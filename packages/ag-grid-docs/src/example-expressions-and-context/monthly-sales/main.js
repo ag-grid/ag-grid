@@ -6,7 +6,9 @@ var monthCellClassRules = {
 };
 var yearToDateValueGetter = 'var total = 0; ctx.months.forEach( function(monthName, monthIndex) { if (monthIndex<=ctx.month) { total += data[monthName + "_act"]; } }); return total; ';
 var accountingCellRenderer = function(params) {
-    if (params.value >= 0) {
+    if (params.value == null) {
+        return '';
+    } else if (params.value >= 0) {
         return params.value.toLocaleString();
     } else {
         return '(' + Math.abs(params.value).toLocaleString() + ')';

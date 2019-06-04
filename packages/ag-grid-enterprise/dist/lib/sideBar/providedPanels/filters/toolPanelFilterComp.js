@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -67,7 +67,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
             container.appendChild(filter.getGui());
             _this.agFilterToolPanelBody.appendChild(container);
             if (filter.afterGuiAttached) {
-                filter.afterGuiAttached();
+                filter.afterGuiAttached({});
             }
         });
         ag_grid_community_1._.setVisible(this.eExpandChecked, true);

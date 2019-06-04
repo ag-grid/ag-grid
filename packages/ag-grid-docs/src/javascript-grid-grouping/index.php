@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Grouping by Row: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Grouping by Row. Use Grouping Rows to group the data over selected dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns of their choice and have it grouped on the fly. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Grouping by Row. Use Grouping Rows to group the data over selected dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns of their choice and have it grouped on the fly. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Grid Grouping";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -11,6 +11,8 @@ include '../documentation-main/documentation_header.php';
         This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row
         groups and then builds up into more advanced topics for row grouping.<br>
     </p>
+
+    <? enterprise_feature("Row Grouping"); ?>
 
     <p>
         Remember Row Grouping works with all frameworks eg Angular and React as well as plain JavaScript.
@@ -278,7 +280,7 @@ columnDefs = [
 
     <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h2 id="fullWidthRows">Keeping Columns Visible</h2>
+    <h2 id="keepingColumnsVisible">Keeping Columns Visible</h2>
 
     <p>
         By default dragging a column out of the grid will make it hidden and
@@ -412,10 +414,38 @@ gridOptions.groupRowRendererParams: {
 </snippet>
 
     <p>
-        Below shows an example of aggregating, then using the entire row to give a summary.
+        Below shows an example of aggregating with full width rows for groups. The following can be noted:
     </p>
 
-    <p>We use Components for the groupRowRenderer in this example.</p>
+    <ul>
+        <li>
+            Each group spans the width of the grid.
+        </li>
+        <li>
+            Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
+        </li>
+        <li>
+            Each medal column is editable, you can change the number of medals for any of the athletes.
+        </li>
+        <li>
+            The column Year has a filter on it.
+        </li>
+        <li>
+            The cell renderer has logic listening for changes to filtering and data cell changes*. This means the
+            aggregation data in the full with row is updated if:
+            <ol>
+                <li>If you edit any cell</li>
+                <li>If you filter the data (ie take rows out).</li>
+            </ol>
+        </li>
+    </ul>
+
+    <p>
+        <i>
+            * This is true for Vanilla Javascript and React. Angular uses data binding and thus the aggregation data
+            updates automatically without needing to listen to events.
+        </i>
+    </p>
 
     <?= example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 

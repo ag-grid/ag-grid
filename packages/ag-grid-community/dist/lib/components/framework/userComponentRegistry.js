@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,10 +17,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var textCellEditor_1 = require("../../rendering/cellEditors/textCellEditor");
 var context_1 = require("../../context/context");
-var dateFilter_1 = require("../../filter/dateFilter");
+var dateFilter_1 = require("../../filter/provided/date/dateFilter");
 var headerComp_1 = require("../../headerRendering/header/headerComp");
 var headerGroupComp_1 = require("../../headerRendering/headerGroup/headerGroupComp");
-var floatingFilter_1 = require("../../filter/floatingFilter");
 var groupCellRenderer_1 = require("../../rendering/cellRenderers/groupCellRenderer");
 var animateShowChangeCellRenderer_1 = require("../../rendering/cellRenderers/animateShowChangeCellRenderer");
 var animateSlideCellRenderer_1 = require("../../rendering/cellRenderers/animateSlideCellRenderer");
@@ -29,12 +28,16 @@ var selectCellEditor_1 = require("../../rendering/cellEditors/selectCellEditor")
 var popupTextCellEditor_1 = require("../../rendering/cellEditors/popupTextCellEditor");
 var popupSelectCellEditor_1 = require("../../rendering/cellEditors/popupSelectCellEditor");
 var largeTextCellEditor_1 = require("../../rendering/cellEditors/largeTextCellEditor");
-var textFilter_1 = require("../../filter/textFilter");
-var numberFilter_1 = require("../../filter/numberFilter");
+var numberFilter_1 = require("../../filter/provided/number/numberFilter");
 var loadingOverlayComponent_1 = require("../../rendering/overlays/loadingOverlayComponent");
 var noRowsOverlayComponent_1 = require("../../rendering/overlays/noRowsOverlayComponent");
 var tooltipComponent_1 = require("../../rendering/tooltipComponent");
 var utils_1 = require("../../utils");
+var defaultDateComponent_1 = require("../../filter/provided/date/defaultDateComponent");
+var dateFloatingFilter_1 = require("../../filter/provided/date/dateFloatingFilter");
+var textFilter_1 = require("../../filter/provided/text/textFilter");
+var numberFloatingFilter_1 = require("../../filter/provided/number/numberFloatingFilter");
+var textFloatingFilter_1 = require("../../filter/provided/text/textFloatingFilter");
 var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
     RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
@@ -44,15 +47,14 @@ var UserComponentRegistry = /** @class */ (function () {
     function UserComponentRegistry() {
         this.agGridDefaults = {
             //date
-            agDateInput: dateFilter_1.DefaultDateComponent,
+            agDateInput: defaultDateComponent_1.DefaultDateComponent,
             //header
             agColumnHeader: headerComp_1.HeaderComp,
             agColumnGroupHeader: headerGroupComp_1.HeaderGroupComp,
             //floating filters
-            agSetColumnFloatingFilter: floatingFilter_1.SetFloatingFilterComp,
-            agTextColumnFloatingFilter: floatingFilter_1.TextFloatingFilterComp,
-            agNumberColumnFloatingFilter: floatingFilter_1.NumberFloatingFilterComp,
-            agDateColumnFloatingFilter: floatingFilter_1.DateFloatingFilterComp,
+            agTextColumnFloatingFilter: textFloatingFilter_1.TextFloatingFilter,
+            agNumberColumnFloatingFilter: numberFloatingFilter_1.NumberFloatingFilter,
+            agDateColumnFloatingFilter: dateFloatingFilter_1.DateFloatingFilter,
             // renderers
             agAnimateShowChangeCellRenderer: animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer,
             agAnimateSlideCellRenderer: animateSlideCellRenderer_1.AnimateSlideCellRenderer,
@@ -210,7 +212,7 @@ var UserComponentRegistry = /** @class */ (function () {
                 null;
         }
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
-            console.warn("ag-grid: Looking for component [" + name + "] but it wasn't found.");
+            console.warn("ag-Grid: Looking for component [" + name + "] but it wasn't found.");
         }
         return null;
     };

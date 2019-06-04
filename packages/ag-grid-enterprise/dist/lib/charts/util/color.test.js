@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var color_1 = require("./color");
@@ -120,6 +120,7 @@ test('fromRgbaString', function () {
         expect(color.r).toBe(120 / 255);
         expect(color.g).toBe(240 / 255);
         expect(color.b).toBe(100 / 255);
+        expect(color.a).toBe(1);
         expect(color.toRgbaString()).toBe('rgb(120, 240, 100)');
     }
     {
@@ -142,4 +143,57 @@ test('fromRgbaString', function () {
     expect(function () { color_1.Color.fromRgbaString('rgb(120, .3, 100)'); }).toThrow();
     expect(function () { color_1.Color.fromRgbaString('rgb(120, 240, 100.)'); }).toThrow();
     expect(function () { color_1.Color.fromRgbaString('rgb(-120, 240, 100)'); }).toThrow();
+});
+test('fromString', function () {
+    {
+        var color = color_1.Color.fromString('#abc');
+        expect(color.r).toBe(0.6666666666666666);
+        expect(color.g).toBe(0.7333333333333333);
+        expect(color.b).toBe(0.8);
+        expect(color.a).toBe(1);
+    }
+    {
+        var color = color_1.Color.fromString('#ff00ff');
+        expect(color.r).toBe(1);
+        expect(color.g).toBe(0);
+        expect(color.b).toBe(1);
+        expect(color.a).toBe(1);
+    }
+    {
+        var color = color_1.Color.fromString('rgb(120, 240, 100)');
+        expect(color.r).toBe(120 / 255);
+        expect(color.g).toBe(240 / 255);
+        expect(color.b).toBe(100 / 255);
+        expect(color.a).toBe(1);
+        expect(color.toRgbaString()).toBe('rgb(120, 240, 100)');
+    }
+    {
+        var color = color_1.Color.fromString('cyan');
+        expect(color.r).toBe(0);
+        expect(color.g).toBe(1);
+        expect(color.b).toBe(1);
+        expect(color.a).toBe(1);
+        expect(color.toRgbaString()).toBe('rgb(0, 255, 255)');
+    }
+    {
+        var color = color_1.Color.fromString('magenta');
+        expect(color.r).toBe(1);
+        expect(color.g).toBe(0);
+        expect(color.b).toBe(1);
+        expect(color.a).toBe(1);
+        expect(color.toRgbaString()).toBe('rgb(255, 0, 255)');
+    }
+    expect(function () { color_1.Color.fromRgbaString('#'); }).toThrow();
+    expect(function () { color_1.Color.fromRgbaString('rgba()'); }).toThrow();
+    expect(function () { color_1.Color.fromRgbaString('blah'); }).toThrow();
+});
+test('toHexString', function () {
+    {
+        var color = new color_1.Color(0, 1, 1);
+        expect(color.toHexString()).toBe('#00ffff');
+    }
+    {
+        var color = new color_1.Color(0, 1, 0);
+        expect(color.toHexString()).toBe('#00ff00');
+    }
 });

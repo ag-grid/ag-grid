@@ -1,7 +1,7 @@
-import {Shape} from "./shape";
-import {chainObjects} from "../../util/object";
-import {HdpiCanvas} from "../../canvas/hdpiCanvas";
-import {BBox, isPointInBBox, renderBBox} from "../bbox";
+import { Shape } from "./shape";
+import { chainObjects } from "../../util/object";
+import { HdpiCanvas } from "../../canvas/hdpiCanvas";
+import { BBox } from "../bbox";
 
 export class Text extends Shape {
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
@@ -41,8 +41,9 @@ export class Text extends Shape {
 
     private _text: string = '';
     set text(value: string) {
-        if (this._text !== value) {
-            this._text = value;
+        const str = String(value); // `value` can be an object here
+        if (this._text !== str) {
+            this._text = str;
             this.splitText();
             this.dirty = true;
         }
@@ -84,17 +85,17 @@ export class Text extends Shape {
         return this._textBaseline;
     }
 
-    readonly getBBox = HdpiCanvas.supports.textMetrics
+    readonly getBBox = HdpiCanvas.has.textMetrics
         ? (): BBox => {
             const metrics = HdpiCanvas.measureText(this.text, this.font,
                 this.textBaseline, this.textAlign);
 
-            return {
-                x: this.x - metrics.actualBoundingBoxLeft,
-                y: this.y - metrics.actualBoundingBoxAscent,
-                width: metrics.width,
-                height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
-            };
+            return new BBox(
+                this.x - metrics.actualBoundingBoxLeft,
+                this.y - metrics.actualBoundingBoxAscent,
+                metrics.width,
+                metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+            );
         }
         : (): BBox => {
             const size = HdpiCanvas.getTextSize(this.text, this.font);
@@ -128,56 +129,80 @@ export class Text extends Shape {
                     break;
             }
 
-            return {x, y, width: size.width, height: size.height};
+            return new BBox(x, y, size.width, size.height);
         };
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
         const bbox = this.getBBox();
 
-        return isPointInBBox(bbox, point.x, point.y);
+        return bbox.containsPoint(point.x, point.y);
     }
 
     isPointInStroke(x: number, y: number): boolean {
         return false;
     }
 
-    applyContextAttributes(ctx: CanvasRenderingContext2D) {
-        super.applyContextAttributes(ctx);
-        ctx.font = this.font;
-        ctx.textAlign = this.textAlign;
-        ctx.textBaseline = this.textBaseline;
-    }
-
     render(ctx: CanvasRenderingContext2D): void {
-        if (!this.scene)
+        if (!this.scene || !this.lines.length) {
             return;
-
-        const lines = this.lines;
-        const lineCount = lines.length;
-
-        if (!lineCount)
-            return;
+        }
 
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
 
-        this.applyContextAttributes(ctx);
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+        ctx.font = this.font;
+        ctx.textAlign = this.textAlign;
+        ctx.textBaseline = this.textBaseline;
 
-        if (lineCount > 1) {
-            // TODO: multi-line text
-        } else if (lineCount === 1) {
-            if (this.fillStyle) {
-                ctx.fillText(this.text, this.x, this.y);
+        const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
+
+            const fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
-            if (this.strokeStyle) {
-                ctx.strokeText(this.text, this.x, this.y);
-            }
+            ctx.fillText(this.text, this.x, this.y);
         }
 
-        // renderBBox(ctx, this.getBBox()); // debug
+        if (this.stroke && this.strokeWidth) {
+            ctx.strokeStyle = this.stroke;
+            ctx.lineWidth = this.strokeWidth;
+            if (this.lineDash) {
+                ctx.setLineDash(this.lineDash);
+            }
+            if (this.lineDashOffset) {
+                ctx.lineDashOffset = this.lineDashOffset;
+            }
+            if (this.lineCap) {
+                ctx.lineCap = this.lineCap;
+            }
+            if (this.lineJoin) {
+                ctx.lineJoin = this.lineJoin;
+            }
+
+            const strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.strokeText(this.text, this.x, this.y);
+        }
+
+        // // debug
+        // this.matrix.transformBBox(this.getBBox!()).render(ctx);
 
         this.dirty = false;
     }

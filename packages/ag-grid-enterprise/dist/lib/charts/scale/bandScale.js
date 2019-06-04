@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -7,12 +7,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 var BandScale = /** @class */ (function () {
     function BandScale() {
+        /**
+         * Maps datum to its index in the {@link domain} array.
+         * Used to check for duplicate datums (not allowed).
+         */
+        this.index = new Map();
+        /**
+         * The output range values for datum at each index.
+         */
+        this.ordinalRange = [];
+        /**
+         * Contains unique datums only. Since `{}` is used in place of `Map`
+         * for IE11 compatibility, the datums are converted `toString` before
+         * the uniqueness check.
+         */
         this._domain = [];
         this._range = [0, 1];
-        this.ordinalRange = [];
-        this.index = {}; // new Map<D, number>();
         this._bandwidth = 1;
-        this._padding = 0;
         /**
          * The ratio of the range that is reserved for space between bands.
          */
@@ -37,11 +48,15 @@ var BandScale = /** @class */ (function () {
         set: function (values) {
             var domain = this._domain;
             domain.length = 0;
-            this.index = {};
+            this.index = new Map();
             var index = this.index;
+            // In case one wants to have duplicate domain values, for example, two 'Italy' categories,
+            // one should use objects rather than strings for domain values like so:
+            // { toString: () => 'Italy' }
+            // { toString: () => 'Italy' }
             values.forEach(function (value) {
-                if (index[value] === undefined) {
-                    index[value] = domain.push(value) - 1;
+                if (index.get(value) === undefined) {
+                    index.set(value, domain.push(value) - 1);
                 }
             });
             this.rescale();
@@ -65,7 +80,7 @@ var BandScale = /** @class */ (function () {
         return this._domain;
     };
     BandScale.prototype.convert = function (d) {
-        var i = this.index[d];
+        var i = this.index.get(d);
         if (i === undefined) {
             return NaN;
         }

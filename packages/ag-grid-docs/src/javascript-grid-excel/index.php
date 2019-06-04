@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Excel Export: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Excel Export. Export in native Excel Format which will maintain the column widths and also allow exporting of styles. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Excel Export. Export in native Excel Format which will maintain the column widths and also allow exporting of styles. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "JavaScript Grid Excel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -8,10 +8,14 @@ include '../documentation-main/documentation_header.php';
 
     <h1 class="heading-enterprise">JavaScript Grid Excel</h1>
     <article>
-        <h2>Exporting ag-Grid Data to Excel</h2>
 
         <p>
             Excel Export allows exporting ag-Grid data to Excel using Open XML format (xlsx) or Excel's own XML format. <br/>
+        </p>
+
+        <? enterprise_feature("Excel Export"); ?>
+
+        <p>
             Using this format allows for rich Excel files to be created with the following:
         </p>
 

@@ -1,6 +1,11 @@
-import {Scene} from "./scene";
-import {Matrix} from "./matrix";
-import {BBox} from "./bbox";
+import { Scene } from "./scene";
+import { Matrix } from "./matrix";
+import { BBox } from "./bbox";
+
+export enum PointerEvents {
+    All,
+    None
+}
 
 /**
  * Abstract scene graph node.
@@ -9,7 +14,6 @@ import {BBox} from "./bbox";
 export abstract class Node { // Don't confuse with `window.Node`.
 
     private static fnNameRegex = /function (\w+)\(/;
-    // TODO: what does ag-Grid use for component identification?
     // Uniquely identify nodes (to check for duplicates, for example).
     private createId(): string {
         const constructor = this.constructor as any;
@@ -41,9 +45,21 @@ export abstract class Node { // Don't confuse with `window.Node`.
      */
     tag: number = NaN;
 
+    /**
+     * This is meaningfully faster than `instanceof` and should be the preferred way
+     * of checking inside loops.
+     * @param node
+     */
     static isNode(node: any): node is Node {
         return node ? (node as Node).matrix !== undefined : false;
     }
+
+    /**
+     * To simplify the type system (especially in Selections) we don't have the `Parent` node
+     * (one that has children). Instead, we mimic HTML DOM, where any node can have children.
+     * But we still need to distinguish regular leaf nodes from leaf containers somehow.
+     */
+    protected isContainerNode: boolean = false;
 
     protected _scene: Scene | null = null;
     _setScene(value: Scene | null) {
@@ -76,8 +92,9 @@ export abstract class Node { // Don't confuse with `window.Node`.
     private static MAX_SAFE_INTEGER = Math.pow(2, 53) - 1; // Number.MAX_SAFE_INTEGER
 
     countChildren(depth = Node.MAX_SAFE_INTEGER): number {
-        if (depth <= 0)
+        if (depth <= 0) {
             return 0;
+        }
 
         const children = this.children;
         const n = children.length;
@@ -219,7 +236,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
 
     // These matrices may need to have package level visibility
     // for performance optimization purposes.
-    protected matrix = new Matrix();
+    matrix = new Matrix();
     protected inverseMatrix = new Matrix();
 
     /**
@@ -388,7 +405,37 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return false;
     }
 
-    readonly getBBox?: () => BBox;
+    /**
+     * Hit testing method.
+     * Recursively checks if the given point is inside this node or any of its children.
+     * Returns the first matching node or `undefined`.
+     * Nodes that render later (show on top) are hit tested first.
+     * @param x
+     * @param y
+     */
+    pickNode(x: number, y: number): Node | undefined {
+        if (!this.visible || this.pointerEvents === PointerEvents.None || !this.isPointInNode(x, y)) {
+            return;
+        }
+
+        const children = this.children;
+
+        if (children.length) {
+            // Nodes added later should be hit-tested first,
+            // as they are rendered on top of the previously added nodes.
+            for (let i = children.length - 1; i >= 0; i--) {
+                const hit = children[i].pickNode(x, y);
+                if (hit) {
+                    return hit;
+                }
+            }
+        } else if (!this.isContainerNode) { // a leaf node, but not a container leaf
+            return this;
+        }
+    }
+
+    readonly getBBox?: () => BBox; // we use this signature to be able to conditionally set
+                                   // this property (see Text shape)
 
     getBBoxCenter(): [number, number] {
         const bbox = this.getBBox && this.getBBox();
@@ -401,7 +448,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return [0, 0];
     }
 
-    protected computeTransformMatrix() {
+    computeTransformMatrix() {
         // TODO: transforms without center of scaling and rotation correspond directly
         //       to `setAttribute('transform', 'translate(tx, ty) rotate(rDeg) scale(sx, sy)')`
         //       in SVG. Our use cases will mostly require positioning elements (rects, circles)
@@ -529,4 +576,6 @@ export abstract class Node { // Don't confuse with `window.Node`.
     get visible(): boolean {
         return this._visible;
     }
+
+    pointerEvents: PointerEvents = PointerEvents.All;
 }

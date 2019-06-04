@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var numberFormats_1 = require("./numberFormats");
@@ -11,14 +11,24 @@ var cellStyles_1 = require("./cellStyles");
 var numberFormat_1 = require("./numberFormat");
 var font_1 = require("./font");
 var border_1 = require("./border");
-var registeredNumberFmts = [];
-var registeredFonts = [{ name: 'Calibri', size: 14, colorTheme: '1', family: 2, scheme: 'minor' }];
-var registeredFills = [{ patternType: 'none', }, { patternType: 'gray125' }];
-var registeredBorders = [{ left: undefined, right: undefined, top: undefined, bottom: undefined, diagonal: undefined }];
-var registeredCellStyleXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0 }];
-var registeredCellXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0, xfId: 0 }];
-var registeredCellStyles = [{ builtinId: 0, name: 'normal', xfId: 0 }];
-var stylesMap = { base: 0 };
+var stylesMap;
+var registeredNumberFmts;
+var registeredFonts;
+var registeredFills;
+var registeredBorders;
+var registeredCellStyleXfs;
+var registeredCellXfs;
+var registeredCellStyles;
+var resetStylesheetValues = function () {
+    stylesMap = { base: 0 };
+    registeredNumberFmts = [];
+    registeredFonts = [{ name: 'Calibri', size: 14, colorTheme: '1', family: 2, scheme: 'minor' }];
+    registeredFills = [{ patternType: 'none', }, { patternType: 'gray125' }];
+    registeredBorders = [{ left: undefined, right: undefined, top: undefined, bottom: undefined, diagonal: undefined }];
+    registeredCellStyleXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0 }];
+    registeredCellXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0, xfId: 0 }];
+    registeredCellStyles = [{ builtinId: 0, name: 'normal', xfId: 0 }];
+};
 var convertLegacyPattern = function (name) {
     var colorMap = {
         None: 'none',
@@ -259,6 +269,14 @@ var registerStyle = function (config) {
 };
 var stylesheetFactory = {
     getTemplate: function () {
+        var numberFormats = numberFormats_1.default.getTemplate(registeredNumberFmts);
+        var fonts = fonts_1.default.getTemplate(registeredFonts);
+        var fills = fills_1.default.getTemplate(registeredFills);
+        var borders = borders_1.default.getTemplate(registeredBorders);
+        var cellStylesXfs = cellStyleXfs_1.default.getTemplate(registeredCellStyleXfs);
+        var cellXfs = cellXfs_1.default.getTemplate(registeredCellXfs);
+        var cellStyles = cellStyles_1.default.getTemplate(registeredCellStyles);
+        resetStylesheetValues();
         return {
             name: 'styleSheet',
             properties: {
@@ -267,13 +285,13 @@ var stylesheetFactory = {
                 }
             },
             children: [
-                numberFormats_1.default.getTemplate(registeredNumberFmts),
-                fonts_1.default.getTemplate(registeredFonts),
-                fills_1.default.getTemplate(registeredFills),
-                borders_1.default.getTemplate(registeredBorders),
-                cellStyleXfs_1.default.getTemplate(registeredCellStyleXfs),
-                cellXfs_1.default.getTemplate(registeredCellXfs),
-                cellStyles_1.default.getTemplate(registeredCellStyles),
+                numberFormats,
+                fonts,
+                fills,
+                borders,
+                cellStylesXfs,
+                cellXfs,
+                cellStyles,
                 {
                     name: 'tableStyles',
                     properties: {
@@ -292,6 +310,7 @@ exports.getStyleId = function (name) {
     return stylesMap[name] || 0;
 };
 exports.registerStyles = function (styles) {
+    resetStylesheetValues();
     styles.forEach(registerStyle);
 };
 exports.default = stylesheetFactory;

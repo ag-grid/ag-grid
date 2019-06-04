@@ -1,11 +1,68 @@
-import {Node} from "./node";
+import { Node } from "./node";
+import { BBox } from "./bbox";
+import { Matrix } from "./matrix";
 
 export class Group extends Node {
+
+    protected isContainerNode: boolean = true;
 
     // We consider a group to be boundless, thus any point belongs to it.
     isPointInNode(x: number, y: number): boolean {
         return true;
     }
+
+    readonly getBBox = (): BBox => {
+        let left = Infinity;
+        let right = -Infinity;
+        let top = Infinity;
+        let bottom = -Infinity;
+
+        if (this.dirtyTransform) {
+            this.computeTransformMatrix();
+        }
+
+        this.children.forEach(child => {
+            if (child.visible && child.getBBox) {
+                const bbox = child.getBBox();
+
+                if (!(child instanceof Group)) {
+                    if (child.dirtyTransform) {
+                        child.computeTransformMatrix();
+                    }
+                    const matrix = Matrix.flyweight(child.matrix);
+                    let parent = child.parent;
+                    while (parent) {
+                        matrix.preMultiplySelf(parent.matrix);
+                        parent = parent.parent;
+                    }
+                    matrix.transformBBox(bbox, 0, bbox);
+                }
+
+                const x = bbox.x;
+                const y = bbox.y;
+
+                if (x < left) {
+                    left = x;
+                }
+                if (y < top) {
+                    top = y;
+                }
+                if (x + bbox.width > right) {
+                    right = x + bbox.width;
+                }
+                if (y + bbox.height > bottom) {
+                    bottom = y + bbox.height;
+                }
+            }
+        });
+
+        return new BBox(
+            left,
+            top,
+            right - left,
+            bottom - top
+        );
+    };
 
     render(ctx: CanvasRenderingContext2D) {
         // A group can have `scaling`, `rotation`, `translation` properties
@@ -27,5 +84,12 @@ export class Group extends Node {
             }
             ctx.restore();
         }
+
+        // debug
+        // this.getBBox().render(ctx, {
+        //     label: this.id,
+        //     resetTransform: true,
+        //     fillStyle: 'rgba(0, 0, 0, 0.5)'
+        // });
     }
 }

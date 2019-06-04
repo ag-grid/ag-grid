@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Component, MenuItemDef } from "ag-grid-community";
 export declare class MenuList extends Component {
     private popupService;

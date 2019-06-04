@@ -1,4 +1,5 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
+import { BBox } from "./bbox";
 /**
  * As of Jan 8, 2019, Firefox still doesn't implement
  * `getTransform(): DOMMatrix;`
@@ -13,22 +14,16 @@
  * https://www.w3.org/TR/geometry-1/
  */
 export declare class Matrix {
-    private readonly elements;
+    readonly elements: number[];
     constructor(elements?: number[]);
     setElements(elements: number[]): Matrix;
     setIdentityElements(): this;
     readonly identity: boolean;
-    private _a;
     a: number;
-    private _b;
     b: number;
-    private _c;
     c: number;
-    private _d;
     d: number;
-    private _e;
     e: number;
-    private _f;
     f: number;
     /**
      * Performs the AxB matrix multiplication and saves the result
@@ -62,6 +57,7 @@ export declare class Matrix {
         x: number;
         y: number;
     };
+    transformBBox(bbox: BBox, radius?: number, target?: BBox): BBox;
     toContext(ctx: CanvasRenderingContext2D): void;
     private static matrix;
     static flyweight(elements?: number[] | Matrix): Matrix;

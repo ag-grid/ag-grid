@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -80,17 +80,18 @@ var HeaderComp = /** @class */ (function (_super) {
     };
     HeaderComp.prototype.setupTap = function () {
         var _this = this;
-        var gow = this.gridOptionsWrapper;
-        if (gow.isSuppressTouch()) {
+        var options = this.gridOptionsWrapper;
+        if (options.isSuppressTouch()) {
             return;
         }
-        var suppressMenuHide = gow.isSuppressMenuHide();
         var touchListener = new touchListener_1.TouchListener(this.getGui(), true);
-        var menuTouchListener = suppressMenuHide ? new touchListener_1.TouchListener(this.eMenu, true) : touchListener;
+        var suppressMenuHide = options.isSuppressMenuHide();
+        var tapMenuButton = suppressMenuHide && utils_1._.exists(this.eMenu);
+        var menuTouchListener = tapMenuButton ? new touchListener_1.TouchListener(this.eMenu, true) : touchListener;
         if (this.params.enableMenu) {
-            var eventType = suppressMenuHide ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
+            var eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             var showMenuFn = function (event) {
-                gow.getApi().showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
+                options.getApi().showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
             };
             this.addDestroyableEventListener(menuTouchListener, touchListener_1.TouchListener[eventType], showMenuFn);
         }
@@ -106,8 +107,10 @@ var HeaderComp = /** @class */ (function (_super) {
             };
             this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, tapListener);
         }
+        // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
+        // so we need to make sure to destroy both listeners here
         this.addDestroyFunc(function () { return touchListener.destroy(); });
-        if (menuTouchListener !== touchListener) {
+        if (tapMenuButton) {
             this.addDestroyFunc(function () { return menuTouchListener.destroy(); });
         }
     };
@@ -121,8 +124,8 @@ var HeaderComp = /** @class */ (function (_super) {
         // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         var suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
-        var dontShowMenu = !this.params.enableMenu || (utils_1._.isUserAgentIPad() && !suppressMenuHide);
-        if (dontShowMenu) {
+        var hideShowMenu = !this.params.enableMenu || (utils_1._.isUserAgentIPad() && !suppressMenuHide);
+        if (hideShowMenu) {
             utils_1._.removeFromParent(this.eMenu);
             return;
         }

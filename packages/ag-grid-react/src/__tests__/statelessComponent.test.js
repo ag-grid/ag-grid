@@ -12,7 +12,7 @@ beforeEach((done) => {
     component = mount((<GridWithStatelessFunction/>));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
-    ensureGridApiHasBeenSet(component).then(() => done());
+    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 10));
 
 });
 
@@ -22,7 +22,8 @@ afterEach(() => {
 });
 
 it('stateless function renders as expected', () => {
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Age: 24</div></div>`);
+    // stateless compoenents _still_ require the wrapping div... :-(
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><span>Age: 24</span></div>`);
 });
 
 it('stateless function has no component instance', () => {
@@ -41,7 +42,7 @@ class GridWithStatelessFunction extends Component {
         this.state = {
             columnDefs: [{
                 field: "age",
-                cellRendererFramework: (props) => <div>Age: {props.value}</div>,
+                cellRendererFramework: (props) => <span>Age: {props.value}</span>,
             }],
             rowData: [{age: 24}]
         };

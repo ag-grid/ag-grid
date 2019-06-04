@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -11,12 +11,18 @@ var HdpiCanvas = /** @class */ (function () {
     function HdpiCanvas(width, height) {
         if (width === void 0) { width = 300; }
         if (height === void 0) { height = 150; }
-        this._parent = null;
         this.canvas = document.createElement('canvas');
         this.context = this.canvas.getContext('2d');
+        /**
+         * The canvas flickers on size changes in Safari.
+         * A temporary canvas is used (during resize only) to prevent that.
+         */
+        this.tempCanvas = document.createElement('canvas');
+        this._parent = undefined;
         // `NaN` is deliberate here, so that overrides are always applied
         // and the `resetTransform` inside the `resize` method works in IE11.
         this._pixelRatio = NaN;
+        this.canvas.style.userSelect = 'none';
         this.updatePixelRatio(0, false);
         this.resize(width, height);
     }
@@ -53,9 +59,11 @@ var HdpiCanvas = /** @class */ (function () {
         return img;
     };
     /**
-     * @param fileName The `.png` extension is going to be added automatically.
+     * @param options.fileName The `.png` extension is going to be added automatically.
+     * @param [options.background] Defaults to `white`.
      */
-    HdpiCanvas.prototype.download = function (fileName) {
+    HdpiCanvas.prototype.download = function (options) {
+        if (options === void 0) { options = {}; }
         // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
         // so we don't support saving to JPEG.
         var type = 'image/png';
@@ -65,10 +73,11 @@ var HdpiCanvas = /** @class */ (function () {
         canvas.width = this.canvas.width;
         canvas.height = this.canvas.height;
         var ctx = canvas.getContext('2d');
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = options.background || 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(this.canvas, 0, 0);
         var dataUrl = canvas.toDataURL(type);
+        var fileName = ((options.fileName || '').trim() || 'image') + '.png';
         if (navigator.msSaveOrOpenBlob) { // IE11
             var binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
             var array = [];
@@ -76,12 +85,12 @@ var HdpiCanvas = /** @class */ (function () {
                 array.push(binary.charCodeAt(i));
             }
             var blob = new Blob([new Uint8Array(array)], { type: type });
-            navigator.msSaveOrOpenBlob(blob, fileName + '.png');
+            navigator.msSaveOrOpenBlob(blob, fileName);
         }
         else {
             var a = document.createElement('a');
             a.href = dataUrl;
-            a.download = fileName + '.png';
+            a.download = fileName;
             a.style.display = 'none';
             document.body.appendChild(a); // required for the `click` to work in Firefox
             a.click();
@@ -137,12 +146,30 @@ var HdpiCanvas = /** @class */ (function () {
     };
     HdpiCanvas.prototype.resize = function (width, height) {
         var canvas = this.canvas;
+        var context = this.context;
+        var tempCanvas = this.tempCanvas;
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        var tempContext = tempCanvas.getContext('2d');
+        tempContext.drawImage(context.canvas, 0, 0);
         canvas.width = Math.round(width * this.pixelRatio);
         canvas.height = Math.round(height * this.pixelRatio);
         canvas.style.width = Math.round(width) + 'px';
         canvas.style.height = Math.round(height) + 'px';
-        this.context.resetTransform();
+        context.drawImage(tempContext.canvas, 0, 0);
+        context.resetTransform();
     };
+    Object.defineProperty(HdpiCanvas, "textMeasuringContext", {
+        get: function () {
+            if (HdpiCanvas._textMeasuringContext) {
+                return HdpiCanvas._textMeasuringContext;
+            }
+            var canvas = document.createElement('canvas');
+            return HdpiCanvas._textMeasuringContext = canvas.getContext('2d');
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(HdpiCanvas, "svgText", {
         get: function () {
             if (HdpiCanvas._svgText) {
@@ -152,6 +179,14 @@ var HdpiCanvas = /** @class */ (function () {
             var svg = document.createElementNS(xmlns, 'svg');
             svg.setAttribute('width', '100');
             svg.setAttribute('height', '100');
+            // Add a descriptive class name in case someone sees this SVG element
+            // in devtools and wonders about its purpose:
+            if (svg.classList) {
+                svg.classList.add('text-measuring-svg');
+            }
+            else {
+                svg.setAttribute('class', 'text-measuring-svg');
+            }
             svg.style.position = 'absolute';
             svg.style.top = '-1000px';
             svg.style.visibility = 'hidden';
@@ -168,8 +203,24 @@ var HdpiCanvas = /** @class */ (function () {
         configurable: true
     });
     ;
+    Object.defineProperty(HdpiCanvas, "has", {
+        get: function () {
+            if (HdpiCanvas._has) {
+                return HdpiCanvas._has;
+            }
+            return HdpiCanvas._has = Object.freeze({
+                textMetrics: HdpiCanvas.textMeasuringContext.measureText('test')
+                    .actualBoundingBoxDescent !== undefined,
+                getTransform: HdpiCanvas.textMeasuringContext.getTransform !== undefined,
+                flicker: !!window.safari
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ;
     HdpiCanvas.measureText = function (text, font, textBaseline, textAlign) {
-        var ctx = HdpiCanvas.textContext;
+        var ctx = HdpiCanvas.textMeasuringContext;
         ctx.font = font;
         ctx.textBaseline = textBaseline;
         ctx.textAlign = textAlign;
@@ -181,9 +232,10 @@ var HdpiCanvas = /** @class */ (function () {
      * @param font The font shorthand string.
      */
     HdpiCanvas.getTextSize = function (text, font) {
-        if (HdpiCanvas.supports.textMetrics) {
-            HdpiCanvas.textContext.font = font;
-            var metrics = HdpiCanvas.textContext.measureText(text);
+        if (HdpiCanvas.has.textMetrics) {
+            var ctx = HdpiCanvas.textMeasuringContext;
+            ctx.font = font;
+            var metrics = ctx.measureText(text);
             return {
                 width: metrics.width,
                 height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
@@ -235,12 +287,13 @@ var HdpiCanvas = /** @class */ (function () {
                     depth--;
                 }
             },
+            setTransform: function (a, b, c, d, e, f) {
+                this.$setTransform(a * pixelRatio, b * pixelRatio, c * pixelRatio, d * pixelRatio, e * pixelRatio, f * pixelRatio);
+            },
             resetTransform: function () {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
-                // this.$resetTransform();
-                this.setTransform(1, 0, 0, 1, 0, 0);
-                this.scale(pixelRatio, pixelRatio);
+                this.$setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
                 this.save();
                 depth = 0;
                 // The scale above will be impossible to restore,
@@ -249,16 +302,6 @@ var HdpiCanvas = /** @class */ (function () {
             }
         };
     };
-    // 2D canvas context for measuring text.
-    HdpiCanvas.textContext = (function () {
-        var canvas = document.createElement('canvas');
-        return canvas.getContext('2d');
-    })();
-    HdpiCanvas.supports = Object.freeze({
-        textMetrics: HdpiCanvas.textContext.measureText('test')
-            .actualBoundingBoxDescent !== undefined,
-        getTransform: HdpiCanvas.textContext.getTransform !== undefined
-    });
     HdpiCanvas.textSizeCache = {};
     return HdpiCanvas;
 }());

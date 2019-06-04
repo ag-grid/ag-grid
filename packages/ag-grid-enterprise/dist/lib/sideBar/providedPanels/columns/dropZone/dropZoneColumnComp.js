@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -165,7 +165,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         return comp;
     };
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
-    DropZoneColumnComp.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button\">&#10006;</span>\n        </span>";
+    DropZoneColumnComp.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-icon ag-icon-grip ag-column-drag\" ref=\"eDragHandle\"></span>\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button ag-icon ag-icon-cancel\"></span>\n        </span>";
     __decorate([
         ag_grid_community_1.Autowired('dragAndDropService'),
         __metadata("design:type", ag_grid_community_1.DragAndDropService)

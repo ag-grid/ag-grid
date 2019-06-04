@@ -54,6 +54,10 @@ function saveState() {
 }
 
 function restoreState() {
+    if (!window.colState) {
+        console.log('no columns state to restore by, you must save state first');
+        return;
+    }
     gridOptions.columnApi.setColumnState(window.colState);
     gridOptions.columnApi.setColumnGroupState(window.groupState);
     gridOptions.api.setSortModel(window.sortState);

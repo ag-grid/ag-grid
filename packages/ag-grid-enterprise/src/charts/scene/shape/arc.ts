@@ -1,8 +1,9 @@
-import {Shape} from "./shape";
-import {Path2D} from "../path2D";
-import {BBox, isPointInBBox} from "../bbox";
-import {normalizeAngle360} from "../../util/angle";
-import {chainObjects} from "../../util/object";
+import { Shape } from "./shape";
+import { Path2D } from "../path2D";
+import { BBox } from "../bbox";
+import { normalizeAngle360 } from "../../util/angle";
+import { chainObjects } from "../../util/object";
+import { isEqual } from "../../util/number";
 
 export enum ArcType {
     Open,
@@ -19,6 +20,10 @@ export class Arc extends Shape {
         lineWidth: 1,
         fillStyle: null
     });
+
+    // Declare a path to retain for later rendering and hit testing
+    // using custom Path2D class. It's pure TypeScript and works in all browsers.
+    protected path = new Path2D();
 
     constructor() {
         super();
@@ -39,10 +44,6 @@ export class Arc extends Shape {
 
         return arc;
     }
-
-    // Declare a path to retain for later rendering and hit testing
-    // using custom Path2D class. It's pure TypeScript and works in all browsers.
-    protected path = new Path2D();
 
     /**
      * It's not always that the path has to be updated.
@@ -130,7 +131,7 @@ export class Arc extends Shape {
     }
 
     private get fullPie(): boolean {
-        return normalizeAngle360(this.startAngle) === normalizeAngle360(this.endAngle);
+        return isEqual(normalizeAngle360(this.startAngle), normalizeAngle360(this.endAngle));
     }
 
     private _counterClockwise: boolean = false;
@@ -168,8 +169,9 @@ export class Arc extends Shape {
     }
 
     updatePath(): void {
-        if (!this.dirtyPath)
+        if (!this.dirtyPath) {
             return;
+        }
 
         const path = this.path;
 
@@ -192,12 +194,13 @@ export class Arc extends Shape {
     }
 
     readonly getBBox = (): BBox => {
-        return {
-            x: this.centerX - this.radiusX,
-            y: this.centerY - this.radiusY,
-            width: this.radiusX * 2,
-            height: this.radiusY * 2
-        };
+        // Only works with full arcs (circles) and untransformed ellipses.
+        return new BBox(
+            this.centerX - this.radiusX,
+            this.centerY - this.radiusY,
+            this.radiusX * 2,
+            this.radiusY * 2
+        );
     };
 
     isPointInPath(x: number, y: number): boolean {
@@ -205,7 +208,7 @@ export class Arc extends Shape {
         const bbox = this.getBBox();
 
         return this.type !== ArcType.Open
-            && isPointInBBox(bbox, point.x, point.y)
+            && bbox.containsPoint(point.x, point.y)
             && this.path.isPointInPath(point.x, point.y);
     }
 
@@ -219,16 +222,10 @@ export class Arc extends Shape {
         }
         this.matrix.toContext(ctx);
 
-        this.applyContextAttributes(ctx);
         this.updatePath();
         this.scene!.appendPath(this.path);
 
-        if (this.fillStyle) {
-            ctx.fill();
-        }
-        if (this.strokeStyle) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
 
         this.dirty = false;
     }

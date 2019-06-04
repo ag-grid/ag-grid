@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -175,7 +175,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         }
     };
     // tab index is needed so we can focus, which is needed for keyboard events
-    RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
+    RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\">\n                <div class=\"ag-icon ag-icon-small-down\"></div>\n            </div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
     __decorate([
         ag_grid_community_1.Autowired('userComponentFactory'),
         __metadata("design:type", ag_grid_community_1.UserComponentFactory)

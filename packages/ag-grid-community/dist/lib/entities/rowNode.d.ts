@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -194,7 +194,7 @@ export declare class RowNode implements IEventEmitter {
     setGroupValue(colKey: string | Column, newValue: any): void;
     setAggData(newAggData: any): void;
     hasChildren(): boolean;
-    isEmptyFillerNode(): boolean;
+    isEmptyRowGroupNode(): boolean;
     private dispatchCellChangedEvent;
     resetQuickFilterAggregateText(): void;
     isExpandable(): boolean;

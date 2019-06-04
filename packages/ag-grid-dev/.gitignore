@@ -1,7 +1,3 @@
-node_modules/
-web-root/
-
-ag-grid-dev.iml
-.idea
-
-package-lock.json
+node_modules
+dist
+!test-src/dist

@@ -36,7 +36,7 @@ export class SetLeftFeature extends BeanStub {
 
     public getColumnOrGroup(): ColumnGroupChild {
         if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
-            return this.colsSpanning[this.colsSpanning.length - 1];
+            return _.last(this.colsSpanning);
         } else {
             return this.columnOrGroup;
         }

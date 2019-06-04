@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -25,6 +25,7 @@ var ClipRect = /** @class */ (function (_super) {
     __extends(ClipRect, _super);
     function ClipRect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.isContainerNode = true;
         _this.path = new path2D_1.Path2D();
         _this._active = true;
         _this._dirtyPath = true;

@@ -14,12 +14,12 @@ export class AgCheckbox extends Component {
     public static EVENT_CHANGED = 'change';
 
     private static TEMPLATE =
-        '<span class="ag-checkbox" role="presentation">' +
+        '<div class="ag-checkbox" role="presentation">' +
         '  <span class="ag-checkbox-checked" role="presentation"></span>' +
         '  <span class="ag-checkbox-unchecked" role="presentation"></span>' +
         '  <span class="ag-checkbox-indeterminate" role="presentation"></span>' +
         '  <span class="ag-checkbox-label" role="presentation"></span>' +
-        '</span>';
+        '</div>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 

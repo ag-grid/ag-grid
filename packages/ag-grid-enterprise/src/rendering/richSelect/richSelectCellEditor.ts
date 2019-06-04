@@ -13,15 +13,17 @@ import {
     Utils,
     GridOptionsWrapper
 } from "ag-grid-community";
-import {RichSelectRow} from "./richSelectRow";
-import {VirtualList} from "../virtualList";
+import { RichSelectRow } from "./richSelectRow";
+import { VirtualList } from "../virtualList";
 
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
     // tab index is needed so we can focus, which is needed for keyboard events
     private static TEMPLATE =
         `<div class="ag-rich-select" tabindex="0">
-            <div ref="eValue" class="ag-rich-select-value"></div>
+            <div ref="eValue" class="ag-rich-select-value">
+                <div class="ag-icon ag-icon-small-down"></div>
+            </div>
             <div ref="eList" class="ag-rich-select-list"></div>
         </div>`;
 
@@ -121,11 +123,11 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const valueFormatted = this.params.formatValue(this.selectedValue);
         const eValue = this.getRefElement('eValue') as HTMLElement;
 
-        const params = <ICellRendererParams> {
+        const params = {
             value: this.selectedValue,
             valueFormatted: valueFormatted,
             api: this.gridOptionsWrapper.getApi()
-        };
+        } as ICellRendererParams;
 
         const promise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(this.params, params);
         if (promise != null) {

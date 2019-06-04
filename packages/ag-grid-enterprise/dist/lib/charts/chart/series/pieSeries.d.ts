@@ -1,59 +1,104 @@
-// ag-grid-enterprise v20.2.0
-import { Chart } from "../chart";
-import { PolarSeries } from "./polarSeries";
+// ag-grid-enterprise v21.0.0
 import { DropShadow } from "../../scene/dropShadow";
-export declare class PieSeries<D, X = number, Y = number> extends PolarSeries<D, X, Y> {
-    protected fieldPropertiesX: (keyof this)[];
-    protected fieldPropertiesY: (keyof this)[];
-    chart: Chart<D, X, Y> | null;
-    /**
-     * The name of the numeric field to use to determine the angle (for example,
-     * a pie slice angle).
-     */
-    _angleField: Extract<keyof D, string> | null;
-    angleField: Extract<keyof D, string> | null;
-    _labelField: Extract<keyof D, string> | null;
-    labelField: Extract<keyof D, string> | null;
-    labelFont: string;
-    labelColor: string;
-    labelRotation: number;
-    labelMinAngle: number;
-    /**
-     * `null` means make the callout color the same as {@link strokeStyle}.
-     */
-    calloutColor: string | null;
-    calloutWidth: number;
-    calloutLength: number;
-    calloutPadding: number;
-    colors: string[];
-    private strokeColors;
-    rotation: number;
-    /**
-     * The stroke style to use for all pie sectors.
-     * `null` value here doesn't mean invisible stroke, as it normally would
-     * (see `Shape.strokeStyle` comments), it means derive stroke colors from fill
-     * colors by darkening them. To make the stroke appear invisible use the same
-     * color as the background of the chart (such as 'white').
-     */
-    strokeStyle: string | null;
-    lineWidth: number;
-    shadow: DropShadow | null;
-    /**
-     * The name of the numeric field to use to determine the radii of pie slices.
-     */
-    private _radiusField;
-    radiusField: string;
-    private angleScale;
+import { Series, SeriesNodeDatum } from "./series";
+import { LegendDatum } from "../legend";
+import { PolarChart } from "../polarChart";
+import { Caption } from "../caption";
+interface GroupSelectionDatum extends SeriesNodeDatum {
+    radius: number;
+    startAngle: number;
+    endAngle: number;
+    midAngle: number;
+    midCos: number;
+    midSin: number;
+    label?: {
+        text: string;
+        textAlign: CanvasTextAlign;
+        textBaseline: CanvasTextBaseline;
+    };
+}
+export interface PieTooltipRendererParams {
+    datum: any;
+    angleField: string;
+    radiusField?: string;
+    labelField?: string;
+}
+export declare class PieSeries extends Series<PolarChart> {
     private radiusScale;
     private groupSelection;
     /**
      * The processed data that gets visualized.
      */
-    private sectorsData;
-    private _data;
+    private groupSelectionData;
+    readonly enabled: boolean[];
+    private angleScale;
     data: any[];
+    private _title;
+    title: Caption | undefined;
+    /**
+     * `null` means make the callout color the same as {@link strokeStyle}.
+     */
+    private _calloutColors;
+    calloutColors: string[];
+    private _calloutStrokeWidth;
+    calloutStrokeWidth: number;
+    private _calloutLength;
+    calloutLength: number;
+    private _calloutPadding;
+    calloutPadding: number;
+    private _labelFont;
+    labelFont: string;
+    private _labelColor;
+    labelColor: string;
+    private _labelMinAngle;
+    labelMinAngle: number;
+    chart: PolarChart | null;
+    /**
+     * The name of the numeric field to use to determine the angle (for example,
+     * a pie slice angle).
+     */
+    private _angleField;
+    angleField: string;
+    /**
+     * The name of the numeric field to use to determine the radii of pie slices.
+     * The largest value will correspond to the full radius and smaller values to
+     * proportionally smaller radii. To prevent confusing visuals, this config only works
+     * if {@link innerRadiusOffset} is zero.
+     */
+    private _radiusField;
+    radiusField: string;
+    /**
+     * The value of the label field is supposed to be a string.
+     * If it isn't, it will be coerced to a string value.
+     */
+    private _labelField;
+    labelField: string;
+    private _labelEnabled;
+    labelEnabled: boolean;
+    private _fills;
+    fills: string[];
+    private _strokes;
+    strokes: string[];
+    /**
+     * The series rotation in degrees.
+     */
+    private _rotation;
+    rotation: number;
+    private _outerRadiusOffset;
+    outerRadiusOffset: number;
+    private _innerRadiusOffset;
+    innerRadiusOffset: number;
+    private _strokeWidth;
+    strokeWidth: number;
+    private _shadow;
+    shadow: DropShadow | undefined;
     getDomainX(): [number, number];
     getDomainY(): [number, number];
     processData(): boolean;
     update(): void;
+    getTooltipHtml(nodeDatum: GroupSelectionDatum): string;
+    tooltipRenderer?: (params: PieTooltipRendererParams) => string;
+    listSeriesItems(data: LegendDatum[]): void;
+    toggleSeriesItem(itemId: number, enabled: boolean): void;
 }
+export {};

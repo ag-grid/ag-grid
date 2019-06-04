@@ -158,8 +158,8 @@
                 "description": "Ag-Grid Enterprise comes with a private support by the ag-Grid development team itself, with a guaranteed 24 hour response time.",
                 "links": [
                     {
-                        "title": "Request a Trial",
-                        "url": "/start-trial.php"
+                        "title": "Pricing",
+                        "url": "/license-pricing.php"
                     }
                 ]
             }

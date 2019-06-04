@@ -60,6 +60,9 @@ export class Events {
     /** Range selection has changed */
     public static EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
 
+    /** Chart Range selection has changed */
+    public static EVENT_CHART_RANGE_SELECTION_CHANGED = 'chartRangeSelectionChanged';
+
     /** For when the tool panel is shown / hidden */
     public static EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
 

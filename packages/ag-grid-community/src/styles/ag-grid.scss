@@ -40,10 +40,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-input-text-wrapper {
     display: flex;
+    flex: 1 1 auto;
     align-items: center;
-    height: 100%;
     line-height: normal;
     position: relative;
+    overflow: hidden;
 }
 
 // setting shake class to an item will give it a left ot right animation
@@ -67,45 +68,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
-$icons-path: "./ag-theme-base/icons/" !default;
-
-@if variable-exists(ag-icons-path) {
-    $icons-path: $ag-icons-path;
-}
-
-$ag-icons-filter: "initial" !default;
-
-@mixin icon-background($icon) {
-    background: transparent url("#{$icons-path}#{$icon}.svg") center no-repeat;
-    background-size: 12px 12px;
-    filter: $ag-icons-filter;
-    height: 12px;
-    width: 12px;
-}
-
-/* icons are used outside of the grid root (in the ghost) */
-$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
-    column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left
-    small-right small-up small-down tick cross tree-open tree-closed tree-indeterminate;
-
-@each $icon in $icons {
-    .ag-icon-#{$icon} {
-        display: inline-block;
-
-        @include icon-background("#{$icon}");
-    }
-}
-
 .ag-root-wrapper {
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
     overflow: hidden;
-
-    *, *:before, *:after {
-        box-sizing: border-box;
-    }
 
     &.ag-layout-normal {
         height: 100%;
@@ -126,12 +93,13 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
             height: 60px;
             width: 110px;
         }
-        &:after {
-            content: 'Invalid License Key';
-            font-weight: bold;
-            font-family: Impact;
-            font-size: 19px;
-        }
+
+      .ag-watermark-text {
+        opacity: 0.5;
+        font-weight: bold;
+        font-family: Impact;
+        font-size: 19px;
+      }
     }
 }
 
@@ -169,7 +137,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Viewports
  ****************************
 */
-.ag-header-viewport, 
+.ag-header-viewport,
 .ag-floating-top-viewport,
 .ag-body-viewport,
 .ag-pinned-left-cols-viewport,
@@ -270,7 +238,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     height: 100%;
 }
 
-.ag-full-width-container, 
+.ag-full-width-container,
 .ag-floating-top-full-width-container,
 .ag-floating-bottom-full-width-container {
     position: absolute;
@@ -352,6 +320,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     white-space: nowrap;
 }
 
+.ag-header-icon {
+    display: flex;
+}
+
 .ag-pinned-left-header {
     height: 100%;
 }
@@ -362,6 +334,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 
 .ag-header-row {
     position: absolute;
+    overflow: hidden; // so when floating filters are height 0px, the contents don't spill out
 }
 
 .ag-header-overlay {
@@ -370,30 +343,51 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-header-cell {
-    display: inline-block;
-    height: 100%;
+    display: inline-flex;
+    align-items: center;
     position: absolute;
-    vertical-align: bottom;
+    height: 100%;
+    overflow: hidden;
+    line-height: 1.5;
 }
 
 .ag-header-group-cell-label {
     overflow: hidden;
     text-overflow: ellipsis;
     display: flex;
+    align-items: center;
 }
 
 .ag-header-cell-label {
+    display: flex;
+    height: 100%;
+    flex: 1 1 auto;
+    align-items: center;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    .ag-header-cell-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.ag-numeric-header {
+    .ag-header-cell-label {
+        flex-direction: row-reverse;
+    }
+}
+
+.ag-header-group-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ag-header-cell-resize {
-    // the resize gets absolutly position to the left or right, depending
-    // on whether the column is pinned and also depending on RTL or LTR
     position: absolute;
-    // z-index, to make sure it appears the header content, so user can grab with mouse
-    z-index: 4;
-    cursor: col-resize;
+    z-index: 1;
     height: 100%;
     width: 4px;
 }
@@ -402,22 +396,8 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     padding-left: 4px;
 }
 
-.ag-header-cell-menu-button {
-    float: right;
-}
-
-.ag-primary-cols-header-panel .ag-column-name-filter {
-    flex-grow: 1;
-    flex-shrink: 1;
-}
-
-.ag-primary-cols-header-panel .ag-primary-cols-filter-wrapper {
-    width: 100%;
-}
-
-.ag-primary-cols-header-panel {
+.ag-header-select-all {
     display: flex;
-    flex-direction: row;
 }
 
 /**
@@ -439,79 +419,96 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     }
 }
 
-.ag-column-drop {
-    width: 100%;
-}
+/**
+ ****************************
+ * Column Panel
+ ****************************
+*/
 
-.ag-column-drop-vertical {
+.ag-column-panel {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
-    height: 50px;
     overflow: hidden;
+    flex: 1 1 auto;
+}
 
-    .ag-column-drop-list {
-        flex-grow: 1;
-        height: 20px;
-        overflow-x: auto;
+.ag-column-select-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-grow: 4;
+    flex-shrink: 1;
+    flex-basis: 0;
+
+    .ag-primary-cols-header-panel {
+        display: flex;
+        flex: none;
+
+        .ag-column-name-filter {
+            flex: 1 1 auto;
+        }
+        .ag-primary-cols-filter-wrapper {
+            flex: 1 1 auto;
+            input {
+                width: 100%;
+            }
+        }
     }
 
-    .ag-column-drop-cell {
-        display: flex;
+    .ag-primary-cols-list-panel {
+        flex: 1 1 auto;
+        overflow: auto;
+    }
+}
 
-        .ag-column-drop-cell-text {
-            overflow: hidden;
-            flex: 1;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+.ag-column-drop {
+    display: inline-flex;
+    align-items: center;
+    overflow: auto;
+    width: 100%;
+
+    .ag-column-drop-list {
+        display: flex;
+        align-items: center;
+        .ag-column-drop-cell {
+            display: flex;
+            align-items: center;
+
+            .ag-column-drop-cell-text {
+                overflow: hidden;
+                flex: 1 1 auto;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
         }
+    }
+}
+
+.ag-column-drop.ag-column-drop-vertical {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1 1 0;
+    align-items: stretch;
+    > div {
+        display: flex;
+    }
+
+    .ag-column-drop-list {
+        align-items: stretch;
+        flex-grow: 1;
+        flex-direction: column;
+        overflow-x: auto;
     }
 
     .ag-column-drop-empty-message {
         display: block;
     }
-
-    .ag-column-drop-cell-button {
-        line-height: 16px;
-    }
 }
 
-.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {
-    float: right;
-}
-
-.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {
-    float: left;
-}
-
-.ag-column-drop-horizontal {
+.ag-column-drop.ag-column-drop-horizontal {
     white-space: nowrap;
     overflow: hidden;
-
-    .ag-column-drop-cell {
-        display: inline-block;
-    }
-
-    .ag-column-drop-empty-message {
-        display: inline-block;
-    }
-
-    .ag-column-drop-list {
-        height: 100%;
-    }
-}
-
-.ag-column-select-indent {
-    display: inline-block;
-}
-
-.ag-column-panel {
-    display: flex;
-    min-height: 400px;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-x: hidden;
-    max-height: 100vh;
 }
 
 /**
@@ -551,6 +548,15 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     z-index: 1;
 }
 
+.ag-row-dragging {
+    z-index: 2;
+}
+
+.ag-stub-cell {
+    display: flex;
+    align-items: center;
+}
+
 /**
  ****************************
  * Cells
@@ -559,23 +565,31 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-cell {
     display: inline-block;
     overflow: hidden;
-    // this float was needed for layout in safari, without it, when images were used (eg country flags),
-    // then the layout was broken
-    //float: left
     position: absolute;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.ag-cell-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    &.ag-row-group {
+        align-items: flex-start;
+    }
+
+    .ag-cell-value, .ag-group-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
 .ag-cell-with-height {
     height: 100%;
 }
 
-.ag-cell-edit-input {
-    height: 100%;
-    width: 100%;
-    line-height: normal;
-}
+
 
 .ag-group-cell-entire-row {
     display: inline-block;
@@ -597,6 +611,16 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     width: 100%;
 }
 
+
+.ag-cell-inline-editing {
+    z-index: 1;
+    .ag-cell-edit-input, .ag-input-text-wrapper {
+        height: 100%;
+        width: 100%;
+        line-height: normal;
+    }
+}
+
 /**
  ****************************
  * Filters
@@ -608,21 +632,21 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     white-space: nowrap;
 }
 
-.ag-filter-filter {
-    width: 100%;
-}
-
 .ag-filter {
     // for focus reasons, we need this for IE, otherwise for the set filter, the 'selectAll' click doesn't work
     // when you click on it when the quick filter has focus. this was a fix for AG-2258
     .ag-filter-checkbox {
         pointer-events: none;
     }
-}
 
-.ag-filter-select {
-    margin: 4px 4px 0 4px;
-    width: 110px;
+    .ag-filter-body-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ag-filter-filter {
+        flex: 1 1 auto;
+    }
 }
 
 /**
@@ -638,16 +662,26 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-floating-filter-body {
+    display: flex;
+    flex: 1 1 auto;
+    height: 20px;
+
     input {
-        height: 19px;
         margin: 0;
-        width: 100%;
+        flex: 1 1 auto;
     }
 }
 
 .ag-floating-filter-full-body {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    > div {
+        flex: 1 1 auto;
+    }
+
     input {
-        height: 19px;
         margin: 0;
         width: 100%;
     }
@@ -655,20 +689,9 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
         height: 100%;
     }
 }
-
 .ag-floating-filter {
     display: inline-block;
     position: absolute;
-}
-
-.ag-floating-filter-body {
-    height: 20px;
-    margin-right: 25px;
-}
-
-.ag-floating-filter-full-body {
-    height: 100%;
-    width: 100%;
 }
 
 .ag-floating-filter-input {
@@ -684,6 +707,11 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     user-select: none;
 }
 
+.ag-floating-filter-button {
+    display: flex;
+    flex: none;
+}
+
 /**
  ****************************
  * Drag & Drop
@@ -693,6 +721,8 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 // the ghost header cell doesn't live inside the grid, it's parent is the body element,
 // so we cannot style using standard themes. hence we break the rules, and style it here
 .ag-dnd-ghost {
+    display: flex;
+    align-items: center;
     background: #e5e5e5;
     border: 1px solid black;
     cursor: move;
@@ -704,16 +734,13 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     position: absolute;
     text-overflow: ellipsis;
     user-select: none;
+    z-index: 10;
 }
 
 .ag-dnd-ghost-icon {
-    display: inline-block;
     padding: 2px;
 }
 
-.ag-dnd-ghost-label {
-    display: inline-block;
-}
 
 /**
  ****************************
@@ -759,6 +786,13 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
  * Popup
  ****************************
 */
+.ag-popup {
+    > div{
+        z-index: 5;
+    }
+
+}
+
 .ag-popup-backdrop {
     height: 100%;
     left: 0;
@@ -770,6 +804,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-popup-editor {
     position: absolute;
     user-select: none;
+    z-index: 1;
 }
 
 /**
@@ -842,6 +877,132 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 
 /**
  ****************************
+ * Dialog
+ ****************************
+*/
+
+$handleSize: 5px;
+
+.ag-dialog {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    overflow: hidden;
+
+    .ag-resizer {
+        position: absolute;
+        pointer-events: none;
+        z-index: 1;
+        &.ag-resizer-topLeft {
+            top: 0;
+            left: 0;
+            height: $handleSize;
+            width: $handleSize;
+            cursor: nwse-resize;
+        }
+        &.ag-resizer-top {
+            top: 0;
+            left: $handleSize;
+            right: $handleSize;
+            height: $handleSize;
+            cursor: ns-resize;
+        }
+        &.ag-resizer-topRight {
+            top: 0;
+            right: 0;
+            height: $handleSize;
+            width: $handleSize;
+            cursor: nesw-resize;
+        }
+        &.ag-resizer-right {
+            top: $handleSize;
+            right: 0;
+            bottom: $handleSize;
+            width: $handleSize;
+            cursor: ew-resize;
+        }
+        &.ag-resizer-bottomRight {
+            bottom: 0;
+            right: 0;
+            height: $handleSize;
+            width: $handleSize;
+            cursor: nwse-resize;
+        }
+        &.ag-resizer-bottom {
+            bottom: 0;
+            left: $handleSize;
+            right: $handleSize;
+            height: $handleSize;
+            cursor: ns-resize;
+        }
+        &.ag-resizer-bottomLeft {
+            bottom: 0;
+            left: 0;
+            height: $handleSize;
+            width: $handleSize;
+            cursor: nesw-resize;
+        }
+        &.ag-resizer-left {
+            left: 0;
+            top: $handleSize;
+            bottom: $handleSize;
+            width: $handleSize;
+            cursor: ew-resize;
+        }
+    }
+
+    .ag-dialog-title-bar {
+        display: flex;
+        flex: none;
+        align-items: center;
+        cursor: default;
+
+        .ag-dialog-title-bar-title {
+            flex: 1 1 auto;
+        }
+
+        .ag-dialog-title-bar-buttons {
+            display: flex;
+            .ag-dialog-button {
+                cursor: pointer;
+                height: 100%;
+                width: 100%;
+                background-size: contain;
+            }
+        }
+    }
+
+    .ag-dialog-content-wrapper {
+        display: flex;
+        flex: 1 1 auto;
+        position: relative;
+        overflow: hidden;
+        > div {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .ag-message-box {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        .ag-message-box-content {
+            display: flex;
+            flex: 1 1 auto;
+            justify-content: center;
+            align-items: center;
+        }
+        .ag-message-box-button-bar {
+            display: flex;
+            justify-content: center;
+        }
+    }
+}
+
+/**
+ ****************************
  * Tooltip
  ****************************
 */
@@ -851,6 +1012,25 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     pointer-events: none;
     z-index: 99999;
 }
+
+.ag-chart-tooltip {
+    position: absolute;
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 99999;
+    border: 1px solid gray;
+    font: 12px Verdana, sans-serif;
+    padding: 7px;
+    color: black;
+    background: rgba(244, 244, 244, 0.9);
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+
+    .title {
+        font-weight: bold;
+    }
+}
+
 /**
  ****************************
  * Animations
@@ -889,10 +1069,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     user-select: none;
 }
 
-.ag-tab {
-    box-sizing: content-box;
-}
-
 .ag-menu-column-select-wrapper {
     height: 265px;
     overflow: auto;
@@ -900,37 +1076,19 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-menu-list {
-    border-collapse: collapse;
     display: table;
 }
 
-.ag-menu-option {
+.ag-menu-option, .ag-menu-separator {
     display: table-row;
+    > span {
+        display: table-cell;
+        vertical-align: middle;
+    }
 }
 
 .ag-menu-option-text {
-    display: table-cell;
     white-space: nowrap;
-}
-
-.ag-menu-option-shortcut {
-    display: table-cell;
-}
-
-.ag-menu-option-icon {
-    display: table-cell;
-}
-
-.ag-menu-option-popup-pointer {
-    display: table-cell;
-}
-
-.ag-menu-separator {
-    display: table-row;
-}
-
-.ag-menu-separator-cell {
-    display: table-cell;
 }
 
 .ag-menu-column-select-wrapper .ag-column-select-panel {
@@ -946,20 +1104,46 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-rich-select {
     cursor: default;
     outline: none;
+    .ag-rich-select-value {
+        display: flex;
+        align-items: center;
+        > span {
+            flex: 1 1 auto;
+        }
+        .ag-icon {
+            order :1;
+        }
+    }
+    .ag-rich-select-list {
+        .ag-virtual-list-item {
+            display: flex;
+            .ag-rich-select-row {
+                display: flex;
+                flex: 1 1 auto;
+                align-items: center;
+                white-space: nowrap;
+            }
+        }
+    }
 }
 
-.ag-rich-select-row {
-    white-space: nowrap;
+/**
+ ****************************
+ * Pagination
+ ****************************
+*/
+.ag-paging-panel {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
 }
 
-.ag-rich-select-list {
-    height: 200px;
-    width: 200px;
-}
-
-.ag-set-filter-list {
-    height: 200px;
-    width: 200px;
+.ag-paging-page-summary-panel {
+    display: flex;
+    align-items: center;
+    .ag-disabled { 
+        pointer-events: none;
+    }
 }
 
 /**
@@ -978,23 +1162,9 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     }
 }
 
-.ag-primary-cols-list-panel {
-    flex-grow: 1;
-    height: 50px;
-    overflow: auto;
-}
-
-.ag-ltr .ag-column-tool-panel-column {
-    margin-left: 16px;
-}
-
-.ag-rtl .ag-column-tool-panel-column {
-    margin-right: 16px;
-}
-
 .ag-column-tool-panel-column,
 .ag-column-tool-panel-column-group {
-    align-items: stretch;
+    align-items: center;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -1003,27 +1173,14 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 
     .ag-column-tool-panel-column,
     .ag-column-tool-panel-column-group {
-        flex-grow: 1;
-        flex-shrink: 1;
+        flex: 1 1 auto;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
-    .ag-column-drag {
-        min-width: 16px;
-        flex-grow: 0;
-        flex-shrink: 0;
-    }
 }
 
-.ag-column-select-panel {
+.ag-column-select-checkbox {
     display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.ag-side-bar .ag-column-select-panel {
-    flex-grow: 4;
 }
 
 .ag-tool-panel-horizontal-resize {
@@ -1036,12 +1193,10 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-rtl .ag-tool-panel-horizontal-resize {
-    float: right;
     transform: translateX(3px);
 }
 
 .ag-ltr .ag-tool-panel-horizontal-resize {
-    float: left;
     transform: translateX(-3px);
 }
 
@@ -1066,12 +1221,46 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 }
 
 .ag-header-group-cell {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     height: 100%;
     overflow: hidden;
     position: absolute;
     text-overflow: ellipsis;
-    //float: left // safari doesn't align if we don't float
+}
+
+.ag-cell-label-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    align-items: center;
+    width: 100%;
+}
+
+.ag-numeric-header .ag-cell-label-container {
+    flex-direction: row;
+}
+/**
+ ****************************
+ * Group Component
+ ****************************
+ */
+
+ .ag-group-component {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    .ag-group-component-label {
+        position: absolute;
+        top: -10px;
+    }
+
+    .ag-group-item {
+        display: flex;
+        align-items: center;
+        flex: 1 1 auto;
+    }
 }
 
 /**
@@ -1084,8 +1273,6 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     flex-direction: row-reverse;
 
     .ag-side-buttons {
-        width: 20px;
-
         div {
             button {
                 display: block;
@@ -1093,7 +1280,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
                 outline: none;
                 cursor: pointer;
 
-                span {
+                span:not(.ag-icon) {
                   writing-mode: tb;
                   writing-mode: vertical-lr;
                 }
@@ -1113,7 +1300,7 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 .ag-rtl .ag-side-bar {
     .ag-side-buttons {
         button {
-            span {
+            span:not(.ag-icon) {
                 writing-mode: tb-rl;
                 writing-mode: vertical-rl;
             }
@@ -1181,9 +1368,6 @@ $row-group-indent-size: 10px !default;
     .ag-pinned-right-header .ag-header-cell-resize {
         left: -4px;
     }
-    .ag-header-select-all {
-        float: left;
-    }
 }
 
 .ag-rtl {
@@ -1197,9 +1381,6 @@ $row-group-indent-size: 10px !default;
     .ag-pinned-left-header .ag-header-cell-resize {
         right: -4px;
     }
-    .ag-header-select-all {
-        float: right;
-    }
 }
 
 @media print {
@@ -1211,3 +1392,4 @@ $row-group-indent-size: 10px !default;
     }
 }
 @import "./ag-grid-mobile";
+@import "./ag-grid-charts";

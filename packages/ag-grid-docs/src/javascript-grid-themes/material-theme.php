@@ -62,11 +62,6 @@ The recommended way to process your project's Scss files is through webpack, sin
 A working example for Angular 2 based on angular-cli can be found in <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">the ag-grid-material repository</a>.
 </p>
 
-<note>The ag grid icons path should be re-adjusted when importing the scss file. 
-
-This is a common problem, <a href="https://github.com/webpack-contrib/sass-loader#problems-with-url">described in the Sass(scss) loader project</a>. 
-The theme exposes the <code>$ag-icons-path</code> variable to address that. The <a href="https://github.com/ag-grid/ag-grid-material/blob/master/angular-material/src/styles.scss#L22-L23">example from above</a> showcases how to override the variable.</note>
-
 <h2>Change the row height / header height / icon size </h2>
 
 <p>
@@ -75,31 +70,6 @@ However, In case you wish to change the sizing, you should do that both in the g
 and by overriding the <code>$grid-size</code> and <code>$icon-size</code>.
 A working example that showcases this using webpack can be found <a href="https://github.com/ag-grid/ag-grid-material/tree/master/custom-sizing">ag-grid-material GitHub repository</a>.
 </p> 
-
-<h2>Change the Theme Icons</h2>
-
-<h3>Replace the Entire Set</h3>
-
-<p>
-The easiest way to replace the entire icon set is to change the <code>$icons-path</code> Scss variable to point to a directory with your set of icons.
-The icons should be <strong>18x18px sized SVG</strong> files. You can check the <a href="https://github.com/ag-grid/ag-grid/tree/latest/src/styles/material-icons">full list in the GitHub repository</a>. 
-</p> 
-
-<h3>Change Individual Icons</h3>
-
-<p>You can also change individual icons by overriding the background images for the respective CSS selector. 
-The following code snippet overrides the pin icon used in the drag hint when reordering columns:<p>
-
-<snippet>
-/* 
- * The override should be placed after the import of the theme. 
- * Alternatively, you can aso increase the selector's specifcity 
- */
-.ag-theme-material .ag-icon-pin {
-    background-image: url('path/to/my-pin-icon.svg');
-}</snippet>
-
-<p>The icon classes follow the <code>.ag-icon-{icon-file-name}</code> convention.</p>
 
 <h2>Integrate with Other Material Component Libraries</h2>
 

@@ -8,10 +8,12 @@ include '../documentation-main/documentation_header.php';
 
     <h1 class="heading-enterprise">Pivoting</h1>
 
-    <p>
+    <p class="lead">
         Pivoting allows you to take a columns values and turn them into columns. For example you can pivot on Country
         to make columns for Ireland, United Kingdom, USA etc.
     </p>
+
+    <? enterprise_feature("Pivoting"); ?>
 
     <p>
         Pivoting only makes sense when mixed with aggregation. If you turn a column into a pivot column, you must have

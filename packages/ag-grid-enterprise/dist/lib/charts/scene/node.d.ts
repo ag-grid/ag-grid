@@ -1,7 +1,11 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
+export declare enum PointerEvents {
+    All = 0,
+    None = 1
+}
 /**
  * Abstract scene graph node.
  * Each node can have zero or one parent and belong to zero or one scene.
@@ -22,7 +26,18 @@ export declare abstract class Node {
      * Usually this will be some enum value used as a selector.
      */
     tag: number;
+    /**
+     * This is meaningfully faster than `instanceof` and should be the preferred way
+     * of checking inside loops.
+     * @param node
+     */
     static isNode(node: any): node is Node;
+    /**
+     * To simplify the type system (especially in Selections) we don't have the `Parent` node
+     * (one that has children). Instead, we mimic HTML DOM, where any node can have children.
+     * But we still need to distinguish regular leaf nodes from leaf containers somehow.
+     */
+    protected isContainerNode: boolean;
     protected _scene: Scene | null;
     _setScene(value: Scene | null): void;
     readonly scene: Scene | null;
@@ -54,7 +69,7 @@ export declare abstract class Node {
      * @param nextNode
      */
     insertBefore<T extends Node>(node: T, nextNode?: Node | null): T;
-    protected matrix: Matrix;
+    matrix: Matrix;
     protected inverseMatrix: Matrix;
     /**
      * Calculates the combined inverse transformation for this node,
@@ -112,9 +127,18 @@ export declare abstract class Node {
     private _translationY;
     translationY: number;
     isPointInNode(x: number, y: number): boolean;
+    /**
+     * Hit testing method.
+     * Recursively checks if the given point is inside this node or any of its children.
+     * Returns the first matching node or `undefined`.
+     * Nodes that render later (show on top) are hit tested first.
+     * @param x
+     * @param y
+     */
+    pickNode(x: number, y: number): Node | undefined;
     readonly getBBox?: () => BBox;
     getBBoxCenter(): [number, number];
-    protected computeTransformMatrix(): void;
+    computeTransformMatrix(): void;
     /**
      * Scene nodes start rendering with the {@link Scene.root | root},
      * where the `render` call propagates from parent nodes to their children.
@@ -149,4 +173,5 @@ export declare abstract class Node {
     dirty: boolean;
     private _visible;
     visible: boolean;
+    pointerEvents: PointerEvents;
 }

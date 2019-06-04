@@ -1,25 +1,35 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 declare type Size = {
     width: number;
     height: number;
 };
+export interface DownloadOptions {
+    fileName?: string;
+    background?: string;
+}
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.
  */
 export declare class HdpiCanvas {
-    constructor(width?: number, height?: number);
-    private _parent;
-    parent: HTMLElement | null;
-    private remove;
     readonly canvas: HTMLCanvasElement;
     readonly context: CanvasRenderingContext2D;
+    /**
+     * The canvas flickers on size changes in Safari.
+     * A temporary canvas is used (during resize only) to prevent that.
+     */
+    private tempCanvas;
+    constructor(width?: number, height?: number);
+    private _parent;
+    parent: HTMLElement | undefined;
+    private remove;
     destroy(): void;
     toImage(): HTMLImageElement;
     /**
-     * @param fileName The `.png` extension is going to be added automatically.
+     * @param options.fileName The `.png` extension is going to be added automatically.
+     * @param [options.background] Defaults to `white`.
      */
-    download(fileName: string): void;
+    download(options?: DownloadOptions): void;
     _pixelRatio: number;
     readonly pixelRatio: number;
     private overrides;
@@ -32,12 +42,15 @@ export declare class HdpiCanvas {
      */
     updatePixelRatio(ratio?: number, resize?: boolean): void;
     resize(width: number, height: number): void;
-    private static readonly textContext;
+    private static _textMeasuringContext?;
+    private static readonly textMeasuringContext;
     private static _svgText;
     private static readonly svgText;
-    static readonly supports: Readonly<{
+    private static _has?;
+    static readonly has: Readonly<{
         textMetrics: boolean;
         getTransform: boolean;
+        flicker: boolean;
     }>;
     static measureText(text: string, font: string, textBaseline: CanvasTextBaseline, textAlign: CanvasTextAlign): TextMetrics;
     /**

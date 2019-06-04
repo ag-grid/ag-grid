@@ -303,29 +303,9 @@ private getCountryFilterParams():any {
         JavaScript).
     </p>
 
-    <h2 id="aggrid-angular-testing">Testing ag-Grid Angular Applications with Karma & Jasmine</h2>
+    <h2 id="aggrid-angular-testing">Testing ag-Grid Angular Applications</h2>
 
-    <p>As with your actual application, you need to ensure you <code>import</code> the <code>AgGridModule</code> when
-        specifying your tests:</p>
-
-    <snippet>
-TestBed.configureTestingModule({
-    imports: [
-        AgGridModule.withComponents([...optional Angular Components...]
-    ]
-    ...rest of module definition</snippet>
-
-    <p>You also need to aware that the Grid <code>API</code> and <code>ColumnAPI</code> will only be available after your
-        fixtures <code>detectChanges</code> has been invoked:</p>
-    <snippet>
-it('grid API is not available until  `detectChanges`', () =&gt; {
-    expect(component.gridOptions.api).not.toBeTruthy();
-});
-
-it('grid API is available after `detectChanges`', () =&gt; {
-    fixture.detectChanges();
-    expect(component.gridOptions.api).toBeTruthy();
-});</snippet>
+    <p>Please see the dedicated testing section <a href="../javascript-grid-testing-angular">here</a>.</p>
 </div>
 <div class="card" style="background-color: aliceblue">
   <div class="card-body">
@@ -348,8 +328,5 @@ it('grid API is available after `detectChanges`', () =&gt; {
   </div>
 </div>
 <br>
-<div>
-  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
-</div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

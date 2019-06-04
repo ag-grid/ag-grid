@@ -2,15 +2,9 @@ import { TextCellEditor } from "../../rendering/cellEditors/textCellEditor";
 
 import { Autowired, Bean, Context, PostConstruct } from "../../context/context";
 import { IComponent } from "../../interfaces/iComponent";
-import { DateFilter, DefaultDateComponent } from "../../filter/dateFilter";
+import { DateFilter } from "../../filter/provided/date/dateFilter";
 import { HeaderComp } from "../../headerRendering/header/headerComp";
 import { HeaderGroupComp } from "../../headerRendering/headerGroup/headerGroupComp";
-import {
-    DateFloatingFilterComp,
-    NumberFloatingFilterComp,
-    SetFloatingFilterComp,
-    TextFloatingFilterComp
-} from "../../filter/floatingFilter";
 import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
 import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";
@@ -19,13 +13,17 @@ import { SelectCellEditor } from "../../rendering/cellEditors/selectCellEditor";
 import { PopupTextCellEditor } from "../../rendering/cellEditors/popupTextCellEditor";
 import { PopupSelectCellEditor } from "../../rendering/cellEditors/popupSelectCellEditor";
 import { LargeTextCellEditor } from "../../rendering/cellEditors/largeTextCellEditor";
-import { TextFilter } from "../../filter/textFilter";
-import { NumberFilter } from "../../filter/numberFilter";
+import { NumberFilter } from "../../filter/provided/number/numberFilter";
 import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
 import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { GridOptions } from "../../entities/gridOptions";
 import { _ } from "../../utils";
+import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
+import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
+import { TextFilter } from "../../filter/provided/text/textFilter";
+import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
+import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -70,10 +68,9 @@ export class UserComponentRegistry {
         agColumnGroupHeader: HeaderGroupComp,
 
         //floating filters
-        agSetColumnFloatingFilter: SetFloatingFilterComp,
-        agTextColumnFloatingFilter: TextFloatingFilterComp,
-        agNumberColumnFloatingFilter: NumberFloatingFilterComp,
-        agDateColumnFloatingFilter: DateFloatingFilterComp,
+        agTextColumnFloatingFilter: TextFloatingFilter,
+        agNumberColumnFloatingFilter: NumberFloatingFilter,
+        agDateColumnFloatingFilter: DateFloatingFilter,
 
         // renderers
         agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,
@@ -249,7 +246,7 @@ export class UserComponentRegistry {
         }
 
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
-            console.warn(`ag-grid: Looking for component [${name}] but it wasn't found.`);
+            console.warn(`ag-Grid: Looking for component [${name}] but it wasn't found.`);
         }
         return null;
     }

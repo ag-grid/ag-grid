@@ -28,8 +28,8 @@ interface IFilterComp {
     // node.
     getGui(): any;
 
-    // The grid calls this to know if the filter icon in the header should be shown. Return true
-    // to show.
+    // Return true if the filter is active. If active than 1) the grid will show the filter icon in the column
+    // header and 2) the filter will be included in the filtering of the data.
     isFilterActive(): boolean;
 
     // The grid will ask each active filter, in turn, whether each row in the grid passes. If any
@@ -38,11 +38,12 @@ interface IFilterComp {
     // object that you provided to the grid for that row).
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 
-    // Gets the filter state for storing
+    // Gets the filter state. If filter is not active, then should return null/undefined.
+    // The grid calls getModel() on all active filters when gridApi.getFilterModel() is called.
     getModel(): any;
 
-    // Restores the filter state. Called either as a result of user calling
-    // OR the floating filter changed (only if using floating filters).
+    // Restores the filter state. Called by the grid after gridApi.setFilterModel(model) is called.
+    // The grid will pass undefined/null to clear the filter.
     setModel(model: any): void;
 
     // optional methods
@@ -68,37 +69,13 @@ interface IFilterComp {
     // destroyed, either new columns are set into the grid, or the grid itself is destroyed.
     destroy?(): void;
 
-    // Only used in conjunction with floating filters.
-    //
     // If floating filters are turned on for the grid, but you have no floating filter
     // configured for this column, then the grid will check for this method. If this
     // method exists, then the grid will provide a read only floating filter for you
     // and display the results of this method. For example, if your filter is a simple
     // filter with one string input value, you could just return the simple string
     // value here.
-    //
-    // If you are implementing a floating filter for your filter, then leave this method out.
     getModelAsString?(model:any): string;
-
-    // Only used in conjunction with floating filters.
-    //
-    // When a floating filter changes and calls the onFloatingFilterChanged(change) callback then:
-    // a) filter.onFloatingFilterChanged(change) gets called if it exists.
-    // ELSE
-    // b) filter.setModel(model) gets called.
-    //
-    // If setModal(modal) is used, then the change object you pass should be the model
-    // object the filter is expecting. The grid will then continue and update the grids rows
-    // based on the new filter state.
-    //
-    // If onFloatingFilterChanged(change) is used, then the change object you pass
-    // can be anything you like, as long as it's expected by your filter. The grid will
-    // update the grid rows for you, you will need to do this yourself by calling filter
-    // filterChangedCallback() if you need. Use this if your need to do more in your floating
-    // than setModel() does. For example ag-Grid out of the box filter components use
-    // this to also consider logic for the Apply button (as if Apply button is active, then
-    // the filter does not call filterChangedCallback(). 
-    onFloatingFilterChanged?(change:any): void;
 }
 </snippet>
 
@@ -120,46 +97,51 @@ interface IFilterParams {
     colDef: ColDef;
 
     // The row model, helpful for looking up data values if needed.
-    // If the filter needs to know which rows are a) in the table b) currently
-    // visible (ie not already filtered), c) what groups d) what order - all of this
-    // can be read from the rowModel.
+    // If the filter needs to know which rows are a) in the table
+    // b) currently visible (ie not already filtered), c) what groups
+    // d) what order - all of this can be read from the rowModel.
     rowModel: IRowModel;
 
-    // A function callback, to be called, when the filter changes,
-    // to inform the grid to filter the data. The grid will respond by filtering the data.
-    filterChangedCallback: ()=&gt; void;
+    // A function callback to be called when the filter changes. The
+    // grid will then respond by filtering the grid data. The callback
+    // takes one optional parameter which if included, will get merged
+    // to the FilterChangedEvent object (useful for passing additional
+    // information to anyone listening to this event, however such extra
+    // attributes are not used by the grid).
+    filterChangedCallback: (additionalEventAttributes?: any)=&gt; void;
 
-    // A function callback, to be optionally called, when the filter changes,
-    // but before 'Apply' is pressed. The grid does nothing except call
-    // gridOptions.filterModified(). This is useful if you are making use of
-    // an 'Apply' button and want to inform the user the filters are not
-    // longer in sync with the data (until you press 'Apply').
+    // A function callback, to be optionally called, when the filter UI changes.
+    // The grid will respond with emitting a FilterModifiedEvent. Apart from
+    // emitting the event, the grid takes no further action.
     filterModifiedCallback: ()=&gt; void;
 
-    // A function callback, call with a node to be given the value for that
-    // filters column for that node. The callback takes care of selecting the right colDef
-    // and deciding whether to use valueGetter or field etc. This is useful in, for example,
-    // creating an Excel style filer, where the filter needs to lookup available values to
-    // allow the user to select from.
+    // A function callback for the filter to get cell values from the
+    // row data. Call with a node to be given the value for that filters
+    // column for that node. The callback takes care of selecting the
+    // right column definition and deciding whether to use valueGetter
+    // or field etc. This is useful in, for example, creating an Excel
+    // style filer, where the filter needs to lookup available values
+    // to allow the user to select from.
     valueGetter: (rowNode: RowNode) =&gt; any;
 
-    // A function callback, call with a node to be told whether
-    // the node passes all filters except the current filter. This is useful if you want
-    // to only present to the user values that this filter can filter given the status
-    // of the other filters. The set filter uses this to remove from the list, items that
-    // are no longer available due to the state of other filters (like Excel type filtering). 
+    // A function callback, call with a node to be told whether the node
+    // passes all filters except the current filter. This is useful if you
+    // want to only present to the user values that this filter can filter
+    // given the status of the other filters. The set filter uses this to
+    // remove from the list, items that are no longer available due to the
+    // state of other filters (like Excel type filtering).
     doesRowPassOtherFilter: (rowNode: RowNode) =&gt; boolean;
 
     // The context for this grid. See section on Context
     context: any;
 
-    // If the grid options angularCompileFilters is set to true, then a new child
-    // scope is created for each column filter and provided here. Just ignore this if
-    // you are not using Angular 1
-    $scope: any;
-
     // The grid API
     api: any;
+
+    // Only if using AngularJS (ie Angular v1), if angularCompileFilters
+    // is set to true, then a new child scope is created for each column
+    // filter and provided here.
+    $scope: any;
 }
 </snippet>
 
@@ -211,14 +193,36 @@ will be empty.
 
 <?= example('Filter Component', 'custom-filter') ?>
 
+<h2>Custom Filters Containing a Popup Element</h2>
+
+<p>
+    Sometimes you will need to create custom components for your filters that also contain popup elements.
+    This is is the case for Date Filter as it pops up a Date Picker. If the library you use to display
+    anchors the popup element outside of the parent filter, then when you click on it the grid will think
+    you clicked outside of the filter and hence close the column menu.
+</p>
+<p>
+    There are two ways you can get fix this problem:
+</p>
+<ul>
+    <li>Add a mouse click listener to your floating element and set it to preventDefault(). This way, the click event
+        will not bubble up to the grid.<br>
+        Note: This is the best solution, but you can only do this if you are writing the component yourself.
+    </li>
+    <li>
+        Add the <code>ag-custom-component-popup</code> CSS class to your floating element. An example of this
+        usage can be found here: <a href="/javascript-grid-date-component/#example-custom-date">Custom Date Component</a>
+    </li>
+</ul>
+
 <?php 
 include './angular.php'; 
 
-include './react.php'; 
+include './react.php';
 
-include './polymer.php'; 
+include './vuejs.php';
 
-include './vuejs.php'; 
+include './polymer.php';
 
 include '../documentation-main/documentation_footer.php'; 
 ?>

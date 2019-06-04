@@ -1,8 +1,8 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "./entities/column";
-import { GridCell } from "./entities/gridCell";
+import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";
 export declare class FocusedCellController {
     private eventService;
@@ -10,14 +10,14 @@ export declare class FocusedCellController {
     private columnController;
     private columnApi;
     private gridApi;
-    private focusedCell;
+    private focusedCellPosition;
     private init;
     clearFocusedCell(): void;
-    getFocusedCell(): GridCell;
-    getFocusCellToUseAfterRefresh(): GridCell;
+    getFocusedCell(): CellPosition;
+    getFocusCellToUseAfterRefresh(): CellPosition;
     private getGridCellForDomElement;
-    setFocusedCell(rowIndex: number, colKey: string | Column, floating: string, forceBrowserFocus?: boolean): void;
-    isCellFocused(gridCell: GridCell): boolean;
+    setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus?: boolean): void;
+    isCellFocused(cellPosition: CellPosition): boolean;
     isRowNodeFocused(rowNode: RowNode): boolean;
     isAnyCellFocused(): boolean;
     isRowFocused(rowIndex: number, floating: string): boolean;

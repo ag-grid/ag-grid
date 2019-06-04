@@ -1,28 +1,204 @@
-import {Scene} from "../scene/scene";
-import {Group} from "../scene/group";
-import {Series} from "./series/series";
+import { Scene } from "../scene/scene";
+import { Group } from "../scene/group";
+import { Series, SeriesNodeDatum } from "./series/series";
+import { Padding } from "../util/padding";
+import { Shape } from "../scene/shape/shape";
+import { Node } from "../scene/node";
+import { Legend, LegendDatum, Orientation } from "./legend";
+import { BBox } from "../scene/bbox";
+import { find } from "../util/array";
+import { Caption } from "./caption";
 
-type Padding = {
-    top: number,
-    right: number,
-    bottom: number,
-    left: number
-};
+export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-export abstract class Chart<D, X, Y> {
+export abstract class Chart {
     readonly scene: Scene = new Scene();
+    legend = new Legend();
 
-    constructor(parent: HTMLElement = document.body) {
-        this.scene.parent = parent;
+    protected legendAutoPadding = new Padding();
+    protected captionAutoPadding = 0; // top padding only
+
+    private tooltipElement: HTMLDivElement = document.createElement('div');
+    private tooltipRect?: ClientRect;
+
+    tooltipOffset = [20, 20];
+
+    private defaultTooltipClass = 'ag-chart-tooltip';
+
+    protected constructor() {
         this.scene.root = new Group();
+        this.legend.onLayoutChange = this.onLayoutChange;
+
+        this.tooltipElement.style.display = 'none';
+        this.tooltipClass = '';
+        document.body.appendChild(this.tooltipElement);
+
+        this.setupListeners(this.scene.hdpiCanvas.canvas);
     }
 
-    private _padding: Padding = {
-        top: 10,
-        right: 10,
-        bottom: 10,
-        left: 10
+    destroy() {
+        const tooltipParent = this.tooltipElement.parentNode;
+        if (tooltipParent) {
+            tooltipParent.removeChild(this.tooltipElement);
+        }
+
+        this.legend.onLayoutChange = undefined;
+        this.cleanupListeners(this.scene.hdpiCanvas.canvas);
+        this.scene.parent = undefined;
+    }
+
+    private readonly onLayoutChange = () => {
+        this.layoutPending = true;
     };
+
+    get element(): HTMLElement {
+        return this.scene.hdpiCanvas.canvas;
+    }
+
+    set parent(value: HTMLElement | undefined) {
+        this.scene.parent = value;
+    }
+    get parent(): HTMLElement | undefined {
+        return this.scene.parent;
+    }
+
+    private _title: Caption | undefined = undefined;
+    set title(value: Caption | undefined) {
+        const oldTitle = this._title;
+        if (oldTitle !== value) {
+            if (oldTitle) {
+                oldTitle.onLayoutChange = undefined;
+                this.scene.root!.removeChild(oldTitle.node);
+            }
+            if (value) {
+                value.onLayoutChange = this.onLayoutChange;
+                this.scene.root!.appendChild(value.node);
+            }
+            this._title = value;
+            this.layoutPending = true;
+        }
+    }
+    get title(): Caption | undefined {
+        return this._title;
+    }
+
+    private _subtitle: Caption | null = null;
+    set subtitle(value: Caption | null) {
+        const oldSubtitle = this._subtitle;
+        if (oldSubtitle !== value) {
+            if (oldSubtitle) {
+                oldSubtitle.onLayoutChange = undefined;
+                this.scene.root!.removeChild(oldSubtitle.node);
+            }
+            if (value) {
+                value.onLayoutChange = this.onLayoutChange;
+                this.scene.root!.appendChild(value.node);
+            }
+            this._subtitle = value;
+            this.layoutPending = true;
+        }
+    }
+    get subtitle(): Caption | null {
+        return this._subtitle;
+    }
+
+    abstract get seriesRoot(): Node;
+
+    protected _series: Series<Chart>[] = [];
+    set series(values: Series<Chart>[]) {
+        this._series = values;
+    }
+    get series(): Series<Chart>[] {
+        return this._series;
+    }
+
+    addSeries(series: Series<Chart>, before: Series<Chart> | null = null): boolean {
+        const canAdd = this.series.indexOf(series) < 0;
+
+        if (canAdd) {
+            const beforeIndex = before ? this.series.indexOf(before) : -1;
+
+            if (beforeIndex >= 0) {
+                this.series.splice(beforeIndex, 0, series);
+                this.seriesRoot.insertBefore(series.group, before!.group);
+            } else {
+                this.series.push(series);
+                this.seriesRoot.append(series.group);
+            }
+            series.chart = this;
+            this.dataPending = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    removeSeries(series: Series<Chart>): boolean {
+        const index = this.series.indexOf(series);
+
+        if (index >= 0) {
+            this.series.splice(index, 1);
+            series.chart = null;
+            this.seriesRoot.removeChild(series.group);
+            this.dataPending = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    removeAllSeries(): void {
+        this.series.forEach(series => {
+            series.chart = null;
+            this.seriesRoot.removeChild(series.group);
+        });
+        this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+        this.dataPending = true;
+    }
+
+    private _legendPosition: LegendPosition = 'right';
+    set legendPosition(value: LegendPosition) {
+        if (this._legendPosition !== value) {
+            this._legendPosition = value;
+            this.legendAutoPadding.clear();
+            switch (value) {
+                case 'right':
+                case 'left':
+                    this.legend.orientation = Orientation.Vertical;
+                    break;
+                case 'bottom':
+                case 'top':
+                    this.legend.orientation = Orientation.Horizontal;
+                    break;
+            }
+            this.layoutPending = true;
+        }
+    }
+    get legendPosition(): LegendPosition {
+        return this._legendPosition;
+    }
+
+    private _legendPadding: number = 20;
+    set legendPadding(value: number) {
+        if (this._legendPadding !== value) {
+            this._legendPadding = value;
+            this.layoutPending = true;
+        }
+    }
+    get legendPadding(): number {
+        return this._legendPadding;
+    }
+
+    private _data: any[] = [];
+    set data(data: any[]) {
+        this._data = data;
+        this.series.forEach(series => series.data = data);
+    }
+    get data(): any[] {
+        return this._data;
+    }
+
+    protected _padding = new Padding(20);
     set padding(value: Padding) {
         this._padding = value;
         this.layoutPending = true;
@@ -34,6 +210,9 @@ export abstract class Chart<D, X, Y> {
     set size(value: [number, number]) {
         this.scene.size = value;
         this.layoutPending = true;
+    }
+    get size(): [number, number] {
+        return [this.scene.width, this.scene.height];
     }
 
     /**
@@ -61,7 +240,7 @@ export abstract class Chart<D, X, Y> {
     private layoutCallbackId: number = 0;
     set layoutPending(value: boolean) {
         if (value) {
-            if (!this.layoutCallbackId) {
+            if (!(this.layoutCallbackId || this.dataPending)) {
                 this.layoutCallbackId = requestAnimationFrame(this._performLayout);
             }
         } else if (this.layoutCallbackId) {
@@ -69,7 +248,6 @@ export abstract class Chart<D, X, Y> {
             this.layoutCallbackId = 0;
         }
     }
-
     /**
      * Only `true` while we are waiting for the layout to start.
      * This will be `false` if the layout has already started and is ongoing.
@@ -81,15 +259,316 @@ export abstract class Chart<D, X, Y> {
     private readonly _performLayout = () => {
         this.layoutCallbackId = 0;
         this.performLayout();
+        if (this.onLayoutDone) {
+            this.onLayoutDone();
+        }
     };
+
+    private dataCallbackId: number = 0;
+    set dataPending(value: boolean) {
+        if (value) {
+            if (!this.dataCallbackId) {
+                this.dataCallbackId = setTimeout(this._processData, 0); // run on next tick
+            }
+        } else if (this.dataCallbackId) {
+            clearTimeout(this.dataCallbackId);
+            this.dataCallbackId = 0;
+        }
+    }
+    get dataPending(): boolean {
+        return !!this.dataCallbackId;
+    }
+
+    onLayoutDone?: () => void;
+
+    private readonly _processData = () => {
+        this.dataCallbackId = 0;
+        this.processData();
+    };
+
+    processData(): void {
+        this.layoutPending = false;
+
+        const legendData: LegendDatum[] = [];
+        this.series.forEach(series => {
+            if (series.visible) {
+                series.processData();
+            }
+            if (series.showInLegend) {
+                series.listSeriesItems(legendData);
+            }
+        });
+        this.legend.data = legendData;
+
+        this.layoutPending = true;
+    }
 
     abstract performLayout(): void;
 
-    protected _series: Series<D, X, Y>[] = [];
-    set series(values: Series<D, X, Y>[]) {
-        this._series = values;
+    protected positionCaptions() {
+        const title = this.title;
+        const subtitle = this.subtitle;
+
+        let titleVisible = false;
+        let subtitleVisible = false;
+
+        const spacing = 5;
+        let paddingTop = 0;
+
+        if (title && title.enabled) {
+            paddingTop += 10;
+            const bbox = title.node.getBBox();
+            title.node.x = this.width / 2;
+            title.node.y = paddingTop;
+            titleVisible = true;
+            paddingTop += bbox.height;
+
+            if (subtitle && subtitle.enabled) {
+                const bbox = subtitle.node.getBBox();
+                subtitle.node.x = this.width / 2;
+                subtitle.node.y = paddingTop;
+                subtitleVisible = true;
+                paddingTop += spacing + bbox.height;
+            }
+        }
+
+        if (title) {
+            title.node.visible = titleVisible;
+        }
+        if (subtitle) {
+            subtitle.node.visible = subtitleVisible;
+        }
+
+        if (this.captionAutoPadding !== paddingTop) {
+            this.captionAutoPadding = paddingTop;
+            this.layoutPending = true;
+        }
     }
-    get series(): Series<D, X, Y>[] {
-        return this._series;
+
+    private legendBBox?: BBox;
+
+    protected positionLegend() {
+        if (!this.legend.data.length) {
+            return; // TODO: figure out why we ever arrive here (data should be processed before layout)
+        }
+
+        const captionAutoPadding = this.captionAutoPadding;
+        const width = this.width;
+        const height = this.height - captionAutoPadding;
+        const legend = this.legend;
+        const legendGroup = legend.group;
+        const legendPadding = this.legendPadding;
+        const legendAutoPadding = this.legendAutoPadding;
+
+        legendGroup.translationX = 0;
+        legendGroup.translationY = 0;
+
+        let legendBBox: BBox;
+        switch (this.legendPosition) {
+            case 'bottom':
+                legend.performLayout(width - legendPadding * 2, 0);
+                legendBBox = legendGroup.getBBox();
+
+                legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                legendGroup.translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendPadding;
+
+                if (legendAutoPadding.bottom !== legendBBox.height) {
+                    legendAutoPadding.bottom = legendBBox.height;
+                    this.layoutPending = true;
+                }
+                break;
+
+            case 'top':
+                legend.performLayout(width - legendPadding * 2, 0);
+                legendBBox = legendGroup.getBBox();
+
+                legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                legendGroup.translationY = captionAutoPadding + legendPadding - legendBBox.y;
+
+                if (legendAutoPadding.top !== legendBBox.height) {
+                    legendAutoPadding.top = legendBBox.height;
+                    this.layoutPending = true;
+                }
+                break;
+
+            case 'left':
+                legend.performLayout(0, height - legendPadding * 2);
+                legendBBox = legendGroup.getBBox();
+
+                legendGroup.translationX = legendPadding - legendBBox.x;
+                legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
+
+                if (legendAutoPadding.left !== legendBBox.width) {
+                    legendAutoPadding.left = legendBBox.width;
+                    this.layoutPending = true;
+                }
+                break;
+
+            default: // case 'right':
+                legend.performLayout(0, height - legendPadding * 2);
+                legendBBox = legendGroup.getBBox();
+
+                legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
+                legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
+
+                if (legendAutoPadding.right !== legendBBox.width) {
+                    legendAutoPadding.right = legendBBox.width;
+                    this.layoutPending = true;
+                }
+                break;
+        }
+
+        // Round off for pixel grid alignment to work properly.
+        legendGroup.translationX = Math.floor(legendGroup.translationX);
+        legendGroup.translationY = Math.floor(legendGroup.translationY);
+
+        this.legendBBox = legendBBox;
+    }
+
+    private setupListeners(chartElement: HTMLCanvasElement) {
+        chartElement.addEventListener('mousemove', this.onMouseMove);
+        chartElement.addEventListener('mouseout', this.onMouseOut);
+        chartElement.addEventListener('click', this.onClick);
+    }
+
+    private cleanupListeners(chartElement: HTMLCanvasElement) {
+        chartElement.removeEventListener('mousemove', this.onMouseMove);
+        chartElement.removeEventListener('mouseout', this.onMouseMove);
+        chartElement.removeEventListener('click', this.onClick);
+    }
+
+    private pickSeriesNode(x: number, y: number): {
+        series: Series<Chart>,
+        node: Node
+    } | undefined {
+        const allSeries = this.series;
+
+        let node: Node | undefined = undefined;
+        for (let i = allSeries.length - 1; i >= 0; i--) {
+            const series = allSeries[i];
+            node = series.group.pickNode(x, y);
+            if (node) {
+                return {
+                    series,
+                    node
+                };
+            }
+        }
+    }
+
+    private lastPick?: {
+        series: Series<Chart>,
+        node: Shape,
+        fill?: string // used to save the original fillStyle of the node,
+                           // to be restored when the highlight fillStyle is removed
+    };
+
+    private readonly onMouseMove = (event: MouseEvent) => {
+        const x = event.offsetX;
+        const y = event.offsetY;
+
+        const pick = this.pickSeriesNode(x, y);
+        if (pick) {
+            const node = pick.node;
+            if (node instanceof Shape) {
+                if (!this.lastPick) { // cursor moved from empty space to a node
+                    this.onSeriesNodePick(event, pick.series, node);
+                } else {
+                    if (this.lastPick.node !== node) { // cursor moved from one node to another
+                        this.lastPick.node.fill = this.lastPick.fill;
+                        this.onSeriesNodePick(event, pick.series, node);
+                    } else { // cursor moved within the same node
+                        if (pick.series.tooltipEnabled) {
+                            this.showTooltip(event);
+                        }
+                    }
+                }
+            }
+        } else if (this.lastPick) { // cursor moved from a node to empty space
+            this.lastPick.node.fill = this.lastPick.fill;
+            this.hideTooltip();
+            this.lastPick = undefined;
+        }
+    };
+
+    private readonly onMouseOut = (event: MouseEvent) => {
+        this.tooltipElement.style.display = 'none';
+    };
+
+    private readonly onClick = (event: MouseEvent) => {
+        const x = event.offsetX;
+        const y = event.offsetY;
+
+        const datum = this.legend.datumForPoint(x, y);
+        if (datum) {
+            const {id, itemId, enabled} = datum;
+            const series = find(this.series, series => series.id === id);
+
+            if (series) {
+                series.toggleSeriesItem(itemId, !enabled);
+            }
+        }
+    };
+
+    private onSeriesNodePick(event: MouseEvent, series: Series<Chart>, node: Shape) {
+        this.lastPick = {
+            series,
+            node,
+            fill: node.fill
+        };
+        node.fill = 'yellow';
+
+        const html = series.tooltipEnabled && series.getTooltipHtml(node.datum as SeriesNodeDatum);
+        if (html) {
+            this.showTooltip(event, html);
+        }
+    }
+
+    private _tooltipClass: string = this.defaultTooltipClass;
+    set tooltipClass(value: string) {
+        if (this._tooltipClass !== value) {
+            this._tooltipClass = value;
+            this.tooltipElement.setAttribute('class', this.defaultTooltipClass + ' ' + value);
+        }
+    }
+    get tooltipClass(): string {
+        return this._tooltipClass;
+    }
+
+    /**
+     * Shows tooltip at the given event's coordinates.
+     * If the `html` parameter is missing, moves the existing tooltip to the new position.
+     */
+    private showTooltip(event: MouseEvent, html?: string) {
+        const el = this.tooltipElement;
+        const offset = this.tooltipOffset;
+        const parent = el.parentElement;
+
+        if (html !== undefined) {
+            el.innerHTML = html;
+        } else if (!el.innerHTML) {
+            return;
+        }
+
+        el.style.display = 'table';
+        const tooltipRect = this.tooltipRect = el.getBoundingClientRect();
+
+        let left = event.x + scrollX + offset[0];
+        const top = event.y + scrollY + offset[1];
+
+        if (tooltipRect && parent && parent.parentElement) {
+            if (left + tooltipRect.width > parent.parentElement.offsetWidth) {
+                left -= tooltipRect.width + offset[0];
+            }
+        }
+        el.style.left = `${left}px`;
+        el.style.top = `${top}px`;
+    }
+
+    private hideTooltip() {
+        const el = this.tooltipElement;
+
+        el.style.display = 'none';
+        el.innerHTML = '';
     }
 }

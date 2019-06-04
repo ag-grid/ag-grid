@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Node } from "./node";
 import { Path2D } from "./path2D";
 /**
@@ -7,6 +7,7 @@ import { Path2D } from "./path2D";
  * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
  */
 export declare class ClipRect extends Node {
+    protected isContainerNode: boolean;
     protected path: Path2D;
     isPointInNode(x: number, y: number): boolean;
     private _active;

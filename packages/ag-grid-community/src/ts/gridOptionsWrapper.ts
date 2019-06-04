@@ -1,5 +1,6 @@
 import { RowNode } from "./entities/rowNode";
 import {
+    ChartRef, GetChartToolbarItems,
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
@@ -10,21 +11,22 @@ import {
     NodeChildDetails,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
+    ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
+import { _ } from "./utils";
 import { EventService } from "./eventService";
 import { Constants } from "./constants";
 import { ComponentUtil } from "./components/componentUtil";
 import { GridApi } from "./gridApi";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./entities/colDef";
-import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
+import { Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { IDatasource } from "./rowModels/iDatasource";
-import { GridCellDef } from "./entities/gridCell";
+import { CellPosition } from "./entities/cellPosition";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exporter/exportParams";
 import { AgEvent } from "./events";
@@ -34,7 +36,8 @@ import { ColDefUtil } from "./components/colDefUtil";
 import { Events } from "./eventKeys";
 import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
-import { _ } from "./utils";
+import { ModuleNames } from "./modules/moduleNames";
+import { ChartOptions } from "./interfaces/iChartOptions";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -91,17 +94,20 @@ export class GridOptionsWrapper {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('enterprise') private enterprise: boolean;
-    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('environment') private environment: Environment;
     @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
+    @Autowired('context') private context: Context;
 
     private propertyEventService: EventService = new EventService();
 
     private domDataKey = '__AG_' + Math.random().toString();
 
     private layoutElements: HTMLElement[] = [];
+
+    // we store this locally, so we are not calling _.getScrollWidth() multiple times as it's an expensive operation
+    private scrollWidth: number;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
@@ -524,6 +530,10 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowClassRules;
     }
 
+    public getCreateChartContainerFunc(): (params: ChartRef) => void | undefined {
+        return this.gridOptions.createChartContainer;
+    }
+
     public getPopupParent() {
         return this.gridOptions.popupParent;
     }
@@ -593,7 +603,16 @@ export class GridOptionsWrapper {
     }
 
     public isEnableCharts() {
-        return isTrue(this.gridOptions.enableCharts);
+        if (isTrue((this.gridOptions.enableCharts))) {
+            if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
+                _.doOnce(() => {
+                    console.warn('ag-grid: Charts is enabled but the Charts Module has not been included.');
+                }, 'ChartsModuleCheck');
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     public getColResizeDefault() {
@@ -652,8 +671,10 @@ export class GridOptionsWrapper {
         return this.gridOptions.rowData;
     }
 
-    public isGroupUseEntireRow() {
-        return isTrue(this.gridOptions.groupUseEntireRow);
+    // this property is different - we never allow groupUseEntireRow if in pivot mode,
+    // as otherwise we don't see the pivot values.
+    public isGroupUseEntireRow(pivotMode: boolean) {
+        return pivotMode ? false : isTrue(this.gridOptions.groupUseEntireRow);
     }
 
     public isEnableRtl() {
@@ -801,7 +822,15 @@ export class GridOptionsWrapper {
     }
 
     public isEnableRangeSelection(): boolean {
-        return isTrue(this.gridOptions.enableRangeSelection);
+        return this.enterprise && isTrue(this.gridOptions.enableRangeSelection);
+    }
+
+    public isEnableRangeHandle(): boolean {
+        return isTrue(this.gridOptions.enableRangeHandle);
+    }
+
+    public isEnableFillHandle(): boolean {
+        return isTrue(this.gridOptions.enableFillHandle);
     }
 
     public isSuppressMultiRangeSelection(): boolean {
@@ -908,6 +937,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressCsvExport);
     }
 
+    public isAllowShowChangeAfterFilter() {
+        return isTrue(this.gridOptions.allowShowChangeAfterFilter);
+    }
+
     public isSuppressExcelExport() {
         return isTrue(this.gridOptions.suppressExcelExport);
     }
@@ -944,15 +977,19 @@ export class GridOptionsWrapper {
         return this.gridOptions.getMainMenuItems;
     }
 
+    public getChartToolbarItemsFunc(): GetChartToolbarItems | undefined {
+        return this.gridOptions.getChartToolbarItems;
+    }
+
     public getRowNodeIdFunc(): GetRowNodeIdFunc | undefined {
         return this.gridOptions.getRowNodeId;
     }
 
-    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => GridCellDef) | undefined {
+    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => CellPosition) | undefined {
         return this.gridOptions.navigateToNextCell;
     }
 
-    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => GridCellDef) | undefined {
+    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => CellPosition) | undefined {
         return this.gridOptions.tabToNextCell;
     }
 
@@ -1029,6 +1066,10 @@ export class GridOptionsWrapper {
 
     public getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined {
         return this.gridOptions.postSort;
+    }
+
+    public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions {
+        return this.gridOptions.processChartOptions;
     }
 
     public getClipboardDeliminator() {
@@ -1184,34 +1225,40 @@ export class GridOptionsWrapper {
         return this.gridOptions.colWidth;
     }
 
-    public getRowBufferInPixels() {
-        let rowsToBuffer: number;
-        if (typeof this.gridOptions.rowBuffer === 'number') {
-            if (this.gridOptions.rowBuffer < 0) {
+    public getRowBuffer(): number {
+        let rowBuffer = this.gridOptions.rowBuffer;
+
+        if (typeof rowBuffer === 'number') {
+            if (rowBuffer < 0) {
                 _.doOnce(() => console.warn(`ag-Grid: rowBuffer should not be negative`),
                     'warn rowBuffer negative');
-                rowsToBuffer = 0;
-            } else {
-                rowsToBuffer = this.gridOptions.rowBuffer;
+                this.gridOptions.rowBuffer = rowBuffer = 0;
             }
         } else {
-            rowsToBuffer = Constants.ROW_BUFFER_SIZE;
+            rowBuffer = Constants.ROW_BUFFER_SIZE;
         }
 
+        return rowBuffer;
+    }
+
+    public getRowBufferInPixels() {
+        const rowsToBuffer = this.getRowBuffer();
         const defaultRowHeight = this.getRowHeightAsNumber();
-        const res = rowsToBuffer * defaultRowHeight;
-        return res;
+
+        return rowsToBuffer * defaultRowHeight;
     }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
     public getScrollbarWidth() {
-        let scrollbarWidth = this.gridOptions.scrollbarWidth;
-        if (typeof scrollbarWidth !== 'number' || scrollbarWidth < 0) {
-            scrollbarWidth = _.getScrollbarWidth();
+        if (this.scrollWidth == null) {
+            const useGridOptions =
+                typeof this.gridOptions.scrollbarWidth === 'number' &&
+                this.gridOptions.scrollbarWidth >= 0;
+            this.scrollWidth = useGridOptions ? this.gridOptions.scrollbarWidth : _.getScrollbarWidth();
         }
-        return scrollbarWidth;
+        return this.scrollWidth;
     }
 
     private checkForDeprecated() {

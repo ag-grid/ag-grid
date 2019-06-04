@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
@@ -7,6 +7,7 @@ import { Column } from "../entities/column";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { Component } from "../widgets/component";
 import { Beans } from "./beans";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 export declare class RowComp extends Component {
     static DOM_DATA_KEY_RENDERED_ROW: string;
     private static FULL_WIDTH_CELL_RENDERER;
@@ -76,7 +77,9 @@ export declare class RowComp extends Component {
     isEditing(): boolean;
     stopRowEditing(cancel: boolean): void;
     isFullWidth(): boolean;
+    refreshFullWidth(): boolean;
     private addListeners;
+    private addListenersForCellComps;
     private onGridColumnsChanged;
     private onRowNodeDataChanged;
     private onRowNodeCellChanged;
@@ -128,6 +131,7 @@ export declare class RowComp extends Component {
     private afterRowAttached;
     private addHoverFunctionality;
     private roundRowTopToBounds;
+    protected getFrameworkOverrides(): IFrameworkOverrides;
     private onRowHeightChanged;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;

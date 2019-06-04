@@ -1,15 +1,18 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Chart } from "./chart";
 import { Axis } from "../axis";
 import { Series } from "./series/series";
-export declare class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
-    constructor(xAxis: Axis<X>, yAxis: Axis<Y>, parent?: HTMLElement);
+import { ClipRect } from "../scene/clipRect";
+export declare class CartesianChart extends Chart {
+    private axisAutoPadding;
+    constructor(xAxis: Axis, yAxis: Axis);
     private seriesClipRect;
+    readonly seriesRoot: ClipRect;
     private readonly _xAxis;
-    readonly xAxis: Axis<X>;
+    readonly xAxis: Axis;
     private readonly _yAxis;
-    readonly yAxis: Axis<Y>;
-    addSeries(series: Series<D, X, Y>): void;
+    readonly yAxis: Axis;
+    series: Series<CartesianChart>[];
     performLayout(): void;
     updateAxes(): void;
 }

@@ -4,6 +4,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { EventService } from "../eventService";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 interface TaskItem {
     task: () => void;
@@ -18,11 +19,12 @@ export class AnimationFrameService {
 
     // create tasks are to do with row creation. for them we want to execute according to row order, so we use
     // TaskItem so we know what index the item is for.
-    private createRowTasks: TaskItem[] = [];
+    private p1Tasks: TaskItem[] = [];
+
     // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
     // important.
-    private destroyRowTasks: (() => void)[] = [];
+    private p2Tasks: (() => void)[] = [];
     private ticking = false;
 
     private useAnimationFrame: boolean;
@@ -32,9 +34,15 @@ export class AnimationFrameService {
     private scrollGoingDown = true;
     private lastScrollTop = 0;
 
+    private gridPanel: GridPanel;
+
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
         this.lastScrollTop = scrollTop;
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     @PostConstruct
@@ -55,13 +63,13 @@ export class AnimationFrameService {
     public addP1Task(task: () => void, index: number): void {
         this.verifyAnimationFrameOn('addP1Task');
         const taskItem: TaskItem = {task: task, index: index};
-        this.createRowTasks.push(taskItem);
+        this.p1Tasks.push(taskItem);
         this.schedule();
     }
 
     public addP2Task(task: () => void): void {
         this.verifyAnimationFrameOn('addP2Task');
-        this.destroyRowTasks.push(task);
+        this.p2Tasks.push(task);
         this.schedule();
     }
 
@@ -69,9 +77,9 @@ export class AnimationFrameService {
         this.verifyAnimationFrameOn('executeFrame');
 
         if (this.scrollGoingDown) {
-            this.createRowTasks.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
+            this.p1Tasks.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
         } else {
-            this.createRowTasks.sort((a: TaskItem, b: TaskItem) => a.index - b.index);
+            this.p1Tasks.sort((a: TaskItem, b: TaskItem) => a.index - b.index);
         }
 
         const frameStart = new Date().getTime();
@@ -81,19 +89,25 @@ export class AnimationFrameService {
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            if (this.createRowTasks.length > 0) {
-                const taskItem = this.createRowTasks.pop();
-                taskItem.task();
-            } else if (this.destroyRowTasks.length > 0) {
-                const task = this.destroyRowTasks.pop();
-                task();
-            } else {
-                break;
+
+            const gridPanelUpdated = this.gridPanel.executeFrame();
+
+            if (!gridPanelUpdated) {
+                if (this.p1Tasks.length > 0) {
+                    const taskItem = this.p1Tasks.pop();
+                    taskItem.task();
+                } else if (this.p2Tasks.length > 0) {
+                    const task = this.p2Tasks.pop();
+                    task();
+                } else {
+                    break;
+                }
             }
+
             duration = (new Date().getTime()) - frameStart;
         }
 
-        if (this.createRowTasks.length > 0 || this.destroyRowTasks.length > 0) {
+        if (this.p1Tasks.length > 0 || this.p2Tasks.length > 0) {
             this.requestFrame();
         } else {
             this.stopTicking();

@@ -1,4 +1,4 @@
-import {cubicRoots} from "./polyRoots";
+import { cubicRoots } from "./polyRoots";
 
 /**
  * Returns the intersection point for the given pair of line segments, or null,
@@ -13,8 +13,8 @@ export function segmentIntersection(ax1: number, ay1: number, ax2: number, ay2: 
         return null;
     }
 
-    const ua = ( (bx2 - bx1) * (ay1 - by1) - (ax1 - bx1) * (by2 - by1) ) / d;
-    const ub = ( (ax2 - ax1) * (ay1 - by1) - (ay2 - ay1) * (ax1 - bx1) ) / d;
+    const ua = ((bx2 - bx1) * (ay1 - by1) - (ax1 - bx1) * (by2 - by1)) / d;
+    const ub = ((ax2 - ax1) * (ay1 - by1) - (ay2 - ay1) * (ax1 - bx1)) / d;
 
     if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
         return {

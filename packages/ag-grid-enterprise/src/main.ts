@@ -26,13 +26,14 @@ import { NameValueComp } from "./statusBar/providedPanels/nameValueComp";
 import { PrimaryColsHeaderPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel";
 import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
 import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
-import { ChartingService } from "./charts/chartingService";
 import { WatermarkComp } from "./license/watermark";
+import { FillHandle } from "./widgets/selection/fillHandle";
+import { RangeHandle } from "./widgets/selection/rangeHandle";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
 export { SetFilter } from "./setFilter/setFilter";
-export { SetFilterModel } from "./setFilter/setFilterModel";
+export { SetValueModel } from "./setFilter/setValueModel";
 export { StatusBar } from "./statusBar/statusBar";
 export { StatusBarService } from "./statusBar/statusBarService";
 export { ClipboardService } from "./clipboardService";
@@ -62,15 +63,16 @@ export { ValuesDropZonePanel } from "./sideBar/providedPanels/columns/panels/val
 export { ExcelCreator } from "./exporter/excelCreator";
 export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
-export { ChartingService } from "./charts/chartingService";
 export { WatermarkComp } from "./license/watermark";
+export { FillHandle } from "./widgets/selection/fillHandle";
+export { RangeHandle } from "./widgets/selection/rangeHandle";
 
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,
     RangeController, ClipboardService, PivotStage, PivotColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
-    MenuItemMapper, StatusBarService, ChartingService], rowModelTypes);
+    MenuItemMapper, StatusBarService], rowModelTypes);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgPrimaryColsHeader', theClass: PrimaryColsHeaderPanel},
@@ -81,5 +83,7 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgNameValue', theClass: NameValueComp},
     {componentName: 'AgGridHeaderDropZones', theClass: GridHeaderDropZones},
     {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
-    {componentName: 'AgWatermark', theClass: WatermarkComp}
+    {componentName: 'AgWatermark', theClass: WatermarkComp},
+    {componentName: 'AgFillHandle', theClass: FillHandle},
+    {componentName: 'AgRangeHandle', theClass: RangeHandle}
 ]);

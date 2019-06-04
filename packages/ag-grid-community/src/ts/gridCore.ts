@@ -8,12 +8,11 @@ import { EventService } from "./eventService";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
-import { Autowired, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
+import { Autowired, Optional, PostConstruct } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { FocusedCellController } from "./focusedCellController";
 import { Component } from "./widgets/component";
 import { IClipboardService } from "./interfaces/iClipboardService";
-import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
 import { GridApi } from "./gridApi";
 import { ISideBar } from "./interfaces/ISideBar";
 import { RefSelector } from "./widgets/componentAnnotations";
@@ -48,7 +47,6 @@ export class GridCore extends Component {
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     @Autowired('columnController') private columnController: ColumnController;

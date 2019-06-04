@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -120,6 +120,12 @@ var UserComponentFactory = /** @class */ (function () {
         var paramsAfterCallback = modifyParamsCallback ? modifyParamsCallback(params, componentInstance) : params;
         var deferredInit = this.initComponent(componentInstance, paramsAfterCallback);
         if (deferredInit == null) {
+            // const p = new Promise<A>(resolve => {
+            //     setTimeout( ()=> {
+            //         resolve(componentInstance);
+            //     }, 1000);
+            // });
+            // return p;
             return utils_1.Promise.resolve(componentInstance);
         }
         else {

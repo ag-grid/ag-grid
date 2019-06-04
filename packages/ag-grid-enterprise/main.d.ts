@@ -1,8 +1,8 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 export { AggregationStage } from "./dist/lib/rowStages/aggregationStage";
 export { GroupStage } from "./dist/lib/rowStages/groupStage";
 export { SetFilter } from "./dist/lib/setFilter/setFilter";
-export { SetFilterModel } from "./dist/lib/setFilter/setFilterModel";
+export { SetValueModel } from "./dist/lib/setFilter/setValueModel";
 export { StatusBar } from "./dist/lib/statusBar/statusBar";
 export { StatusBarService } from "./dist/lib/statusBar/statusBarService";
 export { ClipboardService } from "./dist/lib/clipboardService";
@@ -32,5 +32,6 @@ export { ValuesDropZonePanel } from "./dist/lib/sideBar/providedPanels/columns/p
 export { ExcelCreator } from "./dist/lib/exporter/excelCreator";
 export { ExcelXmlFactory } from "./dist/lib/exporter/excelXmlFactory";
 export { ExcelXlsxFactory } from "./dist/lib/exporter/excelXlsxFactory";
-export { ChartingService } from "./dist/lib/charts/chartingService";
 export { WatermarkComp } from "./dist/lib/license/watermark";
+export { FillHandle } from "./dist/lib/widgets/selection/fillHandle";
+export { RangeHandle } from "./dist/lib/widgets/selection/rangeHandle";

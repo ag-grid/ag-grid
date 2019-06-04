@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid - Enterprise Grade Features: Column Menu";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Menu. The Column Menu drops down from the column header. Use the default options or provide your own. Free and Commercial version available.";
+$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Column Menu. The Column Menu drops down from the column header. Use the default options or provide your own. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Javascript Grid Column Menu";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -14,6 +14,8 @@ include '../documentation-main/documentation_header.php';
         only the filter is shown. For ag-Grid Enterprise, a tabbed component containing a 1) Menu, 2) Filter
         and 3) Column Management panel is shown.
     </p>
+
+    <? enterprise_feature("Column Menu"); ?>
 
     <h2>Showing the Column Menu</h2>
 

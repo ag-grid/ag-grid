@@ -1,20 +1,22 @@
 import { Autowired, Bean } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { IFrameworkFactory } from "../interfaces/iFrameworkFactory";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { _ } from "../utils";
 
 @Bean('resizeObserverService')
 export class ResizeObserverService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
+    @Autowired('frameworkOverrides') private frameworkOverrides: IFrameworkOverrides;
 
-    public observeResize(element: HTMLElement, callback: () => void): () => void {
+    public observeResize(element: HTMLElement, callback: () => void, debounceDelay: number = 50): () => void {
         // put in variable, so available to usePolyfill() function below
-        const frameworkFactory = this.frameworkFactory;
-
+        const frameworkFactory = this.frameworkOverrides;
+        // this gets fired too often and might cause some relayout issues
+        // so we add a debounce to the callback here to avoid the flashing effect.
+        const debouncedCallback = _.debounce(callback, debounceDelay);
         const useBrowserResizeObserver = () => {
-            const resizeObserver = new (window as any).ResizeObserver(callback);
+            const resizeObserver = new (window as any).ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);
             return () => resizeObserver.disconnect();
         };
@@ -41,7 +43,7 @@ export class ResizeObserverService {
                         callback();
                     }
 
-                    frameworkFactory.setTimeout(periodicallyCheckWidthAndHeight, 500);
+                    frameworkFactory.setTimeout(periodicallyCheckWidthAndHeight, debounceDelay);
                 }
             };
 

@@ -174,7 +174,7 @@ export class HeaderWrapperComp extends Component {
     private setupMove(eHeaderCellLabel: HTMLElement, displayName: string): void {
         const suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.getComponentHolder().suppressMovable
-            || this.column.isLockPosition();
+            || this.column.getColDef().lockPosition;
 
         if (suppressMove) { return; }
 

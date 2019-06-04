@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -206,7 +206,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         // if any child is fixed, then don't allow moving
         var childSuppressesMoving = false;
         this.columnGroup.getLeafColumns().forEach(function (column) {
-            if (column.getColDef().suppressMovable || column.isLockPosition()) {
+            if (column.getColDef().suppressMovable || column.getColDef().lockPosition) {
                 childSuppressesMoving = true;
             }
         });

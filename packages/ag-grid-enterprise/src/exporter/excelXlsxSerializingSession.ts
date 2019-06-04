@@ -134,9 +134,11 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
             data: {
                 type: typeTransformed,
                 value:
-                    typeTransformed === 's' ? this.getStringPosition(value == null ? '' : value).toString() :
-                        typeTransformed === 'n' ? Number(value).toString() :
-                            value
+                    typeTransformed === 's'
+                    ? this.getStringPosition(value == null ? '' : value).toString()
+                    : typeTransformed === 'n'
+                        ? Number(value).toString()
+                        : value
             }
         };
     }

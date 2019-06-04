@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,20 +17,27 @@ var Downloader = /** @class */ (function () {
     function Downloader() {
     }
     Downloader.prototype.download = function (fileName, content) {
+        // Internet Explorer
         if (window.navigator.msSaveOrOpenBlob) {
             window.navigator.msSaveOrOpenBlob(content, fileName);
         }
         else {
-            // Chrome
+            // Other Browsers
             var element = document.createElement("a");
-            var url = window.URL.createObjectURL(content);
-            element.setAttribute("href", url);
+            var url_1 = window.URL.createObjectURL(content);
+            element.setAttribute("href", url_1);
             element.setAttribute("download", fileName);
             element.style.display = "none";
             document.body.appendChild(element);
-            element.click();
-            window.URL.revokeObjectURL(url);
+            element.dispatchEvent(new MouseEvent('click', {
+                bubbles: false,
+                cancelable: true,
+                view: window
+            }));
             document.body.removeChild(element);
+            window.setTimeout(function () {
+                window.URL.revokeObjectURL(url_1);
+            }, 0);
         }
     };
     Downloader = __decorate([

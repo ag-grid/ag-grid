@@ -21,22 +21,24 @@ import {
 import { _, Promise } from "../../utils";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
-    pinned:string;
-    padding:number;
-    suppressPadding:boolean;
-    suppressDoubleClickExpand:boolean;
-    footerValueGetter:any;
-    suppressCount:boolean;
-    fullWidth:boolean;
-    checkbox:any;
-    scope:any;
-    actualValue:string;
+    pinned: string;
+    suppressPadding: boolean;
+    suppressDoubleClickExpand: boolean;
+    suppressEnterExpand: boolean;
+    footerValueGetter: any;
+    suppressCount: boolean;
+    fullWidth: boolean;
+    checkbox: any;
+    scope: any;
+
+    /** @deprecated */
+    padding: number;
 }
 
 export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private static TEMPLATE =
-        '<span>' +
+        '<span class="ag-cell-wrapper">' +
          '<span class="ag-group-expanded" ref="eExpanded"></span>' +
          '<span class="ag-group-contracted" ref="eContracted"></span>' +
          '<span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>' +
@@ -389,7 +391,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
 
         // expand / contract as the user hits enter
-        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this), { capture: true });
+        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
 
@@ -412,11 +414,13 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        if (!event.defaultPrevented && _.isKeyPressed(event, Constants.KEY_ENTER)) {
+        const enterKeyPressed = _.isKeyPressed(event, Constants.KEY_ENTER);
+        if (enterKeyPressed) {
+            if (this.params.suppressEnterExpand) { return; }
+
             const cellEditable = this.params.column.isCellEditable(this.params.node);
-            if (cellEditable) {
-                return;
-            }
+            if (cellEditable) { return; }
+
             event.preventDefault();
             this.onExpandOrContract();
         }
@@ -435,9 +439,15 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             this.draggedFromHideOpenParents = true;
         } else {
             const rowGroupColumn = rowNode.rowGroupColumn;
-            // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
-            // then nothing was dragged down
-            this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+            if (rowGroupColumn) {
+                // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
+                // then nothing was dragged down
+                this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+            } else {
+                // the only way we can end up here (no column, but a group) is if we are at the root node,
+                // which only happens when 'groupIncludeTotalFooter' is true. here, we are never dragging
+                this.draggedFromHideOpenParents = false;
+            }
         }
 
         if (this.draggedFromHideOpenParents) {
@@ -520,6 +530,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         const pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
         const notExpandable = !displayedGroup.isExpandable();
         const addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+        this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     }
 

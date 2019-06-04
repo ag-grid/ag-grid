@@ -6,7 +6,7 @@ import { IFilterComp } from "../interfaces/iFilter";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
-import { IFloatingFilterComp } from "../filter/floatingFilter";
+import { IFloatingFilterComp } from "../filter/floating/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
@@ -330,11 +330,14 @@ export interface ColDef extends AbstractColDef {
     headerComponentParams?: any;
 
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
-    floatingFilterComponent?: string | { new(): IFloatingFilterComp<any, any, any> };
+    floatingFilterComponent?: string | { new(): IFloatingFilterComp };
     floatingFilterComponentParams?: any;
     floatingFilterComponentFramework?: any;
 
     refData?: { [key: string]: string };
+
+    /** Defines the column data type used when charting, i.e. 'category' | 'series' | 'excluded' | undefined **/
+    chartType?: string;
 }
 
 export interface IsColumnFunc {
@@ -411,6 +414,7 @@ export interface CellClassParams {
     colDef: ColDef;
     rowIndex: number;
     $scope: any;
-    api: GridApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     context: any;
 }

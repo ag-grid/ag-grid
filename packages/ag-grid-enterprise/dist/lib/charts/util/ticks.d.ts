@@ -1,6 +1,7 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 export default function (a: number, b: number, count: number): NumericTicks;
+export declare function tickIncrement(a: number, b: number, count: number): number;
 export declare class NumericTicks extends Array<number> {
-    constructor(decimalDigits: number, size?: number);
-    readonly decimalDigits: number;
+    readonly fractionDigits: number;
+    constructor(fractionDigits: number, size?: number);
 }

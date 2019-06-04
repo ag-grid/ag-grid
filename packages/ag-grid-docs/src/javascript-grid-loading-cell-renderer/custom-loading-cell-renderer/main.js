@@ -21,7 +21,7 @@ var gridOptions = {
 
     loadingCellRenderer: 'customLoadingCellRenderer',
     loadingCellRendererParams: {
-      loadingMessage: 'One moment please...'
+        loadingMessage: 'One moment please...'
     },
 
     columnDefs: columnDefs,

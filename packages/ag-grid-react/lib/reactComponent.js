@@ -1,4 +1,4 @@
-// ag-grid-react v20.2.0
+// ag-grid-react v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -25,8 +25,10 @@ var ReactComponent = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.portal = null;
         _this.componentWrappingElement = 'div';
+        _this.unwrapComponent = true;
         _this.reactComponent = reactComponent;
         _this.parentComponent = parentComponent;
+        _this.orphans = [];
         _this.statelessComponent = ReactComponent.isStateless(_this.reactComponent);
         return _this;
     }
@@ -42,14 +44,40 @@ var ReactComponent = /** @class */ (function (_super) {
     ReactComponent.prototype.init = function (params) {
         var _this = this;
         return new ag_grid_community_1.Promise(function (resolve) {
+            // functional components have to have the wrapping div... :-(
+            _this.unwrapComponent = _this.parentComponent.props.componentWrappingElement === undefined && !_this.statelessComponent;
             _this.eParentElement = _this.createParentElement(params);
             _this.createReactComponent(params, resolve);
         });
     };
     ReactComponent.prototype.getGui = function () {
-        return this.eParentElement;
+        if (this.unwrapComponent) {
+            var fragment = document.createDocumentFragment();
+            if (this.orphans.length > 0) {
+                for (var _i = 0, _a = this.orphans; _i < _a.length; _i++) {
+                    var orphan = _a[_i];
+                    fragment.appendChild(orphan);
+                }
+            }
+            else {
+                while (this.eParentElement.firstChild) {
+                    this.orphans.push(this.eParentElement.firstChild);
+                    fragment.appendChild(this.eParentElement.firstChild);
+                }
+            }
+            return fragment;
+        }
+        else {
+            return this.eParentElement;
+        }
     };
     ReactComponent.prototype.destroy = function () {
+        if (this.unwrapComponent) {
+            for (var _i = 0, _a = this.orphans; _i < _a.length; _i++) {
+                var orphan = _a[_i];
+                this.eParentElement.appendChild(orphan);
+            }
+        }
         return this.parentComponent.destroyPortal(this.portal);
     };
     ReactComponent.prototype.createReactComponent = function (params, resolve) {
@@ -68,11 +96,16 @@ var ReactComponent = /** @class */ (function (_super) {
     };
     ReactComponent.prototype.createParentElement = function (params) {
         var eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
-        AgGrid.Utils.addCssClass(eParentElement, 'ag-react-container');
-        // so user can have access to the react container,
-        // to add css class or style
-        params.reactContainer = this.eParentElement;
+        if (!this.unwrapComponent) {
+            AgGrid.Utils.addCssClass(eParentElement, 'ag-react-container');
+            // so user can have access to the react container,
+            // to add css class or style
+            params.reactContainer = this.eParentElement;
+        }
         return eParentElement;
+    };
+    ReactComponent.prototype.statelessComponentRendered = function () {
+        return this.eParentElement.childElementCount > 0;
     };
     ReactComponent.isStateless = function (Component) {
         return (typeof Component === 'function' &&

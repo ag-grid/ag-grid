@@ -5,7 +5,7 @@ import { CellFocusedEvent, Events } from "./events";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
-import { GridCell } from "./entities/gridCell";
+import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
 import { CellComp } from "./rendering/cellComp";
@@ -20,26 +20,29 @@ export class FocusedCellController {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private focusedCell: GridCell;
+    private focusedCellPosition: CellPosition;
 
     @PostConstruct
     private init(): void {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCell.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.clearFocusedCell.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCell.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearFocusedCell.bind(this));
+
+        // we used to remove focus when moving column, am not sure why. so taking this out and see who complains.
+        // we can delete these three lines of code soon.
+        // this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.clearFocusedCell.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearFocusedCell.bind(this));
+        // this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearFocusedCell.bind(this));
     }
 
     public clearFocusedCell(): void {
-        this.focusedCell = null;
+        this.focusedCellPosition = null;
         this.onCellFocused(false);
     }
 
-    public getFocusedCell(): GridCell {
-        return this.focusedCell;
+    public getFocusedCell(): CellPosition {
+        return this.focusedCellPosition;
     }
 
     // we check if the browser is focusing something, and if it is, and
@@ -49,12 +52,12 @@ export class FocusedCellController {
     // first focus a cell, then second click outside the grid, as then the
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
-    public getFocusCellToUseAfterRefresh(): GridCell {
+    public getFocusCellToUseAfterRefresh(): CellPosition {
         if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {
             return null;
         }
 
-        if (!this.focusedCell) {
+        if (!this.focusedCellPosition) {
             return null;
         }
 
@@ -65,16 +68,16 @@ export class FocusedCellController {
             return null;
         }
 
-        return this.focusedCell;
+        return this.focusedCellPosition;
     }
 
-    private getGridCellForDomElement(eBrowserCell: Node): GridCell {
+    private getGridCellForDomElement(eBrowserCell: Node): CellPosition {
 
         let ePointer = eBrowserCell;
         while (ePointer) {
             const cellComp = this.gridOptionsWrapper.getDomData(ePointer, CellComp.DOM_DATA_KEY_CELL_COMP) as CellComp;
             if (cellComp) {
-                return cellComp.getGridCell();
+                return cellComp.getCellPosition();
             }
             ePointer = ePointer.parentNode;
         }
@@ -82,18 +85,15 @@ export class FocusedCellController {
         return null;
     }
 
-    public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string, forceBrowserFocus = false): void {
+    public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus = false): void {
         const column = _.makeNull(this.columnController.getGridColumn(colKey));
-        this.focusedCell = new GridCell({rowIndex: rowIndex,
-                                        floating: _.makeNull(floating),
-                                        column: column});
-
+        this.focusedCellPosition = {rowIndex: rowIndex, rowPinned: _.makeNull(floating), column: column};
         this.onCellFocused(forceBrowserFocus);
     }
 
-    public isCellFocused(gridCell: GridCell): boolean {
-        if (_.missing(this.focusedCell)) { return false; }
-        return this.focusedCell.column === gridCell.column && this.isRowFocused(gridCell.rowIndex, gridCell.floating);
+    public isCellFocused(cellPosition: CellPosition): boolean {
+        if (_.missing(this.focusedCellPosition)) { return false; }
+        return this.focusedCellPosition.column === cellPosition.column && this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
@@ -101,13 +101,13 @@ export class FocusedCellController {
     }
 
     public isAnyCellFocused(): boolean {
-        return !!this.focusedCell;
+        return !!this.focusedCellPosition;
     }
 
     public isRowFocused(rowIndex: number, floating: string): boolean {
-        if (_.missing(this.focusedCell)) { return false; }
+        if (_.missing(this.focusedCellPosition)) { return false; }
         const floatingOrNull = _.makeNull(floating);
-        return this.focusedCell.rowIndex === rowIndex && this.focusedCell.floating === floatingOrNull;
+        return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
     }
 
     private onCellFocused(forceBrowserFocus: boolean): void {
@@ -122,10 +122,10 @@ export class FocusedCellController {
             rowPinned: null as string
         };
 
-        if (this.focusedCell) {
-            event.rowIndex = this.focusedCell.rowIndex;
-            event.column = this.focusedCell.column;
-            event.rowPinned = this.focusedCell.floating;
+        if (this.focusedCellPosition) {
+            event.rowIndex = this.focusedCellPosition.rowIndex;
+            event.column = this.focusedCellPosition.column;
+            event.rowPinned = this.focusedCellPosition.rowPinned;
         }
 
         this.eventService.dispatchEvent(event);

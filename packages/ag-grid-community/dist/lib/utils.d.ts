@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -6,11 +6,22 @@ import { Column } from "./entities/column";
 import { RowNode } from "./entities/rowNode";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { CellComp } from "./rendering/cellComp";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+/**
+ * A Util Class only used when debugging for printing time to console
+ */
 export declare class Timer {
     private timestamp;
     print(msg: string): void;
 }
 export declare class Utils {
+    private static PASSIVE_EVENTS;
+    private static OUTSIDE_ANGULAR_EVENTS;
+    /**
+     * These variables are lazy loaded, as otherwise they try and get initialised when we are loading
+     * unit tests and we don't have references to window or document in the unit tests
+     * from http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+     */
     private static isSafari;
     private static isIE;
     private static isEdge;
@@ -21,9 +32,35 @@ export declare class Utils {
     private static NUMPAD_DEL_NUMLOCK_ON_KEY;
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
     private static doOnceFlags;
+    /**
+     * When in IE or Edge, when you are editing a cell, then click on another cell,
+     * the other cell doesn't keep focus, so navigation keys, type to start edit etc
+     * don't work. appears that when you update the dom in IE it looses focus
+     * https://ag-grid.com/forum/showthread.php?tid=4362
+     * @param {HTMLElement} el
+     */
     static doIeFocusHack(el: HTMLElement): void;
+    /**
+     * If the key was passed before, then doesn't execute the func
+     * @param {Function} func
+     * @param {string} key
+     */
     static doOnce(func: () => void, key: string): void;
+    /**
+     * Checks if event was issued by a left click
+     * from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
+     * @param {MouseEvent} mouseEvent
+     * @returns {boolean}
+     */
     static isLeftClick(mouseEvent: MouseEvent): boolean;
+    /**
+     * `True` if the event is close to the original event by X pixels either vertically or horizontally.
+     * we only start dragging after X pixels so this allows us to know if we should start dragging yet.
+     * @param {MouseEvent | TouchEvent} e1
+     * @param {MouseEvent | TouchEvent} e2
+     * @param {number} pixelCount
+     * @returns {boolean}
+     */
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
     static jsonEquals(val1: any, val2: any): boolean;
     static shallowCompare(arr1: any[], arr2: any[]): boolean;
@@ -32,12 +69,33 @@ export declare class Utils {
         [key: string]: T;
     }): T[];
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
-    static getAbsoluteHeight(el: HTMLElement | null): number;
+    static getElementSize(el: HTMLElement): {
+        height: number;
+        width: number;
+        paddingTop: number;
+        paddingRight: number;
+        paddingBottom: number;
+        paddingLeft: number;
+        marginTop: number;
+        marginRight: number;
+        marginBottom: number;
+        marginLeft: number;
+        boxSizing: string;
+    };
+    static getInnerHeight(el: HTMLElement): number;
+    static getInnerWidth(el: HTMLElement): number;
+    static getAbsoluteHeight(el: HTMLElement): number;
     static getAbsoluteWidth(el: HTMLElement): number;
     static getScrollLeft(element: HTMLElement, rtl: boolean): number;
     static cleanNumber(value: any): number;
     static compose: (...fns: Function[]) => (arg: any) => any;
     static decToHex: (number: number, bytes: number) => string;
+    /**
+     * It encodes any string in UTF-8 format
+     * taken from https://github.com/mathiasbynens/utf8.js
+     * @param {string} s
+     * @returns {string}
+     */
     static utf8_encode: (s: string) => string;
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
@@ -53,6 +111,7 @@ export declare class Utils {
     static getAllKeysInObjects(objects: any[]): string[];
     static mergeDeep(dest: any, source: any): void;
     static assign(object: any, ...sources: any[]): any;
+    static flatten(arrayOfArrays: any[]): any;
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null;
     static serializeDateToYyyyMmDd(date: Date, separator: string): string | null;
     static pad(num: number, totalStringSize: number): string;
@@ -64,14 +123,50 @@ export declare class Utils {
     }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null;
     static toStrings<T>(array: T[]): (string | null)[];
     static iterateArray<T>(array: T[], callback: (item: T, index: number) => void): void;
+    /**
+     * Returns true if it is a DOM node
+     * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+     * @param {any} o
+     * @return {boolean}
+     */
     static isNode(o: any): boolean;
+    /**
+     * Returns true if it is a DOM element
+     * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+     * @param {any} o
+     * @returns {boolean}
+     */
     static isElement(o: any): boolean;
     static isNodeOrElement(o: any): boolean;
+    /**
+     * Makes a copy of a node list into a list
+     * @param {NodeList} nodeList
+     * @returns {Node[]}
+     */
     static copyNodeList(nodeList: NodeList): Node[];
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
+    /**
+     * Allows user to tell the grid to skip specific keyboard events
+     * @param {GridOptionsWrapper} gridOptionsWrapper
+     * @param {KeyboardEvent} keyboardEvent
+     * @param {RowNode} rowNode
+     * @param {Column} column
+     * @param {boolean} editing
+     * @returns {boolean}
+     */
     static isUserSuppressingKeyboardEvent(gridOptionsWrapper: GridOptionsWrapper, keyboardEvent: KeyboardEvent, rowNode: RowNode, column: Column, editing: boolean): boolean;
     static getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp;
+    /**
+     * Adds all type of change listeners to an element, intended to be a text field
+     * @param {HTMLElement} element
+     * @param {EventListener} listener
+     */
     static addChangeListener(element: HTMLElement, listener: EventListener): void;
+    /**
+     * If value is undefined, null or blank, returns null, otherwise returns the value
+     * @param {T} value
+     * @returns {T | null}
+     */
     static makeNull<T>(value: T): T | null;
     static missing(value: any): boolean;
     static missingOrEmpty(value: any[] | string | undefined): boolean;
@@ -84,21 +179,32 @@ export declare class Utils {
     static removeElement(parent: HTMLElement, cssSelector: string): void;
     static removeFromParent(node: Element | null): void;
     static isVisible(element: HTMLElement): boolean;
+    static callIfPresent(func: Function): void;
     /**
-     * loads the template and returns it as an element. makes up for no simple way in
+     * Loads the template and returns it as an element. makes up for no simple way in
      * the dom api to load html directly, eg we cannot do this: document.createElement(template)
+     * @param {string} template
+     * @returns {HTMLElement}
      */
     static loadTemplate(template: string): HTMLElement;
     static appendHtml(eContainer: HTMLElement, htmlTemplate: string): void;
     static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean): void;
-    static callIfPresent(func: Function): void;
+    /**
+     * This method adds a class to an element and remove that class from all siblings.
+     * Useful for toggling state.
+     * @param {HTMLElement} element The element to receive the class
+     * @param {string} className The class to be assigned to the element
+     * @param {boolean} [inverted] This inverts the effect, adding the class to all siblings and
+     *        removing from the relevant element (useful when adding a class to hide non-selected elements).
+     */
+    static radioCssClass(element: HTMLElement, className: string, inverted?: boolean): void;
     static addCssClass(element: HTMLElement, className: string): void;
+    static removeCssClass(element: HTMLElement, className: string): void;
     static containsClass(element: any, className: string): boolean;
     static getElementAttribute(element: any, attributeName: string): string | null;
     static offsetHeight(element: HTMLElement): number;
     static offsetWidth(element: HTMLElement): number;
     static sortNumberArray(numberArray: number[]): void;
-    static removeCssClass(element: HTMLElement, className: string): void;
     static removeRepeatsFromArray<T>(array: T[], object: T): void;
     static removeFromArray<T>(array: T[], object: T): void;
     static removeAllFromArray<T>(array: T[], toRemove: T[]): void;
@@ -106,6 +212,7 @@ export declare class Utils {
     static insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number): void;
     static moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number): void;
     static defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
+    static last<T>(arr: T[]): T | undefined;
     static compareArrays(array1: any[] | undefined, array2: any[]): boolean;
     static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
     static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
@@ -114,6 +221,13 @@ export declare class Utils {
     static toStringOrNull(value: any): string | null;
     static formatSize(size: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number | null): string;
+    /**
+     * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
+     * puts in decimal places in IE, so we use this method instead
+     * from: http://blog.tompawlak.org/number-currency-formatting-javascript
+     * @param {number} value
+     * @returns {string}
+     */
     static formatNumberCommas(value: number): string;
     static prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
     static iconNameClassMap: {
@@ -122,6 +236,10 @@ export declare class Utils {
     /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the default icon from the theme
+     * @param {string} iconName
+     * @param {GridOptionsWrapper} gridOptionsWrapper
+     * @param {Column | null} [column]
+     * @returns {HTMLElement}
      */
     static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement;
     static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement;
@@ -142,23 +260,74 @@ export declare class Utils {
     static isBrowserChrome(): boolean;
     static isBrowserFirefox(): boolean;
     static isUserAgentIPad(): boolean;
+    /**
+     * srcElement is only available in IE. In all other browsers it is target
+     * http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
+     * @param {Event} event
+     * @returns {Element}
+     */
     static getTarget(event: Event): Element;
     static isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean;
     static isElementInEventPath(element: HTMLElement, event: Event): boolean;
     static isFunction(val: any): boolean;
     static createEventPath(event: Event): EventTarget[];
+    /**
+     * firefox doesn't have event.path set, or any alternative to it, so we hack
+     * it in. this is needed as it's to late to work out the path when the item is
+     * removed from the dom. used by MouseEventService, where it works out if a click
+     * was from the current grid, or a detail grid (master / detail).
+     * @param {Event} event
+     */
     static addAgGridEventPath(event: Event): void;
+    /**
+     * Gets the path for an Event.
+     * https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
+     * https://developer.mozilla.org/en-US/docs/Web/API/Event
+     * @param {Event} event
+     * @returns {EventTarget[]}
+     */
     static getEventPath(event: Event): EventTarget[];
     static forEachSnapshotFirst(list: any[], callback: (item: any) => void): void;
+    /**
+     * Gets the document body width
+     * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+     * @returns {number}
+     */
     static getBodyWidth(): number;
+    /**
+     * Gets the body height
+     * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+     * @returns {number}
+     */
     static getBodyHeight(): number;
     static setCheckboxState(eCheckbox: any, state: any): void;
     static traverseNodesWithKey(nodes: RowNode[], callback: (node: RowNode, key: string) => void): void;
+    /**
+     * Converts a camelCase string into hyphenated string
+     * from https://gist.github.com/youssman/745578062609e8acac9f
+     * @param {string} str
+     * @return {string}
+     */
     static camelCaseToHyphen(str: string): string | null;
+    /**
+     * Converts a hyphenated string into camelCase string
+     * from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
+     * @param {string} str
+     * @return {string}
+     */
     static hyphenToCamelCase(str: string): string | null;
+    static capitalise(str: string): string;
+    /**
+     * Converts a CSS object into string
+     * @param {Object} stylesToUse an object eg: {color: 'black', top: '25px'}
+     * @return {string} A string like "color: black; top: 25px;" for html
+     */
     static cssStyleObjectToMarkup(stylesToUse: any): string;
     /**
-     * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
+     * Check if a value is numeric
+     * from http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
+     * @param {any} value
+     * @return {boolean}
      */
     static isNumeric(value: any): boolean;
     static escape(toEscape: string | null): string | null;
@@ -261,12 +430,28 @@ export declare class Utils {
      *         Firefox v4/OS X  |     undefined    |       1
      *         Firefox v4/Win7  |     undefined    |       3
      *
+     * from: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
+     * @param {any} event
+     * @return {any}
      */
     static normalizeWheel(event: any): any;
     /**
-     * https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
+     * from https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
+     * @param {Function} func The function to be debounced
+     * @param {number} wait The time in ms to debounce
+     * @param {boolean} immediate If it should run immediately or wait for the initial debounce delay
+     * @return {Function} The debounced function
      */
-    static debounce(func: () => void, wait: number, immediate?: boolean): (...args: any[]) => void;
+    static debounce(func: (...args: any[]) => void, wait: number, immediate?: boolean): (...args: any[]) => void;
+    /**
+     * a user once raised an issue - they said that when you opened a popup (eg context menu)
+     * and then clicked on a selection checkbox, the popup wasn't closed. this is because the
+     * popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
+     * checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
+     * to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
+     * but we still let the event pass back to teh body.
+     * @param {Event} event
+     */
     static stopPropagationForAgGrid(event: Event): void;
     static isStopPropagationForAgGrid(event: Event): boolean;
     static executeInAWhile(funcs: Function[]): void;
@@ -276,10 +461,30 @@ export declare class Utils {
     static get(source: {
         [p: string]: any;
     }, expression: string, defaultValue: any): any;
-    static passiveEvents: string[];
-    static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void, options?: boolean | AddEventListenerOptions): void;
+    static addSafePassiveEventListener(frameworkOverrides: IFrameworkOverrides, eElement: HTMLElement, event: string, listener: (event?: any) => void): void;
+    /**
+     * Converts a camelCase string into regular text
+     * from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
+     * @param {string} camelCase
+     * @return {string}
+     */
     static camelCaseToHumanText(camelCase: string | undefined): string | null;
+    /**
+     * Displays a message to the browser. this is useful in iPad, where you can't easily see the console.
+     * so the javascript code can use this to give feedback. this is NOT intended to be called in production.
+     * it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
+     * checking in.
+     * @param {string} msg
+     */
     static message(msg: string): void;
+    /**
+     * Gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
+     * when in ClientSideNodeManager we always have indexes (as this sorts the items the
+     * user provided) but when in GroupStage, the nodes can contain filler nodes that
+     * don't have order id's
+     * @param {RowNode[]} rowNodes
+     * @param {Object} rowNodeOrder
+     */
     static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {
         [id: string]: number;
     }): void;
@@ -287,9 +492,21 @@ export declare class Utils {
         [p: string]: string[];
     };
     static fuzzySuggestions(inputValue: string, validValues: string[], allSuggestions: string[]): string[];
+    /**
+     * Algorithm to do fuzzy search
+     * from https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
+     * @param {string} from
+     * @return {[]}
+     */
     static get_bigrams(from: string): any[];
     static string_similarity: (str1: string, str2: string) => number;
     private static isNumpadDelWithNumlockOnForEdgeOrIe;
+    /**
+     * cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
+     * can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
+     * @param {Promise<ICellRendererComp>} cellRendererPromise
+     * @param {HTMLElement} eTarget
+     */
     static bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement): void;
 }
 export declare class NumberSequence {

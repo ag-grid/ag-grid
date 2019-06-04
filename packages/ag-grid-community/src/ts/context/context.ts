@@ -1,6 +1,7 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
+import { ModuleNames } from "../modules/moduleNames";
 
 // steps in booting up:
 // 1. create all beans
@@ -17,6 +18,7 @@ export interface ContextParams {
     components: ComponentMeta[];
     enterpriseDefaultComponents: any[];
     overrideBeans: any[];
+    registeredModules: string[];
     debug: boolean;
 }
 
@@ -37,6 +39,8 @@ export class Context {
     private contextParams: ContextParams;
     private logger: ILogger;
 
+    private registeredModules: string[] = [];
+
     private componentsMappedByName: { [key: string]: any } = {};
 
     private destroyed = false;
@@ -47,6 +51,8 @@ export class Context {
         }
 
         this.contextParams = params;
+
+        this.registeredModules = params.registeredModules;
 
         this.logger = logger;
         this.logger.log(">> creating ag-Application Context");
@@ -90,9 +96,8 @@ export class Context {
             const newComponent = new this.componentsMappedByName[key]() as Component;
             this.wireBean(newComponent, afterPreCreateCallback);
             return newComponent;
-        } else {
-            return null;
         }
+        return null;
     }
 
     // public createBean(BeanClass: new () => any): Component {
@@ -287,6 +292,10 @@ export class Context {
 
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
+    }
+
+    public isModuleRegistered(moduleName: ModuleNames): boolean {
+        return this.registeredModules.indexOf(moduleName) !== -1;
     }
 }
 

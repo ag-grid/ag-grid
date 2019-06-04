@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -119,7 +119,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     // private instance = Math.random();
-    MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\">\n            <span id=\"eIcon\" class=\"ag-menu-option-icon\"></span>\n            <span id=\"eName\" class=\"ag-menu-option-text\"></span>\n            <span id=\"eShortcut\" class=\"ag-menu-option-shortcut\"></span>\n            <span id=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer\"></span>\n        </div>";
+    MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\">\n            <span id=\"eIcon\" class=\"ag-menu-option-icon\"></span>\n            <span id=\"eName\" class=\"ag-menu-option-text\"></span>\n            <span id=\"eShortcut\" class=\"ag-menu-option-shortcut\"></span>\n            <span id=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer ag-icon\"></span>\n        </div>";
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
     __decorate([
         ag_grid_community_1.Autowired('gridOptionsWrapper'),

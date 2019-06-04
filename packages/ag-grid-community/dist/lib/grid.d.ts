@@ -1,15 +1,16 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "./entities/gridOptions";
 import { Logger } from "./logger";
-import { IFrameworkFactory } from "./interfaces/iFrameworkFactory";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { Module } from "./interfaces/iModule";
 export interface GridParams {
     globalEventListener?: Function;
     $scope?: any;
     $compile?: any;
     quickFilterOnScope?: any;
-    frameworkFactory?: IFrameworkFactory;
+    frameworkOverrides?: IFrameworkOverrides;
     seedBeanInstances?: {
         [key: string]: any;
     };
@@ -20,6 +21,7 @@ export declare class Grid {
     private static frameworkBeans;
     private static enterpriseComponents;
     private static enterpriseDefaultComponents;
+    private static modulesToInclude;
     protected logger: Logger;
     private gridOptions;
     private static RowModelClasses;
@@ -27,7 +29,9 @@ export declare class Grid {
     static setEnterpriseComponents(components: any[]): void;
     static setFrameworkBeans(frameworkBeans: any[]): void;
     static setEnterpriseDefaultComponents(enterpriseDefaultComponents: any[]): void;
+    static addModule(modulesToInclude: Module[]): void;
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams);
+    private extractModuleEntity;
     private setColumnsAndData;
     private dispatchGridReadyEvent;
     private getRowModelClass;

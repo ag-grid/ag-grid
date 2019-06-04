@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -125,7 +125,7 @@ function aggFirst(input) {
 }
 function aggLast(input) {
     if (input.length >= 0) {
-        return input[input.length - 1];
+        return ag_grid_community_1._.last(input);
     }
     else {
         return null;

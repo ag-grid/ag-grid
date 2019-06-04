@@ -91,19 +91,3 @@ export function resizeCanvas(canvas: HTMLCanvasElement, width: number, height: n
 
     canvas.getContext('2d')!.resetTransform();
 }
-
-/**
- * Returns the position offset to apply to align vertical and horizontal
- * lines to the pixel grid for crisp look.
- * @param value Typically line width is assumed. Fractional values won't be aligned.
- * @param bias If alignment is necessary, which side to prefer.
- */
-export function pixelSnap(value: number, bias = PixelSnapBias.Positive): number {
-    // If not a fractional value ...
-    return value % 1 === 0 ? bias * value % 2 / 2 : value;
-}
-
-export enum PixelSnapBias {
-    Negative = -1,
-    Positive = 1
-}

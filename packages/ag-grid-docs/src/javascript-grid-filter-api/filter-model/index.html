@@ -1,0 +1,19 @@
+<div>
+    <span class="button-group">
+        <button onclick="saveFilterModel()">Save Filter Model</button>
+        <button onclick="restoreFilterModel()">Restore from Save</button>
+        <button onclick="clearFilters()">Clear Filters</button>
+    </span>
+</div>
+<div>
+    <span>
+        <button onclick="restoreFromHardCoded()">Name = 'Mich%', Country = ['Ireland', 'United States'], Age < 30, Date < 01/01/2010</button>
+    </span>
+</div>
+<div>
+    <span class="button-group">
+        Saved Filters: <span id="savedFilters">[]</span>
+    </span>
+</div>
+
+<div id="myGrid" class="ag-theme-balham"></div>

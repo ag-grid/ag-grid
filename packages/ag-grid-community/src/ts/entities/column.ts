@@ -16,7 +16,6 @@ import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnUtils } from "../columnController/columnUtils";
 import { RowNode } from "./rowNode";
-import { IFrameworkFactory } from "../interfaces/iFrameworkFactory";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEvent, ColumnEventType } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
@@ -67,7 +66,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -91,12 +89,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private sortedAt: number;
     private moving = false;
     private menuVisible = false;
-
-    // we copy this from col def, as if it's value changes are column is created,
-    // it will break the logic in the column controller
-    private readonly lockPosition: boolean;
-    private readonly lockPinned: boolean;
-    private readonly lockVisible: boolean;
 
     private lastLeftPinned: boolean;
     private firstRightPinned: boolean;
@@ -128,9 +120,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
-        this.lockPosition = colDef.lockPosition === true;
-        this.lockPinned = colDef.lockPinned === true;
-        this.lockVisible = colDef.lockVisible === true;
     }
 
     // gets called when user provides an alternative colDef, eg
@@ -141,18 +130,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public getUserProvidedColDef(): ColDef {
         return this.userProvidedColDef;
-    }
-
-    public isLockPosition(): boolean {
-        return this.lockPosition;
-    }
-
-    public isLockVisible(): boolean {
-        return this.lockVisible;
-    }
-
-    public isLockPinned(): boolean {
-        return this.lockPinned;
     }
 
     public setParent(parent: ColumnGroup): void {
@@ -510,12 +487,17 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.filterActive;
     }
 
-    public setFilterActive(active: boolean, source: ColumnEventType = "api"): void {
+    // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event
+    public setFilterActive(active: boolean, source: ColumnEventType = "api", additionalEventAttributes?: any): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_ACTIVE_CHANGED, source));
         }
-        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source));
+        const filterChangedEvent = this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source);
+        if (additionalEventAttributes) {
+            _.mergeDeep(filterChangedEvent, additionalEventAttributes);
+        }
+        this.eventService.dispatchEvent(filterChangedEvent);
     }
 
     public setPinned(pinned: string | boolean | null | undefined): void {
@@ -719,4 +701,26 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
         return menuTabs;
     }
+
+    // this used to be needed, as previous version of ag-grid had lockPosition as column state,
+    // so couldn't depend on colDef version.
+    public isLockPosition(): boolean {
+        console.warn('ag-Grid: since v21, col.isLockPosition() should not be used, please use col.getColDef().lockPosition instead.');
+        return this.colDef ? !!this.colDef.lockPosition : false;
+    }
+
+    // this used to be needed, as previous version of ag-grid had lockVisible as column state,
+    // so couldn't depend on colDef version.
+    public isLockVisible(): boolean {
+        console.warn('ag-Grid: since v21, col.isLockVisible() should not be used, please use col.getColDef().lockVisible instead.');
+        return this.colDef ? !!this.colDef.lockVisible : false;
+    }
+
+    // this used to be needed, as previous version of ag-grid had lockPinned as column state,
+    // so couldn't depend on colDef version.
+    public isLockPinned(): boolean {
+        console.warn('ag-Grid: since v21, col.isLockPinned() should not be used, please use col.getColDef().lockPinned instead.');
+        return this.colDef ? !!this.colDef.lockPinned : false;
+    }
+
 }

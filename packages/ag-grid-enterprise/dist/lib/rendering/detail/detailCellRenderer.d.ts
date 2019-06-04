@@ -1,6 +1,6 @@
-// ag-grid-enterprise v20.2.0
-import { Component, GridOptions, ICellRendererParams, RowNode } from "ag-grid-community";
-export declare class DetailCellRenderer extends Component {
+// ag-grid-enterprise v21.0.0
+import { Component, GridOptions, ICellRendererParams, ICellRenderer, RowNode } from "ag-grid-community";
+export declare class DetailCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE;
     private eDetailGrid;
     private gridOptionsWrapper;
@@ -8,6 +8,9 @@ export declare class DetailCellRenderer extends Component {
     private detailGridOptions;
     private masterGridApi;
     private rowId;
+    private needRefresh;
+    private suppressRefresh;
+    refresh(): boolean;
     init(params: IDetailCellRendererParams): void;
     private addThemeToDetailGrid;
     private registerDetailWithMaster;
@@ -19,6 +22,7 @@ export declare class DetailCellRenderer extends Component {
 export interface IDetailCellRendererParams extends ICellRendererParams {
     detailGridOptions: GridOptions;
     getDetailRowData: GetDetailRowData;
+    suppressRefresh: boolean;
     agGridReact: any;
     frameworkComponentWrapper: any;
     $compile: any;

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Aggregation: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Aggregation. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Aggregation. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid JavaScript Grid Aggregation";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -8,11 +8,13 @@ include '../documentation-main/documentation_header.php';
 
     <h1>Aggregation</h1>
 
-    <p>
+    <p class="lead">
         When grouping, you can apply an aggregation function to any column to populate the group
         row with values. You can pick from the grid's built in aggregation functions or
         provide your own.
     </p>
+
+    <? enterprise_feature("Aggregation"); ?>
 
     <h2>Defining Aggregations</h2>
 

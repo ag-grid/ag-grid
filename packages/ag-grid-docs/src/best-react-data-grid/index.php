@@ -17,11 +17,12 @@ include '../landing-pages/convert-header.php';
         </a>
     </div>
     <h1>World's Leading React Data Grid Component</h1>
-    <p class="lead-description" id="react-data-grid-overview">ag-Grid is designed to integrate deeply into React.<br>
-        Use our grid as a React component to quickly add a react grid table to your application.<br>
-        Discover the versions9 key benefits and resources available to quickly add a data grid or React datatable to your React application.
-    </p>
     <div class="container">
+            <h2 class="overview">Overview</h2>
+    <p class="lead-description">
+        ag-Grid is designed to integrate deeply into React.<br>
+        Use our grid as a React component to quickly add a react grid table to your application.<br>
+        Discover key benefits and resources available to quickly add a data grid or React datatable to your React application.</p>
         <div class="container">
   <div class="row">
     <div class="col">
@@ -40,7 +41,7 @@ include '../landing-pages/convert-header.php';
                     <li><a class="jump-to" href="#Customization">&#10003; Ease of Integration/Customization</a></li>
                 </ul>
                 <br>
-                <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+                <a href="https://www.ag-grid.com/react-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
     </div>
 </div>
 </div>
@@ -220,7 +221,7 @@ include '../landing-pages/convert-header.php';
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+            <a href="https://www.ag-grid.com/react-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
             <hr>
         </div>
     </div>
@@ -268,7 +269,7 @@ include '../landing-pages/convert-header.php';
 </div>
 <div class="col">
     <hr>
-    <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+    <a href="https://www.ag-grid.com/react-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
     <hr>
 </div>
 </div>
@@ -323,7 +324,7 @@ Waste no time in integrating ag-Grid React into your Web Application.</p>
 </div>
 <div class="col">
 <hr>
-<a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+<a href="https://www.ag-grid.com/react-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
 <hr>
 </div>
 </div>
@@ -376,7 +377,7 @@ You can easily extend the default functionality by creating your custom React co
 </div>
 <div class="col">
     <hr>
-    <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+    <a href="https://www.ag-grid.com/react-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
     <hr>
 </div>
 </div>
@@ -433,7 +434,7 @@ React Responsive Grid Layout
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+            <a href="https://www.ag-grid.com/react-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
             <hr>
         </div>
     </div>
@@ -556,7 +557,7 @@ React Responsive Grid Layout
 <p class="lead-description">
     <strong>Join the <strong>millions of developers</strong> and <strong>thousands of companies</strong> who use ag-Grid.<br> Ready to give it a try?</strong>
 </p>
-<a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
+<a href="https://www.ag-grid.com/react-getting-started/" target="_blank"><button type="button" class="btn btn-primary btn-lg btn-block">Get Started</button></a>
 </p>
 </div>
 </div>

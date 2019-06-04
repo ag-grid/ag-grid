@@ -50,6 +50,7 @@ $params: (
     value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
 
     editor-background-color: $editor-background-color,
+    input-border-color: $input-border-color,
     input-disabled-background-color: $input-disabled-background-color,
 
     button-background-color: transparent,
@@ -59,6 +60,8 @@ $params: (
     icon-opacity: $foreground-opacity,
 
     range-selection-background-color: $range-selection-background-color,
+    range-selection-chart-background-color: $range-selection-chart-background-color,
+    range-selection-chart-category-background-color: $range-selection-chart-category-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
     ag-range-selected-color-1: $ag-range-selected-color-1,
     ag-range-selected-color-2: $ag-range-selected-color-2,
@@ -85,7 +88,7 @@ $params: (
     rich-select-item-height: $row-height,
     
     button-text-transform: uppercase,
-    icons-path: $icons-path,
+    icons-data: $icons-data,
     card-radius: $card-radius,
     card-shadow: $card-shadow,
 
@@ -95,5 +98,19 @@ $params: (
     tooltip-border-radius: $tooltip-border-radius,
     tooltip-border-color: $tooltip-border-color,
     tooltip-border-width: $tooltip-border-width,
-    tooltip-border-style: $tooltip-border-style
+    tooltip-border-style: $tooltip-border-style,
+
+    dialog-background-color: $dialog-background-color,
+    dialog-border-size: $dialog-border-size,
+    dialog-border-style: $dialog-border-style,
+    dialog-border-color: $dialog-border-color,
+
+    dialog-title-background-color: $dialog-title-background-color,
+    dialog-title-foreground-color: $dialog-title-foreground-color,
+    dialog-title-height: $dialog-title-height,
+    dialog-title-font-family: $dialog-title-font-family,
+    dialog-title-font-size: $dialog-title-font-size,
+    dialog-title-font-weight: $dialog-title-font-weight,
+    dialog-title-padding: $dialog-title-padding,
+    dialog-title-icon-size: $dialog-title-icon-size
 );

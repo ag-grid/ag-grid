@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -133,9 +133,9 @@ var DragService = /** @class */ (function () {
         }
         this.currentDragParams = params;
         this.dragging = false;
-        this.mouseEventLastTime = mouseEvent;
         this.mouseStartEvent = mouseEvent;
         var eDocument = this.gridOptionsWrapper.getDocument();
+        this.setNoSelectToBody(true);
         // we temporally add these listeners, for the duration of the drag, they
         // are removed in mouseup handling.
         eDocument.addEventListener('mousemove', this.onMouseMoveListener);
@@ -179,7 +179,6 @@ var DragService = /** @class */ (function () {
             };
             this.eventService.dispatchEvent(event_1);
             this.currentDragParams.onDragStart(startEvent);
-            this.setNoSelectToBody(true);
         }
         this.currentDragParams.onDragging(currentEvent);
     };
@@ -237,7 +236,6 @@ var DragService = /** @class */ (function () {
         }
         this.setNoSelectToBody(false);
         this.mouseStartEvent = null;
-        this.mouseEventLastTime = null;
         this.touchStart = null;
         this.touchLastTime = null;
         this.currentDragParams = null;

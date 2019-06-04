@@ -1,7 +1,12 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var matrix_1 = require("./matrix");
+var PointerEvents;
+(function (PointerEvents) {
+    PointerEvents[PointerEvents["All"] = 0] = "All";
+    PointerEvents[PointerEvents["None"] = 1] = "None";
+})(PointerEvents = exports.PointerEvents || (exports.PointerEvents = {}));
 /**
  * Abstract scene graph node.
  * Each node can have zero or one parent and belong to zero or one scene.
@@ -17,6 +22,12 @@ var Node = /** @class */ (function () {
          * Usually this will be some enum value used as a selector.
          */
         this.tag = NaN;
+        /**
+         * To simplify the type system (especially in Selections) we don't have the `Parent` node
+         * (one that has children). Instead, we mimic HTML DOM, where any node can have children.
+         * But we still need to distinguish regular leaf nodes from leaf containers somehow.
+         */
+        this.isContainerNode = false;
         this._scene = null;
         this._parent = null;
         this._children = [];
@@ -62,8 +73,8 @@ var Node = /** @class */ (function () {
          */
         this._dirty = true;
         this._visible = true;
+        this.pointerEvents = PointerEvents.All;
     }
-    // TODO: what does ag-Grid use for component identification?
     // Uniquely identify nodes (to check for duplicates, for example).
     Node.prototype.createId = function () {
         var constructor = this.constructor;
@@ -80,6 +91,11 @@ var Node = /** @class */ (function () {
         return name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
     ;
+    /**
+     * This is meaningfully faster than `instanceof` and should be the preferred way
+     * of checking inside loops.
+     * @param node
+     */
     Node.isNode = function (node) {
         return node ? node.matrix !== undefined : false;
     };
@@ -117,8 +133,9 @@ var Node = /** @class */ (function () {
     });
     Node.prototype.countChildren = function (depth) {
         if (depth === void 0) { depth = Node.MAX_SAFE_INTEGER; }
-        if (depth <= 0)
+        if (depth <= 0) {
             return 0;
+        }
         var children = this.children;
         var n = children.length;
         var size = n;
@@ -406,6 +423,34 @@ var Node = /** @class */ (function () {
     Node.prototype.isPointInNode = function (x, y) {
         return false;
     };
+    /**
+     * Hit testing method.
+     * Recursively checks if the given point is inside this node or any of its children.
+     * Returns the first matching node or `undefined`.
+     * Nodes that render later (show on top) are hit tested first.
+     * @param x
+     * @param y
+     */
+    Node.prototype.pickNode = function (x, y) {
+        if (!this.visible || this.pointerEvents === PointerEvents.None || !this.isPointInNode(x, y)) {
+            return;
+        }
+        var children = this.children;
+        if (children.length) {
+            // Nodes added later should be hit-tested first,
+            // as they are rendered on top of the previously added nodes.
+            for (var i = children.length - 1; i >= 0; i--) {
+                var hit = children[i].pickNode(x, y);
+                if (hit) {
+                    return hit;
+                }
+            }
+        }
+        else if (!this.isContainerNode) { // a leaf node, but not a container leaf
+            return this;
+        }
+    };
+    // this property (see Text shape)
     Node.prototype.getBBoxCenter = function () {
         var bbox = this.getBBox && this.getBBox();
         if (bbox) {

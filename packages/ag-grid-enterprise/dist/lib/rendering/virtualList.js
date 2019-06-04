@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -129,7 +129,6 @@ var VirtualList = /** @class */ (function (_super) {
         var eDiv = document.createElement('div');
         ag_grid_community_1._.addCssClass(eDiv, 'ag-virtual-list-item');
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
-        eDiv.style.lineHeight = this.rowHeight + "px";
         var rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());
         this.eListContainer.appendChild(eDiv);

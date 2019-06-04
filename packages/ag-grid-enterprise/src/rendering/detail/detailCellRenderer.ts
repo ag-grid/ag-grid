@@ -8,12 +8,13 @@ import {
     GridOptions,
     GridOptionsWrapper,
     ICellRendererParams,
+    ICellRenderer,
     RefSelector,
     RowNode,
     _
 } from "ag-grid-community";
 
-export class DetailCellRenderer extends Component {
+export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private static TEMPLATE =
         `<div class="ag-details-row">
@@ -30,10 +31,27 @@ export class DetailCellRenderer extends Component {
 
     private rowId: string;
 
+    private needRefresh = false;
+
+    private suppressRefresh: boolean;
+
+    public refresh(): boolean {
+        // if we return true, it means we pretend to the grid
+        // that we have refreshed, so refresh will never happen.
+        if (this.suppressRefresh) { return true; }
+
+        // otherwise we only refresh if the data has changed in the node
+        // since the last time. this happens when user updates data using transaction.
+        const res = !this.needRefresh;
+        this.needRefresh = false;
+        return res;
+    }
+
     public init(params: IDetailCellRendererParams): void {
 
         this.rowId = params.node.id;
         this.masterGridApi = params.api;
+        this.suppressRefresh = params.suppressRefresh;
 
         this.selectAndSetTemplate(params);
 
@@ -53,6 +71,10 @@ export class DetailCellRenderer extends Component {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
         }
+
+        this.addDestroyableEventListener(params.node.parent!, RowNode.EVENT_DATA_CHANGED, () => {
+            this.needRefresh = true;
+        });
     }
 
     private addThemeToDetailGrid(): void {
@@ -163,6 +185,7 @@ export class DetailCellRenderer extends Component {
 export interface IDetailCellRendererParams extends ICellRendererParams {
     detailGridOptions: GridOptions;
     getDetailRowData: GetDetailRowData;
+    suppressRefresh: boolean;
     agGridReact: any;
     frameworkComponentWrapper: any;
     $compile: any;

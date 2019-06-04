@@ -170,6 +170,7 @@ export class GridPanel extends Component {
 
     private scrollLeft = -1;
     private scrollTop = -1;
+    private nextScrollTop = -1;
 
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
     private readonly resetLastHorizontalScrollElementDebounce: () => void;
@@ -281,6 +282,7 @@ export class GridPanel extends Component {
         this.paginationAutoPageSizeService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
+        this.animationFrameService.registerGridComp(this);
 
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
@@ -305,7 +307,9 @@ export class GridPanel extends Component {
     }
 
     private onCenterViewportResized(): void {
-        this.checkViewportAndScrolls();
+        if (_.isVisible(this.eCenterViewport)) {
+            this.checkViewportAndScrolls();
+        }
     }
 
     // used by ColumnAnimationService
@@ -422,10 +426,7 @@ export class GridPanel extends Component {
                 eElement: container,
                 onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
                 onDragStop: this.rangeController.onDragStop.bind(this.rangeController),
-                onDragging: this.rangeController.onDragging.bind(this.rangeController),
-                // for range selection by dragging the mouse, we want to ignore the event if shift key is pressed,
-                // as shift key click is another type of range selection
-                skipMouseEvent: mouseEvent => mouseEvent.shiftKey
+                onDragging: this.rangeController.onDragging.bind(this.rangeController)
             };
 
             this.dragService.addDragSource(params);
@@ -450,7 +451,7 @@ export class GridPanel extends Component {
         eventNames.forEach(eventName => {
             const listener = this.processKeyboardEvent.bind(this, eventName);
             this.eAllCellContainers.forEach(container => {
-                this.addDestroyableEventListener(container, eventName, listener, true);
+                this.addDestroyableEventListener(container, eventName, listener);
             });
         });
     }
@@ -498,11 +499,12 @@ export class GridPanel extends Component {
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
         const cellComp = _.getCellCompForEvent(this.gridOptionsWrapper, keyboardEvent);
+
+        if (!cellComp) { return; }
+
         const rowNode = cellComp.getRenderedRow().getRowNode();
         const column = cellComp.getColumn();
         const editing = cellComp.isEditing();
-
-        if (!cellComp) { return; }
 
         const gridProcessingAllowed = !_.isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, editing);
 
@@ -510,7 +512,7 @@ export class GridPanel extends Component {
             switch (eventName) {
                 case 'keydown':
                     // first see if it's a scroll key, page up / down, home / end etc
-                    const wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
+                    const wasScrollKey = !editing && this.navigationService.handlePageScrollingKey(keyboardEvent);
 
                     // if not a scroll key, then we pass onto cell
                     if (!wasScrollKey) {
@@ -524,8 +526,6 @@ export class GridPanel extends Component {
                     cellComp.onKeyPress(keyboardEvent);
                     break;
             }
-        } else {
-            keyboardEvent.preventDefault();
         }
 
         if (eventName === 'keydown') {
@@ -679,13 +679,13 @@ export class GridPanel extends Component {
             const allDisplayedColumns = columnController.getAllDisplayedColumns();
             if (_.missingOrEmpty(allDisplayedColumns)) { return; }
 
-            rangeController.setRange({
-                rowStart: 0,
-                floatingStart: floatingStart,
-                rowEnd: rowEnd,
-                floatingEnd: floatingEnd,
+            rangeController.setCellRange({
+                rowStartIndex: 0,
+                rowStartPinned: floatingStart,
+                rowEndIndex: rowEnd,
+                rowEndPinned: floatingEnd,
                 columnStart: allDisplayedColumns[0],
-                columnEnd: allDisplayedColumns[allDisplayedColumns.length - 1]
+                columnEnd: _.last(allDisplayedColumns)
             });
         }
         event.preventDefault();
@@ -704,7 +704,7 @@ export class GridPanel extends Component {
         // because of the trickery the copy logic uses with a temporary
         // widget. so we set it back again.
         if (focusedCell) {
-            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
     }
 
@@ -1315,9 +1315,24 @@ export class GridPanel extends Component {
 
     private onVerticalScroll(): void {
         const scrollTop: number = this.eBodyViewport.scrollTop;
-        this.scrollTop = scrollTop;
         this.animationFrameService.setScrollTop(scrollTop);
-        this.redrawRowsAfterScroll();
+
+        this.nextScrollTop = scrollTop;
+
+        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
+            this.redrawRowsAfterScroll();
+        } else {
+            this.animationFrameService.schedule();
+        }
+    }
+
+    public executeFrame(): boolean {
+        const frameNeeded = this.scrollTop !== this.nextScrollTop;
+        if (frameNeeded) {
+            this.scrollTop = this.nextScrollTop;
+            this.redrawRowsAfterScroll();
+        }
+        return frameNeeded;
     }
 
     private isControllingScroll(eDiv: HTMLElement): boolean {

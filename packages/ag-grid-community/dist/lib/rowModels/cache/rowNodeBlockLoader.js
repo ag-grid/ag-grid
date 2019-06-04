@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -104,6 +104,9 @@ var RowNodeBlockLoader = /** @class */ (function () {
             this.logger.log("printCacheStatus: activePageLoadsCount = " + this.activeBlockLoadsCount + ","
                 + (" blocks = " + JSON.stringify(this.getBlockState())));
         }
+    };
+    RowNodeBlockLoader.prototype.isLoading = function () {
+        return this.activeBlockLoadsCount > 0;
     };
     __decorate([
         __param(0, context_1.Qualifier('loggerFactory')),

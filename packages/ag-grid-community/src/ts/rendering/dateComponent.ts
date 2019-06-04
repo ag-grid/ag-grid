@@ -1,5 +1,5 @@
 import { IComponent } from "../interfaces/iComponent";
-import { IDateFilterParams } from "../filter/dateFilter";
+import { IDateFilterParams } from "../filter/provided/date/dateFilter";
 export interface IDate {
     /** Returns the current date represented by this editor */
     getDate(): Date;

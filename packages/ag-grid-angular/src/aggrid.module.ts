@@ -1,16 +1,16 @@
 import { ANALYZE_FOR_ENTRY_COMPONENTS, ModuleWithProviders, NgModule } from '@angular/core';
 
-import { AgGridNg2 } from './agGridNg2';
+import { AgGridAngular } from './agGridAngular';
 import { AgGridColumn } from "./agGridColumn";
 
 @NgModule({
     imports: [],
     declarations: [
-        AgGridNg2,
+        AgGridAngular,
         AgGridColumn
     ],
     exports: [
-        AgGridNg2,
+        AgGridAngular,
         AgGridColumn
     ]
 })

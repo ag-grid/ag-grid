@@ -133,7 +133,6 @@ var columnDefs = [
         filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: ['equals', 'lessThan', 'greaterThan'],
-            newRowsAction: 'keep',
             suppressAndOrCondition: true
         }
     },
@@ -142,14 +141,14 @@ var columnDefs = [
         field: 'country',
         width: 120,
         filter: 'agSetColumnFilter',
-        filterParams: {values: countries(), newRowsAction: 'keep'}
+        filterParams: {values: countries()}
     },
     {
         headerName: 'Year',
         field: 'year',
         width: 90,
         filter: 'agSetColumnFilter',
-        filterParams: {values: ['2000', '2004', '2008', '2012'], newRowsAction: 'keep'}
+        filterParams: {values: ['2000', '2004', '2008', '2012']}
     },
     {headerName: 'Date', field: 'date', width: 110},
     {headerName: 'Sport', field: 'sport', width: 110, suppressMenu: true},

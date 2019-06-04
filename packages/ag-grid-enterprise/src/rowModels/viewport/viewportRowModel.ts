@@ -96,11 +96,8 @@ export class ViewportRowModel implements IRowModel {
         const afterBuffer = lastRenderedRow + bufferSize;
 
         const result = Math.ceil(afterBuffer / pageSize) * pageSize;
-        if (result <= this.rowCount) {
-            return result;
-        } else {
-            return this.rowCount;
-        }
+        const lastRowIndex = this.rowCount - 1;
+        return Math.min(result, lastRowIndex);
     }
 
     private onViewportChanged(event: any): void {

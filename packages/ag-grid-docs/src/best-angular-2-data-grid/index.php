@@ -20,9 +20,12 @@ include '../landing-pages/convert-header.php';
         </a>
     </div>
     <h1>World's Leading Angular Datagrid Component</h1>
-    <p class="lead-description" id="opener">ag-Grid is a feature rich data grid built for Angular.<br>
-        Use our Angular grid component and integrate seamlessly with Angular 2,4,5,6,7 <br>
-        to deliver features you need with the performance that you expect.
+    <h2 class="overview">Overview</h2>
+    <p class="lead-description" id="angular-data-grid-overview">
+        ag-Grid is a feature-rich data grid built for Angular.<br> 
+        Integrate seamlessly with Angular 2,4,5,6,7 to deliver core and enterprise features with the performance you expect.<br> 
+        Discover key benefits and resources available to quickly add an Angular Data Grid or 
+        Datatable to your Angular application.
     </p>
     <div class="container">
         <div class="row">
@@ -42,7 +45,7 @@ include '../landing-pages/convert-header.php';
                     &#10003; Ease of Integration/Customization
                 </p>
                 <br>
-                <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+                <a href="https://www.ag-grid.com/angular-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
             </div>
         </div>
     </div>
@@ -223,7 +226,7 @@ include '../landing-pages/convert-header.php';
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+            <a href="https://www.ag-grid.com/angular-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
             <hr>
         </div>
     </div>
@@ -271,7 +274,7 @@ include '../landing-pages/convert-header.php';
 </div>
 <div class="col">
     <hr>
-    <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+    <a href="https://www.ag-grid.com/angular-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
     <hr>
 </div>
 </div>
@@ -327,7 +330,7 @@ Waste no time in integrating ag-Grid Angular into your Web Application.</p>
 </div>
 <div class="col">
 <hr>
-<a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+<a href="https://www.ag-grid.com/angular-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
 <hr>
 </div>
 </div>
@@ -382,7 +385,7 @@ You can easily extend the default functionality by creating your custom Angular 
 </div>
 <div class="col">
     <hr>
-    <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+    <a href="https://www.ag-grid.com/angular-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
     <hr>
 </div>
 </div>
@@ -439,7 +442,7 @@ Angular Responsive Grid Layout
         </div>
         <div class="col">
             <hr>
-            <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary">Start Free Trial</button></a>
+            <a href="https://www.ag-grid.com/angular-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
             <hr>
         </div>
     </div>
@@ -562,7 +565,7 @@ Angular Responsive Grid Layout
 <p class="lead-description">
     <strong>Join the <strong>millions of developers</strong> and <strong>thousands of companies</strong> who use ag-Grid.<br> Ready to give it a try?</strong>
 </p>
-<a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
+<a href="https://www.ag-grid.com/angular-getting-started/" target="_blank"><button type="button" class="btn btn-primary btn-lg btn-block">Get Started</button></a>
 </p>
 </div>
 </div>

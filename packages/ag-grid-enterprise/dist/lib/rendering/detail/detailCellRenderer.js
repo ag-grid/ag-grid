@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27,12 +27,27 @@ var ag_grid_community_1 = require("ag-grid-community");
 var DetailCellRenderer = /** @class */ (function (_super) {
     __extends(DetailCellRenderer, _super);
     function DetailCellRenderer() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.needRefresh = false;
+        return _this;
     }
+    DetailCellRenderer.prototype.refresh = function () {
+        // if we return true, it means we pretend to the grid
+        // that we have refreshed, so refresh will never happen.
+        if (this.suppressRefresh) {
+            return true;
+        }
+        // otherwise we only refresh if the data has changed in the node
+        // since the last time. this happens when user updates data using transaction.
+        var res = !this.needRefresh;
+        this.needRefresh = false;
+        return res;
+    };
     DetailCellRenderer.prototype.init = function (params) {
         var _this = this;
         this.rowId = params.node.id;
         this.masterGridApi = params.api;
+        this.suppressRefresh = params.suppressRefresh;
         this.selectAndSetTemplate(params);
         if (ag_grid_community_1._.exists(this.eDetailGrid)) {
             this.addThemeToDetailGrid();
@@ -50,6 +65,9 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
         }
+        this.addDestroyableEventListener(params.node.parent, ag_grid_community_1.RowNode.EVENT_DATA_CHANGED, function () {
+            _this.needRefresh = true;
+        });
     };
     DetailCellRenderer.prototype.addThemeToDetailGrid = function () {
         // this is needed by environment service of the child grid, the class needs to be on

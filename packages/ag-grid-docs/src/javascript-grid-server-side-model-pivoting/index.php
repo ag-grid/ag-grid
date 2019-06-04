@@ -73,11 +73,6 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-<note>
-    When filtering using the Server-side Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.
-    This is to prevent the filter from being reset as data is loaded into the grid.
-</note>
-
 <h2>Pivoting Challenges</h2>
 
 <p>

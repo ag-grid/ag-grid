@@ -6,7 +6,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { IDatasource } from "../rowModels/iDatasource";
-import { GridCellDef } from "./gridCell";
+import { CellPosition } from "./cellPosition";
 import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../exporter/exportParams";
@@ -17,7 +17,9 @@ import {
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
-    CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent,
+    CellFocusedEvent,
+    CellKeyDownEvent,
+    CellKeyPressEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
@@ -52,6 +54,7 @@ import {
     PasteStartEvent,
     PinnedRowDataChangedEvent,
     RangeSelectionChangedEvent,
+    ChartRangeSelectionChanged,
     RowClickedEvent,
     RowDataChangedEvent,
     RowDataUpdatedEvent,
@@ -66,7 +69,8 @@ import {
     SortChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent
+    VirtualRowRemovedEvent,
+    ToolPanelVisibleChangedEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
@@ -74,6 +78,7 @@ import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayCompone
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
+import { ChartOptions } from "../interfaces/iChartOptions";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -185,6 +190,8 @@ export interface GridOptions {
     suppressEnterpriseResetOnNewColumns?: boolean;
     // enterprise only
     enableRangeSelection?: boolean;
+    enableRangeHandle?: boolean;
+    enableFillHandle?: boolean;
     suppressMultiRangeSelection?: boolean;
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
@@ -194,6 +201,7 @@ export interface GridOptions {
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
+    allowShowChangeAfterFilter?: boolean;
     quickFilterText?: string;
     cacheQuickFilter?: boolean;
     aggFuncs?: { [key: string]: IAggFunc };
@@ -363,6 +371,7 @@ export interface GridOptions {
     groupRowRendererParams?: any;
     groupRowInnerRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     groupRowInnerRendererFramework?: any;
+    createChartContainer?: (params: ChartRef) => void;
 
     isExternalFilterPresent?(): boolean;
 
@@ -374,8 +383,8 @@ export interface GridOptions {
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
-    navigateToNextCell?: (params: NavigateToNextCellParams) => GridCellDef;
-    tabToNextCell?: (params: TabToNextCellParams) => GridCellDef;
+    navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
+    tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
     getDocument?: () => Document;
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
@@ -399,13 +408,16 @@ export interface GridOptions {
 
     getBusinessKeyForNode?(node: RowNode): string;
 
+    /** @deprecated */
     getNodeChildDetails?: GetNodeChildDetails;
+
     getDataPath?: GetDataPath;
     treeData?: boolean;
     isServerSideGroup?: IsServerSideGroup;
     getServerSideGroupKey?: GetServerSideGroupKey;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
+    getChartToolbarItems?: GetChartToolbarItems;
     getRowNodeId?: GetRowNodeIdFunc;
 
     getChildCount?(dataItem: any): number;
@@ -426,12 +438,16 @@ export interface GridOptions {
 
     postSort?(nodes: RowNode[]): void;
 
+    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions;
+
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
 
     // events
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
+
+    onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
 
     onNewColumnsLoaded?(event: NewColumnsLoadedEvent): void;
 
@@ -468,6 +484,8 @@ export interface GridOptions {
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
 
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
+
+    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
 
     onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;
 
@@ -597,6 +615,11 @@ export interface NodeChildDetails {
     key?: any;
 }
 
+export interface ProcessChartOptionsParams {
+    type: string;
+    options: ChartOptions;
+}
+
 export interface GetContextMenuItemsParams {
     defaultItems: string[] | undefined;
     column: Column;
@@ -609,6 +632,16 @@ export interface GetContextMenuItemsParams {
 
 export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
+}
+
+export interface GetChartToolbarItemsParams {
+    defaultItems: string[] | undefined;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
+}
+
+export interface GetChartToolbarItems {
+    (params: GetChartToolbarItemsParams): string[];
 }
 
 export interface MenuItemDef {
@@ -653,16 +686,16 @@ export interface ProcessRowParams {
 
 export interface NavigateToNextCellParams {
     key: number;
-    previousCellDef: GridCellDef;
-    nextCellDef: GridCellDef;
+    previousCellPosition: CellPosition;
+    nextCellPosition: CellPosition;
     event: KeyboardEvent;
 }
 
 export interface TabToNextCellParams {
     backwards: boolean;
     editing: boolean;
-    previousCellDef: GridCellDef;
-    nextCellDef: GridCellDef;
+    previousCellPosition: CellPosition;
+    nextCellPosition: CellPosition;
 }
 
 export interface PostProcessPopupParams {
@@ -686,4 +719,9 @@ export interface PaginationNumberFormatterParams {
 
 export interface ProcessDataFromClipboardParams {
     data: string[][];
+}
+
+export interface ChartRef {
+    chartElement: HTMLElement;
+    destroyChart: () => void;
 }

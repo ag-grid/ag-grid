@@ -13,11 +13,8 @@ import {
     FlashCellsEvent,
     FocusedCellController,
     GridApi,
-    GridCell,
-    GridCellDef,
     GridCore,
     GridOptionsWrapper,
-    GridRow,
     IClipboardService,
     IRowModel,
     Logger,
@@ -28,18 +25,21 @@ import {
     PostConstruct,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
-    RangeSelection,
+    CellRange,
+    RowPosition,
     RowNode,
     RowRenderer,
     RowValueChangedEvent,
     SelectionController,
     ValueService,
-    _
+    CellPosition,
+    CellPositionUtils,
+    _, RowPositionUtils
 } from "ag-grid-community";
 import { RangeController } from "./rangeController";
 
 interface RowCallback {
-    (gridRow: GridRow, rowNode: RowNode | null, columns: Column[] | null, rangeIndex: number, isLastRow?: boolean): void;
+    (gridRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, rangeIndex: number, isLastRow?: boolean): void;
 }
 
 interface ColumnCallback {
@@ -129,7 +129,7 @@ export class ClipboardService implements IClipboardService {
 
         let indexOffset = 0, dataRowIndex = 0;
 
-        const rowCallback = (currentRow: GridRow, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
+        const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
             const atEndOfClipboardData = index - indexOffset >= clipboardData.length;
             if (atEndOfClipboardData) {
                 if (abortRepeatingPasteIntoRows) { return; }
@@ -155,16 +155,16 @@ export class ClipboardService implements IClipboardService {
                 firstRowValue = this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, Constants.EXPORT_TYPE_DRAG_COPY);
                 this.valueService.setValue(rowNode!, column, firstRowValue);
 
-                const gridCellDef = {
+                const cellPosition: CellPosition = {
                     rowIndex: currentRow.rowIndex,
-                    floating: currentRow.floating,
+                    rowPinned: currentRow.rowPinned,
                     column: column
-                } as GridCellDef;
-                const cellId = new GridCell(gridCellDef).createId();
+                };
+                const cellId = CellPositionUtils.createId(cellPosition);
                 cellsToFlash[cellId] = true;
             });
 
-            ++dataRowIndex;
+            dataRowIndex++;
         };
 
         this.iterateActiveRanges(false, rowCallback);
@@ -182,12 +182,12 @@ export class ClipboardService implements IClipboardService {
         }
 
         // remove last row if empty, excel puts empty last row in
-        const lastLine = parsedData[parsedData.length - 1];
-        if (lastLine.length === 1 && lastLine[0] === '') {
+        const lastLine = _.last(parsedData);
+        if (lastLine && lastLine.length === 1 && lastLine[0] === '') {
             _.removeFromArray(parsedData, lastLine);
         }
 
-        const currentRow = new GridRow(focusedCell.rowIndex, focusedCell.floating);
+        const currentRow: RowPosition = {rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned};
         const cellsToFlash = {} as any;
 
         const updatedRowNodes: RowNode[] = [];
@@ -207,7 +207,7 @@ export class ClipboardService implements IClipboardService {
 
         this.dispatchFlashCells(cellsToFlash);
 
-        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.floating, true);
+        this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
 
         this.fireRowChanged(updatedRowNodes);
     }
@@ -230,7 +230,7 @@ export class ClipboardService implements IClipboardService {
         const updatedRowNodes: RowNode[] = [];
         const updatedColumnIds: string[] = [];
 
-        const rowCallback = (currentRow: GridRow, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
+        const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
             // take reference of first row, this is the one we will be using to copy from
             if (!firstRowValues.length) {
                 // two reasons for looping through columns
@@ -256,12 +256,12 @@ export class ClipboardService implements IClipboardService {
                     firstRowValue = this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, Constants.EXPORT_TYPE_DRAG_COPY);
                     this.valueService.setValue(rowNode!, column, firstRowValue);
 
-                    const gridCellDef = {
+                    const cellPosition: CellPosition = {
                         rowIndex: currentRow.rowIndex,
-                        floating: currentRow.floating,
+                        rowPinned: currentRow.rowPinned,
                         column: column
-                    } as GridCellDef;
-                    const cellId = new GridCell(gridCellDef).createId();
+                    };
+                    const cellId = CellPositionUtils.createId(cellPosition);
                     cellsToFlash[cellId] = true;
                 });
             }
@@ -304,7 +304,7 @@ export class ClipboardService implements IClipboardService {
         });
     }
 
-    private multipleCellRange(clipboardGridData: string[][], currentRow: GridRow | null, updatedRowNodes: RowNode[], columnsToPasteInto: Column[], cellsToFlash: any, updatedColumnIds: string[], type: string) {
+    private multipleCellRange(clipboardGridData: string[][], currentRow: RowPosition | null, updatedRowNodes: RowNode[], columnsToPasteInto: Column[], cellsToFlash: any, updatedColumnIds: string[], type: string) {
         clipboardGridData.forEach((clipboardRowData: string[]) => {
             // if we have come to end of rows in grid, then skip
             if (!currentRow) {
@@ -329,15 +329,15 @@ export class ClipboardService implements IClipboardService {
                     this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, type);
                 });
                 // move to next row down for next set of values
-                currentRow = this.cellNavigationService.getRowBelow(currentRow);
+                currentRow = this.cellNavigationService.getRowBelow({rowPinned: currentRow.rowPinned, rowIndex: currentRow.rowIndex});
             }
         });
         return currentRow;
     }
 
-    private singleCellRange(parsedData: string[][], updatedRowNodes: RowNode[], currentRow: GridRow, cellsToFlash: any, updatedColumnIds: string[]) {
+    private singleCellRange(parsedData: string[][], updatedRowNodes: RowNode[], currentRow: RowPosition, cellsToFlash: any, updatedColumnIds: string[]) {
         const value = parsedData[0][0];
-        const rowCallback = (currentRow: GridRow, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
+        const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
             updatedRowNodes.push(rowNode!);
             columns!.forEach((column) => {
                 if (column.isCellEditable(rowNode!)) {
@@ -348,7 +348,7 @@ export class ClipboardService implements IClipboardService {
         this.iterateActiveRanges(false, rowCallback);
     }
 
-    private updateCellValue(rowNode: RowNode | null, column: Column, value: string, currentRow: GridRow | null, cellsToFlash: any, updatedColumnIds: string[], type: string) {
+    private updateCellValue(rowNode: RowNode | null, column: Column, value: string, currentRow: RowPosition | null, cellsToFlash: any, updatedColumnIds: string[], type: string) {
         if (!rowNode || !currentRow) {
             return;
         }
@@ -360,12 +360,12 @@ export class ClipboardService implements IClipboardService {
         const processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
         this.valueService.setValue(rowNode, column, processedValue);
 
-        const gridCellDef = {
+        const cellPosition: CellPosition = {
             rowIndex: currentRow.rowIndex,
-            floating: currentRow.floating,
+            rowPinned: currentRow.rowPinned,
             column: column
-        } as GridCellDef;
-        const cellId = new GridCell(gridCellDef).createId();
+        };
+        const cellId = CellPositionUtils.createId(cellPosition);
         cellsToFlash[cellId] = true;
 
         if (updatedColumnIds.indexOf(column.getId()) < 0) {
@@ -408,25 +408,20 @@ export class ClipboardService implements IClipboardService {
             return;
         }
 
-        const rangeSelections: any = this.rangeController.getCellRanges();
+        const cellRanges: any = this.rangeController.getCellRanges();
 
         if (onlyFirst) {
-            const range = rangeSelections[0];
+            const range = cellRanges[0];
             this.iterateActiveRange(range, rowCallback, columnCallback, true);
         } else {
-            (rangeSelections as RangeSelection[]).forEach((range, idx) => this.iterateActiveRange(range, rowCallback, columnCallback, idx === rangeSelections.length - 1));
+            cellRanges.forEach((range: CellRange, idx: number) => this.iterateActiveRange(range, rowCallback, columnCallback, idx === cellRanges.length - 1));
         }
     }
 
-    private iterateActiveRange(range: RangeSelection, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
-        // get starting and ending row, remember rowEnd could be before rowStart
-        const startRow = range.start.getGridRow();
-        const endRow = range.end.getGridRow();
+    private iterateActiveRange(range: CellRange, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
 
-        const startRowIsFirst = startRow.before(endRow);
-
-        let currentRow : GridRow | null = startRowIsFirst ? startRow : endRow;
-        const lastRow = startRowIsFirst ? endRow : startRow;
+        let currentRow : RowPosition | null = this.rangeController.getRangeStartRow(range);
+        const lastRow = this.rangeController.getRangeEndRow(range);
 
         if (columnCallback && _.exists(columnCallback) && range.columns) {
             columnCallback(range.columns);
@@ -439,7 +434,7 @@ export class ClipboardService implements IClipboardService {
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
         while (!isLastRow && !_.missing(currentRow) && currentRow) {
             const rowNode = this.getRowNode(currentRow);
-            isLastRow = currentRow.equals(lastRow);
+            isLastRow = currentRow.rowIndex === lastRow.rowIndex && currentRow.rowIndex === lastRow.rowIndex;
 
             rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow && isLastRange);
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
@@ -478,7 +473,7 @@ export class ClipboardService implements IClipboardService {
         };
 
         // adds cell values to the data
-        const rowCallback = (currentRow: GridRow, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
+        const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
             columns!.forEach((column, index) => {
                 const value = this.valueService.getValue(column, rowNode);
 
@@ -490,12 +485,12 @@ export class ClipboardService implements IClipboardService {
                 if (_.exists(processedValue)) {
                     data += processedValue;
                 }
-                const gridCellDef = {
+                const cellPosition: CellPosition = {
                     rowIndex: currentRow.rowIndex,
-                    floating: currentRow.floating,
+                    rowPinned: currentRow.rowPinned,
                     column: column
-                } as GridCellDef;
-                const cellId = new GridCell(gridCellDef).createId();
+                };
+                const cellId = CellPositionUtils.createId(cellPosition);
                 cellsToFlash[cellId] = true;
             });
 
@@ -510,10 +505,11 @@ export class ClipboardService implements IClipboardService {
     }
 
     private copyFocusedCellToClipboard(includeHeaders = false): void {
-        const focusedCell = this.focusedCellController.getFocusedCell();
+        const focusedCell: CellPosition = this.focusedCellController.getFocusedCell();
         if (_.missing(focusedCell)) { return; }
 
-        const currentRow = focusedCell.getGridRow();
+        const currentRow: RowPosition = {rowPinned: focusedCell.rowPinned, rowIndex: focusedCell.rowIndex};
+
         const rowNode = this.getRowNode(currentRow);
         const column = focusedCell.column;
         const value = this.valueService.getValue(column, rowNode);
@@ -534,7 +530,7 @@ export class ClipboardService implements IClipboardService {
 
         this.copyDataToClipboard(data);
 
-        const cellId = focusedCell.createId();
+        const cellId = CellPositionUtils.createId(focusedCell);
         const cellsToFlash = {};
         (cellsToFlash as any)[cellId] = true;
         this.dispatchFlashCells(cellsToFlash);
@@ -583,8 +579,8 @@ export class ClipboardService implements IClipboardService {
         }
     }
 
-    private getRowNode(gridRow: GridRow): RowNode | null {
-        switch (gridRow.floating) {
+    private getRowNode(gridRow: RowPosition): RowNode | null {
+        switch (gridRow.rowPinned) {
             case Constants.PINNED_TOP:
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
             case Constants.PINNED_BOTTOM:
@@ -736,7 +732,10 @@ export class ClipboardService implements IClipboardService {
 
             // Now that we have our value string, let's add
             // it to the data array.
-            arrData[arrData.length - 1].push(strMatchedValue);
+            const lastItem = _.last(arrData);
+            if (lastItem) {
+                lastItem.push(strMatchedValue)
+            }
 
             atFirstRow = false;
         }
@@ -745,9 +744,18 @@ export class ClipboardService implements IClipboardService {
         return arrData;
     }
 
-    private rangeSize() {
+    private rangeSize(): number {
         const ranges = this.rangeController.getCellRanges();
-        const [startRange, endRange] = ranges ? [ranges[0].start.rowIndex, ranges[0].end.rowIndex] : [0, 0];
-        return (startRange > endRange ? startRange - endRange : endRange - startRange) + 1;
+        let startRangeIndex: number;
+        let endRangeIndex: number;
+        if (ranges.length > 0) {
+            startRangeIndex = 0;
+            endRangeIndex = 0;
+        } else {
+            startRangeIndex = this.rangeController.getRangeStartRow(ranges[0]).rowIndex;
+            endRangeIndex = this.rangeController.getRangeEndRow(ranges[0]).rowIndex;
+        }
+        return startRangeIndex - endRangeIndex + 1;
     }
+
 }

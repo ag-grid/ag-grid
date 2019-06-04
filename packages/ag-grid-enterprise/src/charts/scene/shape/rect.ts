@@ -1,15 +1,6 @@
-import {Shape} from "./shape";
-import {Path2D} from "../path2D";
-import {isPointInBBox} from "../bbox";
-import {pixelSnap as _pixelSnap} from "../../canvas/canvas";
-
-// _pixelSnap(3) compiles to Object(_canvas_canvas__WEBPACK_IMPORTED_MODULE_3__["pixelSnap"])(3)
-// This has some performance hit and is not nice for readability nor debugging.
-// For example, it shows up as `pixelSnap` in the Sources tab, but can't
-// be called from console like that.
-// See https://github.com/webpack/webpack/issues/5600
-// The suggested `concatenateModules: true` config made no difference.
-const pixelSnap = _pixelSnap;
+import { Shape } from "./shape";
+import { Path2D } from "../path2D";
+import { BBox } from "../bbox";
 
 export class Rect extends Shape {
 
@@ -111,9 +102,9 @@ export class Rect extends Shape {
         return this._crisp;
     }
 
-    set lineWidth(value: number) {
-        if (this._lineWidth !== value) {
-            this._lineWidth = value;
+    set strokeWidth(value: number) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
             // Normally, when the `lineWidth` changes, we only need to repaint the rect
             // without updating the path. If the `isCrisp` is set to `true` however,
             // we need to update the path to make sure the new stroke aligns to
@@ -126,13 +117,14 @@ export class Rect extends Shape {
             }
         }
     }
-    get lineWidth(): number {
-        return this._lineWidth;
+    get strokeWidth(): number {
+        return this._strokeWidth;
     }
 
     updatePath() {
-        if (!this.dirtyPath)
+        if (!this.dirtyPath) {
             return;
+        }
 
         const path = this.path;
         const radius = this.radius;
@@ -141,11 +133,12 @@ export class Rect extends Shape {
 
         if (!radius) {
             if (this.crisp) {
+                const alignment = Math.floor(this.strokeWidth) % 2 / 2;
                 path.rect(
-                    Math.round(this.x) + pixelSnap(this.lineWidth),
-                    Math.round(this.y) + pixelSnap(this.lineWidth),
-                    Math.round(this.width) + Math.round(this.x % 1 + this.width % 1),
-                    Math.round(this.height) + Math.round(this.y % 1 + this.height % 1)
+                    Math.floor(this.x) + alignment,
+                    Math.floor(this.y) + alignment,
+                    Math.floor(this.width) + Math.floor(this.x % 1 + this.width % 1),
+                    Math.floor(this.height) + Math.floor(this.y % 1 + this.height % 1)
                 );
             } else {
                 path.rect(this.x, this.y, this.width, this.height);
@@ -160,19 +153,19 @@ export class Rect extends Shape {
     }
 
     readonly getBBox = () => {
-        return {
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height
-        };
+        return new BBox(
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
     };
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
         const bbox = this.getBBox();
 
-        return isPointInBBox(bbox, point.x, point.y);
+        return bbox.containsPoint(point.x, point.y);
     }
 
     isPointInStroke(x: number, y: number): boolean {
@@ -185,16 +178,10 @@ export class Rect extends Shape {
         }
         this.matrix.toContext(ctx);
 
-        this.applyContextAttributes(ctx);
         this.updatePath();
         this.scene!.appendPath(this.path);
 
-        if (this.fillStyle) {
-            ctx.fill();
-        }
-        if (this.lineWidth && this.strokeStyle) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
 
         this.dirty = false;
     }

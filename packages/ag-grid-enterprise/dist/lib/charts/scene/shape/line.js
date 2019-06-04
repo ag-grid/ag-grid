@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var shape_1 = require("./shape");
 var object_1 = require("../../util/object");
-var canvas_1 = require("../../canvas/canvas");
+var bbox_1 = require("../bbox");
 var Line = /** @class */ (function (_super) {
     __extends(Line, _super);
     function Line() {
@@ -25,8 +25,9 @@ var Line = /** @class */ (function (_super) {
         _this._y1 = 0;
         _this._x2 = 0;
         _this._y2 = 0;
-        _this.getBBox = undefined;
-        _this._pixelSnapBias = canvas_1.PixelSnapBias.Positive;
+        _this.getBBox = function () {
+            return new bbox_1.BBox(_this.x1, _this.y1, _this.x2 - _this.x1, _this.y2 - _this.y1);
+        };
         _this.restoreOwnStyles();
         return _this;
     }
@@ -103,19 +104,6 @@ var Line = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Line.prototype, "pixelSnapBias", {
-        get: function () {
-            return this._pixelSnapBias;
-        },
-        set: function (value) {
-            if (this._pixelSnapBias !== value) {
-                this._pixelSnapBias = value;
-                this.dirty = true;
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
     Line.prototype.isPointInPath = function (x, y) {
         return false;
     };
@@ -127,7 +115,6 @@ var Line = /** @class */ (function (_super) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
         var x1 = this.x1;
         var y1 = this.y1;
         var x2 = this.x2;
@@ -135,25 +122,24 @@ var Line = /** @class */ (function (_super) {
         // Align to the pixel grid if the line is strictly vertical
         // or horizontal (but not both, i.e. a dot).
         if (x1 === x2) {
-            var delta = canvas_1.pixelSnap(this.lineWidth, this.pixelSnapBias);
+            var delta = Math.floor(this.strokeWidth) % 2 / 2;
             x1 += delta;
             x2 += delta;
         }
         else if (y1 === y2) {
-            var delta = canvas_1.pixelSnap(this.lineWidth, this.pixelSnapBias);
+            var delta = Math.floor(this.strokeWidth) % 2 / 2;
             y1 += delta;
             y2 += delta;
         }
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
-        if (this.strokeStyle) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
         this.dirty = false;
     };
     Line.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
-        lineWidth: 1
+        fill: undefined,
+        strokeWidth: 1
     });
     return Line;
 }(shape_1.Shape));

@@ -1,5 +1,5 @@
-import {Node} from "./node";
-import {Path2D} from "./path2D";
+import { Node } from "./node";
+import { Path2D } from "./path2D";
 
 /**
  * Acts as `Group` node but with specified bounds that form a rectangle.
@@ -7,6 +7,8 @@ import {Path2D} from "./path2D";
  * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
  */
 export class ClipRect extends Node {
+
+    protected isContainerNode: boolean = true;
 
     protected path = new Path2D();
 

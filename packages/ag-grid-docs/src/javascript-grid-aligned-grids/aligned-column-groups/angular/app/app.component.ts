@@ -9,6 +9,9 @@ import {HttpClient} from '@angular/common/http';
         #topGrid
         class="ag-theme-balham"
         (firstDataRendered)="onFirstDataRendered($event)"
+        [defaultColDef]="{
+            resizable: true
+        }"
         [rowData]="rowData"
         [gridOptions]="topOptions"
         [columnDefs]="columnDefs">
@@ -21,6 +24,9 @@ import {HttpClient} from '@angular/common/http';
         #bottomGrid
         class="ag-theme-balham"
         (firstDataRendered)="onFirstDataRendered($event)"
+        [defaultColDef]="{
+            resizable: true
+        }"
         [rowData]="rowData"
         [gridOptions]="bottomOptions"
         [columnDefs]="columnDefs">

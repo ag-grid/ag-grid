@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -72,7 +72,7 @@ var DisplayedGroupCreator = /** @class */ (function () {
                 result.push(currentColumn);
             }
             else {
-                var leafGroup = currentRealPath[currentRealPath.length - 1];
+                var leafGroup = utils_1._.last(currentRealPath);
                 leafGroup.addChild(currentColumn);
             }
             previousRealPath = currentRealPath;

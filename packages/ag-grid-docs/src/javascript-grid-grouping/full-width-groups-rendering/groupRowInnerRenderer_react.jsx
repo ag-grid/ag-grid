@@ -6,9 +6,12 @@ export default class GroupRowInnerRenderer extends Component {
 
         props.reactContainer.style.display = "inline-block";
 
-        const node = props.node;
+        this.props = props;
+
+        const node = this.props.node;
         const aggData = node.aggData;
-        let flagCode = props.flagCodes[node.key];
+        let flagCode = this.props.flagCodes[node.key];
+
         this.state = {
             flagCode,
             flagCodeImg: `https://flags.fmcdn.net/data/flags/mini/${flagCode}.png`,
@@ -17,6 +20,27 @@ export default class GroupRowInnerRenderer extends Component {
             silverCount: aggData.silver,
             bronzeCount: aggData.bronze,
         };
+
+        this.dataChangedListener = () => {
+            this.refreshUi();
+        };
+
+        props.api.addEventListener('cellValueChanged', this.dataChangedListener);
+        props.api.addEventListener('filterChanged', this.dataChangedListener);
+    }
+
+    refreshUi() {
+        const node = this.props.node;
+        const aggData = node.aggData;
+        let flagCode = this.props.flagCodes[node.key];
+        this.setState({
+            flagCode,
+            flagCodeImg: `https://flags.fmcdn.net/data/flags/mini/${flagCode}.png`,
+            countryName: node.key,
+            goldCount: aggData.gold,
+            silverCount: aggData.silver,
+            bronzeCount: aggData.bronze,
+        });
     }
 
     render() {
@@ -34,5 +58,10 @@ export default class GroupRowInnerRenderer extends Component {
                 <span className="medal bronze"> Bronze: {this.state.bronzeCount}</span>
             </div>
         );
+    }
+
+    componentWillUnmount() {
+        this.props.api.removeEventListener('cellValueChanged', this.dataChangedListener);
+        this.props.api.removeEventListener('filterChanged', this.dataChangedListener);
     }
 };

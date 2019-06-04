@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Clipboard: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Clipboard. Copy and paste data to and from the Clipboard. Users will be able to edit data in Excel, then copy the data back into the grid when done. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Clipboard. Copy and paste data to and from the Clipboard. Users will be able to edit data in Excel, then copy the data back into the grid when done. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "Javascript Grid Clipboard";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -9,7 +9,11 @@ include '../documentation-main/documentation_header.php';
 
     <h1 class="heading-enterprise">Clipboard</h1>
 
-    <p> You can copy and paste items to and from the grid using the system clipboard.  </p>
+    <p class="lead">
+        You can copy and paste items to and from the grid using the system clipboard.
+    </p>
+
+    <? enterprise_feature("Clipboard"); ?>
 
     <h2> Copy to Clipboard </h2>
 
@@ -100,6 +104,17 @@ include '../documentation-main/documentation_header.php';
         with a paste operation). To turn paste operations off, set grid property
         <code>suppressClipboardPaste=true</code>.
     </p>
+
+    <h2>Using enableCellTextSelection</h2>
+    <p>
+        If instead of using the Clipboard service to copy/paste the contents from a cell, you
+        just want to manually select the text and use the operating system copy/paste. You should
+        set <code>enableCellTextSelection=true</code> in the gridOptions <br>
+
+        <note> This is not an enterprise config and can be at any time to enable cell text selection. </note>
+    </p>
+
+    <?= example('Using enableCellTextSelection', 'cellTextSelection', 'generated', array( "processVue" => true)) ?>
 
     <h2 id="events">Clipboard Events</h2>
 

@@ -1,8 +1,9 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Component } from 'ag-grid-community';
 import { LicenseManager } from '../licenseManager';
 export declare class WatermarkComp extends Component {
     licenseManager: LicenseManager;
+    private eLicenseTextRef;
     constructor();
     private postContruct;
     private shouldDisplayWatermark;

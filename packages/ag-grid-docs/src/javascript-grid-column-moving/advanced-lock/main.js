@@ -26,8 +26,8 @@ var gridOptions = {
 function onColumnPinned(event) {
     var allCols = event.columnApi.getAllGridColumns();
 
-    var allFixedCols = allCols.filter( function(col) { return col.isLockPosition();} );
-    var allNonFixedCols = allCols.filter( function(col) { return !col.isLockPosition();} );
+    var allFixedCols = allCols.filter( function(col) { return col.getColDef().lockPosition; } );
+    var allNonFixedCols = allCols.filter( function(col) { return !col.getColDef().lockPosition;} );
 
     var pinnedCount = allNonFixedCols.filter( function(col) { return col.getPinned()==='left';} ).length;
 

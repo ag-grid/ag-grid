@@ -5,7 +5,7 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./dist/aggrid.module"));
 __export(require("./dist/agGridColumn"));
-__export(require("./dist/agGridNg2"));
-__export(require("./dist/ng2FrameworkFactory"));
-__export(require("./dist/ng2FrameworkComponentWrapper"));
+__export(require("./dist/agGridAngular"));
+__export(require("./dist/angularFrameworkOverrides"));
+__export(require("./dist/angularFrameworkComponentWrapper"));
 //# sourceMappingURL=exports.js.map

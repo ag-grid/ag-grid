@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -77,7 +77,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         this.addDestroyableEventListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     };
     HeaderGroupComp.prototype.addTouchAndClickListeners = function (eElement, action) {
-        var touchListener = new touchListener_1.TouchListener(this.eCloseIcon);
+        var touchListener = new touchListener_1.TouchListener(eElement);
         this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(function () { return touchListener.destroy(); });
         this.addDestroyableEventListener(eElement, "click", action);

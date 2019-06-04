@@ -125,11 +125,11 @@ include '../documentation-main/documentation_header.php';
                 where groups don't actually appear in the selection normally.</td>
         </tr>
         <tr>
-            <th>getRangeSelections()</th>
-            <td>Returns the list of selected ranges.</td>
+            <th>getCellRanges()</th>
+            <td>Returns the list of selected cell ranges.</td>
         </tr>
         <tr>
-            <th>addRangeSelection(rangeSelection)</th>
+            <th>addCellRange(params)</th>
             <td>Adds to the selected range.</td>
         </tr>
         <tr>

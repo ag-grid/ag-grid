@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -20,7 +20,7 @@ var Shape = /** @class */ (function (_super) {
     __extends(Shape, _super);
     function Shape() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this._fillStyle = Shape.defaultStyles.fillStyle; //| CanvasGradient | CanvasPattern;
+        _this._fill = Shape.defaultStyles.fill; //| CanvasGradient | CanvasPattern;
         /**
          * Note that `strokeStyle = null` means invisible stroke,
          * while `lineWidth = 0` means no stroke, and sometimes this can mean different things.
@@ -31,14 +31,15 @@ var Shape = /** @class */ (function (_super) {
          * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
          * unless specific looks that is achieved by having an invisible stroke is desired.
          */
-        _this._strokeStyle = Shape.defaultStyles.strokeStyle;
-        _this._lineWidth = Shape.defaultStyles.lineWidth;
+        _this._stroke = Shape.defaultStyles.stroke;
+        _this._strokeWidth = Shape.defaultStyles.strokeWidth;
         _this._lineDash = Shape.defaultStyles.lineDash;
         _this._lineDashOffset = Shape.defaultStyles.lineDashOffset;
         _this._lineCap = Shape.defaultStyles.lineCap;
         _this._lineJoin = Shape.defaultStyles.lineJoin;
         _this._opacity = Shape.defaultStyles.opacity;
-        _this._shadow = Shape.defaultStyles.shadow;
+        _this._fillShadow = Shape.defaultStyles.fillShadow;
+        _this._strokeShadow = Shape.defaultStyles.strokeShadow;
         return _this;
     }
     /**
@@ -74,39 +75,39 @@ var Shape = /** @class */ (function (_super) {
             }
         }
     };
-    Object.defineProperty(Shape.prototype, "fillStyle", {
+    Object.defineProperty(Shape.prototype, "fill", {
         get: function () {
-            return this._fillStyle;
+            return this._fill;
         },
         set: function (value) {
-            if (this._fillStyle !== value) {
-                this._fillStyle = value;
+            if (this._fill !== value) {
+                this._fill = value;
                 this.dirty = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Shape.prototype, "strokeStyle", {
+    Object.defineProperty(Shape.prototype, "stroke", {
         get: function () {
-            return this._strokeStyle;
+            return this._stroke;
         },
         set: function (value) {
-            if (this._strokeStyle !== value) {
-                this._strokeStyle = value;
+            if (this._stroke !== value) {
+                this._stroke = value;
                 this.dirty = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Shape.prototype, "lineWidth", {
+    Object.defineProperty(Shape.prototype, "strokeWidth", {
         get: function () {
-            return this._lineWidth;
+            return this._strokeWidth;
         },
         set: function (value) {
-            if (this._lineWidth !== value) {
-                this._lineWidth = value;
+            if (this._strokeWidth !== value) {
+                this._strokeWidth = value;
                 this.dirty = true;
             }
         },
@@ -193,26 +194,58 @@ var Shape = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Shape.prototype, "shadow", {
+    Object.defineProperty(Shape.prototype, "fillShadow", {
         get: function () {
-            return this._shadow;
+            return this._fillShadow;
         },
         set: function (value) {
-            if (this._shadow !== value) {
-                this._shadow = value;
+            if (this._fillShadow !== value) {
+                this._fillShadow = value;
                 this.dirty = true;
             }
         },
         enumerable: true,
         configurable: true
     });
-    Shape.prototype.applyContextAttributes = function (ctx) {
-        if (this.fillStyle) {
-            ctx.fillStyle = this.fillStyle;
+    Object.defineProperty(Shape.prototype, "strokeShadow", {
+        get: function () {
+            return this._strokeShadow;
+        },
+        set: function (value) {
+            if (this._strokeShadow !== value) {
+                this._strokeShadow = value;
+                this.dirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Shape.prototype.fillStroke = function (ctx) {
+        if (!this.scene) {
+            return;
         }
-        if (this.strokeStyle) {
-            ctx.strokeStyle = this.strokeStyle;
-            ctx.lineWidth = this.lineWidth;
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+        var pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
+            // The canvas context scaling (depends on the device's pixel ratio)
+            // has no effect on shadows, so we have to account for the pixel ratio
+            // manually here.
+            var fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
+            }
+            ctx.fill();
+        }
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+        if (this.stroke && this.strokeWidth) {
+            ctx.strokeStyle = this.stroke;
+            ctx.lineWidth = this.strokeWidth;
             if (this.lineDash) {
                 ctx.setLineDash(this.lineDash);
             }
@@ -225,16 +258,14 @@ var Shape = /** @class */ (function (_super) {
             if (this.lineJoin) {
                 ctx.lineJoin = this.lineJoin;
             }
-        }
-        if (this.opacity < 1) {
-            ctx.globalAlpha = this.opacity;
-        }
-        var shadow = this.shadow;
-        if (shadow) {
-            ctx.shadowColor = shadow.color;
-            ctx.shadowOffsetX = shadow.offset.x;
-            ctx.shadowOffsetY = shadow.offset.y;
-            ctx.shadowBlur = shadow.blur;
+            var strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.stroke();
         }
     };
     Shape.prototype.isPointInNode = function (x, y) {
@@ -249,15 +280,16 @@ var Shape = /** @class */ (function (_super) {
      * These static defaults are meant to be inherited by subclasses.
      */
     Shape.defaultStyles = object_1.chainObjects({}, {
-        fillStyle: 'black',
-        strokeStyle: null,
-        lineWidth: 0,
-        lineDash: null,
+        fill: 'black',
+        stroke: undefined,
+        strokeWidth: 0,
+        lineDash: undefined,
         lineDashOffset: 0,
         lineCap: null,
         lineJoin: null,
         opacity: 1,
-        shadow: null
+        fillShadow: undefined,
+        strokeShadow: undefined
     });
     return Shape;
 }(node_1.Node));

@@ -1,12 +1,15 @@
-import { Autowired, Component, PostConstruct, _ } from 'ag-grid-community';
+import { _, Autowired, Component, PostConstruct, RefSelector } from 'ag-grid-community';
 import { LicenseManager } from '../licenseManager';
 
 export class WatermarkComp extends Component {
 
     @Autowired('licenseManager') licenseManager: LicenseManager;
+    @RefSelector('eLicenseTextRef') private eLicenseTextRef: HTMLElement;
 
     constructor() {
-        super(`<div class="ag-watermark"></div>`);
+        super(`<div class="ag-watermark">
+                    <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
+               </div>`);
     }
 
     @PostConstruct
@@ -16,6 +19,8 @@ export class WatermarkComp extends Component {
         _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', !show);
 
         if (show) {
+            this.eLicenseTextRef.innerText = this.licenseManager.getWatermarkMessage();
+
             window.setTimeout(() => {
                 this.addCssClass('ag-opacity-zero');
             }, 0);

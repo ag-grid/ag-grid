@@ -13,6 +13,8 @@ include '../documentation-main/documentation_header.php';
     operations such as grouping, filtering and pivoting.
 </p>
 
+<? enterprise_feature("Server-side Row Model"); ?>
+
 <h2>Overview</h2>
 
 <p>

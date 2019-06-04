@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -113,16 +113,16 @@ var TooltipManager = /** @class */ (function () {
     };
     TooltipManager.prototype.showTooltip = function (e) {
         var targetCmp = this.lastHoveredComponent;
-        var cell = targetCmp;
+        var cellComp = targetCmp;
         var registeredComponent = this.registeredComponents[targetCmp.getCompId()];
         this.hideTooltip();
         var params = {
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: targetCmp.getComponentHolder(),
-            column: cell.getColumn && cell.getColumn(),
+            column: cellComp.getColumn && cellComp.getColumn(),
             context: this.gridOptionsWrapper.getContext(),
-            rowIndex: cell.getGridCell && cell.getGridCell().rowIndex,
+            rowIndex: cellComp.getCellPosition && cellComp.getCellPosition().rowIndex,
             value: targetCmp.getTooltipText()
         };
         this.createTooltipComponent(params, registeredComponent, e);

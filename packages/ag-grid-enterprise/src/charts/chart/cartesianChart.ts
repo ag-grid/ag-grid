@@ -1,39 +1,52 @@
-import {Chart} from "./chart";
-import {Axis} from "../axis";
-import {Series} from "./series/series";
-import {ClipRect} from "../scene/clipRect";
+import { Chart } from "./chart";
+import { Axis } from "../axis";
+import { Series } from "./series/series";
+import { ClipRect } from "../scene/clipRect";
+import { extent, checkExtent } from "../util/array";
+import { Padding } from "../util/padding";
 
-export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
+export class CartesianChart extends Chart {
 
-    constructor(xAxis: Axis<X>, yAxis: Axis<Y>, parent: HTMLElement = document.body) {
-        super(parent);
+    private axisAutoPadding = new Padding();
 
-        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
+    constructor(xAxis: Axis, yAxis: Axis) {
+        super();
+
         this._xAxis = xAxis;
         this._yAxis = yAxis;
+
+        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
+        this.scene.root!.append(this.legend.group);
     }
 
     private seriesClipRect = new ClipRect();
 
-    private readonly _xAxis: Axis<X>;
-    get xAxis(): Axis<X> {
+    get seriesRoot(): ClipRect {
+        return this.seriesClipRect;
+    }
+
+    private readonly _xAxis: Axis;
+    get xAxis(): Axis {
         return this._xAxis;
     }
 
-    private readonly _yAxis: Axis<Y>;
-    get yAxis(): Axis<Y> {
+    private readonly _yAxis: Axis;
+    get yAxis(): Axis {
         return this._yAxis;
     }
 
-    addSeries(series: Series<D, X, Y>): void {
-        this.seriesClipRect.append(series.group);
-        this._series.push(series);
-        series.chart = this;
-        this.layoutPending = true;
+    set series(values: Series<CartesianChart>[]) {
+        this.removeAllSeries();
+        values.forEach(series => {
+            this.addSeries(series);
+        });
+    }
+    get series(): Series<CartesianChart>[] {
+        return this._series as Series<CartesianChart>[];
     }
 
     performLayout(): void {
-        if (!(this.xAxis && this.yAxis)) {
+        if (this.dataPending || !(this.xAxis && this.yAxis)) {
             return;
         }
 
@@ -44,45 +57,79 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
             height: this.height
         };
 
+        const captionAutoPadding = this.captionAutoPadding;
+        shrinkRect.y += captionAutoPadding;
+        shrinkRect.height -= captionAutoPadding;
+
+        const legendAutoPadding = this.legendAutoPadding;
+        if (this.legend.data.length) {
+            shrinkRect.x += legendAutoPadding.left;
+            shrinkRect.y += legendAutoPadding.top;
+            shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
+            shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
+
+            const legendPadding = this.legendPadding;
+            switch (this.legendPosition) {
+                case 'right':
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'bottom':
+                    shrinkRect.height -= legendPadding;
+                    break;
+                case 'left':
+                    shrinkRect.x += legendPadding;
+                    shrinkRect.width -= legendPadding;
+                    break;
+                case 'top':
+                    shrinkRect.y += legendPadding;
+                    shrinkRect.height -= legendPadding;
+                    break;
+            }
+        }
+
         const padding = this.padding;
         shrinkRect.x += padding.left;
         shrinkRect.y += padding.top;
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
 
+        const axisAutoPadding = this.axisAutoPadding;
+        shrinkRect.x += axisAutoPadding.left;
+        shrinkRect.y += axisAutoPadding.top;
+        shrinkRect.width -= axisAutoPadding.left + axisAutoPadding.right;
+        shrinkRect.height -= axisAutoPadding.top + axisAutoPadding.bottom;
+
         const seriesClipRect = this.seriesClipRect;
         seriesClipRect.x = shrinkRect.x;
-        seriesClipRect.y = shrinkRect.y - padding.top;
+        seriesClipRect.y = shrinkRect.y;
         seriesClipRect.width = shrinkRect.width;
-        seriesClipRect.height = shrinkRect.height + padding.top;
+        seriesClipRect.height = shrinkRect.height;
 
         const xAxis = this.xAxis;
         const yAxis = this.yAxis;
 
-        // xAxis.scale.
         xAxis.scale.range = [0, shrinkRect.width];
         xAxis.rotation = -90;
-        xAxis.translationX = shrinkRect.x;
-        xAxis.translationY = shrinkRect.y + shrinkRect.height + 1;
+        xAxis.translationX = Math.floor(shrinkRect.x);
+        xAxis.translationY = Math.floor(shrinkRect.y + shrinkRect.height + 1);
         xAxis.parallelLabels = true;
         xAxis.gridLength = shrinkRect.height;
 
         yAxis.scale.range = [shrinkRect.height, 0];
-        yAxis.translationX = shrinkRect.x;
-        yAxis.translationY = shrinkRect.y;
+        yAxis.translationX = Math.floor(shrinkRect.x);
+        yAxis.translationY = Math.floor(shrinkRect.y);
         yAxis.gridLength = shrinkRect.width;
 
-        this._series.forEach(series => {
-            series.group.translationX = shrinkRect.x;
-            series.group.translationY = shrinkRect.y;
-            series.processData();
+        this.updateAxes();
+
+        this.series.forEach(series => {
+            series.group.translationX = Math.floor(shrinkRect.x);
+            series.group.translationY = Math.floor(shrinkRect.y);
+            series.update(); // this has to happen after the `updateAxis` call
         });
 
-        // this.updateAxes();
-
-        this._series.forEach(series => {
-            series.update();
-        });
+        this.positionCaptions();
+        this.positionLegend();
     }
 
     updateAxes() {
@@ -93,13 +140,53 @@ export class CartesianChart<D, X, Y> extends Chart<D, X, Y> {
             return;
         }
 
-        if (this._series.length) {
-            const series = this.series[0];
-            xAxis.scale.domain = series.getDomainX();
-            yAxis.scale.domain = series.getDomainY();
+        const xDomains: any[][] = [];
+        const yDomains: any[][] = [];
+
+        this.series.forEach(series => {
+            if (series.visible) {
+                const xDomain = series.getDomainX();
+                const yDomain = series.getDomainY();
+
+                xDomains.push(xDomain);
+                yDomains.push(yDomain);
+            }
+        });
+
+        const xDomain = new Array<any>().concat(...xDomains);
+        const yDomain = new Array<any>().concat(...yDomains);
+
+        if (typeof xDomain[0] === 'number') {
+            xAxis.domain = checkExtent(extent(xDomain));
+        } else {
+            // if (!xDomain.length) {
+            //     return;
+            // }
+            xAxis.domain = xDomain;
+        }
+
+        if (typeof yDomain[0] === 'number') {
+            yAxis.domain = checkExtent(extent(yDomain));
+        } else {
+            // if (!yDomain.length) {
+            //     return;
+            // }
+            yAxis.domain = yDomain;
         }
 
         xAxis.update();
         yAxis.update();
+
+        const xAxisBBox = xAxis.getBBox();
+        const yAxisBBox = yAxis.getBBox();
+
+        if (this.axisAutoPadding.left !== yAxisBBox.width) {
+            this.axisAutoPadding.left = yAxisBBox.width;
+            this.layoutPending = true;
+        }
+        if (this.axisAutoPadding.bottom !== xAxisBBox.width) {
+            this.axisAutoPadding.bottom = xAxisBBox.width;
+            this.layoutPending = true;
+        }
     }
 }

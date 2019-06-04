@@ -31,10 +31,9 @@ export class PopupService {
         return this.gridOptionsWrapper.getDocument();
     }
 
-    private getPopupParent(): HTMLElement {
+    public getPopupParent(): HTMLElement {
         const ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
-            // user provided popup parent, may not have the right theme applied
             return ePopupParent;
         }
 
@@ -145,12 +144,13 @@ export class PopupService {
         minHeight?: number,
         nudgeX?: number,
         nudgeY?: number,
+        alignSide?: 'left' | 'right',
         keepWithinBounds?: boolean
     }) {
-
         const sourceRect = params.eventSource.getBoundingClientRect();
         const eDocument = this.getDocument();
         const popupParent = this.getPopupParent();
+        const alignSide = params.alignSide || 'left';
 
         let parentRect: ClientRect;
 
@@ -160,33 +160,24 @@ export class PopupService {
             parentRect = popupParent.getBoundingClientRect();
         }
 
+        let x = sourceRect.left - parentRect.left;
+
+        if (alignSide === 'right') {
+            x -= (params.ePopup.offsetWidth - sourceRect.width);
+        }
+
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
             minHeight: params.minHeight,
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
-            x: sourceRect.left - parentRect.left,
+            x,
             y: sourceRect.top - parentRect.top + sourceRect.height,
             keepWithinBounds: params.keepWithinBounds
         });
 
         this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
-    }
-
-    private callPostProcessPopup(ePopup: HTMLElement | null, eventSource: HTMLElement | null, mouseEvent: MouseEvent | Touch | null, type: string, column: Column | null | undefined, rowNode: RowNode | undefined): void {
-        const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
-        if (callback) {
-            const params: PostProcessPopupParams = {
-                column: column,
-                rowNode: rowNode,
-                ePopup: ePopup,
-                type: type,
-                eventSource: eventSource,
-                mouseEvent: mouseEvent
-            };
-            callback(params);
-        }
     }
 
     public positionPopupOverComponent(params: {
@@ -226,7 +217,22 @@ export class PopupService {
         this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
     }
 
-    private positionPopup(params: {
+    private callPostProcessPopup(ePopup: HTMLElement | null, eventSource: HTMLElement | null, mouseEvent: MouseEvent | Touch | null, type: string, column: Column | null | undefined, rowNode: RowNode | undefined): void {
+        const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
+        if (callback) {
+            const params: PostProcessPopupParams = {
+                column: column,
+                rowNode: rowNode,
+                ePopup: ePopup,
+                type: type,
+                eventSource: eventSource,
+                mouseEvent: mouseEvent
+            };
+            callback(params);
+        }
+    }
+
+    public positionPopup(params: {
         ePopup: HTMLElement | null,
         minWidth?: number,
         minHeight?: number,
@@ -285,7 +291,7 @@ export class PopupService {
         return Math.min(Math.max(y, 0), Math.abs(maxY));
     }
 
-    private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement | null }, x: number): number {
+    private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement }, x: number): number {
         const eDocument = this.gridOptionsWrapper.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
@@ -293,19 +299,21 @@ export class PopupService {
         const documentRect = eDocument.documentElement!.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
         const defaultPadding = 3;
+        const ePopup = params.ePopup;
 
         let minWidth = Math.min(200, parentRect.width);
         let diff = 0;
 
         if (params.minWidth && params.minWidth < minWidth) {
             minWidth = params.minWidth;
-        } else if (params.ePopup!.clientWidth > 0) {
-            minWidth = params.ePopup!.clientWidth;
-            params.ePopup!.style.minWidth = `${minWidth}px`;
-            diff = _.getAbsoluteWidth(params.ePopup!) - minWidth;
+        } else if (ePopup.offsetWidth > 0) {
+            minWidth = ePopup.offsetWidth;
+            ePopup.style.minWidth = `${minWidth}px`;
+            diff = _.getAbsoluteWidth(ePopup) - minWidth;
         }
 
         let widthOfParent = isBody ? (_.getAbsoluteWidth(docElement!) + docElement!.scrollLeft) : parentRect.width;
+
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
@@ -350,6 +358,9 @@ export class PopupService {
             _.addCssClass(eWrapper, theme);
         }
 
+        _.addCssClass(eWrapper, 'ag-popup');
+        _.addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
+
         eWrapper.appendChild(eChild);
 
         ePopupParent.appendChild(eWrapper);
@@ -359,7 +370,7 @@ export class PopupService {
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
             const key = event.which || event.keyCode;
-            if (key === Constants.KEY_ESCAPE) {
+            if (key === Constants.KEY_ESCAPE && eWrapper.contains(document.activeElement)) {
                 hidePopup(null);
             }
         };
@@ -395,7 +406,7 @@ export class PopupService {
             _.removeFromArray(this.activePopupElements, eChild);
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
-            eDocument.removeEventListener('click', hidePopupOnMouseEvent);
+            eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
@@ -411,7 +422,7 @@ export class PopupService {
                 eDocument.addEventListener('keydown', hidePopupOnKeyboardEvent);
             }
             if (modal) {
-                eDocument.addEventListener('click', hidePopupOnMouseEvent);
+                eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
                 this.eventService.addEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
                 eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
@@ -424,26 +435,26 @@ export class PopupService {
     private isEventFromCurrentPopup(mouseEvent: MouseEvent | null | undefined, touchEvent: TouchEvent | undefined, eChild: HTMLElement): boolean {
         const event = mouseEvent ? mouseEvent : touchEvent;
 
-        if (event) {
-            const indexOfThisChild = this.activePopupElements.indexOf(eChild);
-            for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
-                const element = this.activePopupElements[i];
-                if (_.isElementInEventPath(element, event)) {
-                    return true;
-                }
-            }
+        if (!event) {
+            return false;
+        }
 
-            // if the user did not write their own Custom Element to be rendered as popup
-            // and this component has additional popup element, they should have the
-            // `ag-custom-component-popup` class to be detected as part of the Custom Component
-            let el = event.target as HTMLElement;
-            while (el && el != document.body) {
-                if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) { return true; }
-                el = el.parentElement;
+        const indexOfThisChild = this.activePopupElements.indexOf(eChild);
+        for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
+            const element = this.activePopupElements[i];
+            if (_.isElementInEventPath(element, event)) {
+                return true;
             }
         }
 
-        return false;
+        // if the user did not write their own Custom Element to be rendered as popup
+        // and this component has additional popup element, they should have the
+        // `ag-custom-component-popup` class to be detected as part of the Custom Component
+        let el = event.target as HTMLElement;
+        while (el && el != document.body) {
+            if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) { return true; }
+            el = el.parentElement;
+        }
     }
 
     // in some browsers, the context menu event can be fired before the click event, which means
@@ -476,5 +487,31 @@ export class PopupService {
         }
 
         return false;
+    }
+
+    public bringPopupToFront(ePopup: HTMLElement) {
+        const parent = this.getPopupParent();
+        const popupList = parent.querySelectorAll('.ag-popup');
+
+        while (!_.containsClass(ePopup, 'ag-popup') && ePopup.parentElement) {
+            ePopup = ePopup.parentElement;
+        }
+
+        if (
+            popupList.length <= 1 ||
+            popupList[popupList.length - 1] === ePopup ||
+            !parent.contains(ePopup)
+        ) { return; }
+
+        popupList[popupList.length - 1].insertAdjacentElement('afterend', ePopup);
+
+        const params = {
+            type: 'popupToFront',
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            ePopup
+        };
+
+        this.eventService.dispatchEvent(params);
     }
 }

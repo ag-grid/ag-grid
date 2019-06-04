@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,11 +23,11 @@ var AnimationFrameService = /** @class */ (function () {
     function AnimationFrameService() {
         // create tasks are to do with row creation. for them we want to execute according to row order, so we use
         // TaskItem so we know what index the item is for.
-        this.createRowTasks = [];
+        this.p1Tasks = [];
         // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
         // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
         // important.
-        this.destroyRowTasks = [];
+        this.p2Tasks = [];
         this.ticking = false;
         // we need to know direction of scroll, to build up rows in the direction of
         // the scroll. eg if user scrolls down, we extend the rows by building down.
@@ -37,6 +37,9 @@ var AnimationFrameService = /** @class */ (function () {
     AnimationFrameService.prototype.setScrollTop = function (scrollTop) {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
         this.lastScrollTop = scrollTop;
+    };
+    AnimationFrameService.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
     };
     AnimationFrameService.prototype.init = function () {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
@@ -53,41 +56,44 @@ var AnimationFrameService = /** @class */ (function () {
     AnimationFrameService.prototype.addP1Task = function (task, index) {
         this.verifyAnimationFrameOn('addP1Task');
         var taskItem = { task: task, index: index };
-        this.createRowTasks.push(taskItem);
+        this.p1Tasks.push(taskItem);
         this.schedule();
     };
     AnimationFrameService.prototype.addP2Task = function (task) {
         this.verifyAnimationFrameOn('addP2Task');
-        this.destroyRowTasks.push(task);
+        this.p2Tasks.push(task);
         this.schedule();
     };
     AnimationFrameService.prototype.executeFrame = function (millis) {
         this.verifyAnimationFrameOn('executeFrame');
         if (this.scrollGoingDown) {
-            this.createRowTasks.sort(function (a, b) { return b.index - a.index; });
+            this.p1Tasks.sort(function (a, b) { return b.index - a.index; });
         }
         else {
-            this.createRowTasks.sort(function (a, b) { return a.index - b.index; });
+            this.p1Tasks.sort(function (a, b) { return a.index - b.index; });
         }
         var frameStart = new Date().getTime();
         var duration = (new Date().getTime()) - frameStart;
         // 16ms is 60 fps
         var noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            if (this.createRowTasks.length > 0) {
-                var taskItem = this.createRowTasks.pop();
-                taskItem.task();
-            }
-            else if (this.destroyRowTasks.length > 0) {
-                var task = this.destroyRowTasks.pop();
-                task();
-            }
-            else {
-                break;
+            var gridPanelUpdated = this.gridPanel.executeFrame();
+            if (!gridPanelUpdated) {
+                if (this.p1Tasks.length > 0) {
+                    var taskItem = this.p1Tasks.pop();
+                    taskItem.task();
+                }
+                else if (this.p2Tasks.length > 0) {
+                    var task = this.p2Tasks.pop();
+                    task();
+                }
+                else {
+                    break;
+                }
             }
             duration = (new Date().getTime()) - frameStart;
         }
-        if (this.createRowTasks.length > 0 || this.destroyRowTasks.length > 0) {
+        if (this.p1Tasks.length > 0 || this.p2Tasks.length > 0) {
             this.requestFrame();
         }
         else {

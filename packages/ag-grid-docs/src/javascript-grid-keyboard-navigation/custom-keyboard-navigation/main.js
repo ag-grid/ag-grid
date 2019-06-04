@@ -78,7 +78,7 @@ var gridOptions = {
 };
 
 function tabToNextCell(params) {
-    var previousCell = params.previousCellDef;
+    var previousCell = params.previousCellPosition;
     var lastRowIndex = previousCell.rowIndex;
     var nextRowIndex = params.backwards ? lastRowIndex + 1 : lastRowIndex - 1;
 
@@ -101,8 +101,8 @@ function tabToNextCell(params) {
 }
 
 function navigateToNextCell(params) {
-    var previousCell = params.previousCellDef;
-    var suggestedNextCell = params.nextCellDef;
+    var previousCell = params.previousCellPosition;
+    var suggestedNextCell = params.nextCellPosition;
     switch (params.key) {
         case KEY_DOWN:
             // return the cell above

@@ -1,0 +1,11 @@
+.button-group {
+    padding-bottom: 4px;
+    display: inline-block;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+}
+
+
+#myGrid {
+    height: calc(100% - 70px) !important
+}

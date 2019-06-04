@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52,6 +52,12 @@ var EnterpriseMenuFactory = /** @class */ (function () {
     };
     EnterpriseMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource, defaultTab, restrictToTabs) {
         var _this = this;
+        var multiplier = -1;
+        var alignSide = 'left';
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            multiplier = 1;
+            alignSide = 'right';
+        }
         this.showMenu(column, function (menu) {
             var minDims = menu.getMinDimensions();
             _this.popupService.positionPopupUnderComponent({
@@ -59,10 +65,11 @@ var EnterpriseMenuFactory = /** @class */ (function () {
                 type: 'columnMenu',
                 eventSource: eventSource,
                 ePopup: menu.getGui(),
-                nudgeX: -9,
-                nudgeY: -26,
+                nudgeX: 9 * multiplier,
+                nudgeY: -23,
                 minWidth: minDims.width,
                 minHeight: minDims.height,
+                alignSide: alignSide,
                 keepWithinBounds: true
             });
             if (defaultTab) {
@@ -153,8 +160,9 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.getTabsToCreate = function () {
         var _this = this;
-        if (this.restrictTo)
+        if (this.restrictTo) {
             return this.restrictTo;
+        }
         return this.column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT)
             .filter(function (tabName) { return _this.isValidMenuTabItem(tabName); })
             .filter(function (tabName) { return _this.isNotSuppressed(tabName); });
@@ -250,7 +258,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.getDefaultMenuOptions = function () {
         var result = [];
-        var allowPinning = !this.column.isLockPinned();
+        var allowPinning = !this.column.getColDef().lockPinned;
         var rowGroupCount = this.columnController.getRowGroupColumns().length;
         var doingGrouping = rowGroupCount > 0;
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;

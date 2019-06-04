@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
-var gridCell_1 = require("../entities/gridCell");
 var constants_1 = require("../constants");
 var mouseEventService_1 = require("./mouseEventService");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
@@ -39,7 +38,7 @@ var NavigationService = /** @class */ (function () {
         var key = event.which || event.keyCode;
         var alt = event.altKey;
         var ctrl = event.ctrlKey;
-        var currentCell = this.mouseEventService.getGridCellForEvent(event).getGridCellDef();
+        var currentCell = this.mouseEventService.getCellPositionForEvent(event);
         if (!currentCell) {
             return false;
         }
@@ -174,8 +173,8 @@ var NavigationService = /** @class */ (function () {
         // highlighted.
         this.focusedCellController.setFocusedCell(focusIndex, focusColumn, null, true);
         if (this.rangeController) {
-            var gridCell = new gridCell_1.GridCell({ rowIndex: focusIndex, floating: null, column: focusColumn });
-            this.rangeController.setRangeToCell(gridCell);
+            var cellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
+            this.rangeController.setRangeToCell(cellPosition);
         }
     };
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
@@ -188,7 +187,7 @@ var NavigationService = /** @class */ (function () {
     NavigationService.prototype.onCtrlLeftOrRight = function (key, gridCell) {
         var leftKey = key === constants_1.Constants.KEY_LEFT;
         var allColumns = this.columnController.getAllDisplayedColumns();
-        var columnToSelect = leftKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        var columnToSelect = leftKey ? allColumns[0] : utils_1._.last(allColumns);
         this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
     };
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
@@ -196,7 +195,7 @@ var NavigationService = /** @class */ (function () {
     NavigationService.prototype.onHomeOrEndKey = function (key) {
         var homeKey = key === constants_1.Constants.KEY_PAGE_HOME;
         var allColumns = this.columnController.getAllDisplayedColumns();
-        var columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        var columnToSelect = homeKey ? allColumns[0] : utils_1._.last(allColumns);
         var rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
         this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);
     };

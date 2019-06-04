@@ -1,16 +1,17 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
-import { CellEvent } from "../events";
-import { GridCell } from "../entities/gridCell";
+import { CellChangedEvent, RowNode } from "../entities/rowNode";
+import { CellEvent, FlashCellsEvent } from "../events";
+import { Beans } from "./beans";
 import { Component } from "../widgets/component";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ColDef } from "../entities/colDef";
-import { Beans } from "./beans";
+import { CellPosition } from "../entities/cellPosition";
 import { RowComp } from "./rowComp";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 export declare class CellComp extends Component {
     static DOM_DATA_KEY_CELL_COMP: string;
     private static CELL_RENDERER_TYPE_NORMAL;
@@ -21,8 +22,9 @@ export declare class CellComp extends Component {
     private column;
     private rowNode;
     private eParentRow;
-    private gridCell;
+    private cellPosition;
     private rangeCount;
+    private hasChartRange;
     private usingWrapper;
     private includeSelectionComponent;
     private includeRowDraggingComponent;
@@ -36,6 +38,7 @@ export declare class CellComp extends Component {
     private cellRenderer;
     private cellRendererGui;
     private cellEditor;
+    private selectionHandle;
     private autoHeightCell;
     private firstRightPinned;
     private lastLeftPinned;
@@ -55,11 +58,11 @@ export declare class CellComp extends Component {
     getCreateTemplate(): string;
     private getStylesForRowSpanning;
     afterAttached(): void;
-    private onColumnHover;
-    private onCellChanged;
+    onColumnHover(): void;
+    onCellChanged(event: CellChangedEvent): void;
     private getCellLeft;
     private getCellWidth;
-    private onFlashCells;
+    onFlashCells(event: FlashCellsEvent): void;
     private setupColSpan;
     getColSpanningList(): Column[];
     private onDisplayColumnsChanged;
@@ -98,7 +101,6 @@ export declare class CellComp extends Component {
     private chooseCellRenderer;
     private createCellRendererInstance;
     private afterCellRendererCreated;
-    private attachCellRenderer;
     private createCellRendererParams;
     private formatValue;
     private getValueToUse;
@@ -141,26 +143,33 @@ export declare class CellComp extends Component {
     private isDoubleClickOnIPad;
     private onCellClicked;
     private createGridCellVo;
-    getGridCell(): GridCell;
+    getCellPosition(): CellPosition;
     getParentRow(): HTMLElement;
     setParentRow(eParentRow: HTMLElement): void;
     getColumn(): Column;
     getComponentHolder(): ColDef;
     detach(): void;
     destroy(): void;
-    private onLeftChanged;
+    onLeftChanged(): void;
     private modifyLeftForPrintLayout;
-    private onWidthChanged;
-    private getRangeClasses;
-    private onRowIndexChanged;
-    private onRangeSelectionChanged;
-    private onFirstRightPinnedChanged;
-    private onLastLeftPinnedChanged;
+    onWidthChanged(): void;
+    private getRangeBorders;
+    private getInitialRangeClasses;
+    onRowIndexChanged(): void;
+    onRangeSelectionChanged(): void;
+    private shouldHaveSelectionHandle;
+    private addSelectionHandle;
+    updateRangeBordersIfRangeCount(): void;
+    private refreshHandle;
+    private updateRangeBorders;
+    onFirstRightPinnedChanged(): void;
+    onLastLeftPinnedChanged(): void;
     private populateTemplate;
+    protected getFrameworkOverrides(): IFrameworkOverrides;
     private addRowDragging;
     private addSelectionCheckbox;
     private addDomData;
-    private onCellFocused;
+    onCellFocused(event?: any): void;
     stopRowOrCellEdit(cancel?: boolean): void;
     stopEditing(cancel?: boolean): void;
 }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -91,7 +91,7 @@ var SideBarButtonComp = /** @class */ (function (_super) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var def = this.toolPanelDef;
         var label = translate(def.labelKey, def.labelDefault);
-        var res = "<div class=\"ag-side-button\">\n                <button type=\"button\" ref=\"eToggleButton\">\n                    <div>\n                        <span class=\"ag-icon-" + def.iconKey + "\"></span>\n                    </div>\n                    <span>" + label + "</span>\n                </button>\n            </div>";
+        var res = "<div class=\"ag-side-button\">\n                <button type=\"button\" ref=\"eToggleButton\">\n                    <div>\n                        <span class=\"ag-icon ag-icon-" + def.iconKey + "\"></span>\n                    </div>\n                    <span>" + label + "</span>\n                </button>\n            </div>";
         return res;
     };
     SideBarButtonComp.prototype.onButtonPressed = function () {

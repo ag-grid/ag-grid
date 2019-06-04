@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Tool Panel: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Show Hide Column Tool Panel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -13,6 +13,8 @@ include '../documentation-main/documentation_header.php';
         operations such as grouping, pivoting, and filtering. Custom Tool Panels can also be provided to the grid.
     </p>
 
+    <? enterprise_feature("Tool Panel"); ?>
+
     <h2>Overview</h2>
 
     <p>
@@ -20,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         panels via buttons that work like tabs. The Side Bar and a Tool Panel are highlighted in the screen shot below.
     </p>
 
-    <p><img src="sideBar.png" alt="sidebar" width="90%" /></p>
+    <p><img src="sideBar.png" alt="sidebar" style="width: 600px;" /></p>
 
     <note>
         <p>

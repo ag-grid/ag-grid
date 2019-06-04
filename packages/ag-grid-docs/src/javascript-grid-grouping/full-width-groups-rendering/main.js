@@ -1,17 +1,26 @@
 var columnDefs = [
     {headerName: 'Athlete', field: 'athlete', width: 200},
     {headerName: 'Age', field: 'age', width: 90},
-    {headerName: 'Gold', field: 'gold', width: 100, aggFunc: 'sum'},
-    {headerName: 'Silver', field: 'silver', width: 100, aggFunc: 'sum'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, aggFunc: 'sum'},
-    {headerName: 'Total', field: 'total', width: 100, aggFunc: 'sum'},
+    {headerName: 'Gold', field: 'gold', width: 100, type: 'number'},
+    {headerName: 'Silver', field: 'silver', width: 100, type: 'number'},
+    {headerName: 'Bronze', field: 'bronze', width: 100, type: 'number'},
     {headerName: 'Country', field: 'country', width: 120, rowGroup: true},
-    {headerName: 'Year', field: 'year', width: 90},
+    {headerName: 'Year', field: 'year', width: 90, filter: true},
     {headerName: 'Date', field: 'date', width: 110},
     {headerName: 'Sport', field: 'sport', width: 110}
 ];
 
 var gridOptions = {
+    columnTypes: {
+        'number': {
+            editable: true,
+            // editing works with strings, need to change string to number
+            valueParser: function(params) {
+                return parseInt(params.newValue);
+            },
+            aggFunc: 'sum'
+        }
+    },
     columnDefs: columnDefs,
     rowData: null,
     groupUseEntireRow: true,

@@ -54,10 +54,10 @@ var gridOptions = {
                     // In the example application, dates are stored as dd/mm/yyyy
                     // We create a Date object for comparison against the filter date
                     var dateParts = cellValue.split('/');
-                    var day = Number(dateParts[2]);
+                    var day = Number(dateParts[0]);
                     var month = Number(dateParts[1]) - 1;
-                    var year = Number(dateParts[0]);
-                    var cellDate = new Date(day, month, year);
+                    var year = Number(dateParts[2]);
+                    var cellDate = new Date(year, month, day);
 
                     // Now that both parameters are Date objects, we can compare
                     if (cellDate < filterLocalDateAtMidnight) {

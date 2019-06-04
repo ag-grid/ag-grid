@@ -7,6 +7,12 @@
     }
 }
 
+.trial-enterprise-icon {
+    width: 30px;
+    float: left;
+    margin-right: 20px;
+}
+
 .heading-enterprise {
     &:after {
         @include enterprise-icon;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("./scene/group");
@@ -8,6 +8,9 @@ var ticks_1 = require("./util/ticks");
 var angle_1 = require("./util/angle");
 var text_1 = require("./scene/shape/text");
 var arc_1 = require("./scene/shape/arc");
+var bbox_1 = require("./scene/bbox");
+var matrix_1 = require("./scene/matrix");
+// import { Rect } from "./scene/shape/rect"; // debug (bbox)
 var Tags;
 (function (Tags) {
     Tags[Tags["Tick"] = 0] = "Tick";
@@ -23,6 +26,14 @@ var Tags;
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var Axis = /** @class */ (function () {
+    // debug (bbox)
+    // private bboxRect = (() => {
+    //     const rect = new Rect();
+    //     rect.fillStyle = null;
+    //     rect.strokeStyle = 'blue';
+    //     rect.lineWidth = 1;
+    //     return rect;
+    // })();
     function Axis(scale) {
         this.group = new group_1.Group();
         this.line = new line_1.Line();
@@ -68,7 +79,7 @@ var Axis = /** @class */ (function () {
          * The font to be used by the labels. The given font string should use the
          * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
          */
-        this.labelFont = '12px Tahoma';
+        this.labelFont = '12px Verdana, sans-serif';
         /**
          * The color of the labels.
          * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
@@ -87,7 +98,7 @@ var Axis = /** @class */ (function () {
          * have the same style.
          */
         this._gridStyle = [{
-                strokeStyle: 'rgba(219, 219, 219, 1)',
+                stroke: 'rgba(219, 219, 219, 1)',
                 lineDash: [4, 2]
             }];
         /**
@@ -127,7 +138,18 @@ var Axis = /** @class */ (function () {
         this.scale = scale;
         this.groupSelection = selection_1.Selection.select(this.group).selectAll();
         this.group.append(this.line);
+        // this.group.append(this.bboxRect); // debug (bbox)
     }
+    Object.defineProperty(Axis.prototype, "domain", {
+        get: function () {
+            return this.scale.domain;
+        },
+        set: function (value) {
+            this.scale.domain = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Axis.prototype, "gridLength", {
         get: function () {
             return this._gridLength;
@@ -169,7 +191,7 @@ var Axis = /** @class */ (function () {
     });
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
-     * Supposed to be called manually after changing any of the axis properties.
+     * Supposed to be called _manually_ after changing _any_ of the axis properties.
      * This allows to bulk set axis properties before updating the nodes.
      * The node changes made by this method are rendered on the next animation frame.
      * We could schedule this method call automatically on the next animation frame
@@ -191,9 +213,9 @@ var Axis = /** @class */ (function () {
         group.rotation = rotation;
         // Render ticks and labels.
         var ticks = scale.ticks(10);
-        var decimalDigits = 0;
+        var fractionDigits = 0;
         if (ticks instanceof ticks_1.NumericTicks) {
-            decimalDigits = ticks.decimalDigits;
+            fractionDigits = ticks.fractionDigits;
         }
         var bandwidth = (scale.bandwidth || 0) / 2;
         // The side of the axis line to position the labels on.
@@ -232,13 +254,13 @@ var Axis = /** @class */ (function () {
         enter.append(text_1.Text);
         var groupSelection = update.merge(enter);
         groupSelection
-            .attrFn('translationY', function (node, datum) {
+            .attrFn('translationY', function (_, datum) {
             return Math.round(scale.convert(datum) + bandwidth);
         });
         groupSelection.selectByTag(Tags.Tick)
             .each(function (line) {
-            line.lineWidth = _this.tickWidth;
-            line.strokeStyle = _this.tickColor;
+            line.strokeWidth = _this.tickWidth;
+            line.stroke = _this.tickColor;
         })
             .attr('x1', sideFlag * this.tickSize)
             .attr('x2', 0)
@@ -267,26 +289,32 @@ var Axis = /** @class */ (function () {
                     line.x2 = -sideFlag * _this.gridLength;
                     line.y1 = 0;
                     line.y2 = 0;
-                    line.visible = line.parent.translationY !== scale.range[0];
+                    line.visible = Math.abs(line.parent.translationY - scale.range[0]) > 1;
                 });
             }
-            gridLines.each(function (arc, datum, index) {
+            gridLines.each(function (gridLine, datum, index) {
                 var style = styles_1[index % styleCount_1];
-                arc.strokeStyle = style.strokeStyle;
-                arc.lineDash = style.lineDash;
-                arc.fillStyle = null;
+                gridLine.stroke = style.stroke;
+                gridLine.strokeWidth = _this.tickWidth;
+                gridLine.lineDash = style.lineDash;
+                gridLine.fill = undefined;
             });
         }
+        var labelFormatter = this.labelFormatter;
         var labels = groupSelection.selectByClass(text_1.Text)
             .each(function (label, datum) {
             label.font = _this.labelFont;
-            label.fillStyle = _this.labelColor;
+            label.fill = _this.labelColor;
             label.textBaseline = parallelLabels && !labelRotation
                 ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                 : 'middle';
-            label.text = decimalDigits && typeof datum === 'number'
-                ? datum.toFixed(decimalDigits)
-                : datum.toString();
+            label.text = labelFormatter
+                ? labelFormatter(fractionDigits ? datum : String(datum), fractionDigits)
+                : fractionDigits
+                    // the `datum` is a floating point number
+                    ? datum.toFixed(fractionDigits)
+                    // the `datum` is an integer, a string or an object
+                    : String(datum);
             label.textAlign = parallelLabels
                 ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                 : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
@@ -295,10 +323,11 @@ var Axis = /** @class */ (function () {
         var autoRotation = parallelLabels
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
-        labels
-            .attr('x', labelX)
-            .attr('rotationCenterX', labelX)
-            .attr('rotation', autoRotation + labelRotation);
+        labels.each(function (label) {
+            label.x = labelX;
+            label.rotationCenterX = labelX;
+            label.rotation = autoRotation + labelRotation;
+        });
         this.groupSelection = groupSelection;
         // Render axis line.
         var line = this.line;
@@ -306,8 +335,50 @@ var Axis = /** @class */ (function () {
         line.x2 = 0;
         line.y1 = scale.range[0];
         line.y2 = scale.range[scale.range.length - 1];
-        line.lineWidth = this.lineWidth;
-        line.strokeStyle = this.lineColor;
+        line.strokeWidth = this.lineWidth;
+        line.stroke = this.lineColor;
+        line.visible = ticks.length > 0;
+        // debug (bbox)
+        // const bbox = this.getBBox();
+        // const bboxRect = this.bboxRect;
+        // bboxRect.x = bbox.x;
+        // bboxRect.y = bbox.y;
+        // bboxRect.width = bbox.width;
+        // bboxRect.height = bbox.height;
+    };
+    Axis.prototype.getBBox = function () {
+        var line = this.line;
+        var labels = this.groupSelection.selectByClass(text_1.Text);
+        var left = Infinity;
+        var right = -Infinity;
+        var top = Infinity;
+        var bottom = -Infinity;
+        labels.each(function (label) {
+            // The label itself is rotated, but not translated, the group that
+            // contains it is. So to capture the group transform in the label bbox
+            // calculation we combine the transform matrices of the label and the group.
+            // Depending on the timing of the `axis.getBBox()` method call, we may
+            // not have the group's and the label's transform matrices updated yet (because
+            // the transform matrix is not recalculated whenever a node's transform attributes
+            // change, instead it's marked for recalculation on the next frame by setting
+            // the node's `dirtyTransform` flag to `true`), so we force them to update
+            // right here by calling `computeTransformMatrix`.
+            label.computeTransformMatrix();
+            var matrix = matrix_1.Matrix.flyweight(label.matrix);
+            var group = label.parent;
+            group.computeTransformMatrix();
+            matrix.preMultiplySelf(group.matrix);
+            var bbox = matrix.transformBBox(label.getBBox());
+            left = Math.min(left, bbox.x);
+            right = Math.max(right, bbox.x + bbox.width);
+            top = Math.min(top, bbox.y);
+            bottom = Math.max(bottom, bbox.y + bbox.height);
+        });
+        left = Math.min(left, 0);
+        right = Math.max(right, 0);
+        top = Math.min(top, line.y1, line.y2);
+        bottom = Math.max(bottom, line.y1, line.y2);
+        return new bbox_1.BBox(left, top, right - left, bottom - top);
     };
     return Axis;
 }());

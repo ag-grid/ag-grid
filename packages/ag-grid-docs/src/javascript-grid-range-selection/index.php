@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Range Selection: Enterprise Grade Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Range Selection. Drag the mouse over cells to create a Range Selection. This is handy for highlighting data or for copying to the clipboard. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Range Selection. Drag the mouse over cells to create a Range Selection. This is handy for highlighting data or for copying to the clipboard. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "range selection javascript grid ag-grid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -15,6 +15,8 @@ include '../documentation-main/documentation_header.php';
         <a href="../javascript-grid-clipboard/">Clipboard</a>
         or for doing aggregations using the <a href="../javascript-grid-status-bar/">Status Bar</a>.
     </p>
+
+    <? enterprise_feature("Range Selection"); ?>
 
     <h2>Selecting Ranges</h2>
 
@@ -94,44 +96,32 @@ api.addEventListener('rangeSelectionChanged', function(event) {
 
     <h2>Range Selection API</h2>
 
-    <h3><code>api.getRangeSelections()</code></h3>
+    <h3><code>api.getCellRanges()</code></h3>
 
     <p>
-        Get the selected ranges using <code>api.getRangeSelections()</code>. This will return back
-        a list of range selection objects, each object contain the details of one range. The
-        structure of the range selection is as follows:
+        Get the selected ranges using <code>api.getCellRanges()</code>. This will return back
+        a list of cell range objects, each object contain the details of one range. The
+        structure of the cell range is as follows:
         <snippet>
-RangeSelection {
-    start: GridCell; // the start cell of the range
-    end: GridCell; // the end cell of the range
-    columns: Column[]; // all the columns of the range
+interface CellRange {
+    startRow: RowPosition; // the start row of the range
+    endRow: RowPosition; // the end row of the range
+    columns: Column[] // the columsn in the range
 }
 
-GridCell {
-    rowIndex: number; // the index of the row. indexes are zero based.
-    floating: string; // whether the row is floating ('top', 'bottom' or null for not floating)
-    column: Column; // the column of the cell
-}</snippet>
+interface RowPosition {
+    rowIndex: number,
+    floating: string
+}
+</snippet>
     </p>
 
     <p>
-        The start and end will be the cells the user started the drag on. Two things to notice
-        about the start and end:
+        The start and end will be the cells the user started the drag on.
+        The start is the first cell the user clicked on and the end is the cell where
+        the user stopped dragging. Do not assume that the start cell's index is numerically
+        before the end cell, as the user could of dragged up.
     </p>
-        <ul class="content">
-            <li>The start is the first cell the user clicked on and the end is the cell where
-            the user stopped dragging. Do not assume that the start cell's index is numerically
-            before the end cell, as the user could of dragged up. Likewise for columns, the end
-            cell could be to the left or the right of the start cell.</li>
-            <li>The columns are listed twice, with start / end columns as well as a complete
-            column list. This is because the complete list of columns
-            may not be what you expect, as the grid may
-            display the columns in a different order to what you provided the grid (the user could
-            reorder), or columns may be not visible, or column groups may be closed. To avoid all
-            ambiguity, the exact columns in the range are presented individually in the <code>columns</code>
-            list.
-            </li>
-        </ul>
 
     <h3><code>api.clearRangeSelection()</code></h3>
 
@@ -139,20 +129,47 @@ GridCell {
         Clears the range selection.
     </p>
 
-    <h3><code>api.addRangeSelection(rangeSelection)</code></h3>
+    <h3><code>api.addCellRange(rangeSelection)</code></h3>
 
     <p>
-        Adds a range to the selection. This keeps any prevoius ranges. If you wish to have this range
-    exclusively, then call clearRangeSelection() first.
+        Adds a range to the selection. This keeps any previous ranges. If you wish to have this range
+    exclusively, then call clearRangeSelection() first. The method takes the following params:
         <snippet>
-AddRangeSelectionParams{
-    rowStart: number, // the start row index
-    floatingStart: string, // the starting floating ('top', 'bottom' or null/undefined)
-    rowEnd: number, // the end row index
-    floatingEnd: string, // the end floating ('top', 'bottom' or null/undefined)
-    columnStart: string|Column, // colId of the starting column
-    columnEnd: string|Column // colId of the ending column
-}</snippet>
+interface AddCellRangeParams {
+
+    // start row
+    rowStartIndex?: number;
+    rowStartPinned?: string; // either 'top', 'bottom' or undefined
+
+    // end row
+    rowEndIndex?: number;
+    rowEndPinned?: string; // either 'top', 'bottom' or undefined
+
+    // columns
+    columnStart?: string | Column;
+    columnEnd?: string | Column;
+    columns?: (string | Column)[];
+}
+</snippet>
+    </p>
+
+    <p>
+        Ranges are normally bounded by a start and end row. However it is also possible to define a range
+        unbounded by rows (ie to contain all rows). For an unbounded range, do not provided start or end
+        row positions.
+    </p>
+
+    <p>
+        Row positions are defined by a row index and pinned. Row indexes start at zero and increment. Pinned
+        can be either 'top' (row is in pinned top section), 'bottom' (row in in pinned bottom section) or
+        undefined (row is in the main body). See <a href="../javascript-grid-row-pinning">Row Pinning</a>
+        for information on row pinning.
+    </p>
+
+    <p>
+        Ranges are defined by a list of columns. Pass in either a) a list of columns or b) a start and end
+        column and let the grid work out the columns in between. Passing a list of columns instead of a start and
+        end column has the advantage that the columns do not need to be contiguous.
     </p>
 
     <h3>Callback <code>processCellForClipboard()</code></h3>

@@ -2,6 +2,8 @@
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { _ } from "../../utils";
+import { Autowired } from "../../context/context";
+import { FilterManager } from "../../filter/filterManager";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
 
@@ -18,6 +20,8 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
     private lastValue: any;
 
     private refreshCount = 0;
+
+    @Autowired('filterManager') private filterManager: FilterManager;
 
     constructor() {
         super(AnimateSlideCellRenderer.TEMPLATE);
@@ -71,6 +75,12 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         }
 
         if (value === this.lastValue) {
+            return;
+        }
+
+        // we don't show the delta if we are in the middle of a filter. see comment on FilterManager
+        // with regards processingFilterChange
+        if (this.filterManager.isSuppressFlashingCellsBecauseFiltering()) {
             return;
         }
 

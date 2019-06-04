@@ -15,7 +15,10 @@ export default class SliderFloatingFilter extends Component {
                 currentValue: event.target.value
             },
             () => {
-                this.props.onFloatingFilterChanged({model: this.buildModel()});
+                let valueToUse = (this.state.currentValue === 0) ? null : this.state.currentValue;
+                this.props.parentFilterInstance( function(instance) {
+                    instance.onFloatingFilterChanged('greaterThan', valueToUse);
+                });
             })
 
     };
@@ -26,18 +29,6 @@ export default class SliderFloatingFilter extends Component {
         this.setState({
             currentValue: !parentModel ? 0 : parentModel.filter
         });
-    }
-
-    buildModel() {
-        if (this.state.currentValue === 0) {
-            return null;
-        }
-        return {
-            filterType: 'number',
-            type: 'greaterThan',
-            filter: this.state.currentValue,
-            filterTo: null
-        };
     }
 
     render() {

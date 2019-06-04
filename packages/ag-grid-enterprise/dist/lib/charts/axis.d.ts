@@ -1,10 +1,11 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
-export declare type GridStyle = {
-    strokeStyle: string | null;
-    lineDash: number[] | null;
-};
+import { BBox } from "./scene/bbox";
+export interface GridStyle {
+    stroke?: string;
+    lineDash?: number[];
+}
 /**
  * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
@@ -14,12 +15,13 @@ export declare type GridStyle = {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export declare class Axis<D> {
+export declare class Axis<D = any> {
     constructor(scale: Scale<D, number>);
     readonly scale: Scale<D, number>;
     readonly group: Group;
     private groupSelection;
     private line;
+    domain: D[];
     /**
      * The horizontal translation of the axis group.
      */
@@ -40,7 +42,7 @@ export declare class Axis<D> {
      * The color of the axis line.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
      */
-    lineColor: string | null;
+    lineColor?: string;
     /**
      * The line width to be used by axis ticks.
      */
@@ -57,7 +59,14 @@ export declare class Axis<D> {
      * The color of the axis ticks.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
-    tickColor: string | null;
+    tickColor?: string;
+    /**
+     * In case {@param value} is a number, the {@param fractionDigits} parameter will
+     * be provided as well. The `fractionDigits` corresponds to the number of fraction
+     * digits used by the tick step. For example, if the tick step is `0.0005`,
+     * the `fractionDigits` is 4.
+     */
+    labelFormatter?: (value: any, fractionDigits?: number) => string;
     /**
      * The font to be used by the labels. The given font string should use the
      * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
@@ -67,7 +76,7 @@ export declare class Axis<D> {
      * The color of the labels.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    labelColor: string | null;
+    labelColor?: string;
     /**
      * The length of the grid. The grid is only visible in case of a non-zero value.
      * In case {@link radialGrid} is `true`, the value is interpreted as an angle
@@ -120,7 +129,7 @@ export declare class Axis<D> {
     parallelLabels: boolean;
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
-     * Supposed to be called manually after changing any of the axis properties.
+     * Supposed to be called _manually_ after changing _any_ of the axis properties.
      * This allows to bulk set axis properties before updating the nodes.
      * The node changes made by this method are rendered on the next animation frame.
      * We could schedule this method call automatically on the next animation frame
@@ -132,4 +141,5 @@ export declare class Axis<D> {
      * it will also make it harder to reason about the program.
      */
     update(): void;
+    getBBox(): BBox;
 }

@@ -17,6 +17,7 @@ $odd-row-background-color: $alt-background !default;
 $foreground-color: rgba($foreground-color, $foreground-opacity) !default; // foreground
 $secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default; // foreground-secondary
 $disabled-foreground-color: rgba($foreground-color, $disabled-foreground-color-opacity) !default; // foreground-disabled
+$input-border-color: #ecf0f1 !default;
 $input-disabled-background-color: rgba(48, 46, 46, 0.3);
 
 $primary-color: $active !default;
@@ -25,7 +26,6 @@ $range-selection-background-color: transparentize($active, 0.8) !default;
 $range-selection-highlight-color: $active !default;
 $selected-color: darken($active, 25) !default;
 
-$alt-icon-color: $default-background !default;
 $background-color: $default-background !default;
 
 $editor-background-color: $chrome-background !default;
@@ -45,5 +45,8 @@ $value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !de
 
 $tooltip-background-color: $header-background-color !default;
 $tooltip-border-color: lighten($header-background-color, 10%) !default;
+
+$range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
+$range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;
 
 @import '../../ag-theme-balham/vars/ag-theme-balham-vars';

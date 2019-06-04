@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -120,6 +120,8 @@ export interface FirstDataRenderedEvent extends AgGridEvent {
 export interface RangeSelectionChangedEvent extends AgGridEvent {
     finished: boolean;
     started: boolean;
+}
+export interface ChartRangeSelectionChanged extends AgGridEvent {
 }
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
     columnGroup: OriginalColumnGroup;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,8 +18,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
 var constants_1 = require("./constants");
 var columnController_1 = require("./columnController/columnController");
-var gridRow_1 = require("./entities/gridRow");
-var gridCell_1 = require("./entities/gridCell");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
 var utils_1 = require("./utils");
@@ -76,7 +74,7 @@ var CellNavigationService = /** @class */ (function () {
     CellNavigationService.prototype.isCellGoodToFocusOn = function (gridCell) {
         var column = gridCell.column;
         var rowNode;
-        switch (gridCell.floating) {
+        switch (gridCell.rowPinned) {
             case constants_1.Constants.PINNED_TOP:
                 rowNode = this.pinnedRowModel.getPinnedTopRow(gridCell.rowIndex);
                 break;
@@ -98,14 +96,11 @@ var CellNavigationService = /** @class */ (function () {
         if (!colToLeft) {
             return null;
         }
-        else {
-            var gridCellDef = {
-                rowIndex: lastCell.rowIndex,
-                column: colToLeft,
-                floating: lastCell.floating
-            };
-            return new gridCell_1.GridCell(gridCellDef);
-        }
+        return {
+            rowIndex: lastCell.rowIndex,
+            column: colToLeft,
+            rowPinned: lastCell.rowPinned
+        };
     };
     CellNavigationService.prototype.getCellToRight = function (lastCell) {
         if (!lastCell) {
@@ -116,89 +111,80 @@ var CellNavigationService = /** @class */ (function () {
         if (!colToRight) {
             return null;
         }
-        else {
-            var gridCellDef = {
-                rowIndex: lastCell.rowIndex,
-                column: colToRight,
-                floating: lastCell.floating
-            };
-            return new gridCell_1.GridCell(gridCellDef);
-        }
+        return {
+            rowIndex: lastCell.rowIndex,
+            column: colToRight,
+            rowPinned: lastCell.rowPinned
+        };
     };
-    CellNavigationService.prototype.getRowBelow = function (lastRow) {
+    CellNavigationService.prototype.getRowBelow = function (rowPosition) {
         // if already on top row, do nothing
-        if (this.isLastRowInContainer(lastRow)) {
-            if (lastRow.isFloatingBottom()) {
-                return null;
-            }
-            else if (lastRow.isNotFloating()) {
-                if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_BOTTOM)) {
-                    return new gridRow_1.GridRow(0, constants_1.Constants.PINNED_BOTTOM);
-                }
-                else {
+        var index = rowPosition.rowIndex;
+        var pinned = rowPosition.rowPinned;
+        if (this.isLastRowInContainer(rowPosition)) {
+            switch (pinned) {
+                case constants_1.Constants.PINNED_BOTTOM:
+                    // never any rows after pinned bottom
                     return null;
-                }
-            }
-            else {
-                if (this.rowModel.isRowsToRender()) {
-                    return new gridRow_1.GridRow(0, null);
-                }
-                else if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_BOTTOM)) {
-                    return new gridRow_1.GridRow(0, constants_1.Constants.PINNED_BOTTOM);
-                }
-                else {
+                case constants_1.Constants.PINNED_TOP:
+                    // if on last row of pinned top, then next row is main body (if rows exist),
+                    // otherwise it's the pinned bottom
+                    if (this.rowModel.isRowsToRender()) {
+                        return { rowIndex: 0, rowPinned: null };
+                    }
+                    else if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_BOTTOM)) {
+                        return { rowIndex: 0, rowPinned: constants_1.Constants.PINNED_BOTTOM };
+                    }
                     return null;
-                }
+                default:
+                    // if in the main body, then try pinned bottom, otherwise return nothing
+                    if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_BOTTOM)) {
+                        return { rowIndex: 0, rowPinned: constants_1.Constants.PINNED_BOTTOM };
+                    }
+                    return null;
             }
         }
-        else {
-            return new gridRow_1.GridRow(lastRow.rowIndex + 1, lastRow.floating);
-        }
+        return { rowIndex: index + 1, rowPinned: pinned };
     };
     CellNavigationService.prototype.getCellBelow = function (lastCell) {
         if (!lastCell) {
             return null;
         }
-        var rowBelow = this.getRowBelow(lastCell.getGridRow());
+        var rowBelow = this.getRowBelow(lastCell);
         if (rowBelow) {
-            var gridCellDef = {
+            return {
                 rowIndex: rowBelow.rowIndex,
                 column: lastCell.column,
-                floating: rowBelow.floating
+                rowPinned: rowBelow.rowPinned
             };
-            return new gridCell_1.GridCell(gridCellDef);
         }
-        else {
-            return null;
-        }
+        return null;
     };
-    CellNavigationService.prototype.isLastRowInContainer = function (gridRow) {
-        if (gridRow.isFloatingTop()) {
+    CellNavigationService.prototype.isLastRowInContainer = function (rowPosition) {
+        var pinned = rowPosition.rowPinned;
+        var index = rowPosition.rowIndex;
+        if (pinned === constants_1.Constants.PINNED_TOP) {
             var lastTopIndex = this.pinnedRowModel.getPinnedTopRowData().length - 1;
-            return lastTopIndex <= gridRow.rowIndex;
+            return lastTopIndex <= index;
         }
-        else if (gridRow.isFloatingBottom()) {
+        else if (pinned === constants_1.Constants.PINNED_BOTTOM) {
             var lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
-            return lastBottomIndex <= gridRow.rowIndex;
+            return lastBottomIndex <= index;
         }
-        else {
-            var lastBodyIndex = this.rowModel.getPageLastRow();
-            return lastBodyIndex <= gridRow.rowIndex;
-        }
+        var lastBodyIndex = this.rowModel.getPageLastRow();
+        return lastBodyIndex <= index;
     };
-    CellNavigationService.prototype.getRowAbove = function (lastRow) {
+    CellNavigationService.prototype.getRowAbove = function (rowIndex, pinned) {
         // if already on top row, do nothing
-        if (lastRow.rowIndex === 0) {
-            if (lastRow.isFloatingTop()) {
+        if (rowIndex === 0) {
+            if (pinned === constants_1.Constants.PINNED_TOP) {
                 return null;
             }
-            else if (lastRow.isNotFloating()) {
+            else if (!pinned) {
                 if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
                 }
-                else {
-                    return null;
-                }
+                return null;
             }
             else {
                 // last floating bottom
@@ -208,85 +194,74 @@ var CellNavigationService = /** @class */ (function () {
                 else if (this.pinnedRowModel.isRowsToRender(constants_1.Constants.PINNED_TOP)) {
                     return this.getLastFloatingTopRow();
                 }
-                else {
-                    return null;
-                }
+                return null;
             }
         }
-        else {
-            return new gridRow_1.GridRow(lastRow.rowIndex - 1, lastRow.floating);
-        }
+        return { rowIndex: rowIndex - 1, rowPinned: pinned };
     };
     CellNavigationService.prototype.getCellAbove = function (lastCell) {
         if (!lastCell) {
             return null;
         }
-        var rowAbove = this.getRowAbove(lastCell.getGridRow());
+        var rowAbove = this.getRowAbove(lastCell.rowIndex, lastCell.rowPinned);
         if (rowAbove) {
-            var gridCellDef = {
+            return {
                 rowIndex: rowAbove.rowIndex,
                 column: lastCell.column,
-                floating: rowAbove.floating
+                rowPinned: rowAbove.rowPinned
             };
-            return new gridCell_1.GridCell(gridCellDef);
         }
-        else {
-            return null;
-        }
+        return null;
     };
     CellNavigationService.prototype.getLastBodyCell = function () {
         var lastBodyRow = this.rowModel.getPageLastRow();
-        return new gridRow_1.GridRow(lastBodyRow, null);
+        return { rowIndex: lastBodyRow, rowPinned: null };
     };
     CellNavigationService.prototype.getLastFloatingTopRow = function () {
         var lastFloatingRow = this.pinnedRowModel.getPinnedTopRowData().length - 1;
-        return new gridRow_1.GridRow(lastFloatingRow, constants_1.Constants.PINNED_TOP);
+        return { rowIndex: lastFloatingRow, rowPinned: constants_1.Constants.PINNED_TOP };
     };
     CellNavigationService.prototype.getNextTabbedCell = function (gridCell, backwards) {
         if (backwards) {
             return this.getNextTabbedCellBackwards(gridCell);
         }
-        else {
-            return this.getNextTabbedCellForwards(gridCell);
-        }
+        return this.getNextTabbedCellForwards(gridCell);
     };
     CellNavigationService.prototype.getNextTabbedCellForwards = function (gridCell) {
         var displayedColumns = this.columnController.getAllDisplayedColumns();
         var newRowIndex = gridCell.rowIndex;
-        var newFloating = gridCell.floating;
+        var newFloating = gridCell.rowPinned;
         // move along to the next cell
         var newColumn = this.columnController.getDisplayedColAfter(gridCell.column);
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
             newColumn = displayedColumns[0];
-            var rowBelow = this.getRowBelow(gridCell.getGridRow());
+            var rowBelow = this.getRowBelow(gridCell);
             if (utils_1._.missing(rowBelow)) {
                 return null;
             }
             newRowIndex = rowBelow ? rowBelow.rowIndex : null;
-            newFloating = rowBelow ? rowBelow.floating : null;
+            newFloating = rowBelow ? rowBelow.rowPinned : null;
         }
-        var gridCellDef = { rowIndex: newRowIndex, column: newColumn, floating: newFloating };
-        return new gridCell_1.GridCell(gridCellDef);
+        return { rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating };
     };
     CellNavigationService.prototype.getNextTabbedCellBackwards = function (gridCell) {
         var displayedColumns = this.columnController.getAllDisplayedColumns();
         var newRowIndex = gridCell.rowIndex;
-        var newFloating = gridCell.floating;
+        var newFloating = gridCell.rowPinned;
         // move along to the next cell
         var newColumn = this.columnController.getDisplayedColBefore(gridCell.column);
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
-            newColumn = displayedColumns[displayedColumns.length - 1];
-            var rowAbove = this.getRowAbove(gridCell.getGridRow());
+            newColumn = utils_1._.last(displayedColumns);
+            var rowAbove = this.getRowAbove(gridCell.rowIndex, gridCell.rowPinned);
             if (utils_1._.missing(rowAbove)) {
                 return null;
             }
             newRowIndex = rowAbove ? rowAbove.rowIndex : null;
-            newFloating = rowAbove ? rowAbove.floating : null;
+            newFloating = rowAbove ? rowAbove.rowPinned : null;
         }
-        var gridCellDef = { rowIndex: newRowIndex, column: newColumn, floating: newFloating };
-        return new gridCell_1.GridCell(gridCellDef);
+        return { rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating };
     };
     __decorate([
         context_1.Autowired('columnController'),

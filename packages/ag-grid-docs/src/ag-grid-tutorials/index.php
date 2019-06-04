@@ -66,13 +66,6 @@ include '../getting-started/header.php';
         Ready to try ag-Grid in your project? Download ag-Grid Community edition or trial ag-Grid Enterprise for free.
 </p>
 
-<div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
-</div>
-<br>
-<div>
-  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
-</div>
 </div>
 
 <?php include '../getting-started/footer.php';?>

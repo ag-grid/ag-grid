@@ -49,7 +49,8 @@ var gridOptions = {
     showToolPanel: true,
     floatingFilter: true,
     autoGroupColumnDef: {
-        headerName: "Athlete", field: "athlete", width: 180,
+        headerName: "Athlete",
+        field: "athlete",
         rowDrag: true,
         // use font awesome for first col, with numbers for sort
         icons: {
@@ -74,8 +75,8 @@ var gridOptions = {
         sortAscending: '<i class="fa fa-long-arrow-alt-down"/>',
         sortDescending: '<i class="fa fa-long-arrow-alt-up"/>',
         // use some strings from group
-        groupExpanded: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/minus.png" style="width: 12px;padding-right: 2px"/>',
-        groupContracted: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/plus.png" style="width: 12px;padding-right: 2px"/>',
+        groupExpanded: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/minus.png" style="height: 12px; width: 12px;padding-right: 2px"/>',
+        groupContracted: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/plus.png" style="height: 12px; width: 12px;padding-right: 2px"/>',
         columnMovePin: '<i class="far fa-hand-rock"/>',
         columnMoveAdd: '<i class="fa fa-plus-square"/>',
         columnMoveHide: '<i class="fa fa-times"/>',

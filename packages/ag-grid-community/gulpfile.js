@@ -144,7 +144,7 @@ function webpackTask(minify, styles) {
                         use: ['style-loader', {
                             loader:'css-loader',
                             options: {
-                                minimze: !!minify
+                                minimize: !!minify
                             }
                         }]
                     }
@@ -156,23 +156,8 @@ function webpackTask(minify, styles) {
 }
 
 function scssTask() {
-    const svgMinOptions = {
-        plugins: [
-            {cleanupAttrs: true},
-            {removeDoctype: true},
-            {removeComments: true},
-            {removeMetadata: true},
-            {removeTitle: true},
-            {removeDesc: true},
-            {removeEditorsNSData: true},
-            {removeUselessStrokeAndFill: true},
-            {cleanupIDs: true},
-            {collapseGroups: true},
-            {convertShapeToPath: true}
-        ]
-    };
+    var f = filter(["**/*.css", '!*Font*.css'], { restore: true });
 
-    // Uncompressed
     return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
         .pipe(named())
         .pipe(webpackStream({
@@ -215,14 +200,19 @@ function scssTask() {
                             {
                                 loader: 'image-webpack-loader',
                                 options: {
-                                    svgo: svgMinOptions
-                                }
-                            },
-                            {
-                                loader: 'svg-colorize-loader',
-                                options: {
-                                    color1: "#000000",
-                                    color2: "#FFFFFF"
+                                    svgo: {
+                                        cleanupAttrs: true,
+                                        removeDoctype: true,
+                                        removeComments: true,
+                                        removeMetadata: true,
+                                        removeTitle: true,
+                                        removeDesc: true,
+                                        removeEditorsNSData: true,
+                                        removeUselessStrokeAndFill: true,
+                                        cleanupIDs: true,
+                                        collapseGroups: true,
+                                        convertShapeToPath: true
+                                    }
                                 }
                             }
                         ]
@@ -233,7 +223,10 @@ function scssTask() {
                 new MiniCssExtractPlugin('[name].css')
             ]
         }))
-        .pipe(filter("**/*.css"))
-        .pipe(gulp.dest('dist/styles/'));
+        .pipe(f)
+        .pipe(gulp.dest('dist/styles/'))
+        .pipe(f.restore)
+        .pipe(filter('*Font*.css'))
+        .pipe(gulp.dest('dist/styles/webfont/'));
 }
 

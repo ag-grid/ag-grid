@@ -1,5 +1,5 @@
-import {Shape} from "./shape";
-import {chainObjects} from "../../util/object";
+import { Shape } from "./shape";
+import { chainObjects } from "../../util/object";
 
 /**
  * Circular arc node that uses the experimental `Path2D` class to define
@@ -97,7 +97,7 @@ export class Arc extends Shape {
     render(ctx: CanvasRenderingContext2D): void {
         // Path2D approach:
         this.updatePath();
-        this.applyContextAttributes(ctx);
+        // this.applyContextAttributes(ctx);
         ctx.fill(this.path);
         ctx.stroke(this.path);
 

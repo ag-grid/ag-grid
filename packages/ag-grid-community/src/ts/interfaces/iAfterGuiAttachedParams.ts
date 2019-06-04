@@ -1,3 +1,3 @@
 export interface IAfterGuiAttachedParams {
-    hidePopup: () => void;
+    hidePopup?: () => void;
 }

@@ -1,16 +1,13 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
-import { ExpressionService } from "../valueService/expressionService";
-import { TemplateService } from "../templateService";
-import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { RowComp } from "./rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { FirstDataRenderedEvent, Events, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
+import { Events, FirstDataRenderedEvent, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
 import { Constants } from "../constants";
 import { CellComp } from "./cellComp";
-import { Autowired, Bean, Context, Optional, PreDestroy, Qualifier } from "../context/context";
+import { Autowired, Bean, Optional, Qualifier } from "../context/context";
 import { GridCore } from "../gridCore";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnController } from "../columnController/columnController";
@@ -18,7 +15,7 @@ import { Logger, LoggerFactory } from "../logger";
 import { FocusedCellController } from "../focusedCellController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { CellNavigationService } from "../cellNavigationService";
-import { GridCell, GridCellDef } from "../entities/gridCell";
+import { CellPosition } from "../entities/cellPosition";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { BeanStub } from "../context/beanStub";
@@ -30,7 +27,9 @@ import { AnimationFrameService } from "../misc/animationFrameService";
 import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
+import { IRowModel } from "../interfaces/iRowModel";
 import { _ } from "../utils";
+import { RowPosition } from "../entities/rowPosition";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -39,11 +38,9 @@ export class RowRenderer extends BeanStub {
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("$scope") private $scope: any;
-    @Autowired("expressionService") private expressionService: ExpressionService;
-    @Autowired("templateService") private templateService: TemplateService;
-    @Autowired("valueService") private valueService: ValueService;
     @Autowired("eventService") private eventService: EventService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
+    @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("loggerFactory") private loggerFactory: LoggerFactory;
     @Autowired("focusedCellController") private focusedCellController: FocusedCellController;
     @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
@@ -55,6 +52,8 @@ export class RowRenderer extends BeanStub {
     @Optional("rangeController") private rangeController: IRangeController;
 
     private gridPanel: GridPanel;
+
+    private destroyFuncsForColumnListeners: (() => void)[] = [];
 
     private firstRenderedRow: number;
     private lastRenderedRow: number;
@@ -87,6 +86,10 @@ export class RowRenderer extends BeanStub {
         this.gridCore = gridCore;
     }
 
+    public getGridCore(): GridCore {
+        return this.gridCore;
+    }
+
     public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create("RowRenderer");
     }
@@ -102,10 +105,122 @@ export class RowRenderer extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
 
+        this.registerCellEventListeners();
+
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         this.embedFullWidthRows = this.printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         this.redrawAfterModelUpdate();
+    }
+
+    // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
+    // registering and de-registering for events is a performance bottleneck. so we register here once and inform
+    // all active cells.
+    private registerCellEventListeners(): void {
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_FOCUSED, event => {
+            this.forEachCellComp(cellComp => cellComp.onCellFocused(event));
+        });
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
+            this.forEachCellComp(cellComp => cellComp.onFlashCells(event));
+        });
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
+            this.forEachCellComp(cellComp => cellComp.onColumnHover());
+        });
+
+        // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
+        // then changing the width of the containers will impact left position. eg the center cols all have their
+        // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
+        // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
+        // in different containers so doesn't impact.
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
+            if (this.printLayout) {
+                this.forEachCellComp(cellComp => cellComp.onLeftChanged());
+            }
+        });
+
+        const rangeSelectionEnabled = this.gridOptionsWrapper.isEnableRangeSelection();
+        if (rangeSelectionEnabled) {
+
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
+                this.forEachCellComp(cellComp => cellComp.onRangeSelectionChanged());
+            });
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
+                this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
+            });
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
+                this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
+            });
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
+                this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
+            });
+
+        }
+
+        // add listeners to the grid columns
+        this.refreshListenersToColumnsForCellComps();
+        // if the grid columns change, then refresh the listeners again
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
+
+        this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
+    }
+
+    // executes all functions in destroyFuncsForColumnListeners and then clears the list
+    private removeGridColumnListeners(): void {
+        this.destroyFuncsForColumnListeners.forEach(func => func());
+        this.destroyFuncsForColumnListeners.length = 0;
+    }
+
+    // this function adds listeners onto all the grid columns, which are the column that we could have cellComps for.
+    // when the grid columns change, we add listeners again. in an ideal design, each CellComp would just register to
+    // the column it belongs to on creation, however this was a bottleneck with the number of cells, so do it here
+    // once instead.
+    private refreshListenersToColumnsForCellComps(): void {
+
+        this.removeGridColumnListeners();
+
+        const cols = this.columnController.getAllGridColumns();
+
+        if (!cols) { return; }
+
+        cols.forEach(col => {
+
+            const forEachCellWithThisCol = (callback: (cellComp: CellComp) => void) => {
+                this.forEachCellComp(cellComp => {
+                    if (cellComp.getColumn() === col) {
+                        callback(cellComp);
+                    }
+                });
+            };
+
+            const leftChangedListener = () => {
+                forEachCellWithThisCol(cellComp => cellComp.onLeftChanged());
+            };
+            const widthChangedListener = () => {
+                forEachCellWithThisCol(cellComp => cellComp.onWidthChanged());
+            };
+            const firstRightPinnedChangedListener = () => {
+                forEachCellWithThisCol(cellComp => cellComp.onFirstRightPinnedChanged());
+            };
+            const lastLeftPinnedChangedListener = () => {
+                forEachCellWithThisCol(cellComp => cellComp.onLastLeftPinnedChanged());
+            };
+
+            col.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
+            col.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+            col.addEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
+            col.addEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, lastLeftPinnedChangedListener);
+
+            this.destroyFuncsForColumnListeners.push(() => {
+                col.removeEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
+                col.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
+                col.removeEventListener(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, firstRightPinnedChangedListener);
+                col.removeEventListener(Column.EVENT_LAST_LEFT_PINNED_CHANGED, lastLeftPinnedChangedListener);
+            });
+        });
+
     }
 
     private onDomLayoutChanged(): void {
@@ -279,7 +394,7 @@ export class RowRenderer extends BeanStub {
         });
     }
 
-    private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): GridCell {
+    private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): CellPosition {
         const focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
 
         if (_.missing(focusedCell)) {
@@ -306,7 +421,7 @@ export class RowRenderer extends BeanStub {
     public redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
 
-        const focusedCell: GridCell = this.getCellToRestoreFocusToAfterRefresh(params);
+        const focusedCell: CellPosition = this.getCellToRestoreFocusToAfterRefresh(params);
 
         this.sizeContainerToPageHeight();
 
@@ -390,9 +505,9 @@ export class RowRenderer extends BeanStub {
     // worry about the focus been lost. this is important when the user is using keyboard navigation to do edits
     // and the cellEditor is calling 'refresh' to get other cells to update (as other cells might depend on the
     // edited cell).
-    private restoreFocusedCell(gridCell: GridCell): void {
-        if (gridCell) {
-            this.focusedCellController.setFocusedCell(gridCell.rowIndex, gridCell.column, gridCell.floating, true);
+    private restoreFocusedCell(cellPosition: CellPosition): void {
+        if (cellPosition) {
+            this.focusedCellController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
         }
     }
 
@@ -459,12 +574,12 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    public getEditingCells(): GridCellDef[] {
-        const res: GridCellDef[] = [];
+    public getEditingCells(): CellPosition[] {
+        const res: CellPosition[] = [];
         this.forEachCellComp(cellComp => {
             if (cellComp.isEditing()) {
-                const gridCellDef: GridCellDef = cellComp.getGridCell().getGridCellDef();
-                res.push(gridCellDef);
+                const cellPosition = cellComp.getCellPosition();
+                res.push(cellPosition);
             }
         });
         return res;
@@ -724,8 +839,11 @@ export class RowRenderer extends BeanStub {
         const rowsToRemove: string[] = [];
         _.iterateObject(this.rowCompsByIndex, (id: string, rowComp: RowComp) => {
             if (rowComp.isFullWidth()) {
-                const rowIndex = rowComp.getRowNode().rowIndex;
-                rowsToRemove.push(rowIndex.toString());
+                const fullWidthRowsRefreshed = rowComp.refreshFullWidth();
+                if (!fullWidthRowsRefreshed) {
+                    const rowIndex = rowComp.getRowNode().rowIndex;
+                    rowsToRemove.push(rowIndex.toString());
+                }
             }
         });
         this.removeRowComps(rowsToRemove);
@@ -851,9 +969,11 @@ export class RowRenderer extends BeanStub {
         // of, we also have a property to not do this operation.
         const rowLayoutNormal = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
         const suppressRowCountRestriction = this.gridOptionsWrapper.isSuppressMaxRenderedRowRestriction();
+        const rowBufferMaxSize = Math.max(this.gridOptionsWrapper.getRowBuffer(), 500);
+
         if (rowLayoutNormal && !suppressRowCountRestriction) {
-            if (newLast - newFirst > 500) {
-                newLast = newFirst + 500;
+            if (newLast - newFirst > rowBufferMaxSize) {
+                newLast = newFirst + rowBufferMaxSize;
             }
         }
 
@@ -978,40 +1098,39 @@ export class RowRenderer extends BeanStub {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: GridCell, allowUserOverride: boolean) {
-        let nextCell: GridCell;
-
+    public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean) {
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
-        while (true) {
-
-            const cellComp = this.getComponentForCell(currentCell);
-            const colSpanningList = cellComp.getColSpanningList();
-
+        let nextCell = currentCell;
+        let finished = false;
+        while (!finished) {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (key === Constants.KEY_RIGHT && colSpanningList.length > 1) {
-                currentCell = new GridCell({
-                    rowIndex: currentCell.rowIndex,
-                    column: colSpanningList[colSpanningList.length - 1],
-                    floating: currentCell.floating
-                });
+            if (key === Constants.KEY_RIGHT) {
+                nextCell = this.getLastCellOfColSpan(nextCell);
             }
 
-            nextCell = this.cellNavigationService.getNextCellToFocus(key, currentCell);
+            nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
 
-            if (_.missing(nextCell)) { break; }
-
-            const skipGroupRows = this.gridOptionsWrapper.isGroupUseEntireRow();
-            if (!skipGroupRows) { break; }
-
-            const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
-            if (!rowNode.group) { break; }
-        }
-
-        if (nextCell) {
-            const cellComp = this.getComponentForCell(nextCell);
-            nextCell = cellComp.getGridCell();
+            if (_.missing(nextCell)) {
+                // pointer points to nothing, we have hit a border of the grid
+                finished = true;
+            } else {
+                const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+                if (rowNode.group) {
+                    // full width rows cannot be focused, so if it's a group and using full width rows,
+                    // we need to skip over the row
+                    const pivotMode = this.columnController.isPivotMode();
+                    const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+                    if (usingFullWidthRows) {
+                        finished = !rowNode.group;
+                    } else {
+                        finished = true;
+                    }
+                } else {
+                    finished = true;
+                }
+            }
         }
 
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
@@ -1019,15 +1138,23 @@ export class RowRenderer extends BeanStub {
         if (allowUserOverride) {
             const userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
             if (_.exists(userFunc)) {
-                const params = {
+                const params: NavigateToNextCellParams = {
                     key: key,
-                    previousCellDef: currentCell.getGridCellDef(),
-                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
+                    previousCellPosition: currentCell,
+                    nextCellPosition: nextCell ? nextCell : null,
                     event: event
-                } as NavigateToNextCellParams;
-                const nextCellDef = userFunc(params);
-                if (_.exists(nextCellDef)) {
-                    nextCell = new GridCell(nextCellDef);
+                };
+                const userCell = userFunc(params);
+                if (_.exists(userCell)) {
+                    if ((userCell as any).floating) {
+                        _.doOnce(() => {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        userCell.rowPinned = (userCell as any).floating;
+                    }
+                    nextCell = {
+                        rowPinned: userCell.rowPinned,
+                        rowIndex: userCell.rowIndex,
+                        column: userCell.column
+                    } as CellPosition;
                 } else {
                     nextCell = null;
                 }
@@ -1039,19 +1166,39 @@ export class RowRenderer extends BeanStub {
             return;
         }
 
+        // in case we have col spanning we get the cellComp and use it to
+        // get the position. This was we always focus the first cell inside
+        // the spanning.
+        const cellComp = this.getComponentForCell(nextCell);
+        nextCell = cellComp.getCellPosition();
+
         this.ensureCellVisible(nextCell);
 
-        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
+        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
 
         if (this.rangeController) {
-            const gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
-            this.rangeController.setRangeToCell(gridCell);
+            this.rangeController.setRangeToCell(nextCell);
         }
     }
 
-    public ensureCellVisible(gridCell: GridCell): void {
+    private getLastCellOfColSpan(cell: CellPosition): CellPosition {
+        const cellComp = this.getComponentForCell(cell);
+        const colSpanningList = cellComp.getColSpanningList();
+
+        if (colSpanningList.length === 1) {
+            return cell;
+        }
+
+        return {
+            rowIndex: cell.rowIndex,
+            column: _.last(colSpanningList),
+            rowPinned: cell.rowPinned
+        };
+    }
+
+    public ensureCellVisible(gridCell: CellPosition): void {
         // this scrolls the row into view
-        if (_.missing(gridCell.floating)) {
+        if (_.missing(gridCell.rowPinned)) {
             this.gridPanel.ensureIndexVisible(gridCell.rowIndex);
         }
 
@@ -1067,24 +1214,24 @@ export class RowRenderer extends BeanStub {
         this.animationFrameService.flushAllFrames();
     }
 
-    public startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void {
+    public startEditingCell(gridCell: CellPosition, keyPress: number, charPress: string): void {
         const cell = this.getComponentForCell(gridCell);
         if (cell) {
             cell.startRowOrCellEdit(keyPress, charPress);
         }
     }
 
-    private getComponentForCell(gridCell: GridCell): CellComp {
+    public getComponentForCell(cellPosition: CellPosition): CellComp {
         let rowComponent: RowComp;
-        switch (gridCell.floating) {
+        switch (cellPosition.rowPinned) {
             case Constants.PINNED_TOP:
-                rowComponent = this.floatingTopRowComps[gridCell.rowIndex];
+                rowComponent = this.floatingTopRowComps[cellPosition.rowIndex];
                 break;
             case Constants.PINNED_BOTTOM:
-                rowComponent = this.floatingBottomRowComps[gridCell.rowIndex];
+                rowComponent = this.floatingBottomRowComps[cellPosition.rowIndex];
                 break;
             default:
-                rowComponent = this.rowCompsByIndex[gridCell.rowIndex];
+                rowComponent = this.rowCompsByIndex[cellPosition.rowIndex];
                 break;
         }
 
@@ -1092,8 +1239,19 @@ export class RowRenderer extends BeanStub {
             return null;
         }
 
-        const cellComponent: CellComp = rowComponent.getRenderedCellForColumn(gridCell.column);
+        const cellComponent: CellComp = rowComponent.getRenderedCellForColumn(cellPosition.column);
         return cellComponent;
+    }
+
+    public getRowNode(gridRow: RowPosition): RowNode | null {
+        switch (gridRow.rowPinned) {
+            case Constants.PINNED_TOP:
+                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+            case Constants.PINNED_BOTTOM:
+                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
+            default:
+                return this.rowModel.getRow(gridRow.rowIndex);
+        }
     }
 
     public onTabKeyDown(previousRenderedCell: CellComp, keyboardEvent: KeyboardEvent): void {
@@ -1136,7 +1294,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveToNextEditingCell(previousRenderedCell: CellComp, backwards: boolean): boolean {
-        const gridCell = previousRenderedCell.getGridCell();
+        const gridCell = previousRenderedCell.getCellPosition();
 
         // need to do this before getting next cell to edit, in case the next cell
         // has editable function (eg colDef.editable=func() ) and it depends on the
@@ -1160,7 +1318,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveToNextEditingRow(previousRenderedCell: CellComp, backwards: boolean): boolean {
-        const gridCell = previousRenderedCell.getGridCell();
+        const gridCell = previousRenderedCell.getCellPosition();
 
         // find the next cell to start editing
         const nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, true);
@@ -1177,7 +1335,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveToNextCellNotEditing(previousRenderedCell: CellComp, backwards: boolean): boolean {
-        const gridCell = previousRenderedCell.getGridCell();
+        const gridCell = previousRenderedCell.getCellPosition();
 
         // find the next cell to start editing
         const nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, false);
@@ -1194,10 +1352,10 @@ export class RowRenderer extends BeanStub {
     }
 
     private moveEditToNextCellOrRow(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
-        const pGridCell = previousRenderedCell.getGridCell();
-        const nGridCell = nextRenderedCell.getGridCell();
+        const pGridCell = previousRenderedCell.getCellPosition();
+        const nGridCell = nextRenderedCell.getCellPosition();
 
-        const rowsMatch = pGridCell.rowIndex === nGridCell.rowIndex && pGridCell.floating === nGridCell.floating;
+        const rowsMatch = pGridCell.rowIndex === nGridCell.rowIndex && pGridCell.rowPinned === nGridCell.rowPinned;
 
         if (rowsMatch) {
             // same row, so we don't start / stop editing, we just move the focus along
@@ -1219,10 +1377,13 @@ export class RowRenderer extends BeanStub {
 
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null
-    private findNextCellToFocusOn(gridCell: GridCell, backwards: boolean, startEditing: boolean): CellComp {
-        let nextCell: GridCell = gridCell;
+    private findNextCellToFocusOn(gridCell: CellPosition, backwards: boolean, startEditing: boolean): CellComp {
+        let nextCell: CellPosition = gridCell;
 
         while (true) {
+            if (!backwards) {
+                nextCell = this.getLastCellOfColSpan(nextCell);
+            }
             nextCell = this.cellNavigationService.getNextTabbedCell(nextCell, backwards);
 
             // allow user to override what cell to go to next
@@ -1231,12 +1392,20 @@ export class RowRenderer extends BeanStub {
                 const params = {
                     backwards: backwards,
                     editing: startEditing,
-                    previousCellDef: gridCell.getGridCellDef(),
-                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null
+                    previousCellPosition: gridCell,
+                    nextCellPosition: nextCell ? nextCell : null
                 } as TabToNextCellParams;
-                const nextCellDef = userFunc(params);
-                if (_.exists(nextCellDef)) {
-                    nextCell = new GridCell(nextCellDef);
+                const userCell = userFunc(params);
+                if (_.exists(userCell)) {
+                    if ((userCell as any).floating) {
+                        _.doOnce(() => {console.warn(`ag-Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
+                        userCell.rowPinned = (userCell as any).floating;
+                    }
+                    nextCell = {
+                        rowIndex: userCell.rowIndex,
+                        column: userCell.column,
+                        rowPinned: userCell.rowPinned
+                    } as CellPosition;
                 } else {
                     nextCell = null;
                 }
@@ -1259,7 +1428,7 @@ export class RowRenderer extends BeanStub {
             }
 
             // this scrolls the row into view
-            const cellIsNotFloating = _.missing(nextCell.floating);
+            const cellIsNotFloating = _.missing(nextCell.rowPinned);
             if (cellIsNotFloating) {
                 this.gridPanel.ensureIndexVisible(nextCell.rowIndex);
             }
@@ -1294,8 +1463,7 @@ export class RowRenderer extends BeanStub {
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             if (this.rangeController) {
-                gridCell = new GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
-                this.rangeController.setRangeToCell(gridCell);
+                this.rangeController.setRangeToCell(nextCell);
             }
 
             // we successfully tabbed onto a grid cell, so return true
@@ -1303,12 +1471,12 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private lookupRowNodeForCell(cell: GridCell) {
-        if (cell.floating === Constants.PINNED_TOP) {
+    private lookupRowNodeForCell(cell: CellPosition) {
+        if (cell.rowPinned === Constants.PINNED_TOP) {
             return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
         }
 
-        if (cell.floating === Constants.PINNED_BOTTOM) {
+        if (cell.rowPinned === Constants.PINNED_BOTTOM) {
             return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
         }
 

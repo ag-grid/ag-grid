@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -29,16 +29,17 @@ var nameValueComp_1 = require("./statusBar/providedPanels/nameValueComp");
 var primaryColsHeaderPanel_1 = require("./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel");
 var primaryColsListPanel_1 = require("./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel");
 var gridHeaderDropZones_1 = require("./sideBar/providedPanels/columns/gridHeaderDropZones");
-var chartingService_1 = require("./charts/chartingService");
 var watermark_1 = require("./license/watermark");
+var fillHandle_1 = require("./widgets/selection/fillHandle");
+var rangeHandle_1 = require("./widgets/selection/rangeHandle");
 var aggregationStage_2 = require("./rowStages/aggregationStage");
 exports.AggregationStage = aggregationStage_2.AggregationStage;
 var groupStage_2 = require("./rowStages/groupStage");
 exports.GroupStage = groupStage_2.GroupStage;
 var setFilter_1 = require("./setFilter/setFilter");
 exports.SetFilter = setFilter_1.SetFilter;
-var setFilterModel_1 = require("./setFilter/setFilterModel");
-exports.SetFilterModel = setFilterModel_1.SetFilterModel;
+var setValueModel_1 = require("./setFilter/setValueModel");
+exports.SetValueModel = setValueModel_1.SetValueModel;
 var statusBar_2 = require("./statusBar/statusBar");
 exports.StatusBar = statusBar_2.StatusBar;
 var statusBarService_2 = require("./statusBar/statusBarService");
@@ -97,15 +98,17 @@ var excelXmlFactory_2 = require("./exporter/excelXmlFactory");
 exports.ExcelXmlFactory = excelXmlFactory_2.ExcelXmlFactory;
 var excelXlsxFactory_2 = require("./exporter/excelXlsxFactory");
 exports.ExcelXlsxFactory = excelXlsxFactory_2.ExcelXlsxFactory;
-var chartingService_2 = require("./charts/chartingService");
-exports.ChartingService = chartingService_2.ChartingService;
 var watermark_2 = require("./license/watermark");
 exports.WatermarkComp = watermark_2.WatermarkComp;
+var fillHandle_2 = require("./widgets/selection/fillHandle");
+exports.FillHandle = fillHandle_2.FillHandle;
+var rangeHandle_2 = require("./widgets/selection/rangeHandle");
+exports.RangeHandle = rangeHandle_2.RangeHandle;
 var rowModelTypes = { viewport: viewportRowModel_1.ViewportRowModel, serverSide: serverSideRowModel_1.ServerSideRowModel };
 ag_grid_community_1.Grid.setEnterpriseBeans([enterpriseMenu_1.EnterpriseMenuFactory, excelCreator_1.ExcelCreator, excelXmlFactory_1.ExcelXmlFactory, excelXlsxFactory_1.ExcelXlsxFactory,
     rangeController_1.RangeController, clipboardService_1.ClipboardService, pivotStage_1.PivotStage, pivotColDefService_1.PivotColDefService,
     contextMenu_1.ContextMenuFactory, groupStage_1.GroupStage, aggregationStage_1.AggregationStage, enterpriseBoot_1.EnterpriseBoot, aggFuncService_1.AggFuncService, licenseManager_1.LicenseManager, md5_1.MD5,
-    menuItemMapper_1.MenuItemMapper, statusBarService_1.StatusBarService, chartingService_1.ChartingService], rowModelTypes);
+    menuItemMapper_1.MenuItemMapper, statusBarService_1.StatusBarService], rowModelTypes);
 ag_grid_community_1.Grid.setEnterpriseComponents([
     { componentName: 'AgPrimaryColsHeader', theClass: primaryColsHeaderPanel_1.PrimaryColsHeaderPanel },
     { componentName: 'AgPrimaryColsList', theClass: primaryColsListPanel_1.PrimaryColsListPanel },
@@ -115,5 +118,7 @@ ag_grid_community_1.Grid.setEnterpriseComponents([
     { componentName: 'AgNameValue', theClass: nameValueComp_1.NameValueComp },
     { componentName: 'AgGridHeaderDropZones', theClass: gridHeaderDropZones_1.GridHeaderDropZones },
     { componentName: 'AgSideBarButtons', theClass: sideBarButtonsComp_1.SideBarButtonsComp },
-    { componentName: 'AgWatermark', theClass: watermark_1.WatermarkComp }
+    { componentName: 'AgWatermark', theClass: watermark_1.WatermarkComp },
+    { componentName: 'AgFillHandle', theClass: fillHandle_1.FillHandle },
+    { componentName: 'AgRangeHandle', theClass: rangeHandle_1.RangeHandle }
 ]);

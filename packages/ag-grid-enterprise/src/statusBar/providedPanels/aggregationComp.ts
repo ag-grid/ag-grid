@@ -2,23 +2,19 @@ import {
     Autowired,
     CellNavigationService,
     Component,
-    Constants,
-    Context,
     Events,
     EventService,
     GridApi,
     GridOptions,
     GridOptionsWrapper,
-    GridRow,
-    IRowModel,
+    RowPosition,
     IStatusPanelComp,
-    PinnedRowModel,
     PostConstruct,
-    PreConstruct,
     RefSelector,
-    RowNode,
     ValueService,
-    _
+    _, CellPositionUtils,
+    RowPositionUtils,
+    RowRenderer
 } from 'ag-grid-community';
 import { RangeController } from "../../rangeController";
 import { NameValueComp } from "./nameValueComp";
@@ -38,8 +34,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('rangeController') private rangeController: RangeController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -61,11 +56,11 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             return;
         }
 
-        this.avgAggregationComp.setLabel('average','Average');
-        this.countAggregationComp.setLabel('count','Count');
-        this.minAggregationComp.setLabel('min','Min');
-        this.maxAggregationComp.setLabel('max','Max');
-        this.sumAggregationComp.setLabel('sum','Sum');
+        this.avgAggregationComp.setLabel('average', 'Average');
+        this.countAggregationComp.setLabel('count', 'Count');
+        this.minAggregationComp.setLabel('min', 'Min');
+        this.maxAggregationComp.setLabel('max', 'Max');
+        this.sumAggregationComp.setLabel('sum', 'Sum');
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
@@ -130,40 +125,38 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
             cellRanges.forEach((cellRange) => {
 
-                // get starting and ending row, remember rowEnd could be before rowStart
-                const startRow = cellRange.start.getGridRow();
-                const endRow = cellRange.end.getGridRow();
-
-                const startRowIsFirst = startRow.before(endRow);
-
-                let currentRow: GridRow | null = startRowIsFirst ? startRow : endRow;
-                const lastRow = startRowIsFirst ? endRow : startRow;
+                let currentRow: RowPosition | null = this.rangeController.getRangeStartRow(cellRange);
+                const lastRow = this.rangeController.getRangeEndRow(cellRange);
 
                 while (true) {
 
-                    const finishedAllRows = _.missing(currentRow) || !currentRow || lastRow.before(currentRow);
+                    const finishedAllRows = _.missing(currentRow) || !currentRow || RowPositionUtils.before(lastRow, currentRow);
                     if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
 
-                    cellRange.columns.forEach((column) => {
+                    cellRange.columns.forEach(col => {
                         if (currentRow === null) {
                             return;
                         }
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
-                        const cellId = currentRow.getGridCell(column).createId();
+                        const cellId = CellPositionUtils.createId({
+                            rowPinned: currentRow.rowPinned,
+                            column: col,
+                            rowIndex: currentRow.rowIndex
+                        });
                         if (cellsSoFar[cellId]) {
                             return;
                         }
                         cellsSoFar[cellId] = true;
 
-                        const rowNode = this.getRowNode(currentRow);
+                        const rowNode = this.rowRenderer.getRowNode(currentRow);
                         if (_.missing(rowNode)) {
                             return;
                         }
 
-                        let value = this.valueService.getValue(column, rowNode);
+                        let value = this.valueService.getValue(col, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_.missing(value) || value === '') {
@@ -212,16 +205,5 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.setAggregationComponentValue('min', min, gotNumberResult);
         this.setAggregationComponentValue('max', max, gotNumberResult);
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
-    }
-
-    private getRowNode(gridRow: GridRow): RowNode | null {
-        switch (gridRow.floating) {
-            case Constants.PINNED_TOP:
-                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
-            case Constants.PINNED_BOTTOM:
-                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
-            default:
-                return this.rowModel.getRow(gridRow.rowIndex);
-        }
     }
 }

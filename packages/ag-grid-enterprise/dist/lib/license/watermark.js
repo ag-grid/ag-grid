@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,13 +28,14 @@ var licenseManager_1 = require("../licenseManager");
 var WatermarkComp = /** @class */ (function (_super) {
     __extends(WatermarkComp, _super);
     function WatermarkComp() {
-        return _super.call(this, "<div class=\"ag-watermark\"></div>") || this;
+        return _super.call(this, "<div class=\"ag-watermark\">\n                    <div ref=\"eLicenseTextRef\" class=\"ag-watermark-text\"></div>\n               </div>") || this;
     }
     WatermarkComp.prototype.postContruct = function () {
         var _this = this;
         var show = this.shouldDisplayWatermark();
         ag_grid_community_1._.addOrRemoveCssClass(this.getGui(), 'ag-hidden', !show);
         if (show) {
+            this.eLicenseTextRef.innerText = this.licenseManager.getWatermarkMessage();
             window.setTimeout(function () {
                 _this.addCssClass('ag-opacity-zero');
             }, 0);
@@ -53,6 +54,10 @@ var WatermarkComp = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('licenseManager'),
         __metadata("design:type", licenseManager_1.LicenseManager)
     ], WatermarkComp.prototype, "licenseManager", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('eLicenseTextRef'),
+        __metadata("design:type", HTMLElement)
+    ], WatermarkComp.prototype, "eLicenseTextRef", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

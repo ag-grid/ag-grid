@@ -1,13 +1,19 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("../../scene/group");
 var Series = /** @class */ (function () {
     function Series() {
         this.id = this.createId();
-        this._chart = null;
+        /**
+         * The group node that contains all the nodes used to render this series.
+         */
         this.group = new group_1.Group();
+        this._data = [];
+        this._chart = null;
         this._visible = true;
+        this.tooltipEnabled = false;
+        this._showInLegend = true;
     }
     // Uniquely identify series.
     Series.prototype.createId = function () {
@@ -15,6 +21,17 @@ var Series = /** @class */ (function () {
         return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
     ;
+    Object.defineProperty(Series.prototype, "data", {
+        get: function () {
+            return this._data;
+        },
+        set: function (data) {
+            this._data = data;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Series.prototype, "visible", {
         get: function () {
             return this._visible;
@@ -22,12 +39,38 @@ var Series = /** @class */ (function () {
         set: function (value) {
             if (this._visible !== value) {
                 this._visible = value;
-                this.update();
+                this.scheduleData();
             }
         },
         enumerable: true,
         configurable: true
     });
+    Series.prototype.toggleSeriesItem = function (itemId, enabled) {
+        this.visible = enabled;
+    };
+    Object.defineProperty(Series.prototype, "showInLegend", {
+        get: function () {
+            return this._showInLegend;
+        },
+        set: function (value) {
+            if (this._showInLegend !== value) {
+                this._showInLegend = value;
+                this.scheduleLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Series.prototype.scheduleLayout = function () {
+        if (this.chart) {
+            this.chart.layoutPending = true;
+        }
+    };
+    Series.prototype.scheduleData = function () {
+        if (this.chart) {
+            this.chart.dataPending = true;
+        }
+    };
     return Series;
 }());
 exports.Series = Series;

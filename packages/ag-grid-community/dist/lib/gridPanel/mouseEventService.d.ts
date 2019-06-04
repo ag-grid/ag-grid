@@ -1,7 +1,7 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { GridCell } from "../entities/gridCell";
+import { CellPosition } from "../entities/cellPosition";
 import { CellComp } from "../rendering/cellComp";
 export declare class MouseEventService {
     private gridOptionsWrapper;
@@ -13,5 +13,5 @@ export declare class MouseEventService {
     private stampDomElementWithGridInstance;
     getRenderedCellForEvent(event: Event): CellComp;
     isEventFromThisGrid(event: MouseEvent | KeyboardEvent): boolean;
-    getGridCellForEvent(event: MouseEvent | KeyboardEvent): GridCell;
+    getCellPositionForEvent(event: MouseEvent | KeyboardEvent): CellPosition;
 }

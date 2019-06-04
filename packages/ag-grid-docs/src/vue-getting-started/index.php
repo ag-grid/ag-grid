@@ -17,9 +17,9 @@ We will show you some of the fundamentals of the grid (passing properties, using
 
 <h2>Add ag-Grid to Your Project</h2>
 
-<p>For the purposes of this tutorial, we are going to scaffold an Vue app with <a href="https://cli.angular.io/">angular CLI</a>. 
+<p>For the purposes of this tutorial, we are going to scaffold an Vue app with <a href="https://cli.vuejs.org/">Vue CLI</a>.
 Don't worry if your project has a different configuration. Ag-Grid and its Vue wrapper are distributed as NPM packages, which should work with any common Vue project module bundler setup. 
-Let's follow the <a href="https://github.com/angular/angular-cli#installation">Vue CLI instructions</a> - run the following in your terminal:</p>
+Let's follow the <a href="https://cli.vuejs.org/">Vue CLI instructions</a> - run the following in your terminal:</p>
 
 <snippet language="sh">
 npm install -g @vue/cli
@@ -326,9 +326,13 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <p>Well, we cheated a bit. Calling <code>alert</code> is not exactly a call to our backend.
 Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p> 
 
-<h2>Grouping (enterprise)</h2>
+<h2>Grouping</h2>
 
-<div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
+<div class="note">
+    Grouping is a feature exclusive to ag-Grid Enterprise. You are free to trial ag-Grid Enterprise to see what you
+    think. You only need to get in touch if you want to start using ag-Grid Enterprise in a project intended
+    for production.
+</div>
 
 <p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 
@@ -365,7 +369,12 @@ import Vue from 'vue'
 import App from './App'
 </snippet>
 
-<p>If everything is ok, you should see a message in the console that warns you about missing enterprise license. In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup - feel free to look around:</p>
+<p>
+    If everything is ok, you should see a message in the console that tells you there is no enterprise license key.
+    You can ignore the message as we are trialing.
+    In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup -
+    feel free to look around:
+</p>
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
@@ -460,21 +469,9 @@ ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</
 
 <snippet language="scss">
 &lt;style lang="scss"&gt;
-  $ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
-
   @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
   @import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 &lt;/style&gt;
-</snippet>
-
-<p>Notice that we had to aid the Sass preprocessor a bit by setting the <code>$ag-icons-path</code> variable. This is a common gotcha with Sass, as external image paths are considered relative to the main file. 
-In fact, by specifying the icons path, we also made our first theme override! We might change the entire theme icon set by changing the path in the variable to a directory containing our icon set.</p> 
-
-<p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
-
-<snippet language="diff">
-  $ag-icons-path: "../node_modules/ag-grid-community/src/styles/ag-theme-balham/icons/";
-+$odd-row-background-color: #CFD8DC;
 </snippet>
 
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
@@ -498,13 +495,6 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
 <br><br>
-<div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
-</div>
-<br>
-<div>
-  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
-</div>
 
 
 <?php include '../getting-started/footer.php'; ?>

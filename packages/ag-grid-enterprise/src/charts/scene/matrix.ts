@@ -1,3 +1,5 @@
+import { BBox } from "./bbox";
+
 /**
  * As of Jan 8, 2019, Firefox still doesn't implement
  * `getTransform(): DOMMatrix;`
@@ -18,7 +20,7 @@ export class Matrix {
     // `1` means first column
     // `2` means second row
 
-    private readonly elements: number[];
+    readonly elements: number[];
 
     constructor(elements: number[] = [1, 0, 0, 1, 0, 0]) {
         this.elements = elements;
@@ -68,7 +70,6 @@ export class Matrix {
                e[3] === 1 && e[4] === 0 && e[5] === 0;
     }
 
-    private _a = 1;
     set a(value: number) {
         this.elements[0] = value;
     }
@@ -76,7 +77,6 @@ export class Matrix {
         return this.elements[0];
     }
 
-    private _b = 0;
     set b(value: number) {
         this.elements[1] = value;
     }
@@ -84,7 +84,6 @@ export class Matrix {
         return this.elements[1];
     }
 
-    private _c = 0;
     set c(value: number) {
         this.elements[2] = value;
     }
@@ -92,7 +91,6 @@ export class Matrix {
         return this.elements[2];
     }
 
-    private _d = 1;
     set d(value: number) {
         this.elements[3] = value;
     }
@@ -100,7 +98,6 @@ export class Matrix {
         return this.elements[3];
     }
 
-    private _e = 0;
     set e(value: number) {
         this.elements[4] = value;
     }
@@ -108,7 +105,6 @@ export class Matrix {
         return this.elements[4];
     }
 
-    private _f = 0;
     set f(value: number) {
         this.elements[5] = value;
     }
@@ -227,6 +223,43 @@ export class Matrix {
         };
     }
 
+    transformBBox(bbox: BBox, radius: number = 0, target?: BBox): BBox {
+        const elements = this.elements;
+        const xx = elements[0];
+        const xy = elements[1];
+        const yx = elements[2];
+        const yy = elements[3];
+
+        let h_w = bbox.width * 0.5;
+        let h_h = bbox.height * 0.5;
+        const cx = bbox.x + h_w;
+        const cy = bbox.y + h_h;
+        let w, h;
+
+        if (radius) {
+            h_w -= radius;
+            h_h -= radius;
+            const sx = Math.sqrt(xx * xx + yx * yx);
+            const sy = Math.sqrt(xy * xy + yy * yy);
+            w = Math.abs(h_w * xx) + Math.abs(h_h * yx) + Math.abs(sx * radius);
+            h = Math.abs(h_w * xy) + Math.abs(h_h * yy) + Math.abs(sy * radius);
+        } else {
+            w = Math.abs(h_w * xx) + Math.abs(h_h * yx);
+            h = Math.abs(h_w * xy) + Math.abs(h_h * yy);
+        }
+
+        if (!target) {
+            target = new BBox(0, 0, 0, 0);
+        }
+
+        target.x = cx * xx + cy * yx + elements[4] - w;
+        target.y = cx * xy + cy * yy + elements[5] - h;
+        target.width = w + w;
+        target.height = h + h;
+
+        return target;
+    }
+
     toContext(ctx: CanvasRenderingContext2D) {
         // It's fair to say that matrix multiplications are not cheap.
         // However, updating path definitions on every frame isn't either, so
@@ -248,8 +281,9 @@ export class Matrix {
         // If the matrix is mostly identity (95% of the time),
         // the `if (this.isIdentity)` check can make this call 3-4 times
         // faster on average: https://jsperf.com/matrix-check-first-vs-always-set
-        if (this.identity)
+        if (this.identity) {
             return;
+        }
 
         const e = this.elements;
         ctx.transform(e[0], e[1], e[2], e[3], e[4], e[5]);
@@ -257,13 +291,17 @@ export class Matrix {
 
     private static matrix = new Matrix();
     static flyweight(elements?: number[] | Matrix): Matrix {
-        if (elements)
-            if (elements instanceof Matrix)
+        if (elements) {
+            if (elements instanceof Matrix) {
                 Matrix.matrix.setElements(elements.elements);
-            else
+            }
+            else {
                 Matrix.matrix.setElements(elements);
-        else
+            }
+        }
+        else {
             Matrix.matrix.setIdentityElements();
+        }
 
         return Matrix.matrix;
     }

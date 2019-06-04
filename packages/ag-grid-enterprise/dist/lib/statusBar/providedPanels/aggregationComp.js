@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -93,32 +93,32 @@ var AggregationComp = /** @class */ (function (_super) {
         var cellsSoFar = {};
         if (cellRanges && !ag_grid_community_1._.missingOrEmpty(cellRanges)) {
             cellRanges.forEach(function (cellRange) {
-                // get starting and ending row, remember rowEnd could be before rowStart
-                var startRow = cellRange.start.getGridRow();
-                var endRow = cellRange.end.getGridRow();
-                var startRowIsFirst = startRow.before(endRow);
-                var currentRow = startRowIsFirst ? startRow : endRow;
-                var lastRow = startRowIsFirst ? endRow : startRow;
+                var currentRow = _this.rangeController.getRangeStartRow(cellRange);
+                var lastRow = _this.rangeController.getRangeEndRow(cellRange);
                 while (true) {
-                    var finishedAllRows = ag_grid_community_1._.missing(currentRow) || !currentRow || lastRow.before(currentRow);
+                    var finishedAllRows = ag_grid_community_1._.missing(currentRow) || !currentRow || ag_grid_community_1.RowPositionUtils.before(lastRow, currentRow);
                     if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
-                    cellRange.columns.forEach(function (column) {
+                    cellRange.columns.forEach(function (col) {
                         if (currentRow === null) {
                             return;
                         }
                         // we only want to include each cell once, in case a cell is in multiple ranges
-                        var cellId = currentRow.getGridCell(column).createId();
+                        var cellId = ag_grid_community_1.CellPositionUtils.createId({
+                            rowPinned: currentRow.rowPinned,
+                            column: col,
+                            rowIndex: currentRow.rowIndex
+                        });
                         if (cellsSoFar[cellId]) {
                             return;
                         }
                         cellsSoFar[cellId] = true;
-                        var rowNode = _this.getRowNode(currentRow);
+                        var rowNode = _this.rowRenderer.getRowNode(currentRow);
                         if (ag_grid_community_1._.missing(rowNode)) {
                             return;
                         }
-                        var value = _this.valueService.getValue(column, rowNode);
+                        var value = _this.valueService.getValue(col, rowNode);
                         // if empty cell, skip it, doesn't impact count or anything
                         if (ag_grid_community_1._.missing(value) || value === '') {
                             return;
@@ -156,16 +156,6 @@ var AggregationComp = /** @class */ (function (_super) {
         this.setAggregationComponentValue('max', max, gotNumberResult);
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
     };
-    AggregationComp.prototype.getRowNode = function (gridRow) {
-        switch (gridRow.floating) {
-            case ag_grid_community_1.Constants.PINNED_TOP:
-                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
-            case ag_grid_community_1.Constants.PINNED_BOTTOM:
-                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
-            default:
-                return this.rowModel.getRow(gridRow.rowIndex);
-        }
-    };
     AggregationComp.TEMPLATE = "<div class=\"ag-status-panel ag-status-panel-aggregations\">\n                <ag-name-value ref=\"avgAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"countAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"minAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"maxAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"sumAggregationComp\"></ag-name-value>\n            </div>";
     __decorate([
         ag_grid_community_1.Autowired('eventService'),
@@ -184,13 +174,9 @@ var AggregationComp = /** @class */ (function (_super) {
         __metadata("design:type", ag_grid_community_1.CellNavigationService)
     ], AggregationComp.prototype, "cellNavigationService", void 0);
     __decorate([
-        ag_grid_community_1.Autowired('pinnedRowModel'),
-        __metadata("design:type", ag_grid_community_1.PinnedRowModel)
-    ], AggregationComp.prototype, "pinnedRowModel", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('rowModel'),
-        __metadata("design:type", Object)
-    ], AggregationComp.prototype, "rowModel", void 0);
+        ag_grid_community_1.Autowired('rowRenderer'),
+        __metadata("design:type", ag_grid_community_1.RowRenderer)
+    ], AggregationComp.prototype, "rowRenderer", void 0);
     __decorate([
         ag_grid_community_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)

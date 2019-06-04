@@ -34,7 +34,7 @@ export class MenuItemComponent extends Component {
             <span id="eIcon" class="ag-menu-option-icon"></span>
             <span id="eName" class="ag-menu-option-text"></span>
             <span id="eShortcut" class="ag-menu-option-shortcut"></span>
-            <span id="ePopupPointer" class="ag-menu-option-popup-pointer"></span>
+            <span id="ePopupPointer" class="ag-menu-option-popup-pointer ag-icon"></span>
         </div>`;
 
     public static EVENT_ITEM_SELECTED = 'itemSelected';

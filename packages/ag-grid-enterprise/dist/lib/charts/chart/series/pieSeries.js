@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -14,16 +14,18 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var polarSeries_1 = require("./polarSeries");
 var group_1 = require("../../scene/group");
-var arc_1 = require("../../scene/shape/arc");
 var line_1 = require("../../scene/shape/line");
 var text_1 = require("../../scene/shape/text");
 var selection_1 = require("../../scene/selection");
 var linearScale_1 = require("../../scale/linearScale");
 var angle_1 = require("../../util/angle");
-var colors_1 = require("../colors");
+var palettes_1 = require("../palettes");
 var color_1 = require("../../util/color");
+var sector_1 = require("../../scene/shape/sector");
+var series_1 = require("./series");
+var node_1 = require("../../scene/node");
+var number_1 = require("../../util/number");
 var PieSeriesNodeTag;
 (function (PieSeriesNodeTag) {
     PieSeriesNodeTag[PieSeriesNodeTag["Sector"] = 0] = "Sector";
@@ -34,41 +36,13 @@ var PieSeries = /** @class */ (function (_super) {
     __extends(PieSeries, _super);
     function PieSeries() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.fieldPropertiesX = ['angleField'];
-        _this.fieldPropertiesY = ['radiusField'];
+        _this.radiusScale = linearScale_1.default();
+        _this.groupSelection = selection_1.Selection.select(_this.group).selectAll();
         /**
-         * The name of the numeric field to use to determine the angle (for example,
-         * a pie slice angle).
+         * The processed data that gets visualized.
          */
-        _this._angleField = null;
-        _this._labelField = null;
-        _this.labelFont = '12px Tahoma';
-        _this.labelColor = 'black';
-        _this.labelRotation = 0;
-        _this.labelMinAngle = 20; // in degrees
-        /**
-         * `null` means make the callout color the same as {@link strokeStyle}.
-         */
-        _this.calloutColor = null;
-        _this.calloutWidth = 2;
-        _this.calloutLength = 10;
-        _this.calloutPadding = 3;
-        _this.colors = colors_1.default;
-        _this.strokeColors = colors_1.default.map(function (color) { return color_1.Color.fromHexString(color).darker().toHexString(); });
-        /**
-         * The stroke style to use for all pie sectors.
-         * `null` value here doesn't mean invisible stroke, as it normally would
-         * (see `Shape.strokeStyle` comments), it means derive stroke colors from fill
-         * colors by darkening them. To make the stroke appear invisible use the same
-         * color as the background of the chart (such as 'white').
-         */
-        _this.strokeStyle = null;
-        _this.lineWidth = 2;
-        _this.shadow = null;
-        /**
-         * The name of the numeric field to use to determine the radii of pie slices.
-         */
-        _this._radiusField = '';
+        _this.groupSelectionData = [];
+        _this.enabled = [];
         _this.angleScale = (function () {
             var scale = linearScale_1.default();
             // Each slice is a ratio of the whole, where all ratios add up to 1.
@@ -77,15 +51,178 @@ var PieSeries = /** @class */ (function (_super) {
             scale.range = [-Math.PI, Math.PI].map(function (angle) { return angle + Math.PI / 2; });
             return scale;
         })();
-        _this.radiusScale = linearScale_1.default();
-        _this.groupSelection = selection_1.Selection.select(_this.group).selectAll();
+        _this._title = undefined;
         /**
-         * The processed data that gets visualized.
+         * `null` means make the callout color the same as {@link strokeStyle}.
          */
-        _this.sectorsData = [];
-        _this._data = [];
+        _this._calloutColors = palettes_1.default.strokes;
+        _this._calloutStrokeWidth = 1;
+        _this._calloutLength = 10;
+        _this._calloutPadding = 3;
+        _this._labelFont = '12px Verdana, sans-serif';
+        _this._labelColor = 'black';
+        _this._labelMinAngle = 20; // in degrees
+        /**
+         * The name of the numeric field to use to determine the angle (for example,
+         * a pie slice angle).
+         */
+        _this._angleField = '';
+        /**
+         * The name of the numeric field to use to determine the radii of pie slices.
+         * The largest value will correspond to the full radius and smaller values to
+         * proportionally smaller radii. To prevent confusing visuals, this config only works
+         * if {@link innerRadiusOffset} is zero.
+         */
+        _this._radiusField = '';
+        /**
+         * The value of the label field is supposed to be a string.
+         * If it isn't, it will be coerced to a string value.
+         */
+        _this._labelField = '';
+        _this._labelEnabled = true;
+        _this._fills = palettes_1.default.fills;
+        _this._strokes = palettes_1.default.strokes;
+        /**
+         * The series rotation in degrees.
+         */
+        _this._rotation = 0;
+        _this._outerRadiusOffset = 0;
+        _this._innerRadiusOffset = 0;
+        _this._strokeWidth = 1;
+        _this._shadow = undefined;
         return _this;
     }
+    Object.defineProperty(PieSeries.prototype, "data", {
+        get: function () {
+            return this._data;
+        },
+        set: function (data) {
+            this._data = data;
+            var enabled = this.enabled;
+            enabled.length = data.length;
+            for (var i = 0, ln = data.length; i < ln; i++) {
+                enabled[i] = true;
+            }
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "title", {
+        get: function () {
+            return this._title;
+        },
+        set: function (value) {
+            var _this = this;
+            var oldTitle = this._title;
+            if (oldTitle !== value) {
+                if (oldTitle) {
+                    oldTitle.onLayoutChange = undefined;
+                    this.group.removeChild(oldTitle.node);
+                }
+                if (value) {
+                    value.node.textBaseline = 'bottom';
+                    value.onLayoutChange = function () { return _this.scheduleLayout(); };
+                    this.group.appendChild(value.node);
+                }
+                this._title = value;
+                this.scheduleLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "calloutColors", {
+        get: function () {
+            return this._calloutColors;
+        },
+        set: function (value) {
+            if (this._calloutColors !== value) {
+                this._calloutColors = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "calloutStrokeWidth", {
+        get: function () {
+            return this._calloutStrokeWidth;
+        },
+        set: function (value) {
+            if (this._calloutStrokeWidth !== value) {
+                this._calloutStrokeWidth = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "calloutLength", {
+        get: function () {
+            return this._calloutLength;
+        },
+        set: function (value) {
+            if (this._calloutLength !== value) {
+                this._calloutLength = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "calloutPadding", {
+        get: function () {
+            return this._calloutPadding;
+        },
+        set: function (value) {
+            if (this._calloutPadding !== value) {
+                this._calloutPadding = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "labelFont", {
+        get: function () {
+            return this._labelFont;
+        },
+        set: function (value) {
+            if (this._labelFont !== value) {
+                this._labelFont = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "labelColor", {
+        get: function () {
+            return this._labelColor;
+        },
+        set: function (value) {
+            if (this._labelColor !== value) {
+                this._labelColor = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "labelMinAngle", {
+        get: function () {
+            return this._labelMinAngle;
+        },
+        set: function (value) {
+            if (this._labelMinAngle !== value) {
+                this._labelMinAngle = value;
+                this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(PieSeries.prototype, "chart", {
         get: function () {
             return this._chart;
@@ -106,38 +243,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._angleField !== value) {
                 this._angleField = value;
-                if (this.processData()) {
-                    this.update();
-                }
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PieSeries.prototype, "labelField", {
-        get: function () {
-            return this._labelField;
-        },
-        set: function (value) {
-            if (this._labelField !== value) {
-                this._labelField = value;
-                this.processData();
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(PieSeries.prototype, "rotation", {
-        get: function () {
-            return this._rotation;
-        },
-        set: function (value) {
-            if (this._rotation !== value) {
-                this._rotation = value;
-                if (this.processData()) {
-                    this.update();
-                }
+                this.scheduleData();
             }
         },
         enumerable: true,
@@ -150,21 +256,121 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._radiusField !== value) {
                 this._radiusField = value;
-                if (this.processData()) {
-                    this.update();
-                }
+                this.scheduleData();
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(PieSeries.prototype, "data", {
+    Object.defineProperty(PieSeries.prototype, "labelField", {
         get: function () {
-            return this._data;
+            return this._labelField;
         },
-        set: function (data) {
-            this._data = data;
-            if (this.processData()) {
+        set: function (value) {
+            if (this._labelField !== value) {
+                this._labelField = value;
+                this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "labelEnabled", {
+        get: function () {
+            return this._labelEnabled;
+        },
+        set: function (value) {
+            if (this._labelEnabled !== value) {
+                this._labelEnabled = value;
+                this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "fills", {
+        get: function () {
+            return this._fills;
+        },
+        set: function (values) {
+            this._fills = values;
+            this.strokes = values.map(function (color) { return color_1.Color.fromString(color).darker().toHexString(); });
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "strokes", {
+        get: function () {
+            return this._strokes;
+        },
+        set: function (values) {
+            this._strokes = values;
+            this.calloutColors = values;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "rotation", {
+        get: function () {
+            return this._rotation;
+        },
+        set: function (value) {
+            if (this._rotation !== value) {
+                this._rotation = value;
+                this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "outerRadiusOffset", {
+        get: function () {
+            return this._outerRadiusOffset;
+        },
+        set: function (value) {
+            if (this._outerRadiusOffset !== value) {
+                this._outerRadiusOffset = value;
+                this.scheduleLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "innerRadiusOffset", {
+        get: function () {
+            return this._innerRadiusOffset;
+        },
+        set: function (value) {
+            if (this._innerRadiusOffset !== value) {
+                this._innerRadiusOffset = value;
+                this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "strokeWidth", {
+        get: function () {
+            return this._strokeWidth;
+        },
+        set: function (value) {
+            if (this._strokeWidth !== value) {
+                this._strokeWidth = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "shadow", {
+        get: function () {
+            return this._shadow;
+        },
+        set: function (value) {
+            if (this._shadow !== value) {
+                this._shadow = value;
                 this.update();
             }
         },
@@ -180,11 +386,8 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.processData = function () {
         var _this = this;
         var data = this.data;
-        var centerX = this.centerX + this.offsetX;
-        var centerY = this.centerY + this.offsetY;
-        this.group.translationX = centerX;
-        this.group.translationY = centerY;
-        var angleData = data.map(function (datum) { return datum[_this.angleField]; });
+        var enabled = this.enabled;
+        var angleData = data.map(function (datum, index) { return enabled[index] && +datum[_this.angleField] || 0; });
         var angleDataTotal = angleData.reduce(function (a, b) { return a + b; }, 0);
         // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie slice.
         // Each slice starts where the previous one ends, so we only keep the ratios for end angles.
@@ -192,73 +395,72 @@ var PieSeries = /** @class */ (function (_super) {
             var sum = 0;
             return angleData.map(function (datum) { return sum += datum / angleDataTotal; });
         })();
-        var labelField = this.labelField;
+        var labelField = this.labelEnabled && this.labelField;
         var labelData = [];
         if (labelField) {
-            labelData = data.map(function (datum) { return datum[labelField]; });
+            labelData = data.map(function (datum) { return String(datum[labelField]); });
         }
         var radiusField = this.radiusField;
+        var useRadiusField = !!radiusField && !this.innerRadiusOffset;
         var radiusData = [];
-        if (radiusField) {
-            radiusData = data.map(function (datum) { return datum[radiusField]; });
-            this.radiusScale.domain = [0, Math.max.apply(Math, radiusData.concat([1]))];
-            this.radiusScale.range = [0, this.radius];
+        if (useRadiusField) {
+            radiusData = data.map(function (datum) { return Math.abs(datum[radiusField]); });
+            var maxDatum_1 = Math.max.apply(Math, radiusData);
+            radiusData.forEach(function (value, index, array) { return array[index] = value / maxDatum_1; });
         }
         var angleScale = this.angleScale;
-        var labelFont = this.labelFont;
-        var labelColor = this.labelColor;
-        var sectorsData = this.sectorsData;
-        sectorsData.length = 0;
+        var groupSelectionData = this.groupSelectionData;
+        groupSelectionData.length = 0;
         var rotation = angle_1.toRadians(this.rotation);
-        var colors = this.colors;
-        var strokeColor = this.strokeStyle;
-        var strokeColors = this.strokeColors;
-        var calloutColor = this.calloutColor;
-        var sectorIndex = 0;
+        var halfPi = Math.PI / 2;
+        var datumIndex = 0;
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce(function (start, end) {
-            var radius = radiusField ? _this.radiusScale.convert(radiusData[sectorIndex]) : _this.radius;
-            var startAngle = angleScale.convert(start + rotation);
-            var endAngle = angleScale.convert(end + rotation);
+            var radius = useRadiusField ? radiusData[datumIndex] : 1;
+            var startAngle = angleScale.convert(start) + rotation;
+            var endAngle = angleScale.convert(end) + rotation;
             var midAngle = (startAngle + endAngle) / 2;
             var span = Math.abs(endAngle - startAngle);
             var midCos = Math.cos(midAngle);
             var midSin = Math.sin(midAngle);
-            var calloutLength = _this.calloutLength;
             var labelMinAngle = angle_1.toRadians(_this.labelMinAngle);
             var labelVisible = labelField && span > labelMinAngle;
-            var strokeStyle = strokeColor ? strokeColor : strokeColors[sectorIndex % strokeColors.length];
-            var calloutStrokeStyle = calloutColor ? calloutColor : strokeStyle;
-            sectorsData.push({
-                index: sectorIndex,
+            var midAngle180 = angle_1.normalizeAngle180(midAngle);
+            // Split the circle into quadrants like so: ⊗
+            var quadrantStart = -3 * Math.PI / 4; // same as `normalizeAngle180(toRadians(-135))`
+            var textAlign;
+            var textBaseline;
+            if (midAngle180 >= quadrantStart && midAngle180 < (quadrantStart += halfPi)) {
+                textAlign = 'center';
+                textBaseline = 'bottom';
+            }
+            else if (midAngle180 >= quadrantStart && midAngle180 < (quadrantStart += halfPi)) {
+                textAlign = 'left';
+                textBaseline = 'middle';
+            }
+            else if (midAngle180 >= quadrantStart && midAngle180 < (quadrantStart += halfPi)) {
+                textAlign = 'center';
+                textBaseline = 'hanging';
+            }
+            else {
+                textAlign = 'right';
+                textBaseline = 'middle';
+            }
+            groupSelectionData.push({
+                seriesDatum: data[datumIndex],
                 radius: radius,
                 startAngle: startAngle,
                 endAngle: endAngle,
-                midAngle: angle_1.normalizeAngle180(midAngle),
-                fillStyle: colors[sectorIndex % colors.length],
-                strokeStyle: strokeStyle,
-                lineWidth: _this.lineWidth,
-                shadow: _this.shadow,
+                midAngle: midAngle,
+                midCos: midCos,
+                midSin: midSin,
                 label: labelVisible ? {
-                    text: labelData[sectorIndex],
-                    font: labelFont,
-                    fillStyle: labelColor,
-                    x: midCos * (radius + calloutLength + _this.calloutPadding),
-                    y: midSin * (radius + calloutLength + _this.calloutPadding)
-                } : undefined,
-                callout: labelVisible ? {
-                    start: {
-                        x: midCos * radius,
-                        y: midSin * radius
-                    },
-                    end: {
-                        x: midCos * (radius + calloutLength),
-                        y: midSin * (radius + calloutLength)
-                    },
-                    strokeStyle: calloutStrokeStyle
+                    text: labelData[datumIndex],
+                    textAlign: textAlign,
+                    textBaseline: textBaseline
                 } : undefined
             });
-            sectorIndex++;
+            datumIndex++;
             return end;
         }, 0);
         return true;
@@ -266,80 +468,144 @@ var PieSeries = /** @class */ (function (_super) {
     PieSeries.prototype.update = function () {
         var _this = this;
         var chart = this.chart;
-        if (!chart || chart && chart.layoutPending) {
+        var visible = this.group.visible = this.visible && this.enabled.indexOf(true) >= 0;
+        if (!chart || !visible || chart.dataPending || chart.layoutPending) {
             return;
         }
-        var updateGroups = this.groupSelection.setData(this.sectorsData);
+        var fills = this.fills;
+        var strokes = this.strokes;
+        var calloutColors = this.calloutColors;
+        var outerRadiusOffset = this.outerRadiusOffset;
+        var innerRadiusOffset = this.innerRadiusOffset;
+        var radiusScale = this.radiusScale;
+        radiusScale.range = [0, chart.radius];
+        this.group.translationX = chart.centerX;
+        this.group.translationY = chart.centerY;
+        var title = this.title;
+        if (title) {
+            title.node.translationY = -chart.radius - outerRadiusOffset - 2;
+            title.node.visible = title.enabled;
+        }
+        var updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(group_1.Group);
-        enterGroups.append(arc_1.Arc).each(function (node) { return node.tag = PieSeriesNodeTag.Sector; });
-        enterGroups.append(line_1.Line).each(function (node) { return node.tag = PieSeriesNodeTag.Callout; });
-        enterGroups.append(text_1.Text).each(function (node) { return node.tag = PieSeriesNodeTag.Label; });
+        enterGroups.append(sector_1.Sector).each(function (node) { return node.tag = PieSeriesNodeTag.Sector; });
+        enterGroups.append(line_1.Line).each(function (node) {
+            node.tag = PieSeriesNodeTag.Callout;
+            node.pointerEvents = node_1.PointerEvents.None;
+        });
+        enterGroups.append(text_1.Text).each(function (node) {
+            node.tag = PieSeriesNodeTag.Label;
+            node.pointerEvents = node_1.PointerEvents.None;
+        });
         var groupSelection = updateGroups.merge(enterGroups);
+        var minOuterRadius = Infinity;
+        var outerRadii = [];
         groupSelection.selectByTag(PieSeriesNodeTag.Sector)
-            .each(function (arc, datum) {
-            arc.type = arc_1.ArcType.Round;
-            arc.radiusX = datum.radius;
-            arc.radiusY = datum.radius;
-            arc.startAngle = datum.startAngle;
-            arc.endAngle = datum.endAngle;
-            arc.fillStyle = datum.fillStyle;
-            arc.strokeStyle = datum.strokeStyle;
-            arc.shadow = datum.shadow;
-            arc.lineWidth = datum.lineWidth;
-            arc.lineJoin = 'round';
+            .each(function (sector, datum, index) {
+            var radius = radiusScale.convert(datum.radius);
+            var outerRadius = Math.max(0, radius + outerRadiusOffset);
+            if (minOuterRadius > outerRadius) {
+                minOuterRadius = outerRadius;
+            }
+            outerRadii.push(outerRadius);
+            sector.outerRadius = outerRadius;
+            sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
+            sector.startAngle = datum.startAngle;
+            sector.endAngle = datum.endAngle;
+            sector.fill = fills[index % fills.length];
+            sector.stroke = strokes[index % strokes.length];
+            sector.fillShadow = _this.shadow;
+            sector.strokeWidth = _this.strokeWidth;
+            sector.lineJoin = 'round';
         });
+        var calloutLength = this.calloutLength;
         groupSelection.selectByTag(PieSeriesNodeTag.Callout)
-            .each(function (line, datum) {
-            var callout = datum.callout;
-            if (callout) {
-                line.lineWidth = _this.calloutWidth;
-                line.strokeStyle = callout.strokeStyle;
-                line.x1 = callout.start.x;
-                line.y1 = callout.start.y;
-                line.x2 = callout.end.x;
-                line.y2 = callout.end.y;
+            .each(function (line, datum, index) {
+            if (datum.label) {
+                var outerRadius = outerRadii[index];
+                line.strokeWidth = _this.calloutStrokeWidth;
+                line.stroke = calloutColors[index % calloutColors.length];
+                line.x1 = datum.midCos * outerRadius;
+                line.y1 = datum.midSin * outerRadius;
+                line.x2 = datum.midCos * (outerRadius + calloutLength);
+                line.y2 = datum.midSin * (outerRadius + calloutLength);
             }
             else {
-                line.strokeStyle = null;
+                line.stroke = undefined;
             }
         });
-        var halfPi = Math.PI / 2;
+        var calloutPadding = this.calloutPadding;
         groupSelection.selectByTag(PieSeriesNodeTag.Label)
-            .each(function (text, datum) {
-            var angle = datum.midAngle;
-            // Split the circle into quadrants like so: ⊗
-            var quadrantStart = -3 * Math.PI / 4; // same as `normalizeAngle180(toRadians(-135))`
-            if (angle >= quadrantStart && angle < (quadrantStart += halfPi)) {
-                text.textAlign = 'center';
-                text.textBaseline = 'bottom';
-            }
-            else if (angle >= quadrantStart && angle < (quadrantStart += halfPi)) {
-                text.textAlign = 'left';
-                text.textBaseline = 'middle';
-            }
-            else if (angle >= quadrantStart && angle < (quadrantStart += halfPi)) {
-                text.textAlign = 'center';
-                text.textBaseline = 'hanging';
-            }
-            else {
-                text.textAlign = 'right';
-                text.textBaseline = 'middle';
-            }
+            .each(function (text, datum, i) {
             var label = datum.label;
             if (label) {
-                text.font = label.font;
+                var outerRadius = outerRadii[i];
+                var labelRadius = outerRadius + calloutLength + calloutPadding;
+                text.font = _this.labelFont;
                 text.text = label.text;
-                text.x = label.x;
-                text.y = label.y;
-                text.fillStyle = label.fillStyle;
+                text.x = datum.midCos * labelRadius;
+                text.y = datum.midSin * labelRadius;
+                text.fill = _this.labelColor;
+                text.textAlign = label.textAlign;
+                text.textBaseline = label.textBaseline;
             }
             else {
-                text.fillStyle = null;
+                text.fill = undefined;
             }
         });
         this.groupSelection = groupSelection;
     };
+    PieSeries.prototype.getTooltipHtml = function (nodeDatum) {
+        var html = '';
+        var angleField = this.angleField;
+        if (!angleField) {
+            return html;
+        }
+        if (this.tooltipRenderer) {
+            html = this.tooltipRenderer({
+                datum: nodeDatum.seriesDatum,
+                angleField: angleField,
+                radiusField: this.radiusField,
+                labelField: this.labelField
+            });
+        }
+        else {
+            var title = this.title ? "<div class=\"title\">" + this.title.text + "</div>" : '';
+            var label = this.labelField ? nodeDatum.seriesDatum[this.labelField] + ": " : '';
+            var value = nodeDatum.seriesDatum[angleField];
+            var formattedValue = typeof (value) === 'number' ? number_1.toFixed(value) : value.toString();
+            html = "" + title + label + formattedValue;
+        }
+        return html;
+    };
+    PieSeries.prototype.listSeriesItems = function (data) {
+        var _this = this;
+        var labelField = this.labelField;
+        if (this.data.length && labelField) {
+            var fills_1 = this.fills;
+            var strokes_1 = this.strokes;
+            var id_1 = this.id;
+            this.data.forEach(function (datum, index) {
+                data.push({
+                    id: id_1,
+                    itemId: index,
+                    enabled: _this.enabled[index],
+                    label: {
+                        text: String(datum[labelField])
+                    },
+                    marker: {
+                        fillStyle: fills_1[index % fills_1.length],
+                        strokeStyle: strokes_1[index % strokes_1.length]
+                    }
+                });
+            });
+        }
+    };
+    PieSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
+        this.enabled[itemId] = enabled;
+        this.scheduleData();
+    };
     return PieSeries;
-}(polarSeries_1.PolarSeries));
+}(series_1.Series));
 exports.PieSeries = PieSeries;

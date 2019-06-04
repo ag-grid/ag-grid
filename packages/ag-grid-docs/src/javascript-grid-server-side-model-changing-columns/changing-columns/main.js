@@ -20,11 +20,11 @@ var colDefAge = {field: "age", enableRowGroup: true};
 var colDefCountry = {
     field: "country", enableRowGroup: true, enablePivot: true, rowGroup: true,
     filter: 'agSetColumnFilter',
-    filterParams: {values: countries(), newRowsAction: 'keep'}
+    filterParams: {values: countries()}
 };
 var colDefYear = {
     field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, filter: 'agSetColumnFilter',
-    filterParams: {values: ['2000','2004','2008','2012'], newRowsAction: 'keep'}
+    filterParams: {values: ['2000','2004','2008','2012']}
 };
 var colDefSport = {field: "sport", enableRowGroup: true, enablePivot: true};
 var colDefGold = {field: "gold", aggFunc: 'sum', enableValue: true};
@@ -56,6 +56,16 @@ var gridOptions = {
     animateRows: true,
     sideBar: {
         toolPanels: ['columns','filters']
+    },
+    onGridReady: function(params) {
+        document.getElementById('athlete').checked = true;
+        document.getElementById('age').checked = true;
+        document.getElementById('country').checked = true;
+        document.getElementById('year').checked = true;
+        document.getElementById('sport').checked = true;
+        document.getElementById('gold').checked = true;
+        document.getElementById('silver').checked = true;
+        document.getElementById('bronze').checked = true;
     },
     suppressAggFuncInHeader: true,
 };

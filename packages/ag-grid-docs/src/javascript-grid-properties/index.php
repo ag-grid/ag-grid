@@ -236,6 +236,11 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-data-update/#flashing">Flashing Data Changes</a>.</td>
         </tr>
         <tr>
+            <th>allowShowChangeAfterFilter</th>
+            <td>Set to true to have cells flash after data changes even when the change is due to filtering.
+                See <a href="../javascript-grid-data-update/#flashing">Flashing Data Changes</a>.</td>
+        </tr>
+        <tr>
             <th>stopEditingWhenGridLosesFocus</th>
             <td>
                 Set this to true to <a href="../javascript-grid-cell-editing/#losingFocusStopsEditing">
@@ -383,6 +388,14 @@ include '../documentation-main/documentation_header.php';
             <td>There is no property suppressRowVirtualisation - if you want to do this, then set the rowBuffer
             property to be very large, eg 9999. But be careful, lots of rendered rows will mean a very large amount
             of rendering in the DOM which will slow things down.</td>
+        </tr>
+        <tr>
+            <th>suppressMaxRenderedRowRestriction</th>
+            <td>By default the grid has limit of rendering a maximum of 500 rows at once (remember the grid only 
+            renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling 
+            this will never be an issue).<br>
+            <strong>This is only relevant if you are manually setting rowBuffer to a high value (rendering more rows 
+            than can be seen) or if your grid height is able to display more than 500 rows at once</strong></td>
         </tr>
         <tr>
             <th>suppressScrollOnNewData</th>

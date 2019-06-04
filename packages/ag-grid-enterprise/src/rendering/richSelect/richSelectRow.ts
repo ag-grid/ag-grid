@@ -47,11 +47,11 @@ export class RichSelectRow extends Component {
     private populateWithRenderer(value: any, valueFormatted: string): boolean {
 
         // bad coder here - we are not populating all values of the cellRendererParams
-        let params = <ICellRendererParams> {
+        const params = {
             value: value,
             valueFormatted: valueFormatted,
             api: this.gridOptionsWrapper.getApi()
-        };
+        } as ICellRendererParams;
 
         const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(this.params, params);
         if (cellRendererPromise != null) {

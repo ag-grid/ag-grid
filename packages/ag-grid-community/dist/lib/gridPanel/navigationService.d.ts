@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "./gridPanel";
@@ -12,9 +12,9 @@ export declare class NavigationService {
     private gridOptionsWrapper;
     private scrollWidth;
     private gridPanel;
+    private timeLastPageEventProcessed;
     private init;
     registerGridComp(gridPanel: GridPanel): void;
-    private timeLastPageEventProcessed;
     handlePageScrollingKey(event: KeyboardEvent): boolean;
     private isTimeSinceLastPageEventToRecent;
     private setTimeLastPageEventProcessed;

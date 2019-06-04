@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,6 +48,10 @@ var Environment = /** @class */ (function () {
             return HARD_CODED_SIZES['ag-theme-balham'][key];
         }
         return HARD_CODED_SIZES['ag-theme-classic'][key];
+    };
+    Environment.prototype.isThemeDark = function () {
+        var theme = this.getTheme();
+        return !!theme && theme.indexOf('dark') >= 0;
     };
     Environment.prototype.getTheme = function () {
         var reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;

@@ -1,19 +1,21 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Shape } from "./shape";
-import { PixelSnapBias } from "../../canvas/canvas";
+import { BBox } from "../bbox";
 export declare class Line extends Shape {
     protected static defaultStyles: {
-        fillStyle: string | null;
-        strokeStyle: string | null;
-        lineWidth: number;
-        lineDash: number[] | null;
+        fill: string;
+        stroke: undefined;
+        strokeWidth: number;
+        lineDash: undefined;
         lineDashOffset: number;
         lineCap: import("./shape").ShapeLineCap;
         lineJoin: import("./shape").ShapeLineJoin;
         opacity: number;
-        shadow: import("../dropShadow").DropShadow | null;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     } & {
-        lineWidth: number;
+        fill: undefined;
+        strokeWidth: number;
     };
     constructor();
     static create(x1: number, y1: number, x2: number, y2: number): Line;
@@ -25,9 +27,7 @@ export declare class Line extends Shape {
     x2: number;
     private _y2;
     y2: number;
-    readonly getBBox: any;
-    private _pixelSnapBias;
-    pixelSnapBias: PixelSnapBias;
+    readonly getBBox: () => BBox;
     isPointInPath(x: number, y: number): boolean;
     isPointInStroke(x: number, y: number): boolean;
     render(ctx: CanvasRenderingContext2D): void;

@@ -42,6 +42,11 @@ export class Environment {
         return HARD_CODED_SIZES['ag-theme-classic'][key];
     }
 
+    public isThemeDark(): boolean {
+        const theme = this.getTheme();
+        return !!theme && theme.indexOf('dark') >= 0;
+    }
+
     public getTheme(): string | undefined {
         const reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
         let el: HTMLElement = this.eGridDiv;

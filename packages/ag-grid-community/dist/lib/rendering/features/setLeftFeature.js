@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,7 +40,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
     };
     SetLeftFeature.prototype.getColumnOrGroup = function () {
         if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
-            return this.colsSpanning[this.colsSpanning.length - 1];
+            return utils_1._.last(this.colsSpanning);
         }
         else {
             return this.columnOrGroup;

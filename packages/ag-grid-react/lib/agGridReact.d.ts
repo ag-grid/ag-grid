@@ -1,4 +1,4 @@
-// ag-grid-react v20.2.0
+// ag-grid-react v21.0.0
 import * as React from "react";
 import { ReactPortal } from "react";
 import * as AgGrid from "ag-grid-community";
@@ -39,5 +39,7 @@ export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
     destroyPortal(portal: ReactPortal): void;
     private getStrategyTypeForProp;
     componentWillReceiveProps(nextProps: any): void;
+    private extractDeclarativeColDefChanges;
+    private extractGridPropertyChanges;
     componentWillUnmount(): void;
 }

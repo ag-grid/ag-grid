@@ -1,4 +1,4 @@
-import {BandScale} from "./bandScale";
+import { BandScale } from "./bandScale";
 
 test('initial state', () => {
     const scale = new BandScale();

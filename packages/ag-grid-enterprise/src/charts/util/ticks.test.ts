@@ -1,4 +1,4 @@
-import getTicks, {NumericTicks} from "./ticks";
+import getTicks, { NumericTicks } from "./ticks";
 
 function compareTicks(ticks: NumericTicks, array: number[]) {
     expect(ticks).toHaveLength(array.length);

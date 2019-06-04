@@ -65,7 +65,8 @@ s.parentNode.insertBefore(b, s);})();
 
             <h1>ag-Grid Pricing</h1> 
 <hr>
-            <p class="lead">ag-Grid comes in two versions – <strong>Community</strong> and <strong>Enterprise</strong>. Let's go over the differences between the two, so you can pick the one that is most suitable for your project.</p>
+            <p class="lead">ag-Grid comes in two versions – <strong>ag-Grid Community</strong> and <strong>ag-Grid Enterprise</strong>.
+                The difference between Community and Enterprise is:</p>
 <!--
             <p class="lead">Ag-Grid comes in two versions &ndash; <strong>Community</strong> and <strong>Enterprise</strong>. The document outlines the important differences between the two.</p>
                 <p class="lead">The Community eddition is <strong>MIT licensed</strong>, supports all major JavaScript frameworks, includes all essential datagrid features and can be used free of charge.</p> 
@@ -78,7 +79,7 @@ s.parentNode.insertBefore(b, s);})();
                         <div class="card h-100">
                           <div class="card-body">
                             <h2 class="card-title">ag-Grid Community</h2>
-                            <h3 class="h5 card-subtitle mb-2 text-muted">MIT License</h3>
+                            <h3 class="h5 card-subtitle mb-2 text-muted">Open Source MIT License (Free for Everyone)</h3>
 
 
                             <ul class="card-text">
@@ -108,6 +109,11 @@ s.parentNode.insertBefore(b, s);})();
                 </div>
             </div>
 
+            <p style="margin-bottom: 40px;">
+                You can <b>evaluate ag-Grid Enterprise without contacting us</b>. A license is only
+                required when you start developing for production.
+            </p>
+
 
             <h2>License and Pricing for ag-Grid Enterprise</h2>
 
@@ -127,12 +133,13 @@ We offer three flavors – <strong>Single Application Developer</strong>, <stron
                         <h4>&dollar;750 USD
                             <span>per Developer</span>
                         </h4>
-                        <p>Usage of ag-Grid Enterprise in a <br><strong>single application</strong></p>
-                        <p><a href="start-trial.php">Sign up for a free trial</a></p>
+                        <div style="margin-top: 25px;">
+                            Usage of ag-Grid Enterprise in a <br><strong>single application</strong>
+                        </div>
                     </div>
 
                     <div class="card-footer">
-                        <a class="btn" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-applicationDeveloper">Enquire</a>
+                        <a class="btn" href="mailto:info@ag-grid.com?subject=Web Enquiry"><img src="/images/envelope.png" style="margin-top: -3px; padding-right: 10px">Email Us</a>
                     </div>
                 </div>
 
@@ -146,12 +153,13 @@ We offer three flavors – <strong>Single Application Developer</strong>, <stron
                         <h4>&dollar;1,200 USD
                             <span>per Developer</span>
                         </h4>
-                        <p>Usage of ag-Grid Enterprise in <br><strong>multiple applications</strong></p>
-                        <p><a href="start-trial.php">Sign up for a free trial</a></p>
+                        <div style="margin-top: 25px;">
+                            Usage of ag-Grid Enterprise in <br><strong>multiple applications</strong>
+                        </div>
                     </div>
 
                     <div class="card-footer">
-                        <a class="btn" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-siteDeveloper">Enquire</a>
+                        <a class="btn" href="mailto:info@ag-grid.com?subject=Web Enquiry"><img src="/images/envelope.png" style="margin-top: -3px; padding-right: 10px">Email Us</a>
                     </div>
                 </div>
 
@@ -164,12 +172,13 @@ We offer three flavors – <strong>Single Application Developer</strong>, <stron
                         <h4>$750 USD
                             <span>per Production Environment</span>
                         </h4>
-                        <p>Usage of ag-Grid Enterprise in <br><strong>external facing Applications</strong></p>
-                        <p><a href="start-trial.php">Sign up for a free trial</a></p>
+                        <div style="margin-top: 25px;">
+                        Usage of ag-Grid Enterprise in <br><strong>external facing Applications</strong>
+                        </div>
                     </div>
 
                     <div class="card-footer">
-                        <a class="btn" data-product-type="single-developer" href="#" data-toggle="modal" data-target=".orderForm-saasAndOEM">Enquire</a>
+                        <a class="btn" href="mailto:info@ag-grid.com?subject=Web Enquiry"><img src="/images/envelope.png" style="margin-top: -3px; padding-right: 10px">Email Us</a>
                     </div>
                 </div>
 

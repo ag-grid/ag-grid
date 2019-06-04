@@ -26,7 +26,7 @@ import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComp
 import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
 import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { IFloatingFilterComp } from "../../filter/floatingFilter";
+import { IFloatingFilterComp } from "../../filter/floating/floatingFilter";
 import { ICellEditorComp } from "../../interfaces/iCellEditor";
 import { IToolPanelComp } from "../../interfaces/iToolPanel";
 import { StatusPanelDef } from "../../interfaces/iStatusPanel";
@@ -155,8 +155,8 @@ export class UserComponentFactory {
             colDef, params, 'filter', defaultFilter, false, modifyParamsCallback);
     }
 
-    public newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp<any, any, any>> {
-        return this.createAndInitUserComponent<IFloatingFilterComp<any, any, any>>(
+    public newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp> {
+        return this.createAndInitUserComponent<IFloatingFilterComp>(
             colDef, params, "floatingFilterComponent", defaultFloatingFilter, true);
     }
 
@@ -218,6 +218,14 @@ export class UserComponentFactory {
 
         const deferredInit: void | Promise<void> = this.initComponent(componentInstance, paramsAfterCallback);
         if (deferredInit == null) {
+
+            // const p = new Promise<A>(resolve => {
+            //     setTimeout( ()=> {
+            //         resolve(componentInstance);
+            //     }, 1000);
+            // });
+            // return p;
+
             return Promise.resolve(componentInstance);
         } else {
             const asPromise: Promise<void> = deferredInit as Promise<void>;

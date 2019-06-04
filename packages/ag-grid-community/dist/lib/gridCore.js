@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -217,10 +217,6 @@ var GridCore = /** @class */ (function (_super) {
         context_1.Autowired('rowModel'),
         __metadata("design:type", Object)
     ], GridCore.prototype, "rowModel", void 0);
-    __decorate([
-        context_1.Autowired('frameworkFactory'),
-        __metadata("design:type", Object)
-    ], GridCore.prototype, "frameworkFactory", void 0);
     __decorate([
         context_1.Autowired('resizeObserverService'),
         __metadata("design:type", resizeObserverService_1.ResizeObserverService)

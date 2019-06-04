@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -309,7 +309,7 @@ var RowNode = /** @class */ (function () {
         // if children exist.
         return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
     };
-    RowNode.prototype.isEmptyFillerNode = function () {
+    RowNode.prototype.isEmptyRowGroupNode = function () {
         return this.group && utils_1._.missingOrEmpty(this.childrenAfterGroup);
     };
     RowNode.prototype.dispatchCellChangedEvent = function (column, newValue) {

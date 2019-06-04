@@ -1,5 +1,5 @@
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
-import { GridCell, GridCellDef } from "../entities/gridCell";
+import { CellPosition } from "../entities/cellPosition";
 import { Constants } from "../constants";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../rowModels/paginationProxy";
@@ -26,6 +26,8 @@ export class NavigationService {
     private scrollWidth: number;
     private gridPanel: GridPanel;
 
+    private timeLastPageEventProcessed = 0;
+
     @PostConstruct
     private init(): void {
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
@@ -35,15 +37,13 @@ export class NavigationService {
         this.gridPanel = gridPanel;
     }
 
-    private timeLastPageEventProcessed = 0;
-
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
 
         const key = event.which || event.keyCode;
         const alt = event.altKey;
         const ctrl = event.ctrlKey;
 
-        const currentCell: GridCellDef = this.mouseEventService.getGridCellForEvent(event).getGridCellDef();
+        const currentCell: CellPosition = this.mouseEventService.getCellPositionForEvent(event);
         if (!currentCell) { return false; }
 
         let processed = false;
@@ -113,7 +113,7 @@ export class NavigationService {
         this.timeLastPageEventProcessed = new Date().getTime();
     }
 
-    private onPageDown(gridCell: GridCellDef): void {
+    private onPageDown(gridCell: CellPosition): void {
 
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
@@ -144,7 +144,7 @@ export class NavigationService {
         this.setTimeLastPageEventProcessed();
     }
 
-    private onPageUp(gridCell: GridCellDef): void {
+    private onPageUp(gridCell: CellPosition): void {
 
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
@@ -181,7 +181,6 @@ export class NavigationService {
     // scrollColumn - what column to horizontally scroll to
     // focusIndex / focusColumn - for page up / down, we want to scroll to one row/column, but focus another
     private navigateTo(scrollIndex: number, scrollType: string, scrollColumn: Column, focusIndex: number, focusColumn: Column): void {
-
         if (_.exists(scrollColumn)) {
             this.gridPanel.ensureColumnVisible(scrollColumn);
         }
@@ -197,13 +196,13 @@ export class NavigationService {
         // highlighted.
         this.focusedCellController.setFocusedCell(focusIndex, focusColumn, null, true);
         if (this.rangeController) {
-            const gridCell = new GridCell({rowIndex: focusIndex, floating: null, column: focusColumn});
-            this.rangeController.setRangeToCell(gridCell);
+            const cellPosition: CellPosition = {rowIndex: focusIndex, rowPinned: null, column: focusColumn};
+            this.rangeController.setRangeToCell(cellPosition);
         }
     }
 
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
-    private onCtrlUpOrDown(key: number, gridCell: GridCellDef): void {
+    private onCtrlUpOrDown(key: number, gridCell: CellPosition): void {
 
         const upKey = key === Constants.KEY_UP;
         const rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
@@ -212,12 +211,12 @@ export class NavigationService {
     }
 
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
-    private onCtrlLeftOrRight(key: number, gridCell: GridCellDef): void {
+    private onCtrlLeftOrRight(key: number, gridCell: CellPosition): void {
 
         const leftKey = key === Constants.KEY_LEFT;
 
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        const columnToSelect: Column = leftKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        const columnToSelect: Column = leftKey ? allColumns[0] : _.last(allColumns);
 
         this.navigateTo(gridCell.rowIndex, null, columnToSelect, gridCell.rowIndex, columnToSelect);
     }
@@ -229,7 +228,7 @@ export class NavigationService {
         const homeKey = key === Constants.KEY_PAGE_HOME;
 
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
-        const columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        const columnToSelect = homeKey ? allColumns[0] : _.last(allColumns);
         const rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
 
         this.navigateTo(rowIndexToScrollTo, null, columnToSelect, rowIndexToScrollTo, columnToSelect);

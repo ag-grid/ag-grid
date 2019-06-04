@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -14,6 +14,7 @@ export declare class Component extends BeanStub implements IComponent<any> {
     private childComponents;
     private annotatedEventListeners;
     private visible;
+    protected parentComponent: Component | undefined;
     private compId;
     constructor(template?: string);
     getCompId(): number;
@@ -29,6 +30,8 @@ export declare class Component extends BeanStub implements IComponent<any> {
     private getAgComponentMetaData;
     private removeAnnotatedEventListeners;
     getGui(): HTMLElement;
+    setParentComponent(component: Component): void;
+    getParentComponent(): Component | undefined;
     protected setGui(eGui: HTMLElement): void;
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;

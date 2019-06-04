@@ -5,17 +5,38 @@ import Scale from './scale';
  * See https://github.com/d3/d3-scale#band-scales for more info.
  */
 export class BandScale<D> implements Scale<D, number> {
+
+    /**
+     * Maps datum to its index in the {@link domain} array.
+     * Used to check for duplicate datums (not allowed).
+     */
+    private index = new Map<D, number>();
+
+    /**
+     * The output range values for datum at each index.
+     */
+    private ordinalRange: number[] = [];
+
+    /**
+     * Contains unique datums only. Since `{}` is used in place of `Map`
+     * for IE11 compatibility, the datums are converted `toString` before
+     * the uniqueness check.
+     */
     private _domain: D[] = [];
     set domain(values: D[]) {
         const domain = this._domain;
-
         domain.length = 0;
-        this.index = {} as any;
+
+        this.index = new Map<D, number>();
         const index = this.index;
 
+        // In case one wants to have duplicate domain values, for example, two 'Italy' categories,
+        // one should use objects rather than strings for domain values like so:
+        // { toString: () => 'Italy' }
+        // { toString: () => 'Italy' }
         values.forEach(value => {
-            if (index[value] === undefined) {
-                index[value] =  domain.push(value) - 1;
+            if (index.get(value) === undefined) {
+                index.set(value, domain.push(value) - 1);
             }
         });
 
@@ -40,25 +61,24 @@ export class BandScale<D> implements Scale<D, number> {
     }
 
     convert(d: D): number {
-        const i = this.index[d];
-        if (i === undefined) { return NaN; }
+        const i = this.index.get(d);
+        if (i === undefined) {
+            return NaN;
+        }
 
         const r = this.ordinalRange[i];
-        if (r === undefined) { return NaN; }
+        if (r === undefined) {
+            return NaN;
+        }
 
         return r;
     }
-
-    private ordinalRange: number[] = [];
-
-    private index = {} as any; // new Map<D, number>();
 
     private _bandwidth: number = 1;
     get bandwidth(): number {
         return this._bandwidth;
     }
 
-    private _padding = 0;
     set padding(value: number) {
         value = Math.max(0, Math.min(1, value));
         this._paddingInner = value;
@@ -122,6 +142,7 @@ export class BandScale<D> implements Scale<D, number> {
         if (!n) {
             return;
         }
+
         let [a, b] =  this._range;
         const reversed = b < a;
 

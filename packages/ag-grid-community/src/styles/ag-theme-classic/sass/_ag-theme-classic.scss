@@ -33,7 +33,6 @@
     %tab {
         border: 1px solid transparent;
         border-bottom-width: 0;
-        display: inline-block;
         margin: $grid-size;
         margin-bottom: 0;
         padding: $grid-size $grid-size * 2;
@@ -85,10 +84,6 @@
         border-right: 1px solid $border-color;
     }
 
-    .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-empty-message {
-        line-height: $header-height;
-    }
-
     .ag-floating-filter-button {
         margin-top: $grid-size * 2;
     }
@@ -98,7 +93,7 @@
         justify-content: flex-start;
     }
 
-    .ag-cell-focus {
+    .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected) {
         border: 1px solid $focused-cell-border-color;
     }
 
@@ -119,10 +114,9 @@
         }
         border: 1px solid $border-color;
         border-radius: 0;
-        height: $grid-size * 4.5 !important;
+        min-height: $grid-size * 4.5;
 
         .ag-column-drop-cell-button {
-            height: calc(100% - #{$grid-size});
             margin-bottom: $grid-size / 2;
             margin-top: $grid-size / 2;
         }
@@ -141,30 +135,15 @@
         transition: all 1s;
     }
 
-    .ag-group-expanded {
-        .ag-icon-contracted:empty {
-            @include icon-background($params, "contracted");
-        }
-    }
-
-    .ag-rtl .ag-icon-tree-closed {
-        @include icon-background($params, "small-left");
-    }
-
     .ag-cell-inline-editing {
         height: $row-height;
         padding: 0;
-    }
-
-    .ag-tool-panel-wrapper .ag-column-drop .ag-column-drop-title {
-        float: none;
     }
 
     .ag-column-select-panel {
         .ag-column-tool-panel-column-group,
         .ag-column-tool-panel-column {
             height: $grid-size * 5;
-            line-height: $grid-size * 5;
         }
     }
 
@@ -175,10 +154,6 @@
     // bootstrap overrides
     .ag-tab {
         box-sizing: initial;
-    }
-
-    .ag-filter .ag-filter-value {
-        line-height: $icon-size + $grid-size;
     }
 
     .ag-selection-checkbox span {
@@ -212,9 +187,5 @@
 
     .ag-column-name-filter {
         height: $grid-size * 4;
-    }
-
-    .ag-column-drop-cell .ag-column-drag {
-        background-position-y: 0 !important;
     }
 }

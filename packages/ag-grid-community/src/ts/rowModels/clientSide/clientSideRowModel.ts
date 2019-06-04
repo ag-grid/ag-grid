@@ -498,7 +498,7 @@ export class ClientSideRowModel {
             // if pixel is less than or equal zero, it's always the first row
             return 0;
         }
-        const lastNode = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+        const lastNode = _.last(this.rowsToDisplay);
         if (lastNode.rowTop <= pixelToMatch) {
             return this.rowsToDisplay.length - 1;
         }
@@ -528,7 +528,7 @@ export class ClientSideRowModel {
 
     public getCurrentPageHeight(): number {
         if (this.rowsToDisplay && this.rowsToDisplay.length > 0) {
-            const lastRow = this.rowsToDisplay[this.rowsToDisplay.length - 1];
+            const lastRow = _.last(this.rowsToDisplay);
             const lastPixel = lastRow.rowTop + lastRow.rowHeight;
             return lastPixel;
         } else {
@@ -783,7 +783,7 @@ export class ClientSideRowModel {
                 const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
                 rowNodeTrans.push(rowNodeTran);
                 if (tranItem.callback) {
-                    callbackFuncsBound.push(tranItem.callback.bind(rowNodeTran));
+                    callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
                 }
             });
         }

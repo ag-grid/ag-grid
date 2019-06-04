@@ -1,5 +1,5 @@
-// ag-grid-enterprise v20.2.0
-import { IRowNodeStage, StageExecuteParams } from "ag-grid-community";
+// ag-grid-enterprise v21.0.0
+import { IRowNodeStage, StageExecuteParams, IAggFunc } from "ag-grid-community";
 export declare class AggregationStage implements IRowNodeStage {
     private gridOptionsWrapper;
     private columnController;
@@ -15,5 +15,5 @@ export declare class AggregationStage implements IRowNodeStage {
     private getValuesPivotNonLeaf;
     private getValuesFromMappedSet;
     private getValuesNormal;
-    private aggregateValues;
+    aggregateValues(values: any[], aggFuncOrString: string | IAggFunc): any;
 }

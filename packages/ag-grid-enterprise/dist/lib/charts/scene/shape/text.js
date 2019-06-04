@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -30,15 +30,10 @@ var Text = /** @class */ (function (_super) {
         _this._font = Text.defaultStyles.font;
         _this._textAlign = Text.defaultStyles.textAlign;
         _this._textBaseline = Text.defaultStyles.textBaseline;
-        _this.getBBox = hdpiCanvas_1.HdpiCanvas.supports.textMetrics
+        _this.getBBox = hdpiCanvas_1.HdpiCanvas.has.textMetrics
             ? function () {
                 var metrics = hdpiCanvas_1.HdpiCanvas.measureText(_this.text, _this.font, _this.textBaseline, _this.textAlign);
-                return {
-                    x: _this.x - metrics.actualBoundingBoxLeft,
-                    y: _this.y - metrics.actualBoundingBoxAscent,
-                    width: metrics.width,
-                    height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
-                };
+                return new bbox_1.BBox(_this.x - metrics.actualBoundingBoxLeft, _this.y - metrics.actualBoundingBoxAscent, metrics.width, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
             }
             : function () {
                 var size = hdpiCanvas_1.HdpiCanvas.getTextSize(_this.text, _this.font);
@@ -69,7 +64,7 @@ var Text = /** @class */ (function (_super) {
                         y -= size.height;
                         break;
                 }
-                return { x: x, y: y, width: size.width, height: size.height };
+                return new bbox_1.BBox(x, y, size.width, size.height);
             };
         return _this;
     }
@@ -107,8 +102,9 @@ var Text = /** @class */ (function (_super) {
             return this._text;
         },
         set: function (value) {
-            if (this._text !== value) {
-                this._text = value;
+            var str = String(value); // `value` can be an object here
+            if (this._text !== str) {
+                this._text = str;
                 this.splitText();
                 this.dirty = true;
             }
@@ -158,41 +154,63 @@ var Text = /** @class */ (function (_super) {
     Text.prototype.isPointInPath = function (x, y) {
         var point = this.transformPoint(x, y);
         var bbox = this.getBBox();
-        return bbox_1.isPointInBBox(bbox, point.x, point.y);
+        return bbox.containsPoint(point.x, point.y);
     };
     Text.prototype.isPointInStroke = function (x, y) {
         return false;
     };
-    Text.prototype.applyContextAttributes = function (ctx) {
-        _super.prototype.applyContextAttributes.call(this, ctx);
-        ctx.font = this.font;
-        ctx.textAlign = this.textAlign;
-        ctx.textBaseline = this.textBaseline;
-    };
     Text.prototype.render = function (ctx) {
-        if (!this.scene)
+        if (!this.scene || !this.lines.length) {
             return;
-        var lines = this.lines;
-        var lineCount = lines.length;
-        if (!lineCount)
-            return;
+        }
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
-        if (lineCount > 1) {
-            // TODO: multi-line text
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
         }
-        else if (lineCount === 1) {
-            if (this.fillStyle) {
-                ctx.fillText(this.text, this.x, this.y);
+        ctx.font = this.font;
+        ctx.textAlign = this.textAlign;
+        ctx.textBaseline = this.textBaseline;
+        var pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
+            var fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
-            if (this.strokeStyle) {
-                ctx.strokeText(this.text, this.x, this.y);
-            }
+            ctx.fillText(this.text, this.x, this.y);
         }
-        // renderBBox(ctx, this.getBBox()); // debug
+        if (this.stroke && this.strokeWidth) {
+            ctx.strokeStyle = this.stroke;
+            ctx.lineWidth = this.strokeWidth;
+            if (this.lineDash) {
+                ctx.setLineDash(this.lineDash);
+            }
+            if (this.lineDashOffset) {
+                ctx.lineDashOffset = this.lineDashOffset;
+            }
+            if (this.lineCap) {
+                ctx.lineCap = this.lineCap;
+            }
+            if (this.lineJoin) {
+                ctx.lineJoin = this.lineJoin;
+            }
+            var strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.strokeText(this.text, this.x, this.y);
+        }
+        // // debug
+        // this.matrix.transformBBox(this.getBBox!()).render(ctx);
         this.dirty = false;
     };
     Text.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {

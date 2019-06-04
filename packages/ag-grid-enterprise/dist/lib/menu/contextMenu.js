@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24,7 +24,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
-var clipboardService_1 = require("../clipboardService");
 var menuItemComponent_1 = require("./menuItemComponent");
 var menuList_1 = require("./menuList");
 var menuItemMapper_1 = require("./menuItemMapper");
@@ -47,6 +46,17 @@ var ContextMenuFactory = /** @class */ (function () {
                 // only makes sense if column exists, could have originated from a row
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'paste', 'separator');
             }
+        }
+        else {
+            // if user clicks outside of a cell (eg below the rows, or not rows present)
+            // nothing to show, perhaps tool panels???
+        }
+        if (this.gridOptionsWrapper.isEnableCharts() && this.context.isModuleRegistered("chartsModule" /* ChartsModule */)) {
+            if (!this.rangeController.isEmpty()) {
+                defaultMenuOptions.push('chartRange');
+            }
+        }
+        if (ag_grid_community_1._.exists(node)) {
             // if user clicks a cell
             var suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
             var suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
@@ -54,18 +64,6 @@ var ContextMenuFactory = /** @class */ (function () {
             var anyExport = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');
-            }
-        }
-        else {
-            // if user clicks outside of a cell (eg below the rows, or not rows present)
-            // nothing to show, perhaps tool panels???
-        }
-        if (this.gridOptionsWrapper.isEnableCharts()) {
-            if (!this.rangeController.isEmpty()) {
-                defaultMenuOptions.push('chartRange');
-            }
-            if (this.rowModel.getType() === ag_grid_community_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-                defaultMenuOptions.push('chartEverything');
             }
         }
         if (this.gridOptionsWrapper.getContextMenuItemsFunc()) {
@@ -160,22 +158,12 @@ var ContextMenu = /** @class */ (function (_super) {
         menuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
     };
     ContextMenu.prototype.afterGuiAttached = function (params) {
-        this.addDestroyFunc(params.hidePopup);
+        if (params.hidePopup) {
+            this.addDestroyFunc(params.hidePopup);
+        }
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
-    __decorate([
-        ag_grid_community_1.Autowired('clipboardService'),
-        __metadata("design:type", clipboardService_1.ClipboardService)
-    ], ContextMenu.prototype, "clipboardService", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
-    ], ContextMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('gridApi'),
-        __metadata("design:type", ag_grid_community_1.GridApi)
-    ], ContextMenu.prototype, "gridApi", void 0);
     __decorate([
         ag_grid_community_1.Autowired('eventService'),
         __metadata("design:type", ag_grid_community_1.EventService)

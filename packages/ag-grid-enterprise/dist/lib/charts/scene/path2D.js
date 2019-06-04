@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var intersection_1 = require("./intersection");
@@ -9,6 +9,7 @@ var Path2D = /** @class */ (function () {
         // to minimize the number of allocations.
         this.commands = [];
         this.params = [];
+        this._closedPath = false;
     }
     Path2D.prototype.moveTo = function (x, y) {
         if (this.xy) {
@@ -54,8 +55,9 @@ var Path2D = /** @class */ (function () {
         // Convert from endpoint to center parametrization:
         // https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
         var xy = this.xy;
-        if (!xy)
+        if (!xy) {
             return;
+        }
         if (rx < 0) {
             rx = -rx;
         }
@@ -110,8 +112,9 @@ var Path2D = /** @class */ (function () {
     Path2D.prototype.arcToAlt = function (rx, ry, rotation, fA, fS, x2, y2) {
         // Convert from endpoint to center parametrization. See:
         // https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
-        if (!this.xy)
+        if (!this.xy) {
             return;
+        }
         if (rx < 0) {
             rx = -rx;
         }
@@ -320,16 +323,25 @@ var Path2D = /** @class */ (function () {
         this.xy[0] = x;
         this.xy[1] = y;
     };
+    Object.defineProperty(Path2D.prototype, "closedPath", {
+        get: function () {
+            return this._closedPath;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Path2D.prototype.closePath = function () {
         if (this.xy) {
             this.xy = undefined;
             this.commands.push('Z');
+            this._closedPath = true;
         }
     };
     Path2D.prototype.clear = function () {
         this.commands.length = 0;
         this.params.length = 0;
         this.xy = undefined;
+        this._closedPath = false;
     };
     Path2D.prototype.isPointInPath = function (x, y) {
         var commands = this.commands;
@@ -436,7 +448,6 @@ var Path2D = /** @class */ (function () {
                 cpy = y;
             }
         }
-        // TODO: use the regular for loop for better performance
         // But that will make compiler complain about x/y, cpx/cpy
         // being used without being set first.
         parts.forEach(function (part) {
@@ -633,13 +644,6 @@ var Path2D = /** @class */ (function () {
             throw new Error('Invalid path.');
         }
         return 'M' + path.slice(0, 2).join(',') + 'C' + path.slice(2).join(',');
-    };
-    /**
-     * The number of parameters for each of the SVG path commands.
-     */
-    Path2D.paramCounts = {
-        A: 7, C: 6, H: 1, L: 2, M: 2, Q: 4, S: 4, T: 2, V: 1, Z: 0,
-        a: 7, c: 6, h: 1, l: 2, m: 2, q: 4, s: 4, t: 2, v: 1, z: 0
     };
     Path2D.splitCommandsRe = /(?=[AaCcHhLlMmQqSsTtVvZz])/g;
     Path2D.matchParamsRe = /-?[0-9]*\.?\d+/g;

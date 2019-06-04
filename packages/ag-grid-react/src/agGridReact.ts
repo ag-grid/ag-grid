@@ -96,7 +96,9 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     }
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
-        if (reactComponent.getFrameworkComponentInstance() || reactComponent.isStatelesComponent()) {
+        if (reactComponent.isStatelesComponent() && reactComponent.statelessComponentRendered()) {
+            resolve(null);
+        } else if (!reactComponent.isStatelesComponent() && reactComponent.getFrameworkComponentInstance()) {
             resolve(null);
         } else {
             if (runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
@@ -155,9 +157,39 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     }
 
     componentWillReceiveProps(nextProps: any) {
+        const changes = <any>{};
+
+        this.extractGridPropertyChanges(nextProps, changes);
+        this.extractDeclarativeColDefChanges(nextProps, changes);
+
+        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
+    }
+
+    private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
         let debugLogging = !!nextProps.debug;
 
-        const changes = <any>{};
+        if (AgGridColumn.hasChildColumns(nextProps)) {
+            const detectionStrategy = this.changeDetectionService.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
+
+            const currentColDefs = this.gridOptions.columnDefs;
+            const newColDefs = AgGridColumn.mapChildColumnDefs(nextProps);
+            if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
+                if (debugLogging) {
+                    console.log(`agGridReact: colDefs definitions changed`);
+                }
+
+                changes['columnDefs'] =
+                    {
+                        previousValue: this.gridOptions.columnDefs,
+                        currentValue: AgGridColumn.mapChildColumnDefs(nextProps)
+                    }
+            }
+        }
+    }
+
+    private extractGridPropertyChanges(nextProps: any, changes: any) {
+        let debugLogging = !!nextProps.debug;
+
         const changedKeys = Object.keys(nextProps);
         changedKeys.forEach((propKey) => {
             if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
@@ -185,9 +217,6 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
                 };
             }
         });
-
-
-        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
     }
 
     componentWillUnmount() {

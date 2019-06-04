@@ -1,4 +1,4 @@
-import { Autowired, Component, Context, MenuItemDef, PopupService, _ } from "ag-grid-community";
+import { Autowired, Component, MenuItemDef, PopupService, _ } from "ag-grid-community";
 import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
 
 export class MenuList extends Component {
@@ -104,7 +104,7 @@ export class MenuList extends Component {
             if (shouldShow && !showingThisMenu) {
                 this.showChildMenu(menuItemDef, menuItemComp, null);
             }
-        }, 500);
+        }, 300);
     }
 
     public addSeparator(): void {

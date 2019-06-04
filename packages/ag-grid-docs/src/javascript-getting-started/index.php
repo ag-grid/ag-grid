@@ -246,9 +246,13 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 <li>Afterwards, we extracted the row nodes' underlying data items and converted them to a string suitable to be presented to the user in an alert box.</li> 
 </ul>
 
-<h2>Grouping (enterprise)</h2>
+<h2>Grouping</h2>
 
-<div class="note">Grouping is a feature exclusive to the enterprise version of ag-Grid.</div>
+<div class="note">
+    Grouping is a feature exclusive to ag-Grid Enterprise. You are free to trial ag-Grid Enterprise to see what you
+    think. You only need to get in touch if you want to start using ag-Grid Enterprise in a project intended
+    for production.
+</div>
 
 <p>In addition to filtering and sorting, <a href="../javascript-grid-grouping">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 
@@ -263,7 +267,12 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 &lt;script src=&quot;https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
 </snippet>
 
-<p>If everything is ok, you should see a message in the console that warns you about missing enterprise license. In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup - feel free to look around:</p>
+<p>
+    If everything is ok, you should see a message in the console that tells you there is no enterprise license key.
+    You can ignore the message as we are trialing.
+    In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup -
+    feel free to look around:
+</p>
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
@@ -377,15 +386,6 @@ While doing so, we learned how to configure the grid and how how to use its api 
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
 </div>
 <br>
-<p><b id="f1">1</b> This is not exactly true. ag-Grid's core, as well as the framework wrappers are written in TypeScript. This provides nice strong typing and compile-time checks for our TypeScript users, while not giving the Babel/Vanilla users any disadvantage.  <a href="#a1">↩</a></p>
-</div>
-
-<div>
-    <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community"><button type="button" class="btn btn-outline-primary btn-lg btn-block">Community Edition</button></a>
-</div>
-<br>
-<div>
-  <a href="https://www.ag-grid.com/start-trial.php"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
 </div>
 
 <?php include '../getting-started/footer.php'; ?>

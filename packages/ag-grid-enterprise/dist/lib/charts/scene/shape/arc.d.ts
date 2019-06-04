@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 import { BBox } from "../bbox";
@@ -12,22 +12,23 @@ export declare enum ArcType {
  */
 export declare class Arc extends Shape {
     protected static defaultStyles: {
-        fillStyle: string | null;
-        strokeStyle: string | null;
-        lineWidth: number;
-        lineDash: number[] | null;
+        fill: string;
+        stroke: undefined;
+        strokeWidth: number;
+        lineDash: undefined;
         lineDashOffset: number;
         lineCap: import("./shape").ShapeLineCap;
         lineJoin: import("./shape").ShapeLineJoin;
         opacity: number;
-        shadow: import("../dropShadow").DropShadow | null;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     } & {
         lineWidth: number;
         fillStyle: null;
     };
+    protected path: Path2D;
     constructor();
     static create(centerX: number, centerY: number, radiusX: number, radiusY?: number, startAngle?: number, endAngle?: number, counterClockwise?: boolean): Arc;
-    protected path: Path2D;
     /**
      * It's not always that the path has to be updated.
      * For example, if transform attributes (such as `translationX`)

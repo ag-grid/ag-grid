@@ -1,6 +1,7 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var bbox_1 = require("./bbox");
 /**
  * As of Jan 8, 2019, Firefox still doesn't implement
  * `getTransform(): DOMMatrix;`
@@ -17,12 +18,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Matrix = /** @class */ (function () {
     function Matrix(elements) {
         if (elements === void 0) { elements = [1, 0, 0, 1, 0, 0]; }
-        this._a = 1;
-        this._b = 0;
-        this._c = 0;
-        this._d = 1;
-        this._e = 0;
-        this._f = 0;
         this.elements = elements;
     }
     Matrix.prototype.setElements = function (elements) {
@@ -168,7 +163,7 @@ var Matrix = /** @class */ (function () {
      * Returns the inverse of this matrix as a new matrix.
      */
     Matrix.prototype.inverse = function () {
-        var _g = this.elements, a = _g[0], b = _g[1], c = _g[2], d = _g[3], e = _g[4], f = _g[5];
+        var _a = this.elements, a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4], f = _a[5];
         var rD = 1 / (a * d - b * c); // reciprocal of determinant
         a *= rD;
         b *= rD;
@@ -180,7 +175,7 @@ var Matrix = /** @class */ (function () {
      * Save the inverse of this matrix to the given matrix.
      */
     Matrix.prototype.inverseTo = function (other) {
-        var _g = this.elements, a = _g[0], b = _g[1], c = _g[2], d = _g[3], e = _g[4], f = _g[5];
+        var _a = this.elements, a = _a[0], b = _a[1], c = _a[2], d = _a[3], e = _a[4], f = _a[5];
         var rD = 1 / (a * d - b * c); // reciprocal of determinant
         a *= rD;
         b *= rD;
@@ -215,6 +210,39 @@ var Matrix = /** @class */ (function () {
             y: x * e[1] + y * e[3] + e[5]
         };
     };
+    Matrix.prototype.transformBBox = function (bbox, radius, target) {
+        if (radius === void 0) { radius = 0; }
+        var elements = this.elements;
+        var xx = elements[0];
+        var xy = elements[1];
+        var yx = elements[2];
+        var yy = elements[3];
+        var h_w = bbox.width * 0.5;
+        var h_h = bbox.height * 0.5;
+        var cx = bbox.x + h_w;
+        var cy = bbox.y + h_h;
+        var w, h;
+        if (radius) {
+            h_w -= radius;
+            h_h -= radius;
+            var sx = Math.sqrt(xx * xx + yx * yx);
+            var sy = Math.sqrt(xy * xy + yy * yy);
+            w = Math.abs(h_w * xx) + Math.abs(h_h * yx) + Math.abs(sx * radius);
+            h = Math.abs(h_w * xy) + Math.abs(h_h * yy) + Math.abs(sy * radius);
+        }
+        else {
+            w = Math.abs(h_w * xx) + Math.abs(h_h * yx);
+            h = Math.abs(h_w * xy) + Math.abs(h_h * yy);
+        }
+        if (!target) {
+            target = new bbox_1.BBox(0, 0, 0, 0);
+        }
+        target.x = cx * xx + cy * yx + elements[4] - w;
+        target.y = cx * xy + cy * yy + elements[5] - h;
+        target.width = w + w;
+        target.height = h + h;
+        return target;
+    };
     Matrix.prototype.toContext = function (ctx) {
         // It's fair to say that matrix multiplications are not cheap.
         // However, updating path definitions on every frame isn't either, so
@@ -235,19 +263,24 @@ var Matrix = /** @class */ (function () {
         // If the matrix is mostly identity (95% of the time),
         // the `if (this.isIdentity)` check can make this call 3-4 times
         // faster on average: https://jsperf.com/matrix-check-first-vs-always-set
-        if (this.identity)
+        if (this.identity) {
             return;
+        }
         var e = this.elements;
         ctx.transform(e[0], e[1], e[2], e[3], e[4], e[5]);
     };
     Matrix.flyweight = function (elements) {
-        if (elements)
-            if (elements instanceof Matrix)
+        if (elements) {
+            if (elements instanceof Matrix) {
                 Matrix.matrix.setElements(elements.elements);
-            else
+            }
+            else {
                 Matrix.matrix.setElements(elements);
-        else
+            }
+        }
+        else {
             Matrix.matrix.setIdentityElements();
+        }
         return Matrix.matrix;
     };
     Matrix.matrix = new Matrix();

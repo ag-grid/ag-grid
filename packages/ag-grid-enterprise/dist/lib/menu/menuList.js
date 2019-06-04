@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -103,7 +103,7 @@ var MenuList = /** @class */ (function (_super) {
             if (shouldShow && !showingThisMenu) {
                 _this.showChildMenu(menuItemDef, menuItemComp, null);
             }
-        }, 500);
+        }, 300);
     };
     MenuList.prototype.addSeparator = function () {
         this.getGui().appendChild(ag_grid_community_1._.loadTemplate(MenuList.SEPARATOR_TEMPLATE));

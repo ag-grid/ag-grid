@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Keyboard Interaction: Core Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Keyboard Interaction. With Keyboard Navigation users can use cursor keys and tab keys to navigate between cells. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Keyboard Interaction. With Keyboard Navigation users can use cursor keys and tab keys to navigate between cells. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid Keyboard Interaction";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -91,10 +91,12 @@ interface NavigateToNextCellParams {
     key: number;
 
     // the cell that currently has focus
-    previousCellDef: GridCellDef;
+    previousCellPosition: CellPosition;
 
     // the cell the grid would normally pick as the next cell for this navigation
-    nextCellDef: GridCellDef;
+    nextCellPosition: CellPosition;
+
+    event: KeyboardEvent;
 }</snippet>
 
     <h2><code>tabToNextCell</code></h2>
@@ -115,24 +117,24 @@ interface TabToNextCellParams {
     editing: boolean;
 
     // the cell that currently has focus
-    previousCellDef: GridCellDef;
+    previousCellPosition: CellPosition;
 
     // the cell the grid would normally pick as the next cell for this navigation
-    nextCellDef: GridCellDef;
+    nextCellPosition: CellPosition;
 }</snippet>
 
-    <h2><code>GridCellDef</code></h2>
+    <h2><code>CellPosition</code></h2>
 
     <p>
-        Both functions above use GridCellDef. This is an object that represents a cell in the grid. Its
+        Both functions above use CellPosition. This is an object that represents a cell in the grid. Its
         interface is as follows:
     </p>
 
     <snippet>
-interface GridCellDef {
+interface CellPosition {
 
-    // either 'top', 'bottom' or undefined/null (for not floating)
-    floating: string;
+    // either 'top', 'bottom' or undefined/null (for not pinned)
+    rowPinned: string;
 
     // a positive number from 0 to n, where n is the last row the grid is rendering
     rowIndex: number;
@@ -142,8 +144,8 @@ interface GridCellDef {
 }</snippet>
 
     <p>
-        The functions take a GridCellDef for current and next cells, as well as returning a GridCellDef object.
-        The returned GridCellDef will be the one the grid puts focus on next. Return the provided <code>nextCellDef</code>
+        The functions take a CellPosition for current and next cells, as well as returning a CellPosition object.
+        The returned CellPosition will be the one the grid puts focus on next. Return the provided <code>nextCellPosition</code>
         to stick with the grid default behaviour. Return null/undefined to skip the navigation.
     </p>
 

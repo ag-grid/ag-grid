@@ -77,7 +77,7 @@ include '../landing-pages/header.php';
                     <p><strong>Powerful, advanced features designed for Enterprise Applications.</strong><br>
                         Available in ag-Grid Enterprise.
                     </p>
-                    <a href="https://www.ag-grid.com/start-trial.php" target="_blank">Start Free Trial</a>
+                    <a href="https://www.ag-grid.com/vue-getting-started/" target="_blank">Get Started</a>
                 </div>
                 <div class="col" style="margin-top: 10px">
                     <p>Aggregation</p>
@@ -150,7 +150,7 @@ include '../landing-pages/header.php';
                         Join the millions of developers and thousands of companies who use ag-Grid to provide the best possible experience to their users.
                     </p>
                     <div>
-                        <a href="https://www.ag-grid.com/start-trial.php" target="_blank"><button type="button" class="btn btn-primary btn-lg btn-block">Start Free Trial</button></a>
+                        <a href="https://www.ag-grid.com/vue-getting-started/" target="_blank"><button type="button" class="btn btn-primary btn-lg btn-block">Get Started</button></a>
                     </div>
                 </div>
                 

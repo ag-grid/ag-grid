@@ -11,8 +11,22 @@ if (strcmp($version, 'latest') == 0) {
 } else {
     $rootFolder = '/archive/' . $version . '/';
 }
+
+function enterprise_feature($name) {
+
+/*    echo('<div class="enterprise-note">');
+    echo('<div class="trial-enterprise-note">');
+    echo("$name is an enterprise feature. Want to get started? ");
+    echo("You don't need to contact us to start evaluating ag-Grid Enterprise. ");
+    echo("A license is only required  when you start developing for production. ");
+    echo('</div>');
+    echo('</div>');*/
+
+}
+
 ?>
 <!DOCTYPE html>
+
 <html lang="en">
 <head lang="en">
 <?php

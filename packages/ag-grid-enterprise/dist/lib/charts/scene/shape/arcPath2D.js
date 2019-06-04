@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -130,7 +130,7 @@ var Arc = /** @class */ (function (_super) {
     Arc.prototype.render = function (ctx) {
         // Path2D approach:
         this.updatePath();
-        this.applyContextAttributes(ctx);
+        // this.applyContextAttributes(ctx);
         ctx.fill(this.path);
         ctx.stroke(this.path);
         // Traditional approach:

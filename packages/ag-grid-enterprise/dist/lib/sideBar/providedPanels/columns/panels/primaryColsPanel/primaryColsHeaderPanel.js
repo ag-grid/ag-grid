@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -132,14 +132,14 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         var allPrimaryColumns = this.columnController.getAllPrimaryColumns();
         var columns = [];
         if (allPrimaryColumns !== null) {
-            columns = allPrimaryColumns.filter(function (col) { return !col.isLockVisible(); });
+            columns = allPrimaryColumns.filter(function (col) { return !col.getColDef().lockVisible; });
         }
         var pivotMode = this.columnController.isPivotMode();
         var checkedCount = 0;
         var uncheckedCount = 0;
         columns.forEach(function (col) {
             // ignore lock visible columns
-            if (col.isLockVisible()) {
+            if (col.getColDef().lockVisible) {
                 return;
             }
             // not not count columns not in tool panel

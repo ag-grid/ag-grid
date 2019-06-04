@@ -1,4 +1,4 @@
-// ag-grid-aurelia v20.2.0
+// ag-grid-aurelia v21.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11,7 +11,7 @@ var aurelia_framework_1 = require("aurelia-framework");
 var ag_grid_community_1 = require("ag-grid-community");
 var AureliaFrameworkFactory = /** @class */ (function () {
     function AureliaFrameworkFactory() {
-        this._baseFrameworkFactory = new ag_grid_community_1.BaseFrameworkFactory(); // todo - inject this
+        this._baseFrameworkFactory = new ag_grid_community_1.VanillaFrameworkOverrides(); // todo - inject this
     }
     AureliaFrameworkFactory.prototype.setContainer = function (container) {
         this._container = container;
@@ -21,6 +21,9 @@ var AureliaFrameworkFactory = /** @class */ (function () {
     };
     AureliaFrameworkFactory.prototype.setTimeout = function (action, timeout) {
         this._baseFrameworkFactory.setTimeout(action, timeout);
+    };
+    AureliaFrameworkFactory.prototype.addEventListenerOutsideAngular = function (element, type, listener, useCapture) {
+        this._baseFrameworkFactory.addEventListenerOutsideAngular(element, type, listener, useCapture);
     };
     AureliaFrameworkFactory = __decorate([
         aurelia_framework_1.autoinject(),

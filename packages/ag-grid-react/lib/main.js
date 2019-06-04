@@ -1,4 +1,4 @@
-// ag-grid-react v20.2.0
+// ag-grid-react v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var agGridReact_1 = require("./agGridReact");

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -119,7 +119,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             }
         }
         else {
-            var isAllowedColumn = function (c) { return !c.isLockVisible() && !c.getColDef().suppressToolPanel; };
+            var isAllowedColumn = function (c) { return !c.getColDef().lockVisible && !c.getColDef().suppressToolPanel; };
             var allowedColumns = childColumns.filter(isAllowedColumn);
             this.columnController.setColumnsVisible(allowedColumns, nextState, "toolPanelUi");
         }
@@ -202,7 +202,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
                 }
             }
             else {
-                if (!col.isLockVisible()) {
+                if (!col.getColDef().lockVisible) {
                     colsThatCanAction++;
                 }
             }
@@ -216,9 +216,10 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         var hiddenChildCount = 0;
         this.columnGroup.getLeafColumns().forEach(function (column) {
             // ignore lock visible columns and columns set to 'suppressToolPanel'
-            var ignoredColumn = column.isLockVisible() || column.getColDef().suppressToolPanel;
-            if (ignoredColumn)
+            var ignoredColumn = column.getColDef().lockVisible || column.getColDef().suppressToolPanel;
+            if (ignoredColumn) {
                 return null;
+            }
             if (_this.isColumnVisible(column, pivotMode)) {
                 visibleChildCount++;
             }
@@ -287,7 +288,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             this.onExpandOrContractClicked();
         }
     };
-    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupClosedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span class=\"ag-column-tool-panel-column-group\" ref=\"eLabel\"></span>\n        </div>";
+    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupClosedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-icon ag-icon-grip ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)

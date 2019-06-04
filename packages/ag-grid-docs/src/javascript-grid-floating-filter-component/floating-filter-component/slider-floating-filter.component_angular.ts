@@ -1,13 +1,9 @@
-import {AfterViewInit, Component} from "@angular/core";
+import {Component} from "@angular/core";
 
-import {IFloatingFilter, IFloatingFilterParams, SerializedNumberFilter} from "ag-grid-community";
+import {IFloatingFilter, IFloatingFilterParams, NumberFilter, NumberFilterModel} from "ag-grid-community";
 import {AgFrameworkComponent} from "ag-grid-angular";
 
-export interface SliderFloatingFilterChange {
-    model: SerializedNumberFilter
-}
-
-export interface SliderFloatingFilterParams extends IFloatingFilterParams<SerializedNumberFilter, SliderFloatingFilterChange> {
+export interface SliderFloatingFilterParams extends IFloatingFilterParams {
     value: number
     maxValue: number
 }
@@ -20,8 +16,10 @@ export interface SliderFloatingFilterParams extends IFloatingFilterParams<Serial
                [(ngModel)]="currentValue"
                (ngModelChange)="valueChanged()"/>`
 })
-export class SliderFloatingFilter implements IFloatingFilter<SerializedNumberFilter, SliderFloatingFilterChange, SliderFloatingFilterParams>, AgFrameworkComponent<SliderFloatingFilterParams> {
+export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkComponent<SliderFloatingFilterParams> {
+
     private params: SliderFloatingFilterParams;
+
     public maxValue: number;
     public currentValue: number;
 
@@ -32,10 +30,13 @@ export class SliderFloatingFilter implements IFloatingFilter<SerializedNumberFil
     }
 
     valueChanged() {
-        this.params.onFloatingFilterChanged({model: this.buildModel()});
+        let valueToUse = (this.currentValue === 0) ? null : this.currentValue;
+        this.params.parentFilterInstance( function(instance) {
+            (<NumberFilter>instance).onFloatingFilterChanged('greaterThan', valueToUse);
+        });
     }
 
-    onParentModelChanged(parentModel: SerializedNumberFilter): void {
+    onParentModelChanged(parentModel: NumberFilterModel): void {
         if (!parentModel) {
             this.currentValue = 0;
         } else {
@@ -43,18 +44,6 @@ export class SliderFloatingFilter implements IFloatingFilter<SerializedNumberFil
             // so just read off the value and use that
             this.currentValue = parentModel.filter
         }
-    }
-
-    buildModel(): SerializedNumberFilter {
-        if (this.currentValue === 0) {
-            return null;
-        }
-        return {
-            filterType: 'number',
-            type: 'greaterThan',
-            filter: this.currentValue,
-            filterTo: null
-        };
     }
 
 }

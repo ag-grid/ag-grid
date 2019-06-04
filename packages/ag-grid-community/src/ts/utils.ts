@@ -5,13 +5,16 @@ import { Constants } from "./constants";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { SuppressKeyboardEventParams } from "./entities/colDef";
 import { CellComp } from "./rendering/cellComp";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 
-// util class, only used when debugging, for printing time to console
+/**
+ * A Util Class only used when debugging for printing time to console
+ */
 export class Timer {
 
     private timestamp = new Date().getTime();
@@ -23,7 +26,9 @@ export class Timer {
     }
 }
 
-/** HTML Escapes. */
+/**
+ * HTML Escapes.
+ */
 const HTML_ESCAPES: { [id: string]: string } = {
     '&': '&amp;',
     '<': '&lt;',
@@ -36,10 +41,15 @@ const reUnescapedHtml = /[&<>"']/g;
 
 export class Utils {
 
-    // taken from:
-    // http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-    // both of these variables are lazy loaded, as otherwise they try and get initialised when we are loading
-    // unit tests and we don't have references to window or document in the unit tests
+    private static PASSIVE_EVENTS: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
+
+    private static OUTSIDE_ANGULAR_EVENTS: string[] = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
+
+    /**
+     * These variables are lazy loaded, as otherwise they try and get initialised when we are loading
+     * unit tests and we don't have references to window or document in the unit tests
+     * from http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+     */
     private static isSafari: boolean;
     private static isIE: boolean;
     private static isEdge: boolean;
@@ -55,10 +65,13 @@ export class Utils {
 
     private static doOnceFlags: { [key: string]: boolean } = {};
 
-    // https://ag-grid.com/forum/showthread.php?tid=4362
-    // when in IE or Edge, when you are editing a cell, then click on another cell,
-    // the other cell doesn't keep focus, so navigation keys, type to start edit etc
-    // don't work. appears that when you update the dom in IE it looses focus
+    /**
+     * When in IE or Edge, when you are editing a cell, then click on another cell,
+     * the other cell doesn't keep focus, so navigation keys, type to start edit etc
+     * don't work. appears that when you update the dom in IE it looses focus
+     * https://ag-grid.com/forum/showthread.php?tid=4362
+     * @param {HTMLElement} el
+     */
     static doIeFocusHack(el: HTMLElement): void {
         if (_.isBrowserIE() || _.isBrowserEdge()) {
             if (_.missing(document.activeElement) || document.activeElement === document.body) {
@@ -68,7 +81,11 @@ export class Utils {
         }
     }
 
-    // if the key was passed before, then doesn't execute the func
+    /**
+     * If the key was passed before, then doesn't execute the func
+     * @param {Function} func
+     * @param {string} key
+     */
     static doOnce(func: () => void, key: string) {
         if (this.doOnceFlags[key]) {
             return;
@@ -77,7 +94,12 @@ export class Utils {
         this.doOnceFlags[key] = true;
     }
 
-    // got from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
+    /**
+     * Checks if event was issued by a left click
+     * from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
+     * @param {MouseEvent} mouseEvent
+     * @returns {boolean}
+     */
     static isLeftClick(mouseEvent: MouseEvent): boolean {
         if ("buttons" in mouseEvent) {
             return mouseEvent.buttons == 1;
@@ -86,8 +108,14 @@ export class Utils {
         return button == 1;
     }
 
-    // returns true if the event is close to the original event by X pixels either vertically or horizontally.
-    // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
+    /**
+     * `True` if the event is close to the original event by X pixels either vertically or horizontally.
+     * we only start dragging after X pixels so this allows us to know if we should start dragging yet.
+     * @param {MouseEvent | TouchEvent} e1
+     * @param {MouseEvent | TouchEvent} e2
+     * @param {number} pixelCount
+     * @returns {boolean}
+     */
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
         // by default, we wait 4 pixels before starting the drag
         if (pixelCount === 0) {
@@ -167,18 +195,80 @@ export class Utils {
         }
     }
 
-    static getAbsoluteHeight(el: HTMLElement | null): number {
-        const styles: any = window.getComputedStyle(el!);
-        const margin = parseFloat(styles.marginTop) + parseFloat(styles.marginBottom);
+    static getElementSize(el: HTMLElement): {
+        height: number,
+        width: number,
+        paddingTop: number,
+        paddingRight: number,
+        paddingBottom: number,
+        paddingLeft: number,
+        marginTop: number,
+        marginRight: number,
+        marginBottom: number,
+        marginLeft: number,
+        boxSizing: string
+    } {
+        const {
+            height,
+            width,
+            paddingTop,
+            paddingRight,
+            paddingBottom,
+            paddingLeft,
+            marginTop,
+            marginRight,
+            marginBottom,
+            marginLeft,
+            boxSizing
+        } = window.getComputedStyle(el);
 
-        return Math.ceil(el!.offsetHeight + margin);
+        return {
+            height: parseFloat(height),
+            width: parseFloat(width),
+            paddingTop: parseFloat(paddingTop),
+            paddingRight: parseFloat(paddingRight),
+            paddingBottom: parseFloat(paddingBottom),
+            paddingLeft: parseFloat(paddingLeft),
+            marginTop: parseFloat(marginTop),
+            marginRight: parseFloat(marginRight),
+            marginBottom: parseFloat(marginBottom),
+            marginLeft: parseFloat(marginLeft),
+            boxSizing
+        };
+    }
+
+    static getInnerHeight(el: HTMLElement): number {
+        const size = this.getElementSize(el);
+
+        if (size.boxSizing === 'border-box') {
+            return size.height - size.paddingTop - size.paddingBottom;
+        }
+
+        return size.height;
+    }
+
+    static getInnerWidth(el: HTMLElement): number {
+        const size = this.getElementSize(el);
+
+        if (size.boxSizing === 'border-box') {
+            return size.width - size.paddingLeft - size.paddingRight;
+        }
+
+        return size.width;
+    }
+
+    static getAbsoluteHeight(el: HTMLElement): number {
+        const size = this.getElementSize(el);
+        const marginRight = size.marginBottom + size.marginTop;
+
+        return Math.ceil(el.offsetHeight + marginRight);
     }
 
     static getAbsoluteWidth(el: HTMLElement): number {
-        const styles: any = window.getComputedStyle(el);
-        const margin = parseFloat(styles.marginLeft) + parseFloat(styles.marginRight);
+        const size = this.getElementSize(el);
+        const marginWidth = size.marginLeft + size.marginRight;
 
-        return Math.ceil(el.offsetWidth + margin);
+        return Math.ceil(el.offsetWidth + marginWidth);
     }
 
     static getScrollLeft(element: HTMLElement, rtl: boolean): number {
@@ -220,27 +310,87 @@ export class Utils {
         return hex;
     }
 
+    /**
+     * It encodes any string in UTF-8 format
+     * taken from https://github.com/mathiasbynens/utf8.js
+     * @param {string} s
+     * @returns {string}
+     */
     static utf8_encode = (s: string): string => {
-        let utftext = '';
+        const stringFromCharCode = String.fromCharCode;
 
-        s = s.replace(/\r\n/g, "\n");
+        function ucs2decode(string: string) {
+            const output = [];
+            let counter = 0;
+            const length = string.length;
+            let value;
+            let extra;
 
-        for (let n = 0, len = s.length; n < len; n++) {
-            const c = s.charCodeAt(n);
+            while (counter < length) {
+                value = string.charCodeAt(counter++);
+                if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+                    // high surrogate, and there is a next character
+                    extra = string.charCodeAt(counter++);
+                    if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+                        output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+                    } else {
+                        // unmatched surrogate; only append this code unit, in case the next
+                        // code unit is the high surrogate of a surrogate pair
+                        output.push(value);
+                        counter--;
+                    }
+                } else {
+                    output.push(value);
+                }
+            }
+            return output;
+        }
 
-            if (c < 128) {
-                utftext += String.fromCharCode(c);
-            } else if ((c > 127) && (c < 2048)) {
-                utftext += String.fromCharCode((c >> 6) | 192);
-                utftext += String.fromCharCode((c & 63) | 128);
-            } else {
-                utftext += String.fromCharCode((c >> 12) | 224);
-                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-                utftext += String.fromCharCode((c & 63) | 128);
+        function checkScalarValue(codePoint: number) {
+            if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+                throw Error(
+                    'Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
+                    ' is not a scalar value'
+                );
             }
         }
 
-        return utftext;
+        function createByte(codePoint: number, shift: number) {
+            return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
+        }
+
+        function encodeCodePoint(codePoint: number) {
+            if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
+                return stringFromCharCode(codePoint);
+            }
+            let symbol = '';
+
+            if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
+                symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
+            } else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
+                checkScalarValue(codePoint);
+                symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
+                symbol += createByte(codePoint, 6);
+            } else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
+                symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
+                symbol += createByte(codePoint, 12);
+                symbol += createByte(codePoint, 6);
+            }
+            symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
+            return symbol;
+        }
+
+        const codePoints = ucs2decode(s);
+        const length = codePoints.length;
+        let index = -1;
+        let codePoint;
+        let byteString = '';
+
+        while (++index < length) {
+            codePoint = codePoints[index];
+            byteString += encodeCodePoint(codePoint);
+        }
+        return byteString;
     }
 
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
@@ -383,6 +533,10 @@ export class Utils {
         return object;
     }
 
+    static flatten(arrayOfArrays: any[]) {
+        return [].concat.apply([], arrayOfArrays);
+    }
+
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null {
         try {
             if (!yyyyMmDd) {
@@ -490,18 +644,27 @@ export class Utils {
         }
     }
 
-    //Returns true if it is a DOM node
-    //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
-    static isNode(o: any) {
+    /**
+     * Returns true if it is a DOM node
+     * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+     * @param {any} o
+     * @return {boolean}
+     */
+    static isNode(o: any): boolean {
         return (
             typeof Node === "function" ? o instanceof Node :
                 o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
         );
     }
 
-    //Returns true if it is a DOM element
-    //taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
-    static isElement(o: any) {
+    //
+    /**
+     * Returns true if it is a DOM element
+     * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+     * @param {any} o
+     * @returns {boolean}
+     */
+    static isElement(o: any): boolean {
         return (
             typeof HTMLElement === "function" ? o instanceof HTMLElement : //DOM2
                 o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
@@ -512,8 +675,12 @@ export class Utils {
         return this.isNode(o) || this.isElement(o);
     }
 
-    // makes a copy of a node list into a list
-    static copyNodeList(nodeList: NodeList) {
+    /**
+     * Makes a copy of a node list into a list
+     * @param {NodeList} nodeList
+     * @returns {Node[]}
+     */
+    static copyNodeList(nodeList: NodeList): Node[] {
         const childCount = nodeList ? nodeList.length : 0;
         const res: Node[] = [];
         for (let i = 0; i < childCount; i++) {
@@ -557,7 +724,15 @@ export class Utils {
         }
     }
 
-    // allows user to tell the grid to skip specific keyboard events
+    /**
+     * Allows user to tell the grid to skip specific keyboard events
+     * @param {GridOptionsWrapper} gridOptionsWrapper
+     * @param {KeyboardEvent} keyboardEvent
+     * @param {RowNode} rowNode
+     * @param {Column} column
+     * @param {boolean} editing
+     * @returns {boolean}
+     */
     static isUserSuppressingKeyboardEvent(
         gridOptionsWrapper: GridOptionsWrapper,
         keyboardEvent: KeyboardEvent,
@@ -616,7 +791,11 @@ export class Utils {
         return null;
     }
 
-    //adds all type of change listeners to an element, intended to be a text field
+    /**
+     * Adds all type of change listeners to an element, intended to be a text field
+     * @param {HTMLElement} element
+     * @param {EventListener} listener
+     */
     static addChangeListener(element: HTMLElement, listener: EventListener) {
         element.addEventListener("changed", listener);
         element.addEventListener("paste", listener);
@@ -627,14 +806,19 @@ export class Utils {
         element.addEventListener("keyup", listener);
     }
 
-    //if value is undefined, null or blank, returns null, otherwise returns the value
+    /**
+     * If value is undefined, null or blank, returns null, otherwise returns the value
+     * @param {T} value
+     * @returns {T | null}
+     */
     static makeNull<T>(value: T): T | null {
         const valueNoType = value as any;
+
         if (value === null || value === undefined || valueNoType === "") {
             return null;
-        } else {
-            return value;
         }
+
+        return value;
     }
 
     static missing(value: any): boolean {
@@ -697,9 +881,17 @@ export class Utils {
         return (element.offsetParent !== null);
     }
 
+    static callIfPresent(func: Function): void {
+        if (func) {
+            func();
+        }
+    }
+
     /**
-     * loads the template and returns it as an element. makes up for no simple way in
+     * Loads the template and returns it as an element. makes up for no simple way in
      * the dom api to load html directly, eg we cannot do this: document.createElement(template)
+     * @param {string} template
+     * @returns {HTMLElement}
      */
     static loadTemplate(template: string): HTMLElement {
         const tempDiv = document.createElement("div");
@@ -727,9 +919,26 @@ export class Utils {
         }
     }
 
-    static callIfPresent(func: Function): void {
-        if (func) {
-            func();
+    /**
+     * This method adds a class to an element and remove that class from all siblings.
+     * Useful for toggling state.
+     * @param {HTMLElement} element The element to receive the class
+     * @param {string} className The class to be assigned to the element
+     * @param {boolean} [inverted] This inverts the effect, adding the class to all siblings and
+     *        removing from the relevant element (useful when adding a class to hide non-selected elements).
+     */
+    static radioCssClass(element: HTMLElement, className: string, inverted?: boolean) {
+        const parent = element.parentElement;
+
+        let sibling = parent.firstChild as HTMLElement;
+
+        while (sibling) {
+            _.addOrRemoveCssClass(
+                sibling,
+                className,
+                inverted ? (sibling !== element) : (sibling === element)
+            );
+            sibling = sibling.nextSibling as HTMLElement;
         }
     }
 
@@ -756,6 +965,25 @@ export class Utils {
                 // do not use element.classList = className here, it will cause
                 // a read-only assignment error on some browsers (IE/Edge).
                 element.setAttribute('class', className);
+            }
+        }
+    }
+
+    static removeCssClass(element: HTMLElement, className: string) {
+        if (element.classList) {
+            if (element.classList.contains(className)) {
+                element.classList.remove(className);
+            }
+        } else {
+            if (element.className && element.className.length > 0) {
+                const cssClasses = element.className.split(' ');
+                if (cssClasses.indexOf(className) >= 0) {
+                    // remove all instances of the item, not just the first, in case it's in more than once
+                    while (cssClasses.indexOf(className) >= 0) {
+                        cssClasses.splice(cssClasses.indexOf(className), 1);
+                    }
+                    element.setAttribute('class', cssClasses.join(' '));
+                }
             }
         }
     }
@@ -806,25 +1034,6 @@ export class Utils {
         numberArray.sort((a: number, b: number) => a - b);
     }
 
-    static removeCssClass(element: HTMLElement, className: string) {
-        if (element.classList) {
-            if (element.classList.contains(className)) {
-                element.classList.remove(className);
-            }
-        } else {
-            if (element.className && element.className.length > 0) {
-                const cssClasses = element.className.split(' ');
-                if (cssClasses.indexOf(className) >= 0) {
-                    // remove all instances of the item, not just the first, in case it's in more than once
-                    while (cssClasses.indexOf(className) >= 0) {
-                        cssClasses.splice(cssClasses.indexOf(className), 1);
-                    }
-                    element.setAttribute('class', cssClasses.join(' '));
-                }
-            }
-        }
-    }
-
     static removeRepeatsFromArray<T>(array: T[], object: T) {
         if (!array) {
             return;
@@ -840,15 +1049,17 @@ export class Utils {
     }
 
     static removeFromArray<T>(array: T[], object: T) {
-        if (array.indexOf(object) >= 0) {
-            array.splice(array.indexOf(object), 1);
+        const index = array.indexOf(object);
+        if (index >= 0) {
+            array.splice(index, 1);
         }
     }
 
     static removeAllFromArray<T>(array: T[], toRemove: T[]) {
         toRemove.forEach(item => {
-            if (array.indexOf(item) >= 0) {
-                array.splice(array.indexOf(item), 1);
+            const index = array.indexOf(item);
+            if (index >= 0) {
+                array.splice(index, 1);
             }
         });
     }
@@ -932,6 +1143,12 @@ export class Utils {
         function doQuickCompare(a: string, b: string): number {
             return (a > b ? 1 : (a < b ? -1 : 0));
         }
+    }
+
+    static last<T>(arr: T[]): T | undefined {
+        if (!arr || !arr.length) { return undefined; }
+
+        return arr[arr.length - 1];
     }
 
     static compareArrays(array1: any[] | undefined, array2: any[]): boolean {
@@ -1057,14 +1274,17 @@ export class Utils {
         return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 
-    // the native method number.toLocaleString(undefined, {minimumFractionDigits: 0}) puts in decimal places in IE,
-    // so we use this method instead
+    /**
+     * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
+     * puts in decimal places in IE, so we use this method instead
+     * from: http://blog.tompawlak.org/number-currency-formatting-javascript
+     * @param {number} value
+     * @returns {string}
+     */
     static formatNumberCommas(value: number): string {
         if (typeof value !== 'number') {
             return '';
         }
-
-        // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
         return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 
@@ -1075,14 +1295,6 @@ export class Utils {
             parent.appendChild(documentFragment);
         }
     }
-
-    // static prepend(parent: HTMLElement, child: HTMLElement): void {
-    //     if (this.exists(parent.firstChild)) {
-    //         parent.insertBefore(child, parent.firstChild);
-    //     } else {
-    //         parent.appendChild(child);
-    //     }
-    // }
 
     static iconNameClassMap: { [key: string]: string } = {
         columnGroupOpened: 'expanded',
@@ -1101,16 +1313,22 @@ export class Utils {
         dropNotAllowed: 'not-allowed',
         groupContracted: 'expanded',
         groupExpanded: 'contracted',
+        chart: 'chart',
         checkboxChecked: 'checkbox-checked',
         checkboxUnchecked: 'checkbox-unchecked',
         checkboxIndeterminate: 'checkbox-indeterminate',
         checkboxCheckedReadOnly: 'checkbox-checked-readonly',
         checkboxUncheckedReadOnly: 'checkbox-unchecked-readonly',
         checkboxIndeterminateReadOnly: 'checkbox-indeterminate-readonly',
+        radioButtonOn: 'radio-button-on',
+        radioButtonOff: 'radio-button-off',
         groupLoading: 'loading',
+        data: 'data',
         menu: 'menu',
         filter: 'filter',
         columns: 'columns',
+        maximze: 'maximize',
+        minimize: 'minimize',
         menuPin: 'pin',
         menuValue: 'aggregation',
         menuAddRowGroup: 'group',
@@ -1123,6 +1341,7 @@ export class Utils {
         valuePanel: 'aggregation',
         columnDrag: 'column-drag',
         rowDrag: 'row-drag',
+        save: 'save',
         /** from @deprecated header, remove at some point */
         sortAscending: 'asc',
         sortDescending: 'desc',
@@ -1132,6 +1351,10 @@ export class Utils {
     /**
      * If icon provided, use this (either a string, or a function callback).
      * if not, then use the default icon from the theme
+     * @param {string} iconName
+     * @param {GridOptionsWrapper} gridOptionsWrapper
+     * @param {Column | null} [column]
+     * @returns {HTMLElement}
      */
     static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement {
         const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column);
@@ -1232,30 +1455,25 @@ export class Utils {
     }
 
     static getScrollbarWidth() {
-        const outer = document.createElement("div");
-        outer.style.visibility = "hidden";
-        outer.style.width = "100px";
-        outer.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+        const body = document.body;
+        const div = document.createElement("div");
 
-        document.body.appendChild(outer);
+        div.style.width = div.style.height = "100px";
+        div.style.opacity = "0";
+        div.style.overflow = "scroll";
+        div.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+        div.style.position = "absolute";
 
-        const widthNoScroll = outer.offsetWidth;
-        // force scrollbars
-        outer.style.overflow = "scroll";
+        body.appendChild(div);
 
-        // add inner div
-        const inner = document.createElement("div");
-        inner.style.width = "100%";
-        outer.appendChild(inner);
-
-        const widthWithScroll = inner.offsetWidth;
+        const width = div.offsetWidth - div.clientWidth;
 
         // remove divs
-        if (outer.parentNode) {
-            outer.parentNode.removeChild(outer);
+        if (div.parentNode) {
+            div.parentNode.removeChild(div);
         }
 
-        return widthNoScroll - widthWithScroll;
+        return width;
     }
 
     static hasOverflowScrolling(): boolean {
@@ -1369,8 +1587,12 @@ export class Utils {
         return this.isIPad;
     }
 
-    // srcElement is only available in IE. In all other browsers it is target
-    // http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
+    /**
+     * srcElement is only available in IE. In all other browsers it is target
+     * http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
+     * @param {Event} event
+     * @returns {Element}
+     */
     static getTarget(event: Event): Element {
         const eventNoType = event as any;
         return eventNoType.target || eventNoType.srcElement;
@@ -1411,18 +1633,25 @@ export class Utils {
         return res;
     }
 
-    // firefox doesn't have event.path set, or any alternative to it, so we hack
-    // it in. this is needed as it's to late to work out the path when the item is
-    // removed from the dom. used by MouseEventService, where it works out if a click
-    // was from the current grid, or a detail grid (master / detail).
+    /**
+     * firefox doesn't have event.path set, or any alternative to it, so we hack
+     * it in. this is needed as it's to late to work out the path when the item is
+     * removed from the dom. used by MouseEventService, where it works out if a click
+     * was from the current grid, or a detail grid (master / detail).
+     * @param {Event} event
+     */
     static addAgGridEventPath(event: Event): void {
         (event as any).__agGridEventPath = this.getEventPath(event);
     }
 
+    /**
+     * Gets the path for an Event.
+     * https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
+     * https://developer.mozilla.org/en-US/docs/Web/API/Event
+     * @param {Event} event
+     * @returns {EventTarget[]}
+     */
     static getEventPath(event: Event): EventTarget[] {
-        // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
-        // https://developer.mozilla.org/en-US/docs/Web/API/Event
-
         const eventNoType = event as any;
         if (eventNoType.deepPath) {
             // IE supports deep path
@@ -1450,7 +1679,11 @@ export class Utils {
         }
     }
 
-    // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+    /**
+     * Gets the document body width
+     * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+     * @returns {number}
+     */
     static getBodyWidth(): number {
         if (document.body) {
             return document.body.clientWidth;
@@ -1467,7 +1700,11 @@ export class Utils {
         return -1;
     }
 
-    // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+    /**
+     * Gets the body height
+     * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+     * @returns {number}
+     */
     static getBodyHeight(): number {
         if (document.body) {
             return document.body.clientHeight;
@@ -1515,7 +1752,12 @@ export class Utils {
         }
     }
 
-    // from https://gist.github.com/youssman/745578062609e8acac9f
+    /**
+     * Converts a camelCase string into hyphenated string
+     * from https://gist.github.com/youssman/745578062609e8acac9f
+     * @param {string} str
+     * @return {string}
+     */
     static camelCaseToHyphen(str: string): string | null {
         if (str === null || str === undefined) {
             return null;
@@ -1523,7 +1765,12 @@ export class Utils {
         return str.replace(/([A-Z])/g, (g) => '-' + g[0].toLowerCase());
     }
 
-    // from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
+    /**
+     * Converts a hyphenated string into camelCase string
+     * from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
+     * @param {string} str
+     * @return {string}
+     */
     static hyphenToCamelCase(str: string): string | null {
         if (str === null || str === undefined) {
             return null;
@@ -1531,7 +1778,15 @@ export class Utils {
         return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
     }
 
-    // pas in an object eg: {color: 'black', top: '25px'} and it returns "color: black; top: 25px;" for html
+    static capitalise(str: string): string {
+        return str[0].toUpperCase() + str.substr(1).toLowerCase();
+    }
+
+    /**
+     * Converts a CSS object into string
+     * @param {Object} stylesToUse an object eg: {color: 'black', top: '25px'}
+     * @return {string} A string like "color: black; top: 25px;" for html
+     */
     static cssStyleObjectToMarkup(stylesToUse: any): string {
         if (!stylesToUse) {
             return '';
@@ -1547,7 +1802,10 @@ export class Utils {
     }
 
     /**
-     * From http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
+     * Check if a value is numeric
+     * from http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
+     * @param {any} value
+     * @return {boolean}
      */
     static isNumeric(value: any): boolean {
         if (value === '') {
@@ -1564,7 +1822,6 @@ export class Utils {
         return toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
     }
 
-    // Taken from here: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
     /**
      * Mouse wheel (and 2-finger trackpad) support on the web sucks.  It is
      * complicated, thus this doc is long and (hopefully) detailed enough to answer
@@ -1664,6 +1921,9 @@ export class Utils {
      *         Firefox v4/OS X  |     undefined    |       1
      *         Firefox v4/Win7  |     undefined    |       3
      *
+     * from: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
+     * @param {any} event
+     * @return {any}
      */
     static normalizeWheel(event: any): any {
         const PIXEL_STEP = 10;
@@ -1735,9 +1995,13 @@ export class Utils {
     }
 
     /**
-     * https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
+     * from https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
+     * @param {Function} func The function to be debounced
+     * @param {number} wait The time in ms to debounce
+     * @param {boolean} immediate If it should run immediately or wait for the initial debounce delay
+     * @return {Function} The debounced function
      */
-    static debounce(func: () => void, wait: number, immediate: boolean = false) {
+    static debounce(func: (...args: any[]) => void, wait: number, immediate: boolean = false) {
         // 'private' variable for instance
         // The returned function will be able to reference this due to closure.
         // Each call to the returned function will share this common timer.
@@ -1781,12 +2045,15 @@ export class Utils {
         };
     }
 
-    // a user once raised an issue - they said that when you opened a popup (eg context menu)
-    // and then clicked on a selection checkbox, the popup wasn't closed. this is because the
-    // popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
-    // checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
-    // to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
-    // but we still let the event pass back to teh body.
+    /**
+     * a user once raised an issue - they said that when you opened a popup (eg context menu)
+     * and then clicked on a selection checkbox, the popup wasn't closed. this is because the
+     * popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
+     * checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
+     * to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
+     * but we still let the event pass back to teh body.
+     * @param {Event} event
+     */
     static stopPropagationForAgGrid(event: Event): void {
         (event as any)[AG_GRID_STOP_PROPAGATION] = true;
     }
@@ -1833,54 +2100,61 @@ export class Utils {
             const fields: string[] = expression.split('.');
             const thisKey: string = fields[0];
             const nextValue: any = source[thisKey];
+
             if (nextValue != null) {
                 return Utils.get(nextValue, fields.slice(1, fields.length).join('.'), defaultValue);
-            } else {
-                return defaultValue;
             }
-        } else {
-            const nextValue: any = source[expression];
-            return nextValue != null ? nextValue : defaultValue;
-        }
-    }
 
-    static passiveEvents: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
+            return defaultValue;
+        }
+
+        const nextValue: any = source[expression];
+        return nextValue != null ? nextValue : defaultValue;
+    }
 
     static addSafePassiveEventListener(
+        frameworkOverrides: IFrameworkOverrides,
         eElement: HTMLElement,
-        event: string, listener: (event?: any) => void,
-        options?: boolean | AddEventListenerOptions
+        event: string, listener: (event?: any) => void
     ) {
 
-        if (Utils.passiveEvents.indexOf(event) !== -1) {
-            if (options === undefined) {
-                options = {};
-            } else if (typeof options === 'boolean') {
-                options = { capture: options };
-            }
+        const isPassive = Utils.PASSIVE_EVENTS.indexOf(event) >= 0;
+        const isOutsideAngular = Utils.OUTSIDE_ANGULAR_EVENTS.indexOf(event) >= 0;
 
-            options.passive = true;
+        const options = isPassive ? {passive: true} : undefined;
+
+        if (isOutsideAngular) {
+            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
+        } else {
+            eElement.addEventListener(event, listener, options);
         }
-        eElement.addEventListener(event, listener, options);
+
     }
 
+    /**
+     * Converts a camelCase string into regular text
+     * from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
+     * @param {string} camelCase
+     * @return {string}
+     */
     static camelCaseToHumanText(camelCase: string | undefined): string | null {
         if (!camelCase || camelCase == null) {
             return null;
         }
 
-        // Who needs to learn how to code when you have stack overflow!
-        // from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
         const rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
         const words: string[] = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
 
         return words.map(word => word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : '')).join(' ');
     }
 
-    // displays a message to the browser. this is useful in iPad, where you can't easily see the console.
-    // so the javascript code can use this to give feedback. this is NOT intended to be called in production.
-    // it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
-    // checking in.
+    /**
+     * Displays a message to the browser. this is useful in iPad, where you can't easily see the console.
+     * so the javascript code can use this to give feedback. this is NOT intended to be called in production.
+     * it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
+     * checking in.
+     * @param {string} msg
+     */
     static message(msg: string): void {
         const eMessage = document.createElement('div');
         eMessage.innerHTML = msg;
@@ -1896,10 +2170,14 @@ export class Utils {
         // eBox.appendChild(eMessage);
     }
 
-    // gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
-    // when in ClientSideNodeManager we always have indexes (as this sorts the items the
-    // user provided) but when in GroupStage, the nodes can contain filler nodes that
-    // don't have order id's
+    /**
+     * Gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
+     * when in ClientSideNodeManager we always have indexes (as this sorts the items the
+     * user provided) but when in GroupStage, the nodes can contain filler nodes that
+     * don't have order id's
+     * @param {RowNode[]} rowNodes
+     * @param {Object} rowNodeOrder
+     */
     static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number }): void {
         if (!rowNodes) {
             return;
@@ -1999,8 +2277,12 @@ export class Utils {
         return thisSuggestions;
     }
 
-    //Algorithm to do fuzzy search
-    //https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
+    /**
+     * Algorithm to do fuzzy search
+     * from https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
+     * @param {string} from
+     * @return {[]}
+     */
     static get_bigrams(from: string) {
         const s = from.toLowerCase();
         const v = new Array(s.length - 1);
@@ -2050,8 +2332,12 @@ export class Utils {
         return false;
     }
 
-    // cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
-    // can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
+    /**
+     * cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
+     * can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
+     * @param {Promise<ICellRendererComp>} cellRendererPromise
+     * @param {HTMLElement} eTarget
+     */
     public static bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
         cellRendererPromise.then(cellRenderer => {
             const gui: HTMLElement | string = cellRenderer.getGui();

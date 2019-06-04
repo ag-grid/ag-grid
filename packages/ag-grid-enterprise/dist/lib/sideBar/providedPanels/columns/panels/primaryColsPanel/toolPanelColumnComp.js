@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -67,7 +67,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnComp.prototype.onChangeCommon = function (nextState) {
         // ignore lock visible columns
-        if (this.column.isLockVisible()) {
+        if (this.column.getColDef().lockVisible) {
             return;
         }
         // only want to action if the user clicked the checkbox, not is we are setting the checkbox because
@@ -257,7 +257,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         }
         else {
             // when in normal mode, the checkbox is read only if visibility is locked
-            checkboxReadOnly = this.column.isLockVisible();
+            checkboxReadOnly = !!this.column.getColDef().lockVisible;
         }
         this.cbSelect.setReadOnly(checkboxReadOnly);
         var checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
@@ -286,7 +286,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.setExpanded = function (value) {
         console.warn('ag-grid: can not expand a column item that does not represent a column group header');
     };
-    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
+    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-icon ag-icon-grip ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)

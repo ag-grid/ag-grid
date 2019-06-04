@@ -1,35 +1,46 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Group } from "../../scene/group";
 import { Chart } from "../chart";
-export declare abstract class Series<D, X, Y> {
-    private createId;
+import { LegendDatum } from "../legend";
+/**
+ * `D` - raw series datum, an element in the {@link Series.data} array.
+ * `SeriesNodeDatum` - processed series datum used in node selections,
+ *                     contains information used to render pie sectors, bars, line markers, etc.
+ */
+export interface SeriesNodeDatum {
+    seriesDatum: any;
+}
+export declare abstract class Series<C extends Chart> {
     readonly id: string;
-    abstract data: D[];
-    protected _chart: Chart<D, X, Y> | null;
-    abstract chart: Chart<D, X, Y> | null;
+    /**
+     * The group node that contains all the nodes used to render this series.
+     */
     readonly group: Group;
-    private _visible;
+    private createId;
+    protected _data: any[];
+    data: any[];
+    protected _chart: C | null;
+    abstract chart: C | null;
+    protected _visible: boolean;
     visible: boolean;
-    /**
-     * Returns the names of all properties series use in the given direction.
-     * For example, cartesian series have the `xField` and `yField` properties,
-     * so `getFields(Direction.X)` will return the value of the `xField`.
-     * Stacked cartesian series have the `xField` and `yFields` properties,
-     * where the `yFields` is an array of strings, so `getFields(Direction.Y)`
-     * will return the values in the `yFields` property.
-     * Something like a candlestick series may have `xField`, `openField`, `highField`,
-     * `lowField`, `closeField` properties, so the `getFields(Direction.Y)` will
-     * return the values of the `openField`, `highField`, `lowField`, `closeField`.
-     * @param direction
-     */
-    /**
-     * Finds the first matching axis for the series fields.
-     * The provides `axes` and `seriesFields` should have the same direction.
-     * @param axes
-     * @param seriesFields
-     */
     abstract getDomainX(): any[];
     abstract getDomainY(): any[];
     abstract processData(): boolean;
     abstract update(): void;
+    abstract getTooltipHtml(nodeDatum: SeriesNodeDatum): string;
+    tooltipEnabled: boolean;
+    /**
+     * @private
+     * Populates the given {@param data} array with the items of this series
+     * that should be shown in the legend. It's up to the series to determine
+     * what is considered an item. An item could be the series itself or some
+     * part of the series.
+     * @param data
+     */
+    abstract listSeriesItems(data: LegendDatum[]): void;
+    toggleSeriesItem(itemId: any, enabled: boolean): void;
+    private _showInLegend;
+    showInLegend: boolean;
+    scheduleLayout(): void;
+    scheduleData(): void;
 }

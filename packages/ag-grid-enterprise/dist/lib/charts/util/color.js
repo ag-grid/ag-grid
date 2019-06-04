@@ -1,15 +1,19 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * Every color component should be in the [0, 1] range.
- * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
- * So, when animating colors, if the source or target color components are already near
- * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
- * component value to end up outside of that range mid-animation. For this reason the constructor
- * performs range checking/constraining.
- */
 var Color = /** @class */ (function () {
+    /**
+     * Every color component should be in the [0, 1] range.
+     * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
+     * So, when animating colors, if the source or target color components are already near
+     * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
+     * component value to end up outside of that range mid-animation. For this reason the constructor
+     * performs range checking/constraining.
+     * @param r Red component.
+     * @param g Green component.
+     * @param b Blue component.
+     * @param a Alpha (opacity) component.
+     */
     function Color(r, g, b, a) {
         if (a === void 0) { a = 1; }
         // NaN is treated as 0.
@@ -46,23 +50,25 @@ var Color = /** @class */ (function () {
     // Using separate RegExp for the short hex notation because strings like `#abcd`
     // are matched as ['#abcd', 'ab', 'c', 'd', undefined] when the `{1,2}` quantifier is used.
     Color.fromHexString = function (str) {
-        var n = str.length - 1;
-        var short = n === 3 || n === 4;
-        if (str[0] === '#' && (short || n === 6 || n === 8)) {
-            var values = str.match(short ? Color.shortHexRe : Color.hexRe);
-            if (values) {
-                var r = parseInt(values[1], 16);
-                var g = parseInt(values[2], 16);
-                var b = parseInt(values[3], 16);
-                var a = values[4] !== undefined ? parseInt(values[4], 16) : (short ? 15 : 255);
-                if (short) {
-                    r += r * 16;
-                    g += g * 16;
-                    b += b * 16;
-                    a += a * 16;
-                }
-                return new Color(r / 255, g / 255, b / 255, a / 255);
-            }
+        var values = str.match(Color.hexRe);
+        if (values) {
+            var r = parseInt(values[1], 16);
+            var g = parseInt(values[2], 16);
+            var b = parseInt(values[3], 16);
+            var a = values[4] !== undefined ? parseInt(values[4], 16) : 255;
+            return new Color(r / 255, g / 255, b / 255, a / 255);
+        }
+        values = str.match(Color.shortHexRe);
+        if (values) {
+            var r = parseInt(values[1], 16);
+            var g = parseInt(values[2], 16);
+            var b = parseInt(values[3], 16);
+            var a = values[4] !== undefined ? parseInt(values[4], 16) : 15;
+            r += r * 16;
+            g += g * 16;
+            b += b * 16;
+            a += a * 16;
+            return new Color(r / 255, g / 255, b / 255, a / 255);
         }
         throw new Error("Malformed hexadecimal color string: '" + str + "'");
     };
@@ -91,11 +97,15 @@ var Color = /** @class */ (function () {
         var rgb = Color.HSBtoRGB(h, s, b);
         return new Color(rgb[0], rgb[1], rgb[2], alpha);
     };
+    Color.padHex = function (str) {
+        // Can't use `padStart(2, '0')` here because of IE.
+        return str.length === 1 ? '0' + str : str;
+    };
     Color.prototype.toHexString = function () {
         return '#'
-            + Math.round(this.r * 255).toString(16)
-            + Math.round(this.g * 255).toString(16)
-            + Math.round(this.b * 255).toString(16);
+            + Color.padHex(Math.round(this.r * 255).toString(16))
+            + Color.padHex(Math.round(this.g * 255).toString(16))
+            + Color.padHex(Math.round(this.b * 255).toString(16));
     };
     Color.prototype.toRgbaString = function () {
         var components = [
@@ -226,8 +236,8 @@ var Color = /** @class */ (function () {
         return this.derive(0, 1.0, 0.7, 1.0);
     };
     // See https://drafts.csswg.org/css-color/#hex-notation
-    Color.hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*/;
-    Color.shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*/;
+    Color.hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*$/;
+    Color.shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*$/;
     Color.rgbRe = /\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)\s*/;
     Color.rgbaRe = /\s*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([.\d]+)\)\s*/;
     /**

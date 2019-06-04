@@ -1,22 +1,25 @@
 import Scale from "./scale/scale";
-import {Group} from "./scene/group";
-import {Selection} from "./scene/selection";
-import {Line} from "./scene/shape/line";
-import {NumericTicks} from "./util/ticks";
-import {normalizeAngle360, normalizeAngle360Inclusive, toRadians} from "./util/angle";
-import {Text} from "./scene/shape/text";
-import {Arc} from "./scene/shape/arc";
-import {Shape} from "./scene/shape/shape";
+import { Group } from "./scene/group";
+import { Selection } from "./scene/selection";
+import { Line } from "./scene/shape/line";
+import { NumericTicks } from "./util/ticks";
+import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
+import { Text } from "./scene/shape/text";
+import { Arc } from "./scene/shape/arc";
+import { Shape } from "./scene/shape/shape";
+import { BBox } from "./scene/bbox";
+import { Matrix } from "./scene/matrix";
+// import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
     Tick,
     GridLine
 }
 
-export type GridStyle = {
-    strokeStyle: string | null,
-    lineDash: number[] | null
-};
+export interface GridStyle {
+    stroke?: string,
+    lineDash?: number[]
+}
 
 /**
  * A general purpose linear axis with no notion of orientation.
@@ -27,17 +30,35 @@ export type GridStyle = {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<D> {
+export class Axis<D = any> {
+
+    // debug (bbox)
+    // private bboxRect = (() => {
+    //     const rect = new Rect();
+    //     rect.fillStyle = null;
+    //     rect.strokeStyle = 'blue';
+    //     rect.lineWidth = 1;
+    //     return rect;
+    // })();
+
     constructor(scale: Scale<D, number>) {
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
         this.group.append(this.line);
+        // this.group.append(this.bboxRect); // debug (bbox)
     }
 
     readonly scale: Scale<D, number>;
     readonly group = new Group();
     private groupSelection: Selection<Group, Group, D, D>;
     private line = new Line();
+
+    set domain(value: D[]) {
+        this.scale.domain = value;
+    }
+    get domain(): D[] {
+        return this.scale.domain;
+    }
 
     /**
      * The horizontal translation of the axis group.
@@ -63,7 +84,7 @@ export class Axis<D> {
      * The color of the axis line.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
      */
-    lineColor: string | null = 'rgba(195, 195, 195, 1)';
+    lineColor?: string = 'rgba(195, 195, 195, 1)';
 
     /**
      * The line width to be used by axis ticks.
@@ -84,19 +105,27 @@ export class Axis<D> {
      * The color of the axis ticks.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
-    tickColor: string | null = 'rgba(195, 195, 195, 1)';
+    tickColor?: string = 'rgba(195, 195, 195, 1)';
+
+    /**
+     * In case {@param value} is a number, the {@param fractionDigits} parameter will
+     * be provided as well. The `fractionDigits` corresponds to the number of fraction
+     * digits used by the tick step. For example, if the tick step is `0.0005`,
+     * the `fractionDigits` is 4.
+     */
+    labelFormatter?: (value: any, fractionDigits?: number) => string;
 
     /**
      * The font to be used by the labels. The given font string should use the
      * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
      */
-    labelFont: string = '12px Tahoma';
+    labelFont: string = '12px Verdana, sans-serif';
 
     /**
      * The color of the labels.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    labelColor: string | null = 'rgba(87, 87, 87, 1)';
+    labelColor?: string = 'rgba(87, 87, 87, 1)';
 
     /**
      * The length of the grid. The grid is only visible in case of a non-zero value.
@@ -122,7 +151,7 @@ export class Axis<D> {
      * have the same style.
      */
     private _gridStyle: GridStyle[] = [{
-        strokeStyle: 'rgba(219, 219, 219, 1)',
+        stroke: 'rgba(219, 219, 219, 1)',
         lineDash: [4, 2]
     }];
     set gridStyle(value: GridStyle[]) {
@@ -183,7 +212,7 @@ export class Axis<D> {
 
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
-     * Supposed to be called manually after changing any of the axis properties.
+     * Supposed to be called _manually_ after changing _any_ of the axis properties.
      * This allows to bulk set axis properties before updating the nodes.
      * The node changes made by this method are rendered on the next animation frame.
      * We could schedule this method call automatically on the next animation frame
@@ -207,9 +236,9 @@ export class Axis<D> {
 
         // Render ticks and labels.
         const ticks = scale.ticks!(10);
-        let decimalDigits = 0;
+        let fractionDigits = 0;
         if (ticks instanceof NumericTicks) {
-            decimalDigits = ticks.decimalDigits;
+            fractionDigits = ticks.fractionDigits;
         }
         const bandwidth = (scale.bandwidth || 0) / 2;
         // The side of the axis line to position the labels on.
@@ -253,14 +282,14 @@ export class Axis<D> {
         const groupSelection = update.merge(enter);
 
         groupSelection
-            .attrFn('translationY', (node, datum) => {
+            .attrFn('translationY', (_, datum) => {
                 return Math.round(scale.convert(datum) + bandwidth);
             });
 
         groupSelection.selectByTag<Line>(Tags.Tick)
             .each(line => {
-                line.lineWidth = this.tickWidth;
-                line.strokeStyle = this.tickColor;
+                line.strokeWidth = this.tickWidth;
+                line.stroke = this.tickColor;
             })
             .attr('x1', sideFlag * this.tickSize)
             .attr('x2', 0)
@@ -290,27 +319,33 @@ export class Axis<D> {
                         line.x2 = -sideFlag * this.gridLength;
                         line.y1 = 0;
                         line.y2 = 0;
-                        line.visible = line.parent!.translationY !== scale.range[0];
+                        line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
                     });
             }
-            gridLines.each((arc, datum, index) => {
+            gridLines.each((gridLine, datum, index) => {
                 const style = styles[index % styleCount];
-                arc.strokeStyle = style.strokeStyle;
-                arc.lineDash = style.lineDash;
-                arc.fillStyle = null;
+                gridLine.stroke = style.stroke;
+                gridLine.strokeWidth = this.tickWidth;
+                gridLine.lineDash = style.lineDash;
+                gridLine.fill = undefined;
             });
         }
 
+        const labelFormatter = this.labelFormatter;
         const labels = groupSelection.selectByClass(Text)
             .each((label, datum) => {
                 label.font = this.labelFont;
-                label.fillStyle = this.labelColor;
+                label.fill = this.labelColor;
                 label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
-                label.text = decimalDigits && typeof datum === 'number'
-                    ? datum.toFixed(decimalDigits)
-                    : datum.toString();
+                label.text = labelFormatter
+                    ? labelFormatter(fractionDigits ? datum : String(datum), fractionDigits)
+                    : fractionDigits
+                        // the `datum` is a floating point number
+                        ? (datum as any as number).toFixed(fractionDigits)
+                        // the `datum` is an integer, a string or an object
+                        : String(datum);
                 label.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
@@ -321,10 +356,11 @@ export class Axis<D> {
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
-        labels
-            .attr('x', labelX)
-            .attr('rotationCenterX', labelX)
-            .attr('rotation', autoRotation + labelRotation);
+        labels.each(label => {
+            label.x = labelX;
+            label.rotationCenterX = labelX;
+            label.rotation = autoRotation + labelRotation;
+        });
 
         this.groupSelection = groupSelection;
 
@@ -334,7 +370,60 @@ export class Axis<D> {
         line.x2 = 0;
         line.y1 = scale.range[0];
         line.y2 = scale.range[scale.range.length - 1];
-        line.lineWidth = this.lineWidth;
-        line.strokeStyle = this.lineColor;
+        line.strokeWidth = this.lineWidth;
+        line.stroke = this.lineColor;
+        line.visible = ticks.length > 0;
+
+        // debug (bbox)
+        // const bbox = this.getBBox();
+        // const bboxRect = this.bboxRect;
+        // bboxRect.x = bbox.x;
+        // bboxRect.y = bbox.y;
+        // bboxRect.width = bbox.width;
+        // bboxRect.height = bbox.height;
+    }
+
+    getBBox(): BBox {
+        const line = this.line;
+        const labels = this.groupSelection.selectByClass(Text);
+
+        let left = Infinity;
+        let right = -Infinity;
+        let top = Infinity;
+        let bottom = -Infinity;
+
+        labels.each(label => {
+            // The label itself is rotated, but not translated, the group that
+            // contains it is. So to capture the group transform in the label bbox
+            // calculation we combine the transform matrices of the label and the group.
+            // Depending on the timing of the `axis.getBBox()` method call, we may
+            // not have the group's and the label's transform matrices updated yet (because
+            // the transform matrix is not recalculated whenever a node's transform attributes
+            // change, instead it's marked for recalculation on the next frame by setting
+            // the node's `dirtyTransform` flag to `true`), so we force them to update
+            // right here by calling `computeTransformMatrix`.
+            label.computeTransformMatrix();
+            const matrix = Matrix.flyweight(label.matrix);
+            const group = label.parent!;
+            group.computeTransformMatrix();
+            matrix.preMultiplySelf(group.matrix);
+            const bbox = matrix.transformBBox(label.getBBox());
+            left = Math.min(left, bbox.x);
+            right = Math.max(right, bbox.x + bbox.width);
+            top = Math.min(top, bbox.y);
+            bottom = Math.max(bottom, bbox.y + bbox.height);
+        });
+
+        left = Math.min(left, 0);
+        right = Math.max(right, 0);
+        top = Math.min(top, line.y1, line.y2);
+        bottom = Math.max(bottom, line.y1, line.y2);
+
+        return new BBox(
+            left,
+            top,
+            right - left,
+            bottom - top
+        );
     }
 }

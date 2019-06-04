@@ -1,28 +1,26 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IFilterParams } from "./iFilter";
 import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef } from "../entities/colDef";
+import { IProvidedFilterParams } from "../filter/provided/providedFilter";
 export interface SetFilterValuesFuncParams {
     success: (values: string[]) => void;
     colDef: ColDef;
 }
 export declare type SetFilterValuesFunc = (params: SetFilterValuesFuncParams) => void;
 export declare type SetFilterValues = SetFilterValuesFunc | any[];
-export interface ISetFilterParams extends IFilterParams {
+export interface ISetFilterParams extends IProvidedFilterParams {
     suppressRemoveEntries?: boolean;
     values?: SetFilterValues;
     cellHeight: number;
-    apply: boolean;
     suppressSorting: boolean;
     cellRenderer: {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
-    newRowsAction: string;
     suppressMiniFilter: boolean;
     selectAllOnMiniFilter: boolean;
     comparator?: (a: any, b: any) => number;
-    debounceMs?: number;
     miniFilterSearchByRefDataKey?: boolean;
+    textFormatter?: (from: string) => string;
 }

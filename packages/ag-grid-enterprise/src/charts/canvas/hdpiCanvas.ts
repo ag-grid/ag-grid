@@ -1,19 +1,34 @@
 type Size = { width: number, height: number };
 
+export interface DownloadOptions {
+    fileName?: string, background?: string
+}
+
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.
  */
 export class HdpiCanvas {
+    readonly canvas = document.createElement('canvas');
+
+    readonly context = this.canvas.getContext('2d')!;
+
+    /**
+     * The canvas flickers on size changes in Safari.
+     * A temporary canvas is used (during resize only) to prevent that.
+     */
+    private tempCanvas = document.createElement('canvas');
+
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
     constructor(width = 300, height = 150) {
+        this.canvas.style.userSelect = 'none';
         this.updatePixelRatio(0, false);
         this.resize(width, height);
     }
 
-    private _parent: HTMLElement | null = null;
-    set parent(value: HTMLElement | null) {
+    private _parent: HTMLElement | undefined = undefined;
+    set parent(value: HTMLElement | undefined) {
         if (this._parent !== value) {
             this.remove();
             if (value) {
@@ -23,7 +38,7 @@ export class HdpiCanvas {
         }
 
     }
-    get parent(): HTMLElement | null {
+    get parent(): HTMLElement | undefined {
         return this._parent;
     }
 
@@ -34,10 +49,6 @@ export class HdpiCanvas {
             parent.removeChild(this.canvas);
         }
     }
-
-    readonly canvas = document.createElement('canvas');
-
-    readonly context = this.canvas.getContext('2d')!;
 
     destroy() {
         this.canvas.remove();
@@ -52,9 +63,10 @@ export class HdpiCanvas {
     }
 
     /**
-     * @param fileName The `.png` extension is going to be added automatically.
+     * @param options.fileName The `.png` extension is going to be added automatically.
+     * @param [options.background] Defaults to `white`.
      */
-    download(fileName: string) {
+    download(options: DownloadOptions = {}) {
         // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
         // so we don't support saving to JPEG.
         const type = 'image/png';
@@ -64,11 +76,12 @@ export class HdpiCanvas {
         canvas.width = this.canvas.width;
         canvas.height = this.canvas.height;
         const ctx = canvas.getContext('2d')!;
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = options.background || 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(this.canvas, 0, 0);
 
         const dataUrl = canvas.toDataURL(type);
+        const fileName = ((options.fileName || '').trim() || 'image') + '.png';
 
         if (navigator.msSaveOrOpenBlob) { // IE11
             const binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
@@ -78,11 +91,11 @@ export class HdpiCanvas {
             }
             const blob = new Blob([new Uint8Array(array)], {type});
 
-            navigator.msSaveOrOpenBlob(blob, fileName + '.png');
+            navigator.msSaveOrOpenBlob(blob, fileName);
         } else {
             const a = document.createElement('a');
             a.href = dataUrl;
-            a.download = fileName + '.png';
+            a.download = fileName;
             a.style.display = 'none';
             document.body.appendChild(a); // required for the `click` to work in Firefox
             a.click();
@@ -146,25 +159,39 @@ export class HdpiCanvas {
 
     resize(width: number, height: number) {
         const canvas = this.canvas;
+        const context = this.context;
+        const tempCanvas = this.tempCanvas;
+
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        const tempContext = tempCanvas.getContext('2d')!;
+
+        tempContext.drawImage(context.canvas, 0, 0);
 
         canvas.width = Math.round(width * this.pixelRatio);
         canvas.height = Math.round(height * this.pixelRatio);
         canvas.style.width = Math.round(width) + 'px';
         canvas.style.height = Math.round(height) + 'px';
 
-        this.context.resetTransform();
+        context.drawImage(tempContext.canvas, 0, 0);
+
+        context.resetTransform();
     }
 
-    // 2D canvas context for measuring text.
-    private static readonly textContext: CanvasRenderingContext2D = (() => {
+    // 2D canvas context used for measuring text.
+    private static _textMeasuringContext?: CanvasRenderingContext2D;
+    private static get textMeasuringContext(): CanvasRenderingContext2D {
+        if (HdpiCanvas._textMeasuringContext) {
+            return HdpiCanvas._textMeasuringContext;
+        }
         const canvas = document.createElement('canvas');
-        return canvas.getContext('2d')!;
-    })();
+        return HdpiCanvas._textMeasuringContext = canvas.getContext('2d')!;
+    }
 
-    // Offscreen SVGTextElement for measuring text
-    // (this fallback method is at least 25 times slower).
-    // Using a <span> and its `getBoundingClientRect` for the same purpose
-    // often results in a grossly incorrect measured height.
+    // Offscreen SVGTextElement for measuring text. This fallback method
+    // is at least 25 times slower than `CanvasRenderingContext2D.measureText`.
+    // Using a <span> and its `getBoundingClientRect` for text measurement
+    // is also slow and often results in a grossly incorrect measured height.
     private static _svgText: SVGTextElement;
     private static get svgText(): SVGTextElement {
         if (HdpiCanvas._svgText) {
@@ -176,6 +203,13 @@ export class HdpiCanvas {
         const svg = document.createElementNS(xmlns, 'svg');
         svg.setAttribute('width', '100');
         svg.setAttribute('height', '100');
+        // Add a descriptive class name in case someone sees this SVG element
+        // in devtools and wonders about its purpose:
+        if (svg.classList) {
+            svg.classList.add('text-measuring-svg');
+        } else {
+            svg.setAttribute('class', 'text-measuring-svg');
+        }
         svg.style.position = 'absolute';
         svg.style.top = '-1000px';
         svg.style.visibility = 'hidden';
@@ -193,16 +227,27 @@ export class HdpiCanvas {
         return svgText;
     };
 
-    static readonly supports = Object.freeze({
-        textMetrics: HdpiCanvas.textContext.measureText('test')
-            .actualBoundingBoxDescent !== undefined,
-        getTransform: HdpiCanvas.textContext.getTransform !== undefined
-    });
+    private static _has?: Readonly<{
+        textMetrics: boolean,
+        getTransform: boolean,
+        flicker: boolean
+    }>;
+    static get has() {
+        if (HdpiCanvas._has) {
+            return HdpiCanvas._has;
+        }
+        return HdpiCanvas._has = Object.freeze({
+            textMetrics: HdpiCanvas.textMeasuringContext.measureText('test')
+                .actualBoundingBoxDescent !== undefined,
+            getTransform: HdpiCanvas.textMeasuringContext.getTransform !== undefined,
+            flicker: !!(window as any).safari
+        });
+    };
 
     static measureText(text: string, font: string,
                        textBaseline: CanvasTextBaseline,
                        textAlign: CanvasTextAlign): TextMetrics {
-        const ctx = HdpiCanvas.textContext;
+        const ctx = HdpiCanvas.textMeasuringContext;
         ctx.font = font;
         ctx.textBaseline = textBaseline;
         ctx.textAlign = textAlign;
@@ -215,9 +260,10 @@ export class HdpiCanvas {
      * @param font The font shorthand string.
      */
     static getTextSize(text: string, font: string): Size {
-        if (HdpiCanvas.supports.textMetrics) {
-            HdpiCanvas.textContext.font = font;
-            const metrics = HdpiCanvas.textContext.measureText(text);
+        if (HdpiCanvas.has.textMetrics) {
+            const ctx = HdpiCanvas.textMeasuringContext;
+            ctx.font = font;
+            const metrics = ctx.measureText(text);
 
             return {
                 width: metrics.width,
@@ -279,12 +325,20 @@ export class HdpiCanvas {
                     depth--;
                 }
             },
+            setTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
+                this.$setTransform(
+                    a * pixelRatio,
+                    b * pixelRatio,
+                    c * pixelRatio,
+                    d * pixelRatio,
+                    e * pixelRatio,
+                    f * pixelRatio
+                );
+            },
             resetTransform() {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
-                // this.$resetTransform();
-                this.setTransform(1, 0, 0, 1, 0, 0);
-                this.scale(pixelRatio, pixelRatio);
+                this.$setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
                 this.save();
                 depth = 0;
                 // The scale above will be impossible to restore,

@@ -323,6 +323,13 @@ export class ColumnController {
         }
 
         this.pivotMode = pivotMode;
+
+        // we need to update grid columns to cover the scenario where user has groupSuppressAutoColumn=true, as
+        // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
+        // so need to updateGridColumn() to check it autoGroupCol needs to be added / removed
+        this.autoGroupsNeedBuilding = true;
+        this.updateGridColumns();
+
         this.updateDisplayedColumns(source);
         const event: ColumnPivotModeChangedEvent = {
             type: Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
@@ -369,9 +376,9 @@ export class ColumnController {
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[0] : null;
-            firstRight = this.displayedRightColumns ? this.displayedRightColumns[this.displayedRightColumns.length - 1] : null;
+            firstRight = this.displayedRightColumns ? _.last(this.displayedRightColumns) : null;
         } else {
-            lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[this.displayedLeftColumns.length - 1] : null;
+            lastLeft = this.displayedLeftColumns ? _.last(this.displayedLeftColumns) : null;
             firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
         }
 
@@ -1186,7 +1193,7 @@ export class ColumnController {
 
         // go though the cols, see if any non-locked appear before any locked
         proposedColumnOrder.forEach(col => {
-            if (col.isLockPosition()) {
+            if (col.getColDef().lockPosition) {
                 if (foundNonLocked) {
                     rulePassed = false;
                 }
@@ -1605,6 +1612,10 @@ export class ColumnController {
     }
 
     public resetColumnState(suppressEverythingEvent = false, source: ColumnEventType = "api"): void {
+        // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,
+        // this is ignored  below when ordering the cols. to work, we should always put lockPosition cols first.
+        // As a work around, developers should just put lockPosition columns first in their colDef list.
+
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         const primaryColumns = this.getColumnsFromTree(this.primaryColumnTree);
         const columnStates: ColumnState[] = [];
@@ -1963,10 +1974,11 @@ export class ColumnController {
     }
 
     // used by growGroupPanel
-    public getColumnWithValidation(key: string | Column): Column | null {
+    public getColumnWithValidation(key: string | Column | undefined): Column | null {
+        if (key == null) { return null; }
         const column = this.getPrimaryColumn(key);
         if (!column) {
-            console.warn('ag-Grid: could not find column ' + column);
+            console.warn('ag-Grid: could not find column ' + key);
         }
         return column;
     }
@@ -2327,6 +2339,7 @@ export class ColumnController {
         });
 
         this.updateGroupsAndDisplayedColumns(source);
+        this.setFirstRightAndLastLeftPinned(source);
 
         impactedGroups.forEach(originalColumnGroup => {
             const event: ColumnGroupOpenedEvent = {
@@ -2438,9 +2451,10 @@ export class ColumnController {
 
         this.calculateColumnsForGroupDisplay();
 
-        // this is also called when a group is opened or closed
+        // also called when group opened/closed
         this.updateGroupsAndDisplayedColumns(source);
 
+        // also called when group opened/closed
         this.setFirstRightAndLastLeftPinned(source);
     }
 
@@ -2632,8 +2646,8 @@ export class ColumnController {
     }
 
     private putFixedColumnsFirst(): void {
-        const locked = this.gridColumns.filter(c => c.isLockPosition());
-        const unlocked = this.gridColumns.filter(c => !c.isLockPosition());
+        const locked = this.gridColumns.filter(c => c.getColDef().lockPosition);
+        const unlocked = this.gridColumns.filter(c => !c.getColDef().lockPosition);
         this.gridColumns = locked.concat(unlocked);
     }
 
@@ -2987,21 +3001,22 @@ export class ColumnController {
         }
         this.autoGroupsNeedBuilding = false;
 
-        // see if we need to insert the default grouping column
-        const needAutoColumns = (this.rowGroupColumns.length > 0 || this.usingTreeData)
-            && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
-            && !this.gridOptionsWrapper.isGroupUseEntireRow()
-            && !this.gridOptionsWrapper.isGroupSuppressRow();
+        const groupFullWidthRow = this.gridOptionsWrapper.isGroupUseEntireRow(this.pivotMode);
+        // we never suppress auto col for pivot mode, as there is no way for user to provide group columns
+        // in pivot mode. pivot mode has auto group column (provide by grid) and value columns (provided by
+        // pivot feature in the grid).
+        const groupSuppressAutoColumn = this.gridOptionsWrapper.isGroupSuppressAutoColumn() && !this.pivotMode;
+        const groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
+        const groupingActive = this.rowGroupColumns.length > 0 || this.usingTreeData;
+
+        const needAutoColumns = groupingActive && !groupSuppressAutoColumn && !groupFullWidthRow && !groupSuppressRow;
 
         if (needAutoColumns) {
-            // this.groupAutoColumns = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
-
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             if (autoColsDifferent) {
                 this.groupAutoColumns = newAutoGroupCols;
             }
-
         } else {
             this.groupAutoColumns = null;
         }

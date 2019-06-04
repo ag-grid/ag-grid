@@ -1,4 +1,4 @@
-// ag-grid-react v20.2.0
+// ag-grid-react v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -90,7 +90,10 @@ var AgGridReact = /** @class */ (function (_super) {
     AgGridReact.prototype.waitForInstance = function (reactComponent, resolve, runningTime) {
         var _this = this;
         if (runningTime === void 0) { runningTime = 0; }
-        if (reactComponent.getFrameworkComponentInstance() || reactComponent.isStatelesComponent()) {
+        if (reactComponent.isStatelesComponent() && reactComponent.statelessComponentRendered()) {
+            resolve(null);
+        }
+        else if (!reactComponent.isStatelesComponent() && reactComponent.getFrameworkComponentInstance()) {
             resolve(null);
         }
         else {
@@ -145,9 +148,32 @@ var AgGridReact = /** @class */ (function (_super) {
         return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
     };
     AgGridReact.prototype.componentWillReceiveProps = function (nextProps) {
+        var changes = {};
+        this.extractGridPropertyChanges(nextProps, changes);
+        this.extractDeclarativeColDefChanges(nextProps, changes);
+        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+    };
+    AgGridReact.prototype.extractDeclarativeColDefChanges = function (nextProps, changes) {
+        var debugLogging = !!nextProps.debug;
+        if (agGridColumn_1.AgGridColumn.hasChildColumns(nextProps)) {
+            var detectionStrategy = this.changeDetectionService.getStrategy(changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck);
+            var currentColDefs = this.gridOptions.columnDefs;
+            var newColDefs = agGridColumn_1.AgGridColumn.mapChildColumnDefs(nextProps);
+            if (!detectionStrategy.areEqual(currentColDefs, newColDefs)) {
+                if (debugLogging) {
+                    console.log("agGridReact: colDefs definitions changed");
+                }
+                changes['columnDefs'] =
+                    {
+                        previousValue: this.gridOptions.columnDefs,
+                        currentValue: agGridColumn_1.AgGridColumn.mapChildColumnDefs(nextProps)
+                    };
+            }
+        }
+    };
+    AgGridReact.prototype.extractGridPropertyChanges = function (nextProps, changes) {
         var _this = this;
         var debugLogging = !!nextProps.debug;
-        var changes = {};
         var changedKeys = Object.keys(nextProps);
         changedKeys.forEach(function (propKey) {
             if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
@@ -174,7 +200,6 @@ var AgGridReact = /** @class */ (function (_super) {
                 };
             }
         });
-        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
     };
     AgGridReact.prototype.componentWillUnmount = function () {
         if (this.api) {

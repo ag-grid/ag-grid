@@ -29,7 +29,7 @@ export function quadraticRoots(a: number, b: number, c: number): number[] {
 
     const D = b * b - 4 * a * c; // The polynomial's discriminant.
 
-    let roots: number[] = [];
+    const roots: number[] = [];
 
     if (D === 0) { // A single real root.
         const t = -b / (2 * a);

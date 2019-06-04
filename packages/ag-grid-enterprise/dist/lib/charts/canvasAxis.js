@@ -1,7 +1,6 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var canvas_1 = require("./canvas/canvas");
 var angle_1 = require("./util/angle");
 var CanvasAxis = /** @class */ (function () {
     function CanvasAxis(scale) {
@@ -30,7 +29,7 @@ var CanvasAxis = /** @class */ (function () {
             var ticks = scale.ticks(10);
             var bandwidth = (scale.bandwidth || 0) / 2;
             var tickCount = ticks.length;
-            var pxShift = canvas_1.pixelSnap(this.tickWidth);
+            var pxShift = Math.floor(this.tickWidth) % 2 / 2;
             var sideFlag = this.mirroredLabels ? 1 : -1;
             ctx.lineWidth = this.tickWidth;
             ctx.strokeStyle = this.tickColor;
@@ -61,7 +60,7 @@ var CanvasAxis = /** @class */ (function () {
         }
         // Render axis line.
         {
-            var pxShift = canvas_1.pixelSnap(this.lineWidth, canvas_1.PixelSnapBias.Negative);
+            var pxShift = Math.floor(this.lineWidth) % 2 / 2;
             ctx.lineWidth = this.lineWidth;
             ctx.strokeStyle = this.lineColor;
             ctx.beginPath();

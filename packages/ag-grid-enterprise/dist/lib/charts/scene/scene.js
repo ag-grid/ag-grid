@@ -1,43 +1,20 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var hdpiCanvas_1 = require("../canvas/hdpiCanvas");
-var shape_1 = require("./shape/shape");
 var Scene = /** @class */ (function () {
     function Scene(width, height) {
+        var _this = this;
         if (width === void 0) { width = 800; }
         if (height === void 0) { height = 600; }
-        var _this = this;
         this.id = this.createId();
-        this.onMouseMove = function (e) {
-            var x = e.offsetX;
-            var y = e.offsetY;
-            if (_this.root) {
-                var node = _this.pickNode(_this.root, x, y);
-                if (node) {
-                    if (node instanceof shape_1.Shape) {
-                        if (!_this.lastPick) {
-                            _this.lastPick = { node: node, fillStyle: node.fillStyle };
-                        }
-                        else if (_this.lastPick.node !== node) {
-                            _this.lastPick.node.fillStyle = _this.lastPick.fillStyle;
-                            _this.lastPick = { node: node, fillStyle: node.fillStyle };
-                        }
-                        node.fillStyle = 'yellow';
-                    }
-                }
-                else if (_this.lastPick) {
-                    _this.lastPick.node.fillStyle = _this.lastPick.fillStyle;
-                    _this.lastPick = undefined;
-                }
-            }
-        };
         this._dirty = false;
         this._root = null;
         this._frameIndex = 0;
         this._renderFrameIndex = false;
         this.render = function () {
             var ctx = _this.ctx;
+            // start with a blank canvas, clear previous drawing
             ctx.clearRect(0, 0, _this.width, _this.height);
             if (_this.root) {
                 ctx.save();
@@ -57,8 +34,11 @@ var Scene = /** @class */ (function () {
         };
         this.hdpiCanvas = new hdpiCanvas_1.HdpiCanvas(this._width = width, this._height = height);
         this.ctx = this.hdpiCanvas.context;
-        this.setupListeners(this.hdpiCanvas.canvas); // debug
     }
+    Scene.prototype.createId = function () {
+        return this.constructor.name + '-' + (Scene.id++);
+    };
+    ;
     Object.defineProperty(Scene.prototype, "parent", {
         get: function () {
             return this.hdpiCanvas.parent;
@@ -69,31 +49,8 @@ var Scene = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Scene.prototype.createId = function () {
-        return this.constructor.name + '-' + (Scene.id++);
-    };
-    ;
-    Scene.prototype.setupListeners = function (canvas) {
-        canvas.addEventListener('mousemove', this.onMouseMove);
-    };
-    Scene.prototype.pickNode = function (node, x, y) {
-        if (!node.visible || !node.isPointInNode(x, y)) {
-            return;
-        }
-        var children = node.children;
-        if (children.length) {
-            // Nodes added later should be hit-tested first,
-            // as they are rendered on top of the previously added nodes.
-            for (var i = children.length - 1; i >= 0; i--) {
-                var hit = this.pickNode(children[i], x, y);
-                if (hit) {
-                    return hit;
-                }
-            }
-        }
-        else if (node instanceof shape_1.Shape) {
-            return node;
-        }
+    Scene.prototype.download = function (options) {
+        this.hdpiCanvas.download(options);
     };
     Object.defineProperty(Scene.prototype, "width", {
         get: function () {

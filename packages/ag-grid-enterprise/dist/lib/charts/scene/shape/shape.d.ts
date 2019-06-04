@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Node } from "../node";
 import { DropShadow } from "../dropShadow";
 export declare type ShapeLineCap = null | 'round' | 'square';
@@ -13,15 +13,16 @@ export declare abstract class Shape extends Node {
      * These static defaults are meant to be inherited by subclasses.
      */
     protected static defaultStyles: {
-        fillStyle: string | null;
-        strokeStyle: string | null;
-        lineWidth: number;
-        lineDash: number[] | null;
+        fill: string;
+        stroke: undefined;
+        strokeWidth: number;
+        lineDash: undefined;
         lineDashOffset: number;
         lineCap: ShapeLineCap;
         lineJoin: ShapeLineJoin;
         opacity: number;
-        shadow: DropShadow | null;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     };
     /**
      * Restores the default styles introduced by this subclass.
@@ -32,8 +33,8 @@ export declare abstract class Shape extends Node {
      * Restores the base class default styles that have been overridden by this subclass.
      */
     protected restoreOverriddenStyles(): void;
-    private _fillStyle;
-    fillStyle: string | null;
+    private _fill;
+    fill: string | undefined;
     /**
      * Note that `strokeStyle = null` means invisible stroke,
      * while `lineWidth = 0` means no stroke, and sometimes this can mean different things.
@@ -44,12 +45,12 @@ export declare abstract class Shape extends Node {
      * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
      * unless specific looks that is achieved by having an invisible stroke is desired.
      */
-    private _strokeStyle;
-    strokeStyle: string | null;
-    protected _lineWidth: number;
-    lineWidth: number;
+    private _stroke;
+    stroke: string | undefined;
+    protected _strokeWidth: number;
+    strokeWidth: number;
     private _lineDash;
-    lineDash: number[] | null;
+    lineDash: number[] | undefined;
     private _lineDashOffset;
     lineDashOffset: number;
     private _lineCap;
@@ -58,9 +59,11 @@ export declare abstract class Shape extends Node {
     lineJoin: ShapeLineJoin;
     private _opacity;
     opacity: number;
-    private _shadow;
-    shadow: DropShadow | null;
-    applyContextAttributes(ctx: CanvasRenderingContext2D): void;
+    private _fillShadow;
+    fillShadow: DropShadow | undefined;
+    private _strokeShadow;
+    strokeShadow: DropShadow | undefined;
+    protected fillStroke(ctx: CanvasRenderingContext2D): void;
     isPointInNode(x: number, y: number): boolean;
     abstract isPointInPath(x: number, y: number): boolean;
     abstract isPointInStroke(x: number, y: number): boolean;

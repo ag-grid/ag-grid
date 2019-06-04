@@ -92,14 +92,14 @@ export class MoveColumnController implements DropListener {
 
     public setColumnsVisible(columns: Column[], visible: boolean, source: ColumnEventType = "api") {
         if (columns) {
-            const allowedCols = columns.filter(c => !c.isLockVisible());
+            const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
             this.columnController.setColumnsVisible(allowedCols, visible, source);
         }
     }
 
     public setColumnsPinned(columns: Column[], pinned: string, source: ColumnEventType = "api") {
         if (columns) {
-            const allowedCols = columns.filter(c => !c.isLockPinned());
+            const allowedCols = columns.filter(c => !c.getColDef().lockPinned);
             this.columnController.setColumnsPinned(allowedCols, pinned, source);
         }
     }
@@ -173,7 +173,7 @@ export class MoveColumnController implements DropListener {
         let columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
 
         columnsToMove = columnsToMove.filter(col => {
-            if (col.isLockPinned()) {
+            if (col.getColDef().lockPinned) {
                 // if locked return true only if both col and container are same pin type.
                 // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
                 return col.getPinned() == this.pinned;
@@ -206,7 +206,7 @@ export class MoveColumnController implements DropListener {
         movingCols.forEach(col => indexes.push(gridCols.indexOf(col)));
         _.sortNumberArray(indexes);
         const firstIndex = indexes[0];
-        const lastIndex = indexes[indexes.length - 1];
+        const lastIndex = _.last(indexes);
         const spread = lastIndex - firstIndex;
         const gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;
@@ -384,7 +384,7 @@ export class MoveColumnController implements DropListener {
             this.failedMoveAttempts++;
 
             const columns = this.lastDraggingEvent.dragItem.columns;
-            const columnsThatCanPin = columns.filter(c => !c.isLockPinned());
+            const columnsThatCanPin = columns.filter(c => !c.getColDef().lockPinned);
 
             if (columnsThatCanPin.length > 0) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);

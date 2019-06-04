@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -200,6 +200,11 @@ var ColumnController = /** @class */ (function () {
             return;
         }
         this.pivotMode = pivotMode;
+        // we need to update grid columns to cover the scenario where user has groupSuppressAutoColumn=true, as
+        // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
+        // so need to updateGridColumn() to check it autoGroupCol needs to be added / removed
+        this.autoGroupsNeedBuilding = true;
+        this.updateGridColumns();
         this.updateDisplayedColumns(source);
         var event = {
             type: events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
@@ -235,10 +240,10 @@ var ColumnController = /** @class */ (function () {
         var firstRight;
         if (this.gridOptionsWrapper.isEnableRtl()) {
             lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[0] : null;
-            firstRight = this.displayedRightColumns ? this.displayedRightColumns[this.displayedRightColumns.length - 1] : null;
+            firstRight = this.displayedRightColumns ? utils_1._.last(this.displayedRightColumns) : null;
         }
         else {
-            lastLeft = this.displayedLeftColumns ? this.displayedLeftColumns[this.displayedLeftColumns.length - 1] : null;
+            lastLeft = this.displayedLeftColumns ? utils_1._.last(this.displayedLeftColumns) : null;
             firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
         }
         this.gridColumns.forEach(function (column) {
@@ -925,7 +930,7 @@ var ColumnController = /** @class */ (function () {
         var rulePassed = true;
         // go though the cols, see if any non-locked appear before any locked
         proposedColumnOrder.forEach(function (col) {
-            if (col.isLockPosition()) {
+            if (col.getColDef().lockPosition) {
                 if (foundNonLocked) {
                     rulePassed = false;
                 }
@@ -1287,6 +1292,9 @@ var ColumnController = /** @class */ (function () {
         });
     };
     ColumnController.prototype.resetColumnState = function (suppressEverythingEvent, source) {
+        // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,
+        // this is ignored  below when ordering the cols. to work, we should always put lockPosition cols first.
+        // As a work around, developers should just put lockPosition columns first in their colDef list.
         if (suppressEverythingEvent === void 0) { suppressEverythingEvent = false; }
         if (source === void 0) { source = "api"; }
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
@@ -1597,9 +1605,12 @@ var ColumnController = /** @class */ (function () {
     };
     // used by growGroupPanel
     ColumnController.prototype.getColumnWithValidation = function (key) {
+        if (key == null) {
+            return null;
+        }
         var column = this.getPrimaryColumn(key);
         if (!column) {
-            console.warn('ag-Grid: could not find column ' + column);
+            console.warn('ag-Grid: could not find column ' + key);
         }
         return column;
     };
@@ -1909,6 +1920,7 @@ var ColumnController = /** @class */ (function () {
             impactedGroups.push(originalColumnGroup);
         });
         this.updateGroupsAndDisplayedColumns(source);
+        this.setFirstRightAndLastLeftPinned(source);
         impactedGroups.forEach(function (originalColumnGroup) {
             var event = {
                 type: events_1.Events.EVENT_COLUMN_GROUP_OPENED,
@@ -2004,8 +2016,9 @@ var ColumnController = /** @class */ (function () {
         var columnsForDisplay = this.calculateColumnsForDisplay();
         this.buildDisplayedTrees(columnsForDisplay);
         this.calculateColumnsForGroupDisplay();
-        // this is also called when a group is opened or closed
+        // also called when group opened/closed
         this.updateGroupsAndDisplayedColumns(source);
+        // also called when group opened/closed
         this.setFirstRightAndLastLeftPinned(source);
     };
     ColumnController.prototype.isSecondaryColumnsPresent = function () {
@@ -2169,8 +2182,8 @@ var ColumnController = /** @class */ (function () {
         }
     };
     ColumnController.prototype.putFixedColumnsFirst = function () {
-        var locked = this.gridColumns.filter(function (c) { return c.isLockPosition(); });
-        var unlocked = this.gridColumns.filter(function (c) { return !c.isLockPosition(); });
+        var locked = this.gridColumns.filter(function (c) { return c.getColDef().lockPosition; });
+        var unlocked = this.gridColumns.filter(function (c) { return !c.getColDef().lockPosition; });
         this.gridColumns = locked.concat(unlocked);
     };
     ColumnController.prototype.addAutoGroupToGridColumns = function () {
@@ -2479,13 +2492,15 @@ var ColumnController = /** @class */ (function () {
             return;
         }
         this.autoGroupsNeedBuilding = false;
-        // see if we need to insert the default grouping column
-        var needAutoColumns = (this.rowGroupColumns.length > 0 || this.usingTreeData)
-            && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
-            && !this.gridOptionsWrapper.isGroupUseEntireRow()
-            && !this.gridOptionsWrapper.isGroupSuppressRow();
+        var groupFullWidthRow = this.gridOptionsWrapper.isGroupUseEntireRow(this.pivotMode);
+        // we never suppress auto col for pivot mode, as there is no way for user to provide group columns
+        // in pivot mode. pivot mode has auto group column (provide by grid) and value columns (provided by
+        // pivot feature in the grid).
+        var groupSuppressAutoColumn = this.gridOptionsWrapper.isGroupSuppressAutoColumn() && !this.pivotMode;
+        var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
+        var groupingActive = this.rowGroupColumns.length > 0 || this.usingTreeData;
+        var needAutoColumns = groupingActive && !groupSuppressAutoColumn && !groupFullWidthRow && !groupSuppressRow;
         if (needAutoColumns) {
-            // this.groupAutoColumns = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             var newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             var autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             if (autoColsDifferent) {

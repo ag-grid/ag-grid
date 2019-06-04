@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -190,8 +190,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         }
         var shouldAnimate = function () {
             var rowAnimationEnabled = _this.gridOptionsWrapper.isAnimateRows();
-            if (rowNode.master)
+            if (rowNode.master) {
                 return rowAnimationEnabled && rowNode.expanded;
+            }
             return rowAnimationEnabled;
         };
         this.updateRowIndexesAndBounds();
@@ -552,6 +553,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             masterNode.detailNode = detailNode;
             return detailNode;
         }
+    };
+    ServerSideRowModel.prototype.isLoading = function () {
+        return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
     };
     __decorate([
         ag_grid_community_1.Autowired('gridOptionsWrapper'),

@@ -7,22 +7,56 @@
 // `ctx.strokeRect(...bbox);`
 // https://jsperf.com/array-vs-object-create-access
 
-export type BBox = {
-    x: number,
-    y: number,
-    width: number,
-    height: number
-}
+export class BBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 
-export function isPointInBBox(bbox: BBox, x: number, y: number) {
-    return x >= bbox.x && x <= (bbox.x + bbox.width)
-        && y >= bbox.y && y <= (bbox.y + bbox.height);
-}
+    constructor(x: number, y: number, width: number, height: number) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
 
-export function renderBBox(ctx: CanvasRenderingContext2D, bbox: BBox) {
-    ctx.save();
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(bbox.x, bbox.y, bbox.width, bbox.height);
-    ctx.restore();
+    dilate(value: number) {
+        this.x -= value;
+        this.y -= value;
+        this.width += value * 2;
+        this.height += value * 2;
+    }
+
+    containsPoint(x: number, y: number): boolean {
+        return x >= this.x && x <= (this.x + this.width)
+            && y >= this.y && y <= (this.y + this.height);
+    }
+
+    private static noParams = {};
+
+    render(ctx: CanvasRenderingContext2D, params: {
+        resetTransform?: boolean,
+        label?: string,
+        fillStyle?: string,
+        lineWidth?: number,
+        strokeStyle?: string
+    } = BBox.noParams) {
+        ctx.save();
+
+        if (params.resetTransform) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+
+        ctx.strokeStyle = params.strokeStyle || 'cyan';
+        ctx.lineWidth = params.lineWidth || 1;
+        ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+        if (params.label) {
+            ctx.fillStyle = params.fillStyle || 'black';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(params.label, this.x, this.y);
+        }
+
+        ctx.restore();
+    }
 }

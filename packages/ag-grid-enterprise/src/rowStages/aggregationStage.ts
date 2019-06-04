@@ -73,7 +73,7 @@ export class AggregationStage implements IRowNodeStage {
 
         const callback = (rowNode: RowNode) => {
 
-            let hasNoChildren = !rowNode.hasChildren();
+            const hasNoChildren = !rowNode.hasChildren();
             if (hasNoChildren) {
                 // this check is needed for TreeData, in case the node is no longer a child,
                 // but it was a child previously.
@@ -246,7 +246,7 @@ export class AggregationStage implements IRowNodeStage {
         return values;
     }
 
-    private aggregateValues(values: any[], aggFuncOrString: string | IAggFunc): any {
+    public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc): any {
         let aggFunction: IAggFunc;
 
         if (typeof aggFuncOrString === 'string') {

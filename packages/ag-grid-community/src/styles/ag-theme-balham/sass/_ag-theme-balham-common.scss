@@ -23,7 +23,6 @@
     %tab {
         border: 1px solid transparent;
         border-bottom-width: 0;
-        display: inline-block;
         margin: $grid-size;
         margin-bottom: 0;
         padding: $grid-size $grid-size * 2;
@@ -97,26 +96,16 @@
         border-color: $selected-color;
     }
 
-    .ag-icon-row-drag {
-        background-position-y: center;
-    }
-
-    .ag-column-drag {
-        background-position-y: center;
-    }
-
     .ag-column-drop-cell {
-        height: $grid-size * 6 !important;
+        min-height: $grid-size * 6;
 
         .ag-column-drop-cell-button {
-            height: calc(100% - #{$grid-size});
             margin-bottom: $grid-size / 2;
             margin-top: $grid-size / 2;
         }
 
         .ag-column-drop-cell-button:hover {
             opacity: 1;
-            // border: 1px solid $border-color;
         }
     }
 
@@ -125,7 +114,6 @@
         margin-right: $grid-size * 2;
 
         .ag-column-drop-cell-text {
-            line-height: $grid-size * 6;
             margin-left: $grid-size * 2;
         }
     }
@@ -134,62 +122,29 @@
         background-color: $panel-background-color;
         height: $header-height;
 
-        .ag-column-drop-empty-message {
-            line-height: $header-height;
-        }
-
         .ag-column-drop-cell-text {
-            line-height: $grid-size * 6;
             margin-left: $grid-size * 2;
         }
-    }
-
-    .ag-filter .ag-filter-header-container {
-        height: $grid-size * 6;
     }
 
     .ag-root {
         border: 1px solid $border-color;
     }
 
-    .ag-filter .ag-filter-value {
-        line-height: $icon-size + $grid-size;
-    }
-
     // tool panel
     .ag-tool-panel-wrapper {
         border-right: 1px solid $border-color;
-        border-bottom: 1px solid $border-color;
 
         .ag-column-select-panel {
-            padding-bottom: $grid-size * 2;
-
             .ag-column-tool-panel-column-group,
             .ag-column-tool-panel-column {
-                height: $grid-size * 5;
-                line-height: $grid-size * 5;
+                min-height: $grid-size * 5;
             }
         }
 
         .ag-column-drop {
             padding-bottom: $grid-size * 2;
             padding-top: $grid-size * 2;
-
-            .ag-icon {
-                margin-bottom: $grid-size;
-            }
-
-            .ag-column-drop-title {
-                display: inline-block;
-                float: none;
-                margin-bottom: $grid-size;
-            }
-
-            .ag-column-drop-empty-message {
-                height: $grid-size * 4;
-                line-height: $grid-size * 4;
-                padding-left: $icon-size + $grid-size * 2;
-            }
         }
     }
 
@@ -199,34 +154,23 @@
         border-right: 0;
     }
 
-    // real crude adjustments, due to line of elements with display: inline-block in the group cell
-    .ag-icon-expanded,
-    .ag-icon-contracted {
-        transform: translateY(2px);
-    }
-
-    .ag-rtl .ag-icon-expanded {
-        transform: translateY(2px) rotate(180deg);
+    .ag-rtl {
+        .ag-icon-expanded,
+        .ag-icon-contracted {
+            transform: rotate(180deg);
+        }
     }
 
     // context menu spacing
     .ag-menu-option {
         height: $grid-size * 7;
-        line-height: $grid-size * 7;
     }
 
     .ag-column-select-panel {
         .ag-column-tool-panel-column-group,
         .ag-column-tool-panel-column {
             height: $grid-size * 5;
-            line-height: $grid-size * 5;
         }
-    }
-
-    .ag-filter-filter {
-        margin-left: $grid-size;
-        margin-right: $grid-size;
-        width: calc(100% - #{$grid-size * 2});
     }
 
     .ag-tab-header {

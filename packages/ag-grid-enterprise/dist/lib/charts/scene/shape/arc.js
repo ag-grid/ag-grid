@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -19,6 +19,7 @@ var path2D_1 = require("../path2D");
 var bbox_1 = require("../bbox");
 var angle_1 = require("../../util/angle");
 var object_1 = require("../../util/object");
+var number_1 = require("../../util/number");
 var ArcType;
 (function (ArcType) {
     ArcType[ArcType["Open"] = 0] = "Open";
@@ -63,12 +64,8 @@ var Arc = /** @class */ (function (_super) {
          */
         _this._type = ArcType.Open;
         _this.getBBox = function () {
-            return {
-                x: _this.centerX - _this.radiusX,
-                y: _this.centerY - _this.radiusY,
-                width: _this.radiusX * 2,
-                height: _this.radiusY * 2
-            };
+            // Only works with full arcs (circles) and untransformed ellipses.
+            return new bbox_1.BBox(_this.centerX - _this.radiusX, _this.centerY - _this.radiusY, _this.radiusX * 2, _this.radiusY * 2);
         };
         _this.restoreOwnStyles();
         return _this;
@@ -183,7 +180,7 @@ var Arc = /** @class */ (function (_super) {
     });
     Object.defineProperty(Arc.prototype, "fullPie", {
         get: function () {
-            return angle_1.normalizeAngle360(this.startAngle) === angle_1.normalizeAngle360(this.endAngle);
+            return number_1.isEqual(angle_1.normalizeAngle360(this.startAngle), angle_1.normalizeAngle360(this.endAngle));
         },
         enumerable: true,
         configurable: true
@@ -215,8 +212,9 @@ var Arc = /** @class */ (function (_super) {
         configurable: true
     });
     Arc.prototype.updatePath = function () {
-        if (!this.dirtyPath)
+        if (!this.dirtyPath) {
             return;
+        }
         var path = this.path;
         path.clear(); // No need to recreate the Path, can simply clear the existing one.
         // This is much faster than the native Path2D implementation even though this `cubicArc`
@@ -238,7 +236,7 @@ var Arc = /** @class */ (function (_super) {
         var point = this.transformPoint(x, y);
         var bbox = this.getBBox();
         return this.type !== ArcType.Open
-            && bbox_1.isPointInBBox(bbox, point.x, point.y)
+            && bbox.containsPoint(point.x, point.y)
             && this.path.isPointInPath(point.x, point.y);
     };
     Arc.prototype.isPointInStroke = function (x, y) {
@@ -249,15 +247,9 @@ var Arc = /** @class */ (function (_super) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
-        this.applyContextAttributes(ctx);
         this.updatePath();
         this.scene.appendPath(this.path);
-        if (this.fillStyle) {
-            ctx.fill();
-        }
-        if (this.strokeStyle) {
-            ctx.stroke();
-        }
+        this.fillStroke(ctx);
         this.dirty = false;
     };
     Arc.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {

@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
         var rowsCols = [
             [100, defaultColCount],
             [1000, defaultColCount]
-        ]
+        ];
 
         if (!isSmall) {
             rowsCols.push(
                 [10000, 100],
                 [50000, defaultColCount],
                 [100000, defaultColCount]
-            )
+            );
         }
 
         for (var i = 0; i < rowsCols.length; i++) {
@@ -165,7 +165,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
-    // popupParent: document.body,
+    popupParent: document.body,
     // ensureDomOrder: true,
     // enableCellTextSelection: true,
     // postProcessPopup: function(params) {
@@ -206,6 +206,7 @@ var gridOptions = {
     // suppressMovingCss: true,
     // suppressMovableColumns: true,
     // groupIncludeFooter: true,
+    // groupIncludeTotalFooter: true,
     // suppressHorizontalScroll: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressRowHoverHighlight: true,
@@ -214,10 +215,12 @@ var gridOptions = {
     // suppressMakeColumnVisibleAfterUnGroup: true,
     // unSortIcon: true,
     // enableRtl: true,
-    // enableCharts: true,
+    enableCharts: true,
     multiSortKey: 'ctrl',
     animateRows: true,
     enableRangeSelection: true,
+    enableRangeHandle: false,
+    enableFillHandle: false,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
     quickFilterText: null,
@@ -237,7 +240,27 @@ var gridOptions = {
     // suppressCellSelection: true,
     // suppressMultiSort: true,
     // scrollbarWidth: 20,
-    sideBar: true,
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+            },
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
+        ],
+        defaultToolPanel: 'columns',
+        hiddenByDefault: isSmall
+    },
+
     // showToolPanel: true,//window.innerWidth > 1000,
     // toolPanelSuppressColumnFilter: true,
     // toolPanelSuppressColumnSelectAll: true,
@@ -254,7 +277,6 @@ var gridOptions = {
     // clipboardDeliminator: ',',
     // suppressMenuMainPanel: true,
     // suppressMenuColumnPanel: true,
-    // suppressMenuHide: true,
     // forPrint: true,
     // rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
     // headerCellRenderer: headerCellRenderer_text,
@@ -298,6 +320,7 @@ var gridOptions = {
     // ],
     // callback when row clicked
     // stopEditingWhenGridLosesFocus: true,
+    // allowShowChangeAfterFilter: true,
     onRowClicked: function (params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },
@@ -346,21 +369,46 @@ var gridOptions = {
     onGridReady: function (event) {
         console.log('Callback onGridReady: api = ' + event.api);
 
-        if (isSmall) {
-            event.api.setSideBarVisible(false);
-        }
-        else if (docEl.clientWidth <= 1024) {
+        if (docEl.clientWidth <= 1024) {
             event.api.closeToolPanel();
         }
-        //event.api.addGlobalListener(function(type, event) {
-        //    console.log('event ' + type);
-        //});
     },
     onRowGroupOpened: function (event) {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
     },
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
+    },
+
+    processChartOptions: function(params) {
+        var options = params.options;
+        if (params.type === 'groupedBar' || params.type === 'stackedBar' || params.type === 'line') {
+            options.yAxis.labelFormatter = function(n) {
+                if (n < 1e3) return n;
+                if (n >= 1e3 && n < 1e6) return '$' + +(n / 1e3).toFixed(1) + 'K';
+                if (n >= 1e6 && n < 1e9) return '$' + +(n / 1e6).toFixed(1) + 'M';
+                if (n >= 1e9 && n < 1e12) return '$' + +(n / 1e9).toFixed(1) + 'B';
+                if (n >= 1e12) return '$' + +(n / 1e12).toFixed(1) + 'T';
+            };
+
+            options.seriesDefaults.tooltipRenderer = function(params) {
+                var strArr = params.yField.replace(/([A-Z])/g, " $1");
+                var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
+                var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return '<b>' + seriesName + '</b>: $' + value;
+            };
+        }
+
+        if (params.type === 'pie' || params.type === 'doughnut')  {
+            options.seriesDefaults.tooltipRenderer = function(params) {
+                var strArr = params.angleField.replace(/([A-Z])/g, " $1");
+                var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
+                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return '<b>' + seriesName + '</b>: $' + value;
+            };
+        }
+
+        return options;
     },
     getContextMenuItems: getContextMenuItems,
     excelStyles: [
@@ -464,7 +512,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Custom Menu Item',
-            icon: '<img src="images/lab.svg" style="width: 14px;"/>',
+            icon: '<img src="images/lab.svg" style="width: 14px; height: 14px;"/>',
             //shortcut: 'Alt + M',
             action: function () {
                 var value = params.value ? params.value : '<empty>';
@@ -647,7 +695,7 @@ var desktopDefaultCols = [
         children: [
             {
                 headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
-                filter: 'winningsFilter', 
+                filter: 'winningsFilter',
                 valueFormatter: currencyFormatter,
                 type: 'numericColumn',
                 cellClassRules: {
@@ -688,7 +736,8 @@ var desktopDefaultCols = [
         filterParams: {cellRenderer: 'ratingFilterRenderer'}
     },
     {
-        headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter', type: 'numericColumn',
+        headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
+        type: 'numericColumn',
         editable: true, valueParser: numberParser, width: 170,
         // aggFunc: 'sum',
         enableValue: true,
@@ -984,6 +1033,8 @@ function onThemeChanged(newTheme) {
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
 
     document.body.classList.toggle('dark', isDark);
+
+    document.body.style.scrollbarColor = isDark ? '#6B6B6B #1c1f20' : 'inherit';
 }
 
 var filterCount = 0;
@@ -1054,14 +1105,18 @@ PersonFilter.prototype.setupGui = function () {
         '<div><img src="images/ag-Grid2-200.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
         '</div>';
 
-    var that = this;
-    this.onFilterChanged = function () {
-        that.extractFilterText();
-        that.params.filterChangedCallback();
-    };
-
     this.eFilterText = this.gui.querySelector('#filterText');
-    this.eFilterText.addEventListener("input", this.onFilterChanged);
+    this.eFilterText.addEventListener("input", this.onFilterChanged.bind(this));
+};
+
+PersonFilter.prototype.setFromFloatingFilter = function (filter) {
+    this.eFilterText.value = filter;
+    this.onFilterChanged();
+};
+
+PersonFilter.prototype.onFilterChanged = function () {
+    this.extractFilterText();
+    this.params.filterChangedCallback();
 };
 
 PersonFilter.prototype.extractFilterText = function () {
@@ -1120,7 +1175,9 @@ PersonFloatingFilterComponent.prototype.init = function (params) {
     input.className = 'ag-floating-filter-input';
     eGui.appendChild(input);
     this.changeEventListener = function () {
-        params.onFloatingFilterChanged(input.value);
+        params.parentFilterInstance(function(instance) {
+            instance.setFromFloatingFilter(input.value);
+        });
     };
     input.addEventListener('input', this.changeEventListener);
 };
@@ -1142,18 +1199,17 @@ function WinningsFilter() {
 }
 
 WinningsFilter.prototype.init = function (params) {
-
     var uniqueId = Math.random();
     this.filterChangedCallback = params.filterChangedCallback;
     this.eGui = document.createElement("div");
     this.eGui.innerHTML =
-        '<div style="padding: 4px;">' +
-        '<div style="font-weight: bold;">Example Custom Filter</div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNoFilter">No filter</input></label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive">Positive</input></label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative">Negative</input></label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater50">&gt; &pound;50,000</label></div>' +
-        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater90">&gt; &pound;90,000</label></div>' +
+        '<div style="margin: 5px; padding: 4px; border: 1px solid lightgray; position: relative; padding-top: 15px; border-radius: 5px; border-top-left-radius: 0;">' +
+        '<div style="position: absolute; font-weight: bold; margin-top: -22px; ">Example Custom Filter</div>' +
+        '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNoFilter" style="margin-right: 5px;">No filter</input></label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive" style="margin-right: 5px;">Positive</input></label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative" style="margin-right: 5px;">Negative</input></label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater50" style="margin-right: 5px;">&gt; &pound;50,000</label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater90" style="margin-right: 5px;">&gt; &pound;90,000</label></div>' +
         '</div>';
     this.cbNoFilter = this.eGui.querySelector('#cbNoFilter');
     this.cbPositive = this.eGui.querySelector('#cbPositive');
@@ -1170,10 +1226,13 @@ WinningsFilter.prototype.init = function (params) {
 };
 
 WinningsFilter.prototype.getGui = function () {
+    var isDark = document.body.classList.contains('dark');
+    this.eGui.querySelectorAll('div')[1].style.backgroundColor = isDark ? '#2d3436' : 'white';
     return this.eGui;
 };
 
 WinningsFilter.prototype.doesFilterPass = function (node) {
+
     var value = this.valueGetter(node);
     if (this.cbNoFilter.checked) {
         return true;
@@ -1378,16 +1437,4 @@ function countryCellRenderer(params) {
         var flag = '<img class="flag" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;
     }
-}
-
-// setTimeout( function(){
-//     columnApi.setRowGroupColumns(['country']);
-//     columnApi.setValueColumns(['jan']);
-//     columnApi.setPivotMode(true);
-// }, 5000);
-
-function movePopup() {
-    var e = document.querySelector('.ag-popup-window');
-    e.style.top = '400px';
-    e.style.left = '100px';
 }

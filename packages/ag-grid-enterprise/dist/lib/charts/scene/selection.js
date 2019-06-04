@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_1 = require("./node");
@@ -384,10 +384,12 @@ var Selection = /** @class */ (function () {
             var enterGroup = enterGroups[j] = new Array(dataSize);
             var updateGroup = updateGroups[j] = new Array(dataSize);
             var exitGroup = exitGroups[j] = new Array(groupSize);
-            if (key)
+            if (key) {
                 this.bindKey(parent_2, group, enterGroup, updateGroup, exitGroup, data, key);
-            else
+            }
+            else {
                 this.bindIndex(parent_2, group, enterGroup, updateGroup, exitGroup, data);
+            }
             // Now connect the enter nodes to their following update node, such that
             // appendChild can insert the materialized enter node before this node,
             // rather than at the end of the parent node.
@@ -398,8 +400,9 @@ var Selection = /** @class */ (function () {
                         i1 = i0 + 1;
                     }
                     var next = void 0;
-                    while (!(next = updateGroup[i1]) && ++i1 < dataSize)
+                    while (!(next = updateGroup[i1]) && ++i1 < dataSize) {
                         ;
+                    }
                     previous.next = next || null;
                 }
             }

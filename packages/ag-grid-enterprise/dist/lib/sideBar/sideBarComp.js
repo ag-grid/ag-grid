@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -141,7 +141,7 @@ var SideBarComp = /** @class */ (function (_super) {
         this.destroyToolPanelWrappers();
         _super.prototype.destroy.call(this);
     };
-    SideBarComp.TEMPLATE = "<div class=\"ag-side-bar\">\n              <ag-side-bar-buttons ref=\"sideBarButtons\">\n          </div>";
+    SideBarComp.TEMPLATE = "<div class=\"ag-side-bar ag-unselectable\">\n              <ag-side-bar-buttons ref=\"sideBarButtons\">\n          </div>";
     __decorate([
         ag_grid_community_1.Autowired("eventService"),
         __metadata("design:type", ag_grid_community_1.EventService)

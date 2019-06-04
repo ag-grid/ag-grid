@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24,7 +24,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
-var setFilterModel_1 = require("./setFilterModel");
+var setValueModel_1 = require("./setValueModel");
 var setFilterListItem_1 = require("./setFilterListItem");
 var virtualList_1 = require("../rendering/virtualList");
 var CheckboxState;
@@ -38,17 +38,54 @@ var SetFilter = /** @class */ (function (_super) {
     function SetFilter() {
         return _super.call(this) || this;
     }
-    SetFilter.prototype.customInit = function () {
-        var _this = this;
-        var changeFilter = function (applyNow) {
-            if (applyNow === void 0) { applyNow = false; }
-            _this.onFilterChanged(applyNow);
-        };
-        var debounceMs = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
-        this.debounceFilterChanged = ag_grid_community_1._.debounce(changeFilter, debounceMs);
-        this.eCheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.filterParams.column);
-        this.eUncheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.filterParams.column);
-        this.eIndeterminateCheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.filterParams.column);
+    // unlike the simple filter's, nothing in the set filter UI shows/hides.
+    // maybe this method belongs in abstractSimpleFilter???
+    SetFilter.prototype.updateUiVisibility = function () { };
+    SetFilter.prototype.createBodyTemplate = function () {
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        return "<div ref=\"ag-filter-loading\" class=\"loading-filter ag-hidden\">" + translate('loadingOoo', 'Loading...') + "</div>\n                <div>\n                    <div class=\"ag-input-text-wrapper ag-filter-header-container\" id=\"ag-mini-filter\">\n                        <input class=\"ag-filter-filter\" type=\"text\" placeholder=\"" + translate('searchOoo', 'Search...') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-header-container\">\n                        <label id=\"selectAllContainer\" class=\"ag-set-filter-item\">\n                            <div id=\"selectAll\" class=\"ag-filter-checkbox\"></div><span class=\"ag-filter-value\">(" + translate('selectAll', 'Select All') + ")</span>\n                        </label>\n                    </div>\n                    <div id=\"richList\" class=\"ag-set-filter-list\"></div>\n                </div>";
+    };
+    SetFilter.prototype.resetUiToDefaults = function () {
+        this.setMiniFilter(null);
+        this.valueModel.setModel(null, true);
+        this.selectEverything();
+    };
+    SetFilter.prototype.setModelIntoUi = function (model) {
+        this.resetUiToDefaults();
+        if (model) {
+            // also supporting old filter model for backwards compatibility
+            var newValues = (model instanceof Array) ? model : model.values;
+            this.valueModel.setModel(newValues);
+            this.updateSelectAll();
+            this.virtualList.refresh();
+        }
+    };
+    SetFilter.prototype.getModelFromUi = function () {
+        var values = this.valueModel.getModel();
+        if (!values) {
+            return null;
+        }
+        if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
+            // this is a hack, it breaks casting rules, to apply with old model
+            return values;
+        }
+        else {
+            return {
+                values: values,
+                filterType: 'set'
+            };
+        }
+    };
+    SetFilter.prototype.areModelsEqual = function (a, b) {
+        return false;
+    };
+    SetFilter.prototype.setParams = function (params) {
+        _super.prototype.setParams.call(this, params);
+        this.setFilterParams = params;
+        this.eCheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.setFilterParams.column);
+        this.eUncheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.setFilterParams.column);
+        this.eIndeterminateCheckedIcon = ag_grid_community_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.setFilterParams.column);
+        this.initialiseFilterBodyUi();
     };
     SetFilter.prototype.updateCheckboxIcon = function () {
         ag_grid_community_1._.clearElement(this.eSelectAll);
@@ -80,38 +117,25 @@ var SetFilter = /** @class */ (function (_super) {
         if (richList) {
             richList.appendChild(this.virtualList.getGui());
         }
-        if (ag_grid_community_1._.exists(this.filterParams.cellHeight)) {
-            this.virtualList.setRowHeight(this.filterParams.cellHeight);
+        if (ag_grid_community_1._.exists(this.setFilterParams.cellHeight)) {
+            this.virtualList.setRowHeight(this.setFilterParams.cellHeight);
         }
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.filterParams.column);
-        this.virtualList.setModel(new ModelWrapper(this.model));
-        ag_grid_community_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
-        this.eMiniFilter.value = this.model.getMiniFilter();
+        this.valueModel = new setValueModel_1.SetValueModel(this.setFilterParams.colDef, this.setFilterParams.rowModel, this.setFilterParams.valueGetter, this.setFilterParams.doesRowPassOtherFilter, this.setFilterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.setFilterParams.column);
+        this.virtualList.setModel(new ModelWrapper(this.valueModel));
+        ag_grid_community_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.setFilterParams.suppressMiniFilter);
+        this.eMiniFilter.value = this.valueModel.getMiniFilter();
         this.addDestroyableEventListener(this.eMiniFilter, 'input', function () { return _this.onMiniFilterChanged(); });
         this.updateCheckboxIcon();
         this.addDestroyableEventListener(this.eSelectAllContainer, 'click', this.onSelectAll.bind(this));
         this.updateSelectAll();
         this.virtualList.refresh();
     };
-    SetFilter.prototype.modelFromFloatingFilter = function (from) {
-        if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
-            return [from];
-        }
-        else {
-            return {
-                values: [from],
-                filterType: 'set'
-            };
-        }
-    };
-    SetFilter.prototype.refreshFilterBodyUi = function () {
-    };
     SetFilter.prototype.createSetListItem = function (value) {
         var _this = this;
-        var listItem = new setFilterListItem_1.SetFilterListItem(value, this.filterParams.column);
+        var listItem = new setFilterListItem_1.SetFilterListItem(value, this.setFilterParams.column);
         this.getContext().wireBean(listItem);
-        listItem.setSelected(this.model.isValueSelected(value));
+        listItem.setSelected(this.valueModel.isValueSelected(value));
         listItem.addEventListener(setFilterListItem_1.SetFilterListItem.EVENT_SELECTED, function () {
             _this.onItemSelected(value, listItem.isSelected());
         });
@@ -124,41 +148,42 @@ var SetFilter = /** @class */ (function (_super) {
         this.eMiniFilter.focus();
     };
     SetFilter.prototype.isFilterActive = function () {
-        return this.model.isFilterActive();
+        return this.valueModel.isFilterActive();
     };
     SetFilter.prototype.doesFilterPass = function (params) {
         // if no filter, always pass
-        if (this.model.isEverythingSelected() && !this.filterParams.selectAllOnMiniFilter) {
+        if (this.valueModel.isEverythingSelected() && !this.setFilterParams.selectAllOnMiniFilter) {
             return true;
         }
         // if nothing selected in filter, always fail
-        if (this.model.isNothingSelected() && !this.filterParams.selectAllOnMiniFilter) {
+        if (this.valueModel.isNothingSelected() && !this.setFilterParams.selectAllOnMiniFilter) {
             return false;
         }
-        var value = this.filterParams.valueGetter(params.node);
-        if (this.filterParams.colDef.keyCreator) {
-            value = this.filterParams.colDef.keyCreator({ value: value });
+        var value = this.setFilterParams.valueGetter(params.node);
+        if (this.setFilterParams.colDef.keyCreator) {
+            value = this.setFilterParams.colDef.keyCreator({ value: value });
         }
         value = ag_grid_community_1._.makeNull(value);
         if (Array.isArray(value)) {
             for (var i = 0; i < value.length; i++) {
-                if (this.model.isValueSelected(value[i])) {
+                if (this.valueModel.isValueSelected(value[i])) {
                     return true;
                 }
             }
             return false;
         }
         else {
-            return this.model.isValueSelected(value);
+            return this.valueModel.isValueSelected(value);
         }
     };
     SetFilter.prototype.onNewRowsLoaded = function () {
-        var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+        var keepSelection = this.setFilterParams && this.setFilterParams.newRowsAction === 'keep';
         var isSelectAll = this.selectAllState === CheckboxState.CHECKED;
         // default is reset
-        this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
+        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
         this.updateSelectAll();
         this.virtualList.refresh();
+        this.updateModel();
     };
     //noinspection JSUnusedGlobalSymbols
     /**
@@ -173,16 +198,17 @@ var SetFilter = /** @class */ (function (_super) {
         var _this = this;
         if (selectAll === void 0) { selectAll = false; }
         if (notify === void 0) { notify = true; }
-        this.model.onFilterValuesReady(function () {
-            var keepSelection = _this.filterParams && _this.filterParams.newRowsAction === 'keep';
-            _this.model.setValuesType(setFilterModel_1.SetFilterModelValuesType.PROVIDED_LIST);
-            _this.model.refreshValues(options, keepSelection, selectAll);
+        this.valueModel.onFilterValuesReady(function () {
+            var keepSelection = _this.setFilterParams && _this.setFilterParams.newRowsAction === 'keep';
+            _this.valueModel.setValuesType(setValueModel_1.SetFilterModelValuesType.PROVIDED_LIST);
+            _this.valueModel.refreshValues(options, keepSelection, selectAll);
             _this.updateSelectAll();
             var actualToSelect = toSelect ? toSelect : options;
-            actualToSelect.forEach(function (option) { return _this.model.selectValue(option); });
+            actualToSelect.forEach(function (option) { return _this.valueModel.selectValue(option); });
             _this.virtualList.refresh();
             if (notify) {
-                _this.debounceFilterChanged(true);
+                // this.onUiChangedListener(true);
+                _this.onUiChanged();
             }
         });
     };
@@ -192,22 +218,18 @@ var SetFilter = /** @class */ (function (_super) {
      * @param options The options to use.
      */
     SetFilter.prototype.resetFilterValues = function () {
-        this.model.setValuesType(setFilterModel_1.SetFilterModelValuesType.NOT_PROVIDED);
+        this.valueModel.setValuesType(setValueModel_1.SetFilterModelValuesType.NOT_PROVIDED);
         this.onNewRowsLoaded();
     };
     SetFilter.prototype.onAnyFilterChanged = function () {
-        this.model.refreshAfterAnyFilterChanged();
+        this.valueModel.refreshAfterAnyFilterChanged();
         this.virtualList.refresh();
     };
-    SetFilter.prototype.bodyTemplate = function () {
-        var translate = this.translate.bind(this);
-        return "<div ref=\"ag-filter-loading\" class=\"loading-filter ag-hidden\">" + translate('loadingOoo') + "</div>\n                <div>\n                    <div class=\"ag-input-text-wrapper ag-filter-header-container\" id=\"ag-mini-filter\">\n                        <input class=\"ag-filter-filter\" type=\"text\" placeholder=\"" + translate('searchOoo') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-header-container\">\n                        <label id=\"selectAllContainer\">\n                            <div id=\"selectAll\" class=\"ag-filter-checkbox\"></div><span class=\"ag-filter-value\">(" + translate('selectAll') + ")</span>\n                        </label>\n                    </div>\n                    <div id=\"richList\" class=\"ag-set-filter-list\"></div>\n                </div>";
-    };
     SetFilter.prototype.updateSelectAll = function () {
-        if (this.model.isEverythingSelected()) {
+        if (this.valueModel.isEverythingSelected()) {
             this.selectAllState = CheckboxState.CHECKED;
         }
-        else if (this.model.isNothingSelected()) {
+        else if (this.valueModel.isNothingSelected()) {
             this.selectAllState = CheckboxState.UNCHECKED;
         }
         else {
@@ -216,7 +238,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.updateCheckboxIcon();
     };
     SetFilter.prototype.onMiniFilterChanged = function () {
-        var miniFilterChanged = this.model.setMiniFilter(this.eMiniFilter.value);
+        var miniFilterChanged = this.valueModel.setMiniFilter(this.eMiniFilter.value);
         if (miniFilterChanged) {
             this.virtualList.refresh();
         }
@@ -235,92 +257,66 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.doSelectAll = function () {
         var checked = this.selectAllState === CheckboxState.CHECKED;
         if (checked) {
-            this.model.selectEverything();
+            this.valueModel.selectEverything();
         }
         else {
-            this.model.selectNothing();
+            this.valueModel.selectNothing();
         }
         this.virtualList.refresh();
-        this.debounceFilterChanged();
+        this.onUiChanged();
         this.updateSelectAll();
     };
     SetFilter.prototype.onItemSelected = function (value, selected) {
         if (selected) {
-            this.model.selectValue(value);
+            this.valueModel.selectValue(value);
         }
         else {
-            this.model.unselectValue(value);
+            this.valueModel.unselectValue(value);
         }
         this.updateSelectAll();
-        this.debounceFilterChanged();
+        this.onUiChanged();
     };
     SetFilter.prototype.setMiniFilter = function (newMiniFilter) {
-        this.model.setMiniFilter(newMiniFilter);
-        this.eMiniFilter.value = this.model.getMiniFilter();
+        this.valueModel.setMiniFilter(newMiniFilter);
+        this.eMiniFilter.value = this.valueModel.getMiniFilter();
     };
     SetFilter.prototype.getMiniFilter = function () {
-        return this.model.getMiniFilter();
+        return this.valueModel.getMiniFilter();
     };
     SetFilter.prototype.selectEverything = function () {
-        this.model.selectEverything();
+        this.valueModel.selectEverything();
         this.updateSelectAll();
         this.virtualList.refresh();
     };
     SetFilter.prototype.selectNothing = function () {
-        this.model.selectNothing();
+        this.valueModel.selectNothing();
         this.updateSelectAll();
         this.virtualList.refresh();
     };
     SetFilter.prototype.unselectValue = function (value) {
-        this.model.unselectValue(value);
+        this.valueModel.unselectValue(value);
         this.updateSelectAll();
         this.virtualList.refresh();
     };
     SetFilter.prototype.selectValue = function (value) {
-        this.model.selectValue(value);
+        this.valueModel.selectValue(value);
         this.updateSelectAll();
         this.virtualList.refresh();
     };
     SetFilter.prototype.isValueSelected = function (value) {
-        return this.model.isValueSelected(value);
+        return this.valueModel.isValueSelected(value);
     };
     SetFilter.prototype.isEverythingSelected = function () {
-        return this.model.isEverythingSelected();
+        return this.valueModel.isEverythingSelected();
     };
     SetFilter.prototype.isNothingSelected = function () {
-        return this.model.isNothingSelected();
+        return this.valueModel.isNothingSelected();
     };
     SetFilter.prototype.getUniqueValueCount = function () {
-        return this.model.getUniqueValueCount();
+        return this.valueModel.getUniqueValueCount();
     };
     SetFilter.prototype.getUniqueValue = function (index) {
-        return this.model.getUniqueValue(index);
-    };
-    SetFilter.prototype.serialize = function () {
-        if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
-            return this.model.getModel();
-        }
-        else {
-            return {
-                values: this.model.getModel(),
-                filterType: 'set'
-            };
-        }
-    };
-    SetFilter.prototype.parse = function (dataModel) {
-        // also supporting old filter model for backwards compatibility
-        var newValues = (dataModel instanceof Array) ? dataModel : dataModel.values;
-        this.model.setModel(newValues);
-        this.updateSelectAll();
-        this.virtualList.refresh();
-    };
-    SetFilter.prototype.resetState = function () {
-        this.setMiniFilter(null);
-        this.model.setModel(null, true);
-        this.selectEverything();
-    };
-    SetFilter.prototype.isFilterConditionActive = function () {
-        return false;
+        return this.valueModel.getUniqueValue(index);
     };
     __decorate([
         ag_grid_community_1.QuerySelector('#selectAll'),
@@ -343,7 +339,7 @@ var SetFilter = /** @class */ (function (_super) {
         __metadata("design:type", ag_grid_community_1.ValueFormatterService)
     ], SetFilter.prototype, "valueFormatterService", void 0);
     return SetFilter;
-}(ag_grid_community_1.BaseFilter));
+}(ag_grid_community_1.ProvidedFilter));
 exports.SetFilter = SetFilter;
 var ModelWrapper = /** @class */ (function () {
     function ModelWrapper(model) {

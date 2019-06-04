@@ -1,4 +1,4 @@
-import {OrdinalScale} from "./ordinalScale";
+import { OrdinalScale } from "./ordinalScale";
 
 test('initial state', () => {
     const scale = new OrdinalScale<number, string>();

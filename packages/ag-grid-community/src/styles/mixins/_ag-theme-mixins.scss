@@ -17,35 +17,14 @@
     border-color: $color;
 }
 
-@mixin grid-cell($height, $padding) {
-    line-height: $height;
+@mixin grid-header-cell($padding) {
     padding-left: $padding;
     padding-right: $padding;
 }
 
-@mixin icon-background($params, $icon) {
-    $size: map-get($params, "icon-size");
-    $color: map-get($params, "foreground-color");
-    $iconpath: map-get($params, "icons-path");
-    $color1: #{encodecolor(map-get($params, "icon-color"))};
-    $color2: #{encodecolor(map-get($params, "alt-icon-color"))};
-
-    background-color: transparent;
-    background: url("#{$iconpath}#{$icon}.svg?color1=#{$color1}&color2=#{$color2}");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: $size $size;
-    height: $size;
-    opacity: map-get($params, "icon-opacity");
-    width: $size;
-}
-
-@mixin colorful-icon($path, $icon, $color, $altColor) {
-    $iconpath: map-get($params, "icons-path");
-    $color1: encodecolor($color);
-    $color2: encodecolor($altColor);
-
-    background-image: url("#{$iconpath}#{$icon}.svg?color1=#{$color1}&color2=#{$color2}");
+@mixin grid-cell($height, $padding) {
+    line-height: $height;
+    @include grid-header-cell($padding);
 }
 
 @mixin card($params) {
@@ -64,6 +43,7 @@
     $primary-color: map-get($params, "primary-color");
     $placeholder-color: map-get($params, "disabled-foreground-color");
     $focused-border: map-get($params, "focused-textbox-border");
+    $input-border-color: map-get($params, "input-border-color");
     $input-border-width: map-get($params, "input-border-width");
     $input-bottom-border: map-get($params, "input-bottom-border");
     $input-disabled-background-color: map-get($params, "input-disabled-background-color");
@@ -89,7 +69,6 @@
             @if $focused-border {
                 border-bottom: $focused-border;
                 outline: none;
-                padding-bottom: $grid-size - 1;
             }
         }
 
@@ -102,11 +81,18 @@
                 border-bottom: $input-bottom-border-disabled;
             }
         }
+    } @else if $input-border-color {
+        border-width: 1px;
+        border-style: solid;
+        border-color: $input-border-color;
     }
     &:disabled {
         color: $placeholder-color;
         @if $input-disabled-background-color {
             background-color: $input-disabled-background-color;
+        }
+        @if $input-border-color {
+            border-color: transparentize($input-border-color, 0.7);
         }
     }
 }
@@ -123,7 +109,296 @@
     text-transform: $text-transform;
 }
 
-@mixin hide-text {
-    overflow: hidden;
-    text-indent: 100%;
+@mixin icons() {
+    .ag-icon {
+        /* use !important to prevent issues with browser extensions that change fonts */
+        font-family: '#{$icon-font-family}';
+        speak: none;
+        font-size: $icon-size;
+        color: $icon-color;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+      
+        /* Better Font Rendering =========== */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    .ag-icon-aggregation {
+        &:before {
+            content: $ag-icon-aggregation; 
+        }
+    }
+    .ag-icon-arrows {
+        &:before {
+            content: $ag-icon-arrows; 
+        }
+    }
+    .ag-icon-asc {
+        &:before {
+            content: $ag-icon-asc; 
+        }
+    }
+    .ag-icon-cancel {
+        &:before {
+            content: $ag-icon-cancel; 
+        }
+    }
+    .ag-icon-chart {
+        &:before {
+            content: $ag-icon-chart; 
+        }
+    }
+    .ag-icon-checkbox-checked,
+    .ag-icon-checkbox-indeterminate,
+    .ag-icon-checkbox-unchecked {
+        background-color: $alt-icon-color;
+        line-height: $icon-size;
+        border-radius: 3px;
+        &-readonly {
+            cursor: default;
+            opacity: $disabled-foreground-color-opacity;
+        }
+    }
+    .ag-icon-checkbox-checked {
+        color: $accent-color;
+        &:before, &-readonly:before {
+            content: $ag-icon-checkbox-checked;
+        }
+    }
+    .ag-icon-checkbox-indeterminate {
+        &:before, &-readonly:before {
+            content: $ag-icon-checkbox-indeterminate; 
+        }
+    }
+    .ag-icon-checkbox-unchecked {
+        &:before, &-readonly:before  {
+            content: $ag-icon-checkbox-unchecked; 
+        }
+    }
+    .ag-icon-column {
+        &:before {
+            content: $ag-icon-column; 
+        }
+    }
+    .ag-icon-columns {
+        &:before {
+            content: $ag-icon-columns; 
+        }
+    }
+    .ag-icon-contracted {
+        &:before {
+            content: $ag-icon-contracted; 
+        }
+    }
+    .ag-group-expanded {
+        .ag-icon-contracted:empty {
+            &:before {
+                content: $ag-icon-tree-open;
+            }
+        }
+    }
+    .ag-icon-copy {
+        &:before {
+            content: $ag-icon-copy; 
+        }
+    }
+    .ag-icon-cross {
+        &:before {
+            content: $ag-icon-cross; 
+        }
+    }
+    .ag-icon-cut {
+        &:before {
+            content: $ag-icon-cut; 
+        }
+    }
+    .ag-icon-data {
+        &:before {
+            content: $ag-icon-data; 
+        }
+    }
+    .ag-icon-desc {
+        &:before {
+            content: $ag-icon-desc; 
+        }
+    }
+    .ag-icon-expanded {
+        &:before {
+            content: $ag-icon-expanded; 
+        }
+    }
+    .ag-icon-eye-slash {
+        &:before {
+            content: $ag-icon-eye-slash; 
+        }
+    }
+    .ag-icon-eye {
+        &:before {
+            content: $ag-icon-eye; 
+        }
+    }
+    .ag-icon-filter {
+        &:before {
+            content: $ag-icon-filter; 
+        }
+    }
+    .ag-icon-first {
+        &:before {
+            content: $ag-icon-first; 
+        }
+    }
+    .ag-icon-grip, .ag-icon-row-drag {
+        &:before {
+            content: $ag-icon-grip; 
+        }
+    }
+    .ag-icon-group {
+        &:before {
+            content: $ag-icon-group; 
+        }
+    }
+    .ag-icon-indeterminate {
+        &:before {
+            content: $ag-icon-indeterminate; 
+        }
+    }
+    .ag-icon-last {
+        &:before {
+            content: $ag-icon-last; 
+        }
+    }
+    .ag-icon-left, .ag-right-arrow {
+        &:before {
+            content: $ag-icon-left; 
+        }
+    }
+    .ag-icon-loading {
+        &:before {
+            content: $ag-icon-loading;
+        }
+    }
+    .ag-icon-maximize {
+        &:before {
+            content: $ag-icon-maximize; 
+        }
+    }
+    .ag-icon-menu {
+        &:before {
+            content: $ag-icon-menu; 
+        }
+    }
+    .ag-icon-minimize {
+        &:before {
+            content: $ag-icon-minimize; 
+        }
+    }
+    .ag-icon-minus {
+        &:before {
+            content: $ag-icon-minus; 
+        }
+    }
+    .ag-icon-next {
+        &:before {
+            content: $ag-icon-next; 
+        }
+    }
+    .ag-icon-none {
+        &:before {
+            content: $ag-icon-none; 
+        }
+    }
+    .ag-icon-not-allowed {
+        &:before {
+            content: $ag-icon-not-allowed; 
+        }
+    }
+    .ag-icon-paste {
+        &:before {
+            content: $ag-icon-paste; 
+        }
+    }
+    .ag-icon-pin {
+        &:before {
+            content: $ag-icon-pin; 
+        }
+    }
+    .ag-icon-pivot {
+        &:before {
+            content: $ag-icon-pivot; 
+        }
+    }
+    .ag-icon-plus {
+        &:before {
+            content: $ag-icon-plus; 
+        }
+    }
+    .ag-icon-previous {
+        &:before {
+            content: $ag-icon-previous; 
+        }
+    }
+    .ag-icon-radio-button-off {
+        &:before {
+            content: $ag-icon-radio-button-off; 
+        }
+    }
+    .ag-icon-radio-button-on {
+        color: $accent-color;
+        &:before {
+            content: $ag-icon-radio-button-on; 
+        }
+    }
+    .ag-icon-right, .ag-right-arrow {
+        &:before {
+            content: $ag-icon-right; 
+        }
+    }
+    .ag-icon-save {
+        &:before {
+            content: $ag-icon-save; 
+        }
+    }
+    .ag-icon-small-down {
+        &:before {
+            content: $ag-icon-small-down; 
+        }
+    }
+    .ag-icon-small-left {
+        &:before {
+            content: $ag-icon-small-left; 
+        }
+    }
+    .ag-icon-small-right {
+        &:before {
+            content: $ag-icon-small-right; 
+        }
+    }
+    .ag-icon-small-up {
+        &:before {
+            content: $ag-icon-small-up; 
+        }
+    }
+    .ag-icon-tick {
+        &:before {
+            content: $ag-icon-tick; 
+        }
+    }
+    .ag-icon-tree-closed {
+        &:before {
+            content: $ag-icon-tree-closed; 
+        }
+    }
+    .ag-icon-tree-indeterminate {
+        &:before {
+            content: $ag-icon-tree-indeterminate; 
+        }
+    }
+    .ag-icon-tree-open {
+        &:before {
+            content: $ag-icon-tree-open; 
+        }
+    }
 }

@@ -1,12 +1,8 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 export declare class Path2D {
-    xy?: [number, number];
-    commands: string[];
-    params: number[];
-    /**
-     * The number of parameters for each of the SVG path commands.
-     */
-    private static paramCounts;
+    private xy?;
+    readonly commands: string[];
+    readonly params: number[];
     private static splitCommandsRe;
     private static matchParamsRe;
     private static quadraticCommandRe;
@@ -67,6 +63,8 @@ export declare class Path2D {
      */
     quadraticCurveTo(cx: number, cy: number, x: number, y: number): void;
     cubicCurveTo(cx1: number, cy1: number, cx2: number, cy2: number, x: number, y: number): void;
+    private _closedPath;
+    readonly closedPath: boolean;
     closePath(): void;
     clear(): void;
     isPointInPath(x: number, y: number): boolean;

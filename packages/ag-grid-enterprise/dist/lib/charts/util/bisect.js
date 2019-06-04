@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function bisect(list, x, comparator, lo, hi) {
@@ -14,10 +14,12 @@ function bisectRight(list, x, comparator, low, high) {
     var hi = high;
     while (lo < hi) {
         var mid = (lo + hi) >> 1;
-        if (comparator(list[mid], x) > 0) // list[mid] > x
+        if (comparator(list[mid], x) > 0) { // list[mid] > x
             hi = mid;
-        else
+        }
+        else {
             lo = mid + 1;
+        }
     }
     return lo;
 }

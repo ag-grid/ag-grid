@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v20.2.0
+ * @version v21.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,7 +41,7 @@ var filterManager_1 = require("../filter/filterManager");
 var gridApi_1 = require("../gridApi");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
-var floatingFilterWrapper_1 = require("../filter/floatingFilterWrapper");
+var floatingFilterWrapper_1 = require("../filter/floating/floatingFilterWrapper");
 var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";

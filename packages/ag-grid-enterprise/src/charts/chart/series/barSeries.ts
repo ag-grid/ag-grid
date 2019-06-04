@@ -1,67 +1,108 @@
-import {StackedCartesianSeries} from "./stackedCartesianSeries";
-import {Group} from "../../scene/group";
-import {Selection} from "../../scene/selection";
-import {CartesianChart} from "../cartesianChart";
-import {Rect} from "../../scene/shape/rect";
-import {Text} from "../../scene/shape/text";
-import {BandScale} from "../../scale/bandScale";
-import {DropShadow} from "../../scene/dropShadow";
-import colors from "../colors";
-import {Color} from "../../util/color";
+import { Group } from "../../scene/group";
+import { Selection } from "../../scene/selection";
+import { CartesianChart } from "../cartesianChart";
+import { Rect } from "../../scene/shape/rect";
+import { Text } from "../../scene/shape/text";
+import { BandScale } from "../../scale/bandScale";
+import { DropShadow } from "../../scene/dropShadow";
+import palette from "../palettes";
+import { Color } from "../../util/color";
+import { Series, SeriesNodeDatum } from "./series";
+import { PointerEvents } from "../../scene/node";
+import { toFixed } from "../../util/number";
+import { LegendDatum } from "../legend";
 
-type BarDatum = {
+interface GroupSelectionDatum extends SeriesNodeDatum {
+    yField: string,
     x: number,
     y: number,
     width: number,
     height: number,
-    fillStyle: string | null,
-    strokeStyle: string,
-    lineWidth: number,
+    fill?: string,
+    stroke?: string,
+    strokeWidth: number,
     label?: {
         text: string,
         font: string,
-        fillStyle: string,
+        fill: string,
         x: number,
         y: number
     }
-};
+}
 
 enum BarSeriesNodeTag {
     Bar,
     Label
 }
 
-export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries<D, X, Y> {
-    set chart(chart: CartesianChart<D, string, number> | null) {
+export interface BarTooltipRendererParams {
+    datum: any,
+    xField: string,
+    yField: string
+}
+
+export class BarSeries extends Series<CartesianChart> {
+
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+
+    /**
+     * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
+     */
+    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
+
+    /**
+     * The assumption is that the values will be reset (to `true`)
+     * in the {@link yFields} setter.
+     */
+    protected readonly enabled = new Map<string, boolean>();
+
+    private _fills: string[] = palette.fills;
+    set fills(values: string[]) {
+        this._fills = values;
+        this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
+        this.scheduleData();
+    }
+    get fills(): string[] {
+        return this._fills;
+    }
+
+    private _strokes: string[] = palette.strokes;
+    set strokes(values: string[]) {
+        this._strokes = values;
+        this.scheduleData();
+    }
+    get strokes(): string[] {
+        return this._strokes;
+    }
+
+    private xData: string[] = [];
+    private yData: number[][] = [];
+    private domainY: number[] = [];
+
+    /**
+     * Used to get the position of bars within each group.
+     */
+    private groupScale = new BandScale<string>();
+
+    set chart(chart: CartesianChart | null) {
         if (this._chart !== chart) {
             this._chart = chart;
-            this.update();
+            this.scheduleData();
         }
     }
-    get chart(): CartesianChart<D, string, number> | null {
-        return this._chart as CartesianChart<D, string, number>;
+    get chart(): CartesianChart | null {
+        return this._chart as CartesianChart;
     }
 
-    private _data: any[] = [];
-    set data(data: any[]) {
-        this._data = data;
-        if (this.processData()) {
-            this.update();
-        }
-    }
-    get data(): any[] {
-        return this._data;
-    }
-
-    set xField(value: Extract<keyof D, string> | null) {
+    protected _xField: string = '';
+    set xField(value: string) {
         if (this._xField !== value) {
             this._xField = value;
-            if (this.processData()) {
-                this.update();
-            }
+            this.xData = [];
+            this.scheduleData();
         }
     }
-    get xField(): Extract<keyof D, string> | null {
+    get xField(): string {
         return this._xField;
     }
 
@@ -71,51 +112,27 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
      * If the {@link grouped} set to `true`, we get the grouped bar series.
      * @param values
      */
-    set yFields(values: Extract<keyof D, string>[]) {
+    protected _yFields: string[] = [];
+    set yFields(values: string[]) {
         this._yFields = values;
+
+        const enabled = this.enabled;
+        enabled.clear();
+        values.forEach(field => enabled.set(field, true));
 
         const groupScale = this.groupScale;
         groupScale.domain = values;
         groupScale.padding = 0.1;
         groupScale.round = true;
 
-        if (this.processData()) {
-            this.update();
-        }
+        this.yData = [];
+        this.scheduleData();
     }
-    get yFields(): Extract<keyof D, string>[] {
+    get yFields(): string[] {
         return this._yFields;
     }
 
-    /**
-     * If the type of series datum is declared as `any`, one can change the values of the
-     * {@link data}, {@link xField} and {@link yFields} configs on the fly, where the type
-     * of data and the fields names are completely different from ones currently in use by
-     * the series. This can lead to a situation where one sets the new {@link data},
-     * which triggers the series to fetch the fields from the datums, but the
-     * datums have no such fields. Conversely, one can set the new {@link xField} or {@link yFields}
-     * that are not present in the current {@link data}.
-     * In such cases, the {@link data}, {@link xField} and {@link yFields} configs have to be set
-     * simultaneously, as an atomic operation.
-     * @param data
-     * @param xField
-     * @param yFields
-     */
-    setDataAndFields(data: any[], xField: Extract<keyof D, string>, yFields: Extract<keyof D, string>[]) {
-        this._xField = xField;
-        this._yFields = yFields;
-        this._data = data;
-
-        const groupScale = this.groupScale;
-        groupScale.domain = yFields;
-        groupScale.padding = 0.1;
-        groupScale.round = true;
-
-        if (this.processData()) {
-            this.update();
-        }
-    }
-
+    protected _yFieldNames: string[] = [];
     set yFieldNames(values: string[]) {
         this._yFieldNames = values;
         this.update();
@@ -128,56 +145,47 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     set grouped(value: boolean) {
         if (this._grouped !== value) {
             this._grouped = value;
-            if (this.processData()) {
-                this.update();
-            }
+            this.scheduleData();
         }
     }
     get grouped(): boolean {
         return this._grouped;
     }
 
-    /**
-     * The stroke style to use for all bars.
-     * `null` value here doesn't mean invisible stroke, as it normally would
-     * (see `Shape.strokeStyle` comments), it means derive stroke colors from fill
-     * colors by darkening them. To make the stroke appear invisible use the same
-     * color as the background of the chart (such as 'white').
-     */
-    private _strokeStyle: string | null = null;
-    set strokeStyle(value: string | null) {
-        if (this._strokeStyle !== value) {
-            this._strokeStyle = value;
+    private _strokeWidth: number = 1;
+    set strokeWidth(value: number) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
             this.update();
         }
     }
-    get strokeStyle(): string | null {
-        return this._strokeStyle;
+    get strokeWidth(): number {
+        return this._strokeWidth;
     }
 
-    private _lineWidth: number = 2;
-    set lineWidth(value: number) {
-        if (this._lineWidth !== value) {
-            this._lineWidth = value;
-            this.update();
-        }
-    }
-    get lineWidth(): number {
-        return this._lineWidth;
-    }
-
-    private _shadow: DropShadow | null = null;
-    set shadow(value: DropShadow | null) {
+    private _shadow: DropShadow | undefined = undefined;
+    set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
             this.update();
         }
     }
-    get shadow(): DropShadow | null {
+    get shadow(): DropShadow | undefined {
         return this._shadow;
     }
 
-    private _labelFont: string = '12px Tahoma';
+    private _labelEnabled: boolean = true;
+    set labelEnabled(value: boolean) {
+        if (this._labelEnabled !== value) {
+            this._labelEnabled = value;
+            this.update();
+        }
+    }
+    get labelEnabled(): boolean {
+        return this._labelEnabled;
+    }
+
+    private _labelFont: string = '12px Verdana, sans-serif';
     set labelFont(value: string) {
         if (this._labelFont !== value) {
             this._labelFont = value;
@@ -202,33 +210,24 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     /**
      * Vertical and horizontal label padding as an array of two numbers.
      */
-    private _labelPadding: [number, number] = [10, 10];
-    set labelPadding(value: [number, number]) {
+    private _labelPadding: {x: number, y: number} = {x: 10, y: 10};
+    set labelPadding(value: {x: number, y: number}) {
         if (this._labelPadding !== value) {
             this._labelPadding = value;
             this.update();
         }
     }
-    get labelPadding(): [number, number] {
+    get labelPadding(): {x: number, y: number} {
         return this._labelPadding;
     }
 
-    private domainX: string[] = [];
-    private domainY: number[] = [];
-    private yData: number[][] = [];
-
-    /**
-     * Used to get the position of bars within each group.
-     */
-    private groupScale = new BandScale<string>();
-
     processData(): boolean {
-        const data = this.data;
+        let data = this.data as any[];
         const xField = this.xField;
         const yFields = this.yFields;
 
         if (!(xField && yFields.length)) {
-            return false;
+            this._data = data = [];
         }
 
         // If the data is an array of rows like so:
@@ -245,23 +244,16 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         //   yField3: 20
         // }]
         //
-        const xData: string[] = this.domainX = data.map(datum => {
-            const value = datum[xField];
-            if (typeof value !== 'string') {
-                throw new Error(`The ${xField} value is not a string. `
-                    + `This error might be solved by using the 'setDataAndFields' method.`);
-            }
-            return value;
-        });
+        const enabled = this.enabled;
+        const xData: string[] = this.xData = data.map(datum => datum[xField]);
         const yData: number[][] = this.yData = data.map(datum => {
             const values: number[] = [];
             yFields.forEach(field => {
-                const value = datum[field];
-                if (isNaN(value)) {
-                    throw new Error(`The ${field} value is not a number. `
-                        + `This error might be solved by using the 'setDataAndFields' method.`);
+                let value = datum[field];
+                if (isNaN(value) || !isFinite(value)) {
+                    value = 0;
                 }
-                values.push(value);
+                values.push(enabled.get(field) ? value : 0);
             });
             return values;
         });
@@ -313,7 +305,6 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             // console.warn('Zero or infinite y-range.');
         }
 
-        this.domainX = xData;
         this.domainY = [yMin, yMax];
 
         const chart = this.chart;
@@ -325,25 +316,18 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
     }
 
     getDomainX(): string[] {
-        return this.domainX;
+        return this.xData;
     }
 
     getDomainY(): number[] {
         return this.domainY;
     }
 
-    /**
-     * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
-     */
-    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
-
-    colors: string[] = colors;
-    private strokeColors = colors.map(color => Color.fromHexString(color).darker().toHexString());
-
     update(): void {
         const chart = this.chart;
+        const visible = this.group.visible = this.visible;
 
-        if (!chart || chart && chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
             return;
         }
 
@@ -354,45 +338,51 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         const yScale = yAxis.scale;
         const groupScale = this.groupScale;
         const yFields = this.yFields;
-        const colors = this.colors;
-        const strokeColor = this.strokeStyle;
-        const strokeColors = this.strokeColors;
+        const fills = this.fills;
+        const strokes = this.strokes;
         const grouped = this.grouped;
-        const lineWidth = this.lineWidth;
+        const strokeWidth = this.strokeWidth;
         const labelFont = this.labelFont;
         const labelColor = this.labelColor;
         const labelPadding = this.labelPadding;
+        const data = this.data;
+        const xData = this.xData;
+        const yData = this.yData;
+        const labelEnabled = this.labelEnabled;
 
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
 
-        const barData: BarDatum[] = [];
+        const groupSelectionData: GroupSelectionDatum[] = [];
 
         for (let i = 0; i < n; i++) {
-            const category = this.domainX[i];
-            const values = this.yData[i];
-            let x = xScale.convert(category);
+            const category = xData[i];
+            const values = yData[i];
+            const x = xScale.convert(category);
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
-                const barX = grouped ? x + groupScale.convert(yFields[yFieldIndex]) : x;
-                const y = yScale.convert(grouped ? curr : prev + curr);
-                const bottomY = yScale.convert(grouped ? 0 : prev);
+                const yField = yFields[yFieldIndex];
+                const barX = grouped ? x + groupScale.convert(yField) : x;
+                const y = yScale.convert((grouped ? curr : prev + curr));
+                const bottomY = yScale.convert((grouped ? 0 : prev));
                 const labelText = this.yFieldNames[yFieldIndex];
 
-                barData.push({
+                groupSelectionData.push({
+                    seriesDatum: data[i],
+                    yField,
                     x: barX,
-                    y,
+                    y: Math.min(y, bottomY),
                     width: barWidth,
-                    height: bottomY - y,
-                    fillStyle: colors[yFieldIndex % colors.length],
-                    strokeStyle: strokeColor ? strokeColor : strokeColors[yFieldIndex % strokeColors.length],
-                    lineWidth,
+                    height: Math.abs(bottomY - y),
+                    fill: fills[yFieldIndex % fills.length],
+                    stroke: strokes[yFieldIndex % strokes.length],
+                    strokeWidth,
                     label: labelText ? {
                         text: labelText,
                         font: labelFont,
-                        fillStyle: labelColor,
+                        fill: labelColor,
                         x: barX + barWidth / 2,
-                        y: y + lineWidth / 2 + labelPadding[0]
+                        y: y + strokeWidth / 2 + labelPadding.x
                     } : undefined
                 });
 
@@ -401,7 +391,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
             }, 0);
         }
 
-        const updateGroups = this.groupSelection.setData(barData);
+        const updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);
@@ -411,6 +401,7 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
         });
         enterGroups.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
+            text.pointerEvents = PointerEvents.None;
             text.textBaseline = 'hanging';
             text.textAlign = 'center';
         });
@@ -423,30 +414,91 @@ export class BarSeries<D, X = string, Y = number> extends StackedCartesianSeries
                 rect.y = datum.y;
                 rect.width = datum.width;
                 rect.height = datum.height;
-                rect.fillStyle = datum.fillStyle;
-                rect.strokeStyle = datum.strokeStyle;
-                rect.lineWidth = datum.lineWidth;
-                rect.shadow = this.shadow;
+                rect.fill = datum.fill;
+                rect.stroke = datum.stroke;
+                rect.strokeWidth = datum.strokeWidth;
+                rect.fillShadow = this.shadow;
                 rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
             });
 
         groupSelection.selectByTag<Text>(BarSeriesNodeTag.Label)
             .each((text, datum) => {
                 const label = datum.label;
-                if (label) {
+                if (label && labelEnabled) {
                     text.font = label.font;
                     text.text = label.text;
                     text.x = label.x;
                     text.y = label.y;
-                    text.fillStyle = label.fillStyle;
+                    text.fill = label.fill;
                     const textBBox = text.getBBox();
-                    text.visible = datum.height > (textBBox.height + datum.lineWidth + labelPadding[0] * 2)
-                        && datum.width > (textBBox.width + datum.lineWidth + labelPadding[1] * 2);
+                    text.visible = datum.height > (textBBox.height + datum.strokeWidth + labelPadding.x * 2)
+                        && datum.width > (textBBox.width + datum.strokeWidth + labelPadding.y * 2);
                 } else {
                     text.visible = false;
                 }
             });
 
         this.groupSelection = groupSelection;
+    }
+
+    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
+        let html: string = '';
+        if (this.tooltipEnabled) {
+            const xField = this.xField;
+            const yField = nodeDatum.yField;
+
+            if (this.tooltipRenderer && xField) {
+                html = this.tooltipRenderer({
+                    datum: nodeDatum.seriesDatum,
+                    xField,
+                    yField,
+                });
+            } else {
+                const title = nodeDatum.label ? `<div class="title">${nodeDatum.label.text}</div>` : '';
+                const seriesDatum = nodeDatum.seriesDatum;
+                const xValue = seriesDatum[xField];
+                const yValue = seriesDatum[yField];
+                const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
+                const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+
+                html = `${title}${xString}: ${yString}`;
+            }
+        }
+        return html;
+    }
+
+    listSeriesItems(data: LegendDatum[]): void {
+        if (this.data.length && this.xField && this.yFields.length) {
+            const fills = this.fills;
+            const strokes = this.strokes;
+            const id = this.id;
+
+            this.yFields.forEach((yField, index) => {
+                data.push({
+                    id,
+                    itemId: yField,
+                    enabled: this.enabled.get(yField) || false,
+                    label: {
+                        text: this.yFieldNames[index] || this.yFields[index]
+                    },
+                    marker: {
+                        fillStyle: fills[index % fills.length],
+                        strokeStyle: strokes[index % strokes.length]
+                    }
+                });
+            });
+        }
+    }
+
+    toggleSeriesItem(itemId: string, enabled: boolean): void {
+        this.enabled.set(itemId, enabled);
+        const enabledYFields: string[] = [];
+        this.enabled.forEach((enabled, yField) => {
+            if (enabled) {
+                enabledYFields.push(yField);
+            }
+        });
+        this.groupScale.domain = enabledYFields;
+        this.scheduleData();
     }
 }

@@ -1,6 +1,6 @@
-import {Node} from "../node";
-import {chainObjects} from "../../util/object";
-import {DropShadow} from "../dropShadow";
+import { Node } from "../node";
+import { chainObjects } from "../../util/object";
+import { DropShadow } from "../dropShadow";
 
 export type ShapeLineCap = null | 'round' | 'square';  // null is for 'butt'
 export type ShapeLineJoin = null | 'round' | 'bevel';  // null is for 'miter'
@@ -15,15 +15,16 @@ export abstract class Shape extends Node {
      * These static defaults are meant to be inherited by subclasses.
      */
     protected static defaultStyles = chainObjects({}, {
-        fillStyle: 'black' as string | null,
-        strokeStyle: null as string | null,
-        lineWidth: 0,
-        lineDash: null as number[] | null,
+        fill: 'black',
+        stroke: undefined,
+        strokeWidth: 0,
+        lineDash: undefined,
         lineDashOffset: 0,
         lineCap: null as ShapeLineCap,
         lineJoin: null as ShapeLineJoin,
         opacity: 1,
-        shadow: null as DropShadow | null
+        fillShadow: undefined,
+        strokeShadow: undefined
     });
 
     /**
@@ -65,15 +66,15 @@ export abstract class Shape extends Node {
         }
     }
 
-    private _fillStyle: string | null = Shape.defaultStyles.fillStyle; //| CanvasGradient | CanvasPattern;
-    set fillStyle(value: string | null) {
-        if (this._fillStyle !== value) {
-            this._fillStyle = value;
+    private _fill: string | undefined = Shape.defaultStyles.fill; //| CanvasGradient | CanvasPattern;
+    set fill(value: string | undefined) {
+        if (this._fill !== value) {
+            this._fill = value;
             this.dirty = true;
         }
     }
-    get fillStyle(): string | null {
-        return this._fillStyle;
+    get fill(): string | undefined {
+        return this._fill;
     }
 
     /**
@@ -86,30 +87,30 @@ export abstract class Shape extends Node {
      * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
      * unless specific looks that is achieved by having an invisible stroke is desired.
      */
-    private _strokeStyle: string | null = Shape.defaultStyles.strokeStyle;
-    set strokeStyle(value: string | null) {
-        if (this._strokeStyle !== value) {
-            this._strokeStyle = value;
+    private _stroke: string | undefined = Shape.defaultStyles.stroke;
+    set stroke(value: string | undefined) {
+        if (this._stroke !== value) {
+            this._stroke = value;
             this.dirty = true;
         }
     }
-    get strokeStyle(): string | null {
-        return this._strokeStyle;
+    get stroke(): string | undefined {
+        return this._stroke;
     }
 
-    protected _lineWidth: number = Shape.defaultStyles.lineWidth;
-    set lineWidth(value: number) {
-        if (this._lineWidth !== value) {
-            this._lineWidth = value;
+    protected _strokeWidth: number = Shape.defaultStyles.strokeWidth;
+    set strokeWidth(value: number) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
             this.dirty = true;
         }
     }
-    get lineWidth(): number {
-        return this._lineWidth;
+    get strokeWidth(): number {
+        return this._strokeWidth;
     }
 
-    private _lineDash: number[] | null = Shape.defaultStyles.lineDash;
-    set lineDash(value: number[] | null) {
+    private _lineDash: number[] | undefined = Shape.defaultStyles.lineDash;
+    set lineDash(value: number[] | undefined) {
         const oldValue = this._lineDash;
 
         if (oldValue !== value) {
@@ -130,7 +131,7 @@ export abstract class Shape extends Node {
             this.dirty = true;
         }
     }
-    get lineDash(): number[] | null {
+    get lineDash(): number[] | undefined {
         return this._lineDash;
     }
 
@@ -179,24 +180,60 @@ export abstract class Shape extends Node {
         return this._opacity;
     }
 
-    private _shadow: DropShadow | null = Shape.defaultStyles.shadow;
-    set shadow(value: DropShadow | null) {
-        if (this._shadow !== value) {
-            this._shadow = value;
+    private _fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
+    set fillShadow(value: DropShadow | undefined) {
+        if (this._fillShadow !== value) {
+            this._fillShadow = value;
             this.dirty = true;
         }
     }
-    get shadow(): DropShadow | null {
-        return this._shadow;
+    get fillShadow(): DropShadow | undefined {
+        return this._fillShadow;
     }
 
-    applyContextAttributes(ctx: CanvasRenderingContext2D) {
-        if (this.fillStyle) {
-            ctx.fillStyle = this.fillStyle;
+    private _strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
+    set strokeShadow(value: DropShadow | undefined) {
+        if (this._strokeShadow !== value) {
+            this._strokeShadow = value;
+            this.dirty = true;
         }
-        if (this.strokeStyle) {
-            ctx.strokeStyle = this.strokeStyle;
-            ctx.lineWidth = this.lineWidth;
+    }
+    get strokeShadow(): DropShadow | undefined {
+        return this._strokeShadow;
+    }
+
+    protected fillStroke(ctx: CanvasRenderingContext2D) {
+        if (!this.scene) {
+            return;
+        }
+
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+
+        const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
+
+            // The canvas context scaling (depends on the device's pixel ratio)
+            // has no effect on shadows, so we have to account for the pixel ratio
+            // manually here.
+            const fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
+            }
+            ctx.fill();
+        }
+
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+
+        if (this.stroke && this.strokeWidth) {
+            ctx.strokeStyle = this.stroke;
+            ctx.lineWidth = this.strokeWidth;
             if (this.lineDash) {
                 ctx.setLineDash(this.lineDash);
             }
@@ -209,17 +246,15 @@ export abstract class Shape extends Node {
             if (this.lineJoin) {
                 ctx.lineJoin = this.lineJoin;
             }
-        }
-        if (this.opacity < 1) {
-            ctx.globalAlpha = this.opacity;
-        }
 
-        const shadow = this.shadow;
-        if (shadow) {
-            ctx.shadowColor = shadow.color;
-            ctx.shadowOffsetX = shadow.offset.x;
-            ctx.shadowOffsetY = shadow.offset.y;
-            ctx.shadowBlur = shadow.blur;
+            const strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.stroke();
         }
     }
 

@@ -1,17 +1,18 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Shape } from "./shape";
 import { BBox } from "../bbox";
 export declare class Text extends Shape {
     protected static defaultStyles: {
-        fillStyle: string | null;
-        strokeStyle: string | null;
-        lineWidth: number;
-        lineDash: number[] | null;
+        fill: string;
+        stroke: undefined;
+        strokeWidth: number;
+        lineDash: undefined;
         lineDashOffset: number;
         lineCap: import("./shape").ShapeLineCap;
         lineJoin: import("./shape").ShapeLineJoin;
         opacity: number;
-        shadow: import("../dropShadow").DropShadow | null;
+        fillShadow: undefined;
+        strokeShadow: undefined;
     } & {
         textAlign: CanvasTextAlign;
         font: string;
@@ -35,6 +36,5 @@ export declare class Text extends Shape {
     readonly getBBox: () => BBox;
     isPointInPath(x: number, y: number): boolean;
     isPointInStroke(x: number, y: number): boolean;
-    applyContextAttributes(ctx: CanvasRenderingContext2D): void;
     render(ctx: CanvasRenderingContext2D): void;
 }

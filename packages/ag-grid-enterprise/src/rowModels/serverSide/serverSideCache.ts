@@ -16,7 +16,7 @@ import {
     RowNodeCache,
     RowNodeCacheParams
 } from "ag-grid-community";
-import {ServerSideBlock} from "./serverSideBlock";
+import { ServerSideBlock } from "./serverSideBlock";
 
 export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];

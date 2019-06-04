@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Row Height: Styling & Appearance Feature of our Datagrid";
-$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Height. Rows can have different Row Height. You can even change the row height dynamically at run time. Version 20 is available for download now, take it for a free two month trial.";
+$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Row Height. Rows can have different Row Height. You can even change the row height dynamically at run time. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeyboards = "ag-Grid ag grid javascript Row Height";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -14,12 +14,9 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        Changing the row height is only supported in the <a href="../javascript-grid-client-side-model/">Client-side</a>
-        row model. You cannot use variable row height when using
-        <a href="../javascript-grid-virtual-paging/">virtual paging</a>,
+        You cannot use variable row height when using
         <a href="../javascript-grid-viewport/">viewport</a> or
-        <a href="../javascript-grid-server-side-model/">Server-side</a> row models.
-        This is because these row models need to work out the position of rows that are not loaded and hence need to
+        This is because this row model needs to work out the position of rows that are not loaded and hence needs to
         assume the row height is fixed.
     </note>
 

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var agGridNg2_1 = require("./agGridNg2");
+var agGridAngular_1 = require("./agGridAngular");
 var agGridColumn_1 = require("./agGridColumn");
 var AgGridModule = /** @class */ (function () {
     function AgGridModule() {
@@ -26,11 +26,11 @@ var AgGridModule = /** @class */ (function () {
         { type: core_1.NgModule, args: [{
                     imports: [],
                     declarations: [
-                        agGridNg2_1.AgGridNg2,
+                        agGridAngular_1.AgGridAngular,
                         agGridColumn_1.AgGridColumn
                     ],
                     exports: [
-                        agGridNg2_1.AgGridNg2,
+                        agGridAngular_1.AgGridAngular,
                         agGridColumn_1.AgGridColumn
                     ]
                 },] },

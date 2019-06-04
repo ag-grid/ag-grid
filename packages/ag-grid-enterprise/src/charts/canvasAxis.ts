@@ -1,6 +1,5 @@
 import Scale from "./scale/scale";
-import {pixelSnap, PixelSnapBias} from "./canvas/canvas";
-import {normalizeAngle360} from "./util/angle";
+import { normalizeAngle360 } from "./util/angle";
 
 export class CanvasAxis<D> {
     constructor(scale: Scale<D, number>) {
@@ -36,7 +35,7 @@ export class CanvasAxis<D> {
             const ticks = scale.ticks!(10);
             const bandwidth = (scale.bandwidth || 0) / 2;
             const tickCount = ticks.length;
-            const pxShift = pixelSnap(this.tickWidth);
+            const pxShift = Math.floor(this.tickWidth) % 2 / 2;
             const sideFlag = this.mirroredLabels ? 1 : -1;
             ctx.lineWidth = this.tickWidth;
             ctx.strokeStyle = this.tickColor;
@@ -51,7 +50,7 @@ export class CanvasAxis<D> {
                 ctx.lineTo(0, r + pxShift);
                 if (this.flippedLabels) {
                     const rotation = normalizeAngle360(this.rotation);
-                    let flipFlag = (rotation >= 0 && rotation <= Math.PI) ? -1 : 1;
+                    const flipFlag = (rotation >= 0 && rotation <= Math.PI) ? -1 : 1;
 
                     ctx.save();
                     ctx.translate(sideFlag * (this.tickSize + this.tickPadding), r);
@@ -68,7 +67,7 @@ export class CanvasAxis<D> {
 
         // Render axis line.
         {
-            const pxShift = pixelSnap(this.lineWidth, PixelSnapBias.Negative);
+            const pxShift = Math.floor(this.lineWidth) % 2 / 2;
             ctx.lineWidth = this.lineWidth;
             ctx.strokeStyle = this.lineColor;
             ctx.beginPath();
@@ -76,7 +75,6 @@ export class CanvasAxis<D> {
             ctx.lineTo(pxShift, scale.range[scale.range.length - 1]);
             ctx.stroke();
         }
-
 
         ctx.restore();
     }

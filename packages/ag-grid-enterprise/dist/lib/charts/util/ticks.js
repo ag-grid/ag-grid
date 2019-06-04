@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -22,33 +22,39 @@ function default_1(a, b, count) {
     return range(a, b, step);
 }
 exports.default = default_1;
-var E10 = Math.sqrt(50);
-var E5 = Math.sqrt(10);
-var E2 = Math.sqrt(2);
+var e10 = Math.sqrt(50);
+var e5 = Math.sqrt(10);
+var e2 = Math.sqrt(2);
 function tickStep(a, b, count) {
-    if (count <= 0) {
-        throw new Error('Count should be greater than zero.');
-    }
-    var rawStep = Math.abs(b - a) / count;
+    var rawStep = Math.abs(b - a) / Math.max(0, count);
     var step = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10)); // = Math.log10(rawStep)
     var error = rawStep / step;
-    if (error >= E10) {
+    if (error >= e10) {
         step *= 10;
     }
-    else if (error >= E5) {
+    else if (error >= e5) {
         step *= 5;
     }
-    else if (error >= E2) {
+    else if (error >= e2) {
         step *= 2;
     }
-    return step;
+    return b < a ? -step : step;
 }
+function tickIncrement(a, b, count) {
+    var rawStep = (b - a) / Math.max(0, count);
+    var power = Math.floor(Math.log(rawStep) / Math.LN10);
+    var error = rawStep / Math.pow(10, power);
+    return power >= 0
+        ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
+        : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+}
+exports.tickIncrement = tickIncrement;
 var NumericTicks = /** @class */ (function (_super) {
     __extends(NumericTicks, _super);
-    function NumericTicks(decimalDigits, size) {
+    function NumericTicks(fractionDigits, size) {
         if (size === void 0) { size = 0; }
         var _this = _super.call(this, size) || this;
-        _this.decimalDigits = decimalDigits;
+        _this.fractionDigits = fractionDigits;
         return _this;
     }
     return NumericTicks;
@@ -57,12 +63,12 @@ exports.NumericTicks = NumericTicks;
 function range(a, b, step) {
     if (step === void 0) { step = 1; }
     var absStep = Math.abs(step);
-    var decimalDigits = (absStep > 0 && absStep < 1)
+    var fractionDigits = (absStep > 0 && absStep < 1)
         ? Math.abs(Math.floor(Math.log(absStep) / Math.LN10))
         : 0;
-    var f = Math.pow(10, decimalDigits);
-    var n = Math.max(0, Math.ceil((b - a) / step));
-    var values = new NumericTicks(decimalDigits, n);
+    var f = Math.pow(10, fractionDigits);
+    var n = Math.max(0, Math.ceil((b - a) / step)) || 0;
+    var values = new NumericTicks(fractionDigits, n);
     for (var i = 0; i < n; i++) {
         var value = a + step * i;
         values[i] = Math.round(value * f) / f;

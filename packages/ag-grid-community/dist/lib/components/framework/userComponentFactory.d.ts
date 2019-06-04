@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v20.2.0
+// Type definitions for ag-grid-community v21.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "../../entities/gridOptions";
@@ -18,7 +18,7 @@ import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComp
 import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
 import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { IFloatingFilterComp } from "../../filter/floatingFilter";
+import { IFloatingFilterComp } from "../../filter/floating/floatingFilter";
 import { ICellEditorComp } from "../../interfaces/iCellEditor";
 import { IToolPanelComp } from "../../interfaces/iToolPanel";
 import { StatusPanelDef } from "../../interfaces/iStatusPanel";
@@ -71,7 +71,7 @@ export declare class UserComponentFactory {
     newNoRowsOverlayComponent(params: any): Promise<INoRowsOverlayComp>;
     newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp>;
     newFilterComponent(colDef: ColDef, params: IFilterParams, defaultFilter: string, modifyParamsCallback: ModifyParamsCallback): Promise<IFilterComp>;
-    newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp<any, any, any>>;
+    newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp>;
     newToolPanelComponent(toolPanelDef: ToolPanelDef, params: any): Promise<IToolPanelComp>;
     newStatusPanelComponent(def: StatusPanelDef, params: any): Promise<IToolPanelComp>;
     /**

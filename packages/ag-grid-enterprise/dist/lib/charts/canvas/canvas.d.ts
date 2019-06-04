@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 /**
  * Creates an HTMLCanvasElement element with HDPI overrides applied.
  * The `width` and `height` parameters are optional and default to
@@ -16,14 +16,3 @@ export declare function applyHdpiOverrides(canvas: HTMLCanvasElement): number;
  * @param height
  */
 export declare function resizeCanvas(canvas: HTMLCanvasElement, width: number, height: number): void;
-/**
- * Returns the position offset to apply to align vertical and horizontal
- * lines to the pixel grid for crisp look.
- * @param value Typically line width is assumed. Fractional values won't be aligned.
- * @param bias If alignment is necessary, which side to prefer.
- */
-export declare function pixelSnap(value: number, bias?: PixelSnapBias): number;
-export declare enum PixelSnapBias {
-    Negative = -1,
-    Positive = 1
-}

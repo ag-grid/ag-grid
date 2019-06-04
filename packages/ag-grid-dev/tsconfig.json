@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "outDir": "./test-src/dist",
+    "module": "commonjs",
+    "target": "es5",
+    "experimentalDecorators": true
+  },
+  "include": [
+    "test-src/ts/**/*"
+  ]
+}

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 import { Deinterpolator, Reinterpolator } from "./scale";
 import ContinuousScale from "./continuousScale";
 /**
@@ -8,6 +8,11 @@ export declare class LinearScale<R> extends ContinuousScale<R> {
     protected deinterpolatorOf(a: number, b: number): Deinterpolator<number>;
     protected reinterpolatorOf(a: number, b: number): Reinterpolator<number>;
     ticks(count?: number): import("../util/ticks").NumericTicks;
+    /**
+     * Extends the domain so that it starts and ends on nice round values.
+     * @param count Tick count.
+     */
+    nice(count?: number): void;
 }
 export declare function reinterpolateNumber(a: number, b: number): Reinterpolator<number>;
 export declare function deinterpolateNumber(a: number, b: number): Deinterpolator<number>;

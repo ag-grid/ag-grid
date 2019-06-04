@@ -1,0 +1,151 @@
+*
+{
+  margin:0;
+  padding: 0;
+}
+
+body {
+font-family: 'Montserrat', sans-serif;
+}
+#nav-bar {
+  position: sticky;
+  top: 0:
+  z-index: 10;
+}
+.navbar {
+    background: linear-gradient(to top left, #0092ff, #006ad2);
+}
+.navbar-brand {
+
+}
+
+#get-started {
+  background: white;
+  border-radius: 15px 15px;
+}
+
+a#get-started {
+  color: #097ed6;
+  font-weight: 800;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: white;
+}
+
+.navbar-nav li {
+  padding: 0 10px;
+}
+
+/*above the fold section*/
+h1, h2, h3, p, ul, li {
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-weight: 500;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+h3 {
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 17px;
+}
+
+li {
+  border-color: white;
+  border-radius: 15px;
+}
+
+.snippet {
+  font-size: 18px;
+  margin-top: 50px;
+}
+
+#abovefold {
+background: linear-gradient(to top left, #097ed6, #0074e6);
+background-size: cover;
+padding: 50px 0;
+padding-right: 60px;
+padding-left: 60px;
+color: white;
+}
+
+.img {
+  width: 124px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+/*description section*/
+#description {
+  background: #fbfbfb;
+  padding-top: 1px;
+  padding-bottom: 50px;
+}
+
+.overview p {
+  font-size: 16px;
+}
+
+.example {
+display:block;
+margin: 0 auto;
+max-width: 100%;
+box-shadow: 10px 10px 15px 10px grey;
+margin-top: 40px;
+margin-bottom: 80px;
+}
+
+.title::before {
+  content: '';
+  background: linear-gradient(to top left, #097ed6, #0074e6);
+  height: 5px;
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  transform: translateY(63px);
+}
+.title::after {
+  content: '';
+  background: linear-gradient(to top left, #097ed6, #0074e6);
+  height: 10px;
+  width: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 40px;
+  display: block;
+  transform: translateY(17px);
+}
+
+#c2a-button {
+  text-align: center;
+  margin-top: 50px;
+}
+
+/*options*/
+
+#options {
+  background: #fbfbfb;
+  padding-top: 1px;
+}
+
+/*video*/
+
+.demo {
+  box-shadow: 10px 10px 5px grey;
+}
+
+
+
+

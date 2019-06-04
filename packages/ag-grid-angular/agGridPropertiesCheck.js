@@ -5,21 +5,21 @@ HTMLInputElement = typeof HTMLInputElement === 'undefined' ? function () {} : HT
 HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () {} : HTMLButtonElement;
 MouseEvent = typeof MouseEvent === 'undefined' ? function () {} : MouseEvent;
 
-/* Checks for missing gridOptions on agGridNg2 */
-const {AgGridNg2} = require('./dist/agGridNg2');
+/* Checks for missing gridOptions on agGridAngular */
+const {AgGridAngular} = require('./dist/agGridAngular');
 const {ComponentUtil} = require("ag-grid-community");
 
 const missingProperties = [];
 ComponentUtil.ALL_PROPERTIES.forEach((property) => {
-    if (!AgGridNg2.propDecorators.hasOwnProperty(property)) {
-        missingProperties.push(`Grid property ${property} does not exist on AgGridNg2`)
+    if (!AgGridAngular.propDecorators.hasOwnProperty(property)) {
+        missingProperties.push(`Grid property ${property} does not exist on AgGridAngular`)
     }
 });
 
 const missingEvents = [];
 ComponentUtil.EVENTS.forEach((event) => {
-    if (!AgGridNg2.propDecorators.hasOwnProperty(event)) {
-        missingEvents.push(`Grid event ${event} does not exist on AgGridNg2`)
+    if (!AgGridAngular.propDecorators.hasOwnProperty(event)) {
+        missingEvents.push(`Grid event ${event} does not exist on AgGridAngular`)
     }
 });
 

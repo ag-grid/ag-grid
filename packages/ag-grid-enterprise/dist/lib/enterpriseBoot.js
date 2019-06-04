@@ -1,4 +1,4 @@
-// ag-grid-enterprise v20.2.0
+// ag-grid-enterprise v21.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -22,6 +22,7 @@ var aggregationComp_1 = require("./statusBar/providedPanels/aggregationComp");
 var selectedRowsComp_1 = require("./statusBar/providedPanels/selectedRowsComp");
 var filteredRowsComp_1 = require("./statusBar/providedPanels/filteredRowsComp");
 var filtersToolPanel_1 = require("./sideBar/providedPanels/filters/filtersToolPanel");
+var setFloatingFilter_1 = require("./setFilter/setFloatingFilter");
 var EnterpriseBoot = /** @class */ (function () {
     function EnterpriseBoot() {
     }
@@ -29,6 +30,7 @@ var EnterpriseBoot = /** @class */ (function () {
         this.userComponentRegistry.registerDefaultComponent('agRichSelect', richSelectCellEditor_1.RichSelectCellEditor);
         this.userComponentRegistry.registerDefaultComponent('agRichSelectCellEditor', richSelectCellEditor_1.RichSelectCellEditor);
         this.userComponentRegistry.registerDefaultComponent('agSetColumnFilter', setFilter_1.SetFilter);
+        this.userComponentRegistry.registerDefaultComponent('agSetColumnFloatingFilter', setFloatingFilter_1.SetFloatingFilterComp);
         this.userComponentRegistry.registerDefaultComponent('agDetailCellRenderer', detailCellRenderer_1.DetailCellRenderer);
         this.userComponentRegistry.registerDefaultComponent('agAggregationComponent', aggregationComp_1.AggregationComp);
         this.userComponentRegistry.registerDefaultComponent('agColumnsToolPanel', columnToolPanel_1.ColumnToolPanel);
