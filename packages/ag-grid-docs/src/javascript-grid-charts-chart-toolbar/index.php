@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
         The chart settings toolbar item allows users to change the chart type as well as the color palette used in the
         chart as demonstrated below:
     </p>
-        <img alt="Chart Settings" src="chart-settings.gif" style="height: 400px; width: 100%; border: grey solid 1px">
+        <img alt="Chart Settings" src="chart-settings.gif" style="height: 420px; width: 100%; border: grey solid 1px">
     <p>
        <br>
        Right now the toolbar allow users to switch between the 5 most commonly used charts: Grouped Bar, Stacked Bar,
@@ -61,7 +61,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The chart data toolbar is used to dynamically change the data being charted as shown below:
     </p>
-    <img alt="Chart Data" src="chart-data.gif" style="height: 400px; width: 100%; border: grey solid 1px">
+    <img alt="Chart Data" src="chart-data.gif" style="height: 420px; width: 100%; border: grey solid 1px">
 
     <p>
         <br>
