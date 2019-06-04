@@ -174,6 +174,8 @@ interface IGridStyle {
 }
 </snippet>
 
+The example below changes all available styling options. The styling options are exaggerated to demonstrate the option rather than produce a chart that looks nice.
+
     <?= example('Custom Bar Chart', 'custom-bar-chart', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
