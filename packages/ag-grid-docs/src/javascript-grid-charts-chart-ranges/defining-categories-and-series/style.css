@@ -6,11 +6,11 @@
 
 .my-grid {
     flex-grow: 1;
-    height: 10px;
+    height: 10px !important;
 }
 
-.my-chart {
-    flex-grow: 2;
-    height: 10px;
-    display: inline-block;
-}
+ .my-chart {
+     flex-grow: 2;
+     height: 10px !important;
+     display: inline-block;
+ }
