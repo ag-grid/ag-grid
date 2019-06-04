@@ -386,6 +386,8 @@
     }
 
     .ag-row-drag {
+        // added 'move' as IE fallback
+        cursor: move;
         cursor: grab;
         min-width: $icon-size + $grid-size * 3;
     }
@@ -395,6 +397,8 @@
     }
 
     .ag-column-drag {
+        // added 'move' as IE fallback
+        cursor: move;
         cursor: grab;
     }
 
@@ -745,6 +749,7 @@
             }
 
             .ag-column-drop-list {
+                cursor: default;
                 margin-top: $grid-size;
             }
 

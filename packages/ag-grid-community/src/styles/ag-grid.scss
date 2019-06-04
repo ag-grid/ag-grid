@@ -476,7 +476,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
             .ag-column-drop-cell-text {
                 overflow: hidden;
-                flex: 1;
+                flex: 1 1 auto;
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
@@ -1280,7 +1280,7 @@ $handleSize: 5px;
                 outline: none;
                 cursor: pointer;
 
-                span {
+                span:not(.ag-icon) {
                   writing-mode: tb;
                   writing-mode: vertical-lr;
                 }
@@ -1300,7 +1300,7 @@ $handleSize: 5px;
 .ag-rtl .ag-side-bar {
     .ag-side-buttons {
         button {
-            span {
+            span:not(.ag-icon) {
                 writing-mode: tb-rl;
                 writing-mode: vertical-rl;
             }

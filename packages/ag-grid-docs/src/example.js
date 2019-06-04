@@ -385,26 +385,26 @@ var gridOptions = {
         if (params.type === 'groupedBar' || params.type === 'stackedBar' || params.type === 'line') {
             options.yAxis.labelFormatter = function(n) {
                 if (n < 1e3) return n;
-                if (n >= 1e3 && n < 1e6) return `$${+(n / 1e3).toFixed(1)}K`;
-                if (n >= 1e6 && n < 1e9) return `$${+(n / 1e6).toFixed(1)}M`;
-                if (n >= 1e9 && n < 1e12) return `$${+(n / 1e9).toFixed(1)}B`;
-                if (n >= 1e12) return `$${+(n / 1e12).toFixed(1)}T`;
+                if (n >= 1e3 && n < 1e6) return '$' + +(n / 1e3).toFixed(1) + 'K';
+                if (n >= 1e6 && n < 1e9) return '$' + +(n / 1e6).toFixed(1) + 'M';
+                if (n >= 1e9 && n < 1e12) return '$' + +(n / 1e9).toFixed(1) + 'B';
+                if (n >= 1e12) return '$' + +(n / 1e12).toFixed(1) + 'T';
             };
 
-            options.seriesDefaults.tooltipRenderer = (params) => {
+            options.seriesDefaults.tooltipRenderer = function(params) {
                 var strArr = params.yField.replace(/([A-Z])/g, " $1");
                 var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
-                const value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return `<b>${seriesName}</b>: $${value}`;
+                var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return '<b>' + seriesName + '</b>: $' + value;
             };
         }
 
         if (params.type === 'pie' || params.type === 'doughnut')  {
-            options.seriesDefaults.tooltipRenderer = (params) => {
+            options.seriesDefaults.tooltipRenderer = function(params) {
                 var strArr = params.angleField.replace(/([A-Z])/g, " $1");
                 var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
-                const value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return `<b>${seriesName}</b>: $${value}`;
+                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return '<b>' + seriesName + '</b>: $' + value;
             };
         }
 
@@ -512,7 +512,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Custom Menu Item',
-            icon: '<img src="images/lab.svg" style="width: 14px;"/>',
+            icon: '<img src="images/lab.svg" style="width: 14px; height: 14px;"/>',
             //shortcut: 'Alt + M',
             action: function () {
                 var value = params.value ? params.value : '<empty>';
