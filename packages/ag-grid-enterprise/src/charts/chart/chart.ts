@@ -553,8 +553,8 @@ export abstract class Chart {
         el.style.display = 'table';
         const tooltipRect = this.tooltipRect = el.getBoundingClientRect();
 
-        let left = event.x + pageXOffset + offset[0];
-        const top = event.y + pageYOffset + offset[1];
+        let left = event.pageX + pageXOffset + offset[0];
+        const top = event.pageY + pageYOffset + offset[1];
 
         if (tooltipRect && parent && parent.parentElement) {
             if (left + tooltipRect.width > parent.parentElement.offsetWidth) {
