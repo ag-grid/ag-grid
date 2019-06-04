@@ -159,6 +159,8 @@ interface IGridStyle {
 }
 </snippet>
 
+The example below changes all available styling options. The styling options are exaggerated to demonstrate the option rather than produce a chart that looks nice.
+
     <h3>Default Line Options</h3>
 
     <p>
