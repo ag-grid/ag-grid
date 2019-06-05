@@ -19,7 +19,7 @@ const merge = require('merge-stream');
 
 const SKIP_INLINE = true;
 
-gulp.task('release', ['generate-examples', 'build-packaged-examples', 'process-src', 'bundle-site', 'copy-from-dist', 'populate-dev']);
+gulp.task('release', ['generate-examples-release', 'build-packaged-examples', 'process-src', 'bundle-site', 'copy-from-dist', 'populate-dev']);
 gulp.task('default', ['release']);
 
 gulp.task('bundle-site', () => {
@@ -101,7 +101,9 @@ gulp.task('copy-from-dist', () => {
 
 const generateExamples = require('./example-generator');
 gulp.task('serve', require('./dev-server'));
-gulp.task('generate-examples', generateExamples);
+gulp.task('generate-examples', ['generate-examples-dev']);
+gulp.task('generate-examples-dev', generateExamples.bind(null, () => console.log('generation done.'), undefined, true));
+gulp.task('generate-examples-release', generateExamples.bind(null, () => console.log('generation done.'), undefined, false));
 
 const buildPackagedExamples = require('./packaged-example-builder');
 gulp.task('build-packaged-examples', () => buildPackagedExamples(() => console.log("Packaged Examples Built")));

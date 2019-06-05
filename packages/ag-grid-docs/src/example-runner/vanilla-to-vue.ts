@@ -78,13 +78,17 @@ const toAssignment = (property) => {
     return `this.${property.name} = ${value}`;
 };
 
-function createComponentImports(bindings, componentFileNames: any) {
+function createComponentImports(bindings, componentFileNames: any, isDev) {
     const imports = [];
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
     }
 
+    const chartsEnabled = bindings.properties.filter(property => property.name === 'enableCharts' && property.value === 'true').length >= 1;
+    if(chartsEnabled  && !isDev) {
+        imports.push('import "ag-grid-enterprise/chartsModule";');
+    }
 
     if (componentFileNames) {
         let titleCase = (s) => {
@@ -168,8 +172,8 @@ function parseAllMethods(bindings) {
     return [eventHandlers, externalEventHandlers, instanceFunctions, utilFunctions];
 }
 
-function componentTemplate(bindings, componentFileNames) {
-    const imports = createComponentImports(bindings, componentFileNames);
+function componentTemplate(bindings, componentFileNames, isDev) {
+    const imports = createComponentImports(bindings, componentFileNames, isDev);
     const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
     const gridReadyTemplate = onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
@@ -236,9 +240,9 @@ new Vue({
 `;
 }
 
-export function vanillaToVue(js, html, exampleSettings, componentFileNames) {
+export function vanillaToVue(js, html, exampleSettings, componentFileNames, isDev) {
     const bindings = parser(js, html, exampleSettings);
-    return componentTemplate(bindings, componentFileNames);
+    return componentTemplate(bindings, componentFileNames, isDev);
 }
 
 if (typeof window !== 'undefined') {
