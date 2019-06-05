@@ -16,6 +16,8 @@ export enum ArcType {
  */
 export class Arc extends Shape {
 
+    static className = 'Arc';
+
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
         lineWidth: 1,
         fillStyle: null

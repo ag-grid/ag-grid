@@ -3,6 +3,9 @@ import { chainObjects } from "../../util/object";
 import { BBox } from "../bbox";
 
 export class Line extends Shape {
+
+    static className = 'Line';
+
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
         fill: undefined,
         strokeWidth: 1

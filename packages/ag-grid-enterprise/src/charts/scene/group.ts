@@ -4,6 +4,8 @@ import { Matrix } from "./matrix";
 
 export class Group extends Node {
 
+    static className = 'Group';
+
     protected isContainerNode: boolean = true;
 
     // We consider a group to be boundless, thus any point belongs to it.
