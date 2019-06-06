@@ -237,7 +237,7 @@ export class LicenseManager {
         console.error('****************************************** License Key Not Found ***********************************************');
         console.error('* All ag-Grid Enterprise features are unlocked.                                                                *');
         console.error('* This is an evaluation only version, it is not licensed for development projects intended for production.     *');
-        console.error('* If you want to hide the watermarkMessage, please email info@ag-grid.com for a trial license.                        *');
+        console.error('* If you want to hide the watermark, please email info@ag-grid.com for a trial license.                        *');
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
 
