@@ -153,7 +153,23 @@ meta_and_links($title, $keywords, $description, false);
                 </div>
             </div>
         </section>
-</div>
+    </div>
+
+    <div class="stage-scenarios">
+        <h2 class="heading-scenarios">Integrated Charting</h2>
+
+        <section>
+            <div class="demo" id="demo-2" data-load="home/demo-3.php">
+                <div class="loading">
+                    <img src="_assets/doodles/checkbox-selection.svg">
+                    <p>Loading Demo...</p>
+                </div>
+                <div class="view-code">
+                    &nbsp;
+                </div>
+            </div>
+        </section>
+    </div>
 
     <div id="stage-testimonials">
         <section>
