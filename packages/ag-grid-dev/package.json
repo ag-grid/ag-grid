@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-dev",
-  "version": "21.0.0",
+  "version": "21.0.1",
   "description": "ag-Grid Modularisation Tests",
   "main": "index.js",
   "scripts": {

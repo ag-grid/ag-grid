@@ -1,0 +1,13 @@
+// Type definitions for ag-grid-community v21.0.1
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+export interface Module {
+    moduleName: string;
+    beans?: any[];
+    enterpriseComponents?: any[];
+    enterpriseBeans?: any[];
+    enterpriseDefaultComponents?: {
+        componentName: string;
+        theClass: any;
+    }[];
+}

@@ -1,0 +1,59 @@
+// Type definitions for ag-grid-community v21.0.1
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { Component } from "../../widgets/component";
+import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { IRowModel } from "../../interfaces/iRowModel";
+export interface IProvidedFilterParams extends IFilterParams {
+    clearButton?: boolean;
+    applyButton?: boolean;
+    newRowsAction?: string;
+    debounceMs?: number;
+}
+/**
+ * Contains common logic to all provided filters (apply button, clear button, etc).
+ * All the filters that come with ag-Grid extend this class. User filters do not
+ * extend this class.
+ */
+export declare abstract class ProvidedFilter extends Component implements IFilterComp {
+    private static NEW_ROWS_ACTION_KEEP;
+    private static NEW_ROWS_ACTION_CLEAR;
+    private newRowsActionKeep;
+    private providedFilterParams;
+    private clearActive;
+    private applyActive;
+    private eButtonsPanel;
+    protected eFilterBodyWrapper: HTMLElement;
+    private eApplyButton;
+    private eClearButton;
+    protected gridOptionsWrapper: GridOptionsWrapper;
+    protected rowModel: IRowModel;
+    abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
+    protected abstract updateUiVisibility(): void;
+    protected abstract createBodyTemplate(): string;
+    protected abstract resetUiToDefaults(): void;
+    protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
+    protected abstract getModelFromUi(): ProvidedFilterModel | null;
+    protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
+    private appliedModel;
+    private onBtApplyDebounce;
+    /** @deprecated */
+    onFilterChanged(): void;
+    isFilterActive(): boolean;
+    protected postConstruct(): void;
+    init(params: IFilterParams): void;
+    protected setParams(params: IProvidedFilterParams): void;
+    protected getDefaultDebounceMs(): number;
+    private setupOnBtApplyDebounce;
+    getModel(): ProvidedFilterModel;
+    setModel(model: ProvidedFilterModel): void;
+    private onBtClear;
+    protected updateModel(): boolean;
+    private onBtApply;
+    onNewRowsLoaded(): void;
+    protected onUiChanged(afterFloatingFilter?: boolean): void;
+    private createTemplate;
+    static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number;
+    static isUseApplyButton(params: IProvidedFilterParams): boolean;
+}

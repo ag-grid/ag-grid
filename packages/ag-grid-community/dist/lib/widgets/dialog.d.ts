@@ -1,0 +1,94 @@
+// Type definitions for ag-grid-community v21.0.1
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { PopupComponent } from "./popupComponent";
+import { Component } from "./component";
+export declare type ResizableSides = 'topLeft' | 'top' | 'topRight' | 'right' | 'bottomRight' | 'bottom' | 'bottomLeft' | 'left';
+export declare type ResizableStructure = {
+    [key in ResizableSides]?: boolean;
+};
+export interface DialogOptions {
+    alwaysOnTop?: boolean;
+    component?: Component;
+    movable?: boolean;
+    resizable?: boolean | ResizableStructure;
+    maximizable?: boolean;
+    closable?: boolean;
+    title?: string;
+    minWidth?: number;
+    width?: number;
+    minHeight?: number;
+    height?: number;
+    x?: number;
+    y?: number;
+    centered?: boolean;
+}
+export declare class Dialog extends PopupComponent {
+    private static TEMPLATE;
+    private static CLOSE_BTN_TEMPLATE;
+    private static MAXIMIZE_BTN_TEMPLATE;
+    private config;
+    private resizable;
+    private isResizable;
+    private isMaximizable;
+    private isMaximized;
+    private maximizeListeners;
+    private movable;
+    private closable;
+    private isMoving;
+    private isResizing;
+    private minWidth;
+    private minHeight;
+    private popupParent;
+    private dragStartPosition;
+    private position;
+    private size;
+    private lastPosition;
+    private dragService;
+    private popupService;
+    private eContentWrapper;
+    private eTitleBar;
+    private eTitleBarButtons;
+    private eTitle;
+    private eTopLeftResizer;
+    private eTopResizer;
+    private eTopRightResizer;
+    private eRightResizer;
+    private eBottomRightResizer;
+    private eBottomResizer;
+    private eBottomLeftResizer;
+    private eLeftResizer;
+    private closeButtonComp;
+    private maximizeButtonComp;
+    close: () => void;
+    constructor(config?: DialogOptions);
+    protected postConstruct(): void;
+    private updateDragStartPosition;
+    private getResizerElement;
+    setResizable(resizable: boolean | ResizableStructure): void;
+    private onDialogResizeStart;
+    private calculateMouseMovement;
+    private onDialogResize;
+    private onDialogResizeEnd;
+    private refreshSize;
+    setMovable(movable: boolean): void;
+    private onDialogMoveStart;
+    private onDialogMove;
+    private offsetDialog;
+    private onDialogMoveEnd;
+    setClosable(closable: boolean): void;
+    setMaximizable(maximizable: boolean): void;
+    private toggleMaximize;
+    private clearMaximizebleListeners;
+    setBodyComponent(bodyComponent: Component): void;
+    addTitleBarButton(button: Component, position?: number): void;
+    getBodyHeight(): number;
+    getBodyWidth(): number;
+    setTitle(title: string): void;
+    getHeight(): number;
+    setHeight(height: number): void;
+    getWidth(): number;
+    setWidth(width: number): void;
+    private onBtClose;
+    destroy(): void;
+}
