@@ -1,0 +1,5 @@
+@import "./scrollbars.scss";
+
+#live-stream-updates-grid {
+  @include scrollbars(15px, #6b6b6b, #1c1f20, #959595, #424242);
+}
