@@ -50,6 +50,11 @@
         "url": "javascript-grid-features/"
       },
       {
+        "title": "ag-Grid Enterprise",
+        "url": "javascript-grid-set-license/",
+        "enterprise": true
+      },
+      {
         "title": "Column Definitions",
         "url": "javascript-grid-column-definitions/"
       },
@@ -345,11 +350,6 @@
       {
         "title": "Status Bar",
         "url": "javascript-grid-status-bar/",
-        "enterprise": true
-      },
-      {
-        "title": "License Key",
-        "url": "javascript-grid-set-license/",
         "enterprise": true
       },
       {

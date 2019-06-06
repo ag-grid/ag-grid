@@ -66,18 +66,23 @@ gtm_data_layer('trial', array('state' => 'start'));
 
 
             <p>
-                ag-Grid Enterprise is available to download from github or npm. All developers are welcome to evaluate it for 60 days free of charge.
+                ag-Grid Enterprise is available to download from github or npm.
+                You don't need to contact us to evaluate ag-Grid Enterprise.
+                A license is only required when you start developing for production.
             </p>
 
             <p>
-                ag-Grid Enterprise uses a Licence Key to determine if the version you are using is licensed. Without a License Key it displays a watermark and prints an error message to the console.
-                You can remove these for up to 60 days;  please fill in the form below to have a Trial Licence Key emailed to you.
-                Trial licenses are granted to allow you to evaluate the grid’s productivity, performance, and compatibility only, not for development.
+                While trialing, you will notice ag-Grid Enterprise
+                displays a watermark and prints an error message to the console.
+                You can remove these for up to 60 days with a trial license key. To get a trial license key
+                please fill in the form below to have a Trial Licence Key emailed to you.
             </p>
-            <p>
-                If you fill in the form below, you agree to your data being collected for the purposes of recording your request and sending you a Licence Key.
-                Please note that by downloading and installing ag-Grid Enterprise you agree to be bound by our EULA, available <a href="http://github.com/ag-grid/ag-grid/blob/master/packages/ag-grid-enterprise/LICENSE.md">here</a>.
 
+            <p>
+                If you fill in the form below, you agree to your data being collected for the purposes of
+                recording your request and sending you a Licence Key. Please note that by downloading and installing
+                ag-Grid Enterprise you agree to be bound by our EULA, available
+                <a href="http://github.com/ag-grid/ag-grid/blob/master/packages/ag-grid-enterprise/LICENSE.md">here</a>.
             <hr>
 
             <div class="container-fluid">
@@ -105,8 +110,7 @@ gtm_data_layer('trial', array('state' => 'start'));
                     <div class="form-group" style="margin-top: 10px">
                         <label for="email">Email *</label><input class="form-control" placeholder="Email" id="email"
                                                                  maxlength="80"
-                                                                 name="email" size="20" type="text" required
-                                                                 value="seanlandsman@yahoo.co.uk"/>
+                                                                 name="email" size="20" type="text" required/>
                         <div class="invalid-feedback">
                             Email is required.
                         </div>
