@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <div style="display: inline-block;">
         <p>
-            <img style="float: right; border: 1px solid grey; box-shadow: 5px 10px #888888; padding: 6px; margin: 10px 10px 10px 20px;" src="../_assets/homepage/enterprise-features.png/"/>
+            <img style="float: right; border: 1px solid grey; box-shadow: 5px 10px #888888; padding: 6px; margin: 10px 10px 10px 20px;" src="../_assets/homepage/enterprise-features.png"/>
 
             The Enterprise version of ag-Grid comes more grid features and
             <a href="https://ag-grid.zendesk.com/">Support via Zendesk</a>.
