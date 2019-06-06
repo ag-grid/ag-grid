@@ -89,7 +89,7 @@ export class AgGridColumn {
     @Input() public cellRenderer: any;
     @Input() public cellEditor: any;
     @Input() public pinned: any;
-    @Input() public chartType: any;
+    @Input() public chartDataType: any;
     @Input() public sortedAt: any;
     @Input() public width: any;
     @Input() public minWidth: any;

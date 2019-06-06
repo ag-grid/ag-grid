@@ -326,18 +326,18 @@ export class ChartModel extends BeanStub {
         displayedCols.forEach(col => {
             const colDef = col.getColDef() as ColDef;
 
-            const chartType = colDef.chartType;
-            if (chartType) {
+            const chartDataType = colDef.chartDataType;
+            if (chartDataType) {
                 let validChartType = true;
 
-                if (chartType === 'category') {
+                if (chartDataType === 'category') {
                     dimensionCols.push(col);
-                } else if (chartType === 'series') {
+                } else if (chartDataType === 'series') {
                     valueCols.push(col);
-                } else if (chartType === 'excluded') {
+                } else if (chartDataType === 'excluded') {
                     // ignore
                 } else {
-                    console.warn(`ag-Grid: unexpected chartType value '${chartType}' supplied, instead use 'category', 'series' or 'excluded'`);
+                    console.warn(`ag-Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`);
                     validChartType = false;
                 }
 
