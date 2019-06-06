@@ -8,6 +8,7 @@ import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { Caption } from "./caption";
+import { PieSeries } from "./series/pieSeries";
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
@@ -458,9 +459,7 @@ export abstract class Chart {
 
     private lastPick?: {
         series: Series<Chart>,
-        node: Shape,
-        fill?: string // used to save the original fillStyle of the node,
-                           // to be restored when the highlight fillStyle is removed
+        node: Shape
     };
 
     private readonly onMouseMove = (event: MouseEvent) => {
@@ -475,7 +474,6 @@ export abstract class Chart {
                     this.onSeriesNodePick(event, pick.series, node);
                 } else {
                     if (this.lastPick.node !== node) { // cursor moved from one node to another
-                        this.lastPick.node.fill = this.lastPick.fill;
                         this.onSeriesNodePick(event, pick.series, node);
                     } else { // cursor moved within the same node
                         if (pick.series.tooltipEnabled) {
@@ -485,7 +483,7 @@ export abstract class Chart {
                 }
             }
         } else if (this.lastPick) { // cursor moved from a node to empty space
-            this.lastPick.node.fill = this.lastPick.fill;
+            this.lastPick.series.dehighlight();
             this.hideTooltip();
             this.lastPick = undefined;
         }
@@ -513,10 +511,10 @@ export abstract class Chart {
     private onSeriesNodePick(event: MouseEvent, series: Series<Chart>, node: Shape) {
         this.lastPick = {
             series,
-            node,
-            fill: node.fill
+            node
         };
-        node.fill = 'yellow';
+
+        series.highlight(node);
 
         const html = series.tooltipEnabled && series.getTooltipHtml(node.datum as SeriesNodeDatum);
         if (html) {

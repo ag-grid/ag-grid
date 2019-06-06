@@ -4,6 +4,8 @@ import { BBox } from "../bbox";
 
 export class Rect extends Shape {
 
+    static className = 'Rect';
+
     static create(x: number, y: number, width: number, height: number, radius = 0): Rect {
         const rect = new Rect();
 

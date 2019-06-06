@@ -6,6 +6,8 @@ import { BBox } from "../bbox";
 
 export class Sector extends Shape {
 
+    static className = 'Sector';
+
     protected path = new Path2D();
 
     static create(centerX: number, centerY: number, innerRadius: number, outerRadius: number,

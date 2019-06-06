@@ -11,7 +11,7 @@ function isInstanceMethod(instance: any, property: any) {
     return instanceMethods.filter(methodName => methodName === property.name).length > 0;
 }
 
-function indexTemplate(bindings, componentFilenames) {
+function indexTemplate(bindings, componentFilenames, isDev) {
     const imports = [];
     const propertyAssignments = [];
     const componentAttributes = [];
@@ -48,6 +48,11 @@ function indexTemplate(bindings, componentFilenames) {
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
+    }
+
+    const chartsEnabled = bindings.properties.filter(property => property.name === 'enableCharts' && property.value === 'true').length >= 1;
+    if(chartsEnabled && !isDev) {
+        imports.push('import "ag-grid-enterprise/chartsModule";');
     }
 
     if (componentFilenames) {
@@ -174,9 +179,9 @@ render(
 `;
 }
 
-export function vanillaToReact(js, html, exampleSettings, componentFilenames) {
+export function vanillaToReact(js, html, exampleSettings, componentFilenames, isDev) {
     const bindings = parser(js, html, exampleSettings);
-    return indexTemplate(bindings, componentFilenames);
+    return indexTemplate(bindings, componentFilenames, isDev);
 }
 
 if (typeof window !== 'undefined') {

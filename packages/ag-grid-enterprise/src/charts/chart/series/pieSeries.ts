@@ -14,6 +14,7 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
 import { Caption } from "../caption";
+import { Shape } from "../../scene/shape/shape";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     radius: number, // in the [0, 1] range
@@ -44,6 +45,9 @@ export interface PieTooltipRendererParams {
 }
 
 export class PieSeries extends Series<PolarChart> {
+
+    static className = 'PieSeries';
+
     private radiusScale: LinearScale<number> = scaleLinear();
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
@@ -325,6 +329,30 @@ export class PieSeries extends Series<PolarChart> {
         return this._shadow;
     }
 
+    highlightStyle: {
+        fill?: string,
+        stroke?: string,
+        centerOffset?: number
+    } = {
+        fill: 'yellow'
+    };
+
+    private highlightedNode?: Sector;
+
+    highlight(node: Shape) {
+        if (!(node instanceof Sector)) {
+            return;
+        }
+
+        this.highlightedNode = node;
+        this.scheduleLayout();
+    }
+
+    dehighlight() {
+        this.highlightedNode = undefined;
+        this.scheduleLayout();
+    }
+
     getDomainX(): [number, number] {
         return this.angleScale.domain as [number, number];
     }
@@ -471,6 +499,9 @@ export class PieSeries extends Series<PolarChart> {
 
         let minOuterRadius = Infinity;
         const outerRadii: number[] = [];
+        const centerOffsets: number[] = [];
+
+        const highlightedNode = this.highlightedNode;
 
         groupSelection.selectByTag<Sector>(PieSeriesNodeTag.Sector)
             .each((sector, datum, index) => {
@@ -479,24 +510,35 @@ export class PieSeries extends Series<PolarChart> {
                 if (minOuterRadius > outerRadius) {
                     minOuterRadius = outerRadius;
                 }
-                outerRadii.push(outerRadius);
 
                 sector.outerRadius = outerRadius;
                 sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
                 sector.startAngle = datum.startAngle;
                 sector.endAngle = datum.endAngle;
-                sector.fill = fills[index % fills.length];
-                sector.stroke = strokes[index % strokes.length];
+
+                sector.fill = sector === highlightedNode && this.highlightStyle.fill !== undefined
+                    ? this.highlightStyle.fill
+                    : fills[index % fills.length];
+                sector.stroke = sector === highlightedNode && this.highlightStyle.stroke !== undefined
+                    ? this.highlightStyle.stroke
+                    : strokes[index % strokes.length];
+                sector.centerOffset = sector === highlightedNode && this.highlightStyle.centerOffset !== undefined
+                    ? this.highlightStyle.centerOffset
+                    : 0;
+
                 sector.fillShadow = this.shadow;
                 sector.strokeWidth = this.strokeWidth;
                 sector.lineJoin = 'round';
+
+                outerRadii.push(outerRadius);
+                centerOffsets.push(sector.centerOffset);
             });
 
         const calloutLength = this.calloutLength;
         groupSelection.selectByTag<Line>(PieSeriesNodeTag.Callout)
             .each((line, datum, index) => {
                 if (datum.label) {
-                    const outerRadius = outerRadii[index];
+                    const outerRadius = centerOffsets[index] + outerRadii[index];
 
                     line.strokeWidth = this.calloutStrokeWidth;
                     line.stroke = calloutColors[index % calloutColors.length];
@@ -511,12 +553,12 @@ export class PieSeries extends Series<PolarChart> {
 
         const calloutPadding = this.calloutPadding;
         groupSelection.selectByTag<Text>(PieSeriesNodeTag.Label)
-            .each((text, datum, i) => {
+            .each((text, datum, index) => {
                 const label = datum.label;
 
                 if (label) {
-                    const outerRadius = outerRadii[i];
-                    const labelRadius = outerRadius + calloutLength + calloutPadding;
+                    const outerRadius = outerRadii[index];
+                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + calloutPadding;
 
                     text.font = this.labelFont;
                     text.text = label.text;

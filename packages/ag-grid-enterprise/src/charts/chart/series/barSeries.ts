@@ -11,6 +11,7 @@ import { Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
+import { Shape } from "../../scene/shape/shape";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     yField: string,
@@ -42,6 +43,8 @@ export interface BarTooltipRendererParams {
 }
 
 export class BarSeries extends Series<CartesianChart> {
+
+    static className = 'BarSeries';
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 
@@ -219,6 +222,29 @@ export class BarSeries extends Series<CartesianChart> {
     }
     get labelPadding(): {x: number, y: number} {
         return this._labelPadding;
+    }
+
+    highlightStyle: {
+        fill?: string,
+        stroke?: string
+    } = {
+        fill: 'yellow'
+    };
+
+    private highlightedNode?: Rect;
+
+    highlight(node: Shape) {
+        if (!(node instanceof Rect)) {
+            return;
+        }
+
+        this.highlightedNode = node;
+        this.scheduleLayout();
+    }
+
+    dehighlight() {
+        this.highlightedNode = undefined;
+        this.scheduleLayout();
     }
 
     processData(): boolean {
@@ -406,6 +432,7 @@ export class BarSeries extends Series<CartesianChart> {
             text.textAlign = 'center';
         });
 
+        const highlightedNode = this.highlightedNode;
         const groupSelection = updateGroups.merge(enterGroups);
 
         groupSelection.selectByTag<Rect>(BarSeriesNodeTag.Bar)
@@ -414,8 +441,12 @@ export class BarSeries extends Series<CartesianChart> {
                 rect.y = datum.y;
                 rect.width = datum.width;
                 rect.height = datum.height;
-                rect.fill = datum.fill;
-                rect.stroke = datum.stroke;
+                rect.fill = rect === highlightedNode && this.highlightStyle.fill !== undefined
+                    ? this.highlightStyle.fill
+                    : datum.fill;
+                rect.stroke = rect === highlightedNode && this.highlightStyle.stroke !== undefined
+                    ? this.highlightStyle.stroke
+                    : datum.stroke;
                 rect.strokeWidth = datum.strokeWidth;
                 rect.fillShadow = this.shadow;
                 rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns

@@ -1,6 +1,7 @@
 import { Group } from "../../scene/group";
 import { Chart } from "../chart";
 import { LegendDatum } from "../legend";
+import { Shape } from "../../scene/shape/shape";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -23,7 +24,11 @@ export abstract class Series<C extends Chart> {
     // Uniquely identify series.
     private createId(): string {
         const constructor = this.constructor as any;
-        return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
+        let className = constructor.className;
+        if (!className) {
+            throw new Error(`The ${constructor} is missing the 'className' property.`);
+        }
+        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
 
     protected _data: any[] = [];
@@ -84,6 +89,9 @@ export abstract class Series<C extends Chart> {
     get showInLegend(): boolean {
         return this._showInLegend;
     }
+
+    abstract highlight(node: Shape): void;
+    abstract dehighlight(): void;
 
     scheduleLayout() {
         if (this.chart) {

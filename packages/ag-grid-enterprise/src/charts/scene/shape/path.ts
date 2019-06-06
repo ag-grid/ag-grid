@@ -3,6 +3,8 @@ import { Path2D } from "../path2D";
 
 export class Path extends Shape {
 
+    static className = 'Path';
+
     /**
      * Make sure to set {@link dirty} to `true` after changing the path.
      */
