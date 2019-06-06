@@ -1033,8 +1033,6 @@ function onThemeChanged(newTheme) {
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
 
     document.body.classList.toggle('dark', isDark);
-
-    document.body.style.scrollbarColor = isDark ? '#6B6B6B #1c1f20' : 'inherit';
 }
 
 var filterCount = 0;
