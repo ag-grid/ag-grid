@@ -598,6 +598,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     overflow: hidden;
     text-overflow: ellipsis; }
 
+.ag-full-width-row.ag-row-group .ag-cell-wrapper {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+
 .ag-cell-with-height {
   height: 100%; }
 
