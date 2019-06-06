@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
         This section covers how to use the chart range API in your applications.
     </p>
 
-    <h2>Charting API</h2>
+    <h2>Charting Range API</h2>
 
     <p>
         Charts can be created programmatically via the grid's <code>chartRange()</code> API. The interface is
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-function chartRange(params: ChartRangeParams): ChartRef | undefined;
+function chartRange(params: ChartRangeParams): ChartRef | undefined {
     cellRange: CellRangeParams;
     chartType: string;
     chartContainer?: HTMLElement;

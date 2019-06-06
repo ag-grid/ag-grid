@@ -31,6 +31,8 @@ export interface LineTooltipRendererParams {
 
 export class LineSeries extends Series<CartesianChart> {
 
+    static className = 'LineSeries';
+
     private domainX: any[] = [];
     private domainY: any[] = [];
     private xData: any[] = [];

@@ -10321,7 +10321,7 @@ var Column = /** @class */ (function () {
     Column.prototype.validate = function () {
         var colDefAny = this.colDef;
         if (!this.gridOptionsWrapper.isEnterprise()) {
-            var itemsNotAllowedWithoutEnterprise = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex', 'aggFunc'];
+            var itemsNotAllowedWithoutEnterprise = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc', 'chartDataType'];
             itemsNotAllowedWithoutEnterprise.forEach(function (item) {
                 if (utils_1._.exists(colDefAny[item])) {
                     console.warn("ag-Grid: " + item + " is only valid in ag-Grid-Enterprise, your column definition should not have " + item);
@@ -13272,7 +13272,6 @@ var RowComp = /** @class */ (function (_super) {
             var eRow = rowContainerComp.getRowElement(_this.getCompId());
             _this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
-            // console.log(`createRowContainer ${this.getCompId()}`);
             if (useAnimationsFrameForCreate) {
                 _this.beans.taskQueue.addP1Task(_this.lazyCreateCells.bind(_this, cols, eRow), _this.rowNode.rowIndex);
             }
@@ -13289,8 +13288,7 @@ var RowComp = /** @class */ (function (_super) {
         }
         var newChildScope = this.parentScope.$new();
         newChildScope.data = __assign({}, data);
-        console.log(newChildScope.data, newChildScope.data === data, this.beans.doingMasterDetail && this.rowNode.detail);
-        // newChildScope.rowNode = this.rowNode;
+        newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();
         this.addDestroyFunc(function () {
             newChildScope.$destroy();
@@ -14112,7 +14110,6 @@ var RowComp = /** @class */ (function (_super) {
         var _this = this;
         this.addDomData(eRow);
         this.removeSecondPassFuncs.push(function () {
-            // console.log(eRow);
             rowContainerComp.removeRowElement(eRow);
         });
         this.removeFirstPassFuncs.push(function () {
@@ -29964,7 +29961,7 @@ var ColDefUtil = /** @class */ (function () {
         'cellRenderer',
         'cellEditor',
         'pinned',
-        'chartType'
+        'chartDataType'
     ];
     ColDefUtil.OBJECT_PROPERTIES = [
         'headerGroupComponent',
@@ -47087,20 +47084,20 @@ var ChartModel = /** @class */ (function (_super) {
         var valueCols = [];
         displayedCols.forEach(function (col) {
             var colDef = col.getColDef();
-            var chartType = colDef.chartType;
-            if (chartType) {
+            var chartDataType = colDef.chartDataType;
+            if (chartDataType) {
                 var validChartType = true;
-                if (chartType === 'category') {
+                if (chartDataType === 'category') {
                     dimensionCols.push(col);
                 }
-                else if (chartType === 'series') {
+                else if (chartDataType === 'series') {
                     valueCols.push(col);
                 }
-                else if (chartType === 'excluded') {
+                else if (chartDataType === 'excluded') {
                     // ignore
                 }
                 else {
-                    console.warn("ag-Grid: unexpected chartType value '" + chartType + "' supplied, instead use 'category', 'series' or 'excluded'");
+                    console.warn("ag-Grid: unexpected chartDataType value '" + chartDataType + "' supplied, instead use 'category', 'series' or 'excluded'");
                     validChartType = false;
                 }
                 if (validChartType) {
@@ -51285,6 +51282,7 @@ var LineSeries = /** @class */ (function (_super) {
             });
         }
     };
+    LineSeries.className = 'LineSeries';
     return LineSeries;
 }(series_1.Series));
 exports.LineSeries = LineSeries;
@@ -52130,7 +52128,11 @@ var Series = /** @class */ (function () {
     // Uniquely identify series.
     Series.prototype.createId = function () {
         var constructor = this.constructor;
-        return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
+        var className = constructor.className;
+        if (!className) {
+            throw new Error("The " + constructor + " is missing the 'className' property.");
+        }
+        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
     ;
     Object.defineProperty(Series.prototype, "data", {
@@ -52714,6 +52716,7 @@ var BarSeries = /** @class */ (function (_super) {
         this.groupScale.domain = enabledYFields;
         this.scheduleData();
     };
+    BarSeries.className = 'BarSeries';
     return BarSeries;
 }(series_1.Series));
 exports.BarSeries = BarSeries;
@@ -53356,6 +53359,7 @@ var PieSeries = /** @class */ (function (_super) {
         this.enabled[itemId] = enabled;
         this.scheduleData();
     };
+    PieSeries.className = 'PieSeries';
     return PieSeries;
 }(series_1.Series));
 exports.PieSeries = PieSeries;

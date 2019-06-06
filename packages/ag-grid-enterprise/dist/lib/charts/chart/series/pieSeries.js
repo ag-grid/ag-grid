@@ -630,6 +630,7 @@ var PieSeries = /** @class */ (function (_super) {
         this.enabled[itemId] = enabled;
         this.scheduleData();
     };
+    PieSeries.className = 'PieSeries';
     return PieSeries;
 }(series_1.Series));
 exports.PieSeries = PieSeries;

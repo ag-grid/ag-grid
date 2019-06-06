@@ -18,7 +18,11 @@ var Series = /** @class */ (function () {
     // Uniquely identify series.
     Series.prototype.createId = function () {
         var constructor = this.constructor;
-        return constructor.name + '-' + (constructor.id = (constructor.id || 0) + 1);
+        var className = constructor.className;
+        if (!className) {
+            throw new Error("The " + constructor + " is missing the 'className' property.");
+        }
+        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
     ;
     Object.defineProperty(Series.prototype, "data", {

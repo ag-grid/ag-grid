@@ -45,6 +45,9 @@ export interface PieTooltipRendererParams {
 }
 
 export class PieSeries extends Series<PolarChart> {
+
+    static className = 'PieSeries';
+
     private radiusScale: LinearScale<number> = scaleLinear();
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 

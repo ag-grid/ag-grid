@@ -159,6 +159,20 @@ include '../documentation-main/documentation_header.php';
                 Suppress Grid Keyboard Events</a>.
             </td>
         </tr>
+        <tr>
+            <th>processChartOptions(params)</th>
+            <td>Callback to be used to with charts to override default chart options. See
+                <a href="../javascript-grid-charts-customisation/#overriding-chart-options">
+                    Overriding Chart Options</a>.
+            </td>
+        </tr>
+        </tr>
+            <th>getChartToolbarItems(params)</th>
+            <td>Callback to be used to customise the chart toolbar items. See
+                <a href="../javascript-grid-charts-chart-toolbar/#configuring-toolbar-items">
+                    Configuring Toolbar Items</a>.
+            </td>
+        </tr>
 
         <?php include_once '../javascript-grid-pagination/paginationProperties.php' ?>
         <?php printPropertiesRows($paginationCallbacks) ?>

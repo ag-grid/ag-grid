@@ -374,6 +374,7 @@ var LineSeries = /** @class */ (function (_super) {
             });
         }
     };
+    LineSeries.className = 'LineSeries';
     return LineSeries;
 }(series_1.Series));
 exports.LineSeries = LineSeries;

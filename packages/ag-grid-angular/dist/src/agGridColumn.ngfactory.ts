@@ -38,7 +38,7 @@ export const AgGridColumnNgFactory:i0.ComponentFactory<i1.AgGridColumn> = i0.ɵc
         headerValueGetter:'headerValueGetter',groupId:'groupId',colId:'colId',sort:'sort',
         field:'field',type:'type',tooltipField:'tooltipField',headerTooltip:'headerTooltip',
         cellClass:'cellClass',showRowGroup:'showRowGroup',filter:'filter',aggFunc:'aggFunc',
-        cellRenderer:'cellRenderer',cellEditor:'cellEditor',pinned:'pinned',chartType:'chartType',
+        cellRenderer:'cellRenderer',cellEditor:'cellEditor',pinned:'pinned',chartDataType:'chartDataType',
         sortedAt:'sortedAt',width:'width',minWidth:'minWidth',maxWidth:'maxWidth',
         rowGroupIndex:'rowGroupIndex',pivotIndex:'pivotIndex',valueGetter:'valueGetter',
         valueSetter:'valueSetter',filterValueGetter:'filterValueGetter',keyCreator:'keyCreator',

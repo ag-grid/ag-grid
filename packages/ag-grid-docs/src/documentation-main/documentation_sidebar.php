@@ -38,9 +38,10 @@
                 <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/MA.svg"/>
         -->
         <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/enterprise.svg"/>
-        <p class="font-weight-normal">Do you want more features? Then get started with ag-Grid Enterprise. You don't
-            need to contact us to evaluate ag-Grid Enterprise. A license is only required when you start developing for
-            production.
+        <p class="font-weight-normal">Do you want more features? Then
+            <a class="learn-more" href="../javascript-grid-set-license/">get started with ag-Grid Enterprise</a>.
+            You don't need to contact us to evaluate ag-Grid Enterprise. A license is only required
+            when you start developing for production.
         </p>
     </div>
 </div>

@@ -478,7 +478,14 @@ include '../documentation-main/documentation_header.php';
 <table class="table reference">
     <tr>
         <th>getStatusBarComponent(key)</th>
-        <td>Returns the status bar component instance for key provided</td>.
+        <td>Returns the status bar component instance for key provided.</td>
+    </tr>
+</table>
+<h2>Charts</h2>
+<table class="table reference">
+    <tr>
+        <th>chartRange(params)</th>
+        <td>Used to programmatically create charts from a range. See <a href="../javascript-grid-charts-chart-range-api/#charting-range-api">Chart Range API</a>.</td>
     </tr>
 </table>
 <h2>Miscellaneous</h2>

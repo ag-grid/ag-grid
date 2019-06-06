@@ -519,6 +519,7 @@ var BarSeries = /** @class */ (function (_super) {
         this.groupScale.domain = enabledYFields;
         this.scheduleData();
     };
+    BarSeries.className = 'BarSeries';
     return BarSeries;
 }(series_1.Series));
 exports.BarSeries = BarSeries;

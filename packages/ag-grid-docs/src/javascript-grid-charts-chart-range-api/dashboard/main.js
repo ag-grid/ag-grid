@@ -1,13 +1,13 @@
 var columnDefs = [
-    {field: "country", width: 150, chartType: 'category'},
-    {field: "group", chartType: 'category'},
-    {field: "gold", chartType: 'series', editable: true, valueParser: numberValueParser},
-    {field: "silver", chartType: 'series', editable: true, valueParser: numberValueParser},
-    {field: "bronze", chartType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'a', chartType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'b', chartType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'c', chartType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'd', chartType: 'series', editable: true, valueParser: numberValueParser}
+    {field: "country", width: 150, chartDataType: 'category'},
+    {field: "group", chartDataType: 'category'},
+    {field: "gold", chartDataType: 'series', editable: true, valueParser: numberValueParser},
+    {field: "silver", chartDataType: 'series', editable: true, valueParser: numberValueParser},
+    {field: "bronze", chartDataType: 'series', editable: true, valueParser: numberValueParser},
+    {field: 'a', chartDataType: 'series', editable: true, valueParser: numberValueParser},
+    {field: 'b', chartDataType: 'series', editable: true, valueParser: numberValueParser},
+    {field: 'c', chartDataType: 'series', editable: true, valueParser: numberValueParser},
+    {field: 'd', chartDataType: 'series', editable: true, valueParser: numberValueParser}
 ];
 
 function createRowData() {

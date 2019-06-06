@@ -334,6 +334,10 @@ include '../documentation-main/documentation_header.php';
             <th>singleClickEdit</th>
             <td>Set to true to have cells under this column enter edit mode after single click.</td>
         </tr>
+        <tr>
+            <th>chartDataType</th>
+            <td>Defines the chart data type that should be used for a column: <code>'category' | 'series' | 'excluded' | undefined</code>.</td>
+        </tr>
 
         <tr class="title-row">
             <!-- TITLE ROW -->

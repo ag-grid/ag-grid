@@ -17,6 +17,7 @@ export interface LineTooltipRendererParams {
     yField: string;
 }
 export declare class LineSeries extends Series<CartesianChart> {
+    static className: string;
     private domainX;
     private domainY;
     private xData;

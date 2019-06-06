@@ -25,6 +25,7 @@ export interface PieTooltipRendererParams {
     labelField?: string;
 }
 export declare class PieSeries extends Series<PolarChart> {
+    static className: string;
     private radiusScale;
     private groupSelection;
     /**

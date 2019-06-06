@@ -27,6 +27,7 @@ export interface BarTooltipRendererParams {
     yField: string;
 }
 export declare class BarSeries extends Series<CartesianChart> {
+    static className: string;
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
     /**
      * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
