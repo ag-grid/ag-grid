@@ -1,9 +1,9 @@
 var columnDefs = [
-    {field: "athlete", width: 150, enableRowGroup: true},
-    {field: "gold", enableValue: true},
-    {field: "silver", enableValue: true},
-    {field: "bronze", enableValue: true},
-    {field: "total", enableValue: true}
+    {field: "athlete", width: 150, chartDataType: 'category'},
+    {field: "gold", chartDataType: 'series'},
+    {field: "silver", chartDataType: 'series'},
+    {field: "bronze", chartDataType: 'series'},
+    {field: "total", chartDataType: 'series'}
 ];
 
 var gridOptions = {

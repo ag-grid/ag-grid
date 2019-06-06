@@ -221,7 +221,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         if (!this.gridOptionsWrapper.isEnterprise()) {
             const itemsNotAllowedWithoutEnterprise =
-                ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex', 'aggFunc'];
+                ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc', 'chartDataType'];
             itemsNotAllowedWithoutEnterprise.forEach(item => {
                 if (_.exists(colDefAny[item])) {
                     console.warn(`ag-Grid: ${item} is only valid in ag-Grid-Enterprise, your column definition should not have ${item}`);

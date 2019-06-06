@@ -607,6 +607,20 @@ include '../documentation-main/documentation_header.php';
         </tr>
 
         </table>
+
+
+<h2>Charts</h2>
+<table class="table content reference">
+
+    <tr>
+        <th>enableCharts</th>
+        <td>Set to true to  <a href="../javascript-grid-charts-overview/#enabling-charts">Enable Charts</a>.</td>
+    </tr>
+
+</table>
+
+
+
 <h2>Miscellaneous</h2>
     <table class="table content reference">
         <tr>

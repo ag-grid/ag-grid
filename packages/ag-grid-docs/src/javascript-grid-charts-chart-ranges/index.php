@@ -101,15 +101,15 @@ include '../documentation-main/documentation_header.php';
         The different approaches will be presented in the order of precedence used by the grid.
     </p>
 
-    <h3>ColDef.chartType</h3>
+    <h3>ColDef.chartDataType</h3>
 
     <p>
-        When defining column definitions the <code>ColDef.chartType</code> property can be used to define how the column
+        When defining column definitions the <code>ColDef.chartDataType</code> property can be used to define how the column
         should be considered within the context of charting. The allowed values are should below:
     </p>
 
     <snippet>
-        ColDef.chartType = 'category' | 'series' | 'excluded' | undefined
+        ColDef.chartDataType = 'category' | 'series' | 'excluded' | undefined
     </snippet>
 
     <p>
@@ -117,20 +117,20 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The following column definitions show how the different <code>ColDef.chartType</code> values are applied:
+        The following column definitions show how the different <code>ColDef.chartDataType</code> values are applied:
     </p>
 
     <snippet>
         // 'category' columns
-        {field: "athlete", chartType: 'category'},
-        {field: "age", chartType: 'category'}, // despite containing numbers
+        {field: "athlete", chartDataType: 'category'},
+        {field: "age", chartDataType: 'category'}, // despite containing numbers
         {field: "country"}, // contains strings
 
         // 'excluded' from charts
-        {field: "date", chartType: 'excluded'},
+        {field: "date", chartDataType: 'excluded'},
 
         // 'series' columns
-        {field: "gold", chartType: 'series'},
+        {field: "gold", chartDataType: 'series'},
         {field: "silver", width: 100} // contains numbers
     </snippet>
 
