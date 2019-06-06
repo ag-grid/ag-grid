@@ -44,6 +44,8 @@ export interface BarTooltipRendererParams {
 
 export class BarSeries extends Series<CartesianChart> {
 
+    static className = 'BarSeries';
+
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 
     /**
