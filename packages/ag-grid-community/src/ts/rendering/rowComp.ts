@@ -271,8 +271,6 @@ export class RowComp extends Component {
             this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
 
-            // console.log(`createRowContainer ${this.getCompId()}`);
-
             if (useAnimationsFrameForCreate) {
                 this.beans.taskQueue.addP1Task(this.lazyCreateCells.bind(this, cols, eRow), this.rowNode.rowIndex);
             } else {
@@ -291,8 +289,7 @@ export class RowComp extends Component {
 
         const newChildScope = this.parentScope.$new();
         newChildScope.data = {...data };
-        console.log(newChildScope.data, newChildScope.data === data, this.beans.doingMasterDetail && this.rowNode.detail);
-        // newChildScope.rowNode = this.rowNode;
+        newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();
 
         this.addDestroyFunc(() => {
@@ -1232,7 +1229,6 @@ export class RowComp extends Component {
         this.addDomData(eRow);
 
         this.removeSecondPassFuncs.push(() => {
-            // console.log(eRow);
             rowContainerComp.removeRowElement(eRow);
         });
 

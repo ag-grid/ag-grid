@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "21.0.0",
+  "version": "21.0.1",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
@@ -58,10 +58,9 @@
   },
   "peerDependencies": {
     "@angular/compiler": ">=2.1.x",
-    "@angular/compiler-cli": ">=2.1.x",
     "@angular/core": ">=2.1.x",
     "ag-grid-community": "^21.0.0",
-    "core-js": "^2.4.1",
+    "core-js": ">=2.4.1",
     "rxjs": ">=5.0.0-beta.12",
     "zone.js": ">=0.6.x"
   }

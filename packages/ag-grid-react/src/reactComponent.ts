@@ -44,8 +44,7 @@ export class ReactComponent extends BaseReactComponent {
 
     public init(params: any): Promise<void> {
         return new Promise<void>(resolve => {
-            // functional components have to have the wrapping div... :-(
-            this.unwrapComponent = this.parentComponent.props.componentWrappingElement === undefined && !this.statelessComponent;
+            this.unwrapComponent = false;
             this.eParentElement = this.createParentElement(params);
             this.createReactComponent(params, resolve);
         });
