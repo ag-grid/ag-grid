@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
 export declare class PieChartProxy extends ChartProxy {
     private readonly chartOptions;

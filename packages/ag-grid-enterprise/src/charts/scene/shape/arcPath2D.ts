@@ -6,6 +6,9 @@ import { chainObjects } from "../../util/object";
  * the arc path for further rendering and hit-testing.
  */
 export class Arc extends Shape {
+
+    static className = 'Arc';
+
     // Declare a path to feed to `context.fill/stroke` using experimental native Path2D class.
     // Doesn't work in IE.
     protected path = new Path2D();

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.0
+// Type definitions for ag-grid-community v21.0.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -273,7 +273,7 @@ export interface ColDef extends AbstractColDef {
         [key: string]: string;
     };
     /** Defines the column data type used when charting, i.e. 'category' | 'series' | 'excluded' | undefined **/
-    chartType?: string;
+    chartDataType?: string;
 }
 export interface IsColumnFunc {
     (params: IsColumnFuncParams): boolean;

@@ -1,9 +1,10 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { DropShadow } from "../../scene/dropShadow";
 import { Series, SeriesNodeDatum } from "./series";
 import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
 import { Caption } from "../caption";
+import { Shape } from "../../scene/shape/shape";
 interface GroupSelectionDatum extends SeriesNodeDatum {
     radius: number;
     startAngle: number;
@@ -24,6 +25,7 @@ export interface PieTooltipRendererParams {
     labelField?: string;
 }
 export declare class PieSeries extends Series<PolarChart> {
+    static className: string;
     private radiusScale;
     private groupSelection;
     /**
@@ -92,6 +94,14 @@ export declare class PieSeries extends Series<PolarChart> {
     strokeWidth: number;
     private _shadow;
     shadow: DropShadow | undefined;
+    highlightStyle: {
+        fill?: string;
+        stroke?: string;
+        centerOffset?: number;
+    };
+    private highlightedNode?;
+    highlight(node: Shape): void;
+    dehighlight(): void;
     getDomainX(): [number, number];
     getDomainY(): [number, number];
     processData(): boolean;

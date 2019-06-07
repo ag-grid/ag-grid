@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -252,6 +252,7 @@ var Arc = /** @class */ (function (_super) {
         this.fillStroke(ctx);
         this.dirty = false;
     };
+    Arc.className = 'Arc';
     Arc.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
         lineWidth: 1,
         fillStyle: null

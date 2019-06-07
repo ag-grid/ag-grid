@@ -12,6 +12,7 @@ import { Series, SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
+import { Shape } from "../../scene/shape/shape";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number,
@@ -29,6 +30,8 @@ export interface LineTooltipRendererParams {
 }
 
 export class LineSeries extends Series<CartesianChart> {
+
+    static className = 'LineSeries';
 
     private domainX: any[] = [];
     private domainY: any[] = [];
@@ -219,6 +222,29 @@ export class LineSeries extends Series<CartesianChart> {
         return this._strokeWidth;
     }
 
+    highlightStyle: {
+        fill?: string,
+        stroke?: string
+    } = {
+        fill: 'yellow'
+    };
+
+    private highlightedNode?: Arc;
+
+    highlight(node: Shape) {
+        if (!(node instanceof Arc)) {
+            return;
+        }
+
+        this.highlightedNode = node;
+        this.scheduleLayout();
+    }
+
+    dehighlight() {
+        this.highlightedNode = undefined;
+        this.scheduleLayout();
+    }
+
     update(): void {
         const chart = this.chart;
         const visible = this.group.visible = this.visible;
@@ -284,6 +310,7 @@ export class LineSeries extends Series<CartesianChart> {
         const enterGroups = updateGroups.enter.append(Group);
         enterGroups.append(Arc).each(arc => arc.type = ArcType.Chord);
 
+        const highlightedNode = this.highlightedNode;
         const groupSelection = updateGroups.merge(enterGroups);
 
         groupSelection.selectByClass(Arc)
@@ -292,8 +319,12 @@ export class LineSeries extends Series<CartesianChart> {
                 arc.centerY = datum.y;
                 arc.radiusX = datum.radius;
                 arc.radiusY = datum.radius;
-                arc.fill = datum.fill;
-                arc.stroke = datum.stroke;
+                arc.fill = arc === highlightedNode && this.highlightStyle.fill !== undefined
+                    ? this.highlightStyle.fill
+                    : datum.fill;
+                arc.stroke = arc === highlightedNode && this.highlightStyle.stroke !== undefined
+                    ? this.highlightStyle.stroke
+                    : datum.stroke;
                 arc.strokeWidth = datum.strokeWidth;
                 arc.visible = datum.radius > 0;
             });

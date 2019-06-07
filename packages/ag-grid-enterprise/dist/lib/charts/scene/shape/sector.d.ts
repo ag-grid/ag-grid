@@ -1,8 +1,9 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 import { BBox } from "../bbox";
 export declare class Sector extends Shape {
+    static className: string;
     protected path: Path2D;
     static create(centerX: number, centerY: number, innerRadius: number, outerRadius: number, startAngle?: number, endAngle?: number): Sector;
     private _dirtyPath;

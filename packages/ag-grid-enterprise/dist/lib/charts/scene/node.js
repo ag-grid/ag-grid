@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var matrix_1 = require("./matrix");
@@ -78,17 +78,11 @@ var Node = /** @class */ (function () {
     // Uniquely identify nodes (to check for duplicates, for example).
     Node.prototype.createId = function () {
         var constructor = this.constructor;
-        var name = constructor.name;
-        if (!name) { // IE11
-            var match = constructor.toString().match(Node.fnNameRegex);
-            if (match) {
-                constructor.name = name = match[1];
-            }
-            else {
-                throw new Error("Couldn't get the constructor's name: " + constructor);
-            }
+        var className = constructor.className;
+        if (!className) {
+            throw new Error("The " + constructor + " is missing the 'className' property.");
         }
-        return name + '-' + (constructor.id = (constructor.id || 0) + 1);
+        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
     ;
     /**
@@ -556,7 +550,6 @@ var Node = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Node.fnNameRegex = /function (\w+)\(/;
     Node.MAX_SAFE_INTEGER = Math.pow(2, 53) - 1; // Number.MAX_SAFE_INTEGER
     return Node;
 }());

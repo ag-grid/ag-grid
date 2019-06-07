@@ -13,20 +13,14 @@ export enum PointerEvents {
  */
 export abstract class Node { // Don't confuse with `window.Node`.
 
-    private static fnNameRegex = /function (\w+)\(/;
     // Uniquely identify nodes (to check for duplicates, for example).
     private createId(): string {
         const constructor = this.constructor as any;
-        let name = constructor.name;
-        if (!name) { // IE11
-            const match = constructor.toString().match(Node.fnNameRegex);
-            if (match) {
-                constructor.name = name = match[1];
-            } else {
-                throw new Error(`Couldn't get the constructor's name: ${constructor}`);
-            }
+        let className = constructor.className;
+        if (!className) {
+            throw new Error(`The ${constructor} is missing the 'className' property.`);
         }
-        return name + '-' + (constructor.id = (constructor.id || 0) + 1);
+        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
 
     /**

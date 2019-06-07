@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -141,6 +141,7 @@ var MarkerLabel = /** @class */ (function (_super) {
         marker.height = markerSize;
         this.label.x = markerSize / 2 + this.padding;
     };
+    MarkerLabel.className = 'MarkerLabel';
     MarkerLabel.defaults = Object.freeze({
         padding: 4,
         markerSize: 14,

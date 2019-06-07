@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -137,6 +137,7 @@ var Line = /** @class */ (function (_super) {
         this.fillStroke(ctx);
         this.dirty = false;
     };
+    Line.className = 'Line';
     Line.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
         fill: undefined,
         strokeWidth: 1

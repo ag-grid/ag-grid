@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { BeanStub, Column, IRowModel, ValueService } from "ag-grid-community";
 import { AggregationStage } from "../../rowStages/aggregationStage";
 export interface ChartDatasourceParams {

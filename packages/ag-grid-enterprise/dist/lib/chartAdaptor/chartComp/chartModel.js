@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -253,20 +253,20 @@ var ChartModel = /** @class */ (function (_super) {
         var valueCols = [];
         displayedCols.forEach(function (col) {
             var colDef = col.getColDef();
-            var chartType = colDef.chartType;
-            if (chartType) {
+            var chartDataType = colDef.chartDataType;
+            if (chartDataType) {
                 var validChartType = true;
-                if (chartType === 'category') {
+                if (chartDataType === 'category') {
                     dimensionCols.push(col);
                 }
-                else if (chartType === 'series') {
+                else if (chartDataType === 'series') {
                     valueCols.push(col);
                 }
-                else if (chartType === 'excluded') {
+                else if (chartDataType === 'excluded') {
                     // ignore
                 }
                 else {
-                    console.warn("ag-Grid: unexpected chartType value '" + chartType + "' supplied, instead use 'category', 'series' or 'excluded'");
+                    console.warn("ag-Grid: unexpected chartDataType value '" + chartDataType + "' supplied, instead use 'category', 'series' or 'excluded'");
                     validChartType = false;
                 }
                 if (validChartType) {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -247,6 +247,7 @@ var Sector = /** @class */ (function (_super) {
         this.fillStroke(ctx);
         this.dirty = false;
     };
+    Sector.className = 'Sector';
     return Sector;
 }(shape_1.Shape));
 exports.Sector = Sector;

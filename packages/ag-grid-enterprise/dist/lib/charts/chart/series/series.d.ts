@@ -1,7 +1,8 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Group } from "../../scene/group";
 import { Chart } from "../chart";
 import { LegendDatum } from "../legend";
+import { Shape } from "../../scene/shape/shape";
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
  * `SeriesNodeDatum` - processed series datum used in node selections,
@@ -41,6 +42,8 @@ export declare abstract class Series<C extends Chart> {
     toggleSeriesItem(itemId: any, enabled: boolean): void;
     private _showInLegend;
     showInLegend: boolean;
+    abstract highlight(node: Shape): void;
+    abstract dehighlight(): void;
     scheduleLayout(): void;
     scheduleData(): void;
 }

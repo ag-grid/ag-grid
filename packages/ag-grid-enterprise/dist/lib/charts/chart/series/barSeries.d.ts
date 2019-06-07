@@ -1,8 +1,9 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { CartesianChart } from "../cartesianChart";
 import { DropShadow } from "../../scene/dropShadow";
 import { Series, SeriesNodeDatum } from "./series";
 import { LegendDatum } from "../legend";
+import { Shape } from "../../scene/shape/shape";
 interface GroupSelectionDatum extends SeriesNodeDatum {
     yField: string;
     x: number;
@@ -26,6 +27,7 @@ export interface BarTooltipRendererParams {
     yField: string;
 }
 export declare class BarSeries extends Series<CartesianChart> {
+    static className: string;
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
     /**
      * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
@@ -80,6 +82,13 @@ export declare class BarSeries extends Series<CartesianChart> {
         x: number;
         y: number;
     };
+    highlightStyle: {
+        fill?: string;
+        stroke?: string;
+    };
+    private highlightedNode?;
+    highlight(node: Shape): void;
+    dehighlight(): void;
     processData(): boolean;
     getDomainX(): string[];
     getDomainY(): number[];

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -213,6 +213,7 @@ var Text = /** @class */ (function (_super) {
         // this.matrix.transformBBox(this.getBBox!()).render(ctx);
         this.dirty = false;
     };
+    Text.className = 'Text';
     Text.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
         textAlign: 'start',
         font: '10px sans-serif',

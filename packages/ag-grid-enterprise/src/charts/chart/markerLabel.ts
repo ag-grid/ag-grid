@@ -4,6 +4,8 @@ import { Text } from "../scene/shape/text";
 
 export class MarkerLabel extends Group {
 
+    static className = 'MarkerLabel';
+
     static defaults = Object.freeze({
         padding: 4,
         markerSize: 14,

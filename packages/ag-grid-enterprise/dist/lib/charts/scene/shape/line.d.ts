@@ -1,7 +1,8 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Shape } from "./shape";
 import { BBox } from "../bbox";
 export declare class Line extends Shape {
+    static className: string;
     protected static defaultStyles: {
         fill: string;
         stroke: undefined;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -143,6 +143,7 @@ var Arc = /** @class */ (function (_super) {
         // object for hit testing.
         this.dirty = false;
     };
+    Arc.className = 'Arc';
     return Arc;
 }(shape_1.Shape));
 exports.Arc = Arc;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -70,6 +70,9 @@ var BarSeries = /** @class */ (function (_super) {
          * Vertical and horizontal label padding as an array of two numbers.
          */
         _this._labelPadding = { x: 10, y: 10 };
+        _this.highlightStyle = {
+            fill: 'yellow'
+        };
         return _this;
     }
     Object.defineProperty(BarSeries.prototype, "fills", {
@@ -243,6 +246,17 @@ var BarSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    BarSeries.prototype.highlight = function (node) {
+        if (!(node instanceof rect_1.Rect)) {
+            return;
+        }
+        this.highlightedNode = node;
+        this.scheduleLayout();
+    };
+    BarSeries.prototype.dehighlight = function () {
+        this.highlightedNode = undefined;
+        this.scheduleLayout();
+    };
     BarSeries.prototype.processData = function () {
         var data = this.data;
         var xField = this.xField;
@@ -411,6 +425,7 @@ var BarSeries = /** @class */ (function (_super) {
             text.textBaseline = 'hanging';
             text.textAlign = 'center';
         });
+        var highlightedNode = this.highlightedNode;
         var groupSelection = updateGroups.merge(enterGroups);
         groupSelection.selectByTag(BarSeriesNodeTag.Bar)
             .each(function (rect, datum) {
@@ -418,8 +433,12 @@ var BarSeries = /** @class */ (function (_super) {
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = datum.fill;
-            rect.stroke = datum.stroke;
+            rect.fill = rect === highlightedNode && _this.highlightStyle.fill !== undefined
+                ? _this.highlightStyle.fill
+                : datum.fill;
+            rect.stroke = rect === highlightedNode && _this.highlightStyle.stroke !== undefined
+                ? _this.highlightStyle.stroke
+                : datum.stroke;
             rect.strokeWidth = datum.strokeWidth;
             rect.fillShadow = _this.shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
@@ -500,6 +519,7 @@ var BarSeries = /** @class */ (function (_super) {
         this.groupScale.domain = enabledYFields;
         this.scheduleData();
     };
+    BarSeries.className = 'BarSeries';
     return BarSeries;
 }(series_1.Series));
 exports.BarSeries = BarSeries;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -145,6 +145,7 @@ var ClipRect = /** @class */ (function (_super) {
             ctx.restore();
         }
     };
+    ClipRect.className = 'ClipRect';
     return ClipRect;
 }(node_1.Node));
 exports.ClipRect = ClipRect;

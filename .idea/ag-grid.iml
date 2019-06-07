@@ -22,7 +22,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/_dev" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/framework-examples" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/javascript-grid-cell-editor/polymer-editor/node_modules" />

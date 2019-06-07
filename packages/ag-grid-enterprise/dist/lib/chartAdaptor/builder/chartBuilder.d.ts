@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { AxisOptions, BarSeriesOptions, CartesianChartOptions, DropShadowOptions, LineSeriesOptions, PieSeriesOptions, DoughnutChartOptions, ChartOptions, BarChartOptions, LegendOptions, PolarChartOptions, LineChartOptions, PieChartOptions, SeriesOptions, CaptionOptions } from "ag-grid-community";
 import { CartesianChart } from "../../charts/chart/cartesianChart";
 import { PolarChart } from "../../charts/chart/polarChart";
@@ -23,7 +23,7 @@ export declare class ChartBuilder {
     static createDoughnutChart(options: DoughnutChartOptions): PolarChart;
     static createPieChart(options: PieChartOptions): PolarChart;
     static createLineSeries(options: LineSeriesOptions): LineSeries;
-    static createSeries(options: any, type?: string): LineSeries | BarSeries | PieSeries | null;
+    static createSeries(options: any, type?: string): PieSeries | LineSeries | BarSeries | null;
     static initChart<C extends Chart>(chart: C, options: ChartOptions, seriesType?: SeriesType): C;
     static initCartesianChart(chart: CartesianChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType): CartesianChart;
     static initPolarChart(chart: PolarChart, options: PolarChartOptions, seriesType?: PolarSeriesType): PolarChart;

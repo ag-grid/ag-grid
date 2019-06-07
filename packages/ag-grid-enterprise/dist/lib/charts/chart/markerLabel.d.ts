@@ -1,6 +1,7 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Group } from "../scene/group";
 export declare class MarkerLabel extends Group {
+    static className: string;
     static defaults: Readonly<{
         padding: number;
         markerSize: number;

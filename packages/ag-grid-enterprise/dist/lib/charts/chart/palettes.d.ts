@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 export interface Palette {
     fills: string[];
     strokes: string[];

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -94,6 +94,7 @@ var Group = /** @class */ (function (_super) {
         //     fillStyle: 'rgba(0, 0, 0, 0.5)'
         // });
     };
+    Group.className = 'Group';
     return Group;
 }(node_1.Node));
 exports.Group = Group;

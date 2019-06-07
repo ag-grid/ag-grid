@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.0
+ * @version v21.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -189,7 +189,6 @@ var RowComp = /** @class */ (function (_super) {
             var eRow = rowContainerComp.getRowElement(_this.getCompId());
             _this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
-            // console.log(`createRowContainer ${this.getCompId()}`);
             if (useAnimationsFrameForCreate) {
                 _this.beans.taskQueue.addP1Task(_this.lazyCreateCells.bind(_this, cols, eRow), _this.rowNode.rowIndex);
             }
@@ -206,8 +205,7 @@ var RowComp = /** @class */ (function (_super) {
         }
         var newChildScope = this.parentScope.$new();
         newChildScope.data = __assign({}, data);
-        console.log(newChildScope.data, newChildScope.data === data, this.beans.doingMasterDetail && this.rowNode.detail);
-        // newChildScope.rowNode = this.rowNode;
+        newChildScope.rowNode = this.rowNode;
         newChildScope.context = this.beans.gridOptionsWrapper.getContext();
         this.addDestroyFunc(function () {
             newChildScope.$destroy();
@@ -1029,7 +1027,6 @@ var RowComp = /** @class */ (function (_super) {
         var _this = this;
         this.addDomData(eRow);
         this.removeSecondPassFuncs.push(function () {
-            // console.log(eRow);
             rowContainerComp.removeRowElement(eRow);
         });
         this.removeFirstPassFuncs.push(function () {

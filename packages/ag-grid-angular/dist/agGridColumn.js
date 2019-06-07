@@ -91,7 +91,7 @@ var AgGridColumn = /** @class */ (function () {
         'cellRenderer': [{ type: core_1.Input },],
         'cellEditor': [{ type: core_1.Input },],
         'pinned': [{ type: core_1.Input },],
-        'chartType': [{ type: core_1.Input },],
+        'chartDataType': [{ type: core_1.Input },],
         'sortedAt': [{ type: core_1.Input },],
         'width': [{ type: core_1.Input },],
         'minWidth': [{ type: core_1.Input },],

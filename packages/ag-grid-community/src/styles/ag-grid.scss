@@ -351,21 +351,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     line-height: 1.5;
 }
 
-.ag-header-group-cell-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
+.ag-header-group-cell-label, .ag-header-cell-label {
     display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
     align-items: center;
+    text-overflow: ellipsis;
+    height: 100%;
 }
 
 .ag-header-cell-label {
-    display: flex;
-    height: 100%;
-    flex: 1 1 auto;
-    align-items: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
     .ag-header-cell-text {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -398,6 +393,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-header-select-all {
     display: flex;
+    line-height: 1;
 }
 
 /**
@@ -583,6 +579,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         overflow: hidden;
         text-overflow: ellipsis;
     }
+}
+
+.ag-full-width-row.ag-row-group .ag-cell-wrapper {
+    align-items: center;
 }
 
 .ag-cell-with-height {

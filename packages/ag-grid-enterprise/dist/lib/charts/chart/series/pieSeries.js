@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -90,6 +90,9 @@ var PieSeries = /** @class */ (function (_super) {
         _this._innerRadiusOffset = 0;
         _this._strokeWidth = 1;
         _this._shadow = undefined;
+        _this.highlightStyle = {
+            fill: 'yellow'
+        };
         return _this;
     }
     Object.defineProperty(PieSeries.prototype, "data", {
@@ -377,6 +380,17 @@ var PieSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    PieSeries.prototype.highlight = function (node) {
+        if (!(node instanceof sector_1.Sector)) {
+            return;
+        }
+        this.highlightedNode = node;
+        this.scheduleLayout();
+    };
+    PieSeries.prototype.dehighlight = function () {
+        this.highlightedNode = undefined;
+        this.scheduleLayout();
+    };
     PieSeries.prototype.getDomainX = function () {
         return this.angleScale.domain;
     };
@@ -501,6 +515,8 @@ var PieSeries = /** @class */ (function (_super) {
         var groupSelection = updateGroups.merge(enterGroups);
         var minOuterRadius = Infinity;
         var outerRadii = [];
+        var centerOffsets = [];
+        var highlightedNode = this.highlightedNode;
         groupSelection.selectByTag(PieSeriesNodeTag.Sector)
             .each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
@@ -508,22 +524,30 @@ var PieSeries = /** @class */ (function (_super) {
             if (minOuterRadius > outerRadius) {
                 minOuterRadius = outerRadius;
             }
-            outerRadii.push(outerRadius);
             sector.outerRadius = outerRadius;
             sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
-            sector.fill = fills[index % fills.length];
-            sector.stroke = strokes[index % strokes.length];
+            sector.fill = sector === highlightedNode && _this.highlightStyle.fill !== undefined
+                ? _this.highlightStyle.fill
+                : fills[index % fills.length];
+            sector.stroke = sector === highlightedNode && _this.highlightStyle.stroke !== undefined
+                ? _this.highlightStyle.stroke
+                : strokes[index % strokes.length];
+            sector.centerOffset = sector === highlightedNode && _this.highlightStyle.centerOffset !== undefined
+                ? _this.highlightStyle.centerOffset
+                : 0;
             sector.fillShadow = _this.shadow;
             sector.strokeWidth = _this.strokeWidth;
             sector.lineJoin = 'round';
+            outerRadii.push(outerRadius);
+            centerOffsets.push(sector.centerOffset);
         });
         var calloutLength = this.calloutLength;
         groupSelection.selectByTag(PieSeriesNodeTag.Callout)
             .each(function (line, datum, index) {
             if (datum.label) {
-                var outerRadius = outerRadii[index];
+                var outerRadius = centerOffsets[index] + outerRadii[index];
                 line.strokeWidth = _this.calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
                 line.x1 = datum.midCos * outerRadius;
@@ -537,11 +561,11 @@ var PieSeries = /** @class */ (function (_super) {
         });
         var calloutPadding = this.calloutPadding;
         groupSelection.selectByTag(PieSeriesNodeTag.Label)
-            .each(function (text, datum, i) {
+            .each(function (text, datum, index) {
             var label = datum.label;
             if (label) {
-                var outerRadius = outerRadii[i];
-                var labelRadius = outerRadius + calloutLength + calloutPadding;
+                var outerRadius = outerRadii[index];
+                var labelRadius = centerOffsets[index] + outerRadius + calloutLength + calloutPadding;
                 text.font = _this.labelFont;
                 text.text = label.text;
                 text.x = datum.midCos * labelRadius;
@@ -606,6 +630,7 @@ var PieSeries = /** @class */ (function (_super) {
         this.enabled[itemId] = enabled;
         this.scheduleData();
     };
+    PieSeries.className = 'PieSeries';
     return PieSeries;
 }(series_1.Series));
 exports.PieSeries = PieSeries;

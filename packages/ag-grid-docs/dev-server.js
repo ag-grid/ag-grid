@@ -163,7 +163,7 @@ function watchAndGenerateExamples() {
             }
         }
         console.log('regenerating examples...');
-        generateExamples(() => console.log('generation done.'), dir);
+        generateExamples(() => console.log('generation done.'), dir, true);
     };
 
     callback();
@@ -216,7 +216,7 @@ module.exports = () => {
 const genExamples = (exampleDir) => {
     return () => {
         console.log('regenerating examples...');
-        generateExamples(() => console.log('generation done.'), exampleDir);
+        generateExamples(() => console.log('generation done.'), exampleDir, true);
     };
 };
 
@@ -229,7 +229,7 @@ if (process.argv.length >= 3) {
             chokidar.watch(`${examplePath}/**/*`, {ignored: ['**/_gen/**/*']}).on('change', genExamples(exampleDir));
         } else {
             console.log('regenerating examples...');
-            generateExamples(() => console.log('generation done.'), exampleDir);
+            generateExamples(() => console.log('generation done.'), exampleDir, true);
         }
     } else if(execFunc === 'prebuild-examples') {
         buildPackagedExamples(() => console.log("Packaged Examples Built"), exampleDir || undefined);

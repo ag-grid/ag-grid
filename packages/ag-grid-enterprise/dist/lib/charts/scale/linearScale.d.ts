@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Deinterpolator, Reinterpolator } from "./scale";
 import ContinuousScale from "./continuousScale";
 /**

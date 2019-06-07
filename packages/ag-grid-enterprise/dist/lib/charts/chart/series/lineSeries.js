@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -44,6 +44,9 @@ var LineSeries = /** @class */ (function (_super) {
         _this._fill = palettes_1.default.fills[0];
         _this._stroke = palettes_1.default.strokes[0];
         _this._strokeWidth = 3;
+        _this.highlightStyle = {
+            fill: 'yellow'
+        };
         var lineNode = _this.lineNode;
         lineNode.fill = undefined;
         lineNode.lineJoin = 'round';
@@ -238,7 +241,19 @@ var LineSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    LineSeries.prototype.highlight = function (node) {
+        if (!(node instanceof arc_1.Arc)) {
+            return;
+        }
+        this.highlightedNode = node;
+        this.scheduleLayout();
+    };
+    LineSeries.prototype.dehighlight = function () {
+        this.highlightedNode = undefined;
+        this.scheduleLayout();
+    };
     LineSeries.prototype.update = function () {
+        var _this = this;
         var chart = this.chart;
         var visible = this.group.visible = this.visible;
         if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
@@ -293,6 +308,7 @@ var LineSeries = /** @class */ (function (_super) {
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(group_1.Group);
         enterGroups.append(arc_1.Arc).each(function (arc) { return arc.type = arc_1.ArcType.Chord; });
+        var highlightedNode = this.highlightedNode;
         var groupSelection = updateGroups.merge(enterGroups);
         groupSelection.selectByClass(arc_1.Arc)
             .each(function (arc, datum) {
@@ -300,8 +316,12 @@ var LineSeries = /** @class */ (function (_super) {
             arc.centerY = datum.y;
             arc.radiusX = datum.radius;
             arc.radiusY = datum.radius;
-            arc.fill = datum.fill;
-            arc.stroke = datum.stroke;
+            arc.fill = arc === highlightedNode && _this.highlightStyle.fill !== undefined
+                ? _this.highlightStyle.fill
+                : datum.fill;
+            arc.stroke = arc === highlightedNode && _this.highlightStyle.stroke !== undefined
+                ? _this.highlightStyle.stroke
+                : datum.stroke;
             arc.strokeWidth = datum.strokeWidth;
             arc.visible = datum.radius > 0;
         });
@@ -354,6 +374,7 @@ var LineSeries = /** @class */ (function (_super) {
             });
         }
     };
+    LineSeries.className = 'LineSeries';
     return LineSeries;
 }(series_1.Series));
 exports.LineSeries = LineSeries;

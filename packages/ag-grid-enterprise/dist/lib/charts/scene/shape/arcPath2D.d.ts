@@ -1,10 +1,11 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Shape } from "./shape";
 /**
  * Circular arc node that uses the experimental `Path2D` class to define
  * the arc path for further rendering and hit-testing.
  */
 export declare class Arc extends Shape {
+    static className: string;
     protected path: Path2D;
     private _x;
     x: number;

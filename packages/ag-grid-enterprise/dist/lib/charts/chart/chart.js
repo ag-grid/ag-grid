@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var scene_1 = require("../scene/scene");
@@ -52,7 +52,6 @@ var Chart = /** @class */ (function () {
                     }
                     else {
                         if (_this.lastPick.node !== node) { // cursor moved from one node to another
-                            _this.lastPick.node.fill = _this.lastPick.fill;
                             _this.onSeriesNodePick(event, pick.series, node);
                         }
                         else { // cursor moved within the same node
@@ -64,7 +63,7 @@ var Chart = /** @class */ (function () {
                 }
             }
             else if (_this.lastPick) { // cursor moved from a node to empty space
-                _this.lastPick.node.fill = _this.lastPick.fill;
+                _this.lastPick.series.dehighlight();
                 _this.hideTooltip();
                 _this.lastPick = undefined;
             }
@@ -484,10 +483,9 @@ var Chart = /** @class */ (function () {
     Chart.prototype.onSeriesNodePick = function (event, series, node) {
         this.lastPick = {
             series: series,
-            node: node,
-            fill: node.fill
+            node: node
         };
-        node.fill = 'yellow';
+        series.highlight(node);
         var html = series.tooltipEnabled && series.getTooltipHtml(node.datum);
         if (html) {
             this.showTooltip(event, html);
@@ -522,8 +520,8 @@ var Chart = /** @class */ (function () {
         }
         el.style.display = 'table';
         var tooltipRect = this.tooltipRect = el.getBoundingClientRect();
-        var left = event.x + scrollX + offset[0];
-        var top = event.y + scrollY + offset[1];
+        var left = event.pageX + pageXOffset + offset[0];
+        var top = event.pageY + pageYOffset + offset[1];
         if (tooltipRect && parent && parent.parentElement) {
             if (left + tooltipRect.width > parent.parentElement.offsetWidth) {
                 left -= tooltipRect.width + offset[0];

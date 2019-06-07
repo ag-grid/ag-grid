@@ -4,6 +4,9 @@ import { HdpiCanvas } from "../../canvas/hdpiCanvas";
 import { BBox } from "../bbox";
 
 export class Text extends Shape {
+
+    static className = 'Text';
+
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
         textAlign: 'start' as CanvasTextAlign,
         font: '10px sans-serif' as string,

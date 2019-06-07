@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Chart } from "./chart";
 import { Axis } from "../axis";
 import { Series } from "./series/series";

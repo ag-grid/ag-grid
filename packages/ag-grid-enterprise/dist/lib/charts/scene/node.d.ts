@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
@@ -11,7 +11,6 @@ export declare enum PointerEvents {
  * Each node can have zero or one parent and belong to zero or one scene.
  */
 export declare abstract class Node {
-    private static fnNameRegex;
     private createId;
     /**
      * Unique node ID in the form `ClassName-NaturalNumber`.

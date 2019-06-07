@@ -8,6 +8,8 @@ import { Path2D } from "./path2D";
  */
 export class ClipRect extends Node {
 
+    static className = 'ClipRect';
+
     protected isContainerNode: boolean = true;
 
     protected path = new Path2D();

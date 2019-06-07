@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="example">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
+    <script src="../dist/ag-grid-community.js"></script>
+
+    <script>
+        agGrid.initialiseAgGridWithAngular1(angular);
+
+        var module = angular.module('example', ['agGrid']);
+
+        module.controller('exampleCtrl', function ($scope) {
+            var rowData = [{id: '1'}];
+
+            var columnDefs = [
+                {
+                    headerName: 'Selected Renderer',
+                    cellRenderer: function () {
+                        return '<span ng-if="rowNode.selected">Selected</span><span ng-if="!rowNode.selected">Not Selected</span>';
+                    },
+                },
+            ];
+
+            $scope.gridOptions = {
+                angularCompileRows: true,
+                rowSelection: 'single',
+                columnDefs,
+                rowData
+            };
+
+            $scope.selectNodes = function() {
+                $scope.gridOptions.api.forEachNode(function (node) {
+                    node.setSelected(true);
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+
+<div>
+    <div ng-controller="exampleCtrl">
+        <button id="selectNode" ng-click="selectNodes()">Select Nodes</button>
+        <div style="height: 500px;">
+            <div ag-grid="gridOptions" style="height: 100%;" class="ag-theme-balham"></div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

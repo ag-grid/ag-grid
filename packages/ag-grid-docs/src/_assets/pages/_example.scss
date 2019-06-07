@@ -56,6 +56,14 @@
     }
 }
 
+.options-container select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,\ <svg version='1.1' xmlns='http://www.w3.org/2000/svg' width='14px'\ height='14px' viewBox='0 0 1200 1000' fill='rgb(51,51,51)'>\ <path d='M1100 411l-198 -199l-353 353l-353 -353l-197 199l551 551z'/>\ </svg>");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 7px) 49%;
+}
+
 #example-wrapper {
     display: flex;
     flex-direction: column;

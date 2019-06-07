@@ -1,12 +1,12 @@
 var columnDefs = [
-    {field: "country", width: 150, chartType: 'category'},
-    {field: "gold", chartType: 'series'},
-    {field: "silver", chartType: 'series'},
-    {field: "bronze", chartType: 'series'},
-    {headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
-    {headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
-    {headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'},
-    {headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartType: 'series'}
+    {field: "country", width: 150, chartDataType: 'category'},
+    {field: "gold", chartDataType: 'series'},
+    {field: "silver", chartDataType: 'series'},
+    {field: "bronze", chartDataType: 'series'},
+    {headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
+    {headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
+    {headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
+    {headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'}
 ];
 
 function createRowData() {

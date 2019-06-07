@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 import { BBox } from "../bbox";
@@ -11,6 +11,7 @@ export declare enum ArcType {
  * Elliptical arc node.
  */
 export declare class Arc extends Shape {
+    static className: string;
     protected static defaultStyles: {
         fill: string;
         stroke: undefined;

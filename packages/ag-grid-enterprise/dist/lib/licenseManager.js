@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -220,7 +220,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('****************************************** License Key Not Found ***********************************************');
         console.error('* All ag-Grid Enterprise features are unlocked.                                                                *');
         console.error('* This is an evaluation only version, it is not licensed for development projects intended for production.     *');
-        console.error('* If you want to hide the watermarkMessage, please email info@ag-grid.com for a trial license.                        *');
+        console.error('* If you want to hide the watermark, please email info@ag-grid.com for a trial license.                        *');
         console.error('****************************************************************************************************************');
         console.error('****************************************************************************************************************');
         this.watermarkMessage = "For Trial Use Only";
@@ -236,7 +236,7 @@ var LicenseManager = /** @class */ (function () {
         this.watermarkMessage = "Incompatible License Version";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU1OTI4MjgxMDUxNg==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU1OTc0OTQ0MzUwMA==';
     __decorate([
         ag_grid_community_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)

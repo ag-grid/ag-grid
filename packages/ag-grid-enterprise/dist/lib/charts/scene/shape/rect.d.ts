@@ -1,8 +1,9 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 import { BBox } from "../bbox";
 export declare class Rect extends Shape {
+    static className: string;
     static create(x: number, y: number, width: number, height: number, radius?: number): Rect;
     protected path: Path2D;
     private _dirtyPath;

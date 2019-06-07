@@ -1,7 +1,8 @@
-// ag-grid-enterprise v21.0.0
+// ag-grid-enterprise v21.0.1
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 export declare class Path extends Shape {
+    static className: string;
     /**
      * Make sure to set {@link dirty} to `true` after changing the path.
      */

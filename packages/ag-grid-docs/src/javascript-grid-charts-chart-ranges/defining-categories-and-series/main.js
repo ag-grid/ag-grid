@@ -1,15 +1,15 @@
 var columnDefs = [
     // different ways to define 'categories'
-    {field: "athlete", width: 150, chartType: 'category'},
+    {field: "athlete", width: 150, chartDataType: 'category'},
     {field: "age", enableRowGroup: true, sort: 'asc'},
     {field: "sport"},
 
     // excludes year from charts
-    {field: "year", chartType: 'excluded'},
+    {field: "year", chartDataType: 'excluded'},
 
     // different ways to define 'series'
     {field: "gold", enableValue: true},
-    {field: "silver", chartType: 'series'},
+    {field: "silver", chartDataType: 'series'},
     {field: "bronze"}
 ];
 

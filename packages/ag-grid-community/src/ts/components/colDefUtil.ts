@@ -23,7 +23,7 @@ export class ColDefUtil {
         'cellRenderer',
         'cellEditor',
         'pinned',
-        'chartType'
+        'chartDataType'
     ];
 
     public static OBJECT_PROPERTIES = [
