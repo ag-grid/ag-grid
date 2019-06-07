@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.0
+ * @version v21.0.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -952,8 +952,14 @@ var RowRenderer = /** @class */ (function (_super) {
         // in case we have col spanning we get the cellComp and use it to
         // get the position. This was we always focus the first cell inside
         // the spanning.
+        this.ensureCellVisible(nextCell); // ensureCellVisible first, to make sure nextCell is rendered
         var cellComp = this.getComponentForCell(nextCell);
         nextCell = cellComp.getCellPosition();
+        // we call this again, as nextCell can be different to it's previous value due to Column Spanning
+        // (ie if cursor moving from right to left, and cell is spanning columns, then nextCell was the
+        // last column in the group, however now it's the first column in the group). if we didn't do
+        // ensureCellVisible again, then we could only be showing the last portion (last column) of the
+        // merged cells.
         this.ensureCellVisible(nextCell);
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
         if (this.rangeController) {
