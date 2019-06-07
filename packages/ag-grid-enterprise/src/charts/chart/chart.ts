@@ -213,7 +213,7 @@ export abstract class Chart {
         this.layoutPending = true;
     }
     get size(): [number, number] {
-        return [this.scene.width, this.scene.height];
+        return this.scene.size;
     }
 
     /**

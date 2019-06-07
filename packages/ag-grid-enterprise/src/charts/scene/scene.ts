@@ -52,6 +52,9 @@ export class Scene {
             this.dirty = true;
         }
     }
+    get size(): [number, number] {
+        return [this._width, this._height];
+    }
 
     private _dirty = false;
     set dirty(dirty: boolean) {
