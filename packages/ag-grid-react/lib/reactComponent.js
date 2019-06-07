@@ -44,8 +44,7 @@ var ReactComponent = /** @class */ (function (_super) {
     ReactComponent.prototype.init = function (params) {
         var _this = this;
         return new ag_grid_community_1.Promise(function (resolve) {
-            // functional components have to have the wrapping div... :-(
-            _this.unwrapComponent = _this.parentComponent.props.componentWrappingElement === undefined && !_this.statelessComponent;
+            _this.unwrapComponent = false;
             _this.eParentElement = _this.createParentElement(params);
             _this.createReactComponent(params, resolve);
         });

@@ -60,16 +60,19 @@
 
             opts.legendPosition = 'bottom';
             opts.yAxis.labelFormatter = yAxisLabelFormatter;
-            opts.seriesDefaults.tooltipEnabled = true;
+            opts.xAxis.labelRotation = 0;
+
             opts.seriesDefaults.fills =['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
             opts.seriesDefaults.strokes =['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
-            opts.seriesDefaults.tooltipRenderer = (params) => {
-                var strArr = params.yField.replace(/([A-Z])/g, " $1");
-                var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
-                var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return `<b>${seriesName}</b>: ${value}`;
-            };
+            opts.seriesDefaults.tooltipEnabled = false;
+            // opts.seriesDefaults.tooltipRenderer = (params) => {
+            //
+            //     var strArr = params.yField.replace(/([A-Z])/g, " $1");
+            //     var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
+            //     var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            //     return `<b>${seriesName}</b>: ${value}`;
+            // };
 
             return opts;
         },
@@ -77,26 +80,6 @@
             return []; // hide toolbar items
         }
     };
-
-    function createChart(type) {
-
-        // destroy existing chart
-        if (chartRef) {
-            chartRef.destroyChart();
-        }
-
-        var params = {
-            cellRange: {
-                columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
-            },
-            chartContainer: document.querySelector('#myChart'),
-            chartType: type,
-            suppressChartRanges: true,
-            aggregate: true
-        };
-
-        chartRef = gridOptions.api.chartRange(params);
-    }
 
     function numberCellFormatter(params) {
         return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");

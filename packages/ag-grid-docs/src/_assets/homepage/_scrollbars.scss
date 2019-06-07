@@ -1,0 +1,57 @@
+@mixin scrollbars($size, $foreground-color,
+    $background-color: mix($foreground-color, white,  50%),
+    $hover-color: mix($foreground-color, white, 25%),
+    $border-color: rgba(0,0,0,0)
+) {
+  $thumb-padding: 3px;
+  $border-width: 1px;
+  // For Google Chrome
+  ::-webkit-scrollbar {
+    width:  $size;
+    height: $size;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: $foreground-color;
+    border-radius: 10px;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: $hover-color;
+    border-radius: 10px;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:vertical, ::-webkit-scrollbar-thumb:vertical:hover {
+    border: $thumb-padding solid transparent;
+    border-left: $thumb-padding+$border-width solid transparent;
+  }
+
+  ::-webkit-scrollbar-thumb:horizontal, ::-webkit-scrollbar-thumb:horizontal:hover {
+    border: $thumb-padding solid transparent;
+    border-top: $thumb-padding+$border-width solid transparent;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: $background-color;
+  }
+
+  ::-webkit-scrollbar-track:vertical {
+    border-left: $border-width solid $border-color;
+  }
+
+  ::-webkit-scrollbar-track:horizontal {
+    border-top: $border-width solid $border-color;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: $background-color;
+  }
+
+  // For Internet Explorer
+  body {
+    scrollbar-face-color: $foreground-color;
+    scrollbar-track-color: $background-color;
+  }
+}
