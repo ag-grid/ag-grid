@@ -2,8 +2,8 @@
 
 
     var columnDefs = [
-        {headerName: 'Product', field: 'product', chartType: 'category'},
-        {headerName: 'Book', field: 'book', chartType: 'category'},
+        {headerName: 'Product', field: 'product', chartDataType: 'category'},
+        {headerName: 'Book', field: 'book', chartDataType: 'category'},
 
         {headerName: 'Current', field: 'current', type: 'measure'},
         {headerName: 'Previous', field: 'previous', type: 'measure'},
@@ -32,7 +32,7 @@
         },
         columnTypes: {
             measure: {
-                chartType: 'series',
+                chartDataType: 'series',
                 cellClass: 'number',
                 valueFormatter: numberCellFormatter,
                 cellRenderer:'agAnimateShowChangeCellRenderer'
