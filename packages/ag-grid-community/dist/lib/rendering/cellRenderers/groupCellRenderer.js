@@ -108,7 +108,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
         var params = this.params;
         var rowNode = params.node;
-        var paddingCount = rowNode.uiLevel;
+        var paddingCount = rowNode.level;
         var userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
         if (userProvidedPaddingPixelsTheDeprecatedWay) {
             this.setPaddingDeprecatedWay(paddingCount, params.padding);
