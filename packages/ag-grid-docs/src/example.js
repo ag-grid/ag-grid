@@ -395,7 +395,7 @@ var gridOptions = {
                 var strArr = params.yField.replace(/([A-Z])/g, " $1");
                 var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
                 var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return '<b>' + seriesName + '</b>: $' + value;
+                return '<div class="content"><b>' + seriesName + '</b>: $' + value + '</div>';
             };
         }
 
@@ -404,7 +404,7 @@ var gridOptions = {
                 var strArr = params.angleField.replace(/([A-Z])/g, " $1");
                 var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
                 var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return '<b>' + seriesName + '</b>: $' + value;
+                return '<div class="content"><b>' + seriesName + '</b>: $' + value + '</div>';
             };
         }
 
