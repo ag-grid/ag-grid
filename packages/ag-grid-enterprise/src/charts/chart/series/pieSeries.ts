@@ -595,7 +595,7 @@ export class PieSeries extends Series<PolarChart> {
             const label = this.labelField ? `${nodeDatum.seriesDatum[this.labelField]}: ` : '';
             const value = nodeDatum.seriesDatum[angleField];
             const formattedValue = typeof(value) === 'number' ? toFixed(value) : value.toString();
-            html = `${title}${label}${formattedValue}`;
+            html = `${title}<div class="content">${label}${formattedValue}</div>`;
         }
         return html;
     }

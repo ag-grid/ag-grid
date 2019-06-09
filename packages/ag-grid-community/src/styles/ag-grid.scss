@@ -1014,20 +1014,38 @@ $handleSize: 5px;
 }
 
 .ag-chart-tooltip {
+    display: table;
     position: absolute;
     user-select: none;
     pointer-events: none;
     white-space: nowrap;
     z-index: 99999;
-    border: 1px solid gray;
     font: 12px Verdana, sans-serif;
-    padding: 7px;
     color: black;
-    background: rgba(244, 244, 244, 0.9);
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    background: rgb(244, 244, 244);
+    border-radius: 5px;
+    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0 1vh 6vh rgba(3, 3, 3, 0.25);
+
+    opacity: 0;
+    transform: scale(0.90);
+    transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    transition-property: opacity, transform;
+
+    &.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
 
     .title {
         font-weight: bold;
+        padding: 7px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        background-color: #c3c3c3;
+    }
+
+    .content {
+        padding: 7px;
     }
 }
 
@@ -1141,7 +1159,7 @@ $handleSize: 5px;
 .ag-paging-page-summary-panel {
     display: flex;
     align-items: center;
-    .ag-disabled { 
+    .ag-disabled {
         pointer-events: none;
     }
 }

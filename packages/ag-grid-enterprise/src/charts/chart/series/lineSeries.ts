@@ -363,7 +363,7 @@ export class LineSeries extends Series<CartesianChart> {
             const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
             const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
 
-            html = `${title}${xString}: ${yString}`;
+            html = `${title}<div class="content">${xString}: ${yString}</div>`;
         }
         return html;
     }

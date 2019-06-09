@@ -30,7 +30,6 @@ export abstract class Chart {
         this.scene.root = new Group();
         this.legend.onLayoutChange = this.onLayoutChange;
 
-        this.tooltipElement.style.display = 'none';
         this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
 
@@ -490,7 +489,7 @@ export abstract class Chart {
     };
 
     private readonly onMouseOut = (event: MouseEvent) => {
-        this.tooltipElement.style.display = 'none';
+        this.updateTooltipClass(false);
     };
 
     private readonly onClick = (event: MouseEvent) => {
@@ -526,11 +525,19 @@ export abstract class Chart {
     set tooltipClass(value: string) {
         if (this._tooltipClass !== value) {
             this._tooltipClass = value;
-            this.tooltipElement.setAttribute('class', this.defaultTooltipClass + ' ' + value);
+            this.updateTooltipClass();
         }
     }
     get tooltipClass(): string {
         return this._tooltipClass;
+    }
+
+    private updateTooltipClass(visible?: boolean) {
+        const classList = [this.defaultTooltipClass, this._tooltipClass];
+        if (visible) {
+            classList.push('visible');
+        }
+        this.tooltipElement.setAttribute('class', classList.join(' '));
     }
 
     /**
@@ -548,7 +555,7 @@ export abstract class Chart {
             return;
         }
 
-        el.style.display = 'table';
+        this.updateTooltipClass(true);
         const tooltipRect = this.tooltipRect = el.getBoundingClientRect();
 
         let left = event.pageX + pageXOffset + offset[0];
@@ -564,9 +571,6 @@ export abstract class Chart {
     }
 
     private hideTooltip() {
-        const el = this.tooltipElement;
-
-        el.style.display = 'none';
-        el.innerHTML = '';
+        this.updateTooltipClass(false);
     }
 }
