@@ -669,6 +669,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     input {
         margin: 0;
         flex: 1 1 auto;
+        max-height: calc(100% - 1px);
     }
 }
 
