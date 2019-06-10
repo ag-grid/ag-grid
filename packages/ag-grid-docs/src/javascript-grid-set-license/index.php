@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
         <p>
             <img style="float: right; border: 1px solid grey; box-shadow: 5px 10px #888888; padding: 6px; margin: 10px 10px 10px 20px;" src="../_assets/homepage/enterprise-features.png"/>
 
-            The Enterprise version of ag-Grid comes more grid features and
+            The Enterprise version of ag-Grid comes with more grid features and
             <a href="https://ag-grid.zendesk.com/">Support via Zendesk</a>.
             The features that are available in agGrid Enterprise only are marked with the
             Enterprise icon <img src="../_assets/svg/enterprise.svg" style="width: 16px;"/> as demonstrated
