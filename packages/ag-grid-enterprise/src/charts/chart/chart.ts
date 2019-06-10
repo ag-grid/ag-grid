@@ -489,7 +489,7 @@ export abstract class Chart {
     };
 
     private readonly onMouseOut = (event: MouseEvent) => {
-        this.updateTooltipClass(false);
+        this.toggleTooltip(false);
     };
 
     private readonly onClick = (event: MouseEvent) => {
@@ -525,14 +525,14 @@ export abstract class Chart {
     set tooltipClass(value: string) {
         if (this._tooltipClass !== value) {
             this._tooltipClass = value;
-            this.updateTooltipClass();
+            this.toggleTooltip();
         }
     }
     get tooltipClass(): string {
         return this._tooltipClass;
     }
 
-    private updateTooltipClass(visible?: boolean) {
+    private toggleTooltip(visible?: boolean) {
         const classList = [this.defaultTooltipClass, this._tooltipClass];
         if (visible) {
             classList.push('visible');
@@ -555,14 +555,14 @@ export abstract class Chart {
             return;
         }
 
-        this.updateTooltipClass(true);
+        this.toggleTooltip(true);
         const tooltipRect = this.tooltipRect = el.getBoundingClientRect();
 
-        let left = event.pageX + pageXOffset + offset[0];
-        const top = event.pageY + pageYOffset + offset[1];
+        let left = event.pageX + offset[0];
+        const top = event.pageY + offset[1];
 
         if (tooltipRect && parent && parent.parentElement) {
-            if (left + tooltipRect.width > parent.parentElement.offsetWidth) {
+            if (left - scrollX + tooltipRect.width > parent.parentElement.offsetWidth) {
                 left -= tooltipRect.width + offset[0];
             }
         }
@@ -571,6 +571,6 @@ export abstract class Chart {
     }
 
     private hideTooltip() {
-        this.updateTooltipClass(false);
+        this.toggleTooltip(false);
     }
 }
