@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
     <ol>
         <li>
             <p>
-                If node modules and ES6 imports, firstly reference the <code>ag-grid-enterprise</code>
+                If using node modules and ES6 imports, firstly reference the <code>ag-grid-enterprise</code>
                 module in your <code>package.json</code>:
             </p>
             <snippet>
