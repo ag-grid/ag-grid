@@ -8,7 +8,7 @@ export default class ChildMessageRenderer extends Component {
     }
 
     invokeParentMethod() {
-        this.props.context.componentParent.methodFromParent(`Row: ${this.props.node.rowIndex}, Col: ${this.props.colDef.headerName}`)
+        this.props.context.componentParent.methodFromParent(`Row: ${this.props.node.rowIndex}, Col: ${this.props.colDef.headerName}`);
     }
 
     render() {
@@ -16,4 +16,4 @@ export default class ChildMessageRenderer extends Component {
             <span><button style={{height: 20, lineHeight: 0.5}} onClick={this.invokeParentMethod} className="btn btn-info">Invoke Parent</button></span>
         );
     }
-};
+}

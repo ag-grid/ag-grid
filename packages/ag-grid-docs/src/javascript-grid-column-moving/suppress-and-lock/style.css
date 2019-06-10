@@ -12,8 +12,8 @@
 
 .legend-bar {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 1rem;
+    left: 1rem;
     padding: 1px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;

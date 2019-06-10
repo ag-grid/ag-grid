@@ -17,7 +17,8 @@
 .filename {
     padding: 5px;
     color: black;
-    font-size: 16px
+    font-size: 16px;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .hover-over {

@@ -6,11 +6,11 @@ export default class CurrencyRenderer extends Component {
 
         this.state = {
             value: props.value
-        }
+        };
     }
 
     formatValueToCurrency(currency, value) {
-        return `${currency}${value}`
+        return `${currency}${value}`;
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -18,7 +18,7 @@ export default class CurrencyRenderer extends Component {
         if(params.value !== this.state.value) {
             this.setState({
                 value: params.value.toFixed(2)
-            })
+            });
         }
         return true;
     }
@@ -28,4 +28,4 @@ export default class CurrencyRenderer extends Component {
             <span>{this.formatValueToCurrency('EUR', this.state.value)}</span>
         );
     }
-};
+}

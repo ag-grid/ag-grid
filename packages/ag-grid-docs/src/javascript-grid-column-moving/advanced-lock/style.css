@@ -6,8 +6,5 @@
 .legend-box {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-    padding: 1px;
-    left: 0;
-    top: 0;
-    position: absolute;
+    margin-bottom: 5px;
 }

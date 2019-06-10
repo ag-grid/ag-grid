@@ -5,14 +5,13 @@
 }
 
 .test-header {
-    padding: 4px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
+    margin-bottom: 5px;
 }
 
 .label {
     color: #0f0f0f;
-    font-size: smaller;
 }
 .value {
     margin-right: 20px;

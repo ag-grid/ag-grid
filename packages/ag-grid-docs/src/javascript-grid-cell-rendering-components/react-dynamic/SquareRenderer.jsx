@@ -18,4 +18,4 @@ export default class SquareRenderer extends Component {
             <span>{this.state.value}</span>
         );
     }
-};
+}

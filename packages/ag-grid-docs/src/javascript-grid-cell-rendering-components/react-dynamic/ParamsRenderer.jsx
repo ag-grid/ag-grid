@@ -10,4 +10,4 @@ export default class ParamsRenderer extends Component {
             <span>Field: {this.props.colDef.field}, Value: {this.props.value}</span>
         );
     }
-};
+}

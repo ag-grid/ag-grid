@@ -41,13 +41,13 @@ export default class DynamicComponentsExample extends Component {
     refreshEvenRowsCurrencyData() {
         this.gridApi.forEachNode(rowNode => {
             if (rowNode.data.value % 2 === 0) {
-                rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)))
+                rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
         });
 
         this.gridApi.refreshCells({
             columns: ['currency']
-        })
+        });
     }
 
     static createColumnDefs() {
@@ -122,4 +122,4 @@ export default class DynamicComponentsExample extends Component {
             </div>
         );
     }
-};
+}

@@ -18,4 +18,4 @@ export default class CubeRenderer extends Component {
             <span>{this.state.value}</span>
         );
     }
-};
+}
