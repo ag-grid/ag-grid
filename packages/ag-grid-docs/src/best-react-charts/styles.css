@@ -7,6 +7,15 @@
 body {
 font-family: 'Montserrat', sans-serif;
 }
+
+hr {
+  width: 50%;
+  margin: 0 auto;
+  margin-bottom: 50px;
+  margin-top: 50px;
+}
+
+/*nav-section*/
 #nav-bar {
   position: sticky;
   top: 0:
@@ -38,7 +47,7 @@ a#get-started {
 }
 
 /*above the fold section*/
-h1, h2, h3, p, ul, li {
+h1, h2, h3, h4, h5, p, ul, li {
   text-align: center;
 }
 
@@ -56,6 +65,17 @@ h3 {
   margin-top: 30px;
 }
 
+h4 {
+  margin-bottom: 30px;
+  margin-top: 30px;
+  font-weight: 500;
+}
+
+h5 {
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
 p {
   font-family: 'Montserrat', sans-serif;
   font-size: 17px;
@@ -64,6 +84,12 @@ p {
 li {
   border-color: white;
   border-radius: 15px;
+}
+
+code {
+ display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .snippet {
@@ -97,6 +123,10 @@ color: white;
   font-size: 16px;
 }
 
+#example {
+  background: white;
+}
+
 .example {
 display:block;
 margin: 0 auto;
@@ -116,6 +146,30 @@ margin-bottom: 80px;
   display: block;
   transform: translateY(63px);
 }
+
+.title-small::before {
+  content: '';
+  background: linear-gradient(to top left, #097ed6, #0074e6);
+  height: 5px;
+  width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  transform: translateY(58px);
+}
+
+.title-small::after {
+  content: '';
+  background: linear-gradient(to top left, #097ed6, #0074e6);
+  height: 10px;
+  width: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 40px;
+  display: block;
+  transform: translateY(17px);
+}
+
 .title::after {
   content: '';
   background: linear-gradient(to top left, #097ed6, #0074e6);
@@ -133,11 +187,33 @@ margin-bottom: 80px;
   margin-top: 50px;
 }
 
+#c2a-end {
+  text-align: center;
+  margin-top: 50px;
+  color: white;
+}
+
+.application-custom {
+  padding-bottom: 50px;
+}
+
 /*options*/
 
 #options {
   background: #fbfbfb;
   padding-top: 1px;
+  padding-bottom: 50px;
+}
+
+/*c2a*/
+
+#c2a {
+background: linear-gradient(to top left, #097ed6, #0074e6);
+background-size: cover;
+padding: 30px 0;
+padding-right: 60px;
+padding-left: 60px;
+color: white;
 }
 
 /*video*/
