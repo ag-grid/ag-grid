@@ -407,7 +407,7 @@ interface NumberFilterModel {
 // date filter uses this filter model
 interface DateFilterModel {
 
-    // always 'date' for number filter
+    // always 'date' for date filter
     filterType: string;
 
     // one of the filter options eg 'equals'
@@ -461,7 +461,7 @@ var numberBetween35And40 = {
 // of filter model, one of TextFilterModel, NumberFilterModel or DateFilterModel
 interface ICombinedSimpleModel&lt;M&gt; {
 
-    // always 'date' for number filter
+    // the filter type, date, number or text
     filterType: string;
 
     // one of 'AND' or 'OR'
@@ -480,8 +480,8 @@ interface ICombinedSimpleModel&lt;M&gt; {
 <snippet>
 // number filter with two conditions, both are equals type
 var numberEquals18OrEquals20 = {
-    filterType: 'number',
-    operator: 'OR'
+    filterType: "number",
+    operator: "OR"
     condition1: {
         filterType: "number",
         type: "equals",
