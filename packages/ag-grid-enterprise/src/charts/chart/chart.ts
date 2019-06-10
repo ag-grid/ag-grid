@@ -562,7 +562,7 @@ export abstract class Chart {
         const top = event.pageY + offset[1];
 
         if (tooltipRect && parent && parent.parentElement) {
-            if (left - scrollX + tooltipRect.width > parent.parentElement.offsetWidth) {
+            if (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth) {
                 left -= tooltipRect.width + offset[0];
             }
         }
