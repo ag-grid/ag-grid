@@ -66,7 +66,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                4th Jun 2019: <a href="./ag-grid-changelog/?fixVersion=21.0.0">Version 21.0.0</a> Integrated Charts, Filtering Improvements, Icon Customisation and Better Scroll Performance with bug fixes ...
+                <strong>ag-Grid Charting is now live!</strong> A seamless charting experience from within the grid. Read more in our <a href="https://blog.ag-grid.com/introducing-javascript-charts/">release blog</a>. 
             </div>
         </section>
 
