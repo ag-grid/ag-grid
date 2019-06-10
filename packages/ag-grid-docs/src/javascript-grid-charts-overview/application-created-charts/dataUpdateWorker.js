@@ -36,7 +36,7 @@ function createRowData() {
             var portfolio = PORTFOLIOS[j];
             for (var i = 0; i<PRODUCTS.length; i++) {
                 var product = PRODUCTS[i];
-                var book = `GL-${++nextBookId}`;
+                var book = 'GL-' + ++nextBookId;
                 for (var l = 0; l < TRADE_COUNT; l++) {
                     var trade = createTradeRecord(product, portfolio, book, thisBatch);
                     globalRowData.push(trade);
