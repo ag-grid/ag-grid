@@ -88,6 +88,25 @@ export class Text extends Shape {
         return this._textBaseline;
     }
 
+    private _lineHeight: number = 14;
+    set lineHeight(value: number) {
+        // Multi-line text is complicated because:
+        // - Canvas does not support it natively, so we have to implement it manually
+        // - need to know the height of each line -> need to parse the font shorthand ->
+        //   generally impossible to do because font size may not be in pixels
+        // - so, need to measure the text instead, each line individually -> expensive
+        // - or make the user provide the line height manually for multi-line text
+        // - getBBox should use the lineHeight for multi-line text but ignore it otherwise
+        // - textBaseline kind of loses its meaning for multi-line text
+        if (this._lineHeight !== value) {
+            this._lineHeight = value;
+            this.dirty = true;
+        }
+    }
+    get lineHeight(): number {
+        return this._lineHeight;
+    }
+
     readonly getBBox = HdpiCanvas.has.textMetrics
         ? (): BBox => {
             const metrics = HdpiCanvas.measureText(this.text, this.font,
@@ -176,6 +195,9 @@ export class Text extends Shape {
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fillText(this.text, this.x, this.y);
+            // this.lines.forEach((text, index) => {
+            //     ctx.fillText(text, this.x, this.y + index * this.lineHeight);
+            // });
         }
 
         if (this.stroke && this.strokeWidth) {
