@@ -810,8 +810,11 @@ export class CellComp extends Component {
         if (!this.usingCellRenderer) { return; }
 
         // never use task service if angularCompileRows=true, as that assume the cell renderers
-        // are finished when the row is created.
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) { useTaskService = false; }
+        // are finished when the row is created. also we never use it if animation frame service
+        // is turned off.
+        const angularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
+        const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
+        if (angularCompileRows || suppressAnimationFrame) { useTaskService = false; }
 
         const params = this.createCellRendererParams();
 
