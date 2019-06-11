@@ -9,7 +9,6 @@ import {
     EventService,
     GetContextMenuItems,
     GetContextMenuItemsParams,
-    GridApi,
     GridOptionsWrapper,
     IAfterGuiAttachedParams,
     IComponent,
@@ -18,14 +17,13 @@ import {
     MenuItemDef,
     PopupService,
     PostConstruct,
-    RowNode
+    RowNode,
+    ModuleNames
 } from "ag-grid-community";
-import { ClipboardService } from "../clipboardService";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
 import { RangeController } from "../rangeController";
-import { ModuleNames } from "ag-grid-community";
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory implements IContextMenuFactory {

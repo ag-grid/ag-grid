@@ -188,7 +188,8 @@ export class MenuItemMapper {
                 chartRangeSubMenuItems.push('doughnutRangeChart');
                 return {
                     name: 'Chart Range',
-                    subMenu: chartRangeSubMenuItems
+                    subMenu: chartRangeSubMenuItems,
+                    icon: Utils.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
             case 'groupedBarRangeChart': return {
                 name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
