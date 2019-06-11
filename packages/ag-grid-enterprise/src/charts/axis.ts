@@ -340,7 +340,7 @@ export class Axis<D = any> {
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
                 label.text = labelFormatter
-                    ? labelFormatter(fractionDigits ? datum : String(datum), fractionDigits)
+                    ? labelFormatter(fractionDigits >= 0 ? datum : String(datum), fractionDigits)
                     : fractionDigits
                         // the `datum` is a floating point number
                         ? (datum as any as number).toFixed(fractionDigits)
