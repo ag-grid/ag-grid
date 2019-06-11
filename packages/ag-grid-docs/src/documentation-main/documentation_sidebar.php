@@ -2,26 +2,23 @@
 </div>
 <div class="card card-highlight">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.0.0">Version 21.0.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Jun 4</h6>
-        <p class="card-text">
-            Major release with new features and bug fixes:
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.0.0">ag-Grid v21 Released</a></h5>
+        <p>
+            ag-Grid now supports charting
+            data from inside the grid.
         </p>
-        <ul>
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-overview">Integrated Charts</a></li>
+        <p>
 
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-filtering">Filtering Improvements</a></li>
+        </p>
+                <img src="../images/charting-news.png" style="max-width: 100%; margin-bottom: 10px;"/>
 
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-icons/">Icon Customisation</a></li>
+                <a class="learn-more"
+                   href="https://blog.ag-grid.com/introducing-javascript-charts/">Read the charting blog</a>
 
-            <li>Better Scroll Performance</li>
-        </ul>
-
-        <p class="text-right">
+        <p style="margin-top: 20px;">
+            See the
             <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.0.0">Change Log</a>
+            for full release details.
         </p>
     </div>
 </div>
@@ -76,32 +73,7 @@
     </div>
 </div>
 <br>
-<div id="side-bar-announcements" style="margin-top: 10px">
-    <p>From our <a href="https://medium.com/ag-grid/">blog</a>:</p>
-    <div class="card card-highlight">
-        <div class="card-body">
-            <h5 class="card-title"><a
-                        href="https://blog.ag-grid.com/introducing-javascript-charts/">Introducing Javascript Charting in ag-Grid</a></h5>
-            <h6 class="card-subtitle mb-2 text-muted">Jun 10</h6>
-            <p class="card-text">We are very excited to announce that Integrated Charts are now available in ag-Grid Enterprise v21.</p>
-            <p class="text-right">
-                <a class="learn-more"
-                   href="https://blog.ag-grid.com/introducing-javascript-charts/">Full
-                    Article</a>
-            </p>
-            <h5 class="card-title"><a
-                        href="https://blog.ag-grid.com/implementing-infinite-loading-in-an-angular-store-application/">Implementing infinite loading in an Angular store application</a></h5>
-            <h6 class="card-subtitle mb-2 text-muted">May 17</h6>
-            <p class="card-text">In this tutorial, we’ll be building a product store using Angular.</p>
-            <p class="text-right">
-                <a class="learn-more"
-                   href="https://blog.ag-grid.com/implementing-infinite-loading-in-an-angular-store-application/">Full
-                    Article
-                </a>
-            </p>
-        </div>
-    </div>
-    <br>
+
     <!-- Begin Mailchimp Signup Form -->
 <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
 <style type="text/css">
