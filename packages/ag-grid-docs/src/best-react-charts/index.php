@@ -19,7 +19,7 @@ $pageDescription = "Fastest, most feature-rich React Data Grid component from ag
 <body>
 <section id="nav-bar">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-<a class="navbar-brand" href="#"><img src=""></a>
+<a class="navbar-brand" href="#"><img id="logo" src="../images/logo/logo-inverted.svg"></a>
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 <i class="fas fa-bars"></i>
 <span class="navbar-toggler-icon"></span>
@@ -27,13 +27,13 @@ $pageDescription = "Fastest, most feature-rich React Data Grid component from ag
 <div class="collapse navbar-collapse" id="navbarNav">
 <ul class="navbar-nav ml-auto">
 <li class="nav-item">
-<a class="nav-link" href="#">Demo<span class="sr-only">(current)</span></a>
+<a class="nav-link" href="../example.php">Demo<span class="sr-only">(current)</span></a>
 </li>
 <li class="nav-item">
-<a class="nav-link" href="#">Documentation</a>
+<a class="nav-link" href="../documentation-main/documentation.php">Documentation</a>
 </li>
 <li class="nav-item">
-<a class="nav-link" id="get-started" href="#">Get Started</a>
+<a class="nav-link" id="get-started" href="../javascript-grid-getting-started/">Get Started</a>
 </li>
 </ul>
 </div>
@@ -48,9 +48,13 @@ $pageDescription = "Fastest, most feature-rich React Data Grid component from ag
 The best React grid has now integrated charting into its grid.<br>
 The grid comes with charting integration allowing users to chart data directly from the grid without requiring additional developer coding.
 </p>
+<button id="c2a-top" type="button" class="btn btn-light">GET STARTED</button>
 </div>
 <div class="col-md-6">
 <img src="../images/charts-copy.png" class="img-fluid rounded mx-auto d-block" alt="Responsive image">
+</div>
+<div class="col-md-12" id="c2a-top">
+    <button type="button" class="btn btn-light">GET STARTED</button>
 </div>
 </section>
 <section id="description">
@@ -183,6 +187,10 @@ The charting functionality is deeply integrated with the grid. This integration 
             Charts can be pre-defined or dynamically created from within applications, and as with user created charts, these charts also benefit from the integration provided with the grid.
         </p>
         <p>
+            A dummy financial application is presented below to give a taste of what's possible:
+        </p>
+        <img src="../images/chart-application.gif" class="example">
+        <p>
             To find about more about Application Created Charts, follow the links provided below:
         </p>
         <div class="row">
@@ -229,10 +237,10 @@ The grid comes with charting integration allowing users to chart data directly f
 <div class="col-md-6 options">
 <img class="img" src="../images/graph.png">
 <h3>
-Standalone Library
+Standalone Library(in development)
 </h3>
 <p> 
-The grid comes with charting integration allowing users to chart data directly from the grid without requiring additional developer coding.
+ag-Grid will also release it's own standalone library, which is currently in development. 
 </p>
 </div>
 </div>
@@ -244,7 +252,7 @@ The grid comes with charting integration allowing users to chart data directly f
     <div class="container">
         <h3>GET STARTED WITH REACT CHARTS</h3>
         <p class="lead">
-            A seamless charting experience while keeping the coding required by developers to a minimum.
+            "A seamless charting experience while keeping the coding required by developers to a minimum.''
         </p>
         <div id="c2a-end">
 <button type="button" class="btn btn-light">GET STARTED</button>
@@ -254,12 +262,55 @@ The grid comes with charting integration allowing users to chart data directly f
 
 
 
-
+<footer id="site-footer">
+    <div class="row">
+    <div class="col-md-3">
+    <h5>Documentation</h5>
+    <ul>
+                <li><a href="/javascript-grid-getting-started/">Getting Started</a></li>
+                <li><a href="/ag-grid-changelog/">Changelog</a></li>
+                <li><a href="/ag-grid-pipeline/">Pipeline</a></li>
+                <li><a href="/archive/">Documentation Archive</a></li>
+            </ul>     
+    </div>
+    <div class="col-md-3"> 
+    <h5>Support & Community</h5>
+    <ul class="list-unstyled">
+                <li><a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a></li>
+                <li><a href="/license-pricing.php">License &amp; Pricing</a></li>
+                <li><a href="https://ag-grid.zendesk.com/">Support via Zendesk</a></li>
+            </ul>      
+    </div>
+    <div class="col-md-3">
+    <h5>The Company</h5>
+    <ul class="list-unstyled">
+                <li><a href="/about.php">About</a></li>
+                <li><a href="/about.php#team">Team</a></li>
+                <li><a href="https://blog.ag-grid.com/">Blog</a></li>
+                <li><a href="/testimonials.php">Testimonials</a></li>
+                <li><a href=/privacy.php>Privacy Policy</a><li>
+                  <li><a href="/cookies.php">Cookies Policy</a><li>
+            </ul>       
+    </div>
+    <div class="col-md-3">
+    <h5>Social</h5>
+                <ul>
+                <li><a class="github-button" href="https://github.com/ag-grid/ag-grid" data-show-count="true" aria-label="Star ag-grid/ag-grid on GitHub">Star</a></li>
+                <li><a class="twitter-follow-button"
+  href="https://twitter.com/ag_grid">
+Follow @ag_grid</a></li>
+                
+            </ul>       
+    </div>
+</div>
+</footer>
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script async defer src="https://platform.twitter.com/widgets.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>

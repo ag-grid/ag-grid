@@ -24,8 +24,8 @@ hr {
 .navbar {
     background: linear-gradient(to top left, #0092ff, #006ad2);
 }
-.navbar-brand {
-
+#logo {
+  width: 83px;
 }
 
 #get-started {
@@ -39,6 +39,10 @@ a#get-started {
 }
 
 .navbar-light .navbar-nav .nav-link {
+  color: #e0e0e0;
+}
+
+.navbar-light .navbar-nav .nav-link:hover{
   color: white;
 }
 
@@ -93,8 +97,9 @@ code {
 }
 
 .snippet {
-  font-size: 18px;
+  font-size: 21px;
   margin-top: 50px;
+  margin-bottom: 50px;
 }
 
 #abovefold {
@@ -216,10 +221,84 @@ padding-left: 60px;
 color: white;
 }
 
+#c2a-top {
+  text-align: center;
+  top: 75px;
+  display: block;
+  margin: 0 auto;
+}
+
+.btn-light {
+  padding: 12px 24px;
+  background-color: white;
+  border-color: #097ed6;
+  color: #097ed6;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.btn-light:hover {
+  background-color: #097ed6;
+  color: white;
+}
+
 /*video*/
 
 .demo {
   box-shadow: 10px 10px 5px grey;
+}
+
+/*footer-section*/
+
+footer#site-footer {
+    color: $gray-300;
+    background-image: url('./assets/common/hexagons.svg'), linear-gradient(170deg, #00407f, #000d19);;
+    background-repeat: repeat, no-repeat;
+    font-size: 85%;
+    font-weight: 300;
+    text-shadow: 1px 1px 20px $blue-1;
+  }
+
+    .col-md-3 h5 {
+      text-transform: uppercase;
+      color: white;
+      font-size: 15px;
+    }
+
+    footer#site-footer ul a, footer#site-footer ul a:hover {
+    color: #adb5bd;
+}
+
+    ul {
+        padding-left: 0;
+
+        li {
+            list-style: none;
+        }
+        a,
+        a:hover {
+            color: $gray-500;
+        }
+    }
+
+    & > div {
+        @extend .full-width-row, .row, .mb-0, .py-5;
+
+        & > div {
+            @extend .col-sm-3;
+        }
+    }
+
+    #copy {
+        color: $gray-600;
+        & > div:nth-child(1) {
+            @extend .col-sm-7;
+        }
+        
+        & > div:nth-child(2) {
+            @extend .col-sm-3, .ml-auto;
+        }
+    }
 }
 
 
