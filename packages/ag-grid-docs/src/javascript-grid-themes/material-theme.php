@@ -53,7 +53,7 @@ $primary-color: #2196F3; // blue-500
 $accent-color: #FFD740; // amber-A200
 
 // Import the ag-Grid material theme
-@import '~ag-grid/src/styles/ag-theme-material/sass/ag-theme-material';</snippet>
+@import '~ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material';</snippet>
 
 <p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-material.scss#L17-L59">theme source file</a>.</p>
 
