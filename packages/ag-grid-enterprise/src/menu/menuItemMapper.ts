@@ -156,7 +156,8 @@ export class MenuItemMapper {
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
-                    subMenu: exportSubMenuItems
+                    subMenu: exportSubMenuItems,
+                    icon: Utils.createIconNoSpan('save', this.gridOptionsWrapper, null),
                 };
             case 'csvExport':
                 return {
@@ -187,18 +188,18 @@ export class MenuItemMapper {
                 chartRangeSubMenuItems.push('pieRangeChart');
                 chartRangeSubMenuItems.push('doughnutRangeChart');
                 return {
-                    name: 'Chart Range',
+                    name: localeTextFunc('chartRange', 'Chart Range'),
                     subMenu: chartRangeSubMenuItems,
                     icon: Utils.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
             case 'groupedBarRangeChart': return {
-                name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
+                name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.GroupedBar);
                 }
             };
             case 'stackedBarRangeChart': return {
-                name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
+                name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.StackedBar);
                 }
