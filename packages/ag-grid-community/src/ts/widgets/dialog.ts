@@ -1,23 +1,11 @@
 import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
+import { Resizable, ResizableStructure } from "../rendering/resizable";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { PopupComponent } from "./popupComponent";
 import { _ } from "../utils";
 import { Component } from "./component";
-
-export type ResizableSides = 'topLeft' |
-                      'top' |
-                      'topRight' |
-                      'right' |
-                      'bottomRight' |
-                      'bottom' |
-                      'bottomLeft' |
-                      'left';
-
-export type ResizableStructure = {
-    [key in ResizableSides]?: boolean;
-};
 
 export interface DialogOptions {
     alwaysOnTop?: boolean;
@@ -35,21 +23,11 @@ export interface DialogOptions {
     y?: number;
     centered?: boolean;
 }
-
+@Resizable
 export class Dialog extends PopupComponent {
 
     private static TEMPLATE =
         `<div class="ag-dialog" tabindex="-1">
-            <div class="ag-resizer-wrapper">
-                <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
-                <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
-                <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
-                <div ref="eRightResizer" class="ag-resizer ag-resizer-right"></div>
-                <div ref="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
-                <div ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
-                <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
-                <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
-            </div>
             <div ref="eTitleBar" class="ag-dialog-title-bar ag-unselectable">
                 <span ref="eTitle" class="ag-dialog-title-bar-title"></span>
                 <div ref="eTitleBarButtons" class="ag-dialog-title-bar-buttons"></div>
@@ -63,26 +41,16 @@ export class Dialog extends PopupComponent {
         </div>
         `;
 
-    private static MAXIMIZE_BTN_TEMPLATE =
-        `<div class="ag-dialog-button">
-            <span class="ag-icon ag-icon-maximize"></span>
-            <span class="ag-icon ag-icon-minimize ag-hidden"></span>
-        </span>
-        `;
-
     private config: DialogOptions | undefined;
-    private resizable: ResizableStructure = {};
-    private isResizable: boolean = false;
-    private isMaximizable: boolean = false;
-    private isMaximized: boolean = false;
-    private maximizeListeners: (() => void)[] = [];
+
     private movable = false;
     private closable = true;
     private isMoving = false;
-    private isResizing = false;
+
     private minWidth: number;
     private minHeight: number;
     private popupParent: HTMLElement;
+    private titleBarDragSource: DragListenerParams | undefined;
 
     private dragStartPosition = {
         x: 0,
@@ -99,13 +67,6 @@ export class Dialog extends PopupComponent {
         height: 0
     };
 
-    private lastPosition = {
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0
-    };
-
     @Autowired('dragService') private dragService: DragService;
     @Autowired('popupService') private popupService: PopupService;
 
@@ -114,17 +75,7 @@ export class Dialog extends PopupComponent {
     @RefSelector('eTitleBarButtons') private eTitleBarButtons: HTMLElement;
     @RefSelector('eTitle') private eTitle: HTMLElement;
 
-    @RefSelector('eTopLeftResizer') private eTopLeftResizer: HTMLElement;
-    @RefSelector('eTopResizer') private eTopResizer: HTMLElement;
-    @RefSelector('eTopRightResizer') private eTopRightResizer: HTMLElement;
-    @RefSelector('eRightResizer') private eRightResizer: HTMLElement;
-    @RefSelector('eBottomRightResizer') private eBottomRightResizer: HTMLElement;
-    @RefSelector('eBottomResizer') private eBottomResizer: HTMLElement;
-    @RefSelector('eBottomLeftResizer') private eBottomLeftResizer: HTMLElement;
-    @RefSelector('eLeftResizer') private eLeftResizer: HTMLElement;
-
     private closeButtonComp: Component;
-    private maximizeButtonComp: Component;
 
     public close: () => void;
 
@@ -139,9 +90,7 @@ export class Dialog extends PopupComponent {
             alwaysOnTop,
             component,
             centered,
-            resizable,
             movable,
-            maximizable,
             closable,
             title,
             minWidth,
@@ -159,9 +108,7 @@ export class Dialog extends PopupComponent {
         this.minWidth = minWidth != null ? minWidth : 250;
 
         if (component) { this.setBodyComponent(component); }
-        if (resizable) { this.setResizable(resizable); }
         if (title) { this.setTitle(title); }
-        if (this.isResizable && maximizable) { this.setMaximizable(maximizable); }
 
         this.setMovable(!!movable);
         this.setClosable(closable != null ? closable : this.closable);
@@ -222,69 +169,6 @@ export class Dialog extends PopupComponent {
 
     private updateDragStartPosition(x: number, y: number) {
         this.dragStartPosition = { x, y };
-    }
-
-    private getResizerElement(side: ResizableSides): HTMLElement | null {
-        const map = {
-            topLeft: this.eTopLeftResizer,
-            top: this.eTopResizer,
-            topRight: this.eTopRightResizer,
-            right: this.eRightResizer,
-            bottomRight: this.eBottomRightResizer,
-            bottom: this.eBottomResizer,
-            bottomLeft: this.eBottomLeftResizer,
-            left: this.eLeftResizer
-        };
-
-        return map[side];
-    }
-
-    public setResizable(resizable: boolean | ResizableStructure) {
-        let isResizable = false;
-        if (typeof resizable === 'boolean') {
-            resizable = {
-                topLeft: resizable,
-                top: resizable,
-                topRight: resizable,
-                right: resizable,
-                bottomRight: resizable,
-                bottom: resizable,
-                bottomLeft: resizable,
-                left: resizable
-            };
-        }
-
-        Object.keys(resizable).forEach(side => {
-            const r = resizable as ResizableStructure;
-            const s = side as ResizableSides;
-            const val = !!r[s];
-            const el = this.getResizerElement(s);
-
-            const params: DragListenerParams = {
-                eElement: el,
-                onDragStart: this.onDialogResizeStart.bind(this),
-                onDragging: (e: MouseEvent) => this.onDialogResize(e, s),
-                onDragStop: this.onDialogResizeEnd.bind(this),
-            };
-
-            if (!!this.resizable[s] !== val) {
-                if (val) {
-                    this.dragService.addDragSource(params);
-                    el.style.pointerEvents = 'all';
-                    isResizable = true;
-                } else {
-                    this.dragService.removeDragSource(params);
-                    el.style.pointerEvents = 'none';
-                }
-            }
-        });
-
-        this.isResizable = isResizable;
-    }
-
-    private onDialogResizeStart(e: MouseEvent) {
-        this.isResizing = true;
-        this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
     private calculateMouseMovement(params: {
@@ -371,74 +255,6 @@ export class Dialog extends PopupComponent {
         return { movementX, movementY };
     }
 
-    private onDialogResize(e: MouseEvent, side: ResizableSides) {
-        if (!this.isResizing) { return; }
-
-        const isLeft = !!side.match(/left/i);
-        const isRight = !!side.match(/right/i);
-        const isTop = !!side.match(/top/i);
-        const isBottom = !!side.match(/bottom/i);
-        const isHorizontal = isLeft || isRight;
-        const isVertical = isTop || isBottom;
-        const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
-
-        let offsetLeft = 0;
-        let offsetTop = 0;
-
-        if (isHorizontal && movementX) {
-            const direction = isLeft ? -1 : 1;
-            const oldWidth = this.getWidth();
-            const newWidth = oldWidth + (movementX * direction);
-            let skipWidth = false;
-
-            if (isLeft) {
-                offsetLeft = oldWidth - newWidth;
-                if (this.position.x + offsetLeft <= 0 || newWidth <= this.minWidth) {
-                    skipWidth = true;
-                    offsetLeft = 0;
-                }
-            }
-
-            if (!skipWidth) {
-                this.setWidth(newWidth);
-            }
-        }
-
-        if (isVertical && movementY) {
-            const direction = isTop ? -1 : 1;
-            const oldHeight = this.getHeight();
-            const newHeight = oldHeight + (movementY * direction);
-            let skipHeight = false;
-
-            if (isTop) {
-                offsetTop = oldHeight - newHeight;
-                if (this.position.y + offsetTop <= 0 || newHeight <= this.minHeight) {
-                    skipHeight = true;
-                    offsetTop = 0;
-                }
-            }
-
-            if (!skipHeight) {
-                this.setHeight(newHeight);
-            }
-        }
-
-        this.updateDragStartPosition(e.clientX, e.clientY);
-
-        if (offsetLeft || offsetTop) {
-            this.offsetDialog(
-                this.position.x + offsetLeft,
-                this.position.y + offsetTop
-            );
-        }
-
-        this.isMaximized = false;
-    }
-
-    private onDialogResizeEnd() {
-        this.isResizing = false;
-    }
-
     private refreshSize() {
         const { width, height } = this.size;
 
@@ -455,14 +271,20 @@ export class Dialog extends PopupComponent {
         if (movable !== this.movable) {
             this.movable = movable;
 
-            const params: DragListenerParams = {
+            const params: DragListenerParams = this.titleBarDragSource || {
                 eElement: this.eTitleBar,
                 onDragStart: this.onDialogMoveStart.bind(this),
                 onDragging: this.onDialogMove.bind(this),
                 onDragStop: this.onDialogMoveEnd.bind(this)
             };
 
-            this.dragService[movable ? 'addDragSource' : 'removeDragSource'](params);
+            if (movable) {
+                this.dragService.addDragSource(params);
+                this.titleBarDragSource = params;
+            } else {
+                this.dragService.removeDragSource(params);
+                this.titleBarDragSource = undefined;
+            }
         }
     }
 
@@ -518,60 +340,6 @@ export class Dialog extends PopupComponent {
         } else if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
-        }
-    }
-
-    public setMaximizable(maximizable: boolean) {
-        if (maximizable === false) {
-            this.clearMaximizebleListeners();
-            if (this.maximizeButtonComp) {
-                this.maximizeButtonComp.destroy();
-                this.maximizeButtonComp = undefined;
-            }
-            return;
-        }
-
-        const eTitleBar = this.eTitleBar;
-        if (!this.isResizable || !eTitleBar || maximizable === this.isMaximizable) { return; }
-
-        const maximizeButtonComp = this.maximizeButtonComp = new Component(Dialog.MAXIMIZE_BTN_TEMPLATE);
-        maximizeButtonComp.addDestroyableEventListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
-        this.addTitleBarButton(maximizeButtonComp, 0);
-
-        this.maximizeListeners.push(
-            this.addDestroyableEventListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))
-        );
-    }
-
-    private toggleMaximize() {
-        const maximizeButton = this.maximizeButtonComp.getGui();
-        const maximizeEl = maximizeButton.querySelector('.ag-icon-maximize') as HTMLElement;
-        const minimizeEl = maximizeButton.querySelector('.ag-icon-minimize') as HTMLElement;
-        if (this.isMaximized) {
-            const {x, y, width, height } = this.lastPosition;
-
-            this.setWidth(width);
-            this.setHeight(height);
-            this.offsetDialog(x, y);
-        } else {
-            this.lastPosition.width = this.getWidth();
-            this.lastPosition.height = this.getHeight();
-            this.lastPosition.x = this.position.x;
-            this.lastPosition.y = this.position.y;
-            this.offsetDialog(0, 0);
-            this.setHeight(Infinity);
-            this.setWidth(Infinity);
-        }
-
-        this.isMaximized = !this.isMaximized;
-        _.addOrRemoveCssClass(maximizeEl, 'ag-hidden', this.isMaximized);
-        _.addOrRemoveCssClass(minimizeEl, 'ag-hidden', !this.isMaximized);
-    }
-
-    private clearMaximizebleListeners() {
-        if (this.maximizeListeners.length) {
-            this.maximizeListeners.forEach(destroyListener => destroyListener());
-            this.maximizeListeners.length = 0;
         }
     }
 
@@ -663,17 +431,11 @@ export class Dialog extends PopupComponent {
     public destroy(): void {
         super.destroy();
 
+        this.setMovable(false);
         if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
         }
-
-        if (this.maximizeButtonComp) {
-            this.maximizeButtonComp.destroy();
-            this.maximizeButtonComp = undefined;
-        }
-
-        this.clearMaximizebleListeners();
 
         const eGui = this.getGui();
 
