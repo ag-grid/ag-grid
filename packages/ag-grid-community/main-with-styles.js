@@ -11,5 +11,5 @@ require('./dist/styles/ag-theme-blue.css');
 require('./dist/styles/ag-theme-dark.css');
 require('./dist/styles/ag-theme-fresh.css');
 require('./dist/styles/ag-theme-material.css');
-require('./dist/styles/ag-theme-balham.css');
-require('./dist/styles/ag-theme-balham-dark.css');
+require('./dist/styles/ag-theme-finance.css');
+require('./dist/styles/ag-theme-finance-dark.css');

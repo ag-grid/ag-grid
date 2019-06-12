@@ -74,7 +74,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 ### Import styles in `styles.css`
 
     @import "~ag-grid/dist/styles/ag-grid.css";
-    @import "~ag-grid/dist/styles/ag-theme-balham.css";
+    @import "~ag-grid/dist/styles/ag-theme-finance.css";
 
 ### Set the grid's configuration in a parent component
 
@@ -98,7 +98,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 	<ag-grid-angular 
 		style="width: 500px; height: 500px;" 
-		class="ag-theme-balham"
+		class="ag-theme-finance"
 		[rowData]="rowData" 
 		[columnDefs]="columnDefs">
 	</ag-grid-angular>

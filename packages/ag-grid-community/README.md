@@ -67,7 +67,7 @@ Usage Overview
 
 ### Add a placeholder to HTML
 
-    <div id="myGrid" style="height: 150px;width: 600px" class="ag-theme-balham"></div>
+    <div id="myGrid" style="height: 150px;width: 600px" class="ag-theme-finance"></div>
 
 
 #### Import the grid and styles
@@ -75,7 +75,7 @@ Usage Overview
     import {Grid} from "ag-grid/main";
 
     import "ag-grid/dist/styles/ag-grid.css";
-    import "ag-grid/dist/styles/ag-theme-balham.css";
+    import "ag-grid/dist/styles/ag-theme-finance.css";
 
 ### Set configuration
 

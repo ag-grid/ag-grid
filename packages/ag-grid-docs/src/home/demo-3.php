@@ -1,9 +1,9 @@
 <div class="container-fluid blackish text-light pt-2" id="dashboard-demo">
     <div class="row">
         <div class="col-12">
-            <div id="integrated-charting-grid" style="height: 400px;" class="ag-theme-balham-dark">
+            <div id="integrated-charting-grid" style="height: 400px;" class="ag-theme-finance-dark">
             </div>
-            <div id="integrated-charting-chart" style="height: 400px;" class="ag-theme-balham-dark">
+            <div id="integrated-charting-chart" style="height: 400px;" class="ag-theme-finance-dark">
             </div>
         </div>
     </div>

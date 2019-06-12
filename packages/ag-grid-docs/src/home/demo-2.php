@@ -8,7 +8,7 @@
 <div class="container-fluid blackish text-light pt-2" id="dashboard-demo">
     <div class="row">
         <div class="col-12">
-            <div id="live-stream-updates-grid" style="height: 500px;" class="ag-theme-balham-dark">
+            <div id="live-stream-updates-grid" style="height: 500px;" class="ag-theme-finance-dark">
             </div>
         </div>
     </div>

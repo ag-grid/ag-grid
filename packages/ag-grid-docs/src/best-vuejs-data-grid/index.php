@@ -211,7 +211,7 @@ components: {
     </p>
 
     <snippet>
-&lt;ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-balham"
+&lt;ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-finance"
     // these are attributes, not bound, give explicit values here
     rowHeight="22"
     rowSelection="multiple"
@@ -248,7 +248,7 @@ components: {
 
 <snippet lang="html">
 &lt;ag-grid-vue
-        class="ag-theme-balham"
+        class="ag-theme-finance"
         style="width: 700px; height: 400px;"
         :rowData="rowData"
         ...rest of definition

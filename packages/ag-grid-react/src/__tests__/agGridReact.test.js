@@ -88,7 +88,7 @@ class App extends Component {
                 <button id="selectAll" onClick={this.handleSelectAll}>Select All Rows</button>
                 <button id="deSelectAll" onClick={this.handleDeselectAll}>Deselect All Rows</button>
                 <div
-                    className="ag-theme-balham"
+                    className="ag-theme-finance"
                     style={{
                         height: '500px',
                         width: '600px'

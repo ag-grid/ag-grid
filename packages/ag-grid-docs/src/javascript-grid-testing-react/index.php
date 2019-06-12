@@ -149,7 +149,7 @@ class GridWithStatefullComponent extends Component {
     render() {
         return (
             &lt;div
-                className="ag-theme-balham"&gt;
+                className="ag-theme-finance"&gt;
                 &lt;AgGridReact
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}

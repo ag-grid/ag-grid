@@ -358,7 +358,7 @@ export default function parser(js, html, exampleSettings) {
     bindings.gridSettings = (<any>Object).assign({
         width: '100%',
         height: '100%',
-        theme: 'ag-theme-balham'
+        theme: 'ag-theme-finance'
     }, exampleSettings);
     return bindings;
 }

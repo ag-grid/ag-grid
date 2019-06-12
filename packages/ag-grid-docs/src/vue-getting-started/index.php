@@ -64,11 +64,11 @@ npm install --save ag-grid-community ag-grid-vue vue-property-decorator
 <snippet>
 &lt;style lang="scss"&gt;
   @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-  @import "../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css";
+  @import "../node_modules/ag-grid-community/dist/styles/ag-theme-finance.css";
 &lt;/style&gt;
 </snippet>
 
-<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
+<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-finance.css</code>). 
 The grid ships several different themes; pick one that matches your project design.</p>
 
 <div class="note">In a later section we documentation on how you can <a href="#vue_theme_look">Customise the Theme Look</a> using SCSS, which is our recommended approach.</div>
@@ -80,7 +80,7 @@ The grid ships several different themes; pick one that matches your project desi
 <snippet language="html">
 &lt;template&gt;
     &lt;ag-grid-vue style="width: 500px; height: 500px;"
-                 class="ag-theme-balham"
+                 class="ag-theme-finance"
                  :columnDefs="columnDefs"
                  :rowData="rowData"&gt;
     &lt;/ag-grid-vue&gt;
@@ -125,7 +125,7 @@ The grid ships several different themes; pick one that matches your project desi
 each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
 
 <p>This is the ag-grid component definition, with two property bindings - <code>rowData</code> and <code>columnDefs</code>. The component also accepts the standard DOM <code>style</code> and <code>class</code>. 
-We have set the class to <code>ag-theme-balham</code>, which defines the grid theme. 
+We have set the class to <code>ag-theme-finance</code>, which defines the grid theme. 
 As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.
 </p>
 
@@ -203,7 +203,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <snippet language="html">
 &lt;template&gt;
     &lt;ag-grid-vue style="width: 500px; height: 500px;"
-                 class="ag-theme-balham"
+                 class="ag-theme-finance"
                  :columnDefs="columnDefs"
                  :rowData="rowData"
                  rowSelection="multiple"&gt;
@@ -246,7 +246,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 
 <snippet language="html">
 &lt;ag-grid-vue style="width: 500px; height: 500px;"
-             class="ag-theme-balham"
+             class="ag-theme-finance"
              :columnDefs="columnDefs"
              :rowData="rowData"
 
@@ -269,7 +269,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
         &lt;button @click="getSelectedRows()"&gt;Get Selected Rows&lt;/button&gt;
 
         &lt;ag-grid-vue style="width: 500px; height: 500px;"
-                     class="ag-theme-balham"
+                     class="ag-theme-finance"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
                      rowSelection="multiple"
@@ -385,7 +385,7 @@ import App from './App'
     &lt;div&gt;
         &lt;button @click="getSelectedRows()"&gt;Get Selected Rows&lt;/button&gt;
         &lt;ag-grid-vue style="width: 500px; height: 500px;"
-                     class="ag-theme-balham"
+                     class="ag-theme-finance"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
                      rowSelection="multiple"
@@ -470,7 +470,7 @@ ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</
 <snippet language="scss">
 &lt;style lang="scss"&gt;
   @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-  @import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+  @import "../node_modules/ag-grid-community/src/styles/ag-theme-finance/sass/ag-theme-finance.scss";
 &lt;/style&gt;
 </snippet>
 

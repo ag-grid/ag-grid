@@ -33,7 +33,7 @@
             <div style="padding: 4px;" class="toolbar">
             </div>
             <div style="clear: both;"></div>
-            <ag-grid-vue style="width: 800px; height: 350px;" class="ag-theme-balham"
+            <ag-grid-vue style="width: 800px; height: 350px;" class="ag-theme-finance"
                          :gridOptions="gridOptions"
                          :columnDefs="columnDefs"
                          :rowData="rowData"

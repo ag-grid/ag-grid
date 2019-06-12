@@ -19,7 +19,7 @@ var gridOptions = {
 };
 
 var chartPanelTemplate
-    = '<div class="chart-wrapper ag-theme-balham">' +
+    = '<div class="chart-wrapper ag-theme-finance">' +
         '<div class="chart-wrapper-top">' +
             '<span class="chart-wrapper-title"></span>' +
             '<button class="chart-wrapper-close">Destroy Chart</button>' +

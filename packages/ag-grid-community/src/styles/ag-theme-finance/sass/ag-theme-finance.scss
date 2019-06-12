@@ -1,0 +1,12 @@
+@import "../vars/ag-theme-finance-vars";
+@import "./ag-theme-finance-common";
+
+.ag-theme-finance {
+    @include ag-theme-finance($params);
+
+    .ag-filter-toolpanel-body{
+        background-color: $background-color;
+    }
+}
+
+

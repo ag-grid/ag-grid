@@ -51,7 +51,7 @@ import logo from './logo.svg';
 import './App.css';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-finance.css';
 
 class App extends Component {
   constructor(props) {
@@ -77,7 +77,7 @@ class App extends Component {
   render() {
     return (
       &lt;div 
-        className="ag-theme-balham"
+        className="ag-theme-finance"
         style={{ 
         height: '500px', 
         width: '600px' }} 
@@ -97,8 +97,8 @@ export default App;</code></pre>
 <p>Let's go over the <code>App.jsx</code> changes we made:</p>
 <pre class="language-jsx" ng-non-bindable><code>import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';</code></pre>
-<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
+import 'ag-grid-community/dist/styles/ag-theme-finance.css';</code></pre>
+<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-finance.css</code>).
   The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
   <snippet language="jsx">
 constructor(props) {
@@ -123,13 +123,13 @@ this.state = {
   <p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns;
 each column entry specifies the header label and the data field to be displayed in the body of the table.</p>
 <p>The actual data is defined in the <code>rowData</code> as an array of objects. Notice that the fields of the objects match the <code>field</code> values in the <code>columnDefs</code> configuration object.</p>
-<pre class="language-jsx" ng-non-bindable><code>&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-balham"&gt;
+<pre class="language-jsx" ng-non-bindable><code>&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-finance"&gt;
     &lt;AgGridReact
         columnDefs={this.state.columnDefs}
         rowData={this.state.rowData}&gt;
     &lt;/AgGridReact&gt;
 &lt;/div&gt;</code></pre>
-<p>Finally, the JSX code above describes a wrapper <code>DIV</code> element which sets the grid dimensions and specifies the grid's theme by setting the <code>className</code> to <code>ag-theme-balham</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p>
+<p>Finally, the JSX code above describes a wrapper <code>DIV</code> element which sets the grid dimensions and specifies the grid's theme by setting the <code>className</code> to <code>ag-theme-finance</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p>
 <p>Inside the container, we place an <code>AgGridReact</code> component with the configuration objects (<code>columnDefs</code> and <code>rowData</code>) from the component's constructor passed as properties.</p>
 <h2 id="enable-sorting-and-filtering">Enable Sorting And Filtering</h2>
 <p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>sort</code> property to the column definitions.</p>
@@ -206,7 +206,7 @@ this.state = {
 </snippet>
 <p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p>
 <pre class="language-diff" ng-non-bindable><code>
-  &lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-balham"&gt;
+  &lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-finance"&gt;
   +    &lt;button onClick={this.onButtonClick}&gt;Get selected rows&lt;/button&gt;
   +
    &lt;AgGridReact
@@ -257,7 +257,7 @@ Then, add the import to your file:
 <snippet language="diff">
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-finance.css';
 + import 'ag-grid-enterprise';
 </snippet>
 <p>
@@ -304,13 +304,13 @@ rowData={this.state.rowData}
 <p>After you are done with the setup, assuming that you have renamed <code>src/App.css</code> to <code>src/App.scss</code>, you can replace its contents with this:</p>
 <snippet language="scss">
 @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+@import "../node_modules/ag-grid-community/src/styles/ag-theme-finance/sass/ag-theme-finance.scss";
 </snippet>
 <p>To avoid importing the stylesheets twice, remove the imports from <code>src/App.js</code>:</p>
 <snippet language="diff">
 import { AgGridReact } from 'ag-grid-react';
 -import 'ag-grid-community/dist/styles/ag-grid.css';
--import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+-import 'ag-grid-community/dist/styles/ag-theme-finance.css';
 </snippet>
 <snippet language="diff">
 +$odd-row-background-color: #CFD8DC;

@@ -81,7 +81,7 @@ export default class extends Component {
                     <button onClick={this.fillMedium.bind(this)}>Fill 60%</button>
                     <button onClick={this.fillExact.bind(this)}>Exactly 400 x 400 pixels</button>
                 </div>
-                <div style={{height: 'calc(100% - 25px)'}} className="ag-theme-balham">
+                <div style={{height: 'calc(100% - 25px)'}} className="ag-theme-finance">
                     <div style={this.state.style}>
                         <AgGridReact
                             columnDefs={this.state.columnDefs}

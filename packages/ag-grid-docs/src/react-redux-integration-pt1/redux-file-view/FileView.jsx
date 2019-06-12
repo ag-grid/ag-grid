@@ -24,7 +24,7 @@ class FileView extends Component {
 
   render() {
     return (
-      <div id='myGrid' style={{height: 450}} className="ag-theme-balham">
+      <div id='myGrid' style={{height: 450}} className="ag-theme-finance">
         <AgGridReact
           columnDefs={this.colDefs}
           rowData={this.props.files}

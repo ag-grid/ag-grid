@@ -259,7 +259,7 @@ include '../landing-pages/convert-header.php';
     <p class="lead-description">Stress-test our Angular grid with
         <span class="underlined">100 000</span>
     records and 20 columns</p>
-    <div class="grid-container ag-theme-balham"></div>
+    <div class="grid-container ag-theme-finance"></div>
     <br>
     <p style="text-align: center;">
         *<strong>Angular Grid Example Demo</strong>*
@@ -290,7 +290,7 @@ Waste no time in integrating ag-Grid Angular into your Web Application.</p>
 <div class="container" id="dev-api">
 <div class="grid-example">
     <h4>Click operation on right and see the API in action</h4>
-    <div class="grid-container ag-theme-balham-dark"></div>
+    <div class="grid-container ag-theme-finance-dark"></div>
 </div>
 <div class="api-methods-container">
     <div class="api-code">
@@ -427,8 +427,8 @@ Angular Responsive Grid Layout
     <img src="/images/themes/material.png" alt="ag-grid-material-theme" class="center2 zoom">
     <img src="/images/themes/bootstrap.png" alt="ag-grid-bootstrap-theme" class="center2 zoom">
     <br>
-    <img src="/images/themes/balham.png" alt="ag-grid-balham-theme" class="center2 zoom">
-    <img src="/images/themes/balham-dark.png" alt="ag-grid-balham-dark-theme" class="center2 zoom">
+    <img src="/images/themes/finance.png" alt="ag-grid-finance-theme" class="center2 zoom">
+    <img src="/images/themes/finance-dark.png" alt="ag-grid-finance-dark-theme" class="center2 zoom">
     <div class="row">
         <div class="col">
             <hr>

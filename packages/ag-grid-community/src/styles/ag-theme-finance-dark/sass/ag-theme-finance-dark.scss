@@ -1,8 +1,8 @@
-@import "../vars/ag-theme-balham-dark-vars";
-@import "../../ag-theme-balham/sass/ag-theme-balham-common";
+@import "../vars/ag-theme-finance-dark-vars";
+@import "../../ag-theme-finance/sass/ag-theme-finance-common";
 
-.ag-theme-balham-dark {
-    @include ag-theme-balham($params);
+.ag-theme-finance-dark {
+    @include ag-theme-finance($params);
 
     input,
     select {

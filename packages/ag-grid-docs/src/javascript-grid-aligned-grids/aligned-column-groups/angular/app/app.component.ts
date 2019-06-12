@@ -7,7 +7,7 @@ import {HttpClient} from '@angular/common/http';
         <ag-grid-angular
         style="width: 100%; height: 45%"
         #topGrid
-        class="ag-theme-balham"
+        class="ag-theme-finance"
         (firstDataRendered)="onFirstDataRendered($event)"
         [defaultColDef]="{
             resizable: true
@@ -22,7 +22,7 @@ import {HttpClient} from '@angular/common/http';
         <ag-grid-angular
         style="width: 100%; height: 45%"
         #bottomGrid
-        class="ag-theme-balham"
+        class="ag-theme-finance"
         (firstDataRendered)="onFirstDataRendered($event)"
         [defaultColDef]="{
             resizable: true

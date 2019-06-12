@@ -82,7 +82,7 @@ export default class extends Component {
     render() {
         return (
             <div>
-                <div style={{width: '100%', height: '45%'}} className="ag-theme-balham">
+                <div style={{width: '100%', height: '45%'}} className="ag-theme-finance">
                     <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions}
                                  columnDefs={this.state.columnDefs}
                                  defaultColDef={{resizable: true}}
@@ -92,7 +92,7 @@ export default class extends Component {
 
                 <div style={{height: '5%'}}/>
 
-                <div style={{width: '100%', height: '45%'}} className="ag-theme-balham">
+                <div style={{width: '100%', height: '45%'}} className="ag-theme-finance">
                     <AgGridReact rowData={this.state.rowData} gridOptions={this.state.bottomOptions}
                                  columnDefs={this.state.columnDefs}/>
                 </div>

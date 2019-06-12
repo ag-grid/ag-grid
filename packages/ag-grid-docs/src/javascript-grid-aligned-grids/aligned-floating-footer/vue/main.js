@@ -7,13 +7,13 @@ const VueExample = {
         <div style="padding-bottom: 2px;">
             <button v-on:click="btSizeColsToFix">Size Cols to Fit</button>
         </div>
-        <ag-grid-vue style="width: 100%; height: 420px;" class="ag-theme-balham"
+        <ag-grid-vue style="width: 100%; height: 420px;" class="ag-theme-finance"
             :gridOptions="topGridOptions"
             @grid-ready="onGridReady"
             :columnDefs="columnDefs"
             :rowData="rowData"
         ></ag-grid-vue>
-        <ag-grid-vue style="width: 100%; height: 40px;" class="ag-theme-balham"
+        <ag-grid-vue style="width: 100%; height: 40px;" class="ag-theme-finance"
             :gridOptions="bottomGridOptions"
             :headerHeight="0"
             :columnDefs="columnDefs"

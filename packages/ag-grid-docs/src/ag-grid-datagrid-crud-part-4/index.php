@@ -273,7 +273,7 @@ private createColumnDefs(countries: Country[]) {
 
         <snippet>
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-         class="ag-theme-balham"
+         class="ag-theme-finance"
 
          [columnDefs]="columnDefs"
          [rowData]="rowData"
@@ -343,7 +343,7 @@ onCellValueChanged(params: any) {
 
         <snippet language="html">
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-         class="ag-theme-balham"
+         class="ag-theme-finance"
 
          [columnDefs]="columnDefs"
          [rowData]="rowData"
@@ -396,7 +396,7 @@ onCellValueChanged(params: any) {
 &lt;/div&gt;
 &lt;div&gt;
     &lt;ag-grid-angular style="width: 100%; height: 500px;"
-                 class="ag-theme-balham"
+                 class="ag-theme-finance"
 
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"
@@ -489,7 +489,7 @@ deleteSelectedRows() {
     &lt;div&gt;
         &lt;button (click)="insertNewResult()"&gt;Insert New Result&lt;/button&gt;
         &lt;ag-grid-angular style="width: 100%; height: 200px;"
-                         class="ag-theme-balham"
+                         class="ag-theme-finance"
 
                          [columnDefs]="columnDefs"
                          [rowData]="rowData"
@@ -640,7 +640,7 @@ saveAthlete() {
 &lt;/div&gt;
 &lt;div&gt;
     &lt;ag-grid-angular style="width: 100%; height: 500px;"
-                 class="ag-theme-balham"
+                 class="ag-theme-finance"
 
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"
@@ -719,7 +719,7 @@ onAthleteSaved(savedAthlete: Athlete) {
 &lt;/div&gt;
 &lt;div&gt;
     &lt;ag-grid-angular style="width: 100%; height: 500px;"
-                 class="ag-theme-balham"
+                 class="ag-theme-finance"
 
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"
@@ -931,7 +931,7 @@ public class Athlete {
 
         <snippet language="html">
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-         class="ag-theme-balham"
+         class="ag-theme-finance"
 
          #grid
 
@@ -1031,7 +1031,7 @@ private setPanelCoordinates() {
 
         <snippet language="html">
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-         class="ag-theme-balham"
+         class="ag-theme-finance"
 
          ...reset of grid definition
 

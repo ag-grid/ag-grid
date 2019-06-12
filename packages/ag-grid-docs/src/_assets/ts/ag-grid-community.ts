@@ -11,7 +11,7 @@ import "../../../../ag-grid-community/src/styles/ag-theme-fresh/sass/ag-theme-fr
 import "../../../../ag-grid-community/src/styles/ag-theme-dark/sass/ag-theme-dark.scss";
 import "../../../../ag-grid-community/src/styles/ag-theme-blue/sass/ag-theme-blue.scss";
 import "../../../../ag-grid-community/src/styles/ag-theme-bootstrap/sass/ag-theme-bootstrap.scss";
-import "../../../../ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
-import "../../../../ag-grid-community/src/styles/ag-theme-balham-dark/sass/ag-theme-balham-dark.scss";
+import "../../../../ag-grid-community/src/styles/ag-theme-finance/sass/ag-theme-finance.scss";
+import "../../../../ag-grid-community/src/styles/ag-theme-finance-dark/sass/ag-theme-finance-dark.scss";
 
 export * from "../../../../ag-grid-community/src/ts/main";

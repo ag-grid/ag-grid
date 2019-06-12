@@ -180,7 +180,7 @@ somePointLater() {
     <p>ag-Grid requires the core ag-Grid CSS as well as a theme.</p>
 <snippet>
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-finance.css';
 </snippet>
     <p>If you're using webpack you can configure an alias to allow for absolute imports (this isn't necessary when using <code>create-react-app</code>:</p>
     <snippet>
@@ -192,17 +192,17 @@ resolve: {
     <h2 id="applying-theme">Applying a Theme</h2>
     <p>
         You need to set a theme for the grid. You do this by giving the grid a CSS class, one
-        of <code>ag-theme-balham</code>, <code>ag-theme-material</code>, <code>ag-theme-fresh</code>, <code>ag-theme-blue</code> or <code>ag-theme-dark</code>. You must have the CSS loaded as specified above
+        of <code>ag-theme-finance</code>, <code>ag-theme-material</code>, <code>ag-theme-fresh</code>, <code>ag-theme-blue</code> or <code>ag-theme-dark</code>. You must have the CSS loaded as specified above
         for this to work.
     </p>
     <snippet language="jsx">
 // a parent container of the grid, you could put this on your body tag
 // if you only every wanted to use one style of grid
 // HTML
-&lt;div class="ag-theme-balham"&gt;
+&lt;div class="ag-theme-finance"&gt;
 ...
 // OR JSX
-&lt;div className="ag-theme-balham"&gt;
+&lt;div className="ag-theme-finance"&gt;
 ...
 // then later, use the grid
 &lt;AgGridReact
@@ -213,12 +213,12 @@ resolve: {
 <snippet language="jsx">
 // a react component
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-finance.css';
 
 class GridComponent extends Component {
     render() {
         return (
-            &lt;div className="ag-theme-balham"&gt;
+            &lt;div className="ag-theme-finance"&gt;
                 &lt;AgGridReact
                     onGridReady={this.onGridReady}
                     rowData={this.state.rowData}

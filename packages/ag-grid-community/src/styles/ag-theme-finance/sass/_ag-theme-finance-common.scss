@@ -1,6 +1,6 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 
-@mixin ag-theme-balham($params) {
+@mixin ag-theme-finance($params) {
     $border-color: map-get($params, "border-color");
     $default-background: map-get($params, "default-background");
     $foreground-color: map-get($params, "foreground-color");

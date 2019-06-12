@@ -38,7 +38,7 @@
 
 ## Customizable Appearance
     - Use https://www.ag-grid.com/example.php
-    - Change balham => balham dark => material
+    - Change finance => finance dark => material
 
 ## Convenient Licensing
     - MIT License logo / Commercial License pictogram (good luck making that)

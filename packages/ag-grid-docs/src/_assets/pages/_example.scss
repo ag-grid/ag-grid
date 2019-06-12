@@ -32,7 +32,7 @@ body:not(.dark) .bad-score {
     filter: invert(100%);
 }
 
-body .ag-theme-material, body .ag-theme-balham {
+body .ag-theme-material, body .ag-theme-finance {
     .good-score {
         background-color: rgba(185, 246, 202, 0.4);
     }
@@ -173,8 +173,8 @@ button[disabled] {
     }
 }
 
-.ag-theme-balham .flag,
-.ag-theme-balham-dark .flag {
+.ag-theme-finance .flag,
+.ag-theme-finance-dark .flag {
     margin-bottom: 3px;
     margin-right: 4px;
 }

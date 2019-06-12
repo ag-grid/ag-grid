@@ -156,7 +156,7 @@ Change the theme class to the one you use.
 </p>
 
 <snippet language="css">
-.ag-theme-balham .ag-header-group-cell-label span {
+.ag-theme-finance .ag-header-group-cell-label span {
     float: right;
 }
 </snippet>

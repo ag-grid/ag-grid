@@ -32,7 +32,7 @@
             </div>
             <span id="animationAction"></span>
         </div>
-        <div id="animationGrid" class="ag-theme-balham-dark" style="height: 400px;"></div>
+        <div id="animationGrid" class="ag-theme-finance-dark" style="height: 400px;"></div>
     </div>
 
 

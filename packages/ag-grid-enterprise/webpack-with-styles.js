@@ -21,5 +21,5 @@ require('ag-grid-community/dist/styles/ag-theme-blue.css');
 require('ag-grid-community/dist/styles/ag-theme-material.css');
 require('ag-grid-community/dist/styles/ag-theme-bootstrap.css');
 
-require('ag-grid-community/dist/styles/ag-theme-balham.css');
-require('ag-grid-community/dist/styles/ag-theme-balham-dark.css');
+require('ag-grid-community/dist/styles/ag-theme-finance.css');
+require('ag-grid-community/dist/styles/ag-theme-finance-dark.css');

@@ -180,7 +180,7 @@ import React from "react";
 import {render} from "react-dom";
 
 import "ag-grid-root/dist/styles/ag-grid.css";
-import "ag-grid-root/dist/styles/ag-theme-balham.css";
+import "ag-grid-root/dist/styles/ag-theme-finance.css";
 
 import {LicenseManager} from "ag-grid-enterprise";
 LicenseManager.setLicenseKey("your license key");
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () =&gt; {
 import Vue from "vue";
 
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
+import "../node_modules/ag-grid/dist/styles/ag-theme-finance.css";
 
 import "ag-grid-enterprise";
 import {LicenseManager} from "ag-grid-enterprise";
@@ -260,7 +260,7 @@ agGrid.LicenseManager.setLicenseKey("your license key")
 &lt;template id="template"&gt;
     &lt;div &gt;
         &lt;ag-grid-polymer style="width: 100%; height: 350px;"
-            class="ag-theme-balham"
+            class="ag-theme-finance"
             rowData="{{rowData}}"
             columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
     &lt;/div&gt;

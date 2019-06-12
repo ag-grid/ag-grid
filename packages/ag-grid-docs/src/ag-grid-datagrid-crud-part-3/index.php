@@ -310,7 +310,7 @@ ng serve
 "styles": [
     "styles.css",
     "../node_modules/ag-grid/dist/styles/ag-grid.css",
-    "../node_modules/ag-grid/dist/styles/ag-theme-balham.css"
+    "../node_modules/ag-grid/dist/styles/ag-theme-finance.css"
 ],
 </snippet>
 
@@ -419,7 +419,7 @@ export class GridComponent implements OnInit {
 
 <snippet language="html">
 &lt;ag-grid-angular style="width: 100%; height: 800px;"
-    class="ag-theme-balham"
+    class="ag-theme-finance"
     (gridReady)="onGridReady($event)"
     [columnDefs]="columnDefs"
     [rowData]="rowData"&gt;

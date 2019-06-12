@@ -67,7 +67,7 @@ class DeclarativeColumnsGrid extends Component {
     render() {
         return (
             <div
-                className="ag-theme-balham">
+                className="ag-theme-finance">
                 <AgGridReact
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}>

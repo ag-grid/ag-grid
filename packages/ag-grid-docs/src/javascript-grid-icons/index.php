@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
             If you have created your own theme and want to include the stock icons, this is easiest
             done by adding the WebFont from the theme you like: <br>
             <code>dist/styles/webfont/agGridClassicFont.css</code> - WebFont used by themes fresh, blue, dark and bootstrap <br>
-            <code>dist/styles/webfont/agGridBalhamFont.css</code> - WebFont used by theme balham and balham-dark <br>
+            <code>dist/styles/webfont/agGridFinanceFont.css</code> - WebFont used by theme finance and finance-dark <br>
             <code>dist/styles/webfont/agGridMaterialFont.css</code> - WebFont used by theme material<br>
         </p>
     </note>
@@ -45,12 +45,12 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
  * The override should be placed after the import of the theme. 
  * Alternatively, you can aso increase the selector's specificity.
  */
-.ag-theme-balham .ag-icon-pin {
+.ag-theme-finance .ag-icon-pin {
     font-family: "Font Awesome 5 Free";
     /* FontAwesome uses font-weight bold */
     font-weight: bold;
 }
-.ag-theme-balham .ag-icon-pin::before {
+.ag-theme-finance .ag-icon-pin::before {
     content: '\f08d';
 }
 </snippet>
@@ -126,7 +126,7 @@ $ag-icon-tree-indeterminate: "\f068";
 $ag-icon-tree-open: "\f107";
 
 @import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/ag-theme-balham.scss";
+@import "~ag-grid/src/styles/ag-theme-finance.scss";
 
 .ag-icon {
     font-weight: bold;

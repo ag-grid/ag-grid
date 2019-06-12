@@ -64,7 +64,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
     import {AgGridReact} from 'ag-grid-react';
     
     import 'ag-grid/dist/styles/ag-grid.css';
-    import 'ag-grid/dist/styles/ag-theme-balham.css';
+    import 'ag-grid/dist/styles/ag-theme-finance.css';
 
 ### Set the grid's configuration in a parent component
 	class App extends Component {
@@ -96,7 +96,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 		render() {
 			return (
 				<div
-					className="ag-theme-balham"
+					className="ag-theme-finance"
 					style={{
 						height: '500px',
 						width: '600px'

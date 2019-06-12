@@ -14,7 +14,7 @@ import {HttpClient} from '@angular/common/http';
                 <ag-grid-angular
                         style="width: 100%; height: calc(100% - 25px);"
                         #agGrid
-                        class="ag-theme-balham"
+                        class="ag-theme-finance"
                         [rowData]="rowData"
                         [columnDefs]="columnDefs"
                         (firstDataRendered)="onFirstDataRendered($event)">

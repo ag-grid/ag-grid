@@ -71,7 +71,7 @@ include '../getting-started/header.php';
     &lt;script src="example1.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;div id="myGrid" style="height: 100%;" class="ag-theme-balham"&gt;&lt;/div&gt;
+    &lt;div id="myGrid" style="height: 100%;" class="ag-theme-finance"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</snippet>
 <note>
@@ -141,9 +141,9 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <p>
     It is also usual to provide a styling theme to
-    the grid. Five themes come with the grid, <code>ag-theme-material</code>, <code>ag-theme-balham</code>, <code>ag-theme-fresh</code>, <code>ag-theme-dark</code> and <code>ag-theme-blue</code>. Each one is
+    the grid. Five themes come with the grid, <code>ag-theme-material</code>, <code>ag-theme-finance</code>, <code>ag-theme-fresh</code>, <code>ag-theme-dark</code> and <code>ag-theme-blue</code>. Each one is
     set by applying the corresponding class of the same name to the div. In the
-    example, <code>ag-theme-balham</code> is used.
+    example, <code>ag-theme-finance</code> is used.
 </p>
 
 <p>
@@ -152,7 +152,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <snippet language="html">
-&lt;div ag-grid="gridOptions" class="ag-theme-balham" style="height: 100%;"&gt;&lt;/div&gt;
+&lt;div ag-grid="gridOptions" class="ag-theme-finance" style="height: 100%;"&gt;&lt;/div&gt;
 </snippet>
 
 <p>

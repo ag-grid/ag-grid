@@ -101,7 +101,7 @@ beforeEach((done) => {
     
 &lt;template&gt;
     &lt;ag-grid-vue style="width: 500px; height: 500px;"
-                 class="ag-theme-balham"
+                 class="ag-theme-finance"
                  @grid-ready="onGridReady"
                  :columnDefs="columnDefs"
                  :rowData="rowData"&gt;

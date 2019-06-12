@@ -86,10 +86,10 @@ export class AppModule {}
 
 <snippet language="scss">
 @import "~ag-grid-community/dist/styles/ag-grid.css";
-@import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+@import "~ag-grid-community/dist/styles/ag-theme-finance.css";
 </snippet>
 
-<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
+<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-finance.css</code>). 
 The grid ships several different themes; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
 
 <p>Next, let's declare the basic grid configuration. Edit <code>src/app.component.ts</code>:</p>
@@ -127,7 +127,7 @@ each column entry specifies the header label and the data field to be displayed 
 <snippet language="html">
 &lt;ag-grid-angular 
     style="width: 500px; height: 500px;" 
-    class="ag-theme-balham"
+    class="ag-theme-finance"
     [rowData]="rowData" 
     [columnDefs]="columnDefs"
     &gt;
@@ -135,7 +135,7 @@ each column entry specifies the header label and the data field to be displayed 
 </snippet>
 
 <p>This is the ag-grid component definition, with two property bindings - <code>rowData</code> and <code>columnDefs</code>. The component also accepts the standard DOM <code>style</code> and <code>class</code>. 
-We have set the class to <code>ag-theme-balham</code>, which defines the grid theme. 
+We have set the class to <code>ag-theme-finance</code>, which defines the grid theme. 
 As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.
 </p>
 
@@ -235,7 +235,7 @@ export class AppComponent implements OnInit {
 <snippet language="html">
 &lt;ag-grid-angular 
     style="width: 500px; height: 500px;" 
-    class="ag-theme-balham"
+    class="ag-theme-finance"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     &gt;
@@ -290,7 +290,7 @@ export class AppComponent implements OnInit {
 <snippet language="html">
 &lt;ag-grid-angular 
     style="width: 500px; height: 500px;" 
-    class="ag-theme-balham"
+    class="ag-theme-finance"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
@@ -309,7 +309,7 @@ export class AppComponent implements OnInit {
 &lt;ag-grid-angular 
     #agGrid
     style="width: 500px; height: 500px;" 
-    class="ag-theme-balham"
+    class="ag-theme-finance"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
@@ -360,7 +360,7 @@ export class AppComponent implements OnInit {
 &lt;ag-grid-angular 
     #agGrid
     style="width: 500px; height: 500px;" 
-    class="ag-theme-balham"
+    class="ag-theme-finance"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
@@ -496,7 +496,7 @@ export class AppComponent implements OnInit {
 <p>Add the the <code>autoGroupColumnDef</code> property to the template too:</p> 
 
 <snippet language="diff">
-class="ag-theme-balham"
+class="ag-theme-finance"
 +[autoGroupColumnDef]="autoGroupColumnDef"
 </snippet>
 
@@ -517,7 +517,7 @@ override the theme variable values, and refer the ag-grid Sass files instead of 
 
 <snippet language="scss">
 @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+@import "../node_modules/ag-grid-community/src/styles/ag-theme-finance/sass/ag-theme-finance.scss";
 </snippet>
 
 <p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
