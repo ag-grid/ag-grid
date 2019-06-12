@@ -8,7 +8,7 @@ interface HardCodedSize {
     };
 }
 const FRESH_GRID_SIZE = 4;
-const BALHAM_GRID_SIZE = 4;
+const FINANCE_GRID_SIZE = 4;
 
 const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-material': {
@@ -21,10 +21,10 @@ const HARD_CODED_SIZES: HardCodedSize = {
         virtualItemHeight: FRESH_GRID_SIZE * 5,
         rowHeight: 25
     },
-    'ag-theme-balham': {
-        headerHeight: BALHAM_GRID_SIZE * 8,
-        virtualItemHeight: BALHAM_GRID_SIZE * 7,
-        rowHeight: BALHAM_GRID_SIZE * 7
+    'ag-theme-finance': {
+        headerHeight: FINANCE_GRID_SIZE * 8,
+        virtualItemHeight: FINANCE_GRID_SIZE * 7,
+        rowHeight: FINANCE_GRID_SIZE * 7
    }
 };
 
@@ -36,8 +36,8 @@ export class Environment {
     public getSassVariable(theme: string, key: string): number {
         if (theme == 'ag-theme-material') {
             return HARD_CODED_SIZES['ag-theme-material'][key];
-        } else if (theme == 'ag-theme-balham' || theme == 'ag-theme-balham-dark') {
-            return HARD_CODED_SIZES['ag-theme-balham'][key];
+        } else if (theme == 'ag-theme-finance' || theme == 'ag-theme-finance-dark') {
+            return HARD_CODED_SIZES['ag-theme-finance'][key];
         }
         return HARD_CODED_SIZES['ag-theme-classic'][key];
     }
@@ -47,20 +47,31 @@ export class Environment {
         return !!theme && theme.indexOf('dark') >= 0;
     }
 
-    public getTheme(): string | undefined {
+    public getThemeDetails(): { themeMatch: RegExpMatchArray | null, element: HTMLElement | null } {
         const reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
         let el: HTMLElement = this.eGridDiv;
         let themeMatch: RegExpMatchArray;
 
         while (el) {
             themeMatch = reg.exec(el.className);
-            el = el.parentElement;
             if (el == null || themeMatch) {
                 break;
             }
+            el = el.parentElement;
         }
 
-        if (!themeMatch) { return; }
+        return {
+            themeMatch,
+            element: el
+        };
+    }
+
+    public getTheme(): string | undefined {
+        const { themeMatch } = this.getThemeDetails();
+
+        if (!themeMatch) {
+            return;
+        }
 
         const theme = themeMatch[0];
         const usingOldTheme = themeMatch[2] === undefined;

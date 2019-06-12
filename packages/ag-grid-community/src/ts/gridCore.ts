@@ -1,16 +1,15 @@
 import { GridOptions } from "./entities/gridOptions";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
-import { ColumnController } from "./columnController/columnController";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
 import { EventService } from "./eventService";
+import { Environment } from "./environment";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
 import { Autowired, Optional, PostConstruct } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
-import { FocusedCellController } from "./focusedCellController";
 import { Component } from "./widgets/component";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { GridApi } from "./gridApi";
@@ -49,16 +48,15 @@ export class GridCore extends Component {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
-    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('environment') private environment: Environment;
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('$scope') private $scope: any;
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -78,6 +76,7 @@ export class GridCore extends Component {
     public init(): void {
 
         this.logger = this.loggerFactory.create('GridCore');
+        this.fixDeprecatedThemes();
 
         const template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
         this.setTemplate(template);
@@ -132,6 +131,17 @@ export class GridCore extends Component {
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
+    }
+
+    private fixDeprecatedThemes() {
+        const { themeMatch, element } = this.environment.getThemeDetails();
+        const theme = themeMatch && themeMatch[0];
+        if (theme && theme.match('balham')) {
+            const newTheme = theme.replace('balham', 'finance');
+            _.doOnce(() => console.warn(`ag-Grid: As of v21.1 theme ${theme} has been replaced with ${newTheme}.`), 'using-old-theme');
+            _.removeCssClass(element, theme);
+            _.addCssClass(element, newTheme);
+        }
     }
 
     private onGridSizeChanged(): void {
