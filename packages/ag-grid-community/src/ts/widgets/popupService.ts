@@ -323,14 +323,21 @@ export class PopupService {
         return Math.min(Math.max(x, 0), Math.abs(maxX));
     }
 
-    //adds an element to a div, but also listens to background checking for clicks,
-    //so that when the background is clicked, the child is removed again, giving
-    //a model look to popups.
+    // adds an element to a div, but also listens to background checking for clicks,
+    // so that when the background is clicked, the child is removed again, giving
+    // a model look to popups.
     public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void {
         return this.addPopup(true, eChild, closeOnEsc, closedCallback, click);
     }
 
-    public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void {
+    public addPopup(
+        modal: boolean,
+        eChild: any,
+        closeOnEsc: boolean,
+        closedCallback?: () => void,
+        click?: MouseEvent | Touch | null,
+        alwaysOnTop?: boolean
+    ): (event?: any) => void {
         const eDocument = this.gridOptionsWrapper.getDocument();
 
         if (!eDocument) {
@@ -359,12 +366,19 @@ export class PopupService {
         }
 
         _.addCssClass(eWrapper, 'ag-popup');
+
         _.addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
 
         eWrapper.appendChild(eChild);
 
         ePopupParent.appendChild(eWrapper);
         this.activePopupElements.push(eChild);
+
+        if (alwaysOnTop) {
+            this.setAlwaysOnTop(eWrapper, true);
+        } else {
+            this.bringPopupToFront(eWrapper);
+        }
 
         let popupHidden = false;
 
@@ -489,27 +503,60 @@ export class PopupService {
         return false;
     }
 
-    public bringPopupToFront(ePopup: HTMLElement) {
-        const parent = this.getPopupParent();
-        const popupList = parent.querySelectorAll('.ag-popup');
-
+    private getWrapper(ePopup: HTMLElement): HTMLElement | null {
         while (!_.containsClass(ePopup, 'ag-popup') && ePopup.parentElement) {
             ePopup = ePopup.parentElement;
         }
 
+        return _.containsClass(ePopup, 'ag-popup') ? ePopup : null;
+    }
+
+    public setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void {
+        const eWrapper = this.getWrapper(ePopup);
+
+        if (!eWrapper) {
+            return;
+        }
+
+        _.addOrRemoveCssClass(eWrapper, 'ag-always-on-top', !!alwaysOnTop);
+
+        if (alwaysOnTop) {
+            this.bringPopupToFront(eWrapper);
+        }
+    }
+
+    public bringPopupToFront(ePopup: HTMLElement) {
+        const parent = this.getPopupParent();
+        const popupList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
+        const popupLen = popupList.length;
+        const alwaysOnTopList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup.ag-always-on-top'));
+        const onTopLengh = alwaysOnTopList.length;
+        const eWrapper = this.getWrapper(ePopup);
+
         if (
-            popupList.length <= 1 ||
-            popupList[popupList.length - 1] === ePopup ||
-            !parent.contains(ePopup)
+            !eWrapper ||
+            popupLen <= 1 ||
+            !parent.contains(ePopup) ||
+            (!onTopLengh && _.last(popupList) === ePopup)
         ) { return; }
 
-        popupList[popupList.length - 1].insertAdjacentElement('afterend', ePopup);
+        if (onTopLengh) {
+            const isPopupAlwaysOnTop = _.containsClass(eWrapper, 'ag-always-on-top');
+
+            if (isPopupAlwaysOnTop) {
+                (_.last(alwaysOnTopList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+            } else {
+                alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
+            }
+        } else {
+            (_.last(popupList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+        }
 
         const params = {
             type: 'popupToFront',
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
-            ePopup
+            eWrapper
         };
 
         this.eventService.dispatchEvent(params);

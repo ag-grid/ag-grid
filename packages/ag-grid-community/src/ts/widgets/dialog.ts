@@ -180,12 +180,10 @@ export class Dialog extends PopupComponent {
             false,
             eGui,
             true,
-            this.destroy.bind(this)
+            this.destroy.bind(this),
+            undefined,
+            alwaysOnTop
         );
-
-        if (alwaysOnTop) {
-            eGui.style.zIndex = '6';
-        }
 
         this.refreshSize();
 
@@ -201,7 +199,14 @@ export class Dialog extends PopupComponent {
         }
 
         this.addDestroyableEventListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
-            if (eGui.contains(e.relatedTarget as HTMLElement) || eGui.contains(document.activeElement)) { return ; }
+            if (
+                eGui.contains(e.relatedTarget as HTMLElement) ||
+                eGui.contains(document.activeElement) ||
+                this.eTitleBarButtons.contains(e.target as HTMLElement)
+            ) {
+                e.preventDefault();
+                return;
+            }
 
             const focusEl = this.eContentWrapper.querySelector('button, [href], input, select, textarea, [tabindex]');
 
