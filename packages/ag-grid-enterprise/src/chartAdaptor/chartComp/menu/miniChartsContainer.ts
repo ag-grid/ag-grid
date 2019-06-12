@@ -62,6 +62,7 @@ import { Line } from "../../../charts/scene/shape/line";
 import { ClipRect } from "../../../charts/scene/clipRect";
 import { Rect } from "../../../charts/scene/shape/rect";
 import { BandScale } from "../../../charts/scale/bandScale";
+import { Arc } from "../../../charts/scene/shape/arc";
 
 export abstract class MiniChart {
     protected readonly size = 80;
@@ -344,6 +345,80 @@ class MiniStackedBar extends MiniChart {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
             })
+        });
+    }
+}
+
+class MiniScatter extends MiniChart {
+    private readonly points: Arc[];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+        const n = 5;
+
+        // [value, radius] pairs
+        const data = [
+            [[7, 3], [5, 2], [9, 6], [9, 2], [2, 6]],
+            [[2, 4], [2, 3], [5, 5], [7, 5], [6, 3]],
+            [[9, 3], [4, 4], [5, 6], [3, 4], [8, 2]]
+        ];
+
+        const xScale = linearScale();
+        xScale.domain = [0, n];
+        xScale.range = [padding * 2, size - padding];
+
+        const yScale = linearScale();
+        yScale.domain = [0, 10];
+        yScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+
+        const points: Arc[] = [];
+        data.forEach((series) => {
+            series.forEach((datum, j) => {
+                const arc = new Arc();
+                arc.strokeWidth = 1;
+                arc.centerX = xScale.convert(j);
+                arc.centerY = yScale.convert(datum[0]);
+                arc.radiusX = datum[1];
+                arc.radiusY = datum[1];
+                points.push(arc);
+            });
+        });
+        this.points = points;
+
+        const clipRect = new ClipRect();
+        clipRect.x = padding;
+        clipRect.y = padding;
+        clipRect.width = size - padding * 2;
+        clipRect.height = size - padding * 2;
+
+        clipRect.append(this.points);
+        const root = this.root;
+        root.append(clipRect);
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.points.forEach((line, i) => {
+            line.stroke = strokes[i % strokes.length];
+            line.fill = fills[i % fills.length];
         });
     }
 }
