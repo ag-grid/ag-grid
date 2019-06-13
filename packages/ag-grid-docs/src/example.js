@@ -404,10 +404,12 @@ var gridOptions = {
 
         if (params.type === 'pie' || params.type === 'doughnut')  {
             options.seriesDefaults.tooltipRenderer = function(params) {
+                const titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var strArr = params.angleField.replace(/([A-Z])/g, " $1");
                 var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
                 var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return '<div class="content"><b>' + seriesName + '</b>: $' + value + '</div>';
+                return title + '<div class="content">' + (!title ? '<b>' + seriesName + '</b>: ' : '') + '$' + value + '</div>';
             };
         }
 
