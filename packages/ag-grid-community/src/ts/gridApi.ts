@@ -614,6 +614,10 @@ export class GridApi {
         this.selectionController.deselectAllRowNodes(true);
     }
 
+    public getLastSelectedNode() {
+        return this.selectionController.getLastSelectedNode();
+    }
+
     public recomputeAggregates(): void {
         if (_.missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model'); }
         console.warn(`recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead`);

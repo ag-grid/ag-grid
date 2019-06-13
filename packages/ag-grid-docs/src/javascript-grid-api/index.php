@@ -136,7 +136,10 @@ include '../documentation-main/documentation_header.php';
             <th>clearRangeSelection()</th>
             <td>Clears the selected range.</td>
         </tr>
-
+        <tr>
+            <th>getLastSelectedNode()</th>
+            <td>Returns last selected RowNode.</td>
+        </tr>
     </table>
 <h2>Refresh</h2>
     <table class="table reference">
