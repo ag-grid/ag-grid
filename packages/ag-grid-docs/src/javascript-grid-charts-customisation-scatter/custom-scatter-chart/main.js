@@ -44,10 +44,10 @@ function processChartOptions(params) {
     var options = params.options;
     console.log('chart options:', options);
 
-    // we are only interested in processing line type.
+    // we are only interested in processing scatter type.
     // so if user changes the type using the chart control,
     // we ignore it.
-    if (params.type!=='line') {
+    if (params.type!=='scatter') {
         console.log('chart type is ' + params.type + ', making no changes.');
         return params.options;
     }
@@ -148,7 +148,7 @@ function onGridReady(params) {
 
     var chartRangeParams = {
         cellRange: cellRange,
-        chartType: 'line'
+        chartType: 'scatter'
     };
 
     setTimeout(function () {

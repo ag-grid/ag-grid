@@ -42,6 +42,7 @@ include '../documentation-main/documentation_header.php';
         <ul>
             <li><a href="../javascript-grid-charts-customisation-bar/">Customising Bar Charts</a></li>
             <li><a href="../javascript-grid-charts-customisation-line/">Customising Line Charts</a></li>
+            <li><a href="../javascript-grid-charts-customisation-scatter/">Customising Scatter Charts</a></li>
             <li><a href="../javascript-grid-charts-customisation-pie/">Customising Pie Charts</a></li>
             <li><a href="../javascript-grid-charts-customisation-doughnut/">Customising Doughnut Charts</a></li>
         </ul>
