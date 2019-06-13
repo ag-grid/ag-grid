@@ -198,17 +198,6 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._stroke;
     }
 
-    private _strokeWidth: number = 3;
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            this.update();
-        }
-    }
-    get strokeWidth(): number {
-        return this._strokeWidth;
-    }
-
     highlightStyle: {
         fill?: string,
         stroke?: string
@@ -333,7 +322,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            title = title ? `<div class="title" ${titleStyle}>${this.title}</div>` : '';
+            title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xField];
             const yValue = seriesDatum[yField];
@@ -341,6 +330,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
 
             html = `${title}<div class="content">${xString}: ${yString}</div>`;
+            // html = `${title}<div class="content">${xField}: ${xString}<br>${yField}: ${yString}</div>`;
         }
         return html;
     }

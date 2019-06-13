@@ -17,6 +17,7 @@ import { Caption } from "../caption";
 import { Shape } from "../../scene/shape/shape";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
+    index: number,
     radius: number, // in the [0, 1] range
     startAngle: number,
     endAngle: number,
@@ -41,7 +42,9 @@ export interface PieTooltipRendererParams {
     datum: any,
     angleField: string,
     radiusField?: string,
-    labelField?: string
+    labelField?: string,
+    title?: string,
+    color?: string
 }
 
 export class PieSeries extends Series<PolarChart> {
@@ -432,6 +435,7 @@ export class PieSeries extends Series<PolarChart> {
             }
 
             groupSelectionData.push({
+                index: datumIndex,
                 seriesDatum: data[datumIndex],
                 radius,
                 startAngle,
@@ -583,15 +587,20 @@ export class PieSeries extends Series<PolarChart> {
             return html;
         }
 
+        let title = this.title ? this.title.text : undefined;
+        const color = this.fills[nodeDatum.index % this.fills.length];
         if (this.tooltipRenderer) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 angleField,
                 radiusField: this.radiusField,
-                labelField: this.labelField
+                labelField: this.labelField,
+                title,
+                color
             });
         } else {
-            const title = this.title ? `<div class="title">${this.title.text}</div>` : '';
+            const titleStyle = `style="color: white; background-color: ${color}"`;
+            title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
             const label = this.labelField ? `${nodeDatum.seriesDatum[this.labelField]}: ` : '';
             const value = nodeDatum.seriesDatum[angleField];
             const formattedValue = typeof(value) === 'number' ? toFixed(value) : value.toString();

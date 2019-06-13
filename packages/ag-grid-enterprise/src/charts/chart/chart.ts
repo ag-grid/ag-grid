@@ -555,7 +555,9 @@ export abstract class Chart {
             return;
         }
 
-        this.toggleTooltip(true);
+        if (html) {
+            this.toggleTooltip(true);
+        }
         const tooltipRect = this.tooltipRect = el.getBoundingClientRect();
 
         let left = event.pageX + offset[0];

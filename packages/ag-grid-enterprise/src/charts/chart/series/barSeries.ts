@@ -39,7 +39,9 @@ enum BarSeriesNodeTag {
 export interface BarTooltipRendererParams {
     datum: any,
     xField: string,
-    yField: string
+    yField: string,
+    title?: string,
+    color?: string
 }
 
 export class BarSeries extends Series<CartesianChart> {
@@ -477,15 +479,22 @@ export class BarSeries extends Series<CartesianChart> {
         if (this.tooltipEnabled) {
             const xField = this.xField;
             const yField = nodeDatum.yField;
+            const yFields = this.yFields;
+            const yFieldIndex = yFields.indexOf(yField);
+            const color = this.fills[yFieldIndex % this.fills.length];
 
+            let title = nodeDatum.label ? nodeDatum.label.text : undefined;
             if (this.tooltipRenderer && xField) {
                 html = this.tooltipRenderer({
                     datum: nodeDatum.seriesDatum,
                     xField,
                     yField,
+                    title,
+                    color
                 });
             } else {
-                const title = nodeDatum.label ? `<div class="title">${nodeDatum.label.text}</div>` : '';
+                const titleStyle = `style="color: white; background-color: ${color}"`;
+                title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
                 const seriesDatum = nodeDatum.seriesDatum;
                 const xValue = seriesDatum[xField];
                 const yValue = seriesDatum[yField];

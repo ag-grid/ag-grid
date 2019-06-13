@@ -26,7 +26,9 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
 export interface LineTooltipRendererParams {
     datum: any,
     xField: string,
-    yField: string
+    yField: string,
+    title?: string,
+    color?: string
 }
 
 export class LineSeries extends Series<CartesianChart> {
@@ -343,20 +345,25 @@ export class LineSeries extends Series<CartesianChart> {
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         const xField = this.xField;
         const yField = this.yField;
+        const color = this.fill;
         let html: string = '';
 
         if (!xField || !yField) {
             return html;
         }
 
+        let title = this.title;
         if (this.tooltipRenderer && this.xField) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 xField,
-                yField
+                yField,
+                title,
+                color
             });
         } else {
-            const title = this.title ? `<div class="title">${this.title}</div>` : '';
+            const titleStyle = `style="color: white; background-color: ${color}"`;
+            title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xField];
             const yValue = seriesDatum[yField];
