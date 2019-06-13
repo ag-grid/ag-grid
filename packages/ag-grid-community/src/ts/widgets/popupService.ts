@@ -536,19 +536,20 @@ export class PopupService {
         if (
             !eWrapper ||
             popupLen <= 1 ||
-            !parent.contains(ePopup) ||
-            (!onTopLengh && _.last(popupList) === ePopup)
+            !parent.contains(ePopup)
         ) { return; }
+
+        const pos = popupList.indexOf(eWrapper);
 
         if (onTopLengh) {
             const isPopupAlwaysOnTop = _.containsClass(eWrapper, 'ag-always-on-top');
 
-            if (isPopupAlwaysOnTop) {
+            if (isPopupAlwaysOnTop && pos !== popupLen - 1) {
                 (_.last(alwaysOnTopList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
-            } else {
+            } else if (pos !== popupLen - onTopLengh - 1) {
                 alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
             }
-        } else {
+        } else if (pos !== popupLen - 1) {
             (_.last(popupList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
         }
 
