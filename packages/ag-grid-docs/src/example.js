@@ -382,7 +382,8 @@ var gridOptions = {
 
     processChartOptions: function(params) {
         var options = params.options;
-        if (params.type === 'groupedBar' || params.type === 'stackedBar' || params.type === 'line') {
+        var types = ['groupedBar', 'stackedBar', 'line', 'scatter'];
+        if (types.indexOf(params.type) >= 0) {
             options.yAxis.labelFormatter = function(n) {
                 if (n < 1e3) return n;
                 if (n >= 1e3 && n < 1e6) return '$' + +(n / 1e3).toFixed(1) + 'K';
@@ -392,10 +393,12 @@ var gridOptions = {
             };
 
             options.seriesDefaults.tooltipRenderer = function(params) {
+                const titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var strArr = params.yField.replace(/([A-Z])/g, " $1");
                 var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
                 var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return '<div class="content"><b>' + seriesName + '</b>: $' + value + '</div>';
+                return title + '<div class="content">' + (!title ? '<b>' + seriesName + '</b>: ' : '') + '$' + value + '</div>';
             };
         }
 
