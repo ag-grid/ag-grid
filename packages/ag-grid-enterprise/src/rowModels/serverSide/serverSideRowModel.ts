@@ -540,6 +540,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             if (rowNode.id === id) {
                 result = rowNode;
             }
+            if (rowNode.detailNode && rowNode.detailNode.id === id) {
+                result = rowNode.detailNode;
+            }
         });
         return result;
     }

@@ -735,7 +735,7 @@ export class RowRenderer extends BeanStub {
         _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
             const index = Number(indexStr);
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
-                if (this.keepRowBecauseEditingOrFocused(rowComp)) {
+                if (this.doNotUnVirtualiseRow(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
@@ -1035,15 +1035,20 @@ export class RowRenderer extends BeanStub {
     // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
     //    otherwise the user can range select and drag (with focus cell going out of the viewport)
     //    and then ctrl+c, nothing will happen if cell is removed from dom.
-    private keepRowBecauseEditingOrFocused(rowComp: RowComp): boolean {
+    // c) if detail record of master detail, as users complained that the context of detail rows
+    //    was getting lost when detail row out of view. eg user expands to show detail row,
+    //    then manipulates the detail panel (eg sorts the detail grid), then context is lost
+    //    after detail panel is scrolled out of / into view.
+    private doNotUnVirtualiseRow(rowComp: RowComp): boolean {
         const REMOVE_ROW: boolean = false;
         const KEEP_ROW: boolean = true;
         const rowNode = rowComp.getRowNode();
 
         const rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
         const rowIsEditing = rowComp.isEditing();
+        const rowIsDetail = rowNode.detail;
 
-        const mightWantToKeepRow = rowHasFocus || rowIsEditing;
+        const mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;
 
         // if we deffo don't want to keep it,
         if (!mightWantToKeepRow) {
