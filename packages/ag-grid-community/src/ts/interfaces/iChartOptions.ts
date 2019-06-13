@@ -19,6 +19,7 @@ export enum ChartType {
     GroupedBar,
     StackedBar,
     Line,
+    Scatter,
     Pie,
     Doughnut
 }
@@ -36,6 +37,11 @@ export interface BarChartOptions extends CartesianChartOptions {
 export interface LineChartOptions extends CartesianChartOptions {
     series?: LineChartOptions[];
     seriesDefaults?: LineSeriesDefaultOptions;
+}
+
+export interface ScatterChartOptions extends CartesianChartOptions {
+    series?: ScatterChartOptions[];
+    seriesDefaults?: ScatterSeriesDefaultOptions;
 }
 
 export interface PolarChartOptions extends ChartOptions {}
@@ -121,7 +127,35 @@ export interface LineSeriesOptions extends SeriesOptions {
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 }
 
+export interface ScatterTooltipRendererParams {
+    datum: any;
+    xField: string;
+    yField: string;
+}
+
+export interface ScatterSeriesOptions extends SeriesOptions {
+    title?: string;
+
+    xField?: string;
+    yField?: string;
+
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
+
+    marker?: boolean;
+    markerSize?: number;
+    markerStrokeWidth?: number;
+
+    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
+}
+
 export interface LineSeriesDefaultOptions extends LineSeriesOptions {
+    fills?: string[];
+    strokes?: string[];
+}
+
+export interface ScatterSeriesDefaultOptions extends LineSeriesOptions {
     fills?: string[];
     strokes?: string[];
 }

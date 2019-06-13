@@ -4,6 +4,7 @@ import {
     CartesianChartOptions,
     DropShadowOptions,
     LineSeriesOptions,
+    ScatterSeriesOptions,
     PieSeriesOptions,
     DoughnutChartOptions,
     ChartOptions,
@@ -11,6 +12,7 @@ import {
     LegendOptions,
     PolarChartOptions,
     LineChartOptions,
+    ScatterChartOptions,
     PieChartOptions,
     SeriesOptions,
     CaptionOptions,
@@ -19,6 +21,7 @@ import {
 import { CartesianChart } from "../../charts/chart/cartesianChart";
 import { PolarChart } from "../../charts/chart/polarChart";
 import { LineSeries } from "../../charts/chart/series/lineSeries";
+import { ScatterSeries } from "../../charts/chart/series/scatterSeries";
 import { BarSeries } from "../../charts/chart/series/barSeries";
 import { PieSeries } from "../../charts/chart/series/pieSeries";
 import { Chart } from "../../charts/chart/chart";
@@ -30,7 +33,7 @@ import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
 import { Caption } from "../../charts/chart/caption";
 
-type CartesianSeriesType = 'line' | 'bar';
+type CartesianSeriesType = 'line' | 'scatter' | 'bar';
 type PolarSeriesType = 'pie';
 type SeriesType = CartesianSeriesType | PolarSeriesType;
 
@@ -60,6 +63,14 @@ export class ChartBuilder {
         return ChartBuilder.initCartesianChart(chart, options, 'line');
     }
 
+    static createScatterChart(options: ScatterChartOptions): CartesianChart {
+        const chart = new CartesianChart(
+            ChartBuilder.createAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+        return ChartBuilder.initCartesianChart(chart, options, 'scatter');
+    }
+
     static createPolarChart(options: PolarChartOptions): PolarChart {
         const chart = new PolarChart();
         return ChartBuilder.initPolarChart(chart, options);
@@ -79,10 +90,16 @@ export class ChartBuilder {
         return new LineSeries();
     }
 
+    static createScatterSeries(options: ScatterSeriesOptions): ScatterSeries {
+        return new ScatterSeries();
+    }
+
     static createSeries(options: any, type?: string) {
         switch (type || options && options.type) {
             case 'line':
                 return ChartBuilder.initLineSeries(new LineSeries(), options);
+            case 'scatter':
+                return ChartBuilder.initScatterSeries(new ScatterSeries(), options);
             case 'bar':
                 return ChartBuilder.initBarSeries(new BarSeries(), options);
             case 'pie':
@@ -196,6 +213,40 @@ export class ChartBuilder {
         }
         if (options.marker !== undefined) {
             series.marker = options.marker;
+        }
+        if (options.markerSize !== undefined) {
+            series.markerSize = options.markerSize;
+        }
+        if (options.markerStrokeWidth !== undefined) {
+            series.markerStrokeWidth = options.markerStrokeWidth;
+        }
+        if (options.tooltipRenderer !== undefined) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
+
+        return series;
+    }
+
+    static initScatterSeries(series: ScatterSeries, options: ScatterSeriesOptions) {
+        ChartBuilder.initSeries(series, options);
+
+        if (options.title !== undefined) {
+            series.title = options.title;
+        }
+        if (options.xField !== undefined) {
+            series.xField = options.xField;
+        }
+        if (options.yField !== undefined) {
+            series.yField = options.yField;
+        }
+        if (options.fill !== undefined) {
+            series.fill = options.fill;
+        }
+        if (options.stroke !== undefined) {
+            series.stroke = options.stroke;
+        }
+        if (options.strokeWidth !== undefined) {
+            series.strokeWidth = options.strokeWidth;
         }
         if (options.markerSize !== undefined) {
             series.markerSize = options.markerSize;

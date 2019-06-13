@@ -19,6 +19,7 @@ import { ChartModel, ChartModelParams } from "./chartModel";
 import { BarChartProxy } from "./chartProxies/barChartProxy";
 import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
 import { LineChartProxy } from "./chartProxies/lineChartProxy";
+import { ScatterChartProxy } from "./chartProxies/scatterChartProxy";
 import { PieChartProxy } from "./chartProxies/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/doughnutChartProxy";
 import { Palette, palettes } from "../../charts/chart/palettes";
@@ -139,7 +140,9 @@ export class GridChartComp extends Component {
                 return new PieChartProxy(chartOptions);
             case ChartType.Doughnut:
                 return new DoughnutChartProxy(chartOptions);
-            case ChartType.Line:
+            case ChartType.Scatter:
+                return new ScatterChartProxy(chartOptions);
+            default: // case ChartType.Line:
                 return new LineChartProxy(chartOptions);
         }
     }
