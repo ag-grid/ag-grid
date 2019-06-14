@@ -1,11 +1,14 @@
-import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
+import { DragListenerParams } from "../dragAndDrop/dragService";
 import { Resizable, ResizableStructure } from "../rendering/resizable";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { PopupComponent } from "./popupComponent";
-import { _ } from "../utils";
 import { Component } from "./component";
+import { Maximizable, IMaximizable } from "../rendering/maximizable";
+import { Positionable } from "../rendering/positionable";
+import { Movable, IMovable } from "../rendering/movable";
+import { _ } from "../utils";
 
 export interface DialogOptions {
     alwaysOnTop?: boolean;
@@ -23,8 +26,12 @@ export interface DialogOptions {
     y?: number;
     centered?: boolean;
 }
+
+@Positionable
+@Movable
 @Resizable
-export class Dialog extends PopupComponent {
+@Maximizable
+export class Dialog extends PopupComponent implements IMovable, IMaximizable {
 
     private static TEMPLATE =
         `<div class="ag-dialog" tabindex="-1">
@@ -41,34 +48,14 @@ export class Dialog extends PopupComponent {
         </div>
         `;
 
-    private config: DialogOptions | undefined;
-
-    private movable = false;
     private closable = true;
-    private isMoving = false;
 
-    private minWidth: number;
-    private minHeight: number;
-    private popupParent: HTMLElement;
-    private titleBarDragSource: DragListenerParams | undefined;
+    protected config: DialogOptions | undefined;
+    protected popupParent: HTMLElement;
+    protected moveElement: HTMLElement;
+    protected moveElementDragListener: DragListenerParams;
 
-    private dragStartPosition = {
-        x: 0,
-        y: 0
-    };
-
-    private position = {
-        x: 0,
-        y: 0
-    };
-
-    private size = {
-        width: 0,
-        height: 0
-    };
-
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('popupService') private popupService: PopupService;
+    @Autowired('popupService') popupService: PopupService;
 
     @RefSelector('eContentWrapper') private eContentWrapper: HTMLElement;
     @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
@@ -85,65 +72,20 @@ export class Dialog extends PopupComponent {
     }
 
     @PostConstruct
-    protected postConstruct() {
+    postConstruct() {
         const {
-            alwaysOnTop,
             component,
-            centered,
-            movable,
             closable,
             title,
-            minWidth,
-            width,
-            minHeight,
-            height
         } = this.config;
 
-        let { x, y } = this.config;
-
         const eGui = this.getGui();
-
-        this.popupParent = this.popupService.getPopupParent();
-        this.minHeight = minHeight != null ? minHeight : 250;
-        this.minWidth = minWidth != null ? minWidth : 250;
+        this.moveElement = this.eTitleBar;
 
         if (component) { this.setBodyComponent(component); }
         if (title) { this.setTitle(title); }
 
-        this.setMovable(!!movable);
         this.setClosable(closable != null ? closable : this.closable);
-
-        if (width) {
-            _.setFixedWidth(eGui, width);
-            this.size.width = width;
-        }
-
-        if (height) {
-            _.setFixedHeight(eGui, height);
-            this.size.height = height;
-        }
-
-        this.close = this.popupService.addPopup(
-            false,
-            eGui,
-            true,
-            this.destroy.bind(this),
-            undefined,
-            alwaysOnTop
-        );
-
-        this.refreshSize();
-
-        eGui.focus();
-
-        if (centered) {
-            x = (eGui.offsetParent.clientWidth / 2) - (this.getWidth() / 2);
-            y = (eGui.offsetParent.clientHeight / 2) - (this.getHeight() / 2);
-        }
-
-        if (x || y) {
-            this.offsetDialog(x, y);
-        }
 
         this.addDestroyableEventListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
             if (
@@ -167,165 +109,20 @@ export class Dialog extends PopupComponent {
         });
     }
 
-    private updateDragStartPosition(x: number, y: number) {
-        this.dragStartPosition = { x, y };
-    }
-
-    private calculateMouseMovement(params: {
-        e: MouseEvent,
-        topBuffer?: number,
-        anywhereWithin?: boolean,
-        isLeft?: boolean,
-        isTop?: boolean
-    }): { movementX: number, movementY: number} {
-        const parentRect = this.popupParent.getBoundingClientRect();
-        const { e, isLeft, isTop, anywhereWithin, topBuffer } = params;
-        let movementX = e.clientX - this.dragStartPosition.x;
-        let movementY = e.clientY - this.dragStartPosition.y;
-        const width = this.getWidth();
-        const height = this.getHeight();
-
-        // skip if cursor is outside of popupParent horizontally
-        let skipX = (
-            parentRect.left >= e.clientX && this.position.x <= 0 ||
-            parentRect.right <= e.clientX && parentRect.right <= this.position.x + parentRect.left + width
+    //  used by the Positionable Mixin
+    protected renderComponent() {
+        const eGui = this.getGui();
+        const { alwaysOnTop } = this.config;
+        this.close = this.popupService.addPopup(
+            false,
+            eGui,
+            true,
+            this.destroy.bind(this),
+            undefined,
+            alwaysOnTop
         );
 
-        if (!skipX) {
-            if (isLeft) {
-                skipX = (
-                    // skip if we are moving to the left and the cursor
-                    // is positioned to the right of the left side anchor
-                    (movementX < 0 && e.clientX > this.position.x + parentRect.left) ||
-                    // skip if we are moving to the right and the cursor
-                    // is positioned to the left of the dialog
-                    (movementX > 0 && e.clientX < this.position.x + parentRect.left)
-                );
-            } else {
-                if (anywhereWithin) {
-                    // if anywhereWithin is true, we allow to move
-                    // as long as the cursor is within the dialog
-                    skipX = (
-                        (movementX < 0 && e.clientX > this.position.x + parentRect.left + width) ||
-                        (movementX > 0 && e.clientX < this.position.x + parentRect.left)
-                    );
-                } else {
-                    skipX = (
-                        // if the movement is bound to the right side of the dialog
-                        // we skip if we are moving to the left and the cursor
-                        // is to the right of the dialog
-                        (movementX < 0 && e.clientX > this.position.x + parentRect.left + width) ||
-                        // or skip if we are moving to the right and the cursor
-                        // is to the left of the right side anchor
-                        (movementX > 0 && e.clientX < this.position.x + parentRect.left + width)
-                    );
-                }
-            }
-        }
-
-        movementX = skipX ? 0 : movementX;
-
-        const skipY = (
-            // skip if cursor is outside of popupParent vertically
-            parentRect.top >= e.clientY && this.position.y <= 0 ||
-            parentRect.bottom <= e.clientY && parentRect.bottom <= this.position.y + parentRect.top + height ||
-            isTop && (
-                // skip if we are moving to towards top and the cursor is
-                // below the top anchor + topBuffer
-                // note: topBuffer is used when moving the dialog using the title bar
-                (movementY < 0 && e.clientY > this.position.y + parentRect.top + (topBuffer || 0)) ||
-                // skip if we are moving to the bottom and the cursor is
-                // above the top anchor
-                (movementY > 0 && e.clientY < this.position.y + parentRect.top)
-            ) ||
-            // we are anchored to the bottom of the dialog
-            !isTop && (
-                // skip if we are moving towards the top and the cursor
-                // is below the bottom anchor
-                (movementY < 0 && e.clientY > this.position.y + parentRect.top + height) ||
-
-                // skip if we are moving towards the bottom and the cursor
-                // is above the bottom anchor
-                (movementY > 0 && e.clientY < this.position.y + parentRect.top + height)
-            )
-        );
-
-        movementY = skipY ? 0 : movementY;
-
-        return { movementX, movementY };
-    }
-
-    private refreshSize() {
-        const { width, height } = this.size;
-
-        if (!width) {
-            this.setWidth(this.getGui().offsetWidth);
-        }
-
-        if (!height) {
-            this.setHeight(this.getGui().offsetHeight);
-        }
-    }
-
-    public setMovable(movable: boolean) {
-        if (movable !== this.movable) {
-            this.movable = movable;
-
-            const params: DragListenerParams = this.titleBarDragSource || {
-                eElement: this.eTitleBar,
-                onDragStart: this.onDialogMoveStart.bind(this),
-                onDragging: this.onDialogMove.bind(this),
-                onDragStop: this.onDialogMoveEnd.bind(this)
-            };
-
-            if (movable) {
-                this.dragService.addDragSource(params);
-                this.titleBarDragSource = params;
-            } else {
-                this.dragService.removeDragSource(params);
-                this.titleBarDragSource = undefined;
-            }
-        }
-    }
-
-    private onDialogMoveStart(e: MouseEvent) {
-        this.isMoving = true;
-        this.updateDragStartPosition(e.clientX, e.clientY);
-    }
-
-    private onDialogMove(e: MouseEvent) {
-        if (!this.isMoving) { return; }
-        const { x, y } = this.position;
-        const { movementX, movementY } = this.calculateMouseMovement({
-            e,
-            isTop: true,
-            anywhereWithin: true,
-            topBuffer: this.getHeight() - this.getBodyHeight()
-        });
-
-        this.offsetDialog(x + movementX, y + movementY);
-
-        this.updateDragStartPosition(e.clientX, e.clientY);
-    }
-
-    private offsetDialog(x = 0, y = 0) {
-        const ePopup = this.getGui();
-
-        this.popupService.positionPopup({
-            ePopup,
-            x,
-            y,
-            minWidth: this.minWidth,
-            minHeight: this.minHeight,
-            keepWithinBounds: true
-        });
-
-        this.position.x = parseInt(ePopup.style.left, 10);
-        this.position.y = parseInt(ePopup.style.top, 10);
-    }
-
-    private onDialogMoveEnd() {
-        this.isMoving = false;
+        eGui.focus();
     }
 
     public setClosable(closable: boolean) {
@@ -386,41 +183,9 @@ export class Dialog extends PopupComponent {
         this.eTitle.innerText = title;
     }
 
-    public getHeight(): number {
-        return this.size.height;
-    }
-
     public setHeight(height: number) {
-        let newHeight = Math.max(this.minHeight, height);
         const eGui = this.getGui();
-
-        if (newHeight + this.position.y > eGui.offsetParent.clientHeight) {
-            newHeight = eGui.offsetParent.clientHeight - this.position.y;
-        }
-
-        if (this.size.height === newHeight) { return; }
-
-        this.size.height = newHeight;
-        _.setFixedHeight(eGui, newHeight);
         _.setFixedHeight(this.eContentWrapper, eGui.clientHeight - this.eTitleBar.offsetHeight);
-    }
-
-    public getWidth(): number {
-        return this.size.width;
-    }
-
-    public setWidth(width: number) {
-        let newWidth = Math.max(this.minWidth, width);
-        const eGui = this.getGui();
-
-        if (newWidth + this.position.x > eGui.offsetParent.clientWidth) {
-            newWidth = eGui.offsetParent.clientWidth - this.position.x;
-        }
-
-        if (this.size.width === newWidth) { return; }
-
-        this.size.width = newWidth;
-        _.setFixedWidth(eGui, newWidth);
     }
 
     // called when user hits the 'x' in the top right
@@ -431,7 +196,6 @@ export class Dialog extends PopupComponent {
     public destroy(): void {
         super.destroy();
 
-        this.setMovable(false);
         if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;

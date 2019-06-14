@@ -1,8 +1,10 @@
+import { Autowired } from "../context/context";
 import { Component } from "../widgets/component";
-import { PostConstruct } from "../context/context";
 import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { EventService } from "../eventService";
+import { IPositionable } from "./positionable";
 import { _ } from "../utils";
-import { IComponent } from "../interfaces/iComponent";
 
 export type ResizableSides = 'topLeft' |
                       'top' |
@@ -22,7 +24,11 @@ interface MappedResizer {
     dragSource?: DragListenerParams;
 }
 
-export function Resizable<T extends { new(...args:any[]): IComponent<any> }>(target: T) {
+interface IResizable extends IPositionable {
+    setResizable?(resizable: boolean | ResizableStructure): void;
+}
+
+export function Resizable<T extends { new(...args:any[]): IResizable }>(target: T) {
     abstract class MixinClass extends target {
         RESIZE_TEMPLATE = `
             <div class="ag-resizer-wrapper">
@@ -37,23 +43,13 @@ export function Resizable<T extends { new(...args:any[]): IComponent<any> }>(tar
             </div>
         `;
 
-        MAXIMIZE_BTN_TEMPLATE =
-        `<div class="ag-dialog-button">
-            <span class="ag-icon ag-icon-maximize"></span>
-            <span class="ag-icon ag-icon-minimize ag-hidden"></span>
-        </span>
-        `;
+        @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+        @Autowired('dragService') dragService: DragService;
 
         abstract config: any;
-        abstract dragService: DragService;
-        abstract position: { x: number; y: number; };
-        abstract eTitleBar: HTMLElement;
         abstract minWidth: number;
         abstract minHeight: number;
-        abstract getWidth(): number;
-        abstract setWidth(width: number): void;
-        abstract getHeight(): number;
-        abstract setHeight(height: number): void;
+        abstract position: { x: number; y: number; };
         abstract updateDragStartPosition(x: number, y: number): void;
         abstract calculateMouseMovement(params: {
             e: MouseEvent,
@@ -62,10 +58,10 @@ export function Resizable<T extends { new(...args:any[]): IComponent<any> }>(tar
             isLeft?: boolean,
             isTop?: boolean
         }): { movementX: number, movementY: number};
-        abstract offsetDialog(x: number, y: number): void;
+        abstract offsetElement(x: number, y: number): void;
         abstract addTitleBarButton(button: Component, position?: number): void;
-        abstract addDestroyableEventListener(...args: any[]): () => void;
         abstract isAlive(): boolean;
+        abstract localEventService?: EventService;
 
         resizable: ResizableStructure = {};
         isResizable: boolean = false;
@@ -75,10 +71,6 @@ export function Resizable<T extends { new(...args:any[]): IComponent<any> }>(tar
         };
 
         isResizing: boolean = false;
-        isMaximizable: boolean = false;
-        isMaximized: boolean = false;
-        maximizeListeners: (() => void)[] = [];
-        maximizeButtonComp: Component;
 
         lastPosition = {
             x: 0,
@@ -87,13 +79,12 @@ export function Resizable<T extends { new(...args:any[]): IComponent<any> }>(tar
             height: 0
         };
 
-        @PostConstruct
-        addResizer() {
-            const { resizable, maximizable } = this.config;
+        postConstruct() {
+            super.postConstruct();
+            const { resizable } = this.config;
 
             this.addResizers();
             if (resizable) { this.setResizable(resizable); }
-            if (this.isResizable && maximizable) { this.setMaximizable(maximizable); }
         }
 
         addResizers() {
@@ -126,56 +117,12 @@ export function Resizable<T extends { new(...args:any[]): IComponent<any> }>(tar
             return this.resizerMap[side].element;
         }
 
-        setResizable(resizable: boolean | ResizableStructure) {
-            let isResizable = false;
-            if (typeof resizable === 'boolean') {
-                resizable = {
-                    topLeft: resizable,
-                    top: resizable,
-                    topRight: resizable,
-                    right: resizable,
-                    bottomRight: resizable,
-                    bottom: resizable,
-                    bottomLeft: resizable,
-                    left: resizable
-                };
-            }
-
-            Object.keys(resizable).forEach(side => {
-                const r = resizable as ResizableStructure;
-                const s = side as ResizableSides;
-                const val = !!r[s];
-                const el = this.getResizerElement(s);
-
-                const params: DragListenerParams = this.resizerMap[s].dragSource || {
-                    eElement: el,
-                    onDragStart: this.onDialogResizeStart.bind(this),
-                    onDragging: (e: MouseEvent) => this.onDialogResize(e, s),
-                    onDragStop: this.onDialogResizeEnd.bind(this),
-                };
-
-                if (!!this.resizable[s] !== val || (!this.isAlive() && !val)) {
-                    if (val) {
-                        this.dragService.addDragSource(params);
-                        el.style.pointerEvents = 'all';
-                        isResizable = true;
-                    } else {
-                        this.dragService.removeDragSource(params);
-                        el.style.pointerEvents = 'none';
-                    }
-                    this.resizerMap[s].dragSource = val ? params : undefined;
-                }
-            });
-
-            this.isResizable = isResizable;
-        }
-
-        onDialogResizeStart(e: MouseEvent) {
+        onResizeStart(e: MouseEvent) {
             this.isResizing = true;
             this.updateDragStartPosition(e.clientX, e.clientY);
         }
 
-        onDialogResize(e: MouseEvent, side: ResizableSides) {
+        onResize(e: MouseEvent, side: ResizableSides) {
             if (!this.isResizing) { return; }
 
             const isLeft = !!side.match(/left/i);
@@ -230,84 +177,76 @@ export function Resizable<T extends { new(...args:any[]): IComponent<any> }>(tar
             this.updateDragStartPosition(e.clientX, e.clientY);
 
             if (offsetLeft || offsetTop) {
-                this.offsetDialog(
+                this.offsetElement(
                     this.position.x + offsetLeft,
                     this.position.y + offsetTop
                 );
             }
-
-            this.isMaximized = false;
         }
 
-        onDialogResizeEnd() {
+        onResizeEnd() {
             this.isResizing = false;
-        }
 
-        setMaximizable(maximizable: boolean) {
-            if (maximizable === false) {
-                this.clearMaximizebleListeners();
-                if (this.maximizeButtonComp) {
-                    this.maximizeButtonComp.destroy();
-                    this.maximizeButtonComp = undefined;
-                }
-                return;
-            }
+            const params = {
+                type: 'resize',
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi()
+            };
 
-            const eTitleBar = this.eTitleBar;
-            if (!this.isResizable || !eTitleBar || maximizable === this.isMaximizable) { return; }
-
-            const maximizeButtonComp = this.maximizeButtonComp = new Component(this.MAXIMIZE_BTN_TEMPLATE);
-            maximizeButtonComp.addDestroyableEventListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
-            this.addTitleBarButton(maximizeButtonComp, 0);
-
-            this.maximizeListeners.push(
-                this.addDestroyableEventListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))
-            );
-        }
-
-        toggleMaximize() {
-            const maximizeButton = this.maximizeButtonComp.getGui();
-            const maximizeEl = maximizeButton.querySelector('.ag-icon-maximize') as HTMLElement;
-            const minimizeEl = maximizeButton.querySelector('.ag-icon-minimize') as HTMLElement;
-            if (this.isMaximized) {
-                const {x, y, width, height } = this.lastPosition;
-
-                this.setWidth(width);
-                this.setHeight(height);
-                this.offsetDialog(x, y);
-            } else {
-                this.lastPosition.width = this.getWidth();
-                this.lastPosition.height = this.getHeight();
-                this.lastPosition.x = this.position.x;
-                this.lastPosition.y = this.position.y;
-                this.offsetDialog(0, 0);
-                this.setHeight(Infinity);
-                this.setWidth(Infinity);
-            }
-
-            this.isMaximized = !this.isMaximized;
-            _.addOrRemoveCssClass(maximizeEl, 'ag-hidden', this.isMaximized);
-            _.addOrRemoveCssClass(minimizeEl, 'ag-hidden', !this.isMaximized);
-        }
-
-        clearMaximizebleListeners() {
-            if (this.maximizeListeners.length) {
-                this.maximizeListeners.forEach(destroyListener => destroyListener());
-                this.maximizeListeners.length = 0;
+            if (this.localEventService) {
+                this.localEventService.dispatchEvent(params);
             }
         }
 
         destroy() {
             super.destroy();
-            if (this.maximizeButtonComp) {
-                this.maximizeButtonComp.destroy();
-                this.maximizeButtonComp = undefined;
+            this.setResizable(false);
+        }
+
+        public setResizable(resizable: boolean | ResizableStructure) {
+            let isResizable = false;
+            if (typeof resizable === 'boolean') {
+                resizable = {
+                    topLeft: resizable,
+                    top: resizable,
+                    topRight: resizable,
+                    right: resizable,
+                    bottomRight: resizable,
+                    bottom: resizable,
+                    bottomLeft: resizable,
+                    left: resizable
+                };
             }
 
-            this.clearMaximizebleListeners();
-            this.setResizable(false);
+            Object.keys(resizable).forEach(side => {
+                const r = resizable as ResizableStructure;
+                const s = side as ResizableSides;
+                const val = !!r[s];
+                const el = this.getResizerElement(s);
+
+                const params: DragListenerParams = this.resizerMap[s].dragSource || {
+                    eElement: el,
+                    onDragStart: this.onResizeStart.bind(this),
+                    onDragging: (e: MouseEvent) => this.onResize(e, s),
+                    onDragStop: this.onResizeEnd.bind(this),
+                };
+
+                if (!!this.resizable[s] !== val || (!this.isAlive() && !val)) {
+                    if (val) {
+                        this.dragService.addDragSource(params);
+                        el.style.pointerEvents = 'all';
+                        isResizable = true;
+                    } else {
+                        this.dragService.removeDragSource(params);
+                        el.style.pointerEvents = 'none';
+                    }
+                    this.resizerMap[s].dragSource = val ? params : undefined;
+                }
+            });
+
+            this.isResizable = isResizable;
         }
     }
 
-    return MixinClass;
+    return MixinClass as T;
 }
