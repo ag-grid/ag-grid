@@ -5,11 +5,12 @@ import { _ } from "../utils";
 
 export interface IMaximizable extends IPositionable {
     addTitleBarButton(button: Component, position?: number): void;
-    addDestroyableEventListener(...args: any[]): () => void;
 }
 
 export function Maximizable<T extends { new(...args:any[]): IMaximizable }>(target: T) {
     abstract class MixinClass extends target {
+
+        abstract addDestroyableEventListener(...args: any[]): () => void;
 
         MAXIMIZE_BTN_TEMPLATE =
         `<div class="ag-dialog-button">

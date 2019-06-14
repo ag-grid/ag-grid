@@ -16,7 +16,7 @@ export class MessageBox extends Dialog {
         this.message = config.message;
     }
 
-    protected postConstruct() {
+    postConstruct() {
         const messageBodyComp = new MessageBody();
         this.addFeature(this.getContext(), messageBodyComp);
 
