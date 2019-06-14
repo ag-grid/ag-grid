@@ -245,9 +245,6 @@ export class ChartBuilder {
         if (options.stroke !== undefined) {
             series.stroke = options.stroke;
         }
-        if (options.strokeWidth !== undefined) {
-            series.strokeWidth = options.strokeWidth;
-        }
         if (options.markerSize !== undefined) {
             series.markerSize = options.markerSize;
         }

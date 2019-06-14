@@ -141,7 +141,6 @@ export interface ScatterSeriesOptions extends SeriesOptions {
 
     fill?: string;
     stroke?: string;
-    strokeWidth?: number;
 
     marker?: boolean;
     markerSize?: number;
