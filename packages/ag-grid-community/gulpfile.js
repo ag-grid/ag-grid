@@ -180,7 +180,7 @@ function scssTask() {
                                 options: {
                                     syntax: 'postcss-scss', 
                                     plugins: [autoprefixer({
-                                        browsers: ["last 2 version"],
+                                        overrideBrowserslist: ["last 2 version"],
                                         flexbox: true
                                     })]
                                 }
