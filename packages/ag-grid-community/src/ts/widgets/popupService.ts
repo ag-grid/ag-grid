@@ -543,9 +543,10 @@ export class PopupService {
 
         if (onTopLengh) {
             const isPopupAlwaysOnTop = _.containsClass(eWrapper, 'ag-always-on-top');
-
-            if (isPopupAlwaysOnTop && pos !== popupLen - 1) {
-                (_.last(alwaysOnTopList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+            if (isPopupAlwaysOnTop) {
+                if (pos !== popupLen - 1) {
+                    (_.last(alwaysOnTopList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+                }
             } else if (pos !== popupLen - onTopLengh - 1) {
                 alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
             }
