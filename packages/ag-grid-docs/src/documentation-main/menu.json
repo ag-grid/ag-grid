@@ -403,6 +403,10 @@
             "url": "javascript-grid-charts-customisation-line/"
           },
           {
+            "title": "Scatter",
+            "url": "javascript-grid-charts-customisation-scatter/"
+          },
+          {
             "title": "Pie",
             "url": "javascript-grid-charts-customisation-pie/"
           },
