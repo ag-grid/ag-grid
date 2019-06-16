@@ -72,7 +72,12 @@ export class DummyFormattingPanel extends Component {
 
         this.addDestroyableEventListener(comp, 'change', () => {
             const chartProxy = this.chartController.getChartProxy();
-            chartProxy.getChart().series.forEach(series => series.toggleSeriesItem(1, comp.isSelected()));
+            const chart = chartProxy.getChart();
+            chart.series.forEach(s => {
+                s.showInLegend = comp.isSelected();
+                // shouldn't have to toggle series!
+                s.toggleSeriesItem(1, comp.isSelected());
+            });
         });
 
         const groupComp = new AgGroupComponent({label: 'Legend'});
