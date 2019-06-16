@@ -2,6 +2,7 @@ import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostCons
 import { RangeController } from "../../rangeController";
 import { ChartModel, ColState } from "./chartModel";
 import { Palette } from "../../charts/chart/palettes";
+import {ChartProxy} from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -95,6 +96,10 @@ export class ChartController extends BeanStub {
         if (!this.model.isSuppressChartRanges()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
+    }
+
+    public getChartProxy(): ChartProxy {
+        return this.model.getChartProxy();
     }
 
     private raiseChartUpdatedEvent() {

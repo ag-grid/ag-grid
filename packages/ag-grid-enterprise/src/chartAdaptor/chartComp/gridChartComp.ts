@@ -121,9 +121,12 @@ export class GridChartComp extends Component {
             height: height,
         };
 
+        // local state used to detect when chart type changes
+        this.currentChartType = this.model.getChartType();
         this.chartProxy = this.createChartProxy(chartProxyParams);
 
-        this.currentChartType = this.model.getChartType();
+        // update chart proxy ref (used by format panel)
+        this.model.setChartProxy(this.chartProxy);
     }
 
     private getSelectedPalette(): Palette {

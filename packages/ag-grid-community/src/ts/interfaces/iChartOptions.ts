@@ -13,7 +13,7 @@ export interface ChartOptions {
     subtitle?: CaptionOptions;
 }
 
-export type ChartToolbarOptions = 'chartSettings' | 'chartData' | 'chartDownload';
+export type ChartToolbarOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartDownload';
 
 export enum ChartType {
     GroupedBar,

@@ -27,6 +27,7 @@ export class ChartMenu extends Component {
     private buttons: ChartToolbarButtons = {
         chartSettings: ['ag-icon-chart', () => this.showMenu('chartSettings')],
         chartData: ['ag-icon-data', () => this.showMenu('chartData')],
+        chartFormat: ['ag-icon-data', () => this.showMenu('chartFormat')],
         chartDownload: ['ag-icon-save', () => this.saveChart()]
     };
 
@@ -50,7 +51,7 @@ export class ChartMenu extends Component {
     }
 
     private getToolbarOptions(): ChartToolbarOptions[] {
-        let chartToolbarOptions: ChartToolbarOptions[] = ['chartSettings', 'chartData', 'chartDownload'];
+        let chartToolbarOptions: ChartToolbarOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartDownload'];
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
 
         if (toolbarItemsFunc) {

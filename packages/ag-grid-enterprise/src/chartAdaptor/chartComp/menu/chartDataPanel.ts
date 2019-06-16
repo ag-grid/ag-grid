@@ -22,9 +22,9 @@ export class ChartDataPanel extends Component {
 
     private readonly chartController: ChartController;
 
-    constructor(chartModel: ChartController) {
+    constructor(chartController: ChartController) {
         super(ChartDataPanel.TEMPLATE);
-        this.chartController = chartModel;
+        this.chartController = chartController;
     }
 
     @PostConstruct

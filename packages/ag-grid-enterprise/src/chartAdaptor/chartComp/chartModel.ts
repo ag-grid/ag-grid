@@ -14,6 +14,7 @@ import {
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
 import { RangeController } from "../../rangeController";
 import { Palette } from "../../charts/chart/palettes";
+import {ChartProxy} from "./chartProxies/chartProxy";
 
 export interface ColState {
     column?: Column;
@@ -58,6 +59,7 @@ export class ChartModel extends BeanStub {
     private datasource: ChartDatasource;
 
     private chartId: string;
+    private chartProxy: ChartProxy;
 
     public constructor(params: ChartModelParams) {
         super();
@@ -69,7 +71,7 @@ export class ChartModel extends BeanStub {
         this.activePalette = params.activePalette;
         this.suppressChartRanges = params.suppressChartRanges;
 
-        // this is used associate chart ranges with charts
+        // this is used to associate chart ranges with charts
         this.chartId = this.generateId();
     }
 
@@ -220,6 +222,14 @@ export class ChartModel extends BeanStub {
             d[selectedDimension] = {toString: () => dimensionValue, id: index};
             return d;
         });
+    }
+
+    public setChartProxy(chartProxy: ChartProxy): void {
+        this.chartProxy = chartProxy;
+    }
+
+    public getChartProxy(): ChartProxy {
+        return this.chartProxy;
     }
 
     public getChartId(): string {

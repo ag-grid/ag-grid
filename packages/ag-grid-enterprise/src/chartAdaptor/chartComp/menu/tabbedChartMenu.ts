@@ -14,12 +14,14 @@ import {
 import { ChartController } from "../chartController";
 import { ChartSettingsPanel } from "./chartSettingsPanel";
 import { ChartDataPanel } from "./chartDataPanel";
+import { DummyFormattingPanel } from "./dummyFormattingPanel";
 
 export class TabbedChartMenu extends Component {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
     public static TAB_MAIN = 'settings';
     public static TAB_DATA = 'data';
+    public static TAB_FORMAT = 'format';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -27,7 +29,7 @@ export class TabbedChartMenu extends Component {
     private currentChartType: ChartType;
 
     private panels: ChartToolbarOptions[];
-    private tabs: TabbedItem[] = []
+    private tabs: TabbedItem[] = [];
     private readonly chartController: ChartController;
 
     private chartIcons: HTMLElement[] = [];
@@ -51,24 +53,17 @@ export class TabbedChartMenu extends Component {
         
         this.panels.forEach(panel => {
             const panelType = panel.replace('chart', '').toLowerCase();
-            const isMain = panelType === TabbedChartMenu.TAB_MAIN;
-            const iconCls = isMain ? 'chart' : 'data';
-            const panelClass = isMain ? ChartSettingsPanel : ChartDataPanel;
-
-            const { comp, tab } = this.createTab(panelType, iconCls, panelClass);
+            const iconCls = panelType === TabbedChartMenu.TAB_MAIN ? 'chart' : 'data';
+            const { comp, tab } = this.createTab(panelType, iconCls, this.getPanelClass(panelType));
 
             this.tabs.push(tab);
             this.addDestroyFunc(() => comp.destroy());
-        })
+        });
 
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu'
         });
-    }
-
-    public getMinDimensions(): {width: number, height: number} {
-        return this.tabbedLayout.getMinDimensions();
     }
 
     private createTab(
@@ -96,6 +91,10 @@ export class TabbedChartMenu extends Component {
         }
     }
 
+    public getMinDimensions(): {width: number, height: number} {
+        return this.tabbedLayout.getMinDimensions();
+    }
+
     public updateCurrentChartType(chartType: ChartType) {
         _.removeCssClass(this.chartIcons[this.currentChartType], 'ag-selected');
         this.currentChartType = chartType;
@@ -117,5 +116,11 @@ export class TabbedChartMenu extends Component {
             this.parentComponent.destroy();
         }
         super.destroy();
+    }
+
+    private getPanelClass(panelType: string) {
+        const isDataPanel = panelType === TabbedChartMenu.TAB_DATA;
+        const isFormatPanel = panelType === TabbedChartMenu.TAB_FORMAT;
+        return isDataPanel ? ChartDataPanel : (isFormatPanel ? DummyFormattingPanel : ChartSettingsPanel);
     }
 }
