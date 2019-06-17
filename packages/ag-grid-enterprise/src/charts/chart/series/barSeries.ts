@@ -82,6 +82,7 @@ export class BarSeries extends Series<CartesianChart> {
 
     private xData: string[] = [];
     private yData: number[][] = [];
+    private ySums: number[] = [];
     private domainY: number[] = [];
 
     /**
@@ -155,6 +156,26 @@ export class BarSeries extends Series<CartesianChart> {
     }
     get grouped(): boolean {
         return this._grouped;
+    }
+
+    /**
+     * The value to normalize the stacks to, when {@link grouped} is `false`.
+     * Should be a finite positive value or `NaN`.
+     * Defaults to `NaN` - stacks are not normalized.
+     */
+    private _normalizedTo: number = NaN;
+    set normalizedTo(value: number) {
+        if (value === 0) {
+            value = NaN;
+        }
+        const absValue = Math.abs(value);
+        if (this._normalizedTo !== absValue) {
+            this._normalizedTo = absValue;
+            this.scheduleData();
+        }
+    }
+    get normalizedTo(): number {
+        return this._normalizedTo;
     }
 
     private _strokeWidth: number = 1;
@@ -273,16 +294,26 @@ export class BarSeries extends Series<CartesianChart> {
         // }]
         //
         const enabled = this.enabled;
+        const normalizedTo = this.normalizedTo;
         const xData: string[] = this.xData = data.map(datum => datum[xField]);
-        const yData: number[][] = this.yData = data.map(datum => {
+        const ySums: number[] = this.ySums = [];
+        const yData: number[][] = this.yData = data.map((datum, xIndex) => {
             const values: number[] = [];
+            let ySum = 0;
             yFields.forEach(field => {
                 let value = datum[field];
                 if (isNaN(value) || !isFinite(value)) {
                     value = 0;
                 }
-                values.push(enabled.get(field) ? value : 0);
+                if (!enabled.get(field)) {
+                    value = 0;
+                }
+                if (value > 0) {
+                    ySum += value;
+                }
+                values.push(value);
             });
+            ySums[xIndex] = ySum;
             return values;
         });
 
@@ -305,26 +336,35 @@ export class BarSeries extends Series<CartesianChart> {
             yMin = Math.min(...yData.map(groupValues => Math.min(0, ...groupValues)));
             yMax = Math.max(...yData.map(groupValues => Math.max(...groupValues)));
         } else { // stacked or regular
-            // Find the height of each stack in the positive and negative directions,
-            // then find the tallest stacks in both directions.
-            yMin = Math.min(0, ...yData.map(stackValues => {
-                let min = 0;
-                stackValues.forEach(value => {
-                    if (value < 0) {
-                        min -= value;
-                    }
+            if (isFinite(normalizedTo)) {
+                yMin = 0;
+                yMax = normalizedTo;
+                yData.forEach((stack, i) => {
+                    const total = ySums[i];
+                    stack.forEach((value, j) => stack[j] = stack[j] / total * normalizedTo);
                 });
-                return min;
-            }));
-            yMax = Math.max(...yData.map(stackValues => {
-                let max = 0;
-                stackValues.forEach(value => {
-                    if (value > 0) {
-                        max += value;
-                    }
-                });
-                return max;
-            }));
+            } else {
+                // Find the height of each stack in the positive and negative directions,
+                // then find the tallest stacks in both directions.
+                yMin = Math.min(0, ...yData.map(stackValues => {
+                    let min = 0;
+                    stackValues.forEach(value => {
+                        if (value < 0) {
+                            min -= value;
+                        }
+                    });
+                    return min;
+                }));
+                yMax = Math.max(...yData.map(stackValues => {
+                    let max = 0;
+                    stackValues.forEach(value => {
+                        if (value > 0) {
+                            max += value;
+                        }
+                    });
+                    return max;
+                }));
+            }
         }
 
         if (yMin === yMax || !isFinite(yMin) || !isFinite(yMax)) {

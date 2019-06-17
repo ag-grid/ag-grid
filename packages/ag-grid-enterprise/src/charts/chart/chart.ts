@@ -82,8 +82,8 @@ export abstract class Chart {
         return this._title;
     }
 
-    private _subtitle: Caption | null = null;
-    set subtitle(value: Caption | null) {
+    private _subtitle: Caption | undefined = undefined;
+    set subtitle(value: Caption | undefined) {
         const oldSubtitle = this._subtitle;
         if (oldSubtitle !== value) {
             if (oldSubtitle) {
@@ -98,7 +98,7 @@ export abstract class Chart {
             this.layoutPending = true;
         }
     }
-    get subtitle(): Caption | null {
+    get subtitle(): Caption | undefined {
         return this._subtitle;
     }
 
