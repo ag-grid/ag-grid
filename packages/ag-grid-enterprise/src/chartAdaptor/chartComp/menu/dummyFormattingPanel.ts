@@ -36,23 +36,6 @@ export class DummyFormattingPanel extends Component {
 
         const eGui = this.getGui();
 
-        const comp = new AgCheckbox();
-
-        this.getContext().wireBean(comp);
-        comp.setLabel(_.escape('Enabled') as string);
-        comp.setSelected(true);
-
-        this.columnComps['legendEnabled'] = comp;
-
-        this.addDestroyableEventListener(comp, 'change', () => {
-            const chartProxy = this.chartController.getChartProxy();
-            const chart = chartProxy.getChart();
-            chart.series.forEach(s => {
-                s.showInLegend = comp.isSelected();
-                s.toggleSeriesItem(1, comp.isSelected());
-            });
-        });
-
         const groupComp = new AgGroupComponent({label: 'Legend'});
         this.getContext().wireBean(groupComp);
 
@@ -66,13 +49,19 @@ export class DummyFormattingPanel extends Component {
 
         this.getContext().wireBean(comp);
         comp.setLabel('Enabled');
-        comp.setSelected(true);
+
+        const chartProxy = this.chartController.getChartProxy();
+        const chart = chartProxy.getChart();
+
+        // this can be simplified when chart api is improved
+        let enabled = _.every(chart.series, (series) => series.showInLegend && series.visible);
+        comp.setSelected(enabled);
 
         this.columnComps['legendEnabled'] = comp;
 
         this.addDestroyableEventListener(comp, 'change', () => {
-            const chartProxy = this.chartController.getChartProxy();
-            const chart = chartProxy.getChart();
+
+            // this can be simplified when chart api is improved
             chart.series.forEach(s => {
                 s.showInLegend = comp.isSelected();
                 // shouldn't have to toggle series!
@@ -80,8 +69,6 @@ export class DummyFormattingPanel extends Component {
             });
         });
 
-        const groupComp = new AgGroupComponent({label: 'Legend'});
-        this.getContext().wireBean(groupComp);
         container.addItem(comp);
     }
 
