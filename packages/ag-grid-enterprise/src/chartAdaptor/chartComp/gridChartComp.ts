@@ -4,7 +4,7 @@ import {
     CellRange,
     ChartType,
     Component,
-    Dialog,
+    AgDialog,
     Environment,
     GridOptionsWrapper,
     PostConstruct,
@@ -48,7 +48,7 @@ export class GridChartComp extends Component {
     @RefSelector('eChart') private eChart: HTMLElement;
 
     private chartMenu: ChartMenu;
-    private chartDialog: Dialog;
+    private chartDialog: AgDialog;
 
     private model: ChartModel;
     private chartController: ChartController;
@@ -151,7 +151,7 @@ export class GridChartComp extends Component {
     }
 
     private addDialog() {
-        this.chartDialog = new Dialog({
+        this.chartDialog = new AgDialog({
             resizable: true,
             movable: true,
             maximizable: true,
@@ -162,7 +162,7 @@ export class GridChartComp extends Component {
         });
         this.getContext().wireBean(this.chartDialog);
 
-        this.chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => this.destroy());
+        this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());
     }
 
     private addMenu() {

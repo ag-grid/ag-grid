@@ -5,7 +5,6 @@ import { GridApi } from "./gridApi";
 import { ColumnApi } from "./columnController/columnApi";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { FilterRequestSource } from "./filter/filterManager";
-import { Dialog } from "./widgets/dialog";
 
 export { Events } from './eventKeys';
 

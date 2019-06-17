@@ -3,7 +3,7 @@ import {
     AgEvent,
     Component,
     ChartToolbarOptions,
-    Dialog,
+    AgDialog,
     GetChartToolbarItemsParams,
     GridOptionsWrapper,
     PostConstruct,
@@ -38,7 +38,7 @@ export class ChartMenu extends Component {
 
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
-    private menuDialog: Dialog;
+    private menuDialog: AgDialog;
 
     constructor(chartController: ChartController) {
         super(ChartMenu.TEMPLATE);
@@ -102,7 +102,7 @@ export class ChartMenu extends Component {
         const parentRect = parentGui.getBoundingClientRect();
         const tab = this.tabs.indexOf(tabName);
 
-        this.menuDialog = new Dialog({
+        this.menuDialog = new AgDialog({
             alwaysOnTop: true,
             movable: true,
             resizable: {

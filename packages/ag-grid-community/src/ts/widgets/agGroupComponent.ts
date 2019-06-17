@@ -11,27 +11,29 @@ interface GroupParams {
 }
 
 export class AgGroupComponent extends Component {
-    static TEMPLATE =
+    private static TEMPLATE =
         `<div class="ag-group-component">
             <div ref="eLabel" class="ag-group-component-label">
-        </div>
-        `;
+        </div>`;
 
     private items: GroupItem[];
     private label: string;
 
     @RefSelector("eLabel") private eLabel: HTMLElement;
 
-    constructor(params: GroupParams) {
+    constructor(params?: GroupParams) {
         super(AgGroupComponent.TEMPLATE);
+
+        if (!params) {
+            params = {} as GroupParams;
+        }
+
         this.label = params.label;
-
         this.items = params.items || [];
-
     }
 
     @PostConstruct
-    private init() {
+    private postConstruct() {
         if (this.items.length) {
             const initialItems = this.items;
             this.items = [];

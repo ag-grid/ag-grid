@@ -1,7 +1,7 @@
 import {
     Autowired,
     Component,
-    Dialog,
+    AgDialog,
     ChartType,
     GridOptionsWrapper,
     TabbedLayout,
@@ -85,7 +85,7 @@ export class TabbedChartMenu extends Component {
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name,
                 afterAttachedCallback: () => {
-                    (this.parentComponent as Dialog).setTitle(`Chart ${_.capitalise(name)}`)
+                    (this.parentComponent as AgDialog).setTitle(`Chart ${_.capitalise(name)}`)
                 }
             }
         }
