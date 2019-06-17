@@ -1274,15 +1274,15 @@
     ////////////////////////////////////////
     // Dialog
     ////////////////////////////////////////
-    .ag-dialog {
+    .ag-panel {
         background-color: $dialog-background-color;
         border: $dialog-border-size $dialog-border-style $dialog-border-color;
-        .ag-dragging-range-handle &, .ag-dragging-fill-handle & {
+        .ag-dragging-range-handle &.ag-dialog, .ag-dragging-fill-handle &.ag-dialog {
             opacity: 0.7;
             pointer-events: none;
         }
 
-        .ag-dialog-title-bar {
+        .ag-title-bar {
             background-color: $dialog-title-background-color;
             color: $dialog-title-foreground-color;
             height: $dialog-title-height;
@@ -1292,8 +1292,8 @@
             padding-left: $cell-horizontal-padding;
             padding: $dialog-title-padding;
 
-            .ag-dialog-title-bar-buttons {
-                .ag-dialog-button {
+            .ag-title-bar-buttons {
+                .ag-button {
                     height: $dialog-title-icon-size;
                     width: $dialog-title-icon-size;
                     .ag-icon {

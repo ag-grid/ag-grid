@@ -200,6 +200,7 @@ export { AgCheckbox } from "./widgets/agCheckbox";
 export { AgRadioButton } from "./widgets/agRadioButton";
 export { AgGroupComponent } from "./widgets/agGroupComponent";
 export { AgDialog } from "./widgets/agDialog";
+export { AgPanel } from "./widgets/agPanel";
 export { MessageBox } from "./widgets/messageBox";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { PopupComponent } from "./widgets/popupComponent";

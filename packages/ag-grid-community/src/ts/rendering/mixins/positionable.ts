@@ -210,7 +210,10 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
 
             this.size.height = newHeight;
             _.setFixedHeight(eGui, newHeight);
-            super.setHeight(height);
+
+            if (super.setHeight) {
+                super.setHeight(height);
+            }
         }
 
         public getWidth(): number {
@@ -229,6 +232,10 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
 
             this.size.width = newWidth;
             _.setFixedWidth(eGui, newWidth);
+
+            if (super.setWidth) {
+                super.setWidth(width);
+            }
         }
 
         public center() {

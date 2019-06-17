@@ -1,6 +1,5 @@
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
 import { IPositionable } from "./positionable";
-import { PopupService } from "../../widgets/popupService";
 import { _ } from "../../utils";
 
 export interface IMovable extends IPositionable {
@@ -11,11 +10,8 @@ export function Movable<T extends { new(...args:any[]): IMovable }>(target: T) {
     abstract class MixinClass extends target {
 
         abstract config: any;
-        abstract minWidth?: number;
-        abstract minHeight?: number;
         abstract moveElement: HTMLElement;
         abstract moveElementDragListener: DragListenerParams;
-        abstract popupService: PopupService;
         abstract dragService: DragService;
         abstract updateDragStartPosition(x: number, y: number): void;
         abstract calculateMouseMovement(params: {

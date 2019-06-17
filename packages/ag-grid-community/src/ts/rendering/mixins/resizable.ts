@@ -1,5 +1,4 @@
 import { Autowired } from "../../context/context";
-import { Component } from "../../widgets/component";
 import { DragService, DragListenerParams } from "../../dragAndDrop/dragService";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { EventService } from "../../eventService";
@@ -24,7 +23,7 @@ interface MappedResizer {
     dragSource?: DragListenerParams;
 }
 
-interface IResizable extends IPositionable {
+export interface IResizable extends IPositionable {
     setResizable?(resizable: boolean | ResizableStructure): void;
 }
 
@@ -59,7 +58,6 @@ export function Resizable<T extends { new(...args:any[]): IResizable }>(target: 
             isTop?: boolean
         }): { movementX: number, movementY: number};
         abstract offsetElement(x: number, y: number): void;
-        abstract addTitleBarButton(button: Component, position?: number): void;
         abstract isAlive(): boolean;
         abstract localEventService?: EventService;
 

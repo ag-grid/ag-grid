@@ -884,11 +884,44 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 $handleSize: 5px;
 
-.ag-dialog {
+.ag-dialog, .ag-panel {
     display: flex;
     flex-direction: column;
-    position: absolute;
+    position: relative;
     overflow: hidden;
+
+    .ag-title-bar {
+        display: flex;
+        flex: none;
+        align-items: center;
+        cursor: default;
+
+        .ag-title-bar-title {
+            flex: 1 1 auto;
+        }
+
+        .ag-title-bar-buttons {
+            display: flex;
+            .ag-button {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .ag-panel-content-wrapper {
+        display: flex;
+        flex: 1 1 auto;
+        position: relative;
+        overflow: hidden;
+        > div {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+.ag-dialog {
+    position: absolute;
 
     .ag-resizer {
         position: absolute;
@@ -949,38 +982,6 @@ $handleSize: 5px;
             bottom: $handleSize;
             width: $handleSize;
             cursor: ew-resize;
-        }
-    }
-
-    .ag-dialog-title-bar {
-        display: flex;
-        flex: none;
-        align-items: center;
-        cursor: default;
-
-        .ag-dialog-title-bar-title {
-            flex: 1 1 auto;
-        }
-
-        .ag-dialog-title-bar-buttons {
-            display: flex;
-            .ag-dialog-button {
-                cursor: pointer;
-                height: 100%;
-                width: 100%;
-                background-size: contain;
-            }
-        }
-    }
-
-    .ag-dialog-content-wrapper {
-        display: flex;
-        flex: 1 1 auto;
-        position: relative;
-        overflow: hidden;
-        > div {
-            width: 100%;
-            height: 100%;
         }
     }
 
