@@ -77,6 +77,8 @@ import { _ } from "./utils";
 import { TooltipManager } from "./widgets/tooltipManager";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { Module } from "./interfaces/iModule";
+import { AgGroupComponent } from "./widgets/agGroupComponent";
+import { AgDialog } from "./widgets/agDialog";
 
 export interface GridParams {
     // used by Web Components
@@ -191,12 +193,14 @@ export class Grid {
         }
 
         let components = [
-            {componentName: 'AgCheckbox', theClass: AgCheckbox},
-            {componentName: 'AgRadioButton', theClass: AgRadioButton},
-            {componentName: 'AgGridComp', theClass: GridPanel},
-            {componentName: 'AgHeaderRoot', theClass: HeaderRootComp},
-            {componentName: 'AgPagination', theClass: PaginationComp},
-            {componentName: 'AgOverlayWrapper', theClass: OverlayWrapperComponent}
+            { componentName: 'AgCheckbox', theClass: AgCheckbox },
+            { componentName: 'AgRadioButton', theClass: AgRadioButton },
+            { componentName: 'AgGridComp', theClass: GridPanel },
+            { componentName: 'AgHeaderRoot', theClass: HeaderRootComp },
+            { componentName: 'AgPagination', theClass: PaginationComp },
+            { componentName: 'AgOverlayWrapper', theClass: OverlayWrapperComponent },
+            { componentName: 'AgGroupComponent', theClass: AgGroupComponent },
+            { componentName: 'AgDialog', theClass: AgDialog }
         ];
 
         if (Grid.enterpriseComponents) {

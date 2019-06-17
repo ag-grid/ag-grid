@@ -1,7 +1,7 @@
-import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
+import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
 import { IPositionable } from "./positionable";
-import { PopupService } from "../widgets/popupService";
-import { _ } from "../utils";
+import { PopupService } from "../../widgets/popupService";
+import { _ } from "../../utils";
 
 export interface IMovable extends IPositionable {
     setMovable?(movable: boolean): void;

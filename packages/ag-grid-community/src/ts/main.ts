@@ -199,7 +199,7 @@ export { StylingService } from "./styling/stylingService";
 export { AgCheckbox } from "./widgets/agCheckbox";
 export { AgRadioButton } from "./widgets/agRadioButton";
 export { AgGroupComponent } from "./widgets/agGroupComponent";
-export { Dialog } from "./widgets/dialog";
+export { AgDialog } from "./widgets/agDialog";
 export { MessageBox } from "./widgets/messageBox";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { PopupComponent } from "./widgets/popupComponent";

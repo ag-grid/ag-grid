@@ -1,13 +1,13 @@
 import { DragListenerParams } from "../dragAndDrop/dragService";
-import { Resizable, ResizableStructure } from "../rendering/resizable";
+import { Resizable, ResizableStructure } from "../rendering/mixins/resizable";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { PopupComponent } from "./popupComponent";
 import { Component } from "./component";
-import { Maximizable, IMaximizable } from "../rendering/maximizable";
-import { Positionable } from "../rendering/positionable";
-import { Movable, IMovable } from "../rendering/movable";
+import { Maximizable, IMaximizable } from "../rendering/mixins/maximizable";
+import { Positionable } from "../rendering/mixins/positionable";
+import { Movable, IMovable } from "../rendering/mixins/movable";
 import { _ } from "../utils";
 
 export interface DialogOptions {
@@ -31,7 +31,7 @@ export interface DialogOptions {
 @Movable
 @Resizable
 @Maximizable
-export class Dialog extends PopupComponent implements IMovable, IMaximizable {
+export class AgDialog extends PopupComponent implements IMovable, IMaximizable {
 
     private static TEMPLATE =
         `<div class="ag-dialog" tabindex="-1">
@@ -67,7 +67,7 @@ export class Dialog extends PopupComponent implements IMovable, IMaximizable {
     public close: () => void;
 
     constructor(config?: DialogOptions) {
-        super(Dialog.TEMPLATE);
+        super(AgDialog.TEMPLATE);
         this.config = config;
     }
 
@@ -131,7 +131,7 @@ export class Dialog extends PopupComponent implements IMovable, IMaximizable {
         }
 
         if (closable) {
-            const closeButtonComp = this.closeButtonComp = new Component(Dialog.CLOSE_BTN_TEMPLATE);
+            const closeButtonComp = this.closeButtonComp = new Component(AgDialog.CLOSE_BTN_TEMPLATE);
             this.addTitleBarButton(closeButtonComp);
             closeButtonComp.addDestroyableEventListener(closeButtonComp.getGui(), 'click', this.onBtClose.bind(this));
         } else if (this.closeButtonComp) {

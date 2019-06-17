@@ -1,7 +1,7 @@
-import { Component } from "../widgets/component";
-import { PostConstruct } from "../context/context";
+import { Component } from "../../widgets/component";
+import { PostConstruct } from "../../context/context";
 import { IPositionable } from "./positionable";
-import { _ } from "../utils";
+import { _ } from "../../utils";
 
 export interface IMaximizable extends IPositionable {
     addTitleBarButton(button: Component, position?: number): void;

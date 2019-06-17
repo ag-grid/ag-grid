@@ -1,10 +1,10 @@
-import { Autowired } from "../context/context";
-import { Component } from "../widgets/component";
-import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { EventService } from "../eventService";
+import { Autowired } from "../../context/context";
+import { Component } from "../../widgets/component";
+import { DragService, DragListenerParams } from "../../dragAndDrop/dragService";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { EventService } from "../../eventService";
 import { IPositionable } from "./positionable";
-import { _ } from "../utils";
+import { _ } from "../../utils";
 
 export type ResizableSides = 'topLeft' |
                       'top' |

@@ -1,7 +1,7 @@
-import { PopupService } from "../widgets/popupService";
-import { IComponent } from "../interfaces/iComponent";
-import { Autowired } from "../context/context";
-import { _ } from "../utils";
+import { PopupService } from "../../widgets/popupService";
+import { IComponent } from "../../interfaces/iComponent";
+import { Autowired } from "../../context/context";
+import { _ } from "../../utils";
 
 export interface IPositionable extends IComponent<any> {
     getHeight?(): number;
