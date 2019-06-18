@@ -180,6 +180,7 @@ export abstract class Chart {
 
     private _legendPadding: number = 20;
     set legendPadding(value: number) {
+        value = isFinite(value) ? value : 20;
         if (this._legendPadding !== value) {
             this._legendPadding = value;
             this.layoutPending = true;
