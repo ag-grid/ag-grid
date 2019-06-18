@@ -54,6 +54,7 @@
     }
     .ag-tab-header {
         flex: none;
+        user-select: none;
     }
     .ag-tab-body {
         display: flex;

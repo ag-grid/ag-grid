@@ -77,11 +77,14 @@ export class TabbedChartMenu extends Component {
         const comp = new ChildClass(this.chartController);
         this.getContext().wireBean(comp);
         eWrapperDiv.appendChild(comp.getGui());
+        const title = document.createElement('div');
+        title.innerText = _.capitalise(name.replace('chart', ''));
 
         return {
             comp,
             tab: {
-                title: _.createIconNoSpan(iconName, this.gridOptionsWrapper, null),
+                // title: _.createIconNoSpan(iconName, this.gridOptionsWrapper, null),
+                title,
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name,
                 afterAttachedCallback: () => {
