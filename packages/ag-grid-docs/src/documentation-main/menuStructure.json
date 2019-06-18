@@ -203,6 +203,10 @@
       {
         "title": "Column Spanning",
         "url": "javascript-grid-column-spanning/"
+      },
+      {
+        "title": "Column Animation",
+        "url": "javascript-grid-column-animation/"
       }
     ]
   },
@@ -234,7 +238,7 @@
         "url": "javascript-grid-full-width-rows/"
       },
       {
-        "title": "Row & Column Animation",
+        "title": "Row Animation",
         "url": "javascript-grid-animation/"
       }
     ]

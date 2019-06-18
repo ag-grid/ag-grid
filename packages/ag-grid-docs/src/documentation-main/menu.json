@@ -217,8 +217,12 @@
         "url": "javascript-grid-touch/"
       },
       {
-        "title": "Animation",
+        "title": "Row Animation",
         "url": "javascript-grid-animation/"
+      },
+      {
+        "title": "Column Animation",
+        "url": "javascript-grid-column-animation/"
       },
       {
         "title": "Accessing Data",
