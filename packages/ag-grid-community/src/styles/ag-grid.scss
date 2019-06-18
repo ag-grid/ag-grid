@@ -910,7 +910,7 @@ $handleSize: 5px;
 
     .ag-panel-content-wrapper {
         display: flex;
-        flex: 1 1 auto;
+        flex: 1 1 100%;
         position: relative;
         overflow: hidden;
         > div {
