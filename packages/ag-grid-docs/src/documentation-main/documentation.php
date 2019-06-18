@@ -7,68 +7,161 @@ include 'documentation_header.php';
 ?>
 
 <?php
-/*
-$lev1Items = json_decode(file_get_contents('../documentation-main/menuStructure.json'), true);
-$menuItems = json_decode(file_get_contents('../documentation-main/menuItems.json'), true);
 
-foreach($lev1Items as $lev1Item) {
+//doLevel1();
+doOldMenu();
 
-    $lev2Items = $lev1Item['children'];
-    $lev1ItemName = $lev1Item['name'];
+function doLevel1() {
+    $lev1Items = json_decode(file_get_contents('../documentation-main/menuStructure.json'), true);
 
-    echo "<div class='docs-homepage-section-preview'>";
-    echo "<h1>$lev1ItemName</h1>";
+    foreach($lev1Items as $lev1Item) {
 
-    echo "<ul>";
+        $lev1ItemName = $lev1Item['title'];
 
-    $lev2Count = 0;
-    foreach($lev2Items as $lev2Item) {
-        $level2ItemName = $lev2Item['name'];
-        $level2ItemUrl = $lev2Item['url'];
+        echo "<div class='docs-homepage-section-preview'>";
+        echo "<h1>$lev1ItemName</h1>";
 
-//        if ($lev2Count>0) {
-//            echo ", ";
-//        }
+        doLevel2($lev1Item);
 
-        echo "<li>"; // start level 2
+        echo "</div>";
 
-        echo "<span class='docs-homepage-level2-item'>";
-        echo "<a href='../$level2ItemUrl'>$level2ItemName</a>";
-        echo "</span>";
-
-        echo "<ul>";
-
-        $lev3Items = $lev2Item['children'];
-
-        foreach($lev3Items as $lev3Item) {
-            $level3ItemName = $lev3Item['name'];
-            $level3ItemUrl = $lev3Item['url'];
-
-            echo "<li>"; // start level 3
-
-            echo "<span class='docs-homepage-level3-item'>";
-            echo "<a href='$level3ItemUrl'>$level3ItemName</a>";
-            echo "</span>";
-
-            echo "</li>"; // end level 3
-        }
-
-        echo "</ul>";
-
-        echo "</li>"; // end level 2
-
-
-        $lev2Count++;
     }
-
-    echo "</ul>";
-
-    echo "</div>";
 
 }
 
-*/?>
 
+function doLevel2($parentItem) {
+    echo "<ul>";
+
+    $items = $parentItem['items'];
+
+    foreach($items as $item) {
+        $itemTitle = $item['title'];
+        $itemUrl = $item['url'];
+
+        echo "<li>";
+
+        echo "<span class='docs-homepage-level2-item'>";
+        if (strlen($itemUrl) > 1) {
+            echo "<a href='../$itemUrl'>$itemTitle</a>";
+        } else {
+            echo "$itemTitle";
+        }
+
+        if ($item['enterprise']) {
+            echo "<span class=\"enterprise-icon\"/>";
+        }
+
+        echo "</span>";
+
+        doLevel3($item);
+
+        echo "</li>";
+    }
+
+    echo "</ul>";
+}
+
+function doLevel3($parentItem) {
+    echo "<ul>";
+
+    $items = $parentItem['items'];
+
+    foreach($items as $item) {
+        $itemTitle = $item['title'];
+        $itemUrl = $item['url'];
+
+        echo "<li>"; // start level 3
+
+        echo "<span class='docs-homepage-level3-item'>";
+        if (strlen($itemUrl) > 1) {
+            echo "<a href='../$itemUrl'>$itemTitle</a>";
+        } else {
+            echo "$itemTitle";
+        }
+
+        if ($item['enterprise']) {
+            echo "<span class=\"enterprise-icon\"/>";
+        }
+
+        echo "</span>";
+
+        doLevel4($item);
+
+        echo "</li>"; // end level 3
+    }
+
+    echo "</ul>";
+}
+
+function doLevel4($parentItem) {
+    echo "<ul>";
+
+    $items = $parentItem['items'];
+
+    foreach($items as $item) {
+        $itemTitle = $item['title'];
+        $itemUrl = $item['url'];
+
+        echo "<li>"; // start level 3
+
+        echo "<span class='docs-homepage-level3-item'>";
+        if (strlen($itemUrl) > 1) {
+            echo "<a href='../$itemUrl'>$itemTitle</a>";
+        } else {
+            echo "$itemTitle";
+        }
+
+        if ($item['enterprise']) {
+            echo "<span class=\"enterprise-icon\"/>";
+        }
+
+        echo "</span>";
+
+        doLevel5($item);
+
+        echo "</li>"; // end level 3
+    }
+
+    echo "</ul>";
+}
+
+function doLevel5($parentItem) {
+    echo "<ul>";
+
+    $items = $parentItem['items'];
+
+    foreach($items as $item) {
+        $itemTitle = $item['title'];
+        $itemUrl = $item['url'];
+
+        echo "<li>"; // start level 3
+
+        echo "<span class='docs-homepage-level3-item'>";
+        if (strlen($itemUrl) > 1) {
+            echo "<a href='../$itemUrl'>$itemTitle</a>";
+        } else {
+            echo "$itemTitle";
+        }
+
+        if ($item['enterprise']) {
+            echo "<span class=\"enterprise-icon\"/>";
+        }
+
+        echo "</span>";
+
+        echo "</li>"; // end level 3
+    }
+
+    echo "</ul>";
+}
+
+?>
+
+
+<?
+function doOldMenu() {
+?>
 
 <div class="docs-homepage-section-preview">
     <div>
@@ -153,5 +246,9 @@ foreach($lev1Items as $lev1Item) {
     <p> <a href="../javascript-grid-examples/">Go to Examples</a> </p>
     </div>
 </div>
+
+<?
+}
+?>
 
 <?php include 'documentation_footer.php'; ?>
