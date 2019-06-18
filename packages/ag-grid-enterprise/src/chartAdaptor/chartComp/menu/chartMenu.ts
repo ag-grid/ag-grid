@@ -8,7 +8,8 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     Promise,
-    _
+    _,
+    AgPanel
 } from "ag-grid-community";
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
@@ -38,7 +39,7 @@ export class ChartMenu extends Component {
 
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
-    private menuDialog: AgDialog;
+    private menuPanel: AgPanel | AgDialog;
 
     constructor(chartController: ChartController) {
         super(ChartMenu.TEMPLATE);
@@ -102,20 +103,20 @@ export class ChartMenu extends Component {
         const parentRect = parentGui.getBoundingClientRect();
         const tab = this.tabs.indexOf(tabName);
 
-        this.menuDialog = new AgDialog({
-            alwaysOnTop: true,
-            movable: true,
-            resizable: {
-                bottom: true,
-                top: true
-            },
-            maximizable: false,
+        this.menuPanel = new AgPanel({
             minWidth: 220,
             width: 220,
             height: Math.min(390, parentRect.height),
-            x: parentRect.right - 225,
-            y: parentRect.top + 5
+            closable: true
         });
+
+        chartComp.getDockedContainer().appendChild(
+            this.menuPanel.getGui()
+        );
+        
+        window.setTimeout(() => {
+            chartComp.refreshCanvasSize();
+        }, 10);
 
         this.tabbedMenu = new TabbedChartMenu({
             controller: this.chartController, 
@@ -125,27 +126,31 @@ export class ChartMenu extends Component {
 
         new Promise((res) => {
             window.setTimeout(() => {
-                this.menuDialog.setBodyComponent(this.tabbedMenu);
+                this.menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(tab);
             }, 100);
         });
 
-        this.menuDialog.addDestroyableEventListener(this.menuDialog, Component.EVENT_DESTROYED, () => {
+        this.addDestroyableEventListener(this.menuPanel, Component.EVENT_DESTROYED, () => {
             this.tabbedMenu.destroy();
+
+            if (chartComp.isAlive()) {
+                chartComp.refreshCanvasSize();
+            }
         });
 
         const context = this.getContext();
 
-        context.wireBean(this.menuDialog);
+        context.wireBean(this.menuPanel);
         context.wireBean(this.tabbedMenu);
 
-        this.menuDialog.setParentComponent(this);
+        this.menuPanel.setParentComponent(this);
     }
 
     public destroy() {
         super.destroy();
         if (this.tabbedMenu) {
-            this.menuDialog.destroy();
+            this.menuPanel.destroy();
         }
     }
 }

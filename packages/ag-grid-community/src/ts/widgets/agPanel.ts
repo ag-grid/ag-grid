@@ -89,6 +89,7 @@ export class AgPanel extends Component implements IPositionable {
 
         this.close = () => {
             eGui.parentElement.removeChild(eGui);
+            this.destroy();
         };
     }
 

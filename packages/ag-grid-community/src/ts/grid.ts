@@ -73,12 +73,13 @@ import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { PaginationComp } from "./rowModels/pagination/paginationComp";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { ZipContainer } from "./exporter/files/zip/zipContainer";
-import { _ } from "./utils";
 import { TooltipManager } from "./widgets/tooltipManager";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { Module } from "./interfaces/iModule";
 import { AgGroupComponent } from "./widgets/agGroupComponent";
 import { AgDialog } from "./widgets/agDialog";
+import { AgPanel } from "./widgets/agPanel";
+import { _ } from "./utils";
 
 export interface GridParams {
     // used by Web Components
@@ -200,6 +201,7 @@ export class Grid {
             { componentName: 'AgPagination', theClass: PaginationComp },
             { componentName: 'AgOverlayWrapper', theClass: OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', theClass: AgGroupComponent },
+            { componentName: 'AgPanel', theClass: AgPanel },
             { componentName: 'AgDialog', theClass: AgDialog }
         ];
 

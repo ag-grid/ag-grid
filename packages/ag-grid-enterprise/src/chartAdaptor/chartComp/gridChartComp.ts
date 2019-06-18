@@ -39,6 +39,7 @@ export class GridChartComp extends Component {
     private static TEMPLATE =
         `<div class="ag-chart" tabindex="-1">
             <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
+            <div ref="eDockedContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
@@ -46,6 +47,7 @@ export class GridChartComp extends Component {
     @Autowired('environment') private environment: Environment;
 
     @RefSelector('eChart') private eChart: HTMLElement;
+    @RefSelector('eDockedContainer') private eDockedContainer: HTMLElement;
 
     private chartMenu: ChartMenu;
     private chartDialog: AgDialog;
@@ -170,8 +172,7 @@ export class GridChartComp extends Component {
         this.chartMenu.setParentComponent(this);
         this.getContext().wireBean(this.chartMenu);
 
-        const eChart: HTMLElement = this.getGui();
-        eChart.appendChild(this.chartMenu.getGui());
+        this.eChart.appendChild(this.chartMenu.getGui());
     }
 
     private refresh(): void {
@@ -179,6 +180,14 @@ export class GridChartComp extends Component {
             this.createChart();
         }
         this.updateChart();
+    }
+
+    public getChartWrapper(): HTMLElement {
+        return this.eChart;
+    }
+
+    public getDockedContainer(): HTMLElement {
+        return this.eDockedContainer;
     }
 
     public getCurrentChartType(): ChartType {
@@ -205,19 +214,25 @@ export class GridChartComp extends Component {
         this.chartProxy.getChart().scene.download({fileName: "chart"});
     }
 
+    public refreshCanvasSize() {
+        const eGui = this.getGui();
+        const eParent = eGui.parentElement as HTMLElement;
+
+        const chart = this.chartProxy.getChart();
+        chart.height = _.getInnerHeight(eParent);
+        chart.width = _.getInnerWidth(eParent) - _.getAbsoluteWidth(this.eDockedContainer);
+    }
+
     private addResizeListener() {
         const eGui = this.getGui();
 
         const resizeFunc = () => {
-            const eParent = eGui.parentElement as HTMLElement;
             if (!eGui || !eGui.offsetParent) {
                 observeResizeFunc();
                 return;
             }
 
-            const chart = this.chartProxy.getChart();
-            chart.height = _.getInnerHeight(eParent);
-            chart.width = _.getInnerWidth(eParent);
+            this.refreshCanvasSize();
         };
 
         const observeResizeFunc = this.resizeObserverService.observeResize(eGui, resizeFunc, 5);
