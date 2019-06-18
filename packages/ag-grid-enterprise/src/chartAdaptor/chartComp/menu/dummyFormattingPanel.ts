@@ -1,12 +1,18 @@
 import {_, AgCheckbox, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartController} from "../chartController";
 import {Chart, LegendPosition} from "../../../charts/chart/chart";
+import {BarSeries} from "../../../charts/chart/series/barSeries";
 
 export class DummyFormattingPanel extends Component {
 
     public static TEMPLATE =
         `<div class="ag-chart-data-wrapper" style="padding: 5%">  
-            <div>
+
+            <div style="top: 10px; margin: auto; width: 36%">
+                <span style="padding: 5%; border: 1px solid rgba(0, 0, 0, 0.3); background: #e8eff4">Chart Tab</span>    
+            </div>
+            
+            <div style="padding-top: 15px">
                 <span ref="labelPadding"></span>  
             </div>         
             
@@ -79,10 +85,36 @@ export class DummyFormattingPanel extends Component {
                 </div>              
                 <div style="padding-top: 10px">
                     <span ref="labelLegendFontSize" style="padding-right: 5px"></span>   
-                    <input ref="inputLegendFontSize" type="text" style="width: 38px;"> 
-                </div>                  
+                    <input ref="inputLegendFontSize" type="text" style="width: 38px"> 
+                </div>
+            </div>                              
+            
+            <div style="padding-top: 10px">
+                <span ref="labelLegendLabelColor" style="padding-left: 20px; padding-right: 0px"></span>   
+                <input ref="inputLegendLabelColor" type="text" style="width: 88px"> 
+            </div>  
+                          
+            <hr>
+            
+            <div style="top: 10px; margin: auto; width: 38%">
+                <span style="padding: 5%; border: 1px solid rgba(0, 0, 0, 0.3); background: #e8eff4">Series Tab</span>    
+            </div>
+                     
+            <div class="ag-column-tool-panel-column-group" style="padding-top: 15px">                
+                <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 20px"></ag-checkbox>
+                <span ref="labelTooltipsEnabled" style="padding-left: 5px"></span>                                                        
+            </div>  
+            
+            <hr>           
+            <div style="padding-bottom: 15px">
+                <span ref="labelSeriesLabel"></span>  
             </div> 
-                        
+            
+            <div class="ag-column-tool-panel-column-group">                
+                <ag-checkbox ref="cbSeriesLabelsEnabled" style="padding-left: 20px"></ag-checkbox>
+                <span ref="labelSeriesLabelsEnabled" style="padding-left: 5px"></span>                                                        
+            </div>  
+            
          </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -132,6 +164,16 @@ export class DummyFormattingPanel extends Component {
     @RefSelector('labelLegendFontSize') private labelLegendFontSize: HTMLElement;
     @RefSelector('inputLegendFontSize') private inputLegendFontSize: HTMLInputElement;
 
+    @RefSelector('labelLegendLabelColor') private labelLegendLabelColor: HTMLElement;
+    @RefSelector('inputLegendLabelColor') private inputLegendLabelColor: HTMLInputElement;
+
+    @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
+    @RefSelector('labelTooltipsEnabled') private labelTooltipsEnabled: HTMLElement;
+
+    @RefSelector('labelSeriesLabel') private labelSeriesLabel: HTMLElement;
+    @RefSelector('cbSeriesLabelsEnabled') private cbSeriesLabelsEnabled: AgCheckbox;
+    @RefSelector('labelSeriesLabelsEnabled') private labelSeriesLabelsEnabled: HTMLElement;
+
     private readonly chartController: ChartController;
     private chart: Chart;
 
@@ -147,11 +189,14 @@ export class DummyFormattingPanel extends Component {
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
 
-        this.initPaddingItems();
-        this.initLegendItems();
+        this.initChartPaddingItems();
+        this.initChartLegendItems();
+
+        this.initSeriesTooltips();
+        this.initSeriesLabelItems();
     }
 
-    private initPaddingItems() {
+    private initChartPaddingItems() {
         this.labelPadding.innerHTML = 'Padding';
 
         this.labelPaddingTop.innerHTML = 'Top';
@@ -183,7 +228,7 @@ export class DummyFormattingPanel extends Component {
         });
     }
 
-    private initLegendItems() {
+    private initChartLegendItems() {
         this.labelLegend.innerHTML = 'Legend';
 
         // TODO update code below when this.chart.showLegend is available
@@ -280,7 +325,14 @@ export class DummyFormattingPanel extends Component {
             this.selectLegendFontWeight.appendChild(option);
         });
 
-        // TODO add listener for font weight when available in chart api
+        // TODO
+        // this.selectLegendFontWeight.selectedIndex = fonts.indexOf(font);
+        // this.addDestroyableEventListener(this.selectLegendFontWeight, 'input', () => {
+        //     const fontSize = Number.parseInt(this.selectLegendFontWeight.value);
+        //     const font = fonts[this.selectLegendFontWeight.selectedIndex];
+        //     this.chart.legend.labelFont = `bold ${fontSize}px ${font}`;
+        //     this.chart.performLayout();
+        // });
 
         this.labelLegendFontSize.innerHTML = 'Font Size';
         this.inputLegendFontSize.value = fontSize;
@@ -291,5 +343,38 @@ export class DummyFormattingPanel extends Component {
             this.chart.performLayout();
         });
 
+        // TODO replace with Color Picker
+        this.labelLegendLabelColor.innerHTML = 'Label Color';
+        this.inputLegendLabelColor.value = this.chart.legend.labelColor;
+        this.addDestroyableEventListener(this.inputLegendLabelColor, 'input', () => {
+            this.chart.legend.labelColor = this.inputLegendLabelColor.value;
+            this.chart.performLayout();
+        });
+    }
+
+    private initSeriesTooltips() {
+        // TODO update code below when this.chart.showTooltips is available
+        let enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
+        this.cbTooltipsEnabled.setSelected(enabled);
+        this.labelTooltipsEnabled.innerHTML = 'Tooltips';
+        this.addDestroyableEventListener(this.cbTooltipsEnabled, 'change', () => {
+            this.chart.series.forEach(series => {
+                series.tooltipEnabled = this.cbTooltipsEnabled.isSelected();
+            });
+        });
+    }
+
+    private initSeriesLabelItems() {
+        this.labelSeriesLabel.innerHTML = 'Label';
+
+        let enabled = _.every(this.chart.series as BarSeries[], barSeries => barSeries.labelEnabled);
+        this.cbSeriesLabelsEnabled.setSelected(enabled);
+        this.labelSeriesLabelsEnabled.innerHTML = 'Enabled';
+        this.addDestroyableEventListener(this.cbSeriesLabelsEnabled, 'change', () => {
+            const barSeries = this.chart.series as BarSeries[];
+            barSeries.forEach(series => {
+                series.labelEnabled = this.cbSeriesLabelsEnabled.isSelected();
+            });
+        });
     }
 }
