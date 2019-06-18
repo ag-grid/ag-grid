@@ -58,6 +58,7 @@ export class Legend {
 
     private _itemPaddingX: number = 16;
     set itemPaddingX(value: number) {
+        value = isFinite(value) ? value : 16;
         if (this._itemPaddingX !== value) {
             this._itemPaddingX = value;
             this.requestLayout();
@@ -69,6 +70,7 @@ export class Legend {
 
     private _itemPaddingY: number = 8;
     set itemPaddingY(value: number) {
+        value = isFinite(value) ? value : 8;
         if (this._itemPaddingY !== value) {
             this._itemPaddingY = value;
             this.requestLayout();
@@ -80,6 +82,7 @@ export class Legend {
 
     private _markerPadding: number = MarkerLabel.defaults.padding;
     set markerPadding(value: number) {
+        value = isFinite(value) ? value : MarkerLabel.defaults.padding;
         if (this._markerPadding !== value) {
             this._markerPadding = value;
             this.requestLayout();
@@ -113,6 +116,7 @@ export class Legend {
 
     private _markerSize: number = 14;
     set markerSize(value: number) {
+        value = isFinite(value) ? value : 14;
         if (this._markerSize !== value) {
             this._markerSize = value;
             this.requestLayout();
@@ -124,6 +128,7 @@ export class Legend {
 
     private _markerStrokeWidth: number = 1;
     set markerStrokeWidth(value: number) {
+        value = isFinite(value) ? value : 1;
         if (this._markerStrokeWidth !== value) {
             this._markerStrokeWidth = value;
             this.update();
