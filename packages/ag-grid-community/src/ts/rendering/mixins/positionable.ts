@@ -35,9 +35,9 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
             y: 0
         };
 
-        size = {
-            width: 0,
-            height: 0
+        size: { width: number | undefined, height: number | undefined } = {
+            width:undefined,
+            height: undefined
         };
 
         postConstruct() {
@@ -45,7 +45,6 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
                 return;
             }
             super.postConstruct();
-            const eGui = this.getGui();
             const { minWidth, width, minHeight, height, centered, x, y } = this.config;
 
             this.minHeight = minHeight != null ? minHeight : 250;
@@ -54,20 +53,20 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
             this.popupParent = this.popupService.getPopupParent();
 
             if (width) {
-                _.setFixedWidth(eGui, width);
-                this.size.width = width;
+                this.setWidth(width);
             }
 
             if (height) {
-                _.setFixedHeight(eGui, height);
-                this.size.height = height;
+                this.setHeight(height);
             }
 
             if (this.renderComponent) {
                 this.renderComponent();
             }
 
-            this.refreshSize();
+            if (!width || !height) {
+                this.refreshSize();
+            }
 
             if (centered) {
                 this.center();
@@ -198,21 +197,27 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
             return this.size.height;
         }
 
-        public setHeight(height: number) {
-            let newHeight = Math.max(this.minHeight, height);
+        public setHeight(height: number | string) {
             const eGui = this.getGui();
-
-            if (newHeight + this.position.y > eGui.offsetParent.clientHeight) {
-                newHeight = eGui.offsetParent.clientHeight - this.position.y;
+            let isPercent = false;
+            if (typeof height === 'string' && height.indexOf('%') !== -1) {
+                _.setFixedHeight(eGui, height);
+                height = _.getAbsoluteHeight(eGui);
+                isPercent = true;
+            } else {
+                height = Math.max(this.minHeight, parseInt(height as string, 10));
+                const offsetParent = eGui.offsetParent;
+                if (offsetParent && offsetParent.clientHeight && (height + this.position.y > offsetParent.clientHeight)) {
+                    height = offsetParent.clientHeight - this.position.y;
+                }
             }
 
-            if (this.size.height === newHeight) { return; }
+            if (this.size.height === height) { return; }
 
-            this.size.height = newHeight;
-            _.setFixedHeight(eGui, newHeight);
+            this.size.height = height;
 
-            if (super.setHeight) {
-                super.setHeight(height);
+            if (!isPercent) {
+                _.setFixedHeight(eGui, height);
             }
         }
 
@@ -220,21 +225,27 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
             return this.size.width;
         }
 
-        public setWidth(width: number) {
-            let newWidth = Math.max(this.minWidth, width);
+        public setWidth(width: number | string) {
             const eGui = this.getGui();
+            let isPercent = false;
+            if (typeof width === 'string' && width.indexOf('%') !== -1) {
+                _.setFixedWidth(eGui, width);
+                width = _.getAbsoluteWidth(eGui);
+                isPercent = true;
+            } else {
+                width = Math.max(this.minWidth, parseInt(width as string, 10));
+                const offsetParent = eGui.offsetParent;
 
-            if (newWidth + this.position.x > eGui.offsetParent.clientWidth) {
-                newWidth = eGui.offsetParent.clientWidth - this.position.x;
+                if (offsetParent && offsetParent.clientWidth && (width + this.position.x > offsetParent.clientWidth)) {
+                    width = offsetParent.clientWidth - this.position.x;
+                }
             }
 
-            if (this.size.width === newWidth) { return; }
+            if (this.size.width === width) { return; }
 
-            this.size.width = newWidth;
-            _.setFixedWidth(eGui, newWidth);
-
-            if (super.setWidth) {
-                super.setWidth(width);
+            this.size.width = width;
+            if (!isPercent) {
+                _.setFixedWidth(eGui, width);
             }
         }
 

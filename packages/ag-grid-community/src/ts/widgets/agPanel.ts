@@ -8,10 +8,10 @@ export interface PanelOptions {
     component?: Component;
     closable?: boolean;
     title?: string;
-    minWidth?: number;
-    width?: number;
-    minHeight?: number;
-    height?: number;
+    minWidth?: number | string;
+    width?: number | string;
+    minHeight?: number | string;
+    height?: number | string;
 }
 
 @Positionable
@@ -149,11 +149,6 @@ export class AgPanel extends Component implements IPositionable {
 
     public setTitle(title: string) {
         this.eTitle.innerText = title;
-    }
-
-    public setHeight(height: number) {
-        const eGui = this.getGui();
-        _.setFixedHeight(this.eContentWrapper, eGui.clientHeight - this.eTitleBar.offsetHeight);
     }
 
     // called when user hits the 'x' in the top right

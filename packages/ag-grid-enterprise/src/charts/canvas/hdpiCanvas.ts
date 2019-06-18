@@ -148,8 +148,8 @@ export class HdpiCanvas {
 
             canvas.width = Math.round(logicalWidth * pixelRatio);
             canvas.height = Math.round(logicalHeight * pixelRatio);
-            canvas.style.width = Math.round(logicalWidth) + 'px';
-            canvas.style.height = Math.round(logicalHeight) + 'px';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
 
             ctx.resetTransform(); // should be called every time Canvas size changes
         }
@@ -170,8 +170,8 @@ export class HdpiCanvas {
 
         canvas.width = Math.round(width * this.pixelRatio);
         canvas.height = Math.round(height * this.pixelRatio);
-        canvas.style.width = Math.round(width) + 'px';
-        canvas.style.height = Math.round(height) + 'px';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
 
         context.drawImage(tempContext.canvas, 0, 0);
 

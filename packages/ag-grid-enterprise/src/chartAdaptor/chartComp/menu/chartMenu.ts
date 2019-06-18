@@ -99,24 +99,20 @@ export class ChartMenu extends Component {
 
     private showMenu(tabName: ChartToolbarOptions): void {
         const chartComp = this.parentComponent as GridChartComp;
-        const parentGui = chartComp.getGui();
-        const parentRect = parentGui.getBoundingClientRect();
         const tab = this.tabs.indexOf(tabName);
+        const dockedContainer = chartComp.getDockedContainer();
+        _.addCssClass(dockedContainer, 'ag-hidden');
 
         this.menuPanel = new AgPanel({
             minWidth: 220,
             width: 220,
-            height: Math.min(390, parentRect.height),
+            height: '100%',
             closable: true
         });
 
-        chartComp.getDockedContainer().appendChild(
+        dockedContainer.appendChild(
             this.menuPanel.getGui()
         );
-        
-        window.setTimeout(() => {
-            chartComp.refreshCanvasSize();
-        }, 10);
 
         this.tabbedMenu = new TabbedChartMenu({
             controller: this.chartController, 
@@ -128,6 +124,10 @@ export class ChartMenu extends Component {
             window.setTimeout(() => {
                 this.menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(tab);
+                _.removeCssClass(dockedContainer, 'ag-hidden');
+                setTimeout(() => {
+                    dockedContainer.style.minWidth = '220px';
+                }, 10);
             }, 100);
         });
 
@@ -135,7 +135,7 @@ export class ChartMenu extends Component {
             this.tabbedMenu.destroy();
 
             if (chartComp.isAlive()) {
-                chartComp.refreshCanvasSize();
+                dockedContainer.style.minWidth = '0';
             }
         });
 

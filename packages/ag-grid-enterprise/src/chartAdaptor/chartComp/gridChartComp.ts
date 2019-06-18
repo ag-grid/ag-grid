@@ -215,12 +215,11 @@ export class GridChartComp extends Component {
     }
 
     public refreshCanvasSize() {
-        const eGui = this.getGui();
-        const eParent = eGui.parentElement as HTMLElement;
+        const eChartWrapper = this.eChart;
 
         const chart = this.chartProxy.getChart();
-        chart.height = _.getInnerHeight(eParent);
-        chart.width = _.getInnerWidth(eParent) - _.getAbsoluteWidth(this.eDockedContainer);
+        chart.height = _.getInnerHeight(eChartWrapper);
+        chart.width = _.getInnerWidth(eChartWrapper)
     }
 
     private addResizeListener() {
@@ -235,7 +234,7 @@ export class GridChartComp extends Component {
             this.refreshCanvasSize();
         };
 
-        const observeResizeFunc = this.resizeObserverService.observeResize(eGui, resizeFunc, 5);
+        const observeResizeFunc = this.resizeObserverService.observeResize(this.eChart, resizeFunc, 5);
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent) {
