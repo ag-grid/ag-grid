@@ -321,7 +321,7 @@ export { TooltipManager } from "./widgets/tooltipManager";
 export {
     ChartOptions,
     ChartType,
-    ChartToolbarOptions,
+    ChartMenuOptions,
     BarChartOptions,
     LineChartOptions,
     ScatterChartOptions,

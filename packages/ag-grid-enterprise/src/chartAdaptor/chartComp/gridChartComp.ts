@@ -38,7 +38,9 @@ export interface GridChartParams {
 export class GridChartComp extends Component {
     private static TEMPLATE =
         `<div class="ag-chart" tabindex="-1">
-            <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
+            <div ref="eChartComponentsWrapper" class="ag-chart-components-wrapper">
+                <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
+            </div>
             <div ref="eDockedContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
@@ -46,6 +48,7 @@ export class GridChartComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
 
+    @RefSelector('eChartComponentsWrapper') private eChartComponentsWrapper: HTMLElement;
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eDockedContainer') private eDockedContainer: HTMLElement;
 
@@ -172,7 +175,7 @@ export class GridChartComp extends Component {
         this.chartMenu.setParentComponent(this);
         this.getContext().wireBean(this.chartMenu);
 
-        this.eChart.appendChild(this.chartMenu.getGui());
+        this.eChartComponentsWrapper.appendChild(this.chartMenu.getGui());
     }
 
     private refresh(): void {
@@ -180,10 +183,6 @@ export class GridChartComp extends Component {
             this.createChart();
         }
         this.updateChart();
-    }
-
-    public getChartWrapper(): HTMLElement {
-        return this.eChart;
     }
 
     public getDockedContainer(): HTMLElement {

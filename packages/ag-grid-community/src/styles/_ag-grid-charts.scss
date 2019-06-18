@@ -5,25 +5,36 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
-    .ag-chart-canvas-wrapper {
+    .ag-chart-components-wrapper {
         position: relative;
+        display: flex;
         flex: 1 1 auto;
+        overflow: hidden;
+        .ag-chart-canvas-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            canvas {
+                display: block;
+            }
+        }
 
-        canvas {
-            display: block;
+        .ag-chart-menu {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            width: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
     }
-
-    .ag-chart-menu {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        width: 24px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
+    &:not(.ag-has-menu):hover {
+        .ag-chart-menu {
+            opacity: 1;
+            pointer-events: all;
+        }
     }
-
     .ag-chart-docked-container {
         position: relative;
         height: 100%;
@@ -146,17 +157,6 @@
             cursor: pointer;
             &:hover {
                 border-radius: 5px;
-            }
-        }
-    }
-    &:hover {
-        .ag-chart-menu:not(.ag-has-popup) {
-            opacity: 1;
-            pointer-events: all;
-            &:hover {
-                > span {
-                    opacity: 1;
-                }
             }
         }
     }

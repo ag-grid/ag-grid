@@ -2,7 +2,7 @@ import {
     Autowired,
     AgEvent,
     Component,
-    ChartToolbarOptions,
+    ChartMenuOptions,
     AgDialog,
     GetChartToolbarItemsParams,
     GridOptionsWrapper,
@@ -16,7 +16,7 @@ import { ChartController } from "../chartController";
 import { GridChartComp } from "../gridChartComp";
 
 type ChartToolbarButtons = {
-    [key in ChartToolbarOptions]: [string, () => any]
+    [key in ChartMenuOptions]: [string, () => any]
 }
 
 export class ChartMenu extends Component {
@@ -26,13 +26,13 @@ export class ChartMenu extends Component {
     public static EVENT_DOWNLOAD_CHART = 'downloadChart';
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['ag-icon-chart', () => this.showMenu('chartSettings')],
-        chartData: ['ag-icon-data', () => this.showMenu('chartData')],
+        chartSettings: ['ag-icon-menu', () => this.showMenu('chartSettings')],
+        chartData: ['ag-icon-data' , () => this.showMenu('chartData')],
         chartFormat: ['ag-icon-data', () => this.showMenu('chartFormat')],
         chartDownload: ['ag-icon-save', () => this.saveChart()]
     };
 
-    private tabs: ChartToolbarOptions[] = [];
+    private tabs: ChartMenuOptions[] = [];
 
     private static TEMPLATE =
         `<div class="ag-chart-menu"></div>`;
@@ -51,18 +51,18 @@ export class ChartMenu extends Component {
         this.createButtons();
     }
 
-    private getToolbarOptions(): ChartToolbarOptions[] {
-        let chartToolbarOptions: ChartToolbarOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartDownload'];
+    private getToolbarOptions(): ChartMenuOptions[] {
+        let tabOptions: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartDownload'];
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
 
         if (toolbarItemsFunc) {
             const params: GetChartToolbarItemsParams = {
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
-                defaultItems: chartToolbarOptions
+                defaultItems: tabOptions
             };
 
-            chartToolbarOptions = (toolbarItemsFunc(params) as ChartToolbarOptions[]).filter(option => {
+            tabOptions = (toolbarItemsFunc(params) as ChartMenuOptions[]).filter(option => {
                 if (!this.buttons[option]) {
                     console.warn(`ag-Grid: '${option} is not a valid Chart Toolbar Option`);
                     return false;
@@ -71,9 +71,21 @@ export class ChartMenu extends Component {
             });
         }
 
-        this.tabs = chartToolbarOptions.filter(option => option !== 'chartDownload');
+        this.tabs = tabOptions.filter(option => option !== 'chartDownload');
 
-        return chartToolbarOptions;
+        const downloadIdx = tabOptions.indexOf('chartDownload');
+        const firstItem = tabOptions.find(option => option !== 'chartDownload') as ChartMenuOptions;
+        const chartDownload = 'chartDownload' as ChartMenuOptions;
+
+        if (downloadIdx !== -1) {
+            if (!firstItem) {
+                return [chartDownload];
+            } else {
+                return downloadIdx === 0 ? [chartDownload].concat([firstItem]) : [firstItem].concat([chartDownload]);
+            }
+        }
+
+        return [firstItem];
     }
 
     private createButtons(): void {
@@ -97,8 +109,10 @@ export class ChartMenu extends Component {
         this.dispatchEvent(event);
     }
 
-    private showMenu(tabName: ChartToolbarOptions): void {
+    private showMenu(tabName: ChartMenuOptions): void {
         const chartComp = this.parentComponent as GridChartComp;
+        const chartCompGui = chartComp.getGui();
+
         const tab = this.tabs.indexOf(tabName);
         const dockedContainer = chartComp.getDockedContainer();
         _.addCssClass(dockedContainer, 'ag-hidden');
@@ -113,6 +127,8 @@ export class ChartMenu extends Component {
         dockedContainer.appendChild(
             this.menuPanel.getGui()
         );
+
+        _.addCssClass(chartCompGui, 'ag-has-menu');
 
         this.tabbedMenu = new TabbedChartMenu({
             controller: this.chartController, 
@@ -136,6 +152,7 @@ export class ChartMenu extends Component {
 
             if (chartComp.isAlive()) {
                 dockedContainer.style.minWidth = '0';
+                _.removeCssClass(chartCompGui, 'ag-has-menu');
             }
         });
 

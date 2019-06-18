@@ -8,9 +8,9 @@ export interface PanelOptions {
     component?: Component;
     closable?: boolean;
     title?: string;
-    minWidth?: number | string;
+    minWidth?: number;
     width?: number | string;
-    minHeight?: number | string;
+    minHeight?: number;
     height?: number | string;
 }
 

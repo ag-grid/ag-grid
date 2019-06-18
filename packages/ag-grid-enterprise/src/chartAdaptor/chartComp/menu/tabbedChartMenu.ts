@@ -9,7 +9,7 @@ import {
     TabbedItem,
     Promise,
     _,
-    ChartToolbarOptions
+    ChartMenuOptions
 } from "ag-grid-community";
 import { ChartController } from "../chartController";
 import { ChartSettingsPanel } from "./chartSettingsPanel";
@@ -28,7 +28,7 @@ export class TabbedChartMenu extends Component {
     private tabbedLayout: TabbedLayout;
     private currentChartType: ChartType;
 
-    private panels: ChartToolbarOptions[];
+    private panels: ChartMenuOptions[];
     private tabs: TabbedItem[] = [];
     private readonly chartController: ChartController;
 
@@ -37,7 +37,7 @@ export class TabbedChartMenu extends Component {
     constructor(params: {
         controller: ChartController, 
         type: ChartType,
-        panels: ChartToolbarOptions[]
+        panels: ChartMenuOptions[]
     }) {
         super();
 
