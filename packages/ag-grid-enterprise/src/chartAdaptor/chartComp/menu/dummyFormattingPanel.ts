@@ -76,7 +76,7 @@ export class DummyFormattingPanel extends Component {
                 <span ref="labelLegendLabels"></span>   
             </div>
                
-            <div style="width:175px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
+            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
                 <select ref="selectLegendFont" style="width: 155px"></select>  
                 <div style="padding-top: 10px">
                     <select ref="selectLegendFontWeight" style="width: 82px"></select>
@@ -110,7 +110,7 @@ export class DummyFormattingPanel extends Component {
                 <span ref="labelSeriesLabelsEnabled" style="padding-left: 5px"></span>                                                        
             </div>  
             
-             <div style="width:175px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
+             <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
                 <select ref="selectSeriesFont" style="width: 155px"></select>  
                 <div style="padding-top: 10px">
                     <select ref="selectSeriesFontWeight" style="width: 82px"></select>
