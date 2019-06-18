@@ -501,11 +501,12 @@ export class BarSeries extends Series<CartesianChart> {
                     text.font = label.font;
                     text.text = label.text;
                     text.x = label.x;
-                    text.y = label.y;
+                    text.y = label.y - 25;
                     text.fill = label.fill;
-                    const textBBox = text.getBBox();
-                    text.visible = datum.height > (textBBox.height + datum.strokeWidth + labelPadding.x * 2)
-                        && datum.width > (textBBox.width + datum.strokeWidth + labelPadding.y * 2);
+                    text.visible = true;
+                    // const textBBox = text.getBBox();
+                    //text.visible = datum.height > (textBBox.height + datum.strokeWidth + labelPadding.x * 2)
+                    //    && datum.width > (textBBox.width + datum.strokeWidth + labelPadding.y * 2);
                 } else {
                     text.visible = false;
                 }
