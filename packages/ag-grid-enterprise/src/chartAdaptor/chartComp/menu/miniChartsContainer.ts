@@ -350,6 +350,80 @@ class MiniStackedBar extends MiniChart {
     }
 }
 
+class MiniNormalizedBar extends MiniChart {
+    private readonly bars: Rect[][];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+
+        const data = [
+            [10, 10, 10],
+            [6, 7, 8],
+            [2, 4, 6]
+        ];
+
+        const xScale = new BandScale<number>();
+        xScale.domain = [0, 1, 2];
+        xScale.range = [padding, size - padding];
+        xScale.paddingInner = 0.4;
+        xScale.paddingOuter = 0.4;
+
+        const yScale = linearScale();
+        yScale.domain = [0, 10];
+        yScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+
+        const rectLineWidth = 1;
+        const alignment = Math.floor(rectLineWidth) % 2 / 2;
+
+        const bottom = yScale.convert(0);
+        this.bars = data.map(series => {
+            return series.map((datum, i) => {
+                const top = yScale.convert(datum);
+                const rect = new Rect();
+                rect.strokeWidth = rectLineWidth;
+                rect.x = Math.floor(xScale.convert(i)) + alignment;
+                rect.y = Math.floor(top) + alignment;
+                const width = xScale.bandwidth;
+                const height = bottom - top;
+                rect.width = Math.floor(width) + Math.floor(rect.x % 1 + width % 1);
+                rect.height = Math.floor(height) + Math.floor(rect.y % 1 + height % 1);
+                return rect;
+            });
+        });
+
+        const root = this.root;
+        root.append(([] as Rect[]).concat.apply([], this.bars));
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.bars.forEach((series, i) => {
+            series.forEach(bar => {
+                bar.fill = fills[i];
+                bar.stroke = strokes[i];
+            })
+        });
+    }
+}
+
 class MiniScatter extends MiniChart {
     private readonly points: Shape[];
 
