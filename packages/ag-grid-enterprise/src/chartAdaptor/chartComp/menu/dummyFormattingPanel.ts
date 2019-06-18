@@ -8,118 +8,126 @@ export class DummyFormattingPanel extends Component {
     public static TEMPLATE =
         `<div class="ag-chart-data-wrapper" style="padding: 5%">  
 
-            <div style="top: 10px; margin: auto; width: 36%">
-                <span style="padding: 5%; border: 1px solid rgba(0, 0, 0, 0.3); background: #e8eff4">Chart Tab</span>    
-            </div>
-            
-            <div style="padding-top: 15px">
-                <span ref="labelPadding"></span>  
+            <div style="padding-top: 0px">
+                <span ref="labelChartPadding"></span>  
             </div>         
             
-            <div class="ag-column-tool-panel-column-group" style="padding: 15px 5px 5px 25px">
+            <div class="ag-column-tool-panel-column-group" style="padding: 10px 5px 5px 25px">
                 <span ref="labelPaddingTop" style="padding-right: 5px"></span>   
                 <input style="width: 38px" ref="inputPaddingTop" type="text" style="padding-right: 15px">   
                 <span ref="labelPaddingRight" style="padding-left: 15px; padding-right: 5px"></span>       
                 <input style="width: 38px" ref="inputPaddingRight" type="text" style="padding-right: 15px">   
             </div>
             
-            <div class="ag-column-tool-panel-column-group" style="padding: 5px 5px 5px 5px">
+            <div class="ag-column-tool-panel-column-group" style="padding: 5px 5px 0px 5px">
                 <span ref="labelPaddingBottom" style="padding-right: 5px"></span>   
                 <input style="width: 38px" ref="inputPaddingBottom" type="text">   
                 <span ref="labelPaddingLeft" style="padding-left: 22px; padding-right: 5px"></span>       
                 <input style="width: 38px" ref="inputPaddingLeft" type="text">   
             </div>
-            <hr>           
-            <div style="padding-bottom: 15px">
+            
+            <hr>    
+                   
+            <div style="padding-bottom: 12px">
                 <span ref="labelLegend"></span>  
             </div>   
             
             <div class="ag-column-tool-panel-column-group">                
-                <ag-checkbox ref="cbLegendEnabled" style="padding-left: 20px"></ag-checkbox>
+                <ag-checkbox ref="cbLegendEnabled" style="padding-left: 15px"></ag-checkbox>
                 <span ref="labelLegendEnabled" style="padding-left: 5px"></span>                                                        
             </div>  
             
             <div style="padding-top: 10px;">       
-                <span ref="labelLegendPosition" style="padding-left: 20px; padding-right: 10px"></span>  
+                <span ref="labelLegendPosition" style="padding-left: 15px; padding-right: 10px"></span>  
                 <select ref="selectLegendPosition"></select>
             </div>
             
             <div style="padding-top: 10px;">
-                <span ref="labelLegendPadding" style="padding-left: 20px; padding-right: 10px"></span>   
+                <span ref="labelLegendPadding" style="padding-left: 15px; padding-right: 10px"></span>   
                 <input style="width: 38px" ref="inputLegendPadding" type="text">   
             </div>
             
             <div style="padding-top: 10px;">
-                <span ref="labelMarkerSize" style="padding-left: 20px; padding-right: 10px"></span>   
+                <span ref="labelMarkerSize" style="padding-left: 15px; padding-right: 10px"></span>   
                 <input style="width: 38px" ref="inputMarkerSize" type="text">   
             </div>
             
             <div style="padding-top: 10px;">
-                <span ref="labelMarkerStroke" style="padding-left: 20px; padding-right: 10px"></span>   
+                <span ref="labelMarkerStroke" style="padding-left: 15px; padding-right: 10px"></span>   
                 <input style="width: 38px" ref="inputMarkerStroke" type="text">   
             </div>
             
             <div style="padding-top: 10px;">
-                <span ref="labelMarkerPadding" style="padding-left: 20px; padding-right: 10px"></span>   
+                <span ref="labelMarkerPadding" style="padding-left: 15px; padding-right: 10px"></span>   
                 <input style="width: 38px" ref="inputMarkerPadding" type="text">   
             </div>
                 
             <div style="padding-top: 10px;">
-                <span ref="labelItemPaddingX" style="padding-left: 20px; padding-right: 10px"></span>   
+                <span ref="labelItemPaddingX" style="padding-left: 15px; padding-right: 10px"></span>   
                 <input style="width: 38px" ref="inputItemPaddingX" type="text">   
             </div>
               
             <div style="padding-top: 10px;">
-                <span ref="labelItemPaddingY" style="padding-left: 20px; padding-right: 10px"></span>   
+                <span ref="labelItemPaddingY" style="padding-left: 15px; padding-right: 10px"></span>   
                 <input style="width: 38px" ref="inputItemPaddingY" type="text">   
             </div>  
               
-            <div style="padding-top: 15px; padding-bottom: 10px; padding-left: 20px">
-                <span ref="labelLegendFont"></span>   
+            <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
+                <span ref="labelLegendLabels"></span>   
             </div>
                
-            <div style="width:150px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
-                <select ref="selectLegendFont"></select>  
+            <div style="width:175px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
+                <select ref="selectLegendFont" style="width: 155px"></select>  
                 <div style="padding-top: 10px">
-                    <select ref="selectLegendFontWeight"></select>
-                </div>              
+                    <select ref="selectLegendFontWeight" style="width: 82px"></select>
+                     <span ref="labelLegendFontSize" style="padding-left: 16px"></span>   
+                    <input ref="inputLegendFontSize" type="text" style="width: 25px"> 
+                </div>                             
                 <div style="padding-top: 10px">
-                    <span ref="labelLegendFontSize" style="padding-right: 5px"></span>   
-                    <input ref="inputLegendFontSize" type="text" style="width: 38px"> 
+                    <span ref="labelLegendLabelColor" style="padding-right: 5px"></span>   
+                    <input ref="inputLegendLabelColor" type="text" style="width: 115px"> 
                 </div>
             </div>                              
-            
-            <div style="padding-top: 10px">
-                <span ref="labelLegendLabelColor" style="padding-left: 20px; padding-right: 0px"></span>   
-                <input ref="inputLegendLabelColor" type="text" style="width: 88px"> 
-            </div>  
                           
-            <hr>
+            <hr>       
             
-            <div style="top: 10px; margin: auto; width: 38%">
-                <span style="padding: 5%; border: 1px solid rgba(0, 0, 0, 0.3); background: #e8eff4">Series Tab</span>    
+            <div>
+                <span ref="labelSeries"></span>  
+            </div>                
+            
+            <div style="padding-top: 10px;">
+                <span ref="labelSeriesStrokeWidth" style="padding-left: 15px; padding-right: 10px"></span>   
+                <input style="width: 38px" ref="inputSeriesStrokeWidth" type="text">   
             </div>
-                     
-            <div class="ag-column-tool-panel-column-group" style="padding-top: 15px">                
-                <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 20px"></ag-checkbox>
+            
+            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px">                
+                <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 15px"></ag-checkbox>
                 <span ref="labelTooltipsEnabled" style="padding-left: 5px"></span>                                                        
             </div>  
             
-            <hr>           
-            <div style="padding-bottom: 15px">
-                <span ref="labelSeriesLabel"></span>  
-            </div> 
-            
-            <div class="ag-column-tool-panel-column-group">                
-                <ag-checkbox ref="cbSeriesLabelsEnabled" style="padding-left: 20px"></ag-checkbox>
+            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">                
+                <ag-checkbox ref="cbSeriesLabelsEnabled" style="padding-left: 15px"></ag-checkbox>
                 <span ref="labelSeriesLabelsEnabled" style="padding-left: 5px"></span>                                                        
             </div>  
+            
+             <div style="width:175px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
+                <select ref="selectSeriesFont" style="width: 155px"></select>  
+                <div style="padding-top: 10px">
+                    <select ref="selectSeriesFontWeight" style="width: 82px"></select>
+                     <span ref="labelSeriesFontSize" style="padding-left: 16px"></span>   
+                    <input ref="inputSeriesFontSize" type="text" style="width: 25px"> 
+                </div>                             
+                <div style="padding-top: 10px">
+                    <span ref="labelSeriesLabelColor" style="padding-right: 5px"></span>   
+                    <input ref="inputSeriesLabelColor" type="text" style="width: 115px"> 
+                </div>
+            </div> 
             
          </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    @RefSelector('labelPadding') private labelPadding: HTMLElement;
+    @RefSelector('labelChartPadding') private labelChartPadding: HTMLElement;
 
     @RefSelector('labelPaddingTop') private labelPaddingTop: HTMLElement;
     @RefSelector('inputPaddingTop') private inputPaddingTop: HTMLInputElement;
@@ -158,21 +166,31 @@ export class DummyFormattingPanel extends Component {
     @RefSelector('labelItemPaddingY') private labelItemPaddingY: HTMLElement;
     @RefSelector('inputItemPaddingY') private inputItemPaddingY: HTMLInputElement;
 
-    @RefSelector('labelLegendFont') private labelLegendFont: HTMLElement;
+    @RefSelector('labelLegendLabels') private labelLegendLabels: HTMLElement;
     @RefSelector('selectLegendFont') private selectLegendFont: HTMLSelectElement;
     @RefSelector('selectLegendFontWeight') private selectLegendFontWeight: HTMLSelectElement;
     @RefSelector('labelLegendFontSize') private labelLegendFontSize: HTMLElement;
     @RefSelector('inputLegendFontSize') private inputLegendFontSize: HTMLInputElement;
-
     @RefSelector('labelLegendLabelColor') private labelLegendLabelColor: HTMLElement;
     @RefSelector('inputLegendLabelColor') private inputLegendLabelColor: HTMLInputElement;
+
+    @RefSelector('labelSeries') private labelSeries: HTMLElement;
 
     @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
     @RefSelector('labelTooltipsEnabled') private labelTooltipsEnabled: HTMLElement;
 
-    @RefSelector('labelSeriesLabel') private labelSeriesLabel: HTMLElement;
+    @RefSelector('labelSeriesStrokeWidth') private labelSeriesStrokeWidth: HTMLElement;
+    @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: HTMLInputElement;
+
     @RefSelector('cbSeriesLabelsEnabled') private cbSeriesLabelsEnabled: AgCheckbox;
     @RefSelector('labelSeriesLabelsEnabled') private labelSeriesLabelsEnabled: HTMLElement;
+    @RefSelector('labelSeriesLabels') private labelSeriesLabels: HTMLElement;
+    @RefSelector('selectSeriesFont') private selectSeriesFont: HTMLSelectElement;
+    @RefSelector('selectSeriesFontWeight') private selectSeriesFontWeight: HTMLSelectElement;
+    @RefSelector('labelSeriesFontSize') private labelSeriesFontSize: HTMLElement;
+    @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: HTMLInputElement;
+    @RefSelector('labelSeriesLabelColor') private labelSeriesLabelColor: HTMLElement;
+    @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: HTMLInputElement;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -190,14 +208,16 @@ export class DummyFormattingPanel extends Component {
         this.chart = chartProxy.getChart();
 
         this.initChartPaddingItems();
-        this.initChartLegendItems();
+        this.initLegendItems();
+        this.initLegendLabels();
 
         this.initSeriesTooltips();
-        this.initSeriesLabelItems();
+        this.initSeriesStrokeWidth();
+        this.initSeriesLabel();
     }
 
     private initChartPaddingItems() {
-        this.labelPadding.innerHTML = 'Padding';
+        this.labelChartPadding.innerHTML = 'Chart Padding';
 
         this.labelPaddingTop.innerHTML = 'Top';
         this.inputPaddingTop.value = this.chart.padding.top + '';
@@ -228,13 +248,13 @@ export class DummyFormattingPanel extends Component {
         });
     }
 
-    private initChartLegendItems() {
+    private initLegendItems() {
         this.labelLegend.innerHTML = 'Legend';
 
         // TODO update code below when this.chart.showLegend is available
         let enabled = _.every(this.chart.series, (series) => series.showInLegend && series.visible);
         this.cbLegendEnabled.setSelected(enabled);
-        this.labelLegendEnabled.innerHTML = 'Legend Enabled';
+        this.labelLegendEnabled.innerHTML = 'Enabled';
         this.addDestroyableEventListener(this.cbLegendEnabled, 'change', () => {
             this.chart.series.forEach(s => {
                 s.showInLegend = this.cbLegendEnabled.isSelected();
@@ -293,8 +313,10 @@ export class DummyFormattingPanel extends Component {
         this.addDestroyableEventListener(this.inputItemPaddingY, 'input', () => {
             this.chart.legend.itemPaddingY = Number.parseInt(this.inputItemPaddingY.value);
         });
+    }
 
-        this.labelLegendFont.innerHTML = 'Label Font';
+    private initLegendLabels() {
+        this.labelLegendLabels.innerHTML = 'Labels';
 
         const fonts = ['Verdana, sans-serif', 'Arial'];
         fonts.forEach((font: any) => {
@@ -334,7 +356,7 @@ export class DummyFormattingPanel extends Component {
         //     this.chart.performLayout();
         // });
 
-        this.labelLegendFontSize.innerHTML = 'Font Size';
+        this.labelLegendFontSize.innerHTML = 'Size';
         this.inputLegendFontSize.value = fontSize;
         this.addDestroyableEventListener(this.inputLegendFontSize, 'input', () => {
             const fontSize = Number.parseInt(this.inputLegendFontSize.value);
@@ -344,7 +366,7 @@ export class DummyFormattingPanel extends Component {
         });
 
         // TODO replace with Color Picker
-        this.labelLegendLabelColor.innerHTML = 'Label Color';
+        this.labelLegendLabelColor.innerHTML = 'Color';
         this.inputLegendLabelColor.value = this.chart.legend.labelColor;
         this.addDestroyableEventListener(this.inputLegendLabelColor, 'input', () => {
             this.chart.legend.labelColor = this.inputLegendLabelColor.value;
@@ -353,6 +375,8 @@ export class DummyFormattingPanel extends Component {
     }
 
     private initSeriesTooltips() {
+        this.labelSeries.innerHTML = 'Series';
+
         // TODO update code below when this.chart.showTooltips is available
         let enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
         this.cbTooltipsEnabled.setSelected(enabled);
@@ -364,17 +388,98 @@ export class DummyFormattingPanel extends Component {
         });
     }
 
-    private initSeriesLabelItems() {
-        this.labelSeriesLabel.innerHTML = 'Label';
+    private initSeriesStrokeWidth() {
+        this.labelSeriesStrokeWidth.innerHTML = 'Stroke Width';
 
-        let enabled = _.every(this.chart.series as BarSeries[], barSeries => barSeries.labelEnabled);
+        const barSeries = this.chart.series as BarSeries[];
+        if (barSeries.length > 0) {
+            this.inputSeriesStrokeWidth.value = barSeries[0].strokeWidth + '';
+        }
+
+        this.addDestroyableEventListener(this.inputSeriesStrokeWidth, 'input', () => {
+            (this.chart.series as BarSeries[]).forEach(series => {
+                series.strokeWidth = Number.parseInt(this.inputSeriesStrokeWidth.value);
+            });
+        });
+    }
+
+    private initSeriesLabel() {
+        const barSeries = this.chart.series as BarSeries[];
+
+        let enabled = _.every(barSeries, barSeries => barSeries.labelEnabled);
         this.cbSeriesLabelsEnabled.setSelected(enabled);
-        this.labelSeriesLabelsEnabled.innerHTML = 'Enabled';
+        this.labelSeriesLabelsEnabled.innerHTML = 'Labels';
         this.addDestroyableEventListener(this.cbSeriesLabelsEnabled, 'change', () => {
-            const barSeries = this.chart.series as BarSeries[];
             barSeries.forEach(series => {
                 series.labelEnabled = this.cbSeriesLabelsEnabled.isSelected();
             });
         });
+
+        const fonts = ['Verdana, sans-serif', 'Arial'];
+        fonts.forEach((font: any) => {
+            const option = document.createElement('option');
+            option.value = font;
+            option.text = font;
+            this.selectSeriesFont.appendChild(option);
+        });
+
+
+        // if (barSeries.length > 0) {
+        this.inputSeriesStrokeWidth.value = barSeries[0].strokeWidth + '';
+
+        const fontParts = barSeries[0].labelFont.split('px');
+        const fontSize = fontParts[0];
+        const font = fontParts[1].trim();
+
+        this.selectSeriesFont.selectedIndex = fonts.indexOf(font);
+
+        this.addDestroyableEventListener(this.selectSeriesFont, 'input', () => {
+            const font = fonts[this.selectSeriesFont.selectedIndex];
+            const fontSize = Number.parseInt(this.inputSeriesFontSize.value);
+            const barSeries = this.chart.series as BarSeries[];
+            barSeries.forEach(series => {
+                series.labelFont = `${fontSize}px ${font}`;
+            });
+        });
+        // }
+
+        const fontWeights = ['normal', 'bold'];
+        fontWeights.forEach((font: any) => {
+            const option = document.createElement('option');
+            option.value = font;
+            option.text = font;
+            this.selectSeriesFontWeight.appendChild(option);
+        });
+
+        // TODO
+        // this.selectLegendFontWeight.selectedIndex = fonts.indexOf(font);
+        // this.addDestroyableEventListener(this.selectLegendFontWeight, 'input', () => {
+        //     const fontSize = Number.parseInt(this.selectLegendFontWeight.value);
+        //     const font = fonts[this.selectLegendFontWeight.selectedIndex];
+        //     this.chart.legend.labelFont = `bold ${fontSize}px ${font}`;
+        //     this.chart.performLayout();
+        // });
+
+        this.labelSeriesFontSize.innerHTML = 'Size';
+        this.inputSeriesFontSize.value = fontSize;
+        this.addDestroyableEventListener(this.inputSeriesFontSize, 'input', () => {
+            const font = fonts[this.selectSeriesFont.selectedIndex];
+            const fontSize = Number.parseInt(this.inputSeriesFontSize.value);
+            const barSeries = this.chart.series as BarSeries[];
+            barSeries.forEach(series => {
+                series.labelFont = `${fontSize}px ${font}`;
+            });
+        });
+
+        // TODO replace with Color Picker
+        this.labelSeriesLabelColor.innerHTML = 'Color';
+        this.inputSeriesLabelColor.value = barSeries[0].labelColor;
+        this.addDestroyableEventListener(this.inputSeriesLabelColor, 'input', () => {
+            const barSeries = this.chart.series as BarSeries[];
+            barSeries.forEach(series => {
+                series.labelColor = this.inputSeriesLabelColor.value;
+            });
+        });
     }
+
 }
