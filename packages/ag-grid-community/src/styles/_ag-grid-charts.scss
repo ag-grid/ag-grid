@@ -119,13 +119,20 @@
                 left: 0;
                 display: flex;
                 flex-wrap: wrap;
+                align-items: flex-start;
+                align-content: flex-start;
                 justify-content: space-around;
                 width: 100%;
+                height: calc(100% - 30px);
+                overflow-x: hidden;
+                overflow-y: auto;
                 &.ag-animating, &.ag-animating {
                     transition: left 0.3s;
                     transition-timing-function: ease-in-out;
                 }
                 .ag-chart-mini-thumbnail {
+                    width: 80px;
+                    height: 80px;
                     cursor: pointer;
                     canvas {
                         display: block;
