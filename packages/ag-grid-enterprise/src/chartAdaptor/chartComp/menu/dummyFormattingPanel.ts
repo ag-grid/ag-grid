@@ -114,14 +114,14 @@ export class DummyFormattingPanel extends Component {
                 <span ref="labelTooltipsEnabled" style="padding-left: 5px"></span>                                                        
             </div>  
             
-             <!-- SERIES LABELS -->   
+            <!-- SERIES LABELS -->   
             
             <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">                
                 <ag-checkbox ref="cbSeriesLabelsEnabled" style="padding-left: 15px"></ag-checkbox>
                 <span ref="labelSeriesLabelsEnabled" style="padding-left: 5px"></span>                                                        
             </div>  
             
-             <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
+            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
                 <select ref="selectSeriesFont" style="width: 155px"></select>  
                 <div style="padding-top: 10px">
                     <select ref="selectSeriesFontWeight" style="width: 82px"></select>
@@ -201,7 +201,26 @@ export class DummyFormattingPanel extends Component {
                     <span ref="labelAxisTicksColor" style="padding-right: 10px"></span>   
                     <input ref="inputAxisTicksColor" type="text" style="width: 110px">                    
                 </div>  
-            </div>               
+            </div>    
+            
+            <!-- AXIS LABELS -->   
+                               
+            <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
+                <span ref="labelAxisLabels"></span>  
+            </div> 
+            
+            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
+                <select ref="selectAxisFont" style="width: 155px"></select>  
+                <div style="padding-top: 10px">
+                    <select ref="selectAxisFontWeight" style="width: 82px"></select>
+                     <span ref="labelAxisFontSize" style="padding-left: 16px"></span>   
+                    <input ref="inputAxisFontSize" type="text" style="width: 25px"> 
+                </div>                             
+                <div style="padding-top: 10px">
+                    <span ref="labelAxisLabelColor" style="padding-right: 5px"></span>   
+                    <input ref="inputAxisLabelColor" type="text" style="width: 115px"> 
+                </div>
+            </div>            
                       
          </div>`;
 
@@ -259,6 +278,7 @@ export class DummyFormattingPanel extends Component {
     @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: HTMLInputElement;
     @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
     @RefSelector('labelTooltipsEnabled') private labelTooltipsEnabled: HTMLElement;
+
     @RefSelector('cbSeriesLabelsEnabled') private cbSeriesLabelsEnabled: AgCheckbox;
     @RefSelector('labelSeriesLabelsEnabled') private labelSeriesLabelsEnabled: HTMLElement;
     @RefSelector('labelSeriesLabels') private labelSeriesLabels: HTMLElement;
@@ -296,6 +316,13 @@ export class DummyFormattingPanel extends Component {
     @RefSelector('labelAxisTicksColor') private labelAxisTicksColor: HTMLElement;
     @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: HTMLInputElement;
 
+    @RefSelector('labelAxisLabels') private labelAxisLabels: HTMLElement;
+    @RefSelector('selectAxisFont') private selectAxisFont: HTMLSelectElement;
+    @RefSelector('selectAxisFontWeight') private selectAxisFontWeight: HTMLSelectElement;
+    @RefSelector('labelAxisFontSize') private labelAxisFontSize: HTMLElement;
+    @RefSelector('inputAxisFontSize') private inputAxisFontSize: HTMLInputElement;
+    @RefSelector('labelAxisLabelColor') private labelAxisLabelColor: HTMLElement;
+    @RefSelector('inputAxisLabelColor') private inputAxisLabelColor: HTMLInputElement;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -318,11 +345,12 @@ export class DummyFormattingPanel extends Component {
 
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
-        this.initSeriesLabel();
+        this.initSeriesLabels();
         this.initSeriesShadow();
 
         this.initAxis();
         this.initAxisTicks();
+        this.initAxisLabels();
     }
 
     private initChartPaddingItems() {
@@ -513,7 +541,7 @@ export class DummyFormattingPanel extends Component {
         });
     }
 
-    private initSeriesLabel() {
+    private initSeriesLabels() {
         const barSeries = this.chart.series as BarSeries[];
 
         let enabled = _.every(barSeries, barSeries => barSeries.labelEnabled);
@@ -732,6 +760,75 @@ export class DummyFormattingPanel extends Component {
         this.addDestroyableEventListener(this.inputAxisTicksColor, 'input', () => {
             chart.xAxis.tickColor = this.inputAxisTicksColor.value;
             chart.yAxis.tickColor = this.inputAxisTicksColor.value;
+            chart.performLayout();
+        });
+    }
+
+    private initAxisLabels() {
+        const chart = this.chart as CartesianChart;
+
+        this.labelAxisLabels.innerHTML = 'Labels';
+
+        const fonts = ['Verdana, sans-serif', 'Arial'];
+        fonts.forEach((font: any) => {
+            const option = document.createElement('option');
+            option.value = font;
+            option.text = font;
+            this.selectAxisFont.appendChild(option);
+        });
+
+        const fontParts = chart.xAxis.labelFont.split('px');
+        const fontSize = fontParts[0];
+        const font = fontParts[1].trim();
+
+        this.selectAxisFont.selectedIndex = fonts.indexOf(font);
+
+        this.addDestroyableEventListener(this.selectAxisFont, 'input', () => {
+            const font = fonts[this.selectAxisFont.selectedIndex];
+            const fontSize = Number.parseInt(this.inputAxisFontSize.value);
+
+            chart.xAxis.labelFont = `${fontSize}px ${font}`;
+            chart.yAxis.labelFont = `${fontSize}px ${font}`;
+
+            chart.performLayout();
+        });
+
+        const fontWeights = ['normal', 'bold'];
+        fontWeights.forEach((font: any) => {
+            const option = document.createElement('option');
+            option.value = font;
+            option.text = font;
+            this.selectAxisFontWeight.appendChild(option);
+        });
+
+        // TODO
+        // this.selectLegendFontWeight.selectedIndex = fonts.indexOf(font);
+        // this.addDestroyableEventListener(this.selectLegendFontWeight, 'input', () => {
+        //     const fontSize = Number.parseInt(this.selectLegendFontWeight.value);
+        //     const font = fonts[this.selectLegendFontWeight.selectedIndex];
+        //     this.chart.legend.labelFont = `bold ${fontSize}px ${font}`;
+        //     this.chart.performLayout();
+        // });
+
+        this.labelAxisFontSize.innerHTML = 'Size';
+        this.inputAxisFontSize.value = fontSize;
+        this.addDestroyableEventListener(this.inputAxisFontSize, 'input', () => {
+            const font = fonts[this.selectAxisFont.selectedIndex];
+            const fontSize = Number.parseInt(this.inputAxisFontSize.value);
+
+            chart.xAxis.labelFont = `${fontSize}px ${font}`;
+            chart.yAxis.labelFont = `${fontSize}px ${font}`;
+
+            chart.performLayout();
+        });
+
+        // TODO replace with Color Picker
+        this.labelAxisLabelColor.innerHTML = 'Color';
+        this.inputAxisLabelColor.value = `${chart.xAxis.lineColor}`;
+        this.addDestroyableEventListener(this.inputAxisLabelColor, 'input', () => {
+            chart.xAxis.labelColor = this.inputAxisLabelColor.value;
+            chart.yAxis.labelColor = this.inputAxisLabelColor.value;
+
             chart.performLayout();
         });
     }
