@@ -132,6 +132,7 @@ export class BarSeries extends Series<CartesianChart> {
         groupScale.round = true;
 
         this.yData = [];
+
         this.scheduleData();
     }
     get yFields(): string[] {
@@ -296,16 +297,13 @@ export class BarSeries extends Series<CartesianChart> {
         const enabled = this.enabled;
         const normalizedTo = this.normalizedTo;
         const xData: string[] = this.xData = data.map(datum => datum[xField]);
-        const ySums: number[] = this.ySums = [];
+        const ySums: number[] = this.ySums = []; // used for normalization of stacked bars
         const yData: number[][] = this.yData = data.map((datum, xIndex) => {
             const values: number[] = [];
             let ySum = 0;
             yFields.forEach(field => {
                 let value = datum[field];
-                if (isNaN(value) || !isFinite(value)) {
-                    value = 0;
-                }
-                if (!enabled.get(field)) {
+                if (!isFinite(value) || !enabled.get(field)) {
                     value = 0;
                 }
                 if (value > 0) {
@@ -340,8 +338,8 @@ export class BarSeries extends Series<CartesianChart> {
                 yMin = 0;
                 yMax = normalizedTo;
                 yData.forEach((stack, i) => {
-                    const total = ySums[i];
-                    stack.forEach((value, j) => stack[j] = stack[j] / total * normalizedTo);
+                    const ySum = ySums[i];
+                    stack.forEach((y, j) => stack[j] = y / ySum * normalizedTo);
                 });
             } else {
                 // Find the height of each stack in the positive and negative directions,
