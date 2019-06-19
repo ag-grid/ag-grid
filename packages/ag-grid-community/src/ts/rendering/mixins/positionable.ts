@@ -1,25 +1,16 @@
 import { PopupService } from "../../widgets/popupService";
-import { IComponent } from "../../interfaces/iComponent";
 import { Autowired } from "../../context/context";
 import { _ } from "../../utils";
 
-export interface IPositionable extends IComponent<any> {
-    getHeight?(): number;
-    setHeight?(height: number): void;
-    getWidth?(): number;
-    setWidth?(width: number): void;
-    center?(): void;
-    postConstruct(): void;
-}
-
-export function Positionable<T extends { new(...args:any[]): IPositionable }>(target: T) {
+export function Positionable<T extends { new(...args:any[]): any }>(target: T) {
     abstract class MixinClass extends target {
 
-        abstract config: any;
-        abstract popupParent: HTMLElement;
-        abstract minWidth?: number;
-        abstract minHeight?: number;
+        config: any;
         abstract renderComponent?(): void;
+
+        popupParent: HTMLElement;
+        minWidth: number;
+        minHeight?: number;
 
         @Autowired('popupService') popupService: PopupService;
 
@@ -44,7 +35,7 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
             if (this.positioned) {
                 return;
             }
-            super.postConstruct();
+
             const { minWidth, width, minHeight, height, centered, x, y } = this.config;
 
             this.minHeight = minHeight != null ? minHeight : 250;

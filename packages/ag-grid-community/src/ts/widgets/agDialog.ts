@@ -1,9 +1,9 @@
 import { DragListenerParams } from "../dragAndDrop/dragService";
 import { Autowired } from "../context/context";
 import { PopupService } from "./popupService";
-import { Maximizable, IMaximizable } from "../rendering/mixins/maximizable";
-import { Resizable, ResizableStructure, IResizable } from "../rendering/mixins/resizable";
-import { Movable, IMovable } from "../rendering/mixins/movable";
+import { Maximizable } from "../rendering/mixins/maximizable";
+import { Resizable, ResizableStructure } from "../rendering/mixins/resizable";
+import { Movable } from "../rendering/mixins/movable";
 import { PanelOptions, AgPanel } from "./agPanel";
 import { _ } from "../utils";
 
@@ -18,15 +18,12 @@ export interface DialogOptions extends PanelOptions {
     centered?: boolean;
 }
 
-@Resizable
-@Movable
-@Maximizable
-export class AgDialog extends AgPanel implements IMovable, IResizable, IMaximizable {
+export class AgDialog extends Resizable(Maximizable(Movable(AgPanel))) {
 
-    protected config: DialogOptions | undefined;
-    protected popupParent: HTMLElement;
-    protected moveElement: HTMLElement;
-    protected moveElementDragListener: DragListenerParams;
+    moveElement: HTMLElement;
+    moveElementDragListener: DragListenerParams;
+
+    config: DialogOptions | undefined;
 
     @Autowired('popupService') popupService: PopupService;
 
@@ -49,7 +46,7 @@ export class AgDialog extends AgPanel implements IMovable, IResizable, IMaximiza
     }
 
     //  used by the Positionable Mixin
-    protected renderComponent() {
+    renderComponent() {
         const eGui = this.getGui();
         const { alwaysOnTop } = this.config;
 

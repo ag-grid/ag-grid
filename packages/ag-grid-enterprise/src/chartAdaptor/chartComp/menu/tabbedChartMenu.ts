@@ -83,13 +83,7 @@ export class TabbedChartMenu extends Component {
             tab: {
                 title: titleEl,
                 bodyPromise: Promise.resolve(eWrapperDiv),
-                name,
-                afterAttachedCallback: () => {
-                    const menuPanel = this.getParentComponent() as AgPanel;
-                    const chartMenu = menuPanel.getParentComponent() as ChartMenu;
-                    chartMenu.setLastTab(name);
-                }
-
+                name
             }
         }
     }

@@ -26,9 +26,9 @@ export class ChartMenu extends Component {
     public static EVENT_DOWNLOAD_CHART = 'downloadChart';
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['ag-icon-menu', () => this.showMenu(this.lastTab || 'chartSettings')],
-        chartData: ['ag-icon-data' , () => this.showMenu(this.lastTab || 'chartData')],
-        chartFormat: ['ag-icon-data', () => this.showMenu(this.lastTab || 'chartFormat')],
+        chartSettings: ['ag-icon-menu', () => this.showMenu('chartSettings')],
+        chartData: ['ag-icon-data' , () => this.showMenu('chartData')],
+        chartFormat: ['ag-icon-data', () => this.showMenu('chartFormat')],
         chartDownload: ['ag-icon-save', () => this.saveChart()]
     };
 
@@ -40,7 +40,6 @@ export class ChartMenu extends Component {
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
     private menuPanel: AgPanel | AgDialog | undefined;
-    private lastTab: ChartMenuOptions;
 
     constructor(chartController: ChartController) {
         super(ChartMenu.TEMPLATE);
@@ -110,77 +109,73 @@ export class ChartMenu extends Component {
         this.dispatchEvent(event);
     }
 
-    private showMenu(tabName: ChartMenuOptions): void {
-        const chartComp = this.parentComponent as GridChartComp;
-        const chartCompGui = chartComp.getGui();
-
-        const tab = this.tabs.indexOf(tabName);
+    private createMenu(defaultTab: number): Promise<AgPanel> {
+        const chartComp = this.getParentComponent() as GridChartComp;
         const dockedContainer = chartComp.getDockedContainer();
-        _.addCssClass(dockedContainer, 'ag-hidden');
+        const context = this.getContext();
 
-        this.menuPanel = new AgPanel({
+        const menuPanel = this.menuPanel = new AgPanel({
             minWidth: 220,
             width: 220,
             height: '100%',
             closable: true,
             hideTitleBar: true
         });
-
-        this.menuPanel.setParentComponent(this);
-
-        const menuPanelGui = this.menuPanel.getGui();
-
-        dockedContainer.appendChild(menuPanelGui);
-
-        let menuPanelListenerDestroy: () => void;
-
-        _.addCssClass(chartCompGui, 'ag-has-menu');
+        context.wireBean(this.menuPanel);
+        
+        menuPanel.setParentComponent(this);
+        dockedContainer.appendChild(menuPanel.getGui());
 
         this.tabbedMenu = new TabbedChartMenu({
             controller: this.chartController, 
             type: chartComp.getCurrentChartType(),
             panels: this.tabs
         });
-
-        new Promise((res) => {
-            window.setTimeout(() => {
-                this.menuPanel!.setBodyComponent(this.tabbedMenu);
-                this.tabbedMenu.showTab(tab);
-                _.removeCssClass(dockedContainer, 'ag-hidden');
-                dockedContainer.style.minWidth = '220px';
-                if (this.isAlive()) {
-                    menuPanelListenerDestroy = this.addDestroyableEventListener(chartComp.getCartComponentsWrapper(), 'click', (e: MouseEvent) => {
-                        if (this.menuPanel && this.menuPanel.isAlive()) {
-                            this.menuPanel.close();
-                        }
-                    }) as () => void;
-                }
-            }, 100);
-        });
+        context.wireBean(this.tabbedMenu);
 
         this.addDestroyableEventListener(this.menuPanel, Component.EVENT_DESTROYED, () => {
             this.tabbedMenu.destroy();
-
-            if (chartComp.isAlive()) {
-                if (menuPanelListenerDestroy) {
-                    menuPanelListenerDestroy();
-                }
-                dockedContainer.style.minWidth = '0';
-                _.removeCssClass(chartCompGui, 'ag-has-menu');
-                this.menuPanel = undefined;
-            }
         });
 
-        const context = this.getContext();
-
-        context.wireBean(this.menuPanel);
-        context.wireBean(this.tabbedMenu);
-
-        this.menuPanel.setParentComponent(this);
+        return new Promise((res) => {
+            window.setTimeout(() => {
+                menuPanel.setBodyComponent(this.tabbedMenu);
+                this.tabbedMenu.showTab(defaultTab);
+                this.addDestroyableEventListener(chartComp.getChartComponentsWrapper(), 'click', () => {
+                    if (_.containsClass(chartComp.getGui(), 'ag-has-menu')) {
+                        this.hideMenu();
+                    }
+                });
+                res(menuPanel);
+            }, 100);
+        });
     }
 
-    public setLastTab(tab: ChartMenuOptions) {
-        this.lastTab = tab;
+    private slideDockedContainer() {
+        const chartComp = this.getParentComponent() as GridChartComp;
+        chartComp.slideDockedOut((this.menuPanel as AgPanel).getWidth());
+        window.setTimeout(() => {
+            _.addCssClass(this.getParentComponent()!.getGui(), 'ag-has-menu');
+        }, 500);
+    }
+
+    private showMenu(tabName: ChartMenuOptions): void {
+        const tab = this.tabs.indexOf(tabName);
+
+        if (!this.menuPanel) {
+            this.createMenu(tab)
+            .then(() => {
+                this.slideDockedContainer();
+            });
+        } else {
+            this.slideDockedContainer();
+        }
+    }
+
+    private hideMenu(): void {
+        const chartComp = this.getParentComponent() as GridChartComp;
+        chartComp.slideDockedIn();
+        _.removeCssClass(this.getParentComponent()!.getGui(), 'ag-has-menu');
     }
 
     public destroy() {

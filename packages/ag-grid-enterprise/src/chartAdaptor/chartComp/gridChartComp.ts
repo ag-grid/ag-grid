@@ -185,12 +185,20 @@ export class GridChartComp extends Component {
         this.updateChart();
     }
 
-    public getCartComponentsWrapper(): HTMLElement {
+    public getChartComponentsWrapper(): HTMLElement {
         return this.eChartComponentsWrapper;
     }
 
     public getDockedContainer(): HTMLElement {
         return this.eDockedContainer;
+    }
+
+    public slideDockedOut(width: number) {
+        this.eDockedContainer.style.minWidth = width + 'px';
+    }
+
+    public slideDockedIn() {
+        this.eDockedContainer.style.minWidth = '0';
     }
 
     public getCurrentChartType(): ChartType {
