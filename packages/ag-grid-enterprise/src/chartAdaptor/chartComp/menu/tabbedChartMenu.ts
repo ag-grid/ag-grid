@@ -23,8 +23,6 @@ export class TabbedChartMenu extends Component {
     public static TAB_DATA = 'data';
     public static TAB_FORMAT = 'format';
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     private tabbedLayout: TabbedLayout;
     private currentChartType: ChartType;
 
@@ -53,8 +51,7 @@ export class TabbedChartMenu extends Component {
         
         this.panels.forEach(panel => {
             const panelType = panel.replace('chart', '').toLowerCase();
-            const iconCls = panelType === TabbedChartMenu.TAB_MAIN ? 'chart' : 'data';
-            const { comp, tab } = this.createTab(panelType, iconCls, this.getPanelClass(panelType));
+            const { comp, tab } = this.createTab(panelType, this.getPanelClass(panelType));
 
             this.tabs.push(tab);
             this.addDestroyFunc(() => comp.destroy());
@@ -68,7 +65,6 @@ export class TabbedChartMenu extends Component {
 
     private createTab(
         name: string,
-        iconName: string, 
         ChildClass: new (controller: ChartController) => Component
     ): {comp: Component, tab: TabbedItem} {
         const eWrapperDiv = document.createElement('div');
@@ -83,13 +79,9 @@ export class TabbedChartMenu extends Component {
         return {
             comp,
             tab: {
-                // title: _.createIconNoSpan(iconName, this.gridOptionsWrapper, null),
                 title,
                 bodyPromise: Promise.resolve(eWrapperDiv),
-                name,
-                afterAttachedCallback: () => {
-                    (this.parentComponent as AgDialog).setTitle(`Chart ${_.capitalise(name)}`)
-                }
+                name
             }
         }
     }

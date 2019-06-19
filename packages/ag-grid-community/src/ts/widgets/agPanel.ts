@@ -6,6 +6,7 @@ import { _ } from "../utils";
 
 export interface PanelOptions {
     component?: Component;
+    hideTitleBar?: boolean;
     closable?: boolean;
     title?: string;
     minWidth?: number;
@@ -54,15 +55,20 @@ export class AgPanel extends Component implements IPositionable {
         const {
             component,
             closable,
+            hideTitleBar,
             title,
         } = this.config;
 
         const eGui = this.getGui();
 
         if (component) { this.setBodyComponent(component); }
-        if (title) { this.setTitle(title); }
 
-        this.setClosable(closable != null ? closable : this.closable);
+        if (!hideTitleBar) {
+            if (title) { this.setTitle(title); }
+            this.setClosable(closable != null ? closable : this.closable);
+        } else {
+            _.addCssClass(this.eTitleBar, 'ag-hidden');
+        }
 
         this.addDestroyableEventListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
             if (

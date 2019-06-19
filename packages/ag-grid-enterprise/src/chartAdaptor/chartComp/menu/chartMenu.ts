@@ -121,12 +121,21 @@ export class ChartMenu extends Component {
             minWidth: 220,
             width: 220,
             height: '100%',
-            closable: true
+            closable: true,
+            hideTitleBar: true
         });
 
-        dockedContainer.appendChild(
-            this.menuPanel.getGui()
-        );
+        const menuPanelGui = this.menuPanel.getGui();
+
+        dockedContainer.appendChild(menuPanelGui);
+
+        const menuPanelListenerDestroy = this.addDestroyableEventListener(menuPanelGui, 'focusout', (e: FocusEvent) => {
+            if (menuPanelGui.contains(e.relatedTarget as HTMLElement)) {
+                e.preventDefault();
+                return;
+            }
+            this.menuPanel.close();
+        });
 
         _.addCssClass(chartCompGui, 'ag-has-menu');
 
@@ -141,9 +150,11 @@ export class ChartMenu extends Component {
                 this.menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(tab);
                 _.removeCssClass(dockedContainer, 'ag-hidden');
-                setTimeout(() => {
-                    dockedContainer.style.minWidth = '220px';
-                }, 10);
+                dockedContainer.style.minWidth = '220px';
+                window.setTimeout(() => {
+                    menuPanelGui.focus();
+                    _.doIeFocusHack(menuPanelGui);
+                }, 500);
             }, 100);
         });
 
@@ -151,6 +162,9 @@ export class ChartMenu extends Component {
             this.tabbedMenu.destroy();
 
             if (chartComp.isAlive()) {
+                if (menuPanelListenerDestroy) {
+                    menuPanelListenerDestroy();
+                }
                 dockedContainer.style.minWidth = '0';
                 _.removeCssClass(chartCompGui, 'ag-has-menu');
             }

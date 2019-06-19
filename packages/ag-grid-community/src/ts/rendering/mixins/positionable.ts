@@ -205,7 +205,7 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
                 height = _.getAbsoluteHeight(eGui);
                 isPercent = true;
             } else {
-                height = Math.max(this.minHeight, parseInt(height as string, 10));
+                height = Math.max(this.minHeight, height as number);
                 const offsetParent = eGui.offsetParent;
                 if (offsetParent && offsetParent.clientHeight && (height + this.position.y > offsetParent.clientHeight)) {
                     height = offsetParent.clientHeight - this.position.y;
@@ -233,7 +233,7 @@ export function Positionable<T extends { new(...args:any[]): IPositionable }>(ta
                 width = _.getAbsoluteWidth(eGui);
                 isPercent = true;
             } else {
-                width = Math.max(this.minWidth, parseInt(width as string, 10));
+                width = Math.max(this.minWidth, width as number);
                 const offsetParent = eGui.offsetParent;
 
                 if (offsetParent && offsetParent.clientWidth && (width + this.position.x > offsetParent.clientWidth)) {
