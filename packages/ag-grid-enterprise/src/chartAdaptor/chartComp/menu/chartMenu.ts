@@ -26,9 +26,9 @@ export class ChartMenu extends Component {
     public static EVENT_DOWNLOAD_CHART = 'downloadChart';
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['ag-icon-menu', () => this.showMenu('chartSettings')],
-        chartData: ['ag-icon-data' , () => this.showMenu('chartData')],
-        chartFormat: ['ag-icon-data', () => this.showMenu('chartFormat')],
+        chartSettings: ['ag-icon-menu', () => this.showMenu(this.lastTab || 'chartSettings')],
+        chartData: ['ag-icon-data' , () => this.showMenu(this.lastTab || 'chartData')],
+        chartFormat: ['ag-icon-data', () => this.showMenu(this.lastTab || 'chartFormat')],
         chartDownload: ['ag-icon-save', () => this.saveChart()]
     };
 
@@ -40,6 +40,7 @@ export class ChartMenu extends Component {
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
     private menuPanel: AgPanel | AgDialog | undefined;
+    private lastTab: ChartMenuOptions;
 
     constructor(chartController: ChartController) {
         super(ChartMenu.TEMPLATE);
@@ -125,6 +126,8 @@ export class ChartMenu extends Component {
             hideTitleBar: true
         });
 
+        this.menuPanel.setParentComponent(this);
+
         const menuPanelGui = this.menuPanel.getGui();
 
         dockedContainer.appendChild(menuPanelGui);
@@ -174,6 +177,10 @@ export class ChartMenu extends Component {
         context.wireBean(this.tabbedMenu);
 
         this.menuPanel.setParentComponent(this);
+    }
+
+    public setLastTab(tab: ChartMenuOptions) {
+        this.lastTab = tab;
     }
 
     public destroy() {
