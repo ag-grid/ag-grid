@@ -54,6 +54,7 @@ export class ChartMenu extends Component {
     private getToolbarOptions(): ChartMenuOptions[] {
         let tabOptions: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartDownload'];
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
+        const ret = [] as ChartMenuOptions[];
 
         if (toolbarItemsFunc) {
             const params: GetChartToolbarItemsParams = {
@@ -77,15 +78,15 @@ export class ChartMenu extends Component {
         const firstItem = tabOptions.find(option => option !== 'chartDownload') as ChartMenuOptions;
         const chartDownload = 'chartDownload' as ChartMenuOptions;
 
-        if (downloadIdx !== -1) {
-            if (!firstItem) {
-                return [chartDownload];
-            } else {
-                return downloadIdx === 0 ? [chartDownload].concat([firstItem]) : [firstItem].concat([chartDownload]);
-            }
+        if (firstItem) {
+            ret.push(firstItem);
         }
 
-        return [firstItem];
+        if (downloadIdx !== -1) {
+            return downloadIdx === 0 ? [chartDownload].concat(ret) : ret.concat([chartDownload]);
+        }
+
+        return ret;
     }
 
     private createButtons(): void {
