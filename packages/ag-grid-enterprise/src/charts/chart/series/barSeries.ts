@@ -1,7 +1,7 @@
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
-import { Rect } from "../../scene/shape/rect";
+import { Rect, RectSizing } from "../../scene/shape/rect";
 import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
@@ -465,6 +465,7 @@ export class BarSeries extends Series<CartesianChart> {
         const enterGroups = updateGroups.enter.append(Group);
         enterGroups.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
+            // rect.sizing = RectSizing.Border;
             rect.crisp = true;
         });
         enterGroups.append(Text).each(text => {

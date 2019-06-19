@@ -2,6 +2,11 @@ import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 import { BBox } from "../bbox";
 
+export enum RectSizing {
+    Content,
+    Border
+}
+
 export class Rect extends Shape {
 
     static className = 'Rect';
@@ -112,7 +117,7 @@ export class Rect extends Shape {
             // we need to update the path to make sure the new stroke aligns to
             // the pixel grid. This is the reason we override the `lineWidth` setter
             // and getter here.
-            if (this.crisp) {
+            if (this.crisp || this.sizing === RectSizing.Border) {
                 this.dirtyPath = true;
             } else {
                 this.dirty = true;
@@ -123,6 +128,17 @@ export class Rect extends Shape {
         return this._strokeWidth;
     }
 
+    private _sizing: RectSizing = RectSizing.Content;
+    set sizing(value: RectSizing) {
+        if (this._sizing !== value) {
+            this._sizing = value;
+            this.dirtyPath = true;
+        }
+    }
+    get sizing(): RectSizing {
+        return this._sizing;
+    }
+
     updatePath() {
         if (!this.dirtyPath) {
             return;
@@ -130,20 +146,39 @@ export class Rect extends Shape {
 
         const path = this.path;
         const radius = this.radius;
+        const strokeWidth = this.strokeWidth;
 
         path.clear();
 
         if (!radius) {
+            let x = this.x;
+            let y = this.y;
+            let width = this.width;
+            let height = this.height;
+
+            if (this.sizing === RectSizing.Border) {
+                const maxX = x + width / 2;
+                const maxY = y + height / 2;
+                x += strokeWidth * .5;
+                y += strokeWidth * .5;
+                x = Math.min(x, maxX);
+                y = Math.min(y, maxY);
+                width -= strokeWidth;
+                height -= strokeWidth;
+                width = Math.max(0.001, width);
+                height = Math.max(0.001, height);
+            }
+
             if (this.crisp) {
-                const alignment = Math.floor(this.strokeWidth) % 2 / 2;
+                const alignment = Math.floor(strokeWidth) % 2 / 2;
                 path.rect(
-                    Math.floor(this.x) + alignment,
-                    Math.floor(this.y) + alignment,
-                    Math.floor(this.width) + Math.floor(this.x % 1 + this.width % 1),
-                    Math.floor(this.height) + Math.floor(this.y % 1 + this.height % 1)
+                    Math.floor(x) + alignment,
+                    Math.floor(y) + alignment,
+                    Math.floor(width) + Math.floor(x % 1 + width % 1),
+                    Math.floor(height) + Math.floor(y % 1 + height % 1)
                 );
             } else {
-                path.rect(this.x, this.y, this.width, this.height);
+                path.rect(x, y, width, height);
             }
         } else {
             // TODO: rect radius, this will require implementing
