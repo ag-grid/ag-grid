@@ -219,8 +219,33 @@ export class DummyFormattingPanel extends Component {
                 <div style="padding-top: 10px">
                     <span ref="labelAxisLabelColor" style="padding-right: 5px"></span>   
                     <input ref="inputAxisLabelColor" type="text" style="width: 115px"> 
-                </div>
-            </div>            
+                </div>                
+                
+                <div style="padding-top: 10px">
+                    <span ref="labelAxisLabelRotation"></span>  
+                </div>                                                              
+                <div style="padding-top: 5px">
+                    <span ref="labelXAxisLabelRotation" style="padding-right: 5px"></span>   
+                    <input style="width: 25px" ref="inputXAxisLabelRotation" type="text">
+                    <span ref="labelYAxisLabelRotation" style="padding-left: 15px; padding-right: 5px"></span>   
+                    <input style="width: 25px" ref="inputYAxisLabelRotation" type="text">
+                </div> 
+            </div>    
+            
+            <!-- AXIS GRIDLINES -->   
+                               
+            <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
+                <span ref="labelAxisGridlines"></span>  
+            </div>        
+                                          
+            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);"> 
+                <span ref="labelAxisGridlinesMajor"></span> 
+                                
+                <div style="padding-top: 10px">
+                    <span ref="labelAxisGridlinesMajorDash" style="padding-left: 16px"></span>   
+                    <select ref="selectAxisGridlinesMajorDash" style="width: 82px"></select>                                       
+                </div> 
+            </div>                                 
                       
          </div>`;
 
@@ -323,6 +348,17 @@ export class DummyFormattingPanel extends Component {
     @RefSelector('inputAxisFontSize') private inputAxisFontSize: HTMLInputElement;
     @RefSelector('labelAxisLabelColor') private labelAxisLabelColor: HTMLElement;
     @RefSelector('inputAxisLabelColor') private inputAxisLabelColor: HTMLInputElement;
+    @RefSelector('labelAxisLabelRotation') private labelAxisLabelRotation: HTMLElement;
+    @RefSelector('labelXAxisLabelRotation') private labelXAxisLabelRotation: HTMLElement;
+    @RefSelector('inputXAxisLabelRotation') private inputXAxisLabelRotation: HTMLInputElement;
+    @RefSelector('labelYAxisLabelRotation') private labelYAxisLabelRotation: HTMLElement;
+    @RefSelector('inputYAxisLabelRotation') private inputYAxisLabelRotation: HTMLInputElement;
+
+    @RefSelector('labelAxisGridlines') private labelAxisGridlines: HTMLElement;
+    @RefSelector('labelAxisGridlinesMajor') private labelAxisGridlinesMajor: HTMLElement;
+    @RefSelector('labelAxisGridlinesMajorDash') private labelAxisGridlinesMajorDash: HTMLElement;
+    @RefSelector('selectAxisGridlinesMajorDash') private selectAxisGridlinesMajorDash: HTMLSelectElement;
+
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -351,6 +387,7 @@ export class DummyFormattingPanel extends Component {
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
+        this.initAxisGridlines();
     }
 
     private initChartPaddingItems() {
@@ -824,12 +861,42 @@ export class DummyFormattingPanel extends Component {
 
         // TODO replace with Color Picker
         this.labelAxisLabelColor.innerHTML = 'Color';
-        this.inputAxisLabelColor.value = `${chart.xAxis.lineColor}`;
+        this.inputAxisLabelColor.value = `${chart.xAxis.labelColor}`;
         this.addDestroyableEventListener(this.inputAxisLabelColor, 'input', () => {
             chart.xAxis.labelColor = this.inputAxisLabelColor.value;
             chart.yAxis.labelColor = this.inputAxisLabelColor.value;
 
             chart.performLayout();
+        });
+
+        this.labelAxisLabelRotation.innerHTML = 'Rotation (degrees)';
+
+        this.labelXAxisLabelRotation.innerHTML = 'x-axis';
+        this.inputXAxisLabelRotation.value = `${chart.xAxis.labelRotation}`;
+        this.addDestroyableEventListener(this.inputXAxisLabelRotation, 'input', () => {
+            chart.xAxis.labelRotation = Number.parseInt(this.inputXAxisLabelRotation.value);
+            chart.performLayout();
+        });
+
+        this.labelYAxisLabelRotation.innerHTML = 'y-axis';
+        this.inputYAxisLabelRotation.value = `${chart.yAxis.labelRotation}`;
+        this.addDestroyableEventListener(this.inputYAxisLabelRotation, 'input', () => {
+            chart.yAxis.labelRotation = Number.parseInt(this.inputYAxisLabelRotation.value);
+            chart.performLayout();
+        });
+    }
+
+    private initAxisGridlines() {
+        this.labelAxisGridlines.innerHTML = 'Gridlines';
+        this.labelAxisGridlinesMajor.innerHTML = 'Major';
+        this.labelAxisGridlinesMajorDash.innerHTML = 'Dash';
+
+        const dashes = ['----------------', '..................'];
+        dashes.forEach((font: any, index: number) => {
+            const option = document.createElement('option');
+            option.value = `index`;
+            option.text = font;
+            this.selectAxisGridlinesMajorDash.appendChild(option);
         });
     }
 }
