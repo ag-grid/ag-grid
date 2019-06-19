@@ -7,7 +7,9 @@ export class DummyFormattingPanel extends Component {
 
     public static TEMPLATE =
         `<div class="ag-chart-data-wrapper" style="padding: 5%">  
-
+            
+            <!-- CHART PADDING -->
+            
             <div style="padding-top: 0px">
                 <span ref="labelChartPadding"></span>  
             </div>         
@@ -27,6 +29,8 @@ export class DummyFormattingPanel extends Component {
             </div>
             
             <hr>    
+                   
+            <!-- LEGEND -->                   
                    
             <div style="padding-bottom: 12px">
                 <span ref="labelLegend"></span>  
@@ -75,6 +79,8 @@ export class DummyFormattingPanel extends Component {
             <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
                 <span ref="labelLegendLabels"></span>   
             </div>
+            
+             <!-- LEGEND LABELS -->   
                
             <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
                 <select ref="selectLegendFont" style="width: 155px"></select>  
@@ -90,6 +96,8 @@ export class DummyFormattingPanel extends Component {
             </div>                              
                           
             <hr>       
+                        
+            <!-- SERIES -->   
             
             <div>
                 <span ref="labelSeries"></span>  
@@ -104,6 +112,8 @@ export class DummyFormattingPanel extends Component {
                 <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 15px"></ag-checkbox>
                 <span ref="labelTooltipsEnabled" style="padding-left: 5px"></span>                                                        
             </div>  
+            
+             <!-- SERIES LABELS -->   
             
             <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">                
                 <ag-checkbox ref="cbSeriesLabelsEnabled" style="padding-left: 15px"></ag-checkbox>
@@ -122,7 +132,38 @@ export class DummyFormattingPanel extends Component {
                     <input ref="inputSeriesLabelColor" type="text" style="width: 115px"> 
                 </div>
             </div> 
+                                                   
+            <!-- SERIES SHADOW -->                      
+                                            
+            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">                
+                <ag-checkbox ref="cbSeriesShadow" style="padding-left: 15px"></ag-checkbox>
+                <span ref="labelSeriesShadow" style="padding-left: 5px"></span>                                                        
+            </div>                                                 
+                        
+            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
             
+                <div>
+                    <span ref="labelSeriesShadowBlur" style="padding-right: 34px"></span>   
+                    <input style="width: 38px" ref="inputSeriesShadowBlur" type="text">   
+                </div>
+                
+                <div style="padding-top: 5px">
+                    <span ref="labelSeriesShadowXOffset" style="padding-right: 10px"></span>   
+                    <input style="width: 38px" ref="inputSeriesShadowXOffset" type="text">   
+                </div>
+                
+               <div style="padding-top: 5px">
+                    <span ref="labelSeriesShadowYOffset" style="padding-right: 10px"></span>   
+                    <input style="width: 38px" ref="inputSeriesShadowYOffset" type="text">   
+                </div>
+                
+                <div style="padding-top: 5px">
+                    <span ref="labelSeriesShadowColor" style="padding-right: 5px"></span>   
+                    <input ref="inputSeriesShadowColor" type="text" style="width: 110px"> 
+                </div>
+                              
+            </div> 
+                      
          </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -192,6 +233,17 @@ export class DummyFormattingPanel extends Component {
     @RefSelector('labelSeriesLabelColor') private labelSeriesLabelColor: HTMLElement;
     @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: HTMLInputElement;
 
+    @RefSelector('cbSeriesShadow') private cbSeriesShadow: AgCheckbox;
+    @RefSelector('labelSeriesShadow') private labelSeriesShadow: HTMLElement;
+    @RefSelector('labelSeriesShadowBlur') private labelSeriesShadowBlur: HTMLElement;
+    @RefSelector('inputSeriesShadowBlur') private inputSeriesShadowBlur: HTMLInputElement;
+    @RefSelector('labelSeriesShadowXOffset') private labelSeriesShadowXOffset: HTMLElement;
+    @RefSelector('inputSeriesShadowXOffset') private inputSeriesShadowXOffset: HTMLInputElement;
+    @RefSelector('labelSeriesShadowYOffset') private labelSeriesShadowYOffset: HTMLElement;
+    @RefSelector('inputSeriesShadowYOffset') private inputSeriesShadowYOffset: HTMLInputElement;
+    @RefSelector('labelSeriesShadowColor') private labelSeriesShadowColor: HTMLElement;
+    @RefSelector('inputSeriesShadowColor') private inputSeriesShadowColor: HTMLInputElement;
+
     private readonly chartController: ChartController;
     private chart: Chart;
 
@@ -214,34 +266,35 @@ export class DummyFormattingPanel extends Component {
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
         this.initSeriesLabel();
+        this.initSeriesShadow();
     }
 
     private initChartPaddingItems() {
         this.labelChartPadding.innerHTML = 'Chart Padding';
 
         this.labelPaddingTop.innerHTML = 'Top';
-        this.inputPaddingTop.value = this.chart.padding.top + '';
+        this.inputPaddingTop.value = `${this.chart.padding.top}`;
         this.addDestroyableEventListener(this.inputPaddingTop, 'input', () => {
             this.chart.padding.top = Number.parseInt(this.inputPaddingTop.value);
             this.chart.performLayout();
         });
 
         this.labelPaddingRight.innerHTML = 'Right';
-        this.inputPaddingRight.value = this.chart.padding.right + '';
+        this.inputPaddingRight.value = `${this.chart.padding.right}`;
         this.addDestroyableEventListener(this.inputPaddingRight, 'input', () => {
             this.chart.padding.right = Number.parseInt(this.inputPaddingRight.value);
             this.chart.performLayout();
         });
 
         this.labelPaddingBottom.innerHTML = 'Bottom';
-        this.inputPaddingBottom.value = this.chart.padding.bottom + '';
+        this.inputPaddingBottom.value = `${this.chart.padding.bottom}`;
         this.addDestroyableEventListener(this.inputPaddingBottom, 'input', () => {
             this.chart.padding.bottom = Number.parseInt(this.inputPaddingBottom.value);
             this.chart.performLayout();
         });
 
         this.labelPaddingLeft.innerHTML = 'Left';
-        this.inputPaddingLeft.value = this.chart.padding.left + '';
+        this.inputPaddingLeft.value = `${this.chart.padding.left}`;
         this.addDestroyableEventListener(this.inputPaddingLeft, 'input', () => {
             this.chart.padding.left = Number.parseInt(this.inputPaddingLeft.value);
             this.chart.performLayout();
@@ -279,37 +332,37 @@ export class DummyFormattingPanel extends Component {
         });
 
         this.labelLegendPadding.innerHTML = 'Padding';
-        this.inputLegendPadding.value = this.chart.legendPadding + '';
+        this.inputLegendPadding.value = `${this.chart.legendPadding}`;
         this.addDestroyableEventListener(this.inputLegendPadding, 'input', () => {
             this.chart.legendPadding = Number.parseInt(this.inputLegendPadding.value);
         });
 
         this.labelMarkerSize.innerHTML = 'Marker Size';
-        this.inputMarkerSize.value = this.chart.legend.markerSize + '';
+        this.inputMarkerSize.value = `${this.chart.legend.markerSize}`;
         this.addDestroyableEventListener(this.inputMarkerSize, 'input', () => {
             this.chart.legend.markerSize = Number.parseInt(this.inputMarkerSize.value);
         });
 
         this.labelMarkerStroke.innerHTML = 'Marker Stroke';
-        this.inputMarkerStroke.value = this.chart.legend.markerStrokeWidth + '';
+        this.inputMarkerStroke.value = `${this.chart.legend.markerStrokeWidth}`;
         this.addDestroyableEventListener(this.inputMarkerStroke, 'input', () => {
             this.chart.legend.markerStrokeWidth = Number.parseInt(this.inputMarkerStroke.value);
         });
 
         this.labelMarkerPadding.innerHTML = 'Marker Padding';
-        this.inputMarkerPadding.value = this.chart.legend.markerPadding + '';
+        this.inputMarkerPadding.value = `${this.chart.legend.markerPadding}`;
         this.addDestroyableEventListener(this.inputMarkerPadding, 'input', () => {
             this.chart.legend.markerPadding = Number.parseInt(this.inputMarkerPadding.value);
         });
 
         this.labelItemPaddingX.innerHTML = 'Item Padding X';
-        this.inputItemPaddingX.value = this.chart.legend.itemPaddingX + '';
+        this.inputItemPaddingX.value = `${this.chart.legend.itemPaddingX}`;
         this.addDestroyableEventListener(this.inputItemPaddingX, 'input', () => {
             this.chart.legend.itemPaddingX = Number.parseInt(this.inputItemPaddingX.value);
         });
 
         this.labelItemPaddingY.innerHTML = 'Item Padding Y';
-        this.inputItemPaddingY.value = this.chart.legend.itemPaddingX + '';
+        this.inputItemPaddingY.value = `${this.chart.legend.itemPaddingX}`;
         this.addDestroyableEventListener(this.inputItemPaddingY, 'input', () => {
             this.chart.legend.itemPaddingY = Number.parseInt(this.inputItemPaddingY.value);
         });
@@ -393,7 +446,7 @@ export class DummyFormattingPanel extends Component {
 
         const barSeries = this.chart.series as BarSeries[];
         if (barSeries.length > 0) {
-            this.inputSeriesStrokeWidth.value = barSeries[0].strokeWidth + '';
+            this.inputSeriesStrokeWidth.value = `${barSeries[0].strokeWidth}`;
         }
 
         this.addDestroyableEventListener(this.inputSeriesStrokeWidth, 'input', () => {
@@ -423,9 +476,7 @@ export class DummyFormattingPanel extends Component {
             this.selectSeriesFont.appendChild(option);
         });
 
-
-        // if (barSeries.length > 0) {
-        this.inputSeriesStrokeWidth.value = barSeries[0].strokeWidth + '';
+        this.inputSeriesStrokeWidth.value = `${barSeries[0].strokeWidth}`;
 
         const fontParts = barSeries[0].labelFont.split('px');
         const fontSize = fontParts[0];
@@ -441,7 +492,6 @@ export class DummyFormattingPanel extends Component {
                 series.labelFont = `${fontSize}px ${font}`;
             });
         });
-        // }
 
         const fontWeights = ['normal', 'bold'];
         fontWeights.forEach((font: any) => {
@@ -482,4 +532,92 @@ export class DummyFormattingPanel extends Component {
         });
     }
 
+    private initSeriesShadow() {
+        const barSeries = this.chart.series as BarSeries[];
+
+        // TODO use shadowEnabled instead when it's available in chart api
+        let enabled = _.every(barSeries, barSeries => barSeries.shadow != undefined);
+        this.cbSeriesShadow.setSelected(enabled);
+        this.labelSeriesShadow.innerHTML = 'Shadow';
+
+        // Add defaults to chart as shadow is undefined by default
+        if (!this.inputSeriesShadowBlur.value) this.inputSeriesShadowBlur.value = `20`;
+        if (!this.inputSeriesShadowXOffset.value) this.inputSeriesShadowXOffset.value = `10`;
+        if (!this.inputSeriesShadowYOffset.value) this.inputSeriesShadowYOffset.value = `10`;
+        if (!this.inputSeriesShadowColor.value) this.inputSeriesShadowColor.value = `rgba(0,0,0,0.5)`;
+
+        this.addDestroyableEventListener(this.cbSeriesShadow, 'change', () => {
+            barSeries.forEach(series => {
+                // TODO remove this check when shadowEnabled instead when it's available in chart api
+                if (this.cbSeriesShadow.isSelected()) {
+                    series.shadow = {
+                        color: this.inputSeriesShadowColor.value,
+                        offset: {
+                            x: Number.parseInt(this.inputSeriesShadowXOffset.value),
+                            y: Number.parseInt(this.inputSeriesShadowYOffset.value)
+                        },
+                        blur: Number.parseInt(this.inputSeriesShadowBlur.value)
+                    };
+                } else {
+                    series.shadow = undefined;
+                }
+            });
+        });
+
+
+        const updateShadow = () => {
+            barSeries.forEach(series => {
+                // TODO remove this check when shadowEnabled instead when it's available in chart api
+                if (this.cbSeriesShadow.isSelected()) {
+                    const blur = this.inputSeriesShadowBlur.value ? Number.parseInt(this.inputSeriesShadowBlur.value) : 0;
+                    const xOffset = this.inputSeriesShadowXOffset.value ? Number.parseInt(this.inputSeriesShadowXOffset.value) : 0;
+                    const yOffset = this.inputSeriesShadowYOffset.value ? Number.parseInt(this.inputSeriesShadowYOffset.value) : 0;
+                    const color = this.inputSeriesShadowColor.value ? this.inputSeriesShadowColor.value : 'rgba(0,0,0,0.5)';
+                    series.shadow = {
+                        color: color,
+                        offset: {x: xOffset, y: yOffset},
+                        blur: blur
+                    }
+                }
+            });
+            // TODO: why is this necessary???
+            this.chart.performLayout();
+        };
+
+        // BLUR
+        this.labelSeriesShadowBlur.innerHTML = 'Blur';
+        if (barSeries.length > 0) {
+            if (barSeries[0].shadow) {
+                this.inputSeriesShadowBlur.value = barSeries[0].shadow.blur + ''
+            }
+        }
+        this.addDestroyableEventListener(this.inputSeriesShadowBlur, 'input', updateShadow);
+
+        // X Offset
+        this.labelSeriesShadowXOffset.innerHTML = 'X Offset';
+        if (barSeries.length > 0) {
+            if (barSeries[0].shadow) {
+                this.inputSeriesShadowXOffset.value = barSeries[0].shadow.offset.x + ''
+            }
+        }
+        this.addDestroyableEventListener(this.inputSeriesShadowXOffset, 'input', updateShadow);
+
+        // Y Offset
+        this.labelSeriesShadowYOffset.innerHTML = 'Y Offset';
+        if (barSeries.length > 0) {
+            if (barSeries[0].shadow) {
+                this.inputSeriesShadowYOffset.value = barSeries[0].shadow.offset.y + ''
+            }
+        }
+        this.addDestroyableEventListener(this.inputSeriesShadowYOffset, 'input', updateShadow);
+
+        // TODO replace with Color Picker
+        this.labelSeriesShadowColor.innerHTML = 'Color';
+        if (barSeries.length > 0) {
+            if (barSeries[0].shadow) {
+                this.inputSeriesShadowColor.value = barSeries[0].shadow.color + ''
+            }
+        }
+        this.addDestroyableEventListener(this.inputSeriesShadowColor, 'input', updateShadow);
+    }
 }
