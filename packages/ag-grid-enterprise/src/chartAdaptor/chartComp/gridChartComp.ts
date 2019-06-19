@@ -185,6 +185,10 @@ export class GridChartComp extends Component {
         this.updateChart();
     }
 
+    public getCartComponentsWrapper(): HTMLElement {
+        return this.eChartComponentsWrapper;
+    }
+
     public getDockedContainer(): HTMLElement {
         return this.eDockedContainer;
     }

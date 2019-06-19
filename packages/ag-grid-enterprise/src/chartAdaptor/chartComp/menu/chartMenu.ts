@@ -39,7 +39,7 @@ export class ChartMenu extends Component {
 
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
-    private menuPanel: AgPanel | AgDialog;
+    private menuPanel: AgPanel | AgDialog | undefined;
 
     constructor(chartController: ChartController) {
         super(ChartMenu.TEMPLATE);
@@ -129,13 +129,7 @@ export class ChartMenu extends Component {
 
         dockedContainer.appendChild(menuPanelGui);
 
-        const menuPanelListenerDestroy = this.addDestroyableEventListener(menuPanelGui, 'focusout', (e: FocusEvent) => {
-            if (menuPanelGui.contains(e.relatedTarget as HTMLElement)) {
-                e.preventDefault();
-                return;
-            }
-            this.menuPanel.close();
-        });
+        let menuPanelListenerDestroy: () => void;
 
         _.addCssClass(chartCompGui, 'ag-has-menu');
 
@@ -147,14 +141,17 @@ export class ChartMenu extends Component {
 
         new Promise((res) => {
             window.setTimeout(() => {
-                this.menuPanel.setBodyComponent(this.tabbedMenu);
+                this.menuPanel!.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(tab);
                 _.removeCssClass(dockedContainer, 'ag-hidden');
                 dockedContainer.style.minWidth = '220px';
-                window.setTimeout(() => {
-                    menuPanelGui.focus();
-                    _.doIeFocusHack(menuPanelGui);
-                }, 500);
+                if (this.isAlive()) {
+                    menuPanelListenerDestroy = this.addDestroyableEventListener(chartComp.getCartComponentsWrapper(), 'click', (e: MouseEvent) => {
+                        if (this.menuPanel && this.menuPanel.isAlive()) {
+                            this.menuPanel.close();
+                        }
+                    }) as () => void;
+                }
             }, 100);
         });
 
@@ -167,6 +164,7 @@ export class ChartMenu extends Component {
                 }
                 dockedContainer.style.minWidth = '0';
                 _.removeCssClass(chartCompGui, 'ag-has-menu');
+                this.menuPanel = undefined;
             }
         });
 
@@ -180,7 +178,7 @@ export class ChartMenu extends Component {
 
     public destroy() {
         super.destroy();
-        if (this.tabbedMenu) {
+        if (this.menuPanel && this.menuPanel.isAlive()) {
             this.menuPanel.destroy();
         }
     }
