@@ -2,6 +2,7 @@ import {_, AgCheckbox, Autowired, Component, GridOptionsWrapper, PostConstruct, 
 import {ChartController} from "../chartController";
 import {Chart, LegendPosition} from "../../../charts/chart/chart";
 import {BarSeries} from "../../../charts/chart/series/barSeries";
+import {CartesianChart} from "../../../charts/chart/cartesianChart";
 
 export class DummyFormattingPanel extends Component {
 
@@ -141,28 +142,66 @@ export class DummyFormattingPanel extends Component {
             </div>                                                 
                         
             <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-            
                 <div>
                     <span ref="labelSeriesShadowBlur" style="padding-right: 34px"></span>   
                     <input style="width: 38px" ref="inputSeriesShadowBlur" type="text">   
                 </div>
-                
                 <div style="padding-top: 5px">
                     <span ref="labelSeriesShadowXOffset" style="padding-right: 10px"></span>   
                     <input style="width: 38px" ref="inputSeriesShadowXOffset" type="text">   
                 </div>
-                
-               <div style="padding-top: 5px">
+                <div style="padding-top: 5px">
                     <span ref="labelSeriesShadowYOffset" style="padding-right: 10px"></span>   
                     <input style="width: 38px" ref="inputSeriesShadowYOffset" type="text">   
                 </div>
-                
                 <div style="padding-top: 5px">
                     <span ref="labelSeriesShadowColor" style="padding-right: 5px"></span>   
                     <input ref="inputSeriesShadowColor" type="text" style="width: 110px"> 
-                </div>
-                              
+                </div>                              
             </div> 
+                      
+            <hr>       
+                        
+            <!-- AXIS -->
+            
+            <div>
+                <span ref="labelAxis"></span>  
+            </div>                
+            
+            <div style="padding-top: 10px;">
+                <span ref="labelAxisLineWidth" style="padding-left: 15px; padding-right: 10px"></span>   
+                <input style="width: 38px" ref="inputAxisLineWidth" type="text">   
+            </div>
+            
+            <div style="padding-top: 10px">
+                <span ref="labelAxisColor" style="padding-left: 15px; padding-right: 10px"></span>   
+                <input ref="inputAxisColor" type="text" style="width: 110px"> 
+            </div> 
+             
+            <!-- AXIS TICKS -->  
+                            
+            <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
+                <span ref="labelAxisTicks"></span>  
+            </div>                                                 
+                        
+            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
+                <div>
+                    <span ref="labelAxisTicksWidth" style="padding-right: 24px"></span>   
+                    <input style="width: 25px" ref="inputAxisTicksWidth" type="text">
+                </div>
+                <div style="padding-top: 5px">
+                    <span ref="labelAxisTicksSize" style="padding-right: 34px"></span>   
+                    <input style="width: 25px" ref="inputAxisTicksSize" type="text">
+                </div> 
+                <div style="padding-top: 5px">
+                    <span ref="labelAxisTicksPadding" style="padding-right: 12px"></span>   
+                    <input style="width: 25px" ref="inputAxisTicksPadding" type="text">
+                </div> 
+                <div style="padding-top: 5px">
+                    <span ref="labelAxisTicksColor" style="padding-right: 10px"></span>   
+                    <input ref="inputAxisTicksColor" type="text" style="width: 110px">                    
+                </div>  
+            </div>               
                       
          </div>`;
 
@@ -216,13 +255,10 @@ export class DummyFormattingPanel extends Component {
     @RefSelector('inputLegendLabelColor') private inputLegendLabelColor: HTMLInputElement;
 
     @RefSelector('labelSeries') private labelSeries: HTMLElement;
-
-    @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
-    @RefSelector('labelTooltipsEnabled') private labelTooltipsEnabled: HTMLElement;
-
     @RefSelector('labelSeriesStrokeWidth') private labelSeriesStrokeWidth: HTMLElement;
     @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: HTMLInputElement;
-
+    @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
+    @RefSelector('labelTooltipsEnabled') private labelTooltipsEnabled: HTMLElement;
     @RefSelector('cbSeriesLabelsEnabled') private cbSeriesLabelsEnabled: AgCheckbox;
     @RefSelector('labelSeriesLabelsEnabled') private labelSeriesLabelsEnabled: HTMLElement;
     @RefSelector('labelSeriesLabels') private labelSeriesLabels: HTMLElement;
@@ -243,6 +279,23 @@ export class DummyFormattingPanel extends Component {
     @RefSelector('inputSeriesShadowYOffset') private inputSeriesShadowYOffset: HTMLInputElement;
     @RefSelector('labelSeriesShadowColor') private labelSeriesShadowColor: HTMLElement;
     @RefSelector('inputSeriesShadowColor') private inputSeriesShadowColor: HTMLInputElement;
+
+    @RefSelector('labelAxis') private labelAxis: HTMLElement;
+    @RefSelector('labelAxisLineWidth') private labelAxisLineWidth: HTMLElement;
+    @RefSelector('inputAxisLineWidth') private inputAxisLineWidth: HTMLInputElement;
+    @RefSelector('labelAxisColor') private labelAxisColor: HTMLElement;
+    @RefSelector('inputAxisColor') private inputAxisColor: HTMLInputElement;
+
+    @RefSelector('labelAxisTicks') private labelAxisTicks: HTMLElement;
+    @RefSelector('labelAxisTicksWidth') private labelAxisTicksWidth: HTMLElement;
+    @RefSelector('inputAxisTicksWidth') private inputAxisTicksWidth: HTMLInputElement;
+    @RefSelector('labelAxisTicksSize') private labelAxisTicksSize: HTMLElement;
+    @RefSelector('inputAxisTicksSize') private inputAxisTicksSize: HTMLInputElement;
+    @RefSelector('labelAxisTicksPadding') private labelAxisTicksPadding: HTMLElement;
+    @RefSelector('inputAxisTicksPadding') private inputAxisTicksPadding: HTMLInputElement;
+    @RefSelector('labelAxisTicksColor') private labelAxisTicksColor: HTMLElement;
+    @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: HTMLInputElement;
+
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -267,6 +320,9 @@ export class DummyFormattingPanel extends Component {
         this.initSeriesStrokeWidth();
         this.initSeriesLabel();
         this.initSeriesShadow();
+
+        this.initAxis();
+        this.initAxisTicks();
     }
 
     private initChartPaddingItems() {
@@ -410,6 +466,7 @@ export class DummyFormattingPanel extends Component {
         // });
 
         this.labelLegendFontSize.innerHTML = 'Size';
+
         this.inputLegendFontSize.value = fontSize;
         this.addDestroyableEventListener(this.inputLegendFontSize, 'input', () => {
             const fontSize = Number.parseInt(this.inputLegendFontSize.value);
@@ -475,8 +532,6 @@ export class DummyFormattingPanel extends Component {
             option.text = font;
             this.selectSeriesFont.appendChild(option);
         });
-
-        this.inputSeriesStrokeWidth.value = `${barSeries[0].strokeWidth}`;
 
         const fontParts = barSeries[0].labelFont.split('px');
         const fontSize = fontParts[0];
@@ -564,7 +619,6 @@ export class DummyFormattingPanel extends Component {
             });
         });
 
-
         const updateShadow = () => {
             barSeries.forEach(series => {
                 // TODO remove this check when shadowEnabled instead when it's available in chart api
@@ -619,5 +673,66 @@ export class DummyFormattingPanel extends Component {
             }
         }
         this.addDestroyableEventListener(this.inputSeriesShadowColor, 'input', updateShadow);
+    }
+
+    private initAxis() {
+        this.labelAxis.innerHTML = 'Axis';
+
+        const chart = this.chart as CartesianChart;
+        this.labelAxisLineWidth.innerHTML = 'Line Width';
+        this.inputAxisLineWidth.value = `${chart.xAxis.lineWidth}`;
+        this.addDestroyableEventListener(this.inputAxisLineWidth, 'input', () => {
+            chart.xAxis.lineWidth = Number.parseInt(this.inputAxisLineWidth.value);
+            chart.yAxis.lineWidth = Number.parseInt(this.inputAxisLineWidth.value);
+            this.chart.performLayout();
+        });
+
+        // TODO replace with Color Picker
+        this.labelAxisColor.innerHTML = 'Color';
+        this.inputAxisColor.value = `${chart.xAxis.lineColor}`;
+        this.addDestroyableEventListener(this.inputAxisColor, 'input', () => {
+            chart.xAxis.lineColor = this.inputAxisColor.value;
+            chart.yAxis.lineColor = this.inputAxisColor.value;
+            this.chart.performLayout();
+        });
+    }
+
+    private initAxisTicks() {
+        this.labelAxisTicks.innerHTML = 'Ticks';
+
+        const chart = this.chart as CartesianChart;
+
+        this.labelAxisTicksWidth.innerHTML = 'Width';
+        this.inputAxisTicksWidth.value = `${chart.xAxis.lineWidth}`;
+        this.addDestroyableEventListener(this.inputAxisTicksWidth, 'input', () => {
+            chart.xAxis.tickWidth = Number.parseInt(this.inputAxisTicksWidth.value);
+            chart.yAxis.tickWidth = Number.parseInt(this.inputAxisTicksWidth.value);
+            chart.performLayout();
+        });
+
+        this.labelAxisTicksSize.innerHTML = 'Size';
+        this.inputAxisTicksSize.value = `${chart.xAxis.tickSize}`;
+        this.addDestroyableEventListener(this.inputAxisTicksSize, 'input', () => {
+            chart.xAxis.tickSize = Number.parseInt(this.inputAxisTicksSize.value);
+            chart.yAxis.tickSize = Number.parseInt(this.inputAxisTicksSize.value);
+            chart.performLayout();
+        });
+
+        this.labelAxisTicksPadding.innerHTML = 'Padding';
+        this.inputAxisTicksPadding.value = `${chart.xAxis.tickPadding}`;
+        this.addDestroyableEventListener(this.inputAxisTicksPadding, 'input', () => {
+            chart.xAxis.tickPadding = Number.parseInt(this.inputAxisTicksPadding.value);
+            chart.yAxis.tickPadding = Number.parseInt(this.inputAxisTicksPadding.value);
+            chart.performLayout();
+        });
+
+        // TODO replace with Color Picker
+        this.labelAxisTicksColor.innerHTML = 'Color';
+        this.inputAxisTicksColor.value = `${chart.xAxis.lineColor}`;
+        this.addDestroyableEventListener(this.inputAxisTicksColor, 'input', () => {
+            chart.xAxis.tickColor = this.inputAxisTicksColor.value;
+            chart.yAxis.tickColor = this.inputAxisTicksColor.value;
+            chart.performLayout();
+        });
     }
 }
