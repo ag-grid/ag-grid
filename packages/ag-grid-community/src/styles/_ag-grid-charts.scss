@@ -39,6 +39,9 @@
         width: 0;
         min-width: 0;
         transition: min-width 0.4s;
+        .ag-panel {
+            border-width: 0 0 0 1px;
+        }
     }
 }
 
