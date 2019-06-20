@@ -127,10 +127,16 @@ export class Color {
     }
 
     toHexString(): string {
-        return '#'
+        let hex = '#'
             + Color.padHex(Math.round(this.r * 255).toString(16))
             + Color.padHex(Math.round(this.g * 255).toString(16))
             + Color.padHex(Math.round(this.b * 255).toString(16));
+
+        if (this.a < 1) {
+            hex += Color.padHex(Math.round(this.a * 255).toString(16));
+        }
+
+        return hex;
     }
 
     toRgbaString(): string {
