@@ -10,7 +10,7 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
-export class Component extends BeanStub implements IComponent<any> {
+export class Component extends BeanStub {//implements IComponent<any> {
 
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
 

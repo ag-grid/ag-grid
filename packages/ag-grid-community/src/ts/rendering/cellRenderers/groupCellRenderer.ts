@@ -35,7 +35,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     padding: number;
 }
 
-export class GroupCellRenderer extends Component implements ICellRenderer {
+export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private static TEMPLATE =
         '<span class="ag-cell-wrapper">' +
