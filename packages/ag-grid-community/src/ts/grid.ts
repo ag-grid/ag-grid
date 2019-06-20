@@ -79,6 +79,7 @@ import { Module } from "./interfaces/iModule";
 import { AgGroupComponent } from "./widgets/agGroupComponent";
 import { AgDialog } from "./widgets/agDialog";
 import { AgPanel } from "./widgets/agPanel";
+import { AgInputTextField } from "./widgets/agInputTextField";
 import { _ } from "./utils";
 
 export interface GridParams {
@@ -196,6 +197,7 @@ export class Grid {
         let components = [
             { componentName: 'AgCheckbox', theClass: AgCheckbox },
             { componentName: 'AgRadioButton', theClass: AgRadioButton },
+            { componentName: 'AgInputTextField', theClass: AgInputTextField},
             { componentName: 'AgGridComp', theClass: GridPanel },
             { componentName: 'AgHeaderRoot', theClass: HeaderRootComp },
             { componentName: 'AgPagination', theClass: PaginationComp },

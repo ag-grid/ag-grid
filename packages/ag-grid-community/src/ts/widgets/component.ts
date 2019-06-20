@@ -47,13 +47,17 @@ export class Component extends BeanStub implements IComponent<any> {
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
 
-        childNodeList.forEach(childNode => {
+        childNodeList.forEach((childNode: HTMLElement) => {
             const childComp = this.getContext().createComponentFromElement(childNode as Element, (childComp) => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
                 this.copyAttributesFromNode(childNode as Element, childComp.getGui());
             });
             if (childComp) {
+                if ((childComp as any).addItems && childNode.children.length) {
+                    this.createChildComponentsFromTags(childNode);
+                    (childComp as any).addItems(Array.prototype.slice.call(childNode.children));
+                }
                 // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 this.swapComponentForNode(childComp, parentNode, childNode);
             } else if (childNode.childNodes) {

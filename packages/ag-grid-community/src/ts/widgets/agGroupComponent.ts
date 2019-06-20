@@ -41,11 +41,13 @@ export class AgGroupComponent extends Component {
             this.addItems(initialItems);
         }
 
-        this.eLabel.innerHTML = this.label;
+        if (this.label) {
+            this.setLabel(this.label);
+        }
     }
 
     public addItems(items: GroupItem[]) {
-        items.forEach(this.addItem);
+        items.forEach(item => this.addItem(item));
     }
 
     public addItem(item: GroupItem) {
@@ -55,5 +57,9 @@ export class AgGroupComponent extends Component {
 
         eGui.appendChild(el);
         this.items.push(el);
+    }
+
+    public setLabel(label: string) {
+        this.eLabel.innerText = label;
     }
 }

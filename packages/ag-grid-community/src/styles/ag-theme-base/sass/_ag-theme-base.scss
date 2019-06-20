@@ -1244,7 +1244,7 @@
 
 
     ////
-    /// Group Component
+    /// Widgets
     ///
     .ag-group-component{
         margin: 10px 5px;
@@ -1262,6 +1262,12 @@
         }
         .ag-group-item {
             margin-top: 2px;
+        }
+    }
+
+    .ag-textfield {
+        label {
+            margin-right: 5px;
         }
     }
 

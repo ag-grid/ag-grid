@@ -1,4 +1,14 @@
-import {_, AgCheckbox, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid-community";
+import {
+    Autowired, 
+    AgCheckbox, 
+    AgInputTextField,
+    AgGroupComponent,
+    Component, 
+    GridOptionsWrapper, 
+    PostConstruct, 
+    RefSelector, 
+    _
+} from "ag-grid-community";
 import {ChartController} from "../chartController";
 import {Chart, LegendPosition} from "../../../charts/chart/chart";
 import {BarSeries} from "../../../charts/chart/series/barSeries";
@@ -7,39 +17,30 @@ import {CartesianChart} from "../../../charts/chart/cartesianChart";
 export class DummyFormattingPanel extends Component {
 
     public static TEMPLATE =
-        `<div class="ag-chart-data-wrapper" style="padding: 5%">  
+        `<div class="ag-chart-format-wrapper" style="padding: 5%">  
             
             <!-- CHART PADDING -->
             
-            <div style="padding-top: 0px">
-                <span ref="labelChartPadding"></span>  
-            </div>         
-            
-            <div class="ag-column-tool-panel-column-group" style="padding: 10px 5px 5px 25px">
-                <span ref="labelPaddingTop" style="padding-right: 5px"></span>   
-                <input style="width: 38px" ref="inputPaddingTop" type="text" style="padding-right: 15px">   
-                <span ref="labelPaddingRight" style="padding-left: 15px; padding-right: 5px"></span>       
-                <input style="width: 38px" ref="inputPaddingRight" type="text" style="padding-right: 15px">   
-            </div>
-            
-            <div class="ag-column-tool-panel-column-group" style="padding: 5px 5px 0px 5px">
-                <span ref="labelPaddingBottom" style="padding-right: 5px"></span>   
-                <input style="width: 38px" ref="inputPaddingBottom" type="text">   
-                <span ref="labelPaddingLeft" style="padding-left: 22px; padding-right: 5px"></span>       
-                <input style="width: 38px" ref="inputPaddingLeft" type="text">   
-            </div>
-            
-            <hr>    
+            <ag-group-component ref="ePaddingGroup">
+                <div class="padding-group">
+                    <ag-input-text-field ref="inputPaddingTop"></ag-input-text-field>
+                    <ag-input-text-field ref="inputPaddingRight"></ag-input-text-field>
+                </div>
+                <div class="padding-group">
+                    <ag-input-text-field ref="inputPaddingBottom"></ag-input-text-field>
+                    <ag-input-text-field ref="inputPaddingLeft"></ag-input-text-field>
+                </div>
+            </ag-group-component>
                    
-            <!-- LEGEND -->                   
+            <!-- LEGEND -->
                    
             <div style="padding-bottom: 12px">
                 <span ref="labelLegend"></span>  
             </div>   
             
-            <div class="ag-column-tool-panel-column-group">                
+            <div class="ag-column-tool-panel-column-group">
                 <ag-checkbox ref="cbLegendEnabled" style="padding-left: 15px"></ag-checkbox>
-                <span ref="labelLegendEnabled" style="padding-left: 5px"></span>                                                        
+                <span ref="labelLegendEnabled" style="padding-left: 5px"></span>
             </div>  
             
             <div style="padding-top: 10px;">       
@@ -83,7 +84,7 @@ export class DummyFormattingPanel extends Component {
             
              <!-- LEGEND LABELS -->   
                
-            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
+            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
                 <select ref="selectLegendFont" style="width: 155px"></select>  
                 <div style="padding-top: 10px">
                     <select ref="selectLegendFontWeight" style="width: 82px"></select>
@@ -94,34 +95,34 @@ export class DummyFormattingPanel extends Component {
                     <span ref="labelLegendLabelColor" style="padding-right: 5px"></span>   
                     <input ref="inputLegendLabelColor" type="text" style="width: 115px"> 
                 </div>
-            </div>                              
-                          
-            <hr>       
-                        
-            <!-- SERIES -->   
+            </div>
+
+            <hr>
+
+            <!-- SERIES -->
             
             <div>
                 <span ref="labelSeries"></span>  
-            </div>                
+            </div>
             
             <div style="padding-top: 10px;">
                 <span ref="labelSeriesStrokeWidth" style="padding-left: 15px; padding-right: 10px"></span>   
-                <input style="width: 38px" ref="inputSeriesStrokeWidth" type="text">   
+                <input style="width: 38px" ref="inputSeriesStrokeWidth" type="text">
             </div>
             
-            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px">                
+            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px">
                 <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 15px"></ag-checkbox>
-                <span ref="labelTooltipsEnabled" style="padding-left: 5px"></span>                                                        
+                <span ref="labelTooltipsEnabled" style="padding-left: 5px"></span>
             </div>  
             
             <!-- SERIES LABELS -->   
             
-            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">                
+            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">
                 <ag-checkbox ref="cbSeriesLabelsEnabled" style="padding-left: 15px"></ag-checkbox>
-                <span ref="labelSeriesLabelsEnabled" style="padding-left: 5px"></span>                                                        
+                <span ref="labelSeriesLabelsEnabled" style="padding-left: 5px"></span>
             </div>  
             
-            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
+            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
                 <select ref="selectSeriesFont" style="width: 155px"></select>  
                 <div style="padding-top: 10px">
                     <select ref="selectSeriesFontWeight" style="width: 82px"></select>
@@ -133,57 +134,57 @@ export class DummyFormattingPanel extends Component {
                     <input ref="inputSeriesLabelColor" type="text" style="width: 115px"> 
                 </div>
             </div> 
-                                                   
-            <!-- SERIES SHADOW -->                      
-                                            
-            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">                
+
+            <!-- SERIES SHADOW -->
+
+            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">
                 <ag-checkbox ref="cbSeriesShadow" style="padding-left: 15px"></ag-checkbox>
-                <span ref="labelSeriesShadow" style="padding-left: 5px"></span>                                                        
-            </div>                                                 
-                        
+                <span ref="labelSeriesShadow" style="padding-left: 5px"></span>
+            </div>
+
             <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
                 <div>
-                    <span ref="labelSeriesShadowBlur" style="padding-right: 34px"></span>   
-                    <input style="width: 38px" ref="inputSeriesShadowBlur" type="text">   
+                    <span ref="labelSeriesShadowBlur" style="padding-right: 34px"></span>
+                    <input style="width: 38px" ref="inputSeriesShadowBlur" type="text">
                 </div>
                 <div style="padding-top: 5px">
-                    <span ref="labelSeriesShadowXOffset" style="padding-right: 10px"></span>   
-                    <input style="width: 38px" ref="inputSeriesShadowXOffset" type="text">   
+                    <span ref="labelSeriesShadowXOffset" style="padding-right: 10px"></span>
+                    <input style="width: 38px" ref="inputSeriesShadowXOffset" type="text">
                 </div>
                 <div style="padding-top: 5px">
-                    <span ref="labelSeriesShadowYOffset" style="padding-right: 10px"></span>   
-                    <input style="width: 38px" ref="inputSeriesShadowYOffset" type="text">   
+                    <span ref="labelSeriesShadowYOffset" style="padding-right: 10px"></span>
+                    <input style="width: 38px" ref="inputSeriesShadowYOffset" type="text">
                 </div>
                 <div style="padding-top: 5px">
-                    <span ref="labelSeriesShadowColor" style="padding-right: 5px"></span>   
-                    <input ref="inputSeriesShadowColor" type="text" style="width: 110px"> 
-                </div>                              
+                    <span ref="labelSeriesShadowColor" style="padding-right: 5px"></span>
+                    <input ref="inputSeriesShadowColor" type="text" style="width: 110px">
+                </div>
             </div> 
-                      
-            <hr>       
-                        
+
+            <hr>
+
             <!-- AXIS -->
-            
+
             <div>
                 <span ref="labelAxis"></span>  
-            </div>                
-            
+            </div>
+
             <div style="padding-top: 10px;">
                 <span ref="labelAxisLineWidth" style="padding-left: 15px; padding-right: 10px"></span>   
                 <input style="width: 38px" ref="inputAxisLineWidth" type="text">   
             </div>
-            
+
             <div style="padding-top: 10px">
                 <span ref="labelAxisColor" style="padding-left: 15px; padding-right: 10px"></span>   
                 <input ref="inputAxisColor" type="text" style="width: 110px"> 
             </div> 
-             
+
             <!-- AXIS TICKS -->  
-                            
+
             <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
                 <span ref="labelAxisTicks"></span>  
-            </div>                                                 
-                        
+            </div>
+
             <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
                 <div>
                     <span ref="labelAxisTicksWidth" style="padding-right: 24px"></span>   
@@ -200,70 +201,61 @@ export class DummyFormattingPanel extends Component {
                 <div style="padding-top: 5px">
                     <span ref="labelAxisTicksColor" style="padding-right: 10px"></span>   
                     <input ref="inputAxisTicksColor" type="text" style="width: 110px">                    
-                </div>  
-            </div>    
+                </div>
+            </div>
             
-            <!-- AXIS LABELS -->   
-                               
+            <!-- AXIS LABELS -->
+
             <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
-                <span ref="labelAxisLabels"></span>  
-            </div> 
-            
-            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">                        
-                <select ref="selectAxisFont" style="width: 155px"></select>  
+                <span ref="labelAxisLabels"></span>
+            </div>
+
+            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
+                <select ref="selectAxisFont" style="width: 155px"></select>
                 <div style="padding-top: 10px">
                     <select ref="selectAxisFontWeight" style="width: 82px"></select>
-                     <span ref="labelAxisFontSize" style="padding-left: 16px"></span>   
-                    <input ref="inputAxisFontSize" type="text" style="width: 25px"> 
-                </div>                             
+                     <span ref="labelAxisFontSize" style="padding-left: 16px"></span>
+                    <input ref="inputAxisFontSize" type="text" style="width: 25px">
+                </div>
                 <div style="padding-top: 10px">
-                    <span ref="labelAxisLabelColor" style="padding-right: 5px"></span>   
+                    <span ref="labelAxisLabelColor" style="padding-right: 5px"></span>
                     <input ref="inputAxisLabelColor" type="text" style="width: 115px"> 
-                </div>                
+                </div>
                 
                 <div style="padding-top: 10px">
                     <span ref="labelAxisLabelRotation"></span>  
-                </div>                                                              
+                </div>
                 <div style="padding-top: 5px">
-                    <span ref="labelXAxisLabelRotation" style="padding-right: 5px"></span>   
+                    <span ref="labelXAxisLabelRotation" style="padding-right: 5px"></span>
                     <input style="width: 25px" ref="inputXAxisLabelRotation" type="text">
-                    <span ref="labelYAxisLabelRotation" style="padding-left: 15px; padding-right: 5px"></span>   
+                    <span ref="labelYAxisLabelRotation" style="padding-left: 15px; padding-right: 5px"></span>
                     <input style="width: 25px" ref="inputYAxisLabelRotation" type="text">
                 </div> 
-            </div>    
+            </div>
             
-            <!-- AXIS GRIDLINES -->   
-                               
+            <!-- AXIS GRIDLINES -->
+
             <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
                 <span ref="labelAxisGridlines"></span>  
-            </div>        
-                                          
+            </div>
+
             <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);"> 
                 <span ref="labelAxisGridlinesMajor"></span> 
-                                
+
                 <div style="padding-top: 10px">
-                    <span ref="labelAxisGridlinesMajorDash" style="padding-left: 16px"></span>   
-                    <select ref="selectAxisGridlinesMajorDash" style="width: 82px"></select>                                       
+                    <span ref="labelAxisGridlinesMajorDash" style="padding-left: 16px"></span>
+                    <select ref="selectAxisGridlinesMajorDash" style="width: 82px"></select>
                 </div> 
-            </div>                                 
-                      
+            </div>
          </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    @RefSelector('labelChartPadding') private labelChartPadding: HTMLElement;
-
-    @RefSelector('labelPaddingTop') private labelPaddingTop: HTMLElement;
-    @RefSelector('inputPaddingTop') private inputPaddingTop: HTMLInputElement;
-
-    @RefSelector('labelPaddingRight') private labelPaddingRight: HTMLElement;
-    @RefSelector('inputPaddingRight') private inputPaddingRight: HTMLInputElement;
-
-    @RefSelector('labelPaddingBottom') private labelPaddingBottom: HTMLElement;
-    @RefSelector('inputPaddingBottom') private inputPaddingBottom: HTMLInputElement;
-
-    @RefSelector('labelPaddingLeft') private labelPaddingLeft: HTMLElement;
-    @RefSelector('inputPaddingLeft') private inputPaddingLeft: HTMLInputElement;
+    @RefSelector('ePaddingGroup') private ePaddingGroup: AgGroupComponent;
+    @RefSelector('inputPaddingTop') private inputPaddingTop: AgInputTextField;
+    @RefSelector('inputPaddingRight') private inputPaddingRight: AgInputTextField;
+    @RefSelector('inputPaddingBottom') private inputPaddingBottom: AgInputTextField;
+    @RefSelector('inputPaddingLeft') private inputPaddingLeft: AgInputTextField;
 
     @RefSelector('labelLegend') private labelLegend: HTMLElement;
     @RefSelector('cbLegendEnabled') private cbLegendEnabled: AgCheckbox;
@@ -374,7 +366,6 @@ export class DummyFormattingPanel extends Component {
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
-
         this.initChartPaddingItems();
         this.initLegendItems();
         this.initLegendLabels();
@@ -391,34 +382,28 @@ export class DummyFormattingPanel extends Component {
     }
 
     private initChartPaddingItems() {
-        this.labelChartPadding.innerHTML = 'Chart Padding';
+        type Sides = 'top' | 'right' | 'bottom' | 'left';
+        type PaddingConfig = {
+            [key in Sides]: [string, string, AgInputTextField];
+        }
 
-        this.labelPaddingTop.innerHTML = 'Top';
-        this.inputPaddingTop.value = `${this.chart.padding.top}`;
-        this.addDestroyableEventListener(this.inputPaddingTop, 'input', () => {
-            this.chart.padding.top = Number.parseInt(this.inputPaddingTop.value);
-            this.chart.performLayout();
-        });
+        this.ePaddingGroup.setLabel('Chart Padding');
 
-        this.labelPaddingRight.innerHTML = 'Right';
-        this.inputPaddingRight.value = `${this.chart.padding.right}`;
-        this.addDestroyableEventListener(this.inputPaddingRight, 'input', () => {
-            this.chart.padding.right = Number.parseInt(this.inputPaddingRight.value);
-            this.chart.performLayout();
-        });
+        const config: PaddingConfig = {
+            top: ['Top', `${this.chart.padding.top}`, this.inputPaddingTop],
+            right: ['Right', `${this.chart.padding.right}`, this.inputPaddingRight],
+            bottom: ['Bottom', `${this.chart.padding.bottom}`, this.inputPaddingBottom],
+            left: ['Left', `${this.chart.padding.left}`, this.inputPaddingLeft]
+        }
 
-        this.labelPaddingBottom.innerHTML = 'Bottom';
-        this.inputPaddingBottom.value = `${this.chart.padding.bottom}`;
-        this.addDestroyableEventListener(this.inputPaddingBottom, 'input', () => {
-            this.chart.padding.bottom = Number.parseInt(this.inputPaddingBottom.value);
-            this.chart.performLayout();
-        });
-
-        this.labelPaddingLeft.innerHTML = 'Left';
-        this.inputPaddingLeft.value = `${this.chart.padding.left}`;
-        this.addDestroyableEventListener(this.inputPaddingLeft, 'input', () => {
-            this.chart.padding.left = Number.parseInt(this.inputPaddingLeft.value);
-            this.chart.performLayout();
+        Object.keys(config).forEach(side => {
+            const [ label, value, field ] = config[side as Sides];
+            field.setLabel(label);
+            field.setValue(value);
+            this.addDestroyableEventListener(field.getInputElement(), 'input', () => {
+                this.chart.padding[side as Sides] = Number.parseInt(field.getValue());
+                this.chart.performLayout();
+            });
         });
     }
 

@@ -149,6 +149,22 @@
         position: relative;
         user-select: none;
     }
+
+    .ag-chart-format-wrapper {
+        .ag-group-component {
+            border-width: 1px;
+            .ag-group-component-label {
+                top: -6px;
+            }
+            .padding-group {
+                padding: 0 10px;
+                justify-content: space-between;
+                input {
+                    min-width: 30px;
+                }
+            }
+        }
+    }
 }
 
 // sizing
