@@ -16,7 +16,7 @@ export class ChartPaddingPanel extends Component {
                     <ag-input-text-field ref="inputPaddingBottom"></ag-input-text-field>
                     <ag-input-text-field ref="inputPaddingLeft"></ag-input-text-field>
                 </div>   
-            </ag-group-component
+            </ag-group-component>
         <div>`;
 
     @RefSelector('labelChartPadding') private labelChartPadding: AgGroupComponent;
