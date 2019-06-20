@@ -437,6 +437,10 @@
         "url": "javascript-grid-row-node/"
       },
       {
+        "title": "Column",
+        "url": "javascript-grid-column/"
+      },
+      {
         "title": "Client-side",
         "url": "javascript-grid-client-side-model/"
       },

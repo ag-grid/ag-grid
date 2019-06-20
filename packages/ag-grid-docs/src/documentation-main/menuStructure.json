@@ -14,7 +14,7 @@
     ]
   },
   {
-    "title": "API",
+    "title": "Interface / API",
     "items": [
       {
         "title": "Overview",
@@ -50,7 +50,7 @@
       },
       {
         "title": "Column",
-        "url": ""
+        "url": "javascript-grid-column/"
       },
       {
         "title": "Context",
