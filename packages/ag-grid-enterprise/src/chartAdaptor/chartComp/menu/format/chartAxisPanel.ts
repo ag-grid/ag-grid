@@ -33,17 +33,7 @@ export class ChartAxisPanel extends Component {
                         <ag-input-text-field ref="inputXAxisLabelRotation"></ag-input-text-field>
                         <ag-input-text-field ref="inputYAxisLabelRotation"></ag-input-text-field>
                     </ag-group-component>
-                </ag-group-component>
-
-                <!-- AXIS GRIDLINES -->
-
-                <ag-group-component ref="labelAxisGridlines">
-                    <ag-group-component ref="labelAxisGridlinesMajor">
-                        <span ref="labelAxisGridlinesMajorDash" style="padding-left: 16px"></span>
-                        <select ref="selectAxisGridlinesMajorDash" style="width: 82px"></select>
-                    </ag-group-component>
-                </ag-group-component>
-            </ag-group-component>
+                </ag-group-component>              
         </div>`;
 
     @RefSelector('labelAxis') private labelAxis: AgGroupComponent;
@@ -65,11 +55,6 @@ export class ChartAxisPanel extends Component {
     @RefSelector('inputXAxisLabelRotation') private inputXAxisLabelRotation: AgInputTextField;
     @RefSelector('inputYAxisLabelRotation') private inputYAxisLabelRotation: AgInputTextField;
 
-    @RefSelector('labelAxisGridlines') private labelAxisGridlines: AgGroupComponent;
-    @RefSelector('labelAxisGridlinesMajor') private labelAxisGridlinesMajor: AgGroupComponent;
-    @RefSelector('labelAxisGridlinesMajorDash') private labelAxisGridlinesMajorDash: HTMLElement;
-    @RefSelector('selectAxisGridlinesMajorDash') private selectAxisGridlinesMajorDash: HTMLSelectElement;
-
     private readonly chartController: ChartController;
     private chart: Chart;
 
@@ -88,7 +73,6 @@ export class ChartAxisPanel extends Component {
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
-        this.initAxisGridlines();
     }
 
     private initAxis() {
@@ -256,20 +240,6 @@ export class ChartAxisPanel extends Component {
         this.addDestroyableEventListener(this.inputYAxisLabelRotation.getInputElement(), 'input', () => {
             chart.yAxis.labelRotation = Number.parseInt(this.inputYAxisLabelRotation.getValue());
             chart.performLayout();
-        });
-    }
-
-    private initAxisGridlines() {
-        this.labelAxisGridlines.setLabel('Gridlines');
-        this.labelAxisGridlinesMajor.setLabel('Major');
-        this.labelAxisGridlinesMajorDash.innerHTML = 'Dash:';
-
-        const dashes = ['----------------', '..................'];
-        dashes.forEach((font: any, index: number) => {
-            const option = document.createElement('option');
-            option.value = `index`;
-            option.text = font;
-            this.selectAxisGridlinesMajorDash.appendChild(option);
         });
     }
 
