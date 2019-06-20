@@ -5,6 +5,7 @@ import {ChartLegendPanel} from "./format/chartLegendPanel";
 import {ChartBarSeriesPanel} from "./format/chartBarSeriesPanel";
 import {ChartAxisPanel} from "./format/chartAxisPanel";
 import {ChartLineSeriesPanel} from "./format/chartLineSeriesPanel";
+import {ChartPieSeriesPanel} from "./format/chartPieSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
 
@@ -36,10 +37,13 @@ export class ChartFormattingPanel extends Component {
 
         if (chartType === ChartType.GroupedBar || chartType === ChartType.StackedBar) {
             this.createBarChartPanel();
+
         } else if (chartType === ChartType.Pie || chartType === ChartType.Doughnut) {
             this.createPieChartPanel();
+
         } else if (chartType === ChartType.Line) {
             this.createLineChartPanel();
+
         } else {
             console.warn(`ag-Grid: ChartFormattingPanel - unexpected chart type: ${chartType} supplied`);
         }
@@ -62,7 +66,7 @@ export class ChartFormattingPanel extends Component {
     private createPieChartPanel(): void {
         this.addComponent(new ChartPaddingPanel(this.chartController));
         this.addComponent(new ChartLegendPanel(this.chartController));
-        // this.addComponent(new ChartPieSeriesPanel(this.chartController));
+        this.addComponent(new ChartPieSeriesPanel(this.chartController));
     }
 
     private addComponent(component: Component): void {
