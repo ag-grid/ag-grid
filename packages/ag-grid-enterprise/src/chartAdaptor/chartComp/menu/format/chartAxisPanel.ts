@@ -72,22 +72,7 @@ export class ChartAxisPanel extends Component {
                         <input style="width: 25px" ref="inputYAxisLabelRotation" type="text">
                     </div>
                 </div>
-    
-                <!-- AXIS GRIDLINES -->
-    
-                <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
-                    <span ref="labelAxisGridlines"></span>
-                </div>
-    
-                <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-                    <span ref="labelAxisGridlinesMajor"></span>
-    
-                    <div style="padding-top: 10px">
-                        <span ref="labelAxisGridlinesMajorDash" style="padding-left: 16px"></span>
-                        <select ref="selectAxisGridlinesMajorDash" style="width: 82px"></select>
-                    </div>
-                </div>
-                        
+                                           
             </ag-group-component>            
                       
         </div>`;
@@ -121,11 +106,6 @@ export class ChartAxisPanel extends Component {
     @RefSelector('labelYAxisLabelRotation') private labelYAxisLabelRotation: HTMLElement;
     @RefSelector('inputYAxisLabelRotation') private inputYAxisLabelRotation: HTMLInputElement;
 
-    @RefSelector('labelAxisGridlines') private labelAxisGridlines: HTMLElement;
-    @RefSelector('labelAxisGridlinesMajor') private labelAxisGridlinesMajor: HTMLElement;
-    @RefSelector('labelAxisGridlinesMajorDash') private labelAxisGridlinesMajorDash: HTMLElement;
-    @RefSelector('selectAxisGridlinesMajorDash') private selectAxisGridlinesMajorDash: HTMLSelectElement;
-
     private readonly chartController: ChartController;
     private chart: Chart;
 
@@ -144,7 +124,6 @@ export class ChartAxisPanel extends Component {
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
-        this.initAxisGridlines();
     }
 
     private initAxis() {
@@ -292,19 +271,4 @@ export class ChartAxisPanel extends Component {
             chart.performLayout();
         });
     }
-
-    private initAxisGridlines() {
-        this.labelAxisGridlines.innerHTML = 'Gridlines';
-        this.labelAxisGridlinesMajor.innerHTML = 'Major';
-        this.labelAxisGridlinesMajorDash.innerHTML = 'Dash';
-
-        const dashes = ['----------------', '..................'];
-        dashes.forEach((font: any, index: number) => {
-            const option = document.createElement('option');
-            option.value = `index`;
-            option.text = font;
-            this.selectAxisGridlinesMajorDash.appendChild(option);
-        });
-    }
-
 }
