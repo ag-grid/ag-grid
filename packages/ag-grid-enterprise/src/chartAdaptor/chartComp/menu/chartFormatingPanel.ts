@@ -2,7 +2,7 @@ import {_, ChartType, Component, PostConstruct} from "ag-grid-community";
 import {ChartController} from "../chartController";
 import {ChartPaddingPanel} from "./format/chartPaddingPanel";
 import {ChartLegendPanel} from "./format/chartLegendPanel";
-import {ChartSeriesPanel} from "./format/chartSeriesPanel";
+import {ChartBarSeriesPanel} from "./format/chartBarSeriesPanel";
 import {ChartAxisPanel} from "./format/chartAxisPanel";
 
 export class ChartFormattingPanel extends Component {
@@ -47,7 +47,7 @@ export class ChartFormattingPanel extends Component {
     private createBarChartPanel(): void {
         this.addComponent(new ChartPaddingPanel(this.chartController));
         this.addComponent(new ChartLegendPanel(this.chartController));
-        this.addComponent(new ChartSeriesPanel(this.chartController));
+        this.addComponent(new ChartBarSeriesPanel(this.chartController));
         this.addComponent(new ChartAxisPanel(this.chartController));
     }
 

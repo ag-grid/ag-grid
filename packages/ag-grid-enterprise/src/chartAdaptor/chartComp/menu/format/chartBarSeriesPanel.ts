@@ -3,7 +3,7 @@ import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 import {BarSeries} from "../../../../charts/chart/series/barSeries";
 
-export class ChartSeriesPanel extends Component {
+export class ChartBarSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
@@ -105,7 +105,7 @@ export class ChartSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartSeriesPanel.TEMPLATE);
+        this.setTemplate(ChartBarSeriesPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
