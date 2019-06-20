@@ -18,7 +18,14 @@ export class ChartPieSeriesPanel extends Component {
                         <ag-input-text-field ref="inputSeriesFontSize"></ag-input-text-field>
                     </div>
                     <ag-input-text-field ref="inputSeriesLabelColor"></ag-input-text-field>
+                </ag-group-component> 
+                
+                <ag-group-component ref="labelSeriesCallout">
+                    <ag-input-text-field ref="inputSeriesCalloutLength"></ag-input-text-field>
+                    <ag-input-text-field ref="inputSeriesCalloutStrokeWidth"></ag-input-text-field>
+                    <ag-input-text-field ref="inputSeriesCalloutPadding"></ag-input-text-field>
                 </ag-group-component>
+                
                 <ag-group-component ref="labelSeriesShadow">
                     <ag-checkbox ref="cbSeriesShadow"></ag-checkbox>
                     <ag-input-text-field ref="inputSeriesShadowBlur"></ag-input-text-field>
@@ -40,6 +47,11 @@ export class ChartPieSeriesPanel extends Component {
     @RefSelector('selectSeriesFontWeight') private selectSeriesFontWeight: HTMLSelectElement;
     @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: AgInputTextField;
     @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: AgInputTextField;
+
+    @RefSelector('labelSeriesCallout') private labelSeriesCallout: AgGroupComponent;
+    @RefSelector('inputSeriesCalloutLength') private inputSeriesCalloutLength: AgInputTextField;
+    @RefSelector('inputSeriesCalloutStrokeWidth') private inputSeriesCalloutStrokeWidth: AgInputTextField;
+    @RefSelector('inputSeriesCalloutPadding') private inputSeriesCalloutPadding: AgInputTextField;
 
     @RefSelector('labelSeriesShadow') private labelSeriesShadow: AgGroupComponent;
     @RefSelector('cbSeriesShadow') private cbSeriesShadow: AgCheckbox; 
@@ -66,6 +78,7 @@ export class ChartPieSeriesPanel extends Component {
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
         this.initSeriesLabels();
+        this.initCalloutOptions();
         this.initSeriesShadow();
     }
 
@@ -174,14 +187,62 @@ export class ChartPieSeriesPanel extends Component {
         });
     }
 
-    private initSeriesShadow() {
+    private initCalloutOptions() {
+        this.labelSeriesCallout.setLabel('Callout');
+
         const pieSeries = this.chart.series as PieSeries[];
 
+        this.inputSeriesCalloutLength.setLabel('Length')
+            .setLabelWidth(80)
+            .setWidth(115);
+
+        if (pieSeries.length > 0) {
+            this.inputSeriesCalloutLength.setValue(`${pieSeries[0].calloutLength}`);
+        }
+
+        this.addDestroyableEventListener(this.inputSeriesCalloutLength.getInputElement(), 'input', () => {
+            pieSeries.forEach(series => {
+                series.calloutLength = Number.parseInt(this.inputSeriesCalloutLength.getValue());
+            });
+        });
+
+        this.inputSeriesCalloutStrokeWidth.setLabel('Stroke Width')
+            .setLabelWidth(80)
+            .setWidth(115);
+
+        if (pieSeries.length > 0) {
+            this.inputSeriesCalloutStrokeWidth.setValue(`${pieSeries[0].calloutStrokeWidth}`);
+        }
+
+        this.addDestroyableEventListener(this.inputSeriesCalloutStrokeWidth.getInputElement(), 'input', () => {
+            pieSeries.forEach(series => {
+                series.calloutStrokeWidth = Number.parseInt(this.inputSeriesCalloutStrokeWidth.getValue());
+            });
+        });
+
+        this.inputSeriesCalloutPadding.setLabel('Padding')
+            .setLabelWidth(80)
+            .setWidth(115);
+
+        if (pieSeries.length > 0) {
+            this.inputSeriesCalloutPadding.setValue(`${pieSeries[0].calloutPadding}`);
+        }
+
+        this.addDestroyableEventListener(this.inputSeriesCalloutPadding.getInputElement(), 'input', () => {
+            pieSeries.forEach(series => {
+                series.calloutPadding = Number.parseInt(this.inputSeriesCalloutPadding.getValue());
+            });
+        });
+    }
+
+    private initSeriesShadow() {
+        this.labelSeriesShadow.setLabel('Shadow');
+
+        const pieSeries = this.chart.series as PieSeries[];
         // TODO use shadowEnabled instead when it's available in chart api
         let enabled = _.every(pieSeries, pieSeries => pieSeries.shadow != undefined);
         this.cbSeriesShadow.setLabel('Enabled');
         this.cbSeriesShadow.setSelected(enabled);
-        this.labelSeriesShadow.setLabel('Shadow');
 
         // Add defaults to chart as shadow is undefined by default
         if (!this.inputSeriesShadowBlur.getValue()) this.inputSeriesShadowBlur.setValue('20');
