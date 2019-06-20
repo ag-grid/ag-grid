@@ -55,7 +55,7 @@ export class ChartPaddingPanel extends Component {
             right: ['Right', `${this.chart.padding.right}`, this.inputPaddingRight],
             bottom: ['Bottom', `${this.chart.padding.bottom}`, this.inputPaddingBottom],
             left: ['Left', `${this.chart.padding.left}`, this.inputPaddingLeft]
-        }
+        };
 
         this.labelChartPadding.setLabel('Chart Padding');
 

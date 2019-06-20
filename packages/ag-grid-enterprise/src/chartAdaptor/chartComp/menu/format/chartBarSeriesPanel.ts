@@ -2,7 +2,6 @@ import {_, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, 
 import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 import {BarSeries} from "../../../../charts/chart/series/barSeries";
-import { TouchSequence } from "selenium-webdriver";
 
 export class ChartBarSeriesPanel extends Component {
 

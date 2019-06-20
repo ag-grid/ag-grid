@@ -4,6 +4,7 @@ import {ChartPaddingPanel} from "./format/chartPaddingPanel";
 import {ChartLegendPanel} from "./format/chartLegendPanel";
 import {ChartBarSeriesPanel} from "./format/chartBarSeriesPanel";
 import {ChartAxisPanel} from "./format/chartAxisPanel";
+import {ChartLineSeriesPanel} from "./format/chartLineSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
 
@@ -54,7 +55,7 @@ export class ChartFormattingPanel extends Component {
     private createLineChartPanel(): void {
         this.addComponent(new ChartPaddingPanel(this.chartController));
         this.addComponent(new ChartLegendPanel(this.chartController));
-        // this.addComponent(new ChartLineSeriesPanel(this.chartController));
+        this.addComponent(new ChartLineSeriesPanel(this.chartController));
         this.addComponent(new ChartAxisPanel(this.chartController));
     }
 
