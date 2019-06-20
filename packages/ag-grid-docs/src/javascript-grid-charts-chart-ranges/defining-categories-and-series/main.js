@@ -1,16 +1,16 @@
 var columnDefs = [
     // different ways to define 'categories'
     {field: "athlete", width: 150, chartDataType: 'category'},
-    {field: "age", enableRowGroup: true, sort: 'asc'},
-    {field: "sport"},
+    {field: "age", chartDataType: 'category', sort: 'asc'},
+    {field: "sport"}, // inferred as category by grid
 
     // excludes year from charts
     {field: "year", chartDataType: 'excluded'},
 
     // different ways to define 'series'
-    {field: "gold", enableValue: true},
+    {field: "gold", chartDataType: 'series'},
     {field: "silver", chartDataType: 'series'},
-    {field: "bronze"}
+    {field: "bronze"} // inferred as series by grid
 ];
 
 var gridOptions = {

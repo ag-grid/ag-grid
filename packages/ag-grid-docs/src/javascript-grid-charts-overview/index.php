@@ -158,7 +158,7 @@ gridOptions = {
             <ul>
                 <p>
                     <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
-                    The chart toolbar is located in the top left area of the chart and brings
+                    The chart toolbar is located in the top right area of the chart and brings
                     the user to UI components to perform the following:
                 </p>
                     <p>
