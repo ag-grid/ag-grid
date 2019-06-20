@@ -1345,16 +1345,20 @@ $handleSize: 5px;
     position: relative;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    flex: 1 1 auto;
 
     .ag-group-component-label {
         position: absolute;
         top: -10px;
+        left: 0;
     }
 
-    .ag-group-item {
+    .ag-group-item:not(.ag-group-component) {
         display: flex;
         align-items: center;
-        flex: 1 1 auto;
+        align-self: stretch;
     }
 }
 
@@ -1364,7 +1368,8 @@ $handleSize: 5px;
     align-items: center;
     input {
         flex: 1 1 auto;
-        width: 0;
+        width: 100%;
+        min-width: 0;
     }
 }
 

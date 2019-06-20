@@ -1,4 +1,4 @@
-import {_, AgCheckbox, AgGroupComponent, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {_, AgCheckbox, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart, LegendPosition} from "../../../../charts/chart/chart";
 
@@ -6,101 +6,53 @@ export class ChartLegendPanel extends Component {
 
     public static TEMPLATE =
         `<div>  
-            <ag-group-component ref="labelLegend">        
-                <div class="ag-column-tool-panel-column-group">
-                    <ag-checkbox ref="cbLegendEnabled" style="padding-left: 15px"></ag-checkbox>
-                    <span ref="labelLegendEnabled" style="padding-left: 5px"></span>
-                </div>
+            <ag-group-component ref="labelLegend">
+                <ag-checkbox ref="cbLegendEnabled"></ag-checkbox>
     
-                <div style="padding-top: 10px;">
-                    <span ref="labelLegendPosition" style="padding-left: 15px; padding-right: 10px"></span>
-                    <select ref="selectLegendPosition"></select>
+                <div>
+                    <label ref="labelLegendPosition" style="margin-right: 5px;"></label>
+                    <select ref="selectLegendPosition" style="width: 80px"></select>
                 </div>
+
+                <ag-input-text-field ref="inputLegendPadding"></ag-input-text-field>
+                <ag-input-text-field ref="inputMarkerSize"></ag-input-text-field>
+                <ag-input-text-field ref="inputMarkerStroke"></ag-input-text-field>
+                <ag-input-text-field ref="inputMarkerPadding"></ag-input-text-field>
+                <ag-input-text-field ref="inputItemPaddingX"></ag-input-text-field>
+                <ag-input-text-field ref="inputItemPaddingY"></ag-input-text-field>
     
-                <div style="padding-top: 10px;">
-                    <span ref="labelLegendPadding" style="padding-left: 15px; padding-right: 10px"></span>
-                    <input style="width: 38px" ref="inputLegendPadding" type="text">
-                </div>
-    
-                <div style="padding-top: 10px;">
-                    <span ref="labelMarkerSize" style="padding-left: 15px; padding-right: 10px"></span>
-                    <input style="width: 38px" ref="inputMarkerSize" type="text">
-                </div>
-    
-                <div style="padding-top: 10px;">
-                    <span ref="labelMarkerStroke" style="padding-left: 15px; padding-right: 10px"></span>
-                    <input style="width: 38px" ref="inputMarkerStroke" type="text">
-                </div>
-    
-                <div style="padding-top: 10px;">
-                    <span ref="labelMarkerPadding" style="padding-left: 15px; padding-right: 10px"></span>
-                    <input style="width: 38px" ref="inputMarkerPadding" type="text">
-                </div>
-    
-                <div style="padding-top: 10px;">
-                    <span ref="labelItemPaddingX" style="padding-left: 15px; padding-right: 10px"></span>
-                    <input style="width: 38px" ref="inputItemPaddingX" type="text">
-                </div>
-    
-                <div style="padding-top: 10px;">
-                    <span ref="labelItemPaddingY" style="padding-left: 15px; padding-right: 10px"></span>
-                    <input style="width: 38px" ref="inputItemPaddingY" type="text">
-                </div>
-    
-                <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
-                    <span ref="labelLegendLabels"></span>
-                </div>
+
+                <ag-group-component ref="labelLegendLabels">
+                    <select ref="selectLegendFont"></select>
+                    <div class="ag-group-subgroup">
+                        <select ref="selectLegendFontWeight"></select>
+                        <ag-input-text-field ref="inputLegendFontSize"></ag-input-text-field>
+                    </div>
+                    <ag-input-text-field ref="inputLegendLabelColor"></ag-input-text-field>
+                </ag-group-component>
     
                 <!-- LEGEND LABELS -->
-    
-                <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-                    <select ref="selectLegendFont" style="width: 155px"></select>
-                    <div style="padding-top: 10px">
-                        <select ref="selectLegendFontWeight" style="width: 82px"></select>
-                         <span ref="labelLegendFontSize" style="padding-left: 16px"></span>
-                        <input ref="inputLegendFontSize" type="text" style="width: 25px">
-                    </div>
-                    <div style="padding-top: 10px">
-                        <span ref="labelLegendLabelColor" style="padding-right: 5px"></span>
-                        <input ref="inputLegendLabelColor" type="text" style="width: 115px">
-                    </div>
-                </div>
-                
             </ag-group-component>
         </div>`;
 
     @RefSelector('labelLegend') private labelLegend: AgGroupComponent;
     @RefSelector('cbLegendEnabled') private cbLegendEnabled: AgCheckbox;
-    @RefSelector('labelLegendEnabled') private labelLegendEnabled: HTMLElement;
 
     @RefSelector('selectLegendPosition') private selectLegendPosition: HTMLSelectElement;
     @RefSelector('labelLegendPosition') private labelLegendPosition: HTMLElement;
 
-    @RefSelector('labelLegendPadding') private labelLegendPadding: HTMLElement;
-    @RefSelector('inputLegendPadding') private inputLegendPadding: HTMLInputElement;
+    @RefSelector('inputLegendPadding') private inputLegendPadding: AgInputTextField;
+    @RefSelector('inputMarkerSize') private inputMarkerSize: AgInputTextField;
+    @RefSelector('inputMarkerStroke') private inputMarkerStroke: AgInputTextField;
+    @RefSelector('inputMarkerPadding') private inputMarkerPadding: AgInputTextField;
+    @RefSelector('inputItemPaddingX') private inputItemPaddingX: AgInputTextField;
+    @RefSelector('inputItemPaddingY') private inputItemPaddingY: AgInputTextField;
 
-    @RefSelector('labelMarkerSize') private labelMarkerSize: HTMLElement;
-    @RefSelector('inputMarkerSize') private inputMarkerSize: HTMLInputElement;
-
-    @RefSelector('labelMarkerStroke') private labelMarkerStroke: HTMLElement;
-    @RefSelector('inputMarkerStroke') private inputMarkerStroke: HTMLInputElement;
-
-    @RefSelector('labelMarkerPadding') private labelMarkerPadding: HTMLElement;
-    @RefSelector('inputMarkerPadding') private inputMarkerPadding: HTMLInputElement;
-
-    @RefSelector('labelItemPaddingX') private labelItemPaddingX: HTMLElement;
-    @RefSelector('inputItemPaddingX') private inputItemPaddingX: HTMLInputElement;
-
-    @RefSelector('labelItemPaddingY') private labelItemPaddingY: HTMLElement;
-    @RefSelector('inputItemPaddingY') private inputItemPaddingY: HTMLInputElement;
-
-    @RefSelector('labelLegendLabels') private labelLegendLabels: HTMLElement;
+    @RefSelector('labelLegendLabels') private labelLegendLabels: AgGroupComponent;
     @RefSelector('selectLegendFont') private selectLegendFont: HTMLSelectElement;
     @RefSelector('selectLegendFontWeight') private selectLegendFontWeight: HTMLSelectElement;
-    @RefSelector('labelLegendFontSize') private labelLegendFontSize: HTMLElement;
-    @RefSelector('inputLegendFontSize') private inputLegendFontSize: HTMLInputElement;
-    @RefSelector('labelLegendLabelColor') private labelLegendLabelColor: HTMLElement;
-    @RefSelector('inputLegendLabelColor') private inputLegendLabelColor: HTMLInputElement;
+    @RefSelector('inputLegendFontSize') private inputLegendFontSize: AgInputTextField;
+    @RefSelector('inputLegendLabelColor') private inputLegendLabelColor: AgInputTextField;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -127,7 +79,7 @@ export class ChartLegendPanel extends Component {
         // TODO update code below when this.chart.showLegend is available
         let enabled = _.every(this.chart.series, (series) => series.showInLegend && series.visible);
         this.cbLegendEnabled.setSelected(enabled);
-        this.labelLegendEnabled.innerHTML = 'Enabled';
+        this.cbLegendEnabled.setLabel('Enabled');
         this.addDestroyableEventListener(this.cbLegendEnabled, 'change', () => {
             this.chart.series.forEach(s => {
                 s.showInLegend = this.cbLegendEnabled.isSelected();
@@ -135,7 +87,7 @@ export class ChartLegendPanel extends Component {
             });
         });
 
-        this.labelLegendPosition.innerHTML = 'Position';
+        this.labelLegendPosition.innerHTML = 'Position:';
 
         const positions: LegendPosition[] = ['top', 'right', 'bottom', 'left'];
 
@@ -151,45 +103,44 @@ export class ChartLegendPanel extends Component {
             this.chart.legendPosition = positions[this.selectLegendPosition.selectedIndex];
         });
 
-        this.labelLegendPadding.innerHTML = 'Padding';
-        this.inputLegendPadding.value = `${this.chart.legendPadding}`;
-        this.addDestroyableEventListener(this.inputLegendPadding, 'input', () => {
-            this.chart.legendPadding = Number.parseInt(this.inputLegendPadding.value);
+        this.inputLegendPadding
+            .setLabel('Padding')
+            .setLabelWidth(95)
+            .setWidth(130)
+            .setValue(`${this.chart.legendPadding}`);
+
+        this.addDestroyableEventListener(this.inputLegendPadding.getInputElement(), 'input', () => {
+            this.chart.legendPadding = Number.parseInt(this.inputLegendPadding.getValue());
         });
 
-        this.labelMarkerSize.innerHTML = 'Marker Size';
-        this.inputMarkerSize.value = `${this.chart.legend.markerSize}`;
-        this.addDestroyableEventListener(this.inputMarkerSize, 'input', () => {
-            this.chart.legend.markerSize = Number.parseInt(this.inputMarkerSize.value);
-        });
+        type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
+        type LegendConfig = {
+            [key in LegendOptions] : [string, string, AgInputTextField];
+        }
 
-        this.labelMarkerStroke.innerHTML = 'Marker Stroke';
-        this.inputMarkerStroke.value = `${this.chart.legend.markerStrokeWidth}`;
-        this.addDestroyableEventListener(this.inputMarkerStroke, 'input', () => {
-            this.chart.legend.markerStrokeWidth = Number.parseInt(this.inputMarkerStroke.value);
-        });
+        const configs: LegendConfig = {
+            markerSize: ['Marker Size', `${this.chart.legend.markerSize}`, this.inputMarkerSize],
+            markerStrokeWidth: ['Marker Stroke', `${this.chart.legend.markerStrokeWidth}`, this.inputMarkerStroke],
+            markerPadding: ['Marker Padding', `${this.chart.legend.markerPadding}`, this.inputMarkerPadding],
+            itemPaddingX: ['Item Padding X', `${this.chart.legend.itemPaddingX}`, this.inputItemPaddingX],
+            itemPaddingY: ['Item Padding Y', `${this.chart.legend.itemPaddingX}`, this.inputItemPaddingY]
+        }
 
-        this.labelMarkerPadding.innerHTML = 'Marker Padding';
-        this.inputMarkerPadding.value = `${this.chart.legend.markerPadding}`;
-        this.addDestroyableEventListener(this.inputMarkerPadding, 'input', () => {
-            this.chart.legend.markerPadding = Number.parseInt(this.inputMarkerPadding.value);
-        });
+        Object.keys(configs).forEach(config => {
+            const [ label, value, field ] = configs[config as LegendOptions];
 
-        this.labelItemPaddingX.innerHTML = 'Item Padding X';
-        this.inputItemPaddingX.value = `${this.chart.legend.itemPaddingX}`;
-        this.addDestroyableEventListener(this.inputItemPaddingX, 'input', () => {
-            this.chart.legend.itemPaddingX = Number.parseInt(this.inputItemPaddingX.value);
-        });
-
-        this.labelItemPaddingY.innerHTML = 'Item Padding Y';
-        this.inputItemPaddingY.value = `${this.chart.legend.itemPaddingX}`;
-        this.addDestroyableEventListener(this.inputItemPaddingY, 'input', () => {
-            this.chart.legend.itemPaddingY = Number.parseInt(this.inputItemPaddingY.value);
+            field.setLabel(label)
+                .setLabelWidth(95)
+                .setWidth(130)
+                .setValue(value);
+            this.addDestroyableEventListener(field.getInputElement(), 'input', () => {
+                this.chart.legend[config as LegendOptions] = parseInt(field.getValue(), 10);
+            });
         });
     }
 
     private initLegendLabels() {
-        this.labelLegendLabels.innerHTML = 'Labels';
+        this.labelLegendLabels.setLabel('Labels');
 
         const fonts = ['Verdana, sans-serif', 'Arial'];
         fonts.forEach((font: any) => {
@@ -206,7 +157,7 @@ export class ChartLegendPanel extends Component {
         this.selectLegendFont.selectedIndex = fonts.indexOf(font);
 
         this.addDestroyableEventListener(this.selectLegendFont, 'input', () => {
-            const fontSize = Number.parseInt(this.inputLegendFontSize.value);
+            const fontSize = parseInt(this.inputLegendFontSize.getValue(), 10);
             const font = fonts[this.selectLegendFont.selectedIndex];
             this.chart.legend.labelFont = `${fontSize}px ${font}`;
             this.chart.performLayout();
@@ -229,21 +180,22 @@ export class ChartLegendPanel extends Component {
         //     this.chart.performLayout();
         // });
 
-        this.labelLegendFontSize.innerHTML = 'Size';
 
-        this.inputLegendFontSize.value = fontSize;
-        this.addDestroyableEventListener(this.inputLegendFontSize, 'input', () => {
-            const fontSize = Number.parseInt(this.inputLegendFontSize.value);
+        this.inputLegendFontSize
+            .setLabel('Size')
+            .setWidth(70)
+            .setValue(fontSize);
+        this.addDestroyableEventListener(this.inputLegendFontSize.getInputElement(), 'input', () => {
+            const fontSize = Number.parseInt(this.inputLegendFontSize.getValue());
             const font = fonts[this.selectLegendFont.selectedIndex];
             this.chart.legend.labelFont = `${fontSize}px ${font}`;
             this.chart.performLayout();
         });
 
         // TODO replace with Color Picker
-        this.labelLegendLabelColor.innerHTML = 'Color';
-        this.inputLegendLabelColor.value = this.chart.legend.labelColor;
-        this.addDestroyableEventListener(this.inputLegendLabelColor, 'input', () => {
-            this.chart.legend.labelColor = this.inputLegendLabelColor.value;
+        this.inputLegendLabelColor.setLabel('Color').setValue(this.chart.legend.labelColor);
+        this.addDestroyableEventListener(this.inputLegendLabelColor.getInputElement(), 'input', () => {
+            this.chart.legend.labelColor = this.inputLegendLabelColor.getValue();
             this.chart.performLayout();
         });
     }

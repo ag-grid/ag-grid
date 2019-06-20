@@ -1,4 +1,4 @@
-import {AgGroupComponent, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
@@ -6,105 +6,69 @@ import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 export class ChartAxisPanel extends Component {
 
     public static TEMPLATE =
-        `<div>    
-            
-            <ag-group-component ref="labelAxis">     
-                <div style="padding-top: 10px;">
-                    <span ref="labelAxisLineWidth" style="padding-left: 15px; padding-right: 10px"></span>
-                    <input style="width: 38px" ref="inputAxisLineWidth" type="text">
-                </div>
-    
-                <div style="padding-top: 10px">
-                    <span ref="labelAxisColor" style="padding-left: 15px; padding-right: 10px"></span>
-                    <input ref="inputAxisColor" type="text" style="width: 110px">
-                </div>
+        `<div>
+            <ag-group-component ref="labelAxis">
+                <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>
+                <ag-input-text-field ref="inputAxisColor"></ag-input-text-field>
     
                 <!-- AXIS TICKS -->
     
-                <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
-                    <span ref="labelAxisTicks"></span>
-                </div>
-    
-                <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-                    <div>
-                        <span ref="labelAxisTicksWidth" style="padding-right: 24px"></span>
-                        <input style="width: 25px" ref="inputAxisTicksWidth" type="text">
-                    </div>
-                    <div style="padding-top: 5px">
-                        <span ref="labelAxisTicksSize" style="padding-right: 34px"></span>
-                        <input style="width: 25px" ref="inputAxisTicksSize" type="text">
-                    </div>
-                    <div style="padding-top: 5px">
-                        <span ref="labelAxisTicksPadding" style="padding-right: 12px"></span>
-                        <input style="width: 25px" ref="inputAxisTicksPadding" type="text">
-                    </div>
-                    <div style="padding-top: 5px">
-                        <span ref="labelAxisTicksColor" style="padding-right: 10px"></span>
-                        <input ref="inputAxisTicksColor" type="text" style="width: 110px">
-                    </div>
-                </div>
+                <ag-group-component ref="labelAxisTicks">
+                    <ag-input-text-field ref="inputAxisTicksWidth"></ag-input-text-field>
+                    <ag-input-text-field ref="inputAxisTicksSize"></ag-input-text-field>
+                    <ag-input-text-field ref="inputAxisTicksPadding"></ag-input-text-field>
+                    <ag-input-text-field ref="inputAxisTicksColor"></ag-input-text-field>
+                </ag-group-component>
     
                 <!-- AXIS LABELS -->
-    
-                <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
-                    <span ref="labelAxisLabels"></span>
-                </div>
-    
-                <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
+
+                <ag-group-component ref="labelAxisLabels">
                     <select ref="selectAxisFont" style="width: 155px"></select>
-                    <div style="padding-top: 10px">
+                    <div class="ag-group-subgroup">
                         <select ref="selectAxisFontWeight" style="width: 82px"></select>
-                         <span ref="labelAxisFontSize" style="padding-left: 16px"></span>
-                        <input ref="inputAxisFontSize" type="text" style="width: 25px">
+                        <ag-input-text-field ref="inputAxisFontSize"></ag-input-text-field>
                     </div>
-                    <div style="padding-top: 10px">
-                        <span ref="labelAxisLabelColor" style="padding-right: 5px"></span>
-                        <input ref="inputAxisLabelColor" type="text" style="width: 115px">
-                    </div>
-    
-                    <div style="padding-top: 10px">
-                        <span ref="labelAxisLabelRotation"></span>
-                    </div>
-                    <div style="padding-top: 5px">
-                        <span ref="labelXAxisLabelRotation" style="padding-right: 5px"></span>
-                        <input style="width: 25px" ref="inputXAxisLabelRotation" type="text">
-                        <span ref="labelYAxisLabelRotation" style="padding-left: 15px; padding-right: 5px"></span>
-                        <input style="width: 25px" ref="inputYAxisLabelRotation" type="text">
-                    </div>
-                </div>
-                                           
-            </ag-group-component>            
-                      
+                    <ag-input-text-field ref="inputAxisLabelColor"></ag-input-text-field>
+                    <ag-group-component ref="labelAxisLabelRotation">
+                        <ag-input-text-field ref="inputXAxisLabelRotation"></ag-input-text-field>
+                        <ag-input-text-field ref="inputYAxisLabelRotation"></ag-input-text-field>
+                    </ag-group-component>
+                </ag-group-component>
+
+                <!-- AXIS GRIDLINES -->
+
+                <ag-group-component ref="labelAxisGridlines">
+                    <ag-group-component ref="labelAxisGridlinesMajor">
+                        <span ref="labelAxisGridlinesMajorDash" style="padding-left: 16px"></span>
+                        <select ref="selectAxisGridlinesMajorDash" style="width: 82px"></select>
+                    </ag-group-component>
+                </ag-group-component>
+            </ag-group-component>
         </div>`;
 
     @RefSelector('labelAxis') private labelAxis: AgGroupComponent;
-    @RefSelector('labelAxisLineWidth') private labelAxisLineWidth: HTMLElement;
-    @RefSelector('inputAxisLineWidth') private inputAxisLineWidth: HTMLInputElement;
-    @RefSelector('labelAxisColor') private labelAxisColor: HTMLElement;
-    @RefSelector('inputAxisColor') private inputAxisColor: HTMLInputElement;
+    @RefSelector('inputAxisLineWidth') private inputAxisLineWidth: AgInputTextField;
+    @RefSelector('inputAxisColor') private inputAxisColor: AgInputTextField;
 
-    @RefSelector('labelAxisTicks') private labelAxisTicks: HTMLElement;
-    @RefSelector('labelAxisTicksWidth') private labelAxisTicksWidth: HTMLElement;
-    @RefSelector('inputAxisTicksWidth') private inputAxisTicksWidth: HTMLInputElement;
-    @RefSelector('labelAxisTicksSize') private labelAxisTicksSize: HTMLElement;
-    @RefSelector('inputAxisTicksSize') private inputAxisTicksSize: HTMLInputElement;
-    @RefSelector('labelAxisTicksPadding') private labelAxisTicksPadding: HTMLElement;
-    @RefSelector('inputAxisTicksPadding') private inputAxisTicksPadding: HTMLInputElement;
-    @RefSelector('labelAxisTicksColor') private labelAxisTicksColor: HTMLElement;
-    @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: HTMLInputElement;
+    @RefSelector('labelAxisTicks') private labelAxisTicks: AgGroupComponent;
+    @RefSelector('inputAxisTicksWidth') private inputAxisTicksWidth: AgInputTextField;
+    @RefSelector('inputAxisTicksSize') private inputAxisTicksSize: AgInputTextField;
+    @RefSelector('inputAxisTicksPadding') private inputAxisTicksPadding: AgInputTextField;
+    @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: AgInputTextField;
 
-    @RefSelector('labelAxisLabels') private labelAxisLabels: HTMLElement;
+    @RefSelector('labelAxisLabels') private labelAxisLabels: AgGroupComponent;
     @RefSelector('selectAxisFont') private selectAxisFont: HTMLSelectElement;
     @RefSelector('selectAxisFontWeight') private selectAxisFontWeight: HTMLSelectElement;
-    @RefSelector('labelAxisFontSize') private labelAxisFontSize: HTMLElement;
-    @RefSelector('inputAxisFontSize') private inputAxisFontSize: HTMLInputElement;
-    @RefSelector('labelAxisLabelColor') private labelAxisLabelColor: HTMLElement;
-    @RefSelector('inputAxisLabelColor') private inputAxisLabelColor: HTMLInputElement;
-    @RefSelector('labelAxisLabelRotation') private labelAxisLabelRotation: HTMLElement;
-    @RefSelector('labelXAxisLabelRotation') private labelXAxisLabelRotation: HTMLElement;
-    @RefSelector('inputXAxisLabelRotation') private inputXAxisLabelRotation: HTMLInputElement;
-    @RefSelector('labelYAxisLabelRotation') private labelYAxisLabelRotation: HTMLElement;
-    @RefSelector('inputYAxisLabelRotation') private inputYAxisLabelRotation: HTMLInputElement;
+    @RefSelector('inputAxisFontSize') private inputAxisFontSize: AgInputTextField;
+    @RefSelector('inputAxisLabelColor') private inputAxisLabelColor: AgInputTextField;
+    @RefSelector('labelAxisLabelRotation') private labelAxisLabelRotation: AgGroupComponent;
+    @RefSelector('inputXAxisLabelRotation') private inputXAxisLabelRotation: AgInputTextField;
+    @RefSelector('inputYAxisLabelRotation') private inputYAxisLabelRotation: AgInputTextField;
+
+    @RefSelector('labelAxisGridlines') private labelAxisGridlines: AgGroupComponent;
+    @RefSelector('labelAxisGridlinesMajor') private labelAxisGridlinesMajor: AgGroupComponent;
+    @RefSelector('labelAxisGridlinesMajorDash') private labelAxisGridlinesMajorDash: HTMLElement;
+    @RefSelector('selectAxisGridlinesMajorDash') private selectAxisGridlinesMajorDash: HTMLSelectElement;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -124,65 +88,81 @@ export class ChartAxisPanel extends Component {
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
+        this.initAxisGridlines();
     }
 
     private initAxis() {
         this.labelAxis.setLabel('Axis');
 
         const chart = this.chart as CartesianChart;
-        this.labelAxisLineWidth.innerHTML = 'Line Width';
-        this.inputAxisLineWidth.value = `${chart.xAxis.lineWidth}`;
-        this.addDestroyableEventListener(this.inputAxisLineWidth, 'input', () => {
-            chart.xAxis.lineWidth = Number.parseInt(this.inputAxisLineWidth.value);
-            chart.yAxis.lineWidth = Number.parseInt(this.inputAxisLineWidth.value);
+        this.inputAxisLineWidth
+            .setLabel('Line Width')
+            .setValue(`${chart.xAxis.lineWidth}`);
+
+        this.addDestroyableEventListener(this.inputAxisLineWidth.getInputElement(), 'input', () => {
+            const val = parseInt(this.inputAxisLineWidth.getValue(), 10);
+            chart.xAxis.lineWidth = val;
+            chart.yAxis.lineWidth = val;
             this.chart.performLayout();
         });
 
         // TODO replace with Color Picker
-        this.labelAxisColor.innerHTML = 'Color';
-        this.inputAxisColor.value = `${chart.xAxis.lineColor}`;
-        this.addDestroyableEventListener(this.inputAxisColor, 'input', () => {
-            chart.xAxis.lineColor = this.inputAxisColor.value;
-            chart.yAxis.lineColor = this.inputAxisColor.value;
+        this.inputAxisColor
+            .setLabel('Color')
+            .setValue(`${chart.xAxis.lineColor}`);
+        this.addDestroyableEventListener(this.inputAxisColor.getInputElement(), 'input', () => {
+            const val = this.inputAxisColor.getValue();
+            chart.xAxis.lineColor = val;
+            chart.yAxis.lineColor = val;
             this.chart.performLayout();
         });
     }
 
     private initAxisTicks() {
-        this.labelAxisTicks.innerHTML = 'Ticks';
+        this.labelAxisTicks.setLabel('Ticks');
 
         const chart = this.chart as CartesianChart;
 
-        this.labelAxisTicksWidth.innerHTML = 'Width';
-        this.inputAxisTicksWidth.value = `${chart.xAxis.lineWidth}`;
-        this.addDestroyableEventListener(this.inputAxisTicksWidth, 'input', () => {
-            chart.xAxis.tickWidth = Number.parseInt(this.inputAxisTicksWidth.value);
-            chart.yAxis.tickWidth = Number.parseInt(this.inputAxisTicksWidth.value);
+        this.inputAxisTicksWidth
+            .setLabel('Width')
+            .setValue(`${chart.xAxis.lineWidth}`);
+        this.addDestroyableEventListener(this.inputAxisTicksWidth.getInputElement(), 'input', () => {
+            const val = parseInt(this.inputAxisTicksWidth.getValue(), 10);
+            chart.xAxis.tickWidth = val;
+            chart.yAxis.tickWidth = val;
             chart.performLayout();
         });
 
-        this.labelAxisTicksSize.innerHTML = 'Size';
-        this.inputAxisTicksSize.value = `${chart.xAxis.tickSize}`;
-        this.addDestroyableEventListener(this.inputAxisTicksSize, 'input', () => {
-            chart.xAxis.tickSize = Number.parseInt(this.inputAxisTicksSize.value);
-            chart.yAxis.tickSize = Number.parseInt(this.inputAxisTicksSize.value);
+        this.inputAxisTicksSize
+            .setLabel('Size')
+            .setValue(`${chart.xAxis.tickSize}`);
+        this.addDestroyableEventListener(this.inputAxisTicksSize.getInputElement(), 'input', () => {
+            const val = parseInt(this.inputAxisTicksSize.getValue(), 10)
+            chart.xAxis.tickSize = val;
+            chart.yAxis.tickSize = val;
             chart.performLayout();
         });
 
-        this.labelAxisTicksPadding.innerHTML = 'Padding';
-        this.inputAxisTicksPadding.value = `${chart.xAxis.tickPadding}`;
-        this.addDestroyableEventListener(this.inputAxisTicksPadding, 'input', () => {
-            chart.xAxis.tickPadding = Number.parseInt(this.inputAxisTicksPadding.value);
-            chart.yAxis.tickPadding = Number.parseInt(this.inputAxisTicksPadding.value);
+        this.inputAxisTicksPadding
+            .setLabel('Padding')
+            .setValue(`${chart.xAxis.tickPadding}`);
+
+        this.addDestroyableEventListener(this.inputAxisTicksPadding.getInputElement(), 'input', () => {
+            const val = parseInt(this.inputAxisTicksPadding.getValue(), 10);
+            chart.xAxis.tickPadding = val;
+            chart.yAxis.tickPadding = val;
             chart.performLayout();
         });
 
         // TODO replace with Color Picker
-        this.labelAxisTicksColor.innerHTML = 'Color';
-        this.inputAxisTicksColor.value = `${chart.xAxis.lineColor}`;
-        this.addDestroyableEventListener(this.inputAxisTicksColor, 'input', () => {
-            chart.xAxis.tickColor = this.inputAxisTicksColor.value;
-            chart.yAxis.tickColor = this.inputAxisTicksColor.value;
+        this.inputAxisTicksColor
+            .setLabel('Color')
+            .setValue(`${chart.xAxis.lineColor}`);
+
+        this.addDestroyableEventListener(this.inputAxisTicksColor.getInputElement(), 'input', () => {
+            const val = this.inputAxisTicksColor.getValue();
+            chart.xAxis.tickColor = val;
+            chart.yAxis.tickColor = val;
             chart.performLayout();
         });
     }
@@ -190,7 +170,7 @@ export class ChartAxisPanel extends Component {
     private initAxisLabels() {
         const chart = this.chart as CartesianChart;
 
-        this.labelAxisLabels.innerHTML = 'Labels';
+        this.labelAxisLabels.setLabel('Labels');
 
         const fonts = ['Verdana, sans-serif', 'Arial'];
         fonts.forEach((font: any) => {
@@ -208,7 +188,7 @@ export class ChartAxisPanel extends Component {
 
         this.addDestroyableEventListener(this.selectAxisFont, 'input', () => {
             const font = fonts[this.selectAxisFont.selectedIndex];
-            const fontSize = Number.parseInt(this.inputAxisFontSize.value);
+            const fontSize = Number.parseInt(this.inputAxisFontSize.getValue());
 
             chart.xAxis.labelFont = `${fontSize}px ${font}`;
             chart.yAxis.labelFont = `${fontSize}px ${font}`;
@@ -233,11 +213,13 @@ export class ChartAxisPanel extends Component {
         //     this.chart.performLayout();
         // });
 
-        this.labelAxisFontSize.innerHTML = 'Size';
-        this.inputAxisFontSize.value = fontSize;
-        this.addDestroyableEventListener(this.inputAxisFontSize, 'input', () => {
+        this.inputAxisFontSize
+            .setLabel('Size')
+            .setValue(fontSize);
+
+        this.addDestroyableEventListener(this.inputAxisFontSize.getInputElement(), 'input', () => {
             const font = fonts[this.selectAxisFont.selectedIndex];
-            const fontSize = Number.parseInt(this.inputAxisFontSize.value);
+            const fontSize = Number.parseInt(this.inputAxisFontSize.getValue());
 
             chart.xAxis.labelFont = `${fontSize}px ${font}`;
             chart.yAxis.labelFont = `${fontSize}px ${font}`;
@@ -246,29 +228,49 @@ export class ChartAxisPanel extends Component {
         });
 
         // TODO replace with Color Picker
-        this.labelAxisLabelColor.innerHTML = 'Color';
-        this.inputAxisLabelColor.value = `${chart.xAxis.labelColor}`;
-        this.addDestroyableEventListener(this.inputAxisLabelColor, 'input', () => {
-            chart.xAxis.labelColor = this.inputAxisLabelColor.value;
-            chart.yAxis.labelColor = this.inputAxisLabelColor.value;
+        this.inputAxisLabelColor
+            .setLabel('Color')
+            .setValue(`${chart.xAxis.labelColor}`);
+
+        this.addDestroyableEventListener(this.inputAxisLabelColor.getInputElement(), 'input', () => {
+            const val = this.inputAxisLabelColor.getValue();
+            chart.xAxis.labelColor = val;
+            chart.yAxis.labelColor = val;
 
             chart.performLayout();
         });
 
-        this.labelAxisLabelRotation.innerHTML = 'Rotation (degrees)';
+        this.labelAxisLabelRotation.setLabel('Rotation (degrees)');
 
-        this.labelXAxisLabelRotation.innerHTML = 'x-axis';
-        this.inputXAxisLabelRotation.value = `${chart.xAxis.labelRotation}`;
-        this.addDestroyableEventListener(this.inputXAxisLabelRotation, 'input', () => {
-            chart.xAxis.labelRotation = Number.parseInt(this.inputXAxisLabelRotation.value);
+        this.inputXAxisLabelRotation
+            .setLabel('x-axis')
+            .setValue(`${chart.xAxis.labelRotation}`);
+        this.addDestroyableEventListener(this.inputXAxisLabelRotation.getInputElement(), 'input', () => {
+            chart.xAxis.labelRotation = Number.parseInt(this.inputXAxisLabelRotation.getValue());
             chart.performLayout();
         });
 
-        this.labelYAxisLabelRotation.innerHTML = 'y-axis';
-        this.inputYAxisLabelRotation.value = `${chart.yAxis.labelRotation}`;
-        this.addDestroyableEventListener(this.inputYAxisLabelRotation, 'input', () => {
-            chart.yAxis.labelRotation = Number.parseInt(this.inputYAxisLabelRotation.value);
+        this.inputYAxisLabelRotation
+            .setLabel('y-axis')
+            .setValue(`${chart.yAxis.labelRotation}`);
+        this.addDestroyableEventListener(this.inputYAxisLabelRotation.getInputElement(), 'input', () => {
+            chart.yAxis.labelRotation = Number.parseInt(this.inputYAxisLabelRotation.getValue());
             chart.performLayout();
         });
     }
+
+    private initAxisGridlines() {
+        this.labelAxisGridlines.setLabel('Gridlines');
+        this.labelAxisGridlinesMajor.setLabel('Major');
+        this.labelAxisGridlinesMajorDash.innerHTML = 'Dash:';
+
+        const dashes = ['----------------', '..................'];
+        dashes.forEach((font: any, index: number) => {
+            const option = document.createElement('option');
+            option.value = `index`;
+            option.text = font;
+            this.selectAxisGridlinesMajorDash.appendChild(option);
+        });
+    }
+
 }

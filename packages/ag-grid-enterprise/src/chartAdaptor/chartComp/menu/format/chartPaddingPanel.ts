@@ -7,12 +7,12 @@ export class ChartPaddingPanel extends Component {
     public static TEMPLATE =
         `<div>
             <ag-group-component ref="labelChartPadding">
-                <div class="padding-group">
+                <div class="ag-group-subgroup">
                     <ag-input-text-field ref="inputPaddingTop"></ag-input-text-field>
                     <ag-input-text-field ref="inputPaddingRight"></ag-input-text-field>
                 </div>
                 
-                <div class="padding-group"">
+                <div class="ag-group-subgroup">
                     <ag-input-text-field ref="inputPaddingBottom"></ag-input-text-field>
                     <ag-input-text-field ref="inputPaddingLeft"></ag-input-text-field>
                 </div>   
@@ -45,9 +45,9 @@ export class ChartPaddingPanel extends Component {
     }
 
     private initChartPaddingItems() {
-        type Sides = 'top' | 'right' | 'bottom' | 'left';
+        type PaddingSides = 'top' | 'right' | 'bottom' | 'left';
         type PaddingConfig = {
-            [key in Sides]: [string, string, AgInputTextField];
+            [key in PaddingSides]: [string, string, AgInputTextField];
         }
 
         const config: PaddingConfig = {
@@ -60,11 +60,14 @@ export class ChartPaddingPanel extends Component {
         this.labelChartPadding.setLabel('Chart Padding');
 
         Object.keys(config).forEach(side => {
-            const [ label, value, field ] = config[side as Sides];
-            field.setLabel(label);
-            field.setValue(value);
+            const [ label, value, field ] = config[side as PaddingSides];
+            field.setLabel(label)
+                .setLabelWidth(45)
+                .setWidth(75)
+                .setValue(value);
+
             this.addDestroyableEventListener(field.getInputElement(), 'input', () => {
-                this.chart.padding[side as Sides] = Number.parseInt(field.getValue());
+                this.chart.padding[side as PaddingSides] = Number.parseInt(field.getValue());
                 this.chart.performLayout();
             });
         });

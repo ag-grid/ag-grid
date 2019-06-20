@@ -1,99 +1,53 @@
-import {_, AgCheckbox, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {_, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 import {BarSeries} from "../../../../charts/chart/series/barSeries";
+import { TouchSequence } from "selenium-webdriver";
 
 export class ChartBarSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
-            <div>
-                <span ref="labelSeries"></span>
-            </div>
-
-            <div style="padding-top: 10px;">
-                <span ref="labelSeriesStrokeWidth" style="padding-left: 15px; padding-right: 10px"></span>
-                <input style="width: 38px" ref="inputSeriesStrokeWidth" type="text">
-            </div>
-
-            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px">
-                <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 15px"></ag-checkbox>
-                <span ref="labelTooltipsEnabled" style="padding-left: 5px"></span>
-            </div>
-
-            <!-- SERIES LABELS -->
-
-            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">
-                <ag-checkbox ref="cbSeriesLabelsEnabled" style="padding-left: 15px"></ag-checkbox>
-                <span ref="labelSeriesLabelsEnabled" style="padding-left: 5px"></span>
-            </div>
-
-            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-                <select ref="selectSeriesFont" style="width: 155px"></select>
-                <div style="padding-top: 10px">
-                    <select ref="selectSeriesFontWeight" style="width: 82px"></select>
-                     <span ref="labelSeriesFontSize" style="padding-left: 16px"></span>
-                    <input ref="inputSeriesFontSize" type="text" style="width: 25px">
-                </div>
-                <div style="padding-top: 10px">
-                    <span ref="labelSeriesLabelColor" style="padding-right: 5px"></span>
-                    <input ref="inputSeriesLabelColor" type="text" style="width: 115px">
-                </div>
-            </div>
-
-            <!-- SERIES SHADOW -->
-
-            <div class="ag-column-tool-panel-column-group" style="padding-top: 10px; padding-bottom: 5px">
-                <ag-checkbox ref="cbSeriesShadow" style="padding-left: 15px"></ag-checkbox>
-                <span ref="labelSeriesShadow" style="padding-left: 5px"></span>
-            </div>
-
-            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-                <div>
-                    <span ref="labelSeriesShadowBlur" style="padding-right: 34px"></span>
-                    <input style="width: 38px" ref="inputSeriesShadowBlur" type="text">
-                </div>
-                <div style="padding-top: 5px">
-                    <span ref="labelSeriesShadowXOffset" style="padding-right: 10px"></span>
-                    <input style="width: 38px" ref="inputSeriesShadowXOffset" type="text">
-                </div>
-                <div style="padding-top: 5px">
-                    <span ref="labelSeriesShadowYOffset" style="padding-right: 10px"></span>
-                    <input style="width: 38px" ref="inputSeriesShadowYOffset" type="text">
-                </div>
-                <div style="padding-top: 5px">
-                    <span ref="labelSeriesShadowColor" style="padding-right: 5px"></span>
-                    <input ref="inputSeriesShadowColor" type="text" style="width: 110px">
-                </div>
-            </div>
+            <ag-group-component ref="seriesGroup">
+                <ag-input-text-field ref="inputSeriesStrokeWidth"></ag-input-text-field>
+                <ag-checkbox ref="cbTooltipsEnabled"></ag-checkbox>
+                <ag-group-component ref="labelSeriesLabels">
+                    <ag-checkbox ref="cbSeriesLabelsEnabled"></ag-checkbox>
+                    <select ref="selectSeriesFont"></select>
+                    <div class="ag-group-subgroup">
+                        <select ref="selectSeriesFontWeight" style="width: 82px"></select>
+                        <ag-input-text-field ref="inputSeriesFontSize"></ag-input-text-field>
+                    </div>
+                    <ag-input-text-field ref="inputSeriesLabelColor"></ag-input-text-field>
+                </ag-group-component>
+                <ag-group-component ref="labelSeriesShadow">
+                    <ag-checkbox ref="cbSeriesShadow"></ag-checkbox>
+                    <ag-input-text-field ref="inputSeriesShadowBlur"></ag-input-text-field>
+                    <ag-input-text-field ref="inputSeriesShadowXOffset"></ag-input-text-field>
+                    <ag-input-text-field ref="inputSeriesShadowYOffset"></ag-input-text-field>
+                    <ag-input-text-field ref="inputSeriesShadowColor"></ag-input-text-field>
+                </ag-group-component>
+            </ag-group-component>
         </div>`;
 
-    @RefSelector('labelSeries') private labelSeries: HTMLElement;
-    @RefSelector('labelSeriesStrokeWidth') private labelSeriesStrokeWidth: HTMLElement;
-    @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: HTMLInputElement;
+    @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
+    @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: AgInputTextField;
     @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
-    @RefSelector('labelTooltipsEnabled') private labelTooltipsEnabled: HTMLElement;
 
+    @RefSelector('labelSeriesLabels') private labelSeriesLabels: AgGroupComponent;
     @RefSelector('cbSeriesLabelsEnabled') private cbSeriesLabelsEnabled: AgCheckbox;
-    @RefSelector('labelSeriesLabelsEnabled') private labelSeriesLabelsEnabled: HTMLElement;
-    @RefSelector('labelSeriesLabels') private labelSeriesLabels: HTMLElement;
+    
     @RefSelector('selectSeriesFont') private selectSeriesFont: HTMLSelectElement;
     @RefSelector('selectSeriesFontWeight') private selectSeriesFontWeight: HTMLSelectElement;
-    @RefSelector('labelSeriesFontSize') private labelSeriesFontSize: HTMLElement;
-    @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: HTMLInputElement;
-    @RefSelector('labelSeriesLabelColor') private labelSeriesLabelColor: HTMLElement;
-    @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: HTMLInputElement;
+    @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: AgInputTextField;
+    @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: AgInputTextField;
 
-    @RefSelector('cbSeriesShadow') private cbSeriesShadow: AgCheckbox;
-    @RefSelector('labelSeriesShadow') private labelSeriesShadow: HTMLElement;
-    @RefSelector('labelSeriesShadowBlur') private labelSeriesShadowBlur: HTMLElement;
-    @RefSelector('inputSeriesShadowBlur') private inputSeriesShadowBlur: HTMLInputElement;
-    @RefSelector('labelSeriesShadowXOffset') private labelSeriesShadowXOffset: HTMLElement;
-    @RefSelector('inputSeriesShadowXOffset') private inputSeriesShadowXOffset: HTMLInputElement;
-    @RefSelector('labelSeriesShadowYOffset') private labelSeriesShadowYOffset: HTMLElement;
-    @RefSelector('inputSeriesShadowYOffset') private inputSeriesShadowYOffset: HTMLInputElement;
-    @RefSelector('labelSeriesShadowColor') private labelSeriesShadowColor: HTMLElement;
-    @RefSelector('inputSeriesShadowColor') private inputSeriesShadowColor: HTMLInputElement;
+    @RefSelector('labelSeriesShadow') private labelSeriesShadow: AgGroupComponent;
+    @RefSelector('cbSeriesShadow') private cbSeriesShadow: AgCheckbox; 
+    @RefSelector('inputSeriesShadowBlur') private inputSeriesShadowBlur: AgInputTextField;
+    @RefSelector('inputSeriesShadowXOffset') private inputSeriesShadowXOffset: AgInputTextField;
+    @RefSelector('inputSeriesShadowYOffset') private inputSeriesShadowYOffset: AgInputTextField;
+    @RefSelector('inputSeriesShadowColor') private inputSeriesShadowColor: AgInputTextField;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -118,12 +72,12 @@ export class ChartBarSeriesPanel extends Component {
     }
 
     private initSeriesTooltips() {
-        this.labelSeries.innerHTML = 'Series';
+        this.seriesGroup.setLabel('Series');
 
         // TODO update code below when this.chart.showTooltips is available
         let enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
+        this.cbTooltipsEnabled.setLabel('Tooltips');
         this.cbTooltipsEnabled.setSelected(enabled);
-        this.labelTooltipsEnabled.innerHTML = 'Tooltips';
         this.addDestroyableEventListener(this.cbTooltipsEnabled, 'change', () => {
             this.chart.series.forEach(series => {
                 series.tooltipEnabled = this.cbTooltipsEnabled.isSelected();
@@ -132,16 +86,16 @@ export class ChartBarSeriesPanel extends Component {
     }
 
     private initSeriesStrokeWidth() {
-        this.labelSeriesStrokeWidth.innerHTML = 'Stroke Width';
+        this.inputSeriesStrokeWidth.setLabel('Stroke Width');
 
         const barSeries = this.chart.series as BarSeries[];
         if (barSeries.length > 0) {
-            this.inputSeriesStrokeWidth.value = `${barSeries[0].strokeWidth}`;
+            this.inputSeriesStrokeWidth.setValue(`${barSeries[0].strokeWidth}`);
         }
 
-        this.addDestroyableEventListener(this.inputSeriesStrokeWidth, 'input', () => {
+        this.addDestroyableEventListener(this.inputSeriesStrokeWidth.getInputElement(), 'input', () => {
             (this.chart.series as BarSeries[]).forEach(series => {
-                series.strokeWidth = Number.parseInt(this.inputSeriesStrokeWidth.value);
+                series.strokeWidth = Number.parseInt(this.inputSeriesStrokeWidth.getValue());
             });
         });
     }
@@ -150,8 +104,10 @@ export class ChartBarSeriesPanel extends Component {
         const barSeries = this.chart.series as BarSeries[];
 
         let enabled = _.every(barSeries, barSeries => barSeries.labelEnabled);
+
+        this.labelSeriesLabels.setLabel('Labels');
+        this.cbSeriesLabelsEnabled.setLabel('Enabled');
         this.cbSeriesLabelsEnabled.setSelected(enabled);
-        this.labelSeriesLabelsEnabled.innerHTML = 'Labels';
         this.addDestroyableEventListener(this.cbSeriesLabelsEnabled, 'change', () => {
             barSeries.forEach(series => {
                 series.labelEnabled = this.cbSeriesLabelsEnabled.isSelected();
@@ -174,7 +130,7 @@ export class ChartBarSeriesPanel extends Component {
 
         this.addDestroyableEventListener(this.selectSeriesFont, 'input', () => {
             const font = fonts[this.selectSeriesFont.selectedIndex];
-            const fontSize = Number.parseInt(this.inputSeriesFontSize.value);
+            const fontSize = Number.parseInt(this.inputSeriesFontSize.getValue());
             const barSeries = this.chart.series as BarSeries[];
             barSeries.forEach(series => {
                 series.labelFont = `${fontSize}px ${font}`;
@@ -198,24 +154,27 @@ export class ChartBarSeriesPanel extends Component {
         //     this.chart.performLayout();
         // });
 
-        this.labelSeriesFontSize.innerHTML = 'Size';
-        this.inputSeriesFontSize.value = fontSize;
-        this.addDestroyableEventListener(this.inputSeriesFontSize, 'input', () => {
+        this.inputSeriesFontSize
+            .setLabel('Size')
+            .setValue(fontSize);
+
+        this.addDestroyableEventListener(this.inputSeriesFontSize.getInputElement(), 'input', () => {
             const font = fonts[this.selectSeriesFont.selectedIndex];
-            const fontSize = Number.parseInt(this.inputSeriesFontSize.value);
+            const fontSize = Number.parseInt(this.inputSeriesFontSize.getValue());
             const barSeries = this.chart.series as BarSeries[];
             barSeries.forEach(series => {
                 series.labelFont = `${fontSize}px ${font}`;
             });
         });
 
-        // TODO replace with Color Picker
-        this.labelSeriesLabelColor.innerHTML = 'Color';
-        this.inputSeriesLabelColor.value = barSeries[0].labelColor;
-        this.addDestroyableEventListener(this.inputSeriesLabelColor, 'input', () => {
+        this.inputSeriesLabelColor
+            .setLabel('Color')
+            .setValue(barSeries[0].labelColor);
+
+        this.addDestroyableEventListener(this.inputSeriesLabelColor.getInputElement(), 'input', () => {
             const barSeries = this.chart.series as BarSeries[];
             barSeries.forEach(series => {
-                series.labelColor = this.inputSeriesLabelColor.value;
+                series.labelColor = this.inputSeriesLabelColor.getValue();
             });
         });
     }
@@ -225,26 +184,27 @@ export class ChartBarSeriesPanel extends Component {
 
         // TODO use shadowEnabled instead when it's available in chart api
         let enabled = _.every(barSeries, barSeries => barSeries.shadow != undefined);
+        this.cbSeriesShadow.setLabel('Enabled');
         this.cbSeriesShadow.setSelected(enabled);
-        this.labelSeriesShadow.innerHTML = 'Shadow';
+        this.labelSeriesShadow.setLabel('Shadow');
 
         // Add defaults to chart as shadow is undefined by default
-        if (!this.inputSeriesShadowBlur.value) this.inputSeriesShadowBlur.value = `20`;
-        if (!this.inputSeriesShadowXOffset.value) this.inputSeriesShadowXOffset.value = `10`;
-        if (!this.inputSeriesShadowYOffset.value) this.inputSeriesShadowYOffset.value = `10`;
-        if (!this.inputSeriesShadowColor.value) this.inputSeriesShadowColor.value = `rgba(0,0,0,0.5)`;
+        if (!this.inputSeriesShadowBlur.getValue()) this.inputSeriesShadowBlur.setValue('20');
+        if (!this.inputSeriesShadowXOffset.getValue()) this.inputSeriesShadowXOffset.setValue('10');
+        if (!this.inputSeriesShadowYOffset.getValue()) this.inputSeriesShadowYOffset.setValue('10');
+        if (!this.inputSeriesShadowColor.getValue()) this.inputSeriesShadowColor.setValue('rgba(0,0,0,0.5)');
 
         this.addDestroyableEventListener(this.cbSeriesShadow, 'change', () => {
             barSeries.forEach(series => {
                 // TODO remove this check when shadowEnabled instead when it's available in chart api
                 if (this.cbSeriesShadow.isSelected()) {
                     series.shadow = {
-                        color: this.inputSeriesShadowColor.value,
+                        color: this.inputSeriesShadowColor.getValue(),
                         offset: {
-                            x: Number.parseInt(this.inputSeriesShadowXOffset.value),
-                            y: Number.parseInt(this.inputSeriesShadowYOffset.value)
+                            x: Number.parseInt(this.inputSeriesShadowXOffset.getValue()),
+                            y: Number.parseInt(this.inputSeriesShadowYOffset.getValue())
                         },
-                        blur: Number.parseInt(this.inputSeriesShadowBlur.value)
+                        blur: Number.parseInt(this.inputSeriesShadowBlur.getValue())
                     };
                 } else {
                     series.shadow = undefined;
@@ -256,10 +216,10 @@ export class ChartBarSeriesPanel extends Component {
             barSeries.forEach(series => {
                 // TODO remove this check when shadowEnabled instead when it's available in chart api
                 if (this.cbSeriesShadow.isSelected()) {
-                    const blur = this.inputSeriesShadowBlur.value ? Number.parseInt(this.inputSeriesShadowBlur.value) : 0;
-                    const xOffset = this.inputSeriesShadowXOffset.value ? Number.parseInt(this.inputSeriesShadowXOffset.value) : 0;
-                    const yOffset = this.inputSeriesShadowYOffset.value ? Number.parseInt(this.inputSeriesShadowYOffset.value) : 0;
-                    const color = this.inputSeriesShadowColor.value ? this.inputSeriesShadowColor.value : 'rgba(0,0,0,0.5)';
+                    const blur = this.inputSeriesShadowBlur.getValue() ? Number.parseInt(this.inputSeriesShadowBlur.getValue()) : 0;
+                    const xOffset = this.inputSeriesShadowXOffset.getValue() ? Number.parseInt(this.inputSeriesShadowXOffset.getValue()) : 0;
+                    const yOffset = this.inputSeriesShadowYOffset.getValue() ? Number.parseInt(this.inputSeriesShadowYOffset.getValue()) : 0;
+                    const color = this.inputSeriesShadowColor.getValue() ? this.inputSeriesShadowColor.getValue() : 'rgba(0,0,0,0.5)';
                     series.shadow = {
                         color: color,
                         offset: {x: xOffset, y: yOffset},
@@ -272,40 +232,40 @@ export class ChartBarSeriesPanel extends Component {
         };
 
         // BLUR
-        this.labelSeriesShadowBlur.innerHTML = 'Blur';
+        this.inputSeriesShadowBlur.setLabel('Blur');
         if (barSeries.length > 0) {
             if (barSeries[0].shadow) {
-                this.inputSeriesShadowBlur.value = barSeries[0].shadow.blur + ''
+                this.inputSeriesShadowBlur.setValue(barSeries[0].shadow.blur + '');
             }
         }
-        this.addDestroyableEventListener(this.inputSeriesShadowBlur, 'input', updateShadow);
+        this.addDestroyableEventListener(this.inputSeriesShadowBlur.getInputElement(), 'input', updateShadow);
 
         // X Offset
-        this.labelSeriesShadowXOffset.innerHTML = 'X Offset';
+        this.inputSeriesShadowXOffset.setLabel('X Offset');
         if (barSeries.length > 0) {
             if (barSeries[0].shadow) {
-                this.inputSeriesShadowXOffset.value = barSeries[0].shadow.offset.x + ''
+                this.inputSeriesShadowXOffset.setValue(barSeries[0].shadow.offset.x + '');
             }
         }
-        this.addDestroyableEventListener(this.inputSeriesShadowXOffset, 'input', updateShadow);
+        this.addDestroyableEventListener(this.inputSeriesShadowXOffset.getInputElement(), 'input', updateShadow);
 
         // Y Offset
-        this.labelSeriesShadowYOffset.innerHTML = 'Y Offset';
+        this.inputSeriesShadowYOffset.setLabel('Y Offset');
         if (barSeries.length > 0) {
             if (barSeries[0].shadow) {
-                this.inputSeriesShadowYOffset.value = barSeries[0].shadow.offset.y + ''
+                this.inputSeriesShadowYOffset.setValue(barSeries[0].shadow.offset.y + '');
             }
         }
-        this.addDestroyableEventListener(this.inputSeriesShadowYOffset, 'input', updateShadow);
+        this.addDestroyableEventListener(this.inputSeriesShadowYOffset.getInputElement(), 'input', updateShadow);
 
         // TODO replace with Color Picker
-        this.labelSeriesShadowColor.innerHTML = 'Color';
+        this.inputSeriesShadowColor.setLabel('Color');
         if (barSeries.length > 0) {
             if (barSeries[0].shadow) {
-                this.inputSeriesShadowColor.value = barSeries[0].shadow.color + ''
+                this.inputSeriesShadowColor.setValue(barSeries[0].shadow.color + '');
             }
         }
-        this.addDestroyableEventListener(this.inputSeriesShadowColor, 'input', updateShadow);
+        this.addDestroyableEventListener(this.inputSeriesShadowColor.getInputElement(), 'input', updateShadow);
     }
 
 

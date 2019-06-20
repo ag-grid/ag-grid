@@ -158,13 +158,11 @@
             .ag-group-component-label {
                 top: -6px;
             }
-            .padding-group {
-                padding: 0 10px;
+            .ag-group-subgroup {
+                align-self: stretch;
                 justify-content: space-between;
-                input {
-                    min-width: 30px;
-                }
             }
+            
         }
     }
 }

@@ -1261,13 +1261,17 @@
             text-transform: uppercase;
         }
         .ag-group-item {
-            margin-top: 2px;
+            margin: 2px 5px;
+            &.ag-group-component {
+                margin-top: 5px;
+            }
         }
     }
 
     .ag-textfield {
         label {
             margin-right: 5px;
+            white-space: nowrap;
         }
     }
 
