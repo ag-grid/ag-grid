@@ -1244,7 +1244,7 @@
 
 
     ////
-    /// Group Component
+    /// Widgets
     ///
     .ag-group-component{
         margin: 10px 5px;
@@ -1262,6 +1262,12 @@
         }
         .ag-group-item {
             margin-top: 2px;
+        }
+    }
+
+    .ag-textfield {
+        label {
+            margin-right: 5px;
         }
     }
 
@@ -1284,6 +1290,7 @@
 
         .ag-title-bar {
             background-color: $dialog-title-background-color;
+            border-bottom: 1px solid lighten($border-color, 10%);
             color: $dialog-title-foreground-color;
             height: $dialog-title-height;
             font-size: $dialog-title-font-size;

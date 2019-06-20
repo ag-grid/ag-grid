@@ -10,7 +10,7 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
-export class Component extends BeanStub implements IComponent<any> {
+export class Component extends BeanStub {//implements IComponent<any> {
 
     public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
 
@@ -47,13 +47,21 @@ export class Component extends BeanStub implements IComponent<any> {
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
 
-        childNodeList.forEach(childNode => {
+        childNodeList.forEach((childNode: Node) => {
             const childComp = this.getContext().createComponentFromElement(childNode as Element, (childComp) => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
                 this.copyAttributesFromNode(childNode as Element, childComp.getGui());
             });
             if (childComp) {
+                if ((childComp as any).addItems && (childNode as Element).children.length) {
+                    this.createChildComponentsFromTags(childNode as Element);
+
+                    // converting from HTMLCollection to Array
+                    const items = Array.prototype.slice.call((childNode as Element).children);
+
+                    (childComp as any).addItems(items);
+                }
                 // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 this.swapComponentForNode(childComp, parentNode, childNode);
             } else if (childNode.childNodes) {

@@ -1262,28 +1262,6 @@ $handleSize: 5px;
 .ag-numeric-header .ag-cell-label-container {
     flex-direction: row;
 }
-/**
- ****************************
- * Group Component
- ****************************
- */
-
- .ag-group-component {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-
-    .ag-group-component-label {
-        position: absolute;
-        top: -10px;
-    }
-
-    .ag-group-item {
-        display: flex;
-        align-items: center;
-        flex: 1 1 auto;
-    }
-}
 
 /**
  ****************************
@@ -1356,6 +1334,40 @@ $handleSize: 5px;
 .ag-status-bar-right {
     display: inline-flex;
 }
+
+/**
+ ****************************
+ * Widgets
+ ****************************
+*/
+
+.ag-group-component {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    .ag-group-component-label {
+        position: absolute;
+        top: -10px;
+    }
+
+    .ag-group-item {
+        display: flex;
+        align-items: center;
+        flex: 1 1 auto;
+    }
+}
+
+.ag-textfield {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    input {
+        flex: 1 1 auto;
+        width: 0;
+    }
+}
+
 
 $toolpanel-indent-size: 10px !default;
 $row-group-indent-size: 10px !default;

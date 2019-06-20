@@ -1,20 +1,17 @@
 import {
-    Autowired,
     Component,
-    AgDialog,
     ChartType,
-    GridOptionsWrapper,
     TabbedLayout,
     PostConstruct,
     TabbedItem,
     Promise,
-    _,
-    ChartMenuOptions
+    ChartMenuOptions,
+    _
 } from "ag-grid-community";
 import { ChartController } from "../chartController";
 import { ChartSettingsPanel } from "./chartSettingsPanel";
 import { ChartDataPanel } from "./chartDataPanel";
-import { DummyFormattingPanel } from "./dummyFormattingPanel";
+import { ChartFormattingPanel } from "./chartFormatingPanel";
 
 export class TabbedChartMenu extends Component {
 
@@ -51,7 +48,7 @@ export class TabbedChartMenu extends Component {
         
         this.panels.forEach(panel => {
             const panelType = panel.replace('chart', '').toLowerCase();
-            const { comp, tab } = this.createTab(panelType, this.getPanelClass(panelType));
+            const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
 
             this.tabs.push(tab);
             this.addDestroyFunc(() => comp.destroy());
@@ -64,22 +61,25 @@ export class TabbedChartMenu extends Component {
     }
 
     private createTab(
-        name: string,
+        name: ChartMenuOptions,
+        title: string,
         ChildClass: new (controller: ChartController) => Component
     ): {comp: Component, tab: TabbedItem} {
         const eWrapperDiv = document.createElement('div');
-        _.addCssClass(eWrapperDiv, `ag-chart-${name}`);
+        _.addCssClass(eWrapperDiv, `ag-chart-${title}`);
 
         const comp = new ChildClass(this.chartController);
         this.getContext().wireBean(comp);
+        
         eWrapperDiv.appendChild(comp.getGui());
-        const title = document.createElement('div');
-        title.innerText = _.capitalise(name.replace('chart', ''));
+
+        const titleEl = document.createElement('div');
+        titleEl.innerText = _.capitalise(title);
 
         return {
             comp,
             tab: {
-                title,
+                title: titleEl,
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name
             }
@@ -116,6 +116,6 @@ export class TabbedChartMenu extends Component {
     private getPanelClass(panelType: string) {
         const isDataPanel = panelType === TabbedChartMenu.TAB_DATA;
         const isFormatPanel = panelType === TabbedChartMenu.TAB_FORMAT;
-        return isDataPanel ? ChartDataPanel : (isFormatPanel ? DummyFormattingPanel : ChartSettingsPanel);
+        return isDataPanel ? ChartDataPanel : (isFormatPanel ? ChartFormattingPanel : ChartSettingsPanel);
     }
 }

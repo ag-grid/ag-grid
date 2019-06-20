@@ -1,18 +1,15 @@
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
-import { IPositionable } from "./positionable";
 import { _ } from "../../utils";
+import { Autowired } from "../../context/context";
 
-export interface IMovable extends IPositionable {
-    setMovable?(movable: boolean): void;
-}
-
-export function Movable<T extends { new(...args:any[]): IMovable }>(target: T) {
+export function Movable<T extends { new(...args:any[]): any }>(target: T) {
     abstract class MixinClass extends target {
+
+        @Autowired('dragService') dragService: DragService;
 
         abstract config: any;
         abstract moveElement: HTMLElement;
         abstract moveElementDragListener: DragListenerParams;
-        abstract dragService: DragService;
         abstract updateDragStartPosition(x: number, y: number): void;
         abstract calculateMouseMovement(params: {
             e: MouseEvent,

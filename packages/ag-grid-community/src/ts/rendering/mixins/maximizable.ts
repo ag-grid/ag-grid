@@ -1,13 +1,7 @@
 import { Component } from "../../widgets/component";
-import { PostConstruct } from "../../context/context";
-import { IPositionable } from "./positionable";
 import { _ } from "../../utils";
 
-export interface IMaximizable extends IPositionable {
-    addTitleBarButton(button: Component, position?: number): void;
-}
-
-export function Maximizable<T extends { new(...args:any[]): IMaximizable }>(target: T) {
+export function Maximizable<T extends { new(...args:any[]): any }>(target: T) {
     abstract class MixinClass extends target {
 
         abstract addDestroyableEventListener(...args: any[]): () => void;
@@ -37,14 +31,14 @@ export function Maximizable<T extends { new(...args:any[]): IMaximizable }>(targ
             height: 0
         };
 
-        @PostConstruct
-        addMiximizer() {
+        postConstruct() {
+            super.postConstruct();
             const { maximizable } = this.config;
 
             if (maximizable) { this.setMaximizable(maximizable); }
         }
 
-        setMaximizable(maximizable: boolean) {
+        public setMaximizable(maximizable: boolean) {
             if (maximizable === false) {
                 this.clearMaximizebleListeners();
                 if (this.maximizeButtonComp) {

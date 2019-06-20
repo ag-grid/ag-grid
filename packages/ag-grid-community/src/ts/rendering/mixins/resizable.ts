@@ -2,7 +2,6 @@ import { Autowired } from "../../context/context";
 import { DragService, DragListenerParams } from "../../dragAndDrop/dragService";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { EventService } from "../../eventService";
-import { IPositionable } from "./positionable";
 import { _ } from "../../utils";
 
 export type ResizableSides = 'topLeft' |
@@ -23,11 +22,7 @@ interface MappedResizer {
     dragSource?: DragListenerParams;
 }
 
-export interface IResizable extends IPositionable {
-    setResizable?(resizable: boolean | ResizableStructure): void;
-}
-
-export function Resizable<T extends { new(...args:any[]): IResizable }>(target: T) {
+export function Resizable<T extends { new(...args:any[]): any }>(target: T) {
     abstract class MixinClass extends target {
         RESIZE_TEMPLATE = `
             <div class="ag-resizer-wrapper">

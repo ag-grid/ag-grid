@@ -100,12 +100,6 @@ export class Context {
         return null;
     }
 
-    // public createBean(BeanClass: new () => any): Component {
-    //     const beanInstance = new BeanClass();
-    //     this.wireBean(beanInstance);
-    //     return beanInstance;
-    // }
-
     public wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);

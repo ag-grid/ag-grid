@@ -1,7 +1,7 @@
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { Component } from "./component";
-import { Positionable, IPositionable } from "../rendering/mixins/positionable";
+import { Positionable } from "../rendering/mixins/positionable";
 import { _ } from "../utils";
 
 export interface PanelOptions {
@@ -15,8 +15,7 @@ export interface PanelOptions {
     height?: number | string;
 }
 
-@Positionable
-export class AgPanel extends Component implements IPositionable {
+export class AgPanel extends Positionable(Component) {
 
     private static TEMPLATE =
         `<div class="ag-panel" tabindex="-1">
@@ -34,7 +33,7 @@ export class AgPanel extends Component implements IPositionable {
         `;
 
     protected closable = true;
-    protected config: PanelOptions | undefined;
+    config: PanelOptions | undefined;
 
     @RefSelector('eContentWrapper') protected eContentWrapper: HTMLElement;
     @RefSelector('eTitleBar') protected eTitleBar: HTMLElement;
@@ -86,10 +85,12 @@ export class AgPanel extends Component implements IPositionable {
                 (focusEl as HTMLElement).focus();
             }
         });
+
+        super.postConstruct();
     }
 
     //  used by the Positionable Mixin
-    protected renderComponent() {
+    renderComponent() {
         const eGui = this.getGui();
         eGui.focus();
 
