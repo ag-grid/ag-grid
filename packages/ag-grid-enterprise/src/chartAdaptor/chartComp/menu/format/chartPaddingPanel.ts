@@ -1,31 +1,29 @@
-import {Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {AgGroupComponent, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 
 export class ChartPaddingPanel extends Component {
 
     public static TEMPLATE =
-        `<div>                  
-             <div style="padding-top: 0px">
-                 <span ref="labelChartPadding"></span>  
-             </div>         
-                    
-            <div class="ag-column-tool-panel-column-group" style="padding: 10px 5px 5px 25px">
-                 <span ref="labelPaddingTop" style="padding-right: 5px"></span>   
-                 <input style="width: 38px" ref="inputPaddingTop" type="text" style="padding-right: 15px">   
-                 <span ref="labelPaddingRight" style="padding-left: 15px; padding-right: 5px"></span>       
-                 <input style="width: 38px" ref="inputPaddingRight" type="text" style="padding-right: 15px">   
-            </div>
-            
-            <div class="ag-column-tool-panel-column-group" style="padding: 5px 5px 0px 5px">
-                 <span ref="labelPaddingBottom" style="padding-right: 5px"></span>   
-                 <input style="width: 38px" ref="inputPaddingBottom" type="text">   
-                 <span ref="labelPaddingLeft" style="padding-left: 22px; padding-right: 5px"></span>       
-                 <input style="width: 38px" ref="inputPaddingLeft" type="text">   
-            </div>            
+        `<div> 
+            <ag-group-component ref="labelChartPadding">     
+                <div class="ag-column-tool-panel-column-group" style="padding: 10px 5px 5px 25px">
+                     <span ref="labelPaddingTop" style="padding-right: 5px"></span>   
+                     <input style="width: 38px" ref="inputPaddingTop" type="text" style="padding-right: 15px">   
+                     <span ref="labelPaddingRight" style="padding-left: 15px; padding-right: 5px"></span>       
+                     <input style="width: 38px" ref="inputPaddingRight" type="text" style="padding-right: 15px">   
+                </div>
+                
+                <div class="ag-column-tool-panel-column-group" style="padding: 5px 5px 0px 5px">
+                     <span ref="labelPaddingBottom" style="padding-right: 5px"></span>   
+                     <input style="width: 38px" ref="inputPaddingBottom" type="text">   
+                     <span ref="labelPaddingLeft" style="padding-left: 22px; padding-right: 5px"></span>       
+                     <input style="width: 38px" ref="inputPaddingLeft" type="text">   
+                </div>   
+            </ag-group-component>         
         </div>`;
 
-    @RefSelector('labelChartPadding') private labelChartPadding: HTMLElement;
+    @RefSelector('labelChartPadding') private labelChartPadding: AgGroupComponent;
 
     @RefSelector('labelPaddingTop') private labelPaddingTop: HTMLElement;
     @RefSelector('inputPaddingTop') private inputPaddingTop: HTMLInputElement;
@@ -58,7 +56,8 @@ export class ChartPaddingPanel extends Component {
     }
 
     private initChartPaddingItems() {
-        this.labelChartPadding.innerHTML = 'Chart Padding';
+
+        this.labelChartPadding.setLabel('Chart Padding');
 
         this.labelPaddingTop.innerHTML = 'Top';
         this.inputPaddingTop.value = `${this.chart.padding.top}`;

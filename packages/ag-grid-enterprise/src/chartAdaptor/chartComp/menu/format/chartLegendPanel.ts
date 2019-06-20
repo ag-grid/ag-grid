@@ -1,76 +1,75 @@
-import {_, AgCheckbox, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {_, AgCheckbox, AgGroupComponent, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart, LegendPosition} from "../../../../charts/chart/chart";
 
 export class ChartLegendPanel extends Component {
 
     public static TEMPLATE =
-        `<div>       
-            <div style="padding-bottom: 12px">
-                <span ref="labelLegend"></span>
-            </div>
-
-            <div class="ag-column-tool-panel-column-group">
-                <ag-checkbox ref="cbLegendEnabled" style="padding-left: 15px"></ag-checkbox>
-                <span ref="labelLegendEnabled" style="padding-left: 5px"></span>
-            </div>
-
-            <div style="padding-top: 10px;">
-                <span ref="labelLegendPosition" style="padding-left: 15px; padding-right: 10px"></span>
-                <select ref="selectLegendPosition"></select>
-            </div>
-
-            <div style="padding-top: 10px;">
-                <span ref="labelLegendPadding" style="padding-left: 15px; padding-right: 10px"></span>
-                <input style="width: 38px" ref="inputLegendPadding" type="text">
-            </div>
-
-            <div style="padding-top: 10px;">
-                <span ref="labelMarkerSize" style="padding-left: 15px; padding-right: 10px"></span>
-                <input style="width: 38px" ref="inputMarkerSize" type="text">
-            </div>
-
-            <div style="padding-top: 10px;">
-                <span ref="labelMarkerStroke" style="padding-left: 15px; padding-right: 10px"></span>
-                <input style="width: 38px" ref="inputMarkerStroke" type="text">
-            </div>
-
-            <div style="padding-top: 10px;">
-                <span ref="labelMarkerPadding" style="padding-left: 15px; padding-right: 10px"></span>
-                <input style="width: 38px" ref="inputMarkerPadding" type="text">
-            </div>
-
-            <div style="padding-top: 10px;">
-                <span ref="labelItemPaddingX" style="padding-left: 15px; padding-right: 10px"></span>
-                <input style="width: 38px" ref="inputItemPaddingX" type="text">
-            </div>
-
-            <div style="padding-top: 10px;">
-                <span ref="labelItemPaddingY" style="padding-left: 15px; padding-right: 10px"></span>
-                <input style="width: 38px" ref="inputItemPaddingY" type="text">
-            </div>
-
-            <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
-                <span ref="labelLegendLabels"></span>
-            </div>
-
-             <!-- LEGEND LABELS -->
-
-            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-                <select ref="selectLegendFont" style="width: 155px"></select>
-                <div style="padding-top: 10px">
-                    <select ref="selectLegendFontWeight" style="width: 82px"></select>
-                     <span ref="labelLegendFontSize" style="padding-left: 16px"></span>
-                    <input ref="inputLegendFontSize" type="text" style="width: 25px">
+        `<div>  
+            <ag-group-component ref="labelLegend">        
+                <div class="ag-column-tool-panel-column-group">
+                    <ag-checkbox ref="cbLegendEnabled" style="padding-left: 15px"></ag-checkbox>
+                    <span ref="labelLegendEnabled" style="padding-left: 5px"></span>
                 </div>
-                <div style="padding-top: 10px">
-                    <span ref="labelLegendLabelColor" style="padding-right: 5px"></span>
-                    <input ref="inputLegendLabelColor" type="text" style="width: 115px">
+    
+                <div style="padding-top: 10px;">
+                    <span ref="labelLegendPosition" style="padding-left: 15px; padding-right: 10px"></span>
+                    <select ref="selectLegendPosition"></select>
                 </div>
-            </div>
+    
+                <div style="padding-top: 10px;">
+                    <span ref="labelLegendPadding" style="padding-left: 15px; padding-right: 10px"></span>
+                    <input style="width: 38px" ref="inputLegendPadding" type="text">
+                </div>
+    
+                <div style="padding-top: 10px;">
+                    <span ref="labelMarkerSize" style="padding-left: 15px; padding-right: 10px"></span>
+                    <input style="width: 38px" ref="inputMarkerSize" type="text">
+                </div>
+    
+                <div style="padding-top: 10px;">
+                    <span ref="labelMarkerStroke" style="padding-left: 15px; padding-right: 10px"></span>
+                    <input style="width: 38px" ref="inputMarkerStroke" type="text">
+                </div>
+    
+                <div style="padding-top: 10px;">
+                    <span ref="labelMarkerPadding" style="padding-left: 15px; padding-right: 10px"></span>
+                    <input style="width: 38px" ref="inputMarkerPadding" type="text">
+                </div>
+    
+                <div style="padding-top: 10px;">
+                    <span ref="labelItemPaddingX" style="padding-left: 15px; padding-right: 10px"></span>
+                    <input style="width: 38px" ref="inputItemPaddingX" type="text">
+                </div>
+    
+                <div style="padding-top: 10px;">
+                    <span ref="labelItemPaddingY" style="padding-left: 15px; padding-right: 10px"></span>
+                    <input style="width: 38px" ref="inputItemPaddingY" type="text">
+                </div>
+    
+                <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
+                    <span ref="labelLegendLabels"></span>
+                </div>
+    
+                <!-- LEGEND LABELS -->
+    
+                <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
+                    <select ref="selectLegendFont" style="width: 155px"></select>
+                    <div style="padding-top: 10px">
+                        <select ref="selectLegendFontWeight" style="width: 82px"></select>
+                         <span ref="labelLegendFontSize" style="padding-left: 16px"></span>
+                        <input ref="inputLegendFontSize" type="text" style="width: 25px">
+                    </div>
+                    <div style="padding-top: 10px">
+                        <span ref="labelLegendLabelColor" style="padding-right: 5px"></span>
+                        <input ref="inputLegendLabelColor" type="text" style="width: 115px">
+                    </div>
+                </div>
+                
+            </ag-group-component>
         </div>`;
 
-    @RefSelector('labelLegend') private labelLegend: HTMLElement;
+    @RefSelector('labelLegend') private labelLegend: AgGroupComponent;
     @RefSelector('cbLegendEnabled') private cbLegendEnabled: AgCheckbox;
     @RefSelector('labelLegendEnabled') private labelLegendEnabled: HTMLElement;
 
@@ -123,7 +122,7 @@ export class ChartLegendPanel extends Component {
     }
 
     private initLegendItems() {
-        this.labelLegend.innerHTML = 'Legend';
+        this.labelLegend.setLabel('Legend');
 
         // TODO update code below when this.chart.showLegend is available
         let enabled = _.every(this.chart.series, (series) => series.showInLegend && series.visible);

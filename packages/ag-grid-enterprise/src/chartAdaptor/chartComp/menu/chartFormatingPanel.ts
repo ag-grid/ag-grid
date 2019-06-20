@@ -9,7 +9,7 @@ import {ChartAxisPanel} from "./format/chartAxisPanel";
 export class ChartFormattingPanel extends Component {
 
     public static TEMPLATE =
-        `<div class="ag-chart-data-wrapper" style="padding: 5%">  
+        `<div class="ag-chart-format-wrapper" style="padding: 5%">  
          </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

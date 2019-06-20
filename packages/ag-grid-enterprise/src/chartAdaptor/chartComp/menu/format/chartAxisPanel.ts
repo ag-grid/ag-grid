@@ -1,4 +1,4 @@
-import {Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {AgGroupComponent, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
@@ -7,92 +7,92 @@ export class ChartAxisPanel extends Component {
 
     public static TEMPLATE =
         `<div>    
-            <div>
-                <span ref="labelAxis"></span>
-            </div>
-
-            <div style="padding-top: 10px;">
-                <span ref="labelAxisLineWidth" style="padding-left: 15px; padding-right: 10px"></span>
-                <input style="width: 38px" ref="inputAxisLineWidth" type="text">
-            </div>
-
-            <div style="padding-top: 10px">
-                <span ref="labelAxisColor" style="padding-left: 15px; padding-right: 10px"></span>
-                <input ref="inputAxisColor" type="text" style="width: 110px">
-            </div>
-
-            <!-- AXIS TICKS -->
-
-            <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
-                <span ref="labelAxisTicks"></span>
-            </div>
-
-            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-                <div>
-                    <span ref="labelAxisTicksWidth" style="padding-right: 24px"></span>
-                    <input style="width: 25px" ref="inputAxisTicksWidth" type="text">
+            
+            <ag-group-component ref="labelAxis">     
+                <div style="padding-top: 10px;">
+                    <span ref="labelAxisLineWidth" style="padding-left: 15px; padding-right: 10px"></span>
+                    <input style="width: 38px" ref="inputAxisLineWidth" type="text">
                 </div>
-                <div style="padding-top: 5px">
-                    <span ref="labelAxisTicksSize" style="padding-right: 34px"></span>
-                    <input style="width: 25px" ref="inputAxisTicksSize" type="text">
-                </div>
-                <div style="padding-top: 5px">
-                    <span ref="labelAxisTicksPadding" style="padding-right: 12px"></span>
-                    <input style="width: 25px" ref="inputAxisTicksPadding" type="text">
-                </div>
-                <div style="padding-top: 5px">
-                    <span ref="labelAxisTicksColor" style="padding-right: 10px"></span>
-                    <input ref="inputAxisTicksColor" type="text" style="width: 110px">
-                </div>
-            </div>
-
-            <!-- AXIS LABELS -->
-
-            <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
-                <span ref="labelAxisLabels"></span>
-            </div>
-
-            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-                <select ref="selectAxisFont" style="width: 155px"></select>
+    
                 <div style="padding-top: 10px">
-                    <select ref="selectAxisFontWeight" style="width: 82px"></select>
-                     <span ref="labelAxisFontSize" style="padding-left: 16px"></span>
-                    <input ref="inputAxisFontSize" type="text" style="width: 25px">
+                    <span ref="labelAxisColor" style="padding-left: 15px; padding-right: 10px"></span>
+                    <input ref="inputAxisColor" type="text" style="width: 110px">
                 </div>
-                <div style="padding-top: 10px">
-                    <span ref="labelAxisLabelColor" style="padding-right: 5px"></span>
-                    <input ref="inputAxisLabelColor" type="text" style="width: 115px">
+    
+                <!-- AXIS TICKS -->
+    
+                <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
+                    <span ref="labelAxisTicks"></span>
                 </div>
-
-                <div style="padding-top: 10px">
-                    <span ref="labelAxisLabelRotation"></span>
+    
+                <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
+                    <div>
+                        <span ref="labelAxisTicksWidth" style="padding-right: 24px"></span>
+                        <input style="width: 25px" ref="inputAxisTicksWidth" type="text">
+                    </div>
+                    <div style="padding-top: 5px">
+                        <span ref="labelAxisTicksSize" style="padding-right: 34px"></span>
+                        <input style="width: 25px" ref="inputAxisTicksSize" type="text">
+                    </div>
+                    <div style="padding-top: 5px">
+                        <span ref="labelAxisTicksPadding" style="padding-right: 12px"></span>
+                        <input style="width: 25px" ref="inputAxisTicksPadding" type="text">
+                    </div>
+                    <div style="padding-top: 5px">
+                        <span ref="labelAxisTicksColor" style="padding-right: 10px"></span>
+                        <input ref="inputAxisTicksColor" type="text" style="width: 110px">
+                    </div>
                 </div>
-                <div style="padding-top: 5px">
-                    <span ref="labelXAxisLabelRotation" style="padding-right: 5px"></span>
-                    <input style="width: 25px" ref="inputXAxisLabelRotation" type="text">
-                    <span ref="labelYAxisLabelRotation" style="padding-left: 15px; padding-right: 5px"></span>
-                    <input style="width: 25px" ref="inputYAxisLabelRotation" type="text">
+    
+                <!-- AXIS LABELS -->
+    
+                <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
+                    <span ref="labelAxisLabels"></span>
                 </div>
-            </div>
-
-            <!-- AXIS GRIDLINES -->
-
-            <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
-                <span ref="labelAxisGridlines"></span>
-            </div>
-
-            <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
-                <span ref="labelAxisGridlinesMajor"></span>
-
-                <div style="padding-top: 10px">
-                    <span ref="labelAxisGridlinesMajorDash" style="padding-left: 16px"></span>
-                    <select ref="selectAxisGridlinesMajorDash" style="width: 82px"></select>
+    
+                <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
+                    <select ref="selectAxisFont" style="width: 155px"></select>
+                    <div style="padding-top: 10px">
+                        <select ref="selectAxisFontWeight" style="width: 82px"></select>
+                         <span ref="labelAxisFontSize" style="padding-left: 16px"></span>
+                        <input ref="inputAxisFontSize" type="text" style="width: 25px">
+                    </div>
+                    <div style="padding-top: 10px">
+                        <span ref="labelAxisLabelColor" style="padding-right: 5px"></span>
+                        <input ref="inputAxisLabelColor" type="text" style="width: 115px">
+                    </div>
+    
+                    <div style="padding-top: 10px">
+                        <span ref="labelAxisLabelRotation"></span>
+                    </div>
+                    <div style="padding-top: 5px">
+                        <span ref="labelXAxisLabelRotation" style="padding-right: 5px"></span>
+                        <input style="width: 25px" ref="inputXAxisLabelRotation" type="text">
+                        <span ref="labelYAxisLabelRotation" style="padding-left: 15px; padding-right: 5px"></span>
+                        <input style="width: 25px" ref="inputYAxisLabelRotation" type="text">
+                    </div>
                 </div>
-            </div>
+    
+                <!-- AXIS GRIDLINES -->
+    
+                <div style="padding-top: 10px; padding-bottom: 3px; padding-left: 15px">
+                    <span ref="labelAxisGridlines"></span>
+                </div>
+    
+                <div style="width:176px; padding: 5%; margin: auto; border: 1px solid rgba(0, 0, 0, 0.1);">
+                    <span ref="labelAxisGridlinesMajor"></span>
+    
+                    <div style="padding-top: 10px">
+                        <span ref="labelAxisGridlinesMajorDash" style="padding-left: 16px"></span>
+                        <select ref="selectAxisGridlinesMajorDash" style="width: 82px"></select>
+                    </div>
+                </div>
+                        
+            </ag-group-component>            
                       
         </div>`;
 
-    @RefSelector('labelAxis') private labelAxis: HTMLElement;
+    @RefSelector('labelAxis') private labelAxis: AgGroupComponent;
     @RefSelector('labelAxisLineWidth') private labelAxisLineWidth: HTMLElement;
     @RefSelector('inputAxisLineWidth') private inputAxisLineWidth: HTMLInputElement;
     @RefSelector('labelAxisColor') private labelAxisColor: HTMLElement;
@@ -126,7 +126,6 @@ export class ChartAxisPanel extends Component {
     @RefSelector('labelAxisGridlinesMajorDash') private labelAxisGridlinesMajorDash: HTMLElement;
     @RefSelector('selectAxisGridlinesMajorDash') private selectAxisGridlinesMajorDash: HTMLSelectElement;
 
-
     private readonly chartController: ChartController;
     private chart: Chart;
 
@@ -149,7 +148,7 @@ export class ChartAxisPanel extends Component {
     }
 
     private initAxis() {
-        this.labelAxis.innerHTML = 'Axis';
+        this.labelAxis.setLabel('Axis');
 
         const chart = this.chart as CartesianChart;
         this.labelAxisLineWidth.innerHTML = 'Line Width';
