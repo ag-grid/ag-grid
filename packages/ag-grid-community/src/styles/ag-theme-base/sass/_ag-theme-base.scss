@@ -1275,6 +1275,13 @@
         }
     }
 
+    .ag-color-picker {
+        .ag-color-button {
+            height: $icon-size;
+            width: $icon-size;
+        }
+    }
+
     ////////////////////////////////////////
     // Popup
     ////////////////////////////////////////

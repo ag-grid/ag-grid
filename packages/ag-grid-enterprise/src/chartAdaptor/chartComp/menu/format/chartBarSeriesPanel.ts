@@ -1,4 +1,4 @@
-import {_, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField} from "ag-grid-community";
+import {_, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField, AgColorPicker} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 import {BarSeries} from "../../../../charts/chart/series/barSeries";
@@ -17,14 +17,14 @@ export class ChartBarSeriesPanel extends Component {
                         <select ref="selectSeriesFontWeight" style="width: 82px"></select>
                         <ag-input-text-field ref="inputSeriesFontSize"></ag-input-text-field>
                     </div>
-                    <ag-input-text-field ref="inputSeriesLabelColor"></ag-input-text-field>
+                    <ag-color-picker ref="inputSeriesLabelColor"></ag-color-picker>
                 </ag-group-component>
                 <ag-group-component ref="labelSeriesShadow">
                     <ag-checkbox ref="cbSeriesShadow"></ag-checkbox>
                     <ag-input-text-field ref="inputSeriesShadowBlur"></ag-input-text-field>
                     <ag-input-text-field ref="inputSeriesShadowXOffset"></ag-input-text-field>
                     <ag-input-text-field ref="inputSeriesShadowYOffset"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesShadowColor"></ag-input-text-field>
+                    <ag-color-picker ref="inputSeriesShadowColor"></ag-color-picker>
                 </ag-group-component>
             </ag-group-component>
         </div>`;
@@ -39,14 +39,14 @@ export class ChartBarSeriesPanel extends Component {
     @RefSelector('selectSeriesFont') private selectSeriesFont: HTMLSelectElement;
     @RefSelector('selectSeriesFontWeight') private selectSeriesFontWeight: HTMLSelectElement;
     @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: AgInputTextField;
-    @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: AgInputTextField;
+    @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: AgColorPicker;
 
     @RefSelector('labelSeriesShadow') private labelSeriesShadow: AgGroupComponent;
     @RefSelector('cbSeriesShadow') private cbSeriesShadow: AgCheckbox; 
     @RefSelector('inputSeriesShadowBlur') private inputSeriesShadowBlur: AgInputTextField;
     @RefSelector('inputSeriesShadowXOffset') private inputSeriesShadowXOffset: AgInputTextField;
     @RefSelector('inputSeriesShadowYOffset') private inputSeriesShadowYOffset: AgInputTextField;
-    @RefSelector('inputSeriesShadowColor') private inputSeriesShadowColor: AgInputTextField;
+    @RefSelector('inputSeriesShadowColor') private inputSeriesShadowColor: AgColorPicker;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -166,11 +166,9 @@ export class ChartBarSeriesPanel extends Component {
             });
         });
 
-        this.inputSeriesLabelColor
-            .setLabel('Color')
-            .setValue(barSeries[0].labelColor);
+        this.inputSeriesLabelColor.setValue(barSeries[0].labelColor);
 
-        this.addDestroyableEventListener(this.inputSeriesLabelColor.getInputElement(), 'input', () => {
+        this.inputSeriesLabelColor.addDestroyableEventListener(this.inputSeriesLabelColor, 'valueChange', () => {
             const barSeries = this.chart.series as BarSeries[];
             barSeries.forEach(series => {
                 series.labelColor = this.inputSeriesLabelColor.getValue();
@@ -257,14 +255,12 @@ export class ChartBarSeriesPanel extends Component {
         }
         this.addDestroyableEventListener(this.inputSeriesShadowYOffset.getInputElement(), 'input', updateShadow);
 
-        // TODO replace with Color Picker
-        this.inputSeriesShadowColor.setLabel('Color');
         if (barSeries.length > 0) {
             if (barSeries[0].shadow) {
                 this.inputSeriesShadowColor.setValue(barSeries[0].shadow.color + '');
             }
         }
-        this.addDestroyableEventListener(this.inputSeriesShadowColor.getInputElement(), 'input', updateShadow);
+        this.inputSeriesShadowColor.addDestroyableEventListener(this.inputSeriesShadowColor, 'valueChange', updateShadow);
     }
 
 

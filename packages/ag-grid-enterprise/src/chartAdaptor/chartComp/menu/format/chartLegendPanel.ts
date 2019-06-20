@@ -1,4 +1,4 @@
-import {_, AgCheckbox, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField} from "ag-grid-community";
+import {_, AgCheckbox, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart, LegendPosition} from "../../../../charts/chart/chart";
 
@@ -28,7 +28,7 @@ export class ChartLegendPanel extends Component {
                         <select ref="selectLegendFontWeight"></select>
                         <ag-input-text-field ref="inputLegendFontSize"></ag-input-text-field>
                     </div>
-                    <ag-input-text-field ref="inputLegendLabelColor"></ag-input-text-field>
+                    <ag-color-picker ref="inputLegendLabelColor"></ag-color-picker>
                 </ag-group-component>
     
                 <!-- LEGEND LABELS -->
@@ -52,7 +52,7 @@ export class ChartLegendPanel extends Component {
     @RefSelector('selectLegendFont') private selectLegendFont: HTMLSelectElement;
     @RefSelector('selectLegendFontWeight') private selectLegendFontWeight: HTMLSelectElement;
     @RefSelector('inputLegendFontSize') private inputLegendFontSize: AgInputTextField;
-    @RefSelector('inputLegendLabelColor') private inputLegendLabelColor: AgInputTextField;
+    @RefSelector('inputLegendLabelColor') private inputLegendLabelColor: AgColorPicker;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -193,8 +193,8 @@ export class ChartLegendPanel extends Component {
         });
 
         // TODO replace with Color Picker
-        this.inputLegendLabelColor.setLabel('Color').setValue(this.chart.legend.labelColor);
-        this.addDestroyableEventListener(this.inputLegendLabelColor.getInputElement(), 'input', () => {
+        this.inputLegendLabelColor.setValue(this.chart.legend.labelColor);
+        this.inputLegendLabelColor.addDestroyableEventListener(this.inputLegendLabelColor, 'valueChange', () => {
             this.chart.legend.labelColor = this.inputLegendLabelColor.getValue();
             this.chart.performLayout();
         });

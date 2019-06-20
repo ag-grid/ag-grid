@@ -1,4 +1,4 @@
-import {AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField} from "ag-grid-community";
+import {AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
@@ -9,7 +9,7 @@ export class ChartAxisPanel extends Component {
         `<div>
             <ag-group-component ref="labelAxis">
                 <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>
-                <ag-input-text-field ref="inputAxisColor"></ag-input-text-field>
+                <ag-color-picker ref="inputAxisColor"></ag-color-picker>
     
                 <!-- AXIS TICKS -->
     
@@ -17,7 +17,7 @@ export class ChartAxisPanel extends Component {
                     <ag-input-text-field ref="inputAxisTicksWidth"></ag-input-text-field>
                     <ag-input-text-field ref="inputAxisTicksSize"></ag-input-text-field>
                     <ag-input-text-field ref="inputAxisTicksPadding"></ag-input-text-field>
-                    <ag-input-text-field ref="inputAxisTicksColor"></ag-input-text-field>
+                    <ag-color-picker ref="inputAxisTicksColor"></ag-color-picker>
                 </ag-group-component>
     
                 <!-- AXIS LABELS -->
@@ -28,7 +28,7 @@ export class ChartAxisPanel extends Component {
                         <select ref="selectAxisFontWeight" style="width: 82px"></select>
                         <ag-input-text-field ref="inputAxisFontSize"></ag-input-text-field>
                     </div>
-                    <ag-input-text-field ref="inputAxisLabelColor"></ag-input-text-field>
+                    <ag-color-picker ref="inputAxisLabelColor"></ag-color-picker>
                     <ag-group-component ref="labelAxisLabelRotation">
                         <ag-input-text-field ref="inputXAxisLabelRotation"></ag-input-text-field>
                         <ag-input-text-field ref="inputYAxisLabelRotation"></ag-input-text-field>
@@ -38,19 +38,19 @@ export class ChartAxisPanel extends Component {
 
     @RefSelector('labelAxis') private labelAxis: AgGroupComponent;
     @RefSelector('inputAxisLineWidth') private inputAxisLineWidth: AgInputTextField;
-    @RefSelector('inputAxisColor') private inputAxisColor: AgInputTextField;
+    @RefSelector('inputAxisColor') private inputAxisColor: AgColorPicker;
 
     @RefSelector('labelAxisTicks') private labelAxisTicks: AgGroupComponent;
     @RefSelector('inputAxisTicksWidth') private inputAxisTicksWidth: AgInputTextField;
     @RefSelector('inputAxisTicksSize') private inputAxisTicksSize: AgInputTextField;
     @RefSelector('inputAxisTicksPadding') private inputAxisTicksPadding: AgInputTextField;
-    @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: AgInputTextField;
+    @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: AgColorPicker;
 
     @RefSelector('labelAxisLabels') private labelAxisLabels: AgGroupComponent;
     @RefSelector('selectAxisFont') private selectAxisFont: HTMLSelectElement;
     @RefSelector('selectAxisFontWeight') private selectAxisFontWeight: HTMLSelectElement;
     @RefSelector('inputAxisFontSize') private inputAxisFontSize: AgInputTextField;
-    @RefSelector('inputAxisLabelColor') private inputAxisLabelColor: AgInputTextField;
+    @RefSelector('inputAxisLabelColor') private inputAxisLabelColor: AgColorPicker;
     @RefSelector('labelAxisLabelRotation') private labelAxisLabelRotation: AgGroupComponent;
     @RefSelector('inputXAxisLabelRotation') private inputXAxisLabelRotation: AgInputTextField;
     @RefSelector('inputYAxisLabelRotation') private inputYAxisLabelRotation: AgInputTextField;
@@ -91,10 +91,8 @@ export class ChartAxisPanel extends Component {
         });
 
         // TODO replace with Color Picker
-        this.inputAxisColor
-            .setLabel('Color')
-            .setValue(`${chart.xAxis.lineColor}`);
-        this.addDestroyableEventListener(this.inputAxisColor.getInputElement(), 'input', () => {
+        this.inputAxisColor.setValue(`${chart.xAxis.lineColor}`);
+        this.inputAxisColor.addDestroyableEventListener(this.inputAxisColor, 'valueChange', () => {
             const val = this.inputAxisColor.getValue();
             chart.xAxis.lineColor = val;
             chart.yAxis.lineColor = val;
@@ -139,11 +137,9 @@ export class ChartAxisPanel extends Component {
         });
 
         // TODO replace with Color Picker
-        this.inputAxisTicksColor
-            .setLabel('Color')
-            .setValue(`${chart.xAxis.lineColor}`);
+        this.inputAxisTicksColor.setValue(`${chart.xAxis.lineColor}`);
 
-        this.addDestroyableEventListener(this.inputAxisTicksColor.getInputElement(), 'input', () => {
+        this.inputAxisTicksColor.addDestroyableEventListener(this.inputAxisTicksColor, 'valueChange', () => {
             const val = this.inputAxisTicksColor.getValue();
             chart.xAxis.tickColor = val;
             chart.yAxis.tickColor = val;
@@ -212,11 +208,9 @@ export class ChartAxisPanel extends Component {
         });
 
         // TODO replace with Color Picker
-        this.inputAxisLabelColor
-            .setLabel('Color')
-            .setValue(`${chart.xAxis.labelColor}`);
+        this.inputAxisLabelColor.setValue(`${chart.xAxis.labelColor}`);
 
-        this.addDestroyableEventListener(this.inputAxisLabelColor.getInputElement(), 'input', () => {
+        this.inputAxisLabelColor.addDestroyableEventListener(this.inputAxisLabelColor, 'valueChange', () => {
             const val = this.inputAxisLabelColor.getValue();
             chart.xAxis.labelColor = val;
             chart.yAxis.labelColor = val;
