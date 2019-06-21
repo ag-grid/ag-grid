@@ -9,11 +9,11 @@ include '../documentation-main/documentation_header.php';
     <h1>Rows Overview</h1>
 
     <p class="lead">
-        A row is a horizontal list of cells that represents one data data item to be displayed.
+        A row is a horizontal list of cells that represents one data item to be displayed.
     </p>
 
     <p>
-        This section outlines column functionality as follows:
+        This section outlines row functionality as follows:
     </p>
 
     <ul>

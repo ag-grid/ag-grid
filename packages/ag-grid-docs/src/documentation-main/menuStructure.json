@@ -259,6 +259,10 @@
     "title": "Layout & Styling",
     "items": [
       {
+        "title": "Overview",
+        "url": "javascript-grid-layout-and-styling-overview/"
+      },
+      {
         "title": "Styling Rows",
         "url": "javascript-grid-row-styles/"
       },
@@ -279,7 +283,7 @@
         "url": "javascript-grid-themes-provided/"
       },
       {
-        "title": "Sizing (merge with below??)",
+        "title": "Grid Size",
         "url": "javascript-grid-width-and-height/"
       },
       {
@@ -287,18 +291,22 @@
         "url": "javascript-grid-responsiveness/"
       },
       {
-        "title": "Printing",
-        "url": "javascript-grid-for-print/"
-      },
-      {
         "title": "Custom Icons",
         "url": "javascript-grid-icons/"
+      },
+      {
+        "title": "Printing",
+        "url": "javascript-grid-for-print/"
       }
     ]
   },
   {
     "title": "Selection",
     "items": [
+      {
+        "title": "Overview",
+        "url": "javascript-grid-selection-overview/"
+      },
       {
         "title": "Row",
         "url": "javascript-grid-selection/"

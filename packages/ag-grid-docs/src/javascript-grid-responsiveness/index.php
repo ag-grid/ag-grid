@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Resize ag-Grid With Parent Container</h1>
+<h1>Resize with Parent Container</h1>
 
 <p class="lead">
     We can dynamically react to screen changes by making use of the grid API features. In this section we describe
@@ -17,15 +17,15 @@ include '../documentation-main/documentation_header.php';
 with many frameworks the suggestions below may not work out of the box in your particular application, but they should serve
 to help point you in the right direction.</note>
 
-<h2>ag-Grid Inside Flexbox Container</h2>
-<p>By default, ag-Grid runs a timer that watches its container size and resizes the UI accordingly. This might interfere with the default behavior of elements with <code>display: flex</code> set. The simple workaround is to add <code>overflow: hidden</code> to the grid element parent.</p>
+<h2>Inside Flexbox Container</h2>
+<p>By default, the grid runs a timer that watches its container size and resizes the UI accordingly. This might interfere with the default behavior of elements with <code>display: flex</code> set. The simple workaround is to add <code>overflow: hidden</code> to the grid element parent.</p>
 
 <p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
 
 <?= example('Grid Inside a Flexbox Container', 'flexbox', 'generated', array("processVue" => true)) ?>
 
-<h2>ag-Grid Inside CSS Grid Container</h2>
-<p>By default, ag-Grid runs a timer that watches its container size and resizes the UI accordingly. This might interfere with the default behavior of elements with <code>display: grid</code> set. The simple workaround is to add <code>overflow: hidden</code> to the grid element parent.</p>
+<h2>Inside CSS Grid Container</h2>
+<p>By default the grid watches its container size and resizes the UI accordingly. This might interfere with the default behavior of elements with <code>display: grid</code> set. The simple workaround is to add <code>overflow: hidden</code> to the grid element parent.</p>
 
 <p>Open the example below in a new tab and resize the window to see how the grid instance gets resized accordingly.</p>
 
