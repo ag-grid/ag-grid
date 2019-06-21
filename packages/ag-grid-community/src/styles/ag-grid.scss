@@ -1345,16 +1345,20 @@ $handleSize: 5px;
     position: relative;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    flex: 1 1 auto;
 
     .ag-group-component-label {
         position: absolute;
         top: -10px;
+        left: 0;
     }
 
-    .ag-group-item {
+    .ag-group-item:not(.ag-group-component) {
         display: flex;
         align-items: center;
-        flex: 1 1 auto;
+        align-self: stretch;
     }
 }
 
@@ -1364,7 +1368,122 @@ $handleSize: 5px;
     align-items: center;
     input {
         flex: 1 1 auto;
-        width: 0;
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+.ag-color-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
+    border-radius: 5px;
+    text-align: center;
+   
+    .ag-spectrum-color {
+        flex: 1 1 auto;
+        cursor: default;
+        background-color: rgb(255, 0, 0);
+        position: relative;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+   
+    .ag-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+   }
+   
+    .ag-spectrum-tools {
+        padding: 10px;
+    }
+   
+    .ag-spectrum-sat {
+        background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
+    }
+   
+    .ag-spectrum-val {
+        cursor: pointer;
+        background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
+    }
+   
+    .ag-spectrum-dragger {
+        position: absolute;
+        pointer-events: none;
+        cursor: pointer;
+        border-radius: 12px;
+        height: 12px;
+        width: 12px;
+        border: 1px solid white;
+        background: black;
+        box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
+    }
+   
+    .ag-spectrum-hue {
+        cursor: default;
+        background: linear-gradient(to left,
+            #ff0000 3%, #ffff00 17%,
+            #00ff00 33%, #00ffff 50%,
+            #0000ff 67%, #ff00ff 83%,
+            #ff0000 100%
+        );
+    }
+   
+    .ag-spectrum-alpha {
+        cursor: default;
+        // background-image: url(checker.png);
+    }
+   
+    .ag-spectrum-hue-background {
+        width: 100%;
+        height: 100%;
+        border-radius: 2px;
+    }
+   
+    .ag-spectrum-alpha-background {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
+        width: 100%;
+        height: 100%;
+        border-radius: 2px;
+    }
+   
+    .ag-hue-alpha {
+        cursor: pointer;
+        margin-bottom: 10px;
+        height: 11px;
+        border-radius: 2px;
+    }
+   
+    .ag-spectrum-slider {
+        position: absolute;
+        pointer-events: none;
+        margin-top: -12px;
+        width: 13px;
+        height: 13px;
+        border-radius: 13px;
+        background-color: rgb(248, 248, 248);
+        box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+    }
+   
+    .ag-spectrum-text-value {
+        text-align: center;
+        font-weight: bold;
+        display: inline-block;
+        overflow: hidden;
+        line-height: 20px;
+        color: #333;
+        white-space: nowrap;
+    }
+   
+    .ag-spectrum-text-value:focus {
+        outline: none;
+        outline-offset: 0;
+        border: 1px solid #0d77e4;
+        padding: 2px;
     }
 }
 

@@ -8,7 +8,6 @@ import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { Caption } from "./caption";
-import { PieSeries } from "./series/pieSeries";
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
@@ -349,8 +348,8 @@ export abstract class Chart {
     private legendBBox?: BBox;
 
     protected positionLegend() {
-        if (!this.legend.data.length) {
-            return; // TODO: figure out why we ever arrive here (data should be processed before layout)
+        if (!this.legend.enabled || !this.legend.data.length) {
+            return;
         }
 
         const captionAutoPadding = this.captionAutoPadding;

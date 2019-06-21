@@ -6,14 +6,12 @@ import {
     TabbedItem,
     Promise,
     ChartMenuOptions,
-    AgPanel,
     _
 } from "ag-grid-community";
 import { ChartController } from "../chartController";
 import { ChartSettingsPanel } from "./chartSettingsPanel";
 import { ChartDataPanel } from "./chartDataPanel";
-import { DummyFormattingPanel } from "./dummyFormattingPanel";
-import { ChartMenu } from "./chartMenu";
+import { ChartFormattingPanel } from "./chartFormatingPanel";
 
 export class TabbedChartMenu extends Component {
 
@@ -118,6 +116,6 @@ export class TabbedChartMenu extends Component {
     private getPanelClass(panelType: string) {
         const isDataPanel = panelType === TabbedChartMenu.TAB_DATA;
         const isFormatPanel = panelType === TabbedChartMenu.TAB_FORMAT;
-        return isDataPanel ? ChartDataPanel : (isFormatPanel ? DummyFormattingPanel : ChartSettingsPanel);
+        return isDataPanel ? ChartDataPanel : (isFormatPanel ? ChartFormattingPanel : ChartSettingsPanel);
     }
 }

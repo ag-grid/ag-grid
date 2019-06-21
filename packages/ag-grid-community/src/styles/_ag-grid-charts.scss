@@ -63,7 +63,8 @@
         flex: 1 1 auto;
         align-items: stretch;
         > div {
-            flex: 1 1 auto;
+            width: 100%;
+            height: 100%;
         }
         overflow: hidden;
     }
@@ -142,7 +143,7 @@
         }
     }
 
-    .ag-chart-data-wrapper {
+    .ag-chart-data-wrapper, .ag-chart-format-wrapper {
         width: 100%;
         height: 100%;
         overflow: auto;
@@ -151,18 +152,17 @@
     }
 
     .ag-chart-format-wrapper {
+        overflow-x: hidden;
         .ag-group-component {
             border-width: 1px;
             .ag-group-component-label {
                 top: -6px;
             }
-            .padding-group {
-                padding: 0 10px;
+            .ag-group-subgroup {
+                align-self: stretch;
                 justify-content: space-between;
-                input {
-                    min-width: 30px;
-                }
             }
+            
         }
     }
 }

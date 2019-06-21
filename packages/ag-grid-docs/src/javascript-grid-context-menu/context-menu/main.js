@@ -152,7 +152,9 @@ function getContextMenuItems(params) {
             },
             icon: '<img src="../images/skills/mac.png"/>'
         }, // built in copy item
-        'copy'
+        'copy',
+        'separator',
+        'chartRange'
     ];
 
     return result;

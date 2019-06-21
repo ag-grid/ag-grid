@@ -1,5 +1,4 @@
 import { CartesianChart } from "../cartesianChart";
-import { Color } from "../../util/color";
 import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
@@ -10,6 +9,7 @@ import { Series, SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
+import { Color } from "ag-grid-community";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number,

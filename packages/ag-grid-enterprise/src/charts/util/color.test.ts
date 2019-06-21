@@ -1,4 +1,4 @@
-import { Color } from "./color";
+import { Color } from "ag-grid-community";
 
 test('constructor', () => {
     {

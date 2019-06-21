@@ -6,7 +6,6 @@ import { DropShadow } from "../../scene/dropShadow";
 import scaleLinear, { LinearScale } from "../../scale/linearScale";
 import { normalizeAngle180, toRadians } from "../../util/angle";
 import palette from "../palettes";
-import { Color } from "../../util/color";
 import { Sector } from "../../scene/shape/sector";
 import { Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
@@ -15,6 +14,7 @@ import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
 import { Caption } from "../caption";
 import { Shape } from "../../scene/shape/shape";
+import { Color } from "ag-grid-community";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     index: number,

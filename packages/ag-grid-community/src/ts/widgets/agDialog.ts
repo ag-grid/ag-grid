@@ -9,6 +9,7 @@ import { _ } from "../utils";
 
 export interface DialogOptions extends PanelOptions {
     eWrapper?: HTMLElement;
+    modal?: boolean;
     alwaysOnTop?: boolean;
     movable?: boolean;
     resizable?: boolean | ResizableStructure;
@@ -48,10 +49,10 @@ export class AgDialog extends Resizable(Maximizable(Movable(AgPanel))) {
     //  used by the Positionable Mixin
     renderComponent() {
         const eGui = this.getGui();
-        const { alwaysOnTop } = this.config;
+        const { alwaysOnTop, modal } = this.config;
 
         this.close = this.popupService.addPopup(
-            false,
+            modal,
             eGui,
             true,
             this.destroy.bind(this),

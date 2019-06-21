@@ -5,7 +5,9 @@ import { _ } from "../utils";
 
 interface ITextField {
     label?: string;
+    labelWidth?: number;
     labelSeparator?: string;
+    width?:number;
     value?: string;
 }
 
@@ -35,7 +37,7 @@ export class AgInputTextField extends Component {
 
     @PostConstruct
     private postConstruct() {
-        const { label, labelSeparator, value } = this.config;
+        const { label, labelSeparator, labelWidth, width, value } = this.config;
 
         if (labelSeparator != null) {
             this.setLabelSeparator(labelSeparator);
@@ -43,6 +45,14 @@ export class AgInputTextField extends Component {
 
         if (label != null) {
             this.setLabel(label);
+        }
+
+        if (labelWidth != null) {
+            this.setLabelWidth(labelWidth);
+        }
+
+        if (width != null) {
+            this.setWidth(width);
         }
 
         if (value != null) {
@@ -54,9 +64,9 @@ export class AgInputTextField extends Component {
         return this.eInput;
     }
 
-    public setLabelSeparator(labelSeparator: string) {
+    public setLabelSeparator(labelSeparator: string): AgInputTextField {
         if (this.labelSeparator === labelSeparator) {
-            return;
+            return this;
         }
 
         this.labelSeparator = labelSeparator;
@@ -64,16 +74,32 @@ export class AgInputTextField extends Component {
         if (this.label != null) {
             this.refreshLabel();
         }
+
+        return this;
     }
 
-    public setLabel(label: string) {
+    public setLabel(label: string): AgInputTextField {
         if (this.label === label) {
-            return;
+            return this;
         }
 
         this.label = label;
 
         this.refreshLabel();
+
+        return this;
+    }
+
+    public setLabelWidth(width: number): AgInputTextField {
+        if (this.label != null) {
+            _.setFixedWidth(this.eLabel, width);
+        }
+        return this;
+    }
+
+    public setWidth(width: number): AgInputTextField {
+        _.setFixedWidth(this.getGui(), width);
+        return this;
     }
 
     private refreshLabel() {
@@ -84,11 +110,13 @@ export class AgInputTextField extends Component {
         return this.eInput.value;
     }
 
-    public setValue(value: string) {
+    public setValue(value: string): AgInputTextField {
         if (this.getValue() === value) {
-            return;
+            return this;
         }
 
         this.eInput.value = value;
+
+        return this;
     }
 }

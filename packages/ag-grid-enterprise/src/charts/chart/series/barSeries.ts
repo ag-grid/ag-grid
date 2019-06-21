@@ -1,17 +1,17 @@
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
-import { Rect, RectSizing } from "../../scene/shape/rect";
+import { Rect } from "../../scene/shape/rect";
 import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
 import palette from "../palettes";
-import { Color } from "../../util/color";
 import { Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
+import { Color } from "ag-grid-community";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     yField: string,

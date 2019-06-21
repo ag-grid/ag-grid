@@ -45,7 +45,8 @@ export class CanvasAxis<D> {
             ctx.font = this.labelFont;
             ctx.beginPath();
             for (let i = 0; i < tickCount; i++) {
-                const r = scale.convert(ticks[i]) - this.tickWidth / 2 + bandwidth;
+                const tick = ticks[i] as any;
+                const r = scale.convert(tick) - this.tickWidth / 2 + bandwidth;
                 ctx.moveTo(sideFlag * this.tickSize, r + pxShift);
                 ctx.lineTo(0, r + pxShift);
                 if (this.flippedLabels) {
@@ -55,11 +56,12 @@ export class CanvasAxis<D> {
                     ctx.save();
                     ctx.translate(sideFlag * (this.tickSize + this.tickPadding), r);
                     ctx.rotate(flipFlag * Math.PI / 2);
-                    const labelWidth = ctx.measureText(ticks[i].toString()).width;
-                    ctx.fillText(ticks[i].toString(), -sideFlag * labelWidth / 2, -sideFlag * flipFlag * this.tickPadding);
+                    
+                    const labelWidth = ctx.measureText(tick.toString()).width;
+                    ctx.fillText(tick.toString(), -sideFlag * labelWidth / 2, -sideFlag * flipFlag * this.tickPadding);
                     ctx.restore();
                 } else {
-                    ctx.fillText(ticks[i].toString(), sideFlag * (this.tickSize + this.tickPadding), r);
+                    ctx.fillText(tick.toString(), sideFlag * (this.tickSize + this.tickPadding), r);
                 }
             }
             ctx.stroke();

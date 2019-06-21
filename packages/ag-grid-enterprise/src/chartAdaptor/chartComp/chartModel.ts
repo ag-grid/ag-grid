@@ -105,7 +105,7 @@ export class ChartModel extends BeanStub {
         const {dimensionCols, valueCols} = this.getAllChartColumns();
 
         if (valueCols.length === 0) {
-            console.warn("ag-Grid - charts require at least one visible column set with 'enableValue=true'");
+            console.warn("ag-Grid - charts require at least one visible 'series' column.");
             return;
         }
 
@@ -336,6 +336,7 @@ export class ChartModel extends BeanStub {
         displayedCols.forEach(col => {
             const colDef = col.getColDef() as ColDef;
 
+            // first check column for 'chartDataType'
             const chartDataType = colDef.chartDataType;
             if (chartDataType) {
                 let validChartType = true;
@@ -354,16 +355,7 @@ export class ChartModel extends BeanStub {
                 if (validChartType) { return; }
             }
 
-            if (!!colDef.enableRowGroup || !!colDef.enablePivot) {
-                dimensionCols.push(col);
-                return;
-            }
-
-            if (!!colDef.enableValue) {
-                valueCols.push(col);
-                return;
-            }
-
+            // if 'chartDataType' is not provided then infer type based data contained in first row
             const isNumberCol = firstRowData && typeof firstRowData[col.getColId()] === 'number';
             isNumberCol ? valueCols.push(col) : dimensionCols.push(col);
         });

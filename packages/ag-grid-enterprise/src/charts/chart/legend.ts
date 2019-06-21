@@ -39,7 +39,8 @@ export class Legend {
     private _data: LegendDatum[] = [];
     set data(data: LegendDatum[]) {
         this._data = data;
-        this.group.visible = data.length > 0;
+        this.group.visible = this.enabled && data.length > 0;
+        this.requestLayout();
     }
     get data(): LegendDatum[] {
         return this._data;
@@ -54,6 +55,18 @@ export class Legend {
     }
     get orientation(): Orientation {
         return this._orientation;
+    }
+
+    private _enabled: boolean = true;
+    set enabled(value: boolean) {
+        if (this._enabled !== value) {
+            this._enabled = value;
+            this.group.visible = value && this.data.length > 0;
+            this.requestLayout();
+        }
+    }
+    get enabled(): boolean {
+        return this._enabled;
     }
 
     private _itemPaddingX: number = 16;

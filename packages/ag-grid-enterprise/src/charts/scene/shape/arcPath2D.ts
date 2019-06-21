@@ -1,5 +1,4 @@
 import { Shape } from "./shape";
-import { chainObjects } from "../../util/object";
 import { isEqual } from "../../util/number";
 import { normalizeAngle360 } from "../../util/angle";
 

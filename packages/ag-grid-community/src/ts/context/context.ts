@@ -93,34 +93,12 @@ export class Context {
     public createComponentFromElement(element: Element, afterPreCreateCallback?: (comp: Component) => void): Component {
         const key = element.nodeName;
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
-            const params = this.getParamsFromElement(element);
-            const newComponent = new this.componentsMappedByName[key](params) as Component;
+            const newComponent = new this.componentsMappedByName[key]() as Component;
             this.wireBean(newComponent, afterPreCreateCallback);
             return newComponent;
         }
         return null;
     }
-
-    private getParamsFromElement(el: Element): Object | undefined {
-        const attrs = el.getAttributeNames();
-        const exclude = ['class', 'style', 'ref'];
-        const ret: any = {};
-
-        for (let attr of attrs) {
-            if (exclude.indexOf(attr) === -1) {
-                ret[attr] = el.getAttribute(attr);
-                el.removeAttribute(attr);
-            }
-        }
-
-        return Object.keys(ret).length ? ret : undefined;
-    }
-
-    // public createBean(BeanClass: new () => any): Component {
-    //     const beanInstance = new BeanClass();
-    //     this.wireBean(beanInstance);
-    //     return beanInstance;
-    // }
 
     public wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void {
         if (!bean) {
