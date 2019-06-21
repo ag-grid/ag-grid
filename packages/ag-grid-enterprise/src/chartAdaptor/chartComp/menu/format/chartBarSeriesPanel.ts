@@ -2,6 +2,7 @@ import {_, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, 
 import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 import {BarSeries} from "../../../../charts/chart/series/barSeries";
+import {ChartShadowPanel} from "./chartShadowPanel";
 
 export class ChartBarSeriesPanel extends Component {
 
@@ -18,14 +19,7 @@ export class ChartBarSeriesPanel extends Component {
                         <ag-input-text-field ref="inputSeriesFontSize"></ag-input-text-field>
                     </div>
                     <ag-color-picker ref="inputSeriesLabelColor"></ag-color-picker>
-                </ag-group-component>
-                <ag-group-component ref="labelSeriesShadow">
-                    <ag-checkbox ref="cbSeriesShadow"></ag-checkbox>
-                    <ag-input-text-field ref="inputSeriesShadowBlur"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesShadowXOffset"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesShadowYOffset"></ag-input-text-field>
-                    <ag-color-picker ref="inputSeriesShadowColor"></ag-color-picker>
-                </ag-group-component>
+                </ag-group-component>               
             </ag-group-component>
         </div>`;
 
@@ -41,15 +35,9 @@ export class ChartBarSeriesPanel extends Component {
     @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: AgInputTextField;
     @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: AgColorPicker;
 
-    @RefSelector('labelSeriesShadow') private labelSeriesShadow: AgGroupComponent;
-    @RefSelector('cbSeriesShadow') private cbSeriesShadow: AgCheckbox; 
-    @RefSelector('inputSeriesShadowBlur') private inputSeriesShadowBlur: AgInputTextField;
-    @RefSelector('inputSeriesShadowXOffset') private inputSeriesShadowXOffset: AgInputTextField;
-    @RefSelector('inputSeriesShadowYOffset') private inputSeriesShadowYOffset: AgInputTextField;
-    @RefSelector('inputSeriesShadowColor') private inputSeriesShadowColor: AgColorPicker;
-
     private readonly chartController: ChartController;
     private chart: Chart;
+    private activePanels: Component[] = [];
 
     constructor(chartController: ChartController) {
         super();
@@ -66,8 +54,11 @@ export class ChartBarSeriesPanel extends Component {
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
         this.initSeriesLabels();
-        this.initSeriesShadow();
 
+        const shadowPanelComp = new ChartShadowPanel(this.chartController);
+        this.getContext().wireBean(shadowPanelComp);
+        this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
+        this.activePanels.push(shadowPanelComp);
     }
 
     private initSeriesTooltips() {
@@ -176,92 +167,15 @@ export class ChartBarSeriesPanel extends Component {
         });
     }
 
-    private initSeriesShadow() {
-        const barSeries = this.chart.series as BarSeries[];
-
-        // TODO use shadowEnabled instead when it's available in chart api
-        let enabled = _.every(barSeries, barSeries => barSeries.shadow != undefined);
-        this.cbSeriesShadow.setLabel('Enabled');
-        this.cbSeriesShadow.setSelected(enabled);
-        this.labelSeriesShadow.setLabel('Shadow');
-
-        // Add defaults to chart as shadow is undefined by default
-        if (!this.inputSeriesShadowBlur.getValue()) this.inputSeriesShadowBlur.setValue('20');
-        if (!this.inputSeriesShadowXOffset.getValue()) this.inputSeriesShadowXOffset.setValue('10');
-        if (!this.inputSeriesShadowYOffset.getValue()) this.inputSeriesShadowYOffset.setValue('10');
-        if (!this.inputSeriesShadowColor.getValue()) this.inputSeriesShadowColor.setValue('rgba(0,0,0,0.5)');
-
-        this.addDestroyableEventListener(this.cbSeriesShadow, 'change', () => {
-            barSeries.forEach(series => {
-                // TODO remove this check when shadowEnabled instead when it's available in chart api
-                if (this.cbSeriesShadow.isSelected()) {
-                    series.shadow = {
-                        color: this.inputSeriesShadowColor.getValue(),
-                        offset: {
-                            x: Number.parseInt(this.inputSeriesShadowXOffset.getValue()),
-                            y: Number.parseInt(this.inputSeriesShadowYOffset.getValue())
-                        },
-                        blur: Number.parseInt(this.inputSeriesShadowBlur.getValue())
-                    };
-                } else {
-                    series.shadow = undefined;
-                }
-            });
+    private destroyActivePanels(): void {
+        this.activePanels.forEach(panel => {
+            _.removeFromParent(panel.getGui());
+            panel.destroy();
         });
-
-        const updateShadow = () => {
-            barSeries.forEach(series => {
-                // TODO remove this check when shadowEnabled instead when it's available in chart api
-                if (this.cbSeriesShadow.isSelected()) {
-                    const blur = this.inputSeriesShadowBlur.getValue() ? Number.parseInt(this.inputSeriesShadowBlur.getValue()) : 0;
-                    const xOffset = this.inputSeriesShadowXOffset.getValue() ? Number.parseInt(this.inputSeriesShadowXOffset.getValue()) : 0;
-                    const yOffset = this.inputSeriesShadowYOffset.getValue() ? Number.parseInt(this.inputSeriesShadowYOffset.getValue()) : 0;
-                    const color = this.inputSeriesShadowColor.getValue() ? this.inputSeriesShadowColor.getValue() : 'rgba(0,0,0,0.5)';
-                    series.shadow = {
-                        color: color,
-                        offset: {x: xOffset, y: yOffset},
-                        blur: blur
-                    }
-                }
-            });
-            // TODO: why is this necessary???
-            this.chart.performLayout();
-        };
-
-        // BLUR
-        this.inputSeriesShadowBlur.setLabel('Blur');
-        if (barSeries.length > 0) {
-            if (barSeries[0].shadow) {
-                this.inputSeriesShadowBlur.setValue(barSeries[0].shadow.blur + '');
-            }
-        }
-        this.addDestroyableEventListener(this.inputSeriesShadowBlur.getInputElement(), 'input', updateShadow);
-
-        // X Offset
-        this.inputSeriesShadowXOffset.setLabel('X Offset');
-        if (barSeries.length > 0) {
-            if (barSeries[0].shadow) {
-                this.inputSeriesShadowXOffset.setValue(barSeries[0].shadow.offset.x + '');
-            }
-        }
-        this.addDestroyableEventListener(this.inputSeriesShadowXOffset.getInputElement(), 'input', updateShadow);
-
-        // Y Offset
-        this.inputSeriesShadowYOffset.setLabel('Y Offset');
-        if (barSeries.length > 0) {
-            if (barSeries[0].shadow) {
-                this.inputSeriesShadowYOffset.setValue(barSeries[0].shadow.offset.y + '');
-            }
-        }
-        this.addDestroyableEventListener(this.inputSeriesShadowYOffset.getInputElement(), 'input', updateShadow);
-
-        if (barSeries.length > 0) {
-            if (barSeries[0].shadow) {
-                this.inputSeriesShadowColor.setValue(barSeries[0].shadow.color + '');
-            }
-        }
-        this.inputSeriesShadowColor.addDestroyableEventListener(this.inputSeriesShadowColor, 'valueChange', updateShadow);
     }
 
-
+    public destroy(): void {
+        this.destroyActivePanels();
+        super.destroy();
+    }
 }

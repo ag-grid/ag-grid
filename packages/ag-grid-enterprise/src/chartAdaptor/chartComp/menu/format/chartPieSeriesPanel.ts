@@ -2,6 +2,7 @@ import {_, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, 
 import {ChartController} from "../../chartController";
 import {Chart} from "../../../../charts/chart/chart";
 import {PieSeries} from "../../../../charts/chart/series/pieSeries";
+import {ChartShadowPanel} from "./chartShadowPanel";
 
 export class ChartPieSeriesPanel extends Component {
 
@@ -24,15 +25,7 @@ export class ChartPieSeriesPanel extends Component {
                     <ag-input-text-field ref="inputSeriesCalloutLength"></ag-input-text-field>
                     <ag-input-text-field ref="inputSeriesCalloutStrokeWidth"></ag-input-text-field>
                     <ag-input-text-field ref="inputSeriesCalloutPadding"></ag-input-text-field>
-                </ag-group-component>
-                
-                <ag-group-component ref="labelSeriesShadow">
-                    <ag-checkbox ref="cbSeriesShadow"></ag-checkbox>
-                    <ag-input-text-field ref="inputSeriesShadowBlur"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesShadowXOffset"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesShadowYOffset"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesShadowColor"></ag-input-text-field>
-                </ag-group-component>
+                </ag-group-component>                              
             </ag-group-component>
         </div>`;
 
@@ -42,7 +35,7 @@ export class ChartPieSeriesPanel extends Component {
 
     @RefSelector('labelSeriesLabels') private labelSeriesLabels: AgGroupComponent;
     @RefSelector('cbSeriesLabelsEnabled') private cbSeriesLabelsEnabled: AgCheckbox;
-    
+
     @RefSelector('selectSeriesFont') private selectSeriesFont: HTMLSelectElement;
     @RefSelector('selectSeriesFontWeight') private selectSeriesFontWeight: HTMLSelectElement;
     @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: AgInputTextField;
@@ -53,15 +46,10 @@ export class ChartPieSeriesPanel extends Component {
     @RefSelector('inputSeriesCalloutStrokeWidth') private inputSeriesCalloutStrokeWidth: AgInputTextField;
     @RefSelector('inputSeriesCalloutPadding') private inputSeriesCalloutPadding: AgInputTextField;
 
-    @RefSelector('labelSeriesShadow') private labelSeriesShadow: AgGroupComponent;
-    @RefSelector('cbSeriesShadow') private cbSeriesShadow: AgCheckbox; 
-    @RefSelector('inputSeriesShadowBlur') private inputSeriesShadowBlur: AgInputTextField;
-    @RefSelector('inputSeriesShadowXOffset') private inputSeriesShadowXOffset: AgInputTextField;
-    @RefSelector('inputSeriesShadowYOffset') private inputSeriesShadowYOffset: AgInputTextField;
-    @RefSelector('inputSeriesShadowColor') private inputSeriesShadowColor: AgInputTextField;
-
     private readonly chartController: ChartController;
     private chart: Chart;
+
+    private activePanels: Component[] = [];
 
     constructor(chartController: ChartController) {
         super();
@@ -79,7 +67,11 @@ export class ChartPieSeriesPanel extends Component {
         this.initSeriesStrokeWidth();
         this.initSeriesLabels();
         this.initCalloutOptions();
-        this.initSeriesShadow();
+
+        const shadowPanelComp = new ChartShadowPanel(this.chartController);
+        this.getContext().wireBean(shadowPanelComp);
+        this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
+        this.activePanels.push(shadowPanelComp);
     }
 
     private initSeriesTooltips() {
@@ -235,92 +227,15 @@ export class ChartPieSeriesPanel extends Component {
         });
     }
 
-    private initSeriesShadow() {
-        this.labelSeriesShadow.setLabel('Shadow');
-
-        const pieSeries = this.chart.series as PieSeries[];
-        // TODO use shadowEnabled instead when it's available in chart api
-        let enabled = _.every(pieSeries, pieSeries => pieSeries.shadow != undefined);
-        this.cbSeriesShadow.setLabel('Enabled');
-        this.cbSeriesShadow.setSelected(enabled);
-
-        // Add defaults to chart as shadow is undefined by default
-        if (!this.inputSeriesShadowBlur.getValue()) this.inputSeriesShadowBlur.setValue('20');
-        if (!this.inputSeriesShadowXOffset.getValue()) this.inputSeriesShadowXOffset.setValue('10');
-        if (!this.inputSeriesShadowYOffset.getValue()) this.inputSeriesShadowYOffset.setValue('10');
-        if (!this.inputSeriesShadowColor.getValue()) this.inputSeriesShadowColor.setValue('rgba(0,0,0,0.5)');
-
-        this.addDestroyableEventListener(this.cbSeriesShadow, 'change', () => {
-            pieSeries.forEach(series => {
-                // TODO remove this check when shadowEnabled instead when it's available in chart api
-                if (this.cbSeriesShadow.isSelected()) {
-                    series.shadow = {
-                        color: this.inputSeriesShadowColor.getValue(),
-                        offset: {
-                            x: Number.parseInt(this.inputSeriesShadowXOffset.getValue()),
-                            y: Number.parseInt(this.inputSeriesShadowYOffset.getValue())
-                        },
-                        blur: Number.parseInt(this.inputSeriesShadowBlur.getValue())
-                    };
-                } else {
-                    series.shadow = undefined;
-                }
-            });
+    private destroyActivePanels(): void {
+        this.activePanels.forEach(panel => {
+            _.removeFromParent(panel.getGui());
+            panel.destroy();
         });
+    }
 
-        const updateShadow = () => {
-            pieSeries.forEach(series => {
-                // TODO remove this check when shadowEnabled instead when it's available in chart api
-                if (this.cbSeriesShadow.isSelected()) {
-                    const blur = this.inputSeriesShadowBlur.getValue() ? Number.parseInt(this.inputSeriesShadowBlur.getValue()) : 0;
-                    const xOffset = this.inputSeriesShadowXOffset.getValue() ? Number.parseInt(this.inputSeriesShadowXOffset.getValue()) : 0;
-                    const yOffset = this.inputSeriesShadowYOffset.getValue() ? Number.parseInt(this.inputSeriesShadowYOffset.getValue()) : 0;
-                    const color = this.inputSeriesShadowColor.getValue() ? this.inputSeriesShadowColor.getValue() : 'rgba(0,0,0,0.5)';
-                    series.shadow = {
-                        color: color,
-                        offset: {x: xOffset, y: yOffset},
-                        blur: blur
-                    }
-                }
-            });
-            // TODO: why is this necessary???
-            this.chart.performLayout();
-        };
-
-        // BLUR
-        this.inputSeriesShadowBlur.setLabel('Blur');
-        if (pieSeries.length > 0) {
-            if (pieSeries[0].shadow) {
-                this.inputSeriesShadowBlur.setValue(pieSeries[0].shadow.blur + '');
-            }
-        }
-        this.addDestroyableEventListener(this.inputSeriesShadowBlur.getInputElement(), 'input', updateShadow);
-
-        // X Offset
-        this.inputSeriesShadowXOffset.setLabel('X Offset');
-        if (pieSeries.length > 0) {
-            if (pieSeries[0].shadow) {
-                this.inputSeriesShadowXOffset.setValue(pieSeries[0].shadow.offset.x + '');
-            }
-        }
-        this.addDestroyableEventListener(this.inputSeriesShadowXOffset.getInputElement(), 'input', updateShadow);
-
-        // Y Offset
-        this.inputSeriesShadowYOffset.setLabel('Y Offset');
-        if (pieSeries.length > 0) {
-            if (pieSeries[0].shadow) {
-                this.inputSeriesShadowYOffset.setValue(pieSeries[0].shadow.offset.y + '');
-            }
-        }
-        this.addDestroyableEventListener(this.inputSeriesShadowYOffset.getInputElement(), 'input', updateShadow);
-
-        // TODO replace with Color Picker
-        this.inputSeriesShadowColor.setLabel('Color');
-        if (pieSeries.length > 0) {
-            if (pieSeries[0].shadow) {
-                this.inputSeriesShadowColor.setValue(pieSeries[0].shadow.color + '');
-            }
-        }
-        this.addDestroyableEventListener(this.inputSeriesShadowColor.getInputElement(), 'input', updateShadow);
+    public destroy(): void {
+        this.destroyActivePanels();
+        super.destroy();
     }
 }
