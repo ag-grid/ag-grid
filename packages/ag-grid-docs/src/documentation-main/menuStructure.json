@@ -670,6 +670,59 @@
     ]
   },
   {
+    "title": "Components",
+    "items": [
+      {
+        "title": "Overview",
+        "url": "javascript-grid-components/"
+      },
+      {
+        "title": "Cell Renderer",
+        "url": "javascript-grid-cell-rendering-components/"
+      },
+      {
+        "title": "Cell Editor",
+        "url": "javascript-grid-cell-editor/"
+      },
+      {
+        "title": "Date Component",
+        "url": "javascript-grid-date-component/"
+      },
+      {
+        "title": "Filter Component",
+        "url": "javascript-grid-filter-component/"
+      },
+      {
+        "title": "Floating Filter Component",
+        "url": "javascript-grid-floating-filter-component/"
+      },
+      {
+        "title": "Header Component",
+        "url": "javascript-grid-header-rendering/"
+      },
+      {
+        "title": "Loading Cell Renderer",
+        "url": "javascript-grid-loading-cell-renderer/"
+      },
+      {
+        "title": "Overlay Component",
+        "url": "javascript-grid-overlay-component/"
+      },
+      {
+        "title": "Status Bar Component",
+        "url": "javascript-grid-status-bar-component/"
+      },
+      {
+        "title": "Tool Panel Component",
+        "url": "javascript-grid-tool-panel-component/"
+      },
+      {
+        "title": "Tooltip Component",
+        "url": "javascript-grid-tooltip-component/"
+      }
+    ]
+  },
+  {
     "title": "Frameworks",
     "items": [
       {
@@ -802,59 +855,6 @@
       {
         "title": "Jasmine & Protractor",
         "url": "javascript-grid-e2e-test-with-jasmine/"
-      }
-    ]
-  },
-  {
-    "title": "Components",
-    "items": [
-      {
-        "title": "Overview",
-        "url": "javascript-grid-components/"
-      },
-      {
-        "title": "Cell Renderer",
-        "url": "javascript-grid-cell-rendering-components/"
-      },
-      {
-        "title": "Cell Editor",
-        "url": "javascript-grid-cell-editor/"
-      },
-      {
-        "title": "Date Component",
-        "url": "javascript-grid-date-component/"
-      },
-      {
-        "title": "Filter Component",
-        "url": "javascript-grid-filter-component/"
-      },
-      {
-        "title": "Floating Filter Component",
-        "url": "javascript-grid-floating-filter-component/"
-      },
-      {
-        "title": "Header Component",
-        "url": "javascript-grid-header-rendering/"
-      },
-      {
-        "title": "Loading Cell Renderer",
-        "url": "javascript-grid-loading-cell-renderer/"
-      },
-      {
-        "title": "Overlay Component",
-        "url": "javascript-grid-overlay-component/"
-      },
-      {
-        "title": "Status Bar Component",
-        "url": "javascript-grid-status-bar-component/"
-      },
-      {
-        "title": "Tool Panel Component",
-        "url": "javascript-grid-tool-panel-component/"
-      },
-      {
-        "title": "Tooltip Component",
-        "url": "javascript-grid-tooltip-component/"
       }
     ]
   },
