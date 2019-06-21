@@ -121,7 +121,7 @@ export class ChartLegendPanel extends Component {
             markerPadding: ['Marker Padding', `${this.chart.legend.markerPadding}`, this.inputMarkerPadding],
             itemPaddingX: ['Item Padding X', `${this.chart.legend.itemPaddingX}`, this.inputItemPaddingX],
             itemPaddingY: ['Item Padding Y', `${this.chart.legend.itemPaddingX}`, this.inputItemPaddingY]
-        }
+        };
 
         Object.keys(configs).forEach(config => {
             const [ label, value, field ] = configs[config as LegendOptions];
@@ -177,11 +177,11 @@ export class ChartLegendPanel extends Component {
         //     this.chart.performLayout();
         // });
 
-
         this.inputLegendFontSize
             .setLabel('Size')
             .setWidth(70)
             .setValue(fontSize);
+
         this.addDestroyableEventListener(this.inputLegendFontSize.getInputElement(), 'input', () => {
             const fontSize = Number.parseInt(this.inputLegendFontSize.getValue());
             const font = fonts[this.selectLegendFont.selectedIndex];
@@ -196,5 +196,4 @@ export class ChartLegendPanel extends Component {
             this.chart.performLayout();
         });
     }
-
 }
