@@ -175,6 +175,14 @@
         "url": "javascript-grid-row-styles/"
       },
       {
+        "title": "Themes",
+        "url": "javascript-grid-styling/"
+      },
+      {
+        "title": "Provided Themes",
+        "url": "javascript-grid-themes-provided/"
+      },
+      {
         "title": "Value Handlers",
         "url": "javascript-grid-value-handlers/",
         "items": [
@@ -499,42 +507,6 @@
         "title": "Viewport",
         "url": "javascript-grid-viewport/",
         "enterprise": true
-      }
-    ]
-  },
-  {
-    "title": "Themes",
-    "gtm": {
-      "category": "themes"
-    },
-    "items": [
-      {
-        "title": "Overview",
-        "url": "javascript-grid-styling/"
-      },
-      {
-        "title": "Balham",
-        "url": "javascript-grid-themes/balham-theme.php"
-      },
-      {
-        "title": "Material",
-        "url": "javascript-grid-themes/material-theme.php"
-      },
-      {
-        "title": "Fresh ",
-        "url": "javascript-grid-themes/fresh-theme.php"
-      },
-      {
-        "title": "Blue",
-        "url": "javascript-grid-themes/blue-theme.php"
-      },
-      {
-        "title": "Dark",
-        "url": "javascript-grid-themes/dark-theme.php"
-      },
-      {
-        "title": "Bootstrap",
-        "url": "javascript-grid-themes/bootstrap-theme.php"
       }
     ]
   },

@@ -259,55 +259,24 @@
     "title": "Layout & Styling",
     "items": [
       {
-        "title": "Styling",
-        "url": "",
-        "items": [
-          {
-            "title": "Rows",
-            "url": "javascript-grid-row-styles/"
-          },
-          {
-            "title": "Cells",
-            "url": "javascript-grid-cell-styles/"
-          },
-          {
-            "title": "Grid // wgh?",
-            "url": ""
-          }
-        ]
+        "title": "Styling Rows",
+        "url": "javascript-grid-row-styles/"
+      },
+      {
+        "title": "Styling Cells",
+        "url": "javascript-grid-cell-styles/"
+      },
+      {
+        "title": "Highlighting Rows & Columns",
+        "url": "javascript-grid-highlighting-rows-and-columns/"
       },
       {
         "title": "Themes",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-styling/"
-          },
-          {
-            "title": "Balham",
-            "url": "javascript-grid-themes/balham-theme.php"
-          },
-          {
-            "title": "Material",
-            "url": "javascript-grid-themes/material-theme.php"
-          },
-          {
-            "title": "Fresh",
-            "url": "javascript-grid-themes/fresh-theme.php"
-          },
-          {
-            "title": "Blue",
-            "url": "javascript-grid-themes/blue-theme.php"
-          },
-          {
-            "title": "Dark",
-            "url": "javascript-grid-themes/dark-theme.php"
-          },
-          {
-            "title": "Bootstrap",
-            "url": "javascript-grid-themes/bootstrap-theme.php"
-          }
-        ]
+        "url": "javascript-grid-styling/"
+      },
+      {
+        "title": "Provided Themes",
+        "url": "javascript-grid-themes-provided/"
       },
       {
         "title": "Sizing (merge with below??)",
