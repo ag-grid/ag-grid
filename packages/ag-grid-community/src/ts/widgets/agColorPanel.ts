@@ -190,11 +190,11 @@ export class AgColorPanel extends Component {
     private update() {
         const color = Color.fromHSB(this.H * 360, this.S, this.B, this.A);
         const spectrumColor = Color.fromHSB(this.H * 360, 1, 1);
-        const hexColor = color.toHexString();
+        const hexColor = color.toRgbaString();
 
-        this.spectrumColor.style.backgroundColor = spectrumColor.toString();
-        (this.picker as AgColorPicker).setValue(hexColor.toUpperCase());
-        this.spectrumTextValue.setValue(hexColor.toUpperCase());
+        this.spectrumColor.style.backgroundColor = spectrumColor.toRgbaString();
+        (this.picker as AgColorPicker).setValue(hexColor);
+        this.spectrumTextValue.setValue(hexColor);
         this.spectrumDragger.style.backgroundColor = hexColor;
     }
 
@@ -203,7 +203,7 @@ export class AgColorPanel extends Component {
      * @param brightness In the [0, 1] interval.
      */
     public setSpectrumValue(saturation: number, brightness: number) {
-        const valRect = this.spectrumValRect || this.refreshSpectrumRect()
+        const valRect = this.spectrumValRect || this.refreshSpectrumRect();
 
         if (valRect) {
             const dragger = this.spectrumDragger;
