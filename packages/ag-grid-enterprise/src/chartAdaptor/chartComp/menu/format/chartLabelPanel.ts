@@ -1,8 +1,8 @@
-import {_, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField, AgColorPicker} from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
-import {PieSeries} from "../../../../charts/chart/series/pieSeries";
-import {BarSeries} from "../../../../charts/chart/series/barSeries";
+import { _, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField, AgColorPicker } from "ag-grid-community";
+import { ChartController } from "../../chartController";
+import { Chart } from "../../../../charts/chart/chart";
+import { PieSeries } from "../../../../charts/chart/series/pieSeries";
+import { BarSeries } from "../../../../charts/chart/series/barSeries";
 
 export class ChartLabelPanel extends Component {
 
@@ -55,7 +55,7 @@ export class ChartLabelPanel extends Component {
     private initSeriesLabels() {
         this.labelSeriesLabels.setLabel('Labels');
 
-        let enabled = this.series.some((series: BarSeries | PieSeries)  => series.labelEnabled);
+        const enabled = this.series.some((series: BarSeries | PieSeries)  => series.labelEnabled);
         this.cbSeriesLabelsEnabled.setLabel('Enabled');
         this.cbSeriesLabelsEnabled.setSelected(enabled);
         this.addDestroyableEventListener(this.cbSeriesLabelsEnabled, 'change', () => {

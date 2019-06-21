@@ -24,7 +24,7 @@ export abstract class Series<C extends Chart> {
     // Uniquely identify series.
     private createId(): string {
         const constructor = this.constructor as any;
-        let className = constructor.className;
+        const className = constructor.className;
         if (!className) {
             throw new Error(`The ${constructor} is missing the 'className' property.`);
         }

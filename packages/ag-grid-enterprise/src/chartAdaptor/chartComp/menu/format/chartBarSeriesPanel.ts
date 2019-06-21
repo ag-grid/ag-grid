@@ -1,9 +1,9 @@
-import {_, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField} from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
-import {BarSeries} from "../../../../charts/chart/series/barSeries";
-import {ChartShadowPanel} from "./chartShadowPanel";
-import {ChartLabelPanel} from "./chartLabelPanel";
+import { _, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField } from "ag-grid-community";
+import { ChartController } from "../../chartController";
+import { Chart } from "../../../../charts/chart/chart";
+import { BarSeries } from "../../../../charts/chart/series/barSeries";
+import { ChartShadowPanel } from "./chartShadowPanel";
+import { ChartLabelPanel } from "./chartLabelPanel";
 
 export class ChartBarSeriesPanel extends Component {
 
@@ -73,7 +73,7 @@ export class ChartBarSeriesPanel extends Component {
     private initSeriesTooltips() {
 
         // TODO update code below when this.chart.showTooltips is available
-        let enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
+        const enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
         this.cbTooltipsEnabled.setLabel('Tooltips');
         this.cbTooltipsEnabled.setSelected(enabled);
         this.addDestroyableEventListener(this.cbTooltipsEnabled, 'change', () => {

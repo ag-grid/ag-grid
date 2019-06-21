@@ -1,6 +1,6 @@
-import {AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField} from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
+import { AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField } from "ag-grid-community";
+import { ChartController } from "../../chartController";
+import { Chart } from "../../../../charts/chart/chart";
 
 export class ChartPaddingPanel extends Component {
 

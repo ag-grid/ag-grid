@@ -1,11 +1,11 @@
-import {_, ChartType, Component, PostConstruct} from "ag-grid-community";
-import {ChartController} from "../chartController";
-import {ChartPaddingPanel} from "./format/chartPaddingPanel";
-import {ChartLegendPanel} from "./format/chartLegendPanel";
-import {ChartBarSeriesPanel} from "./format/chartBarSeriesPanel";
-import {ChartAxisPanel} from "./format/chartAxisPanel";
-import {ChartLineSeriesPanel} from "./format/chartLineSeriesPanel";
-import {ChartPieSeriesPanel} from "./format/chartPieSeriesPanel";
+import { _, ChartType, Component, PostConstruct } from "ag-grid-community";
+import { ChartController } from "../chartController";
+import { ChartPaddingPanel } from "./format/chartPaddingPanel";
+import { ChartLegendPanel } from "./format/chartLegendPanel";
+import { ChartBarSeriesPanel } from "./format/chartBarSeriesPanel";
+import { ChartAxisPanel } from "./format/chartAxisPanel";
+import { ChartLineSeriesPanel } from "./format/chartLineSeriesPanel";
+import { ChartPieSeriesPanel } from "./format/chartPieSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
 

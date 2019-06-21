@@ -16,7 +16,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     // Uniquely identify nodes (to check for duplicates, for example).
     private createId(): string {
         const constructor = this.constructor as any;
-        let className = constructor.className;
+        const className = constructor.className;
         if (!className) {
             throw new Error(`The ${constructor} is missing the 'className' property.`);
         }

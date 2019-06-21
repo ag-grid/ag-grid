@@ -1,6 +1,6 @@
-import {_, AgCheckbox, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker} from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart, LegendPosition} from "../../../../charts/chart/chart";
+import { _, AgCheckbox, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker } from "ag-grid-community";
+import { ChartController } from "../../chartController";
+import { Chart, LegendPosition } from "../../../../charts/chart/chart";
 
 export class ChartLegendPanel extends Component {
 
@@ -77,7 +77,7 @@ export class ChartLegendPanel extends Component {
         this.labelLegend.setLabel('Legend');
 
         // TODO update code below when this.chart.showLegend is available
-        let enabled = _.every(this.chart.series, (series) => series.showInLegend && series.visible);
+        const enabled = _.every(this.chart.series, (series) => series.showInLegend && series.visible);
         this.cbLegendEnabled.setSelected(enabled);
         this.cbLegendEnabled.setLabel('Enabled');
         this.addDestroyableEventListener(this.cbLegendEnabled, 'change', () => {

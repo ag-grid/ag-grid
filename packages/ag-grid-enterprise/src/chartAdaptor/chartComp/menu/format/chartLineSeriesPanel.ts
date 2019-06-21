@@ -7,9 +7,9 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
-import {LineSeries} from "../../../../charts/chart/series/lineSeries";
+import { ChartController } from "../../chartController";
+import { Chart } from "../../../../charts/chart/chart";
+import { LineSeries } from "../../../../charts/chart/series/lineSeries";
 
 export class ChartLineSeriesPanel extends Component {
 
@@ -58,7 +58,7 @@ export class ChartLineSeriesPanel extends Component {
         this.seriesGroup.setLabel('Series');
 
         // TODO update code below when this.chart.showTooltips is available
-        let enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
+        const enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
         this.cbTooltipsEnabled.setLabel('Tooltips');
         this.cbTooltipsEnabled.setSelected(enabled);
         this.addDestroyableEventListener(this.cbTooltipsEnabled, 'change', () => {
@@ -91,7 +91,7 @@ export class ChartLineSeriesPanel extends Component {
         this.cbMarkersEnabled.setLabel('Enabled');
 
         const lineSeries = this.chart.series as LineSeries[];
-        let enabled = lineSeries.some(series => series.marker);
+        const enabled = lineSeries.some(series => series.marker);
         this.cbMarkersEnabled.setSelected(enabled);
 
         this.addDestroyableEventListener(this.cbMarkersEnabled, 'change', () => {

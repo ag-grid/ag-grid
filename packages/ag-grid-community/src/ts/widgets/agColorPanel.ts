@@ -79,7 +79,7 @@ export class AgColorPanel extends Component {
     }
 
     private refreshHueRect() {
-        return this.spectrumHueRect = this.spectrumHue.getBoundingClientRect()
+        return this.spectrumHueRect = this.spectrumHue.getBoundingClientRect();
     }
 
     private refreshAlphaRect() {
@@ -91,45 +91,45 @@ export class AgColorPanel extends Component {
         this.isSpectrumDragging = true;
 
         this.moveDragger(e);
-    };
+    }
 
     private onSpectrumDraggerMove = (e: MouseEvent) => {
         if (this.isSpectrumDragging) {
             this.moveDragger(e);
         }
-    };
+    }
 
     private onSpectrumHueDown = (e: MouseEvent) => {
         this.refreshHueRect();
         this.isSpectrumHueDragging = true;
 
         this.moveHueSlider(e);
-    };
+    }
 
     private onSpectrumHueMove = (e: MouseEvent) => {
         if (this.isSpectrumHueDragging) {
             this.moveHueSlider(e);
         }
-    };
+    }
 
     private onSpectrumAlphaDown = (e: MouseEvent) => {
         this.refreshAlphaRect();
         this.isSpectrumAlphaDragging = true;
 
         this.moveAlphaSlider(e);
-    };
+    }
 
     private onSpectrumAlphaMove = (e: MouseEvent) => {
         if (this.isSpectrumAlphaDragging) {
             this.moveAlphaSlider(e);
         }
-    };
+    }
 
     private onMouseUp = (e: MouseEvent) => {
         this.isSpectrumDragging = false;
         this.isSpectrumHueDragging = false;
         this.isSpectrumAlphaDragging = false;
-    };
+    }
 
     private moveDragger(e: MouseEvent) {
         const valRect = this.spectrumValRect;
@@ -226,20 +226,16 @@ export class AgColorPanel extends Component {
 
     public setValue(val: string) {
         const color: Color = Color.fromString(val);
-        let [h, s, b] = color.toHSB();
+        const [h, s, b] = color.toHSB();
 
-        if (isNaN(h)) {
-            h = 0;
-        }
-
-        this.H = h / 360;
+        this.H = (isNaN(h) ? 0 : h) / 360;
         this.A = color.a;
 
         const spectrumHueRect = this.spectrumHueRect || this.refreshHueRect();
         const spectrumAlphaRect = this.spectrumAlphaRect || this.refreshAlphaRect();
 
-        this.spectrumHueSlider.style.left = ((this.H - 1) * -spectrumHueRect.width) + 'px';
-        this.spectrumAlphaSlider.style.left = (this.A * spectrumAlphaRect.width) + 'px';
+        this.spectrumHueSlider.style.left = `${((this.H - 1) * -spectrumHueRect.width)}px`;
+        this.spectrumAlphaSlider.style.left = `${(this.A * spectrumAlphaRect.width)}px`;
 
         this.setSpectrumValue(s, b);
 

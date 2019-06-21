@@ -1,7 +1,7 @@
-import {AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker} from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import { AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker } from "ag-grid-community";
+import { ChartController } from "../../chartController";
+import { Chart } from "../../../../charts/chart/chart";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 
 export class ChartAxisPanel extends Component {
 

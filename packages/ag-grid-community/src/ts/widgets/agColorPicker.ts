@@ -11,7 +11,7 @@ interface ColorPickerConfig {
     hideTextField?: boolean;
     color: string;
     mode: ColorMode;
-};
+}
 
 export class AgColorPicker extends Component {
     private static TEMPLATE =
