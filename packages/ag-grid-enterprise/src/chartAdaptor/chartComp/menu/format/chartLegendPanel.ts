@@ -81,10 +81,7 @@ export class ChartLegendPanel extends Component {
         this.cbLegendEnabled.setSelected(enabled);
         this.cbLegendEnabled.setLabel('Enabled');
         this.addDestroyableEventListener(this.cbLegendEnabled, 'change', () => {
-            this.chart.series.forEach(s => {
-                s.showInLegend = this.cbLegendEnabled.isSelected();
-                s.toggleSeriesItem(1, this.cbLegendEnabled.isSelected());
-            });
+            this.chart.legend.enabled = this.cbLegendEnabled.isSelected();
         });
 
         this.labelLegendPosition.innerHTML = 'Position:';

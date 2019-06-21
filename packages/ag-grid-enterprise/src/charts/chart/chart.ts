@@ -348,8 +348,8 @@ export abstract class Chart {
     private legendBBox?: BBox;
 
     protected positionLegend() {
-        if (!this.legend.data.length) {
-            return; // TODO: figure out why we ever arrive here (data should be processed before layout)
+        if (!this.legend.enabled || !this.legend.data.length) {
+            return;
         }
 
         const captionAutoPadding = this.captionAutoPadding;
