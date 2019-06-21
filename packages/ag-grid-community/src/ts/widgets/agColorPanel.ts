@@ -226,13 +226,20 @@ export class AgColorPanel extends Component {
 
     public setValue(val: string) {
         const color: Color = Color.fromString(val);
-        const [h, s, b] = color.toHSB();
+        let [h, s, b] = color.toHSB();
 
-        if (!isNaN(h)) {
-            this.H = h / 360;
-            const spectrumHueRect = this.spectrumHueRect || this.refreshHueRect();
-            this.spectrumHueSlider.style.left = ((this.H - 1) * -spectrumHueRect.width) + 'px';
+        if (isNaN(h)) {
+            h = 0;
         }
+
+        this.H = h / 360;
+        this.A = color.a;
+
+        const spectrumHueRect = this.spectrumHueRect || this.refreshHueRect();
+        const spectrumAlphaRect = this.spectrumAlphaRect || this.refreshAlphaRect();
+
+        this.spectrumHueSlider.style.left = ((this.H - 1) * -spectrumHueRect.width) + 'px';
+        this.spectrumAlphaSlider.style.left = (this.A * spectrumAlphaRect.width) + 'px';
 
         this.setSpectrumValue(s, b);
 
