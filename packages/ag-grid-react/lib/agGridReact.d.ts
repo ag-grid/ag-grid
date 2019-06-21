@@ -10,7 +10,7 @@ export interface AgGridReactProps extends GridOptions {
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
 }
-export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
+export declare class AgGridReact extends React.PureComponent<AgGridReactProps, {}> {
     props: any;
     state: any;
     static propTypes: any;
@@ -27,7 +27,6 @@ export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
     render(): React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)>) | (new (props: any) => React.Component<any, any, any>)>;
     createStyleForDiv(): any;
     componentDidMount(): void;
-    shouldComponentUpdate(): boolean;
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime?: number): void;
     /**
      * Mounts a react portal for components registered under the componentFramework.
@@ -38,7 +37,7 @@ export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
     batchUpdate(callback?: any): any;
     destroyPortal(portal: ReactPortal): void;
     private getStrategyTypeForProp;
-    componentWillReceiveProps(nextProps: any): void;
+    componentDidUpdate(prevProps: any): void;
     private extractDeclarativeColDefChanges;
     private extractGridPropertyChanges;
     componentWillUnmount(): void;

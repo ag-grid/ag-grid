@@ -49,14 +49,12 @@ var AgGridColumn = /** @class */ (function (_super) {
             return AgGridColumn.createColDefFromGridColumn(child.props);
         });
     };
-    ;
     AgGridColumn.createColDefFromGridColumn = function (columnProps) {
         var colDef = {};
         AgGridColumn.assign(colDef, columnProps);
         delete colDef.children;
         return colDef;
     };
-    ;
     AgGridColumn.assign = function (colDef, from) {
         // effectively Object.assign - here for IE compatibility
         return [from].reduce(function (r, o) {
@@ -67,7 +65,7 @@ var AgGridColumn = /** @class */ (function (_super) {
         }, colDef);
     };
     return AgGridColumn;
-}(react_1.Component));
+}(react_1.PureComponent));
 exports.AgGridColumn = AgGridColumn;
 addProperties(AgGrid.ColDefUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
 addProperties(AgGrid.ColDefUtil.STRING_PROPERTIES, PropTypes.string);

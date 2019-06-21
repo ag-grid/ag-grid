@@ -1,12 +1,12 @@
 // ag-grid-react v21.0.1
-import { Component } from "react";
+import { PureComponent } from "react";
 import * as AgGrid from "ag-grid-community";
 import { ColDef, ColGroupDef } from "ag-grid-community";
 export interface AgGridColumnProps extends ColDef {
 }
 export interface AgGridColumnGroupProps extends ColGroupDef {
 }
-export declare class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGroupProps, {}> {
+export declare class AgGridColumn extends PureComponent<AgGridColumnProps | AgGridColumnGroupProps, {}> {
     props: any;
     state: any;
     constructor(props: any, state: any);

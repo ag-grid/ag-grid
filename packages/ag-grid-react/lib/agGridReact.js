@@ -81,12 +81,6 @@ var AgGridReact = /** @class */ (function (_super) {
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
     };
-    AgGridReact.prototype.shouldComponentUpdate = function () {
-        // we want full control of the dom, as ag-Grid doesn't use React internally,
-        // so for performance reasons we tell React we don't need render called after
-        // property changes.
-        return false;
-    };
     AgGridReact.prototype.waitForInstance = function (reactComponent, resolve, runningTime) {
         var _this = this;
         if (runningTime === void 0) { runningTime = 0; }
@@ -119,7 +113,8 @@ var AgGridReact = /** @class */ (function (_super) {
             return callback && callback();
         }
         setTimeout(function () {
-            if (_this.api) { // destroyed?
+            if (_this.api) {
+                // destroyed?
                 _this.forceUpdate(function () {
                     callback && callback();
                     _this.hasPendingPortalUpdate = false;
@@ -133,27 +128,28 @@ var AgGridReact = /** @class */ (function (_super) {
         this.batchUpdate();
     };
     AgGridReact.prototype.getStrategyTypeForProp = function (propKey) {
-        if (propKey === 'rowData') {
+        if (propKey === "rowData") {
             // for row data we either return the supplied strategy, or:
             // if deltaRowDataMode we default to IdentityChecks,
             // if not we default to DeepValueChecks (with the rest of the properties)
             if (!!this.props.rowDataChangeDetectionStrategy) {
                 return this.props.rowDataChangeDetectionStrategy;
             }
-            else if (this.props['deltaRowDataMode']) {
+            else if (this.props["deltaRowDataMode"]) {
                 return changeDetectionService_1.ChangeDetectionStrategyType.IdentityCheck;
             }
         }
         // all non row data properties will default to DeepValueCheck
         return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
     };
-    AgGridReact.prototype.componentWillReceiveProps = function (nextProps) {
+    AgGridReact.prototype.componentDidUpdate = function (prevProps) {
         var changes = {};
-        this.extractGridPropertyChanges(nextProps, changes);
-        this.extractDeclarativeColDefChanges(nextProps, changes);
+        this.extractGridPropertyChanges(prevProps, changes);
+        this.extractDeclarativeColDefChanges(changes);
         AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
     };
-    AgGridReact.prototype.extractDeclarativeColDefChanges = function (nextProps, changes) {
+    AgGridReact.prototype.extractDeclarativeColDefChanges = function (changes) {
+        var nextProps = this.props;
         var debugLogging = !!nextProps.debug;
         if (agGridColumn_1.AgGridColumn.hasChildColumns(nextProps)) {
             var detectionStrategy = this.changeDetectionService.getStrategy(changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck);
@@ -163,27 +159,27 @@ var AgGridReact = /** @class */ (function (_super) {
                 if (debugLogging) {
                     console.log("agGridReact: colDefs definitions changed");
                 }
-                changes['columnDefs'] =
-                    {
-                        previousValue: this.gridOptions.columnDefs,
-                        currentValue: agGridColumn_1.AgGridColumn.mapChildColumnDefs(nextProps)
-                    };
+                changes["columnDefs"] = {
+                    previousValue: this.gridOptions.columnDefs,
+                    currentValue: agGridColumn_1.AgGridColumn.mapChildColumnDefs(nextProps)
+                };
             }
         }
     };
-    AgGridReact.prototype.extractGridPropertyChanges = function (nextProps, changes) {
+    AgGridReact.prototype.extractGridPropertyChanges = function (prevProps, changes) {
         var _this = this;
+        var nextProps = this.props;
         var debugLogging = !!nextProps.debug;
         var changedKeys = Object.keys(nextProps);
         changedKeys.forEach(function (propKey) {
             if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
                 var changeDetectionStrategy = _this.changeDetectionService.getStrategy(_this.getStrategyTypeForProp(propKey));
-                if (!changeDetectionStrategy.areEqual(_this.props[propKey], nextProps[propKey])) {
+                if (!changeDetectionStrategy.areEqual(prevProps[propKey], nextProps[propKey])) {
                     if (debugLogging) {
                         console.log("agGridReact: [" + propKey + "] property changed");
                     }
                     changes[propKey] = {
-                        previousValue: _this.props[propKey],
+                        previousValue: prevProps[propKey],
                         currentValue: nextProps[propKey]
                     };
                 }
@@ -195,7 +191,7 @@ var AgGridReact = /** @class */ (function (_super) {
                     console.log("agGridReact: [" + funcName + "] event callback changed");
                 }
                 changes[funcName] = {
-                    previousValue: _this.props[funcName],
+                    previousValue: prevProps[funcName],
                     currentValue: nextProps[funcName]
                 };
             }
@@ -209,7 +205,7 @@ var AgGridReact = /** @class */ (function (_super) {
     };
     AgGridReact.MAX_COMPONENT_CREATION_TIME = 1000; // a second should be more than enough to instantiate a component
     return AgGridReact;
-}(React.Component));
+}(React.PureComponent));
 exports.AgGridReact = AgGridReact;
 AgGridReact.propTypes = {
     gridOptions: PropTypes.object
@@ -235,15 +231,12 @@ var ReactFrameworkComponentWrapper = /** @class */ (function (_super) {
         // at some point soon unstable_renderSubtreeIntoContainer is going to be dropped (and in a minor release at that)
         // this uses the existing mechanism as long as possible, but switches over to using Portals when
         // unstable_renderSubtreeIntoContainer is no longer an option
-        return this.useLegacyReact() ?
-            new legacyReactComponent_1.LegacyReactComponent(UserReactComponent, this.agGridReact) :
-            new reactComponent_1.ReactComponent(UserReactComponent, this.agGridReact);
+        return this.useLegacyReact() ? new legacyReactComponent_1.LegacyReactComponent(UserReactComponent, this.agGridReact) : new reactComponent_1.ReactComponent(UserReactComponent, this.agGridReact);
     };
     ReactFrameworkComponentWrapper.prototype.useLegacyReact = function () {
         // force use of react next (ie portals) if unstable_renderSubtreeIntoContainer is no longer present
         // or if the user elects to try it
-        return (typeof ReactDOM.unstable_renderSubtreeIntoContainer !== "function")
-            || (this.agGridReact && this.agGridReact.gridOptions && !this.agGridReact.gridOptions.reactNext);
+        return typeof ReactDOM.unstable_renderSubtreeIntoContainer !== "function" || (this.agGridReact && this.agGridReact.gridOptions && !this.agGridReact.gridOptions.reactNext);
     };
     __decorate([
         ag_grid_community_1.Autowired("agGridReact"),

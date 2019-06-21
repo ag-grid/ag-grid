@@ -1,19 +1,18 @@
-import React, {Component} from 'react';
-import {AgGridReact} from '../agGridReact';
+import React, { Component } from "react";
+import { AgGridReact } from "../agGridReact";
 
-import {ensureGridApiHasBeenSet} from "./utils"
+import { ensureGridApiHasBeenSet } from "./utils";
 
-import {mount} from 'enzyme';
+import { mount } from "enzyme";
 
 let component = null;
 let agGridReact = null;
 
-beforeEach((done) => {
-    component = mount((<GridWithNoComponentContainerSpecified/>));
+beforeEach(done => {
+    component = mount(<GridWithNoComponentContainerSpecified />);
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
     ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 10));
-
 });
 
 afterEach(() => {
@@ -21,15 +20,18 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('reactNext with no wrapping element set renders as expected', () => {
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div>Blerp</div>`);
+it("reactNext with no wrapping element set renders as expected", () => {
+    expect(
+        component
+            .render()
+            .find(".ag-cell-value")
+            .html()
+    ).toEqual(`<div class="ag-react-container"><div>Blerp</div></div>`);
 });
 
 class CellRenderer extends Component {
     render() {
-        return(
-            <div>Blerp</div>
-        )
+        return <div>Blerp</div>;
     }
 }
 
@@ -38,11 +40,13 @@ class GridWithNoComponentContainerSpecified extends Component {
         super(props);
 
         this.state = {
-            columnDefs: [{
-                field: "age",
-                cellRendererFramework: CellRenderer
-            }],
-            rowData: [{age: 24}]
+            columnDefs: [
+                {
+                    field: "age",
+                    cellRendererFramework: CellRenderer
+                }
+            ],
+            rowData: [{ age: 24 }]
         };
     }
 
@@ -52,14 +56,8 @@ class GridWithNoComponentContainerSpecified extends Component {
 
     render() {
         return (
-            <div
-                className="ag-theme-balham">
-                <AgGridReact
-                    columnDefs={this.state.columnDefs}
-                    onGridReady={this.onGridReady.bind(this)}
-                    rowData={this.state.rowData}
-                    reactNext={true}
-                />
+            <div className="ag-theme-balham">
+                <AgGridReact columnDefs={this.state.columnDefs} onGridReady={this.onGridReady.bind(this)} rowData={this.state.rowData} reactNext={true} />
             </div>
         );
     }
