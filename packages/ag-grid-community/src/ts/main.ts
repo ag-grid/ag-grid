@@ -242,7 +242,7 @@ export { Logger } from "./logger";
 export { SelectionController } from "./selectionController";
 export { SortController } from "./sortController";
 export { TemplateService } from "./templateService";
-export { Utils, NumberSequence, _, Promise, ExternalPromise } from "./utils";
+export { Color, Utils, NumberSequence, _, Promise, ExternalPromise } from "./utils";
 export { ValueService } from "./valueService/valueService";
 export { ExpressionService } from "./valueService/expressionService";
 export { LoggerFactory } from "./logger";

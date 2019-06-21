@@ -8,7 +8,6 @@ import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { Caption } from "./caption";
-import { PieSeries } from "./series/pieSeries";
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 

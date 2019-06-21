@@ -3,6 +3,8 @@ import { PostConstruct } from "../context/context";
 import { RefSelector } from "./componentAnnotations";
 import { AgInputTextField } from "./agInputTextField";
 import { _ } from "../utils";
+import { AgDialog } from "./agDialog";
+import { AgColorPanel } from "./agColorPanel";
 
 type ColorMode = 'hex' | 'hsl' | 'rgba';
 interface ColorPickerConfig {
@@ -43,6 +45,40 @@ export class AgColorPicker extends Component {
             }
             this.addDestroyableEventListener(this.eInput.getInputElement(), 'blur', () => {
                 this.setValue(this.eInput.getValue());
+            });
+
+            this.addDestroyableEventListener(this.eButton, 'click', () => {
+                this.showColorPicker();
+            });
+        }
+
+        private showColorPicker() {
+            const eGuiRect = this.getGui().getBoundingClientRect();
+            const colorDialog = new AgDialog({
+                closable: false,
+                modal: true,
+                hideTitleBar: true,
+                width: 200,
+                height: 320,
+                x: eGuiRect.left,
+                y: eGuiRect.top - 320
+            });
+            this.getContext().wireBean(colorDialog);
+
+            const colorPanel = new AgColorPanel({
+                picker: this
+            });
+
+            this.getContext().wireBean(colorPanel);
+
+            colorDialog.setParentComponent(this);
+            colorDialog.setBodyComponent(colorPanel);
+            colorPanel.setValue(this.eInput.getValue());
+
+            colorDialog.addDestroyFunc(() => {
+                if (colorPanel.isAlive()) {
+                    colorPanel.destroy();
+                }
             });
         }
 
