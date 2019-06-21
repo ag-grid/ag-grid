@@ -322,6 +322,10 @@
     "title": "Filtering",
     "items": [
       {
+        "title": "Overview",
+        "url": "javascript-grid-filtering-overview"
+      },
+      {
         "title": "Column Filters",
         "url": "javascript-grid-filtering/",
         "items": [
