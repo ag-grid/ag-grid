@@ -208,10 +208,10 @@ export interface PieSeriesOptions extends SeriesOptions {
     labelFont?: string;
     labelColor?: string;
     labelMinAngle?: number;
+    labelOffset?: number;
 
     calloutLength?: number;
     calloutStrokeWidth?: number;
-    calloutPadding?: number;
     calloutColors?: string[];
 
     rotation?: number;

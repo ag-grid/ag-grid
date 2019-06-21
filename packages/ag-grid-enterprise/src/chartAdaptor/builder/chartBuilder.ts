@@ -319,8 +319,8 @@ export class ChartBuilder {
         if (options.calloutLength !== undefined) {
             series.calloutLength = options.calloutLength;
         }
-        if (options.calloutPadding !== undefined) {
-            series.calloutPadding = options.calloutPadding;
+        if (options.labelOffset !== undefined) {
+            series.labelOffset = options.labelOffset;
         }
         if (options.labelFont !== undefined) {
             series.labelFont = options.labelFont;

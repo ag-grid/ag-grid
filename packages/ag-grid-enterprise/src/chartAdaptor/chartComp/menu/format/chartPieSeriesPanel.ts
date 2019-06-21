@@ -24,7 +24,7 @@ export class ChartPieSeriesPanel extends Component {
                 <ag-group-component ref="labelSeriesCallout">
                     <ag-input-text-field ref="inputSeriesCalloutLength"></ag-input-text-field>
                     <ag-input-text-field ref="inputSeriesCalloutStrokeWidth"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesCalloutPadding"></ag-input-text-field>
+                    <ag-input-text-field ref="inputSeriesLabelOffset"></ag-input-text-field>
                 </ag-group-component>                              
             </ag-group-component>
         </div>`;
@@ -44,7 +44,7 @@ export class ChartPieSeriesPanel extends Component {
     @RefSelector('labelSeriesCallout') private labelSeriesCallout: AgGroupComponent;
     @RefSelector('inputSeriesCalloutLength') private inputSeriesCalloutLength: AgInputTextField;
     @RefSelector('inputSeriesCalloutStrokeWidth') private inputSeriesCalloutStrokeWidth: AgInputTextField;
-    @RefSelector('inputSeriesCalloutPadding') private inputSeriesCalloutPadding: AgInputTextField;
+    @RefSelector('inputSeriesLabelOffset') private inputSeriesLabelOffset: AgInputTextField;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -212,17 +212,17 @@ export class ChartPieSeriesPanel extends Component {
             });
         });
 
-        this.inputSeriesCalloutPadding.setLabel('Padding')
+        this.inputSeriesLabelOffset.setLabel('Padding')
             .setLabelWidth(80)
             .setWidth(115);
 
         if (pieSeries.length > 0) {
-            this.inputSeriesCalloutPadding.setValue(`${pieSeries[0].calloutPadding}`);
+            this.inputSeriesLabelOffset.setValue(`${pieSeries[0].labelOffset}`);
         }
 
-        this.addDestroyableEventListener(this.inputSeriesCalloutPadding.getInputElement(), 'input', () => {
+        this.addDestroyableEventListener(this.inputSeriesLabelOffset.getInputElement(), 'input', () => {
             pieSeries.forEach(series => {
-                series.calloutPadding = Number.parseInt(this.inputSeriesCalloutPadding.getValue());
+                series.labelOffset = Number.parseInt(this.inputSeriesLabelOffset.getValue());
             });
         });
     }

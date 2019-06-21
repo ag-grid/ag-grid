@@ -142,15 +142,15 @@ export class PieSeries extends Series<PolarChart> {
         return this._calloutLength;
     }
 
-    private _calloutPadding: number = 3;
-    set calloutPadding(value: number) {
-        if (this._calloutPadding !== value) {
-            this._calloutPadding = value;
+    private _labelOffset: number = 3; // from the callout line
+    set labelOffset(value: number) {
+        if (this._labelOffset !== value) {
+            this._labelOffset = value;
             this.update();
         }
     }
-    get calloutPadding(): number {
-        return this._calloutPadding;
+    get labelOffset(): number {
+        return this._labelOffset;
     }
 
     private _labelFont: string = '12px Verdana, sans-serif';
@@ -555,14 +555,14 @@ export class PieSeries extends Series<PolarChart> {
                 }
             });
 
-        const calloutPadding = this.calloutPadding;
+        const labelOffset = this.labelOffset;
         groupSelection.selectByTag<Text>(PieSeriesNodeTag.Label)
             .each((text, datum, index) => {
                 const label = datum.label;
 
                 if (label) {
                     const outerRadius = outerRadii[index];
-                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + calloutPadding;
+                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + labelOffset;
 
                     text.font = this.labelFont;
                     text.text = label.text;
