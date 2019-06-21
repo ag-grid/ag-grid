@@ -2620,15 +2620,17 @@ export class Color {
         return hex;
     }
 
-    toRgbaString(): string {
+    toRgbaString(fractionDigits = 3): string {
         const components: number[] = [
             Math.round(this.r * 255),
             Math.round(this.g * 255),
             Math.round(this.b * 255)
         ];
 
+        const k = Math.pow(10, fractionDigits);
+
         if (this.a !== 1) {
-            components.push(this.a);
+            components.push(Math.round(this.a * k) / k);
             return `rgba(${components.join(', ')})`;
         }
 
