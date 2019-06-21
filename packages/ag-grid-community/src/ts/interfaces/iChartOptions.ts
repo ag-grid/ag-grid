@@ -181,7 +181,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     labelEnabled?: boolean;
     labelFont?: string;
     labelColor?: string;
-    labelPadding?: {x: number, y: number};
+    labelOffset?: number;
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 }

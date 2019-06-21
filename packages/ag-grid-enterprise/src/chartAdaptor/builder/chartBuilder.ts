@@ -288,8 +288,8 @@ export class ChartBuilder {
         if (options.labelFont !== undefined) {
             series.labelFont = options.labelFont;
         }
-        if (options.labelPadding !== undefined) {
-            series.labelPadding = options.labelPadding;
+        if (options.labelOffset !== undefined) {
+            series.labelOffset = options.labelOffset;
         }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
