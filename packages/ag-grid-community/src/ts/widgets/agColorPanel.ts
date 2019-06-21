@@ -44,13 +44,13 @@ export class AgColorPanel extends Component {
             </div>
         </div>`;
 
-    @RefSelector('spectrumColor') private readonly spectrumColor: HTMLDivElement;
-    @RefSelector('spectrumVal') private readonly spectrumVal: HTMLDivElement;
-    @RefSelector('spectrumDragger') private readonly spectrumDragger: HTMLDivElement;
-    @RefSelector('spectrumHue') private readonly spectrumHue: HTMLDivElement;
-    @RefSelector('spectrumHueSlider') private readonly spectrumHueSlider: HTMLDivElement;
-    @RefSelector('spectrumAlpha') private readonly spectrumAlpha: HTMLDivElement;
-    @RefSelector('spectrumAlphaSlider') private readonly spectrumAlphaSlider: HTMLDivElement;
+    @RefSelector('spectrumColor') private readonly spectrumColor: HTMLElement;
+    @RefSelector('spectrumVal') private readonly spectrumVal: HTMLElement;
+    @RefSelector('spectrumDragger') private readonly spectrumDragger: HTMLElement;
+    @RefSelector('spectrumHue') private readonly spectrumHue: HTMLElement;
+    @RefSelector('spectrumHueSlider') private readonly spectrumHueSlider: HTMLElement;
+    @RefSelector('spectrumAlpha') private readonly spectrumAlpha: HTMLElement;
+    @RefSelector('spectrumAlphaSlider') private readonly spectrumAlphaSlider: HTMLElement;
     @RefSelector('spectrumTextValue') private readonly spectrumTextValue: AgInputTextField;
 
     constructor(config: { picker: Component }) {
