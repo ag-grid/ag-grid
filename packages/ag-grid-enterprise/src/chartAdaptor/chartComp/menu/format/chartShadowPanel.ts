@@ -107,7 +107,11 @@ export class ChartShadowPanel extends Component {
         };
 
         // BLUR
-        this.inputSeriesShadowBlur.setLabel('Blur');
+        this.inputSeriesShadowBlur
+            .setLabel('Blur')
+            .setLabelWidth(80)
+            .setWidth(115);
+
         if (this.series.length > 0) {
             if (this.series[0].shadow) {
                 this.inputSeriesShadowBlur.setValue(this.series[0].shadow.blur + '');
@@ -116,7 +120,11 @@ export class ChartShadowPanel extends Component {
         this.addDestroyableEventListener(this.inputSeriesShadowBlur.getInputElement(), 'input', updateShadow);
 
         // X Offset
-        this.inputSeriesShadowXOffset.setLabel('X Offset');
+        this.inputSeriesShadowXOffset
+            .setLabel('X Offset')
+            .setLabelWidth(80)
+            .setWidth(115);
+
         if (this.series.length > 0) {
             if (this.series[0].shadow) {
                 this.inputSeriesShadowXOffset.setValue(this.series[0].shadow.offset.x + '');
@@ -125,7 +133,11 @@ export class ChartShadowPanel extends Component {
         this.addDestroyableEventListener(this.inputSeriesShadowXOffset.getInputElement(), 'input', updateShadow);
 
         // Y Offset
-        this.inputSeriesShadowYOffset.setLabel('Y Offset');
+        this.inputSeriesShadowYOffset
+            .setLabel('Y Offset')
+            .setLabelWidth(80)
+            .setWidth(115);
+
         if (this.series.length > 0) {
             if (this.series[0].shadow) {
                 this.inputSeriesShadowYOffset.setValue(this.series[0].shadow.offset.y + '');

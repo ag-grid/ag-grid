@@ -71,6 +71,8 @@ export class ChartAxisPanel extends Component {
         const chart = this.chart as CartesianChart;
         this.inputAxisLineWidth
             .setLabel('Line Width')
+            .setLabelWidth(80)
+            .setWidth(115)
             .setValue(`${chart.xAxis.lineWidth}`)
             .onInputChange(newValue => {
                 chart.xAxis.lineWidth = newValue;
@@ -94,6 +96,8 @@ export class ChartAxisPanel extends Component {
 
         this.inputAxisTicksWidth
             .setLabel('Width')
+            .setLabelWidth(80)
+            .setWidth(115)
             .setValue(`${chart.xAxis.lineWidth}`)
             .onInputChange(newValue => {
                 chart.xAxis.tickWidth = newValue;
@@ -103,6 +107,8 @@ export class ChartAxisPanel extends Component {
 
         this.inputAxisTicksSize
             .setLabel('Size')
+            .setLabelWidth(80)
+            .setWidth(115)
             .setValue(`${chart.xAxis.tickSize}`)
             .onInputChange(newValue => {
                 chart.xAxis.tickSize = newValue;
@@ -112,6 +118,8 @@ export class ChartAxisPanel extends Component {
 
         this.inputAxisTicksPadding
             .setLabel('Padding')
+            .setLabelWidth(80)
+            .setWidth(115)
             .setValue(`${chart.xAxis.tickPadding}`)
             .onInputChange(newValue => {
                 chart.xAxis.tickPadding = newValue;

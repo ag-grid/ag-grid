@@ -61,21 +61,27 @@ export class ChartLegendPanel extends Component {
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
 
+        this.labelLegend.setLabel('Legend');
+
+        this.initLegendTooltips();
+        this.initLegendPosition();
+        this.initLegendPadding();
         this.initLegendItems();
         this.initLabelPanel();
     }
 
-    private initLegendItems() {
-        this.labelLegend.setLabel('Legend');
+    private initLegendTooltips() {
+        const selected = this.chart.series.some(s => s.tooltipEnabled);
 
-        // TODO update code below when this.chart.showLegend is available
-        const enabled = _.every(this.chart.series, (series) => series.showInLegend && series.visible);
-        this.cbLegendEnabled.setSelected(enabled);
-        this.cbLegendEnabled.setLabel('Enabled');
-        this.addDestroyableEventListener(this.cbLegendEnabled, 'change', () => {
-            this.chart.legend.enabled = this.cbLegendEnabled.isSelected();
-        });
+        this.cbLegendEnabled
+            .setLabel('Tooltips')
+            .setSelected(selected)
+            .onSelectionChange(newSelection => {
+                this.chart.series.forEach(s => s.tooltipEnabled = newSelection);
+            });
+    }
 
+    private initLegendPosition() {
         this.labelLegendPosition.innerHTML = 'Position:';
 
         const positions: LegendPosition[] = ['top', 'right', 'bottom', 'left'];
@@ -91,14 +97,18 @@ export class ChartLegendPanel extends Component {
         this.addDestroyableEventListener(this.selectLegendPosition, 'input', () => {
             this.chart.legendPosition = positions[this.selectLegendPosition.selectedIndex];
         });
+    }
 
+    private initLegendPadding() {
         this.inputLegendPadding
             .setLabel('Padding')
             .setLabelWidth(95)
             .setWidth(130)
             .setValue(`${this.chart.legendPadding}`)
             .onInputChange(newValue => this.chart.legendPadding = newValue);
+    }
 
+    private initLegendItems() {
         type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
         type LegendConfig = {
             [key in LegendOptions] : [string, string, AgInputTextField];
