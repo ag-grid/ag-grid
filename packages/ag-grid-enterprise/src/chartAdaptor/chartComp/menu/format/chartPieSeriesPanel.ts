@@ -41,6 +41,7 @@ export class ChartPieSeriesPanel extends Component {
     private chart: Chart;
 
     private activePanels: Component[] = [];
+    private series: PieSeries[];
 
     constructor(chartController: ChartController) {
         super();
@@ -53,6 +54,7 @@ export class ChartPieSeriesPanel extends Component {
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
+        this.series = this.chart.series as PieSeries[];
 
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
@@ -82,37 +84,28 @@ export class ChartPieSeriesPanel extends Component {
     }
 
     private initSeriesStrokeWidth() {
-        this.inputSeriesStrokeWidth.setLabel('Stroke Width');
-
-        const pieSeries = this.chart.series as PieSeries[];
-        if (pieSeries.length > 0) {
-            this.inputSeriesStrokeWidth.setValue(`${pieSeries[0].strokeWidth}`);
-        }
-
-        this.addDestroyableEventListener(this.inputSeriesStrokeWidth.getInputElement(), 'input', () => {
-            pieSeries.forEach(series => {
-                series.strokeWidth = Number.parseInt(this.inputSeriesStrokeWidth.getValue());
-            });
-        });
+        this.inputSeriesStrokeWidth
+            .setLabel('Stroke Width')
+            .setValue(`${this.series[0].strokeWidth}`)
+            .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
     private initLabelPanel() {
-        const pieSeries = this.chart.series as PieSeries[];
         const params: ChartLabelPanelParams = {
             chartController: this.chartController,
             isEnabled: () => {
-                return pieSeries.some(series => series.labelEnabled);
+                return this.series.some(s => s.labelEnabled);
             },
             setEnabled: (enabled: boolean) => {
-                pieSeries.forEach(series => series.labelEnabled = enabled);
+                this.series.forEach(s => s.labelEnabled = enabled);
             },
-            getFont: () =>  pieSeries.length > 0 ? pieSeries[0].labelFont : '',
+            getFont: () =>  this.series[0].labelFont,
             setFont: (font: string) => {
-                pieSeries.forEach(series => series.labelFont = font);
+                this.series.forEach(s => s.labelFont = font);
             },
-            getColor: () => pieSeries.length > 0 ? pieSeries[0].labelColor : '',
+            getColor: () => this.series[0].labelColor,
             setColor: (color: string) => {
-                pieSeries.forEach(series => series.labelColor = color);
+                this.series.forEach(s => s.labelColor = color);
             }
         };
 
@@ -125,49 +118,26 @@ export class ChartPieSeriesPanel extends Component {
     private initCalloutOptions() {
         this.labelSeriesCallout.setLabel('Callout');
 
-        const pieSeries = this.chart.series as PieSeries[];
-
-        this.inputSeriesCalloutLength.setLabel('Length')
+        this.inputSeriesCalloutLength
+            .setLabel('Length')
             .setLabelWidth(80)
-            .setWidth(115);
+            .setWidth(115)
+            .setValue(`${this.series[0].calloutLength}`)
+            .onInputChange(newValue => this.series.forEach(s => s.calloutLength = newValue));
 
-        if (pieSeries.length > 0) {
-            this.inputSeriesCalloutLength.setValue(`${pieSeries[0].calloutLength}`);
-        }
-
-        this.addDestroyableEventListener(this.inputSeriesCalloutLength.getInputElement(), 'input', () => {
-            pieSeries.forEach(series => {
-                series.calloutLength = Number.parseInt(this.inputSeriesCalloutLength.getValue());
-            });
-        });
-
-        this.inputSeriesCalloutStrokeWidth.setLabel('Stroke Width')
+        this.inputSeriesCalloutStrokeWidth
+            .setLabel('Stroke Width')
             .setLabelWidth(80)
-            .setWidth(115);
+            .setWidth(115)
+            .setValue(`${this.series[0].calloutStrokeWidth}`)
+            .onInputChange(newValue => this.series.forEach(s => s.calloutStrokeWidth = newValue));
 
-        if (pieSeries.length > 0) {
-            this.inputSeriesCalloutStrokeWidth.setValue(`${pieSeries[0].calloutStrokeWidth}`);
-        }
-
-        this.addDestroyableEventListener(this.inputSeriesCalloutStrokeWidth.getInputElement(), 'input', () => {
-            pieSeries.forEach(series => {
-                series.calloutStrokeWidth = Number.parseInt(this.inputSeriesCalloutStrokeWidth.getValue());
-            });
-        });
-
-        this.inputSeriesLabelOffset.setLabel('Padding')
+        this.inputSeriesLabelOffset
+            .setLabel('Padding')
             .setLabelWidth(80)
-            .setWidth(115);
-
-        if (pieSeries.length > 0) {
-            this.inputSeriesLabelOffset.setValue(`${pieSeries[0].labelOffset}`);
-        }
-
-        this.addDestroyableEventListener(this.inputSeriesLabelOffset.getInputElement(), 'input', () => {
-            pieSeries.forEach(series => {
-                series.labelOffset = Number.parseInt(this.inputSeriesLabelOffset.getValue());
-            });
-        });
+            .setWidth(115)
+            .setValue(`${this.series[0].labelOffset}`)
+            .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
     }
 
     private destroyActivePanels(): void {

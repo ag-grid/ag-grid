@@ -32,6 +32,7 @@ export class ChartBarSeriesPanel extends Component {
     private readonly chartController: ChartController;
     private chart: Chart;
     private activePanels: Component[] = [];
+    private series: BarSeries[];
 
     constructor(chartController: ChartController) {
         super();
@@ -44,6 +45,7 @@ export class ChartBarSeriesPanel extends Component {
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
+        this.series = this.chart.series as BarSeries[];
 
         this.initSeriesStrokeWidth();
         this.initSeriesTooltips();
@@ -54,22 +56,13 @@ export class ChartBarSeriesPanel extends Component {
     private initSeriesStrokeWidth() {
         this.seriesGroup.setLabel('Series');
 
-        this.inputSeriesStrokeWidth.setLabel('Stroke Width');
-
-        const barSeries = this.chart.series as BarSeries[];
-        if (barSeries.length > 0) {
-            this.inputSeriesStrokeWidth.setValue(`${barSeries[0].strokeWidth}`);
-        }
-
-        this.addDestroyableEventListener(this.inputSeriesStrokeWidth.getInputElement(), 'input', () => {
-            (this.chart.series as BarSeries[]).forEach(series => {
-                series.strokeWidth = Number.parseInt(this.inputSeriesStrokeWidth.getValue());
-            });
-        });
+        this.inputSeriesStrokeWidth
+            .setLabel('Stroke Width')
+            .setValue(`${this.series[0].strokeWidth}`)
+            .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
     private initSeriesTooltips() {
-
         // TODO update code below when this.chart.showTooltips is available
         const enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
         this.cbTooltipsEnabled.setLabel('Tooltips');
@@ -82,22 +75,25 @@ export class ChartBarSeriesPanel extends Component {
     }
 
     private initLabelPanel() {
-        const barSeries = this.chart.series as BarSeries[];
         const params: ChartLabelPanelParams = {
             chartController: this.chartController,
             isEnabled: () => {
-                return barSeries.some(series => series.labelEnabled);
+                return this.series.some(s => s.labelEnabled);
             },
             setEnabled: (enabled: boolean) => {
-                barSeries.forEach(series => series.labelEnabled = enabled);
+                this.series.forEach(s => s.labelEnabled = enabled);
             },
-            getFont: () => barSeries.length > 0 ? barSeries[0].labelFont : '',
+            getFont: () => {
+                return this.series[0].labelFont;
+            },
             setFont: (font: string) => {
-                barSeries.forEach(series => series.labelFont = font);
+                this.series.forEach(s => s.labelFont = font);
             },
-            getColor: () => barSeries.length > 0 ? barSeries[0].labelColor : '',
+            getColor: () => {
+                return this.series[0].labelColor;
+            },
             setColor: (color: string) => {
-                barSeries.forEach(series => series.labelColor = color);
+                this.series.forEach(s => s.labelColor = color);
             }
         };
 

@@ -96,11 +96,8 @@ export class ChartLegendPanel extends Component {
             .setLabel('Padding')
             .setLabelWidth(95)
             .setWidth(130)
-            .setValue(`${this.chart.legendPadding}`);
-
-        this.addDestroyableEventListener(this.inputLegendPadding.getInputElement(), 'input', () => {
-            this.chart.legendPadding = Number.parseInt(this.inputLegendPadding.getValue());
-        });
+            .setValue(`${this.chart.legendPadding}`)
+            .onInputChange(newValue => this.chart.legendPadding = newValue);
 
         type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
         type LegendConfig = {
@@ -121,10 +118,8 @@ export class ChartLegendPanel extends Component {
             field.setLabel(label)
                 .setLabelWidth(95)
                 .setWidth(130)
-                .setValue(value);
-            this.addDestroyableEventListener(field.getInputElement(), 'input', () => {
-                this.chart.legend[config as LegendOptions] = parseInt(field.getValue(), 10);
-            });
+                .setValue(value)
+                .onInputChange(newValue => this.chart.legend[config as LegendOptions] = newValue);
         });
     }
 

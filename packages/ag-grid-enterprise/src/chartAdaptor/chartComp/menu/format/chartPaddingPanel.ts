@@ -64,12 +64,11 @@ export class ChartPaddingPanel extends Component {
             field.setLabel(label)
                 .setLabelWidth(45)
                 .setWidth(75)
-                .setValue(value);
-
-            this.addDestroyableEventListener(field.getInputElement(), 'input', () => {
-                this.chart.padding[side as PaddingSides] = Number.parseInt(field.getValue());
-                this.chart.performLayout();
-            });
+                .setValue(value)
+                .onInputChange(newValue => {
+                    this.chart.padding[side as PaddingSides] = newValue;
+                    this.chart.performLayout();
+                });
         });
     }
 }

@@ -64,6 +64,14 @@ export class AgInputTextField extends Component {
         return this.eInput;
     }
 
+    public onInputChange(callbackFn: (newValue: number) => void) {
+        this.addDestroyableEventListener(this.getInputElement(), 'input', () => {
+            const newVal = parseInt(this.getValue(), 10);
+            callbackFn(newVal);
+        });
+        return this;
+    }
+
     public setLabelSeparator(labelSeparator: string): AgInputTextField {
         if (this.labelSeparator === labelSeparator) {
             return this;

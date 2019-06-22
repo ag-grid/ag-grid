@@ -120,13 +120,11 @@ export class ChartLabelPanel extends Component {
 
         this.inputSeriesFontSize
             .setLabel('Size')
-            .setValue(fontSize);
-
-        this.addDestroyableEventListener(this.inputSeriesFontSize.getInputElement(), 'input', () => {
-            const font = fonts[this.selectSeriesFont.selectedIndex];
-            const fontSize = Number.parseInt(this.inputSeriesFontSize.getValue());
-            this.params.setFont(`${fontSize}px ${font}`);
-        });
+            .setValue(fontSize)
+            .onInputChange(newFontSize => {
+                const font = fonts[this.selectSeriesFont.selectedIndex];
+                this.params.setFont(`${newFontSize}px ${font}`);
+            });
 
         this.inputSeriesLabelColor.setValue(this.params.getColor());
         this.inputSeriesLabelColor.addDestroyableEventListener(this.inputSeriesLabelColor, 'valueChange', () => {

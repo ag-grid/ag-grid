@@ -69,14 +69,12 @@ export class ChartAxisPanel extends Component {
         const chart = this.chart as CartesianChart;
         this.inputAxisLineWidth
             .setLabel('Line Width')
-            .setValue(`${chart.xAxis.lineWidth}`);
-
-        this.addDestroyableEventListener(this.inputAxisLineWidth.getInputElement(), 'input', () => {
-            const val = parseInt(this.inputAxisLineWidth.getValue(), 10);
-            chart.xAxis.lineWidth = val;
-            chart.yAxis.lineWidth = val;
-            this.chart.performLayout();
-        });
+            .setValue(`${chart.xAxis.lineWidth}`)
+            .onInputChange(newValue => {
+                chart.xAxis.lineWidth = newValue;
+                chart.yAxis.lineWidth = newValue;
+                chart.performLayout();
+            });
 
         this.inputAxisColor.setValue(`${chart.xAxis.lineColor}`);
         this.inputAxisColor.addDestroyableEventListener(this.inputAxisColor, 'valueChange', () => {
@@ -94,34 +92,30 @@ export class ChartAxisPanel extends Component {
 
         this.inputAxisTicksWidth
             .setLabel('Width')
-            .setValue(`${chart.xAxis.lineWidth}`);
-        this.addDestroyableEventListener(this.inputAxisTicksWidth.getInputElement(), 'input', () => {
-            const val = parseInt(this.inputAxisTicksWidth.getValue(), 10);
-            chart.xAxis.tickWidth = val;
-            chart.yAxis.tickWidth = val;
-            chart.performLayout();
-        });
+            .setValue(`${chart.xAxis.lineWidth}`)
+            .onInputChange(newValue => {
+                chart.xAxis.tickWidth = newValue;
+                chart.yAxis.tickWidth = newValue;
+                chart.performLayout();
+            });
 
         this.inputAxisTicksSize
             .setLabel('Size')
-            .setValue(`${chart.xAxis.tickSize}`);
-        this.addDestroyableEventListener(this.inputAxisTicksSize.getInputElement(), 'input', () => {
-            const val = parseInt(this.inputAxisTicksSize.getValue(), 10)
-            chart.xAxis.tickSize = val;
-            chart.yAxis.tickSize = val;
-            chart.performLayout();
-        });
+            .setValue(`${chart.xAxis.tickSize}`)
+            .onInputChange(newValue => {
+                chart.xAxis.tickSize = newValue;
+                chart.yAxis.tickSize = newValue;
+                chart.performLayout();
+            });
 
         this.inputAxisTicksPadding
             .setLabel('Padding')
-            .setValue(`${chart.xAxis.tickPadding}`);
-
-        this.addDestroyableEventListener(this.inputAxisTicksPadding.getInputElement(), 'input', () => {
-            const val = parseInt(this.inputAxisTicksPadding.getValue(), 10);
-            chart.xAxis.tickPadding = val;
-            chart.yAxis.tickPadding = val;
-            chart.performLayout();
-        });
+            .setValue(`${chart.xAxis.tickPadding}`)
+            .onInputChange(newValue => {
+                chart.xAxis.tickPadding = newValue;
+                chart.yAxis.tickPadding = newValue;
+                chart.performLayout();
+            });
 
         this.inputAxisTicksColor.setValue(`${chart.xAxis.lineColor}`);
 
@@ -161,19 +155,19 @@ export class ChartAxisPanel extends Component {
 
         this.inputXAxisLabelRotation
             .setLabel('x-axis')
-            .setValue(`${chart.xAxis.labelRotation}`);
-        this.addDestroyableEventListener(this.inputXAxisLabelRotation.getInputElement(), 'input', () => {
-            chart.xAxis.labelRotation = Number.parseInt(this.inputXAxisLabelRotation.getValue());
-            chart.performLayout();
-        });
+            .setValue(`${chart.xAxis.labelRotation}`)
+            .onInputChange(newValue => {
+                chart.xAxis.labelRotation = newValue;
+                chart.performLayout();
+            });
 
         this.inputYAxisLabelRotation
             .setLabel('y-axis')
-            .setValue(`${chart.yAxis.labelRotation}`);
-        this.addDestroyableEventListener(this.inputYAxisLabelRotation.getInputElement(), 'input', () => {
-            chart.yAxis.labelRotation = Number.parseInt(this.inputYAxisLabelRotation.getValue());
-            chart.performLayout();
-        });
+            .setValue(`${chart.yAxis.labelRotation}`)
+            .onInputChange(newValue => {
+                chart.yAxis.labelRotation = newValue;
+                chart.performLayout();
+            });
     }
 
     private destroyActivePanels(): void {

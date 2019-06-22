@@ -36,6 +36,7 @@ export class ChartLineSeriesPanel extends Component {
 
     private readonly chartController: ChartController;
     private chart: Chart;
+    private series: LineSeries[];
 
     constructor(chartController: ChartController) {
         super();
@@ -48,6 +49,7 @@ export class ChartLineSeriesPanel extends Component {
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
+        this.series = this.chart.series as LineSeries[];
 
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
@@ -69,20 +71,12 @@ export class ChartLineSeriesPanel extends Component {
     }
 
     private initSeriesLineWidth() {
-        this.inputSeriesLineWidth.setLabel('Line Width')
+        this.inputSeriesLineWidth
+            .setLabel('Line Width')
             .setLabelWidth(70)
-            .setWidth(105);
-
-        const lineSeries = this.chart.series as LineSeries[];
-        if (lineSeries.length > 0) {
-            this.inputSeriesLineWidth.setValue(`${lineSeries[0].strokeWidth}`);
-        }
-
-        this.addDestroyableEventListener(this.inputSeriesLineWidth.getInputElement(), 'input', () => {
-            lineSeries.forEach(series => {
-                series.strokeWidth = Number.parseInt(this.inputSeriesLineWidth.getValue());
-            });
-        });
+            .setWidth(105)
+            .setValue(`${this.series[0].strokeWidth}`)
+            .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
     private initMarkers() {
@@ -90,40 +84,25 @@ export class ChartLineSeriesPanel extends Component {
 
         this.cbMarkersEnabled.setLabel('Enabled');
 
-        const lineSeries = this.chart.series as LineSeries[];
-        const enabled = lineSeries.some(series => series.marker);
+        const enabled = this.series.some(s => s.marker);
         this.cbMarkersEnabled.setSelected(enabled);
 
         this.addDestroyableEventListener(this.cbMarkersEnabled, 'change', () => {
-            lineSeries.forEach(series => series.marker = this.cbMarkersEnabled.isSelected());
+            this.series.forEach(s => s.marker = this.cbMarkersEnabled.isSelected());
         });
 
-        this.inputSeriesMarkerSize.setLabel('Size')
+        this.inputSeriesMarkerSize
+            .setLabel('Size')
             .setLabelWidth(80)
-            .setWidth(115);
+            .setWidth(115)
+            .setValue(`${this.series[0].markerSize}`)
+            .onInputChange(newValue => this.series.forEach(s => s.markerSize = newValue));
 
-        if (lineSeries.length > 0) {
-            this.inputSeriesMarkerSize.setValue(`${lineSeries[0].markerSize}`);
-        }
-
-        this.addDestroyableEventListener(this.inputSeriesMarkerSize.getInputElement(), 'input', () => {
-            lineSeries.forEach(series => {
-                series.markerSize = Number.parseInt(this.inputSeriesMarkerSize.getValue());
-            });
-        });
-
-        this.inputSeriesMarkerStrokeWidth.setLabel('Stroke Width')
+        this.inputSeriesMarkerStrokeWidth
+            .setLabel('Stroke Width')
             .setLabelWidth(80)
-            .setWidth(115);
-
-        if (lineSeries.length > 0) {
-            this.inputSeriesMarkerStrokeWidth.setValue(`${lineSeries[0].markerStrokeWidth}`);
-        }
-
-        this.addDestroyableEventListener(this.inputSeriesMarkerStrokeWidth.getInputElement(), 'input', () => {
-            lineSeries.forEach(series => {
-                series.markerStrokeWidth = Number.parseInt(this.inputSeriesMarkerStrokeWidth.getValue());
-            });
-        });
+            .setWidth(115)
+            .setValue(`${this.series[0].markerStrokeWidth}`)
+            .onInputChange(newValue => this.series.forEach(s => s.markerStrokeWidth = newValue));
     }
 }
