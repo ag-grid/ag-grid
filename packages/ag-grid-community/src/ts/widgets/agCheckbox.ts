@@ -47,8 +47,9 @@ export class AgCheckbox extends Component {
         this.updateIcons();
     }
 
-    public setLabel(label: string): void {
+    public setLabel(label: string): AgCheckbox {
         this.eLabel.innerText = label;
+        return this;
     }
 
     private loadIcons(): void {
@@ -117,7 +118,7 @@ export class AgCheckbox extends Component {
         }
     }
 
-    public setSelected(selected: boolean | null): void {
+    public setSelected(selected: boolean | null): AgCheckbox {
         if (this.selected === selected) {
             return;
         }
@@ -137,7 +138,17 @@ export class AgCheckbox extends Component {
             selected: this.selected
         };
         this.dispatchEvent(event);
+
+        return this;
     }
+
+    public onSelectionChange(callbackFn: (newSelection: boolean) => void) {
+        this.addDestroyableEventListener(this, 'change', () => {
+            callbackFn(this.selected);
+        });
+        return this;
+    }
+
 
     private updateIcons(): void {
         _.setVisible(this.eChecked, this.selected === true);

@@ -8,7 +8,6 @@ import {
     RefSelector
 } from "ag-grid-community";
 import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
 import {BarSeries} from "../../../../charts/chart/series/barSeries";
 import {ChartShadowPanel} from "./chartShadowPanel";
 import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
@@ -18,19 +17,17 @@ export class ChartBarSeriesPanel extends Component {
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
+                <ag-checkbox ref="cbTooltipsEnabled"></ag-checkbox>                       
                 <ag-input-text-field ref="inputSeriesStrokeWidth"></ag-input-text-field>
-                <ag-checkbox ref="cbTooltipsEnabled"></ag-checkbox>                          
-                <ag-input-text-field ref="inputSeriesLabelOffset"></ag-input-text-field>
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-    @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: AgInputTextField;
     @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
+    @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: AgInputTextField;
     @RefSelector('inputSeriesLabelOffset') private inputSeriesLabelOffset: AgInputTextField;
 
     private readonly chartController: ChartController;
-    private chart: Chart;
     private activePanels: Component[] = [];
     private series: BarSeries[];
 
@@ -44,8 +41,9 @@ export class ChartBarSeriesPanel extends Component {
         this.setTemplate(ChartBarSeriesPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
-        this.series = this.chart.series as BarSeries[];
+        this.series = chartProxy.getChart().series as BarSeries[];
+
+        this.seriesGroup.setLabel('Series');
 
         this.initSeriesStrokeWidth();
         this.initSeriesTooltips();
@@ -54,24 +52,23 @@ export class ChartBarSeriesPanel extends Component {
     }
 
     private initSeriesStrokeWidth() {
-        this.seriesGroup.setLabel('Series');
-
         this.inputSeriesStrokeWidth
             .setLabel('Stroke Width')
+            .setLabelWidth(80)
+            .setWidth(115)
             .setValue(`${this.series[0].strokeWidth}`)
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
     private initSeriesTooltips() {
-        // TODO update code below when this.chart.showTooltips is available
-        const enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
-        this.cbTooltipsEnabled.setLabel('Tooltips');
-        this.cbTooltipsEnabled.setSelected(enabled);
-        this.addDestroyableEventListener(this.cbTooltipsEnabled, 'change', () => {
-            this.chart.series.forEach(series => {
-                series.tooltipEnabled = this.cbTooltipsEnabled.isSelected();
+        const selected = this.series.some(s => s.tooltipEnabled);
+
+        this.cbTooltipsEnabled
+            .setLabel('Tooltips')
+            .setSelected(selected)
+            .onSelectionChange(newSelection => {
+                this.series.forEach(s => s.tooltipEnabled = newSelection);
             });
-        });
     }
 
     private initLabelPanel() {

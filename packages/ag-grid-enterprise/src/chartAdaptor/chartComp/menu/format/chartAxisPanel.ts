@@ -21,8 +21,10 @@ export class ChartAxisPanel extends Component {
                 </ag-group-component>
 
                 <ag-group-component ref="labelAxisLabelRotation">
-                    <ag-input-text-field ref="inputXAxisLabelRotation"></ag-input-text-field>
-                    <ag-input-text-field ref="inputYAxisLabelRotation"></ag-input-text-field>
+                    <span>
+                        <ag-input-text-field ref="inputXAxisLabelRotation"></ag-input-text-field>
+                        <ag-input-text-field ref="inputYAxisLabelRotation"></ag-input-text-field>                    
+                    </span>
                 </ag-group-component>
                 
             </ag-group-component>            
@@ -154,7 +156,9 @@ export class ChartAxisPanel extends Component {
         this.labelAxisLabelRotation.setLabel('Rotation (degrees)');
 
         this.inputXAxisLabelRotation
-            .setLabel('x-axis')
+            .setLabel('X-Axis')
+            .setLabelWidth(30)
+            .setWidth(65)
             .setValue(`${chart.xAxis.labelRotation}`)
             .onInputChange(newValue => {
                 chart.xAxis.labelRotation = newValue;
@@ -162,7 +166,9 @@ export class ChartAxisPanel extends Component {
             });
 
         this.inputYAxisLabelRotation
-            .setLabel('y-axis')
+            .setLabel('Y-Axis')
+            .setLabelWidth(30)
+            .setWidth(65)
             .setValue(`${chart.yAxis.labelRotation}`)
             .onInputChange(newValue => {
                 chart.yAxis.labelRotation = newValue;

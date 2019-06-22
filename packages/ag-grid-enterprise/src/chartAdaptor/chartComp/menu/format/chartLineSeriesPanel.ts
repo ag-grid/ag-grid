@@ -1,23 +1,14 @@
-import {
-    _,
-    AgCheckbox,
-    AgGroupComponent,
-    AgInputTextField,
-    Component,
-    PostConstruct,
-    RefSelector
-} from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { Chart } from "../../../../charts/chart/chart";
-import { LineSeries } from "../../../../charts/chart/series/lineSeries";
+import {AgCheckbox, AgGroupComponent, AgInputTextField, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {ChartController} from "../../chartController";
+import {LineSeries} from "../../../../charts/chart/series/lineSeries";
 
 export class ChartLineSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-                <ag-input-text-field ref="inputSeriesLineWidth"></ag-input-text-field>
                 <ag-checkbox ref="cbTooltipsEnabled"></ag-checkbox>                  
+                <ag-input-text-field ref="inputSeriesLineWidth"></ag-input-text-field>
                 <ag-group-component ref="seriesMarkersGroup">
                     <ag-checkbox ref="cbMarkersEnabled"></ag-checkbox>
                     <ag-input-text-field ref="inputSeriesMarkerSize"></ag-input-text-field>
@@ -27,15 +18,14 @@ export class ChartLineSeriesPanel extends Component {
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-    @RefSelector('inputSeriesLineWidth') private inputSeriesLineWidth: AgInputTextField;
     @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
+    @RefSelector('inputSeriesLineWidth') private inputSeriesLineWidth: AgInputTextField;
     @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
     @RefSelector('cbMarkersEnabled') private cbMarkersEnabled: AgCheckbox;
     @RefSelector('inputSeriesMarkerSize') private inputSeriesMarkerSize: AgInputTextField;
     @RefSelector('inputSeriesMarkerStrokeWidth') private inputSeriesMarkerStrokeWidth: AgInputTextField;
 
     private readonly chartController: ChartController;
-    private chart: Chart;
     private series: LineSeries[];
 
     constructor(chartController: ChartController) {
@@ -48,8 +38,9 @@ export class ChartLineSeriesPanel extends Component {
         this.setTemplate(ChartLineSeriesPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
-        this.series = this.chart.series as LineSeries[];
+        this.series = chartProxy.getChart().series as LineSeries[];
+
+        this.seriesGroup.setLabel('Series');
 
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
@@ -57,17 +48,14 @@ export class ChartLineSeriesPanel extends Component {
     }
 
     private initSeriesTooltips() {
-        this.seriesGroup.setLabel('Series');
+        const selected = this.series.some(s => s.tooltipEnabled);
 
-        // TODO update code below when this.chart.showTooltips is available
-        const enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
-        this.cbTooltipsEnabled.setLabel('Tooltips');
-        this.cbTooltipsEnabled.setSelected(enabled);
-        this.addDestroyableEventListener(this.cbTooltipsEnabled, 'change', () => {
-            this.chart.series.forEach(series => {
-                series.tooltipEnabled = this.cbTooltipsEnabled.isSelected();
+        this.cbTooltipsEnabled
+            .setLabel('Tooltips')
+            .setSelected(selected)
+            .onSelectionChange(newSelection => {
+                this.series.forEach(s => s.tooltipEnabled = newSelection);
             });
-        });
     }
 
     private initSeriesLineWidth() {

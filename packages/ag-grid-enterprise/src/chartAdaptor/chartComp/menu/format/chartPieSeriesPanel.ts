@@ -8,7 +8,6 @@ import {
     RefSelector
 } from "ag-grid-community";
 import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
 import {PieSeries} from "../../../../charts/chart/series/pieSeries";
 import {ChartShadowPanel} from "./chartShadowPanel";
 import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
@@ -18,8 +17,8 @@ export class ChartPieSeriesPanel extends Component {
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-                <ag-input-text-field ref="inputSeriesStrokeWidth"></ag-input-text-field>
                 <ag-checkbox ref="cbTooltipsEnabled"></ag-checkbox>                               
+                <ag-input-text-field ref="inputSeriesStrokeWidth"></ag-input-text-field>
                 <ag-group-component ref="labelSeriesCallout">
                     <ag-input-text-field ref="inputSeriesCalloutLength"></ag-input-text-field>
                     <ag-input-text-field ref="inputSeriesCalloutStrokeWidth"></ag-input-text-field>
@@ -29,8 +28,8 @@ export class ChartPieSeriesPanel extends Component {
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-    @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: AgInputTextField;
     @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
+    @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: AgInputTextField;
 
     @RefSelector('labelSeriesCallout') private labelSeriesCallout: AgGroupComponent;
     @RefSelector('inputSeriesCalloutLength') private inputSeriesCalloutLength: AgInputTextField;
@@ -38,7 +37,6 @@ export class ChartPieSeriesPanel extends Component {
     @RefSelector('inputSeriesLabelOffset') private inputSeriesLabelOffset: AgInputTextField;
 
     private readonly chartController: ChartController;
-    private chart: Chart;
 
     private activePanels: Component[] = [];
     private series: PieSeries[];
@@ -53,8 +51,9 @@ export class ChartPieSeriesPanel extends Component {
         this.setTemplate(ChartPieSeriesPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
-        this.series = this.chart.series as PieSeries[];
+        this.series = chartProxy.getChart().series as PieSeries[];
+
+        this.seriesGroup.setLabel('Series');
 
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
@@ -70,17 +69,14 @@ export class ChartPieSeriesPanel extends Component {
     }
 
     private initSeriesTooltips() {
-        this.seriesGroup.setLabel('Series');
+        const selected = this.series.some(s => s.tooltipEnabled);
 
-        // TODO update code below when this.chart.showTooltips is available
-        const enabled = _.every(this.chart.series, (series) => series.tooltipEnabled);
-        this.cbTooltipsEnabled.setLabel('Tooltips');
-        this.cbTooltipsEnabled.setSelected(enabled);
-        this.addDestroyableEventListener(this.cbTooltipsEnabled, 'change', () => {
-            this.chart.series.forEach(series => {
-                series.tooltipEnabled = this.cbTooltipsEnabled.isSelected();
+        this.cbTooltipsEnabled
+            .setLabel('Tooltips')
+            .setSelected(selected)
+            .onSelectionChange(newSelection => {
+                this.series.forEach(s => s.tooltipEnabled = newSelection);
             });
-        });
     }
 
     private initSeriesStrokeWidth() {
