@@ -1,8 +1,25 @@
-import { _, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField, AgColorPicker } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { Chart } from "../../../../charts/chart/chart";
-import { PieSeries } from "../../../../charts/chart/series/pieSeries";
-import { BarSeries } from "../../../../charts/chart/series/barSeries";
+import {
+    _,
+    AgCheckbox,
+    AgColorPicker,
+    AgGroupComponent,
+    AgInputTextField,
+    Component,
+    PostConstruct,
+    RefSelector
+} from "ag-grid-community";
+import {ChartController} from "../../chartController";
+import {Chart} from "../../../../charts/chart/chart";
+
+export interface ChartLabelPanelParams {
+    chartController: ChartController;
+    isEnabled?: () => boolean;
+    setEnabled?: (enabled: boolean) => void;
+    getFont: () => string;
+    setFont: (font: string) => void;
+    getColor: () => string;
+    setColor: (color: string) => void;
+}
 
 export class ChartLabelPanel extends Component {
 
@@ -27,26 +44,19 @@ export class ChartLabelPanel extends Component {
     @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: AgInputTextField;
     @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: AgColorPicker;
 
-    private chartController: ChartController;
     private chart: Chart;
-    private series: PieSeries[] | BarSeries[];
+    private params: ChartLabelPanelParams;
 
-    constructor(chartController: ChartController) {
+    constructor(params: ChartLabelPanelParams) {
         super();
-
-        this.chartController = chartController;
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
-
-        this.series = this.chart.series as PieSeries[] | BarSeries[];
+        this.params = params;
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(ChartLabelPanel.TEMPLATE);
 
-        const chartProxy = this.chartController.getChartProxy();
+        const chartProxy = this.params.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
 
         this.initSeriesLabels();
@@ -55,14 +65,20 @@ export class ChartLabelPanel extends Component {
     private initSeriesLabels() {
         this.labelSeriesLabels.setLabel('Labels');
 
-        const enabled = this.series.some((series: BarSeries | PieSeries)  => series.labelEnabled);
-        this.cbSeriesLabelsEnabled.setLabel('Enabled');
-        this.cbSeriesLabelsEnabled.setSelected(enabled);
-        this.addDestroyableEventListener(this.cbSeriesLabelsEnabled, 'change', () => {
-            this.series.forEach((series: BarSeries | PieSeries) => {
-                series.labelEnabled = this.cbSeriesLabelsEnabled.isSelected();
+        // label enabled checkbox is optional, i.e. not included in legend panel
+        if (this.params.isEnabled) {
+            this.cbSeriesLabelsEnabled.setLabel('Enabled');
+            this.cbSeriesLabelsEnabled.setSelected(this.params.isEnabled());
+            this.addDestroyableEventListener(this.cbSeriesLabelsEnabled, 'change', () => {
+                if (this.params.setEnabled) {
+                    this.params.setEnabled(this.cbSeriesLabelsEnabled.isSelected());
+                }
             });
-        });
+        } else {
+            // remove / destroy enabled checkbox
+            _.removeFromParent(this.cbSeriesLabelsEnabled.getGui());
+            this.cbSeriesLabelsEnabled.destroy();
+        }
 
         const fonts = ['Verdana, sans-serif', 'Arial'];
         fonts.forEach((font: any) => {
@@ -72,7 +88,8 @@ export class ChartLabelPanel extends Component {
             this.selectSeriesFont.appendChild(option);
         });
 
-        const fontParts = this.series[0].labelFont.split('px');
+        const completeLabelFont = this.params.getFont();
+        const fontParts = completeLabelFont.split('px');
         const fontSize = fontParts[0];
         const font = fontParts[1].trim();
 
@@ -81,9 +98,7 @@ export class ChartLabelPanel extends Component {
         this.addDestroyableEventListener(this.selectSeriesFont, 'input', () => {
             const font = fonts[this.selectSeriesFont.selectedIndex];
             const fontSize = Number.parseInt(this.inputSeriesFontSize.getValue());
-            this.series.forEach((series: BarSeries | PieSeries) => {
-                series.labelFont = `${fontSize}px ${font}`;
-            });
+            this.params.setFont(`${fontSize}px ${font}`);
         });
 
         const fontWeights = ['normal', 'bold'];
@@ -110,17 +125,12 @@ export class ChartLabelPanel extends Component {
         this.addDestroyableEventListener(this.inputSeriesFontSize.getInputElement(), 'input', () => {
             const font = fonts[this.selectSeriesFont.selectedIndex];
             const fontSize = Number.parseInt(this.inputSeriesFontSize.getValue());
-            this.series.forEach((series: BarSeries | PieSeries) => {
-                series.labelFont = `${fontSize}px ${font}`;
-            });
+            this.params.setFont(`${fontSize}px ${font}`);
         });
 
-        this.inputSeriesLabelColor.setValue(this.series[0].labelColor);
-
+        this.inputSeriesLabelColor.setValue(this.params.getColor());
         this.inputSeriesLabelColor.addDestroyableEventListener(this.inputSeriesLabelColor, 'valueChange', () => {
-            this.series.forEach((series: BarSeries | PieSeries) => {
-                series.labelColor = this.inputSeriesLabelColor.getValue();
-            });
+            this.params.setColor(this.inputSeriesLabelColor.getValue());
         });
     }
 }

@@ -1,9 +1,17 @@
-import { _, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { Chart } from "../../../../charts/chart/chart";
-import { PieSeries } from "../../../../charts/chart/series/pieSeries";
-import { ChartShadowPanel } from "./chartShadowPanel";
-import { ChartLabelPanel } from "./chartLabelPanel";
+import {
+    _,
+    AgCheckbox,
+    AgGroupComponent,
+    AgInputTextField,
+    Component,
+    PostConstruct,
+    RefSelector
+} from "ag-grid-community";
+import {ChartController} from "../../chartController";
+import {Chart} from "../../../../charts/chart/chart";
+import {PieSeries} from "../../../../charts/chart/series/pieSeries";
+import {ChartShadowPanel} from "./chartShadowPanel";
+import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
 
 export class ChartPieSeriesPanel extends Component {
 
@@ -48,12 +56,7 @@ export class ChartPieSeriesPanel extends Component {
 
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
-
-        // init label panel
-        const labelPanelComp = new ChartLabelPanel(this.chartController);
-        this.getContext().wireBean(labelPanelComp);
-        this.seriesGroup.getGui().appendChild(labelPanelComp.getGui());
-        this.activePanels.push(labelPanelComp);
+        this.initLabelPanel();
 
         this.initCalloutOptions();
 
@@ -91,6 +94,32 @@ export class ChartPieSeriesPanel extends Component {
                 series.strokeWidth = Number.parseInt(this.inputSeriesStrokeWidth.getValue());
             });
         });
+    }
+
+    private initLabelPanel() {
+        const pieSeries = this.chart.series as PieSeries[];
+        const params: ChartLabelPanelParams = {
+            chartController: this.chartController,
+            isEnabled: () => {
+                return pieSeries.some(series => series.labelEnabled);
+            },
+            setEnabled: (enabled: boolean) => {
+                pieSeries.forEach(series => series.labelEnabled = enabled);
+            },
+            getFont: () =>  pieSeries.length > 0 ? pieSeries[0].labelFont : '',
+            setFont: (font: string) => {
+                pieSeries.forEach(series => series.labelFont = font);
+            },
+            getColor: () => pieSeries.length > 0 ? pieSeries[0].labelColor : '',
+            setColor: (color: string) => {
+                pieSeries.forEach(series => series.labelColor = color);
+            }
+        };
+
+        const labelPanelComp = new ChartLabelPanel(params);
+        this.getContext().wireBean(labelPanelComp);
+        this.seriesGroup.getGui().appendChild(labelPanelComp.getGui());
+        this.activePanels.push(labelPanelComp);
     }
 
     private initCalloutOptions() {

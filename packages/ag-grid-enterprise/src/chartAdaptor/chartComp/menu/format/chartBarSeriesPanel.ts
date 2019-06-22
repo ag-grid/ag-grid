@@ -1,9 +1,17 @@
-import { _, AgCheckbox, Component, PostConstruct, RefSelector, AgGroupComponent, AgInputTextField } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { Chart } from "../../../../charts/chart/chart";
-import { BarSeries } from "../../../../charts/chart/series/barSeries";
-import { ChartShadowPanel } from "./chartShadowPanel";
-import { ChartLabelPanel } from "./chartLabelPanel";
+import {
+    _,
+    AgCheckbox,
+    AgGroupComponent,
+    AgInputTextField,
+    Component,
+    PostConstruct,
+    RefSelector
+} from "ag-grid-community";
+import {ChartController} from "../../chartController";
+import {Chart} from "../../../../charts/chart/chart";
+import {BarSeries} from "../../../../charts/chart/series/barSeries";
+import {ChartShadowPanel} from "./chartShadowPanel";
+import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
 
 export class ChartBarSeriesPanel extends Component {
 
@@ -39,18 +47,8 @@ export class ChartBarSeriesPanel extends Component {
 
         this.initSeriesStrokeWidth();
         this.initSeriesTooltips();
-
-        // init label panel
-        const labelPanelComp = new ChartLabelPanel(this.chartController);
-        this.getContext().wireBean(labelPanelComp);
-        this.seriesGroup.getGui().appendChild(labelPanelComp.getGui());
-        this.activePanels.push(labelPanelComp);
-
-        // init shadow panel
-        const shadowPanelComp = new ChartShadowPanel(this.chartController);
-        this.getContext().wireBean(shadowPanelComp);
-        this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
-        this.activePanels.push(shadowPanelComp);
+        this.initLabelPanel();
+        this.initShadowPanel();
     }
 
     private initSeriesStrokeWidth() {
@@ -81,6 +79,39 @@ export class ChartBarSeriesPanel extends Component {
                 series.tooltipEnabled = this.cbTooltipsEnabled.isSelected();
             });
         });
+    }
+
+    private initLabelPanel() {
+        const barSeries = this.chart.series as BarSeries[];
+        const params: ChartLabelPanelParams = {
+            chartController: this.chartController,
+            isEnabled: () => {
+                return barSeries.some(series => series.labelEnabled);
+            },
+            setEnabled: (enabled: boolean) => {
+                barSeries.forEach(series => series.labelEnabled = enabled);
+            },
+            getFont: () => barSeries.length > 0 ? barSeries[0].labelFont : '',
+            setFont: (font: string) => {
+                barSeries.forEach(series => series.labelFont = font);
+            },
+            getColor: () => barSeries.length > 0 ? barSeries[0].labelColor : '',
+            setColor: (color: string) => {
+                barSeries.forEach(series => series.labelColor = color);
+            }
+        };
+
+        const labelPanelComp = new ChartLabelPanel(params);
+        this.getContext().wireBean(labelPanelComp);
+        this.seriesGroup.getGui().appendChild(labelPanelComp.getGui());
+        this.activePanels.push(labelPanelComp);
+    }
+
+    private initShadowPanel() {
+        const shadowPanelComp = new ChartShadowPanel(this.chartController);
+        this.getContext().wireBean(shadowPanelComp);
+        this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
+        this.activePanels.push(shadowPanelComp);
     }
 
     private destroyActivePanels(): void {
