@@ -27,12 +27,12 @@ export class ChartLabelPanel extends Component {
         `<div>                               
             <ag-group-component ref="labelSeriesLabels">
                 <ag-checkbox ref="cbSeriesLabelsEnabled"></ag-checkbox>
-                <select ref="selectSeriesFont"></select>
+                <select ref="selectSeriesFont" style="width: 160px"></select>
+                <select ref="selectSeriesFontWeight" ></select>  
                 <div class="ag-group-subgroup">
-                    <select ref="selectSeriesFontWeight" style="width: 82px"></select>
-                    <ag-input-text-field ref="inputSeriesFontSize"></ag-input-text-field>
-                </div>
-                <ag-color-picker ref="inputSeriesLabelColor"></ag-color-picker>
+                    <ag-input-text-field ref="inputSeriesFontSize"></ag-input-text-field> 
+                    <ag-color-picker ref="inputSeriesLabelColor"></ag-color-picker>                                         
+                </div>              
             </ag-group-component>                        
         </div>`;
 
@@ -41,8 +41,8 @@ export class ChartLabelPanel extends Component {
 
     @RefSelector('selectSeriesFont') private selectSeriesFont: HTMLSelectElement;
     @RefSelector('selectSeriesFontWeight') private selectSeriesFontWeight: HTMLSelectElement;
-    @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: AgInputTextField;
     @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: AgColorPicker;
+    @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: AgInputTextField;
 
     private chart: Chart;
     private params: ChartLabelPanelParams;
@@ -127,15 +127,20 @@ export class ChartLabelPanel extends Component {
         this.inputSeriesFontSize
             .setLabel('Size')
             .setValue(fontSize)
+            .setLabelWidth(40)
+            .setWidth(70)
             .onInputChange(newFontSize => {
                 const font = fonts[this.selectSeriesFont.selectedIndex];
                 this.params.setFont(`${newFontSize}px ${font}`);
             });
 
-        this.inputSeriesLabelColor.setValue(this.params.getColor());
-        this.inputSeriesLabelColor.addDestroyableEventListener(this.inputSeriesLabelColor, 'valueChange', () => {
-            this.params.setColor(this.inputSeriesLabelColor.getValue());
-        });
+        this.inputSeriesLabelColor
+            .setLabel("Color")
+            .setLabelWidth(40)
+            .setWidth(70)
+            .setValue(this.params.getColor())
+            .onColorChange(newColor => this.params.setColor(newColor));
+
     }
 
     private destroyActiveComps(): void {

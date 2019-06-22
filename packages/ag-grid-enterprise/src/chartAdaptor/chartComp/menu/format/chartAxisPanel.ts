@@ -7,15 +7,15 @@ export class ChartAxisPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="labelAxis">            
-                <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>
+            <ag-group-component ref="labelAxis">           
                 <ag-color-picker ref="inputAxisColor"></ag-color-picker>
+                <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>
     
                 <ag-group-component ref="labelAxisTicks">
+                    <ag-color-picker ref="inputAxisTicksColor"></ag-color-picker>
                     <ag-input-text-field ref="inputAxisTicksWidth"></ag-input-text-field>
                     <ag-input-text-field ref="inputAxisTicksSize"></ag-input-text-field>
                     <ag-input-text-field ref="inputAxisTicksPadding"></ag-input-text-field>
-                    <ag-color-picker ref="inputAxisTicksColor"></ag-color-picker>
                 </ag-group-component>               
             </ag-group-component>            
         </div>`;
@@ -54,8 +54,19 @@ export class ChartAxisPanel extends Component {
     private initAxis() {
         this.labelAxis.setLabel('Axis');
 
+        this.inputAxisColor
+            .setLabel("Color")
+            .setLabelWidth(85)
+            .setWidth(115)
+            .setValue(`${this.chart.xAxis.lineColor}`)
+            .onColorChange(newColor => {
+                this.chart.xAxis.lineColor = newColor;
+                this.chart.yAxis.lineColor = newColor;
+                this.chart.performLayout();
+            });
+
         this.inputAxisLineWidth
-            .setLabel('Line Width')
+            .setLabel('Thickness')
             .setLabelWidth(80)
             .setWidth(115)
             .setValue(`${this.chart.xAxis.lineWidth}`)
@@ -64,18 +75,21 @@ export class ChartAxisPanel extends Component {
                 this.chart.yAxis.lineWidth = newValue;
                 this.chart.performLayout();
             });
-
-        this.inputAxisColor.setValue(`${this.chart.xAxis.lineColor}`);
-        this.inputAxisColor.addDestroyableEventListener(this.inputAxisColor, 'valueChange', () => {
-            const val = this.inputAxisColor.getValue();
-            this.chart.xAxis.lineColor = val;
-            this.chart.yAxis.lineColor = val;
-            this.chart.performLayout();
-        });
     }
 
     private initAxisTicks() {
         this.labelAxisTicks.setLabel('Ticks');
+
+        this.inputAxisTicksColor
+            .setLabel("Color")
+            .setLabelWidth(85)
+            .setWidth(115)
+            .setValue(`${this.chart.xAxis.lineColor}`)
+            .onColorChange(newColor => {
+                this.chart.xAxis.tickColor = newColor;
+                this.chart.yAxis.tickColor = newColor;
+                this.chart.performLayout();
+            });
 
         type AxisTickProperty = 'tickWidth' | 'tickSize' | 'tickPadding';
 
@@ -99,15 +113,6 @@ export class ChartAxisPanel extends Component {
 
         const initialPadding = `${this.chart.xAxis.tickPadding}`;
         initInput('tickPadding', this.inputAxisTicksPadding, 'Padding', initialPadding);
-
-        this.inputAxisTicksColor.setValue(`${this.chart.xAxis.lineColor}`);
-
-        this.inputAxisTicksColor.addDestroyableEventListener(this.inputAxisTicksColor, 'valueChange', () => {
-            const val = this.inputAxisTicksColor.getValue();
-            this.chart.xAxis.tickColor = val;
-            this.chart.yAxis.tickColor = val;
-            this.chart.performLayout();
-        });
     }
 
     private initAxisLabels() {

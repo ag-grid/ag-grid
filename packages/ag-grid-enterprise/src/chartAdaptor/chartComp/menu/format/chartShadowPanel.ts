@@ -64,7 +64,7 @@ export class ChartShadowPanel extends Component {
         this.cbSeriesShadow.setSelected(enabled);
 
         // Add defaults to chart as shadow is undefined by default
-        if (!this.inputSeriesShadowBlur.getValue()) { this.inputSeriesShadowBlur.setValue('20'); }
+        if (!this.inputSeriesShadowBlur.getValue()) { this.inputSeriesShadowBlur.setValue('10'); }
         if (!this.inputSeriesShadowXOffset.getValue()) { this.inputSeriesShadowXOffset.setValue('10'); }
         if (!this.inputSeriesShadowYOffset.getValue()) { this.inputSeriesShadowYOffset.setValue('10'); }
         if (!this.inputSeriesShadowColor.getValue()) { this.inputSeriesShadowColor.setValue('rgba(0,0,0,0.5)'); }
