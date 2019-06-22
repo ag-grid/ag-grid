@@ -46,6 +46,7 @@ export class ChartLabelPanel extends Component {
 
     private chart: Chart;
     private params: ChartLabelPanelParams;
+    private activeComps: Component[] = [];
 
     constructor(params: ChartLabelPanelParams) {
         super();
@@ -60,6 +61,11 @@ export class ChartLabelPanel extends Component {
         this.chart = chartProxy.getChart();
 
         this.initSeriesLabels();
+    }
+
+    public addCompToPanel(comp: Component) {
+        this.labelSeriesLabels.getGui().appendChild(comp.getGui());
+        this.activeComps.push(comp);
     }
 
     private initSeriesLabels() {
@@ -130,5 +136,17 @@ export class ChartLabelPanel extends Component {
         this.inputSeriesLabelColor.addDestroyableEventListener(this.inputSeriesLabelColor, 'valueChange', () => {
             this.params.setColor(this.inputSeriesLabelColor.getValue());
         });
+    }
+
+    private destroyActiveComps(): void {
+        this.activeComps.forEach(comp => {
+            _.removeFromParent(comp.getGui());
+            comp.destroy();
+        });
+    }
+
+    public destroy(): void {
+        this.destroyActiveComps();
+        super.destroy();
     }
 }

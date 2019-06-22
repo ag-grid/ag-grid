@@ -1,6 +1,5 @@
 import { _, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker } from "ag-grid-community";
 import { ChartController } from "../../chartController";
-import { Chart } from "../../../../charts/chart/chart";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
 
@@ -8,8 +7,7 @@ export class ChartAxisPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="labelAxis">
-            
+            <ag-group-component ref="labelAxis">            
                 <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>
                 <ag-color-picker ref="inputAxisColor"></ag-color-picker>
     
@@ -18,15 +16,7 @@ export class ChartAxisPanel extends Component {
                     <ag-input-text-field ref="inputAxisTicksSize"></ag-input-text-field>
                     <ag-input-text-field ref="inputAxisTicksPadding"></ag-input-text-field>
                     <ag-color-picker ref="inputAxisTicksColor"></ag-color-picker>
-                </ag-group-component>
-
-                <ag-group-component ref="labelAxisLabelRotation">
-                    <span>
-                        <ag-input-text-field ref="inputXAxisLabelRotation"></ag-input-text-field>
-                        <ag-input-text-field ref="inputYAxisLabelRotation"></ag-input-text-field>                    
-                    </span>
-                </ag-group-component>
-                
+                </ag-group-component>               
             </ag-group-component>            
         </div>`;
 
@@ -40,13 +30,9 @@ export class ChartAxisPanel extends Component {
     @RefSelector('inputAxisTicksPadding') private inputAxisTicksPadding: AgInputTextField;
     @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: AgColorPicker;
 
-    @RefSelector('labelAxisLabelRotation') private labelAxisLabelRotation: AgGroupComponent;
-    @RefSelector('inputXAxisLabelRotation') private inputXAxisLabelRotation: AgInputTextField;
-    @RefSelector('inputYAxisLabelRotation') private inputYAxisLabelRotation: AgInputTextField;
-
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
-    private chart: Chart;
+    private chart: CartesianChart;
 
     constructor(chartController: ChartController) {
         super();
@@ -58,7 +44,7 @@ export class ChartAxisPanel extends Component {
         this.setTemplate(ChartAxisPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
+        this.chart = chartProxy.getChart() as CartesianChart;
 
         this.initAxis();
         this.initAxisTicks();
@@ -68,23 +54,22 @@ export class ChartAxisPanel extends Component {
     private initAxis() {
         this.labelAxis.setLabel('Axis');
 
-        const chart = this.chart as CartesianChart;
         this.inputAxisLineWidth
             .setLabel('Line Width')
             .setLabelWidth(80)
             .setWidth(115)
-            .setValue(`${chart.xAxis.lineWidth}`)
+            .setValue(`${this.chart.xAxis.lineWidth}`)
             .onInputChange(newValue => {
-                chart.xAxis.lineWidth = newValue;
-                chart.yAxis.lineWidth = newValue;
-                chart.performLayout();
+                this.chart.xAxis.lineWidth = newValue;
+                this.chart.yAxis.lineWidth = newValue;
+                this.chart.performLayout();
             });
 
-        this.inputAxisColor.setValue(`${chart.xAxis.lineColor}`);
+        this.inputAxisColor.setValue(`${this.chart.xAxis.lineColor}`);
         this.inputAxisColor.addDestroyableEventListener(this.inputAxisColor, 'valueChange', () => {
             const val = this.inputAxisColor.getValue();
-            chart.xAxis.lineColor = val;
-            chart.yAxis.lineColor = val;
+            this.chart.xAxis.lineColor = val;
+            this.chart.yAxis.lineColor = val;
             this.chart.performLayout();
         });
     }
@@ -92,66 +77,47 @@ export class ChartAxisPanel extends Component {
     private initAxisTicks() {
         this.labelAxisTicks.setLabel('Ticks');
 
-        const chart = this.chart as CartesianChart;
+        type AxisTickProperty = 'tickWidth' | 'tickSize' | 'tickPadding';
 
-        this.inputAxisTicksWidth
-            .setLabel('Width')
-            .setLabelWidth(80)
-            .setWidth(115)
-            .setValue(`${chart.xAxis.lineWidth}`)
-            .onInputChange(newValue => {
-                chart.xAxis.tickWidth = newValue;
-                chart.yAxis.tickWidth = newValue;
-                chart.performLayout();
-            });
+        const initInput = (property: AxisTickProperty, input: AgInputTextField, label: string, initialValue: string) => {
+            input.setLabel(label)
+                .setLabelWidth(80)
+                .setWidth(115)
+                .setValue(initialValue)
+                .onInputChange(newValue => {
+                    this.chart.xAxis[property] = newValue;
+                    this.chart.yAxis[property] = newValue;
+                    this.chart.performLayout();
+                });
+        };
 
-        this.inputAxisTicksSize
-            .setLabel('Size')
-            .setLabelWidth(80)
-            .setWidth(115)
-            .setValue(`${chart.xAxis.tickSize}`)
-            .onInputChange(newValue => {
-                chart.xAxis.tickSize = newValue;
-                chart.yAxis.tickSize = newValue;
-                chart.performLayout();
-            });
+        initInput('tickWidth', this.inputAxisTicksWidth, 'Width', `${this.chart.xAxis.tickWidth}`);
+        initInput('tickSize', this.inputAxisTicksSize, 'Length', `${this.chart.xAxis.tickSize}`);
+        initInput('tickPadding', this.inputAxisTicksPadding, 'Padding', `${this.chart.xAxis.tickPadding}`);
 
-        this.inputAxisTicksPadding
-            .setLabel('Padding')
-            .setLabelWidth(80)
-            .setWidth(115)
-            .setValue(`${chart.xAxis.tickPadding}`)
-            .onInputChange(newValue => {
-                chart.xAxis.tickPadding = newValue;
-                chart.yAxis.tickPadding = newValue;
-                chart.performLayout();
-            });
-
-        this.inputAxisTicksColor.setValue(`${chart.xAxis.lineColor}`);
+        this.inputAxisTicksColor.setValue(`${this.chart.xAxis.lineColor}`);
 
         this.inputAxisTicksColor.addDestroyableEventListener(this.inputAxisTicksColor, 'valueChange', () => {
             const val = this.inputAxisTicksColor.getValue();
-            chart.xAxis.tickColor = val;
-            chart.yAxis.tickColor = val;
-            chart.performLayout();
+            this.chart.xAxis.tickColor = val;
+            this.chart.yAxis.tickColor = val;
+            this.chart.performLayout();
         });
     }
 
     private initAxisLabels() {
-        const chart = this.chart as CartesianChart;
-
         const params: ChartLabelPanelParams = {
             chartController: this.chartController,
-            getFont: () => chart.xAxis.labelFont,
+            getFont: () => this.chart.xAxis.labelFont,
             setFont: (font: string) => {
-                chart.xAxis.labelFont = font;
-                chart.yAxis.labelFont = font;
+                this.chart.xAxis.labelFont = font;
+                this.chart.yAxis.labelFont = font;
                 this.chart.performLayout();
             },
-            getColor: () => chart.xAxis.labelColor as string,
+            getColor: () => this.chart.xAxis.labelColor as string,
             setColor: (color: string) => {
-                chart.xAxis.labelColor = color;
-                chart.yAxis.labelColor = color;
+                this.chart.xAxis.labelColor = color;
+                this.chart.yAxis.labelColor = color;
                 this.chart.performLayout();
             }
         };
@@ -161,27 +127,35 @@ export class ChartAxisPanel extends Component {
         this.labelAxis.getGui().appendChild(labelPanelComp.getGui());
         this.activePanels.push(labelPanelComp);
 
-        this.labelAxisLabelRotation.setLabel('Rotation (degrees)');
+        this.addAdditionalLabelComps(labelPanelComp);
+    }
 
-        this.inputXAxisLabelRotation
-            .setLabel('X-Axis')
-            .setLabelWidth(30)
-            .setWidth(65)
-            .setValue(`${chart.xAxis.labelRotation}`)
-            .onInputChange(newValue => {
-                chart.xAxis.labelRotation = newValue;
-                chart.performLayout();
-            });
+    private addAdditionalLabelComps(labelPanelComp: ChartLabelPanel) {
 
-        this.inputYAxisLabelRotation
-            .setLabel('Y-Axis')
-            .setLabelWidth(30)
-            .setWidth(65)
-            .setValue(`${chart.yAxis.labelRotation}`)
-            .onInputChange(newValue => {
-                chart.yAxis.labelRotation = newValue;
-                chart.performLayout();
-            });
+        const createInputComp = (label: string, initialValue: string, updateFunc: (value: number) => void) => {
+            const rotationInput = new AgInputTextField()
+                .setLabel(label)
+                .setLabelWidth(80)
+                .setWidth(115)
+                .setValue(initialValue)
+                .onInputChange(newValue => {
+                    updateFunc(newValue);
+                    this.chart.performLayout();
+                });
+
+            this.getContext().wireBean(rotationInput);
+            labelPanelComp.addCompToPanel(rotationInput);
+        };
+
+        // add x-axis label rotation input to label panel
+        const initialXRotation = `${this.chart.xAxis.labelRotation}`;
+        const updateXRotation = (newValue: number) => this.chart.xAxis.labelRotation = newValue;
+        createInputComp('X Rotation', initialXRotation, updateXRotation);
+
+        // add y-axis label rotation input to label panel
+        const initialYRotation = `${this.chart.yAxis.labelRotation}`;
+        const updateYRotation = (newValue: number) => this.chart.yAxis.labelRotation = newValue;
+        createInputComp('Y Rotation', initialYRotation, updateYRotation);
     }
 
     private destroyActivePanels(): void {

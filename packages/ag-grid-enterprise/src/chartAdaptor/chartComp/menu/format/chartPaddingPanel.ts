@@ -47,10 +47,10 @@ export class ChartPaddingPanel extends Component {
     private initChartPaddingItems() {
         this.labelChartPadding.setLabel('Chart Padding');
 
-        type PaddingProperty = 'top' | 'right' | 'bottom' | 'left';
+        type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
 
-        const initInput = (property: PaddingProperty, field: AgInputTextField, label: string, value: string) => {
-            field.setLabel(label)
+        const initInput = (property: ChartPaddingProperty, input: AgInputTextField, label: string, value: string) => {
+            input.setLabel(label)
                 .setLabelWidth(45)
                 .setWidth(75)
                 .setValue(value)

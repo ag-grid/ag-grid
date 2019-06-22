@@ -114,26 +114,24 @@ export class ChartPieSeriesPanel extends Component {
     private initCalloutOptions() {
         this.labelSeriesCallout.setLabel('Callout');
 
-        this.inputSeriesCalloutLength
-            .setLabel('Length')
-            .setLabelWidth(80)
-            .setWidth(115)
-            .setValue(`${this.series[0].calloutLength}`)
-            .onInputChange(newValue => this.series.forEach(s => s.calloutLength = newValue));
+        type CalloutProperty = 'calloutLength' | 'calloutStrokeWidth' | 'labelOffset';
 
-        this.inputSeriesCalloutStrokeWidth
-            .setLabel('Stroke Width')
-            .setLabelWidth(80)
-            .setWidth(115)
-            .setValue(`${this.series[0].calloutStrokeWidth}`)
-            .onInputChange(newValue => this.series.forEach(s => s.calloutStrokeWidth = newValue));
+        const initInput = (property: CalloutProperty, input: AgInputTextField, label: string, initialValue: string) => {
+            input.setLabel(label)
+                .setLabelWidth(80)
+                .setWidth(115)
+                .setValue(initialValue)
+                .onInputChange(newValue => this.series.forEach(s => s[property] = newValue));
+        };
 
-        this.inputSeriesLabelOffset
-            .setLabel('Padding')
-            .setLabelWidth(80)
-            .setWidth(115)
-            .setValue(`${this.series[0].labelOffset}`)
-            .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
+        const initialLength = `${this.series[0].calloutLength}`;
+        initInput('calloutLength', this.inputSeriesCalloutLength, 'Length', initialLength);
+
+        const initialStrokeWidth = `${this.series[0].calloutStrokeWidth}`;
+        initInput('calloutStrokeWidth', this.inputSeriesCalloutStrokeWidth, 'Stroke Width', initialStrokeWidth);
+
+        const initialOffset = `${this.series[0].labelOffset}`;
+        initInput('labelOffset', this.inputSeriesLabelOffset, 'Offset', initialOffset);
     }
 
     private destroyActivePanels(): void {

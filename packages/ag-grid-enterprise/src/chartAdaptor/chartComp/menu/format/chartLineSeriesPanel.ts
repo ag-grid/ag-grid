@@ -70,27 +70,31 @@ export class ChartLineSeriesPanel extends Component {
     private initMarkers() {
         this.seriesMarkersGroup.setLabel('Markers');
 
-        this.cbMarkersEnabled.setLabel('Enabled');
-
         const enabled = this.series.some(s => s.marker);
-        this.cbMarkersEnabled.setSelected(enabled);
 
-        this.addDestroyableEventListener(this.cbMarkersEnabled, 'change', () => {
-            this.series.forEach(s => s.marker = this.cbMarkersEnabled.isSelected());
-        });
+        this.cbMarkersEnabled
+            .setLabel('Enabled')
+            .setSelected(enabled)
+            .onSelectionChange(newSelection => {
+                this.series.forEach(s => s.marker = newSelection);
+            });
 
-        this.inputSeriesMarkerSize
-            .setLabel('Size')
-            .setLabelWidth(80)
-            .setWidth(115)
-            .setValue(`${this.series[0].markerSize}`)
-            .onInputChange(newValue => this.series.forEach(s => s.markerSize = newValue));
+        type LineMarkerProperty = 'markerSize' | 'markerStrokeWidth';
 
-        this.inputSeriesMarkerStrokeWidth
-            .setLabel('Stroke Width')
-            .setLabelWidth(80)
-            .setWidth(115)
-            .setValue(`${this.series[0].markerStrokeWidth}`)
-            .onInputChange(newValue => this.series.forEach(s => s.markerStrokeWidth = newValue));
+        const initInput = (property: LineMarkerProperty, input: AgInputTextField, label: string, initialValue: string) => {
+            input.setLabel(label)
+                .setLabelWidth(80)
+                .setWidth(115)
+                .setValue(initialValue)
+                .onInputChange(newValue => {
+                    this.series.forEach(s => s[property] = newValue)
+                });
+        };
+
+        const initialSize = `${this.series[0].markerSize}`;
+        initInput('markerSize', this.inputSeriesMarkerSize, 'Size', initialSize);
+
+        const initialStrokeWidth = `${this.series[0].markerStrokeWidth}`;
+        initInput('markerStrokeWidth', this.inputSeriesMarkerStrokeWidth, 'Stroke Width', initialStrokeWidth);
     }
 }
