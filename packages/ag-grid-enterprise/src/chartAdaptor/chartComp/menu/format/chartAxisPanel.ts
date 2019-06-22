@@ -91,9 +91,14 @@ export class ChartAxisPanel extends Component {
                 });
         };
 
-        initInput('tickWidth', this.inputAxisTicksWidth, 'Width', `${this.chart.xAxis.tickWidth}`);
-        initInput('tickSize', this.inputAxisTicksSize, 'Length', `${this.chart.xAxis.tickSize}`);
-        initInput('tickPadding', this.inputAxisTicksPadding, 'Padding', `${this.chart.xAxis.tickPadding}`);
+        const initialWidth = `${this.chart.xAxis.tickWidth}`;
+        initInput('tickWidth', this.inputAxisTicksWidth, 'Width', initialWidth);
+
+        const initialLength = `${this.chart.xAxis.tickSize}`;
+        initInput('tickSize', this.inputAxisTicksSize, 'Length', initialLength);
+
+        const initialPadding = `${this.chart.xAxis.tickPadding}`;
+        initInput('tickPadding', this.inputAxisTicksPadding, 'Padding', initialPadding);
 
         this.inputAxisTicksColor.setValue(`${this.chart.xAxis.lineColor}`);
 
@@ -148,14 +153,12 @@ export class ChartAxisPanel extends Component {
         };
 
         // add x-axis label rotation input to label panel
-        const initialXRotation = `${this.chart.xAxis.labelRotation}`;
         const updateXRotation = (newValue: number) => this.chart.xAxis.labelRotation = newValue;
-        createInputComp('X Rotation', initialXRotation, updateXRotation);
+        createInputComp('X Rotation', `${this.chart.xAxis.labelRotation}`, updateXRotation);
 
         // add y-axis label rotation input to label panel
-        const initialYRotation = `${this.chart.yAxis.labelRotation}`;
         const updateYRotation = (newValue: number) => this.chart.yAxis.labelRotation = newValue;
-        createInputComp('Y Rotation', initialYRotation, updateYRotation);
+        createInputComp('Y Rotation', `${this.chart.yAxis.labelRotation}`, updateYRotation);
     }
 
     private destroyActivePanels(): void {
