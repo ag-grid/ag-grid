@@ -8,23 +8,23 @@ export class ChartPaddingPanel extends Component {
         `<div>
             <ag-group-component ref="chartPaddingGroup">
                 <div class="ag-group-subgroup">
-                    <ag-input-text-field ref="inputPaddingTop"></ag-input-text-field>
-                    <ag-input-text-field ref="inputPaddingRight"></ag-input-text-field>
+                    <ag-input-text-field ref="paddingTopInput"></ag-input-text-field>
+                    <ag-input-text-field ref="paddingRightInput"></ag-input-text-field>
                 </div>
                 
                 <div class="ag-group-subgroup">
-                    <ag-input-text-field ref="inputPaddingBottom"></ag-input-text-field>
-                    <ag-input-text-field ref="inputPaddingLeft"></ag-input-text-field>
+                    <ag-input-text-field ref="paddingBottomInput"></ag-input-text-field>
+                    <ag-input-text-field ref="paddingLeftInput"></ag-input-text-field>
                 </div>   
             </ag-group-component>
         <div>`;
 
     @RefSelector('chartPaddingGroup') private chartPaddingGroup: AgGroupComponent;
 
-    @RefSelector('inputPaddingTop') private inputPaddingTop: AgInputTextField;
-    @RefSelector('inputPaddingRight') private inputPaddingRight: AgInputTextField;
-    @RefSelector('inputPaddingBottom') private inputPaddingBottom: AgInputTextField;
-    @RefSelector('inputPaddingLeft') private inputPaddingLeft: AgInputTextField;
+    @RefSelector('paddingTopInput') private paddingTopInput: AgInputTextField;
+    @RefSelector('paddingRightInput') private paddingRightInput: AgInputTextField;
+    @RefSelector('paddingBottomInput') private paddingBottomInput: AgInputTextField;
+    @RefSelector('paddingLeftInput') private paddingLeftInput: AgInputTextField;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -62,9 +62,9 @@ export class ChartPaddingPanel extends Component {
                 });
         };
 
-        initInput('top', this.inputPaddingTop, 'Top', `${this.chart.padding.top}`);
-        initInput('right', this.inputPaddingRight, 'Right', `${this.chart.padding.right}`);
-        initInput('bottom', this.inputPaddingBottom, 'Bottom', `${this.chart.padding.bottom}`);
-        initInput('left', this.inputPaddingLeft, 'Left', `${this.chart.padding.left}`);
+        initInput('top', this.paddingTopInput, 'Top', `${this.chart.padding.top}`);
+        initInput('right', this.paddingRightInput, 'Right', `${this.chart.padding.right}`);
+        initInput('bottom', this.paddingBottomInput, 'Bottom', `${this.chart.padding.bottom}`);
+        initInput('left', this.paddingLeftInput, 'Left', `${this.chart.padding.left}`);
     }
 }

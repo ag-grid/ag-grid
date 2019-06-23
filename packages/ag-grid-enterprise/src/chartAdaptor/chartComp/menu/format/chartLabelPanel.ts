@@ -26,20 +26,20 @@ export class ChartLabelPanel extends Component {
     public static TEMPLATE =
         `<div>                               
             <ag-group-component ref="labelsGroup">
-                <select ref="selectSeriesFont"></select>
-                <select ref="selectSeriesFontWeight"></select>  
+                <select ref="labelFontSelect"></select>
+                <select ref="labelFontWeightSelect"></select>  
                 <div class="ag-group-subgroup">
-                    <ag-input-text-field ref="inputSeriesFontSize"></ag-input-text-field> 
-                    <ag-color-picker ref="inputSeriesLabelColor"></ag-color-picker>                                         
+                    <ag-input-text-field ref="labelFontSizeInput"></ag-input-text-field> 
+                    <ag-color-picker ref="labelColorPicker"></ag-color-picker>                                         
                 </div>              
             </ag-group-component>                        
         </div>`;
 
     @RefSelector('labelsGroup') private labelsGroup: AgGroupComponent;
-    @RefSelector('selectSeriesFont') private selectSeriesFont: HTMLSelectElement;
-    @RefSelector('selectSeriesFontWeight') private selectSeriesFontWeight: HTMLSelectElement;
-    @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: AgColorPicker;
-    @RefSelector('inputSeriesFontSize') private inputSeriesFontSize: AgInputTextField;
+    @RefSelector('labelFontSelect') private labelFontSelect: HTMLSelectElement;
+    @RefSelector('labelFontWeightSelect') private labelFontWeightSelect: HTMLSelectElement;
+    @RefSelector('labelFontSizeInput') private labelFontSizeInput: AgInputTextField;
+    @RefSelector('labelColorPicker') private labelColorPicker: AgColorPicker;
 
     private chart: Chart;
     private params: ChartLabelPanelParams;
@@ -97,7 +97,7 @@ export class ChartLabelPanel extends Component {
             const option = document.createElement('option');
             option.value = font;
             option.text = font;
-            this.selectSeriesFont.appendChild(option);
+            this.labelFontSelect.appendChild(option);
         });
 
         const completeLabelFont = this.params.getFont();
@@ -105,11 +105,11 @@ export class ChartLabelPanel extends Component {
         const fontSize = fontParts[0];
         const font = fontParts[1].trim();
 
-        this.selectSeriesFont.selectedIndex = fonts.indexOf(font);
+        this.labelFontSelect.selectedIndex = fonts.indexOf(font);
 
-        this.addDestroyableEventListener(this.selectSeriesFont, 'input', () => {
-            const font = fonts[this.selectSeriesFont.selectedIndex];
-            const fontSize = Number.parseInt(this.inputSeriesFontSize.getValue());
+        this.addDestroyableEventListener(this.labelFontSelect, 'input', () => {
+            const font = fonts[this.labelFontSelect.selectedIndex];
+            const fontSize = Number.parseInt(this.labelFontSizeInput.getValue());
             this.params.setFont(`${fontSize}px ${font}`);
         });
 
@@ -118,7 +118,7 @@ export class ChartLabelPanel extends Component {
             const option = document.createElement('option');
             option.value = font;
             option.text = font;
-            this.selectSeriesFontWeight.appendChild(option);
+            this.labelFontWeightSelect.appendChild(option);
         });
 
         // TODO
@@ -130,17 +130,17 @@ export class ChartLabelPanel extends Component {
         //     this.chart.performLayout();
         // });
 
-        this.inputSeriesFontSize
+        this.labelFontSizeInput
             .setLabel('Size')
             .setValue(fontSize)
             .setLabelWidth(40)
             .setWidth(70)
             .onInputChange(newFontSize => {
-                const font = fonts[this.selectSeriesFont.selectedIndex];
+                const font = fonts[this.labelFontSelect.selectedIndex];
                 this.params.setFont(`${newFontSize}px ${font}`);
             });
 
-        this.inputSeriesLabelColor
+        this.labelColorPicker
             .setLabel("Color")
             .setLabelWidth(40)
             .setWidth(70)

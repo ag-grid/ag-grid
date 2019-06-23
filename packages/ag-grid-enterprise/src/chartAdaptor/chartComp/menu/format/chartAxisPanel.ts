@@ -11,15 +11,15 @@ export class ChartAxisPanel extends Component {
             <ag-group-component ref="axisGroup">       
             
                 <!-- TODO Fix styling -->    
-                <ag-color-picker ref="inputAxisColor" style="padding-left: 12px"></ag-color-picker>
-                <ag-input-text-field ref="inputAxisLineWidth" style="padding-left: 12px"></ag-input-text-field> 
+                <ag-color-picker ref="axisColorInput" style="padding-left: 12px"></ag-color-picker>
+                <ag-input-text-field ref="axisLineWidthInput" style="padding-left: 12px"></ag-input-text-field> 
                                                 
             </ag-group-component>            
         </div>`;
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
-    @RefSelector('inputAxisLineWidth') private inputAxisLineWidth: AgInputTextField;
-    @RefSelector('inputAxisColor') private inputAxisColor: AgColorPicker;
+    @RefSelector('axisLineWidthInput') private axisLineWidthInput: AgInputTextField;
+    @RefSelector('axisColorInput') private axisColorInput: AgColorPicker;
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
@@ -47,7 +47,7 @@ export class ChartAxisPanel extends Component {
             .setTitle('Axis')
             .hideEnabledCheckbox(true);
 
-        this.inputAxisColor
+        this.axisColorInput
             .setLabel("Color")
             .setLabelWidth(85)
             .setWidth(115)
@@ -58,7 +58,7 @@ export class ChartAxisPanel extends Component {
                 this.chart.performLayout();
             });
 
-        this.inputAxisLineWidth
+        this.axisLineWidthInput
             .setLabel('Thickness')
             .setLabelWidth(80)
             .setWidth(115)

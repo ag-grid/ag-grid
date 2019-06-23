@@ -9,24 +9,22 @@ export class ChartLineSeriesPanel extends Component {
             <ag-group-component ref="seriesGroup">
             
                 <!-- TODO fix styling -->
-                <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 12px"></ag-checkbox>                  
-                <ag-input-text-field ref="inputSeriesLineWidth" style="padding-left: 12px"></ag-input-text-field>
+                <ag-checkbox ref="seriesTooltipsCheckbox" style="padding-left: 12px"></ag-checkbox>                  
+                <ag-input-text-field ref="seriesLineWidthInput" style="padding-left: 12px"></ag-input-text-field>
                 
                 <ag-group-component ref="seriesMarkersGroup">
-                    <ag-checkbox ref="cbMarkersEnabled"></ag-checkbox>
-                    <ag-input-text-field ref="inputSeriesMarkerSize"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesMarkerStrokeWidth"></ag-input-text-field>
+                    <ag-input-text-field ref="seriesMarkerSizeInput"></ag-input-text-field>
+                    <ag-input-text-field ref="seriesMarkerStrokeWidthInput"></ag-input-text-field>
                 </ag-group-component>  
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-    @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
-    @RefSelector('inputSeriesLineWidth') private inputSeriesLineWidth: AgInputTextField;
+    @RefSelector('seriesTooltipsCheckbox') private seriesTooltipsCheckbox: AgCheckbox;
+    @RefSelector('seriesLineWidthInput') private seriesLineWidthInput: AgInputTextField;
     @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
-    @RefSelector('cbMarkersEnabled') private cbMarkersEnabled: AgCheckbox;
-    @RefSelector('inputSeriesMarkerSize') private inputSeriesMarkerSize: AgInputTextField;
-    @RefSelector('inputSeriesMarkerStrokeWidth') private inputSeriesMarkerStrokeWidth: AgInputTextField;
+    @RefSelector('seriesMarkerSizeInput') private seriesMarkerSizeInput: AgInputTextField;
+    @RefSelector('seriesMarkerStrokeWidthInput') private seriesMarkerStrokeWidthInput: AgInputTextField;
 
     private readonly chartController: ChartController;
     private series: LineSeries[];
@@ -55,7 +53,7 @@ export class ChartLineSeriesPanel extends Component {
     private initSeriesTooltips() {
         const selected = this.series.some(s => s.tooltipEnabled);
 
-        this.cbTooltipsEnabled
+        this.seriesTooltipsCheckbox
             .setLabel('Tooltips')
             .setSelected(selected)
             .onSelectionChange(newSelection => {
@@ -64,7 +62,7 @@ export class ChartLineSeriesPanel extends Component {
     }
 
     private initSeriesLineWidth() {
-        this.inputSeriesLineWidth
+        this.seriesLineWidthInput
             .setLabel('Line Width')
             .setLabelWidth(70)
             .setWidth(105)
@@ -73,15 +71,13 @@ export class ChartLineSeriesPanel extends Component {
     }
 
     private initMarkers() {
-        this.seriesMarkersGroup.setTitle('Markers');
-
         const enabled = this.series.some(s => s.marker);
 
-        this.cbMarkersEnabled
-            .setLabel('Enabled')
-            .setSelected(enabled)
-            .onSelectionChange(newSelection => {
-                this.series.forEach(s => s.marker = newSelection);
+        this.seriesMarkersGroup
+            .setTitle('Markers')
+            .setEnabled(enabled)
+            .onEnableChange(enabled => {
+                this.series.forEach(s => s.marker = enabled);
             });
 
         type LineMarkerProperty = 'markerSize' | 'markerStrokeWidth';
@@ -97,9 +93,9 @@ export class ChartLineSeriesPanel extends Component {
         };
 
         const initialSize = `${this.series[0].markerSize}`;
-        initInput('markerSize', this.inputSeriesMarkerSize, 'Size', initialSize);
+        initInput('markerSize', this.seriesMarkerSizeInput, 'Size', initialSize);
 
         const initialStrokeWidth = `${this.series[0].markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.inputSeriesMarkerStrokeWidth, 'Stroke Width', initialStrokeWidth);
+        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthInput, 'Stroke Width', initialStrokeWidth);
     }
 }

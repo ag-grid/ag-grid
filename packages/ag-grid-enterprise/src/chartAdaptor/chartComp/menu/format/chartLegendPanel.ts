@@ -15,36 +15,36 @@ export class ChartLegendPanel extends Component {
 
     public static TEMPLATE =
         `<div>  
-            <ag-group-component ref="labelLegendGroup">
+            <ag-group-component ref="legendGroup">
                 <!-- TODO Fix styling -->   
                 <div style="padding-left: 12px">
-                    <label ref="labelLegendPosition"></label>
-                    <select ref="selectLegendPosition" style="width: 70px"></select>
+                    <label ref="legendPositionLabel"></label>
+                    <select ref="legendPositionSelect" style="width: 70px"></select>
                 </div>
                 
                 <!-- TODO Fix styling -->   
-                <ag-input-text-field ref="inputLegendPadding" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="inputMarkerSize" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="inputMarkerStroke" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="inputMarkerPadding" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="inputItemPaddingX" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="inputItemPaddingY" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="legendPaddingInput" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="markerSizeInput" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="markerStrokeInput" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="markerPaddingInput" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="itemPaddingXInput" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="itemPaddingYInput" style="padding-left: 12px"></ag-input-text-field>
                 
             </ag-group-component>
         </div>`;
 
-    @RefSelector('labelLegendGroup') private labelLegendGroup: AgGroupComponent;
+    @RefSelector('legendGroup') private legendGroup: AgGroupComponent;
     @RefSelector('cbLegendEnabled') private cbLegendEnabled: AgCheckbox;
 
-    @RefSelector('selectLegendPosition') private selectLegendPosition: HTMLSelectElement;
-    @RefSelector('labelLegendPosition') private labelLegendPosition: HTMLElement;
+    @RefSelector('legendPositionSelect') private legendPositionSelect: HTMLSelectElement;
+    @RefSelector('legendPositionLabel') private legendPositionLabel: HTMLElement;
 
-    @RefSelector('inputLegendPadding') private inputLegendPadding: AgInputTextField;
-    @RefSelector('inputMarkerSize') private inputMarkerSize: AgInputTextField;
-    @RefSelector('inputMarkerStroke') private inputMarkerStroke: AgInputTextField;
-    @RefSelector('inputMarkerPadding') private inputMarkerPadding: AgInputTextField;
-    @RefSelector('inputItemPaddingX') private inputItemPaddingX: AgInputTextField;
-    @RefSelector('inputItemPaddingY') private inputItemPaddingY: AgInputTextField;
+    @RefSelector('legendPaddingInput') private legendPaddingInput: AgInputTextField;
+    @RefSelector('markerSizeInput') private markerSizeInput: AgInputTextField;
+    @RefSelector('markerStrokeInput') private markerStrokeInput: AgInputTextField;
+    @RefSelector('markerPaddingInput') private markerPaddingInput: AgInputTextField;
+    @RefSelector('itemPaddingXInput') private itemPaddingXInput: AgInputTextField;
+    @RefSelector('itemPaddingYInput') private itemPaddingYInput: AgInputTextField;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -70,14 +70,14 @@ export class ChartLegendPanel extends Component {
     }
 
     private initLegendGroup() {
-        this.labelLegendGroup
+        this.legendGroup
             .setTitle('Legend')
             .setEnabled(this.chart.legend.enabled)
             .onEnableChange(enabled => this.chart.legend.enabled = enabled);
     }
 
     private initLegendPosition() {
-        this.labelLegendPosition.innerHTML = 'Position:';
+        this.legendPositionLabel.innerHTML = 'Position:';
 
         const positions: LegendPosition[] = ['top', 'right', 'bottom', 'left'];
 
@@ -85,17 +85,17 @@ export class ChartLegendPanel extends Component {
             const option = document.createElement('option');
             option.value = position;
             option.text = position.charAt(0).toUpperCase() + position.slice(1);
-            this.selectLegendPosition.appendChild(option);
+            this.legendPositionSelect.appendChild(option);
         });
 
-        this.selectLegendPosition.selectedIndex = positions.indexOf(this.chart.legendPosition);
-        this.addDestroyableEventListener(this.selectLegendPosition, 'input', () => {
-            this.chart.legendPosition = positions[this.selectLegendPosition.selectedIndex];
+        this.legendPositionSelect.selectedIndex = positions.indexOf(this.chart.legendPosition);
+        this.addDestroyableEventListener(this.legendPositionSelect, 'input', () => {
+            this.chart.legendPosition = positions[this.legendPositionSelect.selectedIndex];
         });
     }
 
     private initLegendPadding() {
-        this.inputLegendPadding
+        this.legendPaddingInput
             .setLabel('Padding')
             .setLabelWidth(95)
             .setWidth(130)
@@ -115,19 +115,19 @@ export class ChartLegendPanel extends Component {
         };
 
         const initialMarkerSize = `${this.chart.legend.markerSize}`;
-        initInput('markerSize', this.inputMarkerSize, 'Marker Size', initialMarkerSize);
+        initInput('markerSize', this.markerSizeInput, 'Marker Size', initialMarkerSize);
 
         const initialMarkerStroke = `${this.chart.legend.markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.inputMarkerStroke, 'Marker Stroke', initialMarkerStroke);
+        initInput('markerStrokeWidth', this.markerStrokeInput, 'Marker Stroke', initialMarkerStroke);
 
         const initialMarkerPadding = `${this.chart.legend.markerPadding}`;
-        initInput('markerPadding', this.inputMarkerPadding, 'Marker Padding', initialMarkerPadding);
+        initInput('markerPadding', this.markerPaddingInput, 'Marker Padding', initialMarkerPadding);
 
         const initialItemPaddingX = `${this.chart.legend.itemPaddingX}`;
-        initInput('itemPaddingX', this.inputItemPaddingX, 'Item Padding X', initialItemPaddingX);
+        initInput('itemPaddingX', this.itemPaddingXInput, 'Item Padding X', initialItemPaddingX);
 
         const initialItemPaddingY = `${this.chart.legend.itemPaddingY}`;
-        initInput('itemPaddingY', this.inputItemPaddingY, 'Item Padding Y', initialItemPaddingY);
+        initInput('itemPaddingY', this.itemPaddingYInput, 'Item Padding Y', initialItemPaddingY);
     }
 
     private initLabelPanel() {
@@ -149,7 +149,7 @@ export class ChartLegendPanel extends Component {
 
         const labelPanelComp = new ChartLabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
-        this.labelLegendGroup.addItem(labelPanelComp);
+        this.legendGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
     }
 

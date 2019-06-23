@@ -19,25 +19,25 @@ export class ChartPieSeriesPanel extends Component {
             <ag-group-component ref="seriesGroup">
             
                 <!-- TODO fix styling -->
-                <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 12px"></ag-checkbox>                               
-                <ag-input-text-field ref="inputSeriesStrokeWidth" style="padding-left: 12px"></ag-input-text-field>
+                <ag-checkbox ref="seriesTooltipsCheckbox" style="padding-left: 12px"></ag-checkbox>                               
+                <ag-input-text-field ref="seriesStrokeWidthInput" style="padding-left: 12px"></ag-input-text-field>
                 
-                <ag-group-component ref="labelSeriesCallout">
-                    <ag-input-text-field ref="inputSeriesCalloutLength"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesCalloutStrokeWidth"></ag-input-text-field>
-                    <ag-input-text-field ref="inputSeriesLabelOffset"></ag-input-text-field>
+                <ag-group-component ref="seriesCalloutLabel">
+                    <ag-input-text-field ref="seriesCalloutLengthInput"></ag-input-text-field>
+                    <ag-input-text-field ref="seriesCalloutStrokeWidthInput"></ag-input-text-field>
+                    <ag-input-text-field ref="seriesLabelOffsetInput"></ag-input-text-field>
                 </ag-group-component>                              
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-    @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
-    @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: AgInputTextField;
+    @RefSelector('seriesTooltipsCheckbox') private seriesTooltipsCheckbox: AgCheckbox;
+    @RefSelector('seriesStrokeWidthInput') private seriesStrokeWidthInput: AgInputTextField;
 
-    @RefSelector('labelSeriesCallout') private labelSeriesCallout: AgGroupComponent;
-    @RefSelector('inputSeriesCalloutLength') private inputSeriesCalloutLength: AgInputTextField;
-    @RefSelector('inputSeriesCalloutStrokeWidth') private inputSeriesCalloutStrokeWidth: AgInputTextField;
-    @RefSelector('inputSeriesLabelOffset') private inputSeriesLabelOffset: AgInputTextField;
+    @RefSelector('seriesCalloutLabel') private seriesCalloutLabel: AgGroupComponent;
+    @RefSelector('seriesCalloutLengthInput') private seriesCalloutLengthInput: AgInputTextField;
+    @RefSelector('seriesCalloutStrokeWidthInput') private seriesCalloutStrokeWidthInput: AgInputTextField;
+    @RefSelector('seriesLabelOffsetInput') private seriesLabelOffsetInput: AgInputTextField;
 
     private readonly chartController: ChartController;
 
@@ -76,7 +76,7 @@ export class ChartPieSeriesPanel extends Component {
     private initSeriesTooltips() {
         const selected = this.series.some(s => s.tooltipEnabled);
 
-        this.cbTooltipsEnabled
+        this.seriesTooltipsCheckbox
             .setLabel('Tooltips')
             .setSelected(selected)
             .onSelectionChange(newSelection => {
@@ -85,7 +85,7 @@ export class ChartPieSeriesPanel extends Component {
     }
 
     private initSeriesStrokeWidth() {
-        this.inputSeriesStrokeWidth
+        this.seriesStrokeWidthInput
             .setLabel('Stroke Width')
             .setValue(`${this.series[0].strokeWidth}`)
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
@@ -115,7 +115,7 @@ export class ChartPieSeriesPanel extends Component {
     }
 
     private initCalloutOptions() {
-        this.labelSeriesCallout.setTitle('Callout');
+        this.seriesCalloutLabel.setTitle('Callout');
 
         type CalloutProperty = 'calloutLength' | 'calloutStrokeWidth' | 'labelOffset';
 
@@ -128,13 +128,13 @@ export class ChartPieSeriesPanel extends Component {
         };
 
         const initialLength = `${this.series[0].calloutLength}`;
-        initInput('calloutLength', this.inputSeriesCalloutLength, 'Length', initialLength);
+        initInput('calloutLength', this.seriesCalloutLengthInput, 'Length', initialLength);
 
         const initialStrokeWidth = `${this.series[0].calloutStrokeWidth}`;
-        initInput('calloutStrokeWidth', this.inputSeriesCalloutStrokeWidth, 'Stroke Width', initialStrokeWidth);
+        initInput('calloutStrokeWidth', this.seriesCalloutStrokeWidthInput, 'Stroke Width', initialStrokeWidth);
 
         const initialOffset = `${this.series[0].labelOffset}`;
-        initInput('labelOffset', this.inputSeriesLabelOffset, 'Offset', initialOffset);
+        initInput('labelOffset', this.seriesLabelOffsetInput, 'Offset', initialOffset);
     }
 
     private destroyActivePanels(): void {

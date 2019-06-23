@@ -18,15 +18,14 @@ export class ChartBarSeriesPanel extends Component {
         `<div>   
             <ag-group-component ref="seriesGroup">
                 <!-- TODO Fix styling -->   
-                <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 12px"></ag-checkbox>                       
-                <ag-input-text-field ref="inputSeriesStrokeWidth" style="padding-left: 12px"></ag-input-text-field>
+                <ag-checkbox ref="seriesTooltipsCheckbox" style="padding-left: 12px"></ag-checkbox>                       
+                <ag-input-text-field ref="seriesStrokeWidthInput" style="padding-left: 12px"></ag-input-text-field>
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-    @RefSelector('cbTooltipsEnabled') private cbTooltipsEnabled: AgCheckbox;
-    @RefSelector('inputSeriesStrokeWidth') private inputSeriesStrokeWidth: AgInputTextField;
-    @RefSelector('inputSeriesLabelOffset') private inputSeriesLabelOffset: AgInputTextField;
+    @RefSelector('seriesTooltipsCheckbox') private seriesTooltipsCheckbox: AgCheckbox;
+    @RefSelector('seriesStrokeWidthInput') private seriesStrokeWidthInput: AgInputTextField;
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
@@ -55,7 +54,7 @@ export class ChartBarSeriesPanel extends Component {
     }
 
     private initSeriesStrokeWidth() {
-        this.inputSeriesStrokeWidth
+        this.seriesStrokeWidthInput
             .setLabel('Stroke Width')
             .setLabelWidth(80)
             .setWidth(115)
@@ -66,7 +65,7 @@ export class ChartBarSeriesPanel extends Component {
     private initSeriesTooltips() {
         const selected = this.series.some(s => s.tooltipEnabled);
 
-        this.cbTooltipsEnabled
+        this.seriesTooltipsCheckbox
             .setLabel('Tooltips')
             .setSelected(selected)
             .onSelectionChange(newSelection => {

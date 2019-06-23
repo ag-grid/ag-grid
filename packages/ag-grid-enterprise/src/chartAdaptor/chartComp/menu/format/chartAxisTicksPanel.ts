@@ -14,18 +14,18 @@ export class ChartAxisTicksPanel extends Component {
     public static TEMPLATE =
         `<div>         
             <ag-group-component ref="axisTicksGroup">
-                <ag-color-picker ref="inputAxisTicksColor"></ag-color-picker>
-                <ag-input-text-field ref="inputAxisTicksWidth"></ag-input-text-field>
-                <ag-input-text-field ref="inputAxisTicksSize"></ag-input-text-field>
-                <ag-input-text-field ref="inputAxisTicksPadding"></ag-input-text-field>
+                <ag-color-picker ref="axisTicksColorPicker"></ag-color-picker>
+                <ag-input-text-field ref="axisTicksWidthInput"></ag-input-text-field>
+                <ag-input-text-field ref="axisTicksSizeInput"></ag-input-text-field>
+                <ag-input-text-field ref="axisTicksPaddingInput"></ag-input-text-field>
             </ag-group-component>                                    
         </div>`;
 
     @RefSelector('axisTicksGroup') private axisTicksGroup: AgGroupComponent;
-    @RefSelector('inputAxisTicksWidth') private inputAxisTicksWidth: AgInputTextField;
-    @RefSelector('inputAxisTicksSize') private inputAxisTicksSize: AgInputTextField;
-    @RefSelector('inputAxisTicksPadding') private inputAxisTicksPadding: AgInputTextField;
-    @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: AgColorPicker;
+    @RefSelector('axisTicksColorPicker') private axisTicksColorPicker: AgColorPicker;
+    @RefSelector('axisTicksWidthInput') private axisTicksWidthInput: AgInputTextField;
+    @RefSelector('axisTicksSizeInput') private axisTicksSizeInput: AgInputTextField;
+    @RefSelector('axisTicksPaddingInput') private axisTicksPaddingInput: AgInputTextField;
 
     private readonly chartController: ChartController;
     private chart: CartesianChart;
@@ -50,7 +50,7 @@ export class ChartAxisTicksPanel extends Component {
             .setTitle('Ticks')
             .hideEnabledCheckbox(true);
 
-        this.inputAxisTicksColor
+        this.axisTicksColorPicker
             .setLabel("Color")
             .setLabelWidth(85)
             .setWidth(115)
@@ -76,13 +76,13 @@ export class ChartAxisTicksPanel extends Component {
         };
 
         const initialWidth = `${this.chart.xAxis.tickWidth}`;
-        initInput('tickWidth', this.inputAxisTicksWidth, 'Width', initialWidth);
+        initInput('tickWidth', this.axisTicksWidthInput, 'Width', initialWidth);
 
         const initialLength = `${this.chart.xAxis.tickSize}`;
-        initInput('tickSize', this.inputAxisTicksSize, 'Length', initialLength);
+        initInput('tickSize', this.axisTicksSizeInput, 'Length', initialLength);
 
         const initialPadding = `${this.chart.xAxis.tickPadding}`;
-        initInput('tickPadding', this.inputAxisTicksPadding, 'Padding', initialPadding);
+        initInput('tickPadding', this.axisTicksPaddingInput, 'Padding', initialPadding);
     }
 
     public destroy(): void {
