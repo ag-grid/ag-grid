@@ -67,7 +67,7 @@ export class AgInputTextField extends AgLabel {
         return this;
     }
 
-    public setWidth(width: number): AgInputTextField {
+    public setWidth(width: number): this {
         _.setFixedWidth(this.getGui(), width);
         return this;
     }
@@ -76,7 +76,7 @@ export class AgInputTextField extends AgLabel {
         return this.eInput.value;
     }
 
-    public setValue(value: string): AgInputTextField {
+    public setValue(value: string): this {
         if (this.getValue() === value) {
             return this;
         }

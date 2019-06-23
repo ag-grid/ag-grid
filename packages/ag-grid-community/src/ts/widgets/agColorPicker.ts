@@ -72,7 +72,7 @@ export class AgColorPicker extends AgLabel {
         });
     }
 
-    public setWidth(width: number): AgColorPicker {
+    public setWidth(width: number): this {
         _.setFixedWidth(this.getGui(), width);
         return this;
     }
@@ -81,14 +81,14 @@ export class AgColorPicker extends AgLabel {
         return this.color;
     }
 
-    public setValue(color: string): AgColorPicker {
+    public setValue(color: string): this {
         this.color = color;
         this.eButton.style.backgroundColor = color;
         this.dispatchEvent({ type: 'valueChange' });
         return this;
     }
 
-    public onColorChange(callbackFn: (newColor: string) => void): AgColorPicker {
+    public onColorChange(callbackFn: (newColor: string) => void): this {
         this.addDestroyableEventListener(this, 'valueChange', () => {
             callbackFn(this.color);
         });
