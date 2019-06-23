@@ -17,8 +17,9 @@ export class ChartBarSeriesPanel extends Component {
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-                <ag-checkbox ref="cbTooltipsEnabled"></ag-checkbox>                       
-                <ag-input-text-field ref="inputSeriesStrokeWidth"></ag-input-text-field>
+                <!-- TODO Fix styling -->   
+                <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 12px"></ag-checkbox>                       
+                <ag-input-text-field ref="inputSeriesStrokeWidth" style="padding-left: 12px"></ag-input-text-field>
             </ag-group-component>
         </div>`;
 
@@ -76,9 +77,7 @@ export class ChartBarSeriesPanel extends Component {
     private initLabelPanel() {
         const params: ChartLabelPanelParams = {
             chartController: this.chartController,
-            isEnabled: () => {
-                return this.series.some(s => s.labelEnabled);
-            },
+            enabled: this.series.some(s => s.labelEnabled),
             setEnabled: (enabled: boolean) => {
                 this.series.forEach(s => s.labelEnabled = enabled);
             },
@@ -99,14 +98,14 @@ export class ChartBarSeriesPanel extends Component {
         const labelPanelComp = new ChartLabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
-        // this.activePanels.push(labelPanelComp);
+        this.activePanels.push(labelPanelComp);
     }
 
     private initShadowPanel() {
         const shadowPanelComp = new ChartShadowPanel(this.chartController);
         this.getContext().wireBean(shadowPanelComp);
         this.seriesGroup.addItem(shadowPanelComp);
-        // this.activePanels.push(shadowPanelComp);
+        this.activePanels.push(shadowPanelComp);
     }
 
     private destroyActivePanels(): void {

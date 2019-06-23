@@ -8,9 +8,12 @@ export class ChartAxisPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="axisGroup">           
-                <ag-color-picker ref="inputAxisColor"></ag-color-picker>
-                <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>                                 
+            <ag-group-component ref="axisGroup">       
+            
+                <!-- TODO Fix styling -->    
+                <ag-color-picker ref="inputAxisColor" style="padding-left: 12px"></ag-color-picker>
+                <ag-input-text-field ref="inputAxisLineWidth" style="padding-left: 12px"></ag-input-text-field> 
+                                                
             </ag-group-component>            
         </div>`;
 
@@ -78,7 +81,8 @@ export class ChartAxisPanel extends Component {
     private initAxisLabels() {
         const params: ChartLabelPanelParams = {
             chartController: this.chartController,
-            isEnabled: () => false,
+            enabled: true,
+            suppressEnabledCheckbox: true,
             getFont: () => this.chart.xAxis.labelFont,
             setFont: (font: string) => {
                 this.chart.xAxis.labelFont = font;
@@ -106,7 +110,7 @@ export class ChartAxisPanel extends Component {
         const createInputComp = (label: string, initialValue: string, updateFunc: (value: number) => void) => {
             const rotationInput = new AgInputTextField()
                 .setLabel(label)
-                .setLabelWidth(80)
+                .setLabelWidth(85)
                 .setWidth(115)
                 .setValue(initialValue)
                 .onInputChange(newValue => {

@@ -17,8 +17,11 @@ export class ChartPieSeriesPanel extends Component {
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-                <ag-checkbox ref="cbTooltipsEnabled"></ag-checkbox>                               
-                <ag-input-text-field ref="inputSeriesStrokeWidth"></ag-input-text-field>
+            
+                <!-- TODO fix styling -->
+                <ag-checkbox ref="cbTooltipsEnabled" style="padding-left: 12px"></ag-checkbox>                               
+                <ag-input-text-field ref="inputSeriesStrokeWidth" style="padding-left: 12px"></ag-input-text-field>
+                
                 <ag-group-component ref="labelSeriesCallout">
                     <ag-input-text-field ref="inputSeriesCalloutLength"></ag-input-text-field>
                     <ag-input-text-field ref="inputSeriesCalloutStrokeWidth"></ag-input-text-field>
@@ -91,9 +94,7 @@ export class ChartPieSeriesPanel extends Component {
     private initLabelPanel() {
         const params: ChartLabelPanelParams = {
             chartController: this.chartController,
-            isEnabled: () => {
-                return this.series.some(s => s.labelEnabled);
-            },
+            enabled: this.series.some(s => s.labelEnabled),
             setEnabled: (enabled: boolean) => {
                 this.series.forEach(s => s.labelEnabled = enabled);
             },

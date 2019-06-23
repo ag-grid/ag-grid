@@ -96,12 +96,13 @@ export class AgGroupComponent extends Component {
         return this.cbGroupEnabled.isSelected();
     }
 
-    public onEnableChange(callbackFn: (enabled: boolean) => void) {
+    public onEnableChange(callbackFn: (enabled: boolean) => void): this {
         this.cbGroupEnabled.onSelectionChange(callbackFn);
         return this;
     }
 
-    public hideEnabledCheckbox(hide: boolean) {
+    public hideEnabledCheckbox(hide: boolean): this {
         _.addOrRemoveCssClass(this.cbGroupEnabled.getGui(), 'ag-hidden', hide);
+        return this;
     }
 }

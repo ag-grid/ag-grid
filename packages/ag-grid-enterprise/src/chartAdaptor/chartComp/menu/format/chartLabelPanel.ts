@@ -12,7 +12,8 @@ import {Chart} from "../../../../charts/chart/chart";
 
 export interface ChartLabelPanelParams {
     chartController: ChartController;
-    isEnabled: () => boolean;
+    enabled: boolean;
+    suppressEnabledCheckbox?: boolean;
     setEnabled?: (enabled: boolean) => void;
     getFont: () => string;
     setFont: (font: string) => void;
@@ -68,7 +69,8 @@ export class ChartLabelPanel extends Component {
     private initSeriesLabels() {
 
         this.labelsGroup
-            .setEnabled(this.params.isEnabled())
+            .setEnabled(this.params.enabled)
+            .hideEnabledCheckbox(!!this.params.suppressEnabledCheckbox)
             .onEnableChange(enabled => {
                 if (this.params.setEnabled) {
                     this.params.setEnabled(enabled);

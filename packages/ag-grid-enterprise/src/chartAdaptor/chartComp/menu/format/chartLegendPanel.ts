@@ -16,17 +16,20 @@ export class ChartLegendPanel extends Component {
     public static TEMPLATE =
         `<div>  
             <ag-group-component ref="labelLegendGroup">
-                <div>
-                    <label ref="labelLegendPosition" style="margin-right: 5px;"></label>
-                    <select ref="selectLegendPosition" style="width: 80px"></select>
+                <!-- TODO Fix styling -->   
+                <div style="padding-left: 12px">
+                    <label ref="labelLegendPosition"></label>
+                    <select ref="selectLegendPosition" style="width: 70px"></select>
                 </div>
-
-                <ag-input-text-field ref="inputLegendPadding"></ag-input-text-field>
-                <ag-input-text-field ref="inputMarkerSize"></ag-input-text-field>
-                <ag-input-text-field ref="inputMarkerStroke"></ag-input-text-field>
-                <ag-input-text-field ref="inputMarkerPadding"></ag-input-text-field>
-                <ag-input-text-field ref="inputItemPaddingX"></ag-input-text-field>
-                <ag-input-text-field ref="inputItemPaddingY"></ag-input-text-field>
+                
+                <!-- TODO Fix styling -->   
+                <ag-input-text-field ref="inputLegendPadding" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="inputMarkerSize" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="inputMarkerStroke" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="inputMarkerPadding" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="inputItemPaddingX" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="inputItemPaddingY" style="padding-left: 12px"></ag-input-text-field>
+                
             </ag-group-component>
         </div>`;
 
@@ -130,7 +133,8 @@ export class ChartLegendPanel extends Component {
     private initLabelPanel() {
         const params: ChartLabelPanelParams = {
             chartController: this.chartController,
-            isEnabled: () => true,
+            enabled: true,
+            suppressEnabledCheckbox: true,
             getFont: () => this.chart.legend.labelFont,
             setFont: (font: string) => {
                 this.chart.legend.labelFont = font;
