@@ -63,22 +63,18 @@ export class ChartLegendPanel extends Component {
 
         this.labelLegend.setLabel('Legend');
 
-        this.initLegendTooltips();
+        this.initLegendEnabled();
         this.initLegendPosition();
         this.initLegendPadding();
         this.initLegendItems();
         this.initLabelPanel();
     }
 
-    private initLegendTooltips() {
-        const selected = this.chart.series.some(s => s.tooltipEnabled);
-
+    private initLegendEnabled() {
         this.cbLegendEnabled
-            .setLabel('Tooltips')
-            .setSelected(selected)
-            .onSelectionChange(newSelection => {
-                this.chart.series.forEach(s => s.tooltipEnabled = newSelection);
-            });
+            .setLabel('Enabled')
+            .setSelected(this.chart.legend.enabled)
+            .onSelectionChange(newSelection => this.chart.legend.enabled = newSelection);
     }
 
     private initLegendPosition() {
@@ -110,27 +106,29 @@ export class ChartLegendPanel extends Component {
 
     private initLegendItems() {
         type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
-        type LegendConfig = {
-            [key in LegendOptions] : [string, string, AgInputTextField];
-        }
 
-        const configs: LegendConfig = {
-            markerSize: ['Marker Size', `${this.chart.legend.markerSize}`, this.inputMarkerSize],
-            markerStrokeWidth: ['Marker Stroke', `${this.chart.legend.markerStrokeWidth}`, this.inputMarkerStroke],
-            markerPadding: ['Marker Padding', `${this.chart.legend.markerPadding}`, this.inputMarkerPadding],
-            itemPaddingX: ['Item Padding X', `${this.chart.legend.itemPaddingX}`, this.inputItemPaddingX],
-            itemPaddingY: ['Item Padding Y', `${this.chart.legend.itemPaddingX}`, this.inputItemPaddingY]
-        };
-
-        Object.keys(configs).forEach(config => {
-            const [ label, value, field ] = configs[config as LegendOptions];
-
-            field.setLabel(label)
+        const initInput = (property: LegendOptions, input: AgInputTextField, label: string, initialValue: string) => {
+            input.setLabel(label)
                 .setLabelWidth(95)
                 .setWidth(130)
-                .setValue(value)
-                .onInputChange(newValue => this.chart.legend[config as LegendOptions] = newValue);
-        });
+                .setValue(initialValue)
+                .onInputChange(newValue => this.chart.legend[property] = newValue)
+        };
+
+        const initialMarkerSize = `${this.chart.legend.markerSize}`;
+        initInput('markerSize', this.inputMarkerSize, 'Marker Size', initialMarkerSize);
+
+        const initialMarkerStroke = `${this.chart.legend.markerStrokeWidth}`;
+        initInput('markerStrokeWidth', this.inputMarkerStroke, 'Marker Stroke', initialMarkerStroke);
+
+        const initialMarkerPadding = `${this.chart.legend.markerPadding}`;
+        initInput('markerPadding', this.inputMarkerPadding, 'Marker Padding', initialMarkerPadding);
+
+        const initialItemPaddingX = `${this.chart.legend.itemPaddingX}`;
+        initInput('itemPaddingX', this.inputItemPaddingX, 'Item Padding X', initialItemPaddingX);
+
+        const initialItemPaddingY = `${this.chart.legend.itemPaddingY}`;
+        initInput('itemPaddingY', this.inputItemPaddingY, 'Item Padding Y', initialItemPaddingY);
     }
 
     private initLabelPanel() {
