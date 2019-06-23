@@ -1,17 +1,14 @@
-import { Component } from "./component";
+import { AgLabel, IAgLabel } from "./agLabel";
 import { PostConstruct } from "../context/context";
 import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
 
-interface ITextField {
-    label?: string;
-    labelWidth?: number;
-    labelSeparator?: string;
+interface ITextField extends IAgLabel {
     width?:number;
     value?: string;
 }
 
-export class AgInputTextField extends Component {
+export class AgInputTextField extends AgLabel {
     private static TEMPLATE =
         `<div class="ag-textfield">
             <label ref="eLabel"></label>
@@ -20,11 +17,9 @@ export class AgInputTextField extends Component {
             </div>
         </div>`;
 
-    @RefSelector('eLabel') private eLabel: HTMLElement;
+    @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eInput') private eInput: HTMLInputElement;
 
-    private label: string;
-    private labelSeparator: string = ':';
     private config: ITextField = {};
 
     constructor(config?: ITextField) {
@@ -72,46 +67,9 @@ export class AgInputTextField extends Component {
         return this;
     }
 
-    public setLabelSeparator(labelSeparator: string): AgInputTextField {
-        if (this.labelSeparator === labelSeparator) {
-            return this;
-        }
-
-        this.labelSeparator = labelSeparator;
-
-        if (this.label != null) {
-            this.refreshLabel();
-        }
-
-        return this;
-    }
-
-    public setLabel(label: string): AgInputTextField {
-        if (this.label === label) {
-            return this;
-        }
-
-        this.label = label;
-
-        this.refreshLabel();
-
-        return this;
-    }
-
-    public setLabelWidth(width: number): AgInputTextField {
-        if (this.label != null) {
-            _.setFixedWidth(this.eLabel, width);
-        }
-        return this;
-    }
-
     public setWidth(width: number): AgInputTextField {
         _.setFixedWidth(this.getGui(), width);
         return this;
-    }
-
-    private refreshLabel() {
-        this.eLabel.innerText = this.label + this.labelSeparator;
     }
 
     public getValue(): string {

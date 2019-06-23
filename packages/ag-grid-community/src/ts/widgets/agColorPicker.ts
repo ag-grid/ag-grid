@@ -1,36 +1,31 @@
-import {Component} from "./component";
-import {PostConstruct} from "../context/context";
-import {RefSelector} from "./componentAnnotations";
-import {_} from "../utils";
-import {AgDialog} from "./agDialog";
-import {AgColorPanel} from "./agColorPanel";
+import { AgColorPanel } from "./agColorPanel";
+import { AgDialog } from "./agDialog";
+import { AgLabel, IAgLabel } from "./agLabel";
+import { PostConstruct } from "../context/context";
+import { RefSelector } from "./componentAnnotations";
+import { _ } from "../utils";
 
 type ColorMode = 'hex' | 'hsl' | 'rgba';
 
-interface ColorPickerConfig {
+interface ColorPickerConfig extends IAgLabel{
     hideTextField?: boolean;
     color: string;
     mode: ColorMode;
 }
 
-export class AgColorPicker extends Component {
+export class AgColorPicker extends AgLabel {
     private static TEMPLATE =
         `<div class="ag-color-picker">
-             <div style="display: flex"> <!-- TODO -->
-                <label ref="eLabel"></label>
-                <div class="ag-color-button" ref="eButton"></div>
-            </div>
+            <label ref="eLabel"></label>
+            <div class="ag-color-button" ref="eButton"></div>
         </div>`;
 
-    @RefSelector('eLabel') private eLabel: HTMLElement;
+    @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eButton') private eButton: HTMLElement;
 
     private hideTextField: boolean = true;
     private mode: ColorMode = 'hex';
     private color: string;
-
-    private label: string;
-    private labelSeparator: string = ':';
 
     constructor(config?: ColorPickerConfig) {
         super(AgColorPicker.TEMPLATE);
@@ -87,39 +82,6 @@ export class AgColorPicker extends Component {
         });
     }
 
-    public setLabelSeparator(labelSeparator: string): AgColorPicker {
-        if (this.labelSeparator === labelSeparator) {
-            return this;
-        }
-
-        this.labelSeparator = labelSeparator;
-
-        if (this.label != null) {
-            this.refreshLabel();
-        }
-
-        return this;
-    }
-
-    public setLabel(label: string): AgColorPicker {
-        if (this.label === label) {
-            return this;
-        }
-
-        this.label = label;
-
-        this.refreshLabel();
-
-        return this;
-    }
-
-    public setLabelWidth(width: number): AgColorPicker {
-        if (this.label != null) {
-            _.setFixedWidth(this.eLabel, width);
-        }
-        return this;
-    }
-
     public setWidth(width: number): AgColorPicker {
         _.setFixedWidth(this.getGui(), width);
         return this;
@@ -135,10 +97,6 @@ export class AgColorPicker extends Component {
         // this.eInput.setValue(this.color);
         this.dispatchEvent({type: 'valueChange'});
         return this;
-    }
-
-    private refreshLabel() {
-        this.eLabel.innerText = this.label + this.labelSeparator;
     }
 
     public onColorChange(callbackFn: (newColor: string) => void): AgColorPicker {
