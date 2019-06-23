@@ -330,11 +330,11 @@
         "url": "javascript-grid-filtering/",
         "items": [
           {
-            "title": "Provided Filters",
+            "title": "Provided Column Filters",
             "url": "javascript-grid-filter-provided/",
             "items": [
               {
-                "title": "Simple Filters",
+                "title": "Simple Column Filters",
                 "url": "javascript-grid-filter-provided-simple/",
                 "items": [
                   {
@@ -383,26 +383,44 @@
     ]
   },
   {
-    "title": "Rendering Cell Data",
+    "title": "Rendering Cells",
     "items": [
+      {
+        "title": "Overview",
+        "url": "javascript-grid-rendering-overview/"
+      },
       {
         "title": "Rendering Flow (and Saving Flow)",
         "url": "javascript-grid-value-handlers/"
       },
       {
-        "title": "Rich Cell Content - Cell Rendering",
+        "title": "Cell Rendering",
         "url": "javascript-grid-cell-rendering/"
       },
       {
-        "title": "Getters & Formatters",
+        "title": "Provided Renderers",
+        "url": "javascript-grid-provided-renderers",
+        "items": [
+          {
+            "title": "Group Cell Renderer",
+            "url": "javascript-grid-provided-renderer-group"
+          },
+          {
+            "title": "Show Change Cell Renderers",
+            "url": "javascript-grid-provided-renderer-change"
+          }
+        ]
+      },
+      {
+        "title": "Getters & Formatters (should be split)",
         "url": "javascript-grid-value-getters/"
       },
       {
-        "title": "Expressions",
+        "title": "Expressions (merge into where expressions are used)",
         "url": "javascript-grid-cell-expressions/"
       },
       {
-        "title": "Value Cache",
+        "title": "Value Cache (merge into value getters)",
         "url": "javascript-grid-value-cache/"
       },
       {
@@ -416,33 +434,37 @@
       {
         "title": "Change Detection",
         "url": "javascript-grid-change-detection/"
-      },
-      {
-        "title": "Provided Renderers",
-        "url": ""
       }
     ]
   },
   {
-    "title": "Editing Cell Data",
+    "title": "Editing Cells",
     "items": [
       {
         "title": "Overview",
+        "url": "javascript-grid-cell-editing-overview/"
+      },
+      {
+        "title": "Cell Editing",
         "url": "javascript-grid-cell-editing/"
       },
       {
-        "title": "Setters & Parsers",
+        "title": "Setters & Parsers (split)",
         "url": "javascript-grid-value-setters/"
       },
       {
         "title": "Provided Editors",
-        "url": ""
+        "url": "javascript-grid-provided-cell-editors/"
       }
     ]
   },
   {
-    "title": "Grouping & Pivoting",
+    "title": "Group & Pivot",
     "items": [
+      {
+        "title": "Overview",
+        "url": "javascript-grid-grouping-overview/"
+      },
       {
         "title": "Row Grouping",
         "url": "javascript-grid-grouping/",
@@ -474,6 +496,10 @@
     "title": "Import & Export",
     "items": [
       {
+        "title": "Overview",
+        "url": "javascript-grid-import-export-overview/"
+      },
+      {
         "title": "CSV Export",
         "url": "javascript-grid-export/"
       },
@@ -500,8 +526,12 @@
     ]
   },
   {
-    "title": "Grid Accessories",
+    "title": "Accessories",
     "items": [
+      {
+        "title": "Overview",
+        "url": "javascript-grid-accessories-overview/"
+      },
       {
         "title": "Tool Panels",
         "url": "javascript-grid-tool-panel/",
@@ -538,10 +568,6 @@
         "title": "Status Bar",
         "url": "javascript-grid-status-bar/",
         "enterprise": true
-      },
-      {
-        "title": "Tooltips",
-        "url": ""
       },
       {
         "title": "Overlays",
@@ -610,11 +636,15 @@
     "title": "Interactivity",
     "items": [
       {
+        "title": "Overview",
+        "url": "javascript-grid-interactivity-overview/"
+      },
+      {
         "title": "Keyboard Navigation",
         "url": "javascript-grid-keyboard-navigation/"
       },
       {
-        "title": "Touch Support",
+        "title": "Touch",
         "url": "javascript-grid-touch/"
       },
       {
@@ -635,6 +665,14 @@
     "title": "Scrolling",
     "items": [
       {
+        "title": "Overview",
+        "url": "javascript-grid-scrolling-overview/"
+      },
+      {
+        "title": "DOM Virtualisation",
+        "url": "javascript-grid-dom-virtualisation"
+      },
+      {
         "title": "Row Pagination",
         "url": "javascript-grid-pagination/"
       },
@@ -645,10 +683,6 @@
       {
         "title": "Scrolling Performance",
         "url": "javascript-grid-performance/"
-      },
-      {
-        "title": "Row & Column Virtualisation",
-        "url": ""
       }
     ]
   },

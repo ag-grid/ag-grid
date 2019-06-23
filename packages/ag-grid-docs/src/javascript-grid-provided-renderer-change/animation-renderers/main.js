@@ -68,5 +68,7 @@ function onUpdateSomeValues() {
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
+    setTimeout(function() {
+        gridOptions.api.sizeColumnsToFit();
+    }, 200);
 });
