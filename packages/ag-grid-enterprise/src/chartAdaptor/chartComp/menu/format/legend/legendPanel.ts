@@ -7,11 +7,11 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart, LegendPosition} from "../../../../charts/chart/chart";
-import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
+import {ChartController} from "../../../chartController";
+import {Chart, LegendPosition} from "../../../../../charts/chart/chart";
+import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
 
-export class ChartLegendPanel extends Component {
+export class LegendPanel extends Component {
 
     public static TEMPLATE =
         `<div>  
@@ -54,7 +54,7 @@ export class ChartLegendPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartLegendPanel.TEMPLATE);
+        this.setTemplate(LegendPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
@@ -144,7 +144,7 @@ export class ChartLegendPanel extends Component {
             }
         };
 
-        const labelPanelComp = new ChartLabelPanel(params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.legendGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);

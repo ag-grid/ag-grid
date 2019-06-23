@@ -6,10 +6,10 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import {ChartController} from "../../../chartController";
+import {CartesianChart} from "../../../../../charts/chart/cartesianChart";
 
-export class ChartAxisTicksPanel extends Component {
+export class AxisTicksPanel extends Component {
 
     public static TEMPLATE =
         `<div>         
@@ -37,7 +37,7 @@ export class ChartAxisTicksPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartAxisTicksPanel.TEMPLATE);
+        this.setTemplate(AxisTicksPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart() as CartesianChart;

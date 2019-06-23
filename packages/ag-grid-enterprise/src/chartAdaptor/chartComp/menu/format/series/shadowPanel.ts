@@ -6,12 +6,12 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import { Chart } from "../../../../charts/chart/chart";
-import { PieSeries } from "../../../../charts/chart/series/pieSeries";
-import { ChartController } from "../../chartController";
-import { BarSeries } from "../../../../charts/chart/series/barSeries";
+import {ChartController} from "../../../chartController";
+import {Chart} from "../../../../../charts/chart/chart";
+import {PieSeries} from "../../../../../charts/chart/series/pieSeries";
+import {BarSeries} from "../../../../../charts/chart/series/barSeries";
 
-export class ChartShadowPanel extends Component {
+export class ShadowPanel extends Component {
 
     public static TEMPLATE =
         `<div>                              
@@ -40,7 +40,7 @@ export class ChartShadowPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartShadowPanel.TEMPLATE);
+        this.setTemplate(ShadowPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();

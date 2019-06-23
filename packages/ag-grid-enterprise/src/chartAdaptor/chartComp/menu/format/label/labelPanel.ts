@@ -7,8 +7,8 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
+import {ChartController} from "../../../chartController";
+import {Chart} from "../../../../../charts/chart/chart";
 
 export interface ChartLabelPanelParams {
     chartController: ChartController;
@@ -21,7 +21,7 @@ export interface ChartLabelPanelParams {
     setColor: (color: string) => void;
 }
 
-export class ChartLabelPanel extends Component {
+export class LabelPanel extends Component {
 
     public static TEMPLATE =
         `<div>
@@ -52,7 +52,7 @@ export class ChartLabelPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartLabelPanel.TEMPLATE);
+        this.setTemplate(LabelPanel.TEMPLATE);
 
         const chartProxy = this.params.chartController.getChartProxy();
         this.chart = chartProxy.getChart();

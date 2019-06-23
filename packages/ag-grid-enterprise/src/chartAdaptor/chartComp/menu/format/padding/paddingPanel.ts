@@ -1,8 +1,8 @@
 import { AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { Chart } from "../../../../charts/chart/chart";
+import { ChartController } from "../../../chartController";
+import { Chart } from "../../../../../charts/chart/chart";
 
-export class ChartPaddingPanel extends Component {
+export class PaddingPanel extends Component {
 
     public static TEMPLATE =
         `<div>
@@ -36,7 +36,7 @@ export class ChartPaddingPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartPaddingPanel.TEMPLATE);
+        this.setTemplate(PaddingPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();

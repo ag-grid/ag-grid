@@ -8,8 +8,8 @@ import {
     AgRadioButton,
     AgCheckbox
 } from "ag-grid-community";
-import { ChartController } from "../chartController";
-import { ColState } from "../chartModel";
+import { ChartController } from "../../chartController";
+import { ColState } from "../../chartModel";
 
 export class ChartDataPanel extends Component {
 

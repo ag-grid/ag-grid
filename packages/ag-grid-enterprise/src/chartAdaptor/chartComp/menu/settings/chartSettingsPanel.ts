@@ -5,8 +5,8 @@ import {
     _
 } from "ag-grid-community";
 import { MiniChartsContainer } from "./miniChartsContainer";
-import { ChartController } from "../chartController";
-import { Palette } from "../../../charts/chart/palettes";
+import { ChartController } from "../../chartController";
+import { Palette } from "../../../../charts/chart/palettes";
 
 export class ChartSettingsPanel extends Component {
 

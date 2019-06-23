@@ -1,8 +1,8 @@
 import {AgCheckbox, AgGroupComponent, AgInputTextField, Component, PostConstruct, RefSelector} from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {LineSeries} from "../../../../charts/chart/series/lineSeries";
+import {ChartController} from "../../../chartController";
+import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
 
-export class ChartLineSeriesPanel extends Component {
+export class LineSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
@@ -34,7 +34,7 @@ export class ChartLineSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartLineSeriesPanel.TEMPLATE);
+        this.setTemplate(LineSeriesPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.series = chartProxy.getChart().series as LineSeries[];

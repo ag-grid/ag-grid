@@ -7,12 +7,12 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {BarSeries} from "../../../../charts/chart/series/barSeries";
-import {ChartShadowPanel} from "./chartShadowPanel";
-import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
+import {ChartController} from "../../../chartController";
+import {BarSeries} from "../../../../../charts/chart/series/barSeries";
+import {ShadowPanel} from "./shadowPanel";
+import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
 
-export class ChartBarSeriesPanel extends Component {
+export class BarSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
@@ -37,7 +37,7 @@ export class ChartBarSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartBarSeriesPanel.TEMPLATE);
+        this.setTemplate(BarSeriesPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.series = chartProxy.getChart().series as BarSeries[];
@@ -93,14 +93,14 @@ export class ChartBarSeriesPanel extends Component {
             }
         };
 
-        const labelPanelComp = new ChartLabelPanel(params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = new ChartShadowPanel(this.chartController);
+        const shadowPanelComp = new ShadowPanel(this.chartController);
         this.getContext().wireBean(shadowPanelComp);
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
