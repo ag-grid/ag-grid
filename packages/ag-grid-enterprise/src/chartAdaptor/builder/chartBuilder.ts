@@ -288,8 +288,8 @@ export class ChartBuilder {
         if (options.labelFont !== undefined) {
             series.labelFont = options.labelFont;
         }
-        if (options.labelPadding !== undefined) {
-            series.labelPadding = options.labelPadding;
+        if (options.labelOffset !== undefined) {
+            series.labelOffset = options.labelOffset;
         }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
@@ -319,8 +319,8 @@ export class ChartBuilder {
         if (options.calloutLength !== undefined) {
             series.calloutLength = options.calloutLength;
         }
-        if (options.calloutPadding !== undefined) {
-            series.calloutPadding = options.calloutPadding;
+        if (options.labelOffset !== undefined) {
+            series.labelOffset = options.labelOffset;
         }
         if (options.labelFont !== undefined) {
             series.labelFont = options.labelFont;

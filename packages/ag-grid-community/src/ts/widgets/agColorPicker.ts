@@ -1,109 +1,97 @@
-import { Component } from "./component";
+import { AgColorPanel } from "./agColorPanel";
+import { AgDialog } from "./agDialog";
+import { AgLabel, IAgLabel } from "./agLabel";
 import { PostConstruct } from "../context/context";
 import { RefSelector } from "./componentAnnotations";
-import { AgInputTextField } from "./agInputTextField";
 import { _ } from "../utils";
-import { AgDialog } from "./agDialog";
-import { AgColorPanel } from "./agColorPanel";
 
 type ColorMode = 'hex' | 'hsl' | 'rgba';
-interface ColorPickerConfig {
+
+interface ColorPickerConfig extends IAgLabel{
     hideTextField?: boolean;
     color: string;
     mode: ColorMode;
-};
+}
 
-export class AgColorPicker extends Component {
+export class AgColorPicker extends AgLabel {
     private static TEMPLATE =
         `<div class="ag-color-picker">
+            <label ref="eLabel"></label>
             <div class="ag-color-button" ref="eButton"></div>
-            <ag-input-text-field ref="eInput"></ag-input-text-field>
         </div>`;
 
-        @RefSelector('eButton') private eButton: HTMLElement;
-        @RefSelector('eInput') private eInput: AgInputTextField;
+    @RefSelector('eLabel') protected eLabel: HTMLElement;
+    @RefSelector('eButton') private eButton: HTMLElement;
 
-        private hideTextField: boolean = false;
-        private mode: ColorMode = 'hex';
-        private color: string;
+    private color: string;
 
-        constructor(config?: ColorPickerConfig) {
-            super(AgColorPicker.TEMPLATE);
+    constructor(config?: ColorPickerConfig) {
+        super(AgColorPicker.TEMPLATE);
 
-            if (config) {
-                if (config.hideTextField) { this.hideTextField = config.hideTextField; }
-                if (config.mode && config.mode !== 'hex') { this.mode = config.mode; }
-                if (config.color) { this.color = config.color; }
+        if (config && config.color) {
+            this.color = config.color;
+        }
+    }
+
+    @PostConstruct
+    private postConstruct() {
+        if (this.color) {
+            this.setValue(this.color);
+        }
+        this.addDestroyableEventListener(this.eButton, 'click', () => {
+            this.showColorPicker();
+        });
+    }
+
+    private showColorPicker() {
+        const eGuiRect = this.getGui().getBoundingClientRect();
+        const colorDialog = new AgDialog({
+            closable: false,
+            modal: true,
+            hideTitleBar: true,
+            width: 200,
+            height: 320,
+            x: eGuiRect.left,
+            y: eGuiRect.top - 320
+        });
+        this.getContext().wireBean(colorDialog);
+
+        const colorPanel = new AgColorPanel({
+            picker: this
+        });
+
+        this.getContext().wireBean(colorPanel);
+
+        colorDialog.setParentComponent(this);
+        colorDialog.setBodyComponent(colorPanel);
+
+        colorDialog.addDestroyFunc(() => {
+            if (colorPanel.isAlive()) {
+                colorPanel.destroy();
             }
-        }
+        });
+    }
 
-        @PostConstruct
-        private postConstruct() {
-            this.setHideTextField(this.hideTextField);
-            if (this.color) {
-                this.setValue(this.color);
-            }
-            this.addDestroyableEventListener(this.eInput.getInputElement(), 'blur', () => {
-                this.setValue(this.eInput.getValue());
-            });
+    public setWidth(width: number): this {
+        _.setFixedWidth(this.getGui(), width);
+        return this;
+    }
 
-            this.addDestroyableEventListener(this.eButton, 'click', () => {
-                this.showColorPicker();
-            });
-        }
+    public getValue(): string {
+        return this.color;
+    }
 
-        private showColorPicker() {
-            const eGuiRect = this.getGui().getBoundingClientRect();
-            const colorDialog = new AgDialog({
-                closable: false,
-                modal: true,
-                hideTitleBar: true,
-                width: 200,
-                height: 320,
-                x: eGuiRect.left,
-                y: eGuiRect.top - 320
-            });
-            this.getContext().wireBean(colorDialog);
+    public setValue(color: string): this {
+        this.color = color;
+        this.eButton.style.backgroundColor = color;
+        this.dispatchEvent({ type: 'valueChange' });
+        return this;
+    }
 
-            const colorPanel = new AgColorPanel({
-                picker: this
-            });
-
-            this.getContext().wireBean(colorPanel);
-
-            colorDialog.setParentComponent(this);
-            colorDialog.setBodyComponent(colorPanel);
-            colorPanel.setValue(this.eInput.getValue());
-
-            colorDialog.addDestroyFunc(() => {
-                if (colorPanel.isAlive()) {
-                    colorPanel.destroy();
-                }
-            });
-        }
-
-        private setHideTextField(hide: boolean) {
-            _.addOrRemoveCssClass(this.eInput.getGui(), 'ag-hidden', hide);
-        }
-
-        public toggleInputVisibility(visible?: boolean) {
-            visible = visible != null ? visible : this.hideTextField;
-
-            this.setHideTextField(!visible);
-        }
-
-        public getInputElement(): HTMLInputElement {
-            return this.eInput.getInputElement();
-        }
-
-        public getValue(): string {
-            return this.color;
-        }
-
-        public setValue(color: string) {
-            this.color = color;
-            this.eButton.style.backgroundColor = color;
-            this.eInput.setValue(this.color);
-            this.dispatchEvent({ type: 'valueChange' });
-        }
+    public onColorChange(callbackFn: (newColor: string) => void): this {
+        this.addDestroyableEventListener(this, 'valueChange', () => {
+            callbackFn(this.color);
+        });
+        return this;
+    }
 }

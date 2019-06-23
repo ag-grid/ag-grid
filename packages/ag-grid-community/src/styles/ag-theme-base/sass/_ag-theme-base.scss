@@ -164,15 +164,14 @@
         vertical-align: middle;
     }
 
-    .ag-radio-button-label, .ag-checkbox-label {
-        cursor: default;
-        &:empty {
-            margin: 0;
+    .ag-checkbox, .ag-radio-button {
+        label {
+            cursor: default;
+            margin-left: $grid-size;
+            &:empty {
+                margin: 0;
+            }
         }
-    }
-
-    .ag-radio-button-label, .ag-checkbox-label {
-        margin-left: $grid-size;
     }
 
     .ag-cell {
@@ -1282,6 +1281,72 @@
         }
     }
 
+    .ag-color-panel {
+        padding: 5px;
+        box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
+        border-radius: 5px;
+       
+        .ag-spectrum-color {
+            background-color: rgb(255, 0, 0);
+            border-radius: 2px;
+        }
+       
+        .ag-spectrum-tools {
+            padding: 10px;
+        }
+       
+        .ag-spectrum-sat {
+            background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
+        }
+       
+        .ag-spectrum-val {
+            background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
+        }
+       
+        .ag-spectrum-dragger {
+            border-radius: 12px;
+            height: 12px;
+            width: 12px;
+            border: 1px solid white;
+            background: black;
+            box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
+        }
+       
+        .ag-spectrum-hue-background {
+            border-radius: 2px;
+        }
+       
+        .ag-spectrum-alpha-background {
+            border-radius: 2px;
+        }
+       
+        .ag-hue-alpha {
+            margin-bottom: 10px;
+            height: 11px;
+            border-radius: 2px;
+        }
+       
+        .ag-spectrum-slider {
+            margin-top: -12px;
+            width: 13px;
+            height: 13px;
+            border-radius: 13px;
+            background-color: rgb(248, 248, 248);
+            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+        }
+       
+        .ag-spectrum-text-value {
+            font-weight: bold;
+            line-height: 20px;
+            color: #333;
+        }
+       
+        .ag-spectrum-text-value:focus {
+            border: 1px solid #0d77e4;
+            padding: 2px;
+        }
+    }
+
     ////////////////////////////////////////
     // Popup
     ////////////////////////////////////////
@@ -1407,9 +1472,11 @@
             text-align: left;
         }
 
-        .ag-radio-button-label, .ag-checkbox-label {
-            margin-right: $grid-size;
-            margin-left: 0;
+        .ag-checkbox, .ag-radio-button {
+            label {
+                margin-right: $grid-size;
+                margin-left: 0;
+            }
         }
 
         .ag-tool-panel-wrapper {

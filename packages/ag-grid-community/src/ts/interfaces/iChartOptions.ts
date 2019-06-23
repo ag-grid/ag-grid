@@ -181,7 +181,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     labelEnabled?: boolean;
     labelFont?: string;
     labelColor?: string;
-    labelPadding?: {x: number, y: number};
+    labelOffset?: number;
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 }
@@ -208,10 +208,10 @@ export interface PieSeriesOptions extends SeriesOptions {
     labelFont?: string;
     labelColor?: string;
     labelMinAngle?: number;
+    labelOffset?: number;
 
     calloutLength?: number;
     calloutStrokeWidth?: number;
-    calloutPadding?: number;
     calloutColors?: string[];
 
     rotation?: number;

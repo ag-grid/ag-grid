@@ -3,7 +3,7 @@ import { ScatterChartOptions, ScatterSeriesOptions } from "ag-grid-community";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { ScatterSeries } from "../../../charts/chart/series/scatterSeries";
-import {ChartModel} from "../chartModel";
+import { ChartModel } from "../chartModel";
 
 export class ScatterChartProxy extends ChartProxy {
     private readonly chartOptions: ScatterChartOptions;

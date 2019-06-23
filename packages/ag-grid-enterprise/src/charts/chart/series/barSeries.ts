@@ -234,18 +234,15 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelColor;
     }
 
-    /**
-     * Vertical and horizontal label padding as an array of two numbers.
-     */
-    private _labelPadding: {x: number, y: number} = {x: 10, y: 10};
-    set labelPadding(value: {x: number, y: number}) {
-        if (this._labelPadding !== value) {
-            this._labelPadding = value;
+    private _labelOffset: number = 10;
+    set labelOffset(value: number) {
+        if (this._labelOffset !== value) {
+            this._labelOffset = value;
             this.update();
         }
     }
-    get labelPadding(): {x: number, y: number} {
-        return this._labelPadding;
+    get labelOffset(): number {
+        return this._labelOffset;
     }
 
     highlightStyle: {
@@ -410,7 +407,7 @@ export class BarSeries extends Series<CartesianChart> {
         const strokeWidth = this.strokeWidth;
         const labelFont = this.labelFont;
         const labelColor = this.labelColor;
-        const labelPadding = this.labelPadding;
+        const labelOffset = this.labelOffset;
         const data = this.data;
         const xData = this.xData;
         const yData = this.yData;
@@ -448,7 +445,7 @@ export class BarSeries extends Series<CartesianChart> {
                         font: labelFont,
                         fill: labelColor,
                         x: barX + barWidth / 2,
-                        y: y + strokeWidth / 2 + labelPadding.x
+                        y: y + strokeWidth / 2 + labelOffset
                     } : undefined
                 });
 
@@ -503,9 +500,6 @@ export class BarSeries extends Series<CartesianChart> {
                     text.y = label.y - 25;
                     text.fill = label.fill;
                     text.visible = true;
-                    // const textBBox = text.getBBox();
-                    //text.visible = datum.height > (textBBox.height + datum.strokeWidth + labelPadding.x * 2)
-                    //    && datum.width > (textBBox.width + datum.strokeWidth + labelPadding.y * 2);
                 } else {
                     text.visible = false;
                 }

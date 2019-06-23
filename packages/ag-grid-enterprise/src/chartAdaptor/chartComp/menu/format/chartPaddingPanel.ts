@@ -1,6 +1,6 @@
-import {AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField} from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
+import { AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField } from "ag-grid-community";
+import { ChartController } from "../../chartController";
+import { Chart } from "../../../../charts/chart/chart";
 
 export class ChartPaddingPanel extends Component {
 
@@ -45,31 +45,24 @@ export class ChartPaddingPanel extends Component {
     }
 
     private initChartPaddingItems() {
-        type PaddingSides = 'top' | 'right' | 'bottom' | 'left';
-        type PaddingConfig = {
-            [key in PaddingSides]: [string, string, AgInputTextField];
-        }
-
-        const config: PaddingConfig = {
-            top: ['Top', `${this.chart.padding.top}`, this.inputPaddingTop],
-            right: ['Right', `${this.chart.padding.right}`, this.inputPaddingRight],
-            bottom: ['Bottom', `${this.chart.padding.bottom}`, this.inputPaddingBottom],
-            left: ['Left', `${this.chart.padding.left}`, this.inputPaddingLeft]
-        };
-
         this.labelChartPadding.setLabel('Chart Padding');
 
-        Object.keys(config).forEach(side => {
-            const [ label, value, field ] = config[side as PaddingSides];
-            field.setLabel(label)
+        type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
+
+        const initInput = (property: ChartPaddingProperty, input: AgInputTextField, label: string, value: string) => {
+            input.setLabel(label)
                 .setLabelWidth(45)
                 .setWidth(75)
-                .setValue(value);
+                .setValue(value)
+                .onInputChange(newValue => {
+                    this.chart.padding[property] = newValue;
+                    this.chart.performLayout();
+                });
+        };
 
-            this.addDestroyableEventListener(field.getInputElement(), 'input', () => {
-                this.chart.padding[side as PaddingSides] = Number.parseInt(field.getValue());
-                this.chart.performLayout();
-            });
-        });
+        initInput('top', this.inputPaddingTop, 'Top', `${this.chart.padding.top}`);
+        initInput('right', this.inputPaddingRight, 'Right', `${this.chart.padding.right}`);
+        initInput('bottom', this.inputPaddingBottom, 'Bottom', `${this.chart.padding.bottom}`);
+        initInput('left', this.inputPaddingLeft, 'Left', `${this.chart.padding.left}`);
     }
 }

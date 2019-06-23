@@ -1,9 +1,9 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
-import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
-import {BarSeries} from "../../../charts/chart/series/barSeries";
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
-import {ChartModel} from "../chartModel";
-import {CartesianChart} from "../../../charts/chart/cartesianChart";
+import { ChartBuilder } from "../../builder/chartBuilder";
+import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
+import { BarSeries } from "../../../charts/chart/series/barSeries";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
+import { ChartModel } from "../chartModel";
+import { CartesianChart } from "../../../charts/chart/cartesianChart";
 
 export class BarChartProxy extends ChartProxy {
     private readonly chartOptions: BarChartOptions;
@@ -104,7 +104,7 @@ export class BarChartProxy extends ChartProxy {
                 labelEnabled: false,
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelPadding: {x: 10, y: 10},
+                labelOffset: 10,
                 tooltipRenderer: undefined,
                 showInLegend: true,
                 shadow: undefined

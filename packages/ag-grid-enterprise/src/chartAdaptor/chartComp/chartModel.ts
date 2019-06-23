@@ -14,7 +14,7 @@ import {
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
 import { RangeController } from "../../rangeController";
 import { Palette } from "../../charts/chart/palettes";
-import {ChartProxy} from "./chartProxies/chartProxy";
+import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ColState {
     column?: Column;

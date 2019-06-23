@@ -1,6 +1,15 @@
-import {_, AgCheckbox, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker} from "ag-grid-community";
+import {
+    _,
+    AgCheckbox,
+    AgGroupComponent,
+    AgInputTextField,
+    Component,
+    PostConstruct,
+    RefSelector
+} from "ag-grid-community";
 import {ChartController} from "../../chartController";
 import {Chart, LegendPosition} from "../../../../charts/chart/chart";
+import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
 
 export class ChartLegendPanel extends Component {
 
@@ -20,18 +29,6 @@ export class ChartLegendPanel extends Component {
                 <ag-input-text-field ref="inputMarkerPadding"></ag-input-text-field>
                 <ag-input-text-field ref="inputItemPaddingX"></ag-input-text-field>
                 <ag-input-text-field ref="inputItemPaddingY"></ag-input-text-field>
-    
-
-                <ag-group-component ref="labelLegendLabels">
-                    <select ref="selectLegendFont"></select>
-                    <div class="ag-group-subgroup">
-                        <select ref="selectLegendFontWeight"></select>
-                        <ag-input-text-field ref="inputLegendFontSize"></ag-input-text-field>
-                    </div>
-                    <ag-color-picker ref="inputLegendLabelColor"></ag-color-picker>
-                </ag-group-component>
-    
-                <!-- LEGEND LABELS -->
             </ag-group-component>
         </div>`;
 
@@ -48,14 +45,9 @@ export class ChartLegendPanel extends Component {
     @RefSelector('inputItemPaddingX') private inputItemPaddingX: AgInputTextField;
     @RefSelector('inputItemPaddingY') private inputItemPaddingY: AgInputTextField;
 
-    @RefSelector('labelLegendLabels') private labelLegendLabels: AgGroupComponent;
-    @RefSelector('selectLegendFont') private selectLegendFont: HTMLSelectElement;
-    @RefSelector('selectLegendFontWeight') private selectLegendFontWeight: HTMLSelectElement;
-    @RefSelector('inputLegendFontSize') private inputLegendFontSize: AgInputTextField;
-    @RefSelector('inputLegendLabelColor') private inputLegendLabelColor: AgColorPicker;
-
     private readonly chartController: ChartController;
     private chart: Chart;
+    private activePanels: Component[] = [];
 
     constructor(chartController: ChartController) {
         super();
@@ -69,21 +61,27 @@ export class ChartLegendPanel extends Component {
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
 
-        this.initLegendItems();
-        this.initLegendLabels();
-    }
-
-    private initLegendItems() {
         this.labelLegend.setLabel('Legend');
 
-        // TODO update code below when this.chart.showLegend is available
-        let enabled = _.every(this.chart.series, (series) => series.showInLegend && series.visible);
-        this.cbLegendEnabled.setSelected(enabled);
-        this.cbLegendEnabled.setLabel('Enabled');
-        this.addDestroyableEventListener(this.cbLegendEnabled, 'change', () => {
-            this.chart.legend.enabled = this.cbLegendEnabled.isSelected();
-        });
+        this.initLegendTooltips();
+        this.initLegendPosition();
+        this.initLegendPadding();
+        this.initLegendItems();
+        this.initLabelPanel();
+    }
 
+    private initLegendTooltips() {
+        const selected = this.chart.series.some(s => s.tooltipEnabled);
+
+        this.cbLegendEnabled
+            .setLabel('Tooltips')
+            .setSelected(selected)
+            .onSelectionChange(newSelection => {
+                this.chart.series.forEach(s => s.tooltipEnabled = newSelection);
+            });
+    }
+
+    private initLegendPosition() {
         this.labelLegendPosition.innerHTML = 'Position:';
 
         const positions: LegendPosition[] = ['top', 'right', 'bottom', 'left'];
@@ -99,17 +97,18 @@ export class ChartLegendPanel extends Component {
         this.addDestroyableEventListener(this.selectLegendPosition, 'input', () => {
             this.chart.legendPosition = positions[this.selectLegendPosition.selectedIndex];
         });
+    }
 
+    private initLegendPadding() {
         this.inputLegendPadding
             .setLabel('Padding')
             .setLabelWidth(95)
             .setWidth(130)
-            .setValue(`${this.chart.legendPadding}`);
+            .setValue(`${this.chart.legendPadding}`)
+            .onInputChange(newValue => this.chart.legendPadding = newValue);
+    }
 
-        this.addDestroyableEventListener(this.inputLegendPadding.getInputElement(), 'input', () => {
-            this.chart.legendPadding = Number.parseInt(this.inputLegendPadding.getValue());
-        });
-
+    private initLegendItems() {
         type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
         type LegendConfig = {
             [key in LegendOptions] : [string, string, AgInputTextField];
@@ -121,7 +120,7 @@ export class ChartLegendPanel extends Component {
             markerPadding: ['Marker Padding', `${this.chart.legend.markerPadding}`, this.inputMarkerPadding],
             itemPaddingX: ['Item Padding X', `${this.chart.legend.itemPaddingX}`, this.inputItemPaddingX],
             itemPaddingY: ['Item Padding Y', `${this.chart.legend.itemPaddingX}`, this.inputItemPaddingY]
-        }
+        };
 
         Object.keys(configs).forEach(config => {
             const [ label, value, field ] = configs[config as LegendOptions];
@@ -129,72 +128,41 @@ export class ChartLegendPanel extends Component {
             field.setLabel(label)
                 .setLabelWidth(95)
                 .setWidth(130)
-                .setValue(value);
-            this.addDestroyableEventListener(field.getInputElement(), 'input', () => {
-                this.chart.legend[config as LegendOptions] = parseInt(field.getValue(), 10);
-            });
+                .setValue(value)
+                .onInputChange(newValue => this.chart.legend[config as LegendOptions] = newValue);
         });
     }
 
-    private initLegendLabels() {
-        this.labelLegendLabels.setLabel('Labels');
+    private initLabelPanel() {
+        const params: ChartLabelPanelParams = {
+            chartController: this.chartController,
+            getFont: () => this.chart.legend.labelFont,
+            setFont: (font: string) => {
+                this.chart.legend.labelFont = font;
+                this.chart.performLayout();
+            },
+            getColor: () => this.chart.legend.labelColor,
+            setColor: (color: string) => {
+                this.chart.legend.labelColor = color;
+                this.chart.performLayout();
+            }
+        };
 
-        const fonts = ['Verdana, sans-serif', 'Arial'];
-        fonts.forEach((font: any) => {
-            const option = document.createElement('option');
-            option.value = font;
-            option.text = font;
-            this.selectLegendFont.appendChild(option);
-        });
+        const labelPanelComp = new ChartLabelPanel(params);
+        this.getContext().wireBean(labelPanelComp);
+        this.labelLegend.getGui().appendChild(labelPanelComp.getGui());
+        this.activePanels.push(labelPanelComp);
+    }
 
-        const fontParts = this.chart.legend.labelFont.split('px');
-        const fontSize = fontParts[0];
-        const font = fontParts[1].trim();
-
-        this.selectLegendFont.selectedIndex = fonts.indexOf(font);
-
-        this.addDestroyableEventListener(this.selectLegendFont, 'input', () => {
-            const fontSize = parseInt(this.inputLegendFontSize.getValue(), 10);
-            const font = fonts[this.selectLegendFont.selectedIndex];
-            this.chart.legend.labelFont = `${fontSize}px ${font}`;
-            this.chart.performLayout();
-        });
-
-        const fontWeights = ['normal', 'bold'];
-        fontWeights.forEach((font: any) => {
-            const option = document.createElement('option');
-            option.value = font;
-            option.text = font;
-            this.selectLegendFontWeight.appendChild(option);
-        });
-
-        // TODO
-        // this.selectLegendFontWeight.selectedIndex = fonts.indexOf(font);
-        // this.addDestroyableEventListener(this.selectLegendFontWeight, 'input', () => {
-        //     const fontSize = Number.parseInt(this.selectLegendFontWeight.value);
-        //     const font = fonts[this.selectLegendFontWeight.selectedIndex];
-        //     this.chart.legend.labelFont = `bold ${fontSize}px ${font}`;
-        //     this.chart.performLayout();
-        // });
-
-
-        this.inputLegendFontSize
-            .setLabel('Size')
-            .setWidth(70)
-            .setValue(fontSize);
-        this.addDestroyableEventListener(this.inputLegendFontSize.getInputElement(), 'input', () => {
-            const fontSize = Number.parseInt(this.inputLegendFontSize.getValue());
-            const font = fonts[this.selectLegendFont.selectedIndex];
-            this.chart.legend.labelFont = `${fontSize}px ${font}`;
-            this.chart.performLayout();
-        });
-
-        // TODO replace with Color Picker
-        this.inputLegendLabelColor.setValue(this.chart.legend.labelColor);
-        this.inputLegendLabelColor.addDestroyableEventListener(this.inputLegendLabelColor, 'valueChange', () => {
-            this.chart.legend.labelColor = this.inputLegendLabelColor.getValue();
-            this.chart.performLayout();
+    private destroyActivePanels(): void {
+        this.activePanels.forEach(panel => {
+            _.removeFromParent(panel.getGui());
+            panel.destroy();
         });
     }
 
+    public destroy(): void {
+        this.destroyActivePanels();
+        super.destroy();
+    }
 }

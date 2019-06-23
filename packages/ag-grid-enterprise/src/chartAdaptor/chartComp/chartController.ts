@@ -2,7 +2,7 @@ import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostCons
 import { RangeController } from "../../rangeController";
 import { ChartModel, ColState } from "./chartModel";
 import { Palette } from "../../charts/chart/palettes";
-import {ChartProxy} from "./chartProxies/chartProxy";
+import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }

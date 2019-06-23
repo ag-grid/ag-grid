@@ -1,39 +1,23 @@
-import {AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker} from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart} from "../../../../charts/chart/chart";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import { _, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker } from "ag-grid-community";
+import { ChartController } from "../../chartController";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
 
 export class ChartAxisPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="labelAxis">
-                <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>
+            <ag-group-component ref="labelAxis">           
                 <ag-color-picker ref="inputAxisColor"></ag-color-picker>
-    
-                <!-- AXIS TICKS -->
+                <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>
     
                 <ag-group-component ref="labelAxisTicks">
+                    <ag-color-picker ref="inputAxisTicksColor"></ag-color-picker>
                     <ag-input-text-field ref="inputAxisTicksWidth"></ag-input-text-field>
                     <ag-input-text-field ref="inputAxisTicksSize"></ag-input-text-field>
                     <ag-input-text-field ref="inputAxisTicksPadding"></ag-input-text-field>
-                    <ag-color-picker ref="inputAxisTicksColor"></ag-color-picker>
-                </ag-group-component>
-    
-                <!-- AXIS LABELS -->
-
-                <ag-group-component ref="labelAxisLabels">
-                    <select ref="selectAxisFont" style="width: 155px"></select>
-                    <div class="ag-group-subgroup">
-                        <select ref="selectAxisFontWeight" style="width: 82px"></select>
-                        <ag-input-text-field ref="inputAxisFontSize"></ag-input-text-field>
-                    </div>
-                    <ag-color-picker ref="inputAxisLabelColor"></ag-color-picker>
-                    <ag-group-component ref="labelAxisLabelRotation">
-                        <ag-input-text-field ref="inputXAxisLabelRotation"></ag-input-text-field>
-                        <ag-input-text-field ref="inputYAxisLabelRotation"></ag-input-text-field>
-                    </ag-group-component>
-                </ag-group-component>              
+                </ag-group-component>               
+            </ag-group-component>            
         </div>`;
 
     @RefSelector('labelAxis') private labelAxis: AgGroupComponent;
@@ -46,17 +30,9 @@ export class ChartAxisPanel extends Component {
     @RefSelector('inputAxisTicksPadding') private inputAxisTicksPadding: AgInputTextField;
     @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: AgColorPicker;
 
-    @RefSelector('labelAxisLabels') private labelAxisLabels: AgGroupComponent;
-    @RefSelector('selectAxisFont') private selectAxisFont: HTMLSelectElement;
-    @RefSelector('selectAxisFontWeight') private selectAxisFontWeight: HTMLSelectElement;
-    @RefSelector('inputAxisFontSize') private inputAxisFontSize: AgInputTextField;
-    @RefSelector('inputAxisLabelColor') private inputAxisLabelColor: AgColorPicker;
-    @RefSelector('labelAxisLabelRotation') private labelAxisLabelRotation: AgGroupComponent;
-    @RefSelector('inputXAxisLabelRotation') private inputXAxisLabelRotation: AgInputTextField;
-    @RefSelector('inputYAxisLabelRotation') private inputYAxisLabelRotation: AgInputTextField;
-
     private readonly chartController: ChartController;
-    private chart: Chart;
+    private activePanels: Component[] = [];
+    private chart: CartesianChart;
 
     constructor(chartController: ChartController) {
         super();
@@ -68,7 +44,7 @@ export class ChartAxisPanel extends Component {
         this.setTemplate(ChartAxisPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
+        this.chart = chartProxy.getChart() as CartesianChart;
 
         this.initAxis();
         this.initAxisTicks();
@@ -78,163 +54,127 @@ export class ChartAxisPanel extends Component {
     private initAxis() {
         this.labelAxis.setLabel('Axis');
 
-        const chart = this.chart as CartesianChart;
+        this.inputAxisColor
+            .setLabel("Color")
+            .setLabelWidth(85)
+            .setWidth(115)
+            .setValue(`${this.chart.xAxis.lineColor}`)
+            .onColorChange(newColor => {
+                this.chart.xAxis.lineColor = newColor;
+                this.chart.yAxis.lineColor = newColor;
+                this.chart.performLayout();
+            });
+
         this.inputAxisLineWidth
-            .setLabel('Line Width')
-            .setValue(`${chart.xAxis.lineWidth}`);
-
-        this.addDestroyableEventListener(this.inputAxisLineWidth.getInputElement(), 'input', () => {
-            const val = parseInt(this.inputAxisLineWidth.getValue(), 10);
-            chart.xAxis.lineWidth = val;
-            chart.yAxis.lineWidth = val;
-            this.chart.performLayout();
-        });
-
-        // TODO replace with Color Picker
-        this.inputAxisColor.setValue(`${chart.xAxis.lineColor}`);
-        this.inputAxisColor.addDestroyableEventListener(this.inputAxisColor, 'valueChange', () => {
-            const val = this.inputAxisColor.getValue();
-            chart.xAxis.lineColor = val;
-            chart.yAxis.lineColor = val;
-            this.chart.performLayout();
-        });
+            .setLabel('Thickness')
+            .setLabelWidth(80)
+            .setWidth(115)
+            .setValue(`${this.chart.xAxis.lineWidth}`)
+            .onInputChange(newValue => {
+                this.chart.xAxis.lineWidth = newValue;
+                this.chart.yAxis.lineWidth = newValue;
+                this.chart.performLayout();
+            });
     }
 
     private initAxisTicks() {
         this.labelAxisTicks.setLabel('Ticks');
 
-        const chart = this.chart as CartesianChart;
+        this.inputAxisTicksColor
+            .setLabel("Color")
+            .setLabelWidth(85)
+            .setWidth(115)
+            .setValue(`${this.chart.xAxis.lineColor}`)
+            .onColorChange(newColor => {
+                this.chart.xAxis.tickColor = newColor;
+                this.chart.yAxis.tickColor = newColor;
+                this.chart.performLayout();
+            });
 
-        this.inputAxisTicksWidth
-            .setLabel('Width')
-            .setValue(`${chart.xAxis.lineWidth}`);
-        this.addDestroyableEventListener(this.inputAxisTicksWidth.getInputElement(), 'input', () => {
-            const val = parseInt(this.inputAxisTicksWidth.getValue(), 10);
-            chart.xAxis.tickWidth = val;
-            chart.yAxis.tickWidth = val;
-            chart.performLayout();
-        });
+        type AxisTickProperty = 'tickWidth' | 'tickSize' | 'tickPadding';
 
-        this.inputAxisTicksSize
-            .setLabel('Size')
-            .setValue(`${chart.xAxis.tickSize}`);
-        this.addDestroyableEventListener(this.inputAxisTicksSize.getInputElement(), 'input', () => {
-            const val = parseInt(this.inputAxisTicksSize.getValue(), 10)
-            chart.xAxis.tickSize = val;
-            chart.yAxis.tickSize = val;
-            chart.performLayout();
-        });
+        const initInput = (property: AxisTickProperty, input: AgInputTextField, label: string, initialValue: string) => {
+            input.setLabel(label)
+                .setLabelWidth(80)
+                .setWidth(115)
+                .setValue(initialValue)
+                .onInputChange(newValue => {
+                    this.chart.xAxis[property] = newValue;
+                    this.chart.yAxis[property] = newValue;
+                    this.chart.performLayout();
+                });
+        };
 
-        this.inputAxisTicksPadding
-            .setLabel('Padding')
-            .setValue(`${chart.xAxis.tickPadding}`);
+        const initialWidth = `${this.chart.xAxis.tickWidth}`;
+        initInput('tickWidth', this.inputAxisTicksWidth, 'Width', initialWidth);
 
-        this.addDestroyableEventListener(this.inputAxisTicksPadding.getInputElement(), 'input', () => {
-            const val = parseInt(this.inputAxisTicksPadding.getValue(), 10);
-            chart.xAxis.tickPadding = val;
-            chart.yAxis.tickPadding = val;
-            chart.performLayout();
-        });
+        const initialLength = `${this.chart.xAxis.tickSize}`;
+        initInput('tickSize', this.inputAxisTicksSize, 'Length', initialLength);
 
-        // TODO replace with Color Picker
-        this.inputAxisTicksColor.setValue(`${chart.xAxis.lineColor}`);
-
-        this.inputAxisTicksColor.addDestroyableEventListener(this.inputAxisTicksColor, 'valueChange', () => {
-            const val = this.inputAxisTicksColor.getValue();
-            chart.xAxis.tickColor = val;
-            chart.yAxis.tickColor = val;
-            chart.performLayout();
-        });
+        const initialPadding = `${this.chart.xAxis.tickPadding}`;
+        initInput('tickPadding', this.inputAxisTicksPadding, 'Padding', initialPadding);
     }
 
     private initAxisLabels() {
-        const chart = this.chart as CartesianChart;
+        const params: ChartLabelPanelParams = {
+            chartController: this.chartController,
+            getFont: () => this.chart.xAxis.labelFont,
+            setFont: (font: string) => {
+                this.chart.xAxis.labelFont = font;
+                this.chart.yAxis.labelFont = font;
+                this.chart.performLayout();
+            },
+            getColor: () => this.chart.xAxis.labelColor as string,
+            setColor: (color: string) => {
+                this.chart.xAxis.labelColor = color;
+                this.chart.yAxis.labelColor = color;
+                this.chart.performLayout();
+            }
+        };
 
-        this.labelAxisLabels.setLabel('Labels');
+        const labelPanelComp = new ChartLabelPanel(params);
+        this.getContext().wireBean(labelPanelComp);
+        this.labelAxis.getGui().appendChild(labelPanelComp.getGui());
+        this.activePanels.push(labelPanelComp);
 
-        const fonts = ['Verdana, sans-serif', 'Arial'];
-        fonts.forEach((font: any) => {
-            const option = document.createElement('option');
-            option.value = font;
-            option.text = font;
-            this.selectAxisFont.appendChild(option);
-        });
+        this.addAdditionalLabelComps(labelPanelComp);
+    }
 
-        const fontParts = chart.xAxis.labelFont.split('px');
-        const fontSize = fontParts[0];
-        const font = fontParts[1].trim();
+    private addAdditionalLabelComps(labelPanelComp: ChartLabelPanel) {
 
-        this.selectAxisFont.selectedIndex = fonts.indexOf(font);
+        const createInputComp = (label: string, initialValue: string, updateFunc: (value: number) => void) => {
+            const rotationInput = new AgInputTextField()
+                .setLabel(label)
+                .setLabelWidth(80)
+                .setWidth(115)
+                .setValue(initialValue)
+                .onInputChange(newValue => {
+                    updateFunc(newValue);
+                    this.chart.performLayout();
+                });
 
-        this.addDestroyableEventListener(this.selectAxisFont, 'input', () => {
-            const font = fonts[this.selectAxisFont.selectedIndex];
-            const fontSize = Number.parseInt(this.inputAxisFontSize.getValue());
+            this.getContext().wireBean(rotationInput);
+            labelPanelComp.addCompToPanel(rotationInput);
+        };
 
-            chart.xAxis.labelFont = `${fontSize}px ${font}`;
-            chart.yAxis.labelFont = `${fontSize}px ${font}`;
+        // add x-axis label rotation input to label panel
+        const updateXRotation = (newValue: number) => this.chart.xAxis.labelRotation = newValue;
+        createInputComp('X Rotation', `${this.chart.xAxis.labelRotation}`, updateXRotation);
 
-            chart.performLayout();
-        });
+        // add y-axis label rotation input to label panel
+        const updateYRotation = (newValue: number) => this.chart.yAxis.labelRotation = newValue;
+        createInputComp('Y Rotation', `${this.chart.yAxis.labelRotation}`, updateYRotation);
+    }
 
-        const fontWeights = ['normal', 'bold'];
-        fontWeights.forEach((font: any) => {
-            const option = document.createElement('option');
-            option.value = font;
-            option.text = font;
-            this.selectAxisFontWeight.appendChild(option);
-        });
-
-        // TODO
-        // this.selectLegendFontWeight.selectedIndex = fonts.indexOf(font);
-        // this.addDestroyableEventListener(this.selectLegendFontWeight, 'input', () => {
-        //     const fontSize = Number.parseInt(this.selectLegendFontWeight.value);
-        //     const font = fonts[this.selectLegendFontWeight.selectedIndex];
-        //     this.chart.legend.labelFont = `bold ${fontSize}px ${font}`;
-        //     this.chart.performLayout();
-        // });
-
-        this.inputAxisFontSize
-            .setLabel('Size')
-            .setValue(fontSize);
-
-        this.addDestroyableEventListener(this.inputAxisFontSize.getInputElement(), 'input', () => {
-            const font = fonts[this.selectAxisFont.selectedIndex];
-            const fontSize = Number.parseInt(this.inputAxisFontSize.getValue());
-
-            chart.xAxis.labelFont = `${fontSize}px ${font}`;
-            chart.yAxis.labelFont = `${fontSize}px ${font}`;
-
-            chart.performLayout();
-        });
-
-        // TODO replace with Color Picker
-        this.inputAxisLabelColor.setValue(`${chart.xAxis.labelColor}`);
-
-        this.inputAxisLabelColor.addDestroyableEventListener(this.inputAxisLabelColor, 'valueChange', () => {
-            const val = this.inputAxisLabelColor.getValue();
-            chart.xAxis.labelColor = val;
-            chart.yAxis.labelColor = val;
-
-            chart.performLayout();
-        });
-
-        this.labelAxisLabelRotation.setLabel('Rotation (degrees)');
-
-        this.inputXAxisLabelRotation
-            .setLabel('x-axis')
-            .setValue(`${chart.xAxis.labelRotation}`);
-        this.addDestroyableEventListener(this.inputXAxisLabelRotation.getInputElement(), 'input', () => {
-            chart.xAxis.labelRotation = Number.parseInt(this.inputXAxisLabelRotation.getValue());
-            chart.performLayout();
-        });
-
-        this.inputYAxisLabelRotation
-            .setLabel('y-axis')
-            .setValue(`${chart.yAxis.labelRotation}`);
-        this.addDestroyableEventListener(this.inputYAxisLabelRotation.getInputElement(), 'input', () => {
-            chart.yAxis.labelRotation = Number.parseInt(this.inputYAxisLabelRotation.getValue());
-            chart.performLayout();
+    private destroyActivePanels(): void {
+        this.activePanels.forEach(panel => {
+            _.removeFromParent(panel.getGui());
+            panel.destroy();
         });
     }
 
+    public destroy(): void {
+        this.destroyActivePanels();
+        super.destroy();
+    }
 }

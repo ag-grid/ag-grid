@@ -3,7 +3,7 @@ import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { LineSeries } from "../../../charts/chart/series/lineSeries";
-import {ChartModel} from "../chartModel";
+import { ChartModel } from "../chartModel";
 
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;

@@ -7,10 +7,10 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {Chart} from "../../../../charts/chart/chart";
-import {PieSeries} from "../../../../charts/chart/series/pieSeries";
-import {ChartController} from "../../chartController";
-import {BarSeries} from "../../../../charts/chart/series/barSeries";
+import { Chart } from "../../../../charts/chart/chart";
+import { PieSeries } from "../../../../charts/chart/series/pieSeries";
+import { ChartController } from "../../chartController";
+import { BarSeries } from "../../../../charts/chart/series/barSeries";
 
 export class ChartShadowPanel extends Component {
 
@@ -58,16 +58,16 @@ export class ChartShadowPanel extends Component {
         this.labelSeriesShadow.setLabel('Shadow');
 
         // TODO use shadowEnabled instead when it's available in chart api
-        let enabled = this.series.some((series: BarSeries | PieSeries) => series.shadow != undefined);
+        const enabled = this.series.some((series: BarSeries | PieSeries) => series.shadow != undefined);
 
         this.cbSeriesShadow.setLabel('Enabled');
         this.cbSeriesShadow.setSelected(enabled);
 
         // Add defaults to chart as shadow is undefined by default
-        if (!this.inputSeriesShadowBlur.getValue()) this.inputSeriesShadowBlur.setValue('20');
-        if (!this.inputSeriesShadowXOffset.getValue()) this.inputSeriesShadowXOffset.setValue('10');
-        if (!this.inputSeriesShadowYOffset.getValue()) this.inputSeriesShadowYOffset.setValue('10');
-        if (!this.inputSeriesShadowColor.getValue()) this.inputSeriesShadowColor.setValue('rgba(0,0,0,0.5)');
+        if (!this.inputSeriesShadowBlur.getValue()) { this.inputSeriesShadowBlur.setValue('10'); }
+        if (!this.inputSeriesShadowXOffset.getValue()) { this.inputSeriesShadowXOffset.setValue('10'); }
+        if (!this.inputSeriesShadowYOffset.getValue()) { this.inputSeriesShadowYOffset.setValue('10'); }
+        if (!this.inputSeriesShadowColor.getValue()) { this.inputSeriesShadowColor.setValue('rgba(0,0,0,0.5)'); }
 
         this.addDestroyableEventListener(this.cbSeriesShadow, 'change', () => {
             this.series.forEach((series: BarSeries | PieSeries) => {
@@ -107,7 +107,11 @@ export class ChartShadowPanel extends Component {
         };
 
         // BLUR
-        this.inputSeriesShadowBlur.setLabel('Blur');
+        this.inputSeriesShadowBlur
+            .setLabel('Blur')
+            .setLabelWidth(80)
+            .setWidth(115);
+
         if (this.series.length > 0) {
             if (this.series[0].shadow) {
                 this.inputSeriesShadowBlur.setValue(this.series[0].shadow.blur + '');
@@ -116,7 +120,11 @@ export class ChartShadowPanel extends Component {
         this.addDestroyableEventListener(this.inputSeriesShadowBlur.getInputElement(), 'input', updateShadow);
 
         // X Offset
-        this.inputSeriesShadowXOffset.setLabel('X Offset');
+        this.inputSeriesShadowXOffset
+            .setLabel('X Offset')
+            .setLabelWidth(80)
+            .setWidth(115);
+
         if (this.series.length > 0) {
             if (this.series[0].shadow) {
                 this.inputSeriesShadowXOffset.setValue(this.series[0].shadow.offset.x + '');
@@ -125,7 +133,11 @@ export class ChartShadowPanel extends Component {
         this.addDestroyableEventListener(this.inputSeriesShadowXOffset.getInputElement(), 'input', updateShadow);
 
         // Y Offset
-        this.inputSeriesShadowYOffset.setLabel('Y Offset');
+        this.inputSeriesShadowYOffset
+            .setLabel('Y Offset')
+            .setLabelWidth(80)
+            .setWidth(115);
+
         if (this.series.length > 0) {
             if (this.series[0].shadow) {
                 this.inputSeriesShadowYOffset.setValue(this.series[0].shadow.offset.y + '');
