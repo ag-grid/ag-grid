@@ -15,9 +15,7 @@ export class ChartLegendPanel extends Component {
 
     public static TEMPLATE =
         `<div>  
-            <ag-group-component ref="labelLegend">
-                <ag-checkbox ref="cbLegendEnabled"></ag-checkbox>
-    
+            <ag-group-component ref="labelLegendGroup">
                 <div>
                     <label ref="labelLegendPosition" style="margin-right: 5px;"></label>
                     <select ref="selectLegendPosition" style="width: 80px"></select>
@@ -32,7 +30,7 @@ export class ChartLegendPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('labelLegend') private labelLegend: AgGroupComponent;
+    @RefSelector('labelLegendGroup') private labelLegendGroup: AgGroupComponent;
     @RefSelector('cbLegendEnabled') private cbLegendEnabled: AgCheckbox;
 
     @RefSelector('selectLegendPosition') private selectLegendPosition: HTMLSelectElement;
@@ -61,20 +59,18 @@ export class ChartLegendPanel extends Component {
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
 
-        this.labelLegend.setLabel('Legend');
-
-        this.initLegendEnabled();
+        this.initLegendGroup();
         this.initLegendPosition();
         this.initLegendPadding();
         this.initLegendItems();
         this.initLabelPanel();
     }
 
-    private initLegendEnabled() {
-        this.cbLegendEnabled
-            .setLabel('Enabled')
-            .setSelected(this.chart.legend.enabled)
-            .onSelectionChange(newSelection => this.chart.legend.enabled = newSelection);
+    private initLegendGroup() {
+        this.labelLegendGroup
+            .setTitle('Legend')
+            .setEnabled(this.chart.legend.enabled)
+            .onEnableChange(enabled => this.chart.legend.enabled = enabled);
     }
 
     private initLegendPosition() {
@@ -134,6 +130,7 @@ export class ChartLegendPanel extends Component {
     private initLabelPanel() {
         const params: ChartLabelPanelParams = {
             chartController: this.chartController,
+            isEnabled: () => true,
             getFont: () => this.chart.legend.labelFont,
             setFont: (font: string) => {
                 this.chart.legend.labelFont = font;
@@ -148,7 +145,7 @@ export class ChartLegendPanel extends Component {
 
         const labelPanelComp = new ChartLabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
-        this.labelLegend.getGui().appendChild(labelPanelComp.getGui());
+        this.labelLegendGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
     }
 

@@ -43,7 +43,9 @@ export class ChartBarSeriesPanel extends Component {
         const chartProxy = this.chartController.getChartProxy();
         this.series = chartProxy.getChart().series as BarSeries[];
 
-        this.seriesGroup.setLabel('Series');
+        this.seriesGroup
+            .setTitle('Series')
+            .hideEnabledCheckbox(true);
 
         this.initSeriesStrokeWidth();
         this.initSeriesTooltips();
@@ -96,15 +98,15 @@ export class ChartBarSeriesPanel extends Component {
 
         const labelPanelComp = new ChartLabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
-        this.seriesGroup.getGui().appendChild(labelPanelComp.getGui());
-        this.activePanels.push(labelPanelComp);
+        this.seriesGroup.addItem(labelPanelComp);
+        // this.activePanels.push(labelPanelComp);
     }
 
     private initShadowPanel() {
         const shadowPanelComp = new ChartShadowPanel(this.chartController);
         this.getContext().wireBean(shadowPanelComp);
-        this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
-        this.activePanels.push(shadowPanelComp);
+        this.seriesGroup.addItem(shadowPanelComp);
+        // this.activePanels.push(shadowPanelComp);
     }
 
     private destroyActivePanels(): void {

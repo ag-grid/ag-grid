@@ -53,7 +53,9 @@ export class ChartPieSeriesPanel extends Component {
         const chartProxy = this.chartController.getChartProxy();
         this.series = chartProxy.getChart().series as PieSeries[];
 
-        this.seriesGroup.setLabel('Series');
+        this.seriesGroup
+            .setTitle('Series')
+            .hideEnabledCheckbox(true);
 
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
@@ -112,7 +114,7 @@ export class ChartPieSeriesPanel extends Component {
     }
 
     private initCalloutOptions() {
-        this.labelSeriesCallout.setLabel('Callout');
+        this.labelSeriesCallout.setTitle('Callout');
 
         type CalloutProperty = 'calloutLength' | 'calloutStrokeWidth' | 'labelOffset';
 

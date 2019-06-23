@@ -1,6 +1,5 @@
 import {
     _,
-    AgCheckbox,
     AgGroupComponent,
     AgInputTextField,
     Component,
@@ -16,8 +15,7 @@ export class ChartShadowPanel extends Component {
 
     public static TEMPLATE =
         `<div>                              
-            <ag-group-component ref="labelSeriesShadow">
-                <ag-checkbox ref="cbSeriesShadow"></ag-checkbox>
+            <ag-group-component ref="labelShadowGroup">
                 <ag-input-text-field ref="inputSeriesShadowBlur"></ag-input-text-field>
                 <ag-input-text-field ref="inputSeriesShadowXOffset"></ag-input-text-field>
                 <ag-input-text-field ref="inputSeriesShadowYOffset"></ag-input-text-field>
@@ -25,8 +23,7 @@ export class ChartShadowPanel extends Component {
             </ag-group-component>
         </div>`;
 
-    @RefSelector('labelSeriesShadow') private labelSeriesShadow: AgGroupComponent;
-    @RefSelector('cbSeriesShadow') private cbSeriesShadow: AgCheckbox; 
+    @RefSelector('labelShadowGroup') private labelShadowGroup: AgGroupComponent;
     @RefSelector('inputSeriesShadowBlur') private inputSeriesShadowBlur: AgInputTextField;
     @RefSelector('inputSeriesShadowXOffset') private inputSeriesShadowXOffset: AgInputTextField;
     @RefSelector('inputSeriesShadowYOffset') private inputSeriesShadowYOffset: AgInputTextField;
@@ -55,13 +52,8 @@ export class ChartShadowPanel extends Component {
     }
 
     private initSeriesShadow() {
-        this.labelSeriesShadow.setLabel('Shadow');
-
         // TODO use shadowEnabled instead when it's available in chart api
         const enabled = this.series.some((series: BarSeries | PieSeries) => series.shadow != undefined);
-
-        this.cbSeriesShadow.setLabel('Enabled');
-        this.cbSeriesShadow.setSelected(enabled);
 
         // Add defaults to chart as shadow is undefined by default
         if (!this.inputSeriesShadowBlur.getValue()) { this.inputSeriesShadowBlur.setValue('10'); }
@@ -69,28 +61,31 @@ export class ChartShadowPanel extends Component {
         if (!this.inputSeriesShadowYOffset.getValue()) { this.inputSeriesShadowYOffset.setValue('10'); }
         if (!this.inputSeriesShadowColor.getValue()) { this.inputSeriesShadowColor.setValue('rgba(0,0,0,0.5)'); }
 
-        this.addDestroyableEventListener(this.cbSeriesShadow, 'change', () => {
-            this.series.forEach((series: BarSeries | PieSeries) => {
-                // TODO remove this check when shadowEnabled instead when it's available in chart api
-                if (this.cbSeriesShadow.isSelected()) {
-                    series.shadow = {
-                        color: this.inputSeriesShadowColor.getValue(),
-                        offset: {
-                            x: Number.parseInt(this.inputSeriesShadowXOffset.getValue()),
-                            y: Number.parseInt(this.inputSeriesShadowYOffset.getValue())
-                        },
-                        blur: Number.parseInt(this.inputSeriesShadowBlur.getValue())
-                    };
-                } else {
-                    series.shadow = undefined;
-                }
+        this.labelShadowGroup
+            .setTitle('Shadow')
+            .setEnabled(enabled)
+            .onEnableChange(enabled => {
+                this.series.forEach((series: BarSeries | PieSeries) => {
+                    // TODO remove this check when shadowEnabled instead when it's available in chart api
+                    if (enabled) {
+                        series.shadow = {
+                            color: this.inputSeriesShadowColor.getValue(),
+                            offset: {
+                                x: Number.parseInt(this.inputSeriesShadowXOffset.getValue()),
+                                y: Number.parseInt(this.inputSeriesShadowYOffset.getValue())
+                            },
+                            blur: Number.parseInt(this.inputSeriesShadowBlur.getValue())
+                        };
+                    } else {
+                        series.shadow = undefined;
+                    }
+                });
             });
-        });
 
         const updateShadow = () => {
             this.series.forEach((series: BarSeries | PieSeries) => {
                 // TODO remove this check when shadowEnabled instead when it's available in chart api
-                if (this.cbSeriesShadow.isSelected()) {
+                if (this.labelShadowGroup.isEnabled()) {
                     const blur = this.inputSeriesShadowBlur.getValue() ? Number.parseInt(this.inputSeriesShadowBlur.getValue()) : 0;
                     const xOffset = this.inputSeriesShadowXOffset.getValue() ? Number.parseInt(this.inputSeriesShadowXOffset.getValue()) : 0;
                     const yOffset = this.inputSeriesShadowYOffset.getValue() ? Number.parseInt(this.inputSeriesShadowYOffset.getValue()) : 0;

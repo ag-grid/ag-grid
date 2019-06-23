@@ -6,7 +6,7 @@ export class ChartPaddingPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="labelChartPadding">
+            <ag-group-component ref="chartPaddingGroup">
                 <div class="ag-group-subgroup">
                     <ag-input-text-field ref="inputPaddingTop"></ag-input-text-field>
                     <ag-input-text-field ref="inputPaddingRight"></ag-input-text-field>
@@ -19,7 +19,7 @@ export class ChartPaddingPanel extends Component {
             </ag-group-component>
         <div>`;
 
-    @RefSelector('labelChartPadding') private labelChartPadding: AgGroupComponent;
+    @RefSelector('chartPaddingGroup') private chartPaddingGroup: AgGroupComponent;
 
     @RefSelector('inputPaddingTop') private inputPaddingTop: AgInputTextField;
     @RefSelector('inputPaddingRight') private inputPaddingRight: AgInputTextField;
@@ -45,7 +45,9 @@ export class ChartPaddingPanel extends Component {
     }
 
     private initChartPaddingItems() {
-        this.labelChartPadding.setLabel('Chart Padding');
+        this.chartPaddingGroup
+            .setTitle('Chart Padding')
+            .hideEnabledCheckbox(true);
 
         type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
 

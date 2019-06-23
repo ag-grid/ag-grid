@@ -44,9 +44,11 @@ export class ChartDataPanel extends Component {
         [dimensionCols, valueCols].forEach((group, idx) => {
             const isCategory = idx === 0;
             const groupComp = new AgGroupComponent({
-                label: isCategory
+                title: isCategory
                         ? localeTextFunc('chartCategories', 'Categories')
-                        : localeTextFunc('chartSeries', 'Series')
+                        : localeTextFunc('chartSeries', 'Series'),
+                enabled: true,
+                suppressEnabledCheckbox: true
             });
             this.getContext().wireBean(groupComp);
             

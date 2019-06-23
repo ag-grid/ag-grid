@@ -40,7 +40,9 @@ export class ChartLineSeriesPanel extends Component {
         const chartProxy = this.chartController.getChartProxy();
         this.series = chartProxy.getChart().series as LineSeries[];
 
-        this.seriesGroup.setLabel('Series');
+        this.seriesGroup
+            .setTitle('Series')
+            .hideEnabledCheckbox(true);
 
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
@@ -68,7 +70,7 @@ export class ChartLineSeriesPanel extends Component {
     }
 
     private initMarkers() {
-        this.seriesMarkersGroup.setLabel('Markers');
+        this.seriesMarkersGroup.setTitle('Markers');
 
         const enabled = this.series.some(s => s.marker);
 

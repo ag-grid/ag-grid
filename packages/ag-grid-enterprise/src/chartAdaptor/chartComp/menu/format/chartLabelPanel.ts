@@ -1,6 +1,5 @@
 import {
     _,
-    AgCheckbox,
     AgColorPicker,
     AgGroupComponent,
     AgInputTextField,
@@ -13,7 +12,7 @@ import {Chart} from "../../../../charts/chart/chart";
 
 export interface ChartLabelPanelParams {
     chartController: ChartController;
-    isEnabled?: () => boolean;
+    isEnabled: () => boolean;
     setEnabled?: (enabled: boolean) => void;
     getFont: () => string;
     setFont: (font: string) => void;
@@ -25,10 +24,9 @@ export class ChartLabelPanel extends Component {
 
     public static TEMPLATE =
         `<div>                               
-            <ag-group-component ref="labelSeriesLabels">
-                <ag-checkbox ref="cbSeriesLabelsEnabled"></ag-checkbox>
-                <select ref="selectSeriesFont" style="width: 160px"></select>
-                <select ref="selectSeriesFontWeight" ></select>  
+            <ag-group-component ref="labelsGroup">
+                <select ref="selectSeriesFont"></select>
+                <select ref="selectSeriesFontWeight"></select>  
                 <div class="ag-group-subgroup">
                     <ag-input-text-field ref="inputSeriesFontSize"></ag-input-text-field> 
                     <ag-color-picker ref="inputSeriesLabelColor"></ag-color-picker>                                         
@@ -36,9 +34,7 @@ export class ChartLabelPanel extends Component {
             </ag-group-component>                        
         </div>`;
 
-    @RefSelector('labelSeriesLabels') private labelSeriesLabels: AgGroupComponent;
-    @RefSelector('cbSeriesLabelsEnabled') private cbSeriesLabelsEnabled: AgCheckbox;
-
+    @RefSelector('labelsGroup') private labelsGroup: AgGroupComponent;
     @RefSelector('selectSeriesFont') private selectSeriesFont: HTMLSelectElement;
     @RefSelector('selectSeriesFontWeight') private selectSeriesFontWeight: HTMLSelectElement;
     @RefSelector('inputSeriesLabelColor') private inputSeriesLabelColor: AgColorPicker;
@@ -60,31 +56,39 @@ export class ChartLabelPanel extends Component {
         const chartProxy = this.params.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
 
+        this.labelsGroup.setTitle('Labels');
         this.initSeriesLabels();
     }
 
     public addCompToPanel(comp: Component) {
-        this.labelSeriesLabels.getGui().appendChild(comp.getGui());
+        this.labelsGroup.addItem(comp);
         this.activeComps.push(comp);
     }
 
     private initSeriesLabels() {
-        this.labelSeriesLabels.setLabel('Labels');
 
-        // label enabled checkbox is optional, i.e. not included in legend panel
-        if (this.params.isEnabled) {
-            this.cbSeriesLabelsEnabled.setLabel('Enabled');
-            this.cbSeriesLabelsEnabled.setSelected(this.params.isEnabled());
-            this.addDestroyableEventListener(this.cbSeriesLabelsEnabled, 'change', () => {
+        this.labelsGroup
+            .setEnabled(this.params.isEnabled())
+            .onEnableChange(enabled => {
                 if (this.params.setEnabled) {
-                    this.params.setEnabled(this.cbSeriesLabelsEnabled.isSelected());
+                    this.params.setEnabled(enabled);
                 }
             });
-        } else {
-            // remove / destroy enabled checkbox
-            _.removeFromParent(this.cbSeriesLabelsEnabled.getGui());
-            this.cbSeriesLabelsEnabled.destroy();
-        }
+
+        // // label enabled checkbox is optional, i.e. not included in legend panel
+        // if (this.params.isEnabled) {
+        //     this.cbSeriesLabelsEnabled.setLabel('Enabled');
+        //     this.cbSeriesLabelsEnabled.setSelected(this.params.isEnabled());
+        //     this.addDestroyableEventListener(this.cbSeriesLabelsEnabled, 'change', () => {
+        //         if (this.params.setEnabled) {
+        //             this.params.setEnabled(this.cbSeriesLabelsEnabled.isSelected());
+        //         }
+        //     });
+        // } else {
+        //     // remove / destroy enabled checkbox
+        //     _.removeFromParent(this.cbSeriesLabelsEnabled.getGui());
+        //     this.cbSeriesLabelsEnabled.destroy();
+        // }
 
         const fonts = ['Verdana, sans-serif', 'Arial'];
         fonts.forEach((font: any) => {

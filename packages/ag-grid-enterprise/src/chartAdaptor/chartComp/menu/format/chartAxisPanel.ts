@@ -2,33 +2,21 @@ import { _, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputText
 import { ChartController } from "../../chartController";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
+import {ChartAxisTicksPanel} from "./chartAxisTicksPanel";
 
 export class ChartAxisPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="labelAxis">           
+            <ag-group-component ref="axisGroup">           
                 <ag-color-picker ref="inputAxisColor"></ag-color-picker>
-                <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>
-    
-                <ag-group-component ref="labelAxisTicks">
-                    <ag-color-picker ref="inputAxisTicksColor"></ag-color-picker>
-                    <ag-input-text-field ref="inputAxisTicksWidth"></ag-input-text-field>
-                    <ag-input-text-field ref="inputAxisTicksSize"></ag-input-text-field>
-                    <ag-input-text-field ref="inputAxisTicksPadding"></ag-input-text-field>
-                </ag-group-component>               
+                <ag-input-text-field ref="inputAxisLineWidth"></ag-input-text-field>                                 
             </ag-group-component>            
         </div>`;
 
-    @RefSelector('labelAxis') private labelAxis: AgGroupComponent;
+    @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
     @RefSelector('inputAxisLineWidth') private inputAxisLineWidth: AgInputTextField;
     @RefSelector('inputAxisColor') private inputAxisColor: AgColorPicker;
-
-    @RefSelector('labelAxisTicks') private labelAxisTicks: AgGroupComponent;
-    @RefSelector('inputAxisTicksWidth') private inputAxisTicksWidth: AgInputTextField;
-    @RefSelector('inputAxisTicksSize') private inputAxisTicksSize: AgInputTextField;
-    @RefSelector('inputAxisTicksPadding') private inputAxisTicksPadding: AgInputTextField;
-    @RefSelector('inputAxisTicksColor') private inputAxisTicksColor: AgColorPicker;
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
@@ -52,7 +40,9 @@ export class ChartAxisPanel extends Component {
     }
 
     private initAxis() {
-        this.labelAxis.setLabel('Axis');
+        this.axisGroup
+            .setTitle('Axis')
+            .hideEnabledCheckbox(true);
 
         this.inputAxisColor
             .setLabel("Color")
@@ -78,46 +68,17 @@ export class ChartAxisPanel extends Component {
     }
 
     private initAxisTicks() {
-        this.labelAxisTicks.setLabel('Ticks');
 
-        this.inputAxisTicksColor
-            .setLabel("Color")
-            .setLabelWidth(85)
-            .setWidth(115)
-            .setValue(`${this.chart.xAxis.lineColor}`)
-            .onColorChange(newColor => {
-                this.chart.xAxis.tickColor = newColor;
-                this.chart.yAxis.tickColor = newColor;
-                this.chart.performLayout();
-            });
-
-        type AxisTickProperty = 'tickWidth' | 'tickSize' | 'tickPadding';
-
-        const initInput = (property: AxisTickProperty, input: AgInputTextField, label: string, initialValue: string) => {
-            input.setLabel(label)
-                .setLabelWidth(80)
-                .setWidth(115)
-                .setValue(initialValue)
-                .onInputChange(newValue => {
-                    this.chart.xAxis[property] = newValue;
-                    this.chart.yAxis[property] = newValue;
-                    this.chart.performLayout();
-                });
-        };
-
-        const initialWidth = `${this.chart.xAxis.tickWidth}`;
-        initInput('tickWidth', this.inputAxisTicksWidth, 'Width', initialWidth);
-
-        const initialLength = `${this.chart.xAxis.tickSize}`;
-        initInput('tickSize', this.inputAxisTicksSize, 'Length', initialLength);
-
-        const initialPadding = `${this.chart.xAxis.tickPadding}`;
-        initInput('tickPadding', this.inputAxisTicksPadding, 'Padding', initialPadding);
+        const axisTicksComp = new ChartAxisTicksPanel(this.chartController);
+        this.getContext().wireBean(axisTicksComp);
+        this.axisGroup.addItem(axisTicksComp);
+        this.activePanels.push(axisTicksComp);
     }
 
     private initAxisLabels() {
         const params: ChartLabelPanelParams = {
             chartController: this.chartController,
+            isEnabled: () => false,
             getFont: () => this.chart.xAxis.labelFont,
             setFont: (font: string) => {
                 this.chart.xAxis.labelFont = font;
@@ -134,7 +95,7 @@ export class ChartAxisPanel extends Component {
 
         const labelPanelComp = new ChartLabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
-        this.labelAxis.getGui().appendChild(labelPanelComp.getGui());
+        this.axisGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
         this.addAdditionalLabelComps(labelPanelComp);
