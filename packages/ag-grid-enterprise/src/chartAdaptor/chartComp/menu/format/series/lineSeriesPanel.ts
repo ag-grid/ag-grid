@@ -1,6 +1,8 @@
-import {AgCheckbox, AgGroupComponent, AgInputTextField, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {_, AgCheckbox, AgGroupComponent, AgInputTextField, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartController} from "../../../chartController";
 import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
+import {ShadowPanel} from "./shadowPanel";
+import {MarkersPanel} from "./markersPanel";
 
 export class LineSeriesPanel extends Component {
 
@@ -8,24 +10,17 @@ export class LineSeriesPanel extends Component {
         `<div>   
             <ag-group-component ref="seriesGroup">
                 <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
-                <ag-input-text-field ref="seriesLineWidthInput"></ag-input-text-field>
-                
-                <ag-group-component ref="seriesMarkersGroup">
-                    <ag-input-text-field ref="seriesMarkerSizeInput"></ag-input-text-field>
-                    <ag-input-text-field ref="seriesMarkerStrokeWidthInput"></ag-input-text-field>
-                </ag-group-component>  
+                <ag-input-text-field ref="seriesLineWidthInput"></ag-input-text-field>                               
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsCheckbox') private seriesTooltipsCheckbox: AgCheckbox;
     @RefSelector('seriesLineWidthInput') private seriesLineWidthInput: AgInputTextField;
-    @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
-    @RefSelector('seriesMarkerSizeInput') private seriesMarkerSizeInput: AgInputTextField;
-    @RefSelector('seriesMarkerStrokeWidthInput') private seriesMarkerStrokeWidthInput: AgInputTextField;
 
-    private readonly chartController: ChartController;
     private series: LineSeries[];
+    private activePanels: Component[] = [];
+    private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
@@ -45,7 +40,7 @@ export class LineSeriesPanel extends Component {
 
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
-        this.initMarkers();
+        this.initMarkersPanel();
     }
 
     private initSeriesTooltips() {
@@ -68,32 +63,22 @@ export class LineSeriesPanel extends Component {
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
-    private initMarkers() {
-        const enabled = this.series.some(s => s.marker);
+    private initMarkersPanel() {
+        const markersPanelComp = new MarkersPanel(this.series);
+        this.getContext().wireBean(markersPanelComp);
+        this.seriesGroup.addItem(markersPanelComp);
+        this.activePanels.push(markersPanelComp);
+    }
 
-        this.seriesMarkersGroup
-            .setTitle('Markers')
-            .setEnabled(enabled)
-            .onEnableChange(enabled => {
-                this.series.forEach(s => s.marker = enabled);
-            });
+    private destroyActivePanels(): void {
+        this.activePanels.forEach(panel => {
+            _.removeFromParent(panel.getGui());
+            panel.destroy();
+        });
+    }
 
-        type LineMarkerProperty = 'markerSize' | 'markerStrokeWidth';
-
-        const initInput = (property: LineMarkerProperty, input: AgInputTextField, label: string, initialValue: string) => {
-            input.setLabel(label)
-                .setLabelWidth(80)
-                .setWidth(115)
-                .setValue(initialValue)
-                .onInputChange(newValue => {
-                    this.series.forEach(s => s[property] = newValue)
-                });
-        };
-
-        const initialSize = `${this.series[0].markerSize}`;
-        initInput('markerSize', this.seriesMarkerSizeInput, 'Size', initialSize);
-
-        const initialStrokeWidth = `${this.series[0].markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthInput, 'Stroke Width', initialStrokeWidth);
+    public destroy(): void {
+        this.destroyActivePanels();
+        super.destroy();
     }
 }

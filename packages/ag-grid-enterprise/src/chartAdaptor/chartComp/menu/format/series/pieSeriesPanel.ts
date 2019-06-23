@@ -44,19 +44,17 @@ export class PieSeriesPanel extends Component {
         const chartProxy = this.chartController.getChartProxy();
         this.series = chartProxy.getChart().series as PieSeries[];
 
-        this.seriesGroup
-            .setTitle('Series')
-            .hideEnabledCheckbox(true);
-
+        this.initGroup();
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
         this.initLabelPanel();
+        this.initShadowPanel();
+    }
 
-        // init shadow panel
-        const shadowPanelComp = new ShadowPanel(this.chartController);
-        this.getContext().wireBean(shadowPanelComp);
-        this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
-        this.activePanels.push(shadowPanelComp);
+    private initGroup() {
+        this.seriesGroup
+            .setTitle('Series')
+            .hideEnabledCheckbox(true);
     }
 
     private initSeriesTooltips() {
@@ -104,6 +102,13 @@ export class PieSeriesPanel extends Component {
         this.activePanels.push(calloutPanelComp);
 
         this.seriesGroup.addItem(labelPanelComp);
+    }
+
+    private initShadowPanel() {
+        const shadowPanelComp = new ShadowPanel(this.chartController);
+        this.getContext().wireBean(shadowPanelComp);
+        this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
+        this.activePanels.push(shadowPanelComp);
     }
 
     private destroyActivePanels(): void {
