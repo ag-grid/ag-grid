@@ -23,23 +23,13 @@ export class AgColorPicker extends AgLabel {
     @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eButton') private eButton: HTMLElement;
 
-    private hideTextField: boolean = true;
-    private mode: ColorMode = 'hex';
     private color: string;
 
     constructor(config?: ColorPickerConfig) {
         super(AgColorPicker.TEMPLATE);
 
-        if (config) {
-            if (config.hideTextField) {
-                this.hideTextField = config.hideTextField;
-            }
-            if (config.mode && config.mode !== 'hex') {
-                this.mode = config.mode;
-            }
-            if (config.color) {
-                this.color = config.color;
-            }
+        if (config && config.color) {
+            this.color = config.color;
         }
     }
 
@@ -94,8 +84,7 @@ export class AgColorPicker extends AgLabel {
     public setValue(color: string): AgColorPicker {
         this.color = color;
         this.eButton.style.backgroundColor = color;
-        // this.eInput.setValue(this.color);
-        this.dispatchEvent({type: 'valueChange'});
+        this.dispatchEvent({ type: 'valueChange' });
         return this;
     }
 

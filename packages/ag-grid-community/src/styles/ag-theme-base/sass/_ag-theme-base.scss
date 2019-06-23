@@ -164,15 +164,14 @@
         vertical-align: middle;
     }
 
-    .ag-radio-button-label, .ag-checkbox-label {
-        cursor: default;
-        &:empty {
-            margin: 0;
+    .ag-checkbox, .ag-radio-button {
+        label {
+            cursor: default;
+            margin-left: $grid-size;
+            &:empty {
+                margin: 0;
+            }
         }
-    }
-
-    .ag-radio-button-label, .ag-checkbox-label {
-        margin-left: $grid-size;
     }
 
     .ag-cell {
@@ -1473,9 +1472,11 @@
             text-align: left;
         }
 
-        .ag-radio-button-label, .ag-checkbox-label {
-            margin-right: $grid-size;
-            margin-left: 0;
+        .ag-checkbox, .ag-radio-button {
+            label {
+                margin-right: $grid-size;
+                margin-left: 0;
+            }
         }
 
         .ag-tool-panel-wrapper {

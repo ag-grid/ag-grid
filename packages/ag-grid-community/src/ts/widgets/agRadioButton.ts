@@ -1,31 +1,32 @@
-import { Component } from "./component";
-import { Listener, QuerySelector } from "./componentAnnotations";
+import { Listener, QuerySelector, RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct, PreConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
+import { AgLabel } from "./agLabel";
 import { _ } from "../utils";
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 
-export class AgRadioButton extends Component {
+export class AgRadioButton extends AgLabel {
 
     public static EVENT_CHANGED = 'change';
 
     private static TEMPLATE =
-        '<div class="ag-radio-button" role="presentation">' +
-        '  <span class="ag-radio-button-on" role="presentation"></span>' +
-        '  <span class="ag-radio-button-off" role="presentation"></span>' +
-        '  <span class="ag-radio-button-label" role="presentation"></span>' +
-        '</div>';
+        `<div class="ag-radio-button" role="presentation">
+            <span class="ag-radio-button-on" role="presentation"></span>
+            <span class="ag-radio-button-off" role="presentation"></span>
+            <label ref="eLabel" role="presentation"></label>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @QuerySelector('.ag-radio-button-on') private eRadioOn: HTMLElement;
     @QuerySelector('.ag-radio-button-off') private eRadioOff: HTMLElement;
-    @QuerySelector('.ag-radio-button-label') private eLabel: HTMLElement;
+    @RefSelector('eLabel') protected eLabel: HTMLElement;
 
+    protected labelSeparator = '';
     private selected = false;
 
     constructor() {
@@ -41,10 +42,6 @@ export class AgRadioButton extends Component {
     private postConstruct(): void {
         this.loadIcons();
         this.updateIcons();
-    }
-
-    public setLabel(label: string): void {
-        this.eLabel.innerText = label;
     }
 
     private loadIcons(): void {
@@ -66,11 +63,7 @@ export class AgRadioButton extends Component {
     }
 
     public getNextValue(): boolean {
-        if (this.selected === undefined) {
-            return true;
-        } else {
-            return !this.selected;
-        }
+        return this.selected === undefined ? true : !this.selected;
     }
 
     public isSelected(): boolean {
@@ -109,6 +102,5 @@ export class AgRadioButton extends Component {
     private updateIcons(): void {
         _.setVisible(this.eRadioOn, this.selected === true);
         _.setVisible(this.eRadioOff, this.selected === false);
-
     }
 }

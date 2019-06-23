@@ -1,36 +1,37 @@
-import { Component } from "./component";
-import { Listener, QuerySelector } from "./componentAnnotations";
+import { Listener, QuerySelector, RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct, PreConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
+import { AgLabel } from "./agLabel";
 import { _ } from "../utils";
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 
-export class AgCheckbox extends Component {
+export class AgCheckbox extends AgLabel {
 
     public static EVENT_CHANGED = 'change';
 
     private static TEMPLATE =
-        '<div class="ag-checkbox" role="presentation">' +
-        '  <span class="ag-checkbox-checked" role="presentation"></span>' +
-        '  <span class="ag-checkbox-unchecked" role="presentation"></span>' +
-        '  <span class="ag-checkbox-indeterminate" role="presentation"></span>' +
-        '  <span class="ag-checkbox-label" role="presentation"></span>' +
-        '</div>';
+        `<div class="ag-checkbox" role="presentation">
+            <span class="ag-checkbox-checked" role="presentation"></span>
+            <span class="ag-checkbox-unchecked" role="presentation"></span>
+            <span class="ag-checkbox-indeterminate" role="presentation"></span>
+            <label ref="eLabel" role="presentation"></label>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @QuerySelector('.ag-checkbox-checked') private eChecked: HTMLElement;
     @QuerySelector('.ag-checkbox-unchecked') private eUnchecked: HTMLElement;
     @QuerySelector('.ag-checkbox-indeterminate') private eIndeterminate: HTMLElement;
-    @QuerySelector('.ag-checkbox-label') private eLabel: HTMLElement;
+    @RefSelector('eLabel') protected eLabel: HTMLElement;
 
     private selected = false;
     private readOnly = false;
     private passive = false;
+    protected labelSeparator = '';
 
     constructor() {
         super();
@@ -45,11 +46,6 @@ export class AgCheckbox extends Component {
     private postConstruct(): void {
         this.loadIcons();
         this.updateIcons();
-    }
-
-    public setLabel(label: string): AgCheckbox {
-        this.eLabel.innerText = label;
-        return this;
     }
 
     private loadIcons(): void {
@@ -148,7 +144,6 @@ export class AgCheckbox extends Component {
         });
         return this;
     }
-
 
     private updateIcons(): void {
         _.setVisible(this.eChecked, this.selected === true);

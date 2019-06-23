@@ -9,8 +9,9 @@ export interface IAgLabel {
 
 export abstract class AgLabel extends Component {
     protected abstract eLabel: HTMLElement;
+
+    protected labelSeparator: string = ':';
     private label: string;
-    labelSeparator: string = ':';
 
     private refreshLabel() {
         this.eLabel.innerText = this.label + this.labelSeparator;
