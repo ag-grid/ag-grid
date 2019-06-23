@@ -1,7 +1,14 @@
-import {_, AgCheckbox, AgGroupComponent, AgInputTextField, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {
+    _,
+    AgCheckbox,
+    AgGroupComponent,
+    AgInputTextField,
+    Component,
+    PostConstruct,
+    RefSelector
+} from "ag-grid-community";
 import {ChartController} from "../../../chartController";
 import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
-import {ShadowPanel} from "./shadowPanel";
 import {MarkersPanel} from "./markersPanel";
 
 export class LineSeriesPanel extends Component {

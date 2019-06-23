@@ -95,8 +95,20 @@ export class BarSeriesPanel extends Component {
 
         const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
-        this.seriesGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
+
+        const labelOffsetInput = new AgInputTextField()
+            .setLabel('Offset')
+            .setLabelWidth('flex')
+            .setWidth(100)
+            .setValue(`${this.series[0].labelOffset}`)
+            .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
+
+        this.getContext().wireBean(labelOffsetInput);
+        labelPanelComp.addCompToPanel(labelOffsetInput);
+        this.activePanels.push(labelOffsetInput);
+
+        this.seriesGroup.addItem(labelPanelComp);
     }
 
     private initShadowPanel() {
