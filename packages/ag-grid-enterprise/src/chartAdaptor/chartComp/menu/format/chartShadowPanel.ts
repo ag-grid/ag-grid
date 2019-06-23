@@ -1,4 +1,5 @@
 import {
+    AgColorPicker,
     AgGroupComponent,
     AgInputTextField,
     Component,
@@ -15,18 +16,18 @@ export class ChartShadowPanel extends Component {
     public static TEMPLATE =
         `<div>                              
             <ag-group-component ref="shadowGroup">
+                <ag-color-picker ref="shadowColorPicker"></ag-color-picker>
                 <ag-input-text-field ref="shadowBlurInput"></ag-input-text-field>
                 <ag-input-text-field ref="shadowXOffsetInput"></ag-input-text-field>
                 <ag-input-text-field ref="shadowYOffsetInput"></ag-input-text-field>
-                <ag-input-text-field ref="shadowColorInput"></ag-input-text-field>
             </ag-group-component>
         </div>`;
 
     @RefSelector('shadowGroup') private shadowGroup: AgGroupComponent;
+    @RefSelector('shadowColorPicker') private shadowColorPicker: AgColorPicker;
     @RefSelector('shadowBlurInput') private shadowBlurInput: AgInputTextField;
     @RefSelector('shadowXOffsetInput') private shadowXOffsetInput: AgInputTextField;
     @RefSelector('shadowYOffsetInput') private shadowYOffsetInput: AgInputTextField;
-    @RefSelector('shadowColorInput') private shadowColorInput: AgInputTextField;
 
     private chartController: ChartController;
     private chart: Chart;
@@ -51,6 +52,32 @@ export class ChartShadowPanel extends Component {
     }
 
     private initSeriesShadow() {
+
+        const updateShadow = () => {
+            this.series.forEach((series: BarSeries | PieSeries) => {
+                // TODO remove this check when shadowEnabled instead when it's available in chart api
+                if (this.shadowGroup.isEnabled()) {
+                    const blur = this.shadowBlurInput.getValue() ? Number.parseInt(this.shadowBlurInput.getValue()) : 0;
+                    const xOffset = this.shadowXOffsetInput.getValue() ? Number.parseInt(this.shadowXOffsetInput.getValue()) : 0;
+                    const yOffset = this.shadowYOffsetInput.getValue() ? Number.parseInt(this.shadowYOffsetInput.getValue()) : 0;
+                    const color = this.shadowColorPicker.getValue() ? this.shadowColorPicker.getValue() : 'rgba(0,0,0,0.5)';
+                    series.shadow = {
+                        color: color,
+                        offset: {x: xOffset, y: yOffset},
+                        blur: blur
+                    }
+                }
+            });
+            // TODO: why is this necessary???
+            this.chart.performLayout();
+        };
+
+        this.shadowColorPicker
+            .setLabel('Color')
+            .setLabelWidth(85)
+            .setWidth(125)
+            .onColorChange(updateShadow);
+
         // TODO use shadowEnabled instead when it's available in chart api
         const enabled = this.series.some((series: BarSeries | PieSeries) => series.shadow != undefined);
 
@@ -58,7 +85,7 @@ export class ChartShadowPanel extends Component {
         if (!this.shadowBlurInput.getValue()) { this.shadowBlurInput.setValue('10'); }
         if (!this.shadowXOffsetInput.getValue()) { this.shadowXOffsetInput.setValue('10'); }
         if (!this.shadowYOffsetInput.getValue()) { this.shadowYOffsetInput.setValue('10'); }
-        if (!this.shadowColorInput.getValue()) { this.shadowColorInput.setValue('rgba(0,0,0,0.5)'); }
+        if (!this.shadowColorPicker.getValue()) { this.shadowColorPicker.setValue('rgba(0,0,0,0.5)'); }
 
         this.shadowGroup
             .setTitle('Shadow')
@@ -68,7 +95,7 @@ export class ChartShadowPanel extends Component {
                     // TODO remove this check when shadowEnabled instead when it's available in chart api
                     if (enabled) {
                         series.shadow = {
-                            color: this.shadowColorInput.getValue(),
+                            color: this.shadowColorPicker.getValue(),
                             offset: {
                                 x: Number.parseInt(this.shadowXOffsetInput.getValue()),
                                 y: Number.parseInt(this.shadowYOffsetInput.getValue())
@@ -80,25 +107,6 @@ export class ChartShadowPanel extends Component {
                     }
                 });
             });
-
-        const updateShadow = () => {
-            this.series.forEach((series: BarSeries | PieSeries) => {
-                // TODO remove this check when shadowEnabled instead when it's available in chart api
-                if (this.shadowGroup.isEnabled()) {
-                    const blur = this.shadowBlurInput.getValue() ? Number.parseInt(this.shadowBlurInput.getValue()) : 0;
-                    const xOffset = this.shadowXOffsetInput.getValue() ? Number.parseInt(this.shadowXOffsetInput.getValue()) : 0;
-                    const yOffset = this.shadowYOffsetInput.getValue() ? Number.parseInt(this.shadowYOffsetInput.getValue()) : 0;
-                    const color = this.shadowColorInput.getValue() ? this.shadowColorInput.getValue() : 'rgba(0,0,0,0.5)';
-                    series.shadow = {
-                        color: color,
-                        offset: {x: xOffset, y: yOffset},
-                        blur: blur
-                    }
-                }
-            });
-            // TODO: why is this necessary???
-            this.chart.performLayout();
-        };
 
         // BLUR
         this.shadowBlurInput
@@ -139,13 +147,10 @@ export class ChartShadowPanel extends Component {
         }
         this.addDestroyableEventListener(this.shadowYOffsetInput.getInputElement(), 'input', updateShadow);
 
-        // TODO replace with Color Picker
-        this.shadowColorInput.setLabel('Color');
         if (this.series.length > 0) {
             if (this.series[0].shadow) {
-                this.shadowColorInput.setValue(this.series[0].shadow.color + '');
+                this.shadowColorPicker.setValue(this.series[0].shadow.color + '');
             }
         }
-        this.addDestroyableEventListener(this.shadowColorInput.getInputElement(), 'input', updateShadow);
     }
 }

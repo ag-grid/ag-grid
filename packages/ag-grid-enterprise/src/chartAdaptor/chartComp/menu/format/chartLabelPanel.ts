@@ -77,21 +77,6 @@ export class ChartLabelPanel extends Component {
                 }
             });
 
-        // // label enabled checkbox is optional, i.e. not included in legend panel
-        // if (this.params.isEnabled) {
-        //     this.cbSeriesLabelsEnabled.setLabel('Enabled');
-        //     this.cbSeriesLabelsEnabled.setSelected(this.params.isEnabled());
-        //     this.addDestroyableEventListener(this.cbSeriesLabelsEnabled, 'change', () => {
-        //         if (this.params.setEnabled) {
-        //             this.params.setEnabled(this.cbSeriesLabelsEnabled.isSelected());
-        //         }
-        //     });
-        // } else {
-        //     // remove / destroy enabled checkbox
-        //     _.removeFromParent(this.cbSeriesLabelsEnabled.getGui());
-        //     this.cbSeriesLabelsEnabled.destroy();
-        // }
-
         const fonts = ['Verdana, sans-serif', 'Arial'];
         fonts.forEach((font: any) => {
             const option = document.createElement('option');
