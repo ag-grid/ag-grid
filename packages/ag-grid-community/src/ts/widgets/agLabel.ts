@@ -3,7 +3,7 @@ import { _ } from "../utils";
 
 export interface IAgLabel {
     label?: string;
-    labelWidth?: number;
+    labelWidth?: number | 'flex';
     labelSeparator?: string;
 }
 
@@ -43,10 +43,13 @@ export abstract class AgLabel extends Component {
         return this;
     }
 
-    public setLabelWidth(width: number): this {
-        if (this.label != null) {
-            _.setFixedWidth(this.eLabel, width);
+    public setLabelWidth(width: number | 'flex'): this {
+        if (this.label == null) {
+            return this;
         }
+
+        _.setElementWidth(this.eLabel, width);
+
         return this;
     }
 }

@@ -8,13 +8,10 @@ export class ChartAxisPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="axisGroup">       
-            
-                <!-- TODO Fix styling -->    
-                <ag-color-picker ref="axisColorInput" style="padding-left: 12px"></ag-color-picker>
-                <ag-input-text-field ref="axisLineWidthInput" style="padding-left: 12px"></ag-input-text-field> 
-                                                
-            </ag-group-component>            
+            <ag-group-component ref="axisGroup">
+                <ag-color-picker ref="axisColorInput"></ag-color-picker>
+                <ag-input-text-field ref="axisLineWidthInput"></ag-input-text-field> 
+            </ag-group-component>
         </div>`;
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
@@ -49,8 +46,8 @@ export class ChartAxisPanel extends Component {
 
         this.axisColorInput
             .setLabel("Color")
-            .setLabelWidth(85)
-            .setWidth(115)
+            .setLabelWidth('flex')            
+            .setWidth(100)
             .setValue(`${this.chart.xAxis.lineColor}`)
             .onColorChange(newColor => {
                 this.chart.xAxis.lineColor = newColor;
@@ -60,7 +57,8 @@ export class ChartAxisPanel extends Component {
 
         this.axisLineWidthInput
             .setLabel('Thickness')
-            .setLabelWidth(80)
+            .setLabelWidth('flex')
+            .setInputWidth(30)
             .setWidth(115)
             .setValue(`${this.chart.xAxis.lineWidth}`)
             .onInputChange(newValue => {

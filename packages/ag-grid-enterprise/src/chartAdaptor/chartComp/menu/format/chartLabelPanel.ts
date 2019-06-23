@@ -24,15 +24,15 @@ export interface ChartLabelPanelParams {
 export class ChartLabelPanel extends Component {
 
     public static TEMPLATE =
-        `<div>                               
+        `<div>
             <ag-group-component ref="labelsGroup">
                 <select ref="labelFontSelect"></select>
                 <select ref="labelFontWeightSelect"></select>  
                 <div class="ag-group-subgroup">
                     <ag-input-text-field ref="labelFontSizeInput"></ag-input-text-field> 
-                    <ag-color-picker ref="labelColorPicker"></ag-color-picker>                                         
-                </div>              
-            </ag-group-component>                        
+                    <ag-color-picker ref="labelColorPicker"></ag-color-picker>
+                </div>
+            </ag-group-component>
         </div>`;
 
     @RefSelector('labelsGroup') private labelsGroup: AgGroupComponent;
@@ -118,7 +118,8 @@ export class ChartLabelPanel extends Component {
         this.labelFontSizeInput
             .setLabel('Size')
             .setValue(fontSize)
-            .setLabelWidth(40)
+            .setLabelWidth('flex')
+            .setInputWidth(30)
             .setWidth(70)
             .onInputChange(newFontSize => {
                 const font = fonts[this.labelFontSelect.selectedIndex];
@@ -127,8 +128,7 @@ export class ChartLabelPanel extends Component {
 
         this.labelColorPicker
             .setLabel("Color")
-            .setLabelWidth(40)
-            .setWidth(70)
+            .setLabelWidth('flex')
             .setValue(this.params.getColor())
             .onColorChange(newColor => this.params.setColor(newColor));
 

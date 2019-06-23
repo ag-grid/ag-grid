@@ -16,14 +16,11 @@ interface GroupParams {
 export class AgGroupComponent extends Component {
     private static TEMPLATE =
         `<div class="ag-group-component">
-
-            <!-- TODO fix styling -->
-            <div class="ag-group-component-label" style="display: flex; flex-direction: row; top: -8px">     
-                <ag-checkbox ref="cbGroupEnabled" style="padding-right: 3px"></ag-checkbox>
-                <div ref="lbGroupTitle" style="padding-top: 2px">        
-                <!--<div ref="eGroupLabel" class="ag-group-component-label">        -->
+            <div class="ag-group-component-label">
+                <ag-checkbox ref="cbGroupEnabled"></ag-checkbox>
+                <div ref="lbGroupTitle" class="ag-group-component-title"></div>
             </div>
-            
+            <div ref="eContainer" class="ag-group-component-container"></div>
         </div>`;
 
     private items: GroupItem[];
@@ -33,6 +30,7 @@ export class AgGroupComponent extends Component {
 
     @RefSelector('cbGroupEnabled') private cbGroupEnabled: AgCheckbox;
     @RefSelector("lbGroupTitle") private lbGroupTitle: HTMLElement;
+    @RefSelector("eContainer") private groupContainer: HTMLElement;
 
     constructor(params?: GroupParams) {
         super(AgGroupComponent.TEMPLATE);
@@ -74,11 +72,11 @@ export class AgGroupComponent extends Component {
     }
 
     public addItem(item: GroupItem) {
-        const eGui = this.getGui();
+        const container = this.groupContainer;
         const el = item instanceof Component ? item.getGui() : item;
         _.addCssClass(el, 'ag-group-item');
 
-        eGui.appendChild(el);
+        container.appendChild(el);
         this.items.push(el);
     }
 
@@ -87,17 +85,28 @@ export class AgGroupComponent extends Component {
         return this;
     }
 
-    public setEnabled(enabled: boolean): this {
-        this.cbGroupEnabled.setSelected(enabled);
+    public setEnabled(enabled: boolean, skipToggle?: boolean): this {
+        if (this.suppressEnabledCheckbox) {
+            return this;
+        }
+        _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !enabled);
+        this.enabled = enabled;
+
+        if (!skipToggle) {
+            this.cbGroupEnabled.setSelected(enabled);
+        }
         return this;
     }
 
     public isEnabled(): boolean {
-        return this.cbGroupEnabled.isSelected();
+        return this.enabled;
     }
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
-        this.cbGroupEnabled.onSelectionChange(callbackFn);
+        this.cbGroupEnabled.onSelectionChange((newSelection: boolean) => {
+            this.setEnabled(newSelection, true);
+            callbackFn(newSelection);
+        });
         return this;
     }
 

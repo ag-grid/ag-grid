@@ -1343,22 +1343,41 @@ $handleSize: 5px;
 
 .ag-group-component {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    align-self: stretch;
     flex: 1 1 auto;
 
     .ag-group-component-label {
         position: absolute;
+        display: flex;
+        align-items: center;
         top: -10px;
         left: 0;
     }
 
-    .ag-group-item:not(.ag-group-component) {
+    .ag-group-component-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        .ag-group-subgroup {
+            display: flex;
+            align-self: stretch;
+        }
+    }
+
+    .ag-group-item {
         display: flex;
         align-items: center;
-        align-self: stretch;
+        flex: 1 1 auto;
+    }
+
+    &.ag-disabled {
+        .ag-group-component-title {
+            opacity: 0.5;
+        }
+        .ag-group-component-container {
+            display: none;
+        }
     }
 }
 

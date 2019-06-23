@@ -17,16 +17,13 @@ export class ChartPieSeriesPanel extends Component {
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-            
-                <!-- TODO fix styling -->
-                <ag-checkbox ref="seriesTooltipsCheckbox" style="padding-left: 12px"></ag-checkbox>                               
-                <ag-input-text-field ref="seriesStrokeWidthInput" style="padding-left: 12px"></ag-input-text-field>
-                
+                <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
+                <ag-input-text-field ref="seriesStrokeWidthInput"></ag-input-text-field>
                 <ag-group-component ref="seriesCalloutLabel">
                     <ag-input-text-field ref="seriesCalloutLengthInput"></ag-input-text-field>
                     <ag-input-text-field ref="seriesCalloutStrokeWidthInput"></ag-input-text-field>
                     <ag-input-text-field ref="seriesLabelOffsetInput"></ag-input-text-field>
-                </ag-group-component>                              
+                </ag-group-component>
             </ag-group-component>
         </div>`;
 

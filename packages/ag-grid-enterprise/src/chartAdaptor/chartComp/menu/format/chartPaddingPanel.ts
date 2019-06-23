@@ -54,7 +54,7 @@ export class ChartPaddingPanel extends Component {
         const initInput = (property: ChartPaddingProperty, input: AgInputTextField, label: string, value: string) => {
             input.setLabel(label)
                 .setLabelWidth(45)
-                .setWidth(75)
+                .setInputWidth(30)
                 .setValue(value)
                 .onInputChange(newValue => {
                     this.chart.padding[property] = newValue;

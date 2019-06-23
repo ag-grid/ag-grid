@@ -7,10 +7,8 @@ export class ChartLineSeriesPanel extends Component {
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-            
-                <!-- TODO fix styling -->
-                <ag-checkbox ref="seriesTooltipsCheckbox" style="padding-left: 12px"></ag-checkbox>                  
-                <ag-input-text-field ref="seriesLineWidthInput" style="padding-left: 12px"></ag-input-text-field>
+                <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
+                <ag-input-text-field ref="seriesLineWidthInput"></ag-input-text-field>
                 
                 <ag-group-component ref="seriesMarkersGroup">
                     <ag-input-text-field ref="seriesMarkerSizeInput"></ag-input-text-field>

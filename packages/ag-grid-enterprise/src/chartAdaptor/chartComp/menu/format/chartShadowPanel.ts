@@ -74,8 +74,8 @@ export class ChartShadowPanel extends Component {
 
         this.shadowColorPicker
             .setLabel('Color')
-            .setLabelWidth(85)
-            .setWidth(125)
+            .setLabelWidth('flex')
+            .setWidth(100)
             .onColorChange(updateShadow);
 
         // TODO use shadowEnabled instead when it's available in chart api
