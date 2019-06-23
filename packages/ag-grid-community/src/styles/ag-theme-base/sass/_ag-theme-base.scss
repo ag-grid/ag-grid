@@ -165,6 +165,7 @@
     }
 
     .ag-checkbox, .ag-radio-button {
+        cursor: default;
         label {
             cursor: default;
             margin-left: $grid-size;

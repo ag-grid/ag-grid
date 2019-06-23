@@ -1343,7 +1343,7 @@ $handleSize: 5px;
 
 .ag-group-component {
     position: relative;
-    flex: 1 1 auto;
+    flex: 1 1 100%;
 
     .ag-group-component-label {
         position: absolute;
@@ -1357,7 +1357,6 @@ $handleSize: 5px;
         display: flex;
         flex-direction: column;
         width: 100%;
-        height: 100%;
         overflow: hidden;
         .ag-group-subgroup {
             display: flex;

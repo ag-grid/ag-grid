@@ -87,6 +87,7 @@ export class AgPanel extends Positionable(Component) {
         });
 
         super.postConstruct();
+        this.eContentWrapper.style.height = '0';
     }
 
     //  used by the Positionable Mixin
