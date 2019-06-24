@@ -1,10 +1,9 @@
 import { _ } from "../utils";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
-import {Autowired, PostConstruct} from "../context/context";
-import {AgCheckbox} from "./agCheckbox";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {TouchListener} from "../main";
+import { Autowired, PostConstruct } from "../context/context";
+import { AgCheckbox } from "./agCheckbox";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 
 type GroupItem = Component | HTMLElement;
 
@@ -12,20 +11,19 @@ interface GroupParams {
     title: string;
     enabled: boolean;
     suppressEnabledCheckbox: boolean;
-    items?: GroupItem[];
+    items?: GroupItem[]
 }
 
 export class AgGroupComponent extends Component {
     private static TEMPLATE =
         `<div class="ag-group-component">
-            <!-- TODO fix styles -->
             <div class="ag-group-component-label">
-                 <span class="ag-column-group-icons" ref="eColumnGroupIcons" style="padding-left: 5px; padding-right: 5px">
+                 <span class="ag-column-group-icons" ref="eColumnGroupIcons">
                     <span class="ag-column-group-closed-icon" ref="eGroupOpenedIcon"></span>
                     <span class="ag-column-group-opened-icon" ref="eGroupClosedIcon"></span>
-                </span>                        
+                </span>
                 <ag-checkbox ref="cbGroupEnabled"></ag-checkbox>
-                <div ref="lbGroupTitle" class="ag-group-component-title" style="padding-right: 5px"></div>
+                <div ref="lbGroupTitle" class="ag-group-component-title"></div>
             </div>
             <div ref="eContainer" class="ag-group-component-container"></div>
         </div>`;
@@ -40,7 +38,6 @@ export class AgGroupComponent extends Component {
 
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
-    @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: HTMLElement;
 
     @RefSelector('cbGroupEnabled') private cbGroupEnabled: AgCheckbox;
     @RefSelector("lbGroupTitle") private lbGroupTitle: HTMLElement;
@@ -53,10 +50,12 @@ export class AgGroupComponent extends Component {
             params = {} as GroupParams;
         }
 
-        this.title = params.title;
-        this.enabled = params.enabled;
-        this.suppressEnabledCheckbox = params.suppressEnabledCheckbox;
-        this.items = params.items || [];
+        const { title, enabled, suppressEnabledCheckbox, items } = params;
+
+        this.title = title;
+        this.enabled = enabled != null ? enabled : true;
+        this.suppressEnabledCheckbox = suppressEnabledCheckbox;
+        this.items = items || [];
     }
 
     @PostConstruct
@@ -80,8 +79,6 @@ export class AgGroupComponent extends Component {
             this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
         }
 
-        // groups are expanded by default
-        this.expanded = true;
         this.setupExpandContract();
     }
 
@@ -91,21 +88,18 @@ export class AgGroupComponent extends Component {
 
         this.setOpenClosedIcons();
 
-        this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-        this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-
-        const touchListener = new TouchListener(this.eColumnGroupIcons, true);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
-        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+        this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', () => this.toggleGroupExpand());
+        this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', () => this.toggleGroupExpand());
     }
 
-    private onExpandOrContractClicked(): void {
-        this.expanded = !this.expanded;
+    private toggleGroupExpand(expanded?: boolean): void {
+        expanded = expanded != null ? expanded : !this.expanded;
+        if (this.expanded === expanded) { return; }
+
+        this.expanded = expanded;
         this.setOpenClosedIcons();
 
-        // TODO fix styles
-        _.addOrRemoveCssClass(this.getGui(), 'ag-collapsed', !this.expanded);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.expanded);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-collapsed', !expanded);
     }
 
     private setOpenClosedIcons(): void {
@@ -137,22 +131,13 @@ export class AgGroupComponent extends Component {
     }
 
     public setEnabled(enabled: boolean, skipToggle?: boolean): this {
-        if (this.suppressEnabledCheckbox) {
-            return this;
-        }
-
-        // TODO disable group title and inputs only
-        // _.addOrRemoveCssClass(this.getGui(), 'ag-collapsed', !this.expanded);
-
         this.enabled = enabled;
+        _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !enabled);
+        this.toggleGroupExpand(enabled);
 
-        if (!skipToggle) {
+        if (!this.suppressEnabledCheckbox && !skipToggle) {
             this.cbGroupEnabled.setSelected(enabled);
         }
-
-        // TODO - review
-        this.expanded = !enabled;
-        this.onExpandOrContractClicked();
 
         return this;
     }

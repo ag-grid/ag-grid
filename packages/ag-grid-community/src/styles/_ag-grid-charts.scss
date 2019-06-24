@@ -149,12 +149,14 @@
         flex-direction: column;
         position: relative;
         user-select: none;
+        > div {
+            display: flex;
+        }
     }
 
     .ag-chart-format-wrapper {
         overflow-x: hidden;
         .ag-group-component {
-            border-width: 1px;
             .ag-group-subgroup {
                 justify-content: space-between;
             }

@@ -1371,16 +1371,14 @@ $handleSize: 5px;
     }
 
     &.ag-disabled {
-        //TODO disable group title and inputs only (not group border)
+        .ag-group-component-container {
+            pointer-events: none;
+        }
     }
 
     &.ag-collapsed {
         .ag-group-component-container {
             display: none;
-        }
-        //TODO disable group title only (not group border)
-        .ag-group-component-title {
-            opacity: 0.5;
         }
     }
 }

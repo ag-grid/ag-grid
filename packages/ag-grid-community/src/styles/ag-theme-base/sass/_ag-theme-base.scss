@@ -1248,28 +1248,32 @@
     ///
     .ag-group-component {
         margin: 10px 5px;
-        padding: 10px 2px;
+        padding: 10px 2px 0px;
         border: 0px solid transparentize($border-color, 0.5);
-        border-top-width: 4px;
-        border-radius: 3px;
-        &.ag-disabled {
-            border-color: transparent;
-            border-top-color: transparentize($border-color, 0.5);
+        border-bottom-width: 1px;
+        &.ag-collapsed {
+            border-bottom: 0;
+            padding: 0;
+        }
+        &.ag-disabled > {
+            .ag-group-component-label .ag-group-component-title, .ag-group-component-container {
+                opacity: 0.5;
+            }
         }
         .ag-group-component-label {
             background-color: $background-color;
             height: $icon-size;
-            margin-left: 8px;
-            padding: 0 2px;
-            font-size: $font-size - 2px;
-            font-weight: 500;
+            font-size: $font-size - 1px;
             text-transform: uppercase;
+            span + .ag-checkbox {
+                margin-left: 2px;
+            }
         }
         .ag-group-item {
             margin: 2px 5px;
             > .ag-group-component {
-                margin: 0;
-                margin-top: 10px; 
+                margin-top: 10px;
+                border-bottom-width: 0;
             }
         }
     }
