@@ -104,27 +104,26 @@ export class LegendPanel extends Component {
     private initLegendItems() {
         type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
 
-        const initInput = (property: LegendOptions, label: HTMLElement, labelText: string,  input: AgSlider, initialValue: string) => {
-            label.innerText = labelText;
-
-            input.setValue(initialValue)
+        const initInput = (property: LegendOptions, labelText: string,  input: AgSlider, initialValue: string) => {
+            input.setLabel(labelText)
+                 .setValue(initialValue)
                  .onInputChange(newValue => this.chart.legend[property] = newValue)
         };
 
         const initialMarkerSize = `${this.chart.legend.markerSize}`;
-        initInput('markerSize', this.markerSizeLabel, 'Marker Size', this.markerSizeSlider, initialMarkerSize);
+        initInput('markerSize','Marker Size', this.markerSizeSlider, initialMarkerSize);
 
         const initialMarkerStroke = `${this.chart.legend.markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.markerStrokeLabel, 'Marker Stroke',this.markerStrokeSlider,  initialMarkerStroke);
+        initInput('markerStrokeWidth', 'Marker Stroke',this.markerStrokeSlider,  initialMarkerStroke);
 
         const initialMarkerPadding = `${this.chart.legend.markerPadding}`;
-        initInput('markerPadding', this.markerPaddingLabel, 'Marker Padding', this.markerPaddingSlider, initialMarkerPadding);
+        initInput('markerPadding',  'Marker Padding', this.markerPaddingSlider, initialMarkerPadding);
 
         const initialItemPaddingX = `${this.chart.legend.itemPaddingX}`;
-        initInput('itemPaddingX', this.itemPaddingXLabel, 'Item Padding X', this.itemPaddingXSlider,  initialItemPaddingX);
+        initInput('itemPaddingX', 'Item Padding X', this.itemPaddingXSlider,  initialItemPaddingX);
 
         const initialItemPaddingY = `${this.chart.legend.itemPaddingY}`;
-        initInput('itemPaddingY', this.itemPaddingYLabel, 'Item Padding Y', this.itemPaddingYSlider,  initialItemPaddingY);
+        initInput('itemPaddingY', 'Item Padding Y', this.itemPaddingYSlider,  initialItemPaddingY);
     }
 
     private initLabelPanel() {
