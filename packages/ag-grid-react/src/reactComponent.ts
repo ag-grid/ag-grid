@@ -106,7 +106,7 @@ export class ReactComponent extends BaseReactComponent {
 
             // so user can have access to the react container,
             // to add css class or style
-            params.reactContainer = this.eParentElement;
+            params.reactContainer = eParentElement;
         }
         return eParentElement;
     }
