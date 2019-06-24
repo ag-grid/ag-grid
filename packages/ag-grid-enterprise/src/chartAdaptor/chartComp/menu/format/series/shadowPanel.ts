@@ -104,8 +104,8 @@ export class ShadowPanel extends Component {
                 .onInputChange(updateShadow);
         };
 
-        initInput(this.shadowBlurInput,'Blur', '10');
-        initInput(this.shadowXOffsetInput,'X Offset', '10');
-        initInput(this.shadowYOffsetInput,'Y Offset', '10');
+        initInput(this.shadowBlurInput,'Blur', '5');
+        initInput(this.shadowXOffsetInput,'X Offset', '3');
+        initInput(this.shadowYOffsetInput,'Y Offset', '3');
     }
 }
