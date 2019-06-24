@@ -174,6 +174,16 @@
       {
         "title": "Updating Data",
         "url": "javascript-grid-data-update/"
+      },
+      {
+        "title": "See Also",
+        "url": "",
+        "items": [
+          {
+            "title": "Use with RxJS",
+            "url": "javascript-grid-rxjs/"
+          }
+        ]
       }
     ]
   },
@@ -434,6 +444,16 @@
       {
         "title": "Change Detection",
         "url": "javascript-grid-change-detection/"
+      },
+      {
+        "title": "See Also",
+        "url": "",
+        "items": [
+          {
+            "title": "Expressions & Context",
+            "url": "example-expressions-and-context/"
+          }
+        ]
       }
     ]
   },
@@ -687,23 +707,6 @@
     ]
   },
   {
-    "title": "Grid State",
-    "items": [
-      {
-        "title": "Filter",
-        "url": ""
-      },
-      {
-        "title": "Sorting",
-        "url": ""
-      },
-      {
-        "title": "Pivot",
-        "url": ""
-      }
-    ]
-  },
-  {
     "title": "Components",
     "items": [
       {
@@ -895,14 +898,6 @@
   {
     "title": "The items that didn't fit",
     "items": [
-      {
-        "title": "Use with RxJS",
-        "url": "javascript-grid-rxjs/"
-      },
-      {
-        "title": "Expressions & Context",
-        "url": "example-expressions-and-context/"
-      },
       {
         "title": "Example Gallery",
         "url": "example-gallery/"
