@@ -46,4 +46,8 @@ export class AgSlider extends Component {
 
         return this;
     }
+
+    public getValue(): string {
+        return this.eInput.value;
+    }
 }

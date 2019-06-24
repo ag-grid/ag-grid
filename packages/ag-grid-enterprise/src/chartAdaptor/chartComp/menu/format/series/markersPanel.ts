@@ -1,4 +1,4 @@
-import {AgGroupComponent, AgInputTextField, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {AgGroupComponent, AgSlider, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
 
 export class MarkersPanel extends Component {
@@ -6,14 +6,14 @@ export class MarkersPanel extends Component {
     public static TEMPLATE =
         `<div>               
             <ag-group-component ref="seriesMarkersGroup">
-                <ag-input-text-field ref="seriesMarkerSizeInput"></ag-input-text-field>
-                <ag-input-text-field ref="seriesMarkerStrokeWidthInput"></ag-input-text-field>
+                <ag-slider ref="seriesMarkerSizeSlider"></ag-slider>
+                <ag-slider ref="seriesMarkerStrokeWidthSlider"></ag-slider>
             </ag-group-component>  
         </div>`;
 
     @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
-    @RefSelector('seriesMarkerSizeInput') private seriesMarkerSizeInput: AgInputTextField;
-    @RefSelector('seriesMarkerStrokeWidthInput') private seriesMarkerStrokeWidthInput: AgInputTextField;
+    @RefSelector('seriesMarkerSizeSlider') private seriesMarkerSizeSlider: AgSlider;
+    @RefSelector('seriesMarkerStrokeWidthSlider') private seriesMarkerStrokeWidthSlider: AgSlider;
 
     private series: LineSeries[];
 
@@ -40,10 +40,8 @@ export class MarkersPanel extends Component {
 
         type LineMarkerProperty = 'markerSize' | 'markerStrokeWidth';
 
-        const initInput = (property: LineMarkerProperty, input: AgInputTextField, label: string, initialValue: string) => {
+        const initInput = (property: LineMarkerProperty, input: AgSlider, label: string, initialValue: string) => {
             input.setLabel(label)
-                .setLabelWidth(80)
-                .setWidth(115)
                 .setValue(initialValue)
                 .onInputChange(newValue => {
                     this.series.forEach(s => s[property] = newValue)
@@ -51,9 +49,9 @@ export class MarkersPanel extends Component {
         };
 
         const initialSize = `${this.series[0].markerSize}`;
-        initInput('markerSize', this.seriesMarkerSizeInput, 'Size', initialSize);
+        initInput('markerSize', this.seriesMarkerSizeSlider, 'Size', initialSize);
 
         const initialStrokeWidth = `${this.series[0].markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthInput, 'Stroke Width', initialStrokeWidth);
+        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'Stroke Width', initialStrokeWidth);
     }
 }
