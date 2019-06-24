@@ -104,7 +104,7 @@ export class BarChartProxy extends ChartProxy {
                 labelEnabled: false,
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelOffset: 10,
+                labelOffset: 4,
                 tooltipRenderer: undefined,
                 showInLegend: true,
                 shadow: undefined
