@@ -649,6 +649,15 @@
             "url": "javascript-grid-charts-customisation-doughnut/"
           }
         ]
+      },
+      {
+        "title": "See Also",
+        "items": [
+          {
+            "title": "Third Party Charting",
+            "url": "javascript-grid-graphing/"
+          }
+        ]
       }
     ]
   },
@@ -902,24 +911,6 @@
       {
         "title": "Jasmine & Protractor",
         "url": "javascript-grid-e2e-test-with-jasmine/"
-      }
-    ]
-  },
-  {
-    "title": "The items that didn't fit",
-    "items": [
-      {
-        "title": "Third Party Graphing",
-        "url": "javascript-grid-graphing/"
-      }
-    ]
-  },
-  {
-    "title": "The items we can leave out",
-    "items": [
-      {
-        "title": "Use in OpenFin",
-        "url": "javascript-grid-openfin/"
       }
     ]
   }
