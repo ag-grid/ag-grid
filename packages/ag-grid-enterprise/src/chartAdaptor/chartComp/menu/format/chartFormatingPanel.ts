@@ -49,22 +49,22 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createBarChartPanel(): void {
+        this.addComponent(new LegendPanel(this.chartController));
         this.addComponent(new BarSeriesPanel(this.chartController));
         this.addComponent(new AxisPanel(this.chartController));
-        this.addComponent(new LegendPanel(this.chartController));
         this.addComponent(new PaddingPanel(this.chartController));
     }
 
     private createLineChartPanel(): void {
+        this.addComponent(new LegendPanel(this.chartController));
         this.addComponent(new LineSeriesPanel(this.chartController));
         this.addComponent(new AxisPanel(this.chartController));
-        this.addComponent(new LegendPanel(this.chartController));
         this.addComponent(new PaddingPanel(this.chartController));
     }
 
     private createPieChartPanel(): void {
-        this.addComponent(new PieSeriesPanel(this.chartController));
         this.addComponent(new LegendPanel(this.chartController));
+        this.addComponent(new PieSeriesPanel(this.chartController));
         this.addComponent(new PaddingPanel(this.chartController));
     }
 

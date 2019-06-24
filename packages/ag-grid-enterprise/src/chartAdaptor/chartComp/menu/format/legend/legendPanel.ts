@@ -2,7 +2,7 @@ import {
     _,
     AgCheckbox,
     AgGroupComponent,
-    AgInputTextField,
+    AgSlider,
     Component,
     PostConstruct,
     RefSelector
@@ -20,12 +20,13 @@ export class LegendPanel extends Component {
                     <label ref="legendPositionLabel" style="margin-right: 5px;"></label>
                     <select ref="legendPositionSelect" style="flex: 1 1 auto"></select>
                 </div>
-                <ag-input-text-field ref="legendPaddingInput"></ag-input-text-field>
-                <ag-input-text-field ref="markerSizeInput"></ag-input-text-field>
-                <ag-input-text-field ref="markerStrokeInput"></ag-input-text-field>
-                <ag-input-text-field ref="markerPaddingInput"></ag-input-text-field>
-                <ag-input-text-field ref="itemPaddingXInput"></ag-input-text-field>
-                <ag-input-text-field ref="itemPaddingYInput"></ag-input-text-field>
+                
+                <ag-slider ref="legendPaddingSlider"></ag-slider>
+                <ag-slider ref="markerSizeSlider"></ag-slider>
+                <ag-slider ref="markerStrokeSlider"></ag-slider>
+                <ag-slider ref="markerPaddingSlider"></ag-slider>
+                <ag-slider ref="itemPaddingXSlider"></ag-slider>
+                <ag-slider ref="itemPaddingYSlider"></ag-slider>
                 
             </ag-group-component>
         </div>`;
@@ -33,15 +34,15 @@ export class LegendPanel extends Component {
     @RefSelector('legendGroup') private legendGroup: AgGroupComponent;
     @RefSelector('cbLegendEnabled') private cbLegendEnabled: AgCheckbox;
 
-    @RefSelector('legendPositionSelect') private legendPositionSelect: HTMLSelectElement;
     @RefSelector('legendPositionLabel') private legendPositionLabel: HTMLElement;
+    @RefSelector('legendPositionSelect') private legendPositionSelect: HTMLSelectElement;
 
-    @RefSelector('legendPaddingInput') private legendPaddingInput: AgInputTextField;
-    @RefSelector('markerSizeInput') private markerSizeInput: AgInputTextField;
-    @RefSelector('markerStrokeInput') private markerStrokeInput: AgInputTextField;
-    @RefSelector('markerPaddingInput') private markerPaddingInput: AgInputTextField;
-    @RefSelector('itemPaddingXInput') private itemPaddingXInput: AgInputTextField;
-    @RefSelector('itemPaddingYInput') private itemPaddingYInput: AgInputTextField;
+    @RefSelector('legendPaddingSlider') private legendPaddingSlider: AgSlider;
+    @RefSelector('markerSizeSlider') private markerSizeSlider: AgSlider;
+    @RefSelector('markerStrokeSlider') private markerStrokeSlider: AgSlider;
+    @RefSelector('markerPaddingSlider') private markerPaddingSlider: AgSlider;
+    @RefSelector('itemPaddingXSlider') private itemPaddingXSlider: AgSlider;
+    @RefSelector('itemPaddingYSlider') private itemPaddingYSlider: AgSlider;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -69,6 +70,7 @@ export class LegendPanel extends Component {
     private initLegendGroup() {
         this.legendGroup
             .setTitle('Legend')
+            .hideEnabledCheckbox(true)
             .setEnabled(this.chart.legend.enabled)
             .onEnableChange(enabled => this.chart.legend.enabled = enabled);
     }
@@ -92,10 +94,9 @@ export class LegendPanel extends Component {
     }
 
     private initLegendPadding() {
-        this.legendPaddingInput
+
+        this.legendPaddingSlider
             .setLabel('Padding')
-            .setLabelWidth('flex')
-            .setInputWidth(30)
             .setValue(`${this.chart.legendPadding}`)
             .onInputChange(newValue => this.chart.legendPadding = newValue);
     }
@@ -103,28 +104,27 @@ export class LegendPanel extends Component {
     private initLegendItems() {
         type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
 
-        const initInput = (property: LegendOptions, input: AgInputTextField, label: string, initialValue: string) => {
-            input.setLabel(label)
-                .setLabelWidth('flex')
-                .setInputWidth(30)
-                .setValue(initialValue)
-                .onInputChange(newValue => this.chart.legend[property] = newValue)
+        const initInput = (property: LegendOptions, label: HTMLElement, labelText: string,  input: AgSlider, initialValue: string) => {
+            label.innerText = labelText;
+
+            input.setValue(initialValue)
+                 .onInputChange(newValue => this.chart.legend[property] = newValue)
         };
 
         const initialMarkerSize = `${this.chart.legend.markerSize}`;
-        initInput('markerSize', this.markerSizeInput, 'Marker Size', initialMarkerSize);
+        initInput('markerSize', this.markerSizeLabel, 'Marker Size', this.markerSizeSlider, initialMarkerSize);
 
         const initialMarkerStroke = `${this.chart.legend.markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.markerStrokeInput, 'Marker Stroke', initialMarkerStroke);
+        initInput('markerStrokeWidth', this.markerStrokeLabel, 'Marker Stroke',this.markerStrokeSlider,  initialMarkerStroke);
 
         const initialMarkerPadding = `${this.chart.legend.markerPadding}`;
-        initInput('markerPadding', this.markerPaddingInput, 'Marker Padding', initialMarkerPadding);
+        initInput('markerPadding', this.markerPaddingLabel, 'Marker Padding', this.markerPaddingSlider, initialMarkerPadding);
 
         const initialItemPaddingX = `${this.chart.legend.itemPaddingX}`;
-        initInput('itemPaddingX', this.itemPaddingXInput, 'Item Padding X', initialItemPaddingX);
+        initInput('itemPaddingX', this.itemPaddingXLabel, 'Item Padding X', this.itemPaddingXSlider,  initialItemPaddingX);
 
         const initialItemPaddingY = `${this.chart.legend.itemPaddingY}`;
-        initInput('itemPaddingY', this.itemPaddingYInput, 'Item Padding Y', initialItemPaddingY);
+        initInput('itemPaddingY', this.itemPaddingYLabel, 'Item Padding Y', this.itemPaddingYSlider,  initialItemPaddingY);
     }
 
     private initLabelPanel() {
