@@ -16,7 +16,7 @@ export class LegendPanel extends Component {
     public static TEMPLATE =
         `<div>  
             <ag-group-component ref="legendGroup">
-                <ag-checkbox ref="cbLegendEnabled"></ag-checkbox>
+                <ag-checkbox ref="cbLegendEnabled" style="opacity: 1"></ag-checkbox>
                 <div>
                     <label ref="legendPositionLabel" style="margin-right: 5px;"></label>
                     <select ref="legendPositionSelect" style="flex: 1 1 auto"></select>
@@ -78,6 +78,9 @@ export class LegendPanel extends Component {
             .setSelected(this.chart.legend.enabled)
             .onSelectionChange(newSelection => {
                 this.chart.legend.enabled = newSelection;
+                //TODO fix!!!
+                this.legendGroup.setEnabled(newSelection);
+                this.legendGroup.toggleGroupExpand(true);
             });
     }
 
