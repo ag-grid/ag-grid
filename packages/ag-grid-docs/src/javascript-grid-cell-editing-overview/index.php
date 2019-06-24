@@ -21,6 +21,10 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>
+            <a href="../javascript-grid-editing-flow/">Editing Flow</a>:
+            The flow of values from editing to the application data.
+        </li>
+        <li>
             <a href="../javascript-grid-cell-editing/">Cell Editing</a>:
             How to configure the grid to edit certain cells.
         </li>

@@ -184,8 +184,16 @@
       },
       {
         "title": "Value Handlers",
-        "url": "javascript-grid-value-handlers/",
+        "url": "javascript-grid-rendering-overview/",
         "items": [
+          {
+            "title": "Rendering Flow",
+            "url": "javascript-grid-rendering-flow/"
+          },
+          {
+            "title": "Editing Flow",
+            "url": "javascript-grid-editing-flow/"
+          },
           {
             "title": "Getters & Formatters",
             "url": "javascript-grid-value-getters/"

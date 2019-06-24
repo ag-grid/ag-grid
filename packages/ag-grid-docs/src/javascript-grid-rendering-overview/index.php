@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>
-            <a href="../javascript-grid-value-handlers/">Rendering Flow</a>:
+            <a href="../javascript-grid-rendering-flow/">Rendering Flow</a>:
             The flow the grid follows from taking you data to rendering HTML into the cell.
         </li>
         <li>

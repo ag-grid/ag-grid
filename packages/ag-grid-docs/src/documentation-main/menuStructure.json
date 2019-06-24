@@ -400,8 +400,8 @@
         "url": "javascript-grid-rendering-overview/"
       },
       {
-        "title": "Rendering Flow (and Saving Flow)",
-        "url": "javascript-grid-value-handlers/"
+        "title": "Rendering Flow",
+        "url": "javascript-grid-rendering-flow/"
       },
       {
         "title": "Cell Rendering",
@@ -463,6 +463,10 @@
       {
         "title": "Overview",
         "url": "javascript-grid-cell-editing-overview/"
+      },
+      {
+        "title": "Editing Flow",
+        "url": "javascript-grid-editing-flow/"
       },
       {
         "title": "Cell Editing",
