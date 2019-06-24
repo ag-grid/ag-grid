@@ -1351,13 +1351,12 @@ $handleSize: 5px;
         align-items: center;
         top: -10px;
         left: 0;
+        width: 100%;
     }
 
     .ag-group-component-container {
         display: flex;
         flex-direction: column;
-        width: 100%;
-        overflow: hidden;
         .ag-group-subgroup {
             display: flex;
             align-self: stretch;

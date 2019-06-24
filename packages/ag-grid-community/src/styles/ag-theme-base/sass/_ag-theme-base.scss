@@ -1247,33 +1247,35 @@
     /// Widgets
     ///
     .ag-group-component {
-        margin: 10px 5px;
-        padding: 10px 2px 0px;
-        border: 0px solid transparentize($border-color, 0.5);
-        border-bottom-width: 1px;
-        &.ag-collapsed {
-            border-bottom: 0;
-            padding: 0;
-        }
+        background-color: $group-component-background-color;
+        margin: $grid-size * 2 $grid-size;
+        padding: ($grid-size * 2 + 2) ($grid-size - 2) 0px;
+        border: none;
         &.ag-disabled > {
             .ag-group-component-label .ag-group-component-title, .ag-group-component-container {
                 opacity: 0.5;
             }
         }
         .ag-group-component-label {
-            background-color: $background-color;
+            background-color: darken($group-component-background-color, 10%);
             height: $icon-size;
             font-size: $font-size - 1px;
             text-transform: uppercase;
+            height: $grid-size * 5;
+            width: 100%;
             span + .ag-checkbox {
-                margin-left: 2px;
+                margin-left: $grid-size / 2;
             }
         }
+        .ag-group-component-container {
+            margin: $grid-size;
+            margin-left: $icon-size;
+        }
         .ag-group-item {
-            margin: 2px 5px;
+            margin: $grid-size / 2 0;
             > .ag-group-component {
-                margin-top: 10px;
-                border-bottom-width: 0;
+                margin-top: $grid-size * 2  + 2;
+                margin-right: 0;
             }
         }
     }
