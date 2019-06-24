@@ -12,12 +12,13 @@ export class AgInputTextField extends AgLabel {
     private static TEMPLATE =
         `<div class="ag-textfield">
             <label ref="eLabel"></label>
-            <div class="ag-input-text-wrapper">
+            <div ref="eInputWrapper" class="ag-input-text-wrapper">
                 <input type="text" ref="eInput" />
             </div>
         </div>`;
 
     @RefSelector('eLabel') protected eLabel: HTMLElement;
+    @RefSelector('eInputWrapper') private eInputWrapper: HTMLElement;
     @RefSelector('eInput') private eInput: HTMLInputElement;
 
     private config: ITextField = {};
@@ -64,6 +65,11 @@ export class AgInputTextField extends AgLabel {
             const newVal = parseInt(this.getValue(), 10);
             callbackFn(newVal);
         });
+        return this;
+    }
+
+    public setInputWidth(width: number | 'flex'): this {
+        _.setElementWidth(this.eInputWrapper, width);
         return this;
     }
 

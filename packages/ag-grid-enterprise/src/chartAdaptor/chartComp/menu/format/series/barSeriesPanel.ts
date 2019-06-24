@@ -7,19 +7,18 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {BarSeries} from "../../../../charts/chart/series/barSeries";
-import {ChartShadowPanel} from "./chartShadowPanel";
-import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
+import {ChartController} from "../../../chartController";
+import {BarSeries} from "../../../../../charts/chart/series/barSeries";
+import {ShadowPanel} from "./shadowPanel";
+import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
 
-export class ChartBarSeriesPanel extends Component {
+export class BarSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-                <!-- TODO Fix styling -->   
-                <ag-checkbox ref="seriesTooltipsCheckbox" style="padding-left: 12px"></ag-checkbox>                       
-                <ag-input-text-field ref="seriesStrokeWidthInput" style="padding-left: 12px"></ag-input-text-field>
+                <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
+                <ag-input-text-field ref="seriesStrokeWidthInput"></ag-input-text-field>
             </ag-group-component>
         </div>`;
 
@@ -38,7 +37,7 @@ export class ChartBarSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartBarSeriesPanel.TEMPLATE);
+        this.setTemplate(BarSeriesPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.series = chartProxy.getChart().series as BarSeries[];
@@ -94,14 +93,26 @@ export class ChartBarSeriesPanel extends Component {
             }
         };
 
-        const labelPanelComp = new ChartLabelPanel(params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
-        this.seriesGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
+
+        const labelOffsetInput = new AgInputTextField()
+            .setLabel('Offset')
+            .setLabelWidth('flex')
+            .setWidth(100)
+            .setValue(`${this.series[0].labelOffset}`)
+            .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
+
+        this.getContext().wireBean(labelOffsetInput);
+        labelPanelComp.addCompToPanel(labelOffsetInput);
+        this.activePanels.push(labelOffsetInput);
+
+        this.seriesGroup.addItem(labelPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = new ChartShadowPanel(this.chartController);
+        const shadowPanelComp = new ShadowPanel(this.chartController);
         this.getContext().wireBean(shadowPanelComp);
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);

@@ -1,20 +1,17 @@
 import { _, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
-import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
-import {ChartAxisTicksPanel} from "./chartAxisTicksPanel";
+import { ChartController } from "../../../chartController";
+import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
+import {AxisTicksPanel} from "./axisTicksPanel";
+import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
 
-export class ChartAxisPanel extends Component {
+export class AxisPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="axisGroup">       
-            
-                <!-- TODO Fix styling -->    
-                <ag-color-picker ref="axisColorInput" style="padding-left: 12px"></ag-color-picker>
-                <ag-input-text-field ref="axisLineWidthInput" style="padding-left: 12px"></ag-input-text-field> 
-                                                
-            </ag-group-component>            
+            <ag-group-component ref="axisGroup">
+                <ag-color-picker ref="axisColorInput"></ag-color-picker>
+                <ag-input-text-field ref="axisLineWidthInput"></ag-input-text-field> 
+            </ag-group-component>
         </div>`;
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
@@ -32,7 +29,7 @@ export class ChartAxisPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartAxisPanel.TEMPLATE);
+        this.setTemplate(AxisPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart() as CartesianChart;
@@ -49,8 +46,8 @@ export class ChartAxisPanel extends Component {
 
         this.axisColorInput
             .setLabel("Color")
-            .setLabelWidth(85)
-            .setWidth(115)
+            .setLabelWidth('flex')            
+            .setWidth(100)
             .setValue(`${this.chart.xAxis.lineColor}`)
             .onColorChange(newColor => {
                 this.chart.xAxis.lineColor = newColor;
@@ -60,7 +57,8 @@ export class ChartAxisPanel extends Component {
 
         this.axisLineWidthInput
             .setLabel('Thickness')
-            .setLabelWidth(80)
+            .setLabelWidth('flex')
+            .setInputWidth(30)
             .setWidth(115)
             .setValue(`${this.chart.xAxis.lineWidth}`)
             .onInputChange(newValue => {
@@ -72,7 +70,7 @@ export class ChartAxisPanel extends Component {
 
     private initAxisTicks() {
 
-        const axisTicksComp = new ChartAxisTicksPanel(this.chartController);
+        const axisTicksComp = new AxisTicksPanel(this.chartController);
         this.getContext().wireBean(axisTicksComp);
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
@@ -97,7 +95,7 @@ export class ChartAxisPanel extends Component {
             }
         };
 
-        const labelPanelComp = new ChartLabelPanel(params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.axisGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
@@ -105,7 +103,7 @@ export class ChartAxisPanel extends Component {
         this.addAdditionalLabelComps(labelPanelComp);
     }
 
-    private addAdditionalLabelComps(labelPanelComp: ChartLabelPanel) {
+    private addAdditionalLabelComps(labelPanelComp: LabelPanel) {
 
         const createInputComp = (label: string, initialValue: string, updateFunc: (value: number) => void) => {
             const rotationInput = new AgInputTextField()

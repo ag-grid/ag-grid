@@ -64,7 +64,8 @@
         align-items: stretch;
         > div {
             width: 100%;
-            height: 100%;
+            overflow: hidden;
+            overflow-y: auto;
         }
         overflow: hidden;
     }
@@ -144,9 +145,8 @@
     }
 
     .ag-chart-data-wrapper, .ag-chart-format-wrapper {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
+        display: flex;
+        flex-direction: column;
         position: relative;
         user-select: none;
     }
@@ -155,11 +155,7 @@
         overflow-x: hidden;
         .ag-group-component {
             border-width: 1px;
-            .ag-group-component-label {
-                top: -6px;
-            }
             .ag-group-subgroup {
-                align-self: stretch;
                 justify-content: space-between;
             }
             

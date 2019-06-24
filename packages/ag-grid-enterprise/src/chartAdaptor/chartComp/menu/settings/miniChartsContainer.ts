@@ -4,7 +4,7 @@ import {
     PostConstruct
 } from "ag-grid-community";
 
-import { ChartController } from "../chartController";
+import { ChartController } from "../../chartController";
 
 export class MiniChartsContainer extends Component {
     static TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
@@ -52,18 +52,18 @@ export class MiniChartsContainer extends Component {
     }
 }
 
-import { Group } from "../../../charts/scene/group";
-import { Scene } from "../../../charts/scene/scene";
-import { toRadians } from "../../../charts/util/angle";
-import { Sector } from "../../../charts/scene/shape/sector";
-import { Path } from "../../../charts/scene/shape/path";
-import linearScale from "../../../charts/scale/linearScale";
-import { Line } from "../../../charts/scene/shape/line";
-import { ClipRect } from "../../../charts/scene/clipRect";
-import { Rect } from "../../../charts/scene/shape/rect";
-import { BandScale } from "../../../charts/scale/bandScale";
-import { Arc } from "../../../charts/scene/shape/arc";
-import { Shape } from "../../../charts/scene/shape/shape";
+import { Group } from "../../../../charts/scene/group";
+import { Scene } from "../../../../charts/scene/scene";
+import { toRadians } from "../../../../charts/util/angle";
+import { Sector } from "../../../../charts/scene/shape/sector";
+import { Path } from "../../../../charts/scene/shape/path";
+import linearScale from "../../../../charts/scale/linearScale";
+import { Line } from "../../../../charts/scene/shape/line";
+import { ClipRect } from "../../../../charts/scene/clipRect";
+import { Rect } from "../../../../charts/scene/shape/rect";
+import { BandScale } from "../../../../charts/scale/bandScale";
+import { Arc } from "../../../../charts/scene/shape/arc";
+import { Shape } from "../../../../charts/scene/shape/shape";
 
 export abstract class MiniChart {
     protected readonly size = 80;

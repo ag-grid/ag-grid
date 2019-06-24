@@ -1,11 +1,11 @@
 import { _, ChartType, Component, PostConstruct } from "ag-grid-community";
-import { ChartController } from "../chartController";
-import { ChartPaddingPanel } from "./format/chartPaddingPanel";
-import { ChartLegendPanel } from "./format/chartLegendPanel";
-import { ChartBarSeriesPanel } from "./format/chartBarSeriesPanel";
-import { ChartAxisPanel } from "./format/chartAxisPanel";
-import { ChartLineSeriesPanel } from "./format/chartLineSeriesPanel";
-import { ChartPieSeriesPanel } from "./format/chartPieSeriesPanel";
+import { ChartController } from "../../chartController";
+import {LegendPanel} from "./legend/legendPanel";
+import {BarSeriesPanel} from "./series/barSeriesPanel";
+import {AxisPanel} from "./axis/axisPanel";
+import {LineSeriesPanel} from "./series/lineSeriesPanel";
+import {PieSeriesPanel} from "./series/pieSeriesPanel";
+import {PaddingPanel} from "./padding/paddingPanel";
 
 export class ChartFormattingPanel extends Component {
 
@@ -49,23 +49,23 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createBarChartPanel(): void {
-        this.addComponent(new ChartPaddingPanel(this.chartController));
-        this.addComponent(new ChartLegendPanel(this.chartController));
-        this.addComponent(new ChartBarSeriesPanel(this.chartController));
-        this.addComponent(new ChartAxisPanel(this.chartController));
+        this.addComponent(new PaddingPanel(this.chartController));
+        this.addComponent(new LegendPanel(this.chartController));
+        this.addComponent(new BarSeriesPanel(this.chartController));
+        this.addComponent(new AxisPanel(this.chartController));
     }
 
     private createLineChartPanel(): void {
-        this.addComponent(new ChartPaddingPanel(this.chartController));
-        this.addComponent(new ChartLegendPanel(this.chartController));
-        this.addComponent(new ChartLineSeriesPanel(this.chartController));
-        this.addComponent(new ChartAxisPanel(this.chartController));
+        this.addComponent(new PaddingPanel(this.chartController));
+        this.addComponent(new LegendPanel(this.chartController));
+        this.addComponent(new LineSeriesPanel(this.chartController));
+        this.addComponent(new AxisPanel(this.chartController));
     }
 
     private createPieChartPanel(): void {
-        this.addComponent(new ChartPaddingPanel(this.chartController));
-        this.addComponent(new ChartLegendPanel(this.chartController));
-        this.addComponent(new ChartPieSeriesPanel(this.chartController));
+        this.addComponent(new PaddingPanel(this.chartController));
+        this.addComponent(new LegendPanel(this.chartController));
+        this.addComponent(new PieSeriesPanel(this.chartController));
     }
 
     private addComponent(component: Component): void {

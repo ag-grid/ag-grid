@@ -165,6 +165,7 @@
     }
 
     .ag-checkbox, .ag-radio-button {
+        cursor: default;
         label {
             cursor: default;
             margin-left: $grid-size;
@@ -1245,14 +1246,19 @@
     ////
     /// Widgets
     ///
-    .ag-group-component{
+    .ag-group-component {
         margin: 10px 5px;
         padding: 10px 2px;
         border: 0px solid transparentize($border-color, 0.5);
         border-top-width: 4px;
         border-radius: 3px;
+        &.ag-disabled {
+            border-color: transparent;
+            border-top-color: transparentize($border-color, 0.5);
+        }
         .ag-group-component-label {
             background-color: $background-color;
+            height: $icon-size;
             margin-left: 8px;
             padding: 0 2px;
             font-size: $font-size - 2px;
@@ -1261,8 +1267,9 @@
         }
         .ag-group-item {
             margin: 2px 5px;
-            &.ag-group-component {
-                margin-top: 5px;
+            > .ag-group-component {
+                margin: 0;
+                margin-top: 10px; 
             }
         }
     }
@@ -1275,6 +1282,9 @@
     }
 
     .ag-color-picker {
+        label {
+            margin-right: 5px;
+        }
         .ag-color-button {
             height: $icon-size;
             width: $icon-size;

@@ -1521,11 +1521,33 @@ export class Utils {
         this.addOrRemoveCssClass(element, 'ag-invisible', hidden);
     }
 
+    static setElementWidth(element: HTMLElement, width: string | number) {
+        if (width === 'flex') {
+            element.style.width = null;
+            element.style.minWidth = null;
+            element.style.maxWidth = null;
+            element.style.flex = '1 1 auto';
+        } else {
+            this.setFixedWidth(element, width);
+        }
+    }
+
     static setFixedWidth(element: HTMLElement, width: string | number) {
         width = this.formatSize(width);
         element.style.width = width;
         element.style.maxWidth = width;
         element.style.minWidth = width;
+    }
+
+    static setElementHeight(element: HTMLElement, height: string | number) {
+        if (height === 'flex') {
+            element.style.height = null;
+            element.style.minHeight = null;
+            element.style.maxHeight = null;
+            element.style.flex = '1 1 auto';
+        } else {
+            this.setFixedHeight(element, height);
+        }
     }
 
     static setFixedHeight(element: HTMLElement, height: string | number) {

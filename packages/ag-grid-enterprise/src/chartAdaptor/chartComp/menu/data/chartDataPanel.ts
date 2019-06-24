@@ -8,8 +8,8 @@ import {
     AgRadioButton,
     AgCheckbox
 } from "ag-grid-community";
-import { ChartController } from "../chartController";
-import { ColState } from "../chartModel";
+import { ChartController } from "../../chartController";
+import { ColState } from "../../chartModel";
 
 export class ChartDataPanel extends Component {
 
@@ -44,16 +44,18 @@ export class ChartDataPanel extends Component {
         [dimensionCols, valueCols].forEach((group, idx) => {
             const isCategory = idx === 0;
             const groupComp = new AgGroupComponent({
-                title: isCategory
-                        ? localeTextFunc('chartCategories', 'Categories')
-                        : localeTextFunc('chartSeries', 'Series'),
+                title: isCategory 
+                    ? localeTextFunc('chartCategories', 'Categories')
+                    : localeTextFunc('chartSeries', 'Series'),
                 enabled: true,
                 suppressEnabledCheckbox: true
             });
             this.getContext().wireBean(groupComp);
             
             group.forEach(this.getColumnStateMapper(isCategory, groupComp));
-            eGui.appendChild(groupComp.getGui());
+            const eDiv = document.createElement('div');
+            eDiv.appendChild(groupComp.getGui());
+            eGui.appendChild(eDiv);
         });
     }
 

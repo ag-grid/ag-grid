@@ -7,28 +7,25 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {Chart, LegendPosition} from "../../../../charts/chart/chart";
-import {ChartLabelPanel, ChartLabelPanelParams} from "./chartLabelPanel";
+import {ChartController} from "../../../chartController";
+import {Chart, LegendPosition} from "../../../../../charts/chart/chart";
+import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
 
-export class ChartLegendPanel extends Component {
+export class LegendPanel extends Component {
 
     public static TEMPLATE =
         `<div>  
             <ag-group-component ref="legendGroup">
-                <!-- TODO Fix styling -->   
-                <div style="padding-left: 12px">
-                    <label ref="legendPositionLabel"></label>
-                    <select ref="legendPositionSelect" style="width: 70px"></select>
+                <div>
+                    <label ref="legendPositionLabel" style="margin-right: 5px;"></label>
+                    <select ref="legendPositionSelect" style="flex: 1 1 auto"></select>
                 </div>
-                
-                <!-- TODO Fix styling -->   
-                <ag-input-text-field ref="legendPaddingInput" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="markerSizeInput" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="markerStrokeInput" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="markerPaddingInput" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="itemPaddingXInput" style="padding-left: 12px"></ag-input-text-field>
-                <ag-input-text-field ref="itemPaddingYInput" style="padding-left: 12px"></ag-input-text-field>
+                <ag-input-text-field ref="legendPaddingInput"></ag-input-text-field>
+                <ag-input-text-field ref="markerSizeInput"></ag-input-text-field>
+                <ag-input-text-field ref="markerStrokeInput"></ag-input-text-field>
+                <ag-input-text-field ref="markerPaddingInput"></ag-input-text-field>
+                <ag-input-text-field ref="itemPaddingXInput"></ag-input-text-field>
+                <ag-input-text-field ref="itemPaddingYInput"></ag-input-text-field>
                 
             </ag-group-component>
         </div>`;
@@ -57,7 +54,7 @@ export class ChartLegendPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartLegendPanel.TEMPLATE);
+        this.setTemplate(LegendPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
@@ -97,8 +94,8 @@ export class ChartLegendPanel extends Component {
     private initLegendPadding() {
         this.legendPaddingInput
             .setLabel('Padding')
-            .setLabelWidth(95)
-            .setWidth(130)
+            .setLabelWidth('flex')
+            .setInputWidth(30)
             .setValue(`${this.chart.legendPadding}`)
             .onInputChange(newValue => this.chart.legendPadding = newValue);
     }
@@ -108,8 +105,8 @@ export class ChartLegendPanel extends Component {
 
         const initInput = (property: LegendOptions, input: AgInputTextField, label: string, initialValue: string) => {
             input.setLabel(label)
-                .setLabelWidth(95)
-                .setWidth(130)
+                .setLabelWidth('flex')
+                .setInputWidth(30)
                 .setValue(initialValue)
                 .onInputChange(newValue => this.chart.legend[property] = newValue)
         };
@@ -147,7 +144,7 @@ export class ChartLegendPanel extends Component {
             }
         };
 
-        const labelPanelComp = new ChartLabelPanel(params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.legendGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);

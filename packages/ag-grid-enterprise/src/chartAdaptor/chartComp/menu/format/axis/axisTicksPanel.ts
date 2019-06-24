@@ -6,10 +6,10 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import {ChartController} from "../../../chartController";
+import {CartesianChart} from "../../../../../charts/chart/cartesianChart";
 
-export class ChartAxisTicksPanel extends Component {
+export class AxisTicksPanel extends Component {
 
     public static TEMPLATE =
         `<div>         
@@ -18,7 +18,7 @@ export class ChartAxisTicksPanel extends Component {
                 <ag-input-text-field ref="axisTicksWidthInput"></ag-input-text-field>
                 <ag-input-text-field ref="axisTicksSizeInput"></ag-input-text-field>
                 <ag-input-text-field ref="axisTicksPaddingInput"></ag-input-text-field>
-            </ag-group-component>                                    
+            </ag-group-component>
         </div>`;
 
     @RefSelector('axisTicksGroup') private axisTicksGroup: AgGroupComponent;
@@ -37,7 +37,7 @@ export class ChartAxisTicksPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartAxisTicksPanel.TEMPLATE);
+        this.setTemplate(AxisTicksPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart() as CartesianChart;
@@ -52,8 +52,8 @@ export class ChartAxisTicksPanel extends Component {
 
         this.axisTicksColorPicker
             .setLabel("Color")
-            .setLabelWidth(85)
-            .setWidth(115)
+            .setLabelWidth('flex')
+            .setWidth(100)
             .setValue(`${this.chart.xAxis.lineColor}`)
             .onColorChange(newColor => {
                 this.chart.xAxis.tickColor = newColor;
@@ -65,7 +65,8 @@ export class ChartAxisTicksPanel extends Component {
 
         const initInput = (property: AxisTickProperty, input: AgInputTextField, label: string, initialValue: string) => {
             input.setLabel(label)
-                .setLabelWidth(80)
+                .setLabelWidth('flex')
+                .setInputWidth(30)
                 .setWidth(115)
                 .setValue(initialValue)
                 .onInputChange(newValue => {
