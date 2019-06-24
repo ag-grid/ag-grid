@@ -48,6 +48,7 @@ export class AxisTicksPanel extends Component {
     private initAxisTicks() {
         this.axisTicksGroup
             .setTitle('Ticks')
+            .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
         this.axisTicksColorPicker

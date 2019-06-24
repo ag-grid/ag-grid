@@ -34,6 +34,7 @@ export class MarkersPanel extends Component {
         this.seriesMarkersGroup
             .setTitle('Markers')
             .setEnabled(enabled)
+            .hideOpenCloseIcons(true)
             .onEnableChange(enabled => {
                 this.series.forEach(s => s.marker = enabled);
             });

@@ -72,6 +72,7 @@ export class ShadowPanel extends Component {
         this.shadowGroup
             .setTitle('Shadow')
             .setEnabled(enabled)
+            .hideOpenCloseIcons(true)
             .onEnableChange(enabled => {
                 this.series.forEach((series: BarSeries | PieSeries) => {
                     if (enabled) {

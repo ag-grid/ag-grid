@@ -11,6 +11,7 @@ interface GroupParams {
     title: string;
     enabled: boolean;
     suppressEnabledCheckbox: boolean;
+    suppressOpenCloseIcons: boolean;
     items?: GroupItem[]
 }
 
@@ -33,6 +34,7 @@ export class AgGroupComponent extends Component {
     private enabled: boolean;
     private expanded: boolean;
     private suppressEnabledCheckbox: boolean;
+    private suppressOpenCloseIcons: boolean;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -79,6 +81,10 @@ export class AgGroupComponent extends Component {
             this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
         }
 
+        if (this.suppressOpenCloseIcons) [
+            this.hideOpenCloseIcons(this.suppressOpenCloseIcons)
+        ]
+
         this.setupExpandContract();
     }
 
@@ -107,8 +113,10 @@ export class AgGroupComponent extends Component {
         if (this.expanded === expanded) { return; }
 
         this.expanded = expanded;
-        this.setOpenClosedIcons();
 
+        if (!this.suppressOpenCloseIcons) {
+            this.setOpenClosedIcons();
+        }
         _.addOrRemoveCssClass(this.getGui(), 'ag-collapsed', !expanded);
 
         return this;
@@ -135,6 +143,7 @@ export class AgGroupComponent extends Component {
     public setEnabled(enabled: boolean, skipToggle?: boolean): this {
         this.enabled = enabled;
         _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !enabled);
+
         this.toggleGroupExpand(enabled);
 
         if (!this.suppressEnabledCheckbox && !skipToggle) {
@@ -158,6 +167,13 @@ export class AgGroupComponent extends Component {
 
     public hideEnabledCheckbox(hide: boolean): this {
         _.addOrRemoveCssClass(this.cbGroupEnabled.getGui(), 'ag-hidden', hide);
+        return this;
+    }
+
+    public hideOpenCloseIcons(hide: boolean): this {
+        this.suppressOpenCloseIcons = hide;
+        _.addOrRemoveCssClass(this.eGroupOpenedIcon, 'ag-hidden', hide);
+        _.addOrRemoveCssClass(this.eGroupClosedIcon, 'ag-hidden', hide);
         return this;
     }
 }
