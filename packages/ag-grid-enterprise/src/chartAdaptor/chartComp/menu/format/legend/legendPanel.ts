@@ -21,14 +21,12 @@ export class LegendPanel extends Component {
                     <label ref="legendPositionLabel" style="margin-right: 5px;"></label>
                     <select ref="legendPositionSelect" style="flex: 1 1 auto"></select>
                 </div>
-                
                 <ag-slider ref="legendPaddingSlider"></ag-slider>
                 <ag-slider ref="markerSizeSlider"></ag-slider>
                 <ag-slider ref="markerStrokeSlider"></ag-slider>
                 <ag-slider ref="markerPaddingSlider"></ag-slider>
                 <ag-slider ref="itemPaddingXSlider"></ag-slider>
                 <ag-slider ref="itemPaddingYSlider"></ag-slider>
-                
             </ag-group-component>
         </div>`;
 
@@ -103,7 +101,6 @@ export class LegendPanel extends Component {
     }
 
     private initLegendPadding() {
-
         this.legendPaddingSlider
             .setLabel('Padding')
             .setValue(`${this.chart.legendPadding}`)

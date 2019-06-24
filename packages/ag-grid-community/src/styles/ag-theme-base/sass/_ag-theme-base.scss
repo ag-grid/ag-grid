@@ -242,7 +242,7 @@
     ////////////////////////////////////////
     // Basic layout
     ////////////////////////////////////////
-    .ag-input-text-wrapper {
+    .ag-input-wrapper {
         input:not([type]),
         input[type="text"],
         input[type="tel"],
@@ -1280,7 +1280,7 @@
         }
     }
 
-    .ag-textfield {
+    .ag-text-field {
         label {
             margin-right: 5px;
             white-space: nowrap;

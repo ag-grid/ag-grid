@@ -170,7 +170,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div class="ag-filter-body" ref="eCondition${pos}Body">
-            <div class="ag-input-text-wrapper" ref="eInputWrapper${pos}">
+            <div class="ag-input-wrapper" ref="eInputWrapper${pos}">
                 <input class="ag-filter-filter" ref="eValue${pos}" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
             </div>
         </div>`;

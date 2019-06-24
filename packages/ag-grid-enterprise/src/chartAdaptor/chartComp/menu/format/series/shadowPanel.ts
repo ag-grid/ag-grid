@@ -14,7 +14,7 @@ import {BarSeries} from "../../../../../charts/chart/series/barSeries";
 export class ShadowPanel extends Component {
 
     public static TEMPLATE =
-        `<div>                              
+        `<div>
             <ag-group-component ref="shadowGroup">
                 <ag-color-picker ref="shadowColorPicker"></ag-color-picker>
                 <ag-slider ref="shadowBlurSlider"></ag-slider>

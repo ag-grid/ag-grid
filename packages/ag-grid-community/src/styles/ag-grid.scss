@@ -38,7 +38,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
 }
 
-.ag-input-text-wrapper {
+.ag-input-wrapper {
     display: flex;
     flex: 1 1 auto;
     align-items: center;
@@ -614,7 +614,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-cell-inline-editing {
     z-index: 1;
-    .ag-cell-edit-input, .ag-input-text-wrapper {
+    .ag-cell-edit-input, .ag-input-wrapper {
         height: 100%;
         width: 100%;
         line-height: normal;
@@ -1365,8 +1365,11 @@ $handleSize: 5px;
 
     .ag-group-item {
         display: flex;
-        align-items: center;
         flex: 1 1 auto;
+        align-items: center;
+        &.ag-slider {
+            align-items: flex-start;
+        }
     }
 
     &.ag-disabled {
@@ -1382,7 +1385,7 @@ $handleSize: 5px;
     }
 }
 
-.ag-textfield {
+.ag-text-field {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1390,6 +1393,20 @@ $handleSize: 5px;
         flex: 1 1 auto;
         width: 100%;
         min-width: 0;
+    }
+}
+
+.ag-range-field {
+    display: flex;
+    align-items: center;
+}
+
+.ag-slider {
+    display: flex;
+    flex-direction: column;
+    .ag-wrapper {
+        display: flex;
+        align-items: center;
     }
 }
 

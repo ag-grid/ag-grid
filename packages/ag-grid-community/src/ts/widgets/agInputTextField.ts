@@ -1,81 +1,23 @@
-import { AgLabel, IAgLabel } from "./agLabel";
-import { PostConstruct } from "../context/context";
 import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
+import { AgInputField, IInputField } from "./agInputField";
 
-interface ITextField extends IAgLabel {
-    width?:number;
-    value?: string;
-}
-
-export class AgInputTextField extends AgLabel {
-    private static TEMPLATE =
-        `<div class="ag-textfield">
-            <label ref="eLabel"></label>
-            <div ref="eInputWrapper" class="ag-input-text-wrapper">
-                <input type="text" ref="eInput" />
-            </div>
-        </div>`;
-
+export class AgInputTextField extends AgInputField {
     @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eInputWrapper') private eInputWrapper: HTMLElement;
-    @RefSelector('eInput') private eInput: HTMLInputElement;
+    @RefSelector('eInputWrapper') protected eInputWrapper: HTMLElement;
 
-    private config: ITextField = {};
+    protected eInput: HTMLInputElement;
+    protected className = 'ag-text-field';
+    protected inputType = 'text';
 
-    constructor(config?: ITextField) {
-        super(AgInputTextField.TEMPLATE);
+    protected config: IInputField;
+
+    constructor(config?: IInputField) {
+        super();
 
         if (config) {
             this.config = config;
         }
-    }
-
-    @PostConstruct
-    private postConstruct() {
-        const { label, labelSeparator, labelWidth, width, value } = this.config;
-
-        if (labelSeparator != null) {
-            this.setLabelSeparator(labelSeparator);
-        }
-
-        if (label != null) {
-            this.setLabel(label);
-        }
-
-        if (labelWidth != null) {
-            this.setLabelWidth(labelWidth);
-        }
-
-        if (width != null) {
-            this.setWidth(width);
-        }
-
-        if (value != null) {
-            this.setValue(value);
-        }
-    }
-
-    public getInputElement(): HTMLInputElement {
-        return this.eInput;
-    }
-
-    public onInputChange(callbackFn: (newValue: number) => void) {
-        this.addDestroyableEventListener(this.getInputElement(), 'input', () => {
-            const newVal = parseInt(this.getValue(), 10);
-            callbackFn(newVal);
-        });
-        return this;
-    }
-
-    public setInputWidth(width: number | 'flex'): this {
-        _.setElementWidth(this.eInputWrapper, width);
-        return this;
-    }
-
-    public setWidth(width: number): this {
-        _.setFixedWidth(this.getGui(), width);
-        return this;
     }
 
     public getValue(): string {

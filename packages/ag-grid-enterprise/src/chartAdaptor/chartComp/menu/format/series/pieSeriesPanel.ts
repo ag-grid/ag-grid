@@ -19,7 +19,7 @@ export class PieSeriesPanel extends Component {
         `<div>   
             <ag-group-component ref="seriesGroup">
                 <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
-                <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>               
+                <ag-slider ref="seriesStrokeWidthInput"></ag-slider>
             </ag-group-component>
         </div>`;
 
