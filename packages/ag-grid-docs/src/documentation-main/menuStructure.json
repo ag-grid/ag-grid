@@ -703,6 +703,16 @@
       {
         "title": "Scrolling Performance",
         "url": "javascript-grid-performance/"
+      },
+      {
+        "title": "See Also",
+        "url": "",
+        "items": [
+          {
+            "title": "Scrolling Scenarios",
+            "url": "javascript-grid-scrolling-scenarios/"
+          }
+        ]
       }
     ]
   },
@@ -898,10 +908,6 @@
   {
     "title": "The items that didn't fit",
     "items": [
-      {
-        "title": "Example Gallery",
-        "url": "example-gallery/"
-      },
       {
         "title": "Third Party Graphing",
         "url": "javascript-grid-graphing/"
