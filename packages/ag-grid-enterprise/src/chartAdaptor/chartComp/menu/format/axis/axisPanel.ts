@@ -69,7 +69,6 @@ export class AxisPanel extends Component {
     }
 
     private initAxisTicks() {
-
         const axisTicksComp = new AxisTicksPanel(this.chartController);
         this.getContext().wireBean(axisTicksComp);
         this.axisGroup.addItem(axisTicksComp);
