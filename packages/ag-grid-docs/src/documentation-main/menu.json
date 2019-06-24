@@ -195,8 +195,12 @@
             "url": "javascript-grid-editing-flow/"
           },
           {
-            "title": "Getters & Formatters",
+            "title": "Value Getters",
             "url": "javascript-grid-value-getters/"
+          },
+          {
+            "title": "Value Formatters",
+            "url": "javascript-grid-value-formatters/"
           },
           {
             "title": "Setters and Parsers",
@@ -205,10 +209,6 @@
           {
             "title": "Expressions",
             "url": "javascript-grid-cell-expressions/"
-          },
-          {
-            "title": "Value Cache",
-            "url": "javascript-grid-value-cache/"
           },
           {
             "title": "Reference Data",

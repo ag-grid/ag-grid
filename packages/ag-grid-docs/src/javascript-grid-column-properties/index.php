@@ -202,8 +202,11 @@ include '../documentation-main/documentation_header.php';
         </tr>
 
 
-        <?php include '../javascript-grid-value-getters/gettersAndFormattersProperties.php' ?>
-        <?php printPropertiesRows($gettersAndFormattersProperties) ?>
+        <?php include '../javascript-grid-value-getters/valueGetterProperties.php' ?>
+        <?php printPropertiesRows($valueGetterProperties) ?>
+
+        <?php include '../javascript-grid-value-formatters/valueFormatterProperties.php' ?>
+        <?php printPropertiesRows($valueFormatterProperties) ?>
 
         <?php include '../javascript-grid-value-setters/settersAndParsersProperties.php' ?>
         <?php printPropertiesRows($settersAndParsersProperties) ?>

@@ -422,16 +422,16 @@
         ]
       },
       {
-        "title": "Getters & Formatters (should be split)",
+        "title": "Value Getters",
         "url": "javascript-grid-value-getters/"
       },
       {
-        "title": "Expressions (merge into where expressions are used)",
-        "url": "javascript-grid-cell-expressions/"
+        "title": "Value Formatters",
+        "url": "javascript-grid-value-formatters/"
       },
       {
-        "title": "Value Cache (merge into value getters)",
-        "url": "javascript-grid-value-cache/"
+        "title": "Expressions",
+        "url": "javascript-grid-cell-expressions/"
       },
       {
         "title": "Reference Data",

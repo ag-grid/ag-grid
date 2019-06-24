@@ -29,17 +29,16 @@ include '../documentation-main/documentation_header.php';
             The cell renderers the come provided with the grid.
         </li>
         <li>
-            <a href="../javascript-grid-value-getters/">Getters & Formatters</a>:
+            <a href="../javascript-grid-value-getters/">Value Getters</a>:
             Use value getters instead of field to fine tune how values are taken from the provided data.
+        </li>
+        <li>
+            <a href="../javascript-grid-value-getters/">Value Formatters</a>:
             Use formatters to format values.
         </li>
         <li>
             <a href="../javascript-grid-cell-expressions/">Expressions</a>:
             Use strings instead of functions for value getters and formatters.
-        </li>
-        <li>
-            <a href="../javascript-grid-value-cache/">Value Cache</a>:
-            The results of value getters can be cached to improve performance.
         </li>
         <li>
             <a href="../javascript-grid-reference-data/">Reference Data</a>:

@@ -627,7 +627,7 @@ include '../documentation-main/documentation_header.php';
             <th>popupParent</th>
             <td>DOM element to use as <a href="../javascript-grid-context-menu/#popup-parent">popup parent</a> for grid popups (context menu, column menu etc).</td>
         </tr>
-        <?php include '../javascript-grid-value-cache/valueCacheProperties.php' ?>
+        <?php include '../javascript-grid-value-getters/valueCacheProperties.php' ?>
         <?php printPropertiesRows($valueCacheProperties) ?>
         <tr>
             <th>defaultExportParams</th>
