@@ -1482,6 +1482,9 @@ export class GridOptionsWrapper {
             console.warn(`ag-Grid: since v20.1, suppressTabbing is replaced with the more powerful grid callback suppressKeyboardEvent(params) which can suppress any keyboard event including tabbing.`);
         }
 
+        if (options.doesDataFlower) {
+            console.warn('ag-Grid: since v21.1, doesDataFlower is deprecated. Master/Detail is the new way for showing child data for a row and was introduced over a year ago. Please migrate your code to use master/detail instead.')
+        }
     }
 
     private checkForViolations() {

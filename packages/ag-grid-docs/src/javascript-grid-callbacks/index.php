@@ -91,10 +91,6 @@ include '../documentation-main/documentation_header.php';
             <td>Callback to perform additional sorting after the grid has sorted the rows. For more details see <a href="../javascript-grid-sorting/#post-sort">Post Sort</a>.</td>
         </tr>
         <tr>
-            <th>doesDataFlower(dataItem)</th>
-            <td>Tells the grid if this row should flower.</td>
-        </tr>
-        <tr>
             <th>navigateToNextCell(params)</th>
             <td>Allows overriding the default behaviour for when user hits navigation (arrow) key.</td>
         </tr>
