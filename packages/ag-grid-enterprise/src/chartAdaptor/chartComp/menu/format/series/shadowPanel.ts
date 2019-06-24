@@ -92,7 +92,7 @@ export class ShadowPanel extends Component {
         this.shadowColorPicker
             .setLabel('Color')
             .setLabelWidth('flex')
-            .setWidth(100)
+            .setWidth(115)
             .setValue('rgba(0,0,0,0.5)')
             .onColorChange(updateShadow);
 

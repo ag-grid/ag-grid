@@ -53,7 +53,7 @@ export class AxisTicksPanel extends Component {
         this.axisTicksColorPicker
             .setLabel("Color")
             .setLabelWidth('flex')
-            .setWidth(100)
+            .setWidth(115)
             .setValue(`${this.chart.xAxis.lineColor}`)
             .onColorChange(newColor => {
                 this.chart.xAxis.tickColor = newColor;

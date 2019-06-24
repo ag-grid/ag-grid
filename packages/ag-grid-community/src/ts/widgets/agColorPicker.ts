@@ -17,7 +17,9 @@ export class AgColorPicker extends AgLabel {
     private static TEMPLATE =
         `<div class="ag-color-picker">
             <label ref="eLabel"></label>
-            <div class="ag-color-button" ref="eButton"></div>
+            
+            <!-- TODO $icon-size 30px for the color picker (???) -->
+            <div class="ag-color-button" ref="eButton" style="width: 30px"></div>
         </div>`;
 
     @RefSelector('eLabel') protected eLabel: HTMLElement;
