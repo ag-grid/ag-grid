@@ -24,6 +24,20 @@ var gridOptions = {
         sortable: true,
         resizable: true
     },
+    sideBar: {
+        toolPanels: [{
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            toolPanel: 'agColumnsToolPanel',
+            toolPanelParams: {
+                suppressPivots: true,
+                suppressPivotMode: true,
+                suppressValues: true
+            }
+        }]
+    },
     rowBuffer: 0,
     columnDefs: columnDefs,
     rowModelType: 'enterprise',

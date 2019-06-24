@@ -60,40 +60,6 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Row Group Scroll', 'row-group-scroll', 'vanilla', array("enterprise" => 1)) ?>
 
-    <h2>Enterprise Row Model & Complex Columns</h2>
-
-    <p>
-        This example mixes enterprise row model and complex objects. It shows how you can have value getters
-        and embedded fields (ie the field attribute has dot notation).
-    </p>
-
-    <p>
-        In the example, all rows back are modified so that the rows looks something like this:
-    </p>
-
-    <snippet>
-row = {
-    // country field is complex object
-    country: {
-        name: 'Ireland',
-        code: 'IRE'
-    },
-    // year field is complex object
-    year: {
-        name: '2012',
-        shortName: "'12"
-    },
-    // other fields as normal
-    ...
-};</snippet>
-
-    <p>
-        Then the columns are set up so that country uses a <code>valueGetter</code> and year uses a field
-        with dot notation, ie <code>year.name</code>
-    </p>
-
-    <?= example('Enterprise Complex Objects', 'enterprise-complex-objects', 'vanilla', array("enterprise" => 1)) ?>
-
     <h2>Flower Nodes</h2>
 
     <p>

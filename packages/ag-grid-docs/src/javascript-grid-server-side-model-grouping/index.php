@@ -237,6 +237,44 @@ function getRows(params) {
 <?= example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 
+<h2>Complex Columns</h2>
+
+<p>
+    It is possible the data provided has composite objects, in which case it's more difficult for the grid
+    to extract group names. This can be worked with using value getters or embedded fields
+    (ie the field attribute has dot notation).
+</p>
+
+<p>
+    In the example below, all rows back are modified so that the rows looks something like this:
+</p>
+
+<snippet>
+row = {
+    // country field is complex object
+    country: {
+        name: 'Ireland',
+        code: 'IRE'
+    },
+
+    // year field is complex object
+    year: {
+        name: '2012',
+        shortName: "'12"
+    },
+
+    // other fields as normal
+    ...
+};</snippet>
+
+<p>
+    Then the columns are set up so that country uses a <code>valueGetter</code> and year uses a field
+    with dot notation, ie <code>year.name</code>
+</p>
+
+<?= example('Enterprise Complex Objects', 'enterprise-complex-objects', 'vanilla', array("enterprise" => 1)) ?>
+
+
 <h2>Next Up</h2>
 
 <p>
