@@ -50,10 +50,8 @@ export class BarSeries extends Series<CartesianChart> {
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 
-    /**
-     * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
-     */
-    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
+    private rectSelection: Selection<Rect, Group, any, any> = Selection.select(this.group).selectAll<Rect>();
+    private textSelection: Selection<Text, Group, any, any> = Selection.select(this.group).selectAll<Text>();
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -416,7 +414,7 @@ export class BarSeries extends Series<CartesianChart> {
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
 
-        const groupSelectionData: GroupSelectionDatum[] = [];
+        const selectionData: GroupSelectionDatum[] = [];
 
         for (let i = 0; i < n; i++) {
             const category = xData[i];
@@ -430,7 +428,7 @@ export class BarSeries extends Series<CartesianChart> {
                 const bottomY = yScale.convert((grouped ? 0 : prev));
                 const labelText = this.yFieldNames[yFieldIndex];
 
-                groupSelectionData.push({
+                selectionData.push({
                     seriesDatum: data[i],
                     yField,
                     x: barX,
@@ -454,16 +452,17 @@ export class BarSeries extends Series<CartesianChart> {
             }, 0);
         }
 
-        const updateGroups = this.groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
+        const updateRects = this.rectSelection.setData(selectionData);
+        const updateTexts = this.textSelection.setData(selectionData);
+        updateRects.exit.remove();
+        updateTexts.exit.remove();
 
-        const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Rect).each(rect => {
+        const enterRects = updateRects.enter.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
             // rect.sizing = RectSizing.Border;
             rect.crisp = true;
         });
-        enterGroups.append(Text).each(text => {
+        const enterTexts = updateTexts.enter.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
             text.textBaseline = 'hanging';
@@ -471,10 +470,10 @@ export class BarSeries extends Series<CartesianChart> {
         });
 
         const highlightedNode = this.highlightedNode;
-        const groupSelection = updateGroups.merge(enterGroups);
+        const rectSelection = updateRects.merge(enterRects);
+        const textSelection = updateTexts.merge(enterTexts);
 
-        groupSelection.selectByTag<Rect>(BarSeriesNodeTag.Bar)
-            .each((rect, datum) => {
+        rectSelection.each((rect, datum) => {
                 rect.x = datum.x;
                 rect.y = datum.y;
                 rect.width = datum.width;
@@ -490,8 +489,7 @@ export class BarSeries extends Series<CartesianChart> {
                 rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
             });
 
-        groupSelection.selectByTag<Text>(BarSeriesNodeTag.Label)
-            .each((text, datum) => {
+        textSelection.each((text, datum) => {
                 const label = datum.label;
                 if (label && labelEnabled) {
                     text.font = label.font;
@@ -505,7 +503,8 @@ export class BarSeries extends Series<CartesianChart> {
                 }
             });
 
-        this.groupSelection = groupSelection;
+        this.rectSelection = rectSelection;
+        this.textSelection = textSelection;
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
