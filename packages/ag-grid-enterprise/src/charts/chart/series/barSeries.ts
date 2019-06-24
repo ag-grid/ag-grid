@@ -15,6 +15,7 @@ import { Color } from "ag-grid-community";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     yField: string,
+    yValue: number,
     x: number,
     y: number,
     width: number,
@@ -239,7 +240,7 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelColor;
     }
 
-    private _labelOffset: number = 10;
+    private _labelOffset: number = 4;
     set labelOffset(value: number) {
         if (this._labelOffset !== value) {
             this._labelOffset = value;
@@ -434,9 +435,12 @@ export class BarSeries extends Series<CartesianChart> {
                 const y = yScale.convert((grouped ? curr : prev + curr));
                 const bottomY = yScale.convert((grouped ? 0 : prev));
                 const labelText = this.yFieldNames[yFieldIndex];
+                const seriesDatum = data[i];
+                const yValue = seriesDatum[yField];
 
                 selectionData.push({
-                    seriesDatum: data[i],
+                    seriesDatum,
+                    yValue,
                     yField,
                     x: barX,
                     y: Math.min(y, bottomY),
@@ -450,7 +454,7 @@ export class BarSeries extends Series<CartesianChart> {
                         font: labelFont,
                         fill: labelColor,
                         x: barX + barWidth / 2,
-                        y: y + strokeWidth / 2 + labelOffset
+                        y: y + (yValue >= 0 ? -1 : 1) * (strokeWidth / 2 + labelOffset)
                     } : undefined
                 });
 
@@ -472,7 +476,6 @@ export class BarSeries extends Series<CartesianChart> {
         const enterTexts = updateTexts.enter.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
-            text.textBaseline = 'hanging';
             text.textAlign = 'center';
         });
 
@@ -502,9 +505,10 @@ export class BarSeries extends Series<CartesianChart> {
                     text.font = label.font;
                     text.text = label.text;
                     text.x = label.x;
-                    text.y = label.y - 25;
+                    text.y = label.y;
                     text.fill = label.fill;
                     text.visible = true;
+                    text.textBaseline = datum.yValue >= 0 ? 'bottom' : 'hanging';
                 } else {
                     text.visible = false;
                 }
