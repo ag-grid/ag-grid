@@ -70,9 +70,7 @@ export class LegendPanel extends Component {
     private initLegendGroup() {
         this.legendGroup
             .setTitle('Legend')
-            .hideEnabledCheckbox(true)
-            .setEnabled(this.chart.legend.enabled)
-            .onEnableChange(enabled => this.chart.legend.enabled = enabled);
+            .hideEnabledCheckbox(true);
     }
 
     private initLegendPosition() {

@@ -51,6 +51,7 @@ export class AxisPanel extends Component {
     private initAxis() {
         this.axisGroup
             .setTitle('Axis')
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         this.axisColorInput

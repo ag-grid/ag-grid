@@ -43,6 +43,7 @@ export class LineSeriesPanel extends Component {
 
         this.seriesGroup
             .setTitle('Series')
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         this.initSeriesTooltips();

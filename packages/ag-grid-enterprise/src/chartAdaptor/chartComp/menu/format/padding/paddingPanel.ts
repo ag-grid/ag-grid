@@ -42,6 +42,7 @@ export class PaddingPanel extends Component {
     private initChartPaddingItems() {
         this.chartPaddingGroup
             .setTitle('Chart Padding')
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';

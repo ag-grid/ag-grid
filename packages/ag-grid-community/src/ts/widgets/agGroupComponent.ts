@@ -92,16 +92,6 @@ export class AgGroupComponent extends Component {
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', () => this.toggleGroupExpand());
     }
 
-    private toggleGroupExpand(expanded?: boolean): void {
-        expanded = expanded != null ? expanded : !this.expanded;
-        if (this.expanded === expanded) { return; }
-
-        this.expanded = expanded;
-        this.setOpenClosedIcons();
-
-        _.addOrRemoveCssClass(this.getGui(), 'ag-collapsed', !expanded);
-    }
-
     private setOpenClosedIcons(): void {
         const folderOpen = this.expanded;
         _.setVisible(this.eGroupClosedIcon, !folderOpen);
@@ -110,6 +100,18 @@ export class AgGroupComponent extends Component {
 
     public isExpanded(): boolean {
         return this.expanded;
+    }
+
+    public toggleGroupExpand(expanded?: boolean): this {
+        expanded = expanded != null ? expanded : !this.expanded;
+        if (this.expanded === expanded) { return; }
+
+        this.expanded = expanded;
+        this.setOpenClosedIcons();
+
+        _.addOrRemoveCssClass(this.getGui(), 'ag-collapsed', !expanded);
+
+        return this;
     }
 
     public addItems(items: GroupItem[]) {

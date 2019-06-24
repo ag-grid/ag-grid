@@ -54,6 +54,7 @@ export class PieSeriesPanel extends Component {
     private initGroup() {
         this.seriesGroup
             .setTitle('Series')
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
     }
 

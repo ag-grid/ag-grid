@@ -45,6 +45,7 @@ export class BarSeriesPanel extends Component {
 
         this.seriesGroup
             .setTitle('Series')
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         this.initSeriesStrokeWidth();
