@@ -1247,16 +1247,16 @@
     /// Widgets
     ///
     .ag-group-component {
-        background-color: $group-component-background-color;
+        background-color: lighten($group-component-background-color, 1%);
         padding: 0px;
-        border: none;
+        border: 1px solid darken($group-component-background-color, 5%);
         &.ag-disabled > {
             .ag-group-component-label .ag-group-component-title, .ag-group-component-container {
                 opacity: 0.5;
             }
         }
         .ag-group-component-title-bar {
-            background-color: darken($group-component-background-color, 10%);
+            background-color: darken($group-component-background-color, 4%);
             height: $icon-size;
             font-size: $font-size - 1px;
             text-transform: uppercase;
