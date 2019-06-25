@@ -15,6 +15,25 @@ hr {
   margin-top: 50px;
 }
 
+@media only screen and (min-width: 2560px) {
+  body p {
+    font-size: 20px;
+  }
+}
+
+.responsive {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .img-fluid.rounded.mx-auto.d-block {
+    display: none;
+  }
+  .responsive {
+    display: block;
+  }
+}
+
 /*nav-section*/
 #nav-bar {
   position: sticky;
@@ -50,6 +69,10 @@ a#get-started {
   padding: 0 10px;
 }
 
+/*all-sections*/
+
+#description
+
 /*above the fold section*/
 h1, h2, h3, h4, h5, p, ul, li {
   text-align: center;
@@ -57,6 +80,7 @@ h1, h2, h3, h4, h5, p, ul, li {
 
 h1 {
   margin-bottom: 20px;
+  font-weight: 900;
 }
 
 h2 {
@@ -72,7 +96,7 @@ h3 {
 h4 {
   margin-bottom: 30px;
   margin-top: 30px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 h5 {
@@ -99,7 +123,7 @@ code {
 .snippet {
   font-size: 21px;
   margin-top: 50px;
-  margin-bottom: 50px;
+  text-align: left;
 }
 
 #abovefold {
@@ -139,6 +163,11 @@ max-width: 100%;
 box-shadow: 10px 10px 15px 10px grey;
 margin-top: 40px;
 margin-bottom: 80px;
+}
+
+#example-section {
+  margin-top: 80px;
+  margin-bottom: 60px;
 }
 
 .title::before {
@@ -248,6 +277,22 @@ color: white;
   box-shadow: 10px 10px 5px grey;
 }
 
+.feature-desc {
+  margin-top: 20px;
+}
+
+@media only screen and (min-width: 1800px) {
+.container {
+    max-width: 100%;
+}
+}
+
+@media only screen and (min-width: 1800px) {
+  .example {
+    max-width: 50%;
+  }
+}
+
 /*footer-section*/
 
 footer#site-footer {
@@ -300,6 +345,12 @@ footer#site-footer {
         }
     }
 }
+
+/*tests*/
+
+
+
+
 
 
 

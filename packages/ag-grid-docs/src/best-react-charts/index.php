@@ -33,11 +33,18 @@ $pageDescription = "Fastest, most feature-rich React Data Grid component from ag
 <a class="nav-link" href="../documentation-main/documentation.php">Documentation</a>
 </li>
 <li class="nav-item">
+<a class="nav-link" href="../features-overview">Features Overview</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../license-pricing.php">Pricing</a>
+</li>
+<li class="nav-item">
 <a class="nav-link" id="get-started" href="../javascript-grid-getting-started/">Get Started</a>
 </li>
 </ul>
 </div>
 </nav>
+</section>
         
 <!--above the fold section--->
 <section id="abovefold">
@@ -48,13 +55,12 @@ $pageDescription = "Fastest, most feature-rich React Data Grid component from ag
 The best React grid has now integrated charting into its grid.<br>
 The grid comes with charting integration allowing users to chart data directly from the grid without requiring additional developer coding.
 </p>
-<button id="c2a-top" type="button" class="btn btn-light">GET STARTED</button>
 </div>
 <div class="col-md-6">
 <img src="../images/charts-copy.png" class="img-fluid rounded mx-auto d-block" alt="Responsive image">
 </div>
 <div class="col-md-12" id="c2a-top">
-    <button type="button" class="btn btn-light">GET STARTED</button>
+    <a href="../javascript-grid-getting-started/"><button type="button" class="btn btn-light">GET STARTED</button></a>
 </div>
 </section>
 <section id="description">
@@ -114,98 +120,114 @@ The charting functionality is deeply integrated with the grid. This integration 
 </section>
     <section id="feature-examples">
     <div class="container">
+    <hr>
     <h2 class="title">
         CHARTING FEATURE EXAMPLES
     </h2>
-    <h4>
-        Chart Ranges
-    </h4>
-    <p>
+    <div class="row" id="example-section">
+
+        <div class="col-md-6 feature-desc">
+            <h4>Chart Ranges</h4>
+            <p>
         When a chart is created off a selected range of cells in the grid, or via the charting api, the underlying cell range is replaced by a chart range.
     </p>
-    <img class="example" src="../images/charting-ranges.gif">
-    <p>
+<p>
         As illustrated above, the resulting chart range can subsequently modified by dragging on the chart range handle, located at the bottom right corner of the chart range.
     </p>
     <p>
         Find out more about Chart Ranges <a href="">here</a>. 
     </p>
-    <hr>
-    <h4>
-        Categories and Series
-    </h4>
-    <p>
-        There are two types of charting ranges; a category range that is highlighted in green and a series range that is highlighted in blue.</p>
-        <p>A category range can only contain cells from a single column, whereas a series range can contain values from many columns.
-    </p>
+</div>
+<div class="col-md-6">
+    <img class="example" src="../images/charting-ranges.gif">
+</div>
+</div>
+    <div class="row">
+<div class="col-md-6">
     <img class="example" src="../images/contiguous-range.gif">
+</div>
+        <div class="col-md-6 feature-desc">
+            <h4>Categories and Series</h4>
+            <p>
+        There are two types of charting ranges; a category range that is highlighted in green and a series range that is highlighted in blue.</p>
     <p>
         As illustrated above chart ranges can be adjusted from within the grid by dragging on the chart range handle located at the bottom right of the series range. Both the category and series ranges are connected so when the chart range is dragged in an up or down direction they will be updated together.
     </p>
     <p>
         Find out more about Categories and Series <a href="">here</a>.
     </p>
-    <hr>
-    <h3>
+</div>
+</div>
+</div>
+</section>
+<section id="chart-toolbar">
+<div class="container">
+    <h2 class="title">
         CHART TOOLBAR: SETTINGS AND DATA
-    </h3>
-    <h4>Chart Settings</h4>
-    <p>
-        The chart settings toolbar item allows users to change the chart type as well as the color palette used in the chart as demonstrated below:
+    </h2>
+    <div class="row" id="example-section">
+        <div class="col-md-6 feature-desc">
+            <h4>Chart Settings</h4>
+            <p>
+        The chart settings toolbar item allows users to change the chart type as well as the color palette used in the chart.
     </p>
-    <img class="example" src="../images/chart-settings.gif">
     <p>
         The toolbar allow users to switch between the 5 most commonly used charts: Grouped Bar, Stacked Bar, Line, Pie and Doughnut.
-
-        The color palette used by the grid can also be changed via the carousel located at the bottom of the chart setting panel.
     </p>
         <p>
         Find out more about Chart Settings <a href="">here</a>.
     </p>
-    <hr>
-    <h4>
-        Chart Data
-    </h4>
-    <p>
-        The chart data toolbar is used to dynamically change the data being charted as shown below:
-    </p>
+</div>
+<div class="col-md-6">
+    <img class="example" src="../images/chart-settings.gif">
+</div>
+</div>
+    <div class="row">
+<div class="col-md-6">
     <img class="example" src="../images/chart-data.gif">
-    <p>
-        Using the chart data panel the category used in the chart can be changed via radio button selections. Multiple series can be charted and these can also be changed via checkbox selection.
-
-        Grid columns can either be configured as categories or series for charting or left for the grid to infer based on the data contained in the columns.
+</div>
+        <div class="col-md-6 feature-desc">
+            <h4>Chart Data</h4>
+            <p>
+        The chart settings toolbar item allows users to change the chart type as well as the color palette used in the chart.
     </p>
     <p>
-        Find out more about Chart Data <a href="">here</a>.
+        The toolbar allow users to switch between the 5 most commonly used charts: Grouped Bar, Stacked Bar, Line, Pie and Doughnut.
     </p>
-    <hr>
-    <div class="application-custom">
-        <h3>
-            APPLICATION CREATED CHARTS
-        </h3>
         <p>
-            Charts can be pre-defined or dynamically created from within applications, and as with user created charts, these charts also benefit from the integration provided with the grid.
+        Find out more about Chart Settings <a href="">here</a>.
+    </p>
+</div>
+</div>
+    
+</section>
+<hr>
+<section id="app-charts">
+<div class="container">
+    <div class="row" id="mobile-order">
+        <div class="col-md-6">
+            <h3>APPLICATION CREATED CHARTS</h3>
+            <p>
+            Charts can be pre-defined or dynamically created from within applications, and as with user created charts,<br> these charts also benefit from the integration provided with the grid.
         </p>
         <p>
-            A dummy financial application is presented below to give a taste of what's possible:
+            A dummy financial application is presented to give a taste of what's possible.
         </p>
-        <img src="../images/chart-application.gif" class="example">
-        <p>
+ <p>
             To find about more about Application Created Charts, follow the links provided below:
         </p>
         <div class="row">
             <div class="col-md-6">
                 <h5><a href="https://www.ag-grid.com/javascript-grid-charts-chart-range-api/">Chart API</a></h5>
-                <p>
-                    Used to create charts programmatically inside applications.
-                </p>
+            </div>
+            <div class="col-md-6">
+                <h5><a href="https://www.ag-grid.com/javascript-grid-charts-chart-range-api/">Chart Customisation</a></h5>
+            </div>
         </div>
-        <div class="col-md-6">
-            <h5><a href="https://www.ag-grid.com/javascript-grid-charts-customisation/#providing-a-chart-container/">Customise Charts</a></h5>
-            <p>
-                Used to target chart containers inside the application instead of the popup window provided by the grid.
-            </p>
-    </div>
+</div>
+<div class="col-md-6">
+    <img class="example" src="../images/chart-application.gif">
+</div>
 </div>
 <hr>
     <h3>
@@ -215,7 +237,7 @@ The charting functionality is deeply integrated with the grid. This integration 
         Before each chart is created, the developer can do fine grained Chart Customisation to change the charts appearance and behaviour. For example you can change the thickness of the lines, or customise the formatting of the axis labels.
     </p>
         <p>
-        Find out more about Chart Customisation <a href="">here</a>.
+        Find out more about Chart Customisation <a href="../javascript-grid-charts-customisation/">here</a>.
     </p>
 </div>
 </section>
@@ -245,7 +267,7 @@ ag-Grid will also release it's own standalone library, which is currently in dev
 </div>
 </div>
 <div id="c2a-button">
-<button type="button" class="btn btn-primary">GET STARTED</button>
+<a href="../javascript-grid-getting-started/"><button type="button" class="btn btn-primary">GET STARTED</button></a>
 </div>
 </section>
 <section id="c2a">
@@ -255,7 +277,7 @@ ag-Grid will also release it's own standalone library, which is currently in dev
             "A seamless charting experience while keeping the coding required by developers to a minimum.''
         </p>
         <div id="c2a-end">
-<button type="button" class="btn btn-light">GET STARTED</button>
+<a href="../javascript-grid-getting-started/"><button type="button" class="btn btn-light">GET STARTED</button></a>
 </div>
     </div>
 </section>
