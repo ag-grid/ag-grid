@@ -69,6 +69,7 @@ export class LegendPanel extends Component {
             .hideEnabledCheckbox(false)
             .onEnableChange(enabled => {
                 this.chart.legend.enabled = enabled;
+                this.legendGroup.toggleGroupExpand(true);
             });
     }
 

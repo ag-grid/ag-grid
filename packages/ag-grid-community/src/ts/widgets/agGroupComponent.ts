@@ -18,7 +18,7 @@ interface GroupParams {
 export class AgGroupComponent extends Component {
     private static TEMPLATE =
         `<div class="ag-group-component">
-            <div class="ag-group-component-title-bar">
+            <div class="ag-group-component-title-bar" ref="groupTitle">
                  <span class="ag-column-group-icons">
                     <span class="ag-column-group-closed-icon" ref="eGroupOpenedIcon"></span>
                     <span class="ag-column-group-opened-icon" ref="eGroupClosedIcon"></span>
@@ -40,6 +40,7 @@ export class AgGroupComponent extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    @RefSelector('groupTitle') private groupTitle: HTMLElement;
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
 
@@ -102,8 +103,7 @@ export class AgGroupComponent extends Component {
 
         this.setOpenClosedIcons();
 
-        this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', () => this.toggleGroupExpand());
-        this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', () => this.toggleGroupExpand());
+        this.addDestroyableEventListener(this.groupTitle, 'click', () => this.toggleGroupExpand());
     }
 
     private setOpenClosedIcons(): void {
