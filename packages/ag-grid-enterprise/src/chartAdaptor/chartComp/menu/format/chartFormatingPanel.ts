@@ -1,11 +1,11 @@
 import { _, ChartType, Component, PostConstruct } from "ag-grid-community";
 import { ChartController } from "../../chartController";
-import {LegendPanel} from "./legend/legendPanel";
-import {BarSeriesPanel} from "./series/barSeriesPanel";
-import {AxisPanel} from "./axis/axisPanel";
-import {LineSeriesPanel} from "./series/lineSeriesPanel";
-import {PieSeriesPanel} from "./series/pieSeriesPanel";
-import {PaddingPanel} from "./padding/paddingPanel";
+import { LegendPanel } from "./legend/legendPanel";
+import { BarSeriesPanel } from "./series/barSeriesPanel";
+import { AxisPanel } from "./axis/axisPanel";
+import { LineSeriesPanel } from "./series/lineSeriesPanel";
+import { PieSeriesPanel } from "./series/pieSeriesPanel";
+import { PaddingPanel } from "./padding/paddingPanel";
 
 export class ChartFormattingPanel extends Component {
 
@@ -49,22 +49,22 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createBarChartPanel(): void {
+        this.addComponent(new LegendPanel(this.chartController));
         this.addComponent(new BarSeriesPanel(this.chartController));
         this.addComponent(new AxisPanel(this.chartController));
-        this.addComponent(new LegendPanel(this.chartController));
         this.addComponent(new PaddingPanel(this.chartController));
     }
 
     private createLineChartPanel(): void {
+        this.addComponent(new LegendPanel(this.chartController));
         this.addComponent(new LineSeriesPanel(this.chartController));
         this.addComponent(new AxisPanel(this.chartController));
-        this.addComponent(new LegendPanel(this.chartController));
         this.addComponent(new PaddingPanel(this.chartController));
     }
 
     private createPieChartPanel(): void {
-        this.addComponent(new PieSeriesPanel(this.chartController));
         this.addComponent(new LegendPanel(this.chartController));
+        this.addComponent(new PieSeriesPanel(this.chartController));
         this.addComponent(new PaddingPanel(this.chartController));
     }
 

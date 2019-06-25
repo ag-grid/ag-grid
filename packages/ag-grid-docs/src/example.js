@@ -1102,7 +1102,7 @@ PersonFilter.prototype.setupGui = function () {
     this.gui.innerHTML =
         '<div style="padding: 4px;">' +
         '<div style="font-weight: bold;">Custom Athlete Filter</div>' +
-        '<div class="ag-input-text-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
+        '<div class="ag-input-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
         '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, e.g. "mich phel" still brings back Michael Phelps.</div>' +
         '<div style="margin-top: 20px; width: 200px;">Just to illustrate that anything can go in here, here is an image:</div>' +
         '<div><img src="images/ag-Grid2-200.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
@@ -1173,7 +1173,7 @@ function PersonFloatingFilterComponent() {
 PersonFloatingFilterComponent.prototype.init = function (params) {
     this.params = params;
     var eGui = this.eGui = document.createElement('div');
-    eGui.className = 'ag-input-text-wrapper';
+    eGui.className = 'ag-input-wrapper';
     var input = this.input = document.createElement('input');
     input.className = 'ag-floating-filter-input';
     eGui.appendChild(input);

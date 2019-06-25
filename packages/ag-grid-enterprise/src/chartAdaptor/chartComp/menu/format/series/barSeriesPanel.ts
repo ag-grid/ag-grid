@@ -3,14 +3,15 @@ import {
     AgCheckbox,
     AgGroupComponent,
     AgInputTextField,
+    AgSlider,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {BarSeries} from "../../../../../charts/chart/series/barSeries";
-import {ShadowPanel} from "./shadowPanel";
-import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
+import { ChartController } from "../../../chartController";
+import { BarSeries } from "../../../../../charts/chart/series/barSeries";
+import { ShadowPanel } from "./shadowPanel";
+import { ChartLabelPanelParams, LabelPanel } from "../label/labelPanel";
 
 export class BarSeriesPanel extends Component {
 
@@ -18,13 +19,13 @@ export class BarSeriesPanel extends Component {
         `<div>   
             <ag-group-component ref="seriesGroup">
                 <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
-                <ag-input-text-field ref="seriesStrokeWidthInput"></ag-input-text-field>
+                <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsCheckbox') private seriesTooltipsCheckbox: AgCheckbox;
-    @RefSelector('seriesStrokeWidthInput') private seriesStrokeWidthInput: AgInputTextField;
+    @RefSelector('seriesStrokeWidthSlider') private seriesStrokeWidthSlider: AgSlider;
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
@@ -44,6 +45,7 @@ export class BarSeriesPanel extends Component {
 
         this.seriesGroup
             .setTitle('Series')
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         this.initSeriesStrokeWidth();
@@ -53,10 +55,8 @@ export class BarSeriesPanel extends Component {
     }
 
     private initSeriesStrokeWidth() {
-        this.seriesStrokeWidthInput
+        this.seriesStrokeWidthSlider
             .setLabel('Stroke Width')
-            .setLabelWidth(80)
-            .setWidth(115)
             .setValue(`${this.series[0].strokeWidth}`)
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }

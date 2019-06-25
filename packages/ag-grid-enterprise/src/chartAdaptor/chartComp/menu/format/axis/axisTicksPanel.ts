@@ -1,13 +1,13 @@
 import {
     AgColorPicker,
     AgGroupComponent,
-    AgInputTextField,
+    AgSlider,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {CartesianChart} from "../../../../../charts/chart/cartesianChart";
+import { ChartController } from "../../../chartController";
+import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
 
 export class AxisTicksPanel extends Component {
 
@@ -15,17 +15,17 @@ export class AxisTicksPanel extends Component {
         `<div>         
             <ag-group-component ref="axisTicksGroup">
                 <ag-color-picker ref="axisTicksColorPicker"></ag-color-picker>
-                <ag-input-text-field ref="axisTicksWidthInput"></ag-input-text-field>
-                <ag-input-text-field ref="axisTicksSizeInput"></ag-input-text-field>
-                <ag-input-text-field ref="axisTicksPaddingInput"></ag-input-text-field>
+                <ag-slider ref="axisTicksWidthSlider"></ag-slider>
+                <ag-slider ref="axisTicksSizeSlider"></ag-slider>
+                <ag-slider ref="axisTicksPaddingSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @RefSelector('axisTicksGroup') private axisTicksGroup: AgGroupComponent;
     @RefSelector('axisTicksColorPicker') private axisTicksColorPicker: AgColorPicker;
-    @RefSelector('axisTicksWidthInput') private axisTicksWidthInput: AgInputTextField;
-    @RefSelector('axisTicksSizeInput') private axisTicksSizeInput: AgInputTextField;
-    @RefSelector('axisTicksPaddingInput') private axisTicksPaddingInput: AgInputTextField;
+    @RefSelector('axisTicksWidthSlider') private axisTicksWidthSlider: AgSlider;
+    @RefSelector('axisTicksSizeSlider') private axisTicksSizeSlider: AgSlider;
+    @RefSelector('axisTicksPaddingSlider') private axisTicksPaddingSlider: AgSlider;
 
     private readonly chartController: ChartController;
     private chart: CartesianChart;
@@ -48,6 +48,7 @@ export class AxisTicksPanel extends Component {
     private initAxisTicks() {
         this.axisTicksGroup
             .setTitle('Ticks')
+            .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
         this.axisTicksColorPicker
@@ -63,12 +64,10 @@ export class AxisTicksPanel extends Component {
 
         type AxisTickProperty = 'tickWidth' | 'tickSize' | 'tickPadding';
 
-        const initInput = (property: AxisTickProperty, input: AgInputTextField, label: string, initialValue: string) => {
+        const initInput = (property: AxisTickProperty, input: AgSlider, label: string, initialValue: string, maxValue: number) => {
             input.setLabel(label)
-                .setLabelWidth('flex')
-                .setInputWidth(30)
-                .setWidth(115)
                 .setValue(initialValue)
+                .setMaxValue(maxValue)
                 .onInputChange(newValue => {
                     this.chart.xAxis[property] = newValue;
                     this.chart.yAxis[property] = newValue;
@@ -77,13 +76,13 @@ export class AxisTicksPanel extends Component {
         };
 
         const initialWidth = `${this.chart.xAxis.tickWidth}`;
-        initInput('tickWidth', this.axisTicksWidthInput, 'Width', initialWidth);
+        initInput('tickWidth', this.axisTicksWidthSlider, 'Width', initialWidth, 100);
 
         const initialLength = `${this.chart.xAxis.tickSize}`;
-        initInput('tickSize', this.axisTicksSizeInput, 'Length', initialLength);
+        initInput('tickSize', this.axisTicksSizeSlider, 'Length', initialLength, 20);
 
         const initialPadding = `${this.chart.xAxis.tickPadding}`;
-        initInput('tickPadding', this.axisTicksPaddingInput, 'Padding', initialPadding);
+        initInput('tickPadding', this.axisTicksPaddingSlider, 'Padding', initialPadding, 20);
     }
 
     public destroy(): void {

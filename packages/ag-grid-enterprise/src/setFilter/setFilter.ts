@@ -53,7 +53,7 @@ export class SetFilter extends ProvidedFilter {
 
         return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
                 <div>
-                    <div class="ag-input-text-wrapper ag-filter-header-container" id="ag-mini-filter">
+                    <div class="ag-input-wrapper ag-filter-header-container" id="ag-mini-filter">
                         <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
                     </div>
                     <div class="ag-filter-header-container">

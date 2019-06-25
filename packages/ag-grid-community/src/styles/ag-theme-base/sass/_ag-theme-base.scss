@@ -242,7 +242,7 @@
     ////////////////////////////////////////
     // Basic layout
     ////////////////////////////////////////
-    .ag-input-text-wrapper {
+    .ag-input-wrapper {
         input:not([type]),
         input[type="text"],
         input[type="tel"],
@@ -1247,34 +1247,48 @@
     /// Widgets
     ///
     .ag-group-component {
-        margin: 10px 5px;
-        padding: 10px 2px;
-        border: 0px solid transparentize($border-color, 0.5);
-        border-top-width: 4px;
-        border-radius: 3px;
-        &.ag-disabled {
-            border-color: transparent;
-            border-top-color: transparentize($border-color, 0.5);
+        background-color: lighten($group-component-background-color, 1%);
+        padding: 0px;
+        border: 1px solid darken($group-component-background-color, 5%);
+        &.ag-disabled > {
+            .ag-group-component-label .ag-group-component-title, .ag-group-component-container {
+                opacity: 0.5;
+            }
         }
-        .ag-group-component-label {
-            background-color: $background-color;
+        .ag-group-component-title-bar {
+            background-color: darken($group-component-background-color, 4%);
             height: $icon-size;
-            margin-left: 8px;
-            padding: 0 2px;
-            font-size: $font-size - 2px;
-            font-weight: 500;
-            text-transform: uppercase;
+            font-size: $font-size;
+            font-family: $font-family;
+            height: $grid-size * 5;
+        }
+        &:not(.ag-collapsible) > {
+            .ag-group-component-title-bar {
+                .ag-column-group-icons {
+                    display: none;
+                }
+                .ag-group-component-title {
+                    margin-left: $grid-size;
+                }
+            }
+        }
+        .ag-group-component-toolbar {
+            padding: $grid-size;
+        }
+        .ag-group-component-container {
+            margin: $grid-size;
         }
         .ag-group-item {
-            margin: 2px 5px;
+            margin: $grid-size / 2 0;
             > .ag-group-component {
-                margin: 0;
-                margin-top: 10px; 
+                margin-top: $grid-size * 2  + 2;
+                margin-right: 0;
+                padding-left: $grid-size * 2;
             }
         }
     }
 
-    .ag-textfield {
+    .ag-text-field {
         label {
             margin-right: 5px;
             white-space: nowrap;

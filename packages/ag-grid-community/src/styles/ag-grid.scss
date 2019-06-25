@@ -38,7 +38,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
 }
 
-.ag-input-text-wrapper {
+.ag-input-wrapper {
     display: flex;
     flex: 1 1 auto;
     align-items: center;
@@ -614,7 +614,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-cell-inline-editing {
     z-index: 1;
-    .ag-cell-edit-input, .ag-input-text-wrapper {
+    .ag-cell-edit-input, .ag-input-wrapper {
         height: 100%;
         width: 100%;
         line-height: normal;
@@ -1345,19 +1345,19 @@ $handleSize: 5px;
     position: relative;
     flex: 1 1 100%;
 
-    .ag-group-component-label {
-        position: absolute;
+    .ag-group-component-title-bar {
         display: flex;
         align-items: center;
-        top: -10px;
-        left: 0;
+    }
+
+    .ag-group-component-toolbar {
+        display: flex;
+        align-items: center;
     }
 
     .ag-group-component-container {
         display: flex;
         flex-direction: column;
-        width: 100%;
-        overflow: hidden;
         .ag-group-subgroup {
             display: flex;
             align-self: stretch;
@@ -1366,26 +1366,27 @@ $handleSize: 5px;
 
     .ag-group-item {
         display: flex;
-        align-items: center;
         flex: 1 1 auto;
+        align-items: center;
+        &.ag-slider {
+            align-items: flex-start;
+        }
     }
 
     &.ag-disabled {
-        //TODO disable group title and inputs only (not group border)
+        .ag-group-component-container {
+            pointer-events: none;
+        }
     }
 
     &.ag-collapsed {
-        .ag-group-component-container {
+        .ag-group-component-toolbar, .ag-group-component-container {
             display: none;
-        }
-        //TODO disable group title only (not group border)
-        .ag-group-component-title {
-            opacity: 0.5;
         }
     }
 }
 
-.ag-textfield {
+.ag-text-field {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1393,6 +1394,20 @@ $handleSize: 5px;
         flex: 1 1 auto;
         width: 100%;
         min-width: 0;
+    }
+}
+
+.ag-range-field {
+    display: flex;
+    align-items: center;
+}
+
+.ag-slider {
+    display: flex;
+    flex-direction: column;
+    .ag-wrapper {
+        display: flex;
+        align-items: center;
     }
 }
 

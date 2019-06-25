@@ -2,14 +2,14 @@ import {
     _,
     AgCheckbox,
     AgGroupComponent,
-    AgInputTextField,
+    AgSlider,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
-import {MarkersPanel} from "./markersPanel";
+import { ChartController } from "../../../chartController";
+import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
+import { MarkersPanel } from "./markersPanel";
 
 export class LineSeriesPanel extends Component {
 
@@ -17,13 +17,13 @@ export class LineSeriesPanel extends Component {
         `<div>   
             <ag-group-component ref="seriesGroup">
                 <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
-                <ag-input-text-field ref="seriesLineWidthInput"></ag-input-text-field>                               
+                <ag-slider ref="seriesLineWidthSlider"></ag-slider>                               
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsCheckbox') private seriesTooltipsCheckbox: AgCheckbox;
-    @RefSelector('seriesLineWidthInput') private seriesLineWidthInput: AgInputTextField;
+    @RefSelector('seriesLineWidthSlider') private seriesLineWidthSlider: AgSlider;
 
     private series: LineSeries[];
     private activePanels: Component[] = [];
@@ -43,6 +43,7 @@ export class LineSeriesPanel extends Component {
 
         this.seriesGroup
             .setTitle('Series')
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         this.initSeriesTooltips();
@@ -62,10 +63,8 @@ export class LineSeriesPanel extends Component {
     }
 
     private initSeriesLineWidth() {
-        this.seriesLineWidthInput
+        this.seriesLineWidthSlider
             .setLabel('Line Width')
-            .setLabelWidth(70)
-            .setWidth(105)
             .setValue(`${this.series[0].strokeWidth}`)
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }

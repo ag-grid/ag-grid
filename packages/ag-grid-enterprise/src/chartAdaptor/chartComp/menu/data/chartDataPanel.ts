@@ -48,7 +48,8 @@ export class ChartDataPanel extends Component {
                     ? localeTextFunc('chartCategories', 'Categories')
                     : localeTextFunc('chartSeries', 'Series'),
                 enabled: true,
-                suppressEnabledCheckbox: true
+                suppressEnabledCheckbox: true,
+                suppressOpenCloseIcons: false
             });
             this.getContext().wireBean(groupComp);
             

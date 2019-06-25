@@ -7,7 +7,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     private eFloatingFilterText: HTMLInputElement;
 
     constructor() {
-        super(`<div class="ag-input-text-wrapper"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
+        super(`<div class="ag-input-wrapper"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
     }
 
     public init(): void {

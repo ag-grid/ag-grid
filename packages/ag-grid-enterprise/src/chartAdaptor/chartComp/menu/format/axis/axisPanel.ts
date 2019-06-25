@@ -1,8 +1,17 @@
-import { _, AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgColorPicker } from "ag-grid-community";
+import {
+    _,
+    AgGroupComponent,
+    Component,
+    PostConstruct,
+    RefSelector,
+    AgInputTextField,
+    AgColorPicker,
+    AgSlider
+} from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
-import {AxisTicksPanel} from "./axisTicksPanel";
-import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
+import { AxisTicksPanel } from "./axisTicksPanel";
+import { ChartLabelPanelParams, LabelPanel } from "../label/labelPanel";
 
 export class AxisPanel extends Component {
 
@@ -10,12 +19,12 @@ export class AxisPanel extends Component {
         `<div>
             <ag-group-component ref="axisGroup">
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
-                <ag-input-text-field ref="axisLineWidthInput"></ag-input-text-field> 
+                <ag-slider ref="axisLineWidthSlider"></ag-slider> 
             </ag-group-component>
         </div>`;
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
-    @RefSelector('axisLineWidthInput') private axisLineWidthInput: AgInputTextField;
+    @RefSelector('axisLineWidthSlider') private axisLineWidthSlider: AgSlider;
     @RefSelector('axisColorInput') private axisColorInput: AgColorPicker;
 
     private readonly chartController: ChartController;
@@ -42,6 +51,7 @@ export class AxisPanel extends Component {
     private initAxis() {
         this.axisGroup
             .setTitle('Axis')
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         this.axisColorInput
@@ -55,11 +65,8 @@ export class AxisPanel extends Component {
                 this.chart.performLayout();
             });
 
-        this.axisLineWidthInput
+        this.axisLineWidthSlider
             .setLabel('Thickness')
-            .setLabelWidth('flex')
-            .setInputWidth(30)
-            .setWidth(115)
             .setValue(`${this.chart.xAxis.lineWidth}`)
             .onInputChange(newValue => {
                 this.chart.xAxis.lineWidth = newValue;

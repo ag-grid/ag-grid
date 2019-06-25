@@ -1,4 +1,4 @@
-import { AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField } from "ag-grid-community";
+import { AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgSlider } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { Chart } from "../../../../../charts/chart/chart";
 
@@ -7,24 +7,19 @@ export class PaddingPanel extends Component {
     public static TEMPLATE =
         `<div>
             <ag-group-component ref="chartPaddingGroup">
-                <div class="ag-group-subgroup">
-                    <ag-input-text-field ref="paddingTopInput"></ag-input-text-field>
-                    <ag-input-text-field ref="paddingRightInput"></ag-input-text-field>
-                </div>
-                
-                <div class="ag-group-subgroup">
-                    <ag-input-text-field ref="paddingBottomInput"></ag-input-text-field>
-                    <ag-input-text-field ref="paddingLeftInput"></ag-input-text-field>
-                </div>   
+                <ag-slider ref="paddingTopSlider"></ag-slider>
+                <ag-slider ref="paddingRightSlider"></ag-slider>
+                <ag-slider ref="paddingBottomSlider"></ag-slider>
+                <ag-slider ref="paddingLeftSlider"></ag-slider>
             </ag-group-component>
         <div>`;
 
     @RefSelector('chartPaddingGroup') private chartPaddingGroup: AgGroupComponent;
 
-    @RefSelector('paddingTopInput') private paddingTopInput: AgInputTextField;
-    @RefSelector('paddingRightInput') private paddingRightInput: AgInputTextField;
-    @RefSelector('paddingBottomInput') private paddingBottomInput: AgInputTextField;
-    @RefSelector('paddingLeftInput') private paddingLeftInput: AgInputTextField;
+    @RefSelector('paddingTopSlider') private paddingTopSlider: AgSlider;
+    @RefSelector('paddingRightSlider') private paddingRightSlider: AgSlider;
+    @RefSelector('paddingBottomSlider') private paddingBottomSlider: AgSlider;
+    @RefSelector('paddingLeftSlider') private paddingLeftSlider: AgSlider;
 
     private readonly chartController: ChartController;
     private chart: Chart;
@@ -47,14 +42,13 @@ export class PaddingPanel extends Component {
     private initChartPaddingItems() {
         this.chartPaddingGroup
             .setTitle('Chart Padding')
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
 
-        const initInput = (property: ChartPaddingProperty, input: AgInputTextField, label: string, value: string) => {
+        const initInput = (property: ChartPaddingProperty, input: AgSlider, label: string, value: string) => {
             input.setLabel(label)
-                .setLabelWidth(45)
-                .setInputWidth(30)
                 .setValue(value)
                 .onInputChange(newValue => {
                     this.chart.padding[property] = newValue;
@@ -62,9 +56,9 @@ export class PaddingPanel extends Component {
                 });
         };
 
-        initInput('top', this.paddingTopInput, 'Top', `${this.chart.padding.top}`);
-        initInput('right', this.paddingRightInput, 'Right', `${this.chart.padding.right}`);
-        initInput('bottom', this.paddingBottomInput, 'Bottom', `${this.chart.padding.bottom}`);
-        initInput('left', this.paddingLeftInput, 'Left', `${this.chart.padding.left}`);
+        initInput('top', this.paddingTopSlider, 'Top', `${this.chart.padding.top}`);
+        initInput('right', this.paddingRightSlider, 'Right', `${this.chart.padding.right}`);
+        initInput('bottom', this.paddingBottomSlider, 'Bottom', `${this.chart.padding.bottom}`);
+        initInput('left', this.paddingLeftSlider, 'Left', `${this.chart.padding.left}`);
     }
 }

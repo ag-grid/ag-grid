@@ -149,12 +149,19 @@
         flex-direction: column;
         position: relative;
         user-select: none;
+        > div {
+            display: flex;
+            margin: 0;
+            padding-bottom: 2px;
+            &:not(:first-child) {
+                margin-top: 0;
+            }
+        }
     }
 
     .ag-chart-format-wrapper {
         overflow-x: hidden;
         .ag-group-component {
-            border-width: 1px;
             .ag-group-subgroup {
                 justify-content: space-between;
             }
