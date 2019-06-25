@@ -1,22 +1,20 @@
 import {
     _,
-    AgCheckbox,
     AgGroupComponent,
     AgSlider,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {Chart, LegendPosition} from "../../../../../charts/chart/chart";
-import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
+import { ChartController } from "../../../chartController";
+import { Chart, LegendPosition } from "../../../../../charts/chart/chart";
+import { ChartLabelPanelParams, LabelPanel } from "../label/labelPanel";
 
 export class LegendPanel extends Component {
 
     public static TEMPLATE =
         `<div>  
             <ag-group-component ref="legendGroup">
-                <ag-checkbox ref="cbLegendEnabled" style="opacity: 1"></ag-checkbox>
                 <div>
                     <label ref="legendPositionLabel" style="margin-right: 5px;"></label>
                     <select ref="legendPositionSelect" style="flex: 1 1 auto"></select>
@@ -31,7 +29,6 @@ export class LegendPanel extends Component {
         </div>`;
 
     @RefSelector('legendGroup') private legendGroup: AgGroupComponent;
-    @RefSelector('cbLegendEnabled') private cbLegendEnabled: AgCheckbox;
 
     @RefSelector('legendPositionLabel') private legendPositionLabel: HTMLElement;
     @RefSelector('legendPositionSelect') private legendPositionSelect: HTMLSelectElement;
@@ -69,16 +66,9 @@ export class LegendPanel extends Component {
     private initLegendGroup() {
         this.legendGroup
             .setTitle('Legend')
-            .hideEnabledCheckbox(true);
-
-        this.cbLegendEnabled
-            .setLabel('Enabled')
-            .setSelected(this.chart.legend.enabled)
-            .onSelectionChange(newSelection => {
-                this.chart.legend.enabled = newSelection;
-                //TODO fix!!!
-                this.legendGroup.setEnabled(newSelection);
-                this.legendGroup.toggleGroupExpand(true);
+            .hideEnabledCheckbox(false)
+            .onEnableChange(enabled => {
+                this.chart.legend.enabled = enabled;
             });
     }
 
@@ -117,10 +107,10 @@ export class LegendPanel extends Component {
         };
 
         const initialMarkerSize = `${this.chart.legend.markerSize}`;
-        initInput('markerSize','Marker Size', this.markerSizeSlider, initialMarkerSize);
+        initInput('markerSize', 'Marker Size', this.markerSizeSlider, initialMarkerSize);
 
         const initialMarkerStroke = `${this.chart.legend.markerStrokeWidth}`;
-        initInput('markerStrokeWidth', 'Marker Stroke',this.markerStrokeSlider,  initialMarkerStroke);
+        initInput('markerStrokeWidth', 'Marker Stroke', this.markerStrokeSlider,  initialMarkerStroke);
 
         const initialMarkerPadding = `${this.chart.legend.markerPadding}`;
         initInput('markerPadding',  'Marker Padding', this.markerPaddingSlider, initialMarkerPadding);

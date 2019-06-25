@@ -7,11 +7,11 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {PieSeries} from "../../../../../charts/chart/series/pieSeries";
-import {ShadowPanel} from "./shadowPanel";
-import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
-import {CalloutPanel} from "./calloutPanel";
+import { ChartController } from "../../../chartController";
+import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
+import { ShadowPanel } from "./shadowPanel";
+import { ChartLabelPanelParams, LabelPanel } from "../label/labelPanel";
+import { CalloutPanel } from "./calloutPanel";
 
 export class PieSeriesPanel extends Component {
 
@@ -19,7 +19,7 @@ export class PieSeriesPanel extends Component {
         `<div>   
             <ag-group-component ref="seriesGroup">
                 <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
-                <ag-slider ref="seriesStrokeWidthInput"></ag-slider>
+                <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
@@ -109,7 +109,7 @@ export class PieSeriesPanel extends Component {
         const shadowPanelComp = new ShadowPanel(this.chartController);
         this.getContext().wireBean(shadowPanelComp);
         this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
-        this.activePanels.push(shadowPanelComp);
+        this.seriesGroup.addItem(shadowPanelComp);
     }
 
     private destroyActivePanels(): void {

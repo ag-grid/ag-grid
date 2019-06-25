@@ -6,8 +6,8 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {CartesianChart} from "../../../../../charts/chart/cartesianChart";
+import { ChartController } from "../../../chartController";
+import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
 
 export class AxisTicksPanel extends Component {
 

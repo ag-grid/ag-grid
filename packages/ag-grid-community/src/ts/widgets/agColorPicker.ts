@@ -7,7 +7,7 @@ import { _ } from "../utils";
 
 type ColorMode = 'hex' | 'hsl' | 'rgba';
 
-interface ColorPickerConfig extends IAgLabel{
+interface ColorPickerConfig extends IAgLabel {
     hideTextField?: boolean;
     color: string;
     mode: ColorMode;
@@ -17,7 +17,7 @@ export class AgColorPicker extends AgLabel {
     private static TEMPLATE =
         `<div class="ag-color-picker">
             <label ref="eLabel"></label>
-            
+
             <!-- TODO $icon-size 30px for the color picker (???) -->
             <div class="ag-color-button" ref="eButton" style="width: 30px"></div>
         </div>`;

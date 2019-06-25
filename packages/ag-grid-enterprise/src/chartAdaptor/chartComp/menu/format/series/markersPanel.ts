@@ -1,5 +1,5 @@
-import {AgGroupComponent, AgSlider, Component, PostConstruct, RefSelector} from "ag-grid-community";
-import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
+import { AgGroupComponent, AgSlider, Component, PostConstruct, RefSelector } from "ag-grid-community";
+import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
 
 export class MarkersPanel extends Component {
 

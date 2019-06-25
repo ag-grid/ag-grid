@@ -1,4 +1,4 @@
-import {AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgSlider} from "ag-grid-community";
+import { AgGroupComponent, Component, PostConstruct, RefSelector, AgInputTextField, AgSlider } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { Chart } from "../../../../../charts/chart/chart";
 

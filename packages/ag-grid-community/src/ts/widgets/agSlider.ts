@@ -49,6 +49,6 @@ export class AgSlider extends AgLabel {
     }
 
     public getValue(): string {
-        return this.eInput.value;
+        return this.eText.getValue();
     }
 }

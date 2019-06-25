@@ -7,9 +7,9 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
-import {MarkersPanel} from "./markersPanel";
+import { ChartController } from "../../../chartController";
+import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
+import { MarkersPanel } from "./markersPanel";
 
 export class LineSeriesPanel extends Component {
 

@@ -91,45 +91,45 @@ export class AgColorPanel extends Component {
         this.isSpectrumDragging = true;
 
         this.moveDragger(e);
-    };
+    }
 
     private onSpectrumDraggerMove = (e: MouseEvent) => {
         if (this.isSpectrumDragging) {
             this.moveDragger(e);
         }
-    };
+    }
 
     private onSpectrumHueDown = (e: MouseEvent) => {
         this.refreshHueRect();
         this.isSpectrumHueDragging = true;
 
         this.moveHueSlider(e);
-    };
+    }
 
     private onSpectrumHueMove = (e: MouseEvent) => {
         if (this.isSpectrumHueDragging) {
             this.moveHueSlider(e);
         }
-    };
+    }
 
     private onSpectrumAlphaDown = (e: MouseEvent) => {
         this.refreshAlphaRect();
         this.isSpectrumAlphaDragging = true;
 
         this.moveAlphaSlider(e);
-    };
+    }
 
     private onSpectrumAlphaMove = (e: MouseEvent) => {
         if (this.isSpectrumAlphaDragging) {
             this.moveAlphaSlider(e);
         }
-    };
+    }
 
     private onMouseUp = (e: MouseEvent) => {
         this.isSpectrumDragging = false;
         this.isSpectrumHueDragging = false;
         this.isSpectrumAlphaDragging = false;
-    };
+    }
 
     private moveDragger(e: MouseEvent) {
         const valRect = this.spectrumValRect;

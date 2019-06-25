@@ -2,8 +2,8 @@ import { _ } from "../utils";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
-import { AgCheckbox } from "./agCheckbox";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { AgCheckbox } from "./agCheckbox";
 
 type GroupItem = Component | HTMLElement;
 
@@ -12,19 +12,21 @@ interface GroupParams {
     enabled: boolean;
     suppressEnabledCheckbox: boolean;
     suppressOpenCloseIcons: boolean;
-    items?: GroupItem[]
+    items?: GroupItem[];
 }
 
 export class AgGroupComponent extends Component {
     private static TEMPLATE =
         `<div class="ag-group-component">
-            <div class="ag-group-component-label">
-                 <span class="ag-column-group-icons" ref="eColumnGroupIcons">
+            <div class="ag-group-component-title-bar">
+                 <span class="ag-column-group-icons">
                     <span class="ag-column-group-closed-icon" ref="eGroupOpenedIcon"></span>
                     <span class="ag-column-group-opened-icon" ref="eGroupClosedIcon"></span>
                 </span>
+                <span ref="lbGroupTitle" class="ag-group-component-title"></span>
+            </div>
+            <div ref="eToolbar" class="ag-group-component-toolbar">
                 <ag-checkbox ref="cbGroupEnabled"></ag-checkbox>
-                <div ref="lbGroupTitle" class="ag-group-component-title"></div>
             </div>
             <div ref="eContainer" class="ag-group-component-container"></div>
         </div>`;
@@ -33,14 +35,15 @@ export class AgGroupComponent extends Component {
     private title: string;
     private enabled: boolean;
     private expanded: boolean;
-    private suppressEnabledCheckbox: boolean;
-    private suppressOpenCloseIcons: boolean;
+    private suppressEnabledCheckbox: boolean = true;
+    private suppressOpenCloseIcons: boolean = false;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
 
+    @RefSelector('eToolbar') private eToolbar: HTMLElement;
     @RefSelector('cbGroupEnabled') private cbGroupEnabled: AgCheckbox;
     @RefSelector("lbGroupTitle") private lbGroupTitle: HTMLElement;
     @RefSelector("eContainer") private groupContainer: HTMLElement;
@@ -52,12 +55,19 @@ export class AgGroupComponent extends Component {
             params = {} as GroupParams;
         }
 
-        const { title, enabled, suppressEnabledCheckbox, items } = params;
+        const { title, enabled, items, suppressEnabledCheckbox, suppressOpenCloseIcons } = params;
 
         this.title = title;
         this.enabled = enabled != null ? enabled : true;
-        this.suppressEnabledCheckbox = suppressEnabledCheckbox;
         this.items = items || [];
+
+        if (suppressEnabledCheckbox != null) {
+            this.suppressEnabledCheckbox = suppressEnabledCheckbox;
+        }
+
+        if (suppressOpenCloseIcons != null) {
+            this.suppressOpenCloseIcons = suppressOpenCloseIcons;
+        }
     }
 
     @PostConstruct
@@ -69,6 +79,9 @@ export class AgGroupComponent extends Component {
             this.addItems(initialItems);
         }
 
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.cbGroupEnabled.setLabel(localeTextFunc('enabled', 'Enabled'));
+
         if (this.title) {
             this.setTitle(this.title);
         }
@@ -77,13 +90,8 @@ export class AgGroupComponent extends Component {
             this.setEnabled(this.enabled);
         }
 
-        if (this.suppressEnabledCheckbox) {
-            this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
-        }
-
-        if (this.suppressOpenCloseIcons) [
-            this.hideOpenCloseIcons(this.suppressOpenCloseIcons)
-        ]
+        this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
+        this.hideOpenCloseIcons(this.suppressOpenCloseIcons);
 
         this.setupExpandContract();
     }
@@ -109,15 +117,23 @@ export class AgGroupComponent extends Component {
     }
 
     public toggleGroupExpand(expanded?: boolean): this {
+        const eGui = this.getGui();
+
+        if (this.suppressOpenCloseIcons) {
+            this.expanded = true;
+            _.removeCssClass(eGui, 'ag-collapsed');
+            return this;
+        }
+
         expanded = expanded != null ? expanded : !this.expanded;
-        if (this.expanded === expanded) { return; }
+
+        if (this.expanded === expanded) {
+            return this;
+        }
 
         this.expanded = expanded;
-
-        if (!this.suppressOpenCloseIcons) {
-            this.setOpenClosedIcons();
-        }
-        _.addOrRemoveCssClass(this.getGui(), 'ag-collapsed', !expanded);
+        this.setOpenClosedIcons();
+        _.addOrRemoveCssClass(eGui, 'ag-collapsed', !expanded);
 
         return this;
     }
@@ -146,7 +162,7 @@ export class AgGroupComponent extends Component {
 
         this.toggleGroupExpand(enabled);
 
-        if (!this.suppressEnabledCheckbox && !skipToggle) {
+        if (!skipToggle) {
             this.cbGroupEnabled.setSelected(enabled);
         }
 
@@ -162,18 +178,22 @@ export class AgGroupComponent extends Component {
             this.setEnabled(newSelection, true);
             callbackFn(newSelection);
         });
+
         return this;
     }
 
     public hideEnabledCheckbox(hide: boolean): this {
-        _.addOrRemoveCssClass(this.cbGroupEnabled.getGui(), 'ag-hidden', hide);
+        _.addOrRemoveCssClass(this.eToolbar, 'ag-hidden', hide);
         return this;
     }
 
     public hideOpenCloseIcons(hide: boolean): this {
         this.suppressOpenCloseIcons = hide;
-        _.addOrRemoveCssClass(this.eGroupOpenedIcon, 'ag-hidden', hide);
-        _.addOrRemoveCssClass(this.eGroupClosedIcon, 'ag-hidden', hide);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-collapsible', !hide);
+
+        if (hide) {
+            this.toggleGroupExpand(true);
+        }
         return this;
     }
 }

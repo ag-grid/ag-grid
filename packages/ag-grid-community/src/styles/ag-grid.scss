@@ -1345,13 +1345,14 @@ $handleSize: 5px;
     position: relative;
     flex: 1 1 100%;
 
-    .ag-group-component-label {
-        position: absolute;
+    .ag-group-component-title-bar {
         display: flex;
         align-items: center;
-        top: -10px;
-        left: 0;
-        width: 100%;
+    }
+
+    .ag-group-component-toolbar {
+        display: flex;
+        align-items: center;
     }
 
     .ag-group-component-container {
@@ -1379,7 +1380,7 @@ $handleSize: 5px;
     }
 
     &.ag-collapsed {
-        .ag-group-component-container {
+        .ag-group-component-toolbar, .ag-group-component-container {
             display: none;
         }
     }

@@ -10,8 +10,8 @@ import {
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
-import {AxisTicksPanel} from "./axisTicksPanel";
-import {ChartLabelPanelParams, LabelPanel} from "../label/labelPanel";
+import { AxisTicksPanel } from "./axisTicksPanel";
+import { ChartLabelPanelParams, LabelPanel } from "../label/labelPanel";
 
 export class AxisPanel extends Component {
 

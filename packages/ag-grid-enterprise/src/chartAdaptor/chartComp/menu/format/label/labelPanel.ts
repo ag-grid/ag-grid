@@ -7,8 +7,8 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {Chart} from "../../../../../charts/chart/chart";
+import { ChartController } from "../../../chartController";
+import { Chart } from "../../../../../charts/chart/chart";
 
 export interface ChartLabelPanelParams {
     chartController: ChartController;

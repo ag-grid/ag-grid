@@ -6,10 +6,10 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {Chart} from "../../../../../charts/chart/chart";
-import {PieSeries} from "../../../../../charts/chart/series/pieSeries";
-import {BarSeries} from "../../../../../charts/chart/series/barSeries";
+import { ChartController } from "../../../chartController";
+import { Chart } from "../../../../../charts/chart/chart";
+import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
+import { BarSeries } from "../../../../../charts/chart/series/barSeries";
 
 export class ShadowPanel extends Component {
 
@@ -73,6 +73,7 @@ export class ShadowPanel extends Component {
             .setTitle('Shadow')
             .setEnabled(enabled)
             .hideOpenCloseIcons(true)
+            .hideEnabledCheckbox(false)
             .onEnableChange(enabled => {
                 this.series.forEach((series: BarSeries | PieSeries) => {
                     if (enabled) {
@@ -103,8 +104,8 @@ export class ShadowPanel extends Component {
                 .onInputChange(updateShadow);
         };
 
-        initInput(this.shadowBlurSlider,'Blur', '5');
-        initInput(this.shadowXOffsetSlider,'X Offset', '3');
-        initInput(this.shadowYOffsetSlider,'Y Offset', '3');
+        initInput(this.shadowBlurSlider, 'Blur', '5');
+        initInput(this.shadowXOffsetSlider, 'X Offset', '3');
+        initInput(this.shadowYOffsetSlider, 'Y Offset', '3');
     }
 }

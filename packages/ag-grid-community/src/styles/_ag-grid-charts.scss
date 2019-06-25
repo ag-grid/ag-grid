@@ -151,6 +151,10 @@
         user-select: none;
         > div {
             display: flex;
+            margin: 4px;
+            &:not(:first-child) {
+                margin-top: 0;
+            }
         }
     }
 

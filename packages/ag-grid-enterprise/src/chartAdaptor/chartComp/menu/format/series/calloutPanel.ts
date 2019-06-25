@@ -1,14 +1,14 @@
-import {AgGroupComponent, AgSlider, Component, PostConstruct, RefSelector} from "ag-grid-community";
-import {PieSeries} from "../../../../../charts/chart/series/pieSeries";
+import { AgGroupComponent, AgSlider, Component, PostConstruct, RefSelector } from "ag-grid-community";
+import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
 
 export class CalloutPanel extends Component {
 
     public static TEMPLATE =
         `<div>
             <ag-group-component ref="calloutGroup">
-                <ag-slider ref="calloutLengthInput"></ag-slider>
-                <ag-slider ref="calloutStrokeWidthInput"></ag-slider>
-                <ag-slider ref="labelOffsetInput"></ag-slider>
+                <ag-slider ref="calloutLengthSlider"></ag-slider>
+                <ag-slider ref="calloutStrokeWidthSlider"></ag-slider>
+                <ag-slider ref="labelOffsetSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
