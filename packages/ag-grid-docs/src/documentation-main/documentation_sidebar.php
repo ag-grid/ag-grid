@@ -2,6 +2,15 @@
 </div>
 <div class="card card-highlight">
     <div class="card-body">
+        <h5 class="card-title">Charts Session</h5>
+        <p>With Bill Odom and Lance Finney from Oasis Digital</p>
+        <iframe style="max-width: 100%" src="https://www.youtube.com/embed/VzZG85t87bQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p>Join ag-Grid's Niall and Rob show ag-Grid's integrated charting to Bill and Lance.</p>
+    </div>
+</div>
+<br>
+<div class="card card-highlight">
+    <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.0.0">ag-Grid v21 Released</a></h5>
         <p>
             ag-Grid now supports charting
