@@ -40,7 +40,6 @@ export class AgColorPanel extends Component {
                     <div class="ag-spectrum-alpha-background"></div>
                     <div ref="spectrumAlphaSlider" class="ag-spectrum-slider"></div>
                 </div>
-                <ag-input-text-field ref="spectrumTextValue"></ag-input-text-field>
             </div>
         </div>`;
 
@@ -51,7 +50,6 @@ export class AgColorPanel extends Component {
     @RefSelector('spectrumHueSlider') private readonly spectrumHueSlider: HTMLElement;
     @RefSelector('spectrumAlpha') private readonly spectrumAlpha: HTMLElement;
     @RefSelector('spectrumAlphaSlider') private readonly spectrumAlphaSlider: HTMLElement;
-    @RefSelector('spectrumTextValue') private readonly spectrumTextValue: AgInputTextField;
 
     constructor(config: { picker: Component }) {
         super(AgColorPanel.TEMPLATE);
@@ -194,7 +192,6 @@ export class AgColorPanel extends Component {
 
         this.spectrumColor.style.backgroundColor = spectrumColor.toRgbaString();
         (this.picker as AgColorPicker).setValue(hexColor);
-        this.spectrumTextValue.setValue(hexColor);
         this.spectrumDragger.style.backgroundColor = hexColor;
     }
 

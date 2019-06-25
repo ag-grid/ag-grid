@@ -51,10 +51,11 @@ export class AgColorPicker extends AgLabel {
             closable: false,
             modal: true,
             hideTitleBar: true,
+            minWidth: 200,
             width: 200,
-            height: 320,
-            x: eGuiRect.left,
-            y: eGuiRect.top - 320
+            height: 280,
+            x: eGuiRect.right - 200,
+            y: eGuiRect.top - 280
         });
         this.getContext().wireBean(colorDialog);
 
@@ -66,6 +67,7 @@ export class AgColorPicker extends AgLabel {
 
         colorDialog.setParentComponent(this);
         colorDialog.setBodyComponent(colorPanel);
+        colorPanel.setValue(this.getValue());
 
         colorDialog.addDestroyFunc(() => {
             if (colorPanel.isAlive()) {
