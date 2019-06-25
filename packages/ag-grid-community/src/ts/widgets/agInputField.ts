@@ -1,5 +1,5 @@
 import { AgLabel, IAgLabel } from "./agLabel";
-import { PostConstruct, PreConstruct } from "../context/context";
+import { PostConstruct } from "../context/context";
 import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
 
@@ -7,27 +7,28 @@ export interface IInputField extends IAgLabel {
     value?: any;
     width?: number;
 }
+
+export type FieldElement = HTMLInputElement | HTMLSelectElement;
 export abstract class AgInputField extends AgLabel {
     protected abstract className: string;
     protected abstract inputType: string;
+    protected abstract inputTag: string;
     public abstract getValue(): any;
-    public abstract setValue(value: any): void;
+    public abstract setValue(value: any): this;
+
     protected config: IInputField = {};
 
-    private static TEMPLATE =
+    protected TEMPLATE =
         `<div class="ag-input-field">
             <label ref="eLabel"></label>
             <div ref="eInputWrapper" class="ag-input-wrapper">
-                <input ref="eInput" />
+                <%input% ref="eInput"></%input>
             </div>
         </div>`;
 
+    @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eInputWrapper') protected eInputWrapper: HTMLElement;
-    @RefSelector('eInput') protected eInput: HTMLInputElement;
-
-    constructor() {
-        super(AgInputField.TEMPLATE);
-    }
+    @RefSelector('eInput') protected eInput: FieldElement;
 
     @PostConstruct
     protected postConstruct() {
@@ -58,10 +59,12 @@ export abstract class AgInputField extends AgLabel {
     }
 
     private setInputType() {
-        this.eInput.setAttribute('type', this.inputType);
+        if (this.inputType) {
+            this.eInput.setAttribute('type', this.inputType);
+        }
     }
 
-    public getInputElement(): HTMLInputElement {
+    public getInputElement(): FieldElement {
         return this.eInput;
     }
 

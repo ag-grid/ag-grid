@@ -8,11 +8,10 @@ interface IInputRange extends IInputField {
 }
 
 export class AgInputRange extends AgInputField {
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eInputWrapper') protected eInputWrapper: HTMLElement;
 
     protected eInput: HTMLInputElement;
     protected className = 'ag-range-field';
+    protected inputTag = 'input';
     protected inputType = 'range';
     protected config: IInputRange;
 
@@ -22,6 +21,8 @@ export class AgInputRange extends AgInputField {
 
     constructor(config?: IInputRange) {
         super();
+
+        this.setTemplate(this.TEMPLATE.replace(/%input%/, this.inputTag));
 
         if (config) {
             this.config = config;

@@ -4,7 +4,8 @@ import {
     AgSlider,
     Component,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgSelect
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { Chart, LegendPosition } from "../../../../../charts/chart/chart";
@@ -15,10 +16,7 @@ export class LegendPanel extends Component {
     public static TEMPLATE =
         `<div>  
             <ag-group-component ref="legendGroup">
-                <div>
-                    <label ref="legendPositionLabel" style="margin-right: 5px;"></label>
-                    <select ref="legendPositionSelect" style="flex: 1 1 auto"></select>
-                </div>
+                <ag-select ref="legendPositionSelect"></ag-select>
                 <ag-slider ref="legendPaddingSlider"></ag-slider>
                 <ag-slider ref="markerSizeSlider"></ag-slider>
                 <ag-slider ref="markerStrokeSlider"></ag-slider>
@@ -30,8 +28,7 @@ export class LegendPanel extends Component {
 
     @RefSelector('legendGroup') private legendGroup: AgGroupComponent;
 
-    @RefSelector('legendPositionLabel') private legendPositionLabel: HTMLElement;
-    @RefSelector('legendPositionSelect') private legendPositionSelect: HTMLSelectElement;
+    @RefSelector('legendPositionSelect') private legendPositionSelect: AgSelect;
 
     @RefSelector('legendPaddingSlider') private legendPaddingSlider: AgSlider;
     @RefSelector('markerSizeSlider') private markerSizeSlider: AgSlider;
@@ -74,21 +71,18 @@ export class LegendPanel extends Component {
     }
 
     private initLegendPosition() {
-        this.legendPositionLabel.innerHTML = 'Position:';
-
         const positions: LegendPosition[] = ['top', 'right', 'bottom', 'left'];
 
-        positions.forEach((position: any) => {
-            const option = document.createElement('option');
-            option.value = position;
-            option.text = position.charAt(0).toUpperCase() + position.slice(1);
-            this.legendPositionSelect.appendChild(option);
-        });
-
-        this.legendPositionSelect.selectedIndex = positions.indexOf(this.chart.legendPosition);
-        this.addDestroyableEventListener(this.legendPositionSelect, 'input', () => {
-            this.chart.legendPosition = positions[this.legendPositionSelect.selectedIndex];
-        });
+        this.legendPositionSelect
+            .setLabel('Position')
+            .addOptions(positions.map(position => ({
+                value: position,
+                text: _.capitalise(position)
+            })))
+            .onInputChange((value) => {
+                this.chart.legendPosition = value
+            })
+            .setValue(this.chart.legendPosition);
     }
 
     private initLegendPadding() {

@@ -3,17 +3,17 @@ import { _ } from "../utils";
 import { AgInputField, IInputField } from "./agInputField";
 
 export class AgInputTextField extends AgInputField {
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eInputWrapper') protected eInputWrapper: HTMLElement;
 
     protected eInput: HTMLInputElement;
     protected className = 'ag-text-field';
+    protected inputTag = 'input';
     protected inputType = 'text';
 
     protected config: IInputField;
 
     constructor(config?: IInputField) {
         super();
+        this.setTemplate(this.TEMPLATE.replace(/%input%/, this.inputTag));
 
         if (config) {
             this.config = config;

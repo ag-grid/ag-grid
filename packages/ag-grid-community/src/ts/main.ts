@@ -201,6 +201,7 @@ export { AgRadioButton } from "./widgets/agRadioButton";
 export { AgInputTextField } from "./widgets/agInputTextField";
 export { AgInputNumberField } from "./widgets/agInputNumberField";
 export { AgInputRange } from "./widgets/agInputRange";
+export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
 export { AgColorPicker } from "./widgets/agColorPicker";
 export { AgGroupComponent } from "./widgets/agGroupComponent";

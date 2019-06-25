@@ -85,6 +85,7 @@ import { _ } from "./utils";
 import { AgColorPicker } from "./widgets/agColorPicker";
 import { AgInputNumberField } from "./widgets/agInputNumberField";
 import { AgInputRange } from "./widgets/agInputRange";
+import { AgSelect } from "./widgets/agSelect";
 
 export interface GridParams {
     // used by Web Components
@@ -204,6 +205,7 @@ export class Grid {
             { componentName: 'AgInputTextField', theClass: AgInputTextField},
             { componentName: 'AgInputNumberField', theClass: AgInputNumberField},
             { componentName: 'AgInputRange', theClass: AgInputRange},
+            { componentName: 'AgSelect', theClass: AgSelect},
             { componentName: 'AgSlider', theClass: AgSlider},
             { componentName: 'AgColorPicker', theClass: AgColorPicker },
             { componentName: 'AgGridComp', theClass: GridPanel },

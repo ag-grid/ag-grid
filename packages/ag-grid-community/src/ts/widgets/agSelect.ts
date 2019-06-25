@@ -1,21 +1,49 @@
-import { AgLabel, IAgLabel } from "./agLabel";
-import { RefSelector } from "./componentAnnotations";
+import { AgInputField } from "./agInputField";
 
-interface IAgSelect extends IAgLabel {
-
+interface SelectOption {
+    value: string;
+    text?: string;
 }
 
-export class AgSelect extends AgLabel {
-    private static TEMPLATE =
-        `<div class="ag-select">
-            <label ref="eLabel"></label>
-            <select ref="eSelect"></select>
-        </div>`;
+export class AgSelect extends AgInputField {
+    protected className = 'ag-select';
+    protected inputTag = 'select';
+    protected inputType = '';
+    protected eInput: HTMLSelectElement;
 
-    constructor(config?: IAgSelect) {
-        super(AgSelect.TEMPLATE);
+    constructor() {
+        super();
+        this.setTemplate(this.TEMPLATE.replace(/%input%/, this.inputTag));
     }
 
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eSelect') private eSelect: HTMLSelectElement;
+    public addOptions(options: SelectOption[]): this {
+        options.forEach((option) => this.addOption(option));
+
+        return this;
+    }
+
+    public addOption(option: SelectOption): this {
+        const optionEl = document.createElement('option');
+
+        optionEl.value = option.value;
+        optionEl.text = optionEl.text || optionEl.value;
+
+        this.eInput.appendChild(optionEl);
+
+        return this;
+    }
+
+    public getValue() {
+        return this.eInput.value;
+    }
+
+    public setValue(value: string): this {
+        if (this.getValue() === value) {
+            return this;
+        }
+
+        this.eInput.value = value;
+
+        return this;
+    }
 }

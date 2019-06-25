@@ -33,10 +33,6 @@ export class AgCheckbox extends AgLabel {
     private passive = false;
     protected labelSeparator = '';
 
-    constructor() {
-        super();
-    }
-
     @PreConstruct
     private preConstruct(): void {
         this.setTemplate(AgCheckbox.TEMPLATE);
