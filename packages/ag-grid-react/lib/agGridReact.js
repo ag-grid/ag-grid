@@ -90,7 +90,10 @@ var AgGridReact = /** @class */ (function (_super) {
     AgGridReact.prototype.waitForInstance = function (reactComponent, resolve, runningTime) {
         var _this = this;
         if (runningTime === void 0) { runningTime = 0; }
-        if (reactComponent.isStatelesComponent() && reactComponent.statelessComponentRendered()) {
+        if (this.destroyed) {
+            resolve(null);
+        }
+        else if (reactComponent.isStatelesComponent() && reactComponent.statelessComponentRendered()) {
             resolve(null);
         }
         else if (!reactComponent.isStatelesComponent() && reactComponent.getFrameworkComponentInstance()) {
@@ -206,6 +209,7 @@ var AgGridReact = /** @class */ (function (_super) {
             this.api.destroy();
             this.api = null;
         }
+        this.destroyed = true;
     };
     AgGridReact.MAX_COMPONENT_CREATION_TIME = 1000; // a second should be more than enough to instantiate a component
     return AgGridReact;

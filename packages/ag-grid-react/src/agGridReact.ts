@@ -96,7 +96,9 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     }
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
-        if (reactComponent.isStatelesComponent() && reactComponent.statelessComponentRendered()) {
+        if (this.destroyed) {
+            resolve(null);
+        } else if (reactComponent.isStatelesComponent() && reactComponent.statelessComponentRendered()) {
             resolve(null);
         } else if (!reactComponent.isStatelesComponent() && reactComponent.getFrameworkComponentInstance()) {
             resolve(null);
@@ -224,6 +226,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
             this.api.destroy();
             this.api = null;
         }
+        this.destroyed = true;
     }
 }
 
