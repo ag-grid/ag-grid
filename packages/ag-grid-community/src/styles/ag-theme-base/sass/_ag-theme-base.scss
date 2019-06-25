@@ -539,7 +539,7 @@
     }
 
     .ag-tab-body {
-        padding: $grid-size 0;
+        padding: $grid-size / 2 0;
 
         .ag-menu-list {
             margin-bottom: 0;
@@ -1274,6 +1274,7 @@
         }
         .ag-group-component-toolbar {
             padding: $grid-size;
+            
         }
         .ag-group-component-container {
             margin: $grid-size;
@@ -1283,7 +1284,7 @@
             > .ag-group-component {
                 margin-top: $grid-size * 2  + 2;
                 margin-right: 0;
-                padding-left: $grid-size * 2;
+                margin-left: $grid-size * 2;
             }
         }
     }
