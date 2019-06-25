@@ -151,7 +151,8 @@
         user-select: none;
         > div {
             display: flex;
-            margin: 4px;
+            margin: 0;
+            padding-bottom: 2px;
             &:not(:first-child) {
                 margin-top: 0;
             }
