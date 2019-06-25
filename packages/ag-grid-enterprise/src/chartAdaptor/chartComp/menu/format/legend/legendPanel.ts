@@ -94,32 +94,34 @@ export class LegendPanel extends Component {
         this.legendPaddingSlider
             .setLabel('Padding')
             .setValue(`${this.chart.legendPadding}`)
+            .setMaxValue(200)
             .onInputChange(newValue => this.chart.legendPadding = newValue);
     }
 
     private initLegendItems() {
         type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
 
-        const initInput = (property: LegendOptions, labelText: string,  input: AgSlider, initialValue: string) => {
+        const initInput = (property: LegendOptions, labelText: string, input: AgSlider, initialValue: string, maxValue: number) => {
             input.setLabel(labelText)
                  .setValue(initialValue)
+                 .setMaxValue(maxValue)
                  .onInputChange(newValue => this.chart.legend[property] = newValue)
         };
 
         const initialMarkerSize = `${this.chart.legend.markerSize}`;
-        initInput('markerSize', 'Marker Size', this.markerSizeSlider, initialMarkerSize);
+        initInput('markerSize', 'Marker Size', this.markerSizeSlider, initialMarkerSize, 40);
 
         const initialMarkerStroke = `${this.chart.legend.markerStrokeWidth}`;
-        initInput('markerStrokeWidth', 'Marker Stroke', this.markerStrokeSlider,  initialMarkerStroke);
+        initInput('markerStrokeWidth', 'Marker Stroke', this.markerStrokeSlider,  initialMarkerStroke, 10);
 
         const initialMarkerPadding = `${this.chart.legend.markerPadding}`;
-        initInput('markerPadding',  'Marker Padding', this.markerPaddingSlider, initialMarkerPadding);
+        initInput('markerPadding',  'Marker Padding', this.markerPaddingSlider, initialMarkerPadding, 200);
 
         const initialItemPaddingX = `${this.chart.legend.itemPaddingX}`;
-        initInput('itemPaddingX', 'Item Padding X', this.itemPaddingXSlider,  initialItemPaddingX);
+        initInput('itemPaddingX', 'Item Padding X', this.itemPaddingXSlider,  initialItemPaddingX, 50);
 
         const initialItemPaddingY = `${this.chart.legend.itemPaddingY}`;
-        initInput('itemPaddingY', 'Item Padding Y', this.itemPaddingYSlider,  initialItemPaddingY);
+        initInput('itemPaddingY', 'Item Padding Y', this.itemPaddingYSlider,  initialItemPaddingY, 50);
     }
 
     private initLabelPanel() {

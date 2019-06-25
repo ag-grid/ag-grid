@@ -48,6 +48,11 @@ export class AgSlider extends AgLabel {
         return this;
     }
 
+    public setMaxValue(maxValue: number): this{
+        this.eSlider.setMaxValue(maxValue);
+        return this;
+    }
+
     public getValue(): string {
         return this.eText.getValue();
     }

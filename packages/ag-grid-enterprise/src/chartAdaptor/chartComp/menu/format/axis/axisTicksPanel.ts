@@ -64,9 +64,10 @@ export class AxisTicksPanel extends Component {
 
         type AxisTickProperty = 'tickWidth' | 'tickSize' | 'tickPadding';
 
-        const initInput = (property: AxisTickProperty, input: AgSlider, label: string, initialValue: string) => {
+        const initInput = (property: AxisTickProperty, input: AgSlider, label: string, initialValue: string, maxValue: number) => {
             input.setLabel(label)
                 .setValue(initialValue)
+                .setMaxValue(maxValue)
                 .onInputChange(newValue => {
                     this.chart.xAxis[property] = newValue;
                     this.chart.yAxis[property] = newValue;
@@ -75,13 +76,13 @@ export class AxisTicksPanel extends Component {
         };
 
         const initialWidth = `${this.chart.xAxis.tickWidth}`;
-        initInput('tickWidth', this.axisTicksWidthSlider, 'Width', initialWidth);
+        initInput('tickWidth', this.axisTicksWidthSlider, 'Width', initialWidth, 100);
 
         const initialLength = `${this.chart.xAxis.tickSize}`;
-        initInput('tickSize', this.axisTicksSizeSlider, 'Length', initialLength);
+        initInput('tickSize', this.axisTicksSizeSlider, 'Length', initialLength, 20);
 
         const initialPadding = `${this.chart.xAxis.tickPadding}`;
-        initInput('tickPadding', this.axisTicksPaddingSlider, 'Padding', initialPadding);
+        initInput('tickPadding', this.axisTicksPaddingSlider, 'Padding', initialPadding, 20);
     }
 
     public destroy(): void {
