@@ -65,6 +65,7 @@ export class LineSeriesPanel extends Component {
     private initSeriesLineWidth() {
         this.seriesLineWidthSlider
             .setLabel('Line Width')
+            .setMaxValue(20)
             .setValue(`${this.series[0].strokeWidth}`)
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }

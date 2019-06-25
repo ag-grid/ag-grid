@@ -57,6 +57,7 @@ export class BarSeriesPanel extends Component {
     private initSeriesStrokeWidth() {
         this.seriesStrokeWidthSlider
             .setLabel('Stroke Width')
+            .setMaxValue(20)
             .setValue(`${this.series[0].strokeWidth}`)
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }

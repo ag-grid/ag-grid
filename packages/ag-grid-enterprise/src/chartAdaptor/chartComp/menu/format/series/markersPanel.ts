@@ -41,18 +41,19 @@ export class MarkersPanel extends Component {
 
         type LineMarkerProperty = 'markerSize' | 'markerStrokeWidth';
 
-        const initInput = (property: LineMarkerProperty, input: AgSlider, label: string, initialValue: string) => {
+        const initInput = (property: LineMarkerProperty, input: AgSlider, label: string, initialValue: string, maxValue: number) => {
             input.setLabel(label)
                 .setValue(initialValue)
+                .setMaxValue(maxValue)
                 .onInputChange(newValue => {
                     this.series.forEach(s => s[property] = newValue)
                 });
         };
 
         const initialSize = `${this.series[0].markerSize}`;
-        initInput('markerSize', this.seriesMarkerSizeSlider, 'Size', initialSize);
+        initInput('markerSize', this.seriesMarkerSizeSlider, 'Size', initialSize, 30);
 
         const initialStrokeWidth = `${this.series[0].markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'Stroke Width', initialStrokeWidth);
+        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'Stroke Width', initialStrokeWidth, 20);
     }
 }

@@ -40,20 +40,21 @@ export class CalloutPanel extends Component {
 
         type CalloutProperty = 'calloutLength' | 'calloutStrokeWidth' | 'labelOffset';
 
-        const initInput = (property: CalloutProperty, input: AgSlider, label: string, initialValue: string) => {
+        const initInput = (property: CalloutProperty, input: AgSlider, label: string, initialValue: string, maxValue: number) => {
             input.setLabel(label)
                 .setValue(initialValue)
+                .setMaxValue(maxValue)
                 .onInputChange(newValue => this.series.forEach(s => s[property] = newValue));
         };
 
         const initialLength = `${this.series[0].calloutLength}`;
-        initInput('calloutLength', this.calloutLengthSlider, 'Length', initialLength);
+        initInput('calloutLength', this.calloutLengthSlider, 'Length', initialLength, 30);
 
         const initialStrokeWidth = `${this.series[0].calloutStrokeWidth}`;
-        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'Stroke Width', initialStrokeWidth);
+        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'Stroke Width', initialStrokeWidth, 20);
 
         const initialOffset = `${this.series[0].labelOffset}`;
-        initInput('labelOffset', this.labelOffsetSlider, 'Offset', initialOffset);
+        initInput('labelOffset', this.labelOffsetSlider, 'Offset', initialOffset, 30);
     }
 
     public destroy(): void {

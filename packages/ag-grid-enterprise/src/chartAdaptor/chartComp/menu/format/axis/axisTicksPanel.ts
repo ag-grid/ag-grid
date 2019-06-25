@@ -76,13 +76,13 @@ export class AxisTicksPanel extends Component {
         };
 
         const initialWidth = `${this.chart.xAxis.tickWidth}`;
-        initInput('tickWidth', this.axisTicksWidthSlider, 'Width', initialWidth, 100);
+        initInput('tickWidth', this.axisTicksWidthSlider, 'Width', initialWidth, 10);
 
         const initialLength = `${this.chart.xAxis.tickSize}`;
-        initInput('tickSize', this.axisTicksSizeSlider, 'Length', initialLength, 20);
+        initInput('tickSize', this.axisTicksSizeSlider, 'Length', initialLength, 30);
 
         const initialPadding = `${this.chart.xAxis.tickPadding}`;
-        initInput('tickPadding', this.axisTicksPaddingSlider, 'Padding', initialPadding, 20);
+        initInput('tickPadding', this.axisTicksPaddingSlider, 'Padding', initialPadding, 30);
     }
 
     public destroy(): void {
