@@ -1,15 +1,53 @@
 [
   {
-    "title": "Support",
+    "title": "Introduction",
     "items": [
+      {
+        "title": "Overview",
+        "url": "javascript-grid-overview/"
+      },
+      {
+        "title": "Community & Enterprise",
+        "url": "javascript-grid-set-license/",
+        "enterprise": true
+      },
+      {
+        "title": "Getting Started",
+        "url": "javascript-grid-getting-started",
+        "items": [
+          {
+            "title": "Just JavaScript",
+            "url": "javascript-getting-started/"
+          },
+          {
+            "title": "Angular",
+            "url": "angular-getting-started/"
+          },
+          {
+            "title": "React",
+            "url": "react-getting-started/"
+          },
+          {
+            "title": "Vue",
+            "url": "vue-getting-started/"
+          },
+          {
+            "title": "AngularJS",
+            "url": "best-angularjs-data-grid/"
+          },
+          {
+            "title": "Polymer",
+            "url": "polymer-getting-started/"
+          },
+          {
+            "title": "Web Component",
+            "url": "best-web-component-data-grid/"
+          }
+        ]
+      },
       {
         "title": "Supported Browsers",
         "url": "javascript-grid-supported-browsers/"
-      },
-      {
-        "title": "ag-Grid Enterprise",
-        "url": "javascript-grid-set-license/",
-        "enterprise": true
       }
     ]
   },

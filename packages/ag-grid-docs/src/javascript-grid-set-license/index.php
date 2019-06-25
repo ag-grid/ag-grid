@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">ag-Grid Enterprise</h1>
+    <h1 class="heading-enterprise">Community and Enterprise</h1>
 
     <p class="lead">
         ag-Grid comes in two forms: ag-Grid Community (free for everyone, including production use) and ag-Grid

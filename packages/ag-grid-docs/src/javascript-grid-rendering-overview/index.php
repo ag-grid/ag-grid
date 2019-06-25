@@ -9,9 +9,6 @@ include '../documentation-main/documentation_header.php';
     <h1>Rendering Cell Data Overview</h1>
 
     <p class="lead">
-    </p>
-
-    <p>
         This section explains the different mechanics involved with rendering data.
     </p>
 
