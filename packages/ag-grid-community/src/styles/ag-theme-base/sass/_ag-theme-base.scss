@@ -165,6 +165,8 @@
     }
 
     .ag-checkbox, .ag-radio-button {
+        display: flex;
+        align-items: center;
         cursor: default;
         label {
             cursor: default;
@@ -1289,16 +1291,16 @@
         }
     }
 
-    .ag-text-field {
+    .ag-input-field {
         label {
-            margin-right: 5px;
+            margin-right: $grid-size;
             white-space: nowrap;
         }
     }
 
     .ag-color-picker {
         label {
-            margin-right: 5px;
+            margin-right: $grid-size;
         }
         .ag-color-button {
             height: $icon-size;
