@@ -1,21 +1,22 @@
 import { RefSelector } from "./componentAnnotations";
-import { AgInputTextField } from "./agInputTextField";
 import { AgInputRange } from "./agInputRange";
 import { AgLabel } from "./agLabel";
+import { AgInputNumberField } from "./agInputNumberField";
+import { _ } from "../utils";
 
 export class AgSlider extends AgLabel {
     private static TEMPLATE =
         `<div class="ag-slider">
             <label ref="eLabel"></label>
-            <div ref="eInputWrapper" class="ag-wrapper">
+            <div class="ag-wrapper">
                 <ag-input-range ref="eSlider"></ag-input-range>
-                <ag-input-text-field ref="eText"></ag-input-text-field>
+                <ag-input-number-field ref="eText"></ag-input-number-field>
             </div>
         </div>`;
 
     @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eSlider') private eSlider: AgInputRange;
-    @RefSelector('eText') private eText: AgInputTextField;
+    @RefSelector('eText') private eText: AgInputNumberField;
 
     constructor() {
         super(AgSlider.TEMPLATE);
@@ -28,12 +29,23 @@ export class AgSlider extends AgLabel {
             callbackFn(textValue);
         });
 
-        this.addDestroyableEventListener(this.eSlider.getInputElement(), 'input', () => {
+        const sliderEvent = _.isBrowserIE() ? 'change' : 'input';
+        this.addDestroyableEventListener(this.eSlider.getInputElement(), sliderEvent , () => {
             const sliderValue = this.eSlider.getValue();
             this.eText.setValue(sliderValue);
             callbackFn(parseFloat(sliderValue));
         });
 
+        return this;
+    }
+
+    public setSliderWidth(width: number): this {
+        this.eSlider.setWidth(width);
+        return this;
+    }
+
+    public setTextFieldWidth(width: number): this {
+        this.eText.setWidth(width);
         return this;
     }
 

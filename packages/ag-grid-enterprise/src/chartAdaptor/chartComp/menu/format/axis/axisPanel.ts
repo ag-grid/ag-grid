@@ -68,6 +68,7 @@ export class AxisPanel extends Component {
         this.axisLineWidthSlider
             .setLabel('Thickness')
             .setMaxValue(10)
+            .setTextFieldWidth(45)
             .setValue(`${this.chart.xAxis.lineWidth}`)
             .onInputChange(newValue => {
                 this.chart.xAxis.lineWidth = newValue;

@@ -26,7 +26,7 @@ export class AgSelect extends AgInputField {
         const optionEl = document.createElement('option');
 
         optionEl.value = option.value;
-        optionEl.text = optionEl.text || optionEl.value;
+        optionEl.text = option.text || option.value;
 
         this.eInput.appendChild(optionEl);
 

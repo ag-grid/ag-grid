@@ -50,6 +50,7 @@ export class PaddingPanel extends Component {
         const initInput = (property: ChartPaddingProperty, input: AgSlider, label: string, value: string) => {
             input.setLabel(label)
                 .setValue(value)
+                .setTextFieldWidth(45)
                 .onInputChange(newValue => {
                     this.chart.padding[property] = newValue;
                     this.chart.performLayout();

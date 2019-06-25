@@ -256,6 +256,9 @@
         input[type="date"] {
             flex: 1 1 auto;
         }
+        input[type="range"] {
+            padding: 0;
+        }
 
         textarea {
             @include textbox($params);
@@ -1251,7 +1254,8 @@
     .ag-group-component {
         background-color: lighten($group-component-background-color, 1%);
         padding: 0px;
-        border: 1px solid darken($group-component-background-color, 5%);
+        border: 0 solid darken($group-component-background-color, 10%);
+        border-top-width: 1px;
         &.ag-disabled > {
             .ag-group-component-label .ag-group-component-title, .ag-group-component-container {
                 opacity: 0.5;
@@ -1264,30 +1268,26 @@
             font-family: $font-family;
             height: $grid-size * 5;
         }
-        &:not(.ag-collapsible) > {
-            .ag-group-component-title-bar {
-                .ag-column-group-icons {
-                    display: none;
-                }
-                .ag-group-component-title {
+        &:not(.ag-collapsible) {
+            > {
+                div {
                     margin-left: $grid-size;
+                }
+                .ag-group-component-title-bar {
+                    margin-left: 0;
+                    padding: $grid-size;
+                    .ag-column-group-icons {
+                        display: none;
+                    }
                 }
             }
         }
-        .ag-group-component-toolbar {
+        > :not(.ag-group-component-title-bar) {
+            margin-left: $grid-size * 2;
             padding: $grid-size;
-            
-        }
-        .ag-group-component-container {
-            margin: $grid-size;
         }
         .ag-group-item {
             margin: $grid-size / 2 0;
-            > .ag-group-component {
-                margin-top: $grid-size * 2  + 2;
-                margin-right: 0;
-                margin-left: $grid-size * 2;
-            }
         }
     }
 

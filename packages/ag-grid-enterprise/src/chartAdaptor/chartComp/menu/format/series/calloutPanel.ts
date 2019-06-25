@@ -44,6 +44,7 @@ export class CalloutPanel extends Component {
             input.setLabel(label)
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
+                .setTextFieldWidth(45)
                 .onInputChange(newValue => this.series.forEach(s => s[property] = newValue));
         };
 

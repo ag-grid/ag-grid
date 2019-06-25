@@ -4,7 +4,7 @@ import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
 export class MarkersPanel extends Component {
 
     public static TEMPLATE =
-        `<div>               
+        `<div>
             <ag-group-component ref="seriesMarkersGroup">
                 <ag-slider ref="seriesMarkerSizeSlider"></ag-slider>
                 <ag-slider ref="seriesMarkerStrokeWidthSlider"></ag-slider>
@@ -45,6 +45,7 @@ export class MarkersPanel extends Component {
             input.setLabel(label)
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
+                .setTextFieldWidth(45)
                 .onInputChange(newValue => {
                     this.series.forEach(s => s[property] = newValue)
                 });

@@ -1386,11 +1386,11 @@ $handleSize: 5px;
     }
 }
 
-.ag-text-field {
+.ag-input-field {
     display: flex;
     flex-direction: row;
     align-items: center;
-    input {
+    input, select {
         flex: 1 1 auto;
         width: 100%;
         min-width: 0;
@@ -1408,6 +1408,10 @@ $handleSize: 5px;
     .ag-wrapper {
         display: flex;
         align-items: center;
+        align-self: stretch;
+        > div {
+            flex: 1 1 auto;
+        }
     }
 }
 

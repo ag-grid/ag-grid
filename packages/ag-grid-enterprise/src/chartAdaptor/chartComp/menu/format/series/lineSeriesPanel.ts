@@ -17,7 +17,7 @@ export class LineSeriesPanel extends Component {
         `<div>   
             <ag-group-component ref="seriesGroup">
                 <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
-                <ag-slider ref="seriesLineWidthSlider"></ag-slider>                               
+                <ag-slider ref="seriesLineWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
@@ -66,6 +66,7 @@ export class LineSeriesPanel extends Component {
         this.seriesLineWidthSlider
             .setLabel('Line Width')
             .setMaxValue(20)
+            .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }

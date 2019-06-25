@@ -75,6 +75,8 @@ export class LegendPanel extends Component {
 
         this.legendPositionSelect
             .setLabel('Position')
+            .setLabelWidth('flex')
+            .setInputWidth(100)
             .addOptions(positions.map(position => ({
                 value: position,
                 text: _.capitalise(position)
@@ -89,6 +91,7 @@ export class LegendPanel extends Component {
         this.legendPaddingSlider
             .setLabel('Padding')
             .setValue(`${this.chart.legendPadding}`)
+            .setTextFieldWidth(45)
             .setMaxValue(200)
             .onInputChange(newValue => this.chart.legendPadding = newValue);
     }
@@ -100,6 +103,7 @@ export class LegendPanel extends Component {
             input.setLabel(labelText)
                  .setValue(initialValue)
                  .setMaxValue(maxValue)
+                 .setTextFieldWidth(45)
                  .onInputChange(newValue => this.chart.legend[property] = newValue)
         };
 

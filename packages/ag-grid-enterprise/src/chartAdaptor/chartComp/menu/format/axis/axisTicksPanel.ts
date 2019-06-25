@@ -68,6 +68,7 @@ export class AxisTicksPanel extends Component {
             input.setLabel(label)
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
+                .setTextFieldWidth(45)
                 .onInputChange(newValue => {
                     this.chart.xAxis[property] = newValue;
                     this.chart.yAxis[property] = newValue;

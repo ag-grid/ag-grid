@@ -46,6 +46,10 @@ export class ShadowPanel extends Component {
         this.chart = chartProxy.getChart();
         this.series = this.chart.series as PieSeries[] | BarSeries[];
 
+        this.shadowBlurSlider.setTextFieldWidth(45);
+        this.shadowXOffsetSlider.setTextFieldWidth(45);
+        this.shadowYOffsetSlider.setTextFieldWidth(45);
+
         this.initSeriesShadow();
     }
 

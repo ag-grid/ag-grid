@@ -1,4 +1,3 @@
-import { RefSelector } from "./componentAnnotations";
 import { IInputField, AgInputField } from "./agInputField";
 
 interface IInputRange extends IInputField {

@@ -2,11 +2,11 @@ import {
     _,
     AgCheckbox,
     AgGroupComponent,
-    AgInputTextField,
     AgSlider,
     Component,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgInputNumberField
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
@@ -58,6 +58,7 @@ export class BarSeriesPanel extends Component {
         this.seriesStrokeWidthSlider
             .setLabel('Stroke Width')
             .setMaxValue(20)
+            .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
@@ -98,10 +99,9 @@ export class BarSeriesPanel extends Component {
         this.getContext().wireBean(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
-        const labelOffsetInput = new AgInputTextField()
+        const labelOffsetInput = new AgInputNumberField()
             .setLabel('Offset')
-            .setLabelWidth('flex')
-            .setWidth(100)
+            .setInputWidth(40)
             .setValue(`${this.series[0].labelOffset}`)
             .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
 
