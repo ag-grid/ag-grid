@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
 
     <ol class="content">
         <li>
-            Use one of the provided themes e.g. <code>ag-theme-balham</code>.
+            Use one of the provided themes e.g. <code>ag-theme-finance</code>.
         </li>
         <li>
             Use one of the provided themes and tweak using the provided
