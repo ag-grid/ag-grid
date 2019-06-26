@@ -50,7 +50,7 @@ export class BarSeriesPanel extends Component {
 
         this.initSeriesStrokeWidth();
         this.initSeriesTooltips();
-        this.initLabelPanel();
+        // this.initLabelPanel();
         this.initShadowPanel();
     }
 
@@ -74,43 +74,43 @@ export class BarSeriesPanel extends Component {
             });
     }
 
-    private initLabelPanel() {
-        const params: ChartLabelPanelParams = {
-            chartController: this.chartController,
-            enabled: this.series.some(s => s.labelEnabled),
-            setEnabled: (enabled: boolean) => {
-                this.series.forEach(s => s.labelEnabled = enabled);
-            },
-            getFont: () => {
-                return this.series[0].labelFont;
-            },
-            setFont: (font: string) => {
-                this.series.forEach(s => s.labelFont = font);
-            },
-            getColor: () => {
-                return this.series[0].labelColor;
-            },
-            setColor: (color: string) => {
-                this.series.forEach(s => s.labelColor = color);
-            }
-        };
-
-        const labelPanelComp = new LabelPanel(params);
-        this.getContext().wireBean(labelPanelComp);
-        this.activePanels.push(labelPanelComp);
-
-        const labelOffsetInput = new AgInputNumberField()
-            .setLabel('Offset')
-            .setInputWidth(40)
-            .setValue(`${this.series[0].labelOffset}`)
-            .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
-
-        this.getContext().wireBean(labelOffsetInput);
-        labelPanelComp.addCompToPanel(labelOffsetInput);
-        this.activePanels.push(labelOffsetInput);
-
-        this.seriesGroup.addItem(labelPanelComp);
-    }
+    // private initLabelPanel() {
+    //     const params: ChartLabelPanelParams = {
+    //         chartController: this.chartController,
+    //         enabled: this.series.some(s => s.labelEnabled),
+    //         setEnabled: (enabled: boolean) => {
+    //             this.series.forEach(s => s.labelEnabled = enabled);
+    //         },
+    //         getFont: () => {
+    //             return this.series[0].labelFont;
+    //         },
+    //         setFont: (font: string) => {
+    //             this.series.forEach(s => s.labelFont = font);
+    //         },
+    //         getColor: () => {
+    //             return this.series[0].labelColor;
+    //         },
+    //         setColor: (color: string) => {
+    //             this.series.forEach(s => s.labelColor = color);
+    //         }
+    //     };
+    //
+    //     const labelPanelComp = new LabelPanel(params);
+    //     this.getContext().wireBean(labelPanelComp);
+    //     this.activePanels.push(labelPanelComp);
+    //
+    //     const labelOffsetInput = new AgInputNumberField()
+    //         .setLabel('Offset')
+    //         .setInputWidth(40)
+    //         .setValue(`${this.series[0].labelOffset}`)
+    //         .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
+    //
+    //     this.getContext().wireBean(labelOffsetInput);
+    //     labelPanelComp.addCompToPanel(labelOffsetInput);
+    //     this.activePanels.push(labelOffsetInput);
+    //
+    //     this.seriesGroup.addItem(labelPanelComp);
+    // }
 
     private initShadowPanel() {
         const shadowPanelComp = new ShadowPanel(this.chartController);

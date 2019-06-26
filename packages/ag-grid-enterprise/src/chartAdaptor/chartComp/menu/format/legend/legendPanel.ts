@@ -57,7 +57,7 @@ export class LegendPanel extends Component {
         this.initLegendPosition();
         this.initLegendPadding();
         this.initLegendItems();
-        this.initLabelPanel();
+        // this.initLabelPanel();
     }
 
     private initLegendGroup() {
@@ -99,7 +99,7 @@ export class LegendPanel extends Component {
     private initLegendItems() {
         type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
 
-        const initInput = (property: LegendOptions, labelText: string, input: AgSlider, initialValue: string, maxValue: number) => {
+        const initSlider = (property: LegendOptions, labelText: string, input: AgSlider, initialValue: string, maxValue: number) => {
             input.setLabel(labelText)
                  .setValue(initialValue)
                  .setMaxValue(maxValue)
@@ -108,43 +108,43 @@ export class LegendPanel extends Component {
         };
 
         const initialMarkerSize = `${this.chart.legend.markerSize}`;
-        initInput('markerSize', 'Marker Size', this.markerSizeSlider, initialMarkerSize, 40);
+        initSlider('markerSize', 'Marker Size', this.markerSizeSlider, initialMarkerSize, 40);
 
         const initialMarkerStroke = `${this.chart.legend.markerStrokeWidth}`;
-        initInput('markerStrokeWidth', 'Marker Stroke', this.markerStrokeSlider,  initialMarkerStroke, 10);
+        initSlider('markerStrokeWidth', 'Marker Stroke', this.markerStrokeSlider,  initialMarkerStroke, 10);
 
         const initialMarkerPadding = `${this.chart.legend.markerPadding}`;
-        initInput('markerPadding',  'Marker Padding', this.markerPaddingSlider, initialMarkerPadding, 200);
+        initSlider('markerPadding',  'Marker Padding', this.markerPaddingSlider, initialMarkerPadding, 200);
 
         const initialItemPaddingX = `${this.chart.legend.itemPaddingX}`;
-        initInput('itemPaddingX', 'Item Padding X', this.itemPaddingXSlider,  initialItemPaddingX, 50);
+        initSlider('itemPaddingX', 'Item Padding X', this.itemPaddingXSlider,  initialItemPaddingX, 50);
 
         const initialItemPaddingY = `${this.chart.legend.itemPaddingY}`;
-        initInput('itemPaddingY', 'Item Padding Y', this.itemPaddingYSlider,  initialItemPaddingY, 50);
+        initSlider('itemPaddingY', 'Item Padding Y', this.itemPaddingYSlider,  initialItemPaddingY, 50);
     }
 
-    private initLabelPanel() {
-        const params: ChartLabelPanelParams = {
-            chartController: this.chartController,
-            enabled: true,
-            suppressEnabledCheckbox: true,
-            getFont: () => this.chart.legend.labelFont,
-            setFont: (font: string) => {
-                this.chart.legend.labelFont = font;
-                this.chart.performLayout();
-            },
-            getColor: () => this.chart.legend.labelColor,
-            setColor: (color: string) => {
-                this.chart.legend.labelColor = color;
-                this.chart.performLayout();
-            }
-        };
-
-        const labelPanelComp = new LabelPanel(params);
-        this.getContext().wireBean(labelPanelComp);
-        this.legendGroup.addItem(labelPanelComp);
-        this.activePanels.push(labelPanelComp);
-    }
+    // private initLabelPanel() {
+    //     const params: ChartLabelPanelParams = {
+    //         chartController: this.chartController,
+    //         enabled: true,
+    //         suppressEnabledCheckbox: true,
+    //         getFont: () => this.chart.legend.labelFont,
+    //         setFont: (font: string) => {
+    //             this.chart.legend.labelFont = font;
+    //             this.chart.performLayout();
+    //         },
+    //         getColor: () => this.chart.legend.labelColor,
+    //         setColor: (color: string) => {
+    //             this.chart.legend.labelColor = color;
+    //             this.chart.performLayout();
+    //         }
+    //     };
+    //
+    //     const labelPanelComp = new LabelPanel(params);
+    //     this.getContext().wireBean(labelPanelComp);
+    //     this.legendGroup.addItem(labelPanelComp);
+    //     this.activePanels.push(labelPanelComp);
+    // }
 
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
