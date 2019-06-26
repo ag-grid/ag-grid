@@ -35,8 +35,8 @@ export class AgColorPicker extends AgLabel {
         }
     }
 
-    @PostConstruct
-    private postConstruct() {
+    protected postConstruct() {
+        super.postConstruct();
         if (this.color) {
             this.setValue(this.color);
         }
