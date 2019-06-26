@@ -153,15 +153,48 @@ export class PieSeries extends Series<PolarChart> {
         return this._labelOffset;
     }
 
-    private _labelFont: string = '12px Verdana, sans-serif';
-    set labelFont(value: string) {
-        if (this._labelFont !== value) {
-            this._labelFont = value;
+    private _labelFontStyle: string | undefined = undefined;
+    set labelFontStyle(value: string | undefined) {
+        if (this._labelFontStyle !== value) {
+            this._labelFontStyle = value;
             this.update();
         }
     }
-    get labelFont(): string {
-        return this._labelFont;
+    get labelFontStyle(): string | undefined {
+        return this._labelFontStyle;
+    }
+
+    private _labelFontWeight: string | undefined = undefined;
+    set labelFontWeight(value: string | undefined) {
+        if (this._labelFontWeight !== value) {
+            this._labelFontWeight = value;
+            this.update();
+        }
+    }
+    get labelFontWeight(): string | undefined {
+        return this._labelFontWeight;
+    }
+
+    private _labelFontSize: number = 12;
+    set labelFontSize(value: number) {
+        if (this._labelFontSize !== value) {
+            this._labelFontSize = value;
+            this.update();
+        }
+    }
+    get labelFontSize(): number {
+        return this._labelFontSize;
+    }
+
+    private _labelFontFamily: string = 'Verdana, sans-serif';
+    set labelFontFamily(value: string) {
+        if (this._labelFontFamily !== value) {
+            this._labelFontFamily = value;
+            this.update();
+        }
+    }
+    get labelFontFamily(): string {
+        return this._labelFontFamily;
     }
 
     private _labelColor: string = 'black';
@@ -186,13 +219,13 @@ export class PieSeries extends Series<PolarChart> {
         return this._labelMinAngle;
     }
 
-    set chart(chart: PolarChart | null) {
+    set chart(chart: PolarChart | undefined) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.update();
         }
     }
-    get chart(): PolarChart | null {
+    get chart(): PolarChart | undefined {
         return this._chart;
     }
 
@@ -564,7 +597,10 @@ export class PieSeries extends Series<PolarChart> {
                     const outerRadius = outerRadii[index];
                     const labelRadius = centerOffsets[index] + outerRadius + calloutLength + labelOffset;
 
-                    text.font = this.labelFont;
+                    text.fontStyle = this.labelFontStyle;
+                    text.fontWeight = this.labelFontWeight;
+                    text.fontSize = this.labelFontSize;
+                    text.fontFamily = this.labelFontFamily;
                     text.text = label.text;
                     text.x = datum.midCos * labelRadius;
                     text.y = datum.midSin * labelRadius;

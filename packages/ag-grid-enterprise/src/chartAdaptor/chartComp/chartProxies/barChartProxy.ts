@@ -86,7 +86,10 @@ export class BarChartProxy extends ChartProxy {
                 }]
             },
             legend: {
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 itemPaddingX: 16,
                 itemPaddingY: 8,
@@ -102,7 +105,10 @@ export class BarChartProxy extends ChartProxy {
                 strokeWidth: 1,
                 tooltipEnabled: true,
                 labelEnabled: false,
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelOffset: 4,
                 tooltipRenderer: undefined,

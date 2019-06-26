@@ -115,11 +115,10 @@ export class Axis<D = any> {
      */
     labelFormatter?: (value: any, fractionDigits?: number) => string;
 
-    /**
-     * The font to be used by the labels. The given font string should use the
-     * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
-     */
-    labelFont: string = '12px Verdana, sans-serif';
+    labelFontStyle: string = '';
+    labelFontWeight: string = '';
+    labelFontSize: number = 12;
+    labelFontFamily: string = 'Verdana, sans-serif';
 
     /**
      * The color of the labels.
@@ -334,7 +333,10 @@ export class Axis<D = any> {
         const labelFormatter = this.labelFormatter;
         const labels = groupSelection.selectByClass(Text)
             .each((label, datum) => {
-                label.font = this.labelFont;
+                label.fontStyle = this.labelFontStyle;
+                label.fontWeight = this.labelFontWeight;
+                label.fontSize = this.labelFontSize;
+                label.fontFamily = this.labelFontFamily;
                 label.fill = this.labelColor;
                 label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')

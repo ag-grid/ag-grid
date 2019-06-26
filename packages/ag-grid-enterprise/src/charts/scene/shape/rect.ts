@@ -157,12 +157,10 @@ export class Rect extends Shape {
             let height = this.height;
 
             if (this.sizing === RectSizing.Border) {
-                const maxX = x + width / 2;
-                const maxY = y + height / 2;
-                x += strokeWidth * .5;
-                y += strokeWidth * .5;
-                x = Math.min(x, maxX);
-                y = Math.min(y, maxY);
+                x += strokeWidth / 2;
+                y += strokeWidth / 2;
+                x = Math.min(x, x + width / 2);
+                y = Math.min(y, y + height / 2);
                 width -= strokeWidth;
                 height -= strokeWidth;
                 width = Math.max(0.001, width);

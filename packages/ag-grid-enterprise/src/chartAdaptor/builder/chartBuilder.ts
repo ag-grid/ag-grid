@@ -285,8 +285,17 @@ export class ChartBuilder {
         if (options.labelEnabled !== undefined) {
             series.labelEnabled = options.labelEnabled;
         }
-        if (options.labelFont !== undefined) {
-            series.labelFont = options.labelFont;
+        if (options.labelFontStyle !== undefined) {
+            series.labelFontStyle = options.labelFontStyle;
+        }
+        if (options.labelFontWeight !== undefined) {
+            series.labelFontWeight = options.labelFontWeight;
+        }
+        if (options.labelFontSize !== undefined) {
+            series.labelFontSize = options.labelFontSize;
+        }
+        if (options.labelFontFamily !== undefined) {
+            series.labelFontFamily = options.labelFontFamily;
         }
         if (options.labelOffset !== undefined) {
             series.labelOffset = options.labelOffset;
@@ -322,8 +331,17 @@ export class ChartBuilder {
         if (options.labelOffset !== undefined) {
             series.labelOffset = options.labelOffset;
         }
-        if (options.labelFont !== undefined) {
-            series.labelFont = options.labelFont;
+        if (options.labelFontStyle !== undefined) {
+            series.labelFontStyle = options.labelFontStyle;
+        }
+        if (options.labelFontWeight !== undefined) {
+            series.labelFontWeight = options.labelFontWeight;
+        }
+        if (options.labelFontSize !== undefined) {
+            series.labelFontSize = options.labelFontSize;
+        }
+        if (options.labelFontFamily !== undefined) {
+            series.labelFontFamily = options.labelFontFamily;
         }
         if (options.labelColor !== undefined) {
             series.labelColor = options.labelColor;
@@ -387,8 +405,17 @@ export class ChartBuilder {
         if (options.itemPaddingY !== undefined) {
             legend.itemPaddingY = options.itemPaddingY;
         }
-        if (options.labelFont !== undefined) {
-            legend.labelFont = options.labelFont;
+        if (options.labelFontStyle !== undefined) {
+            legend.labelFontStyle = options.labelFontStyle;
+        }
+        if (options.labelFontWeight !== undefined) {
+            legend.labelFontWeight = options.labelFontWeight;
+        }
+        if (options.labelFontSize !== undefined) {
+            legend.labelFontSize = options.labelFontSize;
+        }
+        if (options.labelFontFamily !== undefined) {
+            legend.labelFontFamily = options.labelFontFamily;
         }
         if (options.labelColor !== undefined) {
             legend.labelColor = options.labelColor;
@@ -398,11 +425,17 @@ export class ChartBuilder {
     static createTitle(options: CaptionOptions) {
         options = Object.create(options);
 
-        if (!options.text) {
+        if (options.text === undefined) {
             options.text = 'Title';
         }
-        if (!options.font) {
-            options.font = 'bold 16px Verdana, sans-serif';
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 16;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     }
@@ -410,11 +443,17 @@ export class ChartBuilder {
     static createSubtitle(options: CaptionOptions) {
         options = Object.create(options);
 
-        if (!options.text) {
+        if (options.text === undefined) {
             options.text = 'Subtitle';
         }
-        if (!options.font) {
-            options.font = '12px Verdana, sans-serif';
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 12;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     }
@@ -422,8 +461,14 @@ export class ChartBuilder {
     static createPieTitle(options: CaptionOptions) {
         options = Object.create(options);
 
-        if (!options.font) {
-            options.font = 'bold 12px Verdana, sans-serif';
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 12;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     }
@@ -434,8 +479,17 @@ export class ChartBuilder {
         if (options.text !== undefined) {
             caption.text = options.text;
         }
-        if (options.font !== undefined) {
-            caption.font = options.font;
+        if (options.fontStyle !== undefined) {
+            caption.fontStyle = options.fontStyle;
+        }
+        if (options.fontWeight !== undefined) {
+            caption.fontWeight = options.fontWeight;
+        }
+        if (options.fontSize !== undefined) {
+            caption.fontSize = options.fontSize;
+        }
+        if (options.fontFamily !== undefined) {
+            caption.fontFamily = options.fontFamily;
         }
         if (options.color !== undefined) {
             caption.color = options.color;

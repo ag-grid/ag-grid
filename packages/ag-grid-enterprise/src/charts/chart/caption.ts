@@ -6,13 +6,19 @@ export class Caption {
 
     static create(params: {
         text?: string,
-        font?: string,
+        fontStyle?: string,
+        fontWeight?: string,
+        fontSize?: number,
+        fontFamily?: string,
         color?: string
     } = {}): Caption {
         const caption = new Caption();
 
         caption.text = params.text || '';
-        caption.font = params.font || 'bold 14px Verdana, sans-serif';
+        caption.fontStyle = params.fontStyle;
+        caption.fontWeight = params.fontWeight || 'bold';
+        caption.fontSize = params.fontSize || 14;
+        caption.fontFamily = params.fontFamily || 'Verdana, sans-serif';
         caption.color = params.color || 'black';
         caption.requestLayout();
 
@@ -41,14 +47,44 @@ export class Caption {
         return this.node.text;
     }
 
-    set font(value: string) {
-        if (this.node.font !== value) {
-            this.node.font = value;
+    set fontStyle(value: string | undefined) {
+        if (this.node.fontStyle !== value) {
+            this.node.fontStyle = value;
             this.requestLayout();
         }
     }
-    get font(): string {
-        return this.node.font;
+    get fontStyle(): string | undefined {
+        return this.node.fontStyle;
+    }
+
+    set fontWeight(value: string | undefined) {
+        if (this.node.fontWeight !== value) {
+            this.node.fontWeight = value;
+            this.requestLayout();
+        }
+    }
+    get fontWeight(): string | undefined {
+        return this.node.fontWeight;
+    }
+
+    set fontSize(value: number) {
+        if (this.node.fontSize !== value) {
+            this.node.fontSize = value;
+            this.requestLayout();
+        }
+    }
+    get fontSize(): number {
+        return this.node.fontSize;
+    }
+
+    set fontFamily(value: string) {
+        if (this.node.fontFamily !== value) {
+            this.node.fontFamily = value;
+            this.requestLayout();
+        }
+    }
+    get fontFamily(): string {
+        return this.node.fontFamily;
     }
 
     set color(value: string) {

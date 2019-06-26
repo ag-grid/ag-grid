@@ -40,9 +40,9 @@ export abstract class Series<C extends Chart> {
         return this._data;
     }
 
-    protected _chart: C | null = null;
-    abstract set chart(chart: C | null);
-    abstract get chart(): C | null;
+    protected _chart: C | undefined = undefined;
+    abstract set chart(chart: C | undefined);
+    abstract get chart(): C | undefined;
 
     protected _visible: boolean = true;
     set visible(value: boolean) {

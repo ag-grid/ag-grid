@@ -1,7 +1,7 @@
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
-import { Rect } from "../../scene/shape/rect";
+import { Rect, RectSizing } from "../../scene/shape/rect";
 import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
@@ -13,7 +13,7 @@ import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Color } from "ag-grid-community";
 
-interface GroupSelectionDatum extends SeriesNodeDatum {
+interface SelectionDatum extends SeriesNodeDatum {
     yField: string,
     yValue: number,
     x: number,
@@ -25,7 +25,10 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
     strokeWidth: number,
     label?: {
         text: string,
-        font: string,
+        fontStyle?: string,
+        fontWeight?: string,
+        fontSize: number,
+        fontFamily: string,
         fill: string,
         x: number,
         y: number
@@ -96,13 +99,13 @@ export class BarSeries extends Series<CartesianChart> {
      */
     private groupScale = new BandScale<string>();
 
-    set chart(chart: CartesianChart | null) {
+    set chart(chart: CartesianChart | undefined) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.scheduleData();
         }
     }
-    get chart(): CartesianChart | null {
+    get chart(): CartesianChart | undefined {
         return this._chart as CartesianChart;
     }
 
@@ -218,15 +221,48 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelEnabled;
     }
 
-    private _labelFont: string = '12px Verdana, sans-serif';
-    set labelFont(value: string) {
-        if (this._labelFont !== value) {
-            this._labelFont = value;
+    private _labelFontStyle: string | undefined = undefined;
+    set labelFontStyle(value: string | undefined) {
+        if (this._labelFontStyle !== value) {
+            this._labelFontStyle = value;
             this.update();
         }
     }
-    get labelFont(): string {
-        return this._labelFont;
+    get labelFontStyle(): string | undefined {
+        return this._labelFontStyle;
+    }
+
+    private _labelFontWeight: string | undefined = undefined;
+    set labelFontWeight(value: string | undefined) {
+        if (this._labelFontWeight !== value) {
+            this._labelFontWeight = value;
+            this.update();
+        }
+    }
+    get labelFontWeight(): string | undefined {
+        return this._labelFontWeight;
+    }
+
+    private _labelFontSize: number = 12;
+    set labelFontSize(value: number) {
+        if (this._labelFontSize !== value) {
+            this._labelFontSize = value;
+            this.update();
+        }
+    }
+    get labelFontSize(): number {
+        return this._labelFontSize;
+    }
+
+    private _labelFontFamily: string = 'Verdana, sans-serif';
+    set labelFontFamily(value: string) {
+        if (this._labelFontFamily !== value) {
+            this._labelFontFamily = value;
+            this.update();
+        }
+    }
+    get labelFontFamily(): string {
+        return this._labelFontFamily;
     }
 
     private _labelColor: string = 'black';
@@ -411,7 +447,10 @@ export class BarSeries extends Series<CartesianChart> {
         const strokes = this.strokes;
         const grouped = this.grouped;
         const strokeWidth = this.strokeWidth;
-        const labelFont = this.labelFont;
+        const labelFontStyle = this.labelFontStyle;
+        const labelFontWeight = this.labelFontWeight;
+        const labelFontSize = this.labelFontSize;
+        const labelFontFamily = this.labelFontFamily;
         const labelColor = this.labelColor;
         const labelOffset = this.labelOffset;
         const data = this.data;
@@ -422,7 +461,7 @@ export class BarSeries extends Series<CartesianChart> {
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
 
-        const selectionData: GroupSelectionDatum[] = [];
+        const selectionData: SelectionDatum[] = [];
 
         for (let i = 0; i < n; i++) {
             const category = xData[i];
@@ -451,7 +490,10 @@ export class BarSeries extends Series<CartesianChart> {
                     strokeWidth,
                     label: labelText ? {
                         text: labelText,
-                        font: labelFont,
+                        fontStyle: labelFontStyle,
+                        fontWeight: labelFontWeight,
+                        fontSize: labelFontSize,
+                        fontFamily: labelFontFamily,
                         fill: labelColor,
                         x: barX + barWidth / 2,
                         y: y + (yValue >= 0 ? -1 : 1) * (strokeWidth / 2 + labelOffset)
@@ -502,7 +544,10 @@ export class BarSeries extends Series<CartesianChart> {
         textSelection.each((text, datum) => {
                 const label = datum.label;
                 if (label && labelEnabled) {
-                    text.font = label.font;
+                    text.fontStyle = label.fontStyle;
+                    text.fontWeight = label.fontWeight;
+                    text.fontSize = label.fontSize;
+                    text.fontFamily = label.fontFamily;
                     text.text = label.text;
                     text.x = label.x;
                     text.y = label.y;
@@ -518,7 +563,7 @@ export class BarSeries extends Series<CartesianChart> {
         this.textSelection = textSelection;
     }
 
-    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
+    getTooltipHtml(nodeDatum: SelectionDatum): string {
         let html: string = '';
         if (this.tooltipEnabled) {
             const xField = this.xField;

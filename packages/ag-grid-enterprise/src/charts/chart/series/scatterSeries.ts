@@ -39,13 +39,13 @@ export class ScatterSeries extends Series<CartesianChart> {
 
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
-    set chart(chart: CartesianChart | null) {
+    set chart(chart: CartesianChart | undefined) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.scheduleData();
         }
     }
-    get chart(): CartesianChart | null {
+    get chart(): CartesianChart | undefined {
         return this._chart as CartesianChart;
     }
 

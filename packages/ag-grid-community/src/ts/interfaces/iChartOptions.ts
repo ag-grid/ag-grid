@@ -179,7 +179,10 @@ export interface BarSeriesOptions extends SeriesOptions {
     shadow?: DropShadowOptions;
 
     labelEnabled?: boolean;
-    labelFont?: string;
+    labelFontStyle?: string;
+    labelFontWeight?: string;
+    labelFontSize?: number;
+    labelFontFamily?: string;
     labelColor?: string;
     labelOffset?: number;
 
@@ -205,7 +208,10 @@ export interface PieSeriesOptions extends SeriesOptions {
 
     labelEnabled?: boolean;
     labelField?: string;
-    labelFont?: string;
+    labelFontStyle?: string;
+    labelFontWeight?: string;
+    labelFontSize?: number;
+    labelFontFamily?: string;
     labelColor?: string;
     labelMinAngle?: number;
     labelOffset?: number;
@@ -232,13 +238,19 @@ export interface LegendOptions {
     itemPaddingX?: number;
     itemPaddingY?: number;
 
-    labelFont?: string;
+    labelFontStyle?: string,
+    labelFontWeight?: string,
+    labelFontSize?: number,
+    labelFontFamily?: string,
     labelColor?: string;
 }
 
 export interface CaptionOptions {
     text?: string;
-    font?: string;
+    fontStyle?: string;
+    fontWeight?: string;
+    fontSize?: number;
+    fontFamily?: string;
     color?: string;
     enabled?: boolean;
 }

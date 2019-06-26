@@ -116,15 +116,48 @@ export class Legend {
         return this._labelColor;
     }
 
-    private _labelFont: string = MarkerLabel.defaults.labelFont;
-    set labelFont(value: string) {
-        if (this._labelFont !== value) {
-            this._labelFont = value;
+    private _labelFontStyle: string | undefined = MarkerLabel.defaults.labelFontStyle;
+    set labelFontStyle(value: string | undefined) {
+        if (this._labelFontStyle !== value) {
+            this._labelFontStyle = value;
             this.requestLayout();
         }
     }
-    get labelFont(): string {
-        return this._labelFont;
+    get labelFontStyle(): string | undefined {
+        return this._labelFontStyle;
+    }
+
+    private _labelFontWeight: string | undefined = MarkerLabel.defaults.labelFontWeight;
+    set labelFontWeight(value: string | undefined) {
+        if (this._labelFontWeight !== value) {
+            this._labelFontWeight = value;
+            this.requestLayout();
+        }
+    }
+    get labelFontWeight(): string | undefined {
+        return this._labelFontWeight;
+    }
+
+    private _labelFontSize: number = MarkerLabel.defaults.labelFontSize;
+    set labelFontSize(value: number) {
+        if (this._labelFontSize !== value) {
+            this._labelFontSize = value;
+            this.requestLayout();
+        }
+    }
+    get labelFontSize(): number {
+        return this._labelFontSize;
+    }
+
+    private _labelFontFamily: string = MarkerLabel.defaults.labelFontFamily;
+    set labelFontFamily(value: string) {
+        if (this._labelFontFamily !== value) {
+            this._labelFontFamily = value;
+            this.requestLayout();
+        }
+    }
+    get labelFontFamily(): string {
+        return this._labelFontFamily;
     }
 
     private _markerSize: number = 14;
@@ -185,7 +218,10 @@ export class Legend {
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
             markerLabel.markerSize = this.markerSize;
-            markerLabel.labelFont = this.labelFont;
+            markerLabel.labelFontStyle = this.labelFontStyle;
+            markerLabel.labelFontWeight = this.labelFontWeight;
+            markerLabel.labelFontSize = this.labelFontSize;
+            markerLabel.labelFontFamily = this.labelFontFamily;
             markerLabel.labelText = datum.label.text;
             markerLabel.padding = this.markerPadding;
 

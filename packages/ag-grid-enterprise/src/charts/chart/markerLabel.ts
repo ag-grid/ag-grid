@@ -10,6 +10,10 @@ export class MarkerLabel extends Group {
         padding: 4,
         markerSize: 14,
         labelFont: '12px Verdana, sans-serif',
+        labelFontStyle: undefined,
+        labelFontWeight: undefined,
+        labelFontSize: 12,
+        labelFontFamily: 'Verdana, sans-serif',
         labelColor: 'black'
     });
 
@@ -23,7 +27,10 @@ export class MarkerLabel extends Group {
 
         const label = this.label;
         label.textBaseline = 'middle';
-        label.font = MarkerLabel.defaults.labelFont;
+        label.fontStyle = MarkerLabel.defaults.labelFontStyle;
+        label.fontWeight = MarkerLabel.defaults.labelFontWeight;
+        label.fontSize = MarkerLabel.defaults.labelFontSize;
+        label.fontFamily = MarkerLabel.defaults.labelFontFamily;
         label.fill = MarkerLabel.defaults.labelColor;
         label.y = 2; // for better looking vertical alignment of labels to markers
 
@@ -38,11 +45,32 @@ export class MarkerLabel extends Group {
         return this.label.text;
     }
 
-    set labelFont(value: string) {
-        this.label.font = value;
+    set labelFontStyle(value: string | undefined) {
+        this.label.fontStyle = value;
     }
-    get labelFont(): string {
-        return this.label.font;
+    get labelFontStyle(): string | undefined {
+        return this.label.fontStyle;
+    }
+
+    set labelFontWeight(value: string | undefined) {
+        this.label.fontWeight = value;
+    }
+    get labelFontWeight(): string | undefined {
+        return this.label.fontWeight;
+    }
+
+    set labelFontSize(value: number) {
+        this.label.fontSize = value;
+    }
+    get labelFontSize(): number {
+        return this.label.fontSize;
+    }
+
+    set labelFontFamily(value: string) {
+        this.label.fontFamily = value;
+    }
+    get labelFontFamily(): string {
+        return this.label.fontFamily;
     }
 
     set labelColor(value: string | undefined) {

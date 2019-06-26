@@ -26,7 +26,7 @@ export class Arc extends Shape {
      * are changed, we don't have to update the path. The `dirtyFlag`
      * is how we keep track if the path has to be updated or not.
      */
-    private _dirtyPath = true;
+    private _dirtyPath: boolean = true;
     set dirtyPath(value: boolean) {
         if (this._dirtyPath !== value) {
             this._dirtyPath = value;

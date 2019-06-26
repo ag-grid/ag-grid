@@ -137,7 +137,7 @@ export abstract class Chart {
 
         if (index >= 0) {
             this.series.splice(index, 1);
-            series.chart = null;
+            series.chart = undefined;
             this.seriesRoot.removeChild(series.group);
             this.dataPending = true;
             return true;
@@ -148,7 +148,7 @@ export abstract class Chart {
 
     removeAllSeries(): void {
         this.series.forEach(series => {
-            series.chart = null;
+            series.chart = undefined;
             this.seriesRoot.removeChild(series.group);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
