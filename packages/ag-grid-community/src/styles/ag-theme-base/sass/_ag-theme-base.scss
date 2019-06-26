@@ -1272,7 +1272,7 @@
         &:not(.ag-collapsible) {
             > {
                 div {
-                    margin-left: $grid-size;
+                    margin-left: 0;
                 }
                 .ag-group-component-title-bar {
                     margin-left: 0;
