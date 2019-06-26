@@ -63,7 +63,7 @@ export class PieSeriesPanel extends Component {
 
         this.seriesTooltipsCheckbox
             .setLabel('Tooltips')
-            .setSelected(selected)
+            .setValue(selected)
             .onSelectionChange(newSelection => {
                 this.series.forEach(s => s.tooltipEnabled = newSelection);
             });

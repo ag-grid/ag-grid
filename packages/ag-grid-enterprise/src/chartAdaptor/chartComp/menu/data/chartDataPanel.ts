@@ -65,9 +65,9 @@ export class ChartDataPanel extends Component {
         const checkboxChanged = (updatedColState: ColState) => this.chartController.updateForMenuChange(updatedColState);
 
         const radioButtonChanged = (radioComp: AgRadioButton, updatedColState: ColState) => {
-            this.dimensionComps.forEach(comp => comp.select(false));
+            this.dimensionComps.forEach(comp => comp.setValue(false, true));
             this.chartController.updateForMenuChange(updatedColState);
-            radioComp.select(true);
+            radioComp.setValue(true, true);
         };
 
         return (colState: ColState) => {
@@ -77,7 +77,7 @@ export class ChartDataPanel extends Component {
             
             this.getContext().wireBean(comp);
             comp.setLabel(_.escape(colState.displayName) as string);
-            comp.setSelected(colState.selected);
+            comp.setValue(colState.selected);
 
             this.columnComps[colState.colId] = comp;
 
@@ -86,7 +86,7 @@ export class ChartDataPanel extends Component {
             }
 
             this.addDestroyableEventListener(comp, 'change', () => {
-                colState.selected = comp.isSelected();
+                colState.selected = comp.getValue();
                 if (dimension) {
                     radioButtonChanged(comp as AgRadioButton, colState);
                 } else {

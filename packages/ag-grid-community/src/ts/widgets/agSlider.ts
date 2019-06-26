@@ -1,6 +1,6 @@
 import { RefSelector } from "./componentAnnotations";
 import { AgInputRange } from "./agInputRange";
-import { AgLabel } from "./agLabel";
+import { AgLabel, LabelAlignment } from "./agLabel";
 import { AgInputNumberField } from "./agInputNumberField";
 import { _ } from "../utils";
 
@@ -17,6 +17,8 @@ export class AgSlider extends AgLabel {
     @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eSlider') private eSlider: AgInputRange;
     @RefSelector('eText') private eText: AgInputNumberField;
+
+    protected labelAlignment: LabelAlignment = 'top';
 
     constructor() {
         super(AgSlider.TEMPLATE);

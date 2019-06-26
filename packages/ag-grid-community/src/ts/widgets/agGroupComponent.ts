@@ -163,7 +163,7 @@ export class AgGroupComponent extends Component {
         this.toggleGroupExpand(enabled);
 
         if (!skipToggle) {
-            this.cbGroupEnabled.setSelected(enabled);
+            this.cbGroupEnabled.setValue(enabled);
         }
 
         return this;

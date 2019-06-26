@@ -96,7 +96,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     }
 
     private onLabelClicked(): void {
-        const nextState = !this.cbSelect.isSelected();
+        const nextState = !this.cbSelect.getValue();
         this.onChangeCommon(nextState);
     }
 
@@ -275,13 +275,13 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
             const anyFunctionActive = this.column.isAnyFunctionActive();
-            this.cbSelect.setSelected(anyFunctionActive);
+            this.cbSelect.setValue(anyFunctionActive);
             if (this.selectionCallback) {
                 this.selectionCallback(this.isSelected());
             }
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
-            this.cbSelect.setSelected(this.column.isVisible());
+            this.cbSelect.setValue(this.column.isVisible());
             if (this.selectionCallback) {
                 this.selectionCallback(this.isSelected());
             }
@@ -313,7 +313,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     }
 
     public onSelectAllChanged(value: boolean): void {
-        if (value !== this.cbSelect.isSelected()) {
+        if (value !== this.cbSelect.getValue()) {
             if (!this.cbSelect.isReadOnly()) {
                 this.cbSelect.toggle();
             }
@@ -321,7 +321,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     }
 
     public isSelected(): boolean {
-        return this.cbSelect.isSelected();
+        return this.cbSelect.getValue();
     }
 
     public isSelectable(): boolean {

@@ -100,7 +100,7 @@ export class SelectAllFeature extends BeanStub {
 
         const allSelected = this.getNextCheckboxState(selectionCount);
 
-        this.cbSelectAll.setSelected(allSelected);
+        this.cbSelectAll.setValue(allSelected);
 
         this.processingEventFromCheckbox = false;
     }
@@ -146,7 +146,7 @@ export class SelectAllFeature extends BeanStub {
         if (this.processingEventFromCheckbox) { return; }
         if (!this.cbSelectAllVisible) { return; }
 
-        const value = this.cbSelectAll.isSelected();
+        const value = this.cbSelectAll.getValue();
         if (value) {
             this.selectionController.selectAllRowNodes(this.filteredOnly);
         } else {

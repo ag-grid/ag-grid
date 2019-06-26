@@ -1,5 +1,4 @@
 import { AgLabel, IAgLabel } from "./agLabel";
-import { PostConstruct } from "../context/context";
 import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
 
@@ -30,8 +29,8 @@ export abstract class AgInputField extends AgLabel {
     @RefSelector('eInputWrapper') protected eInputWrapper: HTMLElement;
     @RefSelector('eInput') protected eInput: FieldElement;
 
-    @PostConstruct
     protected postConstruct() {
+        super.postConstruct();
         this.setInputType();
         _.addCssClass(this.getGui(), this.className);
 

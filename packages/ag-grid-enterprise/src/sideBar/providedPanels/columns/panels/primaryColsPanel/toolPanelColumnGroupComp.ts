@@ -4,7 +4,6 @@ import {
     Column,
     ColumnController,
     Component,
-    Context,
     CssClassApplier,
     DragAndDropService,
     DragSource,
@@ -150,7 +149,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     }
 
     private onLabelClicked(): void {
-        const nextState = !this.cbSelect.isSelected();
+        const nextState = !this.cbSelect.getValue();
         this.onChangeCommon(nextState);
     }
 
@@ -249,7 +248,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         const selectedValue = this.workOutSelectedValue();
         const readOnlyValue = this.workOutReadOnlyValue();
         this.processingColumnStateChange = true;
-        this.cbSelect.setSelected(selectedValue);
+        this.cbSelect.setValue(selectedValue);
         if (this.selectionCallback) {
             this.selectionCallback(this.isSelected());
         }
@@ -277,7 +276,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         return colsThatCanAction === 0;
     }
 
-    private workOutSelectedValue(): boolean | null {
+    private workOutSelectedValue(): boolean | undefined {
         const pivotMode = this.columnController.isPivotMode();
 
         let visibleChildCount = 0;
@@ -305,7 +304,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             selectedValue = false;
         }
 
-        return selectedValue;
+        return selectedValue == null ? undefined : selectedValue;
     }
 
     private isColumnVisible(column: Column, pivotMode: boolean): boolean {
@@ -341,8 +340,8 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
     public onSelectAllChanged(value: boolean): void {
         if (
-            (value && !this.cbSelect.isSelected()) ||
-            (!value && this.cbSelect.isSelected())
+            (value && !this.cbSelect.getValue()) ||
+            (!value && this.cbSelect.getValue())
         ) {
             if (!this.cbSelect.isReadOnly()) {
                 this.cbSelect.toggle();
@@ -351,7 +350,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     }
 
     public isSelected(): boolean {
-        return this.cbSelect.isSelected();
+        return this.cbSelect.getValue();
     }
 
     public isSelectable(): boolean {

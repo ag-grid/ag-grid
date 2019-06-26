@@ -1,62 +1,53 @@
-import { Listener, QuerySelector, RefSelector } from "./componentAnnotations";
-import { Autowired, PostConstruct, PreConstruct } from "../context/context";
+import { Listener } from "./componentAnnotations";
+import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
-import { AgLabel } from "./agLabel";
+import { AgInputField } from "./agInputField";
+import { LabelAlignment } from "./agLabel";
 import { _ } from "../utils";
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 
-export class AgCheckbox extends AgLabel {
+export class AgCheckbox extends AgInputField {
+
+    protected className = 'ag-checkbox';
+    protected inputTag = 'input';
+    protected inputType = 'checkbox';
+    protected labelAlignment: LabelAlignment = 'right';
+    protected labelSeparator = '';
+    protected iconMap: { selected: string, unselected: string, indeterminate?: string } = {
+        selected: 'checkboxChecked',
+        unselected: 'checkboxUnchecked',
+        indeterminate: 'checkboxIndeterminate'
+    };
 
     public static EVENT_CHANGED = 'change';
 
-    private static TEMPLATE =
-        `<div class="ag-checkbox" role="presentation">
-            <span class="ag-checkbox-checked" role="presentation"></span>
-            <span class="ag-checkbox-unchecked" role="presentation"></span>
-            <span class="ag-checkbox-indeterminate" role="presentation"></span>
-            <label ref="eLabel" role="presentation"></label>
-        </div>`;
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    @QuerySelector('.ag-checkbox-checked') private eChecked: HTMLElement;
-    @QuerySelector('.ag-checkbox-unchecked') private eUnchecked: HTMLElement;
-    @QuerySelector('.ag-checkbox-indeterminate') private eIndeterminate: HTMLElement;
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-
-    private selected = false;
+    private selected: boolean | undefined = false;
     private readOnly = false;
     private passive = false;
-    protected labelSeparator = '';
+    private eIconEl: HTMLElement;
 
-    @PreConstruct
-    private preConstruct(): void {
-        this.setTemplate(AgCheckbox.TEMPLATE);
+    constructor() {
+        super();
+        this.setTemplate(this.TEMPLATE.replace(/%input%/, this.inputTag));
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.loadIcons();
+    protected postConstruct(): void {
+        super.postConstruct();
+        _.addCssClass(this.eInput, 'ag-hidden');
+        this.addIconsPlaceholder();
         this.updateIcons();
     }
 
-    private loadIcons(): void {
-        _.clearElement(this.eChecked);
-        _.clearElement(this.eUnchecked);
-        _.clearElement(this.eIndeterminate);
-        if (this.readOnly) {
-            this.eChecked.appendChild(_.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
-            this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));
-            this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null));
-        } else {
-            this.eChecked.appendChild(_.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null));
-            this.eUnchecked.appendChild(_.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null));
-            this.eIndeterminate.appendChild(_.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null));
-        }
+    private addIconsPlaceholder(): void {
+        const iconDiv = document.createElement('div');
+        this.eInputWrapper.appendChild(iconDiv);
+        this.eIconEl = iconDiv;
     }
 
     @Listener('click')
@@ -72,11 +63,7 @@ export class AgCheckbox extends AgLabel {
     }
 
     public getNextValue(): boolean {
-        if (this.selected === undefined) {
-            return true;
-        } else {
-            return !this.selected;
-        }
+        return this.selected === undefined ? true : !this.selected;
     }
 
     public setPassive(passive: boolean): void {
@@ -85,14 +72,14 @@ export class AgCheckbox extends AgLabel {
 
     public setReadOnly(readOnly: boolean): void {
         this.readOnly = readOnly;
-        this.loadIcons();
+        this.updateIcons();
     }
 
     public isReadOnly(): boolean {
         return this.readOnly;
     }
 
-    public isSelected(): boolean {
+    protected isSelected(): boolean {
         return this.selected;
     }
 
@@ -106,32 +93,27 @@ export class AgCheckbox extends AgLabel {
             };
             this.dispatchEvent(event);
         } else {
-            this.setSelected(nextValue);
+            this.setValue(nextValue);
         }
     }
 
-    public setSelected(selected: boolean | null): AgCheckbox {
+    protected setSelected(selected?: boolean, silent?: boolean): void {
         if (this.selected === selected) {
             return;
         }
 
-        if (selected === true) {
-            this.selected = true;
-        } else if (selected === false) {
-            this.selected = false;
-        } else {
-            this.selected = undefined;
-        }
+        this.selected = typeof selected === 'boolean' ? selected :  undefined;
+        (this.eInput as HTMLInputElement).checked = this.selected;
 
         this.updateIcons();
 
-        const event: ChangeEvent = {
-            type: AgCheckbox.EVENT_CHANGED,
-            selected: this.selected
-        };
-        this.dispatchEvent(event);
-
-        return this;
+        if (!silent) {
+            const event: ChangeEvent = {
+                type: AgCheckbox.EVENT_CHANGED,
+                selected: this.selected
+            };
+            this.dispatchEvent(event);
+        }
     }
 
     public onSelectionChange(callbackFn: (newSelection: boolean) => void) {
@@ -141,9 +123,25 @@ export class AgCheckbox extends AgLabel {
         return this;
     }
 
-    private updateIcons(): void {
-        _.setVisible(this.eChecked, this.selected === true);
-        _.setVisible(this.eUnchecked, this.selected === false);
-        _.setVisible(this.eIndeterminate, this.selected === undefined);
+    protected getIconName(): string {
+        const value = this.getValue();
+        const prop = value === undefined ? 'indeterminate' : (value ? 'selected' : 'unselected');
+        const readOnlyStr = this.isReadOnly() ? 'ReadOnly' : '';
+        return `${this.iconMap[prop]}${readOnlyStr}`;
+    }
+
+    protected updateIcons(): void {
+        _.clearElement(this.eIconEl);
+        this.eIconEl.appendChild(_.createIconNoSpan(this.getIconName(), this.gridOptionsWrapper, null))
+    }
+
+    public getValue(): boolean {
+        return this.isSelected();
+    }
+
+    public setValue(value: boolean | undefined, silent?: boolean): this {
+        this.setSelected(value, silent);
+
+        return this;
     }
 }
