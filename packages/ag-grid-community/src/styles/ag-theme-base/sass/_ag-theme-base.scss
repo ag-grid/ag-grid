@@ -917,15 +917,16 @@
     ////////////////////////////////////////
     // Editing
     ////////////////////////////////////////
-    .ag-cell-inline-editing {
-        padding: $cell-horizontal-padding;
-        height: $row-height + $grid-size * 3;
-    }
-
-    .ag-cell-inline-editing, .ag-popup-editor {
-        @include card($params);
-
-        background-color: $editor-background-color-color;
+    .ag-cell {
+        &.ag-cell-inline-editing {
+            padding: $cell-horizontal-padding;
+            height: $row-height + $grid-size * 3;
+        }
+        &.ag-cell-inline-editing, &.ag-popup-editor {
+            @include card($params);
+    
+            background-color: $editor-background-color-color;
+        }
     }
 
     .ag-popup-editor {
