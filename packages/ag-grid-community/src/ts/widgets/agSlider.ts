@@ -62,7 +62,7 @@ export class AgSlider extends AgLabel {
         return this;
     }
 
-    public setMaxValue(maxValue: number): this{
+    public setMaxValue(maxValue: number): this {
         this.eSlider.setMaxValue(maxValue);
         return this;
     }

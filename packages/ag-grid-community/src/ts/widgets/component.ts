@@ -199,6 +199,9 @@ export class Component extends BeanStub {//implements IComponent<any> {
             const metaData = thisProto.__agComponentMetaData;
             let currentProtoName = (thisProto.constructor).name;
 
+            // IE does not support Function.prototype.name, so we need to extract
+            // the name using a RegEx
+            // from: https://matt.scharley.me/2012/03/monkey-patch-name-ie.html
             if (currentProtoName === undefined) {
                 const funcNameRegex = /function\s([^(]{1,})\(/;
                 const results = funcNameRegex.exec(thisProto.constructor.toString());
