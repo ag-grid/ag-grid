@@ -1271,7 +1271,7 @@
             height: $icon-size;
             font-size: $font-size;
             font-family: $font-family;
-            height: 30px;
+            height: 26px;
         }
         &:not(.ag-collapsible) {
             > {
@@ -1294,7 +1294,7 @@
         .ag-group-item {
             margin: $grid-size / 2 0;
             .ag-group-component-title-bar {
-                height: 20px;
+                height: 18px;
             }
         }
     }
