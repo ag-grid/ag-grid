@@ -18,17 +18,13 @@ export class AxisPanel extends Component {
         `<div>
             <ag-group-component ref="axisGroup">
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
-                <ag-slider ref="axisLineWidthSlider"></ag-slider> 
-                <ag-angle-select ref="xRotationAngle"></ag-angle-select>
-                <ag-angle-select ref="yRotationAngle"></ag-angle-select>
+                <ag-slider ref="axisLineWidthSlider"></ag-slider>               
             </ag-group-component>
         </div>`;
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
     @RefSelector('axisLineWidthSlider') private axisLineWidthSlider: AgSlider;
     @RefSelector('axisColorInput') private axisColorInput: AgColorPicker;
-    @RefSelector('xRotationAngle') private xRotationAngle: AgAngleSelect;
-    @RefSelector('yRotationAngle') private yRotationAngle: AgAngleSelect;
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
@@ -137,31 +133,14 @@ export class AxisPanel extends Component {
 
     private addAdditionalLabelComps(labelPanelComp: LabelPanel) {
 
-        this.xRotationAngle
-            .setLabel('X Rotation')
-            .setValue(this.chart.xAxis.labelRotation)
-            .onAngleChange((angle: number) => {
-                this.chart.xAxis.labelRotation = angle;
-                this.chart.layoutPending = true;
-            });
-
-        this.yRotationAngle
-            .setLabel('Y Rotation')
-            .setValue(this.chart.xAxis.labelRotation)
-            .onAngleChange((angle: number) => {
-                this.chart.yAxis.labelRotation = angle;
-                this.chart.layoutPending = true;
-            });
-
-
-        const createInputComp = (label: string, initialValue: string, updateFunc: (value: number) => void) => {
+        const createAngleComp = (label: string, initialValue: number, updateFunc: (value: number) => void) => {
             const rotationInput = new AgAngleSelect()
-                .setLabel(label)
-                .setValue(Number.parseFloat(initialValue))
-                .onAngleChange(newAngle => {
-                    updateFunc(newAngle);
-                    this.chart.layoutPending = true;
-                });
+            .setLabel(label)
+            .setValue(initialValue)
+            .onAngleChange(newAngle => {
+                updateFunc(newAngle);
+                this.chart.layoutPending = true;
+            });
 
             this.getContext().wireBean(rotationInput);
             labelPanelComp.addCompToPanel(rotationInput);
@@ -169,11 +148,11 @@ export class AxisPanel extends Component {
 
         // add x-axis label rotation input to label panel
         const updateXRotation = (newValue: number) => this.chart.xAxis.labelRotation = newValue;
-        createInputComp('X Rotation', `${this.chart.xAxis.labelRotation}`, updateXRotation);
+        createAngleComp('X Rotation', this.chart.xAxis.labelRotation, updateXRotation);
 
         // add y-axis label rotation input to label panel
         const updateYRotation = (newValue: number) => this.chart.yAxis.labelRotation = newValue;
-        createInputComp('Y Rotation', `${this.chart.yAxis.labelRotation}`, updateYRotation);
+        createAngleComp('Y Rotation', this.chart.yAxis.labelRotation, updateYRotation);
     }
 
     private destroyActivePanels(): void {

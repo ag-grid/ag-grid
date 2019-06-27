@@ -58,6 +58,7 @@ export class AgAngleSelect extends AgLabel {
             .setMin(0)
             .setMax(360)
             .setPrecision(1)
+            .setValue(`${this.degrees}`)
             .onInputChange((value: string) => {
                 if (value == null || value === '') {
                     value = '0';
