@@ -9,7 +9,7 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Path } from "../../scene/shape/path";
-import { Arc } from "../../scene/shape/arc";
+import { Arc, ArcType } from "../../scene/shape/arc";
 import palette from "../palettes";
 import { extent } from "../../util/array";
 
@@ -33,7 +33,7 @@ export interface AreaTooltipRendererParams {
 
 export class AreaSeries extends Series<CartesianChart> {
 
-    static className = 'BarSeries';
+    static className = 'AreaSeries';
 
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
 
@@ -118,6 +118,17 @@ export class AreaSeries extends Series<CartesianChart> {
     }
     get yFieldNames(): string[] {
         return this._yFieldNames;
+    }
+
+    private _stacked: boolean = true;
+    set stacked(value: boolean) {
+        if (this._stacked !== value) {
+            this._stacked = value;
+            this.scheduleData();
+        }
+    }
+    get stacked(): boolean {
+        return this._stacked;
     }
 
     private _normalizedTo: number = NaN;
@@ -223,7 +234,7 @@ export class AreaSeries extends Series<CartesianChart> {
         const normalizedTo = this.normalizedTo;
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
         const xData: string[] = this.xData = data.map(datum => datum[xField]);
-        const ySums: number[] = this.ySums = []; // used for normalization of stacked bars
+        const ySums: number[] = this.ySums = []; // used for normalization of stacked areas
         const yData: number[][] = this.yData = data.map((datum, xIndex) => {
             const values: number[] = [];
             let ySum = 0;
@@ -254,7 +265,7 @@ export class AreaSeries extends Series<CartesianChart> {
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
 
-        if (isFinite(normalizedTo)) {
+        if (this.stacked && isFinite(normalizedTo)) {
             yMin = 0;
             yMax = normalizedTo;
             yData.forEach((stack, i) => {
@@ -398,7 +409,8 @@ export class AreaSeries extends Series<CartesianChart> {
 
         const enterAreas = updateAreas.enter.append(Path)
             .each(path => path.pointerEvents = PointerEvents.None);
-        const enterMarkers = updateMarkers.enter.append(Arc);
+        const enterMarkers = updateMarkers.enter.append(Arc)
+            .each(arc => arc.type = ArcType.Chord);
 
         const highlightedNode = this.highlightedNode;
         const areaSelection = updateAreas.merge(enterAreas);
