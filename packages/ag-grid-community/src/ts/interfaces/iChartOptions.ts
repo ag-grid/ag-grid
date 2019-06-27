@@ -238,10 +238,10 @@ export interface LegendOptions {
     itemPaddingX?: number;
     itemPaddingY?: number;
 
-    labelFontStyle?: string,
-    labelFontWeight?: string,
-    labelFontSize?: number,
-    labelFontFamily?: string,
+    labelFontStyle?: string;
+    labelFontWeight?: string;
+    labelFontSize?: number;
+    labelFontFamily?: string;
     labelColor?: string;
 }
 

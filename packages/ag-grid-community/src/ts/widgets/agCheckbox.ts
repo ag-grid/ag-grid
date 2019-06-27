@@ -1,4 +1,3 @@
-import { Listener } from "./componentAnnotations";
 import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
