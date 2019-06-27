@@ -1414,6 +1414,16 @@ $handleSize: 5px;
     }
 }
 
+.ag-toggle-button {
+    .ag-input-wrapper {
+        .ag-icon {
+            transition: right 0.3s;
+            position: absolute;
+            top: -1px;
+        }
+    }
+}
+
 .ag-range-field {
     display: flex;
     align-items: center;

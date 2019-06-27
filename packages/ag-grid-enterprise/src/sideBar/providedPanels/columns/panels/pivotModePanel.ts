@@ -18,10 +18,6 @@ export class PivotModePanel extends Component {
 
     @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
 
-    constructor() {
-        super();
-    }
-
     private createTemplate(): string {
         return `<div class="ag-pivot-mode-panel">
                 <ag-checkbox ref="cbPivotMode" class="ag-pivot-mode-select"></ag-checkbox>

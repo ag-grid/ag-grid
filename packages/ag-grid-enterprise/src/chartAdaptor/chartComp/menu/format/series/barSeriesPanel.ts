@@ -1,12 +1,11 @@
 import {
     _,
-    AgCheckbox,
     AgGroupComponent,
     AgSlider,
     Component,
     PostConstruct,
     RefSelector,
-    AgInputNumberField
+    AgToggleButton
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
@@ -18,13 +17,13 @@ export class BarSeriesPanel extends Component {
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-                <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
+                <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-    @RefSelector('seriesTooltipsCheckbox') private seriesTooltipsCheckbox: AgCheckbox;
+    @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesStrokeWidthSlider') private seriesStrokeWidthSlider: AgSlider;
 
     private readonly chartController: ChartController;
@@ -66,7 +65,7 @@ export class BarSeriesPanel extends Component {
     private initSeriesTooltips() {
         const selected = this.series.some(s => s.tooltipEnabled);
 
-        this.seriesTooltipsCheckbox
+        this.seriesTooltipsToggle
             .setLabel('Tooltips')
             .setValue(selected)
             .onSelectionChange(newSelection => {

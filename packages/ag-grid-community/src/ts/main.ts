@@ -198,6 +198,7 @@ export { StylingService } from "./styling/stylingService";
 // widgets
 export { AgCheckbox } from "./widgets/agCheckbox";
 export { AgRadioButton } from "./widgets/agRadioButton";
+export { AgToggleButton } from "./widgets/agToggleButton";
 export { AgInputTextField } from "./widgets/agInputTextField";
 export { AgInputNumberField } from "./widgets/agInputNumberField";
 export { AgInputRange } from "./widgets/agInputRange";

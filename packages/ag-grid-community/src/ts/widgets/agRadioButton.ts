@@ -1,4 +1,3 @@
-import { RefSelector } from "./componentAnnotations";
 import { AgCheckbox } from "./agCheckbox";
 import { _ } from "../utils";
 

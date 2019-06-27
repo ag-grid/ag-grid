@@ -164,7 +164,7 @@
         vertical-align: middle;
     }
 
-    .ag-checkbox, .ag-radio-button {
+    .ag-checkbox, .ag-radio-button, .ag-toggle-button {
         display: flex;
         align-items: center;
         cursor: default;
@@ -1320,6 +1320,33 @@
             }
         }
     }
+
+    .ag-toggle-button {
+        .ag-input-wrapper {
+            height: $icon-size;
+            width: 40px;
+            background-color: $background-color;
+            border: 1px solid $border-color;
+            border-radius: 500rem;
+            .ag-icon {
+                width: $icon-size;
+                height: $icon-size;
+                border: 1px solid $icon-color;
+                border-radius: 500rem;
+                right: calc(100% - #{$icon-size});
+            }
+        }
+        &.ag-selected {
+            .ag-input-wrapper {
+                background-color: $primary-color;
+                .ag-icon {
+                    background: $background-color;
+                    right: -1px;
+                }
+            }
+        }
+    }
+
     .ag-color-picker {
         .ag-color-button {
             height: $icon-size;
@@ -1518,7 +1545,7 @@
             text-align: left;
         }
 
-        .ag-checkbox, .ag-radio-button {
+        .ag-checkbox, .ag-radio-button, .ag-toggle-button {
             label {
                 margin-right: $grid-size;
                 margin-left: 0;

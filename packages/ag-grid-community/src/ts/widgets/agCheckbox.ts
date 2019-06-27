@@ -30,7 +30,7 @@ export class AgCheckbox extends AgInputField {
     private selected: boolean | undefined = false;
     private readOnly = false;
     private passive = false;
-    private eIconEl: HTMLElement;
+    protected eIconEl: HTMLElement;
 
     constructor() {
         super();
@@ -132,7 +132,7 @@ export class AgCheckbox extends AgInputField {
 
     protected updateIcons(): void {
         _.clearElement(this.eIconEl);
-        this.eIconEl.appendChild(_.createIconNoSpan(this.getIconName(), this.gridOptionsWrapper, null))
+        this.eIconEl.appendChild(_.createIconNoSpan(this.getIconName(), this.gridOptionsWrapper, null));
     }
 
     public getValue(): boolean {

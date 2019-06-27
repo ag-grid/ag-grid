@@ -87,6 +87,7 @@ import { AgInputNumberField } from "./widgets/agInputNumberField";
 import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
+import { AgToggleButton } from "./widgets/agToggleButton";
 
 export interface GridParams {
     // used by Web Components
@@ -203,6 +204,7 @@ export class Grid {
         let components = [
             { componentName: 'AgCheckbox', theClass: AgCheckbox },
             { componentName: 'AgRadioButton', theClass: AgRadioButton },
+            { componentName: 'AgToggleButton', theClass: AgToggleButton },
             { componentName: 'AgInputTextField', theClass: AgInputTextField},
             { componentName: 'AgInputNumberField', theClass: AgInputNumberField},
             { componentName: 'AgInputRange', theClass: AgInputRange},
