@@ -67,6 +67,9 @@ export class BarSeriesPanel extends Component {
 
         this.seriesTooltipsToggle
             .setLabel('Tooltips')
+            .setLabelAlignment('left')
+            .setLabelWidth('flex')
+            .setInputWidth(40)
             .setValue(selected)
             .onSelectionChange(newSelection => {
                 this.series.forEach(s => s.tooltipEnabled = newSelection);
