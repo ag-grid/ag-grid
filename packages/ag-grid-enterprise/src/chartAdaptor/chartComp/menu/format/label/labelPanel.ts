@@ -104,9 +104,8 @@ export class LabelPanel extends Component {
                 }
             }
 
-            // const initialValue = this.params.initialFont[property] ? this.params.initialFont[property] : values[0];
             const options = values.map(value => {
-                return {value: value, text: value};
+                return {value: value, text: value}
             });
 
             input.addOptions(options)
@@ -143,6 +142,7 @@ export class LabelPanel extends Component {
         initSelect('weight', this.labelFontWeightSelect, weights);
 
         const sizes = ['8', '10', '12', '14', '16', '20', '22', '24', '26', '28', '30'];
+        this.labelFontSizeSelect.setLabel('Size');
         initSelect('size', this.labelFontSizeSelect, sizes);
     }
 
