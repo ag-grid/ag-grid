@@ -2,6 +2,7 @@ import { AgLabel } from "./agLabel";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired } from "../context/context";
 import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
+import { _ } from "../utils";
 
 export class AgAngleSelect extends AgLabel {
 
@@ -73,7 +74,7 @@ export class AgAngleSelect extends AgLabel {
     }
 
     private calculateCartesian() {
-        const radians = this.toRadians(this.getAngle());
+        const radians = this.toRadians(this.getValue());
         const radius = this.getRadius();
 
         this
@@ -138,23 +139,6 @@ export class AgAngleSelect extends AgLabel {
         return radians;
     }
 
-    public getAngle(): number {
-        return this.degrees;
-    }
-
-    public setAngle(degrees: number): this {
-        const radians = this.normalizeAngle180(this.toRadians(degrees));
-        degrees = this.toDegrees(radians);
-
-        if (this.degrees !== degrees) {
-            this.degrees = degrees;
-            this.calculateCartesian();
-            this.positionChildCircle(radians);
-        }
-
-        return this;
-    }
-
     public getRadius(): number {
         return this.radius;
     }
@@ -171,6 +155,34 @@ export class AgAngleSelect extends AgLabel {
         this.addDestroyableEventListener(this, 'valueChange', () => {
             callbackFn(this.degrees);
         });
+        return this;
+    }
+
+    public getValue(radians?: boolean): number {
+        return radians ? this.toRadians(this.degrees) : this.degrees;
+    }
+
+    public setValue(degrees: number, radians?: boolean): this {
+        let radiansValue: number;
+        if (!radians) {
+            radiansValue = this.normalizeAngle180(this.toRadians(degrees));
+        } else {
+            radiansValue = degrees;
+        }
+
+        degrees = this.toDegrees(radiansValue);
+
+        if (this.degrees !== degrees) {
+            this.degrees = degrees;
+            this.calculateCartesian();
+            this.positionChildCircle(radiansValue);
+        }
+
+        return this;
+    }
+
+    public setWidth(width: number): this {
+        _.setFixedWidth(this.getGui(), width);
         return this;
     }
 
