@@ -5,11 +5,12 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-    AgToggleButton
+    AgToggleButton, AgInputNumberField
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
 import { ShadowPanel } from "./shadowPanel";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
 
 export class BarSeriesPanel extends Component {
 
@@ -48,7 +49,7 @@ export class BarSeriesPanel extends Component {
 
         this.initSeriesStrokeWidth();
         this.initSeriesTooltips();
-        // this.initLabelPanel();
+        this.initLabelPanel();
         this.initShadowPanel();
     }
 
@@ -75,43 +76,50 @@ export class BarSeriesPanel extends Component {
             });
     }
 
-    // private initLabelPanel() {
-    //     const params: ChartLabelPanelParams = {
-    //         chartController: this.chartController,
-    //         enabled: this.series.some(s => s.labelEnabled),
-    //         setEnabled: (enabled: boolean) => {
-    //             this.series.forEach(s => s.labelEnabled = enabled);
-    //         },
-    //         getFont: () => {
-    //             return this.series[0].labelFont;
-    //         },
-    //         setFont: (font: string) => {
-    //             this.series.forEach(s => s.labelFont = font);
-    //         },
-    //         getColor: () => {
-    //             return this.series[0].labelColor;
-    //         },
-    //         setColor: (color: string) => {
-    //             this.series.forEach(s => s.labelColor = color);
-    //         }
-    //     };
-    //
-    //     const labelPanelComp = new LabelPanel(params);
-    //     this.getContext().wireBean(labelPanelComp);
-    //     this.activePanels.push(labelPanelComp);
-    //
-    //     const labelOffsetInput = new AgInputNumberField()
-    //         .setLabel('Offset')
-    //         .setInputWidth(40)
-    //         .setValue(`${this.series[0].labelOffset}`)
-    //         .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
-    //
-    //     this.getContext().wireBean(labelOffsetInput);
-    //     labelPanelComp.addCompToPanel(labelOffsetInput);
-    //     this.activePanels.push(labelOffsetInput);
-    //
-    //     this.seriesGroup.addItem(labelPanelComp);
-    // }
+    private initLabelPanel() {
+        const initialFont = {
+            family: this.series[0].labelFontFamily,
+            style: this.series[0].labelFontStyle,
+            weight: this.series[0].labelFontWeight,
+            size: this.series[0].labelFontSize,
+            color: this.series[0].labelColor
+        };
+
+        const setFont = (font: LabelFont) => {
+            if (font.family) this.series.forEach(s => s.labelFontFamily = font.family as string);
+            if (font.style) this.series.forEach(s => s.labelFontStyle = font.style);
+            if (font.weight) this.series.forEach(s => s.labelFontWeight = font.weight);
+            if (font.size) this.series.forEach(s => s.labelFontSize = font.size as number);
+            if (font.color) this.series.forEach(s => s.labelColor = font.color as string);
+        };
+
+        const params: LabelPanelParams = {
+            enabled: this.series.some(s => s.labelEnabled),
+            setEnabled: (enabled: boolean) => {
+                this.series.forEach(s => s.labelEnabled = enabled);
+            },
+            suppressEnabledCheckbox: false,
+            initialFont: initialFont,
+            setFont: setFont
+        };
+
+        const labelPanelComp = new LabelPanel(this.chartController, params);
+        this.getContext().wireBean(labelPanelComp);
+        this.activePanels.push(labelPanelComp);
+
+        const labelOffsetInput = new AgInputNumberField()
+            .setLabel('Offset')
+            .setInputWidth(40)
+            .setLabelWidth("flex")
+            .setValue(`${this.series[0].labelOffset}`)
+            .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
+
+        this.getContext().wireBean(labelOffsetInput);
+        labelPanelComp.addCompToPanel(labelOffsetInput);
+        this.activePanels.push(labelOffsetInput);
+
+        this.seriesGroup.addItem(labelPanelComp);
+    }
 
     private initShadowPanel() {
         const shadowPanelComp = new ShadowPanel(this.chartController);
