@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 
-    <h2 id="animate-renderer">Change Cell Renderers</h2>
+    <h1 id="animate-renderer">Change Cell Renderers</h1>
 
     <p class="lead">
         The grid provides two cell renderers for animating changes to data. They are:

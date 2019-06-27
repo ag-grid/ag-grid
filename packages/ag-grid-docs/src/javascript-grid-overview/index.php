@@ -9,14 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1>Documentation Overview</h1>
 
     <p class="lead">
-        A long time ago, back in 2014, our founder Niall Crosby was struggling to write enterprise
-        JavaScript applications because there wasn't a quality data grid to be used. This frustration
-        led to Niall taking the challenge and the ag-Grid project was born. A few years later and
-        ag-Grid is "The Best JavaScript Datagrid in the World!".
-    </p>
-
-    <p>
-        But ag-Grid is not just about the JavaScript, it is about the documentation as well.
+        ag-Grid is not just about the JavaScript code we write, it is about the documentation as well.
         We believe documentation and examples are vital to assisting the developer on their
         journey of learning ag-Grid.
     </p>
@@ -36,8 +29,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        We want the whole JavaScript community using ag-Grid Community for free and then those who want to go the
-        extra mile to become our customers of ag-Grid Enterprise.
+        We invite all JavaScript developers to use ag-Grid Community for free and then those
+        who want to go the extra mile to become our customers of ag-Grid Enterprise.
     </p>
 
     <h2>Where to go Next</h2>

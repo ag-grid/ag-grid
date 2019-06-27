@@ -371,7 +371,7 @@
     "items": [
       {
         "title": "Overview",
-        "url": "javascript-grid-filtering-overview"
+        "url": "javascript-grid-filtering-overview/"
       },
       {
         "title": "Column Filters",
@@ -447,15 +447,15 @@
       },
       {
         "title": "Provided Renderers",
-        "url": "javascript-grid-provided-renderers",
+        "url": "javascript-grid-provided-renderers/",
         "items": [
           {
             "title": "Group Cell Renderer",
-            "url": "javascript-grid-provided-renderer-group"
+            "url": "javascript-grid-provided-renderer-group/"
           },
           {
             "title": "Show Change Cell Renderers",
-            "url": "javascript-grid-provided-renderer-change"
+            "url": "javascript-grid-provided-renderer-change/"
           }
         ]
       },
@@ -741,7 +741,7 @@
       },
       {
         "title": "DOM Virtualisation",
-        "url": "javascript-grid-dom-virtualisation"
+        "url": "javascript-grid-dom-virtualisation/"
       },
       {
         "title": "Row Pagination",
@@ -871,7 +871,7 @@
               },
               {
                 "title": "Webpack 2",
-                "url": "ag-grid-angular-webpack-3/"
+                "url": "ag-grid-angular-webpack-2/"
               },
               {
                 "title": "Webpack 1",

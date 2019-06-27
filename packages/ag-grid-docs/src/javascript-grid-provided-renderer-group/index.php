@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h2>Grid Renderer</h2>
+    <h1>Group Cell Renderer</h1>
 
     <p class="lead">
         If you are grouping in the grid, then you will need to provide a group cell renderer

@@ -8,8 +8,8 @@ include 'documentation_header.php';
 
 <?php
 
-//doLevel1();
-doOldMenu();
+doLevel1();
+//doOldMenu();
 
 function doLevel1() {
     $lev1Items = json_decode(file_get_contents('../documentation-main/menuStructure.json'), true);

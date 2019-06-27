@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 
 
-    <h1 class="first-h1" id="pagination">Pagination</h1>
+    <h1 class="first-h1" id="pagination">Row Pagination</h1>
 
     <p class="lead">
         To enable pagination in, set the grid property <code>pagination=true</code>.

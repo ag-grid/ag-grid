@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h2 id="highlighting-rows-and-columns">Highlighting Rows and Columns</h2>
+    <h1 id="highlighting-rows-and-columns">Highlighting Rows and Columns</h1>
 
     <p class="lead">
         The class <code>ag-row-hover</code> and <code>ag-column-hover</code> are added

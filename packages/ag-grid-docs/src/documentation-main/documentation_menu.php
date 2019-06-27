@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_STRICT);
 
-$menu_items = json_decode(file_get_contents('../documentation-main/menu.json'), true);
+$menu_items = json_decode(file_get_contents('../documentation-main/menuStructure.json'), true);
 
 if (basename($_SERVER['PHP_SELF']) == 'index.php') {
     $parts = explode('/', dirname($_SERVER['PHP_SELF']));
