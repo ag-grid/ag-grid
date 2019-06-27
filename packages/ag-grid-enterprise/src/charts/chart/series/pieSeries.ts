@@ -663,8 +663,8 @@ export class PieSeries extends Series<PolarChart> {
                         text: String(datum[labelField])
                     },
                     marker: {
-                        fillStyle: fills[index % fills.length],
-                        strokeStyle: strokes[index % strokes.length]
+                        fill: fills[index % fills.length],
+                        stroke: strokes[index % strokes.length]
                     }
                 });
             });

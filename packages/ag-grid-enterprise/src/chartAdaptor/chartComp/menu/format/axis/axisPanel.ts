@@ -6,7 +6,7 @@ import {
     RefSelector,
     AgInputTextField,
     AgColorPicker,
-    AgSlider
+    AgSlider, AgAngleSelect
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
@@ -20,12 +20,16 @@ export class AxisPanel extends Component {
             <ag-group-component ref="axisGroup">
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
                 <ag-slider ref="axisLineWidthSlider"></ag-slider> 
+                <ag-angle-select ref="xRotationAngle"></ag-angle-select>
+                <ag-angle-select ref="yRotationAngle"></ag-angle-select>
             </ag-group-component>
         </div>`;
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
     @RefSelector('axisLineWidthSlider') private axisLineWidthSlider: AgSlider;
     @RefSelector('axisColorInput') private axisColorInput: AgColorPicker;
+    @RefSelector('xRotationAngle') private xRotationAngle: AgAngleSelect;
+    @RefSelector('yRotationAngle') private yRotationAngle: AgAngleSelect;
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
@@ -82,6 +86,24 @@ export class AxisPanel extends Component {
         this.getContext().wireBean(axisTicksComp);
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
+
+        this.xRotationAngle
+            .setLabel('X Rotation')
+            // .setValue(this.chart.xAxis.labelRotation)
+            .onAngleChange((angle: number) => {
+                this.chart.xAxis.labelRotation = angle;
+                this.chart.layoutPending = true;
+                console.log('New Angle: ' + angle);
+            });
+
+        this.yRotationAngle
+            .setLabel('Y Rotation')
+            // .setValue(this.chart.xAxis.labelRotation)
+            .onAngleChange((angle: number) => {
+                this.chart.yAxis.labelRotation = angle;
+                this.chart.layoutPending = true;
+                console.log('New Angle: ' + angle);
+            })
     }
 
     // private initAxisLabels() {

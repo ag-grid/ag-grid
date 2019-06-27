@@ -9,7 +9,10 @@ export class Text extends Shape {
 
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
         textAlign: 'start' as CanvasTextAlign,
-        font: '10px sans-serif' as string,
+        fontStyle: undefined,
+        fontWeight: undefined,
+        fontSize: 10 as number,
+        fontFamily: 'sans-serif' as string,
         textBaseline: 'alphabetic' as CanvasTextBaseline
     });
 
