@@ -9,7 +9,7 @@ import {
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { Chart, LegendPosition } from "../../../../../charts/chart/chart";
-import { ChartLabelPanelParams, LabelPanel } from "../label/labelPanel";
+import {LabelPanelParams, LabelFont, LabelPanel} from "../label/labelPanel";
 
 export class LegendPanel extends Component {
 
@@ -57,7 +57,7 @@ export class LegendPanel extends Component {
         this.initLegendPosition();
         this.initLegendPadding();
         this.initLegendItems();
-        // this.initLabelPanel();
+        this.initLabelPanel();
     }
 
     private initLegendGroup() {
@@ -123,28 +123,37 @@ export class LegendPanel extends Component {
         initSlider('itemPaddingY', 'Item Padding Y', this.itemPaddingYSlider,  initialItemPaddingY, 50);
     }
 
-    // private initLabelPanel() {
-    //     const params: ChartLabelPanelParams = {
-    //         chartController: this.chartController,
-    //         enabled: true,
-    //         suppressEnabledCheckbox: true,
-    //         getFont: () => this.chart.legend.labelFont,
-    //         setFont: (font: string) => {
-    //             this.chart.legend.labelFont = font;
-    //             this.chart.performLayout();
-    //         },
-    //         getColor: () => this.chart.legend.labelColor,
-    //         setColor: (color: string) => {
-    //             this.chart.legend.labelColor = color;
-    //             this.chart.performLayout();
-    //         }
-    //     };
-    //
-    //     const labelPanelComp = new LabelPanel(params);
-    //     this.getContext().wireBean(labelPanelComp);
-    //     this.legendGroup.addItem(labelPanelComp);
-    //     this.activePanels.push(labelPanelComp);
-    // }
+    private initLabelPanel() {
+
+        const initialFont = {
+            family: this.chart.legend.labelFontFamily,
+            style: this.chart.legend.labelFontStyle,
+            weight: this.chart.legend.labelFontWeight,
+            size: this.chart.legend.labelFontSize,
+            color: this.chart.legend.labelColor
+        };
+
+        const setFont = (font: LabelFont) => {
+            if (font.family) this.chart.legend.labelFontFamily = font.family;
+            if (font.style) this.chart.legend.labelFontStyle = font.style;
+            if (font.weight) this.chart.legend.labelFontWeight = font.weight;
+            if (font.size) this.chart.legend.labelFontSize = font.size;
+            if (font.color) this.chart.legend.labelColor = font.color;
+            this.chart.performLayout();
+        };
+
+        const params: LabelPanelParams = {
+            enabled: true,
+            suppressEnabledCheckbox: true,
+            initialFont: initialFont,
+            setFont: setFont
+        };
+
+        const labelPanelComp = new LabelPanel(this.chartController, params);
+        this.getContext().wireBean(labelPanelComp);
+        this.legendGroup.addItem(labelPanelComp);
+        this.activePanels.push(labelPanelComp);
+    }
 
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {

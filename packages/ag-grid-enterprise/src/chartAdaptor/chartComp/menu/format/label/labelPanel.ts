@@ -2,7 +2,7 @@ import {
     _,
     AgColorPicker,
     AgGroupComponent,
-    AgInputTextField,
+    AgSelect,
     Component,
     PostConstruct,
     RefSelector
@@ -10,15 +10,20 @@ import {
 import { ChartController } from "../../../chartController";
 import { Chart } from "../../../../../charts/chart/chart";
 
-export interface ChartLabelPanelParams {
-    chartController: ChartController;
+export type LabelFont = {
+    family?: string;
+    style?: string;
+    weight?: string;
+    size?: number;
+    color?: string;
+}
+
+export interface LabelPanelParams {
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
     setEnabled?: (enabled: boolean) => void;
-    getFont: () => string;
-    setFont: (font: string) => void;
-    getColor: () => string;
-    setColor: (color: string) => void;
+    initialFont: LabelFont;
+    setFont: (font: LabelFont) => void;
 }
 
 export class LabelPanel extends Component {
@@ -26,27 +31,30 @@ export class LabelPanel extends Component {
     public static TEMPLATE =
         `<div>
             <ag-group-component ref="labelsGroup">
-                <select ref="labelFontSelect"></select>
-                <select ref="labelFontWeightSelect"></select>  
-                <div class="ag-group-subgroup">
-                    <ag-input-text-field ref="labelFontSizeInput"></ag-input-text-field> 
+                <ag-select ref="labelFontFamilySelect"></ag-select>
+                <ag-select ref="labelFontWeightSelect"></ag-select>  
+                <div class="ag-group-subgroup">                    
+                    <ag-select ref="labelFontSizeSelect"></ag-select>   
                     <ag-color-picker ref="labelColorPicker"></ag-color-picker>
                 </div>
             </ag-group-component>
         </div>`;
 
     @RefSelector('labelsGroup') private labelsGroup: AgGroupComponent;
-    @RefSelector('labelFontSelect') private labelFontSelect: HTMLSelectElement;
-    @RefSelector('labelFontWeightSelect') private labelFontWeightSelect: HTMLSelectElement;
-    @RefSelector('labelFontSizeInput') private labelFontSizeInput: AgInputTextField;
+
+    @RefSelector('labelFontFamilySelect') private labelFontFamilySelect: AgSelect;
+    @RefSelector('labelFontWeightSelect') private labelFontWeightSelect: AgSelect;
+    @RefSelector('labelFontSizeSelect') private labelFontSizeSelect: AgSelect;
     @RefSelector('labelColorPicker') private labelColorPicker: AgColorPicker;
 
     private chart: Chart;
-    private params: ChartLabelPanelParams;
+    private params: LabelPanelParams;
     private activeComps: Component[] = [];
+    private chartController: ChartController;
 
-    constructor(params: ChartLabelPanelParams) {
+    constructor(chartController: ChartController, params: LabelPanelParams) {
         super();
+        this.chartController = chartController;
         this.params = params;
     }
 
@@ -54,11 +62,12 @@ export class LabelPanel extends Component {
     private init() {
         this.setTemplate(LabelPanel.TEMPLATE);
 
-        const chartProxy = this.params.chartController.getChartProxy();
+        const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
 
-        this.labelsGroup.setTitle('Labels');
-        this.initSeriesLabels();
+        this.initGroup();
+        this.initFontSelects();
+        this.initFontColorPicker();
     }
 
     public addCompToPanel(comp: Component) {
@@ -66,9 +75,9 @@ export class LabelPanel extends Component {
         this.activeComps.push(comp);
     }
 
-    private initSeriesLabels() {
-
+    private initGroup() {
         this.labelsGroup
+            .setTitle('Labels')
             .setEnabled(this.params.enabled)
             .hideEnabledCheckbox(!!this.params.suppressEnabledCheckbox)
             .hideOpenCloseIcons(true)
@@ -77,62 +86,38 @@ export class LabelPanel extends Component {
                     this.params.setEnabled(enabled);
                 }
             });
+    }
 
-        const fonts = ['Verdana, sans-serif', 'Arial'];
-        fonts.forEach((font: any) => {
-            const option = document.createElement('option');
-            option.value = font;
-            option.text = font;
-            this.labelFontSelect.appendChild(option);
-        });
+    private initFontSelects() {
+        type FontOptions = 'family' | 'weight' | 'size';
 
-        const completeLabelFont = this.params.getFont();
-        const fontParts = completeLabelFont.split('px');
-        const fontSize = fontParts[0];
-        const font = fontParts[1].trim();
+        const initSelect = (property: FontOptions, input: AgSelect, values: string[]) => {
 
-        this.labelFontSelect.selectedIndex = fonts.indexOf(font);
-
-        this.addDestroyableEventListener(this.labelFontSelect, 'input', () => {
-            const font = fonts[this.labelFontSelect.selectedIndex];
-            const fontSize = Number.parseInt(this.labelFontSizeInput.getValue());
-            this.params.setFont(`${fontSize}px ${font}`);
-        });
-
-        const fontWeights = ['normal', 'bold'];
-        fontWeights.forEach((font: any) => {
-            const option = document.createElement('option');
-            option.value = font;
-            option.text = font;
-            this.labelFontWeightSelect.appendChild(option);
-        });
-
-        // TODO
-        // this.selectLegendFontWeight.selectedIndex = fonts.indexOf(font);
-        // this.addDestroyableEventListener(this.selectLegendFontWeight, 'input', () => {
-        //     const fontSize = Number.parseInt(this.selectLegendFontWeight.value);
-        //     const font = fonts[this.selectLegendFontWeight.selectedIndex];
-        //     this.chart.legend.labelFont = `bold ${fontSize}px ${font}`;
-        //     this.chart.performLayout();
-        // });
-
-        this.labelFontSizeInput
-            .setLabel('Size')
-            .setValue(fontSize)
-            .setLabelWidth('flex')
-            .setInputWidth(30)
-            .setWidth(70)
-            .onInputChange(newFontSize => {
-                const font = fonts[this.labelFontSelect.selectedIndex];
-                this.params.setFont(`${newFontSize}px ${font}`);
+            const initialValue = this.params.initialFont[property] ? this.params.initialFont[property] : values[0];
+            const options = values.map(value => {
+                return {value: value, text: value};
             });
 
-        this.labelColorPicker
-            .setLabel("Color")
-            .setLabelWidth('flex')
-            .setValue(this.params.getColor())
-            .onColorChange(newColor => this.params.setColor(newColor));
+            input.addOptions(options)
+                 .setValue(`${initialValue}`)
+                 .onInputChange(newValue => this.params.setFont({[property]: newValue}));
+        };
 
+        const fonts = ['Arial', 'Verdana, sans-serif'];
+        initSelect('family', this.labelFontFamilySelect, fonts);
+
+        const weights = ['Normal', 'Bold', 'Italic', 'Bold Italic'];
+        initSelect('weight', this.labelFontWeightSelect, weights);
+
+        const sizes = ['8', '10', '12', '14', '16', '20', '22', '24', '26', '28', '30'];
+        initSelect('size', this.labelFontSizeSelect, sizes);
+    }
+
+    private initFontColorPicker() {
+        this.labelColorPicker
+            .setLabel('Color')
+            .setValue(`${this.params.initialFont.color}`)
+            .onColorChange(newColor => this.params.setFont({color: newColor}));
     }
 
     private destroyActiveComps(): void {
