@@ -29,8 +29,12 @@ include '../documentation-main/documentation_header.php';
             How to configure the grid to edit certain cells.
         </li>
         <li>
-            <a href="../javascript-grid-value-setters/">Setters & Parsers</a>:
-            How data is formatted after editing and how it's set into the underlying data.
+            <a href="../javascript-grid-value-setters/">Value Setters</a>:
+            How to set data after editing instead of using 'field'.
+        </li>
+        <li>
+            <a href="../javascript-grid-value-setters/">Value Parsers</a>:
+            How to parse data after editing (opposite to formatters).
         </li>
         <li><a href="../javascript-grid-provided-cell-editors/">Provided Editors</a>:
             The editors that come out of the box as part of the grid.

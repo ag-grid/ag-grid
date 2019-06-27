@@ -208,8 +208,14 @@ include '../documentation-main/documentation_header.php';
         <?php include '../javascript-grid-value-formatters/valueFormatterProperties.php' ?>
         <?php printPropertiesRows($valueFormatterProperties) ?>
 
-        <?php include '../javascript-grid-value-setters/settersAndParsersProperties.php' ?>
-        <?php printPropertiesRows($settersAndParsersProperties) ?>
+        <tr>
+            <th>valueSetter(params)</th>
+            <td>Function or expression. Sets the value into your data for saving. Return true if the data changed.</td>
+        </tr>
+        <tr>
+            <th>valueParser(params)</th>
+            <td>Function or expression. Parses the value for saving.</td>
+        </tr>
 
         <tr>
             <th>keyCreator(params)</th>

@@ -8,96 +8,98 @@ include '../documentation-main/documentation_header.php';
 
 
 
-    <h1>Value Setters & Value Parsers</h1>
+    <h1>Value Setters</h1>
 
     <p class="lead">
-        The section <a href="../javascript-grid-value-getters">Getters and Formatters</a>
-        explained how to use <code>valueGetter</code> and <code>valueFormatter</code>
-        to get and format the value before displaying it. This section explains their
-        counterparts; <code>valueSetter</code> and <code>valueParser</code>, which are used for saving
-        edited values.
+        After cell editing the grid normally inserts the new value into your data using the column
+        definition <code>field</code>
+        attribute. If it's not possible to use a field attribute, you can provide a Value Setter instead.
     </p>
 
     <p>
-        Use a <code>valueSetter</code> to set a value into your data after editing when the
-        normal <code>colDef.field</code> attribute will not suffice.
+        A Value Setter is the inverse of a <a href="../javascript-grid-value-getters/">Value Getter</a>.
+        Where the value getter allows getting values from your data using a function rather than
+        a field, the value setter allows you to set values into your data using a function rather
+        than specifying a field.
     </p>
 
     <p>
-        Use a <code>valueParser</code> to parse a value after editing.
-    </p>
-
-    <h2>Properties for Setters and Parsers</h2>
-
-    <p>
-        Below shows the column definition properties for valueSetters and valueParsers.
-    </p>
-
-    <table class="table reference">
-        <?php include './settersAndParsersProperties.php' ?>
-        <?php printPropertiesRows($settersAndParsersProperties) ?>
-    </table>
-
-    <p>
-        These can be a function or an <a href="../javascript-grid-cell-expressions/">expression</a>.
-        This page assumes functions. Once you understand this page, you can go to
-        <a href="../javascript-grid-cell-expressions/">expression</a> to learn how to specify them as
-        expressions.
-    </p>
-
-    <h2 id="example-value-getter">Example - Setters and Parsers</h2>
-
-    <p>
-        The example below demonstrates <code>valueGetter</code>, <code>valueSetter</code>,
-        <code>valueFormatter</code> and <code>valueParser</code>.
-        Some of the columns are editable. When you finish editing, the row data is printed to the console so you can take
-        a look at the impact of the edits. The following should be noted from the demo:
-    </p>
-
-    <ul class="content">
-        <li>
-            <b>Column 'Simple':</b> This is a simple string column using field. It is a simple string column,
-            so doesn't need any special treatment.
-        </li>
-        <li>
-            <b>Column 'Bad Number':</b> This is editable. The value start as numbers. However the numbers
-            after editing are stored as strings. This is bad, we should store the values after editing
-            as numbers.
-        </li>
-        <li>
-            <b>Column 'Good Number':</b> This is editable. The number is formatted for displaying using
-            a <code>valueFormatter</code> and the result of editing is parsed to a number using <code>valueParser</code>.
-        </li>
-        <li>
-            <b>Column 'Name':</b> This is editable. The name value is a combination of <code>firstName</code> and
-            <code>lastName</code>. A <code>valueGetter</code> is used to combine the parts for display, and a
-            <code>valueSetter</code> is used for setting the parts back into the grid (eg if you type 'Sam Boots',
-            then 'Sam' gets set as the first name and 'Boots' as the last name.
-        </li>
-    </ul>
-
-    <?= example('Setters and Parsers', 'setters-and-parsers', 'generated', array('processVue' => true)) ?>
-
-    <h2>Value Saving Flow</h2>
-
-    <p>
-        The flow diagram below shows the flow of a value after it is edited using the UI.
-    </p>
-
-    <img src="valueSetterFlow.svg" class="img-fluid" alt="Value Setter Flow">
-
-    <h2 id="value-setter">Value Setter</h2>
-
-    <p>
-        A <code>valueSetter</code> is the inverse of a <code>valueGetter</code>, it allows you to put
-        values into your data in a way other than using the standard <code>colDef.field</code>.
-        The interface for <code>valueSetter</code> is as follows:
+        The following is an example of how you would configure a column using the field attribute
+        and then follows how the same can be done using value getters and value setters.
     </p>
 
     <snippet>
-// function for valueSetter
-function valueSetter(params: ValueSetterParams) =&gt; boolean;
+// Option 1 - using field
+colDef = {
+    field: 'name';
+};
 
+// Options 2 - using valueGetter and valueSetter
+// value getter used to get data
+colDef = {
+    valueGetter: function(params) {
+        return params.data.name;
+    },
+    valueSetter: function(params) {
+        return params.data.name = params.newValue;
+    }
+};
+</snippet>
+
+    <h2 id="example-value-getter">Example Value Setter</h2>
+
+    <p>
+        The example below demonstrates value setters working along side value getters
+        (value setters are typically only used along side value getters). Note
+        the following:
+    </p>
+
+    <ul>
+        <li>
+            All columns are editable. After an edit, the example prints the updated row data to the console
+            to show the impact of the edit.
+        </li>
+        <li>
+            Column A uses <code>field</code> for both getting and setting the value. This is the simple case for
+            comparison.
+        </li>
+        <li>
+            Column B uses <code>valueGetter</code> and <code>valueSetter</code> instead of field for getting and
+            setting the value. There is no benefit over using the field, but demonstrates how the same can be achieved.
+        </li>
+        <li>
+            Column Name uses <code>valueGetter</code> to combine the value from the two attributes
+            <code>firstName</code> and <code>lastName</code> and
+            <code>valueSetter</code> is used to break the value up into the two same attributes.
+        </li>
+        <li>
+            Column C.X and C.Y use <code>valueGetter</code> to get the value from an embedded object.
+            They then use <code>valueSetter</code> to set the value into the embedded object while also
+            making sure the correct structure exists (this structure creation would not happen if using field).
+        </li>
+    </ul>
+
+    <?= example('Example Value Setters', 'example-setters', 'generated', array('processVue' => true)) ?>
+
+
+    <h2 id="value-setter">Value Setter Return Value</h2>
+
+    <p>
+        A value setter should return <code>true</code> if the value was updated successfully and <code>false</code>
+        if the value was not updated (including if the value was not changed).
+    </p>
+
+    <p>
+        When you return <code>true</code>, the grid knows it must refresh the cell.
+    </p>
+
+    <h2 id="value-setter">Value Setter Parameters</h2>
+
+    <p>
+        The parameters provided ot a value setter are as follows:
+    </p>
+
+    <snippet>
 // interface for params
 interface ValueGetterParams {
     oldValue: any, // the value before the change
@@ -110,51 +112,7 @@ interface ValueGetterParams {
     columnApi: ColumnApi, // the grid Column API
     context: any  // the context
 }
-
-// example value setter, put into a particular part of the data
-colDef.valueSetter = function(params) {
-    // see if values are different, if you have a complex object,
-    // it would be more complicated to do this.
-    if (params.oldValue!==params.newValue) {
-        params.data[someField] = params.newValue;
-        // get grid to refresh the cell
-        return true;
-    } else {
-        // no change, so no refresh needed
-        return false;
-    }
-}</snippet>
-    <h2 id="value-parser">Value Parser</h2>
-
-    <p>
-        A <code>valueParser</code> allows you to parse values after an edit (or after the user sets
-        a value using the grid API).
-        The interface for <code>valueParser</code> is as follows:
-    </p>
-
-    <snippet>
-// function for valueParser
-function valueParser(params: ValueParserParams) =&gt; any;
-
-// interface for params
-interface ValueParserParams {
-    oldValue: any, // the value before the change
-    newValue: any, // the value after the change
-    data: any, // the data you provided for this row
-    node: RowNode, // the row node for this row
-    colDef: ColDef, // the column def for this column
-    column: Column, // the column for this column
-    api: GridApi, // the grid API
-    columnApi: ColumnApi, // the grid Column API
-    context: any  // the context
-}
-
-// example value parser, convert a string to a number
-colDef.valueParser = function(params) {
-    // this is how to convert a string to a number using JavaScript
-    return Number(params.newValue);
-}</snippet>
-
+</snippet>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>
