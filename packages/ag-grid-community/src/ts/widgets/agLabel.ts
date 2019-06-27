@@ -13,7 +13,7 @@ export type LabelAlignment = 'left' | 'right' | 'top';
 export abstract class AgLabel extends Component {
     protected abstract eLabel: HTMLElement;
 
-    protected labelSeparator: string = ':';
+    protected labelSeparator: string = '';
     protected labelAlignment: LabelAlignment = 'left';
     private label: string;
 

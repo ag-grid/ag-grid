@@ -136,6 +136,7 @@ export class AxisPanel extends Component {
         const createAngleComp = (label: string, initialValue: number, updateFunc: (value: number) => void) => {
             const rotationInput = new AgAngleSelect()
             .setLabel(label)
+            .setLabelWidth("flex")
             .setValue(initialValue)
             .onAngleChange(newAngle => {
                 updateFunc(newAngle);
@@ -146,13 +147,15 @@ export class AxisPanel extends Component {
             labelPanelComp.addCompToPanel(rotationInput);
         };
 
+        const degreesSymbol = String.fromCharCode(176);
+
         // add x-axis label rotation input to label panel
         const updateXRotation = (newValue: number) => this.chart.xAxis.labelRotation = newValue;
-        createAngleComp('X Rotation', this.chart.xAxis.labelRotation, updateXRotation);
+        createAngleComp(`X Rotation ${degreesSymbol}`, this.chart.xAxis.labelRotation, updateXRotation);
 
         // add y-axis label rotation input to label panel
         const updateYRotation = (newValue: number) => this.chart.yAxis.labelRotation = newValue;
-        createAngleComp('Y Rotation', this.chart.yAxis.labelRotation, updateYRotation);
+        createAngleComp(`Y Rotation ${degreesSymbol}`, this.chart.yAxis.labelRotation, updateYRotation);
     }
 
     private destroyActivePanels(): void {

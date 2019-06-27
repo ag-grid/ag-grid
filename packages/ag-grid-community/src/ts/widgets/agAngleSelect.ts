@@ -54,10 +54,11 @@ export class AgAngleSelect extends AgLabel {
         this.dragService.addDragSource(this.dragListener);
 
         this.eAngleValue
-            .setInputWidth(55)
+            .setLabel('')
+            .setLabelWidth(5)
+            .setInputWidth(45)
             .setMin(0)
             .setMax(360)
-            .setPrecision(1)
             .setValue(`${this.degrees}`)
             .onInputChange((value: string) => {
                 if (value == null || value === '') {
@@ -199,7 +200,7 @@ export class AgAngleSelect extends AgLabel {
         degrees = this.toDegrees(radiansValue);
 
         if (this.degrees !== degrees) {
-            this.degrees = degrees;
+            this.degrees = Math.floor(degrees);
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
         }
