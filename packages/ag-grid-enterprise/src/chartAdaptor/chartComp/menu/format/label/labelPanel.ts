@@ -141,7 +141,7 @@ export class LabelPanel extends Component {
         const weights = ['Normal', 'Bold', 'Italic', 'Bold Italic'];
         initSelect('weight', this.labelFontWeightSelect, weights);
 
-        const sizes = ['8', '10', '12', '14', '16', '20', '22', '24', '26', '28', '30'];
+        const sizes = ['8', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30'];
         this.labelFontSizeSelect.setLabel('Size');
         initSelect('size', this.labelFontSizeSelect, sizes);
     }

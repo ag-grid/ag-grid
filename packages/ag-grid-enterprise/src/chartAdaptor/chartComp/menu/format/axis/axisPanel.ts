@@ -4,14 +4,13 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-    AgInputTextField,
     AgColorPicker,
     AgSlider, AgAngleSelect
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
 import { AxisTicksPanel } from "./axisTicksPanel";
-import { LabelPanelParams, LabelPanel } from "../label/labelPanel";
+import {LabelPanelParams, LabelPanel, LabelFont} from "../label/labelPanel";
 
 export class AxisPanel extends Component {
 
@@ -49,7 +48,7 @@ export class AxisPanel extends Component {
 
         this.initAxis();
         this.initAxisTicks();
-        // this.initAxisLabels();
+        this.initAxisLabels();
     }
 
     private initAxis() {
@@ -86,6 +85,57 @@ export class AxisPanel extends Component {
         this.getContext().wireBean(axisTicksComp);
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
+    }
+
+    private initAxisLabels() {
+        const initialFont = {
+            family: this.chart.xAxis.labelFontFamily,
+            style: this.chart.xAxis.labelFontStyle,
+            weight: this.chart.xAxis.labelFontWeight,
+            size: this.chart.xAxis.labelFontSize,
+            color: this.chart.xAxis.labelColor
+        };
+
+        const setFont = (font: LabelFont) => {
+            if (font.family) {
+                this.chart.xAxis.labelFontFamily = font.family;
+                this.chart.yAxis.labelFontFamily = font.family;
+            }
+            if (font.style) {
+                this.chart.xAxis.labelFontStyle = font.style;
+                this.chart.yAxis.labelFontStyle = font.style;
+            }
+            if (font.weight) {
+                this.chart.xAxis.labelFontWeight = font.weight;
+                this.chart.yAxis.labelFontWeight = font.weight;
+            }
+            if (font.size) {
+                this.chart.xAxis.labelFontSize = font.size;
+                this.chart.yAxis.labelFontSize = font.size;
+            }
+            if (font.color) {
+                this.chart.xAxis.labelColor = font.color;
+                this.chart.yAxis.labelColor = font.color;
+            }
+            this.chart.performLayout();
+        };
+
+        const params: LabelPanelParams = {
+            enabled: true,
+            suppressEnabledCheckbox: true,
+            initialFont: initialFont,
+            setFont: setFont
+        };
+
+        const labelPanelComp = new LabelPanel(this.chartController, params);
+        this.getContext().wireBean(labelPanelComp);
+        this.axisGroup.addItem(labelPanelComp);
+        this.activePanels.push(labelPanelComp);
+
+        this.addAdditionalLabelComps(labelPanelComp);
+    }
+
+    private addAdditionalLabelComps(labelPanelComp: LabelPanel) {
 
         this.xRotationAngle
             .setLabel('X Rotation')
@@ -101,61 +151,30 @@ export class AxisPanel extends Component {
             .onAngleChange((angle: number) => {
                 this.chart.yAxis.labelRotation = angle;
                 this.chart.layoutPending = true;
-            })
-    }
+            });
 
-    // private initAxisLabels() {
-    //     const params: ChartLabelPanelParams = {
-    //         chartController: this.chartController,
-    //         enabled: true,
-    //         suppressEnabledCheckbox: true,
-    //         getFont: () => this.chart.xAxis.labelFont,
-    //         setFont: (font: string) => {
-    //             this.chart.xAxis.labelFont = font;
-    //             this.chart.yAxis.labelFont = font;
-    //             this.chart.performLayout();
-    //         },
-    //         getColor: () => this.chart.xAxis.labelColor as string,
-    //         setColor: (color: string) => {
-    //             this.chart.xAxis.labelColor = color;
-    //             this.chart.yAxis.labelColor = color;
-    //             this.chart.performLayout();
-    //         }
-    //     };
-    //
-    //     const labelPanelComp = new LabelPanel(params);
-    //     this.getContext().wireBean(labelPanelComp);
-    //     this.axisGroup.addItem(labelPanelComp);
-    //     this.activePanels.push(labelPanelComp);
-    //
-    //     this.addAdditionalLabelComps(labelPanelComp);
-    // }
-    //
-    // private addAdditionalLabelComps(labelPanelComp: LabelPanel) {
-    //
-    //     const createInputComp = (label: string, initialValue: string, updateFunc: (value: number) => void) => {
-    //         const rotationInput = new AgInputTextField()
-    //             .setLabel(label)
-    //             .setLabelWidth(85)
-    //             .setWidth(115)
-    //             .setValue(initialValue)
-    //             .onInputChange(newValue => {
-    //                 updateFunc(newValue);
-    //                 this.chart.performLayout();
-    //             });
-    //
-    //         this.getContext().wireBean(rotationInput);
-    //         labelPanelComp.addCompToPanel(rotationInput);
-    //     };
-    //
-    //     // add x-axis label rotation input to label panel
-    //     const updateXRotation = (newValue: number) => this.chart.xAxis.labelRotation = newValue;
-    //     createInputComp('X Rotation', `${this.chart.xAxis.labelRotation}`, updateXRotation);
-    //
-    //     // add y-axis label rotation input to label panel
-    //     const updateYRotation = (newValue: number) => this.chart.yAxis.labelRotation = newValue;
-    //     createInputComp('Y Rotation', `${this.chart.yAxis.labelRotation}`, updateYRotation);
-    // }
+
+        const createInputComp = (label: string, initialValue: string, updateFunc: (value: number) => void) => {
+            const rotationInput = new AgAngleSelect()
+                .setLabel(label)
+                .setValue(Number.parseFloat(initialValue))
+                .onAngleChange(newAngle => {
+                    updateFunc(newAngle);
+                    this.chart.layoutPending = true;
+                });
+
+            this.getContext().wireBean(rotationInput);
+            labelPanelComp.addCompToPanel(rotationInput);
+        };
+
+        // add x-axis label rotation input to label panel
+        const updateXRotation = (newValue: number) => this.chart.xAxis.labelRotation = newValue;
+        createInputComp('X Rotation', `${this.chart.xAxis.labelRotation}`, updateXRotation);
+
+        // add y-axis label rotation input to label panel
+        const updateYRotation = (newValue: number) => this.chart.yAxis.labelRotation = newValue;
+        createInputComp('Y Rotation', `${this.chart.yAxis.labelRotation}`, updateYRotation);
+    }
 
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
