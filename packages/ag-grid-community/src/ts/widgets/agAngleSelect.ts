@@ -28,7 +28,7 @@ export class AgAngleSelect extends AgLabel {
     @Autowired("dragService") protected dragService: DragService;
 
     private parentCircleRect: ClientRect | DOMRect;
-    private degrees: number = 0;
+    private degrees: number;
     private radius: number = 0;
     private offsetX: number = 0;
     private offsetY: number = 0;
@@ -81,7 +81,7 @@ export class AgAngleSelect extends AgLabel {
     }
 
     private positionChildCircle(radians: number) {
-        const rect = this.parentCircleRect;
+        const rect = this.parentCircleRect || { width: 24, height: 24 };
         const eChildCircle = this.eChildCircle;
 
         const centerX = rect.width / 2;

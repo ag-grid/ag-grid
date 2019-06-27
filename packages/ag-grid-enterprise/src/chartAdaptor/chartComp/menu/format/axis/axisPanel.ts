@@ -93,7 +93,6 @@ export class AxisPanel extends Component {
             .onAngleChange((angle: number) => {
                 this.chart.xAxis.labelRotation = angle;
                 this.chart.layoutPending = true;
-                console.log('New Angle: ' + angle);
             });
 
         this.yRotationAngle
@@ -102,7 +101,6 @@ export class AxisPanel extends Component {
             .onAngleChange((angle: number) => {
                 this.chart.yAxis.labelRotation = angle;
                 this.chart.layoutPending = true;
-                console.log('New Angle: ' + angle);
             })
     }
 
