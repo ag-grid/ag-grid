@@ -57,9 +57,10 @@ hr {
 }
 
 /*nav-section*/
+
 #nav-bar {
   position: sticky;
-  top: 0:
+  top: 0;
   z-index: 10;
 }
 .navbar {
@@ -504,6 +505,7 @@ margin: 0 auto;
 }
 .api .grid-container {
 height: 500px;
+box-shadow: 10px 10px 15px 10px grey;
 }
 .api-operations {
 list-style: none;
@@ -548,28 +550,43 @@ align-items: center;
 min-height: 90px;
 border: 1px solid #e3e2e2;
 }
+
+#api-buttons.row {
+  margin-top: 40px;
 }
 /*api section end*/
 /*performance*/
 .performance .grid-example {
-display: none;
+    display: none;
 }
-.performance .container {
-display: grid;
-grid-template-columns: 300px auto;
-column-gap: 60px;
-margin: 0 auto;
+    .performance .container {
+        display: grid;
+        grid-template-columns: 300px auto;
+        column-gap: 60px;
+        margin: 0 auto;
+    }
+
+    .performance .grid-example {
+        display: block;
+    }
+
+    .performance .grid-container {
+        height: 500px;
+        box-shadow: 10px 10px 15px 10px grey;
+    }
 }
-.performance .grid-example {
-display: block;
-}
-.performance .grid-container {
-height: 500px;
-}
-}
+
 .performance p {
-line-height: 25px;
-text-align: justify;
+    line-height: 25px;
+    text-align: justify;
+}
+
+.col.performance-description {
+  max-width: 35%;
+}
+
+.col.performance.grid-example {
+  max-width: 100%;
 }
 /*performance end*/
 
@@ -625,6 +642,7 @@ a { color: #0084e7; text-decoration: none; }
   top: 75px;
   display: block;
   margin: 0 auto;
+  margin-top: 20px;
 }
 
 .btn-light {

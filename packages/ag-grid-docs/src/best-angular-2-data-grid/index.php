@@ -1,11 +1,21 @@
-<?php
-$pageTitle = "Angular Data Grid | Packed with features and performance.";
-$pageDescription = "Fastest, most feature-rich angular Data Grid component from ag-Grid. Integrate seamlessly with angular to deliver 63+ core and enterprise features including filtering, grouping and pagination. angular Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.";
-$pageGroup = "basics";
-?>
-<head>
+<!DOCTYPE HTML>
+<html lang="en">
+<head lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Angular Data Grid | Packed with features and performance.</title>
+
+    <meta name="description" content="Fastest, most feature-rich angular Data Grid component from ag-Grid. Integrate seamlessly with angular to deliver 63+ core and enterprise features including filtering, grouping and pagination. angular Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.">
+    <meta name="keywords" content="">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="ag-Grid">
+    <meta property="og:description" content="Fastest, most feature-rich angular Data Grid component from ag-Grid. Integrate seamlessly with angular to deliver 63+ core and enterprise features including filtering, grouping and pagination. angular Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@ag_grid">
+    <meta name="twitter:title" content="ag-Grid">
+    <meta name="twitter:description" content="Fastest, most feature-rich angular Data Grid component from ag-Grid. Integrate seamlessly with angular to deliver 63+ core and enterprise features including filtering, grouping and pagination. angular Grid examples and demo on this page. Built to deal with large data sets, ease of integration, heavily customizable and a developer friendly API.">
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -16,16 +26,17 @@ $pageGroup = "basics";
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <style><?php include './styles.css'; ?></style>
-<style><?php include './css/performance.css'; ?></style>
+
 <style><?php include './css/api.css'; ?></style>
 <script src="<?= AG_GRID_ENTERPRISE_SCRIPT_PATH ?>" defer></script>
+<script src="https://unpkg.com/ag-grid-enterprise@21.0.1/dist/ag-grid-enterprise.min.js" defer></script>
 <script src="./js/grid-performance.js" inline></script>
 <script src="./js/grid-api.js" inline></script>
 </head>
 <div>
 <section id="nav-bar">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-<a class="navbar-brand" href="#"><img id="logo" src="../images/logo/logo-inverted.svg"></a>
+<a class="navbar-brand" href="https://www.ag-grid.com/"><img id="logo" src="/images/logo/logo-inverted.svg" alt="ag-Grid Logo"></a>
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 <i class="fas fa-bars"></i>
 <span class="navbar-toggler-icon"></span>
@@ -51,6 +62,7 @@ $pageGroup = "basics";
 </div>
 </nav>
 </section>
+<body>
 <section id="above-the-fold">
         <div id="head-top">
         <div class="logo">
@@ -100,7 +112,7 @@ $pageGroup = "basics";
     <p>
         Running the command below will add ag-Grid to your project. 
     </p>
-    <img class="example code" src="../images/get-started.png">
+    <img class="example code" src="../images/get-started.png" alt="Command Code">
     <p class="lead font-weight-bold">
     Before implementing, learn more about ag-Grid Angular and it's benefits below. 
     </p>
@@ -118,7 +130,7 @@ $pageGroup = "basics";
             <hr>
             <div class="core">
                 <h3>
-                    Trusted by the Community <img class="versions" src="../_assets/svg/Community.svg">
+                    Trusted by the Community <img class="versions" src="../_assets/svg/Community.svg" alt="Community Logo">
                     <p class="text-muted font-weight-bold"><strong>200,000</strong> Downloads Per Month</p>
                 </h3>
 
@@ -171,7 +183,7 @@ $pageGroup = "basics";
 <hr>
     <div class="enterprise">
         <h3>
-            Built for Enterprise <img class="versions" src="../_assets/svg/enterprise.svg">
+            Built for Enterprise <img class="versions" src="../_assets/svg/enterprise.svg" alt="Enterprise Logo">
             <p class="text-muted font-weight-bold"><strong>1,500+ Companies</strong> use ag-Grid Enterprise </p>
             </h3>
             <p>
@@ -236,8 +248,8 @@ $pageGroup = "basics";
 <section id="versions-pricing">
     <h3>Versions</h3>
     <div class="container" id="community-enterprise"> 
-        <p class="lead"><img class="versions" src="../_assets/svg/Community.svg">Everyone can use<a href=""> ag-Grid Community</a> for free. It's MIT licensed and Open Source. No restrictions. No strings attached.</p>
-            <p class="lead"><img class="versions" src="../_assets/svg/enterprise.svg">You can evaluate<a href="../javascript-grid-set-license/"> ag-Grid Enterprise</a> without contacting us. A license is only required when you start developing for production.</p>
+        <p class="lead"><img class="versions" src="../_assets/svg/Community.svg" alt="Community Logo">Everyone can use<a href=""> ag-Grid Community</a> for free. It's MIT licensed and Open Source. No restrictions. No strings attached.</p>
+            <p class="lead"><img class="versions" src="../_assets/svg/enterprise.svg" alt="Enterprise Logo">You can evaluate<a href="../javascript-grid-set-license/"> ag-Grid Enterprise</a> without contacting us. A license is only required when you start developing for production.</p>
     
     <a href="https://www.ag-grid.com/license-pricing.php" target="_blank"><button type="button" class="btn btn-primary">See Pricing</button></a>
 </div>
@@ -246,7 +258,7 @@ $pageGroup = "basics";
     <h2 class="title">Delivers outstanding performance</h2>
 <div class="container" id="performance" data-aos="fade-down">
 <div class="row">
-<div class="col-md-6">
+<div class="col-sm-4 performance-description">
     <h4>It's ridiculously fast</h4>
     <p>
         Our Angular Grid component is built to deal with large data sets.
@@ -265,7 +277,7 @@ $pageGroup = "basics";
         world.
     </p>
 </div>
-<div class="col-md-6 grid-example">
+<div class="col-sm-8 performance grid-example">
     <p>Stress-test our Angular grid with
         <span class="underlined">100 000</span>
     records and 20 columns</p>
@@ -322,7 +334,7 @@ It's easy to deeply customize many areas of our Angular Grid <component class=""
 </div>
 </div>
 </div>
-<div class="row">
+<div class="row" id="api-buttons">
 <div class="col">
 <a href="https://www.ag-grid.com/javascript-grid-api/" target="_blank"><button type="button" class="btn btn-primary">Grid API</button></a>
 </div>
@@ -353,12 +365,12 @@ You can easily extend the default functionality by creating your custom Angular 
         If you want more complex HTML inside the cell or need to customise the value before it’s rendered, you can do it with a custom cell renderer.
 </div>
 <div class="col-md-6">
-    <img class="example-custom" src="/images/customise/cell-renderer.png">
+    <img class="example-custom" src="/images/customise/cell-renderer.png" alt="Cell Renderer Example">
 </div>
 </div>
     <div class="row" id="custom-grid" data-aos="fade-up-left" data-aos-duration="600ms">
 <div class="col-md-6">
-    <img class="example-custom" src="/images/customise/custom-filter.png">
+    <img class="example-custom" src="/images/customise/custom-filter.png" alt="Custom Filter Example">
 </div>
         <div class="col-md-6 feature-desc">
             <h4>Custom Column Filter</h4>
@@ -432,7 +444,7 @@ View all Features
     <h4>
         ag-Grid Angular Overview
     </h4>
-    <img class="icons" alt="ag-grid-docs" src="/images/icons/overview.svg">
+    <img class="icons" alt="Angular Overview Guide" src="/images/icons/overview.svg">
     <p>
         Every feature of ag-Grid is available when using the ag-Grid Angular Component.
     </p>
@@ -444,18 +456,16 @@ View all Features
     <h4>
         Get started with Angular
     </h4>
-    <img class="icons" alt="ag-grid-demo" src="/images/icons/guide.svg">
+    <img class="icons" alt="Angular Get Started Guide" src="/images/icons/guide.svg">
     <p>
         This article will walk you through the necessary steps to add ag-Grid to an existing Angular project.
-        <a href="https://www.ag-grid.com/angular-getting-started/"><p>
-                    Read More
-                </p></a>
+        <a href="https://www.ag-grid.com/angular-getting-started/"><p>Read More</p></a>
 </div>
 <div class="col-md-4">
     <h4>
         Angular[Blog Content]
     </h4>
-    <img class="icons" alt="ag-grid-features" src="/images/icons/blog.svg">
+    <img class="icons" alt="Angular Blog Content" src="/images/icons/blog.svg">
     <p>
         Browse all our Angular and Angular Grid related blogs ranging from depthful content to guides/tutorials.
     </p>
@@ -554,6 +564,8 @@ Follow @ag_grid</a></li>
     AOS.init();
   </script>
 </footer>
+</body>
+</html>
 </div>
 </div>
 </div>
@@ -563,4 +575,5 @@ Follow @ag_grid</a></li>
 </div>
 </div>
 </div>
+
 
