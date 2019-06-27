@@ -387,8 +387,8 @@ export class LineSeries extends Series<CartesianChart> {
                     text: this.title || this.yField
                 },
                 marker: {
-                    fillStyle: this.fill,
-                    strokeStyle: this.stroke
+                    fill: this.fill,
+                    stroke: this.stroke
                 }
             });
         }

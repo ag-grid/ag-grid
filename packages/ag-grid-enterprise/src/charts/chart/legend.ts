@@ -8,8 +8,8 @@ export interface LegendDatum {
     itemId: any,      // sub-component ID
     enabled: boolean, // the current state of the sub-component
     marker: {
-        fillStyle: string,
-        strokeStyle: string
+        fill: string,
+        stroke: string
     },
     label: {
         text: string  // display name for the sub-component
@@ -368,8 +368,8 @@ export class Legend {
     update() {
         this.itemSelection.each((markerLabel, datum) => {
             const marker = datum.marker;
-            markerLabel.markerFill = marker.fillStyle;
-            markerLabel.markerStroke = marker.strokeStyle;
+            markerLabel.markerFill = marker.fill;
+            markerLabel.markerStroke = marker.stroke;
             markerLabel.markerStrokeWidth = this.markerStrokeWidth;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
 

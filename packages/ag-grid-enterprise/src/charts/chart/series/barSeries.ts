@@ -611,8 +611,8 @@ export class BarSeries extends Series<CartesianChart> {
                         text: this.yFieldNames[index] || this.yFields[index]
                     },
                     marker: {
-                        fillStyle: fills[index % fills.length],
-                        strokeStyle: strokes[index % strokes.length]
+                        fill: fills[index % fills.length],
+                        stroke: strokes[index % strokes.length]
                     }
                 });
             });
