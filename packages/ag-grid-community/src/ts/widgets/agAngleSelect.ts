@@ -3,6 +3,7 @@ import { RefSelector } from "./componentAnnotations";
 import { Autowired } from "../context/context";
 import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
 import { _ } from "../utils";
+import { AgInputNumberField } from "./agInputNumberField";
 
 export class AgAngleSelect extends AgLabel {
 
@@ -15,12 +16,14 @@ export class AgAngleSelect extends AgLabel {
                         <div ref="eChildCircle" class="ag-child-circle"></div>
                     </div>
                 </div>
+                <ag-input-number-field ref="eAngleValue"></ag-input-number-field>
             </div>
         </div>`;
 
     @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eParentCircle') private eParentCircle: HTMLElement;
     @RefSelector('eChildCircle') private eChildCircle: HTMLElement;
+    @RefSelector('eAngleValue') private eAngleValue: AgInputNumberField;
 
     @Autowired("dragService") protected dragService: DragService;
 
@@ -40,15 +43,41 @@ export class AgAngleSelect extends AgLabel {
 
         this.dragListener = {
             eElement: this.eParentCircle,
+            dragStartPixels: 0,
             onDragStart: (e: MouseEvent | Touch) => {
                 this.parentCircleRect = this.eParentCircle.getBoundingClientRect();
-                this.calculateAngleDrag(e);
             },
             onDragging: (e: MouseEvent | Touch) => this.calculateAngleDrag(e),
             onDragStop: () => {}
         };
 
         this.dragService.addDragSource(this.dragListener);
+
+        this.eAngleValue
+            .setInputWidth(55)
+            .setMin(0)
+            .setMax(360)
+            .setPrecision(1)
+            .onInputChange((value: string) => {
+                if (value == null || value === '') {
+                    value = '0';
+                }
+                value = this.eAngleValue.normalizeValue(value);
+                let floatValue = parseFloat(value);
+                if (floatValue > 180) {
+                    floatValue = floatValue - 360;
+                }
+                this.setValue(floatValue);
+            });
+
+        this.addDestroyableEventListener(this, 'valueChange', () => {
+            if (this.eAngleValue.getInputElement().contains(document.activeElement)) {
+                return;
+            }
+            const val = this.getValue();
+            const normalizedValue = val < 0 ? 360 + val : val;
+            this.eAngleValue.setValue(normalizedValue.toString());
+        });
     }
 
     private positionChildCircle(radians: number) {
@@ -111,12 +140,8 @@ export class AgAngleSelect extends AgLabel {
         const dy = y - centerY;
 
         const radians = Math.atan2(dy, dx);
-        this.degrees = this.toDegrees(radians);
 
-        this.dispatchEvent({ type: 'valueChange'});
-
-        this.calculateCartesian();
-        this.positionChildCircle(radians);
+        this.setValue(radians, true);
     }
 
     private toDegrees(radians: number): number {
@@ -177,6 +202,8 @@ export class AgAngleSelect extends AgLabel {
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
         }
+
+        this.dispatchEvent({ type: 'valueChange' });
 
         return this;
     }
