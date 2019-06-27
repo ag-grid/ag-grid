@@ -93,7 +93,18 @@ export class LabelPanel extends Component {
 
         const initSelect = (property: FontOptions, input: AgSelect, values: string[]) => {
 
-            const initialValue = this.params.initialFont[property] ? this.params.initialFont[property] : values[0];
+            const fontValue = this.params.initialFont[property];
+
+            let initialValue = values[0];
+            if (fontValue) {
+                const unknownUserProvidedFont = values.indexOf(`${fontValue}`) < 0;
+                if (unknownUserProvidedFont) {
+                    initialValue = `${fontValue}`;
+                    values.push(`${fontValue}`);
+                }
+            }
+
+            // const initialValue = this.params.initialFont[property] ? this.params.initialFont[property] : values[0];
             const options = values.map(value => {
                 return {value: value, text: value};
             });
@@ -103,7 +114,29 @@ export class LabelPanel extends Component {
                  .onInputChange(newValue => this.params.setFont({[property]: newValue}));
         };
 
-        const fonts = ['Arial', 'Verdana, sans-serif'];
+        const fonts = [
+            'Arial, sans-serif',
+            'Aria Black, sans-serif',
+            'Book Antiqua,  serif',
+            'Charcoal, sans-serif',
+            'Comic Sans MS, cursive',
+            'Courier, monospace',
+            'Courier New, monospace',
+            'Gadget, sans-serif',
+            'Geneva, sans-serif',
+            'Helvetica, sans-serif',
+            'Impact, sans-serif',
+            'Lucida Console, monospace',
+            'Lucida Grande, sans-serif',
+            'Lucida Sans Unicode,  sans-serif',
+            'Monaco, monospace',
+            'Palatino Linotype, serif',
+            'Palatino, serif',
+            'Times New Roman, serif',
+            'Times, serif',
+            'Verdana, sans-serif',
+         ];
+
         initSelect('family', this.labelFontFamilySelect, fonts);
 
         const weights = ['Normal', 'Bold', 'Italic', 'Bold Italic'];

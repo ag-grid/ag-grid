@@ -10,7 +10,6 @@ import {
 import { ChartController } from "../../../chartController";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
 import { ShadowPanel } from "./shadowPanel";
-import { ChartLabelPanelParams, LabelPanel } from "../label/labelPanel";
 
 export class BarSeriesPanel extends Component {
 

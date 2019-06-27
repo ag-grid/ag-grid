@@ -10,8 +10,6 @@ import {
 import { ChartController } from "../../../chartController";
 import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
 import { ShadowPanel } from "./shadowPanel";
-import { ChartLabelPanelParams, LabelPanel } from "../label/labelPanel";
-import { CalloutPanel } from "./calloutPanel";
 
 export class PieSeriesPanel extends Component {
 
