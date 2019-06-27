@@ -197,7 +197,15 @@ export class Component extends BeanStub {//implements IComponent<any> {
 
         while (thisProto != null) {
             const metaData = thisProto.__agComponentMetaData;
-            const currentProtoName = (thisProto.constructor).name;
+            let currentProtoName = (thisProto.constructor).name;
+
+            if (currentProtoName === undefined) {
+                const funcNameRegex = /function\s([^(]{1,})\(/;
+                const results = funcNameRegex.exec(thisProto.constructor.toString());
+                if (results && results.length > 1) {
+                    currentProtoName = results[1].trim();
+                }
+            }
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
                 res = res.concat(metaData[currentProtoName][key]);

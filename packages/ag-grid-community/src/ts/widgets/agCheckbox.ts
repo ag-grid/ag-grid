@@ -42,6 +42,7 @@ export class AgCheckbox extends AgInputField {
         _.addCssClass(this.eInput, 'ag-hidden');
         this.addIconsPlaceholder();
         this.updateIcons();
+        this.addDestroyableEventListener(this.getGui(), 'click', (e) => this.onClick(e));
     }
 
     private addIconsPlaceholder(): void {
@@ -50,7 +51,6 @@ export class AgCheckbox extends AgInputField {
         this.eIconEl = iconDiv;
     }
 
-    @Listener('click')
     private onClick(event: MouseEvent): void {
         // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
         // it's not possible to calculate the path by following the parent's chain. in other browser (eg
