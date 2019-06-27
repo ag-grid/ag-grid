@@ -1292,17 +1292,36 @@
         }
     }
 
-    .ag-input-field {
+    .ag-input-field, .ag-angle-select, .ag-color-picker {
         label {
             margin-right: $grid-size;
             white-space: nowrap;
         }
     }
 
-    .ag-color-picker {
-        label {
-            margin-right: $grid-size;
+    .ag-angle-select {
+        .ag-angle-select-field {
+            .ag-parent-circle {
+                width: 24px;
+                height: 24px;
+                border-radius: 12px;
+                box-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
+                background-color: #656565;
+            }
+            .ag-child-circle {
+                top: 4px;
+                left: 12px;
+                width: 6px;
+                height: 6px;
+                margin-left: -3px;
+                margin-top: -4px;
+                border-radius: 3px;
+                background-color: #e8e8e8;
+            }
         }
+    }
+
+    .ag-color-picker {
         .ag-color-button {
             height: $icon-size;
             width: $icon-size;

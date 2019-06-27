@@ -4,7 +4,8 @@ import {
     AgSlider,
     Component,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgAngleSelect
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { Chart } from "../../../../../charts/chart/chart";
@@ -20,6 +21,7 @@ export class ShadowPanel extends Component {
                 <ag-slider ref="shadowBlurSlider"></ag-slider>
                 <ag-slider ref="shadowXOffsetSlider"></ag-slider>
                 <ag-slider ref="shadowYOffsetSlider"></ag-slider>
+                <ag-angle-select ref="shadowAngle"></ag-angle-select>
             </ag-group-component>
         </div>`;
 
@@ -28,6 +30,7 @@ export class ShadowPanel extends Component {
     @RefSelector('shadowBlurSlider') private shadowBlurSlider: AgSlider;
     @RefSelector('shadowXOffsetSlider') private shadowXOffsetSlider: AgSlider;
     @RefSelector('shadowYOffsetSlider') private shadowYOffsetSlider: AgSlider;
+    @RefSelector('shadowAngle') private shadowAngle: AgAngleSelect;
 
     private chartController: ChartController;
     private chart: Chart;
@@ -112,5 +115,10 @@ export class ShadowPanel extends Component {
         initInput(this.shadowBlurSlider, 'Blur', '5', 20);
         initInput(this.shadowXOffsetSlider, 'X Offset', '3', 20);
         initInput(this.shadowYOffsetSlider, 'Y Offset', '3', 20);
+        this.shadowAngle
+            .setLabel('Angle')
+            .onAngleChange((angle: number) => {
+                console.log('New Angle: ' + angle);
+            })
     }
 }

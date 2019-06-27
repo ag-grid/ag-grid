@@ -1,7 +1,6 @@
 import { AgColorPanel } from "./agColorPanel";
 import { AgDialog } from "./agDialog";
 import { AgLabel, IAgLabel } from "./agLabel";
-import { PostConstruct } from "../context/context";
 import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
 

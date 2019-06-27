@@ -1429,6 +1429,20 @@ $handleSize: 5px;
     }
 }
 
+.ag-angle-select {
+    display: flex;
+    align-items: center;
+    .ag-angle-select-field {
+        .ag-parent-circle {
+            display: block;
+            position: relative;
+        }
+        .ag-child-circle {
+            position: absolute;
+        }
+    }
+}
+
 .ag-color-picker {
     display: flex;
     align-items: center;
