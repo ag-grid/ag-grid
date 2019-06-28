@@ -19,6 +19,7 @@ export type LabelFont = {
 }
 
 export interface LabelPanelParams {
+    name?: string;
     enabled: boolean;
     suppressEnabledCheckbox?: boolean;
     setEnabled?: (enabled: boolean) => void;
@@ -77,7 +78,7 @@ export class LabelPanel extends Component {
 
     private initGroup() {
         this.labelsGroup
-            .setTitle('Labels')
+            .setTitle(this.params.name ? this.params.name : 'Labels')
             .setEnabled(this.params.enabled)
             .hideEnabledCheckbox(!!this.params.suppressEnabledCheckbox)
             .hideOpenCloseIcons(true)
@@ -99,9 +100,9 @@ export class LabelPanel extends Component {
             if (fontValue) {
                 const unknownUserProvidedFont = values.indexOf(`${fontValue}`) < 0;
                 if (unknownUserProvidedFont) {
-                    initialValue = `${fontValue}`;
                     values.push(`${fontValue}`);
                 }
+                initialValue = `${fontValue}`;
             }
 
             const options = values.map(value => {
@@ -133,7 +134,7 @@ export class LabelPanel extends Component {
             'Palatino, serif',
             'Times New Roman, serif',
             'Times, serif',
-            'Verdana, sans-serif',
+            // 'Verdana, sans-serif',
          ];
 
         initSelect('family', this.labelFontFamilySelect, fonts);
