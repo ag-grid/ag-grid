@@ -495,6 +495,8 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-master-detail">Master Detail</a> for more details.
             </td>
         </tr>
+        <?php include '../javascript-grid-master-detail/masterDetailProperties.php' ?>
+        <?php printPropertiesRowsWithHelp($masterDetailProperties) ?>
 
         </table>
 <h2>Rendering & Styling</h2>

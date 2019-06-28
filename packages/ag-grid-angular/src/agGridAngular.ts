@@ -238,6 +238,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public infiniteBlockSize : any = undefined;
     @Input() public batchUpdateWaitMillis : any = undefined;
     @Input() public blockLoadDebounceMillis : any = undefined;
+    @Input() public keepDetailRowsCount : any = undefined;
     @Input() public localeTextFunc : any = undefined;
     @Input() public groupRowInnerRenderer : any = undefined;
     @Input() public groupRowInnerRendererFramework : any = undefined;
@@ -424,6 +425,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressBrowserResizeObserver : any = undefined;
     @Input() public suppressMaxRenderedRowRestriction : any = undefined;
     @Input() public excludeChildrenWhenTreeDataFiltering : any = undefined;
+    @Input() public keepDetailRows : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();

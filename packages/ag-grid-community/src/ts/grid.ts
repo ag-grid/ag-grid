@@ -88,6 +88,7 @@ import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
+import {DetailRowCompCache} from "./rendering/detailRowCompCache";
 
 export interface GridParams {
     // used by Web Components
@@ -244,6 +245,7 @@ export class Grid {
                 ValueFormatterService, StylingService, ScrollVisibleService, SortController,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
                 ImmutableService, ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer,
+                DetailRowCompCache,
                 ...moduleBeans
             ],
             components: components,

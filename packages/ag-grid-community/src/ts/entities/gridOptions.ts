@@ -326,6 +326,8 @@ export interface GridOptions {
     popupParent?: HTMLElement;
 
     masterDetail?: boolean;
+    keepDetailRows?: boolean;
+    keepDetailRowsCount?: number;
     isRowMaster?: IsRowMaster;
     detailCellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;

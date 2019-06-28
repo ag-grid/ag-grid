@@ -43,6 +43,7 @@ const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
 const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
+const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
@@ -871,6 +872,18 @@ export class GridOptionsWrapper {
         }, 'MasterDetailEnterpriseCheck');
 
         return usingMasterDetail && this.enterprise;
+    }
+
+    public isKeepDetailRows(): boolean {
+        return isTrue(this.gridOptions.keepDetailRows);
+    }
+
+    public getKeepDetailRowsCount(): number {
+        if (this.gridOptions.keepDetailRowsCount > 0) {
+            return this.gridOptions.keepDetailRowsCount;
+        } else {
+            return DEFAULT_KEEP_DETAIL_ROW_COUNT;
+        }
     }
 
     public getIsRowMasterFunc(): IsRowMaster | undefined {
