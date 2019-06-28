@@ -24,6 +24,11 @@ export class AgSlider extends AgLabel {
         super(AgSlider.TEMPLATE);
     }
 
+    postConstruct() {
+        super.postConstruct();
+        this.setMinValue(0);
+    }
+
     public onInputChange(callbackFn: (newValue: number) => void) {
         this.addDestroyableEventListener(this.eText.getInputElement(), 'input', () => {
             const textValue = parseInt(this.eText.getValue(), 10);
@@ -62,8 +67,16 @@ export class AgSlider extends AgLabel {
         return this;
     }
 
+    public setMinValue(minValue: number): this {
+        this.eSlider.setMinValue(minValue);
+        this.eText.setMin(minValue);
+
+        return this;
+    }
+
     public setMaxValue(maxValue: number): this {
         this.eSlider.setMaxValue(maxValue);
+        this.eText.setMax(maxValue);
         return this;
     }
 
