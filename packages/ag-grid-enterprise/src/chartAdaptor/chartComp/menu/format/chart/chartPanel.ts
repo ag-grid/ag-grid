@@ -65,7 +65,7 @@ export class ChartPanel extends Component implements ExpandablePanel {
         const initialFont = {
             family: this.chart.title ? this.chart.title.fontFamily : 'Verdana, sans-serif',
             style: this.chart.title ? this.chart.title.fontStyle : '',
-            weight: this.chart.title ? this.chart.title.fontWeight : 'normal',
+            weight: this.chart.title ? this.chart.title.fontWeight : 'Normal',
             size: this.chart.title ? this.chart.title.fontSize : 22,
             color: this.chart.title ? this.chart.title.color : 'black'
         };

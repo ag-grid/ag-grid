@@ -85,7 +85,7 @@ export class LegendPanel extends Component implements ExpandablePanel {
         this.legendPositionSelect
             .setLabel('Position')
             .setLabelWidth('flex')
-            .setInputWidth(100)
+            .setInputWidth(80)
             .addOptions(positions.map(position => ({
                 value: position,
                 text: _.capitalise(position)
