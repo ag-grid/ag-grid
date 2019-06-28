@@ -113,7 +113,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    labelFormatter?: (value: any, fractionDigits?: number) => string;
+    labelFormatter?: (params: {value: any, index: number, fractionDigits?: number}) => string;
 
     labelFontStyle: string = '';
     labelFontWeight: string = '';
@@ -332,7 +332,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const labelFormatter = this.labelFormatter;
         const labels = groupSelection.selectByClass(Text)
-            .each((label, datum) => {
+            .each((label, datum, index) => {
                 label.fontStyle = this.labelFontStyle;
                 label.fontWeight = this.labelFontWeight;
                 label.fontSize = this.labelFontSize;
@@ -342,7 +342,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
                 label.text = labelFormatter
-                    ? labelFormatter(fractionDigits >= 0 ? datum : String(datum), fractionDigits)
+                    ? labelFormatter({
+                        value: fractionDigits >= 0 ? datum : String(datum),
+                        index,
+                        fractionDigits
+                    })
                     : fractionDigits
                         // the `datum` is a floating point number
                         ? (datum as any as number).toFixed(fractionDigits)
