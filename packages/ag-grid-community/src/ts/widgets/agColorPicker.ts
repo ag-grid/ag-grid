@@ -50,11 +50,11 @@ export class AgColorPicker extends AgLabel {
             closable: false,
             modal: true,
             hideTitleBar: true,
-            minWidth: 200,
-            width: 200,
-            height: 280,
-            x: eGuiRect.right - 200,
-            y: eGuiRect.top - 280
+            minWidth: 190,
+            width: 190,
+            height: 250,
+            x: eGuiRect.right - 190,
+            y: eGuiRect.top - 250
         });
         this.getContext().wireBean(colorDialog);
 
