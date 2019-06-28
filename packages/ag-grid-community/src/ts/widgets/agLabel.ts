@@ -15,15 +15,17 @@ export abstract class AgLabel extends Component {
 
     protected labelSeparator: string = '';
     protected labelAlignment: LabelAlignment = 'left';
-    private label: string;
+    private label: string = '';
 
     @PostConstruct
     protected postConstruct() {
         this.setLabelAlignment(this.labelAlignment);
+        this.refreshLabel();
     }
 
     private refreshLabel() {
         this.eLabel.innerText = this.label + this.labelSeparator;
+        _.addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
     }
 
     public setLabelSeparator(labelSeparator: string): this {

@@ -1306,6 +1306,14 @@
         }
     }
 
+    .ag-slider, .ag-angle-select {
+        .ag-wrapper {
+            > div:not(:first-of-type) {
+                margin-left: $grid-size * 2;
+            }
+        }
+    }
+
     .ag-angle-select {
         .ag-angle-select-field {
             .ag-parent-circle {

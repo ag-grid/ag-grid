@@ -15,7 +15,6 @@ export class AgCheckbox extends AgInputField {
     protected inputTag = 'input';
     protected inputType = 'checkbox';
     protected labelAlignment: LabelAlignment = 'right';
-    protected labelSeparator = '';
     protected iconMap: { selected: string, unselected: string, indeterminate?: string } = {
         selected: 'checkboxChecked',
         unselected: 'checkboxUnchecked',
