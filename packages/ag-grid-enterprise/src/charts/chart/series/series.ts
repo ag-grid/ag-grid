@@ -90,8 +90,8 @@ export abstract class Series<C extends Chart> {
         return this._showInLegend;
     }
 
-    abstract highlight(node: Shape): void;
-    abstract dehighlight(): void;
+    abstract highlightNode(node: Shape): void;
+    abstract dehighlightNode(): void;
 
     scheduleLayout() {
         if (this.chart) {

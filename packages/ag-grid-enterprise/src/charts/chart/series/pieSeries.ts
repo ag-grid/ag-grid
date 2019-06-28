@@ -375,7 +375,7 @@ export class PieSeries extends Series<PolarChart> {
 
     private highlightedNode?: Sector;
 
-    highlight(node: Shape) {
+    highlightNode(node: Shape) {
         if (!(node instanceof Sector)) {
             return;
         }
@@ -384,7 +384,7 @@ export class PieSeries extends Series<PolarChart> {
         this.scheduleLayout();
     }
 
-    dehighlight() {
+    dehighlightNode() {
         this.highlightedNode = undefined;
         this.scheduleLayout();
     }

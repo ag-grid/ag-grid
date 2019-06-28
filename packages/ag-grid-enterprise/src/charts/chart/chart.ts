@@ -482,7 +482,7 @@ export abstract class Chart {
                 }
             }
         } else if (this.lastPick) { // cursor moved from a node to empty space
-            this.lastPick.series.dehighlight();
+            this.lastPick.series.dehighlightNode();
             this.hideTooltip();
             this.lastPick = undefined;
         }
@@ -513,7 +513,7 @@ export abstract class Chart {
             node
         };
 
-        series.highlight(node);
+        series.highlightNode(node);
 
         const html = series.tooltipEnabled && series.getTooltipHtml(node.datum as SeriesNodeDatum);
         if (html) {

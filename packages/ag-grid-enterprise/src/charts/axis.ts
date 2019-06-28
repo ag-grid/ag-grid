@@ -30,7 +30,7 @@ export interface GridStyle {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<D = any> {
+export class Axis<S extends Scale<D, number>, D = any> {
 
     // debug (bbox)
     // private bboxRect = (() => {
@@ -41,14 +41,14 @@ export class Axis<D = any> {
     //     return rect;
     // })();
 
-    constructor(scale: Scale<D, number>) {
+    constructor(scale: S) {
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
         this.group.append(this.line);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
-    readonly scale: Scale<D, number>;
+    readonly scale: S;
     readonly group = new Group();
     private groupSelection: Selection<Group, Group, D, D>;
     private line = new Line();

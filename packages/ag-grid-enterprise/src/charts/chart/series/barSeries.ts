@@ -296,7 +296,7 @@ export class BarSeries extends Series<CartesianChart> {
 
     private highlightedNode?: Rect;
 
-    highlight(node: Shape) {
+    highlightNode(node: Shape) {
         if (!(node instanceof Rect)) {
             return;
         }
@@ -305,7 +305,7 @@ export class BarSeries extends Series<CartesianChart> {
         this.scheduleLayout();
     }
 
-    dehighlight() {
+    dehighlightNode() {
         this.highlightedNode = undefined;
         this.scheduleLayout();
     }

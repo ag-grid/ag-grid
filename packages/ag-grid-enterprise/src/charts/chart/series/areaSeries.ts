@@ -188,7 +188,7 @@ export class AreaSeries extends Series<CartesianChart> {
 
     private highlightedNode?: Arc;
 
-    highlight(node: Shape) {
+    highlightNode(node: Shape) {
         if (!(node instanceof Arc)) {
             return;
         }
@@ -197,7 +197,7 @@ export class AreaSeries extends Series<CartesianChart> {
         this.scheduleLayout();
     }
 
-    dehighlight() {
+    dehighlightNode() {
         this.highlightedNode = undefined;
         this.scheduleLayout();
     }

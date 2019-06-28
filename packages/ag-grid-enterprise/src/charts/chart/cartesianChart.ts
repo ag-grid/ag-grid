@@ -1,5 +1,6 @@
 import { Chart } from "./chart";
 import { Axis } from "../axis";
+import Scale from "../scale/scale";
 import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
@@ -9,7 +10,7 @@ export class CartesianChart extends Chart {
 
     private axisAutoPadding = new Padding();
 
-    constructor(xAxis: Axis, yAxis: Axis) {
+    constructor(xAxis: Axis<Scale<any, number>>, yAxis: Axis<Scale<any, number>>) {
         super();
 
         this._xAxis = xAxis;
@@ -25,13 +26,13 @@ export class CartesianChart extends Chart {
         return this.seriesClipRect;
     }
 
-    private readonly _xAxis: Axis;
-    get xAxis(): Axis {
+    private readonly _xAxis: Axis<Scale<any, number>>;
+    get xAxis(): Axis<Scale<any, number>> {
         return this._xAxis;
     }
 
-    private readonly _yAxis: Axis;
-    get yAxis(): Axis {
+    private readonly _yAxis: Axis<Scale<any, number>>;
+    get yAxis(): Axis<Scale<any, number>> {
         return this._yAxis;
     }
 

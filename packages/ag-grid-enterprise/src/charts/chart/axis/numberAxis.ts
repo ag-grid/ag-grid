@@ -1,7 +1,7 @@
 import { Axis } from "../../axis";
-import linearScale from "../../scale/linearScale";
+import linearScale, { LinearScale } from "../../scale/linearScale";
 
-export class NumberAxis extends Axis<number> {
+export class NumberAxis extends Axis<LinearScale<number>> {
     constructor() {
         super(linearScale());
     }
