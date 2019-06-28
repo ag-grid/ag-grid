@@ -1292,7 +1292,6 @@
             background-color: darken($group-component-background-color, 2%);
             padding: $grid-size;
             border: 0 solid $border-color;
-            border-width: 1px 0;
         }
         > .ag-group-component-container {
             margin-left: $grid-size * 2;
