@@ -13,6 +13,11 @@ import { Arc, ArcType } from "../../scene/shape/arc";
 import palette from "../palettes";
 import { extent } from "../../util/array";
 
+interface AreaSelectionDatum {
+    yField: string,
+    points: {x: number, y: number}[]
+}
+
 interface MarkerSelectionDatum extends SeriesNodeDatum {
     yField: string,
     yValue: number,
@@ -40,7 +45,7 @@ export class AreaSeries extends Series<CartesianChart> {
     private areaGroup = this.group.appendChild(new Group);
     private markerGroup = this.group.appendChild(new Group);
 
-    private areaSelection: Selection<Path, Group, any, any> = Selection.select(this.areaGroup).selectAll<Path>();
+    private areaSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
     private markerSelection: Selection<Arc, Group, any, any> = Selection.select(this.markerGroup).selectAll<Arc>();
 
     /**
@@ -349,7 +354,7 @@ export class AreaSeries extends Series<CartesianChart> {
         const yData = this.yData;
         const markerSize = this.markerSize;
 
-        const areaSelectionData: {x: number, y: number}[][] = [];
+        const areaSelectionData: AreaSelectionDatum[] = [];
         const markerSelectionData: MarkerSelectionDatum[] = [];
 
         const last = n * 2 - 1;
@@ -376,12 +381,16 @@ export class AreaSeries extends Series<CartesianChart> {
                     text: this.yFieldNames[yFieldIndex]
                 });
 
-                const areaDatum = areaSelectionData[yFieldIndex] || (areaSelectionData[yFieldIndex] = []);
-                areaDatum[i] = {
+                const areaDatum = areaSelectionData[yFieldIndex] || (areaSelectionData[yFieldIndex] = {
+                    yField,
+                    points: []
+                });
+                const areaPoints = areaDatum.points;
+                areaPoints[i] = {
                     x,
                     y
                 };
-                areaDatum[last - i] = {
+                areaPoints[last - i] = {
                     x,
                     y: yScale.convert(prev) + yOffset // bottom y
                 };
@@ -414,9 +423,10 @@ export class AreaSeries extends Series<CartesianChart> {
 
             path.clear();
 
-            const n = datum.length;
+            const points = datum.points;
+            const n = points.length;
             for (let i = 0; i < n; i++) {
-                const {x, y} = datum[i];
+                const {x, y} = points[i];
                 if (!i) {
                     path.moveTo(x, y);
                 } else {
