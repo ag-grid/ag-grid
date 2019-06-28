@@ -384,7 +384,9 @@ var gridOptions = {
         var options = params.options;
         var types = ['groupedBar', 'stackedBar', 'line', 'scatter'];
         if (types.indexOf(params.type) >= 0) {
-            options.yAxis.labelFormatter = function(n) {
+            options.yAxis.labelFormatter = function(params) {
+                var n = params.value;
+
                 if (n < 1e3) return n;
                 if (n >= 1e3 && n < 1e6) return '$' + +(n / 1e3).toFixed(1) + 'K';
                 if (n >= 1e6 && n < 1e9) return '$' + +(n / 1e6).toFixed(1) + 'M';
