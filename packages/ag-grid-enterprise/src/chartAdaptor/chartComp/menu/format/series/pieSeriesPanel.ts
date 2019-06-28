@@ -10,6 +10,8 @@ import {
 import { ChartController } from "../../../chartController";
 import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
 import { ShadowPanel } from "./shadowPanel";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {CalloutPanel} from "./calloutPanel";
 
 export class PieSeriesPanel extends Component {
 
@@ -45,7 +47,7 @@ export class PieSeriesPanel extends Component {
         this.initGroup();
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
-        // this.initLabelPanel();
+        this.initLabelPanel();
         this.initShadowPanel();
     }
 
@@ -76,34 +78,45 @@ export class PieSeriesPanel extends Component {
             .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
-    // private initLabelPanel() {
-    //     const params: ChartLabelPanelParams = {
-    //         chartController: this.chartController,
-    //         enabled: this.series.some(s => s.labelEnabled),
-    //         setEnabled: (enabled: boolean) => {
-    //             this.series.forEach(s => s.labelEnabled = enabled);
-    //         },
-    //         getFont: () =>  this.series[0].labelFont,
-    //         setFont: (font: string) => {
-    //             this.series.forEach(s => s.labelFont = font);
-    //         },
-    //         getColor: () => this.series[0].labelColor,
-    //         setColor: (color: string) => {
-    //             this.series.forEach(s => s.labelColor = color);
-    //         }
-    //     };
-    //
-    //     const labelPanelComp = new LabelPanel(params);
-    //     this.getContext().wireBean(labelPanelComp);
-    //     this.activePanels.push(labelPanelComp);
-    //
-    //     const calloutPanelComp = new CalloutPanel(this.series);
-    //     this.getContext().wireBean(calloutPanelComp);
-    //     labelPanelComp.addCompToPanel(calloutPanelComp);
-    //     this.activePanels.push(calloutPanelComp);
-    //
-    //     this.seriesGroup.addItem(labelPanelComp);
-    // }
+    private initLabelPanel() {
+        const initialFont = {
+            family: this.series[0].labelFontFamily,
+            style: this.series[0].labelFontStyle,
+            weight: this.series[0].labelFontWeight,
+            size: this.series[0].labelFontSize,
+            color: this.series[0].labelColor
+        };
+
+        const setFont = (font: LabelFont) => {
+            if (font.family) this.series.forEach(s => s.labelFontFamily = font.family as string);
+            if (font.style) this.series.forEach(s => s.labelFontStyle = font.style);
+            if (font.weight) this.series.forEach(s => s.labelFontWeight = font.weight);
+            if (font.size) this.series.forEach(s => s.labelFontSize = font.size as number);
+            if (font.color) this.series.forEach(s => s.labelColor = font.color as string);
+        };
+
+        const params: LabelPanelParams = {
+            enabled: this.series.some(s => s.labelEnabled),
+            setEnabled: (enabled: boolean) => {
+                this.series.forEach(s => s.labelEnabled = enabled);
+            },
+            suppressEnabledCheckbox: false,
+            initialFont: initialFont,
+            setFont: setFont
+        };
+
+        const labelPanelComp = new LabelPanel(this.chartController, params);
+
+        this.getContext().wireBean(labelPanelComp);
+        this.activePanels.push(labelPanelComp);
+
+        const calloutPanelComp = new CalloutPanel(this.series);
+        this.getContext().wireBean(calloutPanelComp);
+        labelPanelComp.addCompToPanel(calloutPanelComp);
+        this.activePanels.push(calloutPanelComp);
+
+        this.seriesGroup.addItem(labelPanelComp);
+    }
 
     private initShadowPanel() {
         const shadowPanelComp = new ShadowPanel(this.chartController);
