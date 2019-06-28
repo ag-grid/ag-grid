@@ -17,7 +17,7 @@ export class AgInputNumberField extends AgInputTextField {
     }
 
     public normalizeValue(value: string): string {
-        if (value === '') { return  '';}
+        if (value === '') { return  ''; }
 
         if (this.precision) {
             value = this.adjustPrecision(value);

@@ -88,7 +88,7 @@ import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
-import {DetailRowCompCache} from "./rendering/detailRowCompCache";
+import { DetailRowCompCache } from "./rendering/detailRowCompCache";
 
 export interface GridParams {
     // used by Web Components
