@@ -94,14 +94,14 @@ export class ChartPanel extends Component implements ExpandablePanel {
             }
         };
 
-        if (!this.chart.title) {
-            this.chart.title = Caption.create({text: title});
-            setFont(initialFont);
-        }
-
         this.titleInput
             .setValue(title)
             .onValueChange(newValue => {
+                if (!this.chart.title) {
+                    this.chart.title = Caption.create({text: title});
+                    setFont(initialFont);
+                }
+
                 const currentCaption = this.chart.title as Caption;
                 currentCaption.text = newValue;
                 this.chart.title = currentCaption;
