@@ -1,8 +1,7 @@
 import {
     _,
-    AgCheckbox,
     AgGroupComponent,
-    AgSlider,
+    AgSlider, AgToggleButton,
     Component,
     PostConstruct,
     RefSelector
@@ -18,13 +17,13 @@ export class PieSeriesPanel extends Component {
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-                <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
+               <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-    @RefSelector('seriesTooltipsCheckbox') private seriesTooltipsCheckbox: AgCheckbox;
+    @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesStrokeWidthSlider') private seriesStrokeWidthSlider: AgSlider;
 
     private readonly chartController: ChartController;
@@ -61,8 +60,11 @@ export class PieSeriesPanel extends Component {
     private initSeriesTooltips() {
         const selected = this.series.some(s => s.tooltipEnabled);
 
-        this.seriesTooltipsCheckbox
+        this.seriesTooltipsToggle
             .setLabel('Tooltips')
+            .setLabelAlignment('left')
+            .setLabelWidth('flex')
+            .setInputWidth(40)
             .setValue(selected)
             .onSelectionChange(newSelection => {
                 this.series.forEach(s => s.tooltipEnabled = newSelection);

@@ -1,28 +1,20 @@
-import {
-    _,
-    AgCheckbox,
-    AgGroupComponent,
-    AgSlider,
-    Component,
-    PostConstruct,
-    RefSelector
-} from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
-import { MarkersPanel } from "./markersPanel";
+import {_, AgGroupComponent, AgSlider, AgToggleButton, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {ChartController} from "../../../chartController";
+import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
+import {MarkersPanel} from "./markersPanel";
 
 export class LineSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-                <ag-checkbox ref="seriesTooltipsCheckbox"></ag-checkbox>
+                <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesLineWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-    @RefSelector('seriesTooltipsCheckbox') private seriesTooltipsCheckbox: AgCheckbox;
+    @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesLineWidthSlider') private seriesLineWidthSlider: AgSlider;
 
     private series: LineSeries[];
@@ -54,8 +46,11 @@ export class LineSeriesPanel extends Component {
     private initSeriesTooltips() {
         const selected = this.series.some(s => s.tooltipEnabled);
 
-        this.seriesTooltipsCheckbox
+        this.seriesTooltipsToggle
             .setLabel('Tooltips')
+            .setLabelAlignment('left')
+            .setLabelWidth('flex')
+            .setInputWidth(40)
             .setValue(selected)
             .onSelectionChange(newSelection => {
                 this.series.forEach(s => s.tooltipEnabled = newSelection);
