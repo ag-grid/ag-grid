@@ -1,29 +1,29 @@
-import { AgGroupComponent, Component, PostConstruct, RefSelector, AgSlider } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
+import {_, AgGroupComponent, AgInputTextField, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {ChartController} from "../../../chartController";
+import {Chart} from "../../../../../charts/chart/chart";
 import {ExpandablePanel} from "../chartFormatingPanel";
+import {PaddingPanel} from "./paddingPanel";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {Caption} from "../../../../../charts/chart/caption";
 
 export class ChartPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="chartPaddingGroup">
-                <ag-slider ref="paddingTopSlider"></ag-slider>
-                <ag-slider ref="paddingRightSlider"></ag-slider>
-                <ag-slider ref="paddingBottomSlider"></ag-slider>
-                <ag-slider ref="paddingLeftSlider"></ag-slider>
+            <ag-group-component ref="chartGroup">
+                <label ref="titleLabel"></label>
+                <ag-input-text-field ref="titleInput"></ag-input-text-field>                                      
             </ag-group-component>
         <div>`;
 
-    @RefSelector('chartPaddingGroup') private chartPaddingGroup: AgGroupComponent;
+    @RefSelector('chartGroup') private chartGroup: AgGroupComponent;
 
-    @RefSelector('paddingTopSlider') private paddingTopSlider: AgSlider;
-    @RefSelector('paddingRightSlider') private paddingRightSlider: AgSlider;
-    @RefSelector('paddingBottomSlider') private paddingBottomSlider: AgSlider;
-    @RefSelector('paddingLeftSlider') private paddingLeftSlider: AgSlider;
+    @RefSelector('titleLabel') private titleLabel: HTMLElement;
+    @RefSelector('titleInput') private titleInput: AgInputTextField;
 
-    private readonly chartController: ChartController;
     private chart: Chart;
+    private activePanels: Component[] = [];
+    private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
@@ -37,39 +37,107 @@ export class ChartPanel extends Component implements ExpandablePanel {
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
 
-        this.initChartPaddingItems();
+        this.initGroup();
+        this.initTitles();
+        this.initPaddingPanel();
     }
 
     public expandPanel(expanded: boolean): void {
-        this.chartPaddingGroup.toggleGroupExpand(expanded);
+        this.chartGroup.toggleGroupExpand(expanded);
     }
 
     public setExpandedCallback(expandedCallback: () => void) {
-        this.addDestroyableEventListener(this.chartPaddingGroup, 'expanded', expandedCallback);
+        this.addDestroyableEventListener(this.chartGroup, 'expanded', expandedCallback);
     }
 
-    private initChartPaddingItems() {
-        this.chartPaddingGroup
+    private initGroup(): void {
+        this.chartGroup
             .setTitle('Chart')
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
+    }
 
-        type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
+    private initTitles(): void {
+        this.titleLabel.innerText = 'Chart Title';
 
-        const initInput = (property: ChartPaddingProperty, input: AgSlider, label: string, value: string) => {
-            input.setLabel(label)
-                .setValue(value)
-                .setMaxValue(200)
-                .setTextFieldWidth(45)
-                .onValueChange(newValue => {
-                    this.chart.padding[property] = newValue;
-                    this.chart.performLayout();
-                });
+        const title = this.chart.title ? this.chart.title.text : '';
+
+        const initialFont = {
+            family: this.chart.title ? this.chart.title.fontFamily : 'Verdana, sans-serif',
+            style: this.chart.title ? this.chart.title.fontStyle : '',
+            weight: this.chart.title ? this.chart.title.fontWeight : 'normal',
+            size: this.chart.title ? this.chart.title.fontSize : 22,
+            color: this.chart.title ? this.chart.title.color : 'black'
         };
 
-        initInput('top', this.paddingTopSlider, 'Top', `${this.chart.padding.top}`);
-        initInput('right', this.paddingRightSlider, 'Right', `${this.chart.padding.right}`);
-        initInput('bottom', this.paddingBottomSlider, 'Bottom', `${this.chart.padding.bottom}`);
-        initInput('left', this.paddingLeftSlider, 'Left', `${this.chart.padding.left}`);
+        const setFont = (font: LabelFont) => {
+            const currentFont = this.chart.title as Caption;
+
+            if (font.family) {
+                currentFont.fontFamily = font.family;
+                this.chart.title = currentFont;
+            }
+
+            if (font.weight) {
+                currentFont.fontWeight = font.weight;
+                this.chart.title = currentFont;
+            }
+
+            if (font.size) {
+                currentFont.fontSize = font.size;
+                this.chart.title = currentFont;
+            }
+
+            if (font.color) {
+                currentFont.color = font.color;
+                this.chart.title = currentFont;
+            }
+        };
+
+        if (!this.chart.title) {
+            this.chart.title = Caption.create({text: title});
+            setFont(initialFont);
+        }
+
+        this.titleInput
+            .setValue(title)
+            .onValueChange(newValue => {
+                const currentCaption = this.chart.title as Caption;
+                currentCaption.text = newValue;
+                this.chart.title = currentCaption;
+                this.chart.performLayout();
+            });
+
+        const params: LabelPanelParams = {
+            name: 'Font',
+            enabled: true,
+            suppressEnabledCheckbox: true,
+            initialFont: initialFont,
+            setFont: setFont
+        };
+
+        const labelPanelComp = new LabelPanel(this.chartController, params);
+        this.getContext().wireBean(labelPanelComp);
+        this.chartGroup.addItem(labelPanelComp);
+        this.activePanels.push(labelPanelComp);
+    }
+
+    private initPaddingPanel(): void {
+        const paddingPanelComp = new PaddingPanel(this.chartController);
+        this.getContext().wireBean(paddingPanelComp);
+        this.chartGroup.addItem(paddingPanelComp);
+        this.activePanels.push(paddingPanelComp);
+    }
+
+    private destroyActivePanels(): void {
+        this.activePanels.forEach(panel => {
+            _.removeFromParent(panel.getGui());
+            panel.destroy();
+        });
+    }
+
+    public destroy(): void {
+        this.destroyActivePanels();
+        super.destroy();
     }
 }

@@ -54,6 +54,9 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createBarChartPanel(): void {
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
         const legendPanel = new LegendPanel(this.chartController);
         this.addComponent(legendPanel);
 
@@ -62,9 +65,6 @@ export class ChartFormattingPanel extends Component {
 
         const axisPanel = new AxisPanel(this.chartController);
         this.addComponent(axisPanel);
-
-        const chartPanel = new ChartPanel(this.chartController);
-        this.addComponent(chartPanel);
 
         legendPanel.setExpandedCallback(() => {
             barSeriesPanel.expandPanel(false);
@@ -92,6 +92,9 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createLineChartPanel(): void {
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
         const legendPanel = new LegendPanel(this.chartController);
         this.addComponent(legendPanel);
 
@@ -100,9 +103,6 @@ export class ChartFormattingPanel extends Component {
 
         const axisPanel = new AxisPanel(this.chartController);
         this.addComponent(axisPanel);
-
-        const chartPanel = new ChartPanel(this.chartController);
-        this.addComponent(chartPanel);
 
         legendPanel.setExpandedCallback(() => {
             lineSeriesPanel.expandPanel(false);
@@ -130,14 +130,14 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createPieChartPanel(): void {
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
         const legendPanel = new LegendPanel(this.chartController);
         this.addComponent(legendPanel);
 
         const pieSeriesPanel = new PieSeriesPanel(this.chartController);
         this.addComponent(pieSeriesPanel);
-
-        const chartPanel = new ChartPanel(this.chartController);
-        this.addComponent(chartPanel);
 
         legendPanel.setExpandedCallback(() => {
             pieSeriesPanel.expandPanel(false);
