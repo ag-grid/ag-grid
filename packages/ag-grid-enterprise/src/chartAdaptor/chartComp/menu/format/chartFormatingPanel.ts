@@ -5,7 +5,12 @@ import { BarSeriesPanel } from "./series/barSeriesPanel";
 import { AxisPanel } from "./axis/axisPanel";
 import { LineSeriesPanel } from "./series/lineSeriesPanel";
 import { PieSeriesPanel } from "./series/pieSeriesPanel";
-import { PaddingPanel } from "./padding/paddingPanel";
+import {ChartPanel} from "./chart/chartPanel";
+
+export interface ExpandablePanel {
+    expandPanel(expanded: boolean): void;
+    setExpandedCallback(expandedCallback: () => void): void;
+}
 
 export class ChartFormattingPanel extends Component {
 
@@ -49,23 +54,105 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createBarChartPanel(): void {
-        this.addComponent(new LegendPanel(this.chartController));
-        this.addComponent(new BarSeriesPanel(this.chartController));
-        this.addComponent(new AxisPanel(this.chartController));
-        this.addComponent(new PaddingPanel(this.chartController));
+        const legendPanel = new LegendPanel(this.chartController);
+        this.addComponent(legendPanel);
+
+        const barSeriesPanel = new BarSeriesPanel(this.chartController);
+        this.addComponent(barSeriesPanel);
+
+        const axisPanel = new AxisPanel(this.chartController);
+        this.addComponent(axisPanel);
+
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
+        legendPanel.setExpandedCallback(() => {
+            barSeriesPanel.expandPanel(false);
+            axisPanel.expandPanel(false);
+            chartPanel.expandPanel(false);
+        });
+
+        barSeriesPanel.setExpandedCallback(() => {
+            legendPanel.expandPanel(false);
+            axisPanel.expandPanel(false);
+            chartPanel.expandPanel(false);
+        });
+
+        axisPanel.setExpandedCallback(() => {
+            legendPanel.expandPanel(false);
+            barSeriesPanel.expandPanel(false);
+            chartPanel.expandPanel(false);
+        });
+
+        chartPanel.setExpandedCallback(() => {
+            legendPanel.expandPanel(false);
+            barSeriesPanel.expandPanel(false);
+            axisPanel.expandPanel(false);
+        });
     }
 
     private createLineChartPanel(): void {
-        this.addComponent(new LegendPanel(this.chartController));
-        this.addComponent(new LineSeriesPanel(this.chartController));
-        this.addComponent(new AxisPanel(this.chartController));
-        this.addComponent(new PaddingPanel(this.chartController));
+        const legendPanel = new LegendPanel(this.chartController);
+        this.addComponent(legendPanel);
+
+        const lineSeriesPanel = new LineSeriesPanel(this.chartController);
+        this.addComponent(lineSeriesPanel);
+
+        const axisPanel = new AxisPanel(this.chartController);
+        this.addComponent(axisPanel);
+
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
+        legendPanel.setExpandedCallback(() => {
+            lineSeriesPanel.expandPanel(false);
+            axisPanel.expandPanel(false);
+            chartPanel.expandPanel(false);
+        });
+
+        lineSeriesPanel.setExpandedCallback(() => {
+            legendPanel.expandPanel(false);
+            axisPanel.expandPanel(false);
+            chartPanel.expandPanel(false);
+        });
+
+        axisPanel.setExpandedCallback(() => {
+            legendPanel.expandPanel(false);
+            lineSeriesPanel.expandPanel(false);
+            chartPanel.expandPanel(false);
+        });
+
+        chartPanel.setExpandedCallback(() => {
+            legendPanel.expandPanel(false);
+            lineSeriesPanel.expandPanel(false);
+            axisPanel.expandPanel(false);
+        });
     }
 
     private createPieChartPanel(): void {
-        this.addComponent(new LegendPanel(this.chartController));
-        this.addComponent(new PieSeriesPanel(this.chartController));
-        this.addComponent(new PaddingPanel(this.chartController));
+        const legendPanel = new LegendPanel(this.chartController);
+        this.addComponent(legendPanel);
+
+        const pieSeriesPanel = new PieSeriesPanel(this.chartController);
+        this.addComponent(pieSeriesPanel);
+
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
+        legendPanel.setExpandedCallback(() => {
+            pieSeriesPanel.expandPanel(false);
+            chartPanel.expandPanel(false);
+        });
+
+        pieSeriesPanel.setExpandedCallback(() => {
+            legendPanel.expandPanel(false);
+            chartPanel.expandPanel(false);
+        });
+
+        chartPanel.setExpandedCallback(() => {
+            legendPanel.expandPanel(false);
+            pieSeriesPanel.expandPanel(false);
+        });
     }
 
     private addComponent(component: Component): void {

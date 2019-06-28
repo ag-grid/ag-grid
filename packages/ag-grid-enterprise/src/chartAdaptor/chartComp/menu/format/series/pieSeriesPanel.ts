@@ -11,8 +11,9 @@ import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
 import { ShadowPanel } from "./shadowPanel";
 import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
 import {CalloutPanel} from "./calloutPanel";
+import {ExpandablePanel} from "../chartFormatingPanel";
 
-export class PieSeriesPanel extends Component {
+export class PieSeriesPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>   
@@ -48,6 +49,14 @@ export class PieSeriesPanel extends Component {
         this.initSeriesStrokeWidth();
         this.initLabelPanel();
         this.initShadowPanel();
+    }
+
+    public expandPanel(expanded: boolean): void {
+        this.seriesGroup.toggleGroupExpand(expanded);
+    }
+
+    public setExpandedCallback(expandedCallback: () => void) {
+        this.addDestroyableEventListener(this.seriesGroup, 'expanded', expandedCallback);
     }
 
     private initGroup() {

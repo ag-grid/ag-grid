@@ -2,8 +2,9 @@ import {_, AgGroupComponent, AgSlider, AgToggleButton, Component, PostConstruct,
 import {ChartController} from "../../../chartController";
 import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
 import {MarkersPanel} from "./markersPanel";
+import {ExpandablePanel} from "../chartFormatingPanel";
 
-export class LineSeriesPanel extends Component {
+export class LineSeriesPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>   
@@ -41,6 +42,14 @@ export class LineSeriesPanel extends Component {
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
         this.initMarkersPanel();
+    }
+
+    public expandPanel(expanded: boolean): void {
+        this.seriesGroup.toggleGroupExpand(expanded);
+    }
+
+    public setExpandedCallback(expandedCallback: () => void) {
+        this.addDestroyableEventListener(this.seriesGroup, 'expanded', expandedCallback);
     }
 
     private initSeriesTooltips() {

@@ -11,8 +11,9 @@ import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import {LabelPanelParams, LabelPanel, LabelFont} from "../label/labelPanel";
+import {ExpandablePanel} from "../chartFormatingPanel";
 
-export class AxisPanel extends Component {
+export class AxisPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>
@@ -47,6 +48,14 @@ export class AxisPanel extends Component {
         this.initAxisLabels();
     }
 
+    public expandPanel(expanded: boolean): void {
+        this.axisGroup.toggleGroupExpand(expanded);
+    }
+
+    public setExpandedCallback(expandedCallback: () => void) {
+        this.addDestroyableEventListener(this.axisGroup, 'expanded', expandedCallback);
+    }
+
     private initAxis() {
         this.axisGroup
             .setTitle('Axis')
@@ -56,7 +65,6 @@ export class AxisPanel extends Component {
         this.axisColorInput
             .setLabel("Color")
             .setLabelWidth('flex')
-            .setWidth(115)
             .setValue(`${this.chart.xAxis.lineColor}`)
             .onColorChange(newColor => {
                 this.chart.xAxis.lineColor = newColor;

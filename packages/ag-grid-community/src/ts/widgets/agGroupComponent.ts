@@ -1,9 +1,9 @@
-import { _ } from "../utils";
-import { Component } from "./component";
-import { RefSelector } from "./componentAnnotations";
-import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { AgCheckbox } from "./agCheckbox";
+import {_} from "../utils";
+import {Component} from "./component";
+import {RefSelector} from "./componentAnnotations";
+import {Autowired, PostConstruct} from "../context/context";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {AgCheckbox} from "./agCheckbox";
 
 type GroupItem = Component | HTMLElement;
 
@@ -134,6 +134,13 @@ export class AgGroupComponent extends Component {
         this.expanded = expanded;
         this.setOpenClosedIcons();
         _.addOrRemoveCssClass(eGui, 'ag-collapsed', !expanded);
+
+        if (this.expanded) {
+            const event = {
+                type: 'expanded',
+            };
+            this.dispatchEvent(event);
+        }
 
         return this;
     }

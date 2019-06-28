@@ -10,8 +10,9 @@ import {
 import { ChartController } from "../../../chartController";
 import { Chart, LegendPosition } from "../../../../../charts/chart/chart";
 import {LabelPanelParams, LabelFont, LabelPanel} from "../label/labelPanel";
+import {ExpandablePanel} from "../chartFormatingPanel";
 
-export class LegendPanel extends Component {
+export class LegendPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>  
@@ -58,6 +59,14 @@ export class LegendPanel extends Component {
         this.initLegendPadding();
         this.initLegendItems();
         this.initLabelPanel();
+    }
+
+    public expandPanel(expanded: boolean): void {
+        this.legendGroup.toggleGroupExpand(expanded);
+    }
+
+    public setExpandedCallback(expandedCallback: () => void) {
+        this.addDestroyableEventListener(this.legendGroup, 'expanded', expandedCallback);
     }
 
     private initLegendGroup() {

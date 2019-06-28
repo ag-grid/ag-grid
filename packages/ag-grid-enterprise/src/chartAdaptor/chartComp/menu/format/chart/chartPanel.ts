@@ -1,8 +1,9 @@
 import { AgGroupComponent, Component, PostConstruct, RefSelector, AgSlider } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { Chart } from "../../../../../charts/chart/chart";
+import {ExpandablePanel} from "../chartFormatingPanel";
 
-export class PaddingPanel extends Component {
+export class ChartPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>
@@ -31,7 +32,7 @@ export class PaddingPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(PaddingPanel.TEMPLATE);
+        this.setTemplate(ChartPanel.TEMPLATE);
 
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
@@ -39,9 +40,17 @@ export class PaddingPanel extends Component {
         this.initChartPaddingItems();
     }
 
+    public expandPanel(expanded: boolean): void {
+        this.chartPaddingGroup.toggleGroupExpand(expanded);
+    }
+
+    public setExpandedCallback(expandedCallback: () => void) {
+        this.addDestroyableEventListener(this.chartPaddingGroup, 'expanded', expandedCallback);
+    }
+
     private initChartPaddingItems() {
         this.chartPaddingGroup
-            .setTitle('Chart Padding')
+            .setTitle('Chart')
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
