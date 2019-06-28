@@ -120,17 +120,6 @@ export class AreaSeries extends Series<CartesianChart> {
         return this._yFieldNames;
     }
 
-    private _stacked: boolean = true;
-    set stacked(value: boolean) {
-        if (this._stacked !== value) {
-            this._stacked = value;
-            this.scheduleData();
-        }
-    }
-    get stacked(): boolean {
-        return this._stacked;
-    }
-
     private _normalizedTo: number = NaN;
     set normalizedTo(value: number) {
         if (value === 0) {
@@ -234,7 +223,7 @@ export class AreaSeries extends Series<CartesianChart> {
         const normalizedTo = this.normalizedTo;
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
         const xData: string[] = this.xData = data.map(datum => datum[xField]);
-        const ySums: number[] = this.ySums = []; // used for normalization of stacked areas
+        const ySums: number[] = this.ySums = []; // used for normalization
         const yData: number[][] = this.yData = data.map((datum, xIndex) => {
             const values: number[] = [];
             let ySum = 0;
@@ -265,7 +254,7 @@ export class AreaSeries extends Series<CartesianChart> {
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
 
-        if (this.stacked && isFinite(normalizedTo)) {
+        if (isFinite(normalizedTo)) {
             yMin = 0;
             yMax = normalizedTo;
             yData.forEach((stack, i) => {
