@@ -36,6 +36,7 @@ export class CalloutPanel extends Component {
         this.calloutGroup
             .setTitle('Callout')
             .setEnabled(true)
+            .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
         type CalloutProperty = 'calloutLength' | 'calloutStrokeWidth' | 'labelOffset';
