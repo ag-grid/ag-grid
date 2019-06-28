@@ -46,7 +46,7 @@ export class MarkersPanel extends Component {
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onInputChange(newValue => {
+                .onValueChange(newValue => {
                     this.series.forEach(s => s[property] = newValue)
                 });
         };

@@ -60,7 +60,7 @@ export class AgAngleSelect extends AgLabel {
             .setMin(0)
             .setMax(360)
             .setValue(`${this.degrees}`)
-            .onInputChange((value: string) => {
+            .onValueChange((value: string) => {
                 if (value == null || value === '') {
                     value = '0';
                 }
@@ -178,7 +178,7 @@ export class AgAngleSelect extends AgLabel {
         return this;
     }
 
-    public onAngleChange(callbackFn: (newValue: number) => void): this {
+    public onValueChange(callbackFn: (newValue: number) => void): this {
         this.addDestroyableEventListener(this, 'valueChange', () => {
             callbackFn(this.degrees);
         });

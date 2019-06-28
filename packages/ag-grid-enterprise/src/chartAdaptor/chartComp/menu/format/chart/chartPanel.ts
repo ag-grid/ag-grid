@@ -61,7 +61,7 @@ export class ChartPanel extends Component implements ExpandablePanel {
                 .setValue(value)
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
-                .onInputChange(newValue => {
+                .onValueChange(newValue => {
                     this.chart.padding[property] = newValue;
                     this.chart.performLayout();
                 });

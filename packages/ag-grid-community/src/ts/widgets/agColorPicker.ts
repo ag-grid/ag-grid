@@ -1,50 +1,44 @@
 import { AgColorPanel } from "./agColorPanel";
 import { AgDialog } from "./agDialog";
-import { AgLabel, IAgLabel } from "./agLabel";
-import { RefSelector } from "./componentAnnotations";
+import { IAgLabel } from "./agLabel";
+import { AgPickerField } from "./agPickerField";
 import { _ } from "../utils";
 
-type ColorMode = 'hex' | 'hsl' | 'rgba';
-
 interface ColorPickerConfig extends IAgLabel {
-    hideTextField?: boolean;
     color: string;
-    mode: ColorMode;
 }
 
-export class AgColorPicker extends AgLabel {
-    private static TEMPLATE =
-        `<div class="ag-color-picker">
-            <label ref="eLabel"></label>
+export class AgColorPicker extends AgPickerField<string, HTMLElement> {
 
-            <!-- TODO $icon-size 30px for the color picker (???) -->
-            <div class="ag-color-button" ref="eButton" style="width: 30px"></div>
-        </div>`;
-
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eButton') private eButton: HTMLElement;
-
-    private color: string;
+    protected displayTag = 'div';
+    protected className = 'ag-color-picker';
+    protected pickerIcon = 'colorPicker';
 
     constructor(config?: ColorPickerConfig) {
-        super(AgColorPicker.TEMPLATE);
+        super();
+        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
 
         if (config && config.color) {
-            this.color = config.color;
+            this.value = config.color;
         }
     }
 
     protected postConstruct() {
         super.postConstruct();
-        if (this.color) {
-            this.setValue(this.color);
+        _.addCssClass(this.getGui(), this.className);
+        this.addDestroyableEventListener(this.eDisplayField, 'click', () => this.showPicker());
+
+        if (this.value) {
+            this.setValue(this.value);
         }
-        this.addDestroyableEventListener(this.eButton, 'click', () => {
-            this.showColorPicker();
-        });
     }
 
-    private showColorPicker() {
+    protected showPicker() {
+        if (this.displayedPicker) {
+            this.displayedPicker = false;
+            return;
+        }
+
         const eGuiRect = this.getGui().getBoundingClientRect();
         const colorDialog = new AgDialog({
             closable: false,
@@ -56,6 +50,8 @@ export class AgColorPicker extends AgLabel {
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
         });
+
+        _.addCssClass(colorDialog.getGui(), 'ag-color-dialog');
         this.getContext().wireBean(colorDialog);
 
         const colorPanel = new AgColorPanel({
@@ -69,32 +65,22 @@ export class AgColorPicker extends AgLabel {
         colorPanel.setValue(this.getValue());
 
         colorDialog.addDestroyFunc(() => {
+            this.displayedPicker = false;
             if (colorPanel.isAlive()) {
                 colorPanel.destroy();
             }
         });
     }
 
-    public setWidth(width: number): this {
-        _.setFixedWidth(this.getGui(), width);
-        return this;
-    }
-
     public getValue(): string {
-        return this.color;
+        return this.value;
     }
 
     public setValue(color: string): this {
-        this.color = color;
-        this.eButton.style.backgroundColor = color;
+        this.value = color;
+        this.eDisplayField.style.backgroundColor = color;
         this.dispatchEvent({ type: 'valueChange' });
-        return this;
-    }
 
-    public onColorChange(callbackFn: (newColor: string) => void): this {
-        this.addDestroyableEventListener(this, 'valueChange', () => {
-            callbackFn(this.color);
-        });
         return this;
     }
 }

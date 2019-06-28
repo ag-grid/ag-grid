@@ -90,7 +90,7 @@ export class LegendPanel extends Component implements ExpandablePanel {
                 value: position,
                 text: _.capitalise(position)
             })))
-            .onInputChange((value) => {
+            .onValueChange((value) => {
                 this.chart.legendPosition = value
             })
             .setValue(this.chart.legendPosition);
@@ -102,7 +102,7 @@ export class LegendPanel extends Component implements ExpandablePanel {
             .setValue(`${this.chart.legendPadding}`)
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onInputChange(newValue => this.chart.legendPadding = newValue);
+            .onValueChange(newValue => this.chart.legendPadding = newValue);
     }
 
     private initLegendItems() {
@@ -113,7 +113,7 @@ export class LegendPanel extends Component implements ExpandablePanel {
                  .setValue(initialValue)
                  .setMaxValue(maxValue)
                  .setTextFieldWidth(45)
-                 .onInputChange(newValue => this.chart.legend[property] = newValue)
+                 .onValueChange(newValue => this.chart.legend[property] = newValue)
         };
 
         const initialMarkerSize = `${this.chart.legend.markerSize}`;

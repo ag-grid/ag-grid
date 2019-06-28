@@ -29,7 +29,7 @@ export class AgSlider extends AgLabel {
         this.setMinValue(0);
     }
 
-    public onInputChange(callbackFn: (newValue: number) => void) {
+    public onValueChange(callbackFn: (newValue: number) => void) {
         this.addDestroyableEventListener(this.eText.getInputElement(), 'input', () => {
             const textValue = parseInt(this.eText.getValue(), 10);
             this.eSlider.setValue(textValue.toString());

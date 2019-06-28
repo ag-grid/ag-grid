@@ -2,7 +2,6 @@ import { Component } from "./component";
 import { Color } from "../utils";
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
-import { AgInputTextField } from "./agInputTextField";
 import { AgColorPicker } from "./agColorPicker";
 
 export class AgColorPanel extends Component {

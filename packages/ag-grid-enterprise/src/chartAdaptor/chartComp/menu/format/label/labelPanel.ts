@@ -32,9 +32,9 @@ export class LabelPanel extends Component {
         `<div>
             <ag-group-component ref="labelsGroup">
                 <ag-select ref="labelFontFamilySelect"></ag-select>
-                <ag-select ref="labelFontWeightSelect"></ag-select>  
-                <div class="ag-group-subgroup">                    
-                    <ag-select ref="labelFontSizeSelect"></ag-select>   
+                <ag-select ref="labelFontWeightSelect"></ag-select>
+                <div class="ag-group-subgroup">
+                    <ag-select ref="labelFontSizeSelect"></ag-select>
                     <ag-color-picker ref="labelColorPicker"></ag-color-picker>
                 </div>
             </ag-group-component>
@@ -110,7 +110,7 @@ export class LabelPanel extends Component {
 
             input.addOptions(options)
                  .setValue(`${initialValue}`)
-                 .onInputChange(newValue => this.params.setFont({[property]: newValue}));
+                 .onValueChange(newValue => this.params.setFont({[property]: newValue}));
         };
 
         const fonts = [
@@ -149,8 +149,9 @@ export class LabelPanel extends Component {
     private initFontColorPicker() {
         this.labelColorPicker
             .setLabel('Color')
+            .setInputWidth(45)
             .setValue(`${this.params.initialFont.color}`)
-            .onColorChange(newColor => this.params.setFont({color: newColor}));
+            .onValueChange(newColor => this.params.setFont({color: newColor}));
     }
 
     private destroyActiveComps(): void {

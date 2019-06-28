@@ -20,13 +20,13 @@ export abstract class AgInputField extends AgLabel {
     protected TEMPLATE =
         `<div class="ag-input-field">
             <label ref="eLabel"></label>
-            <div ref="eInputWrapper" class="ag-input-wrapper">
+            <div ref="eWrapper" class="ag-wrapper ag-input-wrapper">
                 <%input% ref="eInput"></%input>
             </div>
         </div>`;
 
     @RefSelector('eLabel') protected eLabel: HTMLElement;
-    @RefSelector('eInputWrapper') protected eInputWrapper: HTMLElement;
+    @RefSelector('eWrapper') protected eWrapper: HTMLElement;
     @RefSelector('eInput') protected eInput: FieldElement;
 
     protected postConstruct() {
@@ -67,7 +67,7 @@ export abstract class AgInputField extends AgLabel {
         return this.eInput;
     }
 
-    public onInputChange(callbackFn: (newValue: any) => void) {
+    public onValueChange(callbackFn: (newValue: any) => void) {
         this.addDestroyableEventListener(this.getInputElement(), 'input', () => {
             const newVal = this.getValue();
             callbackFn(newVal);
@@ -76,7 +76,7 @@ export abstract class AgInputField extends AgLabel {
     }
 
     public setInputWidth(width: number | 'flex'): this {
-        _.setElementWidth(this.eInputWrapper, width);
+        _.setElementWidth(this.eWrapper, width);
         return this;
     }
 

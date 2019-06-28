@@ -45,7 +45,7 @@ export class AgCheckbox extends AgInputField {
 
     private addIconsPlaceholder(): void {
         const iconDiv = document.createElement('div');
-        this.eInputWrapper.appendChild(iconDiv);
+        this.eWrapper.appendChild(iconDiv);
         this.eIconEl = iconDiv;
     }
 

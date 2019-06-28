@@ -19,7 +19,7 @@ export class AxisPanel extends Component implements ExpandablePanel {
         `<div>
             <ag-group-component ref="axisGroup">
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
-                <ag-slider ref="axisLineWidthSlider"></ag-slider>               
+                <ag-slider ref="axisLineWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
@@ -65,8 +65,9 @@ export class AxisPanel extends Component implements ExpandablePanel {
         this.axisColorInput
             .setLabel("Color")
             .setLabelWidth('flex')
+            .setInputWidth(45)
             .setValue(`${this.chart.xAxis.lineColor}`)
-            .onColorChange(newColor => {
+            .onValueChange(newColor => {
                 this.chart.xAxis.lineColor = newColor;
                 this.chart.yAxis.lineColor = newColor;
                 this.chart.performLayout();
@@ -77,7 +78,7 @@ export class AxisPanel extends Component implements ExpandablePanel {
             .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue(`${this.chart.xAxis.lineWidth}`)
-            .onInputChange(newValue => {
+            .onValueChange(newValue => {
                 this.chart.xAxis.lineWidth = newValue;
                 this.chart.yAxis.lineWidth = newValue;
                 this.chart.performLayout();
@@ -146,7 +147,7 @@ export class AxisPanel extends Component implements ExpandablePanel {
             .setLabel(label)
             .setLabelWidth("flex")
             .setValue(initialValue)
-            .onAngleChange(newAngle => {
+            .onValueChange(newAngle => {
                 updateFunc(newAngle);
                 this.chart.layoutPending = true;
             });

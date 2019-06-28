@@ -72,7 +72,7 @@ export class LineSeriesPanel extends Component implements ExpandablePanel {
             .setMaxValue(20)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
-            .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
+            .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
     private initMarkersPanel() {

@@ -56,7 +56,7 @@ export class AxisTicksPanel extends Component {
             .setLabelWidth('flex')
             .setWidth(115)
             .setValue(`${this.chart.xAxis.lineColor}`)
-            .onColorChange(newColor => {
+            .onValueChange(newColor => {
                 this.chart.xAxis.tickColor = newColor;
                 this.chart.yAxis.tickColor = newColor;
                 this.chart.performLayout();
@@ -69,7 +69,7 @@ export class AxisTicksPanel extends Component {
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onInputChange(newValue => {
+                .onValueChange(newValue => {
                     this.chart.xAxis[property] = newValue;
                     this.chart.yAxis[property] = newValue;
                     this.chart.performLayout();

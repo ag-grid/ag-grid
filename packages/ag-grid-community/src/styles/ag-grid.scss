@@ -1429,13 +1429,33 @@ $handleSize: 5px;
     align-items: center;
 }
 
-.ag-slider, .ag-angle-select {
-    .ag-wrapper {
+.ag-picker-field, .ag-slider, .ag-angle-select {
+    > .ag-wrapper {
         display: flex;
-        align-items: center;
         > div {
             flex: 1 1 auto;
         }
+    }
+}
+
+.ag-picker-field {
+    > .ag-wrapper {
+        > button {
+            display: flex;
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+
+.ag-color-picker {
+    > .ag-wrapper {
+        align-items: stretch;
+        overflow: hidden;
+    }
+    button {
+        cursor: pointer;
     }
 }
 
@@ -1453,7 +1473,7 @@ $handleSize: 5px;
     }
 }
 
-.ag-color-picker {
+.ag-picker-field {
     display: flex;
     align-items: center;
 }

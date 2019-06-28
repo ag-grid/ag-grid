@@ -251,6 +251,7 @@
     .ag-input-wrapper {
         input:not([type]),
         input[type="text"],
+        input[type="number"],
         input[type="tel"],
         input[type="date"],
         input[type="datetime-local"] {
@@ -1257,9 +1258,9 @@
     /// Widgets
     ///
     .ag-group-component {
-        background-color: lighten($group-component-background-color, 1%);
+        background-color: $group-component-background-color;
         padding: 0px;
-        border: 0 solid darken($group-component-background-color, 10%);
+        border: 0 solid $group-component-border-color;
         border-top-width: 1px;
         &.ag-disabled > {
             .ag-group-component-label .ag-group-component-title, .ag-group-component-container {
@@ -1267,7 +1268,7 @@
             }
         }
         .ag-group-component-title-bar {
-            background-color: darken($group-component-background-color, 4%);
+            background-color: $group-component-title-background-color;
             height: $icon-size;
             font-size: $font-size;
             font-family: $font-family;
@@ -1287,7 +1288,13 @@
                 }
             }
         }
-        > :not(.ag-group-component-title-bar) {
+        .ag-group-component-toolbar {
+            background-color: darken($group-component-background-color, 2%);
+            padding: $grid-size;
+            border: 0 solid $border-color;
+            border-width: 1px 0;
+        }
+        > .ag-group-component-container {
             margin-left: $grid-size * 2;
             padding: $grid-size;
         }
@@ -1307,7 +1314,7 @@
     }
 
     .ag-slider, .ag-angle-select {
-        .ag-wrapper {
+        > .ag-wrapper {
             > div:not(:first-of-type) {
                 margin-left: $grid-size * 2;
             }
@@ -1363,17 +1370,29 @@
     }
 
     .ag-color-picker {
-        .ag-color-button {
-            height: $icon-size;
-            width: $icon-size;
+        > .ag-wrapper {
+            border: 1px solid $border-color;
+            border-radius: 5px;
+            > div {
+                width: $icon-size;
+                height: $icon-size;
+            }
+            button {
+                background-color: $background-color;
+            }
+            button:hover {
+                background-color: $hover-color;
+            }
         }
     }
 
-    .ag-color-panel {
-        padding: 5px;
-        box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
+    .ag-dialog.ag-color-dialog {
         border-radius: 5px;
-       
+    }
+
+    .ag-color-panel {
+        padding: $grid-size;
+
         .ag-spectrum-color {
             background-color: rgb(255, 0, 0);
             border-radius: 2px;

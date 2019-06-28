@@ -69,7 +69,7 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
             .setMaxValue(20)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
-            .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
+            .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
     private initSeriesTooltips() {
@@ -122,7 +122,7 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
             .setInputWidth(40)
             .setLabelWidth("flex")
             .setValue(`${this.series[0].labelOffset}`)
-            .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
+            .onValueChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
 
         this.getContext().wireBean(labelOffsetInput);
         labelPanelComp.addCompToPanel(labelOffsetInput);
