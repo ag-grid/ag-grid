@@ -1,4 +1,4 @@
-import { _, ChartType, Component, PostConstruct } from "ag-grid-community";
+import {_, ChartType, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
 import { BarSeriesPanel } from "./series/barSeriesPanel";
@@ -19,6 +19,8 @@ export class ChartFormattingPanel extends Component {
     private readonly chartController: ChartController;
 
     private activePanels: Component[] = [];
+
+    @RefSelector('formatPanelWrapper') private formatPanelWrapper: HTMLElement;
 
     constructor(chartController: ChartController) {
         super();
@@ -70,24 +72,28 @@ export class ChartFormattingPanel extends Component {
             barSeriesPanel.expandPanel(false);
             axisPanel.expandPanel(false);
             chartPanel.expandPanel(false);
+            legendPanel.getGui().scrollIntoView({ behavior: 'smooth'});
         });
 
         barSeriesPanel.setExpandedCallback(() => {
             legendPanel.expandPanel(false);
             axisPanel.expandPanel(false);
             chartPanel.expandPanel(false);
+            barSeriesPanel.getGui().scrollIntoView({ behavior: 'smooth'});
         });
 
         axisPanel.setExpandedCallback(() => {
             legendPanel.expandPanel(false);
             barSeriesPanel.expandPanel(false);
             chartPanel.expandPanel(false);
+            axisPanel.getGui().scrollIntoView({ behavior: 'smooth'});
         });
 
         chartPanel.setExpandedCallback(() => {
             legendPanel.expandPanel(false);
             barSeriesPanel.expandPanel(false);
             axisPanel.expandPanel(false);
+            chartPanel.getGui().scrollIntoView({ behavior: 'smooth'});
         });
     }
 
@@ -108,6 +114,7 @@ export class ChartFormattingPanel extends Component {
             lineSeriesPanel.expandPanel(false);
             axisPanel.expandPanel(false);
             chartPanel.expandPanel(false);
+
         });
 
         lineSeriesPanel.setExpandedCallback(() => {

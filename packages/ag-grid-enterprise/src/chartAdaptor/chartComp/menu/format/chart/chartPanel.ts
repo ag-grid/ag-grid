@@ -92,7 +92,6 @@ export class ChartPanel extends Component implements ExpandablePanel {
         this.titleInput
             .setLabel('Title')
             .setLabelWidth('flex')
-            // .setInputWidth('flex')
             .setValue(title)
             .onValueChange(newValue => {
                 if (!this.chart.title) {
