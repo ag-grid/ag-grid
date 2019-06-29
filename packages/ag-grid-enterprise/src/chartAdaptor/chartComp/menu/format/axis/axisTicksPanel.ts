@@ -85,8 +85,4 @@ export class AxisTicksPanel extends Component {
         const initialPadding = `${this.chart.xAxis.tickPadding}`;
         initInput('tickPadding', this.axisTicksPaddingSlider, 'Padding', initialPadding, 30);
     }
-
-    public destroy(): void {
-        super.destroy();
-    }
 }

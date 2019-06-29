@@ -107,17 +107,17 @@ export class ChartFormattingPanel extends Component {
         this.addExpandedCallback(pieSeriesPanel, [legendPanel, chartPanel]);
     }
 
+    private addComponent(component: Component): void {
+        this.getContext().wireBean(component);
+        this.getGui().appendChild(component.getGui());
+        this.activePanels.push(component);
+    }
+
     private addExpandedCallback<T extends Component & ExpandablePanel>(groupPanel: T, subPanels: ExpandablePanel[]) {
         groupPanel.setExpandedCallback(() => {
             subPanels.forEach(subPanel => subPanel.expandPanel(false));
             groupPanel.getGui().scrollIntoView({ behavior: 'smooth'});
         });
-    }
-
-    private addComponent(component: Component): void {
-        this.getContext().wireBean(component);
-        this.getGui().appendChild(component.getGui());
-        this.activePanels.push(component);
     }
 
     private destroyActivePanels(): void {

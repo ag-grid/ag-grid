@@ -76,6 +76,10 @@ export class LabelPanel extends Component {
         this.activeComps.push(comp);
     }
 
+    public setEnabled(enabled: boolean): void {
+        this.labelsGroup.setEnabled(enabled);
+    }
+
     private initGroup() {
         this.labelsGroup
             .setTitle(this.params.name ? this.params.name : 'Labels')

@@ -103,6 +103,9 @@ export class ChartPanel extends Component implements ExpandablePanel {
                 currentCaption.text = newValue;
                 this.chart.title = currentCaption;
                 this.chart.performLayout();
+
+                // only show font panel when title exists
+                labelPanelComp.setEnabled(_.exists(this.chart.title.text));
             });
 
         const params: LabelPanelParams = {
@@ -117,6 +120,8 @@ export class ChartPanel extends Component implements ExpandablePanel {
         this.getContext().wireBean(labelPanelComp);
         this.chartGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
+
+        labelPanelComp.setEnabled(_.exists(title));
     }
 
     private initPaddingPanel(): void {

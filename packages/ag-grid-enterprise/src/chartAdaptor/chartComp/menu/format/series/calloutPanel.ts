@@ -58,8 +58,4 @@ export class CalloutPanel extends Component {
         const initialOffset = `${this.series[0].labelOffset}`;
         initInput('labelOffset', this.labelOffsetSlider, 'Offset', initialOffset, 30);
     }
-
-    public destroy(): void {
-        super.destroy();
-    }
 }
