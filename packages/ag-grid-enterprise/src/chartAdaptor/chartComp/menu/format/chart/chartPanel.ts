@@ -1,4 +1,4 @@
-import {_, AgGroupComponent, AgInputTextField, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {_, AgGroupComponent, AgInputTextArea, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartController} from "../../../chartController";
 import {Chart} from "../../../../../charts/chart/chart";
 import {ExpandablePanel} from "../chartFormatingPanel";
@@ -10,16 +10,13 @@ export class ChartPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="chartGroup">
-                <label ref="titleLabel"></label>
-                <ag-input-text-field ref="titleInput"></ag-input-text-field>                                      
+            <ag-group-component ref="chartGroup">               
+                <ag-input-text-area ref="titleInput"></ag-input-text-area>                                      
             </ag-group-component>
         <div>`;
 
     @RefSelector('chartGroup') private chartGroup: AgGroupComponent;
-
-    @RefSelector('titleLabel') private titleLabel: HTMLElement;
-    @RefSelector('titleInput') private titleInput: AgInputTextField;
+    @RefSelector('titleInput') private titleInput: AgInputTextArea;
 
     private chart: Chart;
     private activePanels: Component[] = [];
@@ -58,8 +55,6 @@ export class ChartPanel extends Component implements ExpandablePanel {
     }
 
     private initTitles(): void {
-        this.titleLabel.innerText = 'Chart Title';
-
         const title = this.chart.title ? this.chart.title.text : '';
 
         const initialFont = {
@@ -95,6 +90,9 @@ export class ChartPanel extends Component implements ExpandablePanel {
         };
 
         this.titleInput
+            .setLabel('Title')
+            .setLabelWidth('flex')
+            // .setInputWidth('flex')
             .setValue(title)
             .onValueChange(newValue => {
                 if (!this.chart.title) {
