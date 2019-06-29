@@ -7,7 +7,7 @@ export interface IInputField extends IAgLabel {
     width?: number;
 }
 
-export type FieldElement = HTMLInputElement | HTMLSelectElement;
+export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgInputField extends AgLabel {
     protected abstract className: string;
     protected abstract inputType: string;
@@ -21,7 +21,7 @@ export abstract class AgInputField extends AgLabel {
         `<div class="ag-input-field">
             <label ref="eLabel"></label>
             <div ref="eWrapper" class="ag-wrapper ag-input-wrapper">
-                <%input% ref="eInput"></%input>
+                <%input% ref="eInput"></%input%>
             </div>
         </div>`;
 
@@ -58,7 +58,7 @@ export abstract class AgInputField extends AgLabel {
     }
 
     private setInputType() {
-        if (this.inputType) {
+        if (_.exists(this.inputType)) {
             this.eInput.setAttribute('type', this.inputType);
         }
     }

@@ -13,7 +13,7 @@ export class AgInputTextField extends AgInputField {
 
     constructor(config?: IInputField) {
         super();
-        this.setTemplate(this.TEMPLATE.replace(/%input%/, this.inputTag));
+        this.setTemplate(this.TEMPLATE.replace(/%input%/g, this.inputTag));
 
         if (config) {
             this.config = config;

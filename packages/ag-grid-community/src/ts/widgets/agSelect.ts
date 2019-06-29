@@ -13,7 +13,7 @@ export class AgSelect extends AgInputField {
 
     constructor() {
         super();
-        this.setTemplate(this.TEMPLATE.replace(/%input%/, this.inputTag));
+        this.setTemplate(this.TEMPLATE.replace(/%input%/g, this.inputTag));
     }
 
     public addOptions(options: SelectOption[]): this {
