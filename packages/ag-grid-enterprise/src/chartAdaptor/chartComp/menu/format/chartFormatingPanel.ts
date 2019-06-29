@@ -16,11 +16,10 @@ export class ChartFormattingPanel extends Component {
 
     public static TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
 
-    private readonly chartController: ChartController;
+    @RefSelector('formatPanelWrapper') private formatPanelWrapper: HTMLElement;
 
     private activePanels: Component[] = [];
-
-    @RefSelector('formatPanelWrapper') private formatPanelWrapper: HTMLElement;
+    private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
@@ -68,33 +67,10 @@ export class ChartFormattingPanel extends Component {
         const axisPanel = new AxisPanel(this.chartController);
         this.addComponent(axisPanel);
 
-        legendPanel.setExpandedCallback(() => {
-            barSeriesPanel.expandPanel(false);
-            axisPanel.expandPanel(false);
-            chartPanel.expandPanel(false);
-            legendPanel.getGui().scrollIntoView({ behavior: 'smooth'});
-        });
-
-        barSeriesPanel.setExpandedCallback(() => {
-            legendPanel.expandPanel(false);
-            axisPanel.expandPanel(false);
-            chartPanel.expandPanel(false);
-            barSeriesPanel.getGui().scrollIntoView({ behavior: 'smooth'});
-        });
-
-        axisPanel.setExpandedCallback(() => {
-            legendPanel.expandPanel(false);
-            barSeriesPanel.expandPanel(false);
-            chartPanel.expandPanel(false);
-            axisPanel.getGui().scrollIntoView({ behavior: 'smooth'});
-        });
-
-        chartPanel.setExpandedCallback(() => {
-            legendPanel.expandPanel(false);
-            barSeriesPanel.expandPanel(false);
-            axisPanel.expandPanel(false);
-            chartPanel.getGui().scrollIntoView({ behavior: 'smooth'});
-        });
+        this.addExpandedCallback(chartPanel, [legendPanel, barSeriesPanel, axisPanel]);
+        this.addExpandedCallback(legendPanel, [barSeriesPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(barSeriesPanel, [legendPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(axisPanel, [legendPanel, barSeriesPanel, chartPanel]);
     }
 
     private createLineChartPanel(): void {
@@ -110,30 +86,10 @@ export class ChartFormattingPanel extends Component {
         const axisPanel = new AxisPanel(this.chartController);
         this.addComponent(axisPanel);
 
-        legendPanel.setExpandedCallback(() => {
-            lineSeriesPanel.expandPanel(false);
-            axisPanel.expandPanel(false);
-            chartPanel.expandPanel(false);
-
-        });
-
-        lineSeriesPanel.setExpandedCallback(() => {
-            legendPanel.expandPanel(false);
-            axisPanel.expandPanel(false);
-            chartPanel.expandPanel(false);
-        });
-
-        axisPanel.setExpandedCallback(() => {
-            legendPanel.expandPanel(false);
-            lineSeriesPanel.expandPanel(false);
-            chartPanel.expandPanel(false);
-        });
-
-        chartPanel.setExpandedCallback(() => {
-            legendPanel.expandPanel(false);
-            lineSeriesPanel.expandPanel(false);
-            axisPanel.expandPanel(false);
-        });
+        this.addExpandedCallback(chartPanel, [legendPanel, lineSeriesPanel, axisPanel]);
+        this.addExpandedCallback(legendPanel, [lineSeriesPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(lineSeriesPanel, [legendPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(axisPanel, [legendPanel, lineSeriesPanel, chartPanel]);
     }
 
     private createPieChartPanel(): void {
@@ -146,19 +102,15 @@ export class ChartFormattingPanel extends Component {
         const pieSeriesPanel = new PieSeriesPanel(this.chartController);
         this.addComponent(pieSeriesPanel);
 
-        legendPanel.setExpandedCallback(() => {
-            pieSeriesPanel.expandPanel(false);
-            chartPanel.expandPanel(false);
-        });
+        this.addExpandedCallback(chartPanel, [legendPanel, pieSeriesPanel]);
+        this.addExpandedCallback(legendPanel, [pieSeriesPanel, chartPanel]);
+        this.addExpandedCallback(pieSeriesPanel, [legendPanel, chartPanel]);
+    }
 
-        pieSeriesPanel.setExpandedCallback(() => {
-            legendPanel.expandPanel(false);
-            chartPanel.expandPanel(false);
-        });
-
-        chartPanel.setExpandedCallback(() => {
-            legendPanel.expandPanel(false);
-            pieSeriesPanel.expandPanel(false);
+    private addExpandedCallback<T extends Component & ExpandablePanel>(groupPanel: T, subPanels: ExpandablePanel[]) {
+        groupPanel.setExpandedCallback(() => {
+            subPanels.forEach(subPanel => subPanel.expandPanel(false));
+            groupPanel.getGui().scrollIntoView({ behavior: 'smooth'});
         });
     }
 
