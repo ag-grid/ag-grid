@@ -6,7 +6,6 @@ import {
     PostConstruct,
     RefSelector,
     AgToggleButton,
-    AgInputNumberField,
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
@@ -117,16 +116,20 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
         this.getContext().wireBean(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
-        const labelOffsetInput = new AgInputNumberField()
+
+        const labelOffsetSlider = new AgSlider();
+        this.getContext().wireBean(labelOffsetSlider);
+
+        labelOffsetSlider
             .setLabel('Offset')
-            .setInputWidth(40)
-            .setLabelWidth("flex")
             .setValue(`${this.series[0].labelOffset}`)
+            .setMinValue(-100)
+            .setMaxValue(100)
+            .setTextFieldWidth(45)
             .onValueChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
 
-        this.getContext().wireBean(labelOffsetInput);
-        labelPanelComp.addCompToPanel(labelOffsetInput);
-        this.activePanels.push(labelOffsetInput);
+        labelPanelComp.addCompToPanel(labelOffsetSlider);
+        this.activePanels.push(labelOffsetSlider);
 
         this.seriesGroup.addItem(labelPanelComp);
     }
