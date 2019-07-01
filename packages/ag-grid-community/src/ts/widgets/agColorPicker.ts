@@ -1,7 +1,8 @@
 import { AgColorPanel } from "./agColorPanel";
 import { AgDialog } from "./agDialog";
-import { IAgLabel } from "./agLabel";
+import { IAgLabel } from "./agAbstractLabel";
 import { AgPickerField } from "./agPickerField";
+import { AgAbstractField } from "./agAbstractField";
 import { _ } from "../utils";
 
 interface ColorPickerConfig extends IAgLabel {
@@ -79,7 +80,7 @@ export class AgColorPicker extends AgPickerField<string, HTMLElement> {
     public setValue(color: string): this {
         this.value = color;
         this.eDisplayField.style.backgroundColor = color;
-        this.dispatchEvent({ type: 'valueChange' });
+        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
 
         return this;
     }

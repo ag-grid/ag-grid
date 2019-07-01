@@ -92,9 +92,9 @@ export class AgInputNumberField extends AgInputTextField {
         return this;
     }
 
-    public setValue(value: string): this {
+    public setValue(value: string, silent?: boolean): this {
         value = this.adjustPrecision(value);
 
-        return super.setValue(value);
+        return super.setValue(value, silent);
     }
 }

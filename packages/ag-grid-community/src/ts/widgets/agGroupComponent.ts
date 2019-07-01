@@ -181,7 +181,7 @@ export class AgGroupComponent extends Component {
     }
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
-        this.cbGroupEnabled.onSelectionChange((newSelection: boolean) => {
+        this.cbGroupEnabled.onValueChange((newSelection: boolean) => {
             this.setEnabled(newSelection, true);
             callbackFn(newSelection);
         });

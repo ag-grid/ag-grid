@@ -10,7 +10,7 @@ export interface IAgLabel {
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
-export abstract class AgLabel extends Component {
+export abstract class AgAbstractLabel extends Component {
     protected abstract eLabel: HTMLElement;
 
     protected labelSeparator: string = '';

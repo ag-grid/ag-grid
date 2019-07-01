@@ -91,7 +91,7 @@ export class LegendPanel extends Component implements ExpandablePanel {
                 text: _.capitalise(position)
             })))
             .onValueChange((value) => {
-                this.chart.legendPosition = value
+                this.chart.legendPosition = value as LegendPosition;
             })
             .setValue(this.chart.legendPosition);
     }

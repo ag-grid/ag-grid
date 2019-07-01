@@ -1,6 +1,7 @@
-import { AgLabel, IAgLabel } from "./agLabel";
+import { IAgLabel } from "./agAbstractLabel";
 import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
+import { AgAbstractField } from "./agAbstractField";
 
 export interface IInputField extends IAgLabel {
     value?: any;
@@ -8,20 +9,18 @@ export interface IInputField extends IAgLabel {
 }
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-export abstract class AgInputField extends AgLabel {
+export abstract class AgAbstractInputField<T> extends AgAbstractField<T> {
     protected abstract className: string;
     protected abstract inputType: string;
-    protected abstract inputTag: string;
-    public abstract getValue(): any;
-    public abstract setValue(value: any): this;
 
     protected config: IInputField = {};
+    protected value: T;
 
     protected TEMPLATE =
         `<div class="ag-input-field">
             <label ref="eLabel"></label>
             <div ref="eWrapper" class="ag-wrapper ag-input-wrapper">
-                <%input% ref="eInput"></%input%>
+                <%displayField% ref="eInput"></%displayField%>
             </div>
         </div>`;
 
@@ -55,10 +54,20 @@ export abstract class AgInputField extends AgLabel {
         if (value != null) {
             this.setValue(value);
         }
+
+        this.addInputListeners();
+    }
+
+    protected addInputListeners() {
+        this.addDestroyableEventListener(this.eInput, 'input', (e) => {
+            const value = e.target.value;
+
+            this.setValue(value);
+        });
     }
 
     private setInputType() {
-        if (_.exists(this.inputType)) {
+        if (this.inputType) {
             this.eInput.setAttribute('type', this.inputType);
         }
     }
@@ -67,10 +76,9 @@ export abstract class AgInputField extends AgLabel {
         return this.eInput;
     }
 
-    public onValueChange(callbackFn: (newValue: any) => void) {
-        this.addDestroyableEventListener(this.getInputElement(), 'input', () => {
-            const newVal = this.getValue();
-            callbackFn(newVal);
+    public onValueChange(callbackFn: (newValue: T) => void) {
+        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
+            callbackFn(this.getValue());
         });
         return this;
     }
@@ -80,8 +88,32 @@ export abstract class AgInputField extends AgLabel {
         return this;
     }
 
+    public setInputName(name: string): this {
+        this.getInputElement().setAttribute('name', name);
+
+        return this;
+    }
+
     public setWidth(width: number): this {
         _.setFixedWidth(this.getGui(), width);
+        return this;
+    }
+
+    public getValue(): T {
+        return this.value;
+    }
+
+    public setValue(value: T, silent?: boolean): this {
+        if (this.value === value) {
+            return this;
+        }
+
+        this.value = value;
+
+        if (!silent) {
+            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+        }
+
         return this;
     }
 }

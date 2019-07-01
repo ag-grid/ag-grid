@@ -1,18 +1,19 @@
 import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
-import { AgInputField } from "./agInputField";
-import { LabelAlignment } from "./agLabel";
+import { AgAbstractInputField } from "./agAbstractInputField";
+import { LabelAlignment } from "./agAbstractLabel";
+import { AgAbstractField } from "./agAbstractField";
 import { _ } from "../utils";
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 
-export class AgCheckbox extends AgInputField {
+export class AgCheckbox extends AgAbstractInputField<boolean> {
 
     protected className = 'ag-checkbox';
-    protected inputTag = 'input';
+    protected displayTag = 'input';
     protected inputType = 'checkbox';
     protected labelAlignment: LabelAlignment = 'right';
     protected iconMap: { selected: string, unselected: string, indeterminate?: string } = {
@@ -20,8 +21,6 @@ export class AgCheckbox extends AgInputField {
         unselected: 'checkboxUnchecked',
         indeterminate: 'checkboxIndeterminate'
     };
-
-    public static EVENT_CHANGED = 'change';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -32,7 +31,7 @@ export class AgCheckbox extends AgInputField {
 
     constructor() {
         super();
-        this.setTemplate(this.TEMPLATE.replace(/%input%/g, this.inputTag));
+        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
     }
 
     protected postConstruct(): void {
@@ -40,7 +39,11 @@ export class AgCheckbox extends AgInputField {
         _.addCssClass(this.eInput, 'ag-hidden');
         this.addIconsPlaceholder();
         this.updateIcons();
+    }
+
+    protected addInputListeners() {
         this.addDestroyableEventListener(this.getGui(), 'click', (e) => this.onClick(e));
+        this.addDestroyableEventListener(this.eInput, 'change', (e) => this.setValue(e.target.checked, true));
     }
 
     private addIconsPlaceholder(): void {
@@ -107,18 +110,11 @@ export class AgCheckbox extends AgInputField {
 
         if (!silent) {
             const event: ChangeEvent = {
-                type: AgCheckbox.EVENT_CHANGED,
+                type: AgAbstractField.EVENT_CHANGED,
                 selected: this.selected
             };
             this.dispatchEvent(event);
         }
-    }
-
-    public onSelectionChange(callbackFn: (newSelection: boolean) => void) {
-        this.addDestroyableEventListener(this, 'change', () => {
-            callbackFn(this.selected);
-        });
-        return this;
     }
 
     protected getIconName(): string {

@@ -61,7 +61,7 @@ export class LineSeriesPanel extends Component implements ExpandablePanel {
             .setLabelWidth('flex')
             .setInputWidth(40)
             .setValue(selected)
-            .onSelectionChange(newSelection => {
+            .onValueChange(newSelection => {
                 this.series.forEach(s => s.tooltipEnabled = newSelection);
             });
     }

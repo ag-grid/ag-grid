@@ -1,11 +1,12 @@
-import { AgLabel } from "./agLabel";
+import { AgAbstractLabel } from "./agAbstractLabel";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired } from "../context/context";
 import { DragService, DragListenerParams } from "../dragAndDrop/dragService";
-import { _ } from "../utils";
 import { AgInputNumberField } from "./agInputNumberField";
+import { AgAbstractField } from "./agAbstractField";
+import { _ } from "../utils";
 
-export class AgAngleSelect extends AgLabel {
+export class AgAngleSelect extends AgAbstractLabel {
 
     private static TEMPLATE =
         `<div class="ag-angle-select">
@@ -72,7 +73,7 @@ export class AgAngleSelect extends AgLabel {
                 this.setValue(floatValue);
             });
 
-        this.addDestroyableEventListener(this, 'valueChange', () => {
+        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
             if (this.eAngleValue.getInputElement().contains(document.activeElement)) {
                 return;
             }
@@ -179,7 +180,7 @@ export class AgAngleSelect extends AgLabel {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void): this {
-        this.addDestroyableEventListener(this, 'valueChange', () => {
+        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
             callbackFn(this.degrees);
         });
         return this;
@@ -205,7 +206,7 @@ export class AgAngleSelect extends AgLabel {
             this.positionChildCircle(radiansValue);
         }
 
-        this.dispatchEvent({ type: 'valueChange' });
+        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
 
         return this;
     }

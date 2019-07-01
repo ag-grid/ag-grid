@@ -1,10 +1,10 @@
-import { AgInputField, IInputField } from "./agInputField";
+import { AgAbstractInputField, IInputField } from "./agAbstractInputField";
 
-export class AgInputTextArea extends AgInputField {
+export class AgInputTextArea extends AgAbstractInputField<string> {
 
     protected eInput: HTMLTextAreaElement;
     protected className = 'ag-text-area';
-    protected inputTag = 'textarea';
+    protected displayTag = 'textarea';
     protected inputType = '';
 
     protected config: IInputField;
@@ -12,24 +12,16 @@ export class AgInputTextArea extends AgInputField {
     constructor(config?: IInputField) {
         super();
 
-        this.setTemplate(this.TEMPLATE.replace(/%input%/g, this.inputTag));
+        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
 
         if (config) {
             this.config = config;
         }
     }
 
-    public getValue(): string {
-        return this.eInput.value;
-    }
+    public setValue(value: string, silent?: boolean): this {
+        const ret = super.setValue(value, silent);
 
-    public setValue(value: string): this {
-        if (this.getValue() === value) {
-            return this;
-        }
-
-        this.eInput.value = value;
-
-        return this;
+        return ret;
     }
 }

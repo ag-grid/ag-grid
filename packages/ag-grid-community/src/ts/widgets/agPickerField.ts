@@ -1,10 +1,10 @@
-import { AgLabel } from "./agLabel";
 import { RefSelector } from "./componentAnnotations";
-import { _ } from "../utils";
 import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { AgAbstractField } from "./agAbstractField";
+import { _ } from "../utils";
 
-export abstract class AgPickerField<T, K> extends AgLabel {
+export abstract class AgPickerField<T, K> extends AgAbstractField<T> {
     protected TEMPLATE =
         `<div class="ag-picker-field">
             <label ref="eLabel"></label>
@@ -15,13 +15,9 @@ export abstract class AgPickerField<T, K> extends AgLabel {
         </div>`;
 
     protected abstract showPicker(): void;
-    protected abstract displayTag: string;
-    protected abstract className: string;
     protected abstract pickerIcon: string;
     protected value: T;
     protected displayedPicker: boolean = false;
-    abstract getValue(): any;
-    abstract setValue(value: any): this;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -53,7 +49,7 @@ export abstract class AgPickerField<T, K> extends AgLabel {
     }
 
     public onValueChange(callbackFn: (newValue: T) => void): this {
-        this.addDestroyableEventListener(this, 'valueChange', () => {
+        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
             callbackFn(this.value);
         });
         return this;

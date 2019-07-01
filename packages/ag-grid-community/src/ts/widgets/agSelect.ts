@@ -1,19 +1,19 @@
-import { AgInputField } from "./agInputField";
+import { AgAbstractInputField } from "./agAbstractInputField";
 
 interface SelectOption {
     value: string;
     text?: string;
 }
 
-export class AgSelect extends AgInputField {
+export class AgSelect extends AgAbstractInputField<string> {
     protected className = 'ag-select';
-    protected inputTag = 'select';
+    protected displayTag = 'select';
     protected inputType = '';
     protected eInput: HTMLSelectElement;
 
     constructor() {
         super();
-        this.setTemplate(this.TEMPLATE.replace(/%input%/g, this.inputTag));
+        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
     }
 
     public addOptions(options: SelectOption[]): this {
@@ -33,17 +33,11 @@ export class AgSelect extends AgInputField {
         return this;
     }
 
-    public getValue() {
-        return this.eInput.value;
-    }
-
-    public setValue(value: string): this {
-        if (this.getValue() === value) {
-            return this;
-        }
+    public setValue(value: string, silent?: boolean): this {
+        const ret = super.setValue(value, silent);
 
         this.eInput.value = value;
 
-        return this;
+        return ret;
     }
 }

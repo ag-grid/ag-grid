@@ -4,9 +4,10 @@ import {
     Component,
     GridOptionsWrapper,
     PostConstruct,
-    _,
+    AgAbstractField,
     AgRadioButton,
-    AgCheckbox
+    AgCheckbox,
+    _
 } from "ag-grid-community";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartModel";
@@ -62,14 +63,6 @@ export class ChartDataPanel extends Component {
 
     private getColumnStateMapper(dimension: boolean, container: AgGroupComponent) {
 
-        const checkboxChanged = (updatedColState: ColState) => this.chartController.updateForMenuChange(updatedColState);
-
-        const radioButtonChanged = (radioComp: AgRadioButton, updatedColState: ColState) => {
-            this.dimensionComps.forEach(comp => comp.setValue(false, true));
-            this.chartController.updateForMenuChange(updatedColState);
-            radioComp.setValue(true, true);
-        };
-
         return (colState: ColState) => {
             const comp = dimension
                 ? new AgRadioButton()
@@ -82,16 +75,13 @@ export class ChartDataPanel extends Component {
             this.columnComps[colState.colId] = comp;
 
             if (dimension) {
+                comp.setInputName('chartDimension' + this.getCompId());
                 this.dimensionComps.push(comp as AgRadioButton);
             }
 
-            this.addDestroyableEventListener(comp, 'change', () => {
+            this.addDestroyableEventListener(comp, AgAbstractField.EVENT_CHANGED, () => {
                 colState.selected = comp.getValue();
-                if (dimension) {
-                    radioButtonChanged(comp as AgRadioButton, colState);
-                } else {
-                    checkboxChanged(colState);
-                }
+                this.chartController.updateForMenuChange(colState);
             });
 
             container.addItem(comp);
