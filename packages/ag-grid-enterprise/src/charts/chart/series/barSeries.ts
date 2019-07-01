@@ -35,6 +35,8 @@ interface SelectionDatum extends SeriesNodeDatum {
     }
 }
 
+export type BarLabelFormatter = (params: {value: number}) => string;
+
 enum BarSeriesNodeTag {
     Bar,
     Label
@@ -287,6 +289,17 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelOffset;
     }
 
+    private _labelFormatter: BarLabelFormatter | undefined = undefined;
+    set labelFormatter(value: BarLabelFormatter | undefined) {
+        if (this._labelFormatter !== value) {
+            this._labelFormatter = value;
+            this.update();
+        }
+    }
+    get labelFormatter(): BarLabelFormatter | undefined {
+        return this._labelFormatter;
+    }
+
     highlightStyle: {
         fill?: string,
         stroke?: string
@@ -447,16 +460,17 @@ export class BarSeries extends Series<CartesianChart> {
         const strokes = this.strokes;
         const grouped = this.grouped;
         const strokeWidth = this.strokeWidth;
+        const labelEnabled = this.labelEnabled;
         const labelFontStyle = this.labelFontStyle;
         const labelFontWeight = this.labelFontWeight;
         const labelFontSize = this.labelFontSize;
         const labelFontFamily = this.labelFontFamily;
         const labelColor = this.labelColor;
         const labelOffset = this.labelOffset;
+        const labelFormatter = this.labelFormatter;
         const data = this.data;
         const xData = this.xData;
         const yData = this.yData;
-        const labelEnabled = this.labelEnabled;
 
         groupScale.range = [0, xScale.bandwidth!];
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
@@ -473,9 +487,17 @@ export class BarSeries extends Series<CartesianChart> {
                 const barX = grouped ? x + groupScale.convert(yField) : x;
                 const y = yScale.convert((grouped ? curr : prev + curr));
                 const bottomY = yScale.convert((grouped ? 0 : prev));
-                const labelText = this.yFieldNames[yFieldIndex];
                 const seriesDatum = data[i];
                 const yValue = seriesDatum[yField];
+                // const labelText = this.yFieldNames[yFieldIndex];
+                let labelText: string;
+                if (labelFormatter) {
+                    labelText = labelFormatter({
+                        value: typeof yValue === 'number' ? yValue : NaN
+                    });
+                } else {
+                    labelText = isFinite(yValue) ? yValue.toFixed(2) : ''
+                }
 
                 selectionData.push({
                     seriesDatum,
@@ -570,12 +592,13 @@ export class BarSeries extends Series<CartesianChart> {
             const yField = nodeDatum.yField;
             const yFields = this.yFields;
             const yFieldIndex = yFields.indexOf(yField);
+            const datum = nodeDatum.seriesDatum;
             const color = this.fills[yFieldIndex % this.fills.length];
 
-            let title = nodeDatum.label ? nodeDatum.label.text : undefined;
+            let title = this.yFieldNames[yFieldIndex] || undefined;
             if (this.tooltipRenderer && xField) {
                 html = this.tooltipRenderer({
-                    datum: nodeDatum.seriesDatum,
+                    datum,
                     xField,
                     yField,
                     title,
@@ -584,9 +607,8 @@ export class BarSeries extends Series<CartesianChart> {
             } else {
                 const titleStyle = `style="color: white; background-color: ${color}"`;
                 title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
-                const seriesDatum = nodeDatum.seriesDatum;
-                const xValue = seriesDatum[xField];
-                const yValue = seriesDatum[yField];
+                const xValue = datum[xField];
+                const yValue = datum[yField];
                 const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
                 const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
 

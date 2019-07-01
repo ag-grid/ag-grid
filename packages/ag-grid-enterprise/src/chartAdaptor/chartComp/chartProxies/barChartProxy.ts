@@ -102,6 +102,7 @@ export class BarChartProxy extends ChartProxy {
                 fills: palette.fills,
                 strokes: palette.strokes,
                 grouped: this.chartProxyParams.chartType === ChartType.GroupedBar,
+                normalizedTo: this.chartProxyParams.chartType === ChartType.NormalizedBar ? 100 : undefined,
                 strokeWidth: 1,
                 tooltipEnabled: true,
                 labelEnabled: false,
@@ -110,7 +111,7 @@ export class BarChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelOffset: 4,
+                labelOffset: this.chartProxyParams.chartType === ChartType.NormalizedBar ? -20 : 4,
                 tooltipRenderer: undefined,
                 showInLegend: true,
                 shadow: undefined

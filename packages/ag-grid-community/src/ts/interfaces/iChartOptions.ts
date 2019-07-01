@@ -18,6 +18,7 @@ export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | '
 export enum ChartType {
     GroupedBar,
     StackedBar,
+    NormalizedBar,
     Line,
     Scatter,
     Pie,
@@ -171,6 +172,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     yFieldNames?: string[];
 
     grouped?: boolean;
+    normalizedTo?: number;
 
     fills?: string[];
     strokes?: string[];

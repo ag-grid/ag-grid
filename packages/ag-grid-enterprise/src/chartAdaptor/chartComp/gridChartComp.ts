@@ -144,6 +144,8 @@ export class GridChartComp extends Component {
                 return new BarChartProxy(chartOptions);
             case ChartType.StackedBar:
                 return new BarChartProxy(chartOptions);
+            case ChartType.NormalizedBar:
+                return new BarChartProxy(chartOptions);
             case ChartType.Pie:
                 return new PieChartProxy(chartOptions);
             case ChartType.Doughnut:
