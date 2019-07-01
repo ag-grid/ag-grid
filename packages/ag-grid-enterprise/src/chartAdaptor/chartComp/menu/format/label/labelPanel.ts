@@ -96,17 +96,32 @@ export class LabelPanel extends Component {
     private initFontSelects() {
         type FontOptions = 'family' | 'weight' | 'size';
 
-        const initSelect = (property: FontOptions, input: AgSelect, values: string[]) => {
+        const initSelect = (property: FontOptions, input: AgSelect, values: string[], sortedValues: boolean) => {
 
             const fontValue = this.params.initialFont[property];
 
             let initialValue = values[0];
             if (fontValue) {
-                const unknownUserProvidedFont = values.indexOf(`${fontValue}`) < 0;
+                const fontValueAsStr = `${fontValue}`;
+                const lowerCaseFontValue = _.exists(fontValueAsStr) ? fontValueAsStr.toLowerCase() : '';
+                const lowerCaseValues = values.map(value => value.toLowerCase());
+
+                // check for known font values using lowercase
+                const valueIndex = lowerCaseValues.indexOf(lowerCaseFontValue);
+                const unknownUserProvidedFont = valueIndex < 0;
+
                 if (unknownUserProvidedFont) {
-                    values.push(`${fontValue}`);
+                    const capitalisedFontValue = _.capitalise(fontValueAsStr);
+
+                    // add user provided font to list
+                    values.push(capitalisedFontValue);
+
+                    if (sortedValues) values.sort();
+
+                    initialValue = capitalisedFontValue;
+                } else {
+                    initialValue = values[valueIndex];
                 }
-                initialValue = `${fontValue}`;
             }
 
             const options = values.map(value => {
@@ -138,17 +153,17 @@ export class LabelPanel extends Component {
             'Palatino, serif',
             'Times New Roman, serif',
             'Times, serif',
-            // 'Verdana, sans-serif',
+            'Verdana, sans-serif',
          ];
 
-        initSelect('family', this.labelFontFamilySelect, fonts);
+        initSelect('family', this.labelFontFamilySelect, fonts, true);
 
         const weights = ['Normal', 'Bold', 'Italic', 'Bold Italic'];
-        initSelect('weight', this.labelFontWeightSelect, weights);
+        initSelect('weight', this.labelFontWeightSelect, weights, false);
 
-        const sizes = ['8', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30'];
+        const sizes = ['8', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30', '32', '34', '36'];
         this.labelFontSizeSelect.setLabel('Size');
-        initSelect('size', this.labelFontSizeSelect, sizes);
+        initSelect('size', this.labelFontSizeSelect, sizes, true);
     }
 
     private initFontColorPicker() {
