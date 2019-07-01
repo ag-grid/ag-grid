@@ -10,8 +10,8 @@ export class ChartPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="chartGroup">               
-                <ag-input-text-area ref="titleInput"></ag-input-text-area>                                      
+            <ag-group-component ref="chartGroup">
+                <ag-input-text-area ref="titleInput"></ag-input-text-area>
             </ag-group-component>
         <div>`;
 
@@ -91,6 +91,7 @@ export class ChartPanel extends Component implements ExpandablePanel {
 
         this.titleInput
             .setLabel('Title')
+            .setLabelAlignment('top')
             .setLabelWidth('flex')
             .setValue(title)
             .onValueChange(newValue => {

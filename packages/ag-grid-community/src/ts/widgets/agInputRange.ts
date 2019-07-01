@@ -1,4 +1,8 @@
-import { IInputField, AgAbstractInputField } from "./agAbstractInputField";
+import {
+    IInputField,
+    AgAbstractInputField
+} from "./agAbstractInputField";
+import { _ } from "../utils";
 
 interface IInputRange extends IInputField {
     min?: number;
@@ -42,6 +46,17 @@ export class AgInputRange extends AgAbstractInputField<string> {
         }
 
         this.setStep(step || 1);
+    }
+
+    protected addInputListeners() {
+        const isIE = _.isBrowserIE();
+        const eventName = isIE ? 'change' : 'input';
+
+        this.addDestroyableEventListener(this.eInput, eventName, (e) => {
+            const value = e.target.value;
+
+            this.setValue(value);
+        });
     }
 
     public setMinValue(value: number): this {

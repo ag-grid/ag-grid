@@ -19,6 +19,7 @@ export abstract class AgAbstractLabel extends Component {
 
     @PostConstruct
     protected postConstruct() {
+        _.addCssClass(this.getGui(), 'ag-labeled');
         this.setLabelAlignment(this.labelAlignment);
         this.refreshLabel();
     }
