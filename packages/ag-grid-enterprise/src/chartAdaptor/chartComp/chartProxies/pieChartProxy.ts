@@ -58,7 +58,7 @@ export class PieChartProxy extends ChartProxy {
         }
 
         if (!existingSeries) {
-            pieChart.addSeries(pieSeries)
+            pieChart.addSeries(pieSeries);
         }
     }
 
@@ -94,7 +94,10 @@ export class PieChartProxy extends ChartProxy {
                 calloutLength: 10,
                 labelEnabled: false,
                 labelOffset: 3,
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelMinAngle: 20,
                 tooltipEnabled: true,

@@ -87,7 +87,10 @@ export class LineChartProxy extends ChartProxy {
             },
             xAxis: {
                 type: 'category',
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelRotation: 45,
                 tickSize: 6,
@@ -102,7 +105,10 @@ export class LineChartProxy extends ChartProxy {
             },
             yAxis: {
                 type: 'number',
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 tickSize: 6,
                 tickWidth: 1,
