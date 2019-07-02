@@ -94,12 +94,10 @@ function processChartOptions(params) {
     var xAxis = options.xAxis;
     xAxis.lineWidth = 2;
     xAxis.lineColor = 'gray';
-
     xAxis.tickWidth = 2;
     xAxis.tickSize = 10;
     xAxis.tickPadding = 10;
     xAxis.tickColor = 'gray';
-
     xAxis.labelFontStyle = 'italic';
     xAxis.labelFontWeight = 'bold';
     xAxis.labelFontSize = 15;

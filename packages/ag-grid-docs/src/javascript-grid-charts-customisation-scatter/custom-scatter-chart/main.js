@@ -14,12 +14,12 @@ function createRowData() {
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
     let rowData = [];
-    countries.forEach( function(country, index) {
+    countries.forEach(function (country, index) {
         rowData.push({
-                country: country,
-                gold: Math.floor(((index+1 / 7) * 333)%100),
-                silver: Math.floor(((index+1 / 3) * 555)%100),
-                bronze: Math.floor(((index+1 / 7.3) * 777)%100),
+            country: country,
+            gold: Math.floor(((index + 1 / 7) * 333) % 100),
+            silver: Math.floor(((index + 1 / 3) * 555) % 100),
+            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
         });
     });
     return rowData;
@@ -47,7 +47,7 @@ function processChartOptions(params) {
     // we are only interested in processing scatter type.
     // so if user changes the type using the chart control,
     // we ignore it.
-    if (params.type!=='scatter') {
+    if (params.type !== 'scatter') {
         console.log('chart type is ' + params.type + ', making no changes.');
         return params.options;
     }
@@ -68,24 +68,28 @@ function processChartOptions(params) {
     legend.markerPadding = 10;
     legend.itemPaddingX = 120;
     legend.itemPaddingY = 20;
-    legend.labelFont = 'bold 18px Arial, sans-serif';
+    legend.labelFontStyle = 'italic';
+    legend.labelFontWeight = 'bold';
+    legend.labelFontSize = 18;
+    legend.labelFontFamily = 'Arial, sans-serif';
     legend.labelColor = '#555';
 
     // changes to the xAxis
     var xAxis = options.xAxis;
     xAxis.lineWidth = 2;
     xAxis.lineColor = 'gray';
-
     xAxis.tickWidth = 2;
     xAxis.tickSize = 10;
     xAxis.tickPadding = 10;
     xAxis.tickColor = 'gray';
-
-    xAxis.labelFont = 'bold 15px Arial, sans-serif';
+    xAxis.labelFontStyle = 'italic';
+    xAxis.labelFontWeight = 'bold';
+    xAxis.labelFontSize = 15;
+    xAxis.labelFontFamily = 'Arial, sans-serif';
     xAxis.labelColor = '#de7b73';
     xAxis.labelRotation = 20;
-    xAxis.labelFormatter = function(value) {
-        return value === 'United Kingdom' ? 'UK' : '(' + String(value) + ')';
+    xAxis.labelFormatter = function (params) {
+        return params.value === 'United Kingdom' ? 'UK' : '(' + String(params.value) + ')';
     };
     xAxis.gridStyle = [
         {
@@ -101,11 +105,14 @@ function processChartOptions(params) {
     yAxis.tickSize = 10;
     yAxis.tickPadding = 10;
     yAxis.tickColor = 'gray';
-    yAxis.labelFont = 'bold 15px Arial, sans-serif';
+    yAxis.labelFontStyle = 'italic';
+    yAxis.labelFontWeight = 'bold';
+    yAxis.labelFontSize = 15;
+    yAxis.labelFontFamily = 'Arial, sans-serif';
     yAxis.labelColor = '#de7b73';
     yAxis.labelRotation = 20;
-    yAxis.labelFormatter = function(value) {
-        return value.toString().toUpperCase();
+    yAxis.labelFormatter = function (params) {
+        return params.value.toString().toUpperCase();
     };
     yAxis.gridStyle = [
         {
@@ -128,12 +135,12 @@ function processChartOptions(params) {
     seriesDefaults.markerSize = 12;
     seriesDefaults.markerStrokeWidth = 4;
 
-    seriesDefaults.tooltipRenderer = function(params) {
+    seriesDefaults.tooltipRenderer = function (params) {
         var xField = params.xField;
         var yField = params.yField;
         var x = params.datum[xField];
         var y = params.datum[yField];
-        return '<b>'+xField.toUpperCase()+':</b> ' + x + '<br/><b>'+yField.toUpperCase()+':</b> '+y;
+        return '<b>' + xField.toUpperCase() + ':</b> ' + x + '<br/><b>' + yField.toUpperCase() + ':</b> ' + y;
     };
 
     return options;
@@ -157,7 +164,7 @@ function onGridReady(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
