@@ -121,6 +121,7 @@ export class Rect extends Shape {
             if (this.crisp || this.sizing === RectSizing.Border) {
                 this.dirtyPath = true;
             } else {
+                this.effectiveStrokeWidth = value;
                 this.dirty = true;
             }
         }
