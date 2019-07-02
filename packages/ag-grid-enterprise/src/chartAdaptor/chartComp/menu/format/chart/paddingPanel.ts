@@ -56,7 +56,6 @@ export class PaddingPanel extends Component {
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => {
                     this.chart.padding[property] = newValue;
-                    this.chart.performLayout();
                 });
         };
 

@@ -148,7 +148,6 @@ export class LegendPanel extends Component implements ExpandablePanel {
             if (font.weight) this.chart.legend.labelFontWeight = font.weight;
             if (font.size) this.chart.legend.labelFontSize = font.size;
             if (font.color) this.chart.legend.labelColor = font.color;
-            this.chart.performLayout();
         };
 
         const params: LabelPanelParams = {

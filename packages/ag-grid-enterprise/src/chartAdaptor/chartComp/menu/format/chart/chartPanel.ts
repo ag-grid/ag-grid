@@ -103,7 +103,6 @@ export class ChartPanel extends Component implements ExpandablePanel {
                 const currentCaption = this.chart.title as Caption;
                 currentCaption.text = newValue;
                 this.chart.title = currentCaption;
-                this.chart.performLayout();
 
                 // only show font panel when title exists
                 labelPanelComp.setEnabled(_.exists(this.chart.title.text));
