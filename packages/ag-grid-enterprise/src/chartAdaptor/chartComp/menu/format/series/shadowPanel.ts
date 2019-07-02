@@ -68,7 +68,6 @@ export class ShadowPanel extends Component {
                     }
                 }
             });
-            this.chart.performLayout();
         };
 
         const enabled = this.series.some((series: BarSeries | PieSeries) => series.shadow != undefined);
