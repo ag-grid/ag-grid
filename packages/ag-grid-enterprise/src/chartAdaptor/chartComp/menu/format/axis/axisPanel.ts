@@ -4,14 +4,17 @@ import {
     Component,
     PostConstruct,
     RefSelector,
+    Autowired,
     AgColorPicker,
-    AgSlider, AgAngleSelect
+    AgSlider,
+    AgAngleSelect,
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import {LabelPanelParams, LabelPanel, LabelFont} from "../label/labelPanel";
 import {ExpandablePanel} from "../chartFormatingPanel";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class AxisPanel extends Component implements ExpandablePanel {
 
@@ -26,6 +29,8 @@ export class AxisPanel extends Component implements ExpandablePanel {
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
     @RefSelector('axisLineWidthSlider') private axisLineWidthSlider: AgSlider;
     @RefSelector('axisColorInput') private axisColorInput: AgColorPicker;
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
@@ -58,12 +63,12 @@ export class AxisPanel extends Component implements ExpandablePanel {
 
     private initAxis() {
         this.axisGroup
-            .setTitle('Axis')
+            .setTitle(this.chartTranslator.translate('axis'))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         this.axisColorInput
-            .setLabel("Color")
+            .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
             .setValue(`${this.chart.xAxis.lineColor}`)
@@ -74,7 +79,7 @@ export class AxisPanel extends Component implements ExpandablePanel {
             });
 
         this.axisLineWidthSlider
-            .setLabel('Thickness')
+            .setLabel(this.chartTranslator.translate('thickness'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue(`${this.chart.xAxis.lineWidth}`)
@@ -160,11 +165,11 @@ export class AxisPanel extends Component implements ExpandablePanel {
 
         // add x-axis label rotation input to label panel
         const updateXRotation = (newValue: number) => this.chart.xAxis.labelRotation = newValue;
-        createAngleComp(`X Rotation ${degreesSymbol}`, this.chart.xAxis.labelRotation, updateXRotation);
+        createAngleComp(`${this.chartTranslator.translate('xRotation')} ${degreesSymbol}`, this.chart.xAxis.labelRotation, updateXRotation);
 
         // add y-axis label rotation input to label panel
         const updateYRotation = (newValue: number) => this.chart.yAxis.labelRotation = newValue;
-        createAngleComp(`Y Rotation ${degreesSymbol}`, this.chart.yAxis.labelRotation, updateYRotation);
+        createAngleComp(`${this.chartTranslator.translate('yRotation')} ${degreesSymbol}`, this.chart.yAxis.labelRotation, updateYRotation);
     }
 
     private destroyActivePanels(): void {

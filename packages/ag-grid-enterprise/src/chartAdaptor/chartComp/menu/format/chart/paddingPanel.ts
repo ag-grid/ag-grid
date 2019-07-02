@@ -1,6 +1,7 @@
-import {AgGroupComponent, AgSlider, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartController} from "../../../chartController";
 import {Chart} from "../../../../../charts/chart/chart";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class PaddingPanel extends Component {
 
@@ -20,8 +21,10 @@ export class PaddingPanel extends Component {
     @RefSelector('paddingBottomSlider') private paddingBottomSlider: AgSlider;
     @RefSelector('paddingLeftSlider') private paddingLeftSlider: AgSlider;
 
-    private readonly chartController: ChartController;
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+
     private chart: Chart;
+    private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
@@ -41,7 +44,7 @@ export class PaddingPanel extends Component {
 
     private initGroup(): void {
         this.chartPaddingGroup
-            .setTitle('Padding')
+            .setTitle(this.chartTranslator.translate('padding'))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
     }
@@ -49,8 +52,8 @@ export class PaddingPanel extends Component {
     private initChartPaddingItems(): void {
         type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
 
-        const initInput = (property: ChartPaddingProperty, input: AgSlider, label: string, value: string) => {
-            input.setLabel(label)
+        const initInput = (property: ChartPaddingProperty, input: AgSlider, labelKey: string, value: string) => {
+            input.setLabel(this.chartTranslator.translate(labelKey))
                 .setValue(value)
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
@@ -61,9 +64,9 @@ export class PaddingPanel extends Component {
                 });
         };
 
-        initInput('top', this.paddingTopSlider, 'Top', `${this.chart.padding.top}`);
-        initInput('right', this.paddingRightSlider, 'Right', `${this.chart.padding.right}`);
-        initInput('bottom', this.paddingBottomSlider, 'Bottom', `${this.chart.padding.bottom}`);
-        initInput('left', this.paddingLeftSlider, 'Left', `${this.chart.padding.left}`);
+        initInput('top', this.paddingTopSlider, 'top', `${this.chart.padding.top}`);
+        initInput('right', this.paddingRightSlider, 'right', `${this.chart.padding.right}`);
+        initInput('bottom', this.paddingBottomSlider, 'bottom', `${this.chart.padding.bottom}`);
+        initInput('left', this.paddingLeftSlider, 'left', `${this.chart.padding.left}`);
     }
 }

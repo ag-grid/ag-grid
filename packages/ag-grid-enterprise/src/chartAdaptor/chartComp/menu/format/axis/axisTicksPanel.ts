@@ -1,13 +1,14 @@
 import {
     AgColorPicker,
     AgGroupComponent,
-    AgSlider,
+    AgSlider, Autowired,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class AxisTicksPanel extends Component {
 
@@ -26,6 +27,8 @@ export class AxisTicksPanel extends Component {
     @RefSelector('axisTicksWidthSlider') private axisTicksWidthSlider: AgSlider;
     @RefSelector('axisTicksSizeSlider') private axisTicksSizeSlider: AgSlider;
     @RefSelector('axisTicksPaddingSlider') private axisTicksPaddingSlider: AgSlider;
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private readonly chartController: ChartController;
     private chart: CartesianChart;
@@ -47,12 +50,12 @@ export class AxisTicksPanel extends Component {
 
     private initAxisTicks() {
         this.axisTicksGroup
-            .setTitle('Ticks')
+            .setTitle(this.chartTranslator.translate('ticks'))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
         this.axisTicksColorPicker
-            .setLabel("Color")
+            .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
             .setValue(`${this.chart.xAxis.lineColor}`)
@@ -77,12 +80,12 @@ export class AxisTicksPanel extends Component {
         };
 
         const initialWidth = `${this.chart.xAxis.tickWidth}`;
-        initInput('tickWidth', this.axisTicksWidthSlider, 'Width', initialWidth, 10);
+        initInput('tickWidth', this.axisTicksWidthSlider, this.chartTranslator.translate('width'), initialWidth, 10);
 
         const initialLength = `${this.chart.xAxis.tickSize}`;
-        initInput('tickSize', this.axisTicksSizeSlider, 'Length', initialLength, 30);
+        initInput('tickSize', this.axisTicksSizeSlider, this.chartTranslator.translate('length'), initialLength, 30);
 
         const initialPadding = `${this.chart.xAxis.tickPadding}`;
-        initInput('tickPadding', this.axisTicksPaddingSlider, 'Padding', initialPadding, 30);
+        initInput('tickPadding', this.axisTicksPaddingSlider, this.chartTranslator.translate('padding'), initialPadding, 30);
     }
 }

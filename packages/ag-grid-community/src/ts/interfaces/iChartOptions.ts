@@ -20,7 +20,7 @@ export enum ChartType {
     StackedBar,
     NormalizedBar,
     Line,
-    Scatter,
+    // Scatter,
     Pie,
     Doughnut
 }
