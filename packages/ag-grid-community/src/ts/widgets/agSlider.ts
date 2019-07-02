@@ -35,7 +35,7 @@ export class AgSlider extends AgAbstractLabel {
         this.addDestroyableEventListener(this.eText, eventChanged, () => {
             const textValue = parseInt(this.eText.getValue(), 10);
             this.eSlider.setValue(textValue.toString(), true);
-            callbackFn(textValue);
+            callbackFn(textValue || 0);
         });
 
         this.addDestroyableEventListener(this.eSlider, eventChanged, () => {

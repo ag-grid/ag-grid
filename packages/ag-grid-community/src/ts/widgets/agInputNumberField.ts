@@ -13,7 +13,9 @@ export class AgInputNumberField extends AgInputTextField {
         super.postConstruct();
         this.addDestroyableEventListener(this.eInput, 'blur', () => {
             const value = this.normalizeValue(this.eInput.value);
-            this.eInput.value = value;
+            if (this.value !== value) {
+                this.setValue(value);
+            }
         });
     }
 
@@ -95,6 +97,9 @@ export class AgInputNumberField extends AgInputTextField {
 
     public setValue(value: string, silent?: boolean): this {
         value = this.adjustPrecision(value);
+        const normalizedValue = this.normalizeValue(value);
+
+        if (value != normalizedValue) { return this; }
 
         return super.setValue(value, silent);
     }
