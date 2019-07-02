@@ -55,8 +55,8 @@ export class PolarChart extends Chart {
         shrinkRect.y += captionAutoPadding;
         shrinkRect.height -= captionAutoPadding;
 
-        const legendAutoPadding = this.legendAutoPadding;
-        if (this.legend.data.length) {
+        if (this.legend.enabled && this.legend.data.length) {
+            const legendAutoPadding = this.legendAutoPadding;
             shrinkRect.x += legendAutoPadding.left;
             shrinkRect.y += legendAutoPadding.top;
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
