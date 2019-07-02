@@ -159,7 +159,7 @@ export class Rect extends Shape {
         if (this.sizing === RectSizing.Border) {
             const halfWidth = width / 2;
             const halfHeight = height / 2;
-            const maxStrokeWidth = Math.min(halfWidth, halfHeight);
+            const maxStrokeWidth = Math.floor(Math.min(halfWidth, halfHeight));
 
             if (effectiveStrokeWidth > maxStrokeWidth) {
                 this.effectiveStrokeWidth = effectiveStrokeWidth = maxStrokeWidth;
