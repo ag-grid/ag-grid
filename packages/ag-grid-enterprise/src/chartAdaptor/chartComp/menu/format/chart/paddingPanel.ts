@@ -55,7 +55,9 @@ export class PaddingPanel extends Component {
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => {
-                    this.chart.padding[property] = newValue;
+                    const padding = this.chart.padding;
+                    padding[property] = newValue;
+                    this.chart.padding = padding;
                 });
         };
 
