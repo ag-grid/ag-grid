@@ -1,10 +1,11 @@
 import { RefSelector } from "./componentAnnotations";
 import { AgInputRange } from "./agInputRange";
-import { AgLabel, LabelAlignment } from "./agLabel";
+import { AgAbstractLabel, LabelAlignment } from "./agAbstractLabel";
 import { AgInputNumberField } from "./agInputNumberField";
+import { AgAbstractField } from "./agAbstractField";
 import { _ } from "../utils";
 
-export class AgSlider extends AgLabel {
+export class AgSlider extends AgAbstractLabel {
     private static TEMPLATE =
         `<div class="ag-slider">
             <label ref="eLabel"></label>
@@ -24,17 +25,22 @@ export class AgSlider extends AgLabel {
         super(AgSlider.TEMPLATE);
     }
 
-    public onInputChange(callbackFn: (newValue: number) => void) {
-        this.addDestroyableEventListener(this.eText.getInputElement(), 'input', () => {
+    protected postConstruct() {
+        super.postConstruct();
+        this.setMinValue(0);
+    }
+
+    public onValueChange(callbackFn: (newValue: number) => void) {
+        const eventChanged = AgAbstractField.EVENT_CHANGED;
+        this.addDestroyableEventListener(this.eText, eventChanged, () => {
             const textValue = parseInt(this.eText.getValue(), 10);
-            this.eSlider.setValue(textValue.toString());
-            callbackFn(textValue);
+            this.eSlider.setValue(textValue.toString(), true);
+            callbackFn(textValue || 0);
         });
 
-        const sliderEvent = _.isBrowserIE() ? 'change' : 'input';
-        this.addDestroyableEventListener(this.eSlider.getInputElement(), sliderEvent , () => {
+        this.addDestroyableEventListener(this.eSlider, eventChanged, () => {
             const sliderValue = this.eSlider.getValue();
-            this.eText.setValue(sliderValue);
+            this.eText.setValue(sliderValue, true);
             callbackFn(parseFloat(sliderValue));
         });
 
@@ -51,23 +57,33 @@ export class AgSlider extends AgLabel {
         return this;
     }
 
-    public setValue(value: string): this {
-        if (this.eText.getValue() === value) {
-            return this;
-        }
-
-        this.eText.setValue(value);
-        this.eSlider.setValue(value);
+    public setMinValue(minValue: number): this {
+        this.eSlider.setMinValue(minValue);
+        this.eText.setMin(minValue);
 
         return this;
     }
 
     public setMaxValue(maxValue: number): this {
         this.eSlider.setMaxValue(maxValue);
+        this.eText.setMax(maxValue);
         return this;
     }
 
     public getValue(): string {
         return this.eText.getValue();
+    }
+
+    public setValue(value: string): this {
+        if (this.getValue() === value) {
+            return this;
+        }
+
+        this.eText.setValue(value, true);
+        this.eSlider.setValue(value, true);
+
+        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+
+        return this;
     }
 }

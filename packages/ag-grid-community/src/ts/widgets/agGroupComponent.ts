@@ -1,9 +1,9 @@
-import { _ } from "../utils";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgCheckbox } from "./agCheckbox";
+import { _ } from "../utils";
 
 type GroupItem = Component | HTMLElement;
 
@@ -135,6 +135,13 @@ export class AgGroupComponent extends Component {
         this.setOpenClosedIcons();
         _.addOrRemoveCssClass(eGui, 'ag-collapsed', !expanded);
 
+        if (this.expanded) {
+            const event = {
+                type: 'expanded',
+            };
+            this.dispatchEvent(event);
+        }
+
         return this;
     }
 
@@ -174,7 +181,7 @@ export class AgGroupComponent extends Component {
     }
 
     public onEnableChange(callbackFn: (enabled: boolean) => void): this {
-        this.cbGroupEnabled.onSelectionChange((newSelection: boolean) => {
+        this.cbGroupEnabled.onValueChange((newSelection: boolean) => {
             this.setEnabled(newSelection, true);
             callbackFn(newSelection);
         });

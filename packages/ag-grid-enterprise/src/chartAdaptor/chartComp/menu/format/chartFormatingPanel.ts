@@ -1,19 +1,25 @@
-import { _, ChartType, Component, PostConstruct } from "ag-grid-community";
+import {_, ChartType, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
 import { BarSeriesPanel } from "./series/barSeriesPanel";
 import { AxisPanel } from "./axis/axisPanel";
 import { LineSeriesPanel } from "./series/lineSeriesPanel";
 import { PieSeriesPanel } from "./series/pieSeriesPanel";
-import { PaddingPanel } from "./padding/paddingPanel";
+import {ChartPanel} from "./chart/chartPanel";
+
+export interface ExpandablePanel {
+    expandPanel(expanded: boolean): void;
+    setExpandedCallback(expandedCallback: () => void): void;
+}
 
 export class ChartFormattingPanel extends Component {
 
     public static TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
 
-    private readonly chartController: ChartController;
+    @RefSelector('formatPanelWrapper') private formatPanelWrapper: HTMLElement;
 
     private activePanels: Component[] = [];
+    private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
@@ -49,29 +55,69 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createBarChartPanel(): void {
-        this.addComponent(new LegendPanel(this.chartController));
-        this.addComponent(new BarSeriesPanel(this.chartController));
-        this.addComponent(new AxisPanel(this.chartController));
-        this.addComponent(new PaddingPanel(this.chartController));
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
+        const legendPanel = new LegendPanel(this.chartController);
+        this.addComponent(legendPanel);
+
+        const barSeriesPanel = new BarSeriesPanel(this.chartController);
+        this.addComponent(barSeriesPanel);
+
+        const axisPanel = new AxisPanel(this.chartController);
+        this.addComponent(axisPanel);
+
+        this.addExpandedCallback(chartPanel, [legendPanel, barSeriesPanel, axisPanel]);
+        this.addExpandedCallback(legendPanel, [barSeriesPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(barSeriesPanel, [legendPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(axisPanel, [legendPanel, barSeriesPanel, chartPanel]);
     }
 
     private createLineChartPanel(): void {
-        this.addComponent(new LegendPanel(this.chartController));
-        this.addComponent(new LineSeriesPanel(this.chartController));
-        this.addComponent(new AxisPanel(this.chartController));
-        this.addComponent(new PaddingPanel(this.chartController));
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
+        const legendPanel = new LegendPanel(this.chartController);
+        this.addComponent(legendPanel);
+
+        const lineSeriesPanel = new LineSeriesPanel(this.chartController);
+        this.addComponent(lineSeriesPanel);
+
+        const axisPanel = new AxisPanel(this.chartController);
+        this.addComponent(axisPanel);
+
+        this.addExpandedCallback(chartPanel, [legendPanel, lineSeriesPanel, axisPanel]);
+        this.addExpandedCallback(legendPanel, [lineSeriesPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(lineSeriesPanel, [legendPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(axisPanel, [legendPanel, lineSeriesPanel, chartPanel]);
     }
 
     private createPieChartPanel(): void {
-        this.addComponent(new LegendPanel(this.chartController));
-        this.addComponent(new PieSeriesPanel(this.chartController));
-        this.addComponent(new PaddingPanel(this.chartController));
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
+        const legendPanel = new LegendPanel(this.chartController);
+        this.addComponent(legendPanel);
+
+        const pieSeriesPanel = new PieSeriesPanel(this.chartController);
+        this.addComponent(pieSeriesPanel);
+
+        this.addExpandedCallback(chartPanel, [legendPanel, pieSeriesPanel]);
+        this.addExpandedCallback(legendPanel, [pieSeriesPanel, chartPanel]);
+        this.addExpandedCallback(pieSeriesPanel, [legendPanel, chartPanel]);
     }
 
     private addComponent(component: Component): void {
         this.getContext().wireBean(component);
         this.getGui().appendChild(component.getGui());
         this.activePanels.push(component);
+    }
+
+    private addExpandedCallback<T extends Component & ExpandablePanel>(groupPanel: T, subPanels: ExpandablePanel[]) {
+        groupPanel.setExpandedCallback(() => {
+            subPanels.forEach(subPanel => subPanel.expandPanel(false));
+            groupPanel.getGui().scrollIntoView({ behavior: 'smooth'});
+        });
     }
 
     private destroyActivePanels(): void {

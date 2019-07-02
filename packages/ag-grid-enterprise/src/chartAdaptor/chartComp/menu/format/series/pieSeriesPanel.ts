@@ -11,8 +11,9 @@ import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
 import { ShadowPanel } from "./shadowPanel";
 import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
 import {CalloutPanel} from "./calloutPanel";
+import {ExpandablePanel} from "../chartFormatingPanel";
 
-export class PieSeriesPanel extends Component {
+export class PieSeriesPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>   
@@ -50,6 +51,14 @@ export class PieSeriesPanel extends Component {
         this.initShadowPanel();
     }
 
+    public expandPanel(expanded: boolean): void {
+        this.seriesGroup.toggleGroupExpand(expanded);
+    }
+
+    public setExpandedCallback(expandedCallback: () => void) {
+        this.addDestroyableEventListener(this.seriesGroup, 'expanded', expandedCallback);
+    }
+
     private initGroup() {
         this.seriesGroup
             .setTitle('Series')
@@ -66,7 +75,7 @@ export class PieSeriesPanel extends Component {
             .setLabelWidth('flex')
             .setInputWidth(40)
             .setValue(selected)
-            .onSelectionChange(newSelection => {
+            .onValueChange(newSelection => {
                 this.series.forEach(s => s.tooltipEnabled = newSelection);
             });
     }
@@ -77,7 +86,7 @@ export class PieSeriesPanel extends Component {
             .setMaxValue(30)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
-            .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
+            .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
     private initLabelPanel() {

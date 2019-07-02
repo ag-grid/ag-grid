@@ -1,4 +1,5 @@
-import { IInputField, AgInputField } from "./agInputField";
+import { IInputField, AgAbstractInputField } from "./agAbstractInputField";
+import { _ } from "../utils";
 
 interface IInputRange extends IInputField {
     min?: number;
@@ -6,11 +7,10 @@ interface IInputRange extends IInputField {
     step?: number;
 }
 
-export class AgInputRange extends AgInputField {
+export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string> {
 
-    protected eInput: HTMLInputElement;
     protected className = 'ag-range-field';
-    protected inputTag = 'input';
+    protected displayTag = 'input';
     protected inputType = 'range';
     protected config: IInputRange;
 
@@ -21,7 +21,7 @@ export class AgInputRange extends AgInputField {
     constructor(config?: IInputRange) {
         super();
 
-        this.setTemplate(this.TEMPLATE.replace(/%input%/, this.inputTag));
+        this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
 
         if (config) {
             this.config = config;
@@ -42,6 +42,17 @@ export class AgInputRange extends AgInputField {
         }
 
         this.setStep(step || 1);
+    }
+
+    protected addInputListeners() {
+        const isIE = _.isBrowserIE();
+        const eventName = isIE ? 'change' : 'input';
+
+        this.addDestroyableEventListener(this.eInput, eventName, (e) => {
+            const value = e.target.value;
+
+            this.setValue(value);
+        });
     }
 
     public setMinValue(value: number): this {
@@ -68,11 +79,7 @@ export class AgInputRange extends AgInputField {
         return this;
     }
 
-    public getValue(): string {
-        return this.eInput.value;
-    }
-
-    public setValue(value: string): this {
+    public setValue(value: string, silent?: boolean): this {
         if (this.min != null) {
             value = Math.max(parseFloat(value), this.min).toString();
         }
@@ -81,8 +88,10 @@ export class AgInputRange extends AgInputField {
             value = Math.min(parseFloat(value), this.max).toString();
         }
 
+        const ret = super.setValue(value, silent);
+
         this.eInput.value = value;
 
-        return this;
+        return ret;
     }
 }

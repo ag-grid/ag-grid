@@ -18,6 +18,7 @@ export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | '
 export enum ChartType {
     GroupedBar,
     StackedBar,
+    NormalizedBar,
     Line,
     Scatter,
     Pie,
@@ -76,7 +77,10 @@ export interface AxisOptions {
     tickPadding?: number;
     tickColor?: string;
 
-    labelFont?: string;
+    labelFontStyle?: string,
+    labelFontWeight?: string,
+    labelFontSize?: number,
+    labelFontFamily?: string,
     labelColor?: string;
     labelRotation?: number;
     mirrorLabels?: boolean;
@@ -171,6 +175,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     yFieldNames?: string[];
 
     grouped?: boolean;
+    normalizedTo?: number;
 
     fills?: string[];
     strokes?: string[];

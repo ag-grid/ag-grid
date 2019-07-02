@@ -100,7 +100,8 @@ function numberCellFormatter(params) {
     return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 
-function yAxisLabelFormatter(n) {
+function yAxisLabelFormatter(params) {
+    var n = params.value;
     if (n < 1e3) return n;
     if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + "K";
     if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + "M";

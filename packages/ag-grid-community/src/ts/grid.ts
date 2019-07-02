@@ -80,6 +80,7 @@ import { AgGroupComponent } from "./widgets/agGroupComponent";
 import { AgDialog } from "./widgets/agDialog";
 import { AgPanel } from "./widgets/agPanel";
 import { AgInputTextField } from "./widgets/agInputTextField";
+import { AgInputTextArea } from "./widgets/agInputTextArea";
 import { AgSlider } from "./widgets/agSlider";
 import { _ } from "./utils";
 import { AgColorPicker } from "./widgets/agColorPicker";
@@ -88,7 +89,7 @@ import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
-import {DetailRowCompCache} from "./rendering/detailRowCompCache";
+import { DetailRowCompCache } from "./rendering/detailRowCompCache";
 
 export interface GridParams {
     // used by Web Components
@@ -207,6 +208,7 @@ export class Grid {
             { componentName: 'AgRadioButton', theClass: AgRadioButton },
             { componentName: 'AgToggleButton', theClass: AgToggleButton },
             { componentName: 'AgInputTextField', theClass: AgInputTextField},
+            { componentName: 'AgInputTextArea', theClass: AgInputTextArea},
             { componentName: 'AgInputNumberField', theClass: AgInputNumberField},
             { componentName: 'AgInputRange', theClass: AgInputRange},
             { componentName: 'AgSelect', theClass: AgSelect},

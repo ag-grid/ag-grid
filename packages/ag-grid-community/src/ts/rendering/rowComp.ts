@@ -873,7 +873,6 @@ export class RowComp extends Component {
                 res.then(callback);
             }
 
-
             this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);
 

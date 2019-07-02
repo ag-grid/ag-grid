@@ -1,17 +1,16 @@
-import { RefSelector } from "./componentAnnotations";
-import { _ } from "../utils";
 import { AgAbstractInputField, IInputField } from "./agAbstractInputField";
 
-export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string> {
+export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, string> {
 
-    protected className = 'ag-text-field';
-    protected displayTag = 'input';
-    protected inputType = 'text';
+    protected className = 'ag-text-area';
+    protected displayTag = 'textarea';
+    protected inputType = '';
 
     protected config: IInputField;
 
     constructor(config?: IInputField) {
         super();
+
         this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
 
         if (config) {
@@ -22,9 +21,7 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
     public setValue(value: string, silent?: boolean): this {
         const ret = super.setValue(value, silent);
 
-        if (this.eInput.value !== value) {
-            this.eInput.value = value;
-        }
+        this.eInput.value = value;
 
         return ret;
     }

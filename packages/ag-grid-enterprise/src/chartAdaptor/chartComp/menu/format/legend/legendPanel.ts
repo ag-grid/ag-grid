@@ -10,8 +10,9 @@ import {
 import { ChartController } from "../../../chartController";
 import { Chart, LegendPosition } from "../../../../../charts/chart/chart";
 import {LabelPanelParams, LabelFont, LabelPanel} from "../label/labelPanel";
+import {ExpandablePanel} from "../chartFormatingPanel";
 
-export class LegendPanel extends Component {
+export class LegendPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>  
@@ -60,6 +61,14 @@ export class LegendPanel extends Component {
         this.initLabelPanel();
     }
 
+    public expandPanel(expanded: boolean): void {
+        this.legendGroup.toggleGroupExpand(expanded);
+    }
+
+    public setExpandedCallback(expandedCallback: () => void) {
+        this.addDestroyableEventListener(this.legendGroup, 'expanded', expandedCallback);
+    }
+
     private initLegendGroup() {
         this.legendGroup
             .setTitle('Legend')
@@ -76,13 +85,13 @@ export class LegendPanel extends Component {
         this.legendPositionSelect
             .setLabel('Position')
             .setLabelWidth('flex')
-            .setInputWidth(100)
+            .setInputWidth(80)
             .addOptions(positions.map(position => ({
                 value: position,
                 text: _.capitalise(position)
             })))
-            .onInputChange((value) => {
-                this.chart.legendPosition = value
+            .onValueChange((value) => {
+                this.chart.legendPosition = value as LegendPosition;
             })
             .setValue(this.chart.legendPosition);
     }
@@ -93,7 +102,7 @@ export class LegendPanel extends Component {
             .setValue(`${this.chart.legendPadding}`)
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onInputChange(newValue => this.chart.legendPadding = newValue);
+            .onValueChange(newValue => this.chart.legendPadding = newValue);
     }
 
     private initLegendItems() {
@@ -104,7 +113,7 @@ export class LegendPanel extends Component {
                  .setValue(initialValue)
                  .setMaxValue(maxValue)
                  .setTextFieldWidth(45)
-                 .onInputChange(newValue => this.chart.legend[property] = newValue)
+                 .onValueChange(newValue => this.chart.legend[property] = newValue)
         };
 
         const initialMarkerSize = `${this.chart.legend.markerSize}`;

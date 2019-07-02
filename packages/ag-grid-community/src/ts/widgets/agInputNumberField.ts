@@ -1,6 +1,7 @@
 import { AgInputTextField } from "./agInputTextField";
 
 export class AgInputNumberField extends AgInputTextField {
+
     protected className = 'ag-number-field';
     protected inputType = 'number';
     private precision: number | undefined;
@@ -12,12 +13,14 @@ export class AgInputNumberField extends AgInputTextField {
         super.postConstruct();
         this.addDestroyableEventListener(this.eInput, 'blur', () => {
             const value = this.normalizeValue(this.eInput.value);
-            this.eInput.value = value;
+            if (this.value !== value) {
+                this.setValue(value);
+            }
         });
     }
 
     public normalizeValue(value: string): string {
-        if (value === '') { return  '';}
+        if (value === '') { return  ''; }
 
         if (this.precision) {
             value = this.adjustPrecision(value);
@@ -92,9 +95,12 @@ export class AgInputNumberField extends AgInputTextField {
         return this;
     }
 
-    public setValue(value: string): this {
+    public setValue(value: string, silent?: boolean): this {
         value = this.adjustPrecision(value);
+        const normalizedValue = this.normalizeValue(value);
 
-        return super.setValue(value);
+        if (value != normalizedValue) { return this; }
+
+        return super.setValue(value, silent);
     }
 }

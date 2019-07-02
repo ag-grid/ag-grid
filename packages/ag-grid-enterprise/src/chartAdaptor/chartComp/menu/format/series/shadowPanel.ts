@@ -98,15 +98,15 @@ export class ShadowPanel extends Component {
         this.shadowColorPicker
             .setLabel('Color')
             .setLabelWidth('flex')
-            .setWidth(115)
+            .setInputWidth(45)
             .setValue('rgba(0,0,0,0.5)')
-            .onColorChange(updateShadow);
+            .onValueChange(updateShadow);
 
         const initInput = (input: AgSlider, label: string, initialValue: string, maxValue: number) => {
             input.setLabel(label)
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
-                .onInputChange(updateShadow);
+                .onValueChange(updateShadow);
         };
 
         initInput(this.shadowBlurSlider, 'Blur', '5', 20);

@@ -8,7 +8,6 @@ import {
     ColumnRowGroupChangeRequestEvent,
     ColumnValueChangeRequestEvent,
     Component,
-    Context,
     CssClassApplier,
     DragAndDropService,
     DragSource,
@@ -87,7 +86,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
 
-        this.addDestroyableEventListener(this.cbSelect, 'change', this.onCheckboxChanged.bind(this));
+        this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
 
         this.onColumnStateChanged();

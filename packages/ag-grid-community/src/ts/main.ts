@@ -196,10 +196,12 @@ export { IGetRowsParams, IDatasource } from "./rowModels/iDatasource";
 export { StylingService } from "./styling/stylingService";
 
 // widgets
+export { AgAbstractField } from "./widgets/agAbstractField";
 export { AgCheckbox } from "./widgets/agCheckbox";
 export { AgRadioButton } from "./widgets/agRadioButton";
 export { AgToggleButton } from "./widgets/agToggleButton";
 export { AgInputTextField } from "./widgets/agInputTextField";
+export { AgInputTextArea } from "./widgets/agInputTextArea";
 export { AgInputNumberField } from "./widgets/agInputNumberField";
 export { AgInputRange } from "./widgets/agInputRange";
 export { AgSelect } from "./widgets/agSelect";

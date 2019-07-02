@@ -57,9 +57,14 @@ interface BarChartOptions {
         itemPaddingX?: number;
         // The amount of vertical padding between legend items. Defaults to `8`.
         itemPaddingY?: number;
-        // The font to be used by the legend's labels, in the CSS `font` property format.
-        // Defaults to `12px Verdana, sans-serif`.
-        labelFont?: string;
+        // The font style to be used by legend's labels. For example, 'italic'. Not used by default.
+        labelFontStyle?: string;
+        // The font weight to be used by legend's labels. For example, 'bold'. Not used by default.
+        labelFontWeight?: string;
+        // The font size to be used by legend's labels. Defaults to `12`.
+        labelFontSize?: number;
+        // The font family to be used by legend's labels. Defaults to `Verdana, sans-serif`.
+        labelFontFamily?: string;
         // The color to be used by the legend's labels. Default depends on ag-Grid theme used
         labelColor?: string;
     };
@@ -79,8 +84,14 @@ interface BarChartOptions {
 
         // Whether to show the labels for bars (only applies to the stacked bars).
         labelEnabled?: boolean;
-        // The font to be used by the bar labels. Defaults to `12px Verdana, sans-serif`.
-        labelFont?: string;
+        // The font style to be used by bar labels. For example, 'italic'. Not used by default.
+        labelFontStyle?: string;
+        // The font weight to be used by bar labels. For example, 'bold'. Not used by default.
+        labelFontWeight?: string;
+        // The font size to be used by bar labels. Defaults to `12`.
+        labelFontSize?: number;
+        // The font family to be used by bar labels. Defaults to `Verdana, sans-serif`.
+        labelFontFamily?: string;
         // The color to be used by the bar labels.
         // Depends on whether the light or dark mode is used.
         labelColor?: string;
@@ -112,10 +123,17 @@ interface BarChartOptions {
 interface CaptionOptions {
     // The text to use for the chart's title/subtitle.
     text?: string;
-    // The font to be used by the title/subtitle.
-    // Defaults to `bold 16px Verdana, sans-serif` for the title
-    // and '12px Verdana, sans-serif' for the subtitle.
-    font?: string;
+    // The font style to be used by the title/subtitle. Not used by default.
+    fontStyle?: string;
+    // The font weight to be used by the title/subtitle.
+    // Defaults to `bold` for the title, and `undefined` for the subtitle.
+    fontWeight?: string;
+    // The font size to be used by the title/subtitle.
+    // Defaults to `16` for the title and `12` for the subtitle.
+    fontSize?: number;
+    // The font family to be used by the title/subtitle.
+    // Defaults to `Verdana, sans-serif` for both.
+    fontFamily?: string;
     // The color of the title/subtitle's text. Defaults to `black`.
     color?: string;
     // Whether to show the title/subtitle or not. Defaults to `true`.
@@ -146,12 +164,18 @@ interface AxisOptions {
     // The color of the axis ticks. Depends on whether the light or dark mode is used.
     tickColor?: string;
 
-    // The font to be used by axis labels. Defaults to `12px Verdana, sans-serif`.
-    labelFont?: string;
+    // The font style to be used by axis labels. For example, 'italic'. Not used by default.
+    labelFontStyle?: string;
+    // The font weight to be used by axis labels. For example, 'bold'. Not used by default.
+    labelFontWeight?: string;
+    // The font size to be used by axis labels. Defaults to `12`.
+    labelFontSize?: number;
+    // The font family to be used by axis labels. Defaults to `Verdana, sans-serif`.
+    labelFontFamily?: string;
     // The color of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
-        // The rotation of the axis labels. Defaults to `45` (degrees), however when no category
-        // is present the default category, i.e. (none), is used with the value  `0`.
+    // The rotation of the axis labels. Defaults to `45` (degrees), however when no category
+    // is present the default category, i.e. (none), is used with the value  `0`.
     labelRotation?: number;
     // The custom formatter function for the axis labels.
     // The value is either a category name or a number. If it's the latter, the number

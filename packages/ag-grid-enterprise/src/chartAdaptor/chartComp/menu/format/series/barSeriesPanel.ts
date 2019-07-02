@@ -5,14 +5,15 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-    AgToggleButton, AgInputNumberField
+    AgToggleButton,
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
 import { ShadowPanel } from "./shadowPanel";
 import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {ExpandablePanel} from "../chartFormatingPanel";
 
-export class BarSeriesPanel extends Component {
+export class BarSeriesPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>   
@@ -53,13 +54,21 @@ export class BarSeriesPanel extends Component {
         this.initShadowPanel();
     }
 
+    public expandPanel(expanded: boolean) {
+        this.seriesGroup.toggleGroupExpand(expanded);
+    }
+
+    public setExpandedCallback(expandedCallback: () => void) {
+        this.addDestroyableEventListener(this.seriesGroup, 'expanded', expandedCallback);
+    }
+
     private initSeriesStrokeWidth() {
         this.seriesStrokeWidthSlider
             .setLabel('Stroke Width')
             .setMaxValue(20)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
-            .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
+            .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
     private initSeriesTooltips() {
@@ -71,7 +80,7 @@ export class BarSeriesPanel extends Component {
             .setLabelWidth('flex')
             .setInputWidth(40)
             .setValue(selected)
-            .onSelectionChange(newSelection => {
+            .onValueChange(newSelection => {
                 this.series.forEach(s => s.tooltipEnabled = newSelection);
             });
     }
@@ -107,16 +116,20 @@ export class BarSeriesPanel extends Component {
         this.getContext().wireBean(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
-        const labelOffsetInput = new AgInputNumberField()
-            .setLabel('Offset')
-            .setInputWidth(40)
-            .setLabelWidth("flex")
-            .setValue(`${this.series[0].labelOffset}`)
-            .onInputChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
 
-        this.getContext().wireBean(labelOffsetInput);
-        labelPanelComp.addCompToPanel(labelOffsetInput);
-        this.activePanels.push(labelOffsetInput);
+        const labelOffsetSlider = new AgSlider();
+        this.getContext().wireBean(labelOffsetSlider);
+
+        labelOffsetSlider
+            .setLabel('Offset')
+            .setValue(`${this.series[0].labelOffset}`)
+            .setMinValue(-100)
+            .setMaxValue(100)
+            .setTextFieldWidth(45)
+            .onValueChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
+
+        labelPanelComp.addCompToPanel(labelOffsetSlider);
+        this.activePanels.push(labelOffsetSlider);
 
         this.seriesGroup.addItem(labelPanelComp);
     }

@@ -1,8 +1,8 @@
-import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
-import {RowNode} from "../entities/rowNode";
-import {Column} from "../entities/column";
-import {Autowired, Bean, PostConstruct, PreDestroy} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
+import { RowNode } from "../entities/rowNode";
+import { Column } from "../entities/column";
+import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 
 /**
  * For Master Detail, it is required to keep components between expanding & collapsing parents.
@@ -36,7 +36,7 @@ export class DetailRowCompCache {
             return;
         }
 
-        let item = this.getCacheItem(rowNode, true);
+        const item = this.getCacheItem(rowNode, true);
 
         // put the comp in the right location of the item.
         // we also destroy any previous comp - this should never happen
@@ -58,17 +58,17 @@ export class DetailRowCompCache {
                 break;
         }
 
-        this.cacheItems.sort( (a: CacheItem, b: CacheItem) => {
+        this.cacheItems.sort((a: CacheItem, b: CacheItem) => {
             return b.lastAccessedTime - a.lastAccessedTime;
         });
         this.purgeCache(this.maxCacheSize);
     }
 
     private getCacheItem(rowNode: RowNode, autoCreate = false): CacheItem {
-        let res: CacheItem = undefined;
+        let res: CacheItem;
 
-        for (let i = 0; i<this.cacheItems.length; i++) {
-            let item = this.cacheItems[i];
+        for (let i = 0; i < this.cacheItems.length; i++) {
+            const item = this.cacheItems[i];
             if (item.rowNode === rowNode) {
                 res = item;
                 break;
@@ -76,9 +76,9 @@ export class DetailRowCompCache {
         }
 
         if (!res && autoCreate) {
-            res = <CacheItem> {
+            res = {
                 rowNode: rowNode
-            };
+            } as CacheItem;
             this.cacheItems.push(res);
         }
 
@@ -101,8 +101,8 @@ export class DetailRowCompCache {
 
     private purgeCache(startIndex: number): void {
         // delete all rows past the index of interest
-        for (let i = startIndex; i<this.cacheItems.length; i++) {
-            let item = this.cacheItems[i];
+        for (let i = startIndex; i < this.cacheItems.length; i++) {
+            const item = this.cacheItems[i];
             this.destroyFullWidthRow(item.center);
             this.destroyFullWidthRow(item.left);
             this.destroyFullWidthRow(item.right);
@@ -118,7 +118,7 @@ export class DetailRowCompCache {
         if (!rowNode.detail) { return undefined; }
 
         const item = this.getCacheItem(rowNode);
-        let res: ICellRendererComp = undefined;
+        let res: ICellRendererComp;
         if (item) {
             switch (pinned) {
                 case Column.PINNED_LEFT:

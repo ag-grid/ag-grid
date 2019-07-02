@@ -36,6 +36,7 @@ export class CalloutPanel extends Component {
         this.calloutGroup
             .setTitle('Callout')
             .setEnabled(true)
+            .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
         type CalloutProperty = 'calloutLength' | 'calloutStrokeWidth' | 'labelOffset';
@@ -45,7 +46,7 @@ export class CalloutPanel extends Component {
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onInputChange(newValue => this.series.forEach(s => s[property] = newValue));
+                .onValueChange(newValue => this.series.forEach(s => s[property] = newValue));
         };
 
         const initialLength = `${this.series[0].calloutLength}`;
@@ -56,9 +57,5 @@ export class CalloutPanel extends Component {
 
         const initialOffset = `${this.series[0].labelOffset}`;
         initInput('labelOffset', this.labelOffsetSlider, 'Offset', initialOffset, 30);
-    }
-
-    public destroy(): void {
-        super.destroy();
     }
 }

@@ -273,6 +273,9 @@ export class ChartBuilder {
         if (options.grouped !== undefined) {
             series.grouped = options.grouped;
         }
+        if (options.normalizedTo !== undefined) {
+            series.normalizedTo = options.normalizedTo;
+        }
         if (options.fills !== undefined) {
             series.fills = options.fills;
         }

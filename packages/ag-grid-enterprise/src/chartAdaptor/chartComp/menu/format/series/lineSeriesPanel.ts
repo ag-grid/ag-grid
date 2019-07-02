@@ -2,8 +2,9 @@ import {_, AgGroupComponent, AgSlider, AgToggleButton, Component, PostConstruct,
 import {ChartController} from "../../../chartController";
 import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
 import {MarkersPanel} from "./markersPanel";
+import {ExpandablePanel} from "../chartFormatingPanel";
 
-export class LineSeriesPanel extends Component {
+export class LineSeriesPanel extends Component implements ExpandablePanel {
 
     public static TEMPLATE =
         `<div>   
@@ -43,6 +44,14 @@ export class LineSeriesPanel extends Component {
         this.initMarkersPanel();
     }
 
+    public expandPanel(expanded: boolean): void {
+        this.seriesGroup.toggleGroupExpand(expanded);
+    }
+
+    public setExpandedCallback(expandedCallback: () => void) {
+        this.addDestroyableEventListener(this.seriesGroup, 'expanded', expandedCallback);
+    }
+
     private initSeriesTooltips() {
         const selected = this.series.some(s => s.tooltipEnabled);
 
@@ -52,7 +61,7 @@ export class LineSeriesPanel extends Component {
             .setLabelWidth('flex')
             .setInputWidth(40)
             .setValue(selected)
-            .onSelectionChange(newSelection => {
+            .onValueChange(newSelection => {
                 this.series.forEach(s => s.tooltipEnabled = newSelection);
             });
     }
@@ -63,7 +72,7 @@ export class LineSeriesPanel extends Component {
             .setMaxValue(20)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
-            .onInputChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
+            .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
     private initMarkersPanel() {

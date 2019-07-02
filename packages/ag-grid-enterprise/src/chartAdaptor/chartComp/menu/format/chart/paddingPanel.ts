@@ -1,12 +1,12 @@
-import { AgGroupComponent, Component, PostConstruct, RefSelector, AgSlider } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
+import {AgGroupComponent, AgSlider, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {ChartController} from "../../../chartController";
+import {Chart} from "../../../../../charts/chart/chart";
 
 export class PaddingPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="chartPaddingGroup">
+            <ag-group-component ref="chartPaddingGroup">                                                   
                 <ag-slider ref="paddingTopSlider"></ag-slider>
                 <ag-slider ref="paddingRightSlider"></ag-slider>
                 <ag-slider ref="paddingBottomSlider"></ag-slider>
@@ -15,7 +15,6 @@ export class PaddingPanel extends Component {
         <div>`;
 
     @RefSelector('chartPaddingGroup') private chartPaddingGroup: AgGroupComponent;
-
     @RefSelector('paddingTopSlider') private paddingTopSlider: AgSlider;
     @RefSelector('paddingRightSlider') private paddingRightSlider: AgSlider;
     @RefSelector('paddingBottomSlider') private paddingBottomSlider: AgSlider;
@@ -36,15 +35,18 @@ export class PaddingPanel extends Component {
         const chartProxy = this.chartController.getChartProxy();
         this.chart = chartProxy.getChart();
 
+        this.initGroup();
         this.initChartPaddingItems();
     }
 
-    private initChartPaddingItems() {
+    private initGroup(): void {
         this.chartPaddingGroup
-            .setTitle('Chart Padding')
-            .toggleGroupExpand(false)
+            .setTitle('Padding')
+            .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
+    }
 
+    private initChartPaddingItems(): void {
         type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
 
         const initInput = (property: ChartPaddingProperty, input: AgSlider, label: string, value: string) => {
@@ -52,7 +54,7 @@ export class PaddingPanel extends Component {
                 .setValue(value)
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
-                .onInputChange(newValue => {
+                .onValueChange(newValue => {
                     this.chart.padding[property] = newValue;
                     this.chart.performLayout();
                 });

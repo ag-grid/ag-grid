@@ -1368,9 +1368,6 @@ $handleSize: 5px;
         display: flex;
         flex: 1 1 auto;
         align-items: center;
-        &.ag-slider {
-            align-items: flex-start;
-        }
     }
 
     &.ag-disabled {
@@ -1386,34 +1383,6 @@ $handleSize: 5px;
     }
 }
 
-.ag-label-align-right {
-    label {
-        order: 1;
-    }
-    > div {
-        flex: none;
-    }
-}
-
-.ag-label-align-top {
-    flex-direction: column;
-    align-items: flex-start;
-    > div {
-        align-self: stretch;
-    }
-}
-
-.ag-input-field {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    input, select {
-        flex: 1 1 auto;
-        width: 100%;
-        min-width: 0;
-    }
-}
-
 .ag-toggle-button {
     .ag-input-wrapper {
         .ag-icon {
@@ -1424,15 +1393,26 @@ $handleSize: 5px;
     }
 }
 
+
+.ag-input-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    input, select, textarea {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: 0;
+    }
+}
+
 .ag-range-field {
     display: flex;
     align-items: center;
 }
 
-.ag-slider, .ag-angle-select {
-    .ag-wrapper {
+.ag-picker-field, .ag-slider, .ag-angle-select {
+    > .ag-wrapper {
         display: flex;
-        align-items: center;
         > div {
             flex: 1 1 auto;
         }
@@ -1453,9 +1433,46 @@ $handleSize: 5px;
     }
 }
 
-.ag-color-picker {
+.ag-picker-field {
     display: flex;
     align-items: center;
+    > .ag-wrapper {
+        > button {
+            display: flex;
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+
+.ag-color-picker {
+    > .ag-wrapper {
+        align-items: stretch;
+        overflow: hidden;
+    }
+    button {
+        cursor: pointer;
+    }
+}
+
+.ag-labeled {
+    &.ag-label-align-right {
+        label {
+            order: 1;
+        }
+        > div {
+            flex: none;
+        }
+    }
+    
+    &.ag-label-align-top {
+        flex-direction: column;
+        align-items: flex-start;
+        > div {
+            align-self: stretch;
+        }
+    }
 }
 
 .ag-color-panel {
