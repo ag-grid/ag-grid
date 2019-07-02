@@ -90,6 +90,9 @@ export class PieSeriesPanel extends Component implements ExpandablePanel {
     }
 
     private initLabelPanel() {
+        // show all labels by default
+        this.series.forEach(s => s.labelMinAngle = 0);
+
         const initialFont = {
             family: this.series[0].labelFontFamily,
             style: this.series[0].labelFontStyle,
