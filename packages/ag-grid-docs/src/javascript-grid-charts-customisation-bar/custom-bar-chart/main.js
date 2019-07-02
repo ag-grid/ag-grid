@@ -68,7 +68,10 @@ function processChartOptions(params) {
     legend.markerPadding = 10;
     legend.itemPaddingX = 120;
     legend.itemPaddingY = 20;
-    legend.labelFont = 'bold 18px Arial, sans-serif';
+    legend.labelFontStyle = 'italic';
+    legend.labelFontWeight = 'bold';
+    legend.labelFontSize = 18;
+    legend.labelFontFamily = 'Arial, sans-serif';
     legend.labelColor = '#555';
 
     var xAxis = options.xAxis;
@@ -80,11 +83,14 @@ function processChartOptions(params) {
     xAxis.tickPadding = 10;
     xAxis.tickColor = 'gray';
 
-    xAxis.labelFont = 'bold 15px Arial, sans-serif';
+    xAxis.labelFontStyle = 'italic';
+    xAxis.labelFontWeight = 'bold';
+    xAxis.labelFontSize = 15;
+    xAxis.labelFontFamily = 'Arial, sans-serif';
     xAxis.labelColor = '#de7b73';
     xAxis.labelRotation = 20;
-    xAxis.labelFormatter = function(value) {
-        return value === 'United Kingdom' ? 'UK' : '(' + String(value) + ')';
+    xAxis.labelFormatter = function(params) {
+        return params.value === 'United Kingdom' ? 'UK' : '(' + String(params.value) + ')';
     };
     xAxis.gridStyle = [
         {
@@ -100,11 +106,14 @@ function processChartOptions(params) {
     yAxis.tickSize = 10;
     yAxis.tickPadding = 10;
     yAxis.tickColor = 'gray';
-    yAxis.labelFont = 'bold 15px Arial, sans-serif';
+    yAxis.labelFontStyle = 'italic';
+    yAxis.labelFontWeight = 'bold';
+    yAxis.labelFontSize = 15;
+    yAxis.labelFontFamily = 'Arial, sans-serif';
     yAxis.labelColor = '#de7b73';
     yAxis.labelRotation = 20;
-    yAxis.labelFormatter = function(value) {
-        return value.toString().toUpperCase();
+    yAxis.labelFormatter = function(params) {
+        return params.value.toString().toUpperCase();
     };
     yAxis.gridStyle = [
         {
@@ -125,7 +134,10 @@ function processChartOptions(params) {
 
     // only impacts stacked bar chart
     seriesDefaults.labelEnabled = true;
-    seriesDefaults.labelFont = 'italic 15px Arial, sans-serif';
+    seriesDefaults.labelFontStyle = 'italic';
+    seriesDefaults.labelFontWeight = 'bold';
+    seriesDefaults.labelFontSize = 15;
+    seriesDefaults.labelFontFamily = 'Arial, sans-serif';
     seriesDefaults.labelPadding = {x: 10, y: 10};
     seriesDefaults.labelColor = 'green';
 
