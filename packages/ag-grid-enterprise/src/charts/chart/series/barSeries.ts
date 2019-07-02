@@ -481,17 +481,21 @@ export class BarSeries extends Series<CartesianChart> {
         for (let i = 0; i < n; i++) {
             const category = xData[i];
             const values = yData[i];
+            const valueCount = values.length;
             const x = xScale.convert(category);
-            let yFieldIndex = 0;
-            values.reduce((prev, curr) => {
-                const yField = yFields[yFieldIndex];
+
+            let prev = 0;
+            let curr: number;
+            for (let j = 0; j < valueCount; j++) {
+                curr = values[j];
+
+                const yField = yFields[j];
                 const yFieldEnabled = enabled.get(yField);
                 const barX = grouped ? x + groupScale.convert(yField) : x;
                 const y = yScale.convert((grouped ? curr : prev + curr));
                 const bottomY = yScale.convert((grouped ? 0 : prev));
                 const seriesDatum = data[i];
                 const yValue = seriesDatum[yField];
-                // const labelText = this.yFieldNames[yFieldIndex];
                 let labelText: string;
                 if (labelFormatter) {
                     labelText = labelFormatter({
@@ -509,8 +513,8 @@ export class BarSeries extends Series<CartesianChart> {
                     y: Math.min(y, bottomY),
                     width: barWidth,
                     height: Math.abs(bottomY - y),
-                    fill: fills[yFieldIndex % fills.length],
-                    stroke: strokes[yFieldIndex % strokes.length],
+                    fill: fills[j % fills.length],
+                    stroke: strokes[j % strokes.length],
                     strokeWidth,
                     label: yFieldEnabled && labelText ? {
                         text: labelText,
@@ -520,13 +524,16 @@ export class BarSeries extends Series<CartesianChart> {
                         fontFamily: labelFontFamily,
                         fill: labelColor,
                         x: barX + barWidth / 2,
-                        y: y + (yValue >= 0 ? -1 : 1) * (strokeWidth / 2 + labelOffset)
+                        y: y + (yValue >= 0 ? -1 : 1) * labelOffset
                     } : undefined
                 });
 
-                yFieldIndex++;
-                return grouped ? curr : curr + prev;
-            }, 0);
+                if (grouped) {
+                    prev = curr;
+                } else {
+                    prev += curr;
+                }
+            }
         }
 
         const updateRects = this.rectSelection.setData(selectionData);
@@ -536,7 +543,7 @@ export class BarSeries extends Series<CartesianChart> {
 
         const enterRects = updateRects.enter.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
-            // rect.sizing = RectSizing.Border;
+            rect.sizing = RectSizing.Border;
             rect.crisp = true;
         });
         const enterTexts = updateTexts.enter.append(Text).each(text => {
