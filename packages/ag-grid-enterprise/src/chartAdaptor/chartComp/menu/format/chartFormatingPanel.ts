@@ -40,7 +40,7 @@ export class ChartFormattingPanel extends Component {
 
         const chartType = this.chartController.getChartType();
 
-        if (chartType === ChartType.GroupedBar || chartType === ChartType.StackedBar) {
+        if (chartType === ChartType.GroupedBar || chartType === ChartType.StackedBar || ChartType.NormalizedBar) {
             this.createBarChartPanel();
 
         } else if (chartType === ChartType.Pie || chartType === ChartType.Doughnut) {
