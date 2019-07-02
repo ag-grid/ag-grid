@@ -55,6 +55,23 @@ function processChartOptions(params) {
     options.height = 500;
     options.width = 1000;
 
+    options.title = {
+        text: 'Precious Metals Production',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 18,
+        fontFamily: 'Arial, sans-serif',
+        color: '#414182'
+    };
+    options.subtitle = {
+        text: 'by country',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 14,
+        fontFamily: 'Arial, sans-serif',
+        color: 'rgb(100, 100, 100)'
+    };
+
     options.padding = {top: 20, right: 10, bottom: 10, left: 20};
 
     options.tooltipClass = 'my-tool-tip-class';

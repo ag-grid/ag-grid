@@ -55,12 +55,18 @@ function processChartOptions(params) {
 
     options.title = {
         text: 'Precious Metals Production',
-        font: 'italic bold 18px Arial, sans-serif',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 18,
+        fontFamily: 'Arial, sans-serif',
         color: '#414182'
     };
     options.subtitle = {
         text: 'by country',
-        font: 'italic 14px Arial, sans-serif',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 14,
+        fontFamily: 'Arial, sans-serif',
         color: 'rgb(100, 100, 100)'
     };
 
@@ -77,7 +83,10 @@ function processChartOptions(params) {
     legend.markerPadding = 10;
     legend.itemPaddingX = 100;
     legend.itemPaddingY = 5;
-    legend.labelFont = '12px Arial, sans-serif';
+    legend.labelFontStyle = 'italic';
+    legend.labelFontWeight = 'bold';
+    legend.labelFontSize = 18;
+    legend.labelFontFamily = 'Arial, sans-serif';
     legend.labelColor = '#2222aa';
 
     var seriesDefaults = options.seriesDefaults;
@@ -87,7 +96,10 @@ function processChartOptions(params) {
 
     seriesDefaults.labelEnabled = true;
     seriesDefaults.labelMinAngle = 30;
-    seriesDefaults.labelFont = '12px Arial, sans-serif';
+    seriesDefaults.labelFontStyle = 'italic';
+    seriesDefaults.labelFontWeight = 'bold';
+    seriesDefaults.labelFontSize = 14;
+    seriesDefaults.labelFontFamily = 'Arial, sans-serif';
     seriesDefaults.labelColor = '#2222aa';
 
     seriesDefaults.strokeWidth = 2;
@@ -98,7 +110,10 @@ function processChartOptions(params) {
 
     seriesDefaults.title = {
         enabled: true,
-        font: 'bold 12px Arial, sans-serif',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 12,
+        fontFamily: 'Arial, sans-serif',
         color: 'maroon'
     };
 
