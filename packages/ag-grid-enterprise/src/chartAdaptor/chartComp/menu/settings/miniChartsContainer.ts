@@ -26,7 +26,9 @@ export class MiniChartsContainer extends Component {
 
     @PostConstruct
     private init() {
-        const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniScatter, MiniPie, MiniDonut];
+        // TODO: reintroduce MiniScatter when chart ranges support it
+        // const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniScatter, MiniPie, MiniDonut];
+        const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniPie, MiniDonut];
         const eGui = this.getGui();
         classes.forEach((MiniClass: new (parent: HTMLElement, fills: string[], strokes: string[]) => MiniChart, idx: number) => {
             const miniWrapper = document.createElement('div');
