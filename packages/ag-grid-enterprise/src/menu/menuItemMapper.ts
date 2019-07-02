@@ -185,7 +185,7 @@ export class MenuItemMapper {
                 chartRangeSubMenuItems.push('groupedBarRangeChart');
                 chartRangeSubMenuItems.push('stackedBarRangeChart');
                 chartRangeSubMenuItems.push('lineRangeChart');
-                chartRangeSubMenuItems.push('scatterRangeChart');
+                // chartRangeSubMenuItems.push('scatterRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
                 chartRangeSubMenuItems.push('doughnutRangeChart');
                 return {
