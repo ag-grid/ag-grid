@@ -460,6 +460,7 @@ export class BarSeries extends Series<CartesianChart> {
         const strokes = this.strokes;
         const grouped = this.grouped;
         const strokeWidth = this.strokeWidth;
+        const enabled = this.enabled;
         const labelEnabled = this.labelEnabled;
         const labelFontStyle = this.labelFontStyle;
         const labelFontWeight = this.labelFontWeight;
@@ -484,6 +485,7 @@ export class BarSeries extends Series<CartesianChart> {
             let yFieldIndex = 0;
             values.reduce((prev, curr) => {
                 const yField = yFields[yFieldIndex];
+                const yFieldEnabled = enabled.get(yField);
                 const barX = grouped ? x + groupScale.convert(yField) : x;
                 const y = yScale.convert((grouped ? curr : prev + curr));
                 const bottomY = yScale.convert((grouped ? 0 : prev));
@@ -510,7 +512,7 @@ export class BarSeries extends Series<CartesianChart> {
                     fill: fills[yFieldIndex % fills.length],
                     stroke: strokes[yFieldIndex % strokes.length],
                     strokeWidth,
-                    label: labelText ? {
+                    label: yFieldEnabled && labelText ? {
                         text: labelText,
                         fontStyle: labelFontStyle,
                         fontWeight: labelFontWeight,
