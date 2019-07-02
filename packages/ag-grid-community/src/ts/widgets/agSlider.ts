@@ -59,14 +59,14 @@ export class AgSlider extends AgAbstractLabel {
 
     public setMinValue(minValue: number): this {
         this.eSlider.setMinValue(minValue);
-        this.eText.setMin(minValue);
+        // this.eText.setMin(minValue);
 
         return this;
     }
 
     public setMaxValue(maxValue: number): this {
         this.eSlider.setMaxValue(maxValue);
-        this.eText.setMax(maxValue);
+        // this.eText.setMax(maxValue);
         return this;
     }
 
