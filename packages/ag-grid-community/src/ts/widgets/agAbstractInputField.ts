@@ -1,7 +1,7 @@
 import { IAgLabel } from "./agAbstractLabel";
 import { RefSelector } from "./componentAnnotations";
-import { _ } from "../utils";
 import { AgAbstractField } from "./agAbstractField";
+import { _ } from "../utils";
 
 export interface IInputField extends IAgLabel {
     value?: any;
@@ -9,12 +9,11 @@ export interface IInputField extends IAgLabel {
 }
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-export abstract class AgAbstractInputField<T> extends AgAbstractField<T> {
+export abstract class AgAbstractInputField<T extends FieldElement, K> extends AgAbstractField<K> {
     protected abstract className: string;
     protected abstract inputType: string;
 
     protected config: IInputField = {};
-    protected value: T;
 
     protected TEMPLATE =
         `<div class="ag-input-field">
@@ -26,26 +25,14 @@ export abstract class AgAbstractInputField<T> extends AgAbstractField<T> {
 
     @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eWrapper') protected eWrapper: HTMLElement;
-    @RefSelector('eInput') protected eInput: FieldElement;
+    @RefSelector('eInput') protected eInput: T;
 
     protected postConstruct() {
         super.postConstruct();
         this.setInputType();
         _.addCssClass(this.getGui(), this.className);
 
-        const { label, labelSeparator, labelWidth, width, value } = this.config;
-
-        if (labelSeparator != null) {
-            this.setLabelSeparator(labelSeparator);
-        }
-
-        if (label != null) {
-            this.setLabel(label);
-        }
-
-        if (labelWidth != null) {
-            this.setLabelWidth(labelWidth);
-        }
+        const { width, value } = this.config;
 
         if (width != null) {
             this.setWidth(width);
@@ -76,13 +63,6 @@ export abstract class AgAbstractInputField<T> extends AgAbstractField<T> {
         return this.eInput;
     }
 
-    public onValueChange(callbackFn: (newValue: T) => void) {
-        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
-            callbackFn(this.getValue());
-        });
-        return this;
-    }
-
     public setInputWidth(width: number | 'flex'): this {
         _.setElementWidth(this.eWrapper, width);
         return this;
@@ -90,29 +70,6 @@ export abstract class AgAbstractInputField<T> extends AgAbstractField<T> {
 
     public setInputName(name: string): this {
         this.getInputElement().setAttribute('name', name);
-
-        return this;
-    }
-
-    public setWidth(width: number): this {
-        _.setFixedWidth(this.getGui(), width);
-        return this;
-    }
-
-    public getValue(): T {
-        return this.value;
-    }
-
-    public setValue(value: T, silent?: boolean): this {
-        if (this.value === value) {
-            return this;
-        }
-
-        this.value = value;
-
-        if (!silent) {
-            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
-        }
 
         return this;
     }

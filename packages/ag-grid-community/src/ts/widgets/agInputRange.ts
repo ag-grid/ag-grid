@@ -1,7 +1,4 @@
-import {
-    IInputField,
-    AgAbstractInputField
-} from "./agAbstractInputField";
+import { IInputField, AgAbstractInputField } from "./agAbstractInputField";
 import { _ } from "../utils";
 
 interface IInputRange extends IInputField {
@@ -10,9 +7,8 @@ interface IInputRange extends IInputField {
     step?: number;
 }
 
-export class AgInputRange extends AgAbstractInputField<string> {
+export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string> {
 
-    protected eInput: HTMLInputElement;
     protected className = 'ag-range-field';
     protected displayTag = 'input';
     protected inputType = 'range';

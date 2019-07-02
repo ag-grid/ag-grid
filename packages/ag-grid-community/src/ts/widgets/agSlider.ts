@@ -25,7 +25,7 @@ export class AgSlider extends AgAbstractLabel {
         super(AgSlider.TEMPLATE);
     }
 
-    postConstruct() {
+    protected postConstruct() {
         super.postConstruct();
         this.setMinValue(0);
     }

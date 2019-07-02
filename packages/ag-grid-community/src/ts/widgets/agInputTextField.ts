@@ -2,9 +2,8 @@ import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
 import { AgAbstractInputField, IInputField } from "./agAbstractInputField";
 
-export class AgInputTextField extends AgAbstractInputField<string> {
+export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string> {
 
-    protected eInput: HTMLInputElement;
     protected className = 'ag-text-field';
     protected displayTag = 'input';
     protected inputType = 'text';

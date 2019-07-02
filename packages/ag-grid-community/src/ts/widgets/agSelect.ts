@@ -5,11 +5,10 @@ interface SelectOption {
     text?: string;
 }
 
-export class AgSelect extends AgAbstractInputField<string> {
+export class AgSelect extends AgAbstractInputField<HTMLSelectElement, string> {
     protected className = 'ag-select';
     protected displayTag = 'select';
     protected inputType = '';
-    protected eInput: HTMLSelectElement;
 
     constructor() {
         super();

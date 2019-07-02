@@ -9,7 +9,7 @@ interface ColorPickerConfig extends IAgLabel {
     color: string;
 }
 
-export class AgColorPicker extends AgPickerField<string, HTMLElement> {
+export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
     protected displayTag = 'div';
     protected className = 'ag-color-picker';
@@ -71,10 +71,6 @@ export class AgColorPicker extends AgPickerField<string, HTMLElement> {
                 colorPanel.destroy();
             }
         });
-    }
-
-    public getValue(): string {
-        return this.value;
     }
 
     public setValue(color: string): this {

@@ -4,7 +4,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgAbstractField } from "./agAbstractField";
 import { _ } from "../utils";
 
-export abstract class AgPickerField<T, K> extends AgAbstractField<T> {
+export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     protected TEMPLATE =
         `<div class="ag-picker-field">
             <label ref="eLabel"></label>
@@ -16,14 +16,14 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<T> {
 
     protected abstract showPicker(): void;
     protected abstract pickerIcon: string;
-    protected value: T;
+    protected value: K;
     protected displayedPicker: boolean = false;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eWrapper') protected eWrapper: HTMLElement;
-    @RefSelector('eDisplayField') protected eDisplayField: K;
+    @RefSelector('eDisplayField') protected eDisplayField: T;
     @RefSelector('eButton') private eButton: HTMLButtonElement;
 
     protected postConstruct() {
@@ -40,18 +40,6 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<T> {
 
     public setInputWidth(width: number | 'flex'): this {
         _.setElementWidth(this.eWrapper, width);
-        return this;
-    }
-
-    public setWidth(width: number): this {
-        _.setFixedWidth(this.getGui(), width);
-        return this;
-    }
-
-    public onValueChange(callbackFn: (newValue: T) => void): this {
-        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
-            callbackFn(this.value);
-        });
         return this;
     }
 }

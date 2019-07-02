@@ -10,7 +10,7 @@ export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 
-export class AgCheckbox extends AgAbstractInputField<boolean> {
+export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
 
     protected className = 'ag-checkbox';
     protected displayTag = 'input';

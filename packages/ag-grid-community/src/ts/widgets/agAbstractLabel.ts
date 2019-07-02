@@ -1,26 +1,43 @@
 import { Component } from "./component";
-import { _ } from "../utils";
 import { PostConstruct } from "../context/context";
+import { _ } from "../utils";
+
+export type LabelAlignment = 'left' | 'right' | 'top';
 
 export interface IAgLabel {
     label?: string;
     labelWidth?: number | 'flex';
     labelSeparator?: string;
+    labelAlignment?: LabelAlignment;
 }
-
-export type LabelAlignment = 'left' | 'right' | 'top';
 
 export abstract class AgAbstractLabel extends Component {
     protected abstract eLabel: HTMLElement;
 
     protected labelSeparator: string = '';
     protected labelAlignment: LabelAlignment = 'left';
+    protected config: IAgLabel = {};
     private label: string = '';
 
     @PostConstruct
     protected postConstruct() {
         _.addCssClass(this.getGui(), 'ag-labeled');
-        this.setLabelAlignment(this.labelAlignment);
+
+        const { labelSeparator, label, labelWidth, labelAlignment } = this.config;
+
+        if (labelSeparator != null) {
+            this.setLabelSeparator(labelSeparator);
+        }
+
+        if (label != null) {
+            this.setLabel(label);
+        }
+
+        if (labelWidth != null) {
+            this.setLabelWidth(labelWidth);
+        }
+
+        this.setLabelAlignment(labelAlignment || this.labelAlignment);
         this.refreshLabel();
     }
 

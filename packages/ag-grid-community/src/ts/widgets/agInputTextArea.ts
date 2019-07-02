@@ -1,8 +1,7 @@
 import { AgAbstractInputField, IInputField } from "./agAbstractInputField";
 
-export class AgInputTextArea extends AgAbstractInputField<string> {
+export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, string> {
 
-    protected eInput: HTMLTextAreaElement;
     protected className = 'ag-text-area';
     protected displayTag = 'textarea';
     protected inputType = '';
@@ -21,6 +20,8 @@ export class AgInputTextArea extends AgAbstractInputField<string> {
 
     public setValue(value: string, silent?: boolean): this {
         const ret = super.setValue(value, silent);
+
+        this.eInput.value = value;
 
         return ret;
     }
