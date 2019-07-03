@@ -1,4 +1,14 @@
 {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "[scss]": {
+        "editor.tabSize": 2
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/build": true,
+        "**/dist": true
+      },
     "cSpell.words": [
         "autowire",
         "autowired",
