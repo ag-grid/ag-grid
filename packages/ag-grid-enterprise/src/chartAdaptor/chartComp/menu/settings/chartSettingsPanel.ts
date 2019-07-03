@@ -1,5 +1,7 @@
 import {
+    Autowired,
     Component,
+    GridOptionsWrapper,
     PostConstruct,
     RefSelector,
     _
@@ -13,15 +15,17 @@ export class ChartSettingsPanel extends Component {
     public static TEMPLATE =
         `<div class="ag-chart-settings-wrapper">
             <div class="ag-chart-settings-nav-bar">
-                <div ref="ePrevBtn" class="ag-chart-settings-prev-btn ag-icon ag-icon-small-left">
+                <div ref="ePrevBtn" class="ag-chart-settings-prev-btn">
                     <button type="button"></button>
                 </div>
                 <div ref="eCardSelector" class="ag-nav-card-selector"></div>
-                <div ref="eNextBtn" class="ag-chart-settings-next-btn ag-icon ag-icon-small-right">
+                <div ref="eNextBtn" class="ag-chart-settings-next-btn">
                     <button type="button"></button>
                 </div>
             </div>
         </div>`;
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector("eCardSelector") private eCardSelector: HTMLElement;
     @RefSelector("ePrevBtn") private ePrevBtn: HTMLElement;
@@ -54,6 +58,8 @@ export class ChartSettingsPanel extends Component {
             this.getGui().appendChild(miniChartsContainer.getGui());
             this.addCardLink(idx);
         });
+        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
+        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallRight', this.gridOptionsWrapper));
 
         this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
         this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));

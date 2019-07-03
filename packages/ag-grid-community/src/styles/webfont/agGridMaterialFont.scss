@@ -1,7 +1,6 @@
 @import '../ag-theme-material/vars/ag-theme-material-vars';
 @import '../mixins/ag-theme-mixins';
 
-
 @font-face {
     font-family: '#{$icon-font-family}';
     src: url("data:application/x-font-ttf;charset=utf-8;base64,#{$icons-data}") format('truetype');
@@ -9,4 +8,4 @@
     font-style: normal;
 }
 
-@include icons();
+@include icons_webfont();

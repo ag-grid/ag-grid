@@ -35,9 +35,9 @@ export class DropZoneColumnComp extends Component {
 
     private static TEMPLATE =
        `<span class="ag-column-drop-cell">
-          <span class="ag-icon ag-icon-grip ag-column-drag" ref="eDragHandle"></span>
+          <span class="ag-column-drag" ref="eDragHandle"></span>
           <span class="ag-column-drop-cell-text"></span>
-          <span class="ag-column-drop-cell-button ag-icon ag-icon-cancel"></span>
+          <span class="ag-column-drop-cell-button ref="eCancel"></span>
         </span>`;
 
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
@@ -53,6 +53,7 @@ export class DropZoneColumnComp extends Component {
     @QuerySelector('.ag-column-drop-cell-button') private btRemove: HTMLElement;
 
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
+    @RefSelector('eCancel') private eCancel: HTMLElement;
 
     private column: Column;
     private dragSourceDropTarget: DropTarget;
@@ -73,6 +74,8 @@ export class DropZoneColumnComp extends Component {
     @PostConstruct
     public init(): void {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
+        this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsWrapper));
+        this.eCancel.appendChild(_.createIconNoSpan('cross', this.gridOptionsWrapper));
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();

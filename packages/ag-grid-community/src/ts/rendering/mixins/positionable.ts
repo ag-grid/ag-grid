@@ -1,19 +1,19 @@
 import { PopupService } from "../../widgets/popupService";
 import { Autowired } from "../../context/context";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { _ } from "../../utils";
 
 export function Positionable<T extends { new(...args:any[]): any }>(target: T) {
     abstract class MixinClass extends target {
 
-        config: any;
-        abstract renderComponent?(): void;
+        @Autowired('popupService') popupService: PopupService;
+        @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
+        abstract renderComponent?(): void;
+        config: any;
         popupParent: HTMLElement;
         minWidth: number;
         minHeight?: number;
-
-        @Autowired('popupService') popupService: PopupService;
-
         positioned = false;
 
         dragStartPosition = {

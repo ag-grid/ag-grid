@@ -1,4 +1,5 @@
 import { Component } from "../../widgets/component";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { _ } from "../../utils";
 
 export function Maximizable<T extends { new(...args:any[]): any }>(target: T) {
@@ -6,22 +7,21 @@ export function Maximizable<T extends { new(...args:any[]): any }>(target: T) {
 
         abstract addDestroyableEventListener(...args: any[]): () => void;
 
-        MAXIMIZE_BTN_TEMPLATE =
-        `<div class="ag-dialog-button">
-            <span class="ag-icon ag-icon-maximize"></span>
-            <span class="ag-icon ag-icon-minimize ag-hidden"></span>
-        </span>
-        `;
+        MAXIMIZE_BTN_TEMPLATE = `<div class="ag-dialog-button"></span>`;
 
         abstract config: any;
         abstract position: { x: number; y: number; };
         abstract eTitleBar: HTMLElement;
         abstract offsetElement(x: number, y: number): void;
+        abstract gridOptionsWrapper: GridOptionsWrapper;
 
         isMaximizable: boolean = false;
         isMaximized: boolean = false;
         maximizeListeners: (() => void)[] = [];
         maximizeButtonComp: Component;
+        maximizeIcon: HTMLElement;
+        minimizeIcon: HTMLElement;
+
         resizeListenerDestroy: () => void | null = null;
 
         lastPosition = {
@@ -39,11 +39,13 @@ export function Maximizable<T extends { new(...args:any[]): any }>(target: T) {
         }
 
         public setMaximizable(maximizable: boolean) {
+
             if (maximizable === false) {
                 this.clearMaximizebleListeners();
+
                 if (this.maximizeButtonComp) {
                     this.maximizeButtonComp.destroy();
-                    this.maximizeButtonComp = undefined;
+                    this.maximizeButtonComp = this.maximizeIcon = this.minimizeIcon = undefined;
                 }
                 return;
             }
@@ -52,7 +54,14 @@ export function Maximizable<T extends { new(...args:any[]): any }>(target: T) {
             if (!eTitleBar || maximizable === this.isMaximizable) { return; }
 
             const maximizeButtonComp = this.maximizeButtonComp = new Component(this.MAXIMIZE_BTN_TEMPLATE);
-            maximizeButtonComp.addDestroyableEventListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
+            this.getContext().wireBean(maximizeButtonComp);
+
+            const eGui = maximizeButtonComp.getGui();
+            eGui.appendChild(this.maximizeIcon = _.createIconNoSpan('maximize', this.gridOptionsWrapper));
+            eGui.appendChild(this.minimizeIcon = _.createIconNoSpan('minimize', this.gridOptionsWrapper));
+            _.addCssClass(this.minimizeIcon, 'ag-hidden');
+
+            maximizeButtonComp.addDestroyableEventListener(eGui, 'click', this.toggleMaximize.bind(this));
             this.addTitleBarButton(maximizeButtonComp, 0);
 
             this.maximizeListeners.push(
@@ -87,12 +96,8 @@ export function Maximizable<T extends { new(...args:any[]): any }>(target: T) {
         }
 
         refreshMaximizeIcon() {
-            const maximizeButton = this.maximizeButtonComp.getGui();
-            const maximizeEl = maximizeButton.querySelector('.ag-icon-maximize') as HTMLElement;
-            const minimizeEl = maximizeButton.querySelector('.ag-icon-minimize') as HTMLElement;
-
-            _.addOrRemoveCssClass(maximizeEl, 'ag-hidden', this.isMaximized);
-            _.addOrRemoveCssClass(minimizeEl, 'ag-hidden', !this.isMaximized);
+            _.addOrRemoveCssClass(this.maximizeIcon, 'ag-hidden', this.isMaximized);
+            _.addOrRemoveCssClass(this.minimizeIcon, 'ag-hidden', !this.isMaximized);
         }
 
         clearMaximizebleListeners() {

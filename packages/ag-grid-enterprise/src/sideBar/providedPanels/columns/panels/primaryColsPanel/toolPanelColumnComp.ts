@@ -27,7 +27,6 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     private static TEMPLATE =
         `<div class="ag-column-tool-panel-column">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-icon ag-icon-grip ag-column-drag" ref="eDragHandle"></span>
             <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
         </div>`;
 
@@ -40,7 +39,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
-    @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
+    private eDragHandle: HTMLElement;
 
     private column: Column;
     private columnDept: number;
@@ -64,6 +63,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     public init(): void {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        _.addCssClass(this.eDragHandle, 'ag-column-drag');
+        this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         const displayNameSanitised: any = _.escape(this.displayName);
