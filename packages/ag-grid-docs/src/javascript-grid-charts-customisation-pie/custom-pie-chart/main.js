@@ -14,12 +14,12 @@ function createRowData() {
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
     let rowData = [];
-    countries.forEach( function(country, index) {
+    countries.forEach(function (country, index) {
         rowData.push({
-                country: country,
-                gold: Math.floor(((index+1 / 7) * 333)%100),
-                silver: Math.floor(((index+1 / 3) * 555)%100),
-                bronze: Math.floor(((index+1 / 7.3) * 777)%100),
+            country: country,
+            gold: Math.floor(((index + 1 / 7) * 333) % 100),
+            silver: Math.floor(((index + 1 / 3) * 555) % 100),
+            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
         });
     });
     return rowData;
@@ -48,7 +48,7 @@ function processChartOptions(params) {
     // we are only interested in processing bar type.
     // so if user changes the type using the chart control,
     // we ignore it.
-    if (params.type!=='pie') {
+    if (params.type !== 'pie') {
         console.log('chart type is ' + params.type + ', making no changes.');
         return params.options;
     }
@@ -57,13 +57,19 @@ function processChartOptions(params) {
     options.width = 1000;
 
     options.title = {
-        text: 'Gold Production',
-        font: 'italic bold 18px Arial, sans-serif',
+        text: 'Precious Metals Production',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 18,
+        fontFamily: 'Arial, sans-serif',
         color: '#414182'
     };
     options.subtitle = {
         text: 'by country',
-        font: 'italic 14px Arial, sans-serif',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 14,
+        fontFamily: 'Arial, sans-serif',
         color: 'rgb(100, 100, 100)'
     };
 
@@ -80,7 +86,10 @@ function processChartOptions(params) {
     legend.markerPadding = 10;
     legend.itemPaddingX = 100;
     legend.itemPaddingY = 5;
-    legend.labelFont = '12px Arial, sans-serif';
+    legend.labelFontStyle = 'italic';
+    legend.labelFontWeight = 'bold';
+    legend.labelFontSize = 18;
+    legend.labelFontFamily = 'Arial, sans-serif';
     legend.labelColor = '#2222aa';
 
     var seriesDefaults = options.seriesDefaults;
@@ -90,7 +99,10 @@ function processChartOptions(params) {
 
     seriesDefaults.labelEnabled = true;
     seriesDefaults.labelMinAngle = 30;
-    seriesDefaults.labelFont = '12px Arial, sans-serif';
+    seriesDefaults.labelFontStyle = 'italic';
+    seriesDefaults.labelFontWeight = 'bold';
+    seriesDefaults.labelFontSize = 14;
+    seriesDefaults.labelFontFamily = 'Arial, sans-serif';
     seriesDefaults.labelColor = '#2222aa';
 
     seriesDefaults.strokeWidth = 2;
@@ -105,10 +117,10 @@ function processChartOptions(params) {
         blur: 10
     };
 
-    seriesDefaults.tooltipRenderer = function(params) {
+    seriesDefaults.tooltipRenderer = function (params) {
         var angleField = params.angleField;
         var value = params.datum[angleField];
-        return '<b>'+angleField.toUpperCase()+':</b> ' + value;
+        return '<b>' + angleField.toUpperCase() + ':</b> ' + value;
     };
 
     return options;
@@ -132,7 +144,7 @@ function onGridReady(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

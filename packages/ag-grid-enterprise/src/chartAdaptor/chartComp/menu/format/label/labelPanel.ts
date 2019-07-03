@@ -2,13 +2,14 @@ import {
     _,
     AgColorPicker,
     AgGroupComponent,
-    AgSelect,
+    AgSelect, Autowired,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
+import {ChartController} from "../../../chartController";
+import {Chart} from "../../../../../charts/chart/chart";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export type LabelFont = {
     family?: string;
@@ -48,6 +49,8 @@ export class LabelPanel extends Component {
     @RefSelector('labelFontSizeSelect') private labelFontSizeSelect: AgSelect;
     @RefSelector('labelColorPicker') private labelColorPicker: AgColorPicker;
 
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+
     private chart: Chart;
     private params: LabelPanelParams;
     private activeComps: Component[] = [];
@@ -82,7 +85,7 @@ export class LabelPanel extends Component {
 
     private initGroup() {
         this.labelsGroup
-            .setTitle(this.params.name ? this.params.name : 'Labels')
+            .setTitle(this.params.name ? this.params.name : this.chartTranslator.translate('labels'))
             .setEnabled(this.params.enabled)
             .hideEnabledCheckbox(!!this.params.suppressEnabledCheckbox)
             .hideOpenCloseIcons(true)
@@ -129,8 +132,8 @@ export class LabelPanel extends Component {
             });
 
             input.addOptions(options)
-                 .setValue(`${initialValue}`)
-                 .onValueChange(newValue => this.params.setFont({[property]: newValue}));
+                .setValue(`${initialValue}`)
+                .onValueChange(newValue => this.params.setFont({[property]: newValue}));
         };
 
         const fonts = [
@@ -154,24 +157,28 @@ export class LabelPanel extends Component {
             'Times New Roman, serif',
             'Times, serif',
             'Verdana, sans-serif',
-         ];
+        ];
 
         initSelect('family', this.labelFontFamilySelect, fonts, true);
 
-        const weights = ['Normal', 'Bold', 'Italic', 'Bold Italic'];
-        initSelect('weight', this.labelFontWeightSelect, weights, false);
+        const weightKeys: string[] = ['normal', 'bold', 'italic', 'boldItalic'];
+        initSelect('weight', this.labelFontWeightSelect, this.getWeigthNames(weightKeys), false);
 
         const sizes = ['8', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30', '32', '34', '36'];
-        this.labelFontSizeSelect.setLabel('Size');
+        this.labelFontSizeSelect.setLabel(this.chartTranslator.translate('size'));
         initSelect('size', this.labelFontSizeSelect, sizes, true);
     }
 
     private initFontColorPicker() {
         this.labelColorPicker
-            .setLabel('Color')
+            .setLabel(this.chartTranslator.translate('color'))
             .setInputWidth(45)
             .setValue(`${this.params.initialFont.color}`)
             .onValueChange(newColor => this.params.setFont({color: newColor}));
+    }
+
+    private getWeigthNames(keys: string[]) {
+        return keys.map(key => this.chartTranslator.translate(key));
     }
 
     private destroyActiveComps(): void {

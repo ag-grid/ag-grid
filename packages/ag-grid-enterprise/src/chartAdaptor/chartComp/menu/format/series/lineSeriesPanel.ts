@@ -1,8 +1,18 @@
-import {_, AgGroupComponent, AgSlider, AgToggleButton, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {
+    _,
+    AgGroupComponent,
+    AgSlider,
+    AgToggleButton,
+    Autowired,
+    Component,
+    PostConstruct,
+    RefSelector
+} from "ag-grid-community";
 import {ChartController} from "../../../chartController";
 import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
 import {MarkersPanel} from "./markersPanel";
 import {ExpandablePanel} from "../chartFormatingPanel";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class LineSeriesPanel extends Component implements ExpandablePanel {
 
@@ -17,6 +27,8 @@ export class LineSeriesPanel extends Component implements ExpandablePanel {
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesLineWidthSlider') private seriesLineWidthSlider: AgSlider;
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private series: LineSeries[];
     private activePanels: Component[] = [];
@@ -35,7 +47,7 @@ export class LineSeriesPanel extends Component implements ExpandablePanel {
         this.series = chartProxy.getChart().series as LineSeries[];
 
         this.seriesGroup
-            .setTitle('Series')
+            .setTitle(this.chartTranslator.translate('series'))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
@@ -56,7 +68,7 @@ export class LineSeriesPanel extends Component implements ExpandablePanel {
         const selected = this.series.some(s => s.tooltipEnabled);
 
         this.seriesTooltipsToggle
-            .setLabel('Tooltips')
+            .setLabel(this.chartTranslator.translate('tooltips'))
             .setLabelAlignment('left')
             .setLabelWidth('flex')
             .setInputWidth(40)
@@ -68,7 +80,7 @@ export class LineSeriesPanel extends Component implements ExpandablePanel {
 
     private initSeriesLineWidth() {
         this.seriesLineWidthSlider
-            .setLabel('Line Width')
+            .setLabel(this.chartTranslator.translate('lineWidth'))
             .setMaxValue(20)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)

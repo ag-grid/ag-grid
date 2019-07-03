@@ -1,5 +1,6 @@
-import { AgGroupComponent, AgSlider, Component, PostConstruct, RefSelector } from "ag-grid-community";
+import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class CalloutPanel extends Component {
 
@@ -19,6 +20,8 @@ export class CalloutPanel extends Component {
     @RefSelector('calloutStrokeWidthSlider') private calloutStrokeWidthSlider: AgSlider;
     @RefSelector('labelOffsetSlider') private labelOffsetSlider: AgSlider;
 
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+
     private series: PieSeries[];
 
     constructor(series: PieSeries[]) {
@@ -34,15 +37,15 @@ export class CalloutPanel extends Component {
 
     private initCalloutOptions() {
         this.calloutGroup
-            .setTitle('Callout')
+            .setTitle(this.chartTranslator.translate('callout'))
             .setEnabled(true)
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
         type CalloutProperty = 'calloutLength' | 'calloutStrokeWidth' | 'labelOffset';
 
-        const initInput = (property: CalloutProperty, input: AgSlider, label: string, initialValue: string, maxValue: number) => {
-            input.setLabel(label)
+        const initInput = (property: CalloutProperty, input: AgSlider, labelKey: string, initialValue: string, maxValue: number) => {
+            input.setLabel(this.chartTranslator.translate(labelKey))
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
@@ -50,12 +53,12 @@ export class CalloutPanel extends Component {
         };
 
         const initialLength = `${this.series[0].calloutLength}`;
-        initInput('calloutLength', this.calloutLengthSlider, 'Length', initialLength, 30);
+        initInput('calloutLength', this.calloutLengthSlider, 'length', initialLength, 30);
 
         const initialStrokeWidth = `${this.series[0].calloutStrokeWidth}`;
-        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'Stroke Width', initialStrokeWidth, 20);
+        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', initialStrokeWidth, 20);
 
         const initialOffset = `${this.series[0].labelOffset}`;
-        initInput('labelOffset', this.labelOffsetSlider, 'Offset', initialOffset, 30);
+        initInput('labelOffset', this.labelOffsetSlider, 'offset', initialOffset, 30);
     }
 }

@@ -4,6 +4,7 @@ import linearScale, { LinearScale } from "../../scale/linearScale";
 export class NumberAxis extends Axis<LinearScale<number>> {
     constructor() {
         super(linearScale());
+        this.scale.clamp = true;
     }
 
     private _nice: boolean = true;

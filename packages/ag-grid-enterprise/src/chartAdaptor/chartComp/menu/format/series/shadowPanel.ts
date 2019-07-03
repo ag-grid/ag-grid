@@ -1,7 +1,7 @@
 import {
     AgColorPicker,
     AgGroupComponent,
-    AgSlider,
+    AgSlider, Autowired,
     Component,
     PostConstruct,
     RefSelector,
@@ -10,6 +10,7 @@ import { ChartController } from "../../../chartController";
 import { Chart } from "../../../../../charts/chart/chart";
 import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class ShadowPanel extends Component {
 
@@ -28,6 +29,8 @@ export class ShadowPanel extends Component {
     @RefSelector('shadowBlurSlider') private shadowBlurSlider: AgSlider;
     @RefSelector('shadowXOffsetSlider') private shadowXOffsetSlider: AgSlider;
     @RefSelector('shadowYOffsetSlider') private shadowYOffsetSlider: AgSlider;
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private chartController: ChartController;
     private chart: Chart;
@@ -68,13 +71,12 @@ export class ShadowPanel extends Component {
                     }
                 }
             });
-            this.chart.performLayout();
         };
 
         const enabled = this.series.some((series: BarSeries | PieSeries) => series.shadow != undefined);
 
         this.shadowGroup
-            .setTitle('Shadow')
+            .setTitle(this.chartTranslator.translate('shadow'))
             .setEnabled(enabled)
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
@@ -96,21 +98,21 @@ export class ShadowPanel extends Component {
             });
 
         this.shadowColorPicker
-            .setLabel('Color')
+            .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
             .setValue('rgba(0,0,0,0.5)')
             .onValueChange(updateShadow);
 
-        const initInput = (input: AgSlider, label: string, initialValue: string, maxValue: number) => {
-            input.setLabel(label)
+        const initInput = (input: AgSlider, labelKey: string, initialValue: string, maxValue: number) => {
+            input.setLabel(this.chartTranslator.translate(labelKey))
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
                 .onValueChange(updateShadow);
         };
 
-        initInput(this.shadowBlurSlider, 'Blur', '5', 20);
-        initInput(this.shadowXOffsetSlider, 'X Offset', '3', 20);
-        initInput(this.shadowYOffsetSlider, 'Y Offset', '3', 20);
+        initInput(this.shadowBlurSlider, 'blur', '5', 20);
+        initInput(this.shadowXOffsetSlider, 'xOffset', '3', 20);
+        initInput(this.shadowYOffsetSlider, 'yOffset', '3', 20);
     }
 }

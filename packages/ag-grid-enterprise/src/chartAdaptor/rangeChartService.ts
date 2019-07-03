@@ -60,8 +60,8 @@ export class RangeChartService implements IRangeChartService {
             case 'line':
                 chartType = ChartType.Line;
                 break;
-            case 'scatter':
-                chartType = ChartType.Scatter;
+            // case 'scatter':
+            //     chartType = ChartType.Scatter;
                 break;
             default:
                 chartType = ChartType.GroupedBar;

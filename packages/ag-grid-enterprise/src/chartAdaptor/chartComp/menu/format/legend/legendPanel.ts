@@ -5,12 +5,13 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-    AgSelect
+    AgSelect, Autowired
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { Chart, LegendPosition } from "../../../../../charts/chart/chart";
 import {LabelPanelParams, LabelFont, LabelPanel} from "../label/labelPanel";
 import {ExpandablePanel} from "../chartFormatingPanel";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class LegendPanel extends Component implements ExpandablePanel {
 
@@ -38,9 +39,11 @@ export class LegendPanel extends Component implements ExpandablePanel {
     @RefSelector('itemPaddingXSlider') private itemPaddingXSlider: AgSlider;
     @RefSelector('itemPaddingYSlider') private itemPaddingYSlider: AgSlider;
 
-    private readonly chartController: ChartController;
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+
     private chart: Chart;
     private activePanels: Component[] = [];
+    private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
@@ -71,7 +74,7 @@ export class LegendPanel extends Component implements ExpandablePanel {
 
     private initLegendGroup() {
         this.legendGroup
-            .setTitle('Legend')
+            .setTitle(this.chartTranslator.translate('legend'))
             .hideEnabledCheckbox(false)
             .onEnableChange(enabled => {
                 this.chart.legend.enabled = enabled;
@@ -83,12 +86,12 @@ export class LegendPanel extends Component implements ExpandablePanel {
         const positions: LegendPosition[] = ['top', 'right', 'bottom', 'left'];
 
         this.legendPositionSelect
-            .setLabel('Position')
+            .setLabel(this.chartTranslator.translate('position'))
             .setLabelWidth('flex')
             .setInputWidth(80)
             .addOptions(positions.map(position => ({
                 value: position,
-                text: _.capitalise(position)
+                text: this.chartTranslator.translate(position)
             })))
             .onValueChange((value) => {
                 this.chart.legendPosition = value as LegendPosition;
@@ -98,7 +101,7 @@ export class LegendPanel extends Component implements ExpandablePanel {
 
     private initLegendPadding() {
         this.legendPaddingSlider
-            .setLabel('Padding')
+            .setLabel(this.chartTranslator.translate('padding'))
             .setValue(`${this.chart.legendPadding}`)
             .setTextFieldWidth(45)
             .setMaxValue(200)
@@ -108,8 +111,8 @@ export class LegendPanel extends Component implements ExpandablePanel {
     private initLegendItems() {
         type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
 
-        const initSlider = (property: LegendOptions, labelText: string, input: AgSlider, initialValue: string, maxValue: number) => {
-            input.setLabel(labelText)
+        const initSlider = (property: LegendOptions, labelKey: string, input: AgSlider, initialValue: string, maxValue: number) => {
+            input.setLabel(this.chartTranslator.translate(labelKey))
                  .setValue(initialValue)
                  .setMaxValue(maxValue)
                  .setTextFieldWidth(45)
@@ -117,19 +120,19 @@ export class LegendPanel extends Component implements ExpandablePanel {
         };
 
         const initialMarkerSize = `${this.chart.legend.markerSize}`;
-        initSlider('markerSize', 'Marker Size', this.markerSizeSlider, initialMarkerSize, 40);
+        initSlider('markerSize', 'markerSize', this.markerSizeSlider, initialMarkerSize, 40);
 
         const initialMarkerStroke = `${this.chart.legend.markerStrokeWidth}`;
-        initSlider('markerStrokeWidth', 'Marker Stroke', this.markerStrokeSlider,  initialMarkerStroke, 10);
+        initSlider('markerStrokeWidth', 'markerStroke', this.markerStrokeSlider, initialMarkerStroke, 10);
 
         const initialMarkerPadding = `${this.chart.legend.markerPadding}`;
-        initSlider('markerPadding',  'Marker Padding', this.markerPaddingSlider, initialMarkerPadding, 200);
+        initSlider('markerPadding',  'markerPadding', this.markerPaddingSlider, initialMarkerPadding, 200);
 
         const initialItemPaddingX = `${this.chart.legend.itemPaddingX}`;
-        initSlider('itemPaddingX', 'Item Padding X', this.itemPaddingXSlider,  initialItemPaddingX, 50);
+        initSlider('itemPaddingX', 'itemPaddingX', this.itemPaddingXSlider, initialItemPaddingX, 50);
 
         const initialItemPaddingY = `${this.chart.legend.itemPaddingY}`;
-        initSlider('itemPaddingY', 'Item Padding Y', this.itemPaddingYSlider,  initialItemPaddingY, 50);
+        initSlider('itemPaddingY', 'itemPaddingY', this.itemPaddingYSlider, initialItemPaddingY, 50);
     }
 
     private initLabelPanel() {
@@ -148,7 +151,6 @@ export class LegendPanel extends Component implements ExpandablePanel {
             if (font.weight) this.chart.legend.labelFontWeight = font.weight;
             if (font.size) this.chart.legend.labelFontSize = font.size;
             if (font.color) this.chart.legend.labelColor = font.color;
-            this.chart.performLayout();
         };
 
         const params: LabelPanelParams = {

@@ -389,27 +389,27 @@ export class BarSeries extends Series<CartesianChart> {
             if (isFinite(normalizedTo)) {
                 yMin = 0;
                 yMax = normalizedTo;
-                yData.forEach((stack, i) => {
+                yData.forEach((stackValues, i) => {
                     const ySum = ySums[i];
-                    stack.forEach((y, j) => stack[j] = y / ySum * normalizedTo);
+                    stackValues.forEach((y, j) => stackValues[j] = y / ySum * normalizedTo);
                 });
             } else {
                 // Find the height of each stack in the positive and negative directions,
                 // then find the tallest stacks in both directions.
                 yMin = Math.min(0, ...yData.map(stackValues => {
                     let min = 0;
-                    stackValues.forEach(value => {
-                        if (value < 0) {
-                            min -= value;
+                    stackValues.forEach(y => {
+                        if (y < 0) {
+                            min -= y;
                         }
                     });
                     return min;
                 }));
                 yMax = Math.max(...yData.map(stackValues => {
                     let max = 0;
-                    stackValues.forEach(value => {
-                        if (value > 0) {
-                            max += value;
+                    stackValues.forEach(y => {
+                        if (y > 0) {
+                            max += y;
                         }
                     });
                     return max;
@@ -449,7 +449,7 @@ export class BarSeries extends Series<CartesianChart> {
             return;
         }
 
-        const n = this.data.length;
+        const categoryCount = this.data.length;
         const xAxis = chart.xAxis;
         const yAxis = chart.yAxis;
         const xScale = xAxis.scale;
@@ -460,6 +460,7 @@ export class BarSeries extends Series<CartesianChart> {
         const strokes = this.strokes;
         const grouped = this.grouped;
         const strokeWidth = this.strokeWidth;
+        const enabled = this.enabled;
         const labelEnabled = this.labelEnabled;
         const labelFontStyle = this.labelFontStyle;
         const labelFontWeight = this.labelFontWeight;
@@ -477,19 +478,24 @@ export class BarSeries extends Series<CartesianChart> {
 
         const selectionData: SelectionDatum[] = [];
 
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; i < categoryCount; i++) {
             const category = xData[i];
             const values = yData[i];
+            const valueCount = values.length;
             const x = xScale.convert(category);
-            let yFieldIndex = 0;
-            values.reduce((prev, curr) => {
-                const yField = yFields[yFieldIndex];
+
+            let prev = 0;
+            let curr: number;
+            for (let j = 0; j < valueCount; j++) {
+                curr = values[j];
+
+                const yField = yFields[j];
+                const yFieldEnabled = enabled.get(yField);
                 const barX = grouped ? x + groupScale.convert(yField) : x;
                 const y = yScale.convert((grouped ? curr : prev + curr));
                 const bottomY = yScale.convert((grouped ? 0 : prev));
                 const seriesDatum = data[i];
-                const yValue = seriesDatum[yField];
-                // const labelText = this.yFieldNames[yFieldIndex];
+                const yValue = seriesDatum[yField]; // unprocessed y-value
                 let labelText: string;
                 if (labelFormatter) {
                     labelText = labelFormatter({
@@ -507,10 +513,10 @@ export class BarSeries extends Series<CartesianChart> {
                     y: Math.min(y, bottomY),
                     width: barWidth,
                     height: Math.abs(bottomY - y),
-                    fill: fills[yFieldIndex % fills.length],
-                    stroke: strokes[yFieldIndex % strokes.length],
+                    fill: fills[j % fills.length],
+                    stroke: strokes[j % strokes.length],
                     strokeWidth,
-                    label: labelText ? {
+                    label: yFieldEnabled && labelText ? {
                         text: labelText,
                         fontStyle: labelFontStyle,
                         fontWeight: labelFontWeight,
@@ -518,13 +524,16 @@ export class BarSeries extends Series<CartesianChart> {
                         fontFamily: labelFontFamily,
                         fill: labelColor,
                         x: barX + barWidth / 2,
-                        y: y + (yValue >= 0 ? -1 : 1) * (strokeWidth / 2 + labelOffset)
+                        y: y + (yValue >= 0 ? -1 : 1) * labelOffset
                     } : undefined
                 });
 
-                yFieldIndex++;
-                return grouped ? curr : curr + prev;
-            }, 0);
+                if (grouped) {
+                    prev = curr;
+                } else {
+                    prev += curr;
+                }
+            }
         }
 
         const updateRects = this.rectSelection.setData(selectionData);

@@ -91,9 +91,17 @@ localeText = {
         collapseAll: 'laClose-em-up',
         toolPanel: 'laTool Panelo',
         export: 'laExporto',
-        csvExport: 'la CSV Exportp',
-        excelExport: 'la Excel Exporto (.xlsx)',
-        excelXmlExport: 'la Excel Exporto (.xml)'
+        csvExport: 'laCSV Exportp',
+        excelExport: 'laExcel Exporto (.xlsx)',
+        excelXmlExport: 'laExcel Exporto (.xml)'
+
+        // enterprise menu (charts)
+        chartRange: 'laChart Range',
+        groupedBarRangeChart: 'laBar (Grouped)',
+        stackedBarRangeChart: 'laBar (Grouped)',
+        lineRangeChart: 'laLine',
+        pieRangeChart: 'laPie',
+        doughnutRangeChart: 'laDoughnut',
 
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',
@@ -118,6 +126,54 @@ localeText = {
         ctrlC: 'ctrl n C',
         paste: 'laPaste',
         ctrlV: 'ctrl n V'
+
+        // charts
+        settings: 'laSettings',
+        data: 'laData',
+        format: 'laFormat',
+        categories: 'laCategories',
+        series: 'laSeries',
+        axis: 'laAxis',
+        color: 'laColor',
+        thickness: 'laThickness',
+        xRotation: 'laX Rotation',
+        yRotation: 'laY Rotation',
+        ticks: 'laTicks',
+        width: 'laWidth',
+        length: 'laLength',
+        padding: 'laPadding',
+        chart: 'lalaChart',
+        title: 'laTitle',
+        font: 'laFont',
+        top: 'laTop',
+        right: 'laRight',
+        bottom: 'laBottom',
+        left: 'laLeft',
+        labels: 'laLabels',
+        size: 'laSize',
+        legend: 'laLegend',
+        position: 'laPosition',
+        markerSize: 'laMarker Size',
+        markerStroke: 'laMarker Stroke',
+        markerPadding: 'laMarker Padding',
+        itemPaddingX: 'lalaItem Padding X',
+        itemPaddingY: 'laItem Padding Y',
+        strokeWidth: 'laStroke Width',
+        offset: 'laOffset',
+        tooltips: 'laTooltips',
+        offsets: 'laOffsets',
+        callout: 'laCallout',
+        markers: 'laMarkers',
+        shadow: 'laShadow',
+        blur: 'laBlur',
+        xOffset: 'laX Offset',
+        yOffset: 'laY Offset',
+        lineWidth: 'laLine Width',
+        normal: 'laNormal',
+        bold: 'laBold',
+        italic: 'laItalic',
+        boldItalic: 'laBold Italic'
+
 }</snippet>
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>

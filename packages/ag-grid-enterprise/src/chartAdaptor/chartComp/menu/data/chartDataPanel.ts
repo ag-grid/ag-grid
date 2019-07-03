@@ -1,22 +1,22 @@
 import {
-    Autowired,
-    AgGroupComponent,
-    Component,
-    GridOptionsWrapper,
-    PostConstruct,
+    _,
     AgAbstractField,
-    AgRadioButton,
     AgCheckbox,
-    _
+    AgGroupComponent,
+    AgRadioButton,
+    Autowired,
+    Component,
+    PostConstruct
 } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../chartModel";
+import {ChartController} from "../../chartController";
+import {ColState} from "../../chartModel";
+import {ChartTranslator} from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
 
     public static TEMPLATE = `<div class="ag-chart-data-wrapper"></div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private columnComps: { [key: string]: AgRadioButton | AgCheckbox } = {};
     private dimensionComps: AgRadioButton[] = [];
@@ -39,15 +39,14 @@ export class ChartDataPanel extends Component {
 
         const eGui = this.getGui();
 
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
 
         [dimensionCols, valueCols].forEach((group, idx) => {
             const isCategory = idx === 0;
             const groupComp = new AgGroupComponent({
                 title: isCategory 
-                    ? localeTextFunc('chartCategories', 'Categories')
-                    : localeTextFunc('chartSeries', 'Series'),
+                    ? this.chartTranslator.translate('categories')
+                    : this.chartTranslator.translate('series'),
                 enabled: true,
                 suppressEnabledCheckbox: true,
                 suppressOpenCloseIcons: false

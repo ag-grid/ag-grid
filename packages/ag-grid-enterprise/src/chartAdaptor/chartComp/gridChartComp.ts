@@ -150,8 +150,8 @@ export class GridChartComp extends Component {
                 return new PieChartProxy(chartOptions);
             case ChartType.Doughnut:
                 return new DoughnutChartProxy(chartOptions);
-            case ChartType.Scatter:
-                return new ScatterChartProxy(chartOptions);
+            // case ChartType.Scatter:
+            //     return new ScatterChartProxy(chartOptions);
             default: // case ChartType.Line:
                 return new LineChartProxy(chartOptions);
         }

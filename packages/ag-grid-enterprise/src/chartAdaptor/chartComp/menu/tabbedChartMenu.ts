@@ -6,12 +6,13 @@ import {
     TabbedItem,
     Promise,
     ChartMenuOptions,
-    _
+    _, Autowired
 } from "ag-grid-community";
 import { ChartController } from "../chartController";
 import { ChartDataPanel } from "./data/chartDataPanel";
 import { ChartFormattingPanel } from "./format/chartFormatingPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
+import {ChartTranslator} from "../chartTranslator";
 
 export class TabbedChartMenu extends Component {
 
@@ -28,6 +29,8 @@ export class TabbedChartMenu extends Component {
     private readonly chartController: ChartController;
 
     private chartIcons: HTMLElement[] = [];
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     constructor(params: {
         controller: ChartController, 
@@ -74,7 +77,7 @@ export class TabbedChartMenu extends Component {
         eWrapperDiv.appendChild(comp.getGui());
 
         const titleEl = document.createElement('div');
-        titleEl.innerText = _.capitalise(title);
+        titleEl.innerText = this.chartTranslator.translate(title);
 
         return {
             comp,

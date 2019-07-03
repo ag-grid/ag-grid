@@ -1,5 +1,6 @@
-import { AgGroupComponent, AgSlider, Component, PostConstruct, RefSelector } from "ag-grid-community";
+import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class MarkersPanel extends Component {
 
@@ -14,6 +15,8 @@ export class MarkersPanel extends Component {
     @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
     @RefSelector('seriesMarkerSizeSlider') private seriesMarkerSizeSlider: AgSlider;
     @RefSelector('seriesMarkerStrokeWidthSlider') private seriesMarkerStrokeWidthSlider: AgSlider;
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private series: LineSeries[];
 
@@ -32,7 +35,7 @@ export class MarkersPanel extends Component {
         const enabled = this.series.some(s => s.marker);
 
         this.seriesMarkersGroup
-            .setTitle('Markers')
+            .setTitle(this.chartTranslator.translate('markers'))
             .setEnabled(enabled)
             .hideOpenCloseIcons(true)
             .onEnableChange(enabled => {
@@ -41,8 +44,8 @@ export class MarkersPanel extends Component {
 
         type LineMarkerProperty = 'markerSize' | 'markerStrokeWidth';
 
-        const initInput = (property: LineMarkerProperty, input: AgSlider, label: string, initialValue: string, maxValue: number) => {
-            input.setLabel(label)
+        const initInput = (property: LineMarkerProperty, input: AgSlider, labelKey: string, initialValue: string, maxValue: number) => {
+            input.setLabel(this.chartTranslator.translate(labelKey))
                 .setValue(initialValue)
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
@@ -52,9 +55,9 @@ export class MarkersPanel extends Component {
         };
 
         const initialSize = `${this.series[0].markerSize}`;
-        initInput('markerSize', this.seriesMarkerSizeSlider, 'Size', initialSize, 30);
+        initInput('markerSize', this.seriesMarkerSizeSlider, 'size', initialSize, 30);
 
         const initialStrokeWidth = `${this.series[0].markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'Stroke Width', initialStrokeWidth, 20);
+        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', initialStrokeWidth, 20);
     }
 }

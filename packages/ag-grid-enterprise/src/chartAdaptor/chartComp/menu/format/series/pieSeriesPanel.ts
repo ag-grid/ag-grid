@@ -1,7 +1,7 @@
 import {
     _,
     AgGroupComponent,
-    AgSlider, AgToggleButton,
+    AgSlider, AgToggleButton, Autowired,
     Component,
     PostConstruct,
     RefSelector
@@ -12,6 +12,7 @@ import { ShadowPanel } from "./shadowPanel";
 import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
 import {CalloutPanel} from "./calloutPanel";
 import {ExpandablePanel} from "../chartFormatingPanel";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class PieSeriesPanel extends Component implements ExpandablePanel {
 
@@ -26,6 +27,8 @@ export class PieSeriesPanel extends Component implements ExpandablePanel {
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesStrokeWidthSlider') private seriesStrokeWidthSlider: AgSlider;
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private readonly chartController: ChartController;
 
@@ -61,7 +64,7 @@ export class PieSeriesPanel extends Component implements ExpandablePanel {
 
     private initGroup() {
         this.seriesGroup
-            .setTitle('Series')
+            .setTitle(this.chartTranslator.translate('series'))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
     }
@@ -70,7 +73,7 @@ export class PieSeriesPanel extends Component implements ExpandablePanel {
         const selected = this.series.some(s => s.tooltipEnabled);
 
         this.seriesTooltipsToggle
-            .setLabel('Tooltips')
+            .setLabel(this.chartTranslator.translate('tooltips'))
             .setLabelAlignment('left')
             .setLabelWidth('flex')
             .setInputWidth(40)
@@ -82,7 +85,7 @@ export class PieSeriesPanel extends Component implements ExpandablePanel {
 
     private initSeriesStrokeWidth() {
         this.seriesStrokeWidthSlider
-            .setLabel('Stroke Width')
+            .setLabel(this.chartTranslator.translate('strokeWidth'))
             .setMaxValue(30)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
@@ -90,6 +93,9 @@ export class PieSeriesPanel extends Component implements ExpandablePanel {
     }
 
     private initLabelPanel() {
+        // show all labels by default
+        this.series.forEach(s => s.labelMinAngle = 0);
+
         const initialFont = {
             family: this.series[0].labelFontFamily,
             style: this.series[0].labelFontStyle,

@@ -5,13 +5,14 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-    AgToggleButton,
+    AgToggleButton, Autowired,
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
 import { ShadowPanel } from "./shadowPanel";
 import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
 import {ExpandablePanel} from "../chartFormatingPanel";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class BarSeriesPanel extends Component implements ExpandablePanel {
 
@@ -26,6 +27,8 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesStrokeWidthSlider') private seriesStrokeWidthSlider: AgSlider;
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
@@ -44,7 +47,7 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
         this.series = chartProxy.getChart().series as BarSeries[];
 
         this.seriesGroup
-            .setTitle('Series')
+            .setTitle(this.chartTranslator.translate('series'))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
@@ -64,7 +67,7 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
 
     private initSeriesStrokeWidth() {
         this.seriesStrokeWidthSlider
-            .setLabel('Stroke Width')
+            .setLabel(this.chartTranslator.translate('strokeWidth'))
             .setMaxValue(20)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
@@ -75,7 +78,7 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
         const selected = this.series.some(s => s.tooltipEnabled);
 
         this.seriesTooltipsToggle
-            .setLabel('Tooltips')
+            .setLabel(this.chartTranslator.translate('tooltips'))
             .setLabelAlignment('left')
             .setLabelWidth('flex')
             .setInputWidth(40)
@@ -121,7 +124,7 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
         this.getContext().wireBean(labelOffsetSlider);
 
         labelOffsetSlider
-            .setLabel('Offset')
+            .setLabel(this.chartTranslator.translate('offsets'))
             .setValue(`${this.series[0].labelOffset}`)
             .setMinValue(-100)
             .setMaxValue(100)

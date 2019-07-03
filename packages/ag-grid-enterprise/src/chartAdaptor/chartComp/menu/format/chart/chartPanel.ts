@@ -1,10 +1,19 @@
-import {_, AgGroupComponent, AgInputTextArea, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {
+    _,
+    AgGroupComponent,
+    AgInputTextArea,
+    Autowired,
+    Component,
+    PostConstruct,
+    RefSelector
+} from "ag-grid-community";
 import {ChartController} from "../../../chartController";
 import {Chart} from "../../../../../charts/chart/chart";
 import {ExpandablePanel} from "../chartFormatingPanel";
 import {PaddingPanel} from "./paddingPanel";
 import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
 import {Caption} from "../../../../../charts/chart/caption";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class ChartPanel extends Component implements ExpandablePanel {
 
@@ -17,6 +26,8 @@ export class ChartPanel extends Component implements ExpandablePanel {
 
     @RefSelector('chartGroup') private chartGroup: AgGroupComponent;
     @RefSelector('titleInput') private titleInput: AgInputTextArea;
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private chart: Chart;
     private activePanels: Component[] = [];
@@ -49,7 +60,7 @@ export class ChartPanel extends Component implements ExpandablePanel {
 
     private initGroup(): void {
         this.chartGroup
-            .setTitle('Chart')
+            .setTitle(this.chartTranslator.translate('chart'))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
     }
@@ -90,7 +101,7 @@ export class ChartPanel extends Component implements ExpandablePanel {
         };
 
         this.titleInput
-            .setLabel('Title')
+            .setLabel(this.chartTranslator.translate('title'))
             .setLabelAlignment('top')
             .setLabelWidth('flex')
             .setValue(title)
@@ -103,14 +114,13 @@ export class ChartPanel extends Component implements ExpandablePanel {
                 const currentCaption = this.chart.title as Caption;
                 currentCaption.text = newValue;
                 this.chart.title = currentCaption;
-                this.chart.performLayout();
 
                 // only show font panel when title exists
                 labelPanelComp.setEnabled(_.exists(this.chart.title.text));
             });
 
         const params: LabelPanelParams = {
-            name: 'Font',
+            name: this.chartTranslator.translate('font'),
             enabled: true,
             suppressEnabledCheckbox: true,
             initialFont: initialFont,

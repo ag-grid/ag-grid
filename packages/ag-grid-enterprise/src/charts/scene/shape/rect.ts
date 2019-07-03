@@ -109,6 +109,7 @@ export class Rect extends Shape {
         return this._crisp;
     }
 
+    private effectiveStrokeWidth: number = Shape.defaultStyles.strokeWidth;
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
@@ -120,6 +121,7 @@ export class Rect extends Shape {
             if (this.crisp || this.sizing === RectSizing.Border) {
                 this.dirtyPath = true;
             } else {
+                this.effectiveStrokeWidth = value;
                 this.dirty = true;
             }
         }
@@ -144,44 +146,42 @@ export class Rect extends Shape {
             return;
         }
 
-        const path = this.path;
-        const radius = this.radius;
-        const strokeWidth = this.strokeWidth;
+        const borderSizing = this.sizing === RectSizing.Border;
 
+        const path = this.path;
         path.clear();
 
-        if (!radius) {
-            let x = this.x;
-            let y = this.y;
-            let width = this.width;
-            let height = this.height;
+        let x = this.x;
+        let y = this.y;
+        let width = this.width;
+        let height = this.height;
+        let strokeWidth: number;
 
-            if (this.sizing === RectSizing.Border) {
-                x += strokeWidth / 2;
-                y += strokeWidth / 2;
-                x = Math.min(x, x + width / 2);
-                y = Math.min(y, y + height / 2);
-                width -= strokeWidth;
-                height -= strokeWidth;
-                width = Math.max(0.001, width);
-                height = Math.max(0.001, height);
-            }
+        if (borderSizing) {
+            const halfWidth = width / 2;
+            const halfHeight = height / 2;
+            strokeWidth = Math.min(this.strokeWidth, halfWidth, halfHeight);
 
-            if (this.crisp) {
-                const alignment = Math.floor(strokeWidth) % 2 / 2;
-                path.rect(
-                    Math.floor(x) + alignment,
-                    Math.floor(y) + alignment,
-                    Math.floor(width) + Math.floor(x % 1 + width % 1),
-                    Math.floor(height) + Math.floor(y % 1 + height % 1)
-                );
-            } else {
-                path.rect(x, y, width, height);
-            }
+            x = Math.min(x + strokeWidth / 2, x + halfWidth);
+            y = Math.min(y + strokeWidth / 2, y + halfHeight);
+            width = Math.max(width - strokeWidth, 0);
+            height = Math.max(height - strokeWidth, 0);
         } else {
-            // TODO: rect radius, this will require implementing
-            //       another `arcTo` method in the `Path2D` class.
-            throw "TODO";
+            strokeWidth = this.strokeWidth;
+        }
+
+        this.effectiveStrokeWidth = strokeWidth;
+
+        if (this.crisp && !borderSizing) {
+            const alignment = Math.floor(strokeWidth) % 2 / 2;
+            path.rect(
+                Math.floor(x) + alignment,
+                Math.floor(y) + alignment,
+                Math.floor(width) + Math.floor(x % 1 + width % 1),
+                Math.floor(height) + Math.floor(y % 1 + height % 1)
+            );
+        } else {
+            path.rect(x, y, width, height);
         }
 
         this.dirtyPath = false;
@@ -219,5 +219,61 @@ export class Rect extends Shape {
         this.fillStroke(ctx);
 
         this.dirty = false;
+    }
+
+    protected fillStroke(ctx: CanvasRenderingContext2D) {
+        if (!this.scene) {
+            return;
+        }
+
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+
+        const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
+
+            // The canvas context scaling (depends on the device's pixel ratio)
+            // has no effect on shadows, so we have to account for the pixel ratio
+            // manually here.
+            const fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
+            }
+            ctx.fill();
+        }
+
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+
+        if (this.stroke && this.effectiveStrokeWidth) {
+            ctx.strokeStyle = this.stroke;
+            ctx.lineWidth = this.effectiveStrokeWidth;
+            if (this.lineDash) {
+                ctx.setLineDash(this.lineDash);
+            }
+            if (this.lineDashOffset) {
+                ctx.lineDashOffset = this.lineDashOffset;
+            }
+            if (this.lineCap) {
+                ctx.lineCap = this.lineCap;
+            }
+            if (this.lineJoin) {
+                ctx.lineJoin = this.lineJoin;
+            }
+
+            const strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.stroke();
+        }
     }
 }

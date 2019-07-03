@@ -185,7 +185,7 @@ export class MenuItemMapper {
                 chartRangeSubMenuItems.push('groupedBarRangeChart');
                 chartRangeSubMenuItems.push('stackedBarRangeChart');
                 chartRangeSubMenuItems.push('lineRangeChart');
-                chartRangeSubMenuItems.push('scatterRangeChart');
+                // chartRangeSubMenuItems.push('scatterRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
                 chartRangeSubMenuItems.push('doughnutRangeChart');
                 return {
@@ -211,12 +211,12 @@ export class MenuItemMapper {
                     this.rangeChartService.chartCurrentRange(ChartType.Line);
                 }
             };
-            case 'scatterRangeChart': return {
-                name: localeTextFunc('scatterRangeChart', 'Scatter'),
-                action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Scatter);
-                }
-            };
+            // case 'scatterRangeChart': return {
+            //     name: localeTextFunc('scatterRangeChart', 'Scatter'),
+            //     action: () => {
+            //         this.rangeChartService.chartCurrentRange(ChartType.Scatter);
+            //     }
+            // };
             case 'pieRangeChart': return {
                 name: localeTextFunc('pieRangeChart', 'Pie'),
                 action: () => {
