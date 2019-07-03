@@ -1316,6 +1316,7 @@ export class Utils {
         groupExpanded: 'contracted',
         chart: 'chart',
         close: 'cross',
+        cancel: 'cancel',
         check: 'tick',
         checkboxChecked: 'checkbox-checked',
         checkboxUnchecked: 'checkbox-unchecked',

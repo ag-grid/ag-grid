@@ -204,7 +204,7 @@ clipboardPaste // beside the paste from clipboard menu item
 // column drop panels
 rowGroupPanel // beside where to drop columns for row group
 pivotPanel // beside where to drop columns for pivot
-valuePanel // beside where to drop columns for value</snippet>
+valuePanel // beside where to drop columns for valuePanel
 
 // drag
 rowDrag // the row drag icon
@@ -227,8 +227,9 @@ smallRight
 smallUp
 smallDown
 
-// generic widgets
+// generic
 chart
+cancel
 check 
 colorPicker
 groupLoading
