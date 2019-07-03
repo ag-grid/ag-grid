@@ -98,7 +98,7 @@ localeText = {
         // enterprise menu (charts)
         chartRange: 'laChart Range',
         groupedBarRangeChart: 'laBar (Grouped)',
-        stackedBarRangeChart: 'laBar (Grouped)',
+        stackedBarRangeChart: 'laBar (Stacked)',
         lineRangeChart: 'laLine',
         pieRangeChart: 'laPie',
         doughnutRangeChart: 'laDoughnut',
