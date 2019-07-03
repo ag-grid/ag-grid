@@ -75,7 +75,7 @@ export class DropZoneColumnComp extends Component {
     public init(): void {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
         this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsWrapper));
-        this.eCancel.appendChild(_.createIconNoSpan('cross', this.gridOptionsWrapper));
+        this.eCancel.appendChild(_.createIconNoSpan('close', this.gridOptionsWrapper));
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();

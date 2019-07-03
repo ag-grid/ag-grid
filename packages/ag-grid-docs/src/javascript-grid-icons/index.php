@@ -72,57 +72,58 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 
 $icon-font-family: "Font Awesome 5 Free";
 
-$ag-icon-aggregation: "\f247";
-$ag-icon-arrows: "\f0b2";
-$ag-icon-asc: "\f062";
-$ag-icon-cancel: "\f057";
-$ag-icon-chart: "\f080";
-$ag-icon-checkbox-checked: "\f14a";
-$ag-icon-checkbox-indeterminate: "\f146";
-$ag-icon-checkbox-unchecked: "\f0c8";
-$ag-icon-column: "\f142";
-$ag-icon-columns: "\f0db";
-$ag-icon-contracted: "\f146";
-$ag-icon-copy: "\f0c5";
-$ag-icon-cross: "\f00d";
-$ag-icon-cut: "\f0c4";
-$ag-icon-data: "\f1c0";
-$ag-icon-desc: "\f063";
-$ag-icon-expanded: "\f0fe";
-$ag-icon-eye-slash: "\f070";
-$ag-icon-eye: "\f06e";
-$ag-icon-filter: "\f0b0";
-$ag-icon-first: "\f100";
-$ag-icon-grip: "\f58e";
-$ag-icon-group: "\f5fd";
-$ag-icon-indeterminate: "\f06e";
-$ag-icon-last: "\f101";
-$ag-icon-left: "\f060";
-$ag-icon-loading: "\f110";
-$ag-icon-maximize: "\f2d0";
-$ag-icon-menu: "\f0c9";
-$ag-icon-minimize: "\f2d1";
-$ag-icon-minus: "\f068";
-$ag-icon-next: "\f105";
-$ag-icon-none: "\f338";
-$ag-icon-not-allowed: "\f05e";
-$ag-icon-paste: "\f0ea";
-$ag-icon-pin: "\f276";
-$ag-icon-pivot: "\f074";
-$ag-icon-plus: "\f067";
-$ag-icon-previous: "\f104";
-$ag-icon-radio-button-off: "\f111";
-$ag-icon-radio-button-on: "\f058";
-$ag-icon-right: "\f061";
-$ag-icon-save: "\f0c7";
-$ag-icon-small-down: "\f107";
-$ag-icon-small-left: "\f104";
-$ag-icon-small-right: "\f105";
-$ag-icon-small-up: "\f106";
-$ag-icon-tick: "\f00c";
-$ag-icon-tree-closed: "\f105";
-$ag-icon-tree-indeterminate: "\f068";
-$ag-icon-tree-open: "\f107";
+$aggregation-char: "\f247";
+$arrows-char: "\f0b2";
+$asc-char: "\f062";
+$cancel-char: "\f057";
+$chart-char: "\f080";
+$checkbox-checked-char: "\f14a";
+$checkbox-indeterminate-char: "\f146";
+$checkbox-unchecked-char: "\f0c8";
+$color-picker-char: "\f576";
+$column-char: "\f142";
+$columns-char: "\f0db";
+$contracted-char: "\f146";
+$copy-char: "\f0c5";
+$cross-char: "\f00d";
+$cut-char: "\f0c4";
+$data-char: "\f1c0";
+$desc-char: "\f063";
+$expanded-char: "\f0fe";
+$eye-slash-char: "\f070";
+$eye-char: "\f06e";
+$filter-char: "\f0b0";
+$first-char: "\f100";
+$grip-char: "\f58e";
+$group-char: "\f5fd";
+$indeterminate-char: "\f06e";
+$last-char: "\f101";
+$left-char: "\f060";
+$loading-char: "\f110";
+$maximize-char: "\f2d0";
+$menu-char: "\f0c9";
+$minimize-char: "\f2d1";
+$minus-char: "\f068";
+$next-char: "\f105";
+$none-char: "\f338";
+$not-allowed-char: "\f05e";
+$paste-char: "\f0ea";
+$pin-char: "\f276";
+$pivot-char: "\f074";
+$plus-char: "\f067";
+$previous-char: "\f104";
+$radio-button-off-char: "\f111";
+$radio-button-on-char: "\f058";
+$right-char: "\f061";
+$save-char: "\f0c7";
+$small-down-char: "\f107";
+$small-left-char: "\f104";
+$small-right-char: "\f105";
+$small-up-char: "\f106";
+$tick-char: "\f00c";
+$tree-closed-char: "\f105";
+$tree-indeterminate-char: "\f068";
+$tree-open-char: "\f107";
 
 @import "~ag-grid/src/styles/ag-grid.scss";
 @import "~ag-grid/src/styles/ag-theme-balham.scss";
@@ -148,7 +149,7 @@ $ag-icon-tree-open: "\f107";
         The icons are set as follows:
     </p>
 
-    <snippet>
+<snippet>
 // column header items
 menu
 filter
@@ -168,16 +169,16 @@ columnGroupClosed
 // tool panel column group open / close
 columnSelectOpen
 columnSelectClosed
+columnSelectIndeterminate
 
-// row checkbox selection and tool panel column selection
+// grid checkboxes
 checkboxChecked
 checkboxUnchecked
 checkboxIndeterminate
 
-// tool panel column selection, when read only (ie disabled checkboxes)
-checkboxCheckedReadOnly
-checkboxUncheckedReadOnly
-checkboxIndeterminateReadOnly
+// grid radio buttons
+radioButtonOn
+radioButtonOff
 
 // when moving columns
 columnMovePin // when column is to the left, before it gets pinned
@@ -197,6 +198,7 @@ menuValue // beside the column value menu item
 menuAddRowGroup // beside the column row group menu item
 menuRemoveRowGroup // beside the column row group menu item
 clipboardCopy // beside the copy to clipboard menu item
+clipboardCut // beside the cut to clipboard menu item
 clipboardPaste // beside the paste from clipboard menu item
 
 // column drop panels
@@ -205,7 +207,34 @@ pivotPanel // beside where to drop columns for pivot
 valuePanel // beside where to drop columns for value</snippet>
 
 // drag
-rowDrag // the column dragger icon
+rowDrag // the row drag icon
+columnDrag // the column drag icon
+
+// panels and dialogs
+close
+maximize
+minimize
+
+// paging toolbar
+first
+previous
+next
+last
+
+// chevrons (small arrows)
+smallLeft
+smallRight
+smallUp
+smallDown
+
+// generic widgets
+chart
+check 
+colorPicker
+groupLoading
+data
+save
+</snippet>
     <p>
         Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
     </p>

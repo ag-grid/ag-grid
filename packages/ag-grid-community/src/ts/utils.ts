@@ -1315,7 +1315,7 @@ export class Utils {
         groupContracted: 'expanded',
         groupExpanded: 'contracted',
         chart: 'chart',
-        cross: 'cross',
+        close: 'cross',
         check: 'tick',
         checkboxChecked: 'checkbox-checked',
         checkboxUnchecked: 'checkbox-unchecked',
@@ -1354,7 +1354,6 @@ export class Utils {
         smallRight: 'small-right',
         smallUp: 'small-up',
         smallDown: 'small-down',
-        /** from @deprecated header, remove at some point */
         sortAscending: 'asc',
         sortDescending: 'desc',
         sortUnSort: 'none'

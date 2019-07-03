@@ -107,7 +107,7 @@ export class AgPanel extends Positionable(Component) {
             this.getContext().wireBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
-            eGui.appendChild(_.createIconNoSpan('cross', this.gridOptionsWrapper));
+            eGui.appendChild(_.createIconNoSpan('close', this.gridOptionsWrapper));
 
             this.addTitleBarButton(closeButtonComp);
             closeButtonComp.addDestroyableEventListener(eGui, 'click', this.onBtClose.bind(this));
