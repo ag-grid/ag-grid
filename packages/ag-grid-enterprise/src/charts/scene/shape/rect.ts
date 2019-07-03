@@ -146,37 +146,34 @@ export class Rect extends Shape {
             return;
         }
 
-        const path = this.path;
-        let effectiveStrokeWidth = this.effectiveStrokeWidth = this.strokeWidth;
+        const borderSizing = this.sizing === RectSizing.Border;
 
+        const path = this.path;
         path.clear();
 
         let x = this.x;
         let y = this.y;
         let width = this.width;
         let height = this.height;
+        let strokeWidth: number;
 
-        if (this.sizing === RectSizing.Border) {
+        if (borderSizing) {
             const halfWidth = width / 2;
             const halfHeight = height / 2;
-            const maxStrokeWidth = Math.floor(Math.min(halfWidth, halfHeight));
+            strokeWidth = Math.min(this.strokeWidth, halfWidth, halfHeight);
 
-            if (effectiveStrokeWidth > maxStrokeWidth) {
-                this.effectiveStrokeWidth = effectiveStrokeWidth = maxStrokeWidth;
-            }
-
-            x += effectiveStrokeWidth / 2;
-            y += effectiveStrokeWidth / 2;
-            x = Math.min(x, x + halfWidth);
-            y = Math.min(y, y + halfHeight);
-            width -= effectiveStrokeWidth;
-            height -= effectiveStrokeWidth;
-            width = Math.max(0, width);
-            height = Math.max(0, height);
+            x = Math.min(x + strokeWidth / 2, x + halfWidth);
+            y = Math.min(y + strokeWidth / 2, y + halfHeight);
+            width = Math.max(width - strokeWidth, 0);
+            height = Math.max(height - strokeWidth, 0);
+        } else {
+            strokeWidth = this.strokeWidth;
         }
 
-        if (this.crisp) {
-            const alignment = Math.floor(effectiveStrokeWidth) % 2 / 2;
+        this.effectiveStrokeWidth = strokeWidth;
+
+        if (this.crisp && !borderSizing) {
+            const alignment = Math.floor(strokeWidth) % 2 / 2;
             path.rect(
                 Math.floor(x) + alignment,
                 Math.floor(y) + alignment,

@@ -543,7 +543,7 @@ export class BarSeries extends Series<CartesianChart> {
 
         const enterRects = updateRects.enter.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
-            rect.sizing = RectSizing.Border;
+            // rect.sizing = RectSizing.Border;
             rect.crisp = true;
         });
         const enterTexts = updateTexts.enter.append(Text).each(text => {
