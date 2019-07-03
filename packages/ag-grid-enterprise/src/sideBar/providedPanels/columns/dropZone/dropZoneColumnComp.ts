@@ -34,7 +34,7 @@ export class DropZoneColumnComp extends Component {
        `<span class="ag-column-drop-cell">
           <span ref="eDragHandle" class="ag-column-drag"></span>
           <span ref="eText" class="ag-column-drop-cell-text"></span>
-          <span ref="btRemove" class="ag-column-drop-cell-button></span>
+          <span ref="btRemove" class="ag-column-drop-cell-button"></span>
         </span>`;
 
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;

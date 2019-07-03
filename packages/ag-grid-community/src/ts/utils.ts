@@ -1392,7 +1392,7 @@ export class Utils {
         // if not in col, try grid options
         if (gridOptionsWrapper && !userProvidedIcon) {
             const optionsIcons = gridOptionsWrapper.getIcons();
-            if (optionsIcons && optionsIcons.length) {
+            if (optionsIcons) {
                 userProvidedIcon = optionsIcons[iconName];
             }
         }
