@@ -76,6 +76,7 @@ export class LegendPanel extends Component implements ExpandablePanel {
         this.legendGroup
             .setTitle(this.chartTranslator.translate('legend'))
             .hideEnabledCheckbox(false)
+            .toggleGroupExpand(false)
             .onEnableChange(enabled => {
                 this.chart.legend.enabled = enabled;
                 this.legendGroup.toggleGroupExpand(true);
