@@ -1,6 +1,7 @@
 import {
     AxisOptions,
     BarSeriesOptions,
+    AreaSeriesOptions,
     CartesianChartOptions,
     DropShadowOptions,
     LineSeriesOptions,
@@ -9,6 +10,7 @@ import {
     DoughnutChartOptions,
     ChartOptions,
     BarChartOptions,
+    AreaChartOptions,
     LegendOptions,
     PolarChartOptions,
     LineChartOptions,
@@ -23,6 +25,7 @@ import { PolarChart } from "../../charts/chart/polarChart";
 import { LineSeries } from "../../charts/chart/series/lineSeries";
 import { ScatterSeries } from "../../charts/chart/series/scatterSeries";
 import { BarSeries } from "../../charts/chart/series/barSeries";
+import { AreaSeries } from "../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../charts/chart/series/pieSeries";
 import { Chart } from "../../charts/chart/chart";
 import { Series } from "../../charts/chart/series/series";
@@ -33,7 +36,7 @@ import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
 import { Caption } from "../../charts/chart/caption";
 
-type CartesianSeriesType = 'line' | 'scatter' | 'bar';
+type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
 type PolarSeriesType = 'pie';
 type SeriesType = CartesianSeriesType | PolarSeriesType;
 
@@ -86,6 +89,14 @@ export class ChartBuilder {
         return ChartBuilder.initPolarChart(chart, options, 'pie');
     }
 
+    static createAreaChart(options: AreaChartOptions): CartesianChart {
+        const chart = new CartesianChart(
+            ChartBuilder.createAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+        return ChartBuilder.initCartesianChart(chart, options, 'area');
+    }
+
     static createLineSeries(options: LineSeriesOptions): LineSeries {
         return new LineSeries();
     }
@@ -102,6 +113,8 @@ export class ChartBuilder {
                 return ChartBuilder.initScatterSeries(new ScatterSeries(), options);
             case 'bar':
                 return ChartBuilder.initBarSeries(new BarSeries(), options);
+            case 'area':
+                return ChartBuilder.initAreaSeries(new AreaSeries(), options);
             case 'pie':
                 return ChartBuilder.initPieSeries(new PieSeries(), options);
             default:
@@ -302,6 +315,49 @@ export class ChartBuilder {
         }
         if (options.labelOffset !== undefined) {
             series.labelOffset = options.labelOffset;
+        }
+        if (options.tooltipRenderer !== undefined) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
+        if (options.shadow !== undefined) {
+            series.shadow = ChartBuilder.createDropShadow(options.shadow);
+        }
+
+        return series;
+    }
+
+    static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions) {
+        ChartBuilder.initSeries(series, options);
+
+        if (options.xField !== undefined) {
+            series.xField = options.xField;
+        }
+        if (options.yFields !== undefined) {
+            series.yFields = options.yFields;
+        }
+        if (options.yFieldNames !== undefined) {
+            series.yFieldNames = options.yFieldNames;
+        }
+        if (options.normalizedTo !== undefined) {
+            series.normalizedTo = options.normalizedTo;
+        }
+        if (options.fills !== undefined) {
+            series.fills = options.fills;
+        }
+        if (options.stroke !== undefined) {
+            series.stroke = options.stroke;
+        }
+        if (options.strokeWidth !== undefined) {
+            series.strokeWidth = options.strokeWidth;
+        }
+        if (options.marker !== undefined) {
+            series.marker = options.marker;
+        }
+        if (options.markerSize !== undefined) {
+            series.markerSize = options.markerSize;
+        }
+        if (options.markerStrokeWidth !== undefined) {
+            series.markerStrokeWidth = options.markerStrokeWidth;
         }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;

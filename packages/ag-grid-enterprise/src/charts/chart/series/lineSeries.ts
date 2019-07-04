@@ -268,8 +268,8 @@ export class LineSeries extends Series<CartesianChart> {
         const fill = this.fill;
         const stroke = this.stroke;
         const marker = this.marker;
-        const markerStrokeWidth = this.markerStrokeWidth;
         const markerSize = this.markerSize;
+        const markerStrokeWidth = this.markerStrokeWidth;
 
         const lineNode: Path = this.lineNode;
         const linePath: Path2D = lineNode.path;

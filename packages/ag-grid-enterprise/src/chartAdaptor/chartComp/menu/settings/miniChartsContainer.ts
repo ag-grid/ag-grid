@@ -28,7 +28,7 @@ export class MiniChartsContainer extends Component {
     private init() {
         // TODO: reintroduce MiniScatter when chart ranges support it
         // const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniScatter, MiniPie, MiniDonut];
-        const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniPie, MiniDonut];
+        const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniPie, MiniDonut, MiniArea, MiniNormalizedArea];
         const eGui = this.getGui();
         classes.forEach((MiniClass: new (parent: HTMLElement, fills: string[], strokes: string[]) => MiniChart, idx: number) => {
             const miniWrapper = document.createElement('div');
@@ -227,8 +227,8 @@ class MiniBar extends MiniChart {
         const xScale = new BandScale<number>();
         xScale.domain = [0, 1, 2];
         xScale.range = [padding, size - padding];
-        xScale.paddingInner = 0.4;
-        xScale.paddingOuter = 0.4;
+        xScale.paddingInner = 0.3;
+        xScale.paddingOuter = 0.3;
 
         const yScale = linearScale();
         yScale.domain = [0, 4];
@@ -298,8 +298,8 @@ class MiniStackedBar extends MiniChart {
         const xScale = new BandScale<number>();
         xScale.domain = [0, 1, 2];
         xScale.range = [padding, size - padding];
-        xScale.paddingInner = 0.4;
-        xScale.paddingOuter = 0.4;
+        xScale.paddingInner = 0.3;
+        xScale.paddingOuter = 0.3;
 
         const yScale = linearScale();
         yScale.domain = [0, 16];
@@ -372,8 +372,8 @@ class MiniNormalizedBar extends MiniChart {
         const xScale = new BandScale<number>();
         xScale.domain = [0, 1, 2];
         xScale.range = [padding, size - padding];
-        xScale.paddingInner = 0.4;
-        xScale.paddingOuter = 0.4;
+        xScale.paddingInner = 0.3;
+        xScale.paddingOuter = 0.3;
 
         const yScale = linearScale();
         yScale.domain = [0, 10];
@@ -495,5 +495,115 @@ class MiniScatter extends MiniChart {
             line.stroke = strokes[i % strokes.length];
             line.fill = fills[i % fills.length];
         });
+    }
+}
+
+class MiniArea extends MiniChart {
+    private readonly areas: Path[];
+
+    static readonly data = [
+        [2, 3, 2],
+        [3, 6, 5],
+        [6, 2, 2]
+    ];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniArea.data) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+
+        const xScale = new BandScale<number>();
+        xScale.paddingInner = 1;
+        xScale.paddingOuter = 0;
+        xScale.domain = [0, 1, 2];
+        xScale.range = [padding, size - padding];
+
+        const yScale = linearScale();
+        yScale.domain = [0, 16];
+        yScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+
+        const xCount = data.length;
+        const last = xCount * 2 - 1;
+        const pathData: {x: number, y: number}[][] = [];
+
+        for (let i = 0; i < xCount; i++) {
+            const yDatum = data[i];
+            const yCount = yDatum.length;
+            const x = xScale.convert(i);
+
+            let prev = 0;
+            let curr: number;
+            for (let j = 0; j < yCount; j++) {
+                curr = yDatum[j];
+
+                const y = yScale.convert(prev + curr);
+                const points = pathData[j] || (pathData[j] = []);
+
+                points[i] = {
+                    x,
+                    y
+                };
+                points[last - i] = {
+                    x,
+                    y: yScale.convert(prev) // bottom y
+                };
+
+                prev += curr;
+            }
+        }
+
+        this.areas = pathData.map(points => {
+            const area = new Path();
+            area.strokeWidth = 1;
+            const path = area.path;
+            path.clear();
+            points.forEach((point, i) => {
+                if (!i) {
+                    path.moveTo(point.x, point.y);
+                } else {
+                    path.lineTo(point.x, point.y);
+                }
+            });
+            path.closePath();
+            return area;
+        });
+
+        const root = this.root;
+        root.append(this.areas);
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.areas.forEach((area, i) => {
+            area.fill = fills[i];
+            area.stroke = strokes[i];
+        });
+    }
+}
+
+class MiniNormalizedArea extends MiniArea {
+    static readonly data = MiniArea.data.map(stack => {
+        const sum = stack.reduce((p, c) => p + c, 0);
+        return stack.map(v => v / sum * 16);
+    });
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniNormalizedArea.data) {
+        super(parent, fills, strokes, data);
     }
 }
