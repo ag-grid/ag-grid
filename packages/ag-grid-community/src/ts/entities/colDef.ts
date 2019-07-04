@@ -198,6 +198,8 @@ export interface ColDef extends AbstractColDef {
 
     rowDrag?: boolean | ((params: any) => boolean);
 
+    dndSource?: boolean | ((params: any) => boolean);
+
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
 

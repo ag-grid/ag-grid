@@ -150,6 +150,7 @@ export class AgGridColumn {
     @Input() public suppressNavigable: any;
     @Input() public enableCellChangeFlash: any;
     @Input() public rowDrag: any;
+    @Input() public dndSource: any;
     @Input() public autoHeight: any;
     @Input() public sortable: any;
     @Input() public resizable: any;

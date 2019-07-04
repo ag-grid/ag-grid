@@ -580,6 +580,10 @@
         "enterprise": true
       },
       {
+        "title": "Drag & Drop",
+        "url": "javascript-grid-drag-and-drop/"
+      },
+      {
         "title": "See Also",
         "url": "",
         "items": [

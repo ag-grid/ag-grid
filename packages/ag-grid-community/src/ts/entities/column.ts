@@ -361,6 +361,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.isColumnFunc(rowNode, this.colDef.rowDrag);
     }
 
+    public isDndSource(rowNode: RowNode): boolean {
+        return this.isColumnFunc(rowNode, this.colDef.dndSource);
+    }
+
     public isCellCheckboxSelection(rowNode: RowNode): boolean {
         return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
     }

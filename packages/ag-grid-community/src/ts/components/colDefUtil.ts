@@ -97,6 +97,7 @@ export class ColDefUtil {
         'suppressNavigable',
         'enableCellChangeFlash',
         'rowDrag',
+        'dndSource',
         'autoHeight',
         'sortable',
         'resizable',

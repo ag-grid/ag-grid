@@ -28,6 +28,7 @@ import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { _, Promise } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import {DndSourceComp} from "./dndSourceComp";
 
 export class CellComp extends Component {
 
@@ -51,6 +52,7 @@ export class CellComp extends Component {
 
     private includeSelectionComponent: boolean;
     private includeRowDraggingComponent: boolean;
+    private includeDndSourceComponent: boolean;
 
     private cellFocused: boolean;
     private editingCell = false;
@@ -768,16 +770,19 @@ export class CellComp extends Component {
             this.usingWrapper = false;
             this.includeSelectionComponent = false;
             this.includeRowDraggingComponent = false;
+            this.includeDndSourceComponent = false;
             return;
         }
 
         const cbSelectionIsFunc = typeof colDef.checkboxSelection === 'function';
         const rowDraggableIsFunc = typeof colDef.rowDrag === 'function';
+        const dndSourceIsFunc = typeof colDef.dndSource === 'function';
 
         this.includeSelectionComponent = cbSelectionIsFunc || colDef.checkboxSelection === true;
         this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDrag === true;
+        this.includeDndSourceComponent = dndSourceIsFunc || colDef.dndSource === true;
 
-        this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent;
+        this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent || this.includeDndSourceComponent;
     }
 
     private chooseCellRenderer(): void {
@@ -1908,6 +1913,9 @@ export class CellComp extends Component {
             if (this.includeRowDraggingComponent) {
                 this.addRowDragging();
             }
+            if (this.includeDndSourceComponent) {
+                this.addDndSource();
+            }
             if (this.includeSelectionComponent) {
                 this.addSelectionCheckbox();
             }
@@ -1938,12 +1946,17 @@ export class CellComp extends Component {
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
         this.addFeature(this.beans.context, rowDraggingComp);
 
-        // let visibleFunc = this.getComponentHolder().checkboxSelection;
-        // visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
-        // cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
-
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
+    }
+
+    private addDndSource(): void {
+
+        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
+        this.addFeature(this.beans.context, dndSourceComp);
+
+        // put the checkbox in before the value
+        this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);
     }
 
     private addSelectionCheckbox(): void {
