@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders, ExcelFont } from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders, ExcelFont, _ } from 'ag-grid-community';
 import numberFormatsFactory from './numberFormats';
 import fontsFactory from './fonts';
 import fillsFactory from './fills';
@@ -113,7 +113,7 @@ const registerNumberFmt = (format: string): number => {
 
     if (pos === -1) {
         pos = registeredNumberFmts.length + 164;
-        registeredNumberFmts.push({formatCode: format, numFmtId: pos});
+        registeredNumberFmts.push({formatCode: _.utf8_encode(format), numFmtId: pos});
     }
 
     return pos;
@@ -215,7 +215,7 @@ const registerFont = (font: ExcelFont): number => {
     if (pos === -1) {
         pos = registeredFonts.length;
         registeredFonts.push({
-            name,
+            name: _.utf8_encode(name),
             color: convertedColor,
             size,
             bold,
