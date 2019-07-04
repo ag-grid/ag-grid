@@ -133,8 +133,6 @@
                     transition-timing-function: ease-in-out;
                 }
                 .ag-chart-mini-thumbnail {
-                    width: 80px;
-                    height: 80px;
                     cursor: pointer;
                     canvas {
                         display: block;
@@ -165,7 +163,7 @@
             .ag-group-subgroup {
                 justify-content: space-between;
             }
-            
+
         }
     }
 }
@@ -175,7 +173,7 @@
     .ag-chart-menu {
         opacity: 0;
         pointer-events: none;
-        
+
         > span {
             opacity: 0.5;
             line-height: 24px;

@@ -7,8 +7,8 @@
   "scripts": {
     "build": "gulp",
     "umd": "rollup -c",
-    "test": "CI=true react-scripts test --verbose=false",
-    "test:watch": "react-scripts test --verbose=false",
+    "test": "CI=true react-scripts test --verbose=false --env=jest-environment-jsdom-fourteen",
+    "test:watch": "react-scripts test --verbose=false --env=jest-environment-jsdom-fourteen",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache"
   },
   "repository": {
@@ -47,6 +47,7 @@
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^5.0.0-alpha.3",
+    "jest-environment-jsdom-fourteen": "1.0.0-alpha.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-scripts": "2.1.5",

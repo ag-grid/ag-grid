@@ -61,16 +61,16 @@ export class ChartFormattingPanel extends Component {
         const legendPanel = new LegendPanel(this.chartController);
         this.addComponent(legendPanel);
 
-        const barSeriesPanel = new BarSeriesPanel(this.chartController);
-        this.addComponent(barSeriesPanel);
-
         const axisPanel = new AxisPanel(this.chartController);
         this.addComponent(axisPanel);
 
+        const barSeriesPanel = new BarSeriesPanel(this.chartController);
+        this.addComponent(barSeriesPanel);
+
         this.addExpandedCallback(chartPanel, [legendPanel, barSeriesPanel, axisPanel]);
         this.addExpandedCallback(legendPanel, [barSeriesPanel, axisPanel, chartPanel]);
-        this.addExpandedCallback(barSeriesPanel, [legendPanel, axisPanel, chartPanel]);
         this.addExpandedCallback(axisPanel, [legendPanel, barSeriesPanel, chartPanel]);
+        this.addExpandedCallback(barSeriesPanel, [legendPanel, axisPanel, chartPanel]);
     }
 
     private createLineChartPanel(): void {
@@ -80,16 +80,16 @@ export class ChartFormattingPanel extends Component {
         const legendPanel = new LegendPanel(this.chartController);
         this.addComponent(legendPanel);
 
-        const lineSeriesPanel = new LineSeriesPanel(this.chartController);
-        this.addComponent(lineSeriesPanel);
-
         const axisPanel = new AxisPanel(this.chartController);
         this.addComponent(axisPanel);
 
+        const lineSeriesPanel = new LineSeriesPanel(this.chartController);
+        this.addComponent(lineSeriesPanel);
+
         this.addExpandedCallback(chartPanel, [legendPanel, lineSeriesPanel, axisPanel]);
         this.addExpandedCallback(legendPanel, [lineSeriesPanel, axisPanel, chartPanel]);
-        this.addExpandedCallback(lineSeriesPanel, [legendPanel, axisPanel, chartPanel]);
         this.addExpandedCallback(axisPanel, [legendPanel, lineSeriesPanel, chartPanel]);
+        this.addExpandedCallback(lineSeriesPanel, [legendPanel, axisPanel, chartPanel]);
     }
 
     private createPieChartPanel(): void {

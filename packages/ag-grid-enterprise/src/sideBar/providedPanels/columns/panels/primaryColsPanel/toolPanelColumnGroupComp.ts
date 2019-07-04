@@ -28,7 +28,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
                 <span class="ag-column-group-opened-icon" ref="eGroupClosedIcon"></span>
             </span>
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-icon ag-icon-grip ag-column-drag" ref="eDragHandle"></span>
             <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
         </div>`;
 
@@ -38,13 +37,13 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
-    @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
-
+    
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
     @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: HTMLElement;
-
+    
+    private eDragHandle: HTMLElement;
     private columnGroup: OriginalColumnGroup;
     private expanded: boolean;
     private columnDept: number;
@@ -70,6 +69,10 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     @PostConstruct
     public init(): void {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
+
+        this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        _.addCssClass(this.eDragHandle, 'ag-column-drag');
+        this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
         // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');

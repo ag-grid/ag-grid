@@ -1301,6 +1301,7 @@ export class Utils {
         columnGroupClosed: 'contracted',
         columnSelectClosed: 'tree-closed',
         columnSelectOpen: 'tree-open',
+        columnSelectIndeterminate: 'tree-indeterminate',
         columnMovePin: 'pin',
         columnMoveAdd: 'plus',
         columnMoveHide: 'eye-slash',
@@ -1314,12 +1315,19 @@ export class Utils {
         groupContracted: 'expanded',
         groupExpanded: 'contracted',
         chart: 'chart',
+        close: 'cross',
+        cancel: 'cancel',
+        check: 'tick',
         checkboxChecked: 'checkbox-checked',
         checkboxUnchecked: 'checkbox-unchecked',
         checkboxIndeterminate: 'checkbox-indeterminate',
         checkboxCheckedReadOnly: 'checkbox-checked-readonly',
         checkboxUncheckedReadOnly: 'checkbox-unchecked-readonly',
         checkboxIndeterminateReadOnly: 'checkbox-indeterminate-readonly',
+        first: 'first',
+        previous: 'previous',
+        next: 'next',
+        last: 'last',
         colorPicker: 'color-picker',
         radioButtonOn: 'radio-button-on',
         radioButtonOff: 'radio-button-off',
@@ -1328,7 +1336,7 @@ export class Utils {
         menu: 'menu',
         filter: 'filter',
         columns: 'columns',
-        maximze: 'maximize',
+        maximize: 'maximize',
         minimize: 'minimize',
         menuPin: 'pin',
         menuValue: 'aggregation',
@@ -1340,10 +1348,13 @@ export class Utils {
         pivotPanel: 'pivot',
         rowGroupPanel: 'group',
         valuePanel: 'aggregation',
-        columnDrag: 'column-drag',
-        rowDrag: 'row-drag',
+        columnDrag: 'grip',
+        rowDrag: 'grip',
         save: 'save',
-        /** from @deprecated header, remove at some point */
+        smallLeft: 'small-left',
+        smallRight: 'small-right',
+        smallUp: 'small-up',
+        smallDown: 'small-down',
         sortAscending: 'asc',
         sortDescending: 'desc',
         sortUnSort: 'none'
@@ -1368,18 +1379,24 @@ export class Utils {
         }
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement {
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null): HTMLElement {
         let userProvidedIcon: Function | string | null = null;
 
         // check col for icon first
-        const icons: any = (column && column.getColDef().icons) ? column.getColDef().icons : null;
+        const icons: any = column && column.getColDef().icons;
+
         if (icons) {
             userProvidedIcon = icons[iconName];
         }
-        // it not in col, try grid options
-        if (!userProvidedIcon && gridOptionsWrapper.getIcons()) {
-            userProvidedIcon = gridOptionsWrapper.getIcons()[iconName];
+
+        // if not in col, try grid options
+        if (gridOptionsWrapper && !userProvidedIcon) {
+            const optionsIcons = gridOptionsWrapper.getIcons();
+            if (optionsIcons) {
+                userProvidedIcon = optionsIcons[iconName];
+            }
         }
+
         // now if user provided, use it
         if (userProvidedIcon) {
             let rendererResult: any;

@@ -26,10 +26,10 @@ export class ChartMenu extends Component {
     public static EVENT_DOWNLOAD_CHART = 'downloadChart';
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['ag-icon-menu', () => this.showMenu('chartSettings')],
-        chartData: ['ag-icon-data' , () => this.showMenu('chartData')],
-        chartFormat: ['ag-icon-data', () => this.showMenu('chartFormat')],
-        chartDownload: ['ag-icon-save', () => this.saveChart()]
+        chartSettings: ['menu', () => this.showMenu('chartSettings')],
+        chartData: ['data' , () => this.showMenu('chartData')],
+        chartFormat: ['data', () => this.showMenu('chartFormat')],
+        chartDownload: ['save', () => this.saveChart()]
     };
 
     private tabs: ChartMenuOptions[] = [];
@@ -94,10 +94,8 @@ export class ChartMenu extends Component {
 
         chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
-            const [ iconCls, callback ] = buttonConfig;
-            const buttonEl = document.createElement('span');
-            _.addCssClass(buttonEl, 'ag-icon');
-            _.addCssClass(buttonEl, iconCls);
+            const [ iconName, callback ] = buttonConfig;
+            const buttonEl = _.createIconNoSpan(iconName, this.gridOptionsWrapper);
             this.addDestroyableEventListener(buttonEl, 'click', callback);
             this.getGui().appendChild(buttonEl);
         });

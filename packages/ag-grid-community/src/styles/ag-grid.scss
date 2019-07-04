@@ -488,6 +488,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: stretch;
     > div {
         display: flex;
+        align-items: center;
     }
 
     .ag-column-drop-list {
@@ -1164,6 +1165,12 @@ $handleSize: 5px;
     align-items: center;
     .ag-disabled {
         pointer-events: none;
+    }
+    .ag-paging-button {
+        position: relative;
+        button {
+            position: absolute;
+        }
     }
 }
 

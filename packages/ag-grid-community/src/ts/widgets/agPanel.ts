@@ -26,11 +26,7 @@ export class AgPanel extends Positionable(Component) {
             <div ref="eContentWrapper" class="ag-panel-content-wrapper"></div>
         </div>`;
 
-    protected static CLOSE_BTN_TEMPLATE =
-        `<div class="ag-button">
-            <span class="ag-icon ag-icon-cross"></span>
-        </div>
-        `;
+    protected static CLOSE_BTN_TEMPLATE = `<div class="ag-button"></div>`;
 
     protected closable = true;
     config: PanelOptions | undefined;
@@ -108,9 +104,16 @@ export class AgPanel extends Positionable(Component) {
 
         if (closable) {
             const closeButtonComp = this.closeButtonComp = new Component(AgPanel.CLOSE_BTN_TEMPLATE);
+            this.getContext().wireBean(closeButtonComp);
+
+            const eGui = closeButtonComp.getGui();
+            eGui.appendChild(_.createIconNoSpan('close', this.gridOptionsWrapper));
+
             this.addTitleBarButton(closeButtonComp);
-            closeButtonComp.addDestroyableEventListener(closeButtonComp.getGui(), 'click', this.onBtClose.bind(this));
+            closeButtonComp.addDestroyableEventListener(eGui, 'click', this.onBtClose.bind(this));
         } else if (this.closeButtonComp) {
+            const eGui = this.closeButtonComp.getGui();
+            eGui.parentElement.removeChild(eGui);
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
         }

@@ -338,7 +338,7 @@ export class AreaSeries extends Series<CartesianChart> {
             return;
         }
 
-        const n = this.data.length;
+        const xCount = this.data.length;
         const xAxis = chart.xAxis;
         const yAxis = chart.yAxis;
         const xScale = xAxis.scale;
@@ -357,16 +357,20 @@ export class AreaSeries extends Series<CartesianChart> {
         const areaSelectionData: AreaSelectionDatum[] = [];
         const markerSelectionData: MarkerSelectionDatum[] = [];
 
-        const last = n * 2 - 1;
-        for (let i = 0; i < n; i++) {
+        const last = xCount * 2 - 1;
+        for (let i = 0; i < xCount; i++) {
             const xDatum = xData[i];
             const yDatum = yData[i];
+            const yCount = yDatum.length;
             const x = xScale.convert(xDatum) + xOffset;
 
-            let yFieldIndex = 0;
-            yDatum.reduce((prev, curr) => {
+            let prev = 0;
+            let curr: number;
+            for (let j = 0; j < yCount; j++) {
+                curr = yDatum[j];
+
                 const y = yScale.convert(prev + curr) + yOffset;
-                const yField = yFields[yFieldIndex];
+                const yField = yFields[j];
                 const seriesDatum = data[i];
                 const yValue = seriesDatum[yField];
 
@@ -376,12 +380,12 @@ export class AreaSeries extends Series<CartesianChart> {
                     yField,
                     x,
                     y,
-                    fill: fills[yFieldIndex % fills.length],
+                    fill: fills[j % fills.length],
                     radius: markerSize / 2,
-                    text: this.yFieldNames[yFieldIndex]
+                    text: this.yFieldNames[j]
                 });
 
-                const areaDatum = areaSelectionData[yFieldIndex] || (areaSelectionData[yFieldIndex] = {
+                const areaDatum = areaSelectionData[j] || (areaSelectionData[j] = {
                     yField,
                     points: []
                 });
@@ -395,9 +399,8 @@ export class AreaSeries extends Series<CartesianChart> {
                     y: yScale.convert(prev) + yOffset // bottom y
                 };
 
-                yFieldIndex++;
-                return curr + prev;
-            }, 0);
+                prev += curr;
+            }
         }
 
         const updateAreas = this.areaSelection.setData(areaSelectionData);

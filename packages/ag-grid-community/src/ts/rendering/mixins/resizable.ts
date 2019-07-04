@@ -37,13 +37,13 @@ export function Resizable<T extends { new(...args:any[]): any }>(target: T) {
             </div>
         `;
 
-        @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
         @Autowired('dragService') dragService: DragService;
 
         abstract config: any;
         abstract minWidth: number;
         abstract minHeight: number;
         abstract position: { x: number; y: number; };
+        abstract gridOptionsWrapper: GridOptionsWrapper;
         abstract updateDragStartPosition(x: number, y: number): void;
         abstract calculateMouseMovement(params: {
             e: MouseEvent,
