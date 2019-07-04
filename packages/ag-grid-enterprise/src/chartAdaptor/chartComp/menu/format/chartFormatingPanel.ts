@@ -49,7 +49,7 @@ export class ChartFormattingPanel extends Component {
         } else if (chartType === ChartType.Line) {
             this.createLineChartPanel();
 
-        } else if (chartType === ChartType.Area || chartType === ChartType.NormalizedArea) {
+        } else if (chartType === ChartType.StackedArea || chartType === ChartType.NormalizedArea) {
             this.createAreaChartPanel();
 
         } else {

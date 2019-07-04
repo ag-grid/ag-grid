@@ -11,7 +11,7 @@ export class AreaChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        const areaChartType = params.chartType === ChartType.NormalizedArea ? 'normalizedArea' : 'area';
+        const areaChartType = params.chartType === ChartType.NormalizedArea ? 'normalizedArea' : 'stackedArea';
         this.chartOptions = this.getChartOptions(areaChartType, this.defaultOptions()) as AreaChartOptions;
 
         this.chart = ChartBuilder.createAreaChart(this.chartOptions);
@@ -40,7 +40,7 @@ export class AreaChartProxy extends ChartProxy {
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
 
         areaSeries.fills = palette.fills;
-        areaSeries.stroke = 'white'; // TODO: should be the same as the background color
+        areaSeries.strokes = ['white'];
     }
 
     private defaultOptions(): AreaChartOptions {
@@ -106,7 +106,7 @@ export class AreaChartProxy extends ChartProxy {
             seriesDefaults: {
                 type: 'area',
                 fills: palette.fills,
-                stroke: palette.strokes[0],
+                strokes: palette.strokes,
                 normalizedTo: this.chartProxyParams.chartType === ChartType.NormalizedArea ? 100 : undefined,
                 strokeWidth: 1,
                 marker: true,

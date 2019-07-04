@@ -150,7 +150,7 @@ export class GridChartComp extends Component {
                 return new DoughnutChartProxy(chartOptions);
             // case ChartType.Scatter:
             //     return new ScatterChartProxy(chartOptions);
-            case ChartType.Area:
+            case ChartType.StackedArea:
             case ChartType.NormalizedArea:
                 return new AreaChartProxy(chartOptions);
             default: // case ChartType.Line:

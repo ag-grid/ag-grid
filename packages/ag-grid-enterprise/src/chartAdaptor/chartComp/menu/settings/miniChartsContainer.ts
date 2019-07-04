@@ -28,7 +28,7 @@ export class MiniChartsContainer extends Component {
     private init() {
         // TODO: reintroduce MiniScatter when chart ranges support it
         // const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniScatter, MiniPie, MiniDonut];
-        const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniPie, MiniDonut, MiniArea, MiniNormalizedArea];
+        const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniPie, MiniDonut, MiniStackedArea, MiniNormalizedArea];
         const eGui = this.getGui();
         classes.forEach((MiniClass: new (parent: HTMLElement, fills: string[], strokes: string[]) => MiniChart, idx: number) => {
             const miniWrapper = document.createElement('div');
@@ -498,7 +498,7 @@ class MiniScatter extends MiniChart {
     }
 }
 
-class MiniArea extends MiniChart {
+class MiniStackedArea extends MiniChart {
     private readonly areas: Path[];
 
     static readonly data = [
@@ -507,7 +507,7 @@ class MiniArea extends MiniChart {
         [6, 2, 2]
     ];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniArea.data) {
+    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniStackedArea.data) {
         super();
 
         this.scene.parent = parent;
@@ -597,8 +597,8 @@ class MiniArea extends MiniChart {
     }
 }
 
-class MiniNormalizedArea extends MiniArea {
-    static readonly data = MiniArea.data.map(stack => {
+class MiniNormalizedArea extends MiniStackedArea {
+    static readonly data = MiniStackedArea.data.map(stack => {
         const sum = stack.reduce((p, c) => p + c, 0);
         return stack.map(v => v / sum * 16);
     });

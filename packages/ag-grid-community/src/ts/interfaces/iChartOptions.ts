@@ -23,7 +23,7 @@ export enum ChartType {
     // Scatter,
     Pie,
     Doughnut,
-    Area,
+    StackedArea,
     NormalizedArea
 }
 
@@ -222,7 +222,7 @@ export interface AreaSeriesOptions extends SeriesOptions {
     normalizedTo?: number;
 
     fills?: string[];
-    stroke?: string;
+    strokes?: string[];
     strokeWidth?: number;
 
     marker?: boolean;

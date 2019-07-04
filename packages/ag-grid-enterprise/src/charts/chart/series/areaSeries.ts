@@ -63,13 +63,13 @@ export class AreaSeries extends Series<CartesianChart> {
         return this._fills;
     }
 
-    private _stroke: string = 'white';
-    set stroke(value: string) {
-        this._stroke = value;
+    private _strokes: string[] = ['white'];
+    set strokes(values: string[]) {
+        this._strokes = values;
         this.scheduleData();
     }
-    get stroke(): string {
-        return this._stroke;
+    get strokes(): string[] {
+        return this._strokes;
     }
 
     private xData: string[] = [];
@@ -369,7 +369,7 @@ export class AreaSeries extends Series<CartesianChart> {
         const yOffset = (yScale.bandwidth || 0) / 2;
         const yFields = this.yFields;
         const fills = this.fills;
-        const stroke = this.stroke;
+        const stroke = this.strokes[0];
         const strokeWidth = this.strokeWidth;
         const data = this.data;
         const xData = this.xData;
@@ -520,7 +520,7 @@ export class AreaSeries extends Series<CartesianChart> {
     listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yFields.length) {
             const fills = this.fills;
-            const stroke = this.stroke;
+            const strokes = this.strokes;
             const id = this.id;
 
             this.yFields.forEach((yField, index) => {
@@ -533,7 +533,7 @@ export class AreaSeries extends Series<CartesianChart> {
                     },
                     marker: {
                         fill: fills[index % fills.length],
-                        stroke: stroke
+                        stroke: strokes[index % strokes.length]
                     }
                 });
             });

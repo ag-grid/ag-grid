@@ -344,8 +344,8 @@ export class ChartBuilder {
         if (options.fills !== undefined) {
             series.fills = options.fills;
         }
-        if (options.stroke !== undefined) {
-            series.stroke = options.stroke;
+        if (options.strokes !== undefined) {
+            series.strokes = options.strokes;
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
