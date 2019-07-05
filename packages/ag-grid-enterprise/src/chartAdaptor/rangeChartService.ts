@@ -51,6 +51,12 @@ export class RangeChartService implements IRangeChartService {
             case 'normalizedBar':
                 chartType = ChartType.NormalizedBar;
                 break;
+            case 'stackedArea':
+                chartType = ChartType.StackedArea;
+                break;
+            case 'normalizedArea':
+                chartType = ChartType.NormalizedArea;
+                break;
             case 'pie':
                 chartType = ChartType.Pie;
                 break;

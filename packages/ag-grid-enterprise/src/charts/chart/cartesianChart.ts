@@ -5,6 +5,7 @@ import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
 import { Padding } from "../util/padding";
+import { Group } from "../scene/group";
 
 export class CartesianChart extends Chart {
 
@@ -20,9 +21,9 @@ export class CartesianChart extends Chart {
         this.scene.root!.append(this.legend.group);
     }
 
-    private seriesClipRect = new ClipRect();
+    private seriesClipRect = new Group();
 
-    get seriesRoot(): ClipRect {
+    get seriesRoot(): Group {
         return this.seriesClipRect;
     }
 
@@ -100,11 +101,11 @@ export class CartesianChart extends Chart {
         shrinkRect.width -= axisAutoPadding.left + axisAutoPadding.right;
         shrinkRect.height -= axisAutoPadding.top + axisAutoPadding.bottom;
 
-        const seriesClipRect = this.seriesClipRect;
-        seriesClipRect.x = shrinkRect.x;
-        seriesClipRect.y = shrinkRect.y;
-        seriesClipRect.width = shrinkRect.width;
-        seriesClipRect.height = shrinkRect.height;
+        // const seriesClipRect = this.seriesClipRect;
+        // seriesClipRect.x = shrinkRect.x;
+        // seriesClipRect.y = shrinkRect.y;
+        // seriesClipRect.width = shrinkRect.width;
+        // seriesClipRect.height = shrinkRect.height;
 
         const xAxis = this.xAxis;
         const yAxis = this.yAxis;

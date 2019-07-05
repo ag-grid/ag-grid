@@ -687,6 +687,10 @@
             "url": "javascript-grid-charts-customisation-line/"
           },
           {
+            "title": "Area",
+            "url": "javascript-grid-charts-customisation-area/"
+          },
+          {
             "title": "Scatter",
             "url": "javascript-grid-charts-customisation-scatter/"
           },

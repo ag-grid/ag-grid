@@ -6,20 +6,20 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Customising Line Charts</h1>
+    <h1 class="heading-enterprise">Customising Area Charts</h1>
 
     <p class="lead">
-        This sections details how to customise line charts in your applications.
+        This sections details how to customise area charts in your applications.
     </p>
 
-<h3>Line Chart Option Interfaces</h3>
+    <h3>Area Chart Option Interfaces</h3>
 
-<p>
-    The interfaces for line chart options are shown below:
-</p>
+    <p>
+        The interfaces for area chart options are shown below:
+    </p>
 
-<snippet>
-interface LineChartOptions {
+    <snippet>
+interface AreaChartOptions {
     // The chart title to render at the top of the chart.
     title?: CaptionOptions;
     // The subtitle to render under the chart's title.
@@ -38,12 +38,12 @@ interface LineChartOptions {
         left: number;
     };
 
-    // Additional CSS class to be added to tooltip element.
+    // Additional CSS class to be added to the tooltip element.
     tooltipClass?: string;
 
     // The side of the chart to dock the legend to.
     legendPosition?: 'top' | 'right' | 'bottom' | 'left';
-    // The padding amount between the legend and the series.
+    // The amount of padding between the legend and the series.
     legendPadding?: number;
 
     legend?: {
@@ -75,14 +75,14 @@ interface LineChartOptions {
     yAxis: AxisOptions;
 
     seriesDefaults?: {
-        // The fill colors to be used by the series' markers.
+        // The fill colors to be used by the series.
         fills?: string[];
-        // The stroke colors to be used by the series' markers and the line itself.
+        // The stroke colors to be used by the series.
         strokes?: string[];
-        // The stroke width. Defaults to `1`.
+        // The stroke width. Defaults to `3`.
         strokeWidth?: number;
 
-        // Whether to show line series markers at each data point or not. Defaults to `true`.
+        // Whether to show area series markers at each data point or not. Defaults to `true`.
         // Note: tooltips won't show without markers.
         marker?: boolean;
         // The size of the marker. Defaults to `6`.
@@ -90,32 +90,48 @@ interface LineChartOptions {
         // The stroke width of the marker. Defaults to `1`.
         markerStrokeWidth?: number;
 
-        // Whether to show the tooltip for bars when they are hovered/tapped.
+        // The shadow type to use for areas. Defaults to no shadow.
+        shadow?: {
+            // The shadow color. For example, 'rgba(0, 0, 0, 0.3)'.
+            color?: string;
+            // The shadow offset.
+            offset?: [number, number];
+            // The blur amount to apply.
+            blur?: number;
+        };
+
+        // Whether to show the tooltip for area markers when they are hovered/tapped.
         // Defaults to `true`.
         tooltipEnabled?: boolean;
-        // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
-        tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+        // A custom render to use for tooltips. Should return a valid HTML string.
+        tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
     };
 }
 
 interface CaptionOptions {
     // The text to use for the chart's title/subtitle.
     text?: string;
-    // The font to be used by the title/subtitle.
-    // Defaults to `bold 16px Verdana, sans-serif` for the title
-    // and '12px Verdana, sans-serif' for the subtitle.
-    font?: string;
+    // The font style to be used by the title/subtitle. Not used by default.
+    fontStyle?: string;
+    // The font weight to be used by the title/subtitle.
+    // Defaults to `bold` for the title, and `undefined` for the subtitle.
+    fontWeight?: string;
+    // The font size to be used by the title/subtitle.
+    // Defaults to `16` for the title and `12` for the subtitle.
+    fontSize?: number;
+    // The font family to be used by the title/subtitle.
+    // Defaults to `Verdana, sans-serif` for both.
+    fontFamily?: string;
     // The color of the title/subtitle's text. Defaults to `black`.
     color?: string;
     // Whether to show the title/subtitle or not. Defaults to `true`.
     enabled?: boolean;
 }
 
-interface LineTooltipRendererParams {
+interface AreaTooltipRendererParams {
     // The datum object (an element in the `data` array used by the chart/series).
     datum: any;
-    // The field of the datum object that contains the category name
-    // of the highlighted data point.
+    // The field of the datum object that contains the category name of the highlighted data point.
     xField: string;
     // The field of the datum object that contains the series value of the highlighted data point.
     yField: string;
@@ -136,8 +152,14 @@ interface AxisOptions {
     // The color of the axis ticks. Depends on whether the light or dark mode is used.
     tickColor?: string;
 
-    // The font to be used by axis labels. Defaults to `12px Verdana, sans-serif`.
-    labelFont?: string;
+    // The font style to be used by axis labels. For example, 'italic'. Not used by default.
+    labelFontStyle?: string;
+    // The font weight to be used by axis labels. For example, 'bold'. Not used by default.
+    labelFontWeight?: string;
+    // The font size to be used by axis labels. Defaults to `12`.
+    labelFontSize?: number;
+    // The font family to be used by axis labels. Defaults to `Verdana, sans-serif`.
+    labelFontFamily?: string;
     // The color of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
     // The rotation of the axis labels. Defaults to `45` (degrees), however when no category
@@ -166,12 +188,6 @@ interface IGridStyle {
 
 The example below changes all available styling options. The styling options are exaggerated to demonstrate the option rather than produce a chart that looks nice.
 
-    <h3>Default Line Options</h3>
-
-    <p>
-        The default values for the bar chart options are shown below:
-    </p>
-
-<?= example('Custom Line Chart', 'custom-line-chart', 'generated', array("enterprise" => true)) ?>
+    <?= example('Custom Area Chart', 'custom-area-chart', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
