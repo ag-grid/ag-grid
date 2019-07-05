@@ -463,6 +463,7 @@ export class AreaSeries extends Series<CartesianChart> {
             const path = shape.path;
 
             shape.fill = fills[index % fills.length];
+            shape.fillShadow = this.shadow;
 
             path.clear();
 
