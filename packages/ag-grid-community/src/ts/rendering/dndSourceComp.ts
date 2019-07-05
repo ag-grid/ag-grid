@@ -12,13 +12,15 @@ export class DndSourceComp extends Component {
     private readonly rowNode: RowNode;
     private readonly column: Column;
     private readonly cellValue: string;
+    private readonly eCell: HTMLElement;
 
-    constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans) {
+    constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans, eCell: HTMLElement) {
         super(`<div class="ag-row-drag" draggable="true"></div>`);
         this.rowNode = rowNode;
         this.column = column;
         this.cellValue = cellValue;
         this.beans = beans;
+        this.eCell = eCell;
     }
 
     @PostConstruct
@@ -37,12 +39,15 @@ export class DndSourceComp extends Component {
 
         const providedOnRowDrag = this.column.getColDef().dndSourceOnRowDrag;
 
+        dragEvent.dataTransfer.setDragImage(this.eCell, 0, 0);
+
         // default behaviour is to convert data to json and set into drag component
         const defaultOnRowDrag = () => {
             try {
                 const jsonData = JSON.stringify(this.rowNode.data);
                 dragEvent.dataTransfer.setData('application/json', jsonData);
                 dragEvent.dataTransfer.setData('text/plain', jsonData);
+
             } catch (e) {
                 // if we cannot convert the data to json, then we do not set the type
             }

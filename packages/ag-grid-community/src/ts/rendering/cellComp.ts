@@ -1952,7 +1952,7 @@ export class CellComp extends Component {
 
     private addDndSource(): void {
 
-        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
+        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
         this.addFeature(this.beans.context, dndSourceComp);
 
         // put the checkbox in before the value
