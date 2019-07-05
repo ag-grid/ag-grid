@@ -6,8 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
     <h1 class="first-h1" id="pagination">Row Pagination</h1>
 
     <p class="lead">

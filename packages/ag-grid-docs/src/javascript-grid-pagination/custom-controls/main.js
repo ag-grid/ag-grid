@@ -4,7 +4,7 @@ var columnDefs = [
         headerName: '#',
         width: 50,
         cellRenderer: function(params) {
-            return params.node.id + 1;
+            return parseInt(params.node.id) + 1;
         }
     },
     {headerName: 'Athlete', field: 'athlete', width: 150},
