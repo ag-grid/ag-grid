@@ -322,7 +322,7 @@ export class AppComponent implements OnInit {
 <snippet language="ts">
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AgGridNg2 } from 'ag-grid-angular';
+import { AgGridAngular } from 'ag-grid-angular';
 
 @Component({
     selector: 'app-root',
@@ -330,7 +330,7 @@ import { AgGridNg2 } from 'ag-grid-angular';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    @ViewChild('agGrid') agGrid: AgGridNg2;
+    @ViewChild('agGrid') agGrid: AgGridAngular;
 
     title = 'app';
 
@@ -371,7 +371,7 @@ export class AppComponent implements OnInit {
 <snippet language="ts">
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AgGridNg2 } from 'ag-grid-angular';
+import { AgGridAngular } from 'ag-grid-angular';
 
 @Component({
     selector: 'app-root',
@@ -379,7 +379,7 @@ import { AgGridNg2 } from 'ag-grid-angular';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    @ViewChild('agGrid') agGrid: AgGridNg2;
+    @ViewChild('agGrid') agGrid: AgGridAngular;
 
     title = 'app';
 
@@ -456,7 +456,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 <snippet language="ts">
 export class AppComponent implements OnInit {
-    @ViewChild('agGrid') agGrid: AgGridNg2;
+    @ViewChild('agGrid') agGrid: AgGridAngular;
 
     title = 'app';
 
