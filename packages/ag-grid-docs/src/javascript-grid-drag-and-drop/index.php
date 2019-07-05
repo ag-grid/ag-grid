@@ -34,8 +34,10 @@ include '../documentation-main/documentation_header.php';
         moving as the drag is taking place rather than requiring the drag operation to complete first.
     </note>
 
+    <?= example('Simple', 'simple', 'generated') ?>
 
-    <?= example('Browser Dragging', 'browser-dragging', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+
+    <?= example('Two Grids', 'two-grids', 'generated', array('extras' => array('fontawesome')) ) ?>
 
     <note>
         The ag-Grid team gave consideration towards providing grid callbacks for all the drop

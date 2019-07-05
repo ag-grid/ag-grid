@@ -24,7 +24,8 @@ var leftGridOptions = {
     defaultColDef: {
         width: 80,
         sortable: true,
-        filter: true
+        filter: true,
+        resizable: true
     },
     rowClassRules: rowClassRules,
     getRowNodeId: function(data){return data.id},
@@ -38,7 +39,8 @@ var rightGridOptions = {
     defaultColDef: {
         width: 80,
         sortable: true,
-        filter: true
+        filter: true,
+        resizable: true
     },
     rowClassRules: rowClassRules,
     getRowNodeId: function(data){return data.id},
@@ -78,7 +80,7 @@ function binDrop(event) {
     var jsonData = event.dataTransfer.getData("application/json");
     var data = JSON.parse(jsonData);
 
-    // if data missing or data has no it, do nothing
+    // if data missing or data has no id, do nothing
     if (!data || data.id==null) { return; }
 
     var transaction = {
@@ -101,7 +103,6 @@ function dragStart(event, color) {
     var jsonData = JSON.stringify(newItem);
     event.dataTransfer.setData('application/json', jsonData);
 }
-
 
 function gridDragOver(event) {
     var dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
