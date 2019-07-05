@@ -105,6 +105,7 @@ export class ColDefUtil {
     ];
 
     public static FUNCTION_PROPERTIES = [
+        'dndSourceOnRowDrag',
         'valueGetter',
         'valueSetter',
         'filterValueGetter',

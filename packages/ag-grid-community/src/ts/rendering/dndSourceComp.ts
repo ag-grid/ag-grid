@@ -33,13 +33,25 @@ export class DndSourceComp extends Component {
         this.addGuiEventListener('dragstart', this.onDragStart.bind(this));
     }
 
-    private onDragStart(e: DragEvent): void {
-        try {
-            const jsonData = JSON.stringify(this.rowNode.data);
-            e.dataTransfer.setData('application/json', jsonData);
-            e.dataTransfer.setData('text/plain', jsonData);
-        } catch (e) {
-            // if we cannot convert the data to json, then we do not set the type
+    private onDragStart(dragEvent: DragEvent): void {
+
+        const providedOnRowDrag = this.column.getColDef().dndSourceOnRowDrag;
+
+        // default behaviour is to convert data to json and set into drag component
+        const defaultOnRowDrag = () => {
+            try {
+                const jsonData = JSON.stringify(this.rowNode.data);
+                dragEvent.dataTransfer.setData('application/json', jsonData);
+                dragEvent.dataTransfer.setData('text/plain', jsonData);
+            } catch (e) {
+                // if we cannot convert the data to json, then we do not set the type
+            }
+        };
+
+        if (providedOnRowDrag) {
+            providedOnRowDrag({rowNode: this.rowNode, dragEvent: dragEvent});
+        } else {
+            defaultOnRowDrag();
         }
     }
 

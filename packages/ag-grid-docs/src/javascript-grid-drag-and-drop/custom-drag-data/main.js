@@ -1,7 +1,7 @@
 var rowIdSequence = 100;
 
 var colDefs = [
-    {valueGetter: "'Drag'", dndSource: true},
+    {valueGetter: "'Drag'", dndSource: true, dndSourceOnRowDrag: onRowDrag, checkboxSelection: true},
     {field: "id"},
     {field: "color"},
     {field: "value1"},
@@ -21,6 +21,8 @@ var gridOptions = {
         filter: true,
         resizable: true
     },
+    rowSelection: 'multiple',
+    suppressRowClickSelection: true,
     rowClassRules: rowClassRules,
     rowData: createRowData(),
     rowDragManaged: true,
@@ -59,6 +61,23 @@ function onDrop(event) {
 
     var eJsonDisplay = document.querySelector('#eJsonDisplay');
     eJsonDisplay.appendChild(eJsonRow);
+}
+
+function onRowDrag(params) {
+    // create the data that we want to drag
+    var rowNode = params.rowNode;
+    var e = params.dragEvent;
+    var jsonObject = {
+        grid: 'GRID_001',
+        operation: "Drag on Column",
+        rowId: rowNode.data.id,
+        selected: rowNode.isSelected()
+    };
+    var jsonData = JSON.stringify(jsonObject);
+
+    // set data into the event
+    e.dataTransfer.setData('application/json', jsonData);
+    e.dataTransfer.setData('text/plain', jsonData);
 }
 
 // setup the grid after the page has finished loading

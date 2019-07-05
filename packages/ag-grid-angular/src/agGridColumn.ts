@@ -96,6 +96,7 @@ export class AgGridColumn {
     @Input() public maxWidth: any;
     @Input() public rowGroupIndex: any;
     @Input() public pivotIndex: any;
+    @Input() public dndSourceOnRowDrag: any;
     @Input() public valueGetter: any;
     @Input() public valueSetter: any;
     @Input() public filterValueGetter: any;
