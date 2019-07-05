@@ -79,6 +79,9 @@ export class LineChartProxy extends ChartProxy {
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,
+            background: {
+                fill: this.getBackgroundColor()
+            },
             padding: {
                 top: 20,
                 right: 20,

@@ -93,6 +93,9 @@ export class DoughnutChartProxy extends ChartProxy {
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,
+            background: {
+                fill: this.getBackgroundColor()
+            },
             padding: {
                 top: 50,
                 right: 50,

@@ -157,6 +157,14 @@ export class ChartBuilder {
                 options.padding.left
             );
         }
+        if (options.background !== undefined) {
+            if (options.background.fill !== undefined) {
+                chart.background.fill = options.background.fill;
+            }
+            if (options.background.visible !== undefined) {
+                chart.background.visible = options.background.visible;
+            }
+        }
         if (options.legendPosition !== undefined) {
             chart.legendPosition = options.legendPosition;
         }

@@ -1,9 +1,5 @@
 type Size = { width: number, height: number };
 
-export interface DownloadOptions {
-    fileName?: string, background?: string
-}
-
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.
@@ -66,22 +62,14 @@ export class HdpiCanvas {
      * @param options.fileName The `.png` extension is going to be added automatically.
      * @param [options.background] Defaults to `white`.
      */
-    download(options: DownloadOptions = {}) {
+    download(fileName?: string) {
+        fileName = ((fileName || '').trim() || 'image') + '.png';
+
         // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
         // so we don't support saving to JPEG.
         const type = 'image/png';
-        // The background of our canvas is transparent, so we create a temporary canvas
-        // with the white background and paint our canvas on top of it.
-        const canvas = document.createElement('canvas');
-        canvas.width = this.canvas.width;
-        canvas.height = this.canvas.height;
-        const ctx = canvas.getContext('2d')!;
-        ctx.fillStyle = options.background || 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(this.canvas, 0, 0);
 
-        const dataUrl = canvas.toDataURL(type);
-        const fileName = ((options.fileName || '').trim() || 'image') + '.png';
+        const dataUrl = this.canvas.toDataURL(type);
 
         if (navigator.msSaveOrOpenBlob) { // IE11
             const binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part

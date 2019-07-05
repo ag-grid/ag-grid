@@ -47,6 +47,10 @@ export abstract class ChartProxy {
         return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
     }
 
+    protected getBackgroundColor(): string {
+        return this.chartProxyParams.isDarkTheme() ? '#2d3436' : 'white';
+    }
+
     protected getChartOptions(type: string, options: ChartOptions): ChartOptions {
         // allow users to override options before they are applied
         if (this.chartProxyParams.processChartOptions) {

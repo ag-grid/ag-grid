@@ -224,8 +224,9 @@ export class GridChartComp extends Component {
     }
 
     private downloadChart() {
-        // TODO use chart / dialog title for filename
-        this.chartProxy.getChart().scene.download({fileName: "chart"});
+        const chart = this.chartProxy.getChart();
+        const fileName = chart.title ? chart.title.text : 'chart';
+        chart.scene.download(fileName);
     }
 
     public refreshCanvasSize() {

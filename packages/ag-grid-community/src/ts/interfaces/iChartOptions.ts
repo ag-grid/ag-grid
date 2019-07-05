@@ -2,6 +2,7 @@ export interface ChartOptions {
     parent?: HTMLElement;
     width?: number;
     height?: number;
+    background?: BackgroundOptions,
     series?: any[];
     data?: any;
     padding?: IPadding;
@@ -288,6 +289,11 @@ export interface LegendOptions {
     labelFontSize?: number;
     labelFontFamily?: string;
     labelColor?: string;
+}
+
+export interface BackgroundOptions {
+    fill?: string;
+    visible?: boolean;
 }
 
 export interface CaptionOptions {
