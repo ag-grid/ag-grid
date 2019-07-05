@@ -184,10 +184,12 @@ export class MenuItemMapper {
                 const chartRangeSubMenuItems: string[] = [];
                 chartRangeSubMenuItems.push('groupedBarRangeChart');
                 chartRangeSubMenuItems.push('stackedBarRangeChart');
+                chartRangeSubMenuItems.push('normalizedBarRangeChart');
                 chartRangeSubMenuItems.push('lineRangeChart');
-                // chartRangeSubMenuItems.push('scatterRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
                 chartRangeSubMenuItems.push('doughnutRangeChart');
+                chartRangeSubMenuItems.push('stackedAreaRangeChart');
+                chartRangeSubMenuItems.push('normalizedAreaRangeChart');
                 return {
                     name: localeTextFunc('chartRange', 'Chart Range'),
                     subMenu: chartRangeSubMenuItems,
@@ -205,18 +207,18 @@ export class MenuItemMapper {
                     this.rangeChartService.chartCurrentRange(ChartType.StackedBar);
                 }
             };
+            case 'normalizedBarRangeChart': return {
+                name: localeTextFunc('normalizedBarRangeChart', 'Bar (100% Stacked)&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.NormalizedBar);
+                }
+            };
             case 'lineRangeChart': return {
                 name: localeTextFunc('lineRangeChart', 'Line'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.Line);
                 }
             };
-            // case 'scatterRangeChart': return {
-            //     name: localeTextFunc('scatterRangeChart', 'Scatter'),
-            //     action: () => {
-            //         this.rangeChartService.chartCurrentRange(ChartType.Scatter);
-            //     }
-            // };
             case 'pieRangeChart': return {
                 name: localeTextFunc('pieRangeChart', 'Pie'),
                 action: () => {
@@ -227,6 +229,18 @@ export class MenuItemMapper {
                 name: localeTextFunc('doughnutRangeChart', 'Doughnut'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.Doughnut);
+                }
+            };
+            case 'stackedAreaRangeChart': return {
+                name: localeTextFunc('stackedAreaRangeChart', 'Area (Stacked)&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.StackedArea);
+                }
+            };
+            case 'normalizedAreaRangeChart': return {
+                name: localeTextFunc('normalizedAreaRangeChart', 'Area (100% Stacked)&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.NormalizedArea);
                 }
             };
             default:
