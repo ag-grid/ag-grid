@@ -63,13 +63,13 @@ export class AreaSeries extends Series<CartesianChart> {
         return this._fills;
     }
 
-    private _stroke: string = 'white';
-    set stroke(value: string) {
-        this._stroke = value;
+    private _strokes: string[] = ['white'];
+    set strokes(values: string[]) {
+        this._strokes = values;
         this.scheduleData();
     }
-    get stroke(): string {
-        return this._stroke;
+    get strokes(): string[] {
+        return this._strokes;
     }
 
     private xData: string[] = [];
@@ -151,6 +151,17 @@ export class AreaSeries extends Series<CartesianChart> {
         return this._strokeWidth;
     }
 
+    private _marker: boolean = false;
+    set marker(value: boolean) {
+        if (this._marker !== value) {
+            this._marker = value;
+            this.update();
+        }
+    }
+    get marker(): boolean {
+        return this._marker;
+    }
+
     private _markerSize: number = 8;
     set markerSize(value: number) {
         if (this._markerSize !== value) {
@@ -160,6 +171,17 @@ export class AreaSeries extends Series<CartesianChart> {
     }
     get markerSize(): number {
         return this._markerSize;
+    }
+
+    private _markerStrokeWidth: number = 2;
+    set markerStrokeWidth(value: number) {
+        if (this._markerStrokeWidth !== value) {
+            this._markerStrokeWidth = value;
+            this.update();
+        }
+    }
+    get markerStrokeWidth(): number {
+        return this._markerStrokeWidth;
     }
 
     private _shadow: DropShadow | undefined = undefined;
@@ -347,12 +369,14 @@ export class AreaSeries extends Series<CartesianChart> {
         const yOffset = (yScale.bandwidth || 0) / 2;
         const yFields = this.yFields;
         const fills = this.fills;
-        const stroke = this.stroke;
+        const stroke = this.strokes[0];
         const strokeWidth = this.strokeWidth;
         const data = this.data;
         const xData = this.xData;
         const yData = this.yData;
+        const marker = this.marker;
         const markerSize = this.markerSize;
+        const markerStrokeWidth = this.markerStrokeWidth;
 
         const areaSelectionData: AreaSelectionDatum[] = [];
         const markerSelectionData: MarkerSelectionDatum[] = [];
@@ -374,16 +398,18 @@ export class AreaSeries extends Series<CartesianChart> {
                 const seriesDatum = data[i];
                 const yValue = seriesDatum[yField];
 
-                markerSelectionData.push({
-                    seriesDatum,
-                    yValue,
-                    yField,
-                    x,
-                    y,
-                    fill: fills[j % fills.length],
-                    radius: markerSize / 2,
-                    text: this.yFieldNames[j]
-                });
+                if (marker) {
+                    markerSelectionData.push({
+                        seriesDatum,
+                        yValue,
+                        yField,
+                        x,
+                        y,
+                        fill: fills[j % fills.length],
+                        radius: markerSize / 2,
+                        text: this.yFieldNames[j]
+                    });
+                }
 
                 const areaDatum = areaSelectionData[j] || (areaSelectionData[j] = {
                     yField,
@@ -450,7 +476,7 @@ export class AreaSeries extends Series<CartesianChart> {
             arc.stroke = arc === highlightedNode && this.highlightStyle.stroke !== undefined
                 ? this.highlightStyle.stroke
                 : stroke;
-            arc.strokeWidth = strokeWidth;
+            arc.strokeWidth = markerStrokeWidth;
             arc.visible = datum.radius > 0 && !!this.enabled.get(datum.yField);
         });
 
@@ -494,7 +520,7 @@ export class AreaSeries extends Series<CartesianChart> {
     listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yFields.length) {
             const fills = this.fills;
-            const stroke = this.stroke;
+            const strokes = this.strokes;
             const id = this.id;
 
             this.yFields.forEach((yField, index) => {
@@ -507,7 +533,7 @@ export class AreaSeries extends Series<CartesianChart> {
                     },
                     marker: {
                         fill: fills[index % fills.length],
-                        stroke: stroke
+                        stroke: strokes[index % strokes.length]
                     }
                 });
             });

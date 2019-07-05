@@ -22,7 +22,9 @@ export enum ChartType {
     Line,
     // Scatter,
     Pie,
-    Doughnut
+    Doughnut,
+    StackedArea,
+    NormalizedArea
 }
 
 export interface CartesianChartOptions extends ChartOptions {
@@ -55,6 +57,11 @@ export interface PieChartOptions extends PolarChartOptions {
 export interface DoughnutChartOptions extends PolarChartOptions {
     series?: PieSeriesOptions[];
     seriesDefaults?: PieSeriesOptions;
+}
+
+export interface AreaChartOptions extends CartesianChartOptions {
+    series?: AreaSeriesOptions[];
+    seriesDefaults?: AreaSeriesOptions;
 }
 
 interface IPadding {
@@ -109,9 +116,11 @@ export interface SeriesOptions {
 }
 
 export interface LineTooltipRendererParams {
-    datum: any;
-    xField: string;
-    yField: string;
+    datum: any,
+    xField: string,
+    yField: string,
+    title?: string,
+    color?: string
 }
 
 export interface LineSeriesOptions extends SeriesOptions {
@@ -164,9 +173,19 @@ export interface ScatterSeriesDefaultOptions extends LineSeriesOptions {
 }
 
 export interface BarTooltipRendererParams {
-    datum: any;
-    xField: string;
-    yField: string;
+    datum: any,
+    xField: string,
+    yField: string,
+    title?: string,
+    color?: string
+}
+
+export interface AreaTooltipRendererParams {
+    datum: any,
+    xField: string,
+    yField: string,
+    title?: string,
+    color?: string
 }
 
 export interface BarSeriesOptions extends SeriesOptions {
@@ -192,6 +211,27 @@ export interface BarSeriesOptions extends SeriesOptions {
     labelOffset?: number;
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+}
+
+export interface AreaSeriesOptions extends SeriesOptions {
+    xField?: string;
+    yFields?: string[];
+    yFieldNames?: string[];
+
+    grouped?: boolean;
+    normalizedTo?: number;
+
+    fills?: string[];
+    strokes?: string[];
+    strokeWidth?: number;
+
+    marker?: boolean;
+    markerSize?: number;
+    markerStrokeWidth?: number;
+
+    shadow?: DropShadowOptions;
+
+    tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
 }
 
 export interface PieTooltipRendererParams {

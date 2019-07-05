@@ -644,6 +644,15 @@ export class Utils {
         }
     }
 
+    static findIndex<T>(collection: T[], predicate: (item: T, idx: number, collection: T[]) => boolean): number {
+        for (let i = 0; i < collection.length; i++) {
+            if (predicate(collection[i], i, collection)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /**
      * Returns true if it is a DOM node
      * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object

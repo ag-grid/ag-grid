@@ -1,25 +1,25 @@
 import {
     _,
+    AgDialog,
     Autowired,
     CellRange,
+    ChartOptions,
     ChartType,
     Component,
-    AgDialog,
     Environment,
     GridOptionsWrapper,
     PostConstruct,
-    RefSelector,
-    ResizeObserverService,
     ProcessChartOptionsParams,
-    ChartOptions
+    RefSelector,
+    ResizeObserverService
 } from "ag-grid-community";
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
 import { ChartModel, ChartModelParams } from "./chartModel";
 import { BarChartProxy } from "./chartProxies/barChartProxy";
+import { AreaChartProxy } from "./chartProxies/areaChartProxy";
 import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
 import { LineChartProxy } from "./chartProxies/lineChartProxy";
-import { ScatterChartProxy } from "./chartProxies/scatterChartProxy";
 import { PieChartProxy } from "./chartProxies/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/doughnutChartProxy";
 import { Palette, palettes } from "../../charts/chart/palettes";
@@ -141,9 +141,7 @@ export class GridChartComp extends Component {
     private createChartProxy(chartOptions: ChartProxyParams): ChartProxy {
         switch (chartOptions.chartType) {
             case ChartType.GroupedBar:
-                return new BarChartProxy(chartOptions);
             case ChartType.StackedBar:
-                return new BarChartProxy(chartOptions);
             case ChartType.NormalizedBar:
                 return new BarChartProxy(chartOptions);
             case ChartType.Pie:
@@ -152,6 +150,9 @@ export class GridChartComp extends Component {
                 return new DoughnutChartProxy(chartOptions);
             // case ChartType.Scatter:
             //     return new ScatterChartProxy(chartOptions);
+            case ChartType.StackedArea:
+            case ChartType.NormalizedArea:
+                return new AreaChartProxy(chartOptions);
             default: // case ChartType.Line:
                 return new LineChartProxy(chartOptions);
         }

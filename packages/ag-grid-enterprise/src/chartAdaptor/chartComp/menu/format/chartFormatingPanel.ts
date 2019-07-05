@@ -1,11 +1,11 @@
-import {_, ChartType, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import { _, ChartType, Component, PostConstruct, RefSelector } from "ag-grid-community";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
 import { BarSeriesPanel } from "./series/barSeriesPanel";
 import { AxisPanel } from "./axis/axisPanel";
 import { LineSeriesPanel } from "./series/lineSeriesPanel";
 import { PieSeriesPanel } from "./series/pieSeriesPanel";
-import {ChartPanel} from "./chart/chartPanel";
+import { ChartPanel } from "./chart/chartPanel";
 
 export interface ExpandablePanel {
     expandPanel(expanded: boolean): void;
@@ -49,6 +49,9 @@ export class ChartFormattingPanel extends Component {
         } else if (chartType === ChartType.Line) {
             this.createLineChartPanel();
 
+        } else if (chartType === ChartType.StackedArea || chartType === ChartType.NormalizedArea) {
+            this.createAreaChartPanel();
+
         } else {
             console.warn(`ag-Grid: ChartFormattingPanel - unexpected chart type index: ${chartType} supplied`);
         }
@@ -74,6 +77,25 @@ export class ChartFormattingPanel extends Component {
     }
 
     private createLineChartPanel(): void {
+        const chartPanel = new ChartPanel(this.chartController);
+        this.addComponent(chartPanel);
+
+        const legendPanel = new LegendPanel(this.chartController);
+        this.addComponent(legendPanel);
+
+        const axisPanel = new AxisPanel(this.chartController);
+        this.addComponent(axisPanel);
+
+        const lineSeriesPanel = new LineSeriesPanel(this.chartController);
+        this.addComponent(lineSeriesPanel);
+
+        this.addExpandedCallback(chartPanel, [legendPanel, lineSeriesPanel, axisPanel]);
+        this.addExpandedCallback(legendPanel, [lineSeriesPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(axisPanel, [legendPanel, lineSeriesPanel, chartPanel]);
+        this.addExpandedCallback(lineSeriesPanel, [legendPanel, axisPanel, chartPanel]);
+    }
+
+    private createAreaChartPanel(): void {
         const chartPanel = new ChartPanel(this.chartController);
         this.addComponent(chartPanel);
 

@@ -68,7 +68,10 @@ export class AgColorPanel extends Component {
         this.addDestroyableEventListener(this.spectrumAlpha, 'mousedown', this.onSpectrumAlphaDown);
         this.addDestroyableEventListener(eGui, 'mousemove', this.onSpectrumAlphaMove);
 
-        this.addDestroyableEventListener(eGui, 'mouseup', this.onMouseUp);
+        // Listening to `mouseup` on the document on purpose. The user might release the mouse button
+        // outside the UI control. When the mouse returns back to the control's area, the dragging
+        // of the thumb is not expected and seen as a bug.
+        this.addDestroyableEventListener(document, 'mouseup', this.onMouseUp);
     }
 
     private refreshSpectrumRect() {

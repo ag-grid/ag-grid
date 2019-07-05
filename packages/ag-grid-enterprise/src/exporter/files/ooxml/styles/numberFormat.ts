@@ -1,5 +1,10 @@
 import { ExcelOOXMLTemplate } from 'ag-grid-community';
 
+export interface NumberFormat {
+    formatCode: string;
+    numFmtId: number;
+}
+
 const numberFormatFactory: ExcelOOXMLTemplate = {
     getTemplate(numberFormat: NumberFormat) {
         const {formatCode, numFmtId} = numberFormat;
@@ -47,8 +52,3 @@ export const numberFormatMap: {[key: string]: number} = {
     '##0.0E+0': 48,
     '@': 49
 };
-
-export interface NumberFormat {
-    formatCode: string;
-    numFmtId: number;
-}
