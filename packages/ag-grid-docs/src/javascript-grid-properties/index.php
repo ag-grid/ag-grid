@@ -217,13 +217,6 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>enableGroupEdit</th>
-            <td>
-                Set to true to enable <a href="../javascript-grid-cell-editing/#groupEditing">Group Editing</a>,
-                otherwise by default, row groups cannot be edited.
-            </td>
-        </tr>
-        <tr>
             <th>editType</th>
             <td>
                 Set to 'fullRow' to enable <a href="../javascript-grid-cell-editing/#fullRowEdit">Full Row Editing</a>.
