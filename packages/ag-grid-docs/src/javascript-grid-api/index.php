@@ -592,7 +592,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>isAnimationFrameQueueEmpty()</th>
             <td>
-                Returns true if the grid has animation frames to execute.
+                Returns true when there are no more animation frames left to process.
             </td>
         </tr>
         <tr>
