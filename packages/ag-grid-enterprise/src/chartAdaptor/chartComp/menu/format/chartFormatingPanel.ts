@@ -6,6 +6,7 @@ import { AxisPanel } from "./axis/axisPanel";
 import { LineSeriesPanel } from "./series/lineSeriesPanel";
 import { PieSeriesPanel } from "./series/pieSeriesPanel";
 import { ChartPanel } from "./chart/chartPanel";
+import {AreaSeriesPanel} from "./series/areaSeriesPanel";
 
 export interface ExpandablePanel {
     expandPanel(expanded: boolean): void;
@@ -105,13 +106,13 @@ export class ChartFormattingPanel extends Component {
         const axisPanel = new AxisPanel(this.chartController);
         this.addComponent(axisPanel);
 
-        const lineSeriesPanel = new LineSeriesPanel(this.chartController);
-        this.addComponent(lineSeriesPanel);
+        const areaSeriesPanel = new AreaSeriesPanel(this.chartController);
+        this.addComponent(areaSeriesPanel);
 
-        this.addExpandedCallback(chartPanel, [legendPanel, lineSeriesPanel, axisPanel]);
-        this.addExpandedCallback(legendPanel, [lineSeriesPanel, axisPanel, chartPanel]);
-        this.addExpandedCallback(axisPanel, [legendPanel, lineSeriesPanel, chartPanel]);
-        this.addExpandedCallback(lineSeriesPanel, [legendPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(chartPanel, [legendPanel, areaSeriesPanel, axisPanel]);
+        this.addExpandedCallback(legendPanel, [areaSeriesPanel, axisPanel, chartPanel]);
+        this.addExpandedCallback(axisPanel, [legendPanel, areaSeriesPanel, chartPanel]);
+        this.addExpandedCallback(areaSeriesPanel, [legendPanel, axisPanel, chartPanel]);
     }
 
     private createPieChartPanel(): void {

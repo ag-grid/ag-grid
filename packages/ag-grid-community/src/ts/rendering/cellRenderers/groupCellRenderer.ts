@@ -346,7 +346,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private createLeafCell(): void {
         if (_.exists(this.params.value)) {
-            this.eValue.innerHTML = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
+            this.eValue.innerText = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
         }
     }
 

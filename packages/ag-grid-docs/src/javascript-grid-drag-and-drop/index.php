@@ -36,10 +36,11 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Simple', 'simple', 'generated') ?>
 
-
     <?= example('Two Grids', 'two-grids', 'generated', array('extras' => array('fontawesome')) ) ?>
 
     <?= example('Custom Drag Data', 'custom-drag-data', 'generated') ?>
+
+    <?= example('Custom Drag Component', 'custom-drag-comp', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         The ag-Grid team gave consideration towards providing grid callbacks for all the drop
