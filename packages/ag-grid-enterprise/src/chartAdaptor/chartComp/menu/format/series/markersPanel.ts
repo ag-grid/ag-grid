@@ -1,6 +1,7 @@
 import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
-import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
+import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
 import {ChartTranslator} from "../../../chartTranslator";
+import {AreaSeries} from "../../../../../charts/chart/series/areaSeries";
 
 export class MarkersPanel extends Component {
 
@@ -18,9 +19,9 @@ export class MarkersPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private series: LineSeries[];
+    private series: LineSeries[] | AreaSeries[];
 
-    constructor(series: LineSeries[]) {
+    constructor(series: LineSeries[] | AreaSeries[]) {
         super();
         this.series = series;
     }
@@ -32,14 +33,14 @@ export class MarkersPanel extends Component {
     }
 
     private initMarkers() {
-        const enabled = this.series.some(s => s.marker);
+        const enabled = this.series.some((s: LineSeries | AreaSeries) => s.marker);
 
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate('markers'))
             .setEnabled(enabled)
             .hideOpenCloseIcons(true)
             .onEnableChange(enabled => {
-                this.series.forEach(s => s.marker = enabled);
+                this.series.forEach((s: LineSeries | AreaSeries) => s.marker = enabled);
             });
 
         type LineMarkerProperty = 'markerSize' | 'markerStrokeWidth';
@@ -50,7 +51,7 @@ export class MarkersPanel extends Component {
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => {
-                    this.series.forEach(s => s[property] = newValue)
+                    this.series.forEach((s: LineSeries | AreaSeries) => s[property] = newValue)
                 });
         };
 
