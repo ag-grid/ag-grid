@@ -117,9 +117,12 @@ var gridOptions = {
         chartRange: 'laChart Range',
         groupedBarRangeChart: 'laBar (Grouped)',
         stackedBarRangeChart: 'laBar (Stacked)',
+        normalizedBarRangeChart: 'laBar (100% Stacked)',
         lineRangeChart: 'laLine',
         pieRangeChart: 'laPie',
         doughnutRangeChart: 'laDoughnut',
+        stackedAreaRangeChart: 'laArea (Stacked)',
+        normalizedAreaRangeChart: 'laArea (100% Stacked)',
 
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',
@@ -156,7 +159,7 @@ var gridOptions = {
         width: 'laWidth',
         length: 'laLength',
         padding: 'laPadding',
-        chart: 'lalaChart',
+        chart: 'laChart',
         title: 'laTitle',
         font: 'laFont',
         top: 'laTop',

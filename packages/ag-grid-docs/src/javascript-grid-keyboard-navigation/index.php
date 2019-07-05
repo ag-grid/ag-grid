@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <p class="lead">
         The grid responds to keyboard interactions from the user as well as emitting events when
         key presses happen on the grid cells. Below shows all the keyboards interactions that can
-        be done wiht the grid.
+        be done with the grid.
     </p>
 
     <h2>Navigation</h2>
