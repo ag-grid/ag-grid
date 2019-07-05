@@ -65,12 +65,12 @@ include '../documentation-main/documentation_header.php';
     </tr>
     <tr>
         <td class="parameter-key">applyButton</td>
-        <td>Set to <code>true</code> to have the filter us an Apply button. If the Apply button is present,
+        <td>Set to <code>true</code> to have the filter use an Apply button. If the Apply button is present,
             then the filter is only applied after the user hits the Apply button.</td>
     </tr>
     <tr>
         <td class="parameter-key">clearButton</td>
-        <td>Set to <code>true</code> to have the filter us a Clear button. The Clear button will clear the
+        <td>Set to <code>true</code> to have the filter use a Clear button. The Clear button will clear the
             details of the filter thus resetting it.</td>
     </tr>
     <tr>

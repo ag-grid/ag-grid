@@ -68,7 +68,7 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
     private initSeriesStrokeWidth() {
         this.seriesStrokeWidthSlider
             .setLabel(this.chartTranslator.translate('strokeWidth'))
-            .setMaxValue(20)
+            .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
             .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));

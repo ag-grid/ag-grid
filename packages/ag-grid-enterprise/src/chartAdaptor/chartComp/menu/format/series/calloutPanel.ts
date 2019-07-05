@@ -56,7 +56,7 @@ export class CalloutPanel extends Component {
         initInput('calloutLength', this.calloutLengthSlider, 'length', initialLength, 30);
 
         const initialStrokeWidth = `${this.series[0].calloutStrokeWidth}`;
-        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', initialStrokeWidth, 20);
+        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', initialStrokeWidth, 10);
 
         const initialOffset = `${this.series[0].labelOffset}`;
         initInput('labelOffset', this.labelOffsetSlider, 'offset', initialOffset, 30);

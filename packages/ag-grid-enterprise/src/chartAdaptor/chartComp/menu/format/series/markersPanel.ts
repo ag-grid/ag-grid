@@ -58,6 +58,6 @@ export class MarkersPanel extends Component {
         initInput('markerSize', this.seriesMarkerSizeSlider, 'size', initialSize, 30);
 
         const initialStrokeWidth = `${this.series[0].markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', initialStrokeWidth, 20);
+        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', initialStrokeWidth, 10);
     }
 }

@@ -73,7 +73,7 @@ interface IPadding {
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-export interface AxisOptions {
+export interface    AxisOptions {
     type?: 'category' | 'number';
 
     lineWidth?: number;

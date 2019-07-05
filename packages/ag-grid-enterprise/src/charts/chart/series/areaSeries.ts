@@ -25,6 +25,7 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
     y: number,
     radius: number,
     fill?: string,
+    stroke?: string,
     text?: string
 }
 
@@ -43,9 +44,11 @@ export class AreaSeries extends Series<CartesianChart> {
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
 
     private areaGroup = this.group.appendChild(new Group);
+    private strokeGroup = this.group.appendChild(new Group);
     private markerGroup = this.group.appendChild(new Group);
 
     private areaSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
+    private strokeSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.strokeGroup).selectAll<Path>();
     private markerSelection: Selection<Arc, Group, any, any> = Selection.select(this.markerGroup).selectAll<Arc>();
 
     /**
@@ -140,7 +143,7 @@ export class AreaSeries extends Series<CartesianChart> {
         return this._normalizedTo;
     }
 
-    private _strokeWidth: number = 1;
+    private _strokeWidth: number = 3;
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
@@ -369,7 +372,7 @@ export class AreaSeries extends Series<CartesianChart> {
         const yOffset = (yScale.bandwidth || 0) / 2;
         const yFields = this.yFields;
         const fills = this.fills;
-        const stroke = this.strokes[0];
+        const strokes = this.strokes;
         const strokeWidth = this.strokeWidth;
         const data = this.data;
         const xData = this.xData;
@@ -406,6 +409,7 @@ export class AreaSeries extends Series<CartesianChart> {
                         x,
                         y,
                         fill: fills[j % fills.length],
+                        stroke: strokes[j % strokes.length],
                         radius: markerSize / 2,
                         text: this.yFieldNames[j]
                     });
@@ -430,25 +434,35 @@ export class AreaSeries extends Series<CartesianChart> {
         }
 
         const updateAreas = this.areaSelection.setData(areaSelectionData);
+        const updateStrokes = this.strokeSelection.setData(areaSelectionData);
         const updateMarkers = this.markerSelection.setData(markerSelectionData);
         updateAreas.exit.remove();
+        updateStrokes.exit.remove();
         updateMarkers.exit.remove();
 
         const enterAreas = updateAreas.enter.append(Path)
-            .each(path => path.pointerEvents = PointerEvents.None);
+            .each(path => {
+                path.stroke = undefined;
+                path.pointerEvents = PointerEvents.None;
+            });
+        const enterStrokes = updateStrokes.enter.append(Path)
+            .each(path => {
+                path.fill = undefined;
+                path.lineJoin = 'round';
+                path.pointerEvents = PointerEvents.None;
+            });
         const enterMarkers = updateMarkers.enter.append(Arc)
             .each(arc => arc.type = ArcType.Chord);
 
         const highlightedNode = this.highlightedNode;
         const areaSelection = updateAreas.merge(enterAreas);
+        const strokeSelection = updateStrokes.merge(enterStrokes);
         const markerSelection = updateMarkers.merge(enterMarkers);
 
         areaSelection.each((shape, datum, index) => {
             const path = shape.path;
 
             shape.fill = fills[index % fills.length];
-            shape.stroke = stroke;
-            shape.strokeWidth = strokeWidth;
 
             path.clear();
 
@@ -465,6 +479,25 @@ export class AreaSeries extends Series<CartesianChart> {
             path.closePath();
         });
 
+        strokeSelection.each((shape, datum, index) => {
+            const path = shape.path;
+
+            shape.stroke = strokes[index % strokes.length];
+            shape.strokeWidth = strokeWidth;
+
+            path.clear();
+
+            const points = datum.points;
+            for (let i = 0; i < xCount; i++) {
+                const {x, y} = points[i];
+                if (!i) {
+                    path.moveTo(x, y);
+                } else {
+                    path.lineTo(x, y);
+                }
+            }
+        });
+
         markerSelection.each((arc, datum) => {
             arc.centerX = datum.x;
             arc.centerY = datum.y;
@@ -475,12 +508,13 @@ export class AreaSeries extends Series<CartesianChart> {
                 : datum.fill;
             arc.stroke = arc === highlightedNode && this.highlightStyle.stroke !== undefined
                 ? this.highlightStyle.stroke
-                : stroke;
+                : datum.stroke;
             arc.strokeWidth = markerStrokeWidth;
             arc.visible = datum.radius > 0 && !!this.enabled.get(datum.yField);
         });
 
         this.areaSelection = areaSelection;
+        this.strokeSelection = strokeSelection;
         this.markerSelection = markerSelection;
     }
 

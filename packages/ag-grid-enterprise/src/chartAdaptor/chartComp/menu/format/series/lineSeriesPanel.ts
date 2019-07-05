@@ -81,7 +81,7 @@ export class LineSeriesPanel extends Component implements ExpandablePanel {
     private initSeriesLineWidth() {
         this.seriesLineWidthSlider
             .setLabel(this.chartTranslator.translate('lineWidth'))
-            .setMaxValue(20)
+            .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue(`${this.series[0].strokeWidth}`)
             .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));

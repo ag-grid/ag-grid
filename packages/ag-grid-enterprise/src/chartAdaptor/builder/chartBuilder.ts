@@ -568,7 +568,7 @@ export class ChartBuilder {
         );
     }
 
-    static createAxis(options: AxisOptions) {
+    static createAxis(options: AxisOptions): CategoryAxis | NumberAxis {
         let axis: CategoryAxis | NumberAxis | undefined = undefined;
 
         switch (options.type) {

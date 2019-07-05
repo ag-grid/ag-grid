@@ -4,6 +4,7 @@ import { AreaSeries } from "../../../charts/chart/series/areaSeries";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { ChartModel } from "../chartModel";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
+import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
 
 export class AreaChartProxy extends ChartProxy {
     private readonly chartOptions: AreaChartOptions;
@@ -16,9 +17,20 @@ export class AreaChartProxy extends ChartProxy {
 
         this.chart = ChartBuilder.createAreaChart(this.chartOptions);
 
+        this.setAxisPadding(this.chart as CartesianChart);
+
         const areaSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as AreaSeriesOptions);
         if (areaSeries) {
             this.chart.addSeries(areaSeries);
+        }
+    }
+
+
+    private setAxisPadding(chart: CartesianChart) {
+        const xAxis = chart.xAxis;
+        if (xAxis instanceof CategoryAxis) {
+            xAxis.scale.paddingInner = 1;
+            xAxis.scale.paddingOuter = 0;
         }
     }
 
@@ -40,7 +52,7 @@ export class AreaChartProxy extends ChartProxy {
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
 
         areaSeries.fills = palette.fills;
-        areaSeries.strokes = ['white'];
+        areaSeries.strokes = palette.strokes;
     }
 
     private defaultOptions(): AreaChartOptions {
@@ -108,7 +120,7 @@ export class AreaChartProxy extends ChartProxy {
                 fills: palette.fills,
                 strokes: palette.strokes,
                 normalizedTo: this.chartProxyParams.chartType === ChartType.NormalizedArea ? 100 : undefined,
-                strokeWidth: 1,
+                strokeWidth: 3,
                 marker: true,
                 markerSize: 6,
                 markerStrokeWidth: 1,
