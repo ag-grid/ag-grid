@@ -143,7 +143,15 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowDrag</th>
-            <td>Boolean or Function. Set to true (or return true from function) to render a row drag area in the column.</td>
+            <td>Boolean or Function. Set to true (or return true from function) to allow row dragging.</td>
+        </tr>
+        <tr>
+            <th>dndSource</th>
+            <td>Boolean or Function. Set to true (or return true from function) to allow dragging for native drag and drop.</td>
+        </tr>
+        <tr>
+            <th>dndSourceOnRowDrag</th>
+            <td>Function to allow customer drag functionality for native drag and drop.</td>
         </tr>
         <tr>
             <th>cellClass</th>
