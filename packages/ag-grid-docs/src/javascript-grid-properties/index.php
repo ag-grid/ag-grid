@@ -5,7 +5,7 @@ $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
-
+http://localhost:8080/javascript-grid-column-definitions/
     <h1>Grid Properties</h1>
 
     <p class="lead">
@@ -27,6 +27,12 @@ include '../documentation-main/documentation_header.php';
             <td>A <a href="../javascript-grid-column-definitions/#default-column-definitions">default column group</a>
                 definition. All column group definitions will use these properties. Items defined in the
                 actual column group definition get precedence.</td>
+        </tr>
+        <tr>
+            <th>columnTypes</th>
+            <td>An object map of <a href="../javascript-grid-column-definitions/#default-column-definitions">custom column types</a>
+                which contain groups of properties that column definitions can inherit.
+            </td>
         </tr>
         <tr>
             <th>colResizeDefault</th>
