@@ -5,7 +5,6 @@
 
 .inner-col {
     width: 0;
-    border: 1px solid green;
     flex-grow: 1;
     height: 100%;
 }
