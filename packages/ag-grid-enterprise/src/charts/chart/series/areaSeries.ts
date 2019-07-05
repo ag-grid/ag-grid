@@ -371,6 +371,7 @@ export class AreaSeries extends Series<CartesianChart> {
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
         const yFields = this.yFields;
+        const enabled = this.enabled;
         const fills = this.fills;
         const strokes = this.strokes;
         const strokeWidth = this.strokeWidth;
@@ -464,6 +465,7 @@ export class AreaSeries extends Series<CartesianChart> {
 
             shape.fill = fills[index % fills.length];
             shape.fillShadow = this.shadow;
+            shape.visible = !!enabled.get(datum.yField);
 
             path.clear();
 
@@ -485,10 +487,13 @@ export class AreaSeries extends Series<CartesianChart> {
 
             shape.stroke = strokes[index % strokes.length];
             shape.strokeWidth = strokeWidth;
+            shape.visible = !!enabled.get(datum.yField);
 
             path.clear();
 
             const points = datum.points;
+            // The stroke doesn't go all the way around the fill, only on top,
+            // that's why we iterate until `xCount` (rather than `points.length`) and stop.
             for (let i = 0; i < xCount; i++) {
                 const {x, y} = points[i];
                 if (!i) {
@@ -511,7 +516,7 @@ export class AreaSeries extends Series<CartesianChart> {
                 ? this.highlightStyle.stroke
                 : datum.stroke;
             arc.strokeWidth = markerStrokeWidth;
-            arc.visible = datum.radius > 0 && !!this.enabled.get(datum.yField);
+            arc.visible = datum.radius > 0 && !!enabled.get(datum.yField);
         });
 
         this.areaSelection = areaSelection;
