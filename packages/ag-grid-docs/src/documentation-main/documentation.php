@@ -12,7 +12,7 @@ doLevel1();
 //doOldMenu();
 
 function doLevel1() {
-    $lev1Items = json_decode(file_get_contents('../documentation-main/menuStructure.json'), true);
+    $lev1Items = json_decode(file_get_contents('../documentation-main/menu.json'), true);
 
     foreach($lev1Items as $lev1Item) {
 

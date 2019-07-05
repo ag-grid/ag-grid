@@ -22,7 +22,7 @@ var rowClassRules = {
 
 var leftGridOptions = {
     defaultColDef: {
-        width: 150,
+        width: 80,
         sortable: true,
         filter: true
     },
@@ -36,7 +36,7 @@ var leftGridOptions = {
 
 var rightGridOptions = {
     defaultColDef: {
-        width: 150,
+        width: 80,
         sortable: true,
         filter: true
     },
@@ -60,8 +60,8 @@ function createDataItem(color) {
     let newDataItem = {
         id: rowIdSequence++,
         color: color,
-        value1: Math.random(),
-        value2: Math.random()
+        value1: Math.floor(Math.random()*100),
+        value2: Math.floor(Math.random()*100)
     };
     return newDataItem;
 }
