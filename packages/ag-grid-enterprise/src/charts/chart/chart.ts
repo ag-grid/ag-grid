@@ -4,6 +4,7 @@ import { Series, SeriesNodeDatum } from "./series/series";
 import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
+import { Rect } from "../scene/shape/rect";
 import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
@@ -13,6 +14,8 @@ export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export abstract class Chart {
     readonly scene: Scene = new Scene();
+    readonly background: Rect = new Rect();
+
     legend = new Legend();
 
     protected legendAutoPadding = new Padding();
@@ -26,7 +29,13 @@ export abstract class Chart {
     private defaultTooltipClass = 'ag-chart-tooltip';
 
     protected constructor() {
-        this.scene.root = new Group();
+        const root = new Group();
+        const background = this.background;
+
+        background.fill = 'white';
+        root.appendChild(background);
+
+        this.scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
 
         this.tooltipClass = '';
@@ -258,6 +267,8 @@ export abstract class Chart {
 
     private readonly _performLayout = () => {
         this.layoutCallbackId = 0;
+        this.background.width = this.width;
+        this.background.height = this.height;
         this.performLayout();
         if (this.onLayoutDone) {
             this.onLayoutDone();
