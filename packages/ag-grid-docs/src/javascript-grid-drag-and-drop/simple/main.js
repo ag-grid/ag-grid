@@ -1,6 +1,6 @@
 var rowIdSequence = 100;
 
-var colDefs = [
+var columnDefs = [
     {valueGetter: "'Drag'", dndSource: true},
     {field: "id"},
     {field: "color"},
@@ -24,7 +24,7 @@ var gridOptions = {
     rowClassRules: rowClassRules,
     rowData: createRowData(),
     rowDragManaged: true,
-    columnDefs: colDefs,
+    columnDefs: columnDefs,
     animateRows: true
 };
 

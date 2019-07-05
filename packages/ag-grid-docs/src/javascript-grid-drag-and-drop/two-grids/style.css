@@ -21,30 +21,34 @@
 }
 
 .factory-red {
-    background-color: #ffaaaa;
+    background-color: #ffdddd;
+    border: 1px solid #ff8888;
 }
 
 .factory-green {
-    background-color: #aaffaa;
+    background-color: #ddffdd;
+    border: 1px solid #88ff88;
 }
 
 .factory-blue {
-    background-color: #aaaaff;
+    background-color: #ddddff;
+    border: 1px solid #8888ff;
 }
 
 .factory-bin {
     background-color: lightgray;
+    border: 1px solid #888888;
 }
 
 .green-row {
-    background-color: #aaffaa !important;
+    background-color: #ddffdd !important;
 }
 
 .red-row {
-    background-color: #ffaaaa !important;
+    background-color: #ffdddd !important;
 }
 
 .blue-row {
-    background-color: #aaaaff !important;
+    background-color: #ddddff !important;
 }
 
