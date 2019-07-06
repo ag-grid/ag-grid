@@ -379,10 +379,6 @@ include '../documentation-main/documentation_header.php';
             <td>Set to 'true' if this group should be opened by default.</td>
         </tr>
         <tr>
-            <th>headerGroupTooltip</th>
-            <td>Tooltip for the column group header</td>
-        </tr>
-        <tr>
             <th>headerGroupComponent<br/>headerGroupComponentFramework</th>
             <td>Component to use header group.</td>
         </tr>
