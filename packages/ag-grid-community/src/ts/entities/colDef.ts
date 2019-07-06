@@ -36,7 +36,7 @@ export interface AbstractColDef {
 
     tooltipComponent?: { new(): ITooltipComp } | string;
     tooltipComponentFramework?: any;
-    tooltipComponentParams?: ITooltipParams;
+    tooltipComponentParams?: any;
 }
 
 export interface ColGroupDef extends AbstractColDef {
