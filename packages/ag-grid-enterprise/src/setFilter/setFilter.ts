@@ -1,5 +1,4 @@
 import {
-    _,
     ProvidedFilter,
     Autowired,
     Component,
@@ -7,7 +6,8 @@ import {
     ISetFilterParams,
     QuerySelector,
     RefSelector,
-    ValueFormatterService
+    ValueFormatterService,
+    _
 } from "ag-grid-community";
 import { SetFilterModelValuesType, SetValueModel } from "./setValueModel";
 import { SetFilterListItem } from "./setFilterListItem";
@@ -20,14 +20,11 @@ export class SetFilter extends ProvidedFilter {
 
     private valueModel: SetValueModel;
 
-    @QuerySelector('#selectAll')
-    private eSelectAll: HTMLInputElement;
-    @QuerySelector('#selectAllContainer')
-    private eSelectAllContainer: HTMLElement;
-    @QuerySelector('.ag-filter-filter')
-    private eMiniFilter: HTMLInputElement;
-    @RefSelector('ag-filter-loading')
-    private eFilterLoading: HTMLInputElement;
+    @QuerySelector('#selectAll') private eSelectAll: HTMLInputElement;
+    @QuerySelector('#selectAllContainer') private eSelectAllContainer: HTMLElement;
+    @QuerySelector('.ag-filter-filter') private eMiniFilter: HTMLInputElement;
+    @RefSelector('ag-filter-loading') private eFilterLoading: HTMLInputElement;
+    
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     private selectAllState: CheckboxState;
@@ -39,10 +36,6 @@ export class SetFilter extends ProvidedFilter {
     private eCheckedIcon: HTMLElement;
     private eUncheckedIcon: HTMLElement;
     private eIndeterminateCheckedIcon: HTMLElement;
-
-    constructor() {
-        super();
-    }
 
     // unlike the simple filter's, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
@@ -305,6 +298,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onSelectAll(event: Event) {
+        event.preventDefault();
         _.addAgGridEventPath(event);
         if (this.selectAllState === CheckboxState.CHECKED) {
             this.selectAllState = CheckboxState.UNCHECKED;
