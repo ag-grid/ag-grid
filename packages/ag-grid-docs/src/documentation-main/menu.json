@@ -106,7 +106,7 @@
       {
         "title": "Data",
         "icon": "icon-data",
-        "level-2-text-decorator": ",&nbsp;",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -288,6 +288,7 @@
       {
         "title": "Rows",
         "icon": "icon-rows",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Overview",
@@ -295,30 +296,37 @@
           },
           {
             "title": "Row Sorting",
+            "box-title": "Sorting",
             "url": "javascript-grid-sorting/"
           },
           {
             "title": "Row Dragging",
+            "box-title": "Dragging",
             "url": "javascript-grid-row-dragging/"
           },
           {
             "title": "Row Spanning",
+            "box-title": "Spanning",
             "url": "javascript-grid-row-spanning/"
           },
           {
             "title": "Row Pinning",
+            "box-title": "Pinning",
             "url": "javascript-grid-row-pinning/"
           },
           {
             "title": "Row Height",
+            "box-title": "Height",
             "url": "javascript-grid-row-height/"
           },
           {
             "title": "Full Width Rows",
+            "box-title": "Full Width",
             "url": "javascript-grid-full-width-rows/"
           },
           {
             "title": "Row Animation",
+            "box-title": "Animation",
             "url": "javascript-grid-animation/"
           }
         ]
@@ -326,6 +334,7 @@
       {
         "title": "Layout & Styling",
         "icon": "icon-style",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Overview",
@@ -333,14 +342,17 @@
           },
           {
             "title": "Styling Rows",
+            "box-title": "Rows",
             "url": "javascript-grid-row-styles/"
           },
           {
             "title": "Styling Cells",
+            "box-title": "Cells",
             "url": "javascript-grid-cell-styles/"
           },
           {
             "title": "Highlighting Rows & Columns",
+            "box-title": "Highlighting",
             "url": "javascript-grid-highlighting-rows-and-columns/"
           },
           {
@@ -357,127 +369,17 @@
           },
           {
             "title": "Resize with Parent Container",
+            "box-title": "Responsiveness",
             "url": "javascript-grid-responsiveness/"
           },
           {
             "title": "Custom Icons",
+            "box-title": "Icons",
             "url": "javascript-grid-icons/"
           },
           {
             "title": "Printing",
             "url": "javascript-grid-for-print/"
-          }
-        ]
-      },
-      {
-        "title": "Frameworks",
-        "icon": "icon-frameworks",
-        "items": [
-          {
-            "title": "Vanilla JavaScript",
-            "url": "",
-            "items": [
-              {
-                "title": "Getting Started",
-                "url": "javascript-getting-started/"
-              },
-              {
-                "title": "Install with NPM",
-                "url": "javascript-grid-npm/"
-              },
-              {
-                "title": "Download for Local Usage",
-                "url": "javascript-grid-download/"
-              },
-              {
-                "title": "Use with TypeScript",
-                "url": "ag-grid-typescript-webpack-2/"
-              }
-            ]
-          },
-          {
-            "title": "Angular",
-            "url": "",
-            "items": [
-              {
-                "title": "Overview",
-                "url": "angular-more-details/"
-              },
-              {
-                "title": "Getting Started",
-                "url": "angular-getting-started/"
-              },
-              {
-                "title": "Building",
-                "url": "",
-                "items": [
-                  {
-                    "title": "SystemJS",
-                    "url": "ag-grid-angular-systemjs/"
-                  },
-                  {
-                    "title": "Webpack 3",
-                    "url": "ag-grid-angular-webpack-3/"
-                  },
-                  {
-                    "title": "Webpack 2",
-                    "url": "ag-grid-angular-webpack-2/"
-                  },
-                  {
-                    "title": "Webpack 1",
-                    "url": "ag-grid-angular-webpack/"
-                  }
-                ]
-              },
-              {
-                "title": "Angular & Material Design",
-                "url": "example-angular-material-design/"
-              },
-              {
-                "title": "Use with RxJS",
-                "url": "example-angular-rxjs/"
-              }
-            ]
-          },
-          {
-            "title": "React",
-            "url": "",
-            "items": [
-              {
-                "title": "Overview",
-                "url": "react-more-details/"
-              },
-              {
-                "title": "Getting Started",
-                "url": "react-getting-started/"
-              },
-              {
-                "title": "Redux Integration Part 1",
-                "url": "react-redux-integration-pt1/"
-              },
-              {
-                "title": "Redux Integration Part 2",
-                "url": "react-redux-integration-pt2/"
-              }
-            ]
-          },
-          {
-            "title": "Vue",
-            "url": "",
-            "items": [
-              {
-                "title": "Overview",
-                "url": "best-vuejs-data-grid/"
-              },
-              {
-                "title": "Getting Started",
-                "url": "vue-getting-started/"
-              },
-              {
-                "title": "Vue & Unidirectional Data Flow",
-                "url": "vuex-data-flow/"
-              }
-            ]
           }
         ]
       }
@@ -489,6 +391,7 @@
       {
         "title": "Selection",
         "icon": "icon-selection",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -508,6 +411,7 @@
       {
         "title": "Filtering",
         "icon": "icon-filter",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -573,6 +477,7 @@
       {
         "title": "Rendering Cells",
         "icon": "icon-render-cells",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Overview",
@@ -639,6 +544,7 @@
       {
         "title": "Editing Cells",
         "icon": "icon-edit-cells",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Overview",
@@ -669,6 +575,7 @@
       {
         "title": "Group & Pivot",
         "icon": "icon-group",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -704,6 +611,7 @@
       {
         "title": "Import & Export",
         "icon": "icon-import-export",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -748,6 +656,7 @@
       {
         "title": "Accessories",
         "icon": "icon-accessories",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -799,6 +708,7 @@
       {
         "title": "Charts",
         "icon": "icon-charts",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -870,6 +780,7 @@
       {
         "title": "Components",
         "icon": "icon-components",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Overview",
@@ -877,46 +788,57 @@
           },
           {
             "title": "Cell Renderer",
+            "box-title": "Cell",
             "url": "javascript-grid-cell-rendering-components/"
           },
           {
             "title": "Cell Editor",
+            "box-title": "Editor",
             "url": "javascript-grid-cell-editor/"
           },
           {
             "title": "Date Component",
+            "box-title": "Date",
             "url": "javascript-grid-date-component/"
           },
           {
             "title": "Filter Component",
+            "box-title": "Filter",
             "url": "javascript-grid-filter-component/"
           },
           {
             "title": "Floating Filter Component",
+            "box-title": "Floating Filter",
             "url": "javascript-grid-floating-filter-component/"
           },
           {
             "title": "Header Component",
+            "box-title": "Header",
             "url": "javascript-grid-header-rendering/"
           },
           {
             "title": "Loading Cell Renderer",
+            "box-title": "Loading",
             "url": "javascript-grid-loading-cell-renderer/"
           },
           {
             "title": "Overlay Component",
+            "box-title": "Overlays",
             "url": "javascript-grid-overlay-component/"
           },
           {
             "title": "Status Bar Component",
+            "box-title": "Status Bar",
             "url": "javascript-grid-status-bar-component/"
           },
           {
             "title": "Tool Panel Component",
+            "box-title": "Tool Panel",
             "url": "javascript-grid-tool-panel-component/"
           },
           {
             "title": "Tooltip Component",
+            "box-title": "Tooltip",
             "url": "javascript-grid-tooltip-component/"
           }
         ]
@@ -929,6 +851,7 @@
       {
         "title": "Scrolling",
         "icon": "icon-information",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -965,6 +888,7 @@
       {
         "title": "Interactivity",
         "icon": "icon-information",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -995,6 +919,7 @@
       {
         "title": "Testing",
         "icon": "icon-test",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",

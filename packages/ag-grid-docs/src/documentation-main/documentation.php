@@ -61,6 +61,13 @@ function doLevel3($parentItem) {
         }
         $itemUrl = $item['url'];
         $itemTextDecorator = $parentItem['level-2-text-decorator'];
+        $forcedDisplayStyle = $parentItem['level-2-display-style-forced'];
+        $forcedStyle = '';
+
+        if ($forcedDisplayStyle <> '') {
+            $forcedStyle = "display: $forcedDisplayStyle";
+        }
+
         if ($index == $length) {
             $itemTextDecorator = '';
         }
@@ -70,7 +77,7 @@ function doLevel3($parentItem) {
             return;
         }
 
-        echo "<li>";
+        echo "<li style='$forcedStyle'>";
 
         echo "<span class='docs-homepage-level2-item'>";
         if (strlen($itemUrl) > 1) {
