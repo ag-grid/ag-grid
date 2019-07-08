@@ -1930,15 +1930,19 @@ export class CellComp extends Component {
 
     private addRowDragging(): void {
 
+        const pagination = this.beans.gridOptionsWrapper.isPagination();
+        const rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
+        const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
+
         // row dragging only available in default row model
-        if (!this.beans.gridOptionsWrapper.isRowModelDefault()) {
+        if (!clientSideRowModelActive) {
             _.doOnce(() => console.warn('ag-Grid: row dragging is only allowed in the In Memory Row Model'),
                 'CellComp.addRowDragging');
             return;
         }
 
-        if (this.beans.gridOptionsWrapper.isPagination()) {
-            _.doOnce(() => console.warn('ag-Grid: row dragging is not possible when doing pagination'),
+        if (pagination && rowDragManaged) {
+            _.doOnce(() => console.warn('ag-Grid: managed row dragging is not possible when doing pagination'),
                 'CellComp.addRowDragging');
             return;
         }
