@@ -51,18 +51,32 @@ function doLevel3($parentItem) {
     echo "<ul>";
 
     $items = $parentItem['items'];
+    $length = count($items) - 1;
 
-    foreach($items as $item) {
+    foreach($items as $index=>$item) {
         $itemTitle = $item['title'];
+        $boxTitle =  $item['box-title'];
+        if ($boxTitle <> '') {
+            $itemTitle = $boxTitle;
+        }
         $itemUrl = $item['url'];
+        $itemTextDecorator = $parentItem['level-2-text-decorator'];
+        if ($index == $length) {
+            $itemTextDecorator = '';
+        }
+
+
+        if ($itemTitle == 'See Also') {
+            return;
+        }
 
         echo "<li>";
 
         echo "<span class='docs-homepage-level2-item'>";
         if (strlen($itemUrl) > 1) {
-            echo "<a href='../$itemUrl'>$itemTitle</a>";
+            echo "<a href='../$itemUrl'>$itemTitle$itemTextDecorator</a>";
         } else {
-            echo "$itemTitle";
+            echo "$itemTitle$itemTextDecorator";
         }
 
         if ($item['enterprise']) {
@@ -71,7 +85,11 @@ function doLevel3($parentItem) {
 
         echo "</span>";
 
-        doLevel4($item);
+        $maxLevelShow = $item['max-box-show-level'];
+        if ($maxLevelShow > 2) {
+            doLevel4($item, $itemTextDecorator);
+        }
+
 
         echo "</li>";
     }

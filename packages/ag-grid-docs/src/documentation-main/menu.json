@@ -5,6 +5,7 @@
       {
         "title": "Introduction",
         "icon": "icon-information",
+        "max-box-show-level": 2,
         "items": [
           {
             "title": "Overview",
@@ -58,6 +59,7 @@
       {
         "title": "Interface / API",
         "icon": "icon-api",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Overview",
@@ -104,6 +106,7 @@
       {
         "title": "Data",
         "icon": "icon-data",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Overview",
@@ -234,6 +237,7 @@
       {
         "title": "Columns",
         "icon": "icon-columns",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Overview",
@@ -241,34 +245,42 @@
           },
           {
             "title": "Column Definitions",
+            "box-title": "Definitions",
             "url": "javascript-grid-column-definitions/"
           },
           {
             "title": "Column Headers",
+            "box-title": "Headers",
             "url": "javascript-grid-column-header/"
           },
           {
             "title": "Column Groups",
+            "box-title": "Groups",
             "url": "javascript-grid-grouping-headers/"
           },
           {
             "title": "Column Sizing",
+            "box-title": "Sizing",
             "url": "javascript-grid-resizing/"
           },
           {
             "title": "Column Moving",
+            "box-title": "Moving",
             "url": "javascript-grid-column-moving/"
           },
           {
             "title": "Column Pinning",
+            "box-title": "Pinning",
             "url": "javascript-grid-pinning/"
           },
           {
             "title": "Column Spanning",
+            "box-title": "Spanning",
             "url": "javascript-grid-column-spanning/"
           },
           {
             "title": "Column Animation",
+            "box-title": "Animation",
             "url": "javascript-grid-column-animation/"
           }
         ]
