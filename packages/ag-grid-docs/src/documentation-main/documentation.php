@@ -17,9 +17,11 @@ function doLevel1() {
     foreach($lev1Items as $lev1Item) {
 
         $lev1ItemName = $lev1Item['title'];
+        $lev1ItemIcon = $lev1Item['icon'];
 
         echo "<div class='docs-homepage-section-preview'>";
-        echo "<h1>$lev1ItemName</h1>";
+        echo "<div class='newIcon $lev1ItemIcon'></div>";
+        echo "<h2>$lev1ItemName</h2>";
 
         doLevel2($lev1Item);
 
