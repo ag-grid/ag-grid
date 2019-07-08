@@ -230,7 +230,7 @@ interface RowDataTransaction {
 }
 
 // result for above
-interface RowDataTransaction {
+interface RowNodeTransaction {
 
     // Row Nodes added
     add: RowNode[];
