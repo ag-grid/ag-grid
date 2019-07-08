@@ -32,11 +32,17 @@ function should_expand($item) {
     return false;
 }
 
-function render_menu_items($items, $gtm = array()) {
+function render_titles($items, $gtm = array()) {
+    foreach($items as $item) {
+        $actualMenuItems = $item['items'];
+        render_menu_items($actualMenuItems, $gtm);
+    }
+}
+
+function render_menu_items($items, $gtm) {
     if (count($items) == 0) {
         return;
     }
-
     echo "<ul>";
     foreach($items as $item) {
         $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
@@ -76,7 +82,7 @@ LINK;
     echo "</ul>";
 }
 
-render_menu_items($menu_items, array());
+render_titles($menu_items, array());
 ?>
 <script>
 dataLayer.push(<?=$GLOBALS['DOC_GTM'] ?>);

@@ -33,6 +33,7 @@ function enterprise_feature($name) {
 meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
 ?>
 <link rel="stylesheet" href="../dist/docs.css">
+<link rel="stylesheet" href="new_documentation.css">
 </head>
 
 <body ng-app="documentation">
@@ -43,7 +44,7 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
  ?>
 </header>
 
-<div id="documentation">
+<div id="documentation" class="new">
     <div>
     <aside id="side-nav">
         <button id="side-nav-toggle" type="button" data-toggle="collapse" data-target="#side-nav-container" aria-controls="side-nav-container" aria-expanded="false" aria-label="Toggle navigation"><span>&nbsp;</span></button>

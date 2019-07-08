@@ -16,12 +16,29 @@ function doLevel1() {
 
     foreach($lev1Items as $lev1Item) {
 
-        $lev1ItemName = $lev1Item['title'];
+        $lev1ItemName = $lev1Item['group'];
 
-        echo "<div class='docs-homepage-section-preview'>";
         echo "<h1>$lev1ItemName</h1>";
 
         doLevel2($lev1Item);
+    }
+}
+
+
+
+function doLevel2($parentItem) {
+    $lev2Items = $parentItem['items'];
+
+    foreach($lev2Items as $lev2Item) {
+
+        $lev2ItemName = $lev2Item['title'];
+        $lev2ItemIcon = $lev2Item['icon'];
+
+        echo "<div class='docs-homepage-section-preview'>";
+        echo "<div class='newIcon $lev2ItemIcon'></div>";
+        echo "<h2>$lev2ItemName</h2>";
+
+        doLevel3($lev2Item);
 
         echo "</div>";
 
@@ -30,54 +47,43 @@ function doLevel1() {
 }
 
 
-function doLevel2($parentItem) {
-    echo "<ul>";
-
-    $items = $parentItem['items'];
-
-    foreach($items as $item) {
-        $itemTitle = $item['title'];
-        $itemUrl = $item['url'];
-
-        echo "<li>";
-
-        echo "<span class='docs-homepage-level2-item'>";
-        if (strlen($itemUrl) > 1) {
-            echo "<a href='../$itemUrl'>$itemTitle</a>";
-        } else {
-            echo "$itemTitle";
-        }
-
-        if ($item['enterprise']) {
-            echo "<span class=\"enterprise-icon\"/>";
-        }
-
-        echo "</span>";
-
-        doLevel3($item);
-
-        echo "</li>";
-    }
-
-    echo "</ul>";
-}
-
 function doLevel3($parentItem) {
     echo "<ul>";
 
     $items = $parentItem['items'];
+    $length = count($items) - 1;
 
-    foreach($items as $item) {
+    foreach($items as $index=>$item) {
         $itemTitle = $item['title'];
+        $boxTitle =  $item['box-title'];
+        if ($boxTitle <> '') {
+            $itemTitle = $boxTitle;
+        }
         $itemUrl = $item['url'];
+        $itemTextDecorator = $parentItem['level-2-text-decorator'];
+        $forcedDisplayStyle = $parentItem['level-2-display-style-forced'];
+        $forcedStyle = '';
 
-        echo "<li>"; // start level 3
+        if ($forcedDisplayStyle <> '') {
+            $forcedStyle = "display: $forcedDisplayStyle";
+        }
 
-        echo "<span class='docs-homepage-level3-item'>";
+        if ($index == $length) {
+            $itemTextDecorator = '';
+        }
+
+
+        if ($itemTitle == 'See Also') {
+            return;
+        }
+
+        echo "<li style='$forcedStyle'>";
+
+        echo "<span class='docs-homepage-level2-item'>";
         if (strlen($itemUrl) > 1) {
-            echo "<a href='../$itemUrl'>$itemTitle</a>";
+            echo "<a href='../$itemUrl'>$itemTitle$itemTextDecorator</a>";
         } else {
-            echo "$itemTitle";
+            echo "$itemTitle$itemTextDecorator";
         }
 
         if ($item['enterprise']) {
@@ -86,9 +92,13 @@ function doLevel3($parentItem) {
 
         echo "</span>";
 
-        doLevel4($item);
+        $maxLevelShow = $item['max-box-show-level'];
+        if ($maxLevelShow > 2) {
+            doLevel4($item, $itemTextDecorator);
+        }
 
-        echo "</li>"; // end level 3
+
+        echo "</li>";
     }
 
     echo "</ul>";
@@ -127,6 +137,38 @@ function doLevel4($parentItem) {
 }
 
 function doLevel5($parentItem) {
+    echo "<ul>";
+
+    $items = $parentItem['items'];
+
+    foreach($items as $item) {
+        $itemTitle = $item['title'];
+        $itemUrl = $item['url'];
+
+        echo "<li>"; // start level 3
+
+        echo "<span class='docs-homepage-level3-item'>";
+        if (strlen($itemUrl) > 1) {
+            echo "<a href='../$itemUrl'>$itemTitle</a>";
+        } else {
+            echo "$itemTitle";
+        }
+
+        if ($item['enterprise']) {
+            echo "<span class=\"enterprise-icon\"/>";
+        }
+
+        echo "</span>";
+
+        doLevel6($item);
+
+        echo "</li>"; // end level 3
+    }
+
+    echo "</ul>";
+}
+
+function doLevel6($parentItem) {
     echo "<ul>";
 
     $items = $parentItem['items'];
