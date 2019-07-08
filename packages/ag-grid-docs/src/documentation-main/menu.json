@@ -356,6 +356,118 @@
             "url": "javascript-grid-for-print/"
           }
         ]
+      },
+      {
+        "title": "Frameworks",
+        "icon": "icon-frameworks",
+        "items": [
+          {
+            "title": "Vanilla JavaScript",
+            "url": "",
+            "items": [
+              {
+                "title": "Getting Started",
+                "url": "javascript-getting-started/"
+              },
+              {
+                "title": "Install with NPM",
+                "url": "javascript-grid-npm/"
+              },
+              {
+                "title": "Download for Local Usage",
+                "url": "javascript-grid-download/"
+              },
+              {
+                "title": "Use with TypeScript",
+                "url": "ag-grid-typescript-webpack-2/"
+              }
+            ]
+          },
+          {
+            "title": "Angular",
+            "url": "",
+            "items": [
+              {
+                "title": "Overview",
+                "url": "angular-more-details/"
+              },
+              {
+                "title": "Getting Started",
+                "url": "angular-getting-started/"
+              },
+              {
+                "title": "Building",
+                "url": "",
+                "items": [
+                  {
+                    "title": "SystemJS",
+                    "url": "ag-grid-angular-systemjs/"
+                  },
+                  {
+                    "title": "Webpack 3",
+                    "url": "ag-grid-angular-webpack-3/"
+                  },
+                  {
+                    "title": "Webpack 2",
+                    "url": "ag-grid-angular-webpack-2/"
+                  },
+                  {
+                    "title": "Webpack 1",
+                    "url": "ag-grid-angular-webpack/"
+                  }
+                ]
+              },
+              {
+                "title": "Angular & Material Design",
+                "url": "example-angular-material-design/"
+              },
+              {
+                "title": "Use with RxJS",
+                "url": "example-angular-rxjs/"
+              }
+            ]
+          },
+          {
+            "title": "React",
+            "url": "",
+            "items": [
+              {
+                "title": "Overview",
+                "url": "react-more-details/"
+              },
+              {
+                "title": "Getting Started",
+                "url": "react-getting-started/"
+              },
+              {
+                "title": "Redux Integration Part 1",
+                "url": "react-redux-integration-pt1/"
+              },
+              {
+                "title": "Redux Integration Part 2",
+                "url": "react-redux-integration-pt2/"
+              }
+            ]
+          },
+          {
+            "title": "Vue",
+            "url": "",
+            "items": [
+              {
+                "title": "Overview",
+                "url": "best-vuejs-data-grid/"
+              },
+              {
+                "title": "Getting Started",
+                "url": "vue-getting-started/"
+              },
+              {
+                "title": "Vue & Unidirectional Data Flow",
+                "url": "vuex-data-flow/"
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -614,7 +726,13 @@
             ]
           }
         ]
-      },
+      }
+
+    ]
+  },
+  {
+    "group": "Extending the grid",
+    "items": [
       {
         "title": "Accessories",
         "icon": "icon-accessories",
@@ -738,72 +856,6 @@
         ]
       },
       {
-        "title": "Interactivity",
-        "icon": "icon-information",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-interactivity-overview/"
-          },
-          {
-            "title": "Keyboard Navigation",
-            "url": "javascript-grid-keyboard-navigation/"
-          },
-          {
-            "title": "Touch",
-            "url": "javascript-grid-touch/"
-          },
-          {
-            "title": "Accessibility (ARIA)",
-            "url": "javascript-grid-accessibility/"
-          },
-          {
-            "title": "RTL Text Direction",
-            "url": "javascript-grid-rtl/"
-          },
-          {
-            "title": "Internationalisation",
-            "url": "javascript-grid-internationalisation/"
-          }
-        ]
-      },
-      {
-        "title": "Scrolling",
-        "icon": "icon-information",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-scrolling-overview/"
-          },
-          {
-            "title": "DOM Virtualisation",
-            "url": "javascript-grid-dom-virtualisation/"
-          },
-          {
-            "title": "Row Pagination",
-            "url": "javascript-grid-pagination/"
-          },
-          {
-            "title": "Aligned Grids",
-            "url": "javascript-grid-aligned-grids/"
-          },
-          {
-            "title": "Scrolling Performance",
-            "url": "javascript-grid-performance/"
-          },
-          {
-            "title": "See Also",
-            "url": "",
-            "items": [
-              {
-                "title": "Scrolling Scenarios",
-                "url": "javascript-grid-scrolling-scenarios/"
-              }
-            ]
-          }
-        ]
-      },
-      {
         "title": "Components",
         "icon": "icon-components",
         "items": [
@@ -856,116 +908,75 @@
             "url": "javascript-grid-tooltip-component/"
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    "group": "Other",
+    "items": [
       {
-        "title": "Frameworks",
-        "icon": "icon-frameworks",
+        "title": "Scrolling",
+        "icon": "icon-information",
         "items": [
           {
-            "title": "Vanilla JavaScript",
-            "url": "",
-            "items": [
-              {
-                "title": "Getting Started",
-                "url": "javascript-getting-started/"
-              },
-              {
-                "title": "Install with NPM",
-                "url": "javascript-grid-npm/"
-              },
-              {
-                "title": "Download for Local Usage",
-                "url": "javascript-grid-download/"
-              },
-              {
-                "title": "Use with TypeScript",
-                "url": "ag-grid-typescript-webpack-2/"
-              }
-            ]
+            "title": "Overview",
+            "url": "javascript-grid-scrolling-overview/"
           },
           {
-            "title": "Angular",
-            "url": "",
-            "items": [
-              {
-                "title": "Overview",
-                "url": "angular-more-details/"
-              },
-              {
-                "title": "Getting Started",
-                "url": "angular-getting-started/"
-              },
-              {
-                "title": "Building",
-                "url": "",
-                "items": [
-                  {
-                    "title": "SystemJS",
-                    "url": "ag-grid-angular-systemjs/"
-                  },
-                  {
-                    "title": "Webpack 3",
-                    "url": "ag-grid-angular-webpack-3/"
-                  },
-                  {
-                    "title": "Webpack 2",
-                    "url": "ag-grid-angular-webpack-2/"
-                  },
-                  {
-                    "title": "Webpack 1",
-                    "url": "ag-grid-angular-webpack/"
-                  }
-                ]
-              },
-              {
-                "title": "Angular & Material Design",
-                "url": "example-angular-material-design/"
-              },
-              {
-                "title": "Use with RxJS",
-                "url": "example-angular-rxjs/"
-              }
-            ]
+            "title": "DOM Virtualisation",
+            "url": "javascript-grid-dom-virtualisation/"
           },
           {
-            "title": "React",
-            "url": "",
-            "items": [
-              {
-                "title": "Overview",
-                "url": "react-more-details/"
-              },
-              {
-                "title": "Getting Started",
-                "url": "react-getting-started/"
-              },
-              {
-                "title": "Redux Integration Part 1",
-                "url": "react-redux-integration-pt1/"
-              },
-              {
-                "title": "Redux Integration Part 2",
-                "url": "react-redux-integration-pt2/"
-              }
-            ]
+            "title": "Row Pagination",
+            "url": "javascript-grid-pagination/"
           },
           {
-            "title": "Vue",
+            "title": "Aligned Grids",
+            "url": "javascript-grid-aligned-grids/"
+          },
+          {
+            "title": "Scrolling Performance",
+            "url": "javascript-grid-performance/"
+          },
+          {
+            "title": "See Also",
             "url": "",
             "items": [
               {
-                "title": "Overview",
-                "url": "best-vuejs-data-grid/"
-              },
-              {
-                "title": "Getting Started",
-                "url": "vue-getting-started/"
-              },
-              {
-                "title": "Vue & Unidirectional Data Flow",
-                "url": "vuex-data-flow/"
+                "title": "Scrolling Scenarios",
+                "url": "javascript-grid-scrolling-scenarios/"
               }
             ]
+          }
+        ]
+      },
+      {
+        "title": "Interactivity",
+        "icon": "icon-information",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "javascript-grid-interactivity-overview/"
+          },
+          {
+            "title": "Keyboard Navigation",
+            "url": "javascript-grid-keyboard-navigation/"
+          },
+          {
+            "title": "Touch",
+            "url": "javascript-grid-touch/"
+          },
+          {
+            "title": "Accessibility (ARIA)",
+            "url": "javascript-grid-accessibility/"
+          },
+          {
+            "title": "RTL Text Direction",
+            "url": "javascript-grid-rtl/"
+          },
+          {
+            "title": "Internationalisation",
+            "url": "javascript-grid-internationalisation/"
           }
         ]
       },
