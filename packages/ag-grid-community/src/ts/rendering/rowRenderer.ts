@@ -1122,7 +1122,10 @@ export class RowRenderer extends BeanStub {
                 finished = true;
             } else {
                 const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
-                if (rowNode.group) {
+
+                if (rowNode.detail) {
+                    // skip over detail rows
+                } else if (rowNode.group) {
                     // full width rows cannot be focused, so if it's a group and using full width rows,
                     // we need to skip over the row
                     const pivotMode = this.columnController.isPivotMode();
