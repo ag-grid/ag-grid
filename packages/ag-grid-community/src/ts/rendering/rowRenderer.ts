@@ -1117,27 +1117,32 @@ export class RowRenderer extends BeanStub {
 
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
 
-            if (_.missing(nextCell)) {
-                // pointer points to nothing, we have hit a border of the grid
+            // eg if going down, and nextCell=undefined, means we are gone past the last row
+            let hitEdgeOfGrid = _.missing(nextCell);
+            if (hitEdgeOfGrid) {
                 finished = true;
-            } else {
-                const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+                continue;
+            }
 
-                if (rowNode.detail) {
-                    // skip over detail rows
-                } else if (rowNode.group) {
-                    // full width rows cannot be focused, so if it's a group and using full width rows,
-                    // we need to skip over the row
-                    const pivotMode = this.columnController.isPivotMode();
-                    const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
-                    if (usingFullWidthRows) {
-                        finished = !rowNode.group;
-                    } else {
-                        finished = true;
-                    }
-                } else {
-                    finished = true;
-                }
+            const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+
+            // we do not allow focusing on full width rows, this includes details rows
+            if (rowNode.detail) {
+                continue;
+            }
+
+            // if not a group, then we have a valid row, so quit the search
+            if (!rowNode.group) {
+                finished = true;
+                continue;
+            }
+
+            // full width rows cannot be focused, so if it's a group and using full width rows,
+            // we need to skip over the row
+            const pivotMode = this.columnController.isPivotMode();
+            const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+            if (!usingFullWidthRows) {
+                finished = true;
             }
         }
 
