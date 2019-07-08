@@ -1934,17 +1934,19 @@ export class CellComp extends Component {
         const rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
         const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
 
-        // row dragging only available in default row model
-        if (!clientSideRowModelActive) {
-            _.doOnce(() => console.warn('ag-Grid: row dragging is only allowed in the In Memory Row Model'),
-                'CellComp.addRowDragging');
-            return;
-        }
+        if (rowDragManaged) {
+            // row dragging only available in default row model
+            if (!clientSideRowModelActive) {
+                _.doOnce(() => console.warn('ag-Grid: managed row dragging is only allowed in the Client Side Row Model'),
+                    'CellComp.addRowDragging');
+                return;
+            }
 
-        if (pagination && rowDragManaged) {
-            _.doOnce(() => console.warn('ag-Grid: managed row dragging is not possible when doing pagination'),
-                'CellComp.addRowDragging');
-            return;
+            if (pagination) {
+                _.doOnce(() => console.warn('ag-Grid: managed row dragging is not possible when doing pagination'),
+                    'CellComp.addRowDragging');
+                return;
+            }
         }
 
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
