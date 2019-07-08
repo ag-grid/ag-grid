@@ -32,8 +32,7 @@ var gridOptions = {
         sortable: true,
         resizable: true,
         filter: true
-    },
-    reactNext: true
+    }
 };
 
 // setup the grid after the page has finished loading
