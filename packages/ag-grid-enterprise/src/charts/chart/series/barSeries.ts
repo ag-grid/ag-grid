@@ -469,7 +469,6 @@ export class BarSeries extends Series<CartesianChart> {
         const labelFontSize = this.labelFontSize;
         const labelFontFamily = this.labelFontFamily;
         const labelColor = this.labelColor;
-        const labelOffset = this.labelOffset;
         const labelFormatter = this.labelFormatter;
         const data = this.data;
         const xData = this.xData;
@@ -525,8 +524,8 @@ export class BarSeries extends Series<CartesianChart> {
                         fontSize: labelFontSize,
                         fontFamily: labelFontFamily,
                         fill: labelColor,
-                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * labelOffset : barX + barWidth / 2,
-                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? -1 : 1) * labelOffset
+                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
+                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
                     } : undefined
                 });
 
@@ -551,7 +550,8 @@ export class BarSeries extends Series<CartesianChart> {
         const enterTexts = updateTexts.enter.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
-            text.textAlign = flipXY ? 'start' : 'center';
+            text.textAlign = 'center';
+            text.textBaseline = 'middle';
         });
 
         const highlightedNode = this.highlightedNode;
@@ -586,7 +586,6 @@ export class BarSeries extends Series<CartesianChart> {
                     text.y = label.y;
                     text.fill = label.fill;
                     text.visible = true;
-                    text.textBaseline = flipXY ? 'middle' : (datum.yValue >= 0 ? 'bottom' : 'hanging');
                 } else {
                     text.visible = false;
                 }
