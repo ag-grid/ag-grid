@@ -418,7 +418,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         if (enterKeyPressed) {
             if (this.params.suppressEnterExpand) { return; }
 
-            const cellEditable = this.params.column.isCellEditable(this.params.node);
+            const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
             if (cellEditable) { return; }
 
             event.preventDefault();
