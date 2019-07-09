@@ -131,7 +131,6 @@ export class GridPanel extends Component {
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
-    // @RefSelector('eBody') private eBody: HTMLElement;
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eCenterContainer') private eCenterContainer: HTMLElement;
     @RefSelector('eCenterViewport') private eCenterViewport: HTMLElement;
@@ -318,7 +317,7 @@ export class GridPanel extends Component {
     }
 
     public setCellTextSelection(selectable: boolean = false): void {
-        [this.eTop, this.eCenterContainer, this.eBottom]
+        [this.eTop, this.eBodyViewport, this.eBottom]
             .forEach(ct => _.addOrRemoveCssClass(ct, 'ag-selectable', selectable));
     }
 
@@ -468,9 +467,6 @@ export class GridPanel extends Component {
             }
         };
 
-        //For some reason listening only to this.eBody doesn't work... Maybe because the event is consumed somewhere else?
-        //In any case, not expending much time on this, if anyone comes across this and knows how to make this work with
-        //one listener please go ahead and change it...
         this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
     }
 
