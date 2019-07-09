@@ -42,7 +42,7 @@ colDef = {
     }
 }</snippet>
 
-<p>Params contains {value, node, data, column, colDef}.</p>
+<p>Params contains {value, node, data, column, colDef, context}.</p>
 
 <note>
     You only need to override the quick filter value if you have a problem. If you don't have a quick filter

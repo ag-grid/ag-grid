@@ -360,6 +360,7 @@ export interface GetQuickFilterTextParams {
     data: any;
     column: Column;
     colDef: ColDef;
+    context: any;
 }
 
 export interface BaseColDefParams {

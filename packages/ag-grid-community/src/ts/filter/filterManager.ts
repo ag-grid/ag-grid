@@ -377,7 +377,8 @@ export class FilterManager {
                 node: rowNode,
                 data: rowNode.data,
                 column: column,
-                colDef: colDef
+                colDef: colDef,
+                context: this.gridOptionsWrapper.getContext()
             };
             valueAfterCallback = column.getColDef().getQuickFilterText(params);
         } else {
