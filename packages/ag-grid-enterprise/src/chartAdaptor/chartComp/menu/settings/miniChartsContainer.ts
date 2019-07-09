@@ -1,5 +1,6 @@
 import {
     _,
+    ChartType,
     Component,
     PostConstruct
 } from "ag-grid-community";
@@ -11,7 +12,7 @@ export class MiniChartsContainer extends Component {
 
     private readonly fills: string[];
     private readonly strokes: string[];
-    private wrappers: HTMLElement[] = [];
+    private wrappers: { [key in string]: HTMLElement} = {};
     private chartController: ChartController;
 
     constructor(activePalette: number, chartController: ChartController) {
@@ -27,19 +28,18 @@ export class MiniChartsContainer extends Component {
     @PostConstruct
     private init() {
         // TODO: reintroduce MiniScatter when chart ranges support it
-        // const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniScatter, MiniPie, MiniDonut];
-        const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniLine, MiniPie, MiniDonut, MiniStackedArea, MiniNormalizedArea];
+        const classes = [MiniColumn, MiniStackedColumn, MiniNormalizedColumn, MiniLine, MiniPie, MiniDonut, MiniStackedArea, MiniNormalizedArea];
         const eGui = this.getGui();
-        classes.forEach((MiniClass: new (parent: HTMLElement, fills: string[], strokes: string[]) => MiniChart, idx: number) => {
+        classes.forEach(MiniClass => {
             const miniWrapper = document.createElement('div');
             _.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
 
             this.addDestroyableEventListener(miniWrapper, 'click', () => {
-                this.chartController.setChartType(idx);
+                this.chartController.setChartType(MiniClass.chartType);
                 this.refreshSelected();
             });
 
-            this.wrappers.push(miniWrapper);
+            this.wrappers[MiniClass.chartType] = miniWrapper;
 
             new MiniClass(miniWrapper, this.fills, this.strokes);
             eGui.appendChild(miniWrapper);
@@ -83,6 +83,8 @@ export abstract class MiniChart {
 }
 
 export class MiniPie extends MiniChart {
+    static chartType = ChartType.Pie;
+
     static readonly angles = [
         [toRadians(-90), toRadians(30)],
         [toRadians(30), toRadians(120)],
@@ -118,6 +120,7 @@ export class MiniPie extends MiniChart {
 }
 
 export class MiniDonut extends MiniChart {
+    static chartType = ChartType.Doughnut;
     private readonly radius = (this.size - this.padding * 2) / 2;
     private readonly center = this.radius + this.padding;
 
@@ -144,6 +147,7 @@ export class MiniDonut extends MiniChart {
 }
 
 class MiniLine extends MiniChart {
+    static chartType = ChartType.Line;
     private readonly lines: Path[];
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
@@ -211,7 +215,8 @@ class MiniLine extends MiniChart {
     }
 }
 
-class MiniBar extends MiniChart {
+class MiniColumn extends MiniChart {
+    static chartType = ChartType.GroupedColumn;
     private readonly bars: Rect[];
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
@@ -278,7 +283,8 @@ class MiniBar extends MiniChart {
     }
 }
 
-class MiniStackedBar extends MiniChart {
+class MiniStackedColumn extends MiniChart {
+    static chartType = ChartType.StackedColumn;
     private readonly bars: Rect[][];
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
@@ -352,7 +358,8 @@ class MiniStackedBar extends MiniChart {
     }
 }
 
-class MiniNormalizedBar extends MiniChart {
+class MiniNormalizedColumn extends MiniChart {
+    static chartType = ChartType.NormalizedColumn;
     private readonly bars: Rect[][];
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
@@ -427,6 +434,7 @@ class MiniNormalizedBar extends MiniChart {
 }
 
 class MiniScatter extends MiniChart {
+    static chartType = ChartType.Scatter;
     private readonly points: Shape[];
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
@@ -499,6 +507,7 @@ class MiniScatter extends MiniChart {
 }
 
 class MiniStackedArea extends MiniChart {
+    static chartType = ChartType.StackedArea;
     private readonly areas: Path[];
 
     static readonly data = [
@@ -598,6 +607,7 @@ class MiniStackedArea extends MiniChart {
 }
 
 class MiniNormalizedArea extends MiniStackedArea {
+    static chartType = ChartType.NormalizedArea;
     static readonly data = MiniStackedArea.data.map(stack => {
         const sum = stack.reduce((p, c) => p + c, 0);
         return stack.map(v => v / sum * 16);

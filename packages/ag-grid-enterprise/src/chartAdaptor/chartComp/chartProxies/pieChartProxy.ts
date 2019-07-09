@@ -1,6 +1,6 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
-import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
-import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
+import { ChartType, PieChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
 import { CaptionOptions } from "ag-grid-community/src/ts/interfaces/iChartOptions";
@@ -11,7 +11,7 @@ export class PieChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions('pie', this.defaultOptions()) as PieChartOptions;
+        this.chartOptions = this.getChartOptions(ChartType.Pie, this.defaultOptions()) as PieChartOptions;
         this.chart = ChartBuilder.createPolarChart(this.chartOptions);
     }
 

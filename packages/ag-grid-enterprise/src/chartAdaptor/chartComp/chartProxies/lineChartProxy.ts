@@ -1,5 +1,5 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
-import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
+import { ChartType, LineChartOptions, LineSeriesOptions } from "ag-grid-community";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { LineSeries } from "../../../charts/chart/series/lineSeries";
@@ -13,7 +13,7 @@ export class LineChartProxy extends ChartProxy {
 
         const defaultOpts: LineChartOptions = this.defaultOptions();
 
-        this.chartOptions = this.getChartOptions('line', this.defaultOptions()) as LineChartOptions;
+        this.chartOptions = this.getChartOptions(ChartType.Line, this.defaultOptions()) as LineChartOptions;
         this.chart = ChartBuilder.createLineChart(this.chartOptions);
     }
 

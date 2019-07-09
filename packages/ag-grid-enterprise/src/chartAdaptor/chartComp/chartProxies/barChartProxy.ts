@@ -11,8 +11,7 @@ export class BarChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        const barChartType = params.chartType === ChartType.GroupedBar ? 'groupedBar' : 'stackedBar';
-        this.chartOptions = this.getChartOptions(barChartType, this.defaultOptions()) as BarChartOptions;
+        this.chartOptions = this.getChartOptions(params.chartType, this.defaultOptions()) as BarChartOptions;
 
         this.chart = ChartBuilder.createBarChart(this.chartOptions);
 
@@ -110,8 +109,8 @@ export class BarChartProxy extends ChartProxy {
                 type: 'bar',
                 fills: palette.fills,
                 strokes: palette.strokes,
-                grouped: this.chartProxyParams.chartType === ChartType.GroupedBar,
-                normalizedTo: this.chartProxyParams.chartType === ChartType.NormalizedBar ? 100 : undefined,
+                grouped: this.chartProxyParams.chartType === ChartType.GroupedColumn,
+                normalizedTo: this.chartProxyParams.chartType === ChartType.NormalizedColumn ? 100 : undefined,
                 strokeWidth: 1,
                 tooltipEnabled: true,
                 labelEnabled: false,
@@ -120,7 +119,7 @@ export class BarChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelOffset: this.chartProxyParams.chartType === ChartType.NormalizedBar ? -20 : 4,
+                labelOffset: this.chartProxyParams.chartType === ChartType.NormalizedColumn ? -20 : 4,
                 tooltipRenderer: undefined,
                 showInLegend: true,
                 shadow: undefined

@@ -12,8 +12,7 @@ export class AreaChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        const areaChartType = params.chartType === ChartType.NormalizedArea ? 'normalizedArea' : 'stackedArea';
-        this.chartOptions = this.getChartOptions(areaChartType, this.defaultOptions()) as AreaChartOptions;
+        this.chartOptions = this.getChartOptions(params.chartType, this.defaultOptions()) as AreaChartOptions;
 
         this.chart = ChartBuilder.createAreaChart(this.chartOptions);
 

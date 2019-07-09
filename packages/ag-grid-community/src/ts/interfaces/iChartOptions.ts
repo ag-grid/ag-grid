@@ -17,15 +17,18 @@ export interface ChartOptions {
 export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartDownload';
 
 export enum ChartType {
-    GroupedBar,
-    StackedBar,
-    NormalizedBar,
-    Line,
-    // Scatter,
-    Pie,
-    Doughnut,
-    StackedArea,
-    NormalizedArea
+    GroupedColumn = 'groupedColumn',
+    StackedColumn = 'stackedColumn',
+    NormalizedColumn = 'normalizedColumn',
+    GroupedBar = 'groupedBar',
+    StackedBar = 'stackedBar',
+    NormalizedBar = 'normalizedBar',
+    Line = 'line',
+    Scatter = 'scatter',
+    Pie = 'pie',
+    Doughnut = 'doughnut',
+    StackedArea = 'stackedArea',
+    NormalizedArea = 'normalizedArea'
 }
 
 export interface CartesianChartOptions extends ChartOptions {

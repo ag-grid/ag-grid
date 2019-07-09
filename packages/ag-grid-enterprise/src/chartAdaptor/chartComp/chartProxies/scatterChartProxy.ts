@@ -1,5 +1,5 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
-import { ScatterChartOptions, ScatterSeriesOptions } from "ag-grid-community";
+import { ChartType, ScatterChartOptions, ScatterSeriesOptions } from "ag-grid-community";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { ScatterSeries } from "../../../charts/chart/series/scatterSeries";
@@ -13,7 +13,7 @@ export class ScatterChartProxy extends ChartProxy {
 
         const defaultOpts: ScatterChartOptions = this.defaultOptions();
 
-        this.chartOptions = this.getChartOptions('scatter', this.defaultOptions()) as ScatterChartOptions;
+        this.chartOptions = this.getChartOptions(ChartType.Scatter, this.defaultOptions()) as ScatterChartOptions;
         this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
 

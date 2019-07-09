@@ -182,6 +182,9 @@ export class MenuItemMapper {
                 return 'separator';
             case 'chartRange':
                 const chartRangeSubMenuItems: string[] = [];
+                chartRangeSubMenuItems.push('groupedColumnRangeChart');
+                chartRangeSubMenuItems.push('stackedColumnRangeChart');
+                chartRangeSubMenuItems.push('normalizedColumnRangeChart');
                 chartRangeSubMenuItems.push('groupedBarRangeChart');
                 chartRangeSubMenuItems.push('stackedBarRangeChart');
                 chartRangeSubMenuItems.push('normalizedBarRangeChart');
@@ -195,6 +198,24 @@ export class MenuItemMapper {
                     subMenu: chartRangeSubMenuItems,
                     icon: Utils.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
+            case 'groupedColumnRangeChart': return {
+                name: localeTextFunc('groupedColumnRangeChart', 'Column (Grouped)&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.GroupedColumn);
+                }
+            };
+            case 'stackedColumnRangeChart': return {
+                name: localeTextFunc('stackedColumnRangeChart', 'Column (Stacked)&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.StackedColumn);
+                }
+            };
+            case 'normalizedColumnRangeChart': return {
+                name: localeTextFunc('normalizedColumnRangeChart', 'Column (100% Stacked)&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.NormalizedColumn);
+                }
+            };
             case 'groupedBarRangeChart': return {
                 name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)&lrm;'),
                 action: () => {

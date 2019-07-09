@@ -27,7 +27,7 @@ export class RangeChartService implements IRangeChartService {
     // those in developer provided containers.
     private activeCharts: ChartRef[] = [];
 
-    public chartCurrentRange(chartType: ChartType = ChartType.GroupedBar): ChartRef | undefined {
+    public chartCurrentRange(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
         const selectedRange: CellRange = this.getSelectedRange();
         return this.chartRange(selectedRange, chartType);
     }
@@ -39,42 +39,8 @@ export class RangeChartService implements IRangeChartService {
             console.warn("ag-Grid - unable to chart as no range is selected");
             return;
         }
-
-        let chartType: ChartType;
-        switch (params.chartType) {
-            case 'groupedBar':
-                chartType = ChartType.GroupedBar;
-                break;
-            case 'stackedBar':
-                chartType = ChartType.StackedBar;
-                break;
-            case 'normalizedBar':
-                chartType = ChartType.NormalizedBar;
-                break;
-            case 'stackedArea':
-                chartType = ChartType.StackedArea;
-                break;
-            case 'normalizedArea':
-                chartType = ChartType.NormalizedArea;
-                break;
-            case 'pie':
-                chartType = ChartType.Pie;
-                break;
-            case 'doughnut':
-                chartType = ChartType.Doughnut;
-                break;
-            case 'line':
-                chartType = ChartType.Line;
-                break;
-            // case 'scatter':
-            //     chartType = ChartType.Scatter;
-                break;
-            default:
-                chartType = ChartType.GroupedBar;
-        }
-
         if (cellRange) {
-            return this.chartRange(cellRange, chartType, params.chartContainer, params.suppressChartRanges, params.aggregate, params.processChartOptions);
+            return this.chartRange(cellRange, params.chartType, params.chartContainer, params.suppressChartRanges, params.aggregate, params.processChartOptions);
         }
     }
 
@@ -84,12 +50,12 @@ export class RangeChartService implements IRangeChartService {
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
         const params: GridChartParams = {
-            cellRange: cellRange,
-            chartType: chartType,
+            cellRange,
+            chartType,
             insideDialog: !(container || createChartContainerFunc),
-            suppressChartRanges: suppressChartRanges,
-            aggregate: aggregate,
-            processChartOptions: processChartOptions,
+            suppressChartRanges,
+            aggregate,
+            processChartOptions,
             height: 400, //TODO
             width: 800   //TODO
         };

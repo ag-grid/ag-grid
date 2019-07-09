@@ -51,10 +51,10 @@ export abstract class ChartProxy {
         return this.chartProxyParams.isDarkTheme() ? '#2d3436' : 'white';
     }
 
-    protected getChartOptions(type: string, options: ChartOptions): ChartOptions {
+    protected getChartOptions(type: ChartType, options: ChartOptions): ChartOptions {
         // allow users to override options before they are applied
         if (this.chartProxyParams.processChartOptions) {
-            const params: ProcessChartOptionsParams = {type: type, options: options};
+            const params: ProcessChartOptionsParams = {type, options};
             const overriddenOptions = this.chartProxyParams.processChartOptions(params);
             this.overridePalette(overriddenOptions);
             return overriddenOptions;

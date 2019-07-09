@@ -28,12 +28,12 @@ export class TabbedChartMenu extends Component {
     private tabs: TabbedItem[] = [];
     private readonly chartController: ChartController;
 
-    private chartIcons: HTMLElement[] = [];
+    private chartIcons: { [key in string]: HTMLElement } = {};
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     constructor(params: {
-        controller: ChartController, 
+        controller: ChartController,
         type: ChartType,
         panels: ChartMenuOptions[]
     }) {
@@ -48,7 +48,7 @@ export class TabbedChartMenu extends Component {
 
     @PostConstruct
     public init(): void {
-        
+
         this.panels.forEach(panel => {
             const panelType = panel.replace('chart', '').toLowerCase();
             const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
@@ -73,7 +73,7 @@ export class TabbedChartMenu extends Component {
 
         const comp = new ChildClass(this.chartController);
         this.getContext().wireBean(comp);
-        
+
         eWrapperDiv.appendChild(comp.getGui());
 
         const titleEl = document.createElement('div');

@@ -140,6 +140,9 @@ export class GridChartComp extends Component {
 
     private createChartProxy(chartOptions: ChartProxyParams): ChartProxy {
         switch (chartOptions.chartType) {
+            case ChartType.GroupedColumn:
+            case ChartType.StackedColumn:
+            case ChartType.NormalizedColumn:
             case ChartType.GroupedBar:
             case ChartType.StackedBar:
             case ChartType.NormalizedBar:
