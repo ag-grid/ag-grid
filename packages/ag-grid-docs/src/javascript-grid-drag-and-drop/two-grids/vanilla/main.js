@@ -14,12 +14,6 @@ var rightColumnDefs = [
     {field: "value2"}
 ];
 
-var rowClassRules = {
-    "red-row": 'data.color == "Red"',
-    "green-row": 'data.color == "Green"',
-    "blue-row": 'data.color == "Blue"',
-};
-
 var leftGridOptions = {
     defaultColDef: {
         width: 80,
@@ -27,7 +21,11 @@ var leftGridOptions = {
         filter: true,
         resizable: true
     },
-    rowClassRules: rowClassRules,
+    rowClassRules: {
+        "red-row": 'data.color == "Red"',
+        "green-row": 'data.color == "Green"',
+        "blue-row": 'data.color == "Blue"',
+    },
     getRowNodeId: function(data){return data.id},
     rowData: createLeftRowData(),
     rowDragManaged: true,
@@ -42,7 +40,11 @@ var rightGridOptions = {
         filter: true,
         resizable: true
     },
-    rowClassRules: rowClassRules,
+    rowClassRules: {
+        "red-row": 'data.color == "Red"',
+        "green-row": 'data.color == "Green"',
+        "blue-row": 'data.color == "Blue"',
+    },
     getRowNodeId: function(data){return data.id},
     rowData: [],
     rowDragManaged: true,

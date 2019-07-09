@@ -1,19 +1,5 @@
 var rowIdSequence = 100;
 
-var colDefs = [
-    {valueGetter: "'Drag'", dndSource: true, dndSourceOnRowDrag: onRowDrag, checkboxSelection: true},
-    {field: "id"},
-    {field: "color"},
-    {field: "value1"},
-    {field: "value2"}
-];
-
-var rowClassRules = {
-    "red-row": 'data.color == "Red"',
-    "green-row": 'data.color == "Green"',
-    "blue-row": 'data.color == "Blue"',
-};
-
 var gridOptions = {
     defaultColDef: {
         width: 80,
@@ -23,10 +9,20 @@ var gridOptions = {
     },
     rowSelection: 'multiple',
     suppressRowClickSelection: true,
-    rowClassRules: rowClassRules,
+    rowClassRules: {
+        "red-row": 'data.color == "Red"',
+        "green-row": 'data.color == "Green"',
+        "blue-row": 'data.color == "Blue"',
+    },
     rowData: createRowData(),
     rowDragManaged: true,
-    columnDefs: colDefs,
+    columnDefs: [
+        {valueGetter: "'Drag'", dndSource: true, dndSourceOnRowDrag: onRowDrag, checkboxSelection: true},
+        {field: "id"},
+        {field: "color"},
+        {field: "value1"},
+        {field: "value2"}
+    ],
     animateRows: true
 };
 

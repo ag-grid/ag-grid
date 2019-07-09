@@ -8,12 +8,6 @@ var columnDefs = [
     {field: "value2"}
 ];
 
-var rowClassRules = {
-    "red-row": 'data.color == "Red"',
-    "green-row": 'data.color == "Green"',
-    "blue-row": 'data.color == "Blue"',
-};
-
 var gridOptions = {
     defaultColDef: {
         width: 80,
@@ -21,7 +15,11 @@ var gridOptions = {
         filter: true,
         resizable: true
     },
-    rowClassRules: rowClassRules,
+    rowClassRules: {
+        "red-row": 'data.color == "Red"',
+        "green-row": 'data.color == "Green"',
+        "blue-row": 'data.color == "Blue"',
+    },
     rowData: createRowData(),
     rowDragManaged: true,
     columnDefs: columnDefs,

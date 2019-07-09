@@ -103,7 +103,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Two Grids', 'two-grids', 'generated', array('extras' => array('fontawesome')) ) ?>
+    <?= example('Two Grids', 'two-grids', 'multi') ?>
 
     <p>
         Note that there is no specific drop zone logic in the grid. This was done on purpose after analysis.

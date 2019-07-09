@@ -6,8 +6,7 @@
 .drop-col {
     padding-left: 10px;
     box-sizing: border-box;
-    width: 0;
-    flex-grow: 1;
+    flex: 1;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -22,7 +21,7 @@
 .json-display {
     padding-top: 10px;
     box-sizing: border-box;
-    flex-grow: 1;
+    flex: 1;
     border: 1px solid #888;
     background-color: #f8f8f8;
     overflow: auto;
@@ -34,8 +33,7 @@
 }
 
 .grid-col {
-    width: 0;
-    flex-grow: 1;
+    flex: 1;
     height: 100%;
 }
 

@@ -140,6 +140,7 @@ function appComponentTemplate(bindings, componentFileNames, isDev) {
 
         recognizedDomEvents.forEach(event => {
             template = template.replace(new RegExp(`on${event}=`, 'g'), `(${event})=`);
+            template = template.replace('(event)', `($event)`);
         });
 
         template = template.replace('$$GRID$$', agGridTag);

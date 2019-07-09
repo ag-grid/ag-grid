@@ -84,7 +84,7 @@ function nodeIsSimpleHttpRequest(node) {
     return innerCallee && innerProperty && innerCallee.name == 'agGrid' && innerProperty.name == 'simpleHttpRequest';
 }
 
-export const recognizedDomEvents = ['click', 'change', 'input'];
+export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];
 
 const arrayMap = function (array, callback) {
     return Array.prototype.map.call(array, callback);
