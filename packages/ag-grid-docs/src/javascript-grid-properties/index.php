@@ -5,7 +5,6 @@ $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
-http://localhost:8080/javascript-grid-column-definitions/
     <h1>Grid Properties</h1>
 
     <p class="lead">
