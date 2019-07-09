@@ -12,7 +12,7 @@ import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
-import { Caption } from "../caption";
+import { Caption } from "../../caption";
 import { Shape } from "../../scene/shape/shape";
 import { Color } from "ag-grid-community";
 

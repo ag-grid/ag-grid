@@ -12,7 +12,7 @@ import {Chart} from "../../../../../charts/chart/chart";
 import {ExpandablePanel} from "../chartFormatingPanel";
 import {PaddingPanel} from "./paddingPanel";
 import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
-import {Caption} from "../../../../../charts/chart/caption";
+import {Caption} from "../../../../../charts/caption";
 import {ChartTranslator} from "../../../chartTranslator";
 
 export class ChartPanel extends Component implements ExpandablePanel {

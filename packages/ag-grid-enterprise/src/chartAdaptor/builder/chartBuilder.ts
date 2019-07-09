@@ -34,7 +34,7 @@ import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
 import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
-import { Caption } from "../../charts/chart/caption";
+import { Caption } from "../../charts/caption";
 
 type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
 type PolarSeriesType = 'pie';

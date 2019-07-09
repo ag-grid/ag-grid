@@ -6,6 +6,9 @@ import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
+import { CategoryAxis } from "./axis/categoryAxis";
+
+export type CartesianChartLayout = 'vertical' | 'horizontal';
 
 export class CartesianChart extends Chart {
 
@@ -134,9 +137,21 @@ export class CartesianChart extends Chart {
         this.positionLegend();
     }
 
+    private _layout: CartesianChartLayout = 'vertical';
+    set layout(value: CartesianChartLayout) {
+        if (this._layout !== value) {
+            this._layout = value;
+            this.layoutPending = true;
+        }
+    }
+    get layout(): CartesianChartLayout {
+        return this._layout;
+    }
+
     updateAxes() {
-        const xAxis = this.xAxis;
-        const yAxis = this.yAxis;
+        const isHorizontal = this.layout === 'horizontal';
+        const xAxis = isHorizontal ? this.yAxis : this.xAxis;
+        const yAxis = isHorizontal ? this.xAxis : this.yAxis;
 
         if (!(xAxis && yAxis)) {
             return;
@@ -179,8 +194,9 @@ export class CartesianChart extends Chart {
         xAxis.update();
         yAxis.update();
 
-        const xAxisBBox = xAxis.getBBox();
-        const yAxisBBox = yAxis.getBBox();
+        // The `xAxis` and `yAxis` have `.this` prefix on purpose here.
+        const xAxisBBox = this.xAxis.getBBox();
+        const yAxisBBox = this.yAxis.getBBox();
 
         if (this.axisAutoPadding.left !== yAxisBBox.width) {
             this.axisAutoPadding.left = yAxisBBox.width;

@@ -8,7 +8,7 @@ import { Rect } from "../scene/shape/rect";
 import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
-import { Caption } from "./caption";
+import { Caption } from "../caption";
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 

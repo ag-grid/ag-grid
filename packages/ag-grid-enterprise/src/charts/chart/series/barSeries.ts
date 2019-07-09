@@ -12,6 +12,7 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Color } from "ag-grid-community";
+import { CategoryAxis } from "../axis/categoryAxis";
 
 interface SelectionDatum extends SeriesNodeDatum {
     yField: string,
@@ -450,8 +451,9 @@ export class BarSeries extends Series<CartesianChart> {
         }
 
         const categoryCount = this.data.length;
-        const xAxis = chart.xAxis;
-        const yAxis = chart.yAxis;
+        const flipXY = !(chart.xAxis instanceof CategoryAxis);
+        const xAxis = flipXY ? chart.yAxis : chart.xAxis;
+        const yAxis = flipXY ? chart.xAxis : chart.yAxis;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const groupScale = this.groupScale;
@@ -509,10 +511,10 @@ export class BarSeries extends Series<CartesianChart> {
                     seriesDatum,
                     yValue,
                     yField,
-                    x: barX,
-                    y: Math.min(y, bottomY),
-                    width: barWidth,
-                    height: Math.abs(bottomY - y),
+                    x: flipXY ? Math.min(y, bottomY) : barX,
+                    y: flipXY ? barX : Math.min(y, bottomY),
+                    width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                    height: flipXY ? barWidth : Math.abs(bottomY - y),
                     fill: fills[j % fills.length],
                     stroke: strokes[j % strokes.length],
                     strokeWidth,
@@ -523,8 +525,8 @@ export class BarSeries extends Series<CartesianChart> {
                         fontSize: labelFontSize,
                         fontFamily: labelFontFamily,
                         fill: labelColor,
-                        x: barX + barWidth / 2,
-                        y: y + (yValue >= 0 ? -1 : 1) * labelOffset
+                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * labelOffset : barX + barWidth / 2,
+                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? -1 : 1) * labelOffset
                     } : undefined
                 });
 
@@ -549,7 +551,7 @@ export class BarSeries extends Series<CartesianChart> {
         const enterTexts = updateTexts.enter.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
-            text.textAlign = 'center';
+            text.textAlign = flipXY ? 'start' : 'center';
         });
 
         const highlightedNode = this.highlightedNode;
@@ -584,7 +586,7 @@ export class BarSeries extends Series<CartesianChart> {
                     text.y = label.y;
                     text.fill = label.fill;
                     text.visible = true;
-                    text.textBaseline = datum.yValue >= 0 ? 'bottom' : 'hanging';
+                    text.textBaseline = flipXY ? 'middle' : (datum.yValue >= 0 ? 'bottom' : 'hanging');
                 } else {
                     text.visible = false;
                 }

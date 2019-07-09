@@ -9,6 +9,7 @@ import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
+import { Caption } from "./caption";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -41,17 +42,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
     //     return rect;
     // })();
 
+    readonly scale: S;
+    readonly group = new Group();
+    private groupSelection: Selection<Group, Group, D, D>;
+    private line = new Line();
+    // onLayoutChange?: () => void;
+
     constructor(scale: S) {
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
         this.group.append(this.line);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
-
-    readonly scale: S;
-    readonly group = new Group();
-    private groupSelection: Selection<Group, Group, D, D>;
-    private line = new Line();
 
     set domain(value: D[]) {
         this.scale.domain = value;
@@ -119,6 +121,27 @@ export class Axis<S extends Scale<D, number>, D = any> {
     labelFontWeight: string = '';
     labelFontSize: number = 12;
     labelFontFamily: string = 'Verdana, sans-serif';
+
+    private _title: Caption | undefined = undefined;
+    set title(value: Caption | undefined) {
+        const oldTitle = this._title;
+        if (oldTitle !== value) {
+            if (oldTitle) {
+                // oldTitle.onLayoutChange = undefined;
+                this.group.removeChild(oldTitle.node);
+            }
+            if (value) {
+                value.node.rotation = -Math.PI / 2;
+                // value.onLayoutChange = this.onLayoutChange;
+                this.group.appendChild(value.node);
+            }
+            this._title = value;
+            // this.requestLayout();
+        }
+    }
+    get title(): Caption | undefined {
+        return this._title;
+    }
 
     /**
      * The color of the labels.
@@ -380,6 +403,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
         line.stroke = this.lineColor;
         line.visible = ticks.length > 0;
 
+        // const title = this.title;
+        // if (title) {
+        //     const titleRotation = normalizeAngle360(rotation);
+        //     const titleRotationFlag = (titleRotation >= 0 && titleRotation < Math.PI) ? -1 : 1;
+        //     const node = title.node;
+        //
+        //     const bbox = this.getBBox();
+        //
+        //     const titleSideFlag = -1;
+        //     node.textBaseline = titleSideFlag * sideFlag * titleRotationFlag === -1 ? 'bottom' : 'top';
+        //     node.rotation = titleRotationFlag * Math.PI / 2;
+        //     node.x = titleRotationFlag * (line.y1 + line.y2) / 2;
+        //     node.y = sideFlag * titleSideFlag * titleRotationFlag * (10 + bbox.width - Math.max(bbox.x + bbox.width, 0));
+        // }
+
         // debug (bbox)
         // const bbox = this.getBBox();
         // const bboxRect = this.bboxRect;
@@ -432,4 +470,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
             bottom - top
         );
     }
+
+    // private requestLayout() {
+    //     if (this.onLayoutChange) {
+    //         this.onLayoutChange();
+    //     }
+    // }
 }
