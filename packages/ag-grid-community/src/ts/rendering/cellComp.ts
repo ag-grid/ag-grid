@@ -657,17 +657,33 @@ export class CellComp extends Component {
     private refreshToolTip() {
         const newTooltip = this.getToolTip();
 
-        if (this.tooltip !== newTooltip) {
-            this.tooltip = newTooltip;
-            if (!this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-                return;
-            }
+        if (this.tooltip === newTooltip) {
+            return;
+        }
 
-            if (_.exists(newTooltip)) {
+        const hasNewTooltip = _.exists(newTooltip);
+        const hadTooltip = _.exists(this.tooltip);
+
+        if (hasNewTooltip && this.tooltip === newTooltip.toString()) {
+            return;
+        }
+
+        this.tooltip = newTooltip;
+
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
+            if (hasNewTooltip) {
                 const tooltipSanitised = _.escape(this.tooltip);
                 this.eParentOfValue.setAttribute('title', tooltipSanitised!);
             } else {
                 this.eParentOfValue.removeAttribute('title');
+            }
+        } else {
+            if (hadTooltip) {
+                if (!hasNewTooltip) {
+                    this.beans.tooltipManager.unregisterTooltip(this);
+                }
+            } else if (hasNewTooltip) {
+                this.beans.tooltipManager.registerTooltip(this);
             }
         }
     }
