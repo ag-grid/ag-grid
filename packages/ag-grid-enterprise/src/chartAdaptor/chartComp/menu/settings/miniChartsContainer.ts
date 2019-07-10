@@ -28,7 +28,7 @@ export class MiniChartsContainer extends Component {
     @PostConstruct
     private init() {
         // TODO: reintroduce MiniScatter when chart ranges support it
-        const classes = [MiniColumn, MiniStackedColumn, MiniNormalizedColumn, MiniLine, MiniPie, MiniDonut, MiniStackedArea, MiniNormalizedArea];
+        const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniColumn, MiniStackedColumn, MiniNormalizedColumn, MiniLine, MiniPie, MiniDonut, MiniStackedArea, MiniNormalizedArea];
         const eGui = this.getGui();
         classes.forEach(MiniClass => {
             const miniWrapper = document.createElement('div');
@@ -283,6 +283,74 @@ class MiniColumn extends MiniChart {
     }
 }
 
+class MiniBar extends MiniChart {
+    static chartType = ChartType.GroupedBar;
+    private readonly bars: Rect[];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+
+        const data = [2, 3, 4];
+
+        const yScale = new BandScale<number>();
+        yScale.domain = [0, 1, 2];
+        yScale.range = [padding, size - padding];
+        yScale.paddingInner = 0.3;
+        yScale.paddingOuter = 0.3;
+
+        const xScale = linearScale();
+        xScale.domain = [0, 4];
+        xScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+        (this as any).axes = [leftAxis, bottomAxis];
+
+        const rectLineWidth = 1;
+        const alignment = Math.floor(rectLineWidth) % 2 / 2;
+
+        const bottom = xScale.convert(0);
+        this.bars = data.map((datum, i) => {
+            const top = xScale.convert(datum);
+            const rect = new Rect();
+            rect.strokeWidth = rectLineWidth;
+            rect.x = Math.floor(padding) + alignment;
+            rect.y = Math.floor(yScale.convert(i)) + alignment;
+            const width = yScale.bandwidth;
+            const height = bottom - top;
+            rect.width = Math.floor(height) + Math.floor(rect.y % 1 + height % 1);
+            rect.height = Math.floor(width) + Math.floor(rect.x % 1 + width % 1);
+            return rect;
+        });
+
+        const root = this.root;
+        root.append(this.bars);
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.bars.forEach((bar, i) => {
+            bar.fill = fills[i];
+            bar.stroke = strokes[i];
+        });
+    }
+}
+
 class MiniStackedColumn extends MiniChart {
     static chartType = ChartType.StackedColumn;
     private readonly bars: Rect[][];
@@ -358,6 +426,81 @@ class MiniStackedColumn extends MiniChart {
     }
 }
 
+class MiniStackedBar extends MiniChart {
+    static chartType = ChartType.StackedBar;
+    private readonly bars: Rect[][];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+
+        const data = [
+            [8, 12, 16],
+            [6, 9, 12],
+            [2, 3, 4]
+        ];
+
+        const yScale = new BandScale<number>();
+        yScale.domain = [0, 1, 2];
+        yScale.range = [padding, size - padding];
+        yScale.paddingInner = 0.3;
+        yScale.paddingOuter = 0.3;
+
+        const xScale = linearScale();
+        xScale.domain = [0, 16];
+        xScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+
+        const rectLineWidth = 1;
+        const alignment = Math.floor(rectLineWidth) % 2 / 2;
+
+        const bottom = xScale.convert(0);
+        this.bars = data.map(series => {
+            return series.map((datum, i) => {
+                const top = xScale.convert(datum);
+                const rect = new Rect();
+                rect.strokeWidth = rectLineWidth;
+                rect.x = Math.floor(padding) + alignment;
+                rect.y = Math.floor(yScale.convert(i)) + alignment;
+                const width = yScale.bandwidth;
+                const height = bottom - top;
+                rect.width = Math.floor(height) + Math.floor(rect.y % 1 + height % 1);
+                rect.height = Math.floor(width) + Math.floor(rect.x % 1 + width % 1);
+                return rect;
+            });
+        });
+
+        const root = this.root;
+        root.append(([] as Rect[]).concat.apply([], this.bars));
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.bars.forEach((series, i) => {
+            series.forEach(bar => {
+                bar.fill = fills[i];
+                bar.stroke = strokes[i];
+            })
+        });
+    }
+}
+
 class MiniNormalizedColumn extends MiniChart {
     static chartType = ChartType.NormalizedColumn;
     private readonly bars: Rect[][];
@@ -411,6 +554,81 @@ class MiniNormalizedColumn extends MiniChart {
                 const height = bottom - top;
                 rect.width = Math.floor(width) + Math.floor(rect.x % 1 + width % 1);
                 rect.height = Math.floor(height) + Math.floor(rect.y % 1 + height % 1);
+                return rect;
+            });
+        });
+
+        const root = this.root;
+        root.append(([] as Rect[]).concat.apply([], this.bars));
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.bars.forEach((series, i) => {
+            series.forEach(bar => {
+                bar.fill = fills[i];
+                bar.stroke = strokes[i];
+            })
+        });
+    }
+}
+
+class MiniNormalizedBar extends MiniChart {
+    static chartType = ChartType.NormalizedBar;
+    private readonly bars: Rect[][];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+
+        const data = [
+            [10, 10, 10],
+            [6, 7, 8],
+            [2, 4, 6]
+        ];
+
+        const yScale = new BandScale<number>();
+        yScale.domain = [0, 1, 2];
+        yScale.range = [padding, size - padding];
+        yScale.paddingInner = 0.3;
+        yScale.paddingOuter = 0.3;
+
+        const xScale = linearScale();
+        xScale.domain = [0, 10];
+        xScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+
+        const rectLineWidth = 1;
+        const alignment = Math.floor(rectLineWidth) % 2 / 2;
+
+        const bottom = xScale.convert(0);
+        this.bars = data.map(series => {
+            return series.map((datum, i) => {
+                const top = xScale.convert(datum);
+                const rect = new Rect();
+                rect.strokeWidth = rectLineWidth;
+                rect.x = Math.floor(padding) + alignment;
+                rect.y = Math.floor(yScale.convert(i)) + alignment;
+                const width = yScale.bandwidth;
+                const height = bottom - top;
+                rect.width = Math.floor(height) + Math.floor(rect.y % 1 + height % 1);
+                rect.height = Math.floor(width) + Math.floor(rect.x % 1 + width % 1);
                 return rect;
             });
         });

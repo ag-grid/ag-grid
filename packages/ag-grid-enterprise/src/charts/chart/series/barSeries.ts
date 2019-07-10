@@ -279,17 +279,6 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelColor;
     }
 
-    private _labelOffset: number = 4;
-    set labelOffset(value: number) {
-        if (this._labelOffset !== value) {
-            this._labelOffset = value;
-            this.update();
-        }
-    }
-    get labelOffset(): number {
-        return this._labelOffset;
-    }
-
     private _labelFormatter: BarLabelFormatter | undefined = undefined;
     set labelFormatter(value: BarLabelFormatter | undefined) {
         if (this._labelFormatter !== value) {
