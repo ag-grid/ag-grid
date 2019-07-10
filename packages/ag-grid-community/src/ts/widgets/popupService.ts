@@ -346,10 +346,15 @@ export class PopupService {
             };
         }
 
+        const ePopupParent = this.getPopupParent();
+
+        // for angular specifically, but shouldn't cause an issue with js or other fw's
+        // https://github.com/angular/angular/issues/8563
+        ePopupParent.appendChild(eChild);
+
         eChild.style.top = '0px';
         eChild.style.left = '0px';
 
-        const ePopupParent = this.getPopupParent();
 
         const popupAlreadyShown = _.isVisible(eChild);
         if (popupAlreadyShown && ePopupParent.contains(eChild)) {
