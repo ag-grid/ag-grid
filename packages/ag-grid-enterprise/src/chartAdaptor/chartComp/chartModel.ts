@@ -355,6 +355,11 @@ export class ChartModel extends BeanStub {
                 if (validChartType) { return; }
             }
 
+            if (col.isValueActive()) {
+                valueCols.push(col);
+                return;
+            }
+
             // if 'chartDataType' is not provided then infer type based data contained in first row
             const isNumberCol = firstRowData && typeof firstRowData[col.getColId()] === 'number';
             isNumberCol ? valueCols.push(col) : dimensionCols.push(col);
