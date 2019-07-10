@@ -52,6 +52,15 @@ export class ChartBuilder {
 
     static createBarChart(options: BarChartOptions): CartesianChart {
         const chart = new CartesianChart(
+            ChartBuilder.createAxis(options.yAxis),
+            ChartBuilder.createAxis(options.xAxis)
+        );
+        chart.layout = 'horizontal';
+        return ChartBuilder.initCartesianChart(chart, options, 'bar');
+    }
+
+    static createColumnChart(options: BarChartOptions): CartesianChart {
+        const chart = new CartesianChart(
             ChartBuilder.createAxis(options.xAxis),
             ChartBuilder.createAxis(options.yAxis)
         );
@@ -321,9 +330,6 @@ export class ChartBuilder {
         if (options.labelFontFamily !== undefined) {
             series.labelFontFamily = options.labelFontFamily;
         }
-        if (options.labelOffset !== undefined) {
-            series.labelOffset = options.labelOffset;
-        }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
         }
@@ -394,9 +400,6 @@ export class ChartBuilder {
         }
         if (options.calloutLength !== undefined) {
             series.calloutLength = options.calloutLength;
-        }
-        if (options.labelOffset !== undefined) {
-            series.labelOffset = options.labelOffset;
         }
         if (options.labelFontStyle !== undefined) {
             series.labelFontStyle = options.labelFontStyle;

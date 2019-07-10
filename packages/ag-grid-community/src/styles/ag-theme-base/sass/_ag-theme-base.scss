@@ -1,7 +1,7 @@
 @import "../../mixins/ag-theme-mixins";
 
-@if $icon-font-family == 'agGridBalham' or 
-    $icon-font-family == 'agGridMaterial' or 
+@if $icon-font-family == 'agGridBalham' or
+    $icon-font-family == 'agGridMaterial' or
     $icon-font-family == 'agGridClassic' {
     @font-face {
         font-family: '#{$icon-font-family}';
@@ -574,7 +574,7 @@
     ////////////////////////////////////////
     .ag-filter {
         .ag-filter-select, .ag-filter-body {
-            margin-bottom: $grid-size; 
+            margin-bottom: $grid-size;
         }
 
         .ag-filter-body {
@@ -585,7 +585,7 @@
             margin-left: $grid-size;
             margin-right: $grid-size;
         }
-    
+
         // string filter type
         .ag-filter-select {
             margin: $grid-size;
@@ -821,7 +821,7 @@
                 }
             }
         }
-        
+
         span {
             margin: 0 $grid-size;
         }
@@ -939,7 +939,7 @@
         }
         &.ag-cell-inline-editing, &.ag-popup-editor {
             @include card($params);
-    
+
             background-color: $editor-background-color-color;
         }
     }
@@ -1412,19 +1412,19 @@
             background-color: rgb(255, 0, 0);
             border-radius: 2px;
         }
-       
+
         .ag-spectrum-tools {
             padding: 10px;
         }
-       
+
         .ag-spectrum-sat {
             background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
         }
-       
+
         .ag-spectrum-val {
             background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
         }
-       
+
         .ag-spectrum-dragger {
             border-radius: 12px;
             height: 12px;
@@ -1433,21 +1433,21 @@
             background: black;
             box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
         }
-       
+
         .ag-spectrum-hue-background {
             border-radius: 2px;
         }
-       
+
         .ag-spectrum-alpha-background {
             border-radius: 2px;
         }
-       
+
         .ag-hue-alpha {
             margin-bottom: 10px;
             height: 11px;
             border-radius: 2px;
         }
-       
+
         .ag-spectrum-slider {
             margin-top: -12px;
             width: 13px;
@@ -1456,13 +1456,13 @@
             background-color: rgb(248, 248, 248);
             box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
         }
-       
+
         .ag-spectrum-text-value {
             font-weight: bold;
             line-height: 20px;
             color: #333;
         }
-       
+
         .ag-spectrum-text-value:focus {
             border: 1px solid #0d77e4;
             padding: 2px;
@@ -1547,6 +1547,7 @@
 
     .ag-chart {
         .ag-chart-menu {
+            border-radius: 5px;
             background: $background-color;
             > span {
                 &:hover {

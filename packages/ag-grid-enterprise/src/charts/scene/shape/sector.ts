@@ -216,6 +216,7 @@ export class Sector extends Shape {
             );
         }
         path.cubicArc(centerX, centerY, innerRadius, innerRadius, 0, endAngle, startAngle, 1);
+        path.closePath();
 
         this.dirtyPath = false;
     }

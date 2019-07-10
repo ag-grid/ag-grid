@@ -382,9 +382,16 @@ var gridOptions = {
 
     processChartOptions: function(params) {
         var options = params.options;
-        var types = ['groupedBar', 'stackedBar', 'line', 'scatter'];
+        var types = [
+            'groupedBar', 'stackedBar', 'normalizedBar',
+            'groupedColumn', 'stackedColumn', 'normalizedColumn',
+            'stackedArea', 'normalizedArea',
+            'line', 'scatter'
+        ];
+        var normalizedTypes = ['normalizedBar', 'normalizedColumn', 'normalizedArea'];
         if (types.indexOf(params.type) >= 0) {
-            options.yAxis.labelFormatter = function(params) {
+            const isNormalized = normalizedTypes.indexOf(params.type) >= 0;
+            options.yAxis.labelFormatter = isNormalized ? function (params) { return params.value + '%'  } : function(params) {
                 var n = params.value;
 
                 if (n < 1e3) return n;

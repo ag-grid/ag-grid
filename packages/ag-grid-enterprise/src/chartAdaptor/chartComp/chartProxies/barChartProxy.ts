@@ -8,12 +8,21 @@ import { CartesianChart } from "../../../charts/chart/cartesianChart";
 export class BarChartProxy extends ChartProxy {
     private readonly chartOptions: BarChartOptions;
 
+    static barTypes = [ChartType.GroupedBar, ChartType.StackedBar, ChartType.NormalizedBar];
+    static columnTypes = [ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn];
+
     public constructor(params: ChartProxyParams) {
         super(params);
 
         this.chartOptions = this.getChartOptions(params.chartType, this.defaultOptions()) as BarChartOptions;
 
-        this.chart = ChartBuilder.createBarChart(this.chartOptions);
+        if (BarChartProxy.barTypes.indexOf(params.chartType) >= 0) {
+            this.chart = ChartBuilder.createBarChart(this.chartOptions);
+        } else if (BarChartProxy.columnTypes.indexOf(params.chartType) >= 0) {
+            this.chart = ChartBuilder.createColumnChart(this.chartOptions);
+        } else {
+            console.error(`Unrecognized chart type: ${params.chartType}.`);
+        }
 
         const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as BarSeriesOptions);
         if (barSeries) {
@@ -44,6 +53,7 @@ export class BarChartProxy extends ChartProxy {
 
     private defaultOptions(): BarChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
+        const chartType = this.chartProxyParams.chartType;
 
         return {
             parent: this.chartProxyParams.parentElement,
@@ -109,8 +119,8 @@ export class BarChartProxy extends ChartProxy {
                 type: 'bar',
                 fills: palette.fills,
                 strokes: palette.strokes,
-                grouped: this.chartProxyParams.chartType === ChartType.GroupedColumn,
-                normalizedTo: this.chartProxyParams.chartType === ChartType.NormalizedColumn ? 100 : undefined,
+                grouped: chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar,
+                normalizedTo: (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar) ? 100 : undefined,
                 strokeWidth: 1,
                 tooltipEnabled: true,
                 labelEnabled: false,
@@ -119,7 +129,6 @@ export class BarChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelOffset: this.chartProxyParams.chartType === ChartType.NormalizedColumn ? -20 : 4,
                 tooltipRenderer: undefined,
                 showInLegend: true,
                 shadow: undefined

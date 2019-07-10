@@ -119,21 +119,6 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
         this.getContext().wireBean(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
-
-        const labelOffsetSlider = new AgSlider();
-        this.getContext().wireBean(labelOffsetSlider);
-
-        labelOffsetSlider
-            .setLabel(this.chartTranslator.translate('offsets'))
-            .setValue(`${this.series[0].labelOffset}`)
-            .setMinValue(-100)
-            .setMaxValue(100)
-            .setTextFieldWidth(45)
-            .onValueChange(newValue => this.series.forEach(s => s.labelOffset = newValue));
-
-        labelPanelComp.addCompToPanel(labelOffsetSlider);
-        this.activePanels.push(labelOffsetSlider);
-
         this.seriesGroup.addItem(labelPanelComp);
     }
 

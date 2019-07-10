@@ -212,7 +212,6 @@ export interface BarSeriesOptions extends SeriesOptions {
     labelFontSize?: number;
     labelFontFamily?: string;
     labelColor?: string;
-    labelOffset?: number;
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 }
