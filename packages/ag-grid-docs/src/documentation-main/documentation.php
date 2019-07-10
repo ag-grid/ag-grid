@@ -73,32 +73,33 @@ function doLevel3($parentItem) {
         }
 
 
-        if ($itemTitle == 'See Also') {
-            return;
+        if ($itemTitle <> 'See Also' AND $itemTitle <> 'Overview') {
+
+
+
+            echo "<li style='$forcedStyle'>";
+
+            echo "<span class='docs-homepage-level2-item'>";
+            if (strlen($itemUrl) > 1) {
+                echo "<a href='../$itemUrl'>$itemTitle$itemTextDecorator</a>";
+            } else {
+                echo "$itemTitle$itemTextDecorator";
+            }
+
+            if ($item['enterprise']) {
+                echo "<span class=\"enterprise-icon\"/>";
+            }
+
+            echo "</span>";
+
+            $maxLevelShow = $item['max-box-show-level'];
+            if ($maxLevelShow > 2) {
+                doLevel4($item, $itemTextDecorator);
+            }
+
+
+            echo "</li>";
         }
-
-        echo "<li style='$forcedStyle'>";
-
-        echo "<span class='docs-homepage-level2-item'>";
-        if (strlen($itemUrl) > 1) {
-            echo "<a href='../$itemUrl'>$itemTitle$itemTextDecorator</a>";
-        } else {
-            echo "$itemTitle$itemTextDecorator";
-        }
-
-        if ($item['enterprise']) {
-            echo "<span class=\"enterprise-icon\"/>";
-        }
-
-        echo "</span>";
-
-        $maxLevelShow = $item['max-box-show-level'];
-        if ($maxLevelShow > 2) {
-            doLevel4($item, $itemTextDecorator);
-        }
-
-
-        echo "</li>";
     }
 
     echo "</ul>";

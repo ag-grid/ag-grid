@@ -70,14 +70,6 @@
             "url": "javascript-grid-properties/"
           },
           {
-            "title": "Grid Events",
-            "url": "javascript-grid-events/"
-          },
-          {
-            "title": "Grid Callbacks",
-            "url": "javascript-grid-callbacks/"
-          },
-          {
             "title": "Grid API",
             "url": "javascript-grid-api/"
           },
@@ -90,16 +82,21 @@
             "url": "javascript-grid-column-api/"
           },
           {
+            "title": "Grid Events",
+            "box-title": "Events",
+            "url": "javascript-grid-events/"
+          },
+          {
+            "title": "Callbacks",
+            "url": "javascript-grid-callbacks/"
+          },
+          {
             "title": "Row Node",
             "url": "javascript-grid-row-node/"
           },
           {
             "title": "Column",
             "url": "javascript-grid-column/"
-          },
-          {
-            "title": "Context",
-            "url": "javascript-grid-context/"
           }
         ]
       },
@@ -113,13 +110,13 @@
             "url": "javascript-grid-data-overview/"
           },
           {
-            "title": "Row Models",
+            "title": "Client side data",
+            "url": "javascript-grid-client-side-model/"
+          },
+          {
+            "title": "Server side data",
             "url": "javascript-grid-row-models/",
             "items": [
-              {
-                "title": "Client Side Row Model",
-                "url": "javascript-grid-client-side-model/"
-              },
               {
                 "title": "Server Side Row Model",
                 "url": "javascript-grid-server-side-model/",
@@ -216,7 +213,13 @@
           },
           {
             "title": "Accessing Data",
-            "url": "javascript-grid-accessing-data/"
+            "url": "javascript-grid-accessing-data/",
+            "items": [
+              {
+                "title": "Context",
+                "url": "javascript-grid-context/"
+              }
+            ]
           },
           {
             "title": "Updating Data",
@@ -266,7 +269,14 @@
           {
             "title": "Column Moving",
             "box-title": "Moving",
-            "url": "javascript-grid-column-moving/"
+            "url": "javascript-grid-column-moving/",
+            "items": [
+              {
+                "title": "Column Animation",
+                "box-title": "Animation",
+                "url": "javascript-grid-column-animation/"
+              }
+            ]
           },
           {
             "title": "Column Pinning",
@@ -277,11 +287,6 @@
             "title": "Column Spanning",
             "box-title": "Spanning",
             "url": "javascript-grid-column-spanning/"
-          },
-          {
-            "title": "Column Animation",
-            "box-title": "Animation",
-            "url": "javascript-grid-column-animation/"
           }
         ]
       },
@@ -357,11 +362,13 @@
           },
           {
             "title": "Themes",
-            "url": "javascript-grid-styling/"
-          },
-          {
-            "title": "Provided Themes",
-            "url": "javascript-grid-themes-provided/"
+            "url": "javascript-grid-styling/",
+            "items": [
+              {
+                "title": "Provided Themes",
+                "url": "javascript-grid-themes-provided/"
+              }
+            ]
           },
           {
             "title": "Grid Size",
@@ -477,7 +484,7 @@
       {
         "title": "Rendering Cells",
         "icon": "icon-render-cells",
-        "level-2-text-decorator": ",&nbsp;",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -488,38 +495,50 @@
             "url": "javascript-grid-rendering-flow/"
           },
           {
-            "title": "Cell Rendering",
-            "url": "javascript-grid-cell-rendering/"
-          },
-          {
-            "title": "Provided Renderers",
-            "url": "javascript-grid-provided-renderers/",
+            "title": "Massaging cell content",
+            "url": "javascript-grid-value-getters/",
             "items": [
               {
-                "title": "Group Cell Renderer",
-                "url": "javascript-grid-provided-renderer-group/"
+                "title": "Value Getters",
+                "url": "javascript-grid-value-getters/"
               },
               {
-                "title": "Show Change Cell Renderers",
-                "url": "javascript-grid-provided-renderer-change/"
+                "title": "Value Formatters",
+                "url": "javascript-grid-value-formatters/"
+              },
+              {
+                "title": "Expressions",
+                "url": "javascript-grid-cell-expressions/"
+              },
+              {
+                "title": "Reference Data",
+                "url": "javascript-grid-reference-data/"
               }
             ]
           },
           {
-            "title": "Value Getters",
-            "url": "javascript-grid-value-getters/"
-          },
-          {
-            "title": "Value Formatters",
-            "url": "javascript-grid-value-formatters/"
-          },
-          {
-            "title": "Expressions",
-            "url": "javascript-grid-cell-expressions/"
-          },
-          {
-            "title": "Reference Data",
-            "url": "javascript-grid-reference-data/"
+            "title": "Custom cells",
+            "url": "javascript-grid-cell-rendering/",
+            "items": [
+              {
+                "title": "Cell Rendering",
+                "url": "javascript-grid-cell-rendering/"
+              },
+              {
+                "title": "Provided Renderers",
+                "url": "javascript-grid-provided-renderers/",
+                "items": [
+                  {
+                    "title": "Group Cell Renderer",
+                    "url": "javascript-grid-provided-renderer-group/"
+                  },
+                  {
+                    "title": "Show Change Cell Renderers",
+                    "url": "javascript-grid-provided-renderer-change/"
+                  }
+                ]
+              }
+            ]
           },
           {
             "title": "View Refresh",
@@ -544,7 +563,7 @@
       {
         "title": "Editing Cells",
         "icon": "icon-edit-cells",
-        "level-2-text-decorator": ",&nbsp;",
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -647,7 +666,6 @@
           }
         ]
       }
-
     ]
   },
   {
