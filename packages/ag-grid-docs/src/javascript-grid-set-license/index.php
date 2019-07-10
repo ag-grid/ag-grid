@@ -6,13 +6,84 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
+<style>
+    .feature-group-title {
+        display: block;
+        margin-top: 26px;
+        font-size: 30px;
+    }
+</style>
+<?php
+
+function doLevel1Features() {
+    $lev1Items = json_decode(file_get_contents('../documentation-main/menu.json'), true);
+
+    foreach($lev1Items as $lev1Item) {
+
+        doLevel2Features($lev1Item);
+    }
+}
+
+function doLevel2Features($parentItem) {
+    $lev2Items = $parentItem['items'];
+
+    foreach($lev2Items as $lev2Item) {
+
+        $lev2ItemName = $lev2Item['title'];
+
+        if ($lev2ItemName=='Introduction' || $lev2ItemName=='Interface / API' || $lev2ItemName=='Testing') {
+            continue;
+        }
+
+        echo "<tr>";
+        echo "<td colspan='3'><span class='feature-group-title'>$lev2ItemName</span></td>";
+        echo "</tr>";
+
+        doLevel3Features($lev2Item);
+    }
+
+}
+
+
+function doLevel3Features($parentItem) {
+
+    $items = $parentItem['items'];
+
+    foreach($items as $index=>$item) {
+        $itemTitle = $item['title'];
+        $itemUrl = $item['url'];
+
+        if ($itemTitle=='Overview' || $itemTitle=='See Also') {
+            continue;
+        }
+
+        echo "<tr>";
+        echo "<td><a href='../$itemUrl'>$itemTitle</a> ";
+        if ($item['enterprise']) {
+            echo "<img src=\"../_assets/svg/enterprise.svg\" style=\"width: 16px;\"/>";
+        }
+        echo "</td>";
+        if ($item['enterprise']) {
+            echo "<td><i class=\"fas fa-times\" style='color: red;'></i></td>";
+        } else {
+            echo "<td><i class=\"fas fa-check\" style='color: green;'></i></td>";
+        }
+        echo "<td><i class=\"fas fa-check\" style='color: green;'></i></td>";
+        echo "</tr>";
+
+    }
+
+}
+
+
+?>
+
     <h1 class="heading-enterprise">Community and Enterprise</h1>
 
     <p class="lead">
         ag-Grid comes in two forms: ag-Grid Community (free for everyone, including production use) and ag-Grid
         Enterprise (you need a license to use).
     </p>
-
 
     <div style="display: inline-block;">
         <p>
@@ -36,6 +107,25 @@ include '../documentation-main/documentation_header.php';
         when trialing is that you don't use ag-Grid Enterprise in a project intended for production.
     </p>
 
+
+    <h2>Feature Comparison</h2>
+
+    <p>
+        The below table summarizes the features included in ag-Grid Community and ag-Grid Enterprise. Note
+        that ag-Grid Enterprise builds on ag-Grid Community, it offers everything ag-Grid Community offers
+        plus more.
+    </p>
+
+    <table class="properties">
+        <tr>
+            <th></th>
+            <th>Community</th>
+            <th>Enterprise <img src="../_assets/svg/enterprise.svg" style="width: 16px;"/></th>
+        </tr>
+
+        <?php doLevel1Features(); ?>
+
+    </table>
 
     <h2>Installing ag-Grid Enterprise</h2>
 
