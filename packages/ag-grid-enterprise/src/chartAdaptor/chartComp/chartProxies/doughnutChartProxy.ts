@@ -120,7 +120,6 @@ export class DoughnutChartProxy extends ChartProxy {
                 calloutWidth: 2,
                 calloutLength: 10,
                 labelEnabled: false,
-                labelOffset: 3,
                 labelFontStyle: undefined,
                 labelFontWeight: undefined,
                 labelFontSize: 12,

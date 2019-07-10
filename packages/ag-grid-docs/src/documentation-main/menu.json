@@ -847,12 +847,14 @@
           {
             "title": "Status Bar Component",
             "box-title": "Status Bar",
-            "url": "javascript-grid-status-bar-component/"
+            "url": "javascript-grid-status-bar-component/",
+            "enterprise": true
           },
           {
             "title": "Tool Panel Component",
             "box-title": "Tool Panel",
-            "url": "javascript-grid-tool-panel-component/"
+            "url": "javascript-grid-tool-panel-component/",
+            "enterprise": true
           },
           {
             "title": "Tooltip Component",

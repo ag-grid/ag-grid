@@ -121,12 +121,12 @@ export class ChartMenu extends Component {
             hideTitleBar: true
         });
         context.wireBean(this.menuPanel);
-        
+
         menuPanel.setParentComponent(this);
         dockedContainer.appendChild(menuPanel.getGui());
 
         this.tabbedMenu = new TabbedChartMenu({
-            controller: this.chartController, 
+            controller: this.chartController,
             type: chartComp.getCurrentChartType(),
             panels: this.tabs
         });

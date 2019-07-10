@@ -36,12 +36,17 @@ export class ChartFormattingPanel extends Component {
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.createFormatPanel.bind(this));
     }
 
+    private barTypes = [
+        ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn,
+        ChartType.GroupedBar, ChartType.StackedBar, ChartType.NormalizedBar
+    ];
+
     private createFormatPanel() {
         this.destroyActivePanels();
 
         const chartType = this.chartController.getChartType();
 
-        if (chartType === ChartType.GroupedColumn || chartType === ChartType.StackedColumn || chartType === ChartType.NormalizedColumn) {
+        if (this.barTypes.indexOf(chartType) >= 0) {
             this.createBarChartPanel();
 
         } else if (chartType === ChartType.Pie || chartType === ChartType.Doughnut) {
