@@ -10,6 +10,11 @@ import { EventService } from "../eventService";
 import { Events } from '../events';
 import { _ } from "../utils";
 
+type AgPopup = {
+    element: HTMLElement;
+    hideFunc: () => void;
+};
+
 @Bean('popupService')
 export class PopupService {
 
@@ -19,9 +24,8 @@ export class PopupService {
     @Autowired('environment') private environment: Environment;
     @Autowired('eventService') private eventService: EventService;
 
-    private activePopupElements: HTMLElement[] = [];
-
     private gridCore: GridCore;
+    private popupList: AgPopup[] = [];
 
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
@@ -342,8 +346,14 @@ export class PopupService {
 
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return () => {
-            };
+            return () => {};
+        }
+
+        const pos = _.findIndex(this.popupList, popup => popup.element === eChild);
+
+        if (pos !== -1) {
+            const popup = this.popupList[pos];
+            return popup.hideFunc;
         }
 
         const ePopupParent = this.getPopupParent();
@@ -355,12 +365,6 @@ export class PopupService {
         eChild.style.top = '0px';
         eChild.style.left = '0px';
 
-
-        const popupAlreadyShown = _.isVisible(eChild);
-        if (popupAlreadyShown && ePopupParent.contains(eChild)) {
-            return () => {};
-        }
-
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         const eWrapper = document.createElement('div');
@@ -371,13 +375,11 @@ export class PopupService {
         }
 
         _.addCssClass(eWrapper, 'ag-popup');
-
         _.addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
 
         eWrapper.appendChild(eChild);
 
         ePopupParent.appendChild(eWrapper);
-        this.activePopupElements.push(eChild);
 
         if (alwaysOnTop) {
             this.setAlwaysOnTop(eWrapper, true);
@@ -422,16 +424,18 @@ export class PopupService {
             popupHidden = true;
 
             ePopupParent.removeChild(eWrapper);
-            _.removeFromArray(this.activePopupElements, eChild);
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
+
             if (closedCallback) {
                 closedCallback();
             }
+
+            this.popupList = this.popupList.filter(popup => popup.element !== eChild);
         };
 
         // if we add these listeners now, then the current mouse
@@ -448,6 +452,11 @@ export class PopupService {
             }
         }, 0);
 
+        this.popupList.push({
+            element: eChild,
+            hideFunc: hidePopup
+        });
+
         return hidePopup;
     }
 
@@ -458,9 +467,10 @@ export class PopupService {
             return false;
         }
 
-        const indexOfThisChild = this.activePopupElements.indexOf(eChild);
-        for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
-            const element = this.activePopupElements[i];
+        const indexOfThisChild = _.findIndex(this.popupList, popup => popup.element === eChild);
+
+        for (let i = indexOfThisChild; i < this.popupList.length; i++) {
+            const element = this.popupList[i].element;
             if (_.isElementInEventPath(element, event)) {
                 return true;
             }
