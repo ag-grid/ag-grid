@@ -144,7 +144,7 @@ export class ChartFormattingPanel extends Component {
     private addExpandedCallback<T extends Component & ExpandablePanel>(groupPanel: T, subPanels: ExpandablePanel[]) {
         groupPanel.setExpandedCallback(() => {
             subPanels.forEach(subPanel => subPanel.expandPanel(false));
-            groupPanel.getGui().scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+            groupPanel.getGui().scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
         });
     }
 
