@@ -8,11 +8,6 @@ import { PieSeriesPanel } from "./series/pieSeriesPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import {AreaSeriesPanel} from "./series/areaSeriesPanel";
 
-export interface ExpandablePanel {
-    expandPanel(expanded: boolean): void;
-    setExpandedCallback(expandedCallback: () => void): void;
-}
-
 export class ChartFormattingPanel extends Component {
 
     public static TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
@@ -36,116 +31,50 @@ export class ChartFormattingPanel extends Component {
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.createFormatPanel.bind(this));
     }
 
-    private barTypes = [
-        ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn,
-        ChartType.GroupedBar, ChartType.StackedBar, ChartType.NormalizedBar
-    ];
-
     private createFormatPanel() {
         this.destroyActivePanels();
 
+
+        this.addComponent(new ChartPanel(this.chartController));
+        this.addComponent(new LegendPanel(this.chartController));
+
         const chartType = this.chartController.getChartType();
 
-        if (this.barTypes.indexOf(chartType) >= 0) {
-            this.createBarChartPanel();
+        if (this.isBarChart(chartType)) {
+            this.addComponent(new AxisPanel(this.chartController));
+            this.addComponent(new BarSeriesPanel(this.chartController));
 
         } else if (chartType === ChartType.Pie || chartType === ChartType.Doughnut) {
-            this.createPieChartPanel();
+            this.addComponent(new PieSeriesPanel(this.chartController));
 
         } else if (chartType === ChartType.Line) {
-            this.createLineChartPanel();
+            this.addComponent(new AxisPanel(this.chartController));
+            this.addComponent(new LineSeriesPanel(this.chartController));
 
         } else if (chartType === ChartType.StackedArea || chartType === ChartType.NormalizedArea) {
-            this.createAreaChartPanel();
+            this.addComponent(new AxisPanel(this.chartController));
+            this.addComponent(new AreaSeriesPanel(this.chartController));
 
         } else {
             console.warn(`ag-Grid: ChartFormattingPanel - unexpected chart type index: ${chartType} supplied`);
         }
     }
 
-    private createBarChartPanel(): void {
-        const chartPanel = new ChartPanel(this.chartController);
-        this.addComponent(chartPanel);
-
-        const legendPanel = new LegendPanel(this.chartController);
-        this.addComponent(legendPanel);
-
-        const axisPanel = new AxisPanel(this.chartController);
-        this.addComponent(axisPanel);
-
-        const barSeriesPanel = new BarSeriesPanel(this.chartController);
-        this.addComponent(barSeriesPanel);
-
-        this.addExpandedCallback(chartPanel, [legendPanel, barSeriesPanel, axisPanel]);
-        this.addExpandedCallback(legendPanel, [barSeriesPanel, axisPanel, chartPanel]);
-        this.addExpandedCallback(axisPanel, [legendPanel, barSeriesPanel, chartPanel]);
-        this.addExpandedCallback(barSeriesPanel, [legendPanel, axisPanel, chartPanel]);
-    }
-
-    private createLineChartPanel(): void {
-        const chartPanel = new ChartPanel(this.chartController);
-        this.addComponent(chartPanel);
-
-        const legendPanel = new LegendPanel(this.chartController);
-        this.addComponent(legendPanel);
-
-        const axisPanel = new AxisPanel(this.chartController);
-        this.addComponent(axisPanel);
-
-        const lineSeriesPanel = new LineSeriesPanel(this.chartController);
-        this.addComponent(lineSeriesPanel);
-
-        this.addExpandedCallback(chartPanel, [legendPanel, lineSeriesPanel, axisPanel]);
-        this.addExpandedCallback(legendPanel, [lineSeriesPanel, axisPanel, chartPanel]);
-        this.addExpandedCallback(axisPanel, [legendPanel, lineSeriesPanel, chartPanel]);
-        this.addExpandedCallback(lineSeriesPanel, [legendPanel, axisPanel, chartPanel]);
-    }
-
-    private createAreaChartPanel(): void {
-        const chartPanel = new ChartPanel(this.chartController);
-        this.addComponent(chartPanel);
-
-        const legendPanel = new LegendPanel(this.chartController);
-        this.addComponent(legendPanel);
-
-        const axisPanel = new AxisPanel(this.chartController);
-        this.addComponent(axisPanel);
-
-        const areaSeriesPanel = new AreaSeriesPanel(this.chartController);
-        this.addComponent(areaSeriesPanel);
-
-        this.addExpandedCallback(chartPanel, [legendPanel, areaSeriesPanel, axisPanel]);
-        this.addExpandedCallback(legendPanel, [areaSeriesPanel, axisPanel, chartPanel]);
-        this.addExpandedCallback(axisPanel, [legendPanel, areaSeriesPanel, chartPanel]);
-        this.addExpandedCallback(areaSeriesPanel, [legendPanel, axisPanel, chartPanel]);
-    }
-
-    private createPieChartPanel(): void {
-        const chartPanel = new ChartPanel(this.chartController);
-        this.addComponent(chartPanel);
-
-        const legendPanel = new LegendPanel(this.chartController);
-        this.addComponent(legendPanel);
-
-        const pieSeriesPanel = new PieSeriesPanel(this.chartController);
-        this.addComponent(pieSeriesPanel);
-
-        this.addExpandedCallback(chartPanel, [legendPanel, pieSeriesPanel]);
-        this.addExpandedCallback(legendPanel, [pieSeriesPanel, chartPanel]);
-        this.addExpandedCallback(pieSeriesPanel, [legendPanel, chartPanel]);
+    private isBarChart(chartType: ChartType) {
+        return [
+            ChartType.GroupedColumn,
+            ChartType.StackedColumn,
+            ChartType.NormalizedColumn,
+            ChartType.GroupedBar,
+            ChartType.StackedBar,
+            ChartType.NormalizedBar
+        ].indexOf(chartType) > -1;
     }
 
     private addComponent(component: Component): void {
         this.getContext().wireBean(component);
         this.getGui().appendChild(component.getGui());
         this.activePanels.push(component);
-    }
-
-    private addExpandedCallback<T extends Component & ExpandablePanel>(groupPanel: T, subPanels: ExpandablePanel[]) {
-        groupPanel.setExpandedCallback(() => {
-            subPanels.forEach(subPanel => subPanel.expandPanel(false));
-            groupPanel.getGui().scrollIntoView({ behavior: 'smooth'});
-        });
     }
 
     private destroyActivePanels(): void {

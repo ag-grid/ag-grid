@@ -71,7 +71,17 @@ function onFirstDataRendered(event) {
             columns: ['country','gold','silver']
         },
         chartType: 'groupedBar',
-        chartContainer: eContainer1
+        chartContainer: eContainer1,
+        processChartOptions: function(params) {
+            params.options.seriesDefaults.tooltipRenderer = function (params) {
+                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return title + '<div class="content" style="text-align: center">' + value + '</div>';
+            };
+
+            return params.options;
+        }
     };
     event.api.chartRange(params1);
 
@@ -86,6 +96,14 @@ function onFirstDataRendered(event) {
         processChartOptions: function(params) {
             params.options.legendPosition = 'bottom';
             params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
+
+            params.options.seriesDefaults.tooltipRenderer = function (params) {
+                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                let value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return title + '<div class="content" style="text-align: center">' + value + '</div>';
+            };
+
             return params.options;
         }
     };
@@ -102,6 +120,14 @@ function onFirstDataRendered(event) {
         processChartOptions: function(params) {
             params.options.legendPosition = 'bottom';
             params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
+
+            params.options.seriesDefaults.tooltipRenderer = function (params) {
+                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                let value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return title + '<div class="content" style="text-align: center">' + value + '</div>';
+            };
+
             return params.options;
         }
     };

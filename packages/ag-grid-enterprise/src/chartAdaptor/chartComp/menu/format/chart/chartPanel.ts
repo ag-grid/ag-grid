@@ -9,13 +9,12 @@ import {
 } from "ag-grid-community";
 import {ChartController} from "../../../chartController";
 import {Chart} from "../../../../../charts/chart/chart";
-import {ExpandablePanel} from "../chartFormatingPanel";
 import {PaddingPanel} from "./paddingPanel";
 import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
 import {Caption} from "../../../../../charts/caption";
 import {ChartTranslator} from "../../../chartTranslator";
 
-export class ChartPanel extends Component implements ExpandablePanel {
+export class ChartPanel extends Component {
 
     public static TEMPLATE =
         `<div>
@@ -48,14 +47,6 @@ export class ChartPanel extends Component implements ExpandablePanel {
         this.initGroup();
         this.initTitles();
         this.initPaddingPanel();
-    }
-
-    public expandPanel(expanded: boolean): void {
-        this.chartGroup.toggleGroupExpand(expanded);
-    }
-
-    public setExpandedCallback(expandedCallback: () => void) {
-        this.addDestroyableEventListener(this.chartGroup, 'expanded', expandedCallback);
     }
 
     private initGroup(): void {

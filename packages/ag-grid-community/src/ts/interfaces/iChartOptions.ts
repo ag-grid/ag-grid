@@ -77,7 +77,7 @@ interface IPadding {
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-export interface    AxisOptions {
+export interface AxisOptions {
     type?: 'category' | 'number';
 
     lineWidth?: number;
@@ -192,6 +192,11 @@ export interface AreaTooltipRendererParams {
     color?: string
 }
 
+export interface BarLabelFormatterParams {
+    value: number;
+}
+export type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
+
 export interface BarSeriesOptions extends SeriesOptions {
     xField?: string;
     yFields?: string[];
@@ -212,6 +217,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     labelFontSize?: number;
     labelFontFamily?: string;
     labelColor?: string;
+    labelFormatter?: BarLabelFormatter;
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 }

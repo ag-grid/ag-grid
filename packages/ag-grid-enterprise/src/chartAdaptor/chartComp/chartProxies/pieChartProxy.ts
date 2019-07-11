@@ -35,6 +35,7 @@ export class PieChartProxy extends ChartProxy {
             pieChart.removeSeries(existingSeries);
 
             const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+
             // Use `Object.create` to prevent mutating the original user config that is possibly reused.
             const title = (seriesOptions.title ? Object.create(seriesOptions.title) : {}) as CaptionOptions;
             title.text = pieSeriesName;

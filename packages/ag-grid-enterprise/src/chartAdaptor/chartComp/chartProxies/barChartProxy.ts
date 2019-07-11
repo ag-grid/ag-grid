@@ -2,32 +2,21 @@ import { ChartBuilder } from "../../builder/chartBuilder";
 import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
-import { ChartModel } from "../chartModel";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 
 export class BarChartProxy extends ChartProxy {
     private readonly chartOptions: BarChartOptions;
-
-    static barTypes = [ChartType.GroupedBar, ChartType.StackedBar, ChartType.NormalizedBar];
-    static columnTypes = [ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn];
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
         this.chartOptions = this.getChartOptions(params.chartType, this.defaultOptions()) as BarChartOptions;
 
-        if (BarChartProxy.barTypes.indexOf(params.chartType) >= 0) {
-            this.chart = ChartBuilder.createBarChart(this.chartOptions);
-        } else if (BarChartProxy.columnTypes.indexOf(params.chartType) >= 0) {
-            this.chart = ChartBuilder.createColumnChart(this.chartOptions);
-        } else {
-            console.error(`Unrecognized chart type: ${params.chartType}.`);
-        }
+        this.chart = BarChartProxy.isBarChart(params.chartType) ?
+            ChartBuilder.createBarChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
 
         const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as BarSeriesOptions);
-        if (barSeries) {
-            this.chart.addSeries(barSeries);
-        }
+        if (barSeries) this.chart.addSeries(barSeries);
     }
 
     public update(params: UpdateChartParams): void {
@@ -38,17 +27,13 @@ export class BarChartProxy extends ChartProxy {
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        const chart = this.chart as CartesianChart;
-        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
-            chart.xAxis.labelRotation = 0;
-        } else {
-            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
-        }
-
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
-
         barSeries.fills = palette.fills;
         barSeries.strokes = palette.strokes;
+    }
+
+    private static isBarChart(type: ChartType) {
+        return type === ChartType.GroupedBar || type === ChartType.StackedBar || type === ChartType.NormalizedBar;
     }
 
     private defaultOptions(): BarChartOptions {
@@ -75,7 +60,7 @@ export class BarChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 45,
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -93,6 +78,7 @@ export class BarChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,

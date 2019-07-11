@@ -11,8 +11,6 @@ export class ScatterChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        const defaultOpts: ScatterChartOptions = this.defaultOptions();
-
         this.chartOptions = this.getChartOptions(ChartType.Scatter, this.defaultOptions()) as ScatterChartOptions;
         this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
@@ -95,7 +93,7 @@ export class ScatterChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 45,
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -113,6 +111,7 @@ export class ScatterChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,

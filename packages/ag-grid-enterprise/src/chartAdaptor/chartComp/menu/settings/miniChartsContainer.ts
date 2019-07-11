@@ -1,18 +1,25 @@
 import {
-    _,
     ChartType,
     Component,
-    PostConstruct
+    PostConstruct,
+    _,
+    AgGroupComponent
 } from "ag-grid-community";
 
 import { ChartController } from "../../chartController";
+
+type ChartGroupsType = 'bar' | 'column' | 'line' | 'pie';
+
+type ChartGroups = {
+    [key in ChartGroupsType]: any[];
+};
 
 export class MiniChartsContainer extends Component {
     static TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
 
     private readonly fills: string[];
     private readonly strokes: string[];
-    private wrappers: { [key in string]: HTMLElement} = {};
+    private wrappers: { [key: string ]: HTMLElement } = {};
     private chartController: ChartController;
 
     constructor(activePalette: number, chartController: ChartController) {
@@ -28,21 +35,55 @@ export class MiniChartsContainer extends Component {
     @PostConstruct
     private init() {
         // TODO: reintroduce MiniScatter when chart ranges support it
-        const classes = [MiniBar, MiniStackedBar, MiniNormalizedBar, MiniColumn, MiniStackedColumn, MiniNormalizedColumn, MiniLine, MiniPie, MiniDonut, MiniStackedArea, MiniNormalizedArea];
-        const eGui = this.getGui();
-        classes.forEach(MiniClass => {
-            const miniWrapper = document.createElement('div');
-            _.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
+        const chartGroups: ChartGroups = {
+            bar: [
+                MiniBar,
+                MiniStackedBar,
+                MiniNormalizedBar
+            ],
+            column: [
+                MiniColumn,
+                MiniStackedColumn,
+                MiniNormalizedColumn
+            ],
+            line: [
+                MiniLine,
+                MiniStackedArea,
+                MiniNormalizedArea
+            ],
+            pie: [
+                MiniPie,
+                MiniDoughnut
+            ]
+        };
 
-            this.addDestroyableEventListener(miniWrapper, 'click', () => {
-                this.chartController.setChartType(MiniClass.chartType);
-                this.refreshSelected();
+        const eGui = this.getGui();
+        Object.keys(chartGroups).forEach(group => {
+            const chartGroup = chartGroups[group as ChartGroupsType];
+            const groupComponent = new AgGroupComponent({
+                title: _.capitalise(group),
+                suppressEnabledCheckbox: true,
+                enabled: true,
+                suppressOpenCloseIcons: true
+            });
+            this.getContext().wireBean(groupComponent);
+
+            chartGroup.forEach(MiniClass => {
+                const miniWrapper = document.createElement('div');
+                _.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
+
+                this.addDestroyableEventListener(miniWrapper, 'click', () => {
+                    this.chartController.setChartType(MiniClass.chartType);
+                    this.refreshSelected();
+                });
+
+                this.wrappers[MiniClass.chartType] = miniWrapper;
+
+                new MiniClass(miniWrapper, this.fills, this.strokes);
+                groupComponent.addItem(miniWrapper);
             });
 
-            this.wrappers[MiniClass.chartType] = miniWrapper;
-
-            new MiniClass(miniWrapper, this.fills, this.strokes);
-            eGui.appendChild(miniWrapper);
+            eGui.appendChild(groupComponent.getGui());
         });
 
         this.refreshSelected();
@@ -50,7 +91,10 @@ export class MiniChartsContainer extends Component {
 
     public refreshSelected() {
         const type = this.chartController.getChartType();
-        _.radioCssClass(this.wrappers[type], 'ag-selected');
+        
+        for (let wrapper in this.wrappers) {
+            _.addOrRemoveCssClass(this.wrappers[wrapper], 'ag-selected', wrapper === type);
+        }
     }
 }
 
@@ -68,7 +112,7 @@ import { Arc } from "../../../../charts/scene/shape/arc";
 import { Shape } from "../../../../charts/scene/shape/shape";
 
 export abstract class MiniChart {
-    protected readonly size = 80;
+    protected readonly size = 56;
     protected readonly padding = 5;
     protected readonly root = new Group();
     protected readonly scene: Scene = (() => {
@@ -119,7 +163,7 @@ export class MiniPie extends MiniChart {
     }
 }
 
-export class MiniDonut extends MiniChart {
+class MiniDoughnut extends MiniChart {
     static chartType = ChartType.Doughnut;
     private readonly radius = (this.size - this.padding * 2) / 2;
     private readonly center = this.radius + this.padding;

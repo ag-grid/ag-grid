@@ -330,6 +330,9 @@ export class ChartBuilder {
         if (options.labelFontFamily !== undefined) {
             series.labelFontFamily = options.labelFontFamily;
         }
+        if (options.labelFormatter !== undefined) {
+            series.labelFormatter = options.labelFormatter;
+        }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
         }

@@ -381,44 +381,51 @@ var gridOptions = {
     },
 
     processChartOptions: function(params) {
-        var options = params.options;
-        var types = [
-            'groupedBar', 'stackedBar', 'normalizedBar',
-            'groupedColumn', 'stackedColumn', 'normalizedColumn',
-            'stackedArea', 'normalizedArea',
-            'line', 'scatter'
-        ];
-        var normalizedTypes = ['normalizedBar', 'normalizedColumn', 'normalizedArea'];
-        if (types.indexOf(params.type) >= 0) {
-            const isNormalized = normalizedTypes.indexOf(params.type) >= 0;
-            options.yAxis.labelFormatter = isNormalized ? function (params) { return params.value + '%'  } : function(params) {
-                var n = params.value;
-
-                if (n < 1e3) return n;
-                if (n >= 1e3 && n < 1e6) return '$' + +(n / 1e3).toFixed(1) + 'K';
-                if (n >= 1e6 && n < 1e9) return '$' + +(n / 1e6).toFixed(1) + 'M';
-                if (n >= 1e9 && n < 1e12) return '$' + +(n / 1e9).toFixed(1) + 'B';
-                if (n >= 1e12) return '$' + +(n / 1e12).toFixed(1) + 'T';
-            };
-
-            options.seriesDefaults.tooltipRenderer = function(params) {
-                const titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var strArr = params.yField.replace(/([A-Z])/g, " $1");
-                var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
-                var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return title + '<div class="content">' + (!title ? '<b>' + seriesName + '</b>: ' : '') + '$' + value + '</div>';
-            };
-        }
+        let type = params.type;
+        let options = params.options;
 
         if (params.type === 'pie' || params.type === 'doughnut')  {
-            options.seriesDefaults.tooltipRenderer = function(params) {
-                const titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var strArr = params.angleField.replace(/([A-Z])/g, " $1");
-                var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
-                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return title + '<div class="content">' + (!title ? '<b>' + seriesName + '</b>: ' : '') + '$' + value + '</div>';
+            options.seriesDefaults.tooltipRenderer = function (params) {
+                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                let value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return title + '<div class="content">' + '$' + value + '</div>';
+            };
+
+        } else {
+            let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
+
+            options.yAxis.labelFormatter = function(params) {
+                let n = params.value;
+
+                let res = '';
+                if (n < 1e3) res = n;
+                if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
+                if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
+                if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
+                if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
+
+                return isNormalized ? res + '%' : res;
+            };
+
+            options.seriesDefaults.labelFormatter = function (params) {
+                let n = params.value;
+
+                let res = '';
+                if (n < 1e3) res = n;
+                if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
+                if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
+                if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
+                if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
+
+                return res;
+            };
+
+            options.seriesDefaults.tooltipRenderer = function (params) {
+                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return title + '<div class="content">' + '$' + value + '</div>';
             };
         }
 

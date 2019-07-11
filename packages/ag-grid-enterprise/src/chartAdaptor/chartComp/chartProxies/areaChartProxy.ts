@@ -1,10 +1,9 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { AreaChartOptions, AreaSeriesOptions, ChartType } from "ag-grid-community";
-import { AreaSeries } from "../../../charts/chart/series/areaSeries";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
-import { ChartModel } from "../chartModel";
-import { CartesianChart } from "../../../charts/chart/cartesianChart";
-import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
+import {ChartBuilder} from "../../builder/chartBuilder";
+import {AreaChartOptions, AreaSeriesOptions, ChartType} from "ag-grid-community";
+import {AreaSeries} from "../../../charts/chart/series/areaSeries";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
+import {CartesianChart} from "../../../charts/chart/cartesianChart";
+import {CategoryAxis} from "../../../charts/chart/axis/categoryAxis";
 
 export class AreaChartProxy extends ChartProxy {
     private readonly chartOptions: AreaChartOptions;
@@ -19,11 +18,8 @@ export class AreaChartProxy extends ChartProxy {
         this.setAxisPadding(this.chart as CartesianChart);
 
         const areaSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as AreaSeriesOptions);
-        if (areaSeries) {
-            this.chart.addSeries(areaSeries);
-        }
+        if (areaSeries) this.chart.addSeries(areaSeries);
     }
-
 
     private setAxisPadding(chart: CartesianChart) {
         const xAxis = chart.xAxis;
@@ -40,13 +36,6 @@ export class AreaChartProxy extends ChartProxy {
         areaSeries.xField = params.categoryId;
         areaSeries.yFields = params.fields.map(f => f.colId);
         areaSeries.yFieldNames = params.fields.map(f => f.displayName);
-
-        const chart = this.chart as CartesianChart;
-        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
-            chart.xAxis.labelRotation = 0;
-        } else {
-            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
-        }
 
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
 
@@ -77,7 +66,7 @@ export class AreaChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 45,
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -95,6 +84,7 @@ export class AreaChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
