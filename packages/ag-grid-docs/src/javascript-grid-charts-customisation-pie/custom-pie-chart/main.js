@@ -95,6 +95,8 @@ function processChartOptions(params) {
     var seriesDefaults = options.seriesDefaults;
     seriesDefaults.fills = ['#5e64b2', '#b594dc', '#fec444', '#f07372', '#35c2bd'];
     seriesDefaults.strokes = ['#42467d', '#7f689a', '#b28930', '#a85150', '#258884'];
+    seriesDefaults.fillOpacity = 0.8;
+    seriesDefaults.strokeOpacity = 0.8;
     // seriesDefaults.tooltipEnabled = false;
 
     seriesDefaults.labelEnabled = true;
