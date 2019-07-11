@@ -138,19 +138,6 @@
         }
         #side-nav-container > ul ul li {
             span,
-            a.has-children {
-                &::after {
-                    color: $gray-600;
-                    content: "❯ ";
-                    display: inline-block;
-                    float: right;
-                    font-size: 60%;
-                    line-height: 1.4rem;
-                    margin-right: 1rem;
-                    transform: rotate(90deg);
-                    transition: transform 0.3s ease-out;
-                }
-            }
 
             &.expanded {
                 span,

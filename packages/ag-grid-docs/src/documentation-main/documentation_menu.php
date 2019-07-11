@@ -54,7 +54,11 @@ function render_menu_items($items, $gtm, $level) {
     foreach($items as $item) {
         $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
         $current = is_current($item);
-        $li_class = should_expand($item) || $current ? ' class="expanded"' : '';
+        if ($level == 1) {
+            $li_class = should_expand($item) || $current ? ' class="expanded"' : '';
+        } else {
+            $li_class = ' class="expanded"';
+        }
 
         echo "<li$li_class>";
 
@@ -67,7 +71,7 @@ function render_menu_items($items, $gtm, $level) {
                 array_push($a_classes, 'active');
             }
 
-            if (count($item['items']) > 0) {
+            if ($level == 1) {
                 array_push($a_classes, 'has-children');
             }
 
