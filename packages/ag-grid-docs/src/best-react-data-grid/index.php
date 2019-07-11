@@ -310,7 +310,7 @@ It's easy to deeply customize many areas of our React Grid Component</p>
     <pre></pre>
 </div>
 <div>
-    <img alt="Prompt to click on API links" src="./assets/images/prompt-to-click-on-api-links.png">
+    <img alt="Prompt to click on API links" src="/images/prompt-to-click-on-api-links.png">
     <ul class="api-operations">
         <li data-action="sort-by-one-column"><a>Sort by one column (Country)</a></li>
         <li data-action="sort-by-two-columns"><a>Sort by two columns (Country & Year)</a></li>
@@ -339,7 +339,7 @@ It's easy to deeply customize many areas of our React Grid Component</p>
     <a href="https://www.ag-grid.com/javascript-grid-api/" target="_blank"><button type="button" class="btn btn-primary">Grid API</button></a>
 </div>
 <div class="col">
-    <a href="https://www.ag-grid.com/React-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
+    <a href="https://www.ag-grid.com/react-getting-started/" target="_blank"><button type="button" class="btn btn-primary">Get Started</button></a>
 </div>
 </div>
 </section>
