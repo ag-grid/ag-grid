@@ -95,6 +95,28 @@ export class BarSeries extends Series<CartesianChart> {
         return this._strokes;
     }
 
+    private _fillOpacity: number = 1;
+    set fillOpacity(value: number) {
+        if (this._fillOpacity !== value) {
+            this._fillOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    private _strokeOpacity: number = 1;
+    set strokeOpacity(value: number) {
+        if (this._strokeOpacity !== value) {
+            this._strokeOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get strokeOpacity(): number {
+        return this._strokeOpacity;
+    }
+
     private xData: string[] = [];
     private yData: number[][] = [];
     private ySums: number[] = [];
@@ -452,6 +474,8 @@ export class BarSeries extends Series<CartesianChart> {
         const yFields = this.yFields;
         const fills = this.fills;
         const strokes = this.strokes;
+        const fillOpacity = this.fillOpacity;
+        const strokeOpacity = this.strokeOpacity;
         const grouped = this.grouped;
         const strokeWidth = this.strokeWidth;
         const enabled = this.enabled;
@@ -561,6 +585,8 @@ export class BarSeries extends Series<CartesianChart> {
                 rect.stroke = rect === highlightedNode && this.highlightStyle.stroke !== undefined
                     ? this.highlightStyle.stroke
                     : datum.stroke;
+                rect.fillOpacity = fillOpacity;
+                rect.strokeOpacity = strokeOpacity;
                 rect.strokeWidth = datum.strokeWidth;
                 rect.fillShadow = this.shadow;
                 rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
