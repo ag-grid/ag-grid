@@ -74,7 +74,7 @@
         overflow-x: hidden;
         .ag-chart-settings-wrapper {
             position: relative;
-            flex-direction: column-reverse;
+            flex-direction: column;
             width: 100%;
             height: 100%;
             display: flex;
@@ -111,32 +111,39 @@
                     }
                 }
             }
-            .ag-chart-settings-mini-wrapper {
-                position: absolute;
-                top: 0;
-                left: 0;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: flex-start;
-                width: 100%;
-                height: calc(100% - 30px);
+            .ag-chart-settings-mini-charts-container {
+                position: relative;
+                flex: 1 1 auto;
                 overflow-x: hidden;
                 overflow-y: auto;
-                .ag-group-component-container {
-                    flex-direction: row;
-                    flex-wrap: wrap;
-                    .ag-chart-mini-thumbnail {
+                .ag-chart-settings-mini-wrapper {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+                    min-height: 100%;
+                    overflow: hidden;
+                    .ag-group-component {
                         flex: none;
                     }
-                }
-                &.ag-animating, &.ag-animating {
-                    transition: left 0.3s;
-                    transition-timing-function: ease-in-out;
-                }
-                .ag-chart-mini-thumbnail {
-                    cursor: pointer;
-                    canvas {
-                        display: block;
+                    .ag-group-component-container {
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        .ag-chart-mini-thumbnail {
+                            flex: none;
+                        }
+                    }
+                    &.ag-animating, &.ag-animating {
+                        transition: left 0.3s;
+                        transition-timing-function: ease-in-out;
+                    }
+                    .ag-chart-mini-thumbnail {
+                        cursor: pointer;
+                        canvas {
+                            display: block;
+                        }
                     }
                 }
             }

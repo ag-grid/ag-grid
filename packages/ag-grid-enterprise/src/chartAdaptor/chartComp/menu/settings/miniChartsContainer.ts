@@ -36,15 +36,15 @@ export class MiniChartsContainer extends Component {
     private init() {
         // TODO: reintroduce MiniScatter when chart ranges support it
         const chartGroups: ChartGroups = {
-            bar: [
-                MiniBar,
-                MiniStackedBar,
-                MiniNormalizedBar
-            ],
             column: [
                 MiniColumn,
                 MiniStackedColumn,
                 MiniNormalizedColumn
+            ],
+            bar: [
+                MiniBar,
+                MiniStackedBar,
+                MiniNormalizedBar
             ],
             line: [
                 MiniLine,
