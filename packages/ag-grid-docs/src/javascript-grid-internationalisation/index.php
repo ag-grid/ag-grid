@@ -97,14 +97,27 @@ localeText = {
 
         // enterprise menu (charts)
         chartRange: 'laChart Range',
-        groupedBarRangeChart: 'laBar (Grouped)',
-        stackedBarRangeChart: 'laBar (Stacked)',
-        normalizedBarRangeChart: 'laBar (100% Stacked)',
+
+        columnRangeChart: 'laColumn',
+        groupedColumnChart: 'laGrouped',
+        stackedColumnChart: 'laStacked',
+        normalizedColumnChart: 'la100% Stacked',
+
+        barRangeChart: 'laBar',
+        groupedBarChart: 'laGrouped',
+        stackedBarChart: 'laStacked',
+        normalizedBarChart: 'la100% Stacked',
+
         lineRangeChart: 'laLine',
+
         pieRangeChart: 'laPie',
-        doughnutRangeChart: 'laDoughnut',
-        stackedAreaRangeChart: 'laArea (Stacked)',
-        normalizedAreaRangeChart: 'laArea (100% Stacked)',
+        pieChart: 'laPie',
+        doughnutChart: 'laDoughnut',
+
+        areaRangeChart: 'laArea',
+        areaChart: 'laArea',
+        stackedAreaChart: 'laStacked',
+        normalizedRangeChart: 'la100% Stacked',
 
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',
