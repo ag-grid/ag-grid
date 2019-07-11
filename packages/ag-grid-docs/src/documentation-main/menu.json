@@ -495,7 +495,7 @@
             "url": "javascript-grid-rendering-flow/"
           },
           {
-            "title": "Massaging cell content",
+            "title": "Cell Data",
             "url": "javascript-grid-value-getters/",
             "items": [
               {
@@ -517,7 +517,7 @@
             ]
           },
           {
-            "title": "Custom cells",
+            "title": "Custom Cells",
             "url": "javascript-grid-cell-rendering/",
             "items": [
               {

@@ -33,17 +33,24 @@ function should_expand($item) {
 }
 
 function render_titles($items, $gtm = array()) {
+    echo "<ul>";
     foreach($items as $item) {
         $actualMenuItems = $item['items'];
-        render_menu_items($actualMenuItems, $gtm);
+        render_menu_items($actualMenuItems, $gtm, 1);
     }
+    echo "</ul>";
+
 }
 
-function render_menu_items($items, $gtm) {
+function render_menu_items($items, $gtm, $level) {
     if (count($items) == 0) {
         return;
     }
-    echo "<ul>";
+
+    if ($level > 1) {
+        echo "<ul>";
+    }
+
     foreach($items as $item) {
         $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
         $current = is_current($item);
@@ -58,7 +65,7 @@ function render_menu_items($items, $gtm) {
             $a_classes = array();
             if ($current) {
                 array_push($a_classes, 'active');
-            } 
+            }
 
             if (count($item['items']) > 0) {
                 array_push($a_classes, 'has-children');
@@ -76,10 +83,14 @@ LINK;
             echo "<span>{$item['title']}</span>";
         }
 
-        render_menu_items($item['items'], $item_gtm);
+        render_menu_items($item['items'], $item_gtm, $level + 1);
         echo "</li>";
     }
-    echo "</ul>";
+
+    if ($level > 1) {
+        echo "</ul>";
+    }
+
 }
 
 render_titles($menu_items, array());
