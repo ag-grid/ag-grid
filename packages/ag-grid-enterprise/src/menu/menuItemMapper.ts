@@ -201,7 +201,10 @@ export class MenuItemMapper {
 
                 return {
                     name: localeTextFunc('columnRangeChart', 'Column'),
-                    subMenu: columnSubMenuItems
+                    subMenu: columnSubMenuItems,
+                    action: () => {
+                        this.rangeChartService.chartCurrentRange(ChartType.GroupedColumn);
+                    }
                 };
 
             case 'groupedColumnChart': return {
