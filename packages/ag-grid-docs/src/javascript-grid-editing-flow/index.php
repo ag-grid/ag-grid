@@ -7,40 +7,33 @@ define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Editing Flow</h1>
+<h1>Saving Content</h1>
 
 <p class="lead">
-    This section outlines the editing flow of data. That is the process the values goes through from
-    editors and then into your data.
+    This section outlines the flow of saving cell content after editing. That is the process the values goes through from
+    leaving the editors and then into your data.
 </p>
 
-<h2>Configurable Steps</h2>
-
 <p>
-    When editing the following steps can be configured:
+    The different parts of the grid concerned with saving cell values are as follows:
 </p>
 
-<table class="properties">
-    <tr>
-        <td>
-            <b><a href="../javascript-grid-value-setters/#value-parser">Value Parser</a></b>:
-        </td>
-        <td>
-            Allows you to parse values after an edit.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <b><a href="../javascript-grid-value-setters/#value-setter">Value Setter</a></b>:
-        </td>
-        <td>
-            Allows you to put values back into the underlying data.
-        </td>
-    </tr>
-</table>
+<ul>
+    <li>
+        <a href="../javascript-grid-value-setters/#value-parser">Value Parser</a>:
+        Allows you to parse values after an edit.
+    </li>
+    <li>
+        <a href="../javascript-grid-value-setters/#value-setter">Value Setter</a>
+        Allows you to put values back into the underlying data.
+    </li>
+</ul>
+
+<h2>Saving Flow</h2>
 
 <p>
-    The flow diagram below illustrates how these different steps work together.
+    How value parsers, setters and cell editors work together to provide the
+    end result is helpful. The flow diagram below illustrates how these different steps work together.
 </p>
 
 <img src="valueSetterFlow.svg" class="img-fluid" alt="Value Setter Flow" />
