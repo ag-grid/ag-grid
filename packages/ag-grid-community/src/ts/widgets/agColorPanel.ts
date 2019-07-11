@@ -267,7 +267,7 @@ export class AgColorPanel extends Component {
         this.setSpectrumValue(s, b);
     }
 
-    private onRecentColorClick = (e: MouseEvent) => {
+    private onRecentColorClick(e: MouseEvent) {
         const target = e.target as HTMLElement;
 
         if (!_.exists(target.id)) {
