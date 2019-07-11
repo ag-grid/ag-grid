@@ -101,6 +101,164 @@
         ]
       },
       {
+        "title": "Columns",
+        "icon": "icon-columns",
+        "level-2-text-decorator": ",&nbsp;",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "javascript-grid-columns-overview/"
+          },
+          {
+            "title": "Column Definitions",
+            "box-title": "Definitions",
+            "url": "javascript-grid-column-definitions/"
+          },
+          {
+            "title": "Column Headers",
+            "box-title": "Headers",
+            "url": "javascript-grid-column-header/"
+          },
+          {
+            "title": "Column Groups",
+            "box-title": "Groups",
+            "url": "javascript-grid-grouping-headers/"
+          },
+          {
+            "title": "Column Sizing",
+            "box-title": "Sizing",
+            "url": "javascript-grid-resizing/"
+          },
+          {
+            "title": "Column Moving",
+            "box-title": "Moving",
+            "url": "javascript-grid-column-moving/",
+            "items": [
+              {
+                "title": "Column Animation",
+                "box-title": "Animation",
+                "url": "javascript-grid-column-animation/"
+              }
+            ]
+          },
+          {
+            "title": "Column Pinning",
+            "box-title": "Pinning",
+            "url": "javascript-grid-pinning/"
+          },
+          {
+            "title": "Column Spanning",
+            "box-title": "Spanning",
+            "url": "javascript-grid-column-spanning/"
+          }
+        ]
+      },
+      {
+        "title": "Rows",
+        "icon": "icon-rows",
+        "level-2-text-decorator": ",&nbsp;",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "javascript-grid-rows-overview/"
+          },
+          {
+            "title": "Row Sorting",
+            "box-title": "Sorting",
+            "url": "javascript-grid-sorting/"
+          },
+          {
+            "title": "Row Dragging",
+            "box-title": "Dragging",
+            "url": "javascript-grid-row-dragging/"
+          },
+          {
+            "title": "Row Spanning",
+            "box-title": "Spanning",
+            "url": "javascript-grid-row-spanning/"
+          },
+          {
+            "title": "Row Pinning",
+            "box-title": "Pinning",
+            "url": "javascript-grid-row-pinning/"
+          },
+          {
+            "title": "Row Height",
+            "box-title": "Height",
+            "url": "javascript-grid-row-height/"
+          },
+          {
+            "title": "Full Width Rows",
+            "box-title": "Full Width",
+            "url": "javascript-grid-full-width-rows/"
+          },
+          {
+            "title": "Row Animation",
+            "box-title": "Animation",
+            "url": "javascript-grid-animation/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Core Features",
+    "items": [
+      {
+        "title": "Layout & Styling",
+        "icon": "icon-style",
+        "level-2-text-decorator": ",&nbsp;",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "javascript-grid-layout-and-styling-overview/"
+          },
+          {
+            "title": "Styling Rows",
+            "box-title": "Rows",
+            "url": "javascript-grid-row-styles/"
+          },
+          {
+            "title": "Styling Cells",
+            "box-title": "Cells",
+            "url": "javascript-grid-cell-styles/"
+          },
+          {
+            "title": "Highlighting Rows & Columns",
+            "box-title": "Highlighting",
+            "url": "javascript-grid-highlighting-rows-and-columns/"
+          },
+          {
+            "title": "Themes",
+            "url": "javascript-grid-styling/",
+            "items": [
+              {
+                "title": "Provided Themes",
+                "url": "javascript-grid-themes-provided/"
+              }
+            ]
+          },
+          {
+            "title": "Grid Size",
+            "url": "javascript-grid-width-and-height/"
+          },
+          {
+            "title": "Resize with Parent Container",
+            "box-title": "Responsiveness",
+            "url": "javascript-grid-responsiveness/"
+          },
+          {
+            "title": "Custom Icons",
+            "box-title": "Icons",
+            "url": "javascript-grid-icons/"
+          },
+          {
+            "title": "Printing",
+            "url": "javascript-grid-for-print/"
+          }
+        ]
+      },
+      {
         "title": "Data",
         "icon": "icon-data",
         "level-2-display-style-forced": "block",
@@ -110,11 +268,11 @@
             "url": "javascript-grid-data-overview/"
           },
           {
-            "title": "Client side data",
+            "title": "Client Side Data",
             "url": "javascript-grid-client-side-model/"
           },
           {
-            "title": "Server side data",
+            "title": "Server Side Data",
             "url": "javascript-grid-row-models/",
             "items": [
               {
@@ -213,17 +371,15 @@
           },
           {
             "title": "Accessing Data",
-            "url": "javascript-grid-accessing-data/",
-            "items": [
-              {
-                "title": "Context",
-                "url": "javascript-grid-context/"
-              }
-            ]
+            "url": "javascript-grid-accessing-data/"
           },
           {
             "title": "Updating Data",
             "url": "javascript-grid-data-update/"
+          },
+          {
+            "title": "Context",
+            "url": "javascript-grid-context/"
           },
           {
             "title": "See Also",
@@ -238,164 +394,6 @@
         ]
       },
       {
-        "title": "Columns",
-        "icon": "icon-columns",
-        "level-2-text-decorator": ",&nbsp;",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-columns-overview/"
-          },
-          {
-            "title": "Column Definitions",
-            "box-title": "Definitions",
-            "url": "javascript-grid-column-definitions/"
-          },
-          {
-            "title": "Column Headers",
-            "box-title": "Headers",
-            "url": "javascript-grid-column-header/"
-          },
-          {
-            "title": "Column Groups",
-            "box-title": "Groups",
-            "url": "javascript-grid-grouping-headers/"
-          },
-          {
-            "title": "Column Sizing",
-            "box-title": "Sizing",
-            "url": "javascript-grid-resizing/"
-          },
-          {
-            "title": "Column Moving",
-            "box-title": "Moving",
-            "url": "javascript-grid-column-moving/",
-            "items": [
-              {
-                "title": "Column Animation",
-                "box-title": "Animation",
-                "url": "javascript-grid-column-animation/"
-              }
-            ]
-          },
-          {
-            "title": "Column Pinning",
-            "box-title": "Pinning",
-            "url": "javascript-grid-pinning/"
-          },
-          {
-            "title": "Column Spanning",
-            "box-title": "Spanning",
-            "url": "javascript-grid-column-spanning/"
-          }
-        ]
-      },
-      {
-        "title": "Rows",
-        "icon": "icon-rows",
-        "level-2-text-decorator": ",&nbsp;",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-rows-overview/"
-          },
-          {
-            "title": "Row Sorting",
-            "box-title": "Sorting",
-            "url": "javascript-grid-sorting/"
-          },
-          {
-            "title": "Row Dragging",
-            "box-title": "Dragging",
-            "url": "javascript-grid-row-dragging/"
-          },
-          {
-            "title": "Row Spanning",
-            "box-title": "Spanning",
-            "url": "javascript-grid-row-spanning/"
-          },
-          {
-            "title": "Row Pinning",
-            "box-title": "Pinning",
-            "url": "javascript-grid-row-pinning/"
-          },
-          {
-            "title": "Row Height",
-            "box-title": "Height",
-            "url": "javascript-grid-row-height/"
-          },
-          {
-            "title": "Full Width Rows",
-            "box-title": "Full Width",
-            "url": "javascript-grid-full-width-rows/"
-          },
-          {
-            "title": "Row Animation",
-            "box-title": "Animation",
-            "url": "javascript-grid-animation/"
-          }
-        ]
-      },
-      {
-        "title": "Layout & Styling",
-        "icon": "icon-style",
-        "level-2-text-decorator": ",&nbsp;",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-layout-and-styling-overview/"
-          },
-          {
-            "title": "Styling Rows",
-            "box-title": "Rows",
-            "url": "javascript-grid-row-styles/"
-          },
-          {
-            "title": "Styling Cells",
-            "box-title": "Cells",
-            "url": "javascript-grid-cell-styles/"
-          },
-          {
-            "title": "Highlighting Rows & Columns",
-            "box-title": "Highlighting",
-            "url": "javascript-grid-highlighting-rows-and-columns/"
-          },
-          {
-            "title": "Themes",
-            "url": "javascript-grid-styling/",
-            "items": [
-              {
-                "title": "Provided Themes",
-                "url": "javascript-grid-themes-provided/"
-              }
-            ]
-          },
-          {
-            "title": "Grid Size",
-            "url": "javascript-grid-width-and-height/"
-          },
-          {
-            "title": "Resize with Parent Container",
-            "box-title": "Responsiveness",
-            "url": "javascript-grid-responsiveness/"
-          },
-          {
-            "title": "Custom Icons",
-            "box-title": "Icons",
-            "url": "javascript-grid-icons/"
-          },
-          {
-            "title": "Printing",
-            "url": "javascript-grid-for-print/"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "group": "Core Features",
-    "items": [
-      {
         "title": "Selection",
         "icon": "icon-selection",
         "level-2-display-style-forced": "block",
@@ -405,11 +403,11 @@
             "url": "javascript-grid-selection-overview/"
           },
           {
-            "title": "Row",
+            "title": "Row Selection",
             "url": "javascript-grid-selection/"
           },
           {
-            "title": "Range",
+            "title": "Range Selection",
             "url": "javascript-grid-range-selection/",
             "enterprise": true
           }
@@ -491,12 +489,8 @@
             "url": "javascript-grid-rendering-overview/"
           },
           {
-            "title": "Rendering Flow",
-            "url": "javascript-grid-rendering-flow/"
-          },
-          {
-            "title": "Massaging cell content",
-            "url": "javascript-grid-value-getters/",
+            "title": "Cell Content",
+            "url": "javascript-grid-rendering-flow/",
             "items": [
               {
                 "title": "Value Getters",
