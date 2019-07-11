@@ -72,11 +72,14 @@ export class AreaSeriesPanel extends Component {
     }
 
     private initSeriesLineWidth() {
+
+        const strokeWidth = this.series.length > 0 ? this.series[0].strokeWidth : 3;
+
         this.seriesLineWidthSlider
             .setLabel(this.chartTranslator.translate('lineWidth'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(`${this.series[0].strokeWidth}`)
+            .setValue(`${strokeWidth}`)
             .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 

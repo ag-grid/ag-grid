@@ -75,11 +75,13 @@ export class PieSeriesPanel extends Component {
     }
 
     private initSeriesStrokeWidth() {
+        const strokeWidth = this.series.length > 0 ? this.series[0].strokeWidth : 1;
+
         this.seriesStrokeWidthSlider
             .setLabel(this.chartTranslator.translate('strokeWidth'))
             .setMaxValue(30)
             .setTextFieldWidth(45)
-            .setValue(`${this.series[0].strokeWidth}`)
+            .setValue(`${strokeWidth}`)
             .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
     }
 
@@ -88,11 +90,11 @@ export class PieSeriesPanel extends Component {
         this.series.forEach(s => s.labelMinAngle = 0);
 
         const initialFont = {
-            family: this.series[0].labelFontFamily,
-            style: this.series[0].labelFontStyle,
-            weight: this.series[0].labelFontWeight,
-            size: this.series[0].labelFontSize,
-            color: this.series[0].labelColor
+            family: this.series.length > 0 ? this.series[0].labelFontFamily : 'Verdana, sans-serif',
+            style: this.series.length > 0 ? this.series[0].labelFontStyle : undefined,
+            weight: this.series.length > 0 ? this.series[0].labelFontWeight : undefined,
+            size: this.series.length > 0 ? this.series[0].labelFontSize : 12,
+            color: this.series.length > 0 ? this.series[0].labelColor : 'rgb(87, 87, 87)'
         };
 
         const setFont = (font: LabelFont) => {

@@ -55,10 +55,10 @@ export class MarkersPanel extends Component {
                 });
         };
 
-        const initialSize = `${this.series[0].markerSize}`;
-        initInput('markerSize', this.seriesMarkerSizeSlider, 'size', initialSize, 30);
+        const initialSize = this.series.length > 0 ? this.series[0].markerSize : 6;
+        initInput('markerSize', this.seriesMarkerSizeSlider, 'size', `${initialSize}`, 30);
 
-        const initialStrokeWidth = `${this.series[0].markerStrokeWidth}`;
-        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', initialStrokeWidth, 10);
+        const initialStrokeWidth = this.series.length > 0 ? this.series[0].markerStrokeWidth : 1;
+        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', `${initialStrokeWidth}`, 10);
     }
 }

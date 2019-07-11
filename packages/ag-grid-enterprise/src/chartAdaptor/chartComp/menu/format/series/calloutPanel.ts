@@ -52,13 +52,13 @@ export class CalloutPanel extends Component {
                 .onValueChange(newValue => this.series.forEach(s => s[property] = newValue));
         };
 
-        const initialLength = `${this.series[0].calloutLength}`;
-        initInput('calloutLength', this.calloutLengthSlider, 'length', initialLength, 40);
+        const initialLength = this.series.length > 0 ? this.series[0].calloutLength : 10;
+        initInput('calloutLength', this.calloutLengthSlider, 'length', `${initialLength}`, 40);
 
-        const initialStrokeWidth = `${this.series[0].calloutStrokeWidth}`;
-        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', initialStrokeWidth, 10);
+        const initialStrokeWidth = this.series.length > 0 ? this.series[0].calloutStrokeWidth : 1;
+        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', `${initialStrokeWidth}`, 10);
 
-        const initialOffset = `${this.series[0].labelOffset}`;
-        initInput('labelOffset', this.labelOffsetSlider, 'offset', initialOffset, 30);
+        const initialOffset = this.series.length > 0 ? this.series[0].labelOffset : 3;
+        initInput('labelOffset', this.labelOffsetSlider, 'offset', `${initialOffset}`, 30);
     }
 }
