@@ -204,7 +204,9 @@ export class AgColorPanel extends Component {
 
         // the recent color list needs to know color has actually changed
         const colorPicker = this.picker as AgColorPicker;
-        if (colorPicker.getValue() !== color.toRgbaString()) {
+
+        const existingColor = Color.fromString(colorPicker.getValue());
+        if (existingColor.toRgbaString() !== rgbaColor) {
             this.colorChanged = true;
         }
 
