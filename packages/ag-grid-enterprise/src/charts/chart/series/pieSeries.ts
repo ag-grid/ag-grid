@@ -307,6 +307,28 @@ export class PieSeries extends Series<PolarChart> {
         return this._strokes;
     }
 
+    private _fillOpacity: number = 1;
+    set fillOpacity(value: number) {
+        if (this._fillOpacity !== value) {
+            this._fillOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    private _strokeOpacity: number = 1;
+    set strokeOpacity(value: number) {
+        if (this._strokeOpacity !== value) {
+            this._strokeOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get strokeOpacity(): number {
+        return this._strokeOpacity;
+    }
+
     /**
      * The series rotation in degrees.
      */
@@ -502,6 +524,8 @@ export class PieSeries extends Series<PolarChart> {
 
         const fills = this.fills;
         const strokes = this.strokes;
+        const fillOpacity = this.fillOpacity;
+        const strokeOpacity = this.strokeOpacity;
         const calloutColors = this.calloutColors;
 
         const outerRadiusOffset = this.outerRadiusOffset;
@@ -559,6 +583,8 @@ export class PieSeries extends Series<PolarChart> {
                 sector.stroke = sector === highlightedNode && this.highlightStyle.stroke !== undefined
                     ? this.highlightStyle.stroke
                     : strokes[index % strokes.length];
+                sector.fillOpacity = fillOpacity;
+                sector.strokeOpacity = strokeOpacity;
                 sector.centerOffset = sector === highlightedNode && this.highlightStyle.centerOffset !== undefined
                     ? this.highlightStyle.centerOffset
                     : 0;
