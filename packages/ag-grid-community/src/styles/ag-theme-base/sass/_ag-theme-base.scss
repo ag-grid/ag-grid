@@ -1579,11 +1579,15 @@
                     border: 1px solid $border-color;
                     border-radius: 5px;
                     margin: 5px;
-                    &:first-child {
-                        margin-left: 0;
+                    &:nth-child(2n + 2):not(:last-child) {
+                        margin-left: auto;
+                        margin-right: auto;
                     }
-                    &:last-child {
-                        margin-right: 0;
+                    &:nth-child(3n + 1) {
+                        margin-left: 2px;
+                    }
+                    &:nth-child(3n) {
+                        margin-right: 2px;
                     }
                     &.ag-selected {
                         border-color: $primary-color;

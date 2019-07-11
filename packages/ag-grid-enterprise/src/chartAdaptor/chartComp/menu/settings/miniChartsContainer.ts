@@ -113,7 +113,7 @@ import { Arc } from "../../../../charts/scene/shape/arc";
 import { Shape } from "../../../../charts/scene/shape/shape";
 
 export abstract class MiniChart {
-    protected readonly size = 56;
+    protected readonly size = 58;
     protected readonly padding = 5;
     protected readonly root = new Group();
     protected readonly scene: Scene = (() => {
