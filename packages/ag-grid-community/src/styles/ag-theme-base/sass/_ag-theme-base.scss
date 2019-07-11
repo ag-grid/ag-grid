@@ -1559,10 +1559,23 @@
 
     .ag-chart-tabbed-menu {
         .ag-chart-settings {
-            .ag-chart-settings-mini-wrapper > div {
-                border: 1px solid $border-color;
-                &.ag-selected {
-                    border-color: $primary-color;
+            .ag-chart-settings-mini-wrapper {
+                .ag-group-component-container {
+                    margin-left: 0;
+                }
+                .ag-chart-mini-thumbnail {
+                    border: 1px solid $border-color;
+                    border-radius: 5px;
+                    margin: 5px;
+                    &:first-child {
+                        margin-left: 0;
+                    }
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                    &.ag-selected {
+                        border-color: $primary-color;
+                    }
                 }
             }
 

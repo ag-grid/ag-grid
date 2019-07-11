@@ -1,18 +1,14 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { ChartType, LineChartOptions, LineSeriesOptions } from "ag-grid-community";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
-import { CartesianChart } from "../../../charts/chart/cartesianChart";
-import { LineSeries } from "../../../charts/chart/series/lineSeries";
-import { ChartModel } from "../chartModel";
+import {ChartBuilder} from "../../builder/chartBuilder";
+import {ChartType, LineChartOptions, LineSeriesOptions} from "ag-grid-community";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
+import {CartesianChart} from "../../../charts/chart/cartesianChart";
+import {LineSeries} from "../../../charts/chart/series/lineSeries";
 
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;
 
     public constructor(params: ChartProxyParams) {
         super(params);
-
-        const defaultOpts: LineChartOptions = this.defaultOptions();
-
         this.chartOptions = this.getChartOptions(ChartType.Line, this.defaultOptions()) as LineChartOptions;
         this.chart = ChartBuilder.createLineChart(this.chartOptions);
     }
@@ -34,16 +30,7 @@ export class LineChartProxy extends ChartProxy {
             seriesExists ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
         };
 
-        lineChart.series
-            .map(series => series as LineSeries)
-            .forEach(updateSeries);
-
-        const chart = this.chart as CartesianChart;
-        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
-            chart.xAxis.labelRotation = 0;
-        } else {
-            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
-        }
+        lineChart.series.map(series => series as LineSeries).forEach(updateSeries);
 
         params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
             const seriesOptions = this.chartOptions.seriesDefaults as LineSeriesOptions;
@@ -95,7 +82,7 @@ export class LineChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 45,
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -113,6 +100,7 @@ export class LineChartProxy extends ChartProxy {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,

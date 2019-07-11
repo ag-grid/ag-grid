@@ -15,7 +15,17 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
-    createChartContainer: createChartContainer
+    createChartContainer: createChartContainer,
+    processChartOptions: function(params) {
+        params.options.seriesDefaults.tooltipRenderer = function (params) {
+            let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+            let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+            let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            return title + '<div class="content" style="text-align: center">' + value + '</div>';
+        };
+
+        return params.options;
+    }
 };
 
 var chartPanelTemplate

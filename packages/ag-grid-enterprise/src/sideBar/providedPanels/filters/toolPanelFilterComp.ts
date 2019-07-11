@@ -55,7 +55,7 @@ export class ToolPanelFilterComp extends Component {
         this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper);
         this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper);
         this.eExpand.appendChild(this.eExpandChecked);
-        this.eExpand.appendChild(this.eExpandChecked);
+        this.eExpand.appendChild(this.eExpandUnchecked);
     }
 
     public setColumn(column: Column): void {

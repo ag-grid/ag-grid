@@ -32,6 +32,7 @@ export class DoughnutChartProxy extends ChartProxy {
         });
 
         const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+
         // Use `Object.create` to prevent mutating the original user config that is possibly reused.
         const title = (seriesOptions.title ? Object.create(seriesOptions.title) : {}) as CaptionOptions;
         seriesOptions.title = title;

@@ -9,14 +9,12 @@ import {
     RefSelector
 } from "ag-grid-community";
 import {ChartController} from "../../../chartController";
-import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
 import {MarkersPanel} from "./markersPanel";
-import {ExpandablePanel} from "../chartFormatingPanel";
 import {ChartTranslator} from "../../../chartTranslator";
 import {AreaSeries} from "../../../../../charts/chart/series/areaSeries";
 import {ShadowPanel} from "./shadowPanel";
 
-export class AreaSeriesPanel extends Component implements ExpandablePanel {
+export class AreaSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
@@ -57,14 +55,6 @@ export class AreaSeriesPanel extends Component implements ExpandablePanel {
         this.initSeriesLineWidth();
         this.initMarkersPanel();
         this.initShadowPanel();
-    }
-
-    public expandPanel(expanded: boolean): void {
-        this.seriesGroup.toggleGroupExpand(expanded);
-    }
-
-    public setExpandedCallback(expandedCallback: () => void) {
-        this.addDestroyableEventListener(this.seriesGroup, 'expanded', expandedCallback);
     }
 
     private initSeriesTooltips() {

@@ -11,10 +11,9 @@ import { ChartController } from "../../../chartController";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
 import { ShadowPanel } from "./shadowPanel";
 import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
-import {ExpandablePanel} from "../chartFormatingPanel";
 import {ChartTranslator} from "../../../chartTranslator";
 
-export class BarSeriesPanel extends Component implements ExpandablePanel {
+export class BarSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
@@ -55,14 +54,6 @@ export class BarSeriesPanel extends Component implements ExpandablePanel {
         this.initSeriesTooltips();
         this.initLabelPanel();
         this.initShadowPanel();
-    }
-
-    public expandPanel(expanded: boolean) {
-        this.seriesGroup.toggleGroupExpand(expanded);
-    }
-
-    public setExpandedCallback(expandedCallback: () => void) {
-        this.addDestroyableEventListener(this.seriesGroup, 'expanded', expandedCallback);
     }
 
     private initSeriesStrokeWidth() {
