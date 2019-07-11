@@ -36,7 +36,10 @@ interface SelectionDatum extends SeriesNodeDatum {
     }
 }
 
-export type BarLabelFormatter = (params: {value: number}) => string;
+export interface BarLabelFormatterParams {
+    value: number;
+}
+export type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
 
 enum BarSeriesNodeTag {
     Bar,
@@ -44,11 +47,11 @@ enum BarSeriesNodeTag {
 }
 
 export interface BarTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string,
-    title?: string,
-    color?: string
+    datum: any;
+    xField: string;
+    yField: string;
+    title?: string;
+    color?: string;
 }
 
 export class BarSeries extends Series<CartesianChart> {

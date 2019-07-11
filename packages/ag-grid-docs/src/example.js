@@ -408,6 +408,19 @@ var gridOptions = {
                 return isNormalized ? res + '%' : res;
             };
 
+            options.seriesDefaults.labelFormatter = function (params) {
+                let n = params.value;
+
+                let res = '';
+                if (n < 1e3) res = n;
+                if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
+                if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
+                if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
+                if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
+
+                return res;
+            };
+
             options.seriesDefaults.tooltipRenderer = function (params) {
                 let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
