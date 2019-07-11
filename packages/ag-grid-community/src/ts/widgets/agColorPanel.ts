@@ -21,6 +21,9 @@ export class AgColorPanel extends Component {
 
     private picker: Component;
 
+    private static maxRecentColors = 8;
+    private static recentColors: string[] = [];
+
     private static TEMPLATE =
         `<div class="ag-color-panel">
             <div ref="spectrumColor" class="ag-spectrum-color">
@@ -39,6 +42,7 @@ export class AgColorPanel extends Component {
                     <div class="ag-spectrum-alpha-background"></div>
                     <div ref="spectrumAlphaSlider" class="ag-spectrum-slider"></div>
                 </div>
+                <div ref="recentColors" style="display: flex; flex-direction: row; justify-content: space-between;"></div>
             </div>
         </div>`;
 
@@ -49,6 +53,7 @@ export class AgColorPanel extends Component {
     @RefSelector('spectrumHueSlider') private readonly spectrumHueSlider: HTMLElement;
     @RefSelector('spectrumAlpha') private readonly spectrumAlpha: HTMLElement;
     @RefSelector('spectrumAlphaSlider') private readonly spectrumAlphaSlider: HTMLElement;
+    @RefSelector('recentColors') private readonly recentColors: HTMLElement;
 
     constructor(config: { picker: Component }) {
         super(AgColorPanel.TEMPLATE);
@@ -72,6 +77,8 @@ export class AgColorPanel extends Component {
         // outside the UI control. When the mouse returns back to the control's area, the dragging
         // of the thumb is not expected and seen as a bug.
         this.addDestroyableEventListener(document, 'mouseup', this.onMouseUp);
+
+        this.addDestroyableEventListener(this.recentColors, 'click', this.onRecentColorClick);
     }
 
     private refreshSpectrumRect() {
@@ -129,6 +136,10 @@ export class AgColorPanel extends Component {
         this.isSpectrumDragging = false;
         this.isSpectrumHueDragging = false;
         this.isSpectrumAlphaDragging = false;
+    }
+
+    private onRecentColorClick = (e: MouseEvent) => {
+
     }
 
     private moveDragger(e: MouseEvent) {
@@ -190,11 +201,12 @@ export class AgColorPanel extends Component {
     private update() {
         const color = Color.fromHSB(this.H * 360, this.S, this.B, this.A);
         const spectrumColor = Color.fromHSB(this.H * 360, 1, 1);
-        const hexColor = color.toRgbaString();
+        const rgbaColor = color.toRgbaString();
 
         this.spectrumColor.style.backgroundColor = spectrumColor.toRgbaString();
-        (this.picker as AgColorPicker).setValue(hexColor);
-        this.spectrumDragger.style.backgroundColor = hexColor;
+        (this.picker as AgColorPicker).setValue(rgbaColor);
+        this.spectrumDragger.style.backgroundColor = rgbaColor;
+        AgColorPanel.recentColors[0] = rgbaColor;
     }
 
     /**
@@ -223,6 +235,20 @@ export class AgColorPanel extends Component {
         }
     }
 
+    private updateRecentColors() {
+        const recentColors = AgColorPanel.recentColors;
+        const innerHtml = recentColors.map(color => {
+            return `<div class="ag-recent-color" style="background-color: ${color}; width: 15px; height: 15px;" recent-color="${color}"></div>`;
+        });
+        this.recentColors.innerHTML = innerHtml.join('');
+
+        recentColors.unshift('');
+        const max = AgColorPanel.maxRecentColors;
+        if (recentColors.length > max) {
+            AgColorPanel.recentColors = recentColors.slice(0, max);
+        }
+    }
+
     public setValue(val: string) {
         const color: Color = Color.fromString(val);
         const [h, s, b] = color.toHSB();
@@ -236,7 +262,7 @@ export class AgColorPanel extends Component {
         this.spectrumHueSlider.style.left = `${((this.H - 1) * -spectrumHueRect.width)}px`;
         this.spectrumAlphaSlider.style.left = `${(this.A * spectrumAlphaRect.width)}px`;
 
+        this.updateRecentColors();
         this.setSpectrumValue(s, b);
-
     }
 }
