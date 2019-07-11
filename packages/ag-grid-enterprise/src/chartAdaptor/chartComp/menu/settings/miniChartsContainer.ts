@@ -48,6 +48,7 @@ export class MiniChartsContainer extends Component {
             ],
             line: [
                 MiniLine,
+                MiniArea,
                 MiniStackedArea,
                 MiniNormalizedArea
             ],
@@ -91,7 +92,7 @@ export class MiniChartsContainer extends Component {
 
     public refreshSelected() {
         const type = this.chartController.getChartType();
-        
+
         for (const wrapper in this.wrappers) {
             _.addOrRemoveCssClass(this.wrappers[wrapper], 'ag-selected', wrapper === type);
         }
@@ -764,6 +765,108 @@ class MiniScatter extends MiniChart {
         this.points.forEach((line, i) => {
             line.stroke = strokes[i % strokes.length];
             line.fill = fills[i % fills.length];
+        });
+    }
+}
+
+class MiniArea extends MiniChart {
+    static chartType = ChartType.Area;
+    private readonly areas: Path[];
+
+    static readonly data = [
+        [2, 3, 2],
+        [3, 6, 5],
+        [6, 2, 2]
+    ];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniStackedArea.data) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+
+        const xScale = new BandScale<number>();
+        xScale.paddingInner = 1;
+        xScale.paddingOuter = 0;
+        xScale.domain = [0, 1, 2];
+        xScale.range = [padding, size - padding];
+
+        const yScale = linearScale();
+        yScale.domain = [0, 12];
+        yScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+
+        const xCount = data.length;
+        const last = xCount * 2 - 1;
+        const pathData: {x: number, y: number}[][] = [];
+
+        const bottomY = yScale.convert(0);
+        for (let i = 0; i < xCount; i++) {
+            const yDatum = data[i];
+            const yCount = yDatum.length;
+            const x = xScale.convert(i);
+
+            let prev = 0;
+            let curr: number;
+            for (let j = 0; j < yCount; j++) {
+                curr = yDatum[j];
+
+                const y = yScale.convert(prev + curr);
+                const points = pathData[j] || (pathData[j] = []);
+
+                points[i] = {
+                    x,
+                    y
+                };
+                points[last - i] = {
+                    x,
+                    y: bottomY
+                };
+
+                prev = curr;
+            }
+        }
+
+        this.areas = pathData.reverse().map(points => {
+            const area = new Path();
+            area.strokeWidth = 1;
+            area.fillOpacity = 0.7;
+            const path = area.path;
+            path.clear();
+            points.forEach((point, i) => {
+                if (!i) {
+                    path.moveTo(point.x, point.y);
+                } else {
+                    path.lineTo(point.x, point.y);
+                }
+            });
+            path.closePath();
+            return area;
+        });
+
+        const root = this.root;
+        root.append(this.areas);
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.areas.forEach((area, i) => {
+            area.fill = fills[i];
+            area.stroke = strokes[i];
         });
     }
 }
