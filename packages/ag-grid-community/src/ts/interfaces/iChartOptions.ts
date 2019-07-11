@@ -207,6 +207,8 @@ export interface BarSeriesOptions extends SeriesOptions {
 
     fills?: string[];
     strokes?: string[];
+    fillOpacity?: number;
+    strokeOpacity?: number;
     strokeWidth?: number;
 
     shadow?: DropShadowOptions;
@@ -232,6 +234,8 @@ export interface AreaSeriesOptions extends SeriesOptions {
 
     fills?: string[];
     strokes?: string[];
+    fillOpacity?: number;
+    strokeOpacity?: number;
     strokeWidth?: number;
 
     marker?: boolean;
@@ -255,6 +259,8 @@ export interface PieSeriesOptions extends SeriesOptions {
 
     fills?: string[];
     strokes?: string[];
+    fillOpacity?: number;
+    strokeOpacity?: number;
     strokeWidth?: number;
 
     angleField?: string;
