@@ -27,8 +27,6 @@ export interface AgGridReactProps extends GridOptions {
 export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     static propTypes: any;
 
-    destroyed: boolean = false;
-
     gridOptions!: AgGrid.GridOptions;
 
     changeDetectionService = new ChangeDetectionService();
@@ -96,6 +94,12 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
     }
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
+        // if the grid has been destroyed in the meantime just resolve
+        if(!this.api) {
+            resolve(null);
+            return;
+        }
+
         if (reactComponent.isStatelesComponent() && reactComponent.statelessComponentRendered()) {
             resolve(null);
         } else if (!reactComponent.isStatelesComponent() && reactComponent.getFrameworkComponentInstance()) {
