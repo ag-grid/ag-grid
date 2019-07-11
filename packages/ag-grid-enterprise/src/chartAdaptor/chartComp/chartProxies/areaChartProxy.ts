@@ -4,14 +4,19 @@ import { AreaSeries } from "../../../charts/chart/series/areaSeries";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
+import {LineSeries} from "../../../charts/chart/series/lineSeries";
 
 export class AreaChartProxy extends ChartProxy {
     private readonly chartOptions: AreaChartOptions;
+
+    private chartType: ChartType;
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
         this.chartOptions = this.getChartOptions(params.chartType, this.defaultOptions()) as AreaChartOptions;
+
+        this.chartType = params.chartType;
 
         this.chart = ChartBuilder.createAreaChart(this.chartOptions);
 
@@ -30,17 +35,67 @@ export class AreaChartProxy extends ChartProxy {
     }
 
     public update(params: UpdateChartParams): void {
-        const areaSeries = this.chart.series[0] as AreaSeries;
 
-        areaSeries.data = params.data;
-        areaSeries.xField = params.categoryId;
-        areaSeries.yFields = params.fields.map(f => f.colId);
-        areaSeries.yFieldNames = params.fields.map(f => f.displayName);
+        //TODO: refactor
 
-        const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+        if (this.chartType === ChartType.Area) {
 
-        areaSeries.fills = palette.fills;
-        areaSeries.strokes = palette.strokes;
+            if (params.fields.length === 0) {
+                this.chart.removeAllSeries();
+                return;
+            }
+
+            const lineChart = this.chart as CartesianChart;
+            const fieldIds = params.fields.map(f => f.colId);
+
+            const existingSeriesMap: { [id: string]: AreaSeries } = {};
+
+            const updateSeries = (areaSeries: AreaSeries) => {
+                const id = areaSeries.yFields[0] as string;
+                const seriesExists = fieldIds.indexOf(id) > -1;
+                seriesExists ? existingSeriesMap[id] = areaSeries : lineChart.removeSeries(areaSeries);
+            };
+
+            lineChart.series.map(series => series as AreaSeries).forEach(updateSeries);
+
+            params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
+                const seriesOptions = this.chartOptions.seriesDefaults as AreaChartOptions;
+
+                const existingSeries = existingSeriesMap[f.colId];
+                const areaSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as AreaSeries;
+
+                if (areaSeries) {
+                    areaSeries.yFieldNames = [f.displayName];
+                    areaSeries.data = params.data;
+                    areaSeries.xField = params.categoryId;
+                    areaSeries.yFields = [f.colId];
+
+                    const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+                    const fills = palette.fills;
+                    areaSeries.fills = [fills[index % fills.length]];
+
+                    const strokes = palette.strokes;
+                    areaSeries.strokes = [strokes[index % strokes.length]];
+
+                    if (!existingSeries) {
+                        lineChart.addSeries(areaSeries);
+                    }
+                }
+            });
+        } else {
+            const areaSeries = this.chart.series[0] as AreaSeries;
+
+            areaSeries.data = params.data;
+            areaSeries.xField = params.categoryId;
+            areaSeries.yFields = params.fields.map(f => f.colId);
+            areaSeries.yFieldNames = params.fields.map(f => f.displayName);
+
+            const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+            areaSeries.fills = palette.fills;
+            areaSeries.strokes = palette.strokes;
+        }
     }
 
     private defaultOptions(): AreaChartOptions {
@@ -111,6 +166,7 @@ export class AreaChartProxy extends ChartProxy {
                 type: 'area',
                 fills: palette.fills,
                 strokes: palette.strokes,
+                fillOpacity: this.chartProxyParams.chartType === ChartType.Area ? 0.7 : 1,
                 normalizedTo: this.chartProxyParams.chartType === ChartType.NormalizedArea ? 100 : undefined,
                 strokeWidth: 3,
                 marker: true,

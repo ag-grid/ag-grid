@@ -50,7 +50,7 @@ export class ChartFormattingPanel extends Component {
             this.addComponent(new AxisPanel(this.chartController));
             this.addComponent(new LineSeriesPanel(this.chartController));
 
-        } else if (chartType === ChartType.StackedArea || chartType === ChartType.NormalizedArea) {
+        } else if (chartType === ChartType.Area || chartType === ChartType.StackedArea || chartType === ChartType.NormalizedArea) {
             this.addComponent(new AxisPanel(this.chartController));
             this.addComponent(new AreaSeriesPanel(this.chartController));
 

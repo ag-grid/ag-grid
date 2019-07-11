@@ -13,16 +13,16 @@ import {
     RefSelector,
     ResizeObserverService
 } from "ag-grid-community";
-import { ChartMenu } from "./menu/chartMenu";
-import { ChartController } from "./chartController";
-import { ChartModel, ChartModelParams } from "./chartModel";
-import { BarChartProxy } from "./chartProxies/barChartProxy";
-import { AreaChartProxy } from "./chartProxies/areaChartProxy";
-import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
-import { LineChartProxy } from "./chartProxies/lineChartProxy";
-import { PieChartProxy } from "./chartProxies/pieChartProxy";
-import { DoughnutChartProxy } from "./chartProxies/doughnutChartProxy";
-import { Palette, palettes } from "../../charts/chart/palettes";
+import {ChartMenu} from "./menu/chartMenu";
+import {ChartController} from "./chartController";
+import {ChartModel, ChartModelParams} from "./chartModel";
+import {BarChartProxy} from "./chartProxies/barChartProxy";
+import {AreaChartProxy} from "./chartProxies/areaChartProxy";
+import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
+import {LineChartProxy} from "./chartProxies/lineChartProxy";
+import {PieChartProxy} from "./chartProxies/pieChartProxy";
+import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
+import {Palette, palettes} from "../../charts/chart/palettes";
 
 export interface GridChartParams {
     cellRange: CellRange;
@@ -151,12 +151,11 @@ export class GridChartComp extends Component {
                 return new PieChartProxy(chartOptions);
             case ChartType.Doughnut:
                 return new DoughnutChartProxy(chartOptions);
-            // case ChartType.Scatter:
-            //     return new ScatterChartProxy(chartOptions);
+            case ChartType.Area:
             case ChartType.StackedArea:
             case ChartType.NormalizedArea:
                 return new AreaChartProxy(chartOptions);
-            default: // case ChartType.Line:
+            case ChartType.Line:
                 return new LineChartProxy(chartOptions);
         }
     }
