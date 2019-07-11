@@ -7,7 +7,7 @@ define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Rendering Flow</h1>
+<h1>Cell Content</h1>
 
 <p class="lead">
     This section outlines the rendering flow of data. That is the process the values goes through from
