@@ -13,10 +13,9 @@ import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import {LabelPanelParams, LabelPanel, LabelFont} from "../label/labelPanel";
-import {ExpandablePanel} from "../chartFormatingPanel";
 import {ChartTranslator} from "../../../chartTranslator";
 
-export class AxisPanel extends Component implements ExpandablePanel {
+export class AxisPanel extends Component {
 
     public static TEMPLATE =
         `<div>
@@ -51,14 +50,6 @@ export class AxisPanel extends Component implements ExpandablePanel {
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
-    }
-
-    public expandPanel(expanded: boolean): void {
-        this.axisGroup.toggleGroupExpand(expanded);
-    }
-
-    public setExpandedCallback(expandedCallback: () => void) {
-        this.addDestroyableEventListener(this.axisGroup, 'expanded', expandedCallback);
     }
 
     private initAxis() {

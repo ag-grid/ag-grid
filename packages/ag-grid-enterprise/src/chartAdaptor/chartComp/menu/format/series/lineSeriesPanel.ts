@@ -11,10 +11,9 @@ import {
 import {ChartController} from "../../../chartController";
 import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
 import {MarkersPanel} from "./markersPanel";
-import {ExpandablePanel} from "../chartFormatingPanel";
 import {ChartTranslator} from "../../../chartTranslator";
 
-export class LineSeriesPanel extends Component implements ExpandablePanel {
+export class LineSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
@@ -54,14 +53,6 @@ export class LineSeriesPanel extends Component implements ExpandablePanel {
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
         this.initMarkersPanel();
-    }
-
-    public expandPanel(expanded: boolean): void {
-        this.seriesGroup.toggleGroupExpand(expanded);
-    }
-
-    public setExpandedCallback(expandedCallback: () => void) {
-        this.addDestroyableEventListener(this.seriesGroup, 'expanded', expandedCallback);
     }
 
     private initSeriesTooltips() {
