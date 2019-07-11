@@ -114,6 +114,7 @@ export class PopupService {
 
         const {x, y} = this.calculatePointerAlign(params.mouseEvent);
         const { ePopup, nudgeX, nudgeY} = params;
+
         this.positionPopup({
             ePopup: ePopup,
             x,
@@ -405,22 +406,19 @@ export class PopupService {
         };
 
         const hidePopup = (mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent) => {
-            // we don't hide popup if the event was on the child, or any
-            // children of this child
-            if (this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild)) {
+            if (
+                // we don't hide popup if the event was on the child, or any
+                // children of this child
+                this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild) ||
+                // if the event to close is actually the open event, then ignore it
+                this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) ||
+                // this method should only be called once. the client can have different
+                // paths, each one wanting to close, so this method may be called multiple times.
+                popupHidden
+            ) {
                 return;
             }
 
-            // if the event to close is actually the open event, then ignore it
-            if (this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent)) {
-                return;
-            }
-
-            // this method should only be called once. the client can have different
-            // paths, each one wanting to close, so this method may be called multiple times.
-            if (popupHidden) {
-                return;
-            }
             popupHidden = true;
 
             ePopupParent.removeChild(eWrapper);
@@ -469,9 +467,14 @@ export class PopupService {
 
         const indexOfThisChild = _.findIndex(this.popupList, popup => popup.element === eChild);
 
+        if (indexOfThisChild === -1) {
+            return false;
+        }
+
         for (let i = indexOfThisChild; i < this.popupList.length; i++) {
-            const element = this.popupList[i].element;
-            if (_.isElementInEventPath(element, event)) {
+            const popup = this.popupList[i];
+
+            if (_.isElementInEventPath(popup.element, event)) {
                 return true;
             }
         }
@@ -510,6 +513,7 @@ export class PopupService {
 
             const xMatch = Math.abs(originalClick.screenX - screenX) < 5;
             const yMatch = Math.abs(originalClick.screenY - screenY) < 5;
+
             if (xMatch && yMatch) {
                 return true;
             }
@@ -529,9 +533,7 @@ export class PopupService {
     public setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void {
         const eWrapper = this.getWrapper(ePopup);
 
-        if (!eWrapper) {
-            return;
-        }
+        if (!eWrapper) { return; }
 
         _.addOrRemoveCssClass(eWrapper, 'ag-always-on-top', !!alwaysOnTop);
 
@@ -545,24 +547,20 @@ export class PopupService {
         const popupList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
         const popupLen = popupList.length;
         const alwaysOnTopList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup.ag-always-on-top'));
-        const onTopLengh = alwaysOnTopList.length;
+        const onTopLength = alwaysOnTopList.length;
         const eWrapper = this.getWrapper(ePopup);
 
-        if (
-            !eWrapper ||
-            popupLen <= 1 ||
-            !parent.contains(ePopup)
-        ) { return; }
+        if (!eWrapper || popupLen <= 1 || !parent.contains(ePopup)) { return; }
 
         const pos = popupList.indexOf(eWrapper);
 
-        if (onTopLengh) {
+        if (onTopLength) {
             const isPopupAlwaysOnTop = _.containsClass(eWrapper, 'ag-always-on-top');
             if (isPopupAlwaysOnTop) {
                 if (pos !== popupLen - 1) {
                     (_.last(alwaysOnTopList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
                 }
-            } else if (pos !== popupLen - onTopLengh - 1) {
+            } else if (pos !== popupLen - onTopLength - 1) {
                 alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
             }
         } else if (pos !== popupLen - 1) {
