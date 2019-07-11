@@ -1,23 +1,20 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { AreaChartOptions, AreaSeriesOptions, ChartType } from "ag-grid-community";
-import { AreaSeries } from "../../../charts/chart/series/areaSeries";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
-import { CartesianChart } from "../../../charts/chart/cartesianChart";
-import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
-import {LineSeries} from "../../../charts/chart/series/lineSeries";
+import {ChartBuilder} from "../../builder/chartBuilder";
+import {AreaChartOptions, AreaSeriesOptions, ChartType} from "ag-grid-community";
+import {AreaSeries} from "../../../charts/chart/series/areaSeries";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
+import {CartesianChart} from "../../../charts/chart/cartesianChart";
+import {CategoryAxis} from "../../../charts/chart/axis/categoryAxis";
 
 export class AreaChartProxy extends ChartProxy {
+    private readonly chartType: ChartType;
     private readonly chartOptions: AreaChartOptions;
-
-    private chartType: ChartType;
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions(params.chartType, this.defaultOptions()) as AreaChartOptions;
-
         this.chartType = params.chartType;
 
+        this.chartOptions = this.getChartOptions(params.chartType, this.defaultOptions()) as AreaChartOptions;
         this.chart = ChartBuilder.createAreaChart(this.chartOptions);
 
         this.setAxisPadding(this.chart as CartesianChart);
@@ -36,54 +33,12 @@ export class AreaChartProxy extends ChartProxy {
 
     public update(params: UpdateChartParams): void {
 
-        //TODO: refactor
-
         if (this.chartType === ChartType.Area) {
+            // area charts have multiple series
+            this.updateAreaChart(params);
 
-            if (params.fields.length === 0) {
-                this.chart.removeAllSeries();
-                return;
-            }
-
-            const lineChart = this.chart as CartesianChart;
-            const fieldIds = params.fields.map(f => f.colId);
-
-            const existingSeriesMap: { [id: string]: AreaSeries } = {};
-
-            const updateSeries = (areaSeries: AreaSeries) => {
-                const id = areaSeries.yFields[0] as string;
-                const seriesExists = fieldIds.indexOf(id) > -1;
-                seriesExists ? existingSeriesMap[id] = areaSeries : lineChart.removeSeries(areaSeries);
-            };
-
-            lineChart.series.map(series => series as AreaSeries).forEach(updateSeries);
-
-            params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
-                const seriesOptions = this.chartOptions.seriesDefaults as AreaChartOptions;
-
-                const existingSeries = existingSeriesMap[f.colId];
-                const areaSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as AreaSeries;
-
-                if (areaSeries) {
-                    areaSeries.yFieldNames = [f.displayName];
-                    areaSeries.data = params.data;
-                    areaSeries.xField = params.categoryId;
-                    areaSeries.yFields = [f.colId];
-
-                    const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
-
-                    const fills = palette.fills;
-                    areaSeries.fills = [fills[index % fills.length]];
-
-                    const strokes = palette.strokes;
-                    areaSeries.strokes = [strokes[index % strokes.length]];
-
-                    if (!existingSeries) {
-                        lineChart.addSeries(areaSeries);
-                    }
-                }
-            });
         } else {
+            // stacked and normalized has a single series
             const areaSeries = this.chart.series[0] as AreaSeries;
 
             areaSeries.data = params.data;
@@ -96,6 +51,52 @@ export class AreaChartProxy extends ChartProxy {
             areaSeries.fills = palette.fills;
             areaSeries.strokes = palette.strokes;
         }
+    }
+
+    private updateAreaChart(params: UpdateChartParams) {
+        if (params.fields.length === 0) {
+            this.chart.removeAllSeries();
+            return;
+        }
+
+        const lineChart = this.chart as CartesianChart;
+        const fieldIds = params.fields.map(f => f.colId);
+
+        const existingSeriesMap: { [id: string]: AreaSeries } = {};
+
+        const updateSeries = (areaSeries: AreaSeries) => {
+            const id = areaSeries.yFields[0] as string;
+            const seriesExists = fieldIds.indexOf(id) > -1;
+            seriesExists ? existingSeriesMap[id] = areaSeries : lineChart.removeSeries(areaSeries);
+        };
+
+        lineChart.series.map(series => series as AreaSeries).forEach(updateSeries);
+
+        params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
+            const seriesOptions = this.chartOptions.seriesDefaults as AreaChartOptions;
+
+            const existingSeries = existingSeriesMap[f.colId];
+            const areaSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as AreaSeries;
+
+            if (areaSeries) {
+                areaSeries.yFieldNames = [f.displayName];
+                areaSeries.data = params.data;
+                areaSeries.xField = params.categoryId;
+                areaSeries.yFields = [f.colId];
+
+                const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+                const fills = palette.fills;
+                areaSeries.fills = [fills[index % fills.length]];
+
+                const strokes = palette.strokes;
+                areaSeries.strokes = [strokes[index % strokes.length]];
+
+                if (!existingSeries) {
+                    lineChart.addSeries(areaSeries);
+                }
+            }
+        });
     }
 
     private defaultOptions(): AreaChartOptions {
