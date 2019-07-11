@@ -182,84 +182,129 @@ export class MenuItemMapper {
                 return 'separator';
             case 'chartRange':
                 const chartRangeSubMenuItems: string[] = [];
-                chartRangeSubMenuItems.push('groupedColumnRangeChart');
-                chartRangeSubMenuItems.push('stackedColumnRangeChart');
-                chartRangeSubMenuItems.push('normalizedColumnRangeChart');
-                chartRangeSubMenuItems.push('groupedBarRangeChart');
-                chartRangeSubMenuItems.push('stackedBarRangeChart');
-                chartRangeSubMenuItems.push('normalizedBarRangeChart');
+                chartRangeSubMenuItems.push('columnRangeChart');
+                chartRangeSubMenuItems.push('barRangeChart');
                 chartRangeSubMenuItems.push('lineRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
-                chartRangeSubMenuItems.push('doughnutRangeChart');
-                chartRangeSubMenuItems.push('stackedAreaRangeChart');
-                chartRangeSubMenuItems.push('normalizedAreaRangeChart');
+                chartRangeSubMenuItems.push('areaRangeChart');
                 return {
                     name: localeTextFunc('chartRange', 'Chart Range'),
                     subMenu: chartRangeSubMenuItems,
                     icon: Utils.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
-            case 'groupedColumnRangeChart': return {
-                name: localeTextFunc('groupedColumnRangeChart', 'Column (Grouped)&lrm;'),
+
+            case 'columnRangeChart':
+                const columnSubMenuItems: string[] = [];
+                columnSubMenuItems.push('groupedColumnChart');
+                columnSubMenuItems.push('stackedColumnChart');
+                columnSubMenuItems.push('normalizedColumnChart');
+
+                return {
+                    name: localeTextFunc('columnRangeChart', 'Column'),
+                    subMenu: columnSubMenuItems
+                };
+
+            case 'groupedColumnChart': return {
+                name: localeTextFunc('groupedColumnChart', 'Grouped&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.GroupedColumn);
                 }
             };
-            case 'stackedColumnRangeChart': return {
-                name: localeTextFunc('stackedColumnRangeChart', 'Column (Stacked)&lrm;'),
+            case 'stackedColumnChart': return {
+                name: localeTextFunc('stackedColumnChart', 'Stacked&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.StackedColumn);
                 }
             };
-            case 'normalizedColumnRangeChart': return {
-                name: localeTextFunc('normalizedColumnRangeChart', 'Column (100% Stacked)&lrm;'),
+            case 'normalizedColumnChart': return {
+                name: localeTextFunc('normalizedColumnChart', '100% Stacked&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.NormalizedColumn);
                 }
             };
-            case 'groupedBarRangeChart': return {
-                name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)&lrm;'),
+
+            case 'barRangeChart':
+                const barSubMenuItems: string[] = [];
+                barSubMenuItems.push('groupedBarChart');
+                barSubMenuItems.push('stackedBarChart');
+                barSubMenuItems.push('normalizedBarChart');
+
+                return {
+                    name: localeTextFunc('barRangeChart', 'Bar'),
+                    subMenu: barSubMenuItems
+                };
+            case 'groupedBarChart': return {
+                name: localeTextFunc('groupedBarChart', 'Grouped&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.GroupedBar);
                 }
             };
-            case 'stackedBarRangeChart': return {
-                name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)&lrm;'),
+            case 'stackedBarChart': return {
+                name: localeTextFunc('stackedBarChart', 'Stacked&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.StackedBar);
                 }
             };
-            case 'normalizedBarRangeChart': return {
-                name: localeTextFunc('normalizedBarRangeChart', 'Bar (100% Stacked)&lrm;'),
+            case 'normalizedBarChart': return {
+                name: localeTextFunc('normalizedBarChart', '100% Stacked&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.NormalizedBar);
                 }
             };
+
             case 'lineRangeChart': return {
                 name: localeTextFunc('lineRangeChart', 'Line'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.Line);
                 }
             };
-            case 'pieRangeChart': return {
-                name: localeTextFunc('pieRangeChart', 'Pie'),
+
+            case 'pieRangeChart':
+                const pieSubMenuItems: string[] = [];
+                pieSubMenuItems.push('pieChart');
+                pieSubMenuItems.push('doughnutChart');
+
+                return {
+                    name: localeTextFunc('pieRangeChart', 'Pie'),
+                    subMenu: pieSubMenuItems
+                };
+            case 'pieChart': return {
+                name: localeTextFunc('pieChart', 'Pie'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.Pie);
                 }
             };
-            case 'doughnutRangeChart': return {
-                name: localeTextFunc('doughnutRangeChart', 'Doughnut'),
+            case 'doughnutChart': return {
+                name: localeTextFunc('doughnutChart', 'Doughnut'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.Doughnut);
                 }
             };
-            case 'stackedAreaRangeChart': return {
-                name: localeTextFunc('stackedAreaRangeChart', 'Area (Stacked)&lrm;'),
+
+            case 'areaRangeChart':
+                const areaSubMenuItems: string[] = [];
+                areaSubMenuItems.push('areaChart');
+                areaSubMenuItems.push('stackedAreaChart');
+                areaSubMenuItems.push('normalizedAreaChart');
+
+                return {
+                    name: localeTextFunc('areaRangeChart', 'Area'),
+                    subMenu: areaSubMenuItems
+                };
+            case 'areaChart': return {
+                name: localeTextFunc('areaChart', 'Area&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.Area);
+                }
+            };
+            case 'stackedAreaChart': return {
+                name: localeTextFunc('stackedAreaChart', 'Stacked&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.StackedArea);
                 }
             };
-            case 'normalizedAreaRangeChart': return {
-                name: localeTextFunc('normalizedAreaRangeChart', 'Area (100% Stacked)&lrm;'),
+            case 'normalizedAreaChart': return {
+                name: localeTextFunc('normalizedAreaChart', '100% Stacked&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.NormalizedArea);
                 }
