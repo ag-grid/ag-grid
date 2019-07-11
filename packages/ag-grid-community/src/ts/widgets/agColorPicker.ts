@@ -80,4 +80,8 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
         return this;
     }
+
+    public getValue(): string {
+        return this.value;
+    }
 }

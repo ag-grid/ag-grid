@@ -14,6 +14,7 @@ export class ChartSettingsPanel extends Component {
 
     public static TEMPLATE =
         `<div class="ag-chart-settings-wrapper">
+            <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container"></div>
             <div class="ag-chart-settings-nav-bar">
                 <div ref="ePrevBtn" class="ag-chart-settings-prev-btn">
                     <button type="button"></button>
@@ -27,6 +28,7 @@ export class ChartSettingsPanel extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    @RefSelector('eMiniChartsContainer') eMiniChartsContainer: HTMLElement;
     @RefSelector("eCardSelector") private eCardSelector: HTMLElement;
     @RefSelector("ePrevBtn") private ePrevBtn: HTMLElement;
     @RefSelector("eNextBtn") private eNextBtn: HTMLElement;
@@ -49,13 +51,13 @@ export class ChartSettingsPanel extends Component {
     }
 
     @PostConstruct
-    private init() {
+    private postConstruct() {
         this.palettes.forEach((palette, idx) => {
             const miniChartsContainer = new MiniChartsContainer(idx, this.chartController);
             this.getContext().wireBean(miniChartsContainer);
 
             this.miniCharts.push(miniChartsContainer);
-            this.getGui().appendChild(miniChartsContainer.getGui());
+            this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
             this.addCardLink(idx);
         });
         this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallLeft', this.gridOptionsWrapper));

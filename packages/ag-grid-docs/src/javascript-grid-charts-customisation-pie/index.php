@@ -80,6 +80,10 @@ interface PieChartOptions {
         fills?: string[];
         // The stroke colors of pie slices. Darker versions of fill colors by default.
         strokes?: string[];
+        // The opacity of all fills.
+        fillOpacity?: number;
+        // The opacity of all strokes.
+        strokeOpacity?: number;
 
         // Whether to show pie slice labels or not.
         labelEnabled?: boolean;

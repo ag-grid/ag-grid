@@ -145,6 +145,8 @@ function processChartOptions(params) {
 
     seriesDefaults.fills = ['#e1ba00', 'silver', 'peru'];
     seriesDefaults.strokes = ['black'];
+    seriesDefaults.fillOpacity = 0.8;
+    seriesDefaults.strokeOpacity = 0.8;
     seriesDefaults.strokeWidth = 2;
 
     // only impacts stacked bar chart

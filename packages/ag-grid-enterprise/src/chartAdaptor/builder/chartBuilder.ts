@@ -312,6 +312,12 @@ export class ChartBuilder {
         if (options.strokes !== undefined) {
             series.strokes = options.strokes;
         }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
+        }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
         }
@@ -363,6 +369,12 @@ export class ChartBuilder {
         }
         if (options.strokes !== undefined) {
             series.strokes = options.strokes;
+        }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
@@ -439,6 +451,12 @@ export class ChartBuilder {
         }
         if (options.strokes !== undefined) {
             series.strokes = options.strokes;
+        }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
         }
         if (options.rotation !== undefined) {
             series.rotation = options.rotation;

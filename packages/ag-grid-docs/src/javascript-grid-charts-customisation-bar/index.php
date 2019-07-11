@@ -79,6 +79,10 @@ interface BarChartOptions {
         fills?: string[];
         // The stroke colors to be used by the series.
         strokes?: string[];
+        // The opacity of all fills.
+        fillOpacity?: number;
+        // The opacity of all strokes.
+        strokeOpacity?: number;
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
 
