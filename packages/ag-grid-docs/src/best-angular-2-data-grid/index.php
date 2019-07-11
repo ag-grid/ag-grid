@@ -16,6 +16,7 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+        <link rel="icon" href="favicon.ico" type="image/x-icon"/>
         <style><?php include './styles.css'; ?></style>
         <style><?php include './css/api.css'; ?></style>
         <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
@@ -26,36 +27,10 @@
         <script src="https://unpkg.com/ag-grid-enterprise@21.0.1/dist/ag-grid-enterprise.min.js" defer></script>
         <script src="./js/grid-performance.js" inline></script>
         <script src="./js/grid-api.js" inline></script>
+        <?php include '../includes/analytics.php'; ?>
     </head>
     <body>
-        <section id="nav-bar">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="https://www.ag-grid.com/"><img id="logo" src="../images/logo/logo-inverted.svg" alt="ag-Grid Logo"></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-                <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="../example.php">Demo<span class="sr-only">(current)</span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../documentation-main/documentation.php">Documentation</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../features-overview">Features Overview</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../license-pricing.php">Pricing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="get-started" href="../javascript-grid-getting-started/">Get Started</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </section>
+        <?php include '../includes/navbar-2.php'; ?>
         <section id="above-the-fold">
             <div id="head-top">
                 <div class="container">
@@ -199,7 +174,6 @@
                             <a class="features-link" href="../javascript-grid-master-detail/">Master / Detail</a></p>
                         </div>
                     </div>
-                    
                     <div class="row" data-aos="fade-down" data-aos-delay="200">
                         <div class="col-md-6">
                             <p><strong>Aggregation</strong></p>

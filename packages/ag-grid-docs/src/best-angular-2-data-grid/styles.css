@@ -80,6 +80,14 @@ padding: 0 10px;
 .snippet {
 font-size: 21px;
 margin-top: 50px;
+text-align: center;
+}
+.snippet a {
+  color: white;
+  text-decoration: none;
+}
+li {
+  list-style: none;
 }
 .example.code {
 max-width: 70%;
@@ -575,7 +583,7 @@ transform: translateY(-15px);
 }
 }footer#site-footer-2 {
 color: $gray-300;
-background-image: url('./assets/common/hexagons.svg'), linear-gradient(170deg, #00407f, #000d19);;
+background-image: linear-gradient(170deg, #00407f, #000d19);;
 background-repeat: repeat, no-repeat;
 font-size: 85%;
 font-weight: 300;
