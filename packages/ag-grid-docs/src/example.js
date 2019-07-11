@@ -672,8 +672,7 @@ var desktopDefaultCols = [
         children: [
             {
                 headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
-                // tooltipField: 'game.name',
-                tooltipValueGetter: function(params) { return '4444'; },
+                tooltipField: 'game.name',
                 cellClass: function () {
                     return 'alphabet';
                 },
