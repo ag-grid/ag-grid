@@ -10,8 +10,8 @@ import {
 import { ChartController } from "../../../chartController";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
 import { ShadowPanel } from "./shadowPanel";
-import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
-import {ChartTranslator} from "../../../chartTranslator";
+import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class BarSeriesPanel extends Component {
 
@@ -89,11 +89,11 @@ export class BarSeriesPanel extends Component {
         };
 
         const setFont = (font: LabelFont) => {
-            if (font.family) this.series.forEach(s => s.labelFontFamily = font.family as string);
-            if (font.style) this.series.forEach(s => s.labelFontStyle = font.style);
-            if (font.weight) this.series.forEach(s => s.labelFontWeight = font.weight);
-            if (font.size) this.series.forEach(s => s.labelFontSize = font.size as number);
-            if (font.color) this.series.forEach(s => s.labelColor = font.color as string);
+            if (font.family) { this.series.forEach(s => s.labelFontFamily = font.family as string); }
+            if (font.style) { this.series.forEach(s => s.labelFontStyle = font.style); }
+            if (font.weight) { this.series.forEach(s => s.labelFontWeight = font.weight); }
+            if (font.size) { this.series.forEach(s => s.labelFontSize = font.size as number); }
+            if (font.color) { this.series.forEach(s => s.labelColor = font.color as string); }
         };
 
         const params: LabelPanelParams = {

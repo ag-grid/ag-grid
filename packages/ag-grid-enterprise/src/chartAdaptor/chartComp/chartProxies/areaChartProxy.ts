@@ -1,9 +1,9 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
-import {AreaChartOptions, AreaSeriesOptions, ChartType} from "ag-grid-community";
-import {AreaSeries} from "../../../charts/chart/series/areaSeries";
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
-import {CartesianChart} from "../../../charts/chart/cartesianChart";
-import {CategoryAxis} from "../../../charts/chart/axis/categoryAxis";
+import { ChartBuilder } from "../../builder/chartBuilder";
+import { AreaChartOptions, AreaSeriesOptions, ChartType } from "ag-grid-community";
+import { AreaSeries } from "../../../charts/chart/series/areaSeries";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
+import { CartesianChart } from "../../../charts/chart/cartesianChart";
+import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
 
 export class AreaChartProxy extends ChartProxy {
     private readonly chartOptions: AreaChartOptions;
@@ -18,7 +18,7 @@ export class AreaChartProxy extends ChartProxy {
         this.setAxisPadding(this.chart as CartesianChart);
 
         const areaSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as AreaSeriesOptions);
-        if (areaSeries) this.chart.addSeries(areaSeries);
+        if (areaSeries) { this.chart.addSeries(areaSeries); }
     }
 
     private setAxisPadding(chart: CartesianChart) {

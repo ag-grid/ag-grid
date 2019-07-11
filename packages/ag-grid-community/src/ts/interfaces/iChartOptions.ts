@@ -2,7 +2,7 @@ export interface ChartOptions {
     parent?: HTMLElement;
     width?: number;
     height?: number;
-    background?: BackgroundOptions,
+    background?: BackgroundOptions;
     series?: any[];
     data?: any;
     padding?: IPadding;
@@ -88,10 +88,10 @@ export interface AxisOptions {
     tickPadding?: number;
     tickColor?: string;
 
-    labelFontStyle?: string,
-    labelFontWeight?: string,
-    labelFontSize?: number,
-    labelFontFamily?: string,
+    labelFontStyle?: string;
+    labelFontWeight?: string;
+    labelFontSize?: number;
+    labelFontFamily?: string;
     labelColor?: string;
     labelRotation?: number;
     mirrorLabels?: boolean;
@@ -120,11 +120,11 @@ export interface SeriesOptions {
 }
 
 export interface LineTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string,
-    title?: string,
-    color?: string
+    datum: any;
+    xField: string;
+    yField: string;
+    title?: string;
+    color?: string;
 }
 
 export interface LineSeriesOptions extends SeriesOptions {
@@ -177,19 +177,19 @@ export interface ScatterSeriesDefaultOptions extends LineSeriesOptions {
 }
 
 export interface BarTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string,
-    title?: string,
-    color?: string
+    datum: any;
+    xField: string;
+    yField: string;
+    title?: string;
+    color?: string;
 }
 
 export interface AreaTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string,
-    title?: string,
-    color?: string
+    datum: any;
+    xField: string;
+    yField: string;
+    title?: string;
+    color?: string;
 }
 
 export interface BarLabelFormatterParams {

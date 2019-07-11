@@ -92,7 +92,7 @@ export class MiniChartsContainer extends Component {
     public refreshSelected() {
         const type = this.chartController.getChartType();
         
-        for (let wrapper in this.wrappers) {
+        for (const wrapper in this.wrappers) {
             _.addOrRemoveCssClass(this.wrappers[wrapper], 'ag-selected', wrapper === type);
         }
     }

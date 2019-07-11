@@ -8,7 +8,7 @@ import {
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class AxisTicksPanel extends Component {
 

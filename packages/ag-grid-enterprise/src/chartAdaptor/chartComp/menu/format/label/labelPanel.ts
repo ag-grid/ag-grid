@@ -7,9 +7,9 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {Chart} from "../../../../../charts/chart/chart";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartController } from "../../../chartController";
+import { Chart } from "../../../../../charts/chart/chart";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export type LabelFont = {
     family?: string;
@@ -119,7 +119,7 @@ export class LabelPanel extends Component {
                     // add user provided font to list
                     values.push(capitalisedFontValue);
 
-                    if (sortedValues) values.sort();
+                    if (sortedValues) { values.sort(); }
 
                     initialValue = capitalisedFontValue;
                 } else {

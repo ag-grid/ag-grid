@@ -6,7 +6,7 @@ import { AxisPanel } from "./axis/axisPanel";
 import { LineSeriesPanel } from "./series/lineSeriesPanel";
 import { PieSeriesPanel } from "./series/pieSeriesPanel";
 import { ChartPanel } from "./chart/chartPanel";
-import {AreaSeriesPanel} from "./series/areaSeriesPanel";
+import { AreaSeriesPanel } from "./series/areaSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
 
@@ -33,7 +33,6 @@ export class ChartFormattingPanel extends Component {
 
     private createFormatPanel() {
         this.destroyActivePanels();
-
 
         this.addComponent(new ChartPanel(this.chartController));
         this.addComponent(new LegendPanel(this.chartController));

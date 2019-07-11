@@ -119,7 +119,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         _.setVisible(this.eApplyButton, this.applyActive);
         // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
         // just applied, the event would get passed as the second parameter, which we do not want.
-        this.addDestroyableEventListener(this.eApplyButton, "click", ()=> this.onBtApply());
+        this.addDestroyableEventListener(this.eApplyButton, "click", () => this.onBtApply());
 
         _.setVisible(this.eClearButton, this.clearActive);
         this.addDestroyableEventListener(this.eClearButton, "click", this.onBtClear.bind(this));

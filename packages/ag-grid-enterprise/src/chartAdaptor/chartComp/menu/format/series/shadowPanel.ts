@@ -10,7 +10,7 @@ import { ChartController } from "../../../chartController";
 import { Chart } from "../../../../../charts/chart/chart";
 import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
 import { BarSeries } from "../../../../../charts/chart/series/barSeries";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class ShadowPanel extends Component {
 

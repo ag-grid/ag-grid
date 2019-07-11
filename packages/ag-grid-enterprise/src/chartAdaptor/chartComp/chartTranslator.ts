@@ -1,4 +1,4 @@
-import {Autowired, Bean, GridOptionsWrapper} from "ag-grid-community";
+import { Autowired, Bean, GridOptionsWrapper } from "ag-grid-community";
 
 @Bean("chartTranslator")
 export class ChartTranslator {
@@ -55,7 +55,7 @@ export class ChartTranslator {
 
     public translate(toTranslate: string): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        let defaultTranslation = ChartTranslator.DEFAULT_TRANSLATIONS[toTranslate];
+        const defaultTranslation = ChartTranslator.DEFAULT_TRANSLATIONS[toTranslate];
         return translate(toTranslate, defaultTranslation);
     }
 }

@@ -1,7 +1,7 @@
-import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {Chart} from "../../../../../charts/chart/chart";
-import {ChartTranslator} from "../../../chartTranslator";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector } from "ag-grid-community";
+import { ChartController } from "../../../chartController";
+import { Chart } from "../../../../../charts/chart/chart";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class PaddingPanel extends Component {
 

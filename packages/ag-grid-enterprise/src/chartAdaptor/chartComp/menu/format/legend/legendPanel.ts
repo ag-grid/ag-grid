@@ -9,8 +9,8 @@ import {
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 import { Chart, LegendPosition } from "../../../../../charts/chart/chart";
-import {LabelPanelParams, LabelFont, LabelPanel} from "../label/labelPanel";
-import {ChartTranslator} from "../../../chartTranslator";
+import { LabelPanelParams, LabelFont, LabelPanel } from "../label/labelPanel";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class LegendPanel extends Component {
 
@@ -138,11 +138,11 @@ export class LegendPanel extends Component {
         };
 
         const setFont = (font: LabelFont) => {
-            if (font.family) this.chart.legend.labelFontFamily = font.family;
-            if (font.style) this.chart.legend.labelFontStyle = font.style;
-            if (font.weight) this.chart.legend.labelFontWeight = font.weight;
-            if (font.size) this.chart.legend.labelFontSize = font.size;
-            if (font.color) this.chart.legend.labelColor = font.color;
+            if (font.family) { this.chart.legend.labelFontFamily = font.family; }
+            if (font.style) { this.chart.legend.labelFontStyle = font.style; }
+            if (font.weight) { this.chart.legend.labelFontWeight = font.weight; }
+            if (font.size) { this.chart.legend.labelFontSize = font.size; }
+            if (font.color) { this.chart.legend.labelColor = font.color; }
         };
 
         const params: LabelPanelParams = {

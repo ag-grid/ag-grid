@@ -1,7 +1,7 @@
-import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
-import {LineSeries} from "../../../../../charts/chart/series/lineSeries";
-import {ChartTranslator} from "../../../chartTranslator";
-import {AreaSeries} from "../../../../../charts/chart/series/areaSeries";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector } from "ag-grid-community";
+import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
+import { ChartTranslator } from "../../../chartTranslator";
+import { AreaSeries } from "../../../../../charts/chart/series/areaSeries";
 
 export class MarkersPanel extends Component {
 

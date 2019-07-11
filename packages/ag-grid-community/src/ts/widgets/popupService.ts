@@ -10,10 +10,10 @@ import { EventService } from "../eventService";
 import { Events } from '../events';
 import { _ } from "../utils";
 
-type AgPopup = {
+interface AgPopup {
     element: HTMLElement;
     hideFunc: () => void;
-};
+}
 
 @Bean('popupService')
 export class PopupService {

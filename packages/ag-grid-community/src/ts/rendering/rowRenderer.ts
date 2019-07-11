@@ -1118,7 +1118,7 @@ export class RowRenderer extends BeanStub {
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
 
             // eg if going down, and nextCell=undefined, means we are gone past the last row
-            let hitEdgeOfGrid = _.missing(nextCell);
+            const hitEdgeOfGrid = _.missing(nextCell);
             if (hitEdgeOfGrid) {
                 finished = true;
                 continue;

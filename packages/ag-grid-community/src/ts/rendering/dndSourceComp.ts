@@ -1,9 +1,9 @@
-import {Component} from "../widgets/component";
-import {PostConstruct} from "../context/context";
-import {RowNode} from "../entities/rowNode";
-import {Beans} from "./beans";
-import {Column} from "../entities/column";
-import {_} from "../utils";
+import { Component } from "../widgets/component";
+import { PostConstruct } from "../context/context";
+import { RowNode } from "../entities/rowNode";
+import { Beans } from "./beans";
+import { Column } from "../entities/column";
+import { _ } from "../utils";
 
 export class DndSourceComp extends Component {
 

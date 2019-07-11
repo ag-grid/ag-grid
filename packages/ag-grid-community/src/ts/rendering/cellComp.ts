@@ -28,7 +28,7 @@ import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { _, Promise } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
-import {DndSourceComp} from "./dndSourceComp";
+import { DndSourceComp } from "./dndSourceComp";
 
 export class CellComp extends Component {
 

@@ -16,7 +16,7 @@ export class BarChartProxy extends ChartProxy {
             ChartBuilder.createBarChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
 
         const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as BarSeriesOptions);
-        if (barSeries) this.chart.addSeries(barSeries);
+        if (barSeries) { this.chart.addSeries(barSeries); }
     }
 
     public update(params: UpdateChartParams): void {

@@ -1,6 +1,6 @@
-import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector } from "ag-grid-community";
 import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class CalloutPanel extends Component {
 

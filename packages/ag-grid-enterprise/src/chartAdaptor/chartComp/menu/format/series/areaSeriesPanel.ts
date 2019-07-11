@@ -8,11 +8,11 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {MarkersPanel} from "./markersPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {AreaSeries} from "../../../../../charts/chart/series/areaSeries";
-import {ShadowPanel} from "./shadowPanel";
+import { ChartController } from "../../../chartController";
+import { MarkersPanel } from "./markersPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { AreaSeries } from "../../../../../charts/chart/series/areaSeries";
+import { ShadowPanel } from "./shadowPanel";
 
 export class AreaSeriesPanel extends Component {
 

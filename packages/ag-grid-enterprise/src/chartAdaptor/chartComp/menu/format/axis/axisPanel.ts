@@ -12,8 +12,8 @@ import {
 import { ChartController } from "../../../chartController";
 import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
 import { AxisTicksPanel } from "./axisTicksPanel";
-import {LabelPanelParams, LabelPanel, LabelFont} from "../label/labelPanel";
-import {ChartTranslator} from "../../../chartTranslator";
+import { LabelPanelParams, LabelPanel, LabelFont } from "../label/labelPanel";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class AxisPanel extends Component {
 
