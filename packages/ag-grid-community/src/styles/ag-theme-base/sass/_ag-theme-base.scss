@@ -1467,6 +1467,18 @@
             border: 1px solid #0d77e4;
             padding: 2px;
         }
+
+        .ag-recent-colors {
+            > div {
+                margin: 0 3px;
+                &:first-child {
+                    margin-left: 0;
+                }
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
     }
 
     ////////////////////////////////////////

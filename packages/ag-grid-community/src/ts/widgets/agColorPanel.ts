@@ -1,5 +1,5 @@
 import { Component } from "./component";
-import { Color } from "../utils";
+import { Color, _ } from "../utils";
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { AgColorPicker } from "./agColorPicker";
@@ -43,7 +43,7 @@ export class AgColorPanel extends Component {
                     <div class="ag-spectrum-alpha-background"></div>
                     <div ref="spectrumAlphaSlider" class="ag-spectrum-slider"></div>
                 </div>
-                <div ref="recentColors" style="display: flex; flex-direction: row"></div>
+                <div ref="recentColors" class="ag-recent-colors"></div>
             </div>
         </div>`;
 
@@ -265,35 +265,45 @@ export class AgColorPanel extends Component {
         this.setSpectrumValue(s, b);
     }
 
-    private onRecentColorClick = (evt: MouseEvent) => {
-        const id = Number.parseInt((<HTMLElement>evt.target).id);
+    private onRecentColorClick = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+
+        if (!_.exists(target.id)) {
+            return;
+        }
+
+        const id = parseInt(target.id, 10);
+
         this.setValue(AgColorPanel.recentColors[id]);
-    };
+        this.destroy();
+    }
 
     private addRecentColor() {
         const color = Color.fromHSB(this.H * 360, this.S, this.B, this.A);
         const rgbaColor = color.toRgbaString();
 
-        const recentColors = AgColorPanel.recentColors;
-        if (this.colorChanged && recentColors[0] !== rgbaColor) {
+        let recentColors = AgColorPanel.recentColors;
 
-            // remove duplicate color
-            const existingItemIndex = recentColors.indexOf(rgbaColor);
-            if (existingItemIndex > -1) {
-                recentColors.splice(existingItemIndex, 1);
-            }
-
-            // add color to head
-            recentColors.unshift(rgbaColor);
-
-            // ensure we don't exceed max number of recent colors
-            if (recentColors.length > AgColorPanel.maxRecentColors) {
-                AgColorPanel.recentColors = recentColors.slice(0, AgColorPanel.maxRecentColors);
-            }
+        if (!this.colorChanged || recentColors[0] === rgbaColor) {
+            return;
         }
+
+        // remove duplicate color
+        recentColors = recentColors.filter(color => color != rgbaColor);
+
+        // add color to head
+        recentColors = [rgbaColor].concat(recentColors);
+
+        // ensure we don't exceed max number of recent colors
+        if (recentColors.length > AgColorPanel.maxRecentColors) {
+            recentColors = recentColors.slice(0, AgColorPanel.maxRecentColors);
+        }
+
+        AgColorPanel.recentColors = recentColors;
     }
 
     public destroy() {
+        super.destroy();
         this.addRecentColor();
     }
 }

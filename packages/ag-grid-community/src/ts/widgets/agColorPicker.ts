@@ -51,24 +51,38 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
         });
+        this.getContext().wireBean(colorDialog);
 
         _.addCssClass(colorDialog.getGui(), 'ag-color-dialog');
-        this.getContext().wireBean(colorDialog);
 
         const colorPanel = new AgColorPanel({
             picker: this
         });
-
         this.getContext().wireBean(colorPanel);
+
+        colorPanel.addDestroyFunc(() => {
+            if (colorDialog.isAlive()) {
+                colorDialog.destroy();
+            }
+        });
 
         colorDialog.setParentComponent(this);
         colorDialog.setBodyComponent(colorPanel);
         colorPanel.setValue(this.getValue());
 
         colorDialog.addDestroyFunc(() => {
+            const wasDestroying = this.isDestroyingPicker;
             this.displayedPicker = false;
-            if (colorPanel.isAlive()) {
-                colorPanel.destroy();
+
+            // here we check if the picker was already being
+            // destroyed to avoid a stackoverflow
+            if (!wasDestroying) {
+                this.isDestroyingPicker = true;
+                if (colorPanel.isAlive()) {
+                    colorPanel.destroy();
+                }
+            } else {
+                this.isDestroyingPicker = false;
             }
         });
     }

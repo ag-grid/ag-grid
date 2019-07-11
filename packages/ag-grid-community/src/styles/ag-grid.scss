@@ -1557,6 +1557,13 @@ $handleSize: 5px;
         outline: none;
         outline-offset: 0;
     }
+
+    .ag-recent-colors {
+        display: flex;
+        > div {
+            cursor: pointer;
+        }
+    }
 }
 
 

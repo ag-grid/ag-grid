@@ -18,6 +18,7 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     protected abstract pickerIcon: string;
     protected value: K;
     protected displayedPicker: boolean = false;
+    protected isDestroyingPicker: boolean = false;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
