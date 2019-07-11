@@ -226,14 +226,11 @@ export class Rect extends Shape {
             return;
         }
 
-        if (this.opacity < 1) {
-            ctx.globalAlpha = this.opacity;
-        }
-
         const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
 
         if (this.fill) {
             ctx.fillStyle = this.fill;
+            ctx.globalAlpha = this.opacity * this.fillOpacity;
 
             // The canvas context scaling (depends on the device's pixel ratio)
             // has no effect on shadows, so we have to account for the pixel ratio
@@ -252,6 +249,8 @@ export class Rect extends Shape {
 
         if (this.stroke && this.effectiveStrokeWidth) {
             ctx.strokeStyle = this.stroke;
+            ctx.globalAlpha = this.opacity * this.strokeOpacity;
+
             ctx.lineWidth = this.effectiveStrokeWidth;
             if (this.lineDash) {
                 ctx.setLineDash(this.lineDash);

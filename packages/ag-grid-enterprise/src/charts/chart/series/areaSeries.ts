@@ -75,6 +75,28 @@ export class AreaSeries extends Series<CartesianChart> {
         return this._strokes;
     }
 
+    private _fillOpacity: number = 1;
+    set fillOpacity(value: number) {
+        if (this._fillOpacity !== value) {
+            this._fillOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    private _strokeOpacity: number = 1;
+    set strokeOpacity(value: number) {
+        if (this._strokeOpacity !== value) {
+            this._strokeOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get strokeOpacity(): number {
+        return this._strokeOpacity;
+    }
+
     private xData: string[] = [];
     private yData: number[][] = [];
     private ySums: number[] = [];
@@ -374,6 +396,8 @@ export class AreaSeries extends Series<CartesianChart> {
         const enabled = this.enabled;
         const fills = this.fills;
         const strokes = this.strokes;
+        const fillOpacity = this.fillOpacity;
+        const strokeOpacity = this.strokeOpacity;
         const strokeWidth = this.strokeWidth;
         const data = this.data;
         const xData = this.xData;
@@ -464,6 +488,7 @@ export class AreaSeries extends Series<CartesianChart> {
             const path = shape.path;
 
             shape.fill = fills[index % fills.length];
+            shape.fillOpacity = fillOpacity;
             shape.fillShadow = this.shadow;
             shape.visible = !!enabled.get(datum.yField);
 
@@ -488,6 +513,7 @@ export class AreaSeries extends Series<CartesianChart> {
             shape.stroke = strokes[index % strokes.length];
             shape.strokeWidth = strokeWidth;
             shape.visible = !!enabled.get(datum.yField);
+            shape.strokeOpacity = strokeOpacity;
 
             path.clear();
 
