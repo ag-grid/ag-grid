@@ -6,7 +6,7 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Rendering Cell Data Overview</h1>
+    <h1>Rendering Cells Overview</h1>
 
     <p class="lead">
         This section explains the different mechanics involved with rendering data.
@@ -14,8 +14,23 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>
-            <a href="../javascript-grid-rendering-flow/">Rendering Flow</a>:
-            The flow the grid follows from taking you data to rendering HTML into the cell.
+            <a href="../javascript-grid-rendering-flow/">Cell Content</a>:
+            The different ways of getting data into your cells. This section
+            covers:
+            <ul>
+                <li>
+                    <a href="../javascript-grid-value-getters/#value-getter">Value Getters</a>
+                </li>
+                <li>
+                    <a href="../javascript-grid-value-getters/">Value Formatters</a>
+                </li>
+                <li>
+                    <a href="../javascript-grid-cell-expressions/">Expressions</a>
+                </li>
+                <li>
+                    <a href="../javascript-grid-reference-data/">Reference Data</a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="../javascript-grid-cell-rendering/">Cell Rendering</a>:
@@ -25,23 +40,8 @@ include '../documentation-main/documentation_header.php';
             <a href="../javascript-grid-provided-renderers/">Provided Renderers</a>:
             The cell renderers the come provided with the grid.
         </li>
-        <li>
-            <a href="../javascript-grid-value-getters/">Value Getters</a>:
-            Use value getters instead of field to fine tune how values are taken from the provided data.
-        </li>
-        <li>
-            <a href="../javascript-grid-value-getters/">Value Formatters</a>:
-            Use formatters to format values.
-        </li>
-        <li>
-            <a href="../javascript-grid-cell-expressions/">Expressions</a>:
-            Use strings instead of functions for value getters and formatters.
-        </li>
-        <li>
-            <a href="../javascript-grid-reference-data/">Reference Data</a>:
-            Reference data is used to display alternative values rather that what is in your
-            data, eg you data could have USA but you want to display 'America'.
-        </li>
+
+
         <li>
             <a href="../javascript-grid-refresh/">View Refresh</a>:
             How to refresh cells in the grid.

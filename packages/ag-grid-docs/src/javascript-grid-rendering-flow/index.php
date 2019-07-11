@@ -10,45 +10,41 @@ include '../documentation-main/documentation_header.php';
 <h1>Cell Content</h1>
 
 <p class="lead">
-    This section outlines the rendering flow of data. That is the process the values goes through from
-    the provided data to ending up as HTML on the screen.
+    Cell content with with regards how values are provided into the cells. There are different aspects
+    of the grid that assist this.
 </p>
 
-<h2>Configurable Steps</h2>
-
 <p>
-    When rendering the following steps can be configured:
+    The different parts of the grid concerned with cell values are as follows:
 </p>
 
-<table class="properties">
-    <tr>
-        <td>
-            <b><a href="../javascript-grid-value-getters/#value-getter">Value Getter</a></b>:
-        </td>
-        <td>
-            Gets the value from your data for display.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <b><a href="../javascript-grid-value-getters/#value-formatter">Value Formatter</a></b>:
-        </td>
-        <td>
-            Allows you to format or transform the value for display purposes.
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <b><a href="../javascript-grid-cell-rendering">Cell Renderer</a></b>:
-        </td>
-        <td>
-            Gets the value from your data for display.
-        </td>
-    </tr>
-</table>
+<ul>
+    <li>
+        <a href="../javascript-grid-value-getters/#value-getter">Value Getter</a>:
+        Instead of specifying <code>colDef.field</code>, you can use <code>colDef.valueGetter</code>
+        to provide a function for getting cell values. This is more flexible than providing field
+        values for specific cells.
+    </li>
+    <li>
+        <a href="../javascript-grid-value-getters/">Value Formatters</a>:
+        Use formatters to format values.
+    </li>
+    <li>
+        <a href="../javascript-grid-cell-expressions/">Expressions</a>:
+        Use strings instead of functions for value getters and formatters.
+    </li>
+    <li>
+        <a href="../javascript-grid-reference-data/">Reference Data</a>:
+        Reference data is used to display alternative values rather that what is in your
+        data, eg you data could have USA but you want to display 'America'.
+    </li>
+</ul>
+
+<h2>Rendering Flow</h2>
 
 <p>
-    The flow diagram below illustrates how these different steps work together.
+    How value getters, formatters and cell renderers work together to provide the
+    end result is helpful. The flow diagram below illustrates how these different steps work together.
 </p>
 
 <img src="valueGetterFlow.svg" class="img-fluid" alt="Value Getter Flow" />

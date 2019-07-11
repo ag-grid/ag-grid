@@ -511,26 +511,20 @@
             ]
           },
           {
-            "title": "Custom Cells",
-            "url": "javascript-grid-cell-rendering/",
+            "title": "Cell Rendering",
+            "url": "javascript-grid-cell-rendering/"
+          },
+          {
+            "title": "Provided Renderers",
+            "url": "javascript-grid-provided-renderers/",
             "items": [
               {
-                "title": "Cell Rendering",
-                "url": "javascript-grid-cell-rendering/"
+                "title": "Group Cell Renderer",
+                "url": "javascript-grid-provided-renderer-group/"
               },
               {
-                "title": "Provided Renderers",
-                "url": "javascript-grid-provided-renderers/",
-                "items": [
-                  {
-                    "title": "Group Cell Renderer",
-                    "url": "javascript-grid-provided-renderer-group/"
-                  },
-                  {
-                    "title": "Show Change Cell Renderers",
-                    "url": "javascript-grid-provided-renderer-change/"
-                  }
-                ]
+                "title": "Show Change Cell Renderers",
+                "url": "javascript-grid-provided-renderer-change/"
               }
             ]
           },
@@ -564,20 +558,22 @@
             "url": "javascript-grid-cell-editing-overview/"
           },
           {
-            "title": "Editing Flow",
-            "url": "javascript-grid-editing-flow/"
-          },
-          {
             "title": "Cell Editing",
             "url": "javascript-grid-cell-editing/"
           },
           {
-            "title": "Value Setters",
-            "url": "javascript-grid-value-setters/"
-          },
-          {
-            "title": "Value Parsers",
-            "url": "javascript-grid-value-parsers/"
+            "title": "Saving Content",
+            "url": "javascript-grid-editing-flow/",
+            "items": [
+              {
+                "title": "Value Setters",
+                "url": "javascript-grid-value-setters/"
+              },
+              {
+                "title": "Value Parsers",
+                "url": "javascript-grid-value-parsers/"
+              }
+            ]
           },
           {
             "title": "Provided Editors",
