@@ -8,7 +8,7 @@ import {
 
 import { ChartController } from "../../chartController";
 
-type ChartGroupsType = 'bar' | 'column' | 'line' | 'pie' | 'area';
+type ChartGroupsType = 'bar' | 'column' | 'pie' | 'line' | 'area';
 
 type ChartGroups = {
     [key in ChartGroupsType]: any[];
@@ -46,12 +46,12 @@ export class MiniChartsContainer extends Component {
                 MiniStackedBar,
                 MiniNormalizedBar
             ],
-            line: [
-                MiniLine
-            ],
             pie: [
                 MiniPie,
                 MiniDoughnut
+            ],
+            line: [
+                MiniLine
             ],
             area: [
                 MiniArea,

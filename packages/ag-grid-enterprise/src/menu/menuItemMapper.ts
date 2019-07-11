@@ -184,8 +184,8 @@ export class MenuItemMapper {
                 const chartRangeSubMenuItems: string[] = [];
                 chartRangeSubMenuItems.push('columnRangeChart');
                 chartRangeSubMenuItems.push('barRangeChart');
-                chartRangeSubMenuItems.push('lineRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
+                chartRangeSubMenuItems.push('lineRangeChart');
                 chartRangeSubMenuItems.push('areaRangeChart');
                 return {
                     name: localeTextFunc('chartRange', 'Chart Range'),
@@ -255,13 +255,6 @@ export class MenuItemMapper {
                 }
             };
 
-            case 'lineRangeChart': return {
-                name: localeTextFunc('lineRangeChart', 'Line'),
-                action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Line);
-                }
-            };
-
             case 'pieRangeChart':
                 const pieSubMenuItems: string[] = [];
                 pieSubMenuItems.push('pieChart');
@@ -281,6 +274,13 @@ export class MenuItemMapper {
                 name: localeTextFunc('doughnutChart', 'Doughnut'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.Doughnut);
+                }
+            };
+
+            case 'lineRangeChart': return {
+                name: localeTextFunc('lineRangeChart', 'Line'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.Line);
                 }
             };
 
