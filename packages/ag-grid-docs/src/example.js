@@ -66,7 +66,7 @@ var countries = [
     {country: "Belgium", continent: "Europe", language: "French"}
 ];
 
-var games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
+var games = [null, "Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
     "Abalone", "Agon", "Backgammon", "Battleship", "Blockade", "Blood Bowl", "Bul", "Camelot", "Checkers",
     "Go", "Gipf", "Guess Who?", "Hare and Hounds", "Hex", "Hijara", "Isola", "Janggi (Korean Chess)", "Le Jeu de la Guerre",
     "Patolli", "Plateau", "PUNCT", "Rithmomachy", "Sahkku", "Senet", "Shogi", "Space Hulk", "Stratego", "Sugoroku",
@@ -665,7 +665,8 @@ var desktopDefaultCols = [
         children: [
             {
                 headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
-                tooltipField: 'game.name',
+                // tooltipField: 'game.name',
+                tooltipValueGetter: function(params) { return '4444'; },
                 cellClass: function () {
                     return 'alphabet';
                 },
