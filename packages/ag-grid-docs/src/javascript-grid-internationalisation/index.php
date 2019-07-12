@@ -188,7 +188,9 @@ localeText = {
         normal: 'laNormal',
         bold: 'laBold',
         italic: 'laItalic',
-        boldItalic: 'laBold Italic'
+        boldItalic: 'laBold Italic',
+        fillOpacity: 'laFill Opacity',
+        strokeOpacity: 'laLine Opacity'
 
 }</snippet>
 
