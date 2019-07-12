@@ -52,8 +52,19 @@ export class ChartTranslator {
         italic: 'Italic',
         boldItalic: 'Bold Italic',
         fillOpacity: 'Fill Opacity',
-        strokeOpacity: 'Line Opacity'
-
+        strokeOpacity: 'Line Opacity',
+        pieTooltip: 'Pie',
+        doughnutTooltip: 'Doughnut',
+        lineTooltip: 'Line',
+        groupedColumnTooltip: 'Grouped',
+        groupedBarTooltip: 'Grouped',
+        stackedColumnTooltip: 'Stacked',
+        stackedBarTooltip: 'Stacked',
+        normalizedColumnTooltip: 'Normalized Stacked',
+        normalizedBarTooltip: 'Normalized Stacked',
+        groupedAreaTooltip: 'Grouped',
+        stackedAreaTooltip: 'Stacked',
+        normalizedAreaTooltip: 'Normalized Stacked'
     };
 
     public translate(toTranslate: string): string {
