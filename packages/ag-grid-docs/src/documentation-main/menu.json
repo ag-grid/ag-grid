@@ -6,15 +6,11 @@
         "title": "Introduction",
         "icon": "icon-information",
         "max-box-show-level": 2,
+        "matrixExclude": true,
         "items": [
           {
             "title": "Overview",
             "url": "javascript-grid-overview/"
-          },
-          {
-            "title": "Community & Enterprise",
-            "url": "javascript-grid-set-license/",
-            "enterprise": true
           },
           {
             "title": "Getting Started",
@@ -51,6 +47,11 @@
             ]
           },
           {
+            "title": "Community & Enterprise",
+            "url": "javascript-grid-set-license/",
+            "enterprise": true
+          },
+          {
             "title": "Supported Browsers",
             "url": "javascript-grid-supported-browsers/"
           }
@@ -59,6 +60,7 @@
       {
         "title": "Interface / API",
         "icon": "icon-api",
+        "matrixExclude": true,
         "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
@@ -133,6 +135,7 @@
             "title": "Column Moving",
             "box-title": "Moving",
             "url": "javascript-grid-column-moving/",
+            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Column Animation",
@@ -231,6 +234,7 @@
           {
             "title": "Themes",
             "url": "javascript-grid-styling/",
+            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Provided Themes",
@@ -279,6 +283,7 @@
                 "title": "Server Side Row Model",
                 "url": "javascript-grid-server-side-model/",
                 "enterprise": true,
+                "matrixExcludeChildren": true,
                 "items": [
                   {
                     "title": "Infinite Scroll",
@@ -750,27 +755,33 @@
             "items": [
               {
                 "title": "Bar",
-                "url": "javascript-grid-charts-customisation-bar/"
+                "url": "javascript-grid-charts-customisation-bar/",
+                "enterprise": true
               },
               {
                 "title": "Line",
-                "url": "javascript-grid-charts-customisation-line/"
+                "url": "javascript-grid-charts-customisation-line/",
+                "enterprise": true
               },
               {
                 "title": "Area",
-                "url": "javascript-grid-charts-customisation-area/"
+                "url": "javascript-grid-charts-customisation-area/",
+                "enterprise": true
               },
               {
                 "title": "Scatter",
-                "url": "javascript-grid-charts-customisation-scatter/"
+                "url": "javascript-grid-charts-customisation-scatter/",
+                "enterprise": true
               },
               {
                 "title": "Pie",
-                "url": "javascript-grid-charts-customisation-pie/"
+                "url": "javascript-grid-charts-customisation-pie/",
+                "enterprise": true
               },
               {
                 "title": "Doughnut",
-                "url": "javascript-grid-charts-customisation-doughnut/"
+                "url": "javascript-grid-charts-customisation-doughnut/",
+                "enterprise": true
               }
             ]
           },
@@ -929,6 +940,7 @@
       {
         "title": "Testing",
         "icon": "icon-test",
+        "matrixExclude": true,
         "level-2-display-style-forced": "block",
         "items": [
           {
