@@ -10,10 +10,6 @@
         "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-grid-overview/"
-          },
-          {
             "title": "Getting Started",
             "url": "javascript-grid-getting-started",
             "items": [
