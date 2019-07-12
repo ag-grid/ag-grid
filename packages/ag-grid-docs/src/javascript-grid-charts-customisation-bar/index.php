@@ -79,18 +79,22 @@ interface BarChartOptions {
         fills?: string[];
         // The stroke colors to be used by the series.
         strokes?: string[];
-        // The opacity of all fills.
+         // The opacity of all fills. Valid range if from 0 to 1.
+        // Defaults to 1 (completely opaque).
         fillOpacity?: number;
-        // The opacity of all strokes.
+        // The opacity of all strokes. Valid range if from 0 to 1.
+        // Defaults to 1 (completely opaque).
         strokeOpacity?: number;
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
 
         // Whether to show the labels for bars (only applies to the stacked bars).
         labelEnabled?: boolean;
-        // The font style to be used by bar labels. For example, 'italic'. Not used by default.
+        // The font style to be used by bar labels. For example, 'italic'.
+        // Not used by default.
         labelFontStyle?: string;
-        // The font weight to be used by bar labels. For example, 'bold'. Not used by default.
+        // The font weight to be used by bar labels. For example, 'bold'.
+        // Not used by default.
         labelFontWeight?: string;
         // The font size to be used by bar labels. Defaults to `12`.
         labelFontSize?: number;
@@ -119,7 +123,8 @@ interface BarChartOptions {
         // Whether to show the tooltip for bars when they are hovered/tapped.
         // Defaults to `true`.
         tooltipEnabled?: boolean;
-        // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
+        // A custom tooltip render to use for bar tooltips.
+        // Should return a valid HTML string.
         tooltipRenderer?: (params: BarTooltipRendererParams) => string;
     };
 }
