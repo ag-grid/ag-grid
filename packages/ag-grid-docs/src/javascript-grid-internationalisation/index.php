@@ -203,8 +203,6 @@ localeText = {
         groupedAreaTooltip: 'laGrouped',
         stackedAreaTooltip: 'laStacked',
         normalizedAreaTooltip: 'la100% Stacked'
-
-
 }</snippet>
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>
