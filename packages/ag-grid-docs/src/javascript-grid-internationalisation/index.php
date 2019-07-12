@@ -117,7 +117,7 @@ localeText = {
         areaRangeChart: 'laArea',
         areaChart: 'laArea',
         stackedAreaChart: 'laStacked',
-        normalizedRangeChart: 'la100% Stacked',
+        normalizedAreaChart: 'la100% Stacked',
 
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',
@@ -190,7 +190,20 @@ localeText = {
         italic: 'laItalic',
         boldItalic: 'laBold Italic',
         fillOpacity: 'laFill Opacity',
-        strokeOpacity: 'laLine Opacity'
+        strokeOpacity: 'laLine Opacity',
+        groupedColumnTooltip: 'laGrouped',
+        stackedColumnTooltip: 'laStacked',
+        normalizedColumnTooltip: 'la100% Stacked',
+        groupedBarTooltip: 'laGrouped',
+        stackedBarTooltip: 'laStacked',
+        normalizedBarTooltip: 'la100% Stacked',
+        pieTooltip: 'laPie',
+        doughnutTooltip: 'laDoughnut',
+        lineTooltip: 'laLine',
+        groupedAreaTooltip: 'laGrouped',
+        stackedAreaTooltip: 'laStacked',
+        normalizedAreaTooltip: 'la100% Stacked'
+
 
 }</snippet>
 

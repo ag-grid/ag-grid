@@ -53,18 +53,18 @@ export class ChartTranslator {
         boldItalic: 'Bold Italic',
         fillOpacity: 'Fill Opacity',
         strokeOpacity: 'Line Opacity',
+        groupedColumnTooltip: 'Grouped',
+        stackedColumnTooltip: 'Stacked',
+        normalizedColumnTooltip: '100% Stacked',
+        groupedBarTooltip: 'Grouped',
+        stackedBarTooltip: 'Stacked',
+        normalizedBarTooltip: '100% Stacked',
         pieTooltip: 'Pie',
         doughnutTooltip: 'Doughnut',
         lineTooltip: 'Line',
-        groupedColumnTooltip: 'Grouped',
-        groupedBarTooltip: 'Grouped',
-        stackedColumnTooltip: 'Stacked',
-        stackedBarTooltip: 'Stacked',
-        normalizedColumnTooltip: 'Normalized Stacked',
-        normalizedBarTooltip: 'Normalized Stacked',
         groupedAreaTooltip: 'Grouped',
         stackedAreaTooltip: 'Stacked',
-        normalizedAreaTooltip: 'Normalized Stacked'
+        normalizedAreaTooltip: '100% Stacked'
     };
 
     public translate(toTranslate: string): string {
