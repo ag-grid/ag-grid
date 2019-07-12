@@ -12,6 +12,21 @@ include '../documentation-main/documentation_header.php';
         margin-top: 26px;
         font-size: 30px;
     }
+    .feature-title {
+        display: block;
+    }
+    .feature-title-indent-1 {
+        padding-left: 40px;
+    }
+    .feature-title-indent-2 {
+        padding-left: 80px;
+    }
+    .feature-title-indent-3 {
+        padding-left: 120px;
+    }
+    .feature-title-indent-4 {
+        padding-left: 160px;
+    }
 </style>
 <?php
 
@@ -19,7 +34,6 @@ function doLevel1Features() {
     $lev1Items = json_decode(file_get_contents('../documentation-main/menu.json'), true);
 
     foreach($lev1Items as $lev1Item) {
-
         doLevel2Features($lev1Item);
     }
 }
@@ -31,7 +45,8 @@ function doLevel2Features($parentItem) {
 
         $lev2ItemName = $lev2Item['title'];
 
-        if ($lev2ItemName=='Introduction' || $lev2ItemName=='Interface / API' || $lev2ItemName=='Testing') {
+        $matrixExclude = $lev2Item['matrixExclude'];
+        if ($matrixExclude) {
             continue;
         }
 
@@ -39,13 +54,13 @@ function doLevel2Features($parentItem) {
         echo "<td colspan='3'><span class='feature-group-title'>$lev2ItemName</span></td>";
         echo "</tr>";
 
-        doLevel3Features($lev2Item);
+        printFeatureRecursive($lev2Item, 0);
     }
 
 }
 
 
-function doLevel3Features($parentItem) {
+function printFeatureRecursive($parentItem, $indent) {
 
     $items = $parentItem['items'];
 
@@ -58,11 +73,11 @@ function doLevel3Features($parentItem) {
         }
 
         echo "<tr>";
-        echo "<td><a href='../$itemUrl'>$itemTitle</a> ";
+        echo "<td><span class='feature-title feature-title-indent-$indent'><a href='../$itemUrl'>$itemTitle</a> ";
         if ($item['enterprise']) {
             echo "<img src=\"../_assets/svg/enterprise.svg\" style=\"width: 16px;\"/>";
         }
-        echo "</td>";
+        echo "</span></td>";
         if ($item['enterprise']) {
             echo "<td><i class=\"fas fa-times\" style='color: red;'></i></td>";
         } else {
@@ -71,6 +86,10 @@ function doLevel3Features($parentItem) {
         echo "<td><i class=\"fas fa-check\" style='color: green;'></i></td>";
         echo "</tr>";
 
+        $matrixExcludeChildren = $item['matrixExcludeChildren'];
+        if (!$matrixExcludeChildren) {
+            printFeatureRecursive($item, $indent+1);
+        }
     }
 
 }
