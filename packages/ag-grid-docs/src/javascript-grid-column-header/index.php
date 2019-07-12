@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The following example shows how you can provide a unique look & feel to the headers. Note that:
-    </pre>
+    </p>
     <ul class="content">
         <li>The header heights have all been changed in the gridOptions:
 <snippet>
@@ -150,6 +150,27 @@ pivotGroupHeaderHeight:100,
         header check how to create your own <a href="../javascript-grid-header-rendering/">Header Components</a>.
     </p>
 
+
+<h2>Header Tooltips</h2>
+
+<p>
+    You can provide a tooltip to the header using <code>colDef.headerTooltip</code> or <code>colDef.headerTooltip</code>.
+</p>
+
+<p>
+    The example below shows header tooltips. Note the following:
+</p>
+
+<ul>
+    <li>
+        The first two columns (Athlete and Age) have no header tooltip.
+    </li>
+    <li>
+        The remaining columns (Country through to Total) have a header tooltip set.
+    </li>
+</ul>
+
+<?= example('Header Tooltip', 'header-tooltip', 'generated') ?>
 
 <h2>Header Templates</h2>
 
