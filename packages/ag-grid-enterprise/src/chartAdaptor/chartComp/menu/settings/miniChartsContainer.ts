@@ -896,7 +896,7 @@ class MiniStackedArea extends MiniChart {
 
         const yScale = linearScale();
         yScale.domain = [0, 16];
-        yScale.range = [size - padding + 0.5, padding];
+        yScale.range = [size - padding + 0.5, padding + 0.5];
 
         const axisOvershoot = 3;
 
