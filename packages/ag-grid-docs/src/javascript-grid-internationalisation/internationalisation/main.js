@@ -186,7 +186,7 @@ var gridOptions = {
         markerSize: 'laMarker Size',
         markerStroke: 'laMarker Stroke',
         markerPadding: 'laMarker Padding',
-        itemPaddingX: 'lalaItem Padding X',
+        itemPaddingX: 'laItem Padding X',
         itemPaddingY: 'laItem Padding Y',
         strokeWidth: 'laStroke Width',
         offset: 'laOffset',
