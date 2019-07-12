@@ -57,9 +57,11 @@ interface PieChartOptions {
         itemPaddingX?: number;
         // The amount of vertical padding between legend items. Defaults to `8`.
         itemPaddingY?: number;
-        // The font style to be used by legend's labels. For example, 'italic'. Not used by default.
+        // The font style to be used by legend's labels. For example, 'italic'.
+        // Not used by default.
         labelFontStyle?: string;
-        // The font weight to be used by legend's labels. For example, 'bold'. Not used by default.
+        // The font weight to be used by legend's labels. For example, 'bold'.
+        // Not used by default.
         labelFontWeight?: string;
         // The font size to be used by legend's labels. Defaults to `12`.
         labelFontSize?: number;
@@ -80,9 +82,11 @@ interface PieChartOptions {
         fills?: string[];
         // The stroke colors of pie slices. Darker versions of fill colors by default.
         strokes?: string[];
-        // The opacity of all fills.
+         // The opacity of all fills. Valid range if from 0 to 1.
+        // Defaults to 1 (completely opaque).
         fillOpacity?: number;
-        // The opacity of all strokes.
+        // The opacity of all strokes. Valid range if from 0 to 1.
+        // Defaults to 1 (completely opaque).
         strokeOpacity?: number;
 
         // Whether to show pie slice labels or not.
@@ -90,9 +94,11 @@ interface PieChartOptions {
         // If the pie slice angle is smaller than this value (in degrees),
         // the label won't be shown.
         labelMinAngle?: number;
-        // The font style to be used by slice labels. For example, 'italic'. Not used by default.
+        // The font style to be used by slice labels. For example, 'italic'.
+        // Not used by default.
         labelFontStyle?: string;
-        // The font weight to be used by slice labels. For example, 'bold'. Not used by default.
+        // The font weight to be used by slice labels. For example, 'bold'.
+        // Not used by default.
         labelFontWeight?: string;
         // The font size to be used by slice labels. Defaults to `12`.
         labelFontSize?: number;
@@ -127,7 +133,8 @@ interface PieChartOptions {
         // Whether to show the tooltip for bars when they are hovered/tapped.
         // Defaults to `true`.
         tooltipEnabled?: boolean;
-        // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
+        // A custom tooltip render to use for bar tooltips.
+        // Should return a valid HTML string.
         tooltipRenderer?: (params: DoughnutTooltipRendererParams) => string;
     };
 }

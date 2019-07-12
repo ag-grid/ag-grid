@@ -57,9 +57,11 @@ interface AreaChartOptions {
         itemPaddingX?: number;
         // The amount of vertical padding between legend items. Defaults to `8`.
         itemPaddingY?: number;
-        // The font style to be used by legend's labels. For example, 'italic'. Not used by default.
+        // The font style to be used by legend's labels. For example, 'italic'.
+        // Not used by default.
         labelFontStyle?: string;
-        // The font weight to be used by legend's labels. For example, 'bold'. Not used by default.
+        // The font weight to be used by legend's labels. For example, 'bold'.
+        // Not used by default.
         labelFontWeight?: string;
         // The font size to be used by legend's labels. Defaults to `12`.
         labelFontSize?: number;
@@ -79,9 +81,11 @@ interface AreaChartOptions {
         fills?: string[];
         // The stroke colors to be used by the series.
         strokes?: string[];
-        // The opacity of all fills.
+        // The opacity of all fills. Valid range if from 0 to 1.
+        // Defaults to 1 (completely opaque).
         fillOpacity?: number;
-        // The opacity of all strokes.
+        // The opacity of all strokes. Valid range if from 0 to 1.
+        // Defaults to 1 (completely opaque).
         strokeOpacity?: number;
         // The stroke width. Defaults to `3`.
         strokeWidth?: number;
@@ -135,7 +139,8 @@ interface CaptionOptions {
 interface AreaTooltipRendererParams {
     // The datum object (an element in the `data` array used by the chart/series).
     datum: any;
-    // The field of the datum object that contains the category name of the highlighted data point.
+    // The field of the datum object that contains the category name
+    // of the highlighted data point.
     xField: string;
     // The field of the datum object that contains the series value of the highlighted data point.
     yField: string;

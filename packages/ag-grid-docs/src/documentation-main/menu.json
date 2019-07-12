@@ -133,15 +133,7 @@
           {
             "title": "Column Moving",
             "box-title": "Moving",
-            "url": "javascript-grid-column-moving/",
-            "matrixExcludeChildren": true,
-            "items": [
-              {
-                "title": "Column Animation",
-                "box-title": "Animation",
-                "url": "javascript-grid-column-animation/"
-              }
-            ]
+            "url": "javascript-grid-column-moving/"
           },
           {
             "title": "Column Pinning",
