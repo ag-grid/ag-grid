@@ -68,7 +68,7 @@ function printFeatureRecursive($parentItem, $indent) {
         $itemTitle = $item['title'];
         $itemUrl = $item['url'];
 
-        if ($itemTitle=='Overview' || $itemTitle=='See Also') {
+        if ($itemTitle=='See Also') {
             continue;
         }
 

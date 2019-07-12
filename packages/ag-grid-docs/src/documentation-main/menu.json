@@ -108,10 +108,6 @@
         "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-grid-columns-overview/"
-          },
-          {
             "title": "Column Definitions",
             "box-title": "Definitions",
             "url": "javascript-grid-column-definitions/"
@@ -162,10 +158,6 @@
         "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-grid-rows-overview/"
-          },
-          {
             "title": "Row Sorting",
             "box-title": "Sorting",
             "url": "javascript-grid-sorting/"
@@ -212,10 +204,6 @@
         "icon": "icon-style",
         "level-2-text-decorator": ",&nbsp;",
         "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-layout-and-styling-overview/"
-          },
           {
             "title": "Styling Rows",
             "box-title": "Rows",
@@ -267,10 +255,6 @@
         "icon": "icon-data",
         "level-2-display-style-forced": "block",
         "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-data-overview/"
-          },
           {
             "title": "Client Side Data",
             "url": "javascript-grid-client-side-model/"
@@ -490,10 +474,6 @@
         "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-grid-rendering-overview/"
-          },
-          {
             "title": "Cell Content",
             "url": "javascript-grid-rendering-flow/",
             "items": [
@@ -559,10 +539,6 @@
         "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-grid-cell-editing-overview/"
-          },
-          {
             "title": "Cell Editing",
             "url": "javascript-grid-cell-editing/"
           },
@@ -591,10 +567,6 @@
         "icon": "icon-group",
         "level-2-display-style-forced": "block",
         "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-grouping-overview/"
-          },
           {
             "title": "Row Grouping",
             "url": "javascript-grid-grouping/",
@@ -627,10 +599,6 @@
         "icon": "icon-import-export",
         "level-2-display-style-forced": "block",
         "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-import-export-overview/"
-          },
           {
             "title": "CSV Export",
             "url": "javascript-grid-export/"
@@ -671,10 +639,6 @@
         "icon": "icon-accessories",
         "level-2-display-style-forced": "block",
         "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-accessories-overview/"
-          },
           {
             "title": "Tool Panels",
             "url": "javascript-grid-tool-panel/",
@@ -875,10 +839,6 @@
         "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-grid-scrolling-overview/"
-          },
-          {
             "title": "DOM Virtualisation",
             "url": "javascript-grid-dom-virtualisation/"
           },
@@ -911,10 +871,6 @@
         "icon": "icon-information",
         "level-2-display-style-forced": "block",
         "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-interactivity-overview/"
-          },
           {
             "title": "Keyboard Navigation",
             "url": "javascript-grid-keyboard-navigation/"
