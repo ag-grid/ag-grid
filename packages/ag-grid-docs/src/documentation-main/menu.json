@@ -91,7 +91,7 @@
           },
           {
             "title": "Column Interface",
-            "url": "javascript-grid-column-interface/",
+            "url": "javascript-grid-column-definitions/",
             "items": [
               {
                 "title": "Column Properties",
@@ -114,11 +114,6 @@
         "icon": "icon-columns",
         "level-2-text-decorator": ",&nbsp;",
         "items": [
-          {
-            "title": "Column Definitions",
-            "box-title": "Definitions",
-            "url": "javascript-grid-column-definitions/"
-          },
           {
             "title": "Column Headers",
             "box-title": "Headers",
