@@ -125,8 +125,8 @@ $ag-icon-tree-closed: "\f105";
 $ag-icon-tree-indeterminate: "\f068";
 $ag-icon-tree-open: "\f107";
 
-@import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/ag-theme-balham.scss";
+@import "~ag-grid-community/src/styles/ag-grid.scss";
+@import "~ag-grid-community/src/styles/ag-theme-balham.scss";
 
 .ag-icon {
     font-weight: bold;
