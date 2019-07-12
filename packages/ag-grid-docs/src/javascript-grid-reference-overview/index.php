@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
     <h1>
-        Interface / API
+        Grid Interface
     </h1>
 
     <p class="lead">
@@ -40,31 +40,12 @@ include '../documentation-main/documentation_header.php';
             your application it is done through a grid callback e.g. <code>getRowHeight()</code>.
         </li>
         <li>
-            <a href="../javascript-grid-column-properties/">Column Properties</a>:
-            Columns are configured through column definitions. A column definition contains the column properties
-            e.g. <code>colDef.pinned='left'</code>.
-        </li>
-        <li>
-            <a href="../javascript-grid-column-api/">Column API</a>:
-            The column API is similar to the grid API, the difference is that the column API provides methods
-            relevant to columns e.g. <code>columnApi.setColumnVisible('country',false)</code>.
-        </li>
-        <li>
             <a href="../javascript-grid-row-node/">Row Node</a>:
             Each row in the grid is represented by a Row Node object, which in turn has a reference to the piece of
             row data provided by the application. The Row Node wraps the row data item. The Row Node has attributes,
             methods and events for interacting with the specific row e.g. <code>rowNode.setSelected(true)</code>.
         </li>
-        <li>
-            <a href="../javascript-grid-column/">Column</a>:
-            Each column in the grid is represented by a Column object, which in turn has a reference to the column
-            definition provided by the application. The Column wraps the Column Definition.
-            The Column object has attributes, methods and events for interacting
-            with the specific column e.g. <code>column.isVisible()</code>.
-        </li>
     </ul>
-
-
 
 
 <h2> Grid Options </h2>

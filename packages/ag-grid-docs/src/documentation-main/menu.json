@@ -61,44 +61,51 @@
         "title": "Interface / API",
         "icon": "icon-api",
         "matrixExclude": true,
-        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-grid-reference-overview/"
+            "title": "Grid Interface",
+            "url": "javascript-grid-reference-overview/",
+            "items": [
+              {
+                "title": "Grid Properties",
+                "url": "javascript-grid-properties/"
+              },
+              {
+                "title": "Grid API",
+                "url": "javascript-grid-api/"
+              },
+              {
+                "title": "Grid Events",
+                "box-title": "Events",
+                "url": "javascript-grid-events/"
+              },
+              {
+                "title": "Grid Callbacks",
+                "url": "javascript-grid-callbacks/"
+              },
+              {
+                "title": "Row Object",
+                "url": "javascript-grid-row-node/"
+              }
+            ]
           },
           {
-            "title": "Grid Properties",
-            "url": "javascript-grid-properties/"
-          },
-          {
-            "title": "Grid API",
-            "url": "javascript-grid-api/"
-          },
-          {
-            "title": "Column Properties",
-            "url": "javascript-grid-column-properties/"
-          },
-          {
-            "title": "Column API",
-            "url": "javascript-grid-column-api/"
-          },
-          {
-            "title": "Grid Events",
-            "box-title": "Events",
-            "url": "javascript-grid-events/"
-          },
-          {
-            "title": "Callbacks",
-            "url": "javascript-grid-callbacks/"
-          },
-          {
-            "title": "Row Node",
-            "url": "javascript-grid-row-node/"
-          },
-          {
-            "title": "Column",
-            "url": "javascript-grid-column/"
+            "title": "Column Interface",
+            "url": "javascript-grid-column-definitions/",
+            "items": [
+              {
+                "title": "Column Properties",
+                "url": "javascript-grid-column-properties/"
+              },
+              {
+                "title": "Column API",
+                "url": "javascript-grid-column-api/"
+              },
+              {
+                "title": "Column Object",
+                "url": "javascript-grid-column/"
+              }
+            ]
           }
         ]
       },
@@ -107,11 +114,6 @@
         "icon": "icon-columns",
         "level-2-text-decorator": ",&nbsp;",
         "items": [
-          {
-            "title": "Column Definitions",
-            "box-title": "Definitions",
-            "url": "javascript-grid-column-definitions/"
-          },
           {
             "title": "Column Headers",
             "box-title": "Headers",
