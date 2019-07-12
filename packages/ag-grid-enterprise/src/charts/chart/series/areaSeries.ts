@@ -474,6 +474,7 @@ export class AreaSeries extends Series<CartesianChart> {
             .each(path => {
                 path.fill = undefined;
                 path.lineJoin = 'round';
+                path.lineCap = 'round';
                 path.pointerEvents = PointerEvents.None;
             });
         const enterMarkers = updateMarkers.enter.append(Arc)
