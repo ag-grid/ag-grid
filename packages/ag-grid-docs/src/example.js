@@ -182,11 +182,11 @@ var gridOptions = {
     // editType: 'fullRow',
     // debug: true,
     // suppressMultiRangeSelection: true,
-    rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
+    //rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
     suppressMenuHide: isSmall,
-    pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
-    pivotColumnGroupTotals: 'before',
-    pivotRowTotals: 'before',
+    // pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
+    // pivotColumnGroupTotals: 'before',
+    // pivotRowTotals: 'before',
     // suppressRowTransform: true,
     // minColWidth: 50,
     // maxColWidth: 300,
@@ -394,6 +394,12 @@ var gridOptions = {
 
         } else {
             let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
+
+            if (type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar') {
+                options.xAxis.labelRotation = 0;
+            } else {
+                options.xAxis.labelRotation = 35;
+            }
 
             options.yAxis.labelFormatter = function(params) {
                 let n = params.value;

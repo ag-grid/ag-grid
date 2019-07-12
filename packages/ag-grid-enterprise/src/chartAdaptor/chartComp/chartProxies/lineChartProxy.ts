@@ -3,6 +3,7 @@ import { ChartType, LineChartOptions, LineSeriesOptions } from "ag-grid-communit
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { LineSeries } from "../../../charts/chart/series/lineSeries";
+import {ChartModel} from "../chartModel";
 
 export class LineChartProxy extends ChartProxy {
     private readonly chartOptions: LineChartOptions;
@@ -57,6 +58,15 @@ export class LineChartProxy extends ChartProxy {
                 }
             }
         });
+
+        // always set the label rotation of the default category to 0 degrees
+        const chart = this.chart as CartesianChart;
+        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
+            chart.xAxis.labelRotation = 0;
+        } else {
+            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
+        }
+
     }
 
     private defaultOptions(): LineChartOptions {

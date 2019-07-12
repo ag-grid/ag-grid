@@ -2,7 +2,8 @@ import { ChartBuilder } from "../../builder/chartBuilder";
 import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
-import { CartesianChart } from "../../../charts/chart/cartesianChart";
+import {CartesianChart} from "../../../charts/chart/cartesianChart";
+import {ChartModel} from "../chartModel";
 
 export class BarChartProxy extends ChartProxy {
     private readonly chartOptions: BarChartOptions;
@@ -26,6 +27,14 @@ export class BarChartProxy extends ChartProxy {
         barSeries.xField = params.categoryId;
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
+
+        // always set the label rotation of the default category to 0 degrees
+        const chart = this.chart as CartesianChart;
+        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
+            chart.xAxis.labelRotation = 0;
+        } else {
+            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
+        }
 
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
         barSeries.fills = palette.fills;

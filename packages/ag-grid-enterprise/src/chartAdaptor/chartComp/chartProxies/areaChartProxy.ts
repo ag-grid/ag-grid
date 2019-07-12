@@ -4,6 +4,7 @@ import {AreaSeries} from "../../../charts/chart/series/areaSeries";
 import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
 import {CartesianChart} from "../../../charts/chart/cartesianChart";
 import {CategoryAxis} from "../../../charts/chart/axis/categoryAxis";
+import {ChartModel} from "../chartModel";
 
 export class AreaChartProxy extends ChartProxy {
     private readonly chartType: ChartType;
@@ -50,6 +51,14 @@ export class AreaChartProxy extends ChartProxy {
 
             areaSeries.fills = palette.fills;
             areaSeries.strokes = palette.strokes;
+        }
+
+        // always set the label rotation of the default category to 0 degrees
+        const chart = this.chart as CartesianChart;
+        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
+            chart.xAxis.labelRotation = 0;
+        } else {
+            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
         }
     }
 
