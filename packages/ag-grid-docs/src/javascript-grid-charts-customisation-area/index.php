@@ -139,7 +139,8 @@ interface CaptionOptions {
 interface AreaTooltipRendererParams {
     // The datum object (an element in the `data` array used by the chart/series).
     datum: any;
-    // The field of the datum object that contains the category name of the highlighted data point.
+    // The field of the datum object that contains the category name
+    // of the highlighted data point.
     xField: string;
     // The field of the datum object that contains the series value of the highlighted data point.
     yField: string;

@@ -57,9 +57,11 @@ interface ScatterChartOptions {
         itemPaddingX?: number;
         // The amount of vertical padding between legend items. Defaults to `8`.
         itemPaddingY?: number;
-        // The font style to be used by legend's labels. For example, 'italic'. Not used by default.
+        // The font style to be used by legend's labels. For example, 'italic'.
+        // Not used by default.
         labelFontStyle?: string;
-        // The font weight to be used by legend's labels. For example, 'bold'. Not used by default.
+        // The font weight to be used by legend's labels. For example, 'bold'.
+        // Not used by default.
         labelFontWeight?: string;
         // The font size to be used by legend's labels. Defaults to `12`.
         labelFontSize?: number;
