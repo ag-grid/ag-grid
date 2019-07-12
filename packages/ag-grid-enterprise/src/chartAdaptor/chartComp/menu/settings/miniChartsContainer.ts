@@ -154,6 +154,7 @@ export class MiniPie extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Pie';
         this.root.append(this.sectors);
         this.updateColors(fills, strokes);
     }
@@ -181,6 +182,7 @@ class MiniDoughnut extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Donuts';
         this.root.append(this.sectors);
         this.updateColors(fills, strokes);
     }
@@ -201,6 +203,7 @@ class MiniLine extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Lines';
 
         const size = this.size;
         const padding = this.padding;
@@ -270,6 +273,7 @@ class MiniColumn extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Columns';
 
         const size = this.size;
         const padding = this.padding;
@@ -338,6 +342,7 @@ class MiniBar extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Grouped Bars';
 
         const size = this.size;
         const padding = this.padding;
@@ -406,6 +411,7 @@ class MiniStackedColumn extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Stacked Columns';
 
         const size = this.size;
         const padding = this.padding;
@@ -481,6 +487,7 @@ class MiniStackedBar extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Stacked Bars';
 
         const size = this.size;
         const padding = this.padding;
@@ -556,6 +563,7 @@ class MiniNormalizedColumn extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Normalized Stacked Columns';
 
         const size = this.size;
         const padding = this.padding;
@@ -631,6 +639,7 @@ class MiniNormalizedBar extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Normalized Stacked Bars';
 
         const size = this.size;
         const padding = this.padding;
@@ -785,6 +794,7 @@ class MiniArea extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Areas';
 
         const size = this.size;
         const padding = this.padding;
@@ -884,6 +894,7 @@ class MiniStackedArea extends MiniChart {
         super();
 
         this.scene.parent = parent;
+        this.scene.hdpiCanvas.canvas.title = 'Stacked Areas';
 
         const size = this.size;
         const padding = this.padding;
@@ -979,5 +990,6 @@ class MiniNormalizedArea extends MiniStackedArea {
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniNormalizedArea.data) {
         super(parent, fills, strokes, data);
+        this.scene.hdpiCanvas.canvas.title = 'Normalized Stacked Areas';
     }
 }
