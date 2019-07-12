@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 
 
-    <h1>Row Node</h1>
+    <h1>Row Object (aka Row Node)</h1>
 
     <p class="lead">
         A Row Node represents one row of data. The Row Node will contain a reference to the
