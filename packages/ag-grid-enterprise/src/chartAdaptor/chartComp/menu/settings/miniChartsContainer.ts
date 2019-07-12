@@ -776,12 +776,12 @@ class MiniArea extends MiniChart {
     private readonly areas: Path[];
 
     static readonly data = [
-        [2, 3, 2],
-        [3, 6, 5],
-        [6, 2, 2]
+        [1, 3, 5],
+        [2, 6, 4],
+        [5, 3, 1]
     ];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniStackedArea.data) {
+    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniArea.data) {
         super();
 
         this.scene.parent = parent;
@@ -793,11 +793,11 @@ class MiniArea extends MiniChart {
         xScale.paddingInner = 1;
         xScale.paddingOuter = 0;
         xScale.domain = [0, 1, 2];
-        xScale.range = [padding, size - padding];
+        xScale.range = [padding + 0.5, size - padding - 0.5];
 
         const yScale = linearScale();
-        yScale.domain = [0, 12];
-        yScale.range = [size - padding, padding];
+        yScale.domain = [0, 6];
+        yScale.range = [size - padding + 0.5, padding];
 
         const axisOvershoot = 3;
 
@@ -819,12 +819,11 @@ class MiniArea extends MiniChart {
             const yCount = yDatum.length;
             const x = xScale.convert(i);
 
-            let prev = 0;
             let curr: number;
             for (let j = 0; j < yCount; j++) {
                 curr = yDatum[j];
 
-                const y = yScale.convert(prev + curr);
+                const y = yScale.convert(curr);
                 const points = pathData[j] || (pathData[j] = []);
 
                 points[i] = {
@@ -835,8 +834,6 @@ class MiniArea extends MiniChart {
                     x,
                     y: bottomY
                 };
-
-                prev = curr;
             }
         }
 
@@ -895,11 +892,11 @@ class MiniStackedArea extends MiniChart {
         xScale.paddingInner = 1;
         xScale.paddingOuter = 0;
         xScale.domain = [0, 1, 2];
-        xScale.range = [padding, size - padding];
+        xScale.range = [padding + 0.5, size - padding - 0.5];
 
         const yScale = linearScale();
         yScale.domain = [0, 16];
-        yScale.range = [size - padding, padding];
+        yScale.range = [size - padding + 0.5, padding];
 
         const axisOvershoot = 3;
 
