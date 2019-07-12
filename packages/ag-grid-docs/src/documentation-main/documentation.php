@@ -73,21 +73,20 @@ function doLevel3($parentItem) {
         }
 
 
-        if ($itemTitle <> 'See Also' AND $itemTitle <> 'Overview') {
-
-
-
+        if ($itemTitle <> 'See Also') {
             echo "<li style='$forcedStyle'>";
 
             echo "<span class='docs-homepage-level2-item'>";
             if (strlen($itemUrl) > 1) {
-                echo "<a href='../$itemUrl'>$itemTitle$itemTextDecorator</a>";
+                echo "<a href='../$itemUrl'>$itemTitle</a>";
             } else {
-                echo "$itemTitle$itemTextDecorator";
+                echo "$itemTitle";
             }
 
             if ($item['enterprise']) {
-                echo "<span class=\"enterprise-icon\"/>";
+                echo "<span class=\"enterprise-icon\"></span>$itemTextDecorator";
+            }else {
+                echo "$itemTextDecorator";
             }
 
             echo "</span>";

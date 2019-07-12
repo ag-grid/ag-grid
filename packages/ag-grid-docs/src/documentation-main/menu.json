@@ -7,6 +7,7 @@
         "icon": "icon-information",
         "max-box-show-level": 2,
         "matrixExclude": true,
+        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -132,15 +133,7 @@
           {
             "title": "Column Moving",
             "box-title": "Moving",
-            "url": "javascript-grid-column-moving/",
-            "matrixExcludeChildren": true,
-            "items": [
-              {
-                "title": "Column Animation",
-                "box-title": "Animation",
-                "url": "javascript-grid-column-animation/"
-              }
-            ]
+            "url": "javascript-grid-column-moving/"
           },
           {
             "title": "Column Pinning",
@@ -837,7 +830,7 @@
     "items": [
       {
         "title": "Scrolling",
-        "icon": "icon-information",
+        "icon": "icon-scrolling",
         "level-2-display-style-forced": "block",
         "items": [
           {
@@ -870,7 +863,7 @@
       },
       {
         "title": "Interactivity",
-        "icon": "icon-information",
+        "icon": "icon-interactivity",
         "level-2-display-style-forced": "block",
         "items": [
           {
