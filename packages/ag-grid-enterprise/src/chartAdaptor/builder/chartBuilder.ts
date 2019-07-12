@@ -481,6 +481,9 @@ export class ChartBuilder {
     }
 
     static initLegend(legend: Legend, options: LegendOptions) {
+        if (options.enabled !== undefined) {
+            legend.enabled = options.enabled;
+        }
         if (options.markerStrokeWidth !== undefined) {
             legend.markerStrokeWidth = options.markerStrokeWidth;
         }

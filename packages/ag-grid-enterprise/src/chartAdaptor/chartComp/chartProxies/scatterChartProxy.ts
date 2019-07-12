@@ -123,6 +123,7 @@
 //                 }]
 //             },
 //             legend: {
+//                 enabled: true,
 //                 labelFontStyle: undefined,
 //                 labelFontWeight: undefined,
 //                 labelFontSize: 12,

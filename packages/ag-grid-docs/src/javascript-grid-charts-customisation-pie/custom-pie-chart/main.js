@@ -81,6 +81,7 @@ function processChartOptions(params) {
     options.legendPadding = 20;
 
     var legend = options.legend;
+    legend.enabled = true;
     legend.markerStrokeWidth = 2;
     legend.markerSize = 10;
     legend.markerPadding = 10;

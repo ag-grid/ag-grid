@@ -47,6 +47,8 @@ interface ScatterChartOptions {
     legendPadding?: number;
 
     legend?: {
+        // Whether to show the legend or not.
+        enabled?: boolean;
         // The stroke width of a legend marker. Defaults to `1`.
         markerStrokeWidth?: number;
         // The size of a legend marker. Defaults to `14`.

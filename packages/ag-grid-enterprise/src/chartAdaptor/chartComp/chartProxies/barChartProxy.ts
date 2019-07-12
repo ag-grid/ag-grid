@@ -90,6 +90,7 @@ export class BarChartProxy extends ChartProxy {
                 }]
             },
             legend: {
+                enabled: true,
                 labelFontStyle: undefined,
                 labelFontWeight: undefined,
                 labelFontSize: 12,

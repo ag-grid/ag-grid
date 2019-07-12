@@ -104,6 +104,7 @@ export class DoughnutChartProxy extends ChartProxy {
                 left: 50
             },
             legend: {
+                enabled: true,
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 itemPaddingX: 16,

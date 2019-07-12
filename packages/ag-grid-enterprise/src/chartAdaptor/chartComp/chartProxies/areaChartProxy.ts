@@ -152,6 +152,7 @@ export class AreaChartProxy extends ChartProxy {
                 }]
             },
             legend: {
+                enabled: true,
                 labelFontStyle: undefined,
                 labelFontWeight: undefined,
                 labelFontSize: 12,
