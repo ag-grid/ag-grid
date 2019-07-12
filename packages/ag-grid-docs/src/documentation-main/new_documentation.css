@@ -70,5 +70,7 @@ ul li ul {
 .icon-selection { background-image: url('imgs/icon-selection.svg');}
 .icon-style { background-image: url('imgs/icon-style.svg');}
 .icon-test { background-image: url('imgs/icon-test.svg');}
+.icon-scrolling { background-image: url('imgs/icon-scroll.svg');}
+.icon-interactivity { background-image: url('imgs/icon-interaction.svg');}
 
 .docs-homepage-section-preview + h1 { padding-top: 100px;}

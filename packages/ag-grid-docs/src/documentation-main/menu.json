@@ -838,7 +838,7 @@
     "items": [
       {
         "title": "Scrolling",
-        "icon": "icon-information",
+        "icon": "icon-scrolling",
         "level-2-display-style-forced": "block",
         "items": [
           {
@@ -871,7 +871,7 @@
       },
       {
         "title": "Interactivity",
-        "icon": "icon-information",
+        "icon": "icon-interactivity",
         "level-2-display-style-forced": "block",
         "items": [
           {
