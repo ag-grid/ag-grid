@@ -21,12 +21,16 @@ export class AreaSeriesPanel extends Component {
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesLineWidthSlider"></ag-slider>
+                <ag-slider ref="seriesLineOpacitySlider"></ag-slider>
+                <ag-slider ref="seriesFillOpacitySlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesLineWidthSlider') private seriesLineWidthSlider: AgSlider;
+    @RefSelector('seriesLineOpacitySlider') private seriesLineOpacitySlider: AgSlider;
+    @RefSelector('seriesFillOpacitySlider') private seriesFillOpacitySlider: AgSlider;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
@@ -53,6 +57,7 @@ export class AreaSeriesPanel extends Component {
 
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
+        this.initOpacity();
         this.initMarkersPanel();
         this.initShadowPanel();
     }
@@ -81,6 +86,28 @@ export class AreaSeriesPanel extends Component {
             .setTextFieldWidth(45)
             .setValue(`${strokeWidth}`)
             .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
+    }
+
+    private initOpacity() {
+        const strokeOpacity = this.series.length > 0 ? this.series[0].strokeOpacity : 1;
+
+        this.seriesLineOpacitySlider
+            .setLabel(this.chartTranslator.translate('strokeOpacity'))
+            .setStep(0.05)
+            .setMaxValue(1)
+            .setTextFieldWidth(45)
+            .setValue(`${strokeOpacity}`)
+            .onValueChange(newValue => this.series.forEach(s => s.strokeOpacity = newValue));
+
+        const fillOpacity = this.series.length > 0 ? this.series[0].fillOpacity : 1;
+
+        this.seriesFillOpacitySlider
+            .setLabel(this.chartTranslator.translate('fillOpacity'))
+            .setStep(0.05)
+            .setMaxValue(1)
+            .setTextFieldWidth(45)
+            .setValue(`${fillOpacity}`)
+            .onValueChange(newValue => this.series.forEach(s => s.fillOpacity = newValue));
     }
 
     private initMarkersPanel() {

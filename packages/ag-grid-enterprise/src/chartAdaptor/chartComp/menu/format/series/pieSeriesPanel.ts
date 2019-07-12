@@ -20,12 +20,16 @@ export class PieSeriesPanel extends Component {
             <ag-group-component ref="seriesGroup">
                <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>
+                <ag-slider ref="seriesLineOpacitySlider"></ag-slider>
+                <ag-slider ref="seriesFillOpacitySlider"></ag-slider>
             </ag-group-component>
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
     @RefSelector('seriesStrokeWidthSlider') private seriesStrokeWidthSlider: AgSlider;
+    @RefSelector('seriesLineOpacitySlider') private seriesLineOpacitySlider: AgSlider;
+    @RefSelector('seriesFillOpacitySlider') private seriesFillOpacitySlider: AgSlider;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
@@ -49,6 +53,7 @@ export class PieSeriesPanel extends Component {
         this.initGroup();
         this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
+        this.initOpacity();
         this.initLabelPanel();
         this.initShadowPanel();
     }
@@ -83,6 +88,28 @@ export class PieSeriesPanel extends Component {
             .setTextFieldWidth(45)
             .setValue(`${strokeWidth}`)
             .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
+    }
+
+    private initOpacity() {
+        const strokeOpacity = this.series.length > 0 ? this.series[0].strokeOpacity : 1;
+
+        this.seriesLineOpacitySlider
+            .setLabel(this.chartTranslator.translate('strokeOpacity'))
+            .setStep(0.05)
+            .setMaxValue(1)
+            .setTextFieldWidth(45)
+            .setValue(`${strokeOpacity}`)
+            .onValueChange(newValue => this.series.forEach(s => s.strokeOpacity = newValue));
+
+        const fillOpacity = this.series.length > 0 ? this.series[0].fillOpacity : 1;
+
+        this.seriesFillOpacitySlider
+            .setLabel(this.chartTranslator.translate('fillOpacity'))
+            .setStep(0.05)
+            .setMaxValue(1)
+            .setTextFieldWidth(45)
+            .setValue(`${fillOpacity}`)
+            .onValueChange(newValue => this.series.forEach(s => s.fillOpacity = newValue));
     }
 
     private initLabelPanel() {

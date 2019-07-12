@@ -86,4 +86,9 @@ export class AgSlider extends AgAbstractLabel {
 
         return this;
     }
+
+    public setStep(step: number): this {
+        this.eSlider.setStep(step);
+        return this;
+    }
 }

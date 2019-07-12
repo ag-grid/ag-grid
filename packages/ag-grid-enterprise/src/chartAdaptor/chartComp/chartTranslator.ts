@@ -50,7 +50,10 @@ export class ChartTranslator {
         normal: 'Normal',
         bold: 'Bold',
         italic: 'Italic',
-        boldItalic: 'Bold Italic'
+        boldItalic: 'Bold Italic',
+        fillOpacity: 'Fill Opacity',
+        strokeOpacity: 'Line Opacity'
+
     };
 
     public translate(toTranslate: string): string {
