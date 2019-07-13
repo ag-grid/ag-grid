@@ -224,7 +224,7 @@ export class GridSerializer {
         const isPivotMode = this.columnController.isPivotMode();
         const rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
-        const onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
+        const onlySelectedOneOrAllPagesNonStandardModel = !rowModelNormal && (onlySelected || onlySelectedAllPages);
 
         let columnsToExport: Column[] = [];
 
@@ -267,7 +267,10 @@ export class GridSerializer {
         }
 
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
-
+        function processSelectedRows() {
+            const selectedNodes = this.selectionController.getSelectedNodes();
+            selectedNodes.forEach(processRow);
+        }
         if (isPivotMode) {
             if ((this.rowModel as any).forEachPivotNode) {
                 (this.rowModel as ClientSideRowModel).forEachPivotNode(processRow);
@@ -276,22 +279,27 @@ export class GridSerializer {
                 this.rowModel.forEachNode(processRow);
             }
         } else {
-            // onlySelectedAllPages: user doing pagination and wants selected items from
-            // other pages, so cannot use the standard row model as it won't have rows from
-            // other pages.
-            // onlySelectedNonStandardModel: if user wants selected in non standard row model
+            // onlySelectedOneOrAllPagesNonStandardModel: if user wants selected in non standard row model
             // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
-            if (onlySelectedAllPages || onlySelectedNonStandardModel) {
-                const selectedNodes = this.selectionController.getSelectedNodes();
-                selectedNodes.forEach((node:RowNode) => {
-                    processRow(node);
-                });
+            if (onlySelectedOneOrAllPagesNonStandardModel) {
+                processSelectedRows();
             } else {
                 // here is everything else - including standard row model and selected. we don't use
                 // the selection model even when just using selected, so that the result is the order
                 // of the rows appearing on the screen.
                 if (rowModelNormal) {
-                    (this.rowModel as ClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
+                    (this.rowModel as ClientSideRowModel)
+                        .forEachNodeAfterFilterAndSort(
+                            onlySelectedAllPages
+                                ? (node: RowNode) => {
+                                    if(node.isSelected()) {
+                                        processRow(node);
+                                    }
+                                } 
+                                : processRow
+                        );
+                } else if (onlySelectedAllPages) {
+                    processSelectedRows();
                 } else {
                     this.rowModel.forEachNode(processRow);
                 }
