@@ -10,26 +10,102 @@
         "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Getting Started",
-            "url": "javascript-grid-getting-started",
+            "title": "Community & Enterprise",
+            "url": "javascript-grid-set-license/",
+            "enterprise": true
+          },
+          {
+            "title": "Supported Browsers",
+            "url": "javascript-grid-supported-browsers/"
+          },
+          {
+            "title": "Frameworks Info",
+            "url": "javascript-grid-frameworks-info/",
             "items": [
               {
-                "title": "Just JavaScript",
-                "url": "javascript-getting-started/"
+                "title": "Vanilla JavaScript",
+                "url": "javascript-grid-npm/",
+                "items": [
+                  {
+                    "title": "Getting Started",
+                    "url": "javascript-getting-started/"
+                  },
+                  {
+                    "title": "Download for Local Usage",
+                    "url": "javascript-grid-download/"
+                  },
+                  {
+                    "title": "Use with TypeScript",
+                    "url": "ag-grid-typescript-webpack-2/"
+                  }
+                ]
               },
               {
                 "title": "Angular",
-                "url": "angular-getting-started/"
+                "url": "angular-more-details/",
+                "items": [
+                  {
+                    "title": "Getting Started",
+                    "url": "angular-getting-started/"
+                  },
+                  {
+                    "title": "SystemJS",
+                    "url": "ag-grid-angular-systemjs/"
+                  },
+                  {
+                    "title": "Webpack 3",
+                    "url": "ag-grid-angular-webpack-3/"
+                  },
+                  {
+                    "title": "Webpack 2",
+                    "url": "ag-grid-angular-webpack-2/"
+                  },
+                  {
+                    "title": "Webpack 1",
+                    "url": "ag-grid-angular-webpack/"
+                  },
+                  {
+                    "title": "Angular & Material Design",
+                    "url": "example-angular-material-design/"
+                  },
+                  {
+                    "title": "Use with RxJS",
+                    "url": "example-angular-rxjs/"
+                  }
+                ]
               },
               {
                 "title": "React",
-                "url": "react-getting-started/"
+                "url": "react-more-details/",
+                "items": [
+                  {
+                    "title": "Getting Started",
+                    "url": "react-getting-started/"
+                  },
+                  {
+                    "title": "Redux Integration Part 1",
+                    "url": "react-redux-integration-pt1/"
+                  },
+                  {
+                    "title": "Redux Integration Part 2",
+                    "url": "react-redux-integration-pt2/"
+                  }
+                ]
               },
               {
                 "title": "Vue",
-                "url": "vue-getting-started/"
-              },
-              {
+                "url": "best-vuejs-data-grid/",
+                "items": [
+                  {
+                    "title": "Getting Started",
+                    "url": "vue-getting-started/"
+                  },
+                  {
+                    "title": "Vue & Unidirectional Data Flow",
+                    "url": "vuex-data-flow/"
+                  }
+                ]
+              },              {
                 "title": "AngularJS",
                 "url": "best-angularjs-data-grid/"
               },
@@ -41,16 +117,8 @@
                 "title": "Web Component",
                 "url": "best-web-component-data-grid/"
               }
+
             ]
-          },
-          {
-            "title": "Community & Enterprise",
-            "url": "javascript-grid-set-license/",
-            "enterprise": true
-          },
-          {
-            "title": "Supported Browsers",
-            "url": "javascript-grid-supported-browsers/"
           }
         ]
       },
