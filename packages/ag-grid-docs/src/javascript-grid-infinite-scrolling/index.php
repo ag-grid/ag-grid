@@ -649,7 +649,7 @@ loadingSpinnerColumn = {
 
     <p>
         The infinite row model does not use <a href="../javascript-grid-overlays/">overlays</a>
-        like the Client-side Row Model. The does not
+        like the Client-side Row Model. It does not
         use 'loading' overlay as rows load in blocks as it would be wrong to hide all the grid
         because some rows are getting loaded. The grid does not use 'no rows' overlay as the
         'no rows' could be because you have a filter set, and a grid with a filter shows an empty
