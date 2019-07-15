@@ -16,7 +16,6 @@ export class DoughnutChartProxy extends ChartProxy {
     }
 
     public update(params: UpdateChartParams): void {
-        debugger;
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
