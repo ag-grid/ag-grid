@@ -16,6 +16,7 @@ export class DoughnutChartProxy extends ChartProxy {
     }
 
     public update(params: UpdateChartParams): void {
+        debugger;
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
@@ -25,11 +26,17 @@ export class DoughnutChartProxy extends ChartProxy {
         const fieldIds = params.fields.map(f => f.colId);
 
         const existingSeriesMap: { [id: string]: PieSeries } = {};
+        const removedSeriesList: PieSeries[] = [];
         doughnutChart.series.forEach(series => {
             const pieSeries = (series as PieSeries);
             const id = pieSeries.angleField as string;
-            fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = pieSeries : doughnutChart.removeSeries(pieSeries);
+            if (fieldIds.indexOf(id) > -1) {
+                existingSeriesMap[id] = pieSeries;
+            } else {
+                removedSeriesList.push(pieSeries);
+            }
         });
+        removedSeriesList.forEach(series => doughnutChart.removeSeries(series));
 
         const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
 
