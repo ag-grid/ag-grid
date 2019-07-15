@@ -48,6 +48,27 @@ function processChartOptions(params) {
         case 'stackedBar':
             options.legendPosition = 'bottom';
             break;
+        case 'normalizedBar':
+            options.legendPosition = 'bottom';
+            break;
+        case 'groupedColumn':
+            options.legendPosition = 'right';
+            break;
+        case 'stackedColumn':
+            options.legendPosition = 'right';
+            break;
+        case 'normalizedColumn':
+            options.legendPosition = 'right';
+            break;
+        case 'area':
+            options.legendPosition = 'bottom';
+            break;
+        case 'stackedArea':
+            options.legendPosition = 'bottom';
+            break;
+        case 'normalizedArea':
+            options.legendPosition = 'bottom';
+            break;
         case 'pie':
             options.legendPosition = 'top';
             break;
@@ -87,6 +108,111 @@ function chartStackedBar() {
     var chartRangeParams = {
         cellRange: cellRange,
         chartType: 'stackedBar'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartNormalizedBar() {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'normalizedBar'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartGroupedColumn() {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'groupedColumn'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartStackedColumn() {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'stackedColumn'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartNormalizedColumn() {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'normalizedColumn'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartArea() {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'area'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartStackedArea() {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'stackedArea'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
+function chartNormalizedArea() {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'normalizedArea'
     };
 
     gridOptions.api.chartRange(chartRangeParams);
