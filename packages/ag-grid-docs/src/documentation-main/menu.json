@@ -724,11 +724,6 @@
                 "enterprise": true
               },
               {
-                "title": "Scatter",
-                "url": "javascript-grid-charts-customisation-scatter/",
-                "enterprise": true
-              },
-              {
                 "title": "Pie",
                 "url": "javascript-grid-charts-customisation-pie/",
                 "enterprise": true
