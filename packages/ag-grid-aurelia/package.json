@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-aurelia",
-  "version": "21.0.1",
+  "version": "21.1.0",
   "description": "ag-Grid Aurelia Component",
   "main": "./main.js",
   "typings": "./main.d.ts",
