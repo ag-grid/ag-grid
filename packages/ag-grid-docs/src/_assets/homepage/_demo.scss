@@ -20,3 +20,7 @@
 [class^='ag-theme'][class$='dark'] {
   @include scrollbars(15px, #6b6b6b, #1c1f20, #959595, #424242);
 }
+
+.ag-theme-balham-dark {
+    @include scrollbars(15px, #6b6b6b, #1c1f20, #959595, #424242);
+}
