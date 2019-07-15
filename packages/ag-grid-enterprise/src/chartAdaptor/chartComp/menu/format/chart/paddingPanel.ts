@@ -7,7 +7,7 @@ export class PaddingPanel extends Component {
 
     public static TEMPLATE =
         `<div>
-            <ag-group-component ref="chartPaddingGroup">                                                   
+            <ag-group-component ref="chartPaddingGroup">
                 <ag-slider ref="paddingTopSlider"></ag-slider>
                 <ag-slider ref="paddingRightSlider"></ag-slider>
                 <ag-slider ref="paddingBottomSlider"></ag-slider>
