@@ -6,7 +6,7 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Status Bar Panels (Components)</h1>
+<h1 class="heading-enterprise">Status Bar Panels (Components)</h1>
 
 <p>
     Status Bar Panels allow you to add your own components to the grid's Status Bar. Use this when the provided
