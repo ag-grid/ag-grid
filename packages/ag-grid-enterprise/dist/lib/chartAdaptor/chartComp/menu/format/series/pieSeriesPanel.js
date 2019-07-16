@@ -71,7 +71,7 @@ var PieSeriesPanel = /** @class */ (function (_super) {
         var strokeWidth = this.series.length > 0 ? this.series[0].strokeWidth : 1;
         this.seriesStrokeWidthSlider
             .setLabel(this.chartTranslator.translate('strokeWidth'))
-            .setMaxValue(30)
+            .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue("" + strokeWidth)
             .onValueChange(function (newValue) { return _this.series.forEach(function (s) { return s.strokeWidth = newValue; }); });

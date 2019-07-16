@@ -34,11 +34,18 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         var doughnutChart = this.chart;
         var fieldIds = params.fields.map(function (f) { return f.colId; });
         var existingSeriesMap = {};
+        var removedSeriesList = [];
         doughnutChart.series.forEach(function (series) {
             var pieSeries = series;
             var id = pieSeries.angleField;
-            fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = pieSeries : doughnutChart.removeSeries(pieSeries);
+            if (fieldIds.indexOf(id) > -1) {
+                existingSeriesMap[id] = pieSeries;
+            }
+            else {
+                removedSeriesList.push(pieSeries);
+            }
         });
+        removedSeriesList.forEach(function (series) { return doughnutChart.removeSeries(series); });
         var seriesOptions = this.chartOptions.seriesDefaults;
         // Use `Object.create` to prevent mutating the original user config that is possibly reused.
         var title = (seriesOptions.title ? Object.create(seriesOptions.title) : {});

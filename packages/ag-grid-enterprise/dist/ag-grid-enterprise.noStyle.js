@@ -100,10 +100,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(1);
-__webpack_require__(270);
+__webpack_require__(274);
 
 // add in exports for ag-Grid-Enterprise
-var agGridEnterprise = __webpack_require__(378);
+var agGridEnterprise = __webpack_require__(382);
 Object.keys(agGridEnterprise).forEach(function(key) {
     exports[key] = agGridEnterprise[key];
 });
@@ -123,8 +123,8 @@ Object.keys(agGrid).forEach(function(key) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var rangeChartService_1 = __webpack_require__(187);
-var chartTranslator_1 = __webpack_require__(194);
+var rangeChartService_1 = __webpack_require__(191);
+var chartTranslator_1 = __webpack_require__(198);
 exports.ChartsModule = {
     moduleName: "chartsModule" /* ChartsModule */,
     enterpriseBeans: [
@@ -158,33 +158,33 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 // columnController
 var columnFactory_1 = __webpack_require__(4);
 exports.ColumnFactory = columnFactory_1.ColumnFactory;
-var columnController_1 = __webpack_require__(18);
+var columnController_1 = __webpack_require__(22);
 exports.ColumnController = columnController_1.ColumnController;
-var columnKeyCreator_1 = __webpack_require__(120);
+var columnKeyCreator_1 = __webpack_require__(124);
 exports.ColumnKeyCreator = columnKeyCreator_1.ColumnKeyCreator;
-var columnUtils_1 = __webpack_require__(21);
+var columnUtils_1 = __webpack_require__(25);
 exports.ColumnUtils = columnUtils_1.ColumnUtils;
-var displayedGroupCreator_1 = __webpack_require__(25);
+var displayedGroupCreator_1 = __webpack_require__(29);
 exports.DisplayedGroupCreator = displayedGroupCreator_1.DisplayedGroupCreator;
-var groupInstanceIdCreator_1 = __webpack_require__(112);
+var groupInstanceIdCreator_1 = __webpack_require__(116);
 exports.GroupInstanceIdCreator = groupInstanceIdCreator_1.GroupInstanceIdCreator;
 // components
-var componentUtil_1 = __webpack_require__(11);
+var componentUtil_1 = __webpack_require__(15);
 exports.ComponentUtil = componentUtil_1.ComponentUtil;
-var colDefUtil_1 = __webpack_require__(117);
+var colDefUtil_1 = __webpack_require__(121);
 exports.ColDefUtil = colDefUtil_1.ColDefUtil;
-var userComponentRegistry_1 = __webpack_require__(61);
+var userComponentRegistry_1 = __webpack_require__(65);
 exports.UserComponentRegistry = userComponentRegistry_1.UserComponentRegistry;
-var userComponentFactory_1 = __webpack_require__(60);
+var userComponentFactory_1 = __webpack_require__(64);
 exports.UserComponentFactory = userComponentFactory_1.UserComponentFactory;
-var agGridNg1_1 = __webpack_require__(122);
+var agGridNg1_1 = __webpack_require__(126);
 exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
-var agGridWebComponent_1 = __webpack_require__(179);
+var agGridWebComponent_1 = __webpack_require__(183);
 exports.initialiseAgGridWithWebComponents = agGridWebComponent_1.initialiseAgGridWithWebComponents;
 // context
-var beanStub_1 = __webpack_require__(31);
+var beanStub_1 = __webpack_require__(35);
 exports.BeanStub = beanStub_1.BeanStub;
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 exports.Context = context_1.Context;
 exports.Autowired = context_1.Autowired;
 exports.PostConstruct = context_1.PostConstruct;
@@ -193,236 +193,236 @@ exports.Optional = context_1.Optional;
 exports.Bean = context_1.Bean;
 exports.Qualifier = context_1.Qualifier;
 exports.PreDestroy = context_1.PreDestroy;
-var componentAnnotations_1 = __webpack_require__(64);
+var componentAnnotations_1 = __webpack_require__(68);
 exports.QuerySelector = componentAnnotations_1.QuerySelector;
 exports.Listener = componentAnnotations_1.Listener;
 exports.RefSelector = componentAnnotations_1.RefSelector;
 // dragAndDrop
-var dragAndDropService_1 = __webpack_require__(41);
+var dragAndDropService_1 = __webpack_require__(45);
 exports.DragAndDropService = dragAndDropService_1.DragAndDropService;
 exports.DragSourceType = dragAndDropService_1.DragSourceType;
 exports.HDirection = dragAndDropService_1.HDirection;
 exports.VDirection = dragAndDropService_1.VDirection;
-var dragService_1 = __webpack_require__(42);
+var dragService_1 = __webpack_require__(46);
 exports.DragService = dragService_1.DragService;
 // entities
-var column_1 = __webpack_require__(20);
+var column_1 = __webpack_require__(24);
 exports.Column = column_1.Column;
-var columnGroup_1 = __webpack_require__(19);
+var columnGroup_1 = __webpack_require__(23);
 exports.ColumnGroup = columnGroup_1.ColumnGroup;
-var originalColumnGroup_1 = __webpack_require__(22);
+var originalColumnGroup_1 = __webpack_require__(26);
 exports.OriginalColumnGroup = originalColumnGroup_1.OriginalColumnGroup;
-var rowNode_1 = __webpack_require__(33);
+var rowNode_1 = __webpack_require__(37);
 exports.RowNode = rowNode_1.RowNode;
 // filter
-var filterManager_1 = __webpack_require__(58);
+var filterManager_1 = __webpack_require__(62);
 exports.FilterManager = filterManager_1.FilterManager;
-var providedFilter_1 = __webpack_require__(68);
+var providedFilter_1 = __webpack_require__(72);
 exports.ProvidedFilter = providedFilter_1.ProvidedFilter;
-var simpleFilter_1 = __webpack_require__(66);
+var simpleFilter_1 = __webpack_require__(70);
 exports.SimpleFilter = simpleFilter_1.SimpleFilter;
-var scalerFilter_1 = __webpack_require__(69);
+var scalerFilter_1 = __webpack_require__(73);
 exports.ScalerFilter = scalerFilter_1.ScalerFilter;
-var numberFilter_1 = __webpack_require__(83);
+var numberFilter_1 = __webpack_require__(87);
 exports.NumberFilter = numberFilter_1.NumberFilter;
-var textFilter_1 = __webpack_require__(90);
+var textFilter_1 = __webpack_require__(94);
 exports.TextFilter = textFilter_1.TextFilter;
-var dateFilter_1 = __webpack_require__(63);
+var dateFilter_1 = __webpack_require__(67);
 exports.DateFilter = dateFilter_1.DateFilter;
 // gridPanel
-var gridPanel_1 = __webpack_require__(133);
+var gridPanel_1 = __webpack_require__(137);
 exports.GridPanel = gridPanel_1.GridPanel;
-var scrollVisibleService_1 = __webpack_require__(52);
+var scrollVisibleService_1 = __webpack_require__(56);
 exports.ScrollVisibleService = scrollVisibleService_1.ScrollVisibleService;
-var mouseEventService_1 = __webpack_require__(76);
+var mouseEventService_1 = __webpack_require__(80);
 exports.MouseEventService = mouseEventService_1.MouseEventService;
 // headerRendering
-var bodyDropPivotTarget_1 = __webpack_require__(132);
+var bodyDropPivotTarget_1 = __webpack_require__(136);
 exports.BodyDropPivotTarget = bodyDropPivotTarget_1.BodyDropPivotTarget;
-var bodyDropTarget_1 = __webpack_require__(130);
+var bodyDropTarget_1 = __webpack_require__(134);
 exports.BodyDropTarget = bodyDropTarget_1.BodyDropTarget;
-var cssClassApplier_1 = __webpack_require__(104);
+var cssClassApplier_1 = __webpack_require__(108);
 exports.CssClassApplier = cssClassApplier_1.CssClassApplier;
-var headerContainer_1 = __webpack_require__(125);
+var headerContainer_1 = __webpack_require__(129);
 exports.HeaderContainer = headerContainer_1.HeaderContainer;
-var headerRootComp_1 = __webpack_require__(124);
+var headerRootComp_1 = __webpack_require__(128);
 exports.HeaderRootComp = headerRootComp_1.HeaderRootComp;
-var headerRowComp_1 = __webpack_require__(126);
+var headerRowComp_1 = __webpack_require__(130);
 exports.HeaderRowComp = headerRowComp_1.HeaderRowComp;
-var horizontalResizeService_1 = __webpack_require__(103);
+var horizontalResizeService_1 = __webpack_require__(107);
 exports.HorizontalResizeService = horizontalResizeService_1.HorizontalResizeService;
-var moveColumnController_1 = __webpack_require__(131);
+var moveColumnController_1 = __webpack_require__(135);
 exports.MoveColumnController = moveColumnController_1.MoveColumnController;
-var standardMenu_1 = __webpack_require__(140);
+var standardMenu_1 = __webpack_require__(144);
 exports.StandardMenuFactory = standardMenu_1.StandardMenuFactory;
 // layout
-var tabbedLayout_1 = __webpack_require__(180);
+var tabbedLayout_1 = __webpack_require__(184);
 exports.TabbedLayout = tabbedLayout_1.TabbedLayout;
-var verticalStack_1 = __webpack_require__(181);
+var verticalStack_1 = __webpack_require__(185);
 exports.VerticalStack = verticalStack_1.VerticalStack;
 // misc
-var simpleHttpRequest_1 = __webpack_require__(182);
+var simpleHttpRequest_1 = __webpack_require__(186);
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
-var resizeObserverService_1 = __webpack_require__(138);
+var resizeObserverService_1 = __webpack_require__(142);
 exports.ResizeObserverService = resizeObserverService_1.ResizeObserverService;
-var largeTextCellEditor_1 = __webpack_require__(82);
+var largeTextCellEditor_1 = __webpack_require__(86);
 exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
-var popupEditorWrapper_1 = __webpack_require__(44);
+var popupEditorWrapper_1 = __webpack_require__(48);
 exports.PopupEditorWrapper = popupEditorWrapper_1.PopupEditorWrapper;
-var popupSelectCellEditor_1 = __webpack_require__(81);
+var popupSelectCellEditor_1 = __webpack_require__(85);
 exports.PopupSelectCellEditor = popupSelectCellEditor_1.PopupSelectCellEditor;
-var popupTextCellEditor_1 = __webpack_require__(80);
+var popupTextCellEditor_1 = __webpack_require__(84);
 exports.PopupTextCellEditor = popupTextCellEditor_1.PopupTextCellEditor;
-var selectCellEditor_1 = __webpack_require__(79);
+var selectCellEditor_1 = __webpack_require__(83);
 exports.SelectCellEditor = selectCellEditor_1.SelectCellEditor;
-var textCellEditor_1 = __webpack_require__(62);
+var textCellEditor_1 = __webpack_require__(66);
 exports.TextCellEditor = textCellEditor_1.TextCellEditor;
-var animateShowChangeCellRenderer_1 = __webpack_require__(77);
+var animateShowChangeCellRenderer_1 = __webpack_require__(81);
 exports.AnimateShowChangeCellRenderer = animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer;
-var animateSlideCellRenderer_1 = __webpack_require__(57);
+var animateSlideCellRenderer_1 = __webpack_require__(61);
 exports.AnimateSlideCellRenderer = animateSlideCellRenderer_1.AnimateSlideCellRenderer;
-var groupCellRenderer_1 = __webpack_require__(74);
+var groupCellRenderer_1 = __webpack_require__(78);
 exports.GroupCellRenderer = groupCellRenderer_1.GroupCellRenderer;
 // features
-var setLeftFeature_1 = __webpack_require__(105);
+var setLeftFeature_1 = __webpack_require__(109);
 exports.SetLeftFeature = setLeftFeature_1.SetLeftFeature;
 // rendering
-var autoWidthCalculator_1 = __webpack_require__(26);
+var autoWidthCalculator_1 = __webpack_require__(30);
 exports.AutoWidthCalculator = autoWidthCalculator_1.AutoWidthCalculator;
-var cellRendererFactory_1 = __webpack_require__(56);
+var cellRendererFactory_1 = __webpack_require__(60);
 exports.CellRendererFactory = cellRendererFactory_1.CellRendererFactory;
-var checkboxSelectionComponent_1 = __webpack_require__(32);
+var checkboxSelectionComponent_1 = __webpack_require__(36);
 exports.CheckboxSelectionComponent = checkboxSelectionComponent_1.CheckboxSelectionComponent;
-var cellComp_1 = __webpack_require__(29);
+var cellComp_1 = __webpack_require__(33);
 exports.CellComp = cellComp_1.CellComp;
-var rowComp_1 = __webpack_require__(28);
+var rowComp_1 = __webpack_require__(32);
 exports.RowComp = rowComp_1.RowComp;
-var rowRenderer_1 = __webpack_require__(27);
+var rowRenderer_1 = __webpack_require__(31);
 exports.RowRenderer = rowRenderer_1.RowRenderer;
-var valueFormatterService_1 = __webpack_require__(75);
+var valueFormatterService_1 = __webpack_require__(79);
 exports.ValueFormatterService = valueFormatterService_1.ValueFormatterService;
 // rowControllers/inMemory
-var filterStage_1 = __webpack_require__(141);
+var filterStage_1 = __webpack_require__(145);
 exports.FilterStage = filterStage_1.FilterStage;
-var flattenStage_1 = __webpack_require__(146);
+var flattenStage_1 = __webpack_require__(150);
 exports.FlattenStage = flattenStage_1.FlattenStage;
-var sortStage_1 = __webpack_require__(144);
+var sortStage_1 = __webpack_require__(148);
 exports.SortStage = sortStage_1.SortStage;
 // row models
-var pinnedRowModel_1 = __webpack_require__(50);
+var pinnedRowModel_1 = __webpack_require__(54);
 exports.PinnedRowModel = pinnedRowModel_1.PinnedRowModel;
-var clientSideRowModel_1 = __webpack_require__(153);
+var clientSideRowModel_1 = __webpack_require__(157);
 exports.ClientSideRowModel = clientSideRowModel_1.ClientSideRowModel;
-var changedPath_1 = __webpack_require__(35);
+var changedPath_1 = __webpack_require__(39);
 exports.ChangedPath = changedPath_1.ChangedPath;
-var clientSideNodeManager_1 = __webpack_require__(154);
+var clientSideNodeManager_1 = __webpack_require__(158);
 exports.ClientSideNodeManager = clientSideNodeManager_1.ClientSideNodeManager;
-var infiniteRowModel_1 = __webpack_require__(147);
+var infiniteRowModel_1 = __webpack_require__(151);
 exports.InfiniteRowModel = infiniteRowModel_1.InfiniteRowModel;
-var rowNodeBlock_1 = __webpack_require__(150);
+var rowNodeBlock_1 = __webpack_require__(154);
 exports.RowNodeBlock = rowNodeBlock_1.RowNodeBlock;
-var rowNodeBlockLoader_1 = __webpack_require__(152);
+var rowNodeBlockLoader_1 = __webpack_require__(156);
 exports.RowNodeBlockLoader = rowNodeBlockLoader_1.RowNodeBlockLoader;
-var paginationProxy_1 = __webpack_require__(51);
+var paginationProxy_1 = __webpack_require__(55);
 exports.PaginationProxy = paginationProxy_1.PaginationProxy;
-var rowNodeCache_1 = __webpack_require__(151);
+var rowNodeCache_1 = __webpack_require__(155);
 exports.RowNodeCache = rowNodeCache_1.RowNodeCache;
 //styling
-var stylingService_1 = __webpack_require__(96);
+var stylingService_1 = __webpack_require__(100);
 exports.StylingService = stylingService_1.StylingService;
 // widgets
-var agAbstractField_1 = __webpack_require__(108);
+var agAbstractField_1 = __webpack_require__(112);
 exports.AgAbstractField = agAbstractField_1.AgAbstractField;
-var agCheckbox_1 = __webpack_require__(106);
+var agCheckbox_1 = __webpack_require__(110);
 exports.AgCheckbox = agCheckbox_1.AgCheckbox;
-var agRadioButton_1 = __webpack_require__(155);
+var agRadioButton_1 = __webpack_require__(159);
 exports.AgRadioButton = agRadioButton_1.AgRadioButton;
-var agToggleButton_1 = __webpack_require__(178);
+var agToggleButton_1 = __webpack_require__(182);
 exports.AgToggleButton = agToggleButton_1.AgToggleButton;
-var agInputTextField_1 = __webpack_require__(168);
+var agInputTextField_1 = __webpack_require__(172);
 exports.AgInputTextField = agInputTextField_1.AgInputTextField;
-var agInputTextArea_1 = __webpack_require__(169);
+var agInputTextArea_1 = __webpack_require__(173);
 exports.AgInputTextArea = agInputTextArea_1.AgInputTextArea;
-var agInputNumberField_1 = __webpack_require__(172);
+var agInputNumberField_1 = __webpack_require__(176);
 exports.AgInputNumberField = agInputNumberField_1.AgInputNumberField;
-var agInputRange_1 = __webpack_require__(171);
+var agInputRange_1 = __webpack_require__(175);
 exports.AgInputRange = agInputRange_1.AgInputRange;
-var agSelect_1 = __webpack_require__(176);
+var agSelect_1 = __webpack_require__(180);
 exports.AgSelect = agSelect_1.AgSelect;
-var agSlider_1 = __webpack_require__(170);
+var agSlider_1 = __webpack_require__(174);
 exports.AgSlider = agSlider_1.AgSlider;
-var agAngleSelect_1 = __webpack_require__(177);
+var agAngleSelect_1 = __webpack_require__(181);
 exports.AgAngleSelect = agAngleSelect_1.AgAngleSelect;
-var agColorPicker_1 = __webpack_require__(173);
+var agColorPicker_1 = __webpack_require__(177);
 exports.AgColorPicker = agColorPicker_1.AgColorPicker;
-var agGroupComponent_1 = __webpack_require__(161);
+var agGroupComponent_1 = __webpack_require__(165);
 exports.AgGroupComponent = agGroupComponent_1.AgGroupComponent;
-var agDialog_1 = __webpack_require__(162);
+var agDialog_1 = __webpack_require__(166);
 exports.AgDialog = agDialog_1.AgDialog;
-var agPanel_1 = __webpack_require__(166);
+var agPanel_1 = __webpack_require__(170);
 exports.AgPanel = agPanel_1.AgPanel;
-var messageBox_1 = __webpack_require__(183);
+var messageBox_1 = __webpack_require__(187);
 exports.MessageBox = messageBox_1.MessageBox;
-var component_1 = __webpack_require__(30);
+var component_1 = __webpack_require__(34);
 exports.Component = component_1.Component;
-var popupComponent_1 = __webpack_require__(45);
+var popupComponent_1 = __webpack_require__(49);
 exports.PopupComponent = popupComponent_1.PopupComponent;
-var popupService_1 = __webpack_require__(59);
+var popupService_1 = __webpack_require__(63);
 exports.PopupService = popupService_1.PopupService;
-var touchListener_1 = __webpack_require__(72);
+var touchListener_1 = __webpack_require__(76);
 exports.TouchListener = touchListener_1.TouchListener;
 // range
-var iRangeController_1 = __webpack_require__(39);
+var iRangeController_1 = __webpack_require__(43);
 exports.CellRangeType = iRangeController_1.CellRangeType;
 // exporter
-var csvCreator_1 = __webpack_require__(16);
+var csvCreator_1 = __webpack_require__(20);
 exports.CsvCreator = csvCreator_1.CsvCreator;
 exports.BaseCreator = csvCreator_1.BaseCreator;
-var downloader_1 = __webpack_require__(114);
+var downloader_1 = __webpack_require__(118);
 exports.Downloader = downloader_1.Downloader;
-var xmlFactory_1 = __webpack_require__(157);
+var xmlFactory_1 = __webpack_require__(161);
 exports.XmlFactory = xmlFactory_1.XmlFactory;
-var gridSerializer_1 = __webpack_require__(17);
+var gridSerializer_1 = __webpack_require__(21);
 exports.BaseGridSerializingSession = gridSerializer_1.BaseGridSerializingSession;
 exports.GridSerializer = gridSerializer_1.GridSerializer;
-var gridSerializer_2 = __webpack_require__(17);
+var gridSerializer_2 = __webpack_require__(21);
 exports.RowType = gridSerializer_2.RowType;
-var zipContainer_1 = __webpack_require__(160);
+var zipContainer_1 = __webpack_require__(164);
 exports.ZipContainer = zipContainer_1.ZipContainer;
 // root
-var vanillaFrameworkOverrides_1 = __webpack_require__(156);
+var vanillaFrameworkOverrides_1 = __webpack_require__(160);
 exports.VanillaFrameworkOverrides = vanillaFrameworkOverrides_1.VanillaFrameworkOverrides;
-var cellNavigationService_1 = __webpack_require__(49);
+var cellNavigationService_1 = __webpack_require__(53);
 exports.CellNavigationService = cellNavigationService_1.CellNavigationService;
-var alignedGridsService_1 = __webpack_require__(116);
+var alignedGridsService_1 = __webpack_require__(120);
 exports.AlignedGridsService = alignedGridsService_1.AlignedGridsService;
-var constants_1 = __webpack_require__(7);
+var constants_1 = __webpack_require__(9);
 exports.Constants = constants_1.Constants;
-var grid_1 = __webpack_require__(123);
+var grid_1 = __webpack_require__(127);
 exports.Grid = grid_1.Grid;
-var gridApi_1 = __webpack_require__(15);
+var gridApi_1 = __webpack_require__(19);
 exports.GridApi = gridApi_1.GridApi;
-var eventKeys_1 = __webpack_require__(13);
+var eventKeys_1 = __webpack_require__(17);
 exports.Events = eventKeys_1.Events;
-var focusedCellController_1 = __webpack_require__(48);
+var focusedCellController_1 = __webpack_require__(52);
 exports.FocusedCellController = focusedCellController_1.FocusedCellController;
-var functions_1 = __webpack_require__(184);
+var functions_1 = __webpack_require__(188);
 exports.defaultGroupComparator = functions_1.defaultGroupComparator;
 var gridOptionsWrapper_1 = __webpack_require__(5);
 exports.GridOptionsWrapper = gridOptionsWrapper_1.GridOptionsWrapper;
-var eventService_1 = __webpack_require__(8);
+var eventService_1 = __webpack_require__(12);
 exports.EventService = eventService_1.EventService;
-var selectableService_1 = __webpack_require__(143);
+var selectableService_1 = __webpack_require__(147);
 exports.SelectableService = selectableService_1.SelectableService;
-var gridCore_1 = __webpack_require__(139);
+var gridCore_1 = __webpack_require__(143);
 exports.GridCore = gridCore_1.GridCore;
-var logger_1 = __webpack_require__(9);
+var logger_1 = __webpack_require__(13);
 exports.Logger = logger_1.Logger;
-var selectionController_1 = __webpack_require__(34);
+var selectionController_1 = __webpack_require__(38);
 exports.SelectionController = selectionController_1.SelectionController;
-var sortController_1 = __webpack_require__(71);
+var sortController_1 = __webpack_require__(75);
 exports.SortController = sortController_1.SortController;
-var templateService_1 = __webpack_require__(54);
+var templateService_1 = __webpack_require__(58);
 exports.TemplateService = templateService_1.TemplateService;
 var utils_1 = __webpack_require__(6);
 exports.Color = utils_1.Color;
@@ -430,26 +430,26 @@ exports.Utils = utils_1.Utils;
 exports.NumberSequence = utils_1.NumberSequence;
 exports._ = utils_1._;
 exports.Promise = utils_1.Promise;
-var valueService_1 = __webpack_require__(36);
+var valueService_1 = __webpack_require__(40);
 exports.ValueService = valueService_1.ValueService;
-var expressionService_1 = __webpack_require__(24);
+var expressionService_1 = __webpack_require__(28);
 exports.ExpressionService = expressionService_1.ExpressionService;
-var logger_2 = __webpack_require__(9);
+var logger_2 = __webpack_require__(13);
 exports.LoggerFactory = logger_2.LoggerFactory;
-var cellPosition_1 = __webpack_require__(38);
+var cellPosition_1 = __webpack_require__(42);
 exports.CellPositionUtils = cellPosition_1.CellPositionUtils;
-var rowPosition_1 = __webpack_require__(46);
+var rowPosition_1 = __webpack_require__(50);
 exports.RowPositionUtils = rowPosition_1.RowPositionUtils;
-var columnApi_1 = __webpack_require__(23);
+var columnApi_1 = __webpack_require__(27);
 exports.ColumnApi = columnApi_1.ColumnApi;
-var frameworkComponentWrapper_1 = __webpack_require__(185);
+var frameworkComponentWrapper_1 = __webpack_require__(189);
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
-var environment_1 = __webpack_require__(43);
+var environment_1 = __webpack_require__(47);
 exports.Environment = environment_1.Environment;
-var tooltipManager_1 = __webpack_require__(100);
+var tooltipManager_1 = __webpack_require__(104);
 exports.TooltipManager = tooltipManager_1.TooltipManager;
 // charts
-var iChartOptions_1 = __webpack_require__(186);
+var iChartOptions_1 = __webpack_require__(190);
 exports.ChartType = iChartOptions_1.ChartType;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(3)))
@@ -506,13 +506,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var logger_1 = __webpack_require__(9);
-var columnUtils_1 = __webpack_require__(21);
-var columnKeyCreator_1 = __webpack_require__(120);
-var originalColumnGroup_1 = __webpack_require__(22);
-var column_1 = __webpack_require__(20);
-var context_1 = __webpack_require__(10);
-var defaultColumnTypes_1 = __webpack_require__(121);
+var logger_1 = __webpack_require__(13);
+var columnUtils_1 = __webpack_require__(25);
+var columnKeyCreator_1 = __webpack_require__(124);
+var originalColumnGroup_1 = __webpack_require__(26);
+var column_1 = __webpack_require__(24);
+var context_1 = __webpack_require__(14);
+var defaultColumnTypes_1 = __webpack_require__(125);
 var utils_1 = __webpack_require__(6);
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 var ColumnFactory = /** @class */ (function () {
@@ -848,19 +848,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(6);
-var eventService_1 = __webpack_require__(8);
-var constants_1 = __webpack_require__(7);
-var componentUtil_1 = __webpack_require__(11);
-var gridApi_1 = __webpack_require__(15);
-var context_1 = __webpack_require__(10);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
-var environment_1 = __webpack_require__(43);
-var propertyKeys_1 = __webpack_require__(14);
-var colDefUtil_1 = __webpack_require__(117);
-var eventKeys_1 = __webpack_require__(13);
-var autoHeightCalculator_1 = __webpack_require__(118);
-var sideBar_1 = __webpack_require__(119);
+var eventService_1 = __webpack_require__(12);
+var constants_1 = __webpack_require__(9);
+var componentUtil_1 = __webpack_require__(15);
+var gridApi_1 = __webpack_require__(19);
+var context_1 = __webpack_require__(14);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
+var environment_1 = __webpack_require__(47);
+var propertyKeys_1 = __webpack_require__(18);
+var colDefUtil_1 = __webpack_require__(121);
+var eventKeys_1 = __webpack_require__(17);
+var autoHeightCalculator_1 = __webpack_require__(122);
+var sideBar_1 = __webpack_require__(123);
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -2188,26 +2188,450 @@ exports.GridOptionsWrapper = GridOptionsWrapper;
  * @license MIT
  */
 
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(7);
+__export(__webpack_require__(7));
+__export(__webpack_require__(8));
+__export(__webpack_require__(10));
+__export(__webpack_require__(11));
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v21.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Color = /** @class */ (function () {
+    /**
+     * Every color component should be in the [0, 1] range.
+     * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
+     * So, when animating colors, if the source or target color components are already near
+     * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
+     * component value to end up outside of that range mid-animation. For this reason the constructor
+     * performs range checking/constraining.
+     * @param r Red component.
+     * @param g Green component.
+     * @param b Blue component.
+     * @param a Alpha (opacity) component.
+     */
+    function Color(r, g, b, a) {
+        if (a === void 0) { a = 1; }
+        // NaN is treated as 0.
+        this.r = Math.min(1, Math.max(0, r || 0));
+        this.g = Math.min(1, Math.max(0, g || 0));
+        this.b = Math.min(1, Math.max(0, b || 0));
+        this.a = Math.min(1, Math.max(0, a || 0));
+    }
+    /**
+     * The given string can be in one of the following formats:
+     * - #rgb
+     * - #rrggbb
+     * - rgb(r, g, b)
+     * - rgba(r, g, b, a)
+     * - CSS color name such as 'white', 'orange', 'cyan', etc.
+     * @param str
+     */
+    Color.fromString = function (str) {
+        // hexadecimal notation
+        if (str.indexOf('#') >= 0) { // there can be some leading whitespace
+            return Color.fromHexString(str);
+        }
+        // color name
+        var hex = Color.nameToHex[str];
+        if (hex) {
+            return Color.fromHexString(hex);
+        }
+        // rgb(a) notation
+        if (str.indexOf('rgb') >= 0) {
+            return Color.fromRgbaString(str);
+        }
+        throw new Error("Invalid color string: '" + str + "'");
+    };
+    // Using separate RegExp for the short hex notation because strings like `#abcd`
+    // are matched as ['#abcd', 'ab', 'c', 'd', undefined] when the `{1,2}` quantifier is used.
+    Color.fromHexString = function (str) {
+        var values = str.match(Color.hexRe);
+        if (values) {
+            var r = parseInt(values[1], 16);
+            var g = parseInt(values[2], 16);
+            var b = parseInt(values[3], 16);
+            var a = values[4] !== undefined ? parseInt(values[4], 16) : 255;
+            return new Color(r / 255, g / 255, b / 255, a / 255);
+        }
+        values = str.match(Color.shortHexRe);
+        if (values) {
+            var r = parseInt(values[1], 16);
+            var g = parseInt(values[2], 16);
+            var b = parseInt(values[3], 16);
+            var a = values[4] !== undefined ? parseInt(values[4], 16) : 15;
+            r += r * 16;
+            g += g * 16;
+            b += b * 16;
+            a += a * 16;
+            return new Color(r / 255, g / 255, b / 255, a / 255);
+        }
+        throw new Error("Malformed hexadecimal color string: '" + str + "'");
+    };
+    Color.fromRgbaString = function (str) {
+        var values = str.match(Color.rgbRe);
+        if (values) {
+            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255);
+        }
+        values = str.match(Color.rgbaRe);
+        if (values) {
+            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255, +values[4]);
+        }
+        throw new Error("Malformed rgb/rgba color string: '" + str + "'");
+    };
+    Color.fromArray = function (arr) {
+        if (arr.length === 4) {
+            return new Color(arr[0], arr[1], arr[2], arr[3]);
+        }
+        if (arr.length === 3) {
+            return new Color(arr[0], arr[1], arr[2]);
+        }
+        throw new Error('The given array should contain 3 or 4 color components (numbers).');
+    };
+    Color.fromHSB = function (h, s, b, alpha) {
+        if (alpha === void 0) { alpha = 1; }
+        var rgb = Color.HSBtoRGB(h, s, b);
+        return new Color(rgb[0], rgb[1], rgb[2], alpha);
+    };
+    Color.padHex = function (str) {
+        // Can't use `padStart(2, '0')` here because of IE.
+        return str.length === 1 ? '0' + str : str;
+    };
+    Color.prototype.toHexString = function () {
+        var hex = '#'
+            + Color.padHex(Math.round(this.r * 255).toString(16))
+            + Color.padHex(Math.round(this.g * 255).toString(16))
+            + Color.padHex(Math.round(this.b * 255).toString(16));
+        if (this.a < 1) {
+            hex += Color.padHex(Math.round(this.a * 255).toString(16));
+        }
+        return hex;
+    };
+    Color.prototype.toRgbaString = function (fractionDigits) {
+        if (fractionDigits === void 0) { fractionDigits = 3; }
+        var components = [
+            Math.round(this.r * 255),
+            Math.round(this.g * 255),
+            Math.round(this.b * 255)
+        ];
+        var k = Math.pow(10, fractionDigits);
+        if (this.a !== 1) {
+            components.push(Math.round(this.a * k) / k);
+            return "rgba(" + components.join(', ') + ")";
+        }
+        return "rgb(" + components.join(', ') + ")";
+    };
+    Color.prototype.toString = function () {
+        if (this.a === 1) {
+            return this.toHexString();
+        }
+        return this.toRgbaString();
+    };
+    Color.prototype.toHSB = function () {
+        return Color.RGBtoHSB(this.r, this.g, this.b);
+    };
+    /**
+     * Converts the given RGB triple to an array of HSB (HSV) components.
+     * The hue component will be `NaN` for achromatic colors.
+     */
+    Color.RGBtoHSB = function (r, g, b) {
+        var min = Math.min(r, g, b);
+        var max = Math.max(r, g, b);
+        var S = max !== 0 ? (max - min) / max : 0;
+        var H = NaN;
+        // min == max, means all components are the same
+        // and the color is a shade of gray with no hue (H is NaN)
+        if (min !== max) {
+            var delta = max - min;
+            var rc = (max - r) / delta;
+            var gc = (max - g) / delta;
+            var bc = (max - b) / delta;
+            if (r === max) {
+                H = bc - gc;
+            }
+            else if (g === max) {
+                H = 2.0 + rc - bc;
+            }
+            else {
+                H = 4.0 + gc - rc;
+            }
+            H /= 6.0;
+            if (H < 0) {
+                H = H + 1.0;
+            }
+        }
+        return [H * 360, S, max];
+    };
+    /**
+     * Converts the given HSB (HSV) triple to an array of RGB components.
+     */
+    Color.HSBtoRGB = function (H, S, B) {
+        if (isNaN(H)) {
+            H = 0;
+        }
+        H = (((H % 360) + 360) % 360) / 360; // normalize hue to [0, 360] interval, then scale to [0, 1]
+        var r = 0;
+        var g = 0;
+        var b = 0;
+        if (S === 0) {
+            r = g = b = B;
+        }
+        else {
+            var h = (H - Math.floor(H)) * 6;
+            var f = h - Math.floor(h);
+            var p = B * (1 - S);
+            var q = B * (1 - S * f);
+            var t = B * (1 - (S * (1 - f)));
+            switch (h >> 0) { // discard the floating point part of the number
+                case 0:
+                    r = B;
+                    g = t;
+                    b = p;
+                    break;
+                case 1:
+                    r = q;
+                    g = B;
+                    b = p;
+                    break;
+                case 2:
+                    r = p;
+                    g = B;
+                    b = t;
+                    break;
+                case 3:
+                    r = p;
+                    g = q;
+                    b = B;
+                    break;
+                case 4:
+                    r = t;
+                    g = p;
+                    b = B;
+                    break;
+                case 5:
+                    r = B;
+                    g = p;
+                    b = q;
+                    break;
+            }
+        }
+        return [r, g, b];
+    };
+    Color.prototype.derive = function (hueShift, saturationFactor, brightnessFactor, opacityFactor) {
+        var hsb = Color.RGBtoHSB(this.r, this.g, this.b);
+        var b = hsb[2];
+        if (b == 0 && brightnessFactor > 1.0) {
+            b = 0.05;
+        }
+        var h = (((hsb[0] + hueShift) % 360) + 360) % 360;
+        var s = Math.max(Math.min(hsb[1] * saturationFactor, 1.0), 0.0);
+        b = Math.max(Math.min(b * brightnessFactor, 1.0), 0.0);
+        var a = Math.max(Math.min(this.a * opacityFactor, 1.0), 0.0);
+        var rgba = Color.HSBtoRGB(h, s, b);
+        rgba.push(a);
+        return Color.fromArray(rgba);
+    };
+    Color.prototype.brighter = function () {
+        return this.derive(0, 1.0, 1.0 / 0.7, 1.0);
+    };
+    Color.prototype.darker = function () {
+        return this.derive(0, 1.0, 0.7, 1.0);
+    };
+    // See https://drafts.csswg.org/css-color/#hex-notation
+    Color.hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*$/;
+    Color.shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*$/;
+    Color.rgbRe = /\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)\s*/;
+    Color.rgbaRe = /\s*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([.\d]+)\)\s*/;
+    /**
+     * CSS Color Module Level 4:
+     * https://drafts.csswg.org/css-color/#named-colors
+     */
+    Color.nameToHex = Object.freeze({
+        aliceblue: '#F0F8FF',
+        antiquewhite: '#FAEBD7',
+        aqua: '#00FFFF',
+        aquamarine: '#7FFFD4',
+        azure: '#F0FFFF',
+        beige: '#F5F5DC',
+        bisque: '#FFE4C4',
+        black: '#000000',
+        blanchedalmond: '#FFEBCD',
+        blue: '#0000FF',
+        blueviolet: '#8A2BE2',
+        brown: '#A52A2A',
+        burlywood: '#DEB887',
+        cadetblue: '#5F9EA0',
+        chartreuse: '#7FFF00',
+        chocolate: '#D2691E',
+        coral: '#FF7F50',
+        cornflowerblue: '#6495ED',
+        cornsilk: '#FFF8DC',
+        crimson: '#DC143C',
+        cyan: '#00FFFF',
+        darkblue: '#00008B',
+        darkcyan: '#008B8B',
+        darkgoldenrod: '#B8860B',
+        darkgray: '#A9A9A9',
+        darkgreen: '#006400',
+        darkgrey: '#A9A9A9',
+        darkkhaki: '#BDB76B',
+        darkmagenta: '#8B008B',
+        darkolivegreen: '#556B2F',
+        darkorange: '#FF8C00',
+        darkorchid: '#9932CC',
+        darkred: '#8B0000',
+        darksalmon: '#E9967A',
+        darkseagreen: '#8FBC8F',
+        darkslateblue: '#483D8B',
+        darkslategray: '#2F4F4F',
+        darkslategrey: '#2F4F4F',
+        darkturquoise: '#00CED1',
+        darkviolet: '#9400D3',
+        deeppink: '#FF1493',
+        deepskyblue: '#00BFFF',
+        dimgray: '#696969',
+        dimgrey: '#696969',
+        dodgerblue: '#1E90FF',
+        firebrick: '#B22222',
+        floralwhite: '#FFFAF0',
+        forestgreen: '#228B22',
+        fuchsia: '#FF00FF',
+        gainsboro: '#DCDCDC',
+        ghostwhite: '#F8F8FF',
+        gold: '#FFD700',
+        goldenrod: '#DAA520',
+        gray: '#808080',
+        green: '#008000',
+        greenyellow: '#ADFF2F',
+        grey: '#808080',
+        honeydew: '#F0FFF0',
+        hotpink: '#FF69B4',
+        indianred: '#CD5C5C',
+        indigo: '#4B0082',
+        ivory: '#FFFFF0',
+        khaki: '#F0E68C',
+        lavender: '#E6E6FA',
+        lavenderblush: '#FFF0F5',
+        lawngreen: '#7CFC00',
+        lemonchiffon: '#FFFACD',
+        lightblue: '#ADD8E6',
+        lightcoral: '#F08080',
+        lightcyan: '#E0FFFF',
+        lightgoldenrodyellow: '#FAFAD2',
+        lightgray: '#D3D3D3',
+        lightgreen: '#90EE90',
+        lightgrey: '#D3D3D3',
+        lightpink: '#FFB6C1',
+        lightsalmon: '#FFA07A',
+        lightseagreen: '#20B2AA',
+        lightskyblue: '#87CEFA',
+        lightslategray: '#778899',
+        lightslategrey: '#778899',
+        lightsteelblue: '#B0C4DE',
+        lightyellow: '#FFFFE0',
+        lime: '#00FF00',
+        limegreen: '#32CD32',
+        linen: '#FAF0E6',
+        magenta: '#FF00FF',
+        maroon: '#800000',
+        mediumaquamarine: '#66CDAA',
+        mediumblue: '#0000CD',
+        mediumorchid: '#BA55D3',
+        mediumpurple: '#9370DB',
+        mediumseagreen: '#3CB371',
+        mediumslateblue: '#7B68EE',
+        mediumspringgreen: '#00FA9A',
+        mediumturquoise: '#48D1CC',
+        mediumvioletred: '#C71585',
+        midnightblue: '#191970',
+        mintcream: '#F5FFFA',
+        mistyrose: '#FFE4E1',
+        moccasin: '#FFE4B5',
+        navajowhite: '#FFDEAD',
+        navy: '#000080',
+        oldlace: '#FDF5E6',
+        olive: '#808000',
+        olivedrab: '#6B8E23',
+        orange: '#FFA500',
+        orangered: '#FF4500',
+        orchid: '#DA70D6',
+        palegoldenrod: '#EEE8AA',
+        palegreen: '#98FB98',
+        paleturquoise: '#AFEEEE',
+        palevioletred: '#DB7093',
+        papayawhip: '#FFEFD5',
+        peachpuff: '#FFDAB9',
+        peru: '#CD853F',
+        pink: '#FFC0CB',
+        plum: '#DDA0DD',
+        powderblue: '#B0E0E6',
+        purple: '#800080',
+        rebeccapurple: '#663399',
+        red: '#FF0000',
+        rosybrown: '#BC8F8F',
+        royalblue: '#4169E1',
+        saddlebrown: '#8B4513',
+        salmon: '#FA8072',
+        sandybrown: '#F4A460',
+        seagreen: '#2E8B57',
+        seashell: '#FFF5EE',
+        sienna: '#A0522D',
+        silver: '#C0C0C0',
+        skyblue: '#87CEEB',
+        slateblue: '#6A5ACD',
+        slategray: '#708090',
+        slategrey: '#708090',
+        snow: '#FFFAFA',
+        springgreen: '#00FF7F',
+        steelblue: '#4682B4',
+        tan: '#D2B48C',
+        teal: '#008080',
+        thistle: '#D8BFD8',
+        tomato: '#FF6347',
+        turquoise: '#40E0D0',
+        violet: '#EE82EE',
+        wheat: '#F5DEB3',
+        white: '#FFFFFF',
+        whitesmoke: '#F5F5F5',
+        yellow: '#FFFF00',
+        yellowgreen: '#9ACD32'
+    });
+    return Color;
+}());
+exports.Color = Color;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v21.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var constants_1 = __webpack_require__(9);
 var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
 var AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
-/**
- * A Util Class only used when debugging for printing time to console
- */
-var Timer = /** @class */ (function () {
-    function Timer() {
-        this.timestamp = new Date().getTime();
-    }
-    Timer.prototype.print = function (msg) {
-        var duration = (new Date().getTime()) - this.timestamp;
-        console.info(msg + " = " + duration);
-        this.timestamp = new Date().getTime();
-    };
-    return Timer;
-}());
-exports.Timer = Timer;
 /**
  * HTML Escapes.
  */
@@ -4333,6 +4757,89 @@ var NumberSequence = /** @class */ (function () {
 }());
 exports.NumberSequence = NumberSequence;
 exports._ = Utils;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v21.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Constants = /** @class */ (function () {
+    function Constants() {
+    }
+    Constants.STEP_EVERYTHING = 0;
+    Constants.STEP_FILTER = 1;
+    Constants.STEP_SORT = 2;
+    Constants.STEP_MAP = 3;
+    Constants.STEP_AGGREGATE = 4;
+    Constants.STEP_PIVOT = 5;
+    Constants.ROW_BUFFER_SIZE = 10;
+    Constants.LAYOUT_INTERVAL = 500;
+    Constants.BATCH_WAIT_MILLIS = 50;
+    Constants.EXPORT_TYPE_DRAG_COPY = 'dragCopy';
+    Constants.EXPORT_TYPE_CLIPBOARD = 'clipboard';
+    Constants.EXPORT_TYPE_EXCEL = 'excel';
+    Constants.EXPORT_TYPE_CSV = 'csv';
+    Constants.KEY_BACKSPACE = 8;
+    Constants.KEY_TAB = 9;
+    Constants.KEY_NEW_LINE = 10;
+    Constants.KEY_ENTER = 13;
+    Constants.KEY_SHIFT = 16;
+    Constants.KEY_ESCAPE = 27;
+    Constants.KEY_SPACE = 32;
+    Constants.KEY_LEFT = 37;
+    Constants.KEY_UP = 38;
+    Constants.KEY_RIGHT = 39;
+    Constants.KEY_DOWN = 40;
+    Constants.KEY_DELETE = 46;
+    Constants.KEY_A = 65;
+    Constants.KEY_C = 67;
+    Constants.KEY_V = 86;
+    Constants.KEY_D = 68;
+    Constants.KEY_F2 = 113;
+    Constants.KEY_PAGE_UP = 33;
+    Constants.KEY_PAGE_DOWN = 34;
+    Constants.KEY_PAGE_HOME = 36;
+    Constants.KEY_PAGE_END = 35;
+    Constants.ROW_MODEL_TYPE_INFINITE = 'infinite';
+    Constants.ROW_MODEL_TYPE_VIEWPORT = 'viewport';
+    Constants.ROW_MODEL_TYPE_CLIENT_SIDE = 'clientSide';
+    Constants.ROW_MODEL_TYPE_SERVER_SIDE = 'serverSide';
+    Constants.DEPRECATED_ROW_MODEL_TYPE_NORMAL = 'normal';
+    Constants.ALWAYS = 'always';
+    Constants.ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
+    Constants.PINNED_TOP = 'top';
+    Constants.PINNED_BOTTOM = 'bottom';
+    Constants.DOM_LAYOUT_NORMAL = 'normal';
+    Constants.DOM_LAYOUT_PRINT = 'print';
+    Constants.DOM_LAYOUT_AUTO_HEIGHT = 'autoHeight';
+    Constants.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
+    return Constants;
+}());
+exports.Constants = Constants;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v21.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
 var PromiseStatus;
 (function (PromiseStatus) {
     PromiseStatus[PromiseStatus["IN_PROGRESS"] = 0] = "IN_PROGRESS";
@@ -4419,412 +4926,10 @@ var Promise = /** @class */ (function () {
     return Promise;
 }());
 exports.Promise = Promise;
-var Color = /** @class */ (function () {
-    /**
-     * Every color component should be in the [0, 1] range.
-     * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
-     * So, when animating colors, if the source or target color components are already near
-     * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
-     * component value to end up outside of that range mid-animation. For this reason the constructor
-     * performs range checking/constraining.
-     * @param r Red component.
-     * @param g Green component.
-     * @param b Blue component.
-     * @param a Alpha (opacity) component.
-     */
-    function Color(r, g, b, a) {
-        if (a === void 0) { a = 1; }
-        // NaN is treated as 0.
-        this.r = Math.min(1, Math.max(0, r || 0));
-        this.g = Math.min(1, Math.max(0, g || 0));
-        this.b = Math.min(1, Math.max(0, b || 0));
-        this.a = Math.min(1, Math.max(0, a || 0));
-    }
-    /**
-     * The given string can be in one of the following formats:
-     * - #rgb
-     * - #rrggbb
-     * - rgb(r, g, b)
-     * - rgba(r, g, b, a)
-     * - CSS color name such as 'white', 'orange', 'cyan', etc.
-     * @param str
-     */
-    Color.fromString = function (str) {
-        // hexadecimal notation
-        if (str.indexOf('#') >= 0) { // there can be some leading whitespace
-            return Color.fromHexString(str);
-        }
-        // color name
-        var hex = Color.nameToHex[str];
-        if (hex) {
-            return Color.fromHexString(hex);
-        }
-        // rgb(a) notation
-        if (str.indexOf('rgb') >= 0) {
-            return Color.fromRgbaString(str);
-        }
-        throw new Error("Invalid color string: '" + str + "'");
-    };
-    // Using separate RegExp for the short hex notation because strings like `#abcd`
-    // are matched as ['#abcd', 'ab', 'c', 'd', undefined] when the `{1,2}` quantifier is used.
-    Color.fromHexString = function (str) {
-        var values = str.match(Color.hexRe);
-        if (values) {
-            var r = parseInt(values[1], 16);
-            var g = parseInt(values[2], 16);
-            var b = parseInt(values[3], 16);
-            var a = values[4] !== undefined ? parseInt(values[4], 16) : 255;
-            return new Color(r / 255, g / 255, b / 255, a / 255);
-        }
-        values = str.match(Color.shortHexRe);
-        if (values) {
-            var r = parseInt(values[1], 16);
-            var g = parseInt(values[2], 16);
-            var b = parseInt(values[3], 16);
-            var a = values[4] !== undefined ? parseInt(values[4], 16) : 15;
-            r += r * 16;
-            g += g * 16;
-            b += b * 16;
-            a += a * 16;
-            return new Color(r / 255, g / 255, b / 255, a / 255);
-        }
-        throw new Error("Malformed hexadecimal color string: '" + str + "'");
-    };
-    Color.fromRgbaString = function (str) {
-        var values = str.match(Color.rgbRe);
-        if (values) {
-            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255);
-        }
-        values = str.match(Color.rgbaRe);
-        if (values) {
-            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255, +values[4]);
-        }
-        throw new Error("Malformed rgb/rgba color string: '" + str + "'");
-    };
-    Color.fromArray = function (arr) {
-        if (arr.length === 4) {
-            return new Color(arr[0], arr[1], arr[2], arr[3]);
-        }
-        if (arr.length === 3) {
-            return new Color(arr[0], arr[1], arr[2]);
-        }
-        throw new Error('The given array should contain 3 or 4 color components (numbers).');
-    };
-    Color.fromHSB = function (h, s, b, alpha) {
-        if (alpha === void 0) { alpha = 1; }
-        var rgb = Color.HSBtoRGB(h, s, b);
-        return new Color(rgb[0], rgb[1], rgb[2], alpha);
-    };
-    Color.padHex = function (str) {
-        // Can't use `padStart(2, '0')` here because of IE.
-        return str.length === 1 ? '0' + str : str;
-    };
-    Color.prototype.toHexString = function () {
-        var hex = '#'
-            + Color.padHex(Math.round(this.r * 255).toString(16))
-            + Color.padHex(Math.round(this.g * 255).toString(16))
-            + Color.padHex(Math.round(this.b * 255).toString(16));
-        if (this.a < 1) {
-            hex += Color.padHex(Math.round(this.a * 255).toString(16));
-        }
-        return hex;
-    };
-    Color.prototype.toRgbaString = function (fractionDigits) {
-        if (fractionDigits === void 0) { fractionDigits = 3; }
-        var components = [
-            Math.round(this.r * 255),
-            Math.round(this.g * 255),
-            Math.round(this.b * 255)
-        ];
-        var k = Math.pow(10, fractionDigits);
-        if (this.a !== 1) {
-            components.push(Math.round(this.a * k) / k);
-            return "rgba(" + components.join(', ') + ")";
-        }
-        return "rgb(" + components.join(', ') + ")";
-    };
-    Color.prototype.toString = function () {
-        if (this.a === 1) {
-            return this.toHexString();
-        }
-        return this.toRgbaString();
-    };
-    Color.prototype.toHSB = function () {
-        return Color.RGBtoHSB(this.r, this.g, this.b);
-    };
-    /**
-     * Converts the given RGB triple to an array of HSB (HSV) components.
-     * The hue component will be `NaN` for achromatic colors.
-     */
-    Color.RGBtoHSB = function (r, g, b) {
-        var min = Math.min(r, g, b);
-        var max = Math.max(r, g, b);
-        var S = max !== 0 ? (max - min) / max : 0;
-        var H = NaN;
-        // min == max, means all components are the same
-        // and the color is a shade of gray with no hue (H is NaN)
-        if (min !== max) {
-            var delta = max - min;
-            var rc = (max - r) / delta;
-            var gc = (max - g) / delta;
-            var bc = (max - b) / delta;
-            if (r === max) {
-                H = bc - gc;
-            }
-            else if (g === max) {
-                H = 2.0 + rc - bc;
-            }
-            else {
-                H = 4.0 + gc - rc;
-            }
-            H /= 6.0;
-            if (H < 0) {
-                H = H + 1.0;
-            }
-        }
-        return [H * 360, S, max];
-    };
-    /**
-     * Converts the given HSB (HSV) triple to an array of RGB components.
-     */
-    Color.HSBtoRGB = function (H, S, B) {
-        if (isNaN(H)) {
-            H = 0;
-        }
-        H = (((H % 360) + 360) % 360) / 360; // normalize hue to [0, 360] interval, then scale to [0, 1]
-        var r = 0;
-        var g = 0;
-        var b = 0;
-        if (S === 0) {
-            r = g = b = B;
-        }
-        else {
-            var h = (H - Math.floor(H)) * 6;
-            var f = h - Math.floor(h);
-            var p = B * (1 - S);
-            var q = B * (1 - S * f);
-            var t = B * (1 - (S * (1 - f)));
-            switch (h >> 0) { // discard the floating point part of the number
-                case 0:
-                    r = B;
-                    g = t;
-                    b = p;
-                    break;
-                case 1:
-                    r = q;
-                    g = B;
-                    b = p;
-                    break;
-                case 2:
-                    r = p;
-                    g = B;
-                    b = t;
-                    break;
-                case 3:
-                    r = p;
-                    g = q;
-                    b = B;
-                    break;
-                case 4:
-                    r = t;
-                    g = p;
-                    b = B;
-                    break;
-                case 5:
-                    r = B;
-                    g = p;
-                    b = q;
-                    break;
-            }
-        }
-        return [r, g, b];
-    };
-    Color.prototype.derive = function (hueShift, saturationFactor, brightnessFactor, opacityFactor) {
-        var hsb = Color.RGBtoHSB(this.r, this.g, this.b);
-        var b = hsb[2];
-        if (b == 0 && brightnessFactor > 1.0) {
-            b = 0.05;
-        }
-        var h = (((hsb[0] + hueShift) % 360) + 360) % 360;
-        var s = Math.max(Math.min(hsb[1] * saturationFactor, 1.0), 0.0);
-        b = Math.max(Math.min(b * brightnessFactor, 1.0), 0.0);
-        var a = Math.max(Math.min(this.a * opacityFactor, 1.0), 0.0);
-        var rgba = Color.HSBtoRGB(h, s, b);
-        rgba.push(a);
-        return Color.fromArray(rgba);
-    };
-    Color.prototype.brighter = function () {
-        return this.derive(0, 1.0, 1.0 / 0.7, 1.0);
-    };
-    Color.prototype.darker = function () {
-        return this.derive(0, 1.0, 0.7, 1.0);
-    };
-    // See https://drafts.csswg.org/css-color/#hex-notation
-    Color.hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*$/;
-    Color.shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*$/;
-    Color.rgbRe = /\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)\s*/;
-    Color.rgbaRe = /\s*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([.\d]+)\)\s*/;
-    /**
-     * CSS Color Module Level 4:
-     * https://drafts.csswg.org/css-color/#named-colors
-     */
-    Color.nameToHex = Object.freeze({
-        aliceblue: '#F0F8FF',
-        antiquewhite: '#FAEBD7',
-        aqua: '#00FFFF',
-        aquamarine: '#7FFFD4',
-        azure: '#F0FFFF',
-        beige: '#F5F5DC',
-        bisque: '#FFE4C4',
-        black: '#000000',
-        blanchedalmond: '#FFEBCD',
-        blue: '#0000FF',
-        blueviolet: '#8A2BE2',
-        brown: '#A52A2A',
-        burlywood: '#DEB887',
-        cadetblue: '#5F9EA0',
-        chartreuse: '#7FFF00',
-        chocolate: '#D2691E',
-        coral: '#FF7F50',
-        cornflowerblue: '#6495ED',
-        cornsilk: '#FFF8DC',
-        crimson: '#DC143C',
-        cyan: '#00FFFF',
-        darkblue: '#00008B',
-        darkcyan: '#008B8B',
-        darkgoldenrod: '#B8860B',
-        darkgray: '#A9A9A9',
-        darkgreen: '#006400',
-        darkgrey: '#A9A9A9',
-        darkkhaki: '#BDB76B',
-        darkmagenta: '#8B008B',
-        darkolivegreen: '#556B2F',
-        darkorange: '#FF8C00',
-        darkorchid: '#9932CC',
-        darkred: '#8B0000',
-        darksalmon: '#E9967A',
-        darkseagreen: '#8FBC8F',
-        darkslateblue: '#483D8B',
-        darkslategray: '#2F4F4F',
-        darkslategrey: '#2F4F4F',
-        darkturquoise: '#00CED1',
-        darkviolet: '#9400D3',
-        deeppink: '#FF1493',
-        deepskyblue: '#00BFFF',
-        dimgray: '#696969',
-        dimgrey: '#696969',
-        dodgerblue: '#1E90FF',
-        firebrick: '#B22222',
-        floralwhite: '#FFFAF0',
-        forestgreen: '#228B22',
-        fuchsia: '#FF00FF',
-        gainsboro: '#DCDCDC',
-        ghostwhite: '#F8F8FF',
-        gold: '#FFD700',
-        goldenrod: '#DAA520',
-        gray: '#808080',
-        green: '#008000',
-        greenyellow: '#ADFF2F',
-        grey: '#808080',
-        honeydew: '#F0FFF0',
-        hotpink: '#FF69B4',
-        indianred: '#CD5C5C',
-        indigo: '#4B0082',
-        ivory: '#FFFFF0',
-        khaki: '#F0E68C',
-        lavender: '#E6E6FA',
-        lavenderblush: '#FFF0F5',
-        lawngreen: '#7CFC00',
-        lemonchiffon: '#FFFACD',
-        lightblue: '#ADD8E6',
-        lightcoral: '#F08080',
-        lightcyan: '#E0FFFF',
-        lightgoldenrodyellow: '#FAFAD2',
-        lightgray: '#D3D3D3',
-        lightgreen: '#90EE90',
-        lightgrey: '#D3D3D3',
-        lightpink: '#FFB6C1',
-        lightsalmon: '#FFA07A',
-        lightseagreen: '#20B2AA',
-        lightskyblue: '#87CEFA',
-        lightslategray: '#778899',
-        lightslategrey: '#778899',
-        lightsteelblue: '#B0C4DE',
-        lightyellow: '#FFFFE0',
-        lime: '#00FF00',
-        limegreen: '#32CD32',
-        linen: '#FAF0E6',
-        magenta: '#FF00FF',
-        maroon: '#800000',
-        mediumaquamarine: '#66CDAA',
-        mediumblue: '#0000CD',
-        mediumorchid: '#BA55D3',
-        mediumpurple: '#9370DB',
-        mediumseagreen: '#3CB371',
-        mediumslateblue: '#7B68EE',
-        mediumspringgreen: '#00FA9A',
-        mediumturquoise: '#48D1CC',
-        mediumvioletred: '#C71585',
-        midnightblue: '#191970',
-        mintcream: '#F5FFFA',
-        mistyrose: '#FFE4E1',
-        moccasin: '#FFE4B5',
-        navajowhite: '#FFDEAD',
-        navy: '#000080',
-        oldlace: '#FDF5E6',
-        olive: '#808000',
-        olivedrab: '#6B8E23',
-        orange: '#FFA500',
-        orangered: '#FF4500',
-        orchid: '#DA70D6',
-        palegoldenrod: '#EEE8AA',
-        palegreen: '#98FB98',
-        paleturquoise: '#AFEEEE',
-        palevioletred: '#DB7093',
-        papayawhip: '#FFEFD5',
-        peachpuff: '#FFDAB9',
-        peru: '#CD853F',
-        pink: '#FFC0CB',
-        plum: '#DDA0DD',
-        powderblue: '#B0E0E6',
-        purple: '#800080',
-        rebeccapurple: '#663399',
-        red: '#FF0000',
-        rosybrown: '#BC8F8F',
-        royalblue: '#4169E1',
-        saddlebrown: '#8B4513',
-        salmon: '#FA8072',
-        sandybrown: '#F4A460',
-        seagreen: '#2E8B57',
-        seashell: '#FFF5EE',
-        sienna: '#A0522D',
-        silver: '#C0C0C0',
-        skyblue: '#87CEEB',
-        slateblue: '#6A5ACD',
-        slategray: '#708090',
-        slategrey: '#708090',
-        snow: '#FFFAFA',
-        springgreen: '#00FF7F',
-        steelblue: '#4682B4',
-        tan: '#D2B48C',
-        teal: '#008080',
-        thistle: '#D8BFD8',
-        tomato: '#FF6347',
-        turquoise: '#40E0D0',
-        violet: '#EE82EE',
-        wheat: '#F5DEB3',
-        white: '#FFFFFF',
-        whitesmoke: '#F5F5F5',
-        yellow: '#FFFF00',
-        yellowgreen: '#9ACD32'
-    });
-    return Color;
-}());
-exports.Color = Color;
 
 
 /***/ }),
-/* 7 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4836,63 +4941,25 @@ exports.Color = Color;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Constants = /** @class */ (function () {
-    function Constants() {
+/**
+ * A Util Class only used when debugging for printing time to console
+ */
+var Timer = /** @class */ (function () {
+    function Timer() {
+        this.timestamp = new Date().getTime();
     }
-    Constants.STEP_EVERYTHING = 0;
-    Constants.STEP_FILTER = 1;
-    Constants.STEP_SORT = 2;
-    Constants.STEP_MAP = 3;
-    Constants.STEP_AGGREGATE = 4;
-    Constants.STEP_PIVOT = 5;
-    Constants.ROW_BUFFER_SIZE = 10;
-    Constants.LAYOUT_INTERVAL = 500;
-    Constants.BATCH_WAIT_MILLIS = 50;
-    Constants.EXPORT_TYPE_DRAG_COPY = 'dragCopy';
-    Constants.EXPORT_TYPE_CLIPBOARD = 'clipboard';
-    Constants.EXPORT_TYPE_EXCEL = 'excel';
-    Constants.EXPORT_TYPE_CSV = 'csv';
-    Constants.KEY_BACKSPACE = 8;
-    Constants.KEY_TAB = 9;
-    Constants.KEY_NEW_LINE = 10;
-    Constants.KEY_ENTER = 13;
-    Constants.KEY_SHIFT = 16;
-    Constants.KEY_ESCAPE = 27;
-    Constants.KEY_SPACE = 32;
-    Constants.KEY_LEFT = 37;
-    Constants.KEY_UP = 38;
-    Constants.KEY_RIGHT = 39;
-    Constants.KEY_DOWN = 40;
-    Constants.KEY_DELETE = 46;
-    Constants.KEY_A = 65;
-    Constants.KEY_C = 67;
-    Constants.KEY_V = 86;
-    Constants.KEY_D = 68;
-    Constants.KEY_F2 = 113;
-    Constants.KEY_PAGE_UP = 33;
-    Constants.KEY_PAGE_DOWN = 34;
-    Constants.KEY_PAGE_HOME = 36;
-    Constants.KEY_PAGE_END = 35;
-    Constants.ROW_MODEL_TYPE_INFINITE = 'infinite';
-    Constants.ROW_MODEL_TYPE_VIEWPORT = 'viewport';
-    Constants.ROW_MODEL_TYPE_CLIENT_SIDE = 'clientSide';
-    Constants.ROW_MODEL_TYPE_SERVER_SIDE = 'serverSide';
-    Constants.DEPRECATED_ROW_MODEL_TYPE_NORMAL = 'normal';
-    Constants.ALWAYS = 'always';
-    Constants.ONLY_WHEN_GROUPING = 'onlyWhenGrouping';
-    Constants.PINNED_TOP = 'top';
-    Constants.PINNED_BOTTOM = 'bottom';
-    Constants.DOM_LAYOUT_NORMAL = 'normal';
-    Constants.DOM_LAYOUT_PRINT = 'print';
-    Constants.DOM_LAYOUT_AUTO_HEIGHT = 'autoHeight';
-    Constants.GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
-    return Constants;
+    Timer.prototype.print = function (msg) {
+        var duration = (new Date().getTime()) - this.timestamp;
+        console.info(msg + " = " + duration);
+        this.timestamp = new Date().getTime();
+    };
+    return Timer;
 }());
-exports.Constants = Constants;
+exports.Timer = Timer;
 
 
 /***/ }),
-/* 8 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4916,9 +4983,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var logger_1 = __webpack_require__(9);
-var context_1 = __webpack_require__(10);
-var context_2 = __webpack_require__(10);
+var logger_1 = __webpack_require__(13);
+var context_1 = __webpack_require__(14);
+var context_2 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 var EventService = /** @class */ (function () {
@@ -5094,7 +5161,7 @@ exports.EventService = EventService;
 
 
 /***/ }),
-/* 9 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5119,8 +5186,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
-var context_2 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
+var context_2 = __webpack_require__(14);
 var LoggerFactory = /** @class */ (function () {
     function LoggerFactory() {
     }
@@ -5165,7 +5232,7 @@ exports.Logger = Logger;
 
 
 /***/ }),
-/* 10 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5505,7 +5572,7 @@ function getOrCreateProps(target) {
 
 
 /***/ }),
-/* 11 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5517,8 +5584,8 @@ function getOrCreateProps(target) {
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var events_1 = __webpack_require__(12);
-var propertyKeys_1 = __webpack_require__(14);
+var events_1 = __webpack_require__(16);
+var propertyKeys_1 = __webpack_require__(18);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 var ComponentUtil = /** @class */ (function () {
@@ -5730,7 +5797,7 @@ function checkForDeprecated(changes) {
 
 
 /***/ }),
-/* 12 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5742,12 +5809,12 @@ function checkForDeprecated(changes) {
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var eventKeys_1 = __webpack_require__(13);
+var eventKeys_1 = __webpack_require__(17);
 exports.Events = eventKeys_1.Events;
 
 
 /***/ }),
-/* 13 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5885,7 +5952,7 @@ exports.Events = Events;
 
 
 /***/ }),
-/* 14 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5985,7 +6052,7 @@ exports.PropertyKeys = PropertyKeys;
 
 
 /***/ }),
-/* 15 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6006,25 +6073,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var csvCreator_1 = __webpack_require__(16);
-var rowRenderer_1 = __webpack_require__(27);
-var filterManager_1 = __webpack_require__(58);
-var columnController_1 = __webpack_require__(18);
-var selectionController_1 = __webpack_require__(34);
+var csvCreator_1 = __webpack_require__(20);
+var rowRenderer_1 = __webpack_require__(31);
+var filterManager_1 = __webpack_require__(62);
+var columnController_1 = __webpack_require__(22);
+var selectionController_1 = __webpack_require__(38);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var valueService_1 = __webpack_require__(36);
-var eventService_1 = __webpack_require__(8);
-var constants_1 = __webpack_require__(7);
-var context_1 = __webpack_require__(10);
-var sortController_1 = __webpack_require__(71);
-var focusedCellController_1 = __webpack_require__(48);
-var cellRendererFactory_1 = __webpack_require__(56);
-var paginationProxy_1 = __webpack_require__(51);
-var immutableService_1 = __webpack_require__(115);
-var valueCache_1 = __webpack_require__(37);
-var alignedGridsService_1 = __webpack_require__(116);
-var pinnedRowModel_1 = __webpack_require__(50);
-var animationFrameService_1 = __webpack_require__(98);
+var valueService_1 = __webpack_require__(40);
+var eventService_1 = __webpack_require__(12);
+var constants_1 = __webpack_require__(9);
+var context_1 = __webpack_require__(14);
+var sortController_1 = __webpack_require__(75);
+var focusedCellController_1 = __webpack_require__(52);
+var cellRendererFactory_1 = __webpack_require__(60);
+var paginationProxy_1 = __webpack_require__(55);
+var immutableService_1 = __webpack_require__(119);
+var valueCache_1 = __webpack_require__(41);
+var alignedGridsService_1 = __webpack_require__(120);
+var pinnedRowModel_1 = __webpack_require__(54);
+var animationFrameService_1 = __webpack_require__(102);
 var utils_1 = __webpack_require__(6);
 var GridApi = /** @class */ (function () {
     function GridApi() {
@@ -7156,7 +7223,7 @@ exports.GridApi = GridApi;
 
 
 /***/ }),
-/* 16 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7190,13 +7257,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var gridSerializer_1 = __webpack_require__(17);
-var downloader_1 = __webpack_require__(114);
-var columnController_1 = __webpack_require__(18);
-var valueService_1 = __webpack_require__(36);
+var context_1 = __webpack_require__(14);
+var gridSerializer_1 = __webpack_require__(21);
+var downloader_1 = __webpack_require__(118);
+var columnController_1 = __webpack_require__(22);
+var valueService_1 = __webpack_require__(40);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var constants_1 = __webpack_require__(7);
+var constants_1 = __webpack_require__(9);
 var utils_1 = __webpack_require__(6);
 var LINE_SEPARATOR = '\r\n';
 var CsvSerializingSession = /** @class */ (function (_super) {
@@ -7427,7 +7494,7 @@ exports.CsvCreator = CsvCreator;
 
 
 /***/ }),
-/* 17 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7448,16 +7515,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var columnController_1 = __webpack_require__(18);
-var constants_1 = __webpack_require__(7);
-var selectionController_1 = __webpack_require__(34);
+var context_1 = __webpack_require__(14);
+var columnController_1 = __webpack_require__(22);
+var constants_1 = __webpack_require__(9);
+var selectionController_1 = __webpack_require__(38);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var displayedGroupCreator_1 = __webpack_require__(25);
+var displayedGroupCreator_1 = __webpack_require__(29);
 var columnFactory_1 = __webpack_require__(4);
-var groupInstanceIdCreator_1 = __webpack_require__(112);
-var columnGroup_1 = __webpack_require__(19);
-var pinnedRowModel_1 = __webpack_require__(50);
+var groupInstanceIdCreator_1 = __webpack_require__(116);
+var columnGroup_1 = __webpack_require__(23);
+var pinnedRowModel_1 = __webpack_require__(54);
 var utils_1 = __webpack_require__(6);
 var BaseGridSerializingSession = /** @class */ (function () {
     function BaseGridSerializingSession(config) {
@@ -7732,7 +7799,7 @@ var RowType;
 
 
 /***/ }),
-/* 18 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7756,25 +7823,25 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var columnGroup_1 = __webpack_require__(19);
-var column_1 = __webpack_require__(20);
+var columnGroup_1 = __webpack_require__(23);
+var column_1 = __webpack_require__(24);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var expressionService_1 = __webpack_require__(24);
+var expressionService_1 = __webpack_require__(28);
 var columnFactory_1 = __webpack_require__(4);
-var displayedGroupCreator_1 = __webpack_require__(25);
-var autoWidthCalculator_1 = __webpack_require__(26);
-var eventService_1 = __webpack_require__(8);
-var columnUtils_1 = __webpack_require__(21);
-var logger_1 = __webpack_require__(9);
-var events_1 = __webpack_require__(12);
-var originalColumnGroup_1 = __webpack_require__(22);
-var groupInstanceIdCreator_1 = __webpack_require__(112);
-var context_1 = __webpack_require__(10);
-var columnAnimationService_1 = __webpack_require__(55);
-var autoGroupColService_1 = __webpack_require__(113);
-var valueCache_1 = __webpack_require__(37);
-var gridApi_1 = __webpack_require__(15);
-var columnApi_1 = __webpack_require__(23);
+var displayedGroupCreator_1 = __webpack_require__(29);
+var autoWidthCalculator_1 = __webpack_require__(30);
+var eventService_1 = __webpack_require__(12);
+var columnUtils_1 = __webpack_require__(25);
+var logger_1 = __webpack_require__(13);
+var events_1 = __webpack_require__(16);
+var originalColumnGroup_1 = __webpack_require__(26);
+var groupInstanceIdCreator_1 = __webpack_require__(116);
+var context_1 = __webpack_require__(14);
+var columnAnimationService_1 = __webpack_require__(59);
+var autoGroupColService_1 = __webpack_require__(117);
+var valueCache_1 = __webpack_require__(41);
+var gridApi_1 = __webpack_require__(19);
+var columnApi_1 = __webpack_require__(27);
 var utils_1 = __webpack_require__(6);
 var ColumnController = /** @class */ (function () {
     function ColumnController() {
@@ -10357,7 +10424,7 @@ exports.ColumnController = ColumnController;
 
 
 /***/ }),
-/* 19 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10378,12 +10445,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var column_1 = __webpack_require__(20);
-var eventService_1 = __webpack_require__(8);
-var context_1 = __webpack_require__(10);
+var column_1 = __webpack_require__(24);
+var eventService_1 = __webpack_require__(12);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 var utils_1 = __webpack_require__(6);
 var ColumnGroup = /** @class */ (function () {
     function ColumnGroup(originalColumnGroup, groupId, instanceId, pinned) {
@@ -10666,7 +10733,7 @@ exports.ColumnGroup = ColumnGroup;
 
 
 /***/ }),
-/* 20 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10687,13 +10754,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var eventService_1 = __webpack_require__(8);
+var eventService_1 = __webpack_require__(12);
 var utils_1 = __webpack_require__(6);
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnUtils_1 = __webpack_require__(21);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var columnUtils_1 = __webpack_require__(25);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -11278,7 +11345,7 @@ exports.Column = Column;
 
 
 /***/ }),
-/* 21 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11300,10 +11367,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnGroup_1 = __webpack_require__(19);
-var originalColumnGroup_1 = __webpack_require__(22);
-var context_1 = __webpack_require__(10);
-var context_2 = __webpack_require__(10);
+var columnGroup_1 = __webpack_require__(23);
+var originalColumnGroup_1 = __webpack_require__(26);
+var context_1 = __webpack_require__(14);
+var context_2 = __webpack_require__(14);
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var ColumnUtils = /** @class */ (function () {
     function ColumnUtils() {
@@ -11437,7 +11504,7 @@ exports.ColumnUtils = ColumnUtils;
 
 
 /***/ }),
-/* 22 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11458,12 +11525,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var columnGroup_1 = __webpack_require__(19);
-var column_1 = __webpack_require__(20);
-var eventService_1 = __webpack_require__(8);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var context_1 = __webpack_require__(14);
+var columnGroup_1 = __webpack_require__(23);
+var column_1 = __webpack_require__(24);
+var eventService_1 = __webpack_require__(12);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 var OriginalColumnGroup = /** @class */ (function () {
     function OriginalColumnGroup(colGroupDef, groupId, padding, level) {
         this.localEventService = new eventService_1.EventService();
@@ -11634,7 +11701,7 @@ exports.OriginalColumnGroup = OriginalColumnGroup;
 
 
 /***/ }),
-/* 23 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11655,8 +11722,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var columnController_1 = __webpack_require__(18);
-var context_1 = __webpack_require__(10);
+var columnController_1 = __webpack_require__(22);
+var context_1 = __webpack_require__(14);
 var ColumnApi = /** @class */ (function () {
     function ColumnApi() {
     }
@@ -11804,7 +11871,7 @@ exports.ColumnApi = ColumnApi;
 
 
 /***/ }),
-/* 24 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11828,9 +11895,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var logger_1 = __webpack_require__(9);
-var context_1 = __webpack_require__(10);
-var context_2 = __webpack_require__(10);
+var logger_1 = __webpack_require__(13);
+var context_1 = __webpack_require__(14);
+var context_2 = __webpack_require__(14);
 var ExpressionService = /** @class */ (function () {
     function ExpressionService() {
         this.expressionToFunctionCache = {};
@@ -11910,7 +11977,7 @@ exports.ExpressionService = ExpressionService;
 
 
 /***/ }),
-/* 25 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11931,11 +11998,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var columnUtils_1 = __webpack_require__(21);
-var columnGroup_1 = __webpack_require__(19);
-var originalColumnGroup_1 = __webpack_require__(22);
-var context_2 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
+var columnUtils_1 = __webpack_require__(25);
+var columnGroup_1 = __webpack_require__(23);
+var originalColumnGroup_1 = __webpack_require__(26);
+var context_2 = __webpack_require__(14);
 var utils_1 = __webpack_require__(6);
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var DisplayedGroupCreator = /** @class */ (function () {
@@ -12122,7 +12189,7 @@ exports.DisplayedGroupCreator = DisplayedGroupCreator;
 
 
 /***/ }),
-/* 26 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12143,10 +12210,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var rowRenderer_1 = __webpack_require__(27);
-var context_1 = __webpack_require__(10);
+var rowRenderer_1 = __webpack_require__(31);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var headerWrapperComp_1 = __webpack_require__(102);
+var headerWrapperComp_1 = __webpack_require__(106);
 var AutoWidthCalculator = /** @class */ (function () {
     function AutoWidthCalculator() {
     }
@@ -12247,7 +12314,7 @@ exports.AutoWidthCalculator = AutoWidthCalculator;
 
 
 /***/ }),
-/* 27 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12285,25 +12352,25 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var eventService_1 = __webpack_require__(8);
-var rowComp_1 = __webpack_require__(28);
-var column_1 = __webpack_require__(20);
-var events_1 = __webpack_require__(12);
-var constants_1 = __webpack_require__(7);
-var cellComp_1 = __webpack_require__(29);
-var context_1 = __webpack_require__(10);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
-var logger_1 = __webpack_require__(9);
-var focusedCellController_1 = __webpack_require__(48);
-var cellNavigationService_1 = __webpack_require__(49);
-var beanStub_1 = __webpack_require__(31);
-var paginationProxy_1 = __webpack_require__(51);
-var gridApi_1 = __webpack_require__(15);
-var pinnedRowModel_1 = __webpack_require__(50);
-var beans_1 = __webpack_require__(53);
-var animationFrameService_1 = __webpack_require__(98);
-var maxDivHeightScaler_1 = __webpack_require__(99);
+var eventService_1 = __webpack_require__(12);
+var rowComp_1 = __webpack_require__(32);
+var column_1 = __webpack_require__(24);
+var events_1 = __webpack_require__(16);
+var constants_1 = __webpack_require__(9);
+var cellComp_1 = __webpack_require__(33);
+var context_1 = __webpack_require__(14);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
+var logger_1 = __webpack_require__(13);
+var focusedCellController_1 = __webpack_require__(52);
+var cellNavigationService_1 = __webpack_require__(53);
+var beanStub_1 = __webpack_require__(35);
+var paginationProxy_1 = __webpack_require__(55);
+var gridApi_1 = __webpack_require__(19);
+var pinnedRowModel_1 = __webpack_require__(54);
+var beans_1 = __webpack_require__(57);
+var animationFrameService_1 = __webpack_require__(102);
+var maxDivHeightScaler_1 = __webpack_require__(103);
 var utils_1 = __webpack_require__(6);
 var RowRenderer = /** @class */ (function (_super) {
     __extends(RowRenderer, _super);
@@ -13557,7 +13624,7 @@ exports.RowRenderer = RowRenderer;
 
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13593,11 +13660,11 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var cellComp_1 = __webpack_require__(29);
-var rowNode_1 = __webpack_require__(33);
-var column_1 = __webpack_require__(20);
-var events_1 = __webpack_require__(12);
-var component_1 = __webpack_require__(30);
+var cellComp_1 = __webpack_require__(33);
+var rowNode_1 = __webpack_require__(37);
+var column_1 = __webpack_require__(24);
+var events_1 = __webpack_require__(16);
+var component_1 = __webpack_require__(34);
 var utils_1 = __webpack_require__(6);
 var RowComp = /** @class */ (function (_super) {
     __extends(RowComp, _super);
@@ -14860,7 +14927,7 @@ exports.RowComp = RowComp;
 
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14896,18 +14963,18 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var column_1 = __webpack_require__(20);
-var constants_1 = __webpack_require__(7);
-var events_1 = __webpack_require__(12);
-var component_1 = __webpack_require__(30);
-var checkboxSelectionComponent_1 = __webpack_require__(32);
-var cellPosition_1 = __webpack_require__(38);
-var iRangeController_1 = __webpack_require__(39);
-var rowDragComp_1 = __webpack_require__(40);
-var popupEditorWrapper_1 = __webpack_require__(44);
-var rowPosition_1 = __webpack_require__(46);
+var column_1 = __webpack_require__(24);
+var constants_1 = __webpack_require__(9);
+var events_1 = __webpack_require__(16);
+var component_1 = __webpack_require__(34);
+var checkboxSelectionComponent_1 = __webpack_require__(36);
+var cellPosition_1 = __webpack_require__(42);
+var iRangeController_1 = __webpack_require__(43);
+var rowDragComp_1 = __webpack_require__(44);
+var popupEditorWrapper_1 = __webpack_require__(48);
+var rowPosition_1 = __webpack_require__(50);
 var utils_1 = __webpack_require__(6);
-var dndSourceComp_1 = __webpack_require__(47);
+var dndSourceComp_1 = __webpack_require__(51);
 var CellComp = /** @class */ (function (_super) {
     __extends(CellComp, _super);
     function CellComp(scope, beans, column, rowNode, rowComp, autoHeightCell, printLayout) {
@@ -16632,7 +16699,7 @@ exports.CellComp = CellComp;
 
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16666,8 +16733,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var beanStub_1 = __webpack_require__(31);
+var context_1 = __webpack_require__(14);
+var beanStub_1 = __webpack_require__(35);
 var utils_1 = __webpack_require__(6);
 var compIdSequence = new utils_1.NumberSequence();
 var Component = /** @class */ (function (_super) {
@@ -16948,7 +17015,7 @@ exports.Component = Component;
 
 
 /***/ }),
-/* 31 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16969,9 +17036,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var eventService_1 = __webpack_require__(8);
+var eventService_1 = __webpack_require__(12);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var utils_1 = __webpack_require__(6);
 var BeanStub = /** @class */ (function () {
     function BeanStub() {
@@ -17097,7 +17164,7 @@ exports.BeanStub = BeanStub;
 
 
 /***/ }),
-/* 32 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17131,14 +17198,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var rowNode_1 = __webpack_require__(33);
-var context_1 = __webpack_require__(10);
+var component_1 = __webpack_require__(34);
+var rowNode_1 = __webpack_require__(37);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var events_1 = __webpack_require__(12);
-var eventService_1 = __webpack_require__(8);
-var gridApi_1 = __webpack_require__(15);
-var columnApi_1 = __webpack_require__(23);
+var events_1 = __webpack_require__(16);
+var eventService_1 = __webpack_require__(12);
+var gridApi_1 = __webpack_require__(19);
+var columnApi_1 = __webpack_require__(27);
 var utils_1 = __webpack_require__(6);
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
@@ -17246,7 +17313,7 @@ exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
 
 
 /***/ }),
-/* 33 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17267,17 +17334,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var selectionController_1 = __webpack_require__(34);
-var valueService_1 = __webpack_require__(36);
-var columnController_1 = __webpack_require__(18);
-var columnApi_1 = __webpack_require__(23);
-var context_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(7);
-var valueCache_1 = __webpack_require__(37);
-var gridApi_1 = __webpack_require__(15);
+var selectionController_1 = __webpack_require__(38);
+var valueService_1 = __webpack_require__(40);
+var columnController_1 = __webpack_require__(22);
+var columnApi_1 = __webpack_require__(27);
+var context_1 = __webpack_require__(14);
+var constants_1 = __webpack_require__(9);
+var valueCache_1 = __webpack_require__(41);
+var gridApi_1 = __webpack_require__(19);
 var utils_1 = __webpack_require__(6);
 var RowNode = /** @class */ (function () {
     function RowNode() {
@@ -17885,7 +17952,7 @@ exports.RowNode = RowNode;
 
 
 /***/ }),
-/* 34 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17909,19 +17976,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var context_2 = __webpack_require__(10);
-var logger_1 = __webpack_require__(9);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var context_3 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
+var context_2 = __webpack_require__(14);
+var logger_1 = __webpack_require__(13);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var context_3 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_4 = __webpack_require__(10);
-var constants_1 = __webpack_require__(7);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var context_4 = __webpack_require__(14);
+var constants_1 = __webpack_require__(9);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 var utils_1 = __webpack_require__(6);
-var changedPath_1 = __webpack_require__(35);
+var changedPath_1 = __webpack_require__(39);
 var SelectionController = /** @class */ (function () {
     function SelectionController() {
     }
@@ -18254,7 +18321,7 @@ exports.SelectionController = SelectionController;
 
 
 /***/ }),
-/* 35 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18423,7 +18490,7 @@ exports.ChangedPath = ChangedPath;
 
 
 /***/ }),
-/* 36 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18445,12 +18512,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var expressionService_1 = __webpack_require__(24);
-var columnController_1 = __webpack_require__(18);
-var context_1 = __webpack_require__(10);
-var events_1 = __webpack_require__(12);
-var eventService_1 = __webpack_require__(8);
-var valueCache_1 = __webpack_require__(37);
+var expressionService_1 = __webpack_require__(28);
+var columnController_1 = __webpack_require__(22);
+var context_1 = __webpack_require__(14);
+var events_1 = __webpack_require__(16);
+var eventService_1 = __webpack_require__(12);
+var valueCache_1 = __webpack_require__(41);
 var utils_1 = __webpack_require__(6);
 var ValueService = /** @class */ (function () {
     function ValueService() {
@@ -18711,7 +18778,7 @@ exports.ValueService = ValueService;
 
 
 /***/ }),
-/* 37 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18732,7 +18799,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var ValueCache = /** @class */ (function () {
     function ValueCache() {
@@ -18790,7 +18857,7 @@ exports.ValueCache = ValueCache;
 
 
 /***/ }),
-/* 38 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18820,7 +18887,7 @@ exports.CellPositionUtils = CellPositionUtils;
 
 
 /***/ }),
-/* 39 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18840,7 +18907,7 @@ var CellRangeType;
 
 
 /***/ }),
-/* 40 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18874,12 +18941,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var context_1 = __webpack_require__(10);
-var rowNode_1 = __webpack_require__(33);
-var dragAndDropService_1 = __webpack_require__(41);
-var eventKeys_1 = __webpack_require__(13);
-var beanStub_1 = __webpack_require__(31);
+var component_1 = __webpack_require__(34);
+var context_1 = __webpack_require__(14);
+var rowNode_1 = __webpack_require__(37);
+var dragAndDropService_1 = __webpack_require__(45);
+var eventKeys_1 = __webpack_require__(17);
+var beanStub_1 = __webpack_require__(35);
 var utils_1 = __webpack_require__(6);
 var RowDragComp = /** @class */ (function (_super) {
     __extends(RowDragComp, _super);
@@ -19069,7 +19136,7 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 41 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19093,12 +19160,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var logger_1 = __webpack_require__(9);
-var context_1 = __webpack_require__(10);
+var logger_1 = __webpack_require__(13);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var dragService_1 = __webpack_require__(42);
-var columnController_1 = __webpack_require__(18);
-var environment_1 = __webpack_require__(43);
+var dragService_1 = __webpack_require__(46);
+var columnController_1 = __webpack_require__(22);
+var environment_1 = __webpack_require__(47);
 var utils_1 = __webpack_require__(6);
 var DragSourceType;
 (function (DragSourceType) {
@@ -19474,7 +19541,7 @@ exports.DragAndDropService = DragAndDropService;
 
 
 /***/ }),
-/* 42 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19495,13 +19562,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var logger_1 = __webpack_require__(9);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
+var context_1 = __webpack_require__(14);
+var logger_1 = __webpack_require__(13);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 var utils_1 = __webpack_require__(6);
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -19763,7 +19830,7 @@ exports.DragService = DragService;
 
 
 /***/ }),
-/* 43 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19784,7 +19851,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var utils_1 = __webpack_require__(6);
 var MAT_GRID_SIZE = 8;
 var FRESH_GRID_SIZE = 4;
@@ -19857,7 +19924,7 @@ exports.Environment = Environment;
 
 
 /***/ }),
-/* 44 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19891,8 +19958,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var popupComponent_1 = __webpack_require__(45);
-var context_1 = __webpack_require__(10);
+var popupComponent_1 = __webpack_require__(49);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 var PopupEditorWrapper = /** @class */ (function (_super) {
@@ -19971,7 +20038,7 @@ exports.PopupEditorWrapper = PopupEditorWrapper;
 
 
 /***/ }),
-/* 45 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19996,7 +20063,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
+var component_1 = __webpack_require__(34);
 var utils_1 = __webpack_require__(6);
 var PopupComponent = /** @class */ (function (_super) {
     __extends(PopupComponent, _super);
@@ -20024,7 +20091,7 @@ exports.PopupComponent = PopupComponent;
 
 
 /***/ }),
-/* 46 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20036,7 +20103,7 @@ exports.PopupComponent = PopupComponent;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(7);
+var constants_1 = __webpack_require__(9);
 var utils_1 = __webpack_require__(6);
 var RowPositionUtils = /** @class */ (function () {
     function RowPositionUtils() {
@@ -20090,7 +20157,7 @@ exports.RowPositionUtils = RowPositionUtils;
 
 
 /***/ }),
-/* 47 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20124,8 +20191,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var context_1 = __webpack_require__(10);
+var component_1 = __webpack_require__(34);
+var context_1 = __webpack_require__(14);
 var utils_1 = __webpack_require__(6);
 var DndSourceComp = /** @class */ (function (_super) {
     __extends(DndSourceComp, _super);
@@ -20185,7 +20252,7 @@ exports.DndSourceComp = DndSourceComp;
 
 
 /***/ }),
-/* 48 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20206,14 +20273,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
+var context_1 = __webpack_require__(14);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
-var gridApi_1 = __webpack_require__(15);
-var cellComp_1 = __webpack_require__(29);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
+var gridApi_1 = __webpack_require__(19);
+var cellComp_1 = __webpack_require__(33);
 var utils_1 = __webpack_require__(6);
 var FocusedCellController = /** @class */ (function () {
     function FocusedCellController() {
@@ -20347,7 +20414,7 @@ exports.FocusedCellController = FocusedCellController;
 
 
 /***/ }),
-/* 49 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20368,11 +20435,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(7);
-var columnController_1 = __webpack_require__(18);
+var context_1 = __webpack_require__(14);
+var constants_1 = __webpack_require__(9);
+var columnController_1 = __webpack_require__(22);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var pinnedRowModel_1 = __webpack_require__(50);
+var pinnedRowModel_1 = __webpack_require__(54);
 var utils_1 = __webpack_require__(6);
 var CellNavigationService = /** @class */ (function () {
     function CellNavigationService() {
@@ -20641,7 +20708,7 @@ exports.CellNavigationService = CellNavigationService;
 
 
 /***/ }),
-/* 50 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20663,13 +20730,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var rowNode_1 = __webpack_require__(33);
-var context_1 = __webpack_require__(10);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var constants_1 = __webpack_require__(7);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var rowNode_1 = __webpack_require__(37);
+var context_1 = __webpack_require__(14);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var constants_1 = __webpack_require__(9);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 var utils_1 = __webpack_require__(6);
 var PinnedRowModel = /** @class */ (function () {
     function PinnedRowModel() {
@@ -20818,7 +20885,7 @@ exports.PinnedRowModel = PinnedRowModel;
 
 
 /***/ }),
-/* 51 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20852,15 +20919,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var beanStub_1 = __webpack_require__(31);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var context_1 = __webpack_require__(10);
+var beanStub_1 = __webpack_require__(35);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var scrollVisibleService_1 = __webpack_require__(52);
-var selectionController_1 = __webpack_require__(34);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var scrollVisibleService_1 = __webpack_require__(56);
+var selectionController_1 = __webpack_require__(38);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 var utils_1 = __webpack_require__(6);
 var PaginationAutoPageSizeService = /** @class */ (function (_super) {
     __extends(PaginationAutoPageSizeService, _super);
@@ -21139,7 +21206,7 @@ exports.PaginationProxy = PaginationProxy;
 
 
 /***/ }),
-/* 52 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21160,12 +21227,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var columnController_1 = __webpack_require__(18);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var context_1 = __webpack_require__(14);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var columnController_1 = __webpack_require__(22);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var ScrollVisibleService = /** @class */ (function () {
     function ScrollVisibleService() {
@@ -21221,7 +21288,7 @@ exports.ScrollVisibleService = ScrollVisibleService;
 
 
 /***/ }),
-/* 53 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21242,32 +21309,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
-var gridApi_1 = __webpack_require__(15);
+var context_1 = __webpack_require__(14);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
+var gridApi_1 = __webpack_require__(19);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var expressionService_1 = __webpack_require__(24);
-var rowRenderer_1 = __webpack_require__(27);
-var templateService_1 = __webpack_require__(54);
-var valueService_1 = __webpack_require__(36);
-var eventService_1 = __webpack_require__(8);
-var columnAnimationService_1 = __webpack_require__(55);
-var focusedCellController_1 = __webpack_require__(48);
-var cellRendererFactory_1 = __webpack_require__(56);
-var popupService_1 = __webpack_require__(59);
-var valueFormatterService_1 = __webpack_require__(75);
-var stylingService_1 = __webpack_require__(96);
-var columnHoverService_1 = __webpack_require__(97);
-var paginationProxy_1 = __webpack_require__(51);
-var animationFrameService_1 = __webpack_require__(98);
-var userComponentFactory_1 = __webpack_require__(60);
-var dragAndDropService_1 = __webpack_require__(41);
-var sortController_1 = __webpack_require__(71);
-var filterManager_1 = __webpack_require__(58);
-var maxDivHeightScaler_1 = __webpack_require__(99);
-var tooltipManager_1 = __webpack_require__(100);
-var detailRowCompCache_1 = __webpack_require__(101);
+var expressionService_1 = __webpack_require__(28);
+var rowRenderer_1 = __webpack_require__(31);
+var templateService_1 = __webpack_require__(58);
+var valueService_1 = __webpack_require__(40);
+var eventService_1 = __webpack_require__(12);
+var columnAnimationService_1 = __webpack_require__(59);
+var focusedCellController_1 = __webpack_require__(52);
+var cellRendererFactory_1 = __webpack_require__(60);
+var popupService_1 = __webpack_require__(63);
+var valueFormatterService_1 = __webpack_require__(79);
+var stylingService_1 = __webpack_require__(100);
+var columnHoverService_1 = __webpack_require__(101);
+var paginationProxy_1 = __webpack_require__(55);
+var animationFrameService_1 = __webpack_require__(102);
+var userComponentFactory_1 = __webpack_require__(64);
+var dragAndDropService_1 = __webpack_require__(45);
+var sortController_1 = __webpack_require__(75);
+var filterManager_1 = __webpack_require__(62);
+var maxDivHeightScaler_1 = __webpack_require__(103);
+var tooltipManager_1 = __webpack_require__(104);
+var detailRowCompCache_1 = __webpack_require__(105);
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
  * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
@@ -21421,7 +21488,7 @@ exports.Beans = Beans;
 
 
 /***/ }),
-/* 54 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21442,8 +21509,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var context_2 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
+var context_2 = __webpack_require__(14);
 var TemplateService = /** @class */ (function () {
     function TemplateService() {
         this.templateCache = {};
@@ -21514,7 +21581,7 @@ exports.TemplateService = TemplateService;
 
 
 /***/ }),
-/* 55 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21535,7 +21602,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var ColumnAnimationService = /** @class */ (function () {
     function ColumnAnimationService() {
@@ -21627,7 +21694,7 @@ exports.ColumnAnimationService = ColumnAnimationService;
 
 
 /***/ }),
-/* 56 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21648,13 +21715,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var eventService_1 = __webpack_require__(8);
-var expressionService_1 = __webpack_require__(24);
-var animateSlideCellRenderer_1 = __webpack_require__(57);
-var animateShowChangeCellRenderer_1 = __webpack_require__(77);
-var groupCellRenderer_1 = __webpack_require__(74);
+var eventService_1 = __webpack_require__(12);
+var expressionService_1 = __webpack_require__(28);
+var animateSlideCellRenderer_1 = __webpack_require__(61);
+var animateShowChangeCellRenderer_1 = __webpack_require__(81);
+var groupCellRenderer_1 = __webpack_require__(78);
 var utils_1 = __webpack_require__(6);
 var CellRendererFactory = /** @class */ (function () {
     function CellRendererFactory() {
@@ -21715,7 +21782,7 @@ exports.CellRendererFactory = CellRendererFactory;
 
 
 /***/ }),
-/* 57 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21749,10 +21816,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
+var component_1 = __webpack_require__(34);
 var utils_1 = __webpack_require__(6);
-var context_1 = __webpack_require__(10);
-var filterManager_1 = __webpack_require__(58);
+var context_1 = __webpack_require__(14);
+var filterManager_1 = __webpack_require__(62);
 var AnimateSlideCellRenderer = /** @class */ (function (_super) {
     __extends(AnimateSlideCellRenderer, _super);
     function AnimateSlideCellRenderer() {
@@ -21835,7 +21902,7 @@ exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
 
 
 /***/ }),
-/* 58 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21858,15 +21925,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(6);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var popupService_1 = __webpack_require__(59);
-var valueService_1 = __webpack_require__(36);
-var columnController_1 = __webpack_require__(18);
-var columnApi_1 = __webpack_require__(23);
-var context_1 = __webpack_require__(10);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var gridApi_1 = __webpack_require__(15);
-var userComponentFactory_1 = __webpack_require__(60);
+var popupService_1 = __webpack_require__(63);
+var valueService_1 = __webpack_require__(40);
+var columnController_1 = __webpack_require__(22);
+var columnApi_1 = __webpack_require__(27);
+var context_1 = __webpack_require__(14);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var gridApi_1 = __webpack_require__(19);
+var userComponentFactory_1 = __webpack_require__(64);
 var FilterManager = /** @class */ (function () {
     function FilterManager() {
         this.allFilters = {};
@@ -22441,7 +22508,7 @@ exports.FilterManager = FilterManager;
 
 
 /***/ }),
-/* 59 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22462,12 +22529,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(7);
-var context_1 = __webpack_require__(10);
+var constants_1 = __webpack_require__(9);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var environment_1 = __webpack_require__(43);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
+var environment_1 = __webpack_require__(47);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
 var utils_1 = __webpack_require__(6);
 var PopupService = /** @class */ (function () {
     function PopupService() {
@@ -22912,7 +22979,7 @@ exports.PopupService = PopupService;
 
 
 /***/ }),
-/* 60 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22933,11 +23000,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var userComponentRegistry_1 = __webpack_require__(61);
-var agComponentUtils_1 = __webpack_require__(94);
-var componentMetadataProvider_1 = __webpack_require__(95);
+var userComponentRegistry_1 = __webpack_require__(65);
+var agComponentUtils_1 = __webpack_require__(98);
+var componentMetadataProvider_1 = __webpack_require__(99);
 var utils_1 = __webpack_require__(6);
 var ComponentSource;
 (function (ComponentSource) {
@@ -23325,7 +23392,7 @@ exports.UserComponentFactory = UserComponentFactory;
 
 
 /***/ }),
-/* 61 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23346,29 +23413,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var textCellEditor_1 = __webpack_require__(62);
-var context_1 = __webpack_require__(10);
-var dateFilter_1 = __webpack_require__(63);
-var headerComp_1 = __webpack_require__(70);
-var headerGroupComp_1 = __webpack_require__(73);
-var groupCellRenderer_1 = __webpack_require__(74);
-var animateShowChangeCellRenderer_1 = __webpack_require__(77);
-var animateSlideCellRenderer_1 = __webpack_require__(57);
-var loadingCellRenderer_1 = __webpack_require__(78);
-var selectCellEditor_1 = __webpack_require__(79);
-var popupTextCellEditor_1 = __webpack_require__(80);
-var popupSelectCellEditor_1 = __webpack_require__(81);
-var largeTextCellEditor_1 = __webpack_require__(82);
-var numberFilter_1 = __webpack_require__(83);
-var loadingOverlayComponent_1 = __webpack_require__(84);
-var noRowsOverlayComponent_1 = __webpack_require__(85);
-var tooltipComponent_1 = __webpack_require__(86);
+var textCellEditor_1 = __webpack_require__(66);
+var context_1 = __webpack_require__(14);
+var dateFilter_1 = __webpack_require__(67);
+var headerComp_1 = __webpack_require__(74);
+var headerGroupComp_1 = __webpack_require__(77);
+var groupCellRenderer_1 = __webpack_require__(78);
+var animateShowChangeCellRenderer_1 = __webpack_require__(81);
+var animateSlideCellRenderer_1 = __webpack_require__(61);
+var loadingCellRenderer_1 = __webpack_require__(82);
+var selectCellEditor_1 = __webpack_require__(83);
+var popupTextCellEditor_1 = __webpack_require__(84);
+var popupSelectCellEditor_1 = __webpack_require__(85);
+var largeTextCellEditor_1 = __webpack_require__(86);
+var numberFilter_1 = __webpack_require__(87);
+var loadingOverlayComponent_1 = __webpack_require__(88);
+var noRowsOverlayComponent_1 = __webpack_require__(89);
+var tooltipComponent_1 = __webpack_require__(90);
 var utils_1 = __webpack_require__(6);
-var defaultDateComponent_1 = __webpack_require__(87);
-var dateFloatingFilter_1 = __webpack_require__(88);
-var textFilter_1 = __webpack_require__(90);
-var numberFloatingFilter_1 = __webpack_require__(91);
-var textFloatingFilter_1 = __webpack_require__(93);
+var defaultDateComponent_1 = __webpack_require__(91);
+var dateFloatingFilter_1 = __webpack_require__(92);
+var textFilter_1 = __webpack_require__(94);
+var numberFloatingFilter_1 = __webpack_require__(95);
+var textFloatingFilter_1 = __webpack_require__(97);
 var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
     RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
@@ -23580,7 +23647,7 @@ exports.UserComponentRegistry = UserComponentRegistry;
 
 
 /***/ }),
-/* 62 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23605,8 +23672,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(7);
-var popupComponent_1 = __webpack_require__(45);
+var constants_1 = __webpack_require__(9);
+var popupComponent_1 = __webpack_require__(49);
 var utils_1 = __webpack_require__(6);
 var TextCellEditor = /** @class */ (function (_super) {
     __extends(TextCellEditor, _super);
@@ -23709,7 +23776,7 @@ exports.TextCellEditor = TextCellEditor;
 
 
 /***/ }),
-/* 63 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23743,13 +23810,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentAnnotations_1 = __webpack_require__(64);
-var context_1 = __webpack_require__(10);
-var userComponentFactory_1 = __webpack_require__(60);
+var componentAnnotations_1 = __webpack_require__(68);
+var context_1 = __webpack_require__(14);
+var userComponentFactory_1 = __webpack_require__(64);
 var utils_1 = __webpack_require__(6);
-var dateCompWrapper_1 = __webpack_require__(65);
-var simpleFilter_1 = __webpack_require__(66);
-var scalerFilter_1 = __webpack_require__(69);
+var dateCompWrapper_1 = __webpack_require__(69);
+var simpleFilter_1 = __webpack_require__(70);
+var scalerFilter_1 = __webpack_require__(73);
 var DateFilter = /** @class */ (function (_super) {
     __extends(DateFilter, _super);
     function DateFilter() {
@@ -23925,7 +23992,7 @@ exports.DateFilter = DateFilter;
 
 
 /***/ }),
-/* 64 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24009,7 +24076,7 @@ function getOrCreateProps(target, instanceName) {
 
 
 /***/ }),
-/* 65 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24073,7 +24140,7 @@ exports.DateCompWrapper = DateCompWrapper;
 
 
 /***/ }),
-/* 66 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24107,9 +24174,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentAnnotations_1 = __webpack_require__(64);
-var optionsFactory_1 = __webpack_require__(67);
-var providedFilter_1 = __webpack_require__(68);
+var componentAnnotations_1 = __webpack_require__(68);
+var optionsFactory_1 = __webpack_require__(71);
+var providedFilter_1 = __webpack_require__(72);
 var utils_1 = __webpack_require__(6);
 var ConditionPosition;
 (function (ConditionPosition) {
@@ -24383,7 +24450,7 @@ exports.SimpleFilter = SimpleFilter;
 
 
 /***/ }),
-/* 67 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24464,7 +24531,7 @@ exports.OptionsFactory = OptionsFactory;
 
 
 /***/ }),
-/* 68 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24498,12 +24565,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var componentAnnotations_1 = __webpack_require__(64);
-var context_1 = __webpack_require__(10);
+var component_1 = __webpack_require__(34);
+var componentAnnotations_1 = __webpack_require__(68);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
-var constants_1 = __webpack_require__(7);
+var constants_1 = __webpack_require__(9);
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with ag-Grid extend this class. User filters do not
@@ -24687,7 +24754,7 @@ exports.ProvidedFilter = ProvidedFilter;
 
 
 /***/ }),
-/* 69 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24712,7 +24779,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var simpleFilter_1 = __webpack_require__(66);
+var simpleFilter_1 = __webpack_require__(70);
 var ScalerFilter = /** @class */ (function (_super) {
     __extends(ScalerFilter, _super);
     function ScalerFilter() {
@@ -24832,7 +24899,7 @@ exports.ScalerFilter = ScalerFilter;
 
 
 /***/ }),
-/* 70 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24866,15 +24933,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var column_1 = __webpack_require__(20);
-var context_1 = __webpack_require__(10);
+var component_1 = __webpack_require__(34);
+var column_1 = __webpack_require__(24);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var sortController_1 = __webpack_require__(71);
-var touchListener_1 = __webpack_require__(72);
-var eventService_1 = __webpack_require__(8);
-var componentAnnotations_1 = __webpack_require__(64);
-var events_1 = __webpack_require__(12);
+var sortController_1 = __webpack_require__(75);
+var touchListener_1 = __webpack_require__(76);
+var eventService_1 = __webpack_require__(12);
+var componentAnnotations_1 = __webpack_require__(68);
+var events_1 = __webpack_require__(16);
 var utils_1 = __webpack_require__(6);
 var HeaderComp = /** @class */ (function (_super) {
     __extends(HeaderComp, _super);
@@ -25135,7 +25202,7 @@ exports.HeaderComp = HeaderComp;
 
 
 /***/ }),
-/* 71 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25156,14 +25223,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var column_1 = __webpack_require__(20);
-var context_1 = __webpack_require__(10);
+var column_1 = __webpack_require__(24);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var gridApi_1 = __webpack_require__(15);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var gridApi_1 = __webpack_require__(19);
 var utils_1 = __webpack_require__(6);
 var SortController = /** @class */ (function () {
     function SortController() {
@@ -25346,7 +25413,7 @@ exports.SortController = SortController;
 
 
 /***/ }),
-/* 72 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25358,7 +25425,7 @@ exports.SortController = SortController;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var eventService_1 = __webpack_require__(8);
+var eventService_1 = __webpack_require__(12);
 var utils_1 = __webpack_require__(6);
 var TouchListener = /** @class */ (function () {
     function TouchListener(eElement, preventMouseClick) {
@@ -25487,7 +25554,7 @@ exports.TouchListener = TouchListener;
 
 
 /***/ }),
-/* 73 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25521,13 +25588,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var columnController_1 = __webpack_require__(18);
+var component_1 = __webpack_require__(34);
+var columnController_1 = __webpack_require__(22);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
-var touchListener_1 = __webpack_require__(72);
-var componentAnnotations_1 = __webpack_require__(64);
-var originalColumnGroup_1 = __webpack_require__(22);
+var context_1 = __webpack_require__(14);
+var touchListener_1 = __webpack_require__(76);
+var componentAnnotations_1 = __webpack_require__(68);
+var originalColumnGroup_1 = __webpack_require__(26);
 var utils_1 = __webpack_require__(6);
 var HeaderGroupComp = /** @class */ (function (_super) {
     __extends(HeaderGroupComp, _super);
@@ -25632,7 +25699,7 @@ exports.HeaderGroupComp = HeaderGroupComp;
 
 
 /***/ }),
-/* 74 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25667,19 +25734,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var expressionService_1 = __webpack_require__(24);
-var eventService_1 = __webpack_require__(8);
-var constants_1 = __webpack_require__(7);
-var context_1 = __webpack_require__(10);
-var component_1 = __webpack_require__(30);
-var rowNode_1 = __webpack_require__(33);
-var valueFormatterService_1 = __webpack_require__(75);
-var checkboxSelectionComponent_1 = __webpack_require__(32);
-var columnController_1 = __webpack_require__(18);
-var column_1 = __webpack_require__(20);
-var componentAnnotations_1 = __webpack_require__(64);
-var mouseEventService_1 = __webpack_require__(76);
-var userComponentFactory_1 = __webpack_require__(60);
+var expressionService_1 = __webpack_require__(28);
+var eventService_1 = __webpack_require__(12);
+var constants_1 = __webpack_require__(9);
+var context_1 = __webpack_require__(14);
+var component_1 = __webpack_require__(34);
+var rowNode_1 = __webpack_require__(37);
+var valueFormatterService_1 = __webpack_require__(79);
+var checkboxSelectionComponent_1 = __webpack_require__(36);
+var columnController_1 = __webpack_require__(22);
+var column_1 = __webpack_require__(24);
+var componentAnnotations_1 = __webpack_require__(68);
+var mouseEventService_1 = __webpack_require__(80);
+var userComponentFactory_1 = __webpack_require__(64);
 var utils_1 = __webpack_require__(6);
 var GroupCellRenderer = /** @class */ (function (_super) {
     __extends(GroupCellRenderer, _super);
@@ -26166,7 +26233,7 @@ exports.GroupCellRenderer = GroupCellRenderer;
 
 
 /***/ }),
-/* 75 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26187,9 +26254,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var expressionService_1 = __webpack_require__(24);
+var expressionService_1 = __webpack_require__(28);
 var ValueFormatterService = /** @class */ (function () {
     function ValueFormatterService() {
     }
@@ -26249,7 +26316,7 @@ exports.ValueFormatterService = ValueFormatterService;
 
 
 /***/ }),
-/* 76 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26270,8 +26337,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var context_2 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
+var context_2 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 var MouseEventService = /** @class */ (function () {
@@ -26336,7 +26403,7 @@ exports.MouseEventService = MouseEventService;
 
 
 /***/ }),
-/* 77 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26370,10 +26437,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
+var component_1 = __webpack_require__(34);
 var utils_1 = __webpack_require__(6);
-var filterManager_1 = __webpack_require__(58);
-var context_1 = __webpack_require__(10);
+var filterManager_1 = __webpack_require__(62);
+var context_1 = __webpack_require__(14);
 var ARROW_UP = '\u2191';
 var ARROW_DOWN = '\u2193';
 var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
@@ -26469,7 +26536,7 @@ exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;
 
 
 /***/ }),
-/* 78 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26503,10 +26570,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var component_1 = __webpack_require__(30);
+var context_1 = __webpack_require__(14);
+var component_1 = __webpack_require__(34);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var componentAnnotations_1 = __webpack_require__(64);
+var componentAnnotations_1 = __webpack_require__(68);
 var utils_1 = __webpack_require__(6);
 var LoadingCellRenderer = /** @class */ (function (_super) {
     __extends(LoadingCellRenderer, _super);
@@ -26541,7 +26608,7 @@ exports.LoadingCellRenderer = LoadingCellRenderer;
 
 
 /***/ }),
-/* 79 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26575,11 +26642,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var popupComponent_1 = __webpack_require__(45);
-var constants_1 = __webpack_require__(7);
-var context_1 = __webpack_require__(10);
+var popupComponent_1 = __webpack_require__(49);
+var constants_1 = __webpack_require__(9);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var valueFormatterService_1 = __webpack_require__(75);
+var valueFormatterService_1 = __webpack_require__(79);
 var utils_1 = __webpack_require__(6);
 var SelectCellEditor = /** @class */ (function (_super) {
     __extends(SelectCellEditor, _super);
@@ -26649,7 +26716,7 @@ exports.SelectCellEditor = SelectCellEditor;
 
 
 /***/ }),
-/* 80 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26674,7 +26741,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var textCellEditor_1 = __webpack_require__(62);
+var textCellEditor_1 = __webpack_require__(66);
 var PopupTextCellEditor = /** @class */ (function (_super) {
     __extends(PopupTextCellEditor, _super);
     function PopupTextCellEditor() {
@@ -26689,7 +26756,7 @@ exports.PopupTextCellEditor = PopupTextCellEditor;
 
 
 /***/ }),
-/* 81 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26714,7 +26781,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var selectCellEditor_1 = __webpack_require__(79);
+var selectCellEditor_1 = __webpack_require__(83);
 var PopupSelectCellEditor = /** @class */ (function (_super) {
     __extends(PopupSelectCellEditor, _super);
     function PopupSelectCellEditor() {
@@ -26729,7 +26796,7 @@ exports.PopupSelectCellEditor = PopupSelectCellEditor;
 
 
 /***/ }),
-/* 82 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26754,8 +26821,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var popupComponent_1 = __webpack_require__(45);
-var constants_1 = __webpack_require__(7);
+var popupComponent_1 = __webpack_require__(49);
+var constants_1 = __webpack_require__(9);
 var utils_1 = __webpack_require__(6);
 var LargeTextCellEditor = /** @class */ (function (_super) {
     __extends(LargeTextCellEditor, _super);
@@ -26804,7 +26871,7 @@ exports.LargeTextCellEditor = LargeTextCellEditor;
 
 
 /***/ }),
-/* 83 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26838,10 +26905,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentAnnotations_1 = __webpack_require__(64);
+var componentAnnotations_1 = __webpack_require__(68);
 var utils_1 = __webpack_require__(6);
-var simpleFilter_1 = __webpack_require__(66);
-var scalerFilter_1 = __webpack_require__(69);
+var simpleFilter_1 = __webpack_require__(70);
+var scalerFilter_1 = __webpack_require__(73);
 var NumberFilter = /** @class */ (function (_super) {
     __extends(NumberFilter, _super);
     function NumberFilter() {
@@ -27011,225 +27078,6 @@ exports.NumberFilter = NumberFilter;
 
 
 /***/ }),
-/* 84 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
-var component_1 = __webpack_require__(30);
-var LoadingOverlayComponent = /** @class */ (function (_super) {
-    __extends(LoadingOverlayComponent, _super);
-    function LoadingOverlayComponent() {
-        return _super.call(this) || this;
-    }
-    LoadingOverlayComponent.prototype.init = function (params) {
-        var template = this.gridOptionsWrapper.getOverlayLoadingTemplate() ?
-            this.gridOptionsWrapper.getOverlayLoadingTemplate() : LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var localisedTemplate = template.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
-        this.setTemplate(localisedTemplate);
-    };
-    LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-    ], LoadingOverlayComponent.prototype, "gridOptionsWrapper", void 0);
-    return LoadingOverlayComponent;
-}(component_1.Component));
-exports.LoadingOverlayComponent = LoadingOverlayComponent;
-
-
-/***/ }),
-/* 85 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
-var component_1 = __webpack_require__(30);
-var NoRowsOverlayComponent = /** @class */ (function (_super) {
-    __extends(NoRowsOverlayComponent, _super);
-    function NoRowsOverlayComponent() {
-        return _super.call(this) || this;
-    }
-    NoRowsOverlayComponent.prototype.init = function (params) {
-        var template = this.gridOptionsWrapper.getOverlayNoRowsTemplate() ?
-            this.gridOptionsWrapper.getOverlayNoRowsTemplate() : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var localisedTemplate = template.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
-        this.setTemplate(localisedTemplate);
-    };
-    NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-    ], NoRowsOverlayComponent.prototype, "gridOptionsWrapper", void 0);
-    return NoRowsOverlayComponent;
-}(component_1.Component));
-exports.NoRowsOverlayComponent = NoRowsOverlayComponent;
-
-
-/***/ }),
-/* 86 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var popupComponent_1 = __webpack_require__(45);
-var TooltipComponent = /** @class */ (function (_super) {
-    __extends(TooltipComponent, _super);
-    function TooltipComponent() {
-        return _super.call(this, "<div class=\"ag-tooltip\"></div>") || this;
-    }
-    // will need to type params
-    TooltipComponent.prototype.init = function (params) {
-        var value = params.value;
-        this.getGui().innerHTML = value;
-    };
-    return TooltipComponent;
-}(popupComponent_1.PopupComponent));
-exports.TooltipComponent = TooltipComponent;
-
-
-/***/ }),
-/* 87 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.0
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var utils_1 = __webpack_require__(6);
-var DefaultDateComponent = /** @class */ (function (_super) {
-    __extends(DefaultDateComponent, _super);
-    function DefaultDateComponent() {
-        return _super.call(this, "<div class=\"ag-input-wrapper\"><input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\"></div>") || this;
-    }
-    DefaultDateComponent.prototype.init = function (params) {
-        this.eDateInput = this.getGui().querySelector('input');
-        if (utils_1._.isBrowserChrome() || params.filterParams.browserDatePicker) {
-            if (utils_1._.isBrowserIE()) {
-                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
-            }
-            else {
-                this.eDateInput.type = 'date';
-            }
-        }
-        this.listener = params.onDateChanged;
-        this.addGuiEventListener('input', this.listener);
-    };
-    DefaultDateComponent.prototype.getDate = function () {
-        return utils_1._.parseYyyyMmDdToDate(this.eDateInput.value, "-");
-    };
-    DefaultDateComponent.prototype.setDate = function (date) {
-        this.eDateInput.value = utils_1._.serializeDateToYyyyMmDd(date, "-");
-    };
-    return DefaultDateComponent;
-}(component_1.Component));
-exports.DefaultDateComponent = DefaultDateComponent;
-
-
-/***/ }),
 /* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -27264,15 +27112,234 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var dateFilter_1 = __webpack_require__(63);
-var context_1 = __webpack_require__(10);
-var userComponentFactory_1 = __webpack_require__(60);
+var gridOptionsWrapper_1 = __webpack_require__(5);
+var context_1 = __webpack_require__(14);
+var component_1 = __webpack_require__(34);
+var LoadingOverlayComponent = /** @class */ (function (_super) {
+    __extends(LoadingOverlayComponent, _super);
+    function LoadingOverlayComponent() {
+        return _super.call(this) || this;
+    }
+    LoadingOverlayComponent.prototype.init = function (params) {
+        var template = this.gridOptionsWrapper.getOverlayLoadingTemplate() ?
+            this.gridOptionsWrapper.getOverlayLoadingTemplate() : LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        var localisedTemplate = template.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
+        this.setTemplate(localisedTemplate);
+    };
+    LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], LoadingOverlayComponent.prototype, "gridOptionsWrapper", void 0);
+    return LoadingOverlayComponent;
+}(component_1.Component));
+exports.LoadingOverlayComponent = LoadingOverlayComponent;
+
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v21.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var gridOptionsWrapper_1 = __webpack_require__(5);
+var context_1 = __webpack_require__(14);
+var component_1 = __webpack_require__(34);
+var NoRowsOverlayComponent = /** @class */ (function (_super) {
+    __extends(NoRowsOverlayComponent, _super);
+    function NoRowsOverlayComponent() {
+        return _super.call(this) || this;
+    }
+    NoRowsOverlayComponent.prototype.init = function (params) {
+        var template = this.gridOptionsWrapper.getOverlayNoRowsTemplate() ?
+            this.gridOptionsWrapper.getOverlayNoRowsTemplate() : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        var localisedTemplate = template.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
+        this.setTemplate(localisedTemplate);
+    };
+    NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], NoRowsOverlayComponent.prototype, "gridOptionsWrapper", void 0);
+    return NoRowsOverlayComponent;
+}(component_1.Component));
+exports.NoRowsOverlayComponent = NoRowsOverlayComponent;
+
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v21.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var popupComponent_1 = __webpack_require__(49);
+var TooltipComponent = /** @class */ (function (_super) {
+    __extends(TooltipComponent, _super);
+    function TooltipComponent() {
+        return _super.call(this, "<div class=\"ag-tooltip\"></div>") || this;
+    }
+    // will need to type params
+    TooltipComponent.prototype.init = function (params) {
+        var value = params.value;
+        this.getGui().innerHTML = value;
+    };
+    return TooltipComponent;
+}(popupComponent_1.PopupComponent));
+exports.TooltipComponent = TooltipComponent;
+
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v21.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var component_1 = __webpack_require__(34);
 var utils_1 = __webpack_require__(6);
-var dateCompWrapper_1 = __webpack_require__(65);
-var componentAnnotations_1 = __webpack_require__(64);
-var simpleFilter_1 = __webpack_require__(66);
-var simpleFloatingFilter_1 = __webpack_require__(89);
-var providedFilter_1 = __webpack_require__(68);
+var DefaultDateComponent = /** @class */ (function (_super) {
+    __extends(DefaultDateComponent, _super);
+    function DefaultDateComponent() {
+        return _super.call(this, "<div class=\"ag-input-wrapper\"><input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\"></div>") || this;
+    }
+    DefaultDateComponent.prototype.init = function (params) {
+        this.eDateInput = this.getGui().querySelector('input');
+        if (utils_1._.isBrowserChrome() || params.filterParams.browserDatePicker) {
+            if (utils_1._.isBrowserIE()) {
+                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
+            }
+            else {
+                this.eDateInput.type = 'date';
+            }
+        }
+        this.listener = params.onDateChanged;
+        this.addGuiEventListener('input', this.listener);
+    };
+    DefaultDateComponent.prototype.getDate = function () {
+        return utils_1._.parseYyyyMmDdToDate(this.eDateInput.value, "-");
+    };
+    DefaultDateComponent.prototype.setDate = function (date) {
+        this.eDateInput.value = utils_1._.serializeDateToYyyyMmDd(date, "-");
+    };
+    return DefaultDateComponent;
+}(component_1.Component));
+exports.DefaultDateComponent = DefaultDateComponent;
+
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v21.1.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var dateFilter_1 = __webpack_require__(67);
+var context_1 = __webpack_require__(14);
+var userComponentFactory_1 = __webpack_require__(64);
+var utils_1 = __webpack_require__(6);
+var dateCompWrapper_1 = __webpack_require__(69);
+var componentAnnotations_1 = __webpack_require__(68);
+var simpleFilter_1 = __webpack_require__(70);
+var simpleFloatingFilter_1 = __webpack_require__(93);
+var providedFilter_1 = __webpack_require__(72);
 var DateFloatingFilter = /** @class */ (function (_super) {
     __extends(DateFloatingFilter, _super);
     function DateFloatingFilter() {
@@ -27372,7 +27439,7 @@ exports.DateFloatingFilter = DateFloatingFilter;
 
 
 /***/ }),
-/* 89 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27397,9 +27464,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var simpleFilter_1 = __webpack_require__(66);
-var optionsFactory_1 = __webpack_require__(67);
+var component_1 = __webpack_require__(34);
+var simpleFilter_1 = __webpack_require__(70);
+var optionsFactory_1 = __webpack_require__(71);
 var SimpleFloatingFilter = /** @class */ (function (_super) {
     __extends(SimpleFloatingFilter, _super);
     function SimpleFloatingFilter() {
@@ -27486,7 +27553,7 @@ exports.SimpleFloatingFilter = SimpleFloatingFilter;
 
 
 /***/ }),
-/* 90 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27520,9 +27587,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentAnnotations_1 = __webpack_require__(64);
+var componentAnnotations_1 = __webpack_require__(68);
 var utils_1 = __webpack_require__(6);
-var simpleFilter_1 = __webpack_require__(66);
+var simpleFilter_1 = __webpack_require__(70);
 var TextFilter = /** @class */ (function (_super) {
     __extends(TextFilter, _super);
     function TextFilter() {
@@ -27694,7 +27761,7 @@ exports.TextFilter = TextFilter;
 
 
 /***/ }),
-/* 91 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27719,9 +27786,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var numberFilter_1 = __webpack_require__(83);
-var simpleFilter_1 = __webpack_require__(66);
-var textInputFloatingFilter_1 = __webpack_require__(92);
+var numberFilter_1 = __webpack_require__(87);
+var simpleFilter_1 = __webpack_require__(70);
+var textInputFloatingFilter_1 = __webpack_require__(96);
 var NumberFloatingFilter = /** @class */ (function (_super) {
     __extends(NumberFloatingFilter, _super);
     function NumberFloatingFilter() {
@@ -27751,7 +27818,7 @@ exports.NumberFloatingFilter = NumberFloatingFilter;
 
 
 /***/ }),
-/* 92 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27785,12 +27852,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentAnnotations_1 = __webpack_require__(64);
+var componentAnnotations_1 = __webpack_require__(68);
 var utils_1 = __webpack_require__(6);
-var constants_1 = __webpack_require__(7);
-var providedFilter_1 = __webpack_require__(68);
-var context_1 = __webpack_require__(10);
-var simpleFloatingFilter_1 = __webpack_require__(89);
+var constants_1 = __webpack_require__(9);
+var providedFilter_1 = __webpack_require__(72);
+var context_1 = __webpack_require__(14);
+var simpleFloatingFilter_1 = __webpack_require__(93);
 var TextInputFloatingFilter = /** @class */ (function (_super) {
     __extends(TextInputFloatingFilter, _super);
     function TextInputFloatingFilter() {
@@ -27862,7 +27929,7 @@ exports.TextInputFloatingFilter = TextInputFloatingFilter;
 
 
 /***/ }),
-/* 93 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27887,8 +27954,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var textFilter_1 = __webpack_require__(90);
-var textInputFloatingFilter_1 = __webpack_require__(92);
+var textFilter_1 = __webpack_require__(94);
+var textInputFloatingFilter_1 = __webpack_require__(96);
 var TextFloatingFilter = /** @class */ (function (_super) {
     __extends(TextFloatingFilter, _super);
     function TextFloatingFilter() {
@@ -27913,7 +27980,7 @@ exports.TextFloatingFilter = TextFloatingFilter;
 
 
 /***/ }),
-/* 94 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27934,8 +28001,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var componentMetadataProvider_1 = __webpack_require__(95);
+var context_1 = __webpack_require__(14);
+var componentMetadataProvider_1 = __webpack_require__(99);
 var utils_1 = __webpack_require__(6);
 var AgComponentUtils = /** @class */ (function () {
     function AgComponentUtils() {
@@ -28003,7 +28070,7 @@ exports.AgComponentUtils = AgComponentUtils;
 
 
 /***/ }),
-/* 95 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28024,8 +28091,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var agComponentUtils_1 = __webpack_require__(94);
+var context_1 = __webpack_require__(14);
+var agComponentUtils_1 = __webpack_require__(98);
 var ComponentMetadataProvider = /** @class */ (function () {
     function ComponentMetadataProvider() {
     }
@@ -28145,7 +28212,7 @@ exports.ComponentMetadataProvider = ComponentMetadataProvider;
 
 
 /***/ }),
-/* 96 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28166,8 +28233,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var expressionService_1 = __webpack_require__(24);
+var context_1 = __webpack_require__(14);
+var expressionService_1 = __webpack_require__(28);
 var StylingService = /** @class */ (function () {
     function StylingService() {
     }
@@ -28231,7 +28298,7 @@ exports.StylingService = StylingService;
 
 
 /***/ }),
-/* 97 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28265,12 +28332,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var eventService_1 = __webpack_require__(8);
-var context_1 = __webpack_require__(10);
-var events_1 = __webpack_require__(12);
-var beanStub_1 = __webpack_require__(31);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var eventService_1 = __webpack_require__(12);
+var context_1 = __webpack_require__(14);
+var events_1 = __webpack_require__(16);
+var beanStub_1 = __webpack_require__(35);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 var ColumnHoverService = /** @class */ (function (_super) {
     __extends(ColumnHoverService, _super);
     function ColumnHoverService() {
@@ -28318,7 +28385,7 @@ exports.ColumnHoverService = ColumnHoverService;
 
 
 /***/ }),
-/* 98 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28339,10 +28406,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var eventKeys_1 = __webpack_require__(13);
-var eventService_1 = __webpack_require__(8);
+var eventKeys_1 = __webpack_require__(17);
+var eventService_1 = __webpack_require__(12);
 var AnimationFrameService = /** @class */ (function () {
     function AnimationFrameService() {
         // create tasks are to do with row creation. for them we want to execute according to row order, so we use
@@ -28488,7 +28555,7 @@ exports.AnimationFrameService = AnimationFrameService;
 
 
 /***/ }),
-/* 99 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28522,10 +28589,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var beanStub_1 = __webpack_require__(31);
-var context_1 = __webpack_require__(10);
-var eventService_1 = __webpack_require__(8);
-var eventKeys_1 = __webpack_require__(13);
+var beanStub_1 = __webpack_require__(35);
+var context_1 = __webpack_require__(14);
+var eventService_1 = __webpack_require__(12);
+var eventKeys_1 = __webpack_require__(17);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 /**
@@ -28642,7 +28709,7 @@ exports.MaxDivHeightScaler = MaxDivHeightScaler;
 
 
 /***/ }),
-/* 100 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28663,12 +28730,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var popupService_1 = __webpack_require__(59);
-var userComponentFactory_1 = __webpack_require__(60);
+var context_1 = __webpack_require__(14);
+var popupService_1 = __webpack_require__(63);
+var userComponentFactory_1 = __webpack_require__(64);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
 var utils_1 = __webpack_require__(6);
 var TooltipManager = /** @class */ (function () {
     function TooltipManager() {
@@ -28875,7 +28942,7 @@ exports.TooltipManager = TooltipManager;
 
 
 /***/ }),
-/* 101 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28896,8 +28963,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var column_1 = __webpack_require__(20);
-var context_1 = __webpack_require__(10);
+var column_1 = __webpack_require__(24);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 /**
  * For Master Detail, it is required to keep components between expanding & collapsing parents.
@@ -29046,7 +29113,7 @@ exports.DetailRowCompCache = DetailRowCompCache;
 
 
 /***/ }),
-/* 102 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29080,28 +29147,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var context_1 = __webpack_require__(10);
-var column_1 = __webpack_require__(20);
-var dragAndDropService_1 = __webpack_require__(41);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
-var horizontalResizeService_1 = __webpack_require__(103);
+var component_1 = __webpack_require__(34);
+var context_1 = __webpack_require__(14);
+var column_1 = __webpack_require__(24);
+var dragAndDropService_1 = __webpack_require__(45);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
+var horizontalResizeService_1 = __webpack_require__(107);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var cssClassApplier_1 = __webpack_require__(104);
-var setLeftFeature_1 = __webpack_require__(105);
-var gridApi_1 = __webpack_require__(15);
-var sortController_1 = __webpack_require__(71);
-var eventService_1 = __webpack_require__(8);
-var userComponentFactory_1 = __webpack_require__(60);
-var agCheckbox_1 = __webpack_require__(106);
-var componentAnnotations_1 = __webpack_require__(64);
-var selectAllFeature_1 = __webpack_require__(110);
-var events_1 = __webpack_require__(12);
-var columnHoverService_1 = __webpack_require__(97);
-var beans_1 = __webpack_require__(53);
-var hoverFeature_1 = __webpack_require__(111);
-var touchListener_1 = __webpack_require__(72);
+var cssClassApplier_1 = __webpack_require__(108);
+var setLeftFeature_1 = __webpack_require__(109);
+var gridApi_1 = __webpack_require__(19);
+var sortController_1 = __webpack_require__(75);
+var eventService_1 = __webpack_require__(12);
+var userComponentFactory_1 = __webpack_require__(64);
+var agCheckbox_1 = __webpack_require__(110);
+var componentAnnotations_1 = __webpack_require__(68);
+var selectAllFeature_1 = __webpack_require__(114);
+var events_1 = __webpack_require__(16);
+var columnHoverService_1 = __webpack_require__(101);
+var beans_1 = __webpack_require__(57);
+var hoverFeature_1 = __webpack_require__(115);
+var touchListener_1 = __webpack_require__(76);
 var utils_1 = __webpack_require__(6);
 var HeaderWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderWrapperComp, _super);
@@ -29399,7 +29466,7 @@ exports.HeaderWrapperComp = HeaderWrapperComp;
 
 
 /***/ }),
-/* 103 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29421,8 +29488,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
-var dragService_1 = __webpack_require__(42);
+var context_1 = __webpack_require__(14);
+var dragService_1 = __webpack_require__(46);
 var HorizontalResizeService = /** @class */ (function () {
     function HorizontalResizeService() {
     }
@@ -29493,7 +29560,7 @@ exports.HorizontalResizeService = HorizontalResizeService;
 
 
 /***/ }),
-/* 104 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29558,7 +29625,7 @@ exports.CssClassApplier = CssClassApplier;
 
 
 /***/ }),
-/* 105 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29583,9 +29650,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var column_1 = __webpack_require__(20);
-var beanStub_1 = __webpack_require__(31);
-var constants_1 = __webpack_require__(7);
+var column_1 = __webpack_require__(24);
+var beanStub_1 = __webpack_require__(35);
+var constants_1 = __webpack_require__(9);
 var utils_1 = __webpack_require__(6);
 var SetLeftFeature = /** @class */ (function (_super) {
     __extends(SetLeftFeature, _super);
@@ -29681,7 +29748,7 @@ exports.SetLeftFeature = SetLeftFeature;
 
 
 /***/ }),
-/* 106 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29715,10 +29782,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var agAbstractInputField_1 = __webpack_require__(107);
-var agAbstractField_1 = __webpack_require__(108);
+var agAbstractInputField_1 = __webpack_require__(111);
+var agAbstractField_1 = __webpack_require__(112);
 var utils_1 = __webpack_require__(6);
 var AgCheckbox = /** @class */ (function (_super) {
     __extends(AgCheckbox, _super);
@@ -29835,7 +29902,7 @@ exports.AgCheckbox = AgCheckbox;
 
 
 /***/ }),
-/* 107 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29869,8 +29936,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentAnnotations_1 = __webpack_require__(64);
-var agAbstractField_1 = __webpack_require__(108);
+var componentAnnotations_1 = __webpack_require__(68);
+var agAbstractField_1 = __webpack_require__(112);
 var utils_1 = __webpack_require__(6);
 var AgAbstractInputField = /** @class */ (function (_super) {
     __extends(AgAbstractInputField, _super);
@@ -29934,7 +30001,7 @@ exports.AgAbstractInputField = AgAbstractInputField;
 
 
 /***/ }),
-/* 108 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29959,7 +30026,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agAbstractLabel_1 = __webpack_require__(109);
+var agAbstractLabel_1 = __webpack_require__(113);
 var utils_1 = __webpack_require__(6);
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
@@ -30000,7 +30067,7 @@ exports.AgAbstractField = AgAbstractField;
 
 
 /***/ }),
-/* 109 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30034,8 +30101,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var context_1 = __webpack_require__(10);
+var component_1 = __webpack_require__(34);
+var context_1 = __webpack_require__(14);
 var utils_1 = __webpack_require__(6);
 var AgAbstractLabel = /** @class */ (function (_super) {
     __extends(AgAbstractLabel, _super);
@@ -30110,7 +30177,7 @@ exports.AgAbstractLabel = AgAbstractLabel;
 
 
 /***/ }),
-/* 110 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30144,15 +30211,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var agCheckbox_1 = __webpack_require__(106);
-var beanStub_1 = __webpack_require__(31);
-var context_1 = __webpack_require__(10);
-var columnApi_1 = __webpack_require__(23);
-var gridApi_1 = __webpack_require__(15);
-var events_1 = __webpack_require__(12);
-var eventService_1 = __webpack_require__(8);
-var constants_1 = __webpack_require__(7);
-var selectionController_1 = __webpack_require__(34);
+var agCheckbox_1 = __webpack_require__(110);
+var beanStub_1 = __webpack_require__(35);
+var context_1 = __webpack_require__(14);
+var columnApi_1 = __webpack_require__(27);
+var gridApi_1 = __webpack_require__(19);
+var events_1 = __webpack_require__(16);
+var eventService_1 = __webpack_require__(12);
+var constants_1 = __webpack_require__(9);
+var selectionController_1 = __webpack_require__(38);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var SelectAllFeature = /** @class */ (function (_super) {
     __extends(SelectAllFeature, _super);
@@ -30341,7 +30408,7 @@ exports.SelectAllFeature = SelectAllFeature;
 
 
 /***/ }),
-/* 111 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30375,9 +30442,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var beanStub_1 = __webpack_require__(31);
-var context_1 = __webpack_require__(10);
-var columnHoverService_1 = __webpack_require__(97);
+var beanStub_1 = __webpack_require__(35);
+var context_1 = __webpack_require__(14);
+var columnHoverService_1 = __webpack_require__(101);
 var HoverFeature = /** @class */ (function (_super) {
     __extends(HoverFeature, _super);
     function HoverFeature(columns, element) {
@@ -30415,7 +30482,7 @@ exports.HoverFeature = HoverFeature;
 
 
 /***/ }),
-/* 112 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30461,7 +30528,7 @@ exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
 
 
 /***/ }),
-/* 113 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30482,12 +30549,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var column_1 = __webpack_require__(20);
+var context_1 = __webpack_require__(14);
+var column_1 = __webpack_require__(24);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnController_1 = __webpack_require__(18);
+var columnController_1 = __webpack_require__(22);
 var columnFactory_1 = __webpack_require__(4);
-var constants_1 = __webpack_require__(7);
+var constants_1 = __webpack_require__(9);
 var utils_1 = __webpack_require__(6);
 var AutoGroupColService = /** @class */ (function () {
     function AutoGroupColService() {
@@ -30611,7 +30678,7 @@ exports.AutoGroupColService = AutoGroupColService;
 
 
 /***/ }),
-/* 114 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30629,7 +30696,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var Downloader = /** @class */ (function () {
     function Downloader() {
     }
@@ -30666,7 +30733,7 @@ exports.Downloader = Downloader;
 
 
 /***/ }),
-/* 115 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30687,8 +30754,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(7);
+var context_1 = __webpack_require__(14);
+var constants_1 = __webpack_require__(9);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 var ImmutableService = /** @class */ (function () {
@@ -30775,7 +30842,7 @@ exports.ImmutableService = ImmutableService;
 
 
 /***/ }),
-/* 116 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30800,14 +30867,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnController_1 = __webpack_require__(18);
-var eventService_1 = __webpack_require__(8);
-var logger_1 = __webpack_require__(9);
-var events_1 = __webpack_require__(12);
-var context_1 = __webpack_require__(10);
-var context_2 = __webpack_require__(10);
-var context_3 = __webpack_require__(10);
-var context_4 = __webpack_require__(10);
+var columnController_1 = __webpack_require__(22);
+var eventService_1 = __webpack_require__(12);
+var logger_1 = __webpack_require__(13);
+var events_1 = __webpack_require__(16);
+var context_1 = __webpack_require__(14);
+var context_2 = __webpack_require__(14);
+var context_3 = __webpack_require__(14);
+var context_4 = __webpack_require__(14);
 var AlignedGridsService = /** @class */ (function () {
     function AlignedGridsService() {
         // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
@@ -31016,7 +31083,7 @@ exports.AlignedGridsService = AlignedGridsService;
 
 
 /***/ }),
-/* 117 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31181,7 +31248,7 @@ exports.ColDefUtil = ColDefUtil;
 
 
 /***/ }),
-/* 118 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31202,10 +31269,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var beans_1 = __webpack_require__(53);
-var cellComp_1 = __webpack_require__(29);
-var columnController_1 = __webpack_require__(18);
+var context_1 = __webpack_require__(14);
+var beans_1 = __webpack_require__(57);
+var cellComp_1 = __webpack_require__(33);
+var columnController_1 = __webpack_require__(22);
 var utils_1 = __webpack_require__(6);
 var AutoHeightCalculator = /** @class */ (function () {
     function AutoHeightCalculator() {
@@ -31279,7 +31346,7 @@ exports.AutoHeightCalculator = AutoHeightCalculator;
 
 
 /***/ }),
-/* 119 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31378,7 +31445,7 @@ exports.SideBarDefParser = SideBarDefParser;
 
 
 /***/ }),
-/* 120 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31436,7 +31503,7 @@ exports.ColumnKeyCreator = ColumnKeyCreator;
 
 
 /***/ }),
-/* 121 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31457,7 +31524,7 @@ exports.DefaultColumnTypes = {
 
 
 /***/ }),
-/* 122 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31469,7 +31536,7 @@ exports.DefaultColumnTypes = {
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_1 = __webpack_require__(123);
+var grid_1 = __webpack_require__(127);
 function initialiseAgGridWithAngular1(angular) {
     var angularModule = angular.module("agGrid", []);
     angularModule.directive("agGrid", function () {
@@ -31506,7 +31573,7 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 
 
 /***/ }),
-/* 123 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31519,93 +31586,93 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var selectionController_1 = __webpack_require__(34);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
-var rowRenderer_1 = __webpack_require__(27);
-var headerRootComp_1 = __webpack_require__(124);
-var filterManager_1 = __webpack_require__(58);
-var valueService_1 = __webpack_require__(36);
-var eventService_1 = __webpack_require__(8);
-var gridPanel_1 = __webpack_require__(133);
-var gridApi_1 = __webpack_require__(15);
+var selectionController_1 = __webpack_require__(38);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
+var rowRenderer_1 = __webpack_require__(31);
+var headerRootComp_1 = __webpack_require__(128);
+var filterManager_1 = __webpack_require__(62);
+var valueService_1 = __webpack_require__(40);
+var eventService_1 = __webpack_require__(12);
+var gridPanel_1 = __webpack_require__(137);
+var gridApi_1 = __webpack_require__(19);
 var columnFactory_1 = __webpack_require__(4);
-var displayedGroupCreator_1 = __webpack_require__(25);
-var expressionService_1 = __webpack_require__(24);
-var templateService_1 = __webpack_require__(54);
-var popupService_1 = __webpack_require__(59);
-var logger_1 = __webpack_require__(9);
-var columnUtils_1 = __webpack_require__(21);
-var autoWidthCalculator_1 = __webpack_require__(26);
-var horizontalResizeService_1 = __webpack_require__(103);
-var context_1 = __webpack_require__(10);
-var csvCreator_1 = __webpack_require__(16);
-var gridCore_1 = __webpack_require__(139);
-var standardMenu_1 = __webpack_require__(140);
-var dragAndDropService_1 = __webpack_require__(41);
-var dragService_1 = __webpack_require__(42);
-var sortController_1 = __webpack_require__(71);
-var focusedCellController_1 = __webpack_require__(48);
-var mouseEventService_1 = __webpack_require__(76);
-var cellNavigationService_1 = __webpack_require__(49);
-var filterStage_1 = __webpack_require__(141);
-var sortStage_1 = __webpack_require__(144);
-var flattenStage_1 = __webpack_require__(146);
-var events_1 = __webpack_require__(12);
-var infiniteRowModel_1 = __webpack_require__(147);
-var clientSideRowModel_1 = __webpack_require__(153);
-var cellRendererFactory_1 = __webpack_require__(56);
-var valueFormatterService_1 = __webpack_require__(75);
-var agCheckbox_1 = __webpack_require__(106);
-var agRadioButton_1 = __webpack_require__(155);
-var vanillaFrameworkOverrides_1 = __webpack_require__(156);
-var scrollVisibleService_1 = __webpack_require__(52);
-var downloader_1 = __webpack_require__(114);
-var xmlFactory_1 = __webpack_require__(157);
-var gridSerializer_1 = __webpack_require__(17);
-var stylingService_1 = __webpack_require__(96);
-var columnHoverService_1 = __webpack_require__(97);
-var columnAnimationService_1 = __webpack_require__(55);
-var sortService_1 = __webpack_require__(145);
-var filterService_1 = __webpack_require__(142);
-var autoGroupColService_1 = __webpack_require__(113);
-var paginationProxy_1 = __webpack_require__(51);
-var immutableService_1 = __webpack_require__(115);
-var constants_1 = __webpack_require__(7);
-var valueCache_1 = __webpack_require__(37);
-var changeDetectionService_1 = __webpack_require__(158);
-var alignedGridsService_1 = __webpack_require__(116);
-var pinnedRowModel_1 = __webpack_require__(50);
-var userComponentFactory_1 = __webpack_require__(60);
-var userComponentRegistry_1 = __webpack_require__(61);
-var agComponentUtils_1 = __webpack_require__(94);
-var componentMetadataProvider_1 = __webpack_require__(95);
-var beans_1 = __webpack_require__(53);
-var environment_1 = __webpack_require__(43);
-var animationFrameService_1 = __webpack_require__(98);
-var navigationService_1 = __webpack_require__(135);
-var maxDivHeightScaler_1 = __webpack_require__(99);
-var selectableService_1 = __webpack_require__(143);
-var autoHeightCalculator_1 = __webpack_require__(118);
-var paginationComp_1 = __webpack_require__(159);
-var resizeObserverService_1 = __webpack_require__(138);
-var zipContainer_1 = __webpack_require__(160);
-var tooltipManager_1 = __webpack_require__(100);
-var overlayWrapperComponent_1 = __webpack_require__(137);
-var agGroupComponent_1 = __webpack_require__(161);
-var agDialog_1 = __webpack_require__(162);
-var agPanel_1 = __webpack_require__(166);
-var agInputTextField_1 = __webpack_require__(168);
-var agInputTextArea_1 = __webpack_require__(169);
-var agSlider_1 = __webpack_require__(170);
+var displayedGroupCreator_1 = __webpack_require__(29);
+var expressionService_1 = __webpack_require__(28);
+var templateService_1 = __webpack_require__(58);
+var popupService_1 = __webpack_require__(63);
+var logger_1 = __webpack_require__(13);
+var columnUtils_1 = __webpack_require__(25);
+var autoWidthCalculator_1 = __webpack_require__(30);
+var horizontalResizeService_1 = __webpack_require__(107);
+var context_1 = __webpack_require__(14);
+var csvCreator_1 = __webpack_require__(20);
+var gridCore_1 = __webpack_require__(143);
+var standardMenu_1 = __webpack_require__(144);
+var dragAndDropService_1 = __webpack_require__(45);
+var dragService_1 = __webpack_require__(46);
+var sortController_1 = __webpack_require__(75);
+var focusedCellController_1 = __webpack_require__(52);
+var mouseEventService_1 = __webpack_require__(80);
+var cellNavigationService_1 = __webpack_require__(53);
+var filterStage_1 = __webpack_require__(145);
+var sortStage_1 = __webpack_require__(148);
+var flattenStage_1 = __webpack_require__(150);
+var events_1 = __webpack_require__(16);
+var infiniteRowModel_1 = __webpack_require__(151);
+var clientSideRowModel_1 = __webpack_require__(157);
+var cellRendererFactory_1 = __webpack_require__(60);
+var valueFormatterService_1 = __webpack_require__(79);
+var agCheckbox_1 = __webpack_require__(110);
+var agRadioButton_1 = __webpack_require__(159);
+var vanillaFrameworkOverrides_1 = __webpack_require__(160);
+var scrollVisibleService_1 = __webpack_require__(56);
+var downloader_1 = __webpack_require__(118);
+var xmlFactory_1 = __webpack_require__(161);
+var gridSerializer_1 = __webpack_require__(21);
+var stylingService_1 = __webpack_require__(100);
+var columnHoverService_1 = __webpack_require__(101);
+var columnAnimationService_1 = __webpack_require__(59);
+var sortService_1 = __webpack_require__(149);
+var filterService_1 = __webpack_require__(146);
+var autoGroupColService_1 = __webpack_require__(117);
+var paginationProxy_1 = __webpack_require__(55);
+var immutableService_1 = __webpack_require__(119);
+var constants_1 = __webpack_require__(9);
+var valueCache_1 = __webpack_require__(41);
+var changeDetectionService_1 = __webpack_require__(162);
+var alignedGridsService_1 = __webpack_require__(120);
+var pinnedRowModel_1 = __webpack_require__(54);
+var userComponentFactory_1 = __webpack_require__(64);
+var userComponentRegistry_1 = __webpack_require__(65);
+var agComponentUtils_1 = __webpack_require__(98);
+var componentMetadataProvider_1 = __webpack_require__(99);
+var beans_1 = __webpack_require__(57);
+var environment_1 = __webpack_require__(47);
+var animationFrameService_1 = __webpack_require__(102);
+var navigationService_1 = __webpack_require__(139);
+var maxDivHeightScaler_1 = __webpack_require__(103);
+var selectableService_1 = __webpack_require__(147);
+var autoHeightCalculator_1 = __webpack_require__(122);
+var paginationComp_1 = __webpack_require__(163);
+var resizeObserverService_1 = __webpack_require__(142);
+var zipContainer_1 = __webpack_require__(164);
+var tooltipManager_1 = __webpack_require__(104);
+var overlayWrapperComponent_1 = __webpack_require__(141);
+var agGroupComponent_1 = __webpack_require__(165);
+var agDialog_1 = __webpack_require__(166);
+var agPanel_1 = __webpack_require__(170);
+var agInputTextField_1 = __webpack_require__(172);
+var agInputTextArea_1 = __webpack_require__(173);
+var agSlider_1 = __webpack_require__(174);
 var utils_1 = __webpack_require__(6);
-var agColorPicker_1 = __webpack_require__(173);
-var agInputNumberField_1 = __webpack_require__(172);
-var agInputRange_1 = __webpack_require__(171);
-var agSelect_1 = __webpack_require__(176);
-var agAngleSelect_1 = __webpack_require__(177);
-var agToggleButton_1 = __webpack_require__(178);
-var detailRowCompCache_1 = __webpack_require__(101);
+var agColorPicker_1 = __webpack_require__(177);
+var agInputNumberField_1 = __webpack_require__(176);
+var agInputRange_1 = __webpack_require__(175);
+var agSelect_1 = __webpack_require__(180);
+var agAngleSelect_1 = __webpack_require__(181);
+var agToggleButton_1 = __webpack_require__(182);
+var detailRowCompCache_1 = __webpack_require__(105);
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -31797,7 +31864,7 @@ exports.Grid = Grid;
 
 
 /***/ }),
-/* 124 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31832,17 +31899,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnController_1 = __webpack_require__(18);
-var column_1 = __webpack_require__(20);
-var context_1 = __webpack_require__(10);
-var headerContainer_1 = __webpack_require__(125);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var component_1 = __webpack_require__(30);
-var componentAnnotations_1 = __webpack_require__(64);
-var gridApi_1 = __webpack_require__(15);
-var autoWidthCalculator_1 = __webpack_require__(26);
-var constants_1 = __webpack_require__(7);
+var columnController_1 = __webpack_require__(22);
+var column_1 = __webpack_require__(24);
+var context_1 = __webpack_require__(14);
+var headerContainer_1 = __webpack_require__(129);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var component_1 = __webpack_require__(34);
+var componentAnnotations_1 = __webpack_require__(68);
+var gridApi_1 = __webpack_require__(19);
+var autoWidthCalculator_1 = __webpack_require__(30);
+var constants_1 = __webpack_require__(9);
 var utils_1 = __webpack_require__(6);
 var HeaderRootComp = /** @class */ (function (_super) {
     __extends(HeaderRootComp, _super);
@@ -31978,7 +32045,7 @@ exports.HeaderRootComp = HeaderRootComp;
 
 
 /***/ }),
-/* 125 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32000,15 +32067,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
-var dragAndDropService_1 = __webpack_require__(41);
-var columnController_1 = __webpack_require__(18);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var headerRowComp_1 = __webpack_require__(126);
-var bodyDropTarget_1 = __webpack_require__(130);
-var column_1 = __webpack_require__(20);
-var scrollVisibleService_1 = __webpack_require__(52);
+var context_1 = __webpack_require__(14);
+var dragAndDropService_1 = __webpack_require__(45);
+var columnController_1 = __webpack_require__(22);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var headerRowComp_1 = __webpack_require__(130);
+var bodyDropTarget_1 = __webpack_require__(134);
+var column_1 = __webpack_require__(24);
+var scrollVisibleService_1 = __webpack_require__(56);
 var utils_1 = __webpack_require__(6);
 var HeaderContainer = /** @class */ (function () {
     function HeaderContainer(eContainer, eViewport, pinned) {
@@ -32159,7 +32226,7 @@ exports.HeaderContainer = HeaderContainer;
 
 
 /***/ }),
-/* 126 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32193,20 +32260,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var context_1 = __webpack_require__(10);
+var component_1 = __webpack_require__(34);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnController_1 = __webpack_require__(18);
-var column_1 = __webpack_require__(20);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var headerWrapperComp_1 = __webpack_require__(102);
-var headerGroupWrapperComp_1 = __webpack_require__(127);
-var filterManager_1 = __webpack_require__(58);
-var gridApi_1 = __webpack_require__(15);
-var constants_1 = __webpack_require__(7);
+var columnController_1 = __webpack_require__(22);
+var column_1 = __webpack_require__(24);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var headerWrapperComp_1 = __webpack_require__(106);
+var headerGroupWrapperComp_1 = __webpack_require__(131);
+var filterManager_1 = __webpack_require__(62);
+var gridApi_1 = __webpack_require__(19);
+var constants_1 = __webpack_require__(9);
 var utils_1 = __webpack_require__(6);
-var floatingFilterWrapper_1 = __webpack_require__(128);
+var floatingFilterWrapper_1 = __webpack_require__(132);
 var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -32450,7 +32517,7 @@ exports.HeaderRowComp = HeaderRowComp;
 
 
 /***/ }),
-/* 127 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32484,21 +32551,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var column_1 = __webpack_require__(20);
-var columnGroup_1 = __webpack_require__(19);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
+var component_1 = __webpack_require__(34);
+var column_1 = __webpack_require__(24);
+var columnGroup_1 = __webpack_require__(23);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var horizontalResizeService_1 = __webpack_require__(103);
-var context_1 = __webpack_require__(10);
-var cssClassApplier_1 = __webpack_require__(104);
-var dragAndDropService_1 = __webpack_require__(41);
-var setLeftFeature_1 = __webpack_require__(105);
-var gridApi_1 = __webpack_require__(15);
-var userComponentFactory_1 = __webpack_require__(60);
-var beans_1 = __webpack_require__(53);
-var hoverFeature_1 = __webpack_require__(111);
+var horizontalResizeService_1 = __webpack_require__(107);
+var context_1 = __webpack_require__(14);
+var cssClassApplier_1 = __webpack_require__(108);
+var dragAndDropService_1 = __webpack_require__(45);
+var setLeftFeature_1 = __webpack_require__(109);
+var gridApi_1 = __webpack_require__(19);
+var userComponentFactory_1 = __webpack_require__(64);
+var beans_1 = __webpack_require__(57);
+var hoverFeature_1 = __webpack_require__(115);
 var utils_1 = __webpack_require__(6);
 var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
@@ -32851,7 +32918,7 @@ exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;
 
 
 /***/ }),
-/* 128 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32885,23 +32952,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var column_1 = __webpack_require__(20);
-var setLeftFeature_1 = __webpack_require__(105);
-var component_1 = __webpack_require__(30);
-var componentAnnotations_1 = __webpack_require__(64);
+var context_1 = __webpack_require__(14);
+var column_1 = __webpack_require__(24);
+var setLeftFeature_1 = __webpack_require__(109);
+var component_1 = __webpack_require__(34);
+var componentAnnotations_1 = __webpack_require__(68);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var beans_1 = __webpack_require__(53);
-var hoverFeature_1 = __webpack_require__(111);
-var events_1 = __webpack_require__(12);
-var eventService_1 = __webpack_require__(8);
-var columnHoverService_1 = __webpack_require__(97);
+var beans_1 = __webpack_require__(57);
+var hoverFeature_1 = __webpack_require__(115);
+var events_1 = __webpack_require__(16);
+var eventService_1 = __webpack_require__(12);
+var columnHoverService_1 = __webpack_require__(101);
 var utils_1 = __webpack_require__(6);
-var userComponentFactory_1 = __webpack_require__(60);
-var gridApi_1 = __webpack_require__(15);
-var columnApi_1 = __webpack_require__(23);
-var filterManager_1 = __webpack_require__(58);
-var readOnlyFloatingFilter_1 = __webpack_require__(129);
+var userComponentFactory_1 = __webpack_require__(64);
+var gridApi_1 = __webpack_require__(19);
+var columnApi_1 = __webpack_require__(27);
+var filterManager_1 = __webpack_require__(62);
+var readOnlyFloatingFilter_1 = __webpack_require__(133);
 var FloatingFilterWrapper = /** @class */ (function (_super) {
     __extends(FloatingFilterWrapper, _super);
     function FloatingFilterWrapper(column) {
@@ -33141,7 +33208,7 @@ exports.FloatingFilterWrapper = FloatingFilterWrapper;
 
 
 /***/ }),
-/* 129 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33175,8 +33242,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var componentAnnotations_1 = __webpack_require__(64);
+var component_1 = __webpack_require__(34);
+var componentAnnotations_1 = __webpack_require__(68);
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
@@ -33214,7 +33281,7 @@ exports.ReadOnlyFloatingFilter = ReadOnlyFloatingFilter;
 
 
 /***/ }),
-/* 130 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33235,12 +33302,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var dragAndDropService_1 = __webpack_require__(41);
-var context_1 = __webpack_require__(10);
-var moveColumnController_1 = __webpack_require__(131);
-var column_1 = __webpack_require__(20);
-var bodyDropPivotTarget_1 = __webpack_require__(132);
-var columnController_1 = __webpack_require__(18);
+var dragAndDropService_1 = __webpack_require__(45);
+var context_1 = __webpack_require__(14);
+var moveColumnController_1 = __webpack_require__(135);
+var column_1 = __webpack_require__(24);
+var bodyDropPivotTarget_1 = __webpack_require__(136);
+var columnController_1 = __webpack_require__(22);
 var DropType;
 (function (DropType) {
     DropType[DropType["ColumnMove"] = 0] = "ColumnMove";
@@ -33351,7 +33418,7 @@ exports.BodyDropTarget = BodyDropTarget;
 
 
 /***/ }),
-/* 131 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33372,12 +33439,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var logger_1 = __webpack_require__(9);
-var columnController_1 = __webpack_require__(18);
-var column_1 = __webpack_require__(20);
+var context_1 = __webpack_require__(14);
+var logger_1 = __webpack_require__(13);
+var columnController_1 = __webpack_require__(22);
+var column_1 = __webpack_require__(24);
 var utils_1 = __webpack_require__(6);
-var dragAndDropService_1 = __webpack_require__(41);
+var dragAndDropService_1 = __webpack_require__(45);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var MoveColumnController = /** @class */ (function () {
     function MoveColumnController(pinned, eContainer) {
@@ -33723,7 +33790,7 @@ exports.MoveColumnController = MoveColumnController;
 
 
 /***/ }),
-/* 132 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33744,9 +33811,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var dragAndDropService_1 = __webpack_require__(41);
-var columnController_1 = __webpack_require__(18);
-var context_1 = __webpack_require__(10);
+var dragAndDropService_1 = __webpack_require__(45);
+var columnController_1 = __webpack_require__(22);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var BodyDropPivotTarget = /** @class */ (function () {
     function BodyDropPivotTarget(pinned) {
@@ -33831,7 +33898,7 @@ exports.BodyDropPivotTarget = BodyDropPivotTarget;
 
 
 /***/ }),
-/* 133 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33866,40 +33933,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnController_1 = __webpack_require__(18);
-var columnApi_1 = __webpack_require__(23);
-var rowRenderer_1 = __webpack_require__(27);
-var context_1 = __webpack_require__(10);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var dragService_1 = __webpack_require__(42);
-var constants_1 = __webpack_require__(7);
-var mouseEventService_1 = __webpack_require__(76);
-var focusedCellController_1 = __webpack_require__(48);
-var scrollVisibleService_1 = __webpack_require__(52);
-var rowContainerComponent_1 = __webpack_require__(134);
-var paginationProxy_1 = __webpack_require__(51);
-var popupEditorWrapper_1 = __webpack_require__(44);
-var alignedGridsService_1 = __webpack_require__(116);
-var pinnedRowModel_1 = __webpack_require__(50);
-var gridApi_1 = __webpack_require__(15);
-var animationFrameService_1 = __webpack_require__(98);
-var rowComp_1 = __webpack_require__(28);
-var navigationService_1 = __webpack_require__(135);
-var valueService_1 = __webpack_require__(36);
-var touchListener_1 = __webpack_require__(72);
-var dragAndDropService_1 = __webpack_require__(41);
-var rowDragFeature_1 = __webpack_require__(136);
-var maxDivHeightScaler_1 = __webpack_require__(99);
-var overlayWrapperComponent_1 = __webpack_require__(137);
-var component_1 = __webpack_require__(30);
-var autoHeightCalculator_1 = __webpack_require__(118);
-var columnAnimationService_1 = __webpack_require__(55);
-var autoWidthCalculator_1 = __webpack_require__(26);
-var beans_1 = __webpack_require__(53);
-var componentAnnotations_1 = __webpack_require__(64);
-var headerRootComp_1 = __webpack_require__(124);
-var resizeObserverService_1 = __webpack_require__(138);
+var columnController_1 = __webpack_require__(22);
+var columnApi_1 = __webpack_require__(27);
+var rowRenderer_1 = __webpack_require__(31);
+var context_1 = __webpack_require__(14);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var dragService_1 = __webpack_require__(46);
+var constants_1 = __webpack_require__(9);
+var mouseEventService_1 = __webpack_require__(80);
+var focusedCellController_1 = __webpack_require__(52);
+var scrollVisibleService_1 = __webpack_require__(56);
+var rowContainerComponent_1 = __webpack_require__(138);
+var paginationProxy_1 = __webpack_require__(55);
+var popupEditorWrapper_1 = __webpack_require__(48);
+var alignedGridsService_1 = __webpack_require__(120);
+var pinnedRowModel_1 = __webpack_require__(54);
+var gridApi_1 = __webpack_require__(19);
+var animationFrameService_1 = __webpack_require__(102);
+var rowComp_1 = __webpack_require__(32);
+var navigationService_1 = __webpack_require__(139);
+var valueService_1 = __webpack_require__(40);
+var touchListener_1 = __webpack_require__(76);
+var dragAndDropService_1 = __webpack_require__(45);
+var rowDragFeature_1 = __webpack_require__(140);
+var maxDivHeightScaler_1 = __webpack_require__(103);
+var overlayWrapperComponent_1 = __webpack_require__(141);
+var component_1 = __webpack_require__(34);
+var autoHeightCalculator_1 = __webpack_require__(122);
+var columnAnimationService_1 = __webpack_require__(59);
+var autoWidthCalculator_1 = __webpack_require__(30);
+var beans_1 = __webpack_require__(57);
+var componentAnnotations_1 = __webpack_require__(68);
+var headerRootComp_1 = __webpack_require__(128);
+var resizeObserverService_1 = __webpack_require__(142);
 var utils_1 = __webpack_require__(6);
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -35220,7 +35287,7 @@ exports.GridPanel = GridPanel;
 
 
 /***/ }),
-/* 134 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35241,7 +35308,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 /**
@@ -35372,7 +35439,7 @@ exports.RowContainerComponent = RowContainerComponent;
 
 
 /***/ }),
-/* 135 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35393,13 +35460,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var constants_1 = __webpack_require__(7);
-var mouseEventService_1 = __webpack_require__(76);
-var paginationProxy_1 = __webpack_require__(51);
-var focusedCellController_1 = __webpack_require__(48);
-var animationFrameService_1 = __webpack_require__(98);
-var columnController_1 = __webpack_require__(18);
+var context_1 = __webpack_require__(14);
+var constants_1 = __webpack_require__(9);
+var mouseEventService_1 = __webpack_require__(80);
+var paginationProxy_1 = __webpack_require__(55);
+var focusedCellController_1 = __webpack_require__(52);
+var animationFrameService_1 = __webpack_require__(102);
+var columnController_1 = __webpack_require__(22);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 var NavigationService = /** @class */ (function () {
@@ -35620,7 +35687,7 @@ exports.NavigationService = NavigationService;
 
 
 /***/ }),
-/* 136 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35641,13 +35708,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var dragAndDropService_1 = __webpack_require__(41);
-var context_1 = __webpack_require__(10);
-var focusedCellController_1 = __webpack_require__(48);
+var dragAndDropService_1 = __webpack_require__(45);
+var context_1 = __webpack_require__(14);
+var focusedCellController_1 = __webpack_require__(52);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var eventService_1 = __webpack_require__(8);
-var eventKeys_1 = __webpack_require__(13);
-var constants_1 = __webpack_require__(7);
+var eventService_1 = __webpack_require__(12);
+var eventKeys_1 = __webpack_require__(17);
+var constants_1 = __webpack_require__(9);
 var RowDragFeature = /** @class */ (function () {
     function RowDragFeature(eContainer, gridPanel) {
         this.eContainer = eContainer;
@@ -35841,7 +35908,7 @@ exports.RowDragFeature = RowDragFeature;
 
 
 /***/ }),
-/* 137 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35876,10 +35943,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
-var component_1 = __webpack_require__(30);
-var userComponentFactory_1 = __webpack_require__(60);
-var componentAnnotations_1 = __webpack_require__(64);
+var context_1 = __webpack_require__(14);
+var component_1 = __webpack_require__(34);
+var userComponentFactory_1 = __webpack_require__(64);
+var componentAnnotations_1 = __webpack_require__(68);
 var utils_1 = __webpack_require__(6);
 var LoadingType;
 (function (LoadingType) {
@@ -35966,7 +36033,7 @@ exports.OverlayWrapperComponent = OverlayWrapperComponent;
 
 
 /***/ }),
-/* 138 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35987,7 +36054,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 var ResizeObserverService = /** @class */ (function () {
@@ -36054,7 +36121,7 @@ exports.ResizeObserverService = ResizeObserverService;
 
 
 /***/ }),
-/* 139 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36089,22 +36156,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
-var rowRenderer_1 = __webpack_require__(27);
-var filterManager_1 = __webpack_require__(58);
-var eventService_1 = __webpack_require__(8);
-var gridPanel_1 = __webpack_require__(133);
-var logger_1 = __webpack_require__(9);
-var popupService_1 = __webpack_require__(59);
-var context_1 = __webpack_require__(10);
-var focusedCellController_1 = __webpack_require__(48);
-var component_1 = __webpack_require__(30);
-var gridApi_1 = __webpack_require__(15);
-var componentAnnotations_1 = __webpack_require__(64);
-var events_1 = __webpack_require__(12);
-var resizeObserverService_1 = __webpack_require__(138);
-var sideBar_1 = __webpack_require__(119);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
+var rowRenderer_1 = __webpack_require__(31);
+var filterManager_1 = __webpack_require__(62);
+var eventService_1 = __webpack_require__(12);
+var gridPanel_1 = __webpack_require__(137);
+var logger_1 = __webpack_require__(13);
+var popupService_1 = __webpack_require__(63);
+var context_1 = __webpack_require__(14);
+var focusedCellController_1 = __webpack_require__(52);
+var component_1 = __webpack_require__(34);
+var gridApi_1 = __webpack_require__(19);
+var componentAnnotations_1 = __webpack_require__(68);
+var events_1 = __webpack_require__(16);
+var resizeObserverService_1 = __webpack_require__(142);
+var sideBar_1 = __webpack_require__(123);
 var utils_1 = __webpack_require__(6);
 var GridCore = /** @class */ (function (_super) {
     __extends(GridCore, _super);
@@ -36357,7 +36424,7 @@ exports.GridCore = GridCore;
 
 
 /***/ }),
-/* 140 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36378,11 +36445,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var filterManager_1 = __webpack_require__(58);
-var popupService_1 = __webpack_require__(59);
+var context_1 = __webpack_require__(14);
+var filterManager_1 = __webpack_require__(62);
+var popupService_1 = __webpack_require__(63);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var eventService_1 = __webpack_require__(8);
+var eventService_1 = __webpack_require__(12);
 var utils_1 = __webpack_require__(6);
 var StandardMenuFactory = /** @class */ (function () {
     function StandardMenuFactory() {
@@ -36476,7 +36543,7 @@ exports.StandardMenuFactory = StandardMenuFactory;
 
 
 /***/ }),
-/* 141 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36497,10 +36564,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var filterService_1 = __webpack_require__(142);
-var selectableService_1 = __webpack_require__(143);
+var filterService_1 = __webpack_require__(146);
+var selectableService_1 = __webpack_require__(147);
 var FilterStage = /** @class */ (function () {
     function FilterStage() {
     }
@@ -36530,7 +36597,7 @@ exports.FilterStage = FilterStage;
 
 
 /***/ }),
-/* 142 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36551,8 +36618,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var filterManager_1 = __webpack_require__(58);
+var context_1 = __webpack_require__(14);
+var filterManager_1 = __webpack_require__(62);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var FilterService = /** @class */ (function () {
     function FilterService() {
@@ -36678,7 +36745,7 @@ exports.FilterService = FilterService;
 
 
 /***/ }),
-/* 143 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36699,7 +36766,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 var SelectableService = /** @class */ (function () {
@@ -36762,7 +36829,7 @@ exports.SelectableService = SelectableService;
 
 
 /***/ }),
-/* 144 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36783,11 +36850,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var sortService_1 = __webpack_require__(145);
-var sortController_1 = __webpack_require__(71);
-var columnController_1 = __webpack_require__(18);
+var sortService_1 = __webpack_require__(149);
+var sortController_1 = __webpack_require__(75);
+var columnController_1 = __webpack_require__(22);
 var utils_1 = __webpack_require__(6);
 var SortStage = /** @class */ (function () {
     function SortStage() {
@@ -36848,7 +36915,7 @@ exports.SortStage = SortStage;
 
 
 /***/ }),
-/* 145 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36869,11 +36936,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var sortController_1 = __webpack_require__(71);
-var valueService_1 = __webpack_require__(36);
+var context_1 = __webpack_require__(14);
+var sortController_1 = __webpack_require__(75);
+var valueService_1 = __webpack_require__(40);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnController_1 = __webpack_require__(18);
+var columnController_1 = __webpack_require__(22);
 var utils_1 = __webpack_require__(6);
 var SortService = /** @class */ (function () {
     function SortService() {
@@ -37113,7 +37180,7 @@ exports.SortService = SortService;
 
 
 /***/ }),
-/* 146 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37134,12 +37201,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var rowNode_1 = __webpack_require__(33);
+var context_1 = __webpack_require__(14);
+var rowNode_1 = __webpack_require__(37);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var selectionController_1 = __webpack_require__(34);
-var eventService_1 = __webpack_require__(8);
-var columnController_1 = __webpack_require__(18);
+var selectionController_1 = __webpack_require__(38);
+var eventService_1 = __webpack_require__(12);
+var columnController_1 = __webpack_require__(22);
 var utils_1 = __webpack_require__(6);
 var FlattenStage = /** @class */ (function () {
     function FlattenStage() {
@@ -37296,7 +37363,7 @@ exports.FlattenStage = FlattenStage;
 
 
 /***/ }),
-/* 147 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37331,21 +37398,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
-var eventService_1 = __webpack_require__(8);
-var selectionController_1 = __webpack_require__(34);
-var events_1 = __webpack_require__(12);
-var sortController_1 = __webpack_require__(71);
-var filterManager_1 = __webpack_require__(58);
-var constants_1 = __webpack_require__(7);
-var infiniteCache_1 = __webpack_require__(148);
-var beanStub_1 = __webpack_require__(31);
-var rowNodeCache_1 = __webpack_require__(151);
-var rowNodeBlockLoader_1 = __webpack_require__(152);
-var gridApi_1 = __webpack_require__(15);
-var columnApi_1 = __webpack_require__(23);
+var context_1 = __webpack_require__(14);
+var eventService_1 = __webpack_require__(12);
+var selectionController_1 = __webpack_require__(38);
+var events_1 = __webpack_require__(16);
+var sortController_1 = __webpack_require__(75);
+var filterManager_1 = __webpack_require__(62);
+var constants_1 = __webpack_require__(9);
+var infiniteCache_1 = __webpack_require__(152);
+var beanStub_1 = __webpack_require__(35);
+var rowNodeCache_1 = __webpack_require__(155);
+var rowNodeBlockLoader_1 = __webpack_require__(156);
+var gridApi_1 = __webpack_require__(19);
+var columnApi_1 = __webpack_require__(27);
 var utils_1 = __webpack_require__(6);
-var rowRenderer_1 = __webpack_require__(27);
+var rowRenderer_1 = __webpack_require__(31);
 var InfiniteRowModel = /** @class */ (function (_super) {
     __extends(InfiniteRowModel, _super);
     function InfiniteRowModel() {
@@ -37691,7 +37758,7 @@ exports.InfiniteRowModel = InfiniteRowModel;
 
 
 /***/ }),
-/* 148 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37728,14 +37795,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var logger_1 = __webpack_require__(9);
-var infiniteBlock_1 = __webpack_require__(149);
-var rowNodeCache_1 = __webpack_require__(151);
-var gridApi_1 = __webpack_require__(15);
-var columnApi_1 = __webpack_require__(23);
+var context_1 = __webpack_require__(14);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var logger_1 = __webpack_require__(13);
+var infiniteBlock_1 = __webpack_require__(153);
+var rowNodeCache_1 = __webpack_require__(155);
+var gridApi_1 = __webpack_require__(19);
+var columnApi_1 = __webpack_require__(27);
 var InfiniteCache = /** @class */ (function (_super) {
     __extends(InfiniteCache, _super);
     function InfiniteCache(params) {
@@ -37873,7 +37940,7 @@ exports.InfiniteCache = InfiniteCache;
 
 
 /***/ }),
-/* 149 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37908,9 +37975,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var context_1 = __webpack_require__(10);
-var rowNodeBlock_1 = __webpack_require__(150);
-var rowRenderer_1 = __webpack_require__(27);
+var context_1 = __webpack_require__(14);
+var rowNodeBlock_1 = __webpack_require__(154);
+var rowRenderer_1 = __webpack_require__(31);
 var utils_1 = __webpack_require__(6);
 var InfiniteBlock = /** @class */ (function (_super) {
     __extends(InfiniteBlock, _super);
@@ -38007,7 +38074,7 @@ exports.InfiniteBlock = InfiniteBlock;
 
 
 /***/ }),
-/* 150 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38033,8 +38100,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(6);
-var rowNode_1 = __webpack_require__(33);
-var beanStub_1 = __webpack_require__(31);
+var rowNode_1 = __webpack_require__(37);
+var beanStub_1 = __webpack_require__(35);
 var RowNodeBlock = /** @class */ (function (_super) {
     __extends(RowNodeBlock, _super);
     function RowNodeBlock(blockNumber, rowNodeCacheParams) {
@@ -38225,7 +38292,7 @@ exports.RowNodeBlock = RowNodeBlock;
 
 
 /***/ }),
-/* 151 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38250,8 +38317,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var beanStub_1 = __webpack_require__(31);
-var rowNodeBlock_1 = __webpack_require__(150);
+var beanStub_1 = __webpack_require__(35);
+var rowNodeBlock_1 = __webpack_require__(154);
 var utils_1 = __webpack_require__(6);
 var RowNodeCache = /** @class */ (function (_super) {
     __extends(RowNodeCache, _super);
@@ -38502,7 +38569,7 @@ exports.RowNodeCache = RowNodeCache;
 
 
 /***/ }),
-/* 152 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38526,9 +38593,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var rowNodeBlock_1 = __webpack_require__(150);
-var logger_1 = __webpack_require__(9);
-var context_1 = __webpack_require__(10);
+var rowNodeBlock_1 = __webpack_require__(154);
+var logger_1 = __webpack_require__(13);
+var context_1 = __webpack_require__(14);
 var utils_1 = __webpack_require__(6);
 var RowNodeBlockLoader = /** @class */ (function () {
     function RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis) {
@@ -38628,7 +38695,7 @@ exports.RowNodeBlockLoader = RowNodeBlockLoader;
 
 
 /***/ }),
-/* 153 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38649,21 +38716,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(7);
+var constants_1 = __webpack_require__(9);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var columnApi_1 = __webpack_require__(23);
-var columnController_1 = __webpack_require__(18);
-var filterManager_1 = __webpack_require__(58);
-var rowNode_1 = __webpack_require__(33);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var context_1 = __webpack_require__(10);
-var selectionController_1 = __webpack_require__(34);
-var clientSideNodeManager_1 = __webpack_require__(154);
-var changedPath_1 = __webpack_require__(35);
-var valueService_1 = __webpack_require__(36);
-var valueCache_1 = __webpack_require__(37);
-var gridApi_1 = __webpack_require__(15);
+var columnApi_1 = __webpack_require__(27);
+var columnController_1 = __webpack_require__(22);
+var filterManager_1 = __webpack_require__(62);
+var rowNode_1 = __webpack_require__(37);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var context_1 = __webpack_require__(14);
+var selectionController_1 = __webpack_require__(38);
+var clientSideNodeManager_1 = __webpack_require__(158);
+var changedPath_1 = __webpack_require__(39);
+var valueService_1 = __webpack_require__(40);
+var valueCache_1 = __webpack_require__(41);
+var gridApi_1 = __webpack_require__(19);
 var utils_1 = __webpack_require__(6);
 var RecursionType;
 (function (RecursionType) {
@@ -39375,7 +39442,7 @@ exports.ClientSideRowModel = ClientSideRowModel;
 
 
 /***/ }),
-/* 154 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39387,8 +39454,8 @@ exports.ClientSideRowModel = ClientSideRowModel;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var rowNode_1 = __webpack_require__(33);
-var events_1 = __webpack_require__(12);
+var rowNode_1 = __webpack_require__(37);
+var events_1 = __webpack_require__(16);
 var utils_1 = __webpack_require__(6);
 var ClientSideNodeManager = /** @class */ (function () {
     function ClientSideNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController, gridApi, columnApi, selectionController) {
@@ -39703,7 +39770,7 @@ exports.ClientSideNodeManager = ClientSideNodeManager;
 
 
 /***/ }),
-/* 155 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39728,7 +39795,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agCheckbox_1 = __webpack_require__(106);
+var agCheckbox_1 = __webpack_require__(110);
 var AgRadioButton = /** @class */ (function (_super) {
     __extends(AgRadioButton, _super);
     function AgRadioButton() {
@@ -39757,7 +39824,7 @@ exports.AgRadioButton = AgRadioButton;
 
 
 /***/ }),
-/* 156 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39787,7 +39854,7 @@ exports.VanillaFrameworkOverrides = VanillaFrameworkOverrides;
 
 
 /***/ }),
-/* 157 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39805,7 +39872,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var LINE_SEPARATOR = '\r\n';
 var XmlFactory = /** @class */ (function () {
     function XmlFactory() {
@@ -39880,7 +39947,7 @@ exports.XmlFactory = XmlFactory;
 
 
 /***/ }),
-/* 158 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39914,14 +39981,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var changedPath_1 = __webpack_require__(35);
-var rowRenderer_1 = __webpack_require__(27);
-var eventService_1 = __webpack_require__(8);
-var constants_1 = __webpack_require__(7);
-var beanStub_1 = __webpack_require__(31);
-var events_1 = __webpack_require__(12);
+var changedPath_1 = __webpack_require__(39);
+var rowRenderer_1 = __webpack_require__(31);
+var eventService_1 = __webpack_require__(12);
+var constants_1 = __webpack_require__(9);
+var beanStub_1 = __webpack_require__(35);
+var events_1 = __webpack_require__(16);
 var ChangeDetectionService = /** @class */ (function (_super) {
     __extends(ChangeDetectionService, _super);
     function ChangeDetectionService() {
@@ -39981,7 +40048,7 @@ exports.ChangeDetectionService = ChangeDetectionService;
 
 
 /***/ }),
-/* 159 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40015,16 +40082,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var context_1 = __webpack_require__(10);
+var component_1 = __webpack_require__(34);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var componentAnnotations_1 = __webpack_require__(64);
-var eventService_1 = __webpack_require__(8);
-var events_1 = __webpack_require__(12);
-var rowRenderer_1 = __webpack_require__(27);
-var paginationProxy_1 = __webpack_require__(51);
+var componentAnnotations_1 = __webpack_require__(68);
+var eventService_1 = __webpack_require__(12);
+var events_1 = __webpack_require__(16);
+var rowRenderer_1 = __webpack_require__(31);
+var paginationProxy_1 = __webpack_require__(55);
 var utils_1 = __webpack_require__(6);
-var constants_1 = __webpack_require__(7);
+var constants_1 = __webpack_require__(9);
 var PaginationComp = /** @class */ (function (_super) {
     __extends(PaginationComp, _super);
     function PaginationComp() {
@@ -40229,7 +40296,7 @@ exports.PaginationComp = PaginationComp;
 
 
 /***/ }),
-/* 160 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40247,7 +40314,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
+var context_1 = __webpack_require__(14);
 var utils_1 = __webpack_require__(6);
 // table for crc calculation
 // from: https://referencesource.microsoft.com/#System/sys/System/IO/compression/Crc32Helper.cs,3b31978c7d7f7246,references
@@ -40431,7 +40498,7 @@ exports.ZipContainer = ZipContainer;
 
 
 /***/ }),
-/* 161 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40465,11 +40532,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
-var componentAnnotations_1 = __webpack_require__(64);
-var context_1 = __webpack_require__(10);
+var component_1 = __webpack_require__(34);
+var componentAnnotations_1 = __webpack_require__(68);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var agCheckbox_1 = __webpack_require__(106);
+var agCheckbox_1 = __webpack_require__(110);
 var utils_1 = __webpack_require__(6);
 var AgGroupComponent = /** @class */ (function (_super) {
     __extends(AgGroupComponent, _super);
@@ -40639,7 +40706,7 @@ exports.AgGroupComponent = AgGroupComponent;
 
 
 /***/ }),
-/* 162 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40673,12 +40740,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var popupService_1 = __webpack_require__(59);
-var maximizable_1 = __webpack_require__(163);
-var resizable_1 = __webpack_require__(164);
-var movable_1 = __webpack_require__(165);
-var agPanel_1 = __webpack_require__(166);
+var context_1 = __webpack_require__(14);
+var popupService_1 = __webpack_require__(63);
+var maximizable_1 = __webpack_require__(167);
+var resizable_1 = __webpack_require__(168);
+var movable_1 = __webpack_require__(169);
+var agPanel_1 = __webpack_require__(170);
 var utils_1 = __webpack_require__(6);
 var AgDialog = /** @class */ (function (_super) {
     __extends(AgDialog, _super);
@@ -40715,7 +40782,7 @@ exports.AgDialog = AgDialog;
 
 
 /***/ }),
-/* 163 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40740,7 +40807,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
+var component_1 = __webpack_require__(34);
 var utils_1 = __webpack_require__(6);
 function Maximizable(target) {
     var MixinClass = /** @class */ (function (_super) {
@@ -40844,7 +40911,7 @@ exports.Maximizable = Maximizable;
 
 
 /***/ }),
-/* 164 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40878,8 +40945,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(10);
-var dragService_1 = __webpack_require__(42);
+var context_1 = __webpack_require__(14);
+var dragService_1 = __webpack_require__(46);
 function Resizable(target) {
     var MixinClass = /** @class */ (function (_super) {
         __extends(MixinClass, _super);
@@ -41053,7 +41120,7 @@ exports.Resizable = Resizable;
 
 
 /***/ }),
-/* 165 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41087,8 +41154,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var dragService_1 = __webpack_require__(42);
-var context_1 = __webpack_require__(10);
+var dragService_1 = __webpack_require__(46);
+var context_1 = __webpack_require__(14);
 function Movable(target) {
     var MixinClass = /** @class */ (function (_super) {
         __extends(MixinClass, _super);
@@ -41161,7 +41228,7 @@ exports.Movable = Movable;
 
 
 /***/ }),
-/* 166 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41195,10 +41262,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentAnnotations_1 = __webpack_require__(64);
-var context_1 = __webpack_require__(10);
-var component_1 = __webpack_require__(30);
-var positionable_1 = __webpack_require__(167);
+var componentAnnotations_1 = __webpack_require__(68);
+var context_1 = __webpack_require__(14);
+var component_1 = __webpack_require__(34);
+var positionable_1 = __webpack_require__(171);
 var utils_1 = __webpack_require__(6);
 var AgPanel = /** @class */ (function (_super) {
     __extends(AgPanel, _super);
@@ -41347,7 +41414,7 @@ exports.AgPanel = AgPanel;
 
 
 /***/ }),
-/* 167 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41381,8 +41448,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var popupService_1 = __webpack_require__(59);
-var context_1 = __webpack_require__(10);
+var popupService_1 = __webpack_require__(63);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(6);
 function Positionable(target) {
@@ -41597,7 +41664,7 @@ exports.Positionable = Positionable;
 
 
 /***/ }),
-/* 168 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41622,7 +41689,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agAbstractInputField_1 = __webpack_require__(107);
+var agAbstractInputField_1 = __webpack_require__(111);
 var AgInputTextField = /** @class */ (function (_super) {
     __extends(AgInputTextField, _super);
     function AgInputTextField(config) {
@@ -41649,7 +41716,7 @@ exports.AgInputTextField = AgInputTextField;
 
 
 /***/ }),
-/* 169 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41674,7 +41741,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agAbstractInputField_1 = __webpack_require__(107);
+var agAbstractInputField_1 = __webpack_require__(111);
 var AgInputTextArea = /** @class */ (function (_super) {
     __extends(AgInputTextArea, _super);
     function AgInputTextArea(config) {
@@ -41699,7 +41766,7 @@ exports.AgInputTextArea = AgInputTextArea;
 
 
 /***/ }),
-/* 170 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41733,11 +41800,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentAnnotations_1 = __webpack_require__(64);
-var agInputRange_1 = __webpack_require__(171);
-var agAbstractLabel_1 = __webpack_require__(109);
-var agInputNumberField_1 = __webpack_require__(172);
-var agAbstractField_1 = __webpack_require__(108);
+var componentAnnotations_1 = __webpack_require__(68);
+var agInputRange_1 = __webpack_require__(175);
+var agAbstractLabel_1 = __webpack_require__(113);
+var agInputNumberField_1 = __webpack_require__(176);
+var agAbstractField_1 = __webpack_require__(112);
 var AgSlider = /** @class */ (function (_super) {
     __extends(AgSlider, _super);
     function AgSlider() {
@@ -41817,7 +41884,7 @@ exports.AgSlider = AgSlider;
 
 
 /***/ }),
-/* 171 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41842,7 +41909,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agAbstractInputField_1 = __webpack_require__(107);
+var agAbstractInputField_1 = __webpack_require__(111);
 var utils_1 = __webpack_require__(6);
 var AgInputRange = /** @class */ (function (_super) {
     __extends(AgInputRange, _super);
@@ -41909,7 +41976,7 @@ exports.AgInputRange = AgInputRange;
 
 
 /***/ }),
-/* 172 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -41934,7 +42001,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agInputTextField_1 = __webpack_require__(168);
+var agInputTextField_1 = __webpack_require__(172);
 var AgInputNumberField = /** @class */ (function (_super) {
     __extends(AgInputNumberField, _super);
     function AgInputNumberField() {
@@ -42033,7 +42100,7 @@ exports.AgInputNumberField = AgInputNumberField;
 
 
 /***/ }),
-/* 173 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42058,10 +42125,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agColorPanel_1 = __webpack_require__(174);
-var agDialog_1 = __webpack_require__(162);
-var agPickerField_1 = __webpack_require__(175);
-var agAbstractField_1 = __webpack_require__(108);
+var agColorPanel_1 = __webpack_require__(178);
+var agDialog_1 = __webpack_require__(166);
+var agPickerField_1 = __webpack_require__(179);
+var agAbstractField_1 = __webpack_require__(112);
 var utils_1 = __webpack_require__(6);
 var AgColorPicker = /** @class */ (function (_super) {
     __extends(AgColorPicker, _super);
@@ -42147,7 +42214,7 @@ exports.AgColorPicker = AgColorPicker;
 
 
 /***/ }),
-/* 174 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42181,10 +42248,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(30);
+var component_1 = __webpack_require__(34);
 var utils_1 = __webpack_require__(6);
-var componentAnnotations_1 = __webpack_require__(64);
-var context_1 = __webpack_require__(10);
+var componentAnnotations_1 = __webpack_require__(68);
+var context_1 = __webpack_require__(14);
 var AgColorPanel = /** @class */ (function (_super) {
     __extends(AgColorPanel, _super);
     function AgColorPanel(config) {
@@ -42426,7 +42493,7 @@ exports.AgColorPanel = AgColorPanel;
 
 
 /***/ }),
-/* 175 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42460,10 +42527,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentAnnotations_1 = __webpack_require__(64);
-var context_1 = __webpack_require__(10);
+var componentAnnotations_1 = __webpack_require__(68);
+var context_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(5);
-var agAbstractField_1 = __webpack_require__(108);
+var agAbstractField_1 = __webpack_require__(112);
 var utils_1 = __webpack_require__(6);
 var AgPickerField = /** @class */ (function (_super) {
     __extends(AgPickerField, _super);
@@ -42514,7 +42581,7 @@ exports.AgPickerField = AgPickerField;
 
 
 /***/ }),
-/* 176 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42539,7 +42606,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agAbstractInputField_1 = __webpack_require__(107);
+var agAbstractInputField_1 = __webpack_require__(111);
 var AgSelect = /** @class */ (function (_super) {
     __extends(AgSelect, _super);
     function AgSelect() {
@@ -42573,7 +42640,7 @@ exports.AgSelect = AgSelect;
 
 
 /***/ }),
-/* 177 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42607,12 +42674,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var agAbstractLabel_1 = __webpack_require__(109);
-var componentAnnotations_1 = __webpack_require__(64);
-var context_1 = __webpack_require__(10);
-var dragService_1 = __webpack_require__(42);
-var agInputNumberField_1 = __webpack_require__(172);
-var agAbstractField_1 = __webpack_require__(108);
+var agAbstractLabel_1 = __webpack_require__(113);
+var componentAnnotations_1 = __webpack_require__(68);
+var context_1 = __webpack_require__(14);
+var dragService_1 = __webpack_require__(46);
+var agInputNumberField_1 = __webpack_require__(176);
+var agAbstractField_1 = __webpack_require__(112);
 var utils_1 = __webpack_require__(6);
 var AgAngleSelect = /** @class */ (function (_super) {
     __extends(AgAngleSelect, _super);
@@ -42800,7 +42867,7 @@ exports.AgAngleSelect = AgAngleSelect;
 
 
 /***/ }),
-/* 178 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42825,7 +42892,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var agRadioButton_1 = __webpack_require__(155);
+var agRadioButton_1 = __webpack_require__(159);
 var utils_1 = __webpack_require__(6);
 var AgToggleButton = /** @class */ (function (_super) {
     __extends(AgToggleButton, _super);
@@ -42854,7 +42921,7 @@ exports.AgToggleButton = AgToggleButton;
 
 
 /***/ }),
-/* 179 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42866,8 +42933,8 @@ exports.AgToggleButton = AgToggleButton;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentUtil_1 = __webpack_require__(11);
-var grid_1 = __webpack_require__(123);
+var componentUtil_1 = __webpack_require__(15);
+var grid_1 = __webpack_require__(127);
 var registered = false;
 function initialiseAgGridWithWebComponents() {
     console.warn('ag-grid: initialiseAgGridWithWebComponents is deprecated. Please use the ag-grid-webcomponent dependency instead. ');
@@ -42977,7 +43044,7 @@ function toCamelCase(myString) {
 
 
 /***/ }),
-/* 180 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43099,7 +43166,7 @@ exports.TabbedLayout = TabbedLayout;
 
 
 /***/ }),
-/* 181 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43146,7 +43213,7 @@ exports.VerticalStack = VerticalStack;
 
 
 /***/ }),
-/* 182 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43176,7 +43243,7 @@ exports.simpleHttpRequest = simpleHttpRequest;
 
 
 /***/ }),
-/* 183 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43210,10 +43277,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var agDialog_1 = __webpack_require__(162);
-var context_1 = __webpack_require__(10);
-var component_1 = __webpack_require__(30);
-var componentAnnotations_1 = __webpack_require__(64);
+var agDialog_1 = __webpack_require__(166);
+var context_1 = __webpack_require__(14);
+var component_1 = __webpack_require__(34);
+var componentAnnotations_1 = __webpack_require__(68);
 var MessageBox = /** @class */ (function (_super) {
     __extends(MessageBox, _super);
     function MessageBox(config) {
@@ -43267,7 +43334,7 @@ var MessageBody = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 184 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43304,7 +43371,7 @@ exports.defaultGroupComparator = defaultGroupComparator;
 
 
 /***/ }),
-/* 185 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43351,7 +43418,7 @@ exports.BaseComponentWrapper = BaseComponentWrapper;
 
 
 /***/ }),
-/* 186 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43381,7 +43448,7 @@ var ChartType;
 
 
 /***/ }),
-/* 187 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43398,8 +43465,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var rangeController_1 = __webpack_require__(188);
-var gridChartComp_1 = __webpack_require__(189);
+var rangeController_1 = __webpack_require__(192);
+var gridChartComp_1 = __webpack_require__(193);
 var RangeChartService = /** @class */ (function () {
     function RangeChartService() {
         // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
@@ -43506,7 +43573,7 @@ exports.RangeChartService = RangeChartService;
 
 
 /***/ }),
-/* 188 */
+/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44131,7 +44198,7 @@ var AutoScrollService = /** @class */ (function () {
 
 
 /***/ }),
-/* 189 */
+/* 193 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44161,15 +44228,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartMenu_1 = __webpack_require__(190);
-var chartController_1 = __webpack_require__(193);
-var chartModel_1 = __webpack_require__(237);
-var barChartProxy_1 = __webpack_require__(243);
-var areaChartProxy_1 = __webpack_require__(266);
-var lineChartProxy_1 = __webpack_require__(267);
-var pieChartProxy_1 = __webpack_require__(268);
-var doughnutChartProxy_1 = __webpack_require__(269);
-var palettes_1 = __webpack_require__(254);
+var chartMenu_1 = __webpack_require__(194);
+var chartController_1 = __webpack_require__(197);
+var chartModel_1 = __webpack_require__(241);
+var barChartProxy_1 = __webpack_require__(247);
+var areaChartProxy_1 = __webpack_require__(270);
+var lineChartProxy_1 = __webpack_require__(271);
+var pieChartProxy_1 = __webpack_require__(272);
+var doughnutChartProxy_1 = __webpack_require__(273);
+var palettes_1 = __webpack_require__(258);
 var GridChartComp = /** @class */ (function (_super) {
     __extends(GridChartComp, _super);
     function GridChartComp(params) {
@@ -44393,7 +44460,7 @@ exports.GridChartComp = GridChartComp;
 
 
 /***/ }),
-/* 190 */
+/* 194 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44423,7 +44490,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var tabbedChartMenu_1 = __webpack_require__(191);
+var tabbedChartMenu_1 = __webpack_require__(195);
 var ChartMenu = /** @class */ (function (_super) {
     __extends(ChartMenu, _super);
     function ChartMenu(chartController) {
@@ -44576,7 +44643,7 @@ exports.ChartMenu = ChartMenu;
 
 
 /***/ }),
-/* 191 */
+/* 195 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44606,10 +44673,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartDataPanel_1 = __webpack_require__(192);
-var chartFormatingPanel_1 = __webpack_require__(195);
-var chartSettingsPanel_1 = __webpack_require__(218);
-var chartTranslator_1 = __webpack_require__(194);
+var chartDataPanel_1 = __webpack_require__(196);
+var chartFormatingPanel_1 = __webpack_require__(199);
+var chartSettingsPanel_1 = __webpack_require__(222);
+var chartTranslator_1 = __webpack_require__(198);
 var TabbedChartMenu = /** @class */ (function (_super) {
     __extends(TabbedChartMenu, _super);
     function TabbedChartMenu(params) {
@@ -44698,7 +44765,7 @@ exports.TabbedChartMenu = TabbedChartMenu;
 
 
 /***/ }),
-/* 192 */
+/* 196 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44728,8 +44795,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartController_1 = __webpack_require__(193);
-var chartTranslator_1 = __webpack_require__(194);
+var chartController_1 = __webpack_require__(197);
+var chartTranslator_1 = __webpack_require__(198);
 var ChartDataPanel = /** @class */ (function (_super) {
     __extends(ChartDataPanel, _super);
     function ChartDataPanel(chartController) {
@@ -44814,7 +44881,7 @@ exports.ChartDataPanel = ChartDataPanel;
 
 
 /***/ }),
-/* 193 */
+/* 197 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44844,7 +44911,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var rangeController_1 = __webpack_require__(188);
+var rangeController_1 = __webpack_require__(192);
 var ChartController = /** @class */ (function (_super) {
     __extends(ChartController, _super);
     function ChartController(chartModel) {
@@ -44946,7 +45013,7 @@ exports.ChartController = ChartController;
 
 
 /***/ }),
-/* 194 */
+/* 198 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45047,7 +45114,7 @@ exports.ChartTranslator = ChartTranslator;
 
 
 /***/ }),
-/* 195 */
+/* 199 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45077,14 +45144,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartController_1 = __webpack_require__(193);
-var legendPanel_1 = __webpack_require__(196);
-var barSeriesPanel_1 = __webpack_require__(198);
-var axisPanel_1 = __webpack_require__(200);
-var lineSeriesPanel_1 = __webpack_require__(202);
-var pieSeriesPanel_1 = __webpack_require__(204);
-var chartPanel_1 = __webpack_require__(206);
-var areaSeriesPanel_1 = __webpack_require__(217);
+var chartController_1 = __webpack_require__(197);
+var legendPanel_1 = __webpack_require__(200);
+var barSeriesPanel_1 = __webpack_require__(202);
+var axisPanel_1 = __webpack_require__(204);
+var lineSeriesPanel_1 = __webpack_require__(206);
+var pieSeriesPanel_1 = __webpack_require__(208);
+var chartPanel_1 = __webpack_require__(210);
+var areaSeriesPanel_1 = __webpack_require__(221);
 var ChartFormattingPanel = /** @class */ (function (_super) {
     __extends(ChartFormattingPanel, _super);
     function ChartFormattingPanel(chartController) {
@@ -45164,7 +45231,7 @@ exports.ChartFormattingPanel = ChartFormattingPanel;
 
 
 /***/ }),
-/* 196 */
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45194,8 +45261,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var labelPanel_1 = __webpack_require__(197);
-var chartTranslator_1 = __webpack_require__(194);
+var labelPanel_1 = __webpack_require__(201);
+var chartTranslator_1 = __webpack_require__(198);
 var LegendPanel = /** @class */ (function (_super) {
     __extends(LegendPanel, _super);
     function LegendPanel(chartController) {
@@ -45366,7 +45433,7 @@ exports.LegendPanel = LegendPanel;
 
 
 /***/ }),
-/* 197 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45396,7 +45463,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartTranslator_1 = __webpack_require__(194);
+var chartTranslator_1 = __webpack_require__(198);
 var LabelPanel = /** @class */ (function (_super) {
     __extends(LabelPanel, _super);
     function LabelPanel(chartController, params) {
@@ -45557,7 +45624,7 @@ exports.LabelPanel = LabelPanel;
 
 
 /***/ }),
-/* 198 */
+/* 202 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45587,9 +45654,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var shadowPanel_1 = __webpack_require__(199);
-var labelPanel_1 = __webpack_require__(197);
-var chartTranslator_1 = __webpack_require__(194);
+var shadowPanel_1 = __webpack_require__(203);
+var labelPanel_1 = __webpack_require__(201);
+var chartTranslator_1 = __webpack_require__(198);
 var BarSeriesPanel = /** @class */ (function (_super) {
     __extends(BarSeriesPanel, _super);
     function BarSeriesPanel(chartController) {
@@ -45746,7 +45813,7 @@ exports.BarSeriesPanel = BarSeriesPanel;
 
 
 /***/ }),
-/* 199 */
+/* 203 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45776,7 +45843,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartTranslator_1 = __webpack_require__(194);
+var chartTranslator_1 = __webpack_require__(198);
 var ShadowPanel = /** @class */ (function (_super) {
     __extends(ShadowPanel, _super);
     function ShadowPanel(chartController) {
@@ -45887,7 +45954,7 @@ exports.ShadowPanel = ShadowPanel;
 
 
 /***/ }),
-/* 200 */
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45917,9 +45984,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var axisTicksPanel_1 = __webpack_require__(201);
-var labelPanel_1 = __webpack_require__(197);
-var chartTranslator_1 = __webpack_require__(194);
+var axisTicksPanel_1 = __webpack_require__(205);
+var labelPanel_1 = __webpack_require__(201);
+var chartTranslator_1 = __webpack_require__(198);
 var AxisPanel = /** @class */ (function (_super) {
     __extends(AxisPanel, _super);
     function AxisPanel(chartController) {
@@ -46074,7 +46141,7 @@ exports.AxisPanel = AxisPanel;
 
 
 /***/ }),
-/* 201 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46104,7 +46171,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartTranslator_1 = __webpack_require__(194);
+var chartTranslator_1 = __webpack_require__(198);
 var AxisTicksPanel = /** @class */ (function (_super) {
     __extends(AxisTicksPanel, _super);
     function AxisTicksPanel(chartController) {
@@ -46189,7 +46256,7 @@ exports.AxisTicksPanel = AxisTicksPanel;
 
 
 /***/ }),
-/* 202 */
+/* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46219,8 +46286,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var markersPanel_1 = __webpack_require__(203);
-var chartTranslator_1 = __webpack_require__(194);
+var markersPanel_1 = __webpack_require__(207);
+var chartTranslator_1 = __webpack_require__(198);
 var LineSeriesPanel = /** @class */ (function (_super) {
     __extends(LineSeriesPanel, _super);
     function LineSeriesPanel(chartController) {
@@ -46309,7 +46376,7 @@ exports.LineSeriesPanel = LineSeriesPanel;
 
 
 /***/ }),
-/* 203 */
+/* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46339,7 +46406,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartTranslator_1 = __webpack_require__(194);
+var chartTranslator_1 = __webpack_require__(198);
 var MarkersPanel = /** @class */ (function (_super) {
     __extends(MarkersPanel, _super);
     function MarkersPanel(series) {
@@ -46404,7 +46471,7 @@ exports.MarkersPanel = MarkersPanel;
 
 
 /***/ }),
-/* 204 */
+/* 208 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46434,10 +46501,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var shadowPanel_1 = __webpack_require__(199);
-var labelPanel_1 = __webpack_require__(197);
-var calloutPanel_1 = __webpack_require__(205);
-var chartTranslator_1 = __webpack_require__(194);
+var shadowPanel_1 = __webpack_require__(203);
+var labelPanel_1 = __webpack_require__(201);
+var calloutPanel_1 = __webpack_require__(209);
+var chartTranslator_1 = __webpack_require__(198);
 var PieSeriesPanel = /** @class */ (function (_super) {
     __extends(PieSeriesPanel, _super);
     function PieSeriesPanel(chartController) {
@@ -46481,7 +46548,7 @@ var PieSeriesPanel = /** @class */ (function (_super) {
         var strokeWidth = this.series.length > 0 ? this.series[0].strokeWidth : 1;
         this.seriesStrokeWidthSlider
             .setLabel(this.chartTranslator.translate('strokeWidth'))
-            .setMaxValue(30)
+            .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue("" + strokeWidth)
             .onValueChange(function (newValue) { return _this.series.forEach(function (s) { return s.strokeWidth = newValue; }); });
@@ -46604,7 +46671,7 @@ exports.PieSeriesPanel = PieSeriesPanel;
 
 
 /***/ }),
-/* 205 */
+/* 209 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46634,7 +46701,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartTranslator_1 = __webpack_require__(194);
+var chartTranslator_1 = __webpack_require__(198);
 var CalloutPanel = /** @class */ (function (_super) {
     __extends(CalloutPanel, _super);
     function CalloutPanel(series) {
@@ -46704,7 +46771,7 @@ exports.CalloutPanel = CalloutPanel;
 
 
 /***/ }),
-/* 206 */
+/* 210 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46734,10 +46801,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var paddingPanel_1 = __webpack_require__(207);
-var labelPanel_1 = __webpack_require__(197);
-var caption_1 = __webpack_require__(208);
-var chartTranslator_1 = __webpack_require__(194);
+var paddingPanel_1 = __webpack_require__(211);
+var labelPanel_1 = __webpack_require__(201);
+var caption_1 = __webpack_require__(212);
+var chartTranslator_1 = __webpack_require__(198);
 var ChartPanel = /** @class */ (function (_super) {
     __extends(ChartPanel, _super);
     function ChartPanel(chartController) {
@@ -46859,7 +46926,7 @@ exports.ChartPanel = ChartPanel;
 
 
 /***/ }),
-/* 207 */
+/* 211 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46889,7 +46956,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartTranslator_1 = __webpack_require__(194);
+var chartTranslator_1 = __webpack_require__(198);
 var PaddingPanel = /** @class */ (function (_super) {
     __extends(PaddingPanel, _super);
     function PaddingPanel(chartController) {
@@ -46928,7 +46995,7 @@ var PaddingPanel = /** @class */ (function (_super) {
         initInput('bottom', this.paddingBottomSlider, 'bottom', "" + this.chart.padding.bottom);
         initInput('left', this.paddingLeftSlider, 'left', "" + this.chart.padding.left);
     };
-    PaddingPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartPaddingGroup\">                                                   \n                <ag-slider ref=\"paddingTopSlider\"></ag-slider>\n                <ag-slider ref=\"paddingRightSlider\"></ag-slider>\n                <ag-slider ref=\"paddingBottomSlider\"></ag-slider>\n                <ag-slider ref=\"paddingLeftSlider\"></ag-slider>\n            </ag-group-component>\n        <div>";
+    PaddingPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartPaddingGroup\">\n                <ag-slider ref=\"paddingTopSlider\"></ag-slider>\n                <ag-slider ref=\"paddingRightSlider\"></ag-slider>\n                <ag-slider ref=\"paddingBottomSlider\"></ag-slider>\n                <ag-slider ref=\"paddingLeftSlider\"></ag-slider>\n            </ag-group-component>\n        <div>";
     __decorate([
         ag_grid_community_1.RefSelector('chartPaddingGroup'),
         __metadata("design:type", ag_grid_community_1.AgGroupComponent)
@@ -46965,16 +47032,16 @@ exports.PaddingPanel = PaddingPanel;
 
 
 /***/ }),
-/* 208 */
+/* 212 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var padding_1 = __webpack_require__(209);
-var text_1 = __webpack_require__(210);
-var node_1 = __webpack_require__(212);
+var padding_1 = __webpack_require__(213);
+var text_1 = __webpack_require__(214);
+var node_1 = __webpack_require__(216);
 var Caption = /** @class */ (function () {
     function Caption() {
         this.node = new text_1.Text();
@@ -47112,7 +47179,7 @@ exports.Caption = Caption;
 
 
 /***/ }),
-/* 209 */
+/* 213 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47142,7 +47209,7 @@ exports.Padding = Padding;
 
 
 /***/ }),
-/* 210 */
+/* 214 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47162,10 +47229,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var shape_1 = __webpack_require__(211);
-var object_1 = __webpack_require__(215);
-var hdpiCanvas_1 = __webpack_require__(216);
-var bbox_1 = __webpack_require__(214);
+var shape_1 = __webpack_require__(215);
+var object_1 = __webpack_require__(219);
+var hdpiCanvas_1 = __webpack_require__(220);
+var bbox_1 = __webpack_require__(218);
 var Text = /** @class */ (function (_super) {
     __extends(Text, _super);
     function Text() {
@@ -47478,7 +47545,7 @@ exports.Text = Text;
 
 
 /***/ }),
-/* 211 */
+/* 215 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47498,8 +47565,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var node_1 = __webpack_require__(212);
-var object_1 = __webpack_require__(215);
+var node_1 = __webpack_require__(216);
+var object_1 = __webpack_require__(219);
 var Shape = /** @class */ (function (_super) {
     __extends(Shape, _super);
     function Shape() {
@@ -47808,14 +47875,14 @@ exports.Shape = Shape;
 
 
 /***/ }),
-/* 212 */
+/* 216 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var matrix_1 = __webpack_require__(213);
+var matrix_1 = __webpack_require__(217);
 var PointerEvents;
 (function (PointerEvents) {
     PointerEvents[PointerEvents["All"] = 0] = "All";
@@ -48371,14 +48438,14 @@ exports.Node = Node;
 
 
 /***/ }),
-/* 213 */
+/* 217 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var bbox_1 = __webpack_require__(214);
+var bbox_1 = __webpack_require__(218);
 /**
  * As of Jan 8, 2019, Firefox still doesn't implement
  * `getTransform(): DOMMatrix;`
@@ -48667,7 +48734,7 @@ exports.Matrix = Matrix;
 
 
 /***/ }),
-/* 214 */
+/* 218 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -48722,7 +48789,7 @@ exports.BBox = BBox;
 
 
 /***/ }),
-/* 215 */
+/* 219 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -48742,7 +48809,7 @@ exports.chainObjects = chainObjects;
 
 
 /***/ }),
-/* 216 */
+/* 220 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49047,7 +49114,7 @@ exports.HdpiCanvas = HdpiCanvas;
 
 
 /***/ }),
-/* 217 */
+/* 221 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49077,9 +49144,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var markersPanel_1 = __webpack_require__(203);
-var chartTranslator_1 = __webpack_require__(194);
-var shadowPanel_1 = __webpack_require__(199);
+var markersPanel_1 = __webpack_require__(207);
+var chartTranslator_1 = __webpack_require__(198);
+var shadowPanel_1 = __webpack_require__(203);
 var AreaSeriesPanel = /** @class */ (function (_super) {
     __extends(AreaSeriesPanel, _super);
     function AreaSeriesPanel(chartController) {
@@ -49203,7 +49270,7 @@ exports.AreaSeriesPanel = AreaSeriesPanel;
 
 
 /***/ }),
-/* 218 */
+/* 222 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49233,7 +49300,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var miniChartsContainer_1 = __webpack_require__(219);
+var miniChartsContainer_1 = __webpack_require__(223);
 var ChartSettingsPanel = /** @class */ (function (_super) {
     __extends(ChartSettingsPanel, _super);
     function ChartSettingsPanel(chartController) {
@@ -49372,7 +49439,7 @@ exports.ChartSettingsPanel = ChartSettingsPanel;
 
 
 /***/ }),
-/* 219 */
+/* 223 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49482,17 +49549,17 @@ var MiniChartsContainer = /** @class */ (function (_super) {
     return MiniChartsContainer;
 }(ag_grid_community_1.Component));
 exports.MiniChartsContainer = MiniChartsContainer;
-var group_1 = __webpack_require__(220);
-var scene_1 = __webpack_require__(221);
-var angle_1 = __webpack_require__(222);
-var sector_1 = __webpack_require__(223);
-var path_1 = __webpack_require__(228);
-var linearScale_1 = __webpack_require__(229);
-var line_1 = __webpack_require__(233);
-var clipRect_1 = __webpack_require__(234);
-var rect_1 = __webpack_require__(235);
-var bandScale_1 = __webpack_require__(236);
-var chartTranslator_1 = __webpack_require__(194);
+var group_1 = __webpack_require__(224);
+var scene_1 = __webpack_require__(225);
+var angle_1 = __webpack_require__(226);
+var sector_1 = __webpack_require__(227);
+var path_1 = __webpack_require__(232);
+var linearScale_1 = __webpack_require__(233);
+var line_1 = __webpack_require__(237);
+var clipRect_1 = __webpack_require__(238);
+var rect_1 = __webpack_require__(239);
+var bandScale_1 = __webpack_require__(240);
+var chartTranslator_1 = __webpack_require__(198);
 var MiniChart = /** @class */ (function (_super) {
     __extends(MiniChart, _super);
     function MiniChart() {
@@ -50353,7 +50420,7 @@ var MiniNormalizedArea = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 220 */
+/* 224 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50373,9 +50440,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var node_1 = __webpack_require__(212);
-var bbox_1 = __webpack_require__(214);
-var matrix_1 = __webpack_require__(213);
+var node_1 = __webpack_require__(216);
+var bbox_1 = __webpack_require__(218);
+var matrix_1 = __webpack_require__(217);
 var Group = /** @class */ (function (_super) {
     __extends(Group, _super);
     function Group() {
@@ -50460,14 +50527,14 @@ exports.Group = Group;
 
 
 /***/ }),
-/* 221 */
+/* 225 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var hdpiCanvas_1 = __webpack_require__(216);
+var hdpiCanvas_1 = __webpack_require__(220);
 var Scene = /** @class */ (function () {
     function Scene(width, height) {
         var _this = this;
@@ -50640,7 +50707,7 @@ exports.Scene = Scene;
 
 
 /***/ }),
-/* 222 */
+/* 226 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50694,7 +50761,7 @@ exports.toDegrees = toDegrees;
 
 
 /***/ }),
-/* 223 */
+/* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50714,11 +50781,11 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var shape_1 = __webpack_require__(211);
-var path2D_1 = __webpack_require__(224);
-var angle_1 = __webpack_require__(222);
-var number_1 = __webpack_require__(227);
-var bbox_1 = __webpack_require__(214);
+var shape_1 = __webpack_require__(215);
+var path2D_1 = __webpack_require__(228);
+var angle_1 = __webpack_require__(226);
+var number_1 = __webpack_require__(231);
+var bbox_1 = __webpack_require__(218);
 var Sector = /** @class */ (function (_super) {
     __extends(Sector, _super);
     function Sector() {
@@ -50955,14 +51022,14 @@ exports.Sector = Sector;
 
 
 /***/ }),
-/* 224 */
+/* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var intersection_1 = __webpack_require__(225);
+var intersection_1 = __webpack_require__(229);
 var Path2D = /** @class */ (function () {
     function Path2D() {
         // The methods of this class will likely be called many times per animation frame,
@@ -51618,14 +51685,14 @@ exports.Path2D = Path2D;
 
 
 /***/ }),
-/* 225 */
+/* 229 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var polyRoots_1 = __webpack_require__(226);
+var polyRoots_1 = __webpack_require__(230);
 /**
  * Returns the intersection point for the given pair of line segments, or null,
  * if the segments are parallel or don't intersect.
@@ -51707,7 +51774,7 @@ exports.bezierCoefficients = bezierCoefficients;
 
 
 /***/ }),
-/* 226 */
+/* 230 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51821,7 +51888,7 @@ exports.cubicRoots = cubicRoots;
 
 
 /***/ }),
-/* 227 */
+/* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51867,7 +51934,7 @@ exports.toReadableNumber = toReadableNumber;
 
 
 /***/ }),
-/* 228 */
+/* 232 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51887,8 +51954,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var shape_1 = __webpack_require__(211);
-var path2D_1 = __webpack_require__(224);
+var shape_1 = __webpack_require__(215);
+var path2D_1 = __webpack_require__(228);
 var Path = /** @class */ (function (_super) {
     __extends(Path, _super);
     function Path() {
@@ -51941,7 +52008,7 @@ exports.Path = Path;
 
 
 /***/ }),
-/* 229 */
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51961,9 +52028,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var continuousScale_1 = __webpack_require__(230);
-var compare_1 = __webpack_require__(231);
-var ticks_1 = __webpack_require__(232);
+var continuousScale_1 = __webpack_require__(234);
+var compare_1 = __webpack_require__(235);
+var ticks_1 = __webpack_require__(236);
 /**
  * Maps continuous domain to a continuous range.
  */
@@ -52062,7 +52129,7 @@ exports.default = scaleLinear;
 
 
 /***/ }),
-/* 230 */
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52213,7 +52280,7 @@ exports.default = ContinuousScale;
 
 
 /***/ }),
-/* 231 */
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52227,7 +52294,7 @@ exports.naturalOrder = naturalOrder;
 
 
 /***/ }),
-/* 232 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52311,7 +52378,7 @@ function range(a, b, step) {
 
 
 /***/ }),
-/* 233 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52331,9 +52398,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var shape_1 = __webpack_require__(211);
-var object_1 = __webpack_require__(215);
-var bbox_1 = __webpack_require__(214);
+var shape_1 = __webpack_require__(215);
+var object_1 = __webpack_require__(219);
+var bbox_1 = __webpack_require__(218);
 var Line = /** @class */ (function (_super) {
     __extends(Line, _super);
     function Line() {
@@ -52465,7 +52532,7 @@ exports.Line = Line;
 
 
 /***/ }),
-/* 234 */
+/* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52485,8 +52552,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var node_1 = __webpack_require__(212);
-var path2D_1 = __webpack_require__(224);
+var node_1 = __webpack_require__(216);
+var path2D_1 = __webpack_require__(228);
 /**
  * Acts as `Group` node but with specified bounds that form a rectangle.
  * Any parts of the child nodes outside that rectangle will not be visible.
@@ -52623,7 +52690,7 @@ exports.ClipRect = ClipRect;
 
 
 /***/ }),
-/* 235 */
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -52643,9 +52710,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var shape_1 = __webpack_require__(211);
-var path2D_1 = __webpack_require__(224);
-var bbox_1 = __webpack_require__(214);
+var shape_1 = __webpack_require__(215);
+var path2D_1 = __webpack_require__(228);
+var bbox_1 = __webpack_require__(218);
 var RectSizing;
 (function (RectSizing) {
     RectSizing[RectSizing["Content"] = 0] = "Content";
@@ -52921,7 +52988,7 @@ exports.Rect = Rect;
 
 
 /***/ }),
-/* 236 */
+/* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53114,7 +53181,7 @@ exports.BandScale = BandScale;
 
 
 /***/ }),
-/* 237 */
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53144,8 +53211,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var chartDatasource_1 = __webpack_require__(238);
-var rangeController_1 = __webpack_require__(188);
+var chartDatasource_1 = __webpack_require__(242);
+var rangeController_1 = __webpack_require__(192);
 var ChartModel = /** @class */ (function (_super) {
     __extends(ChartModel, _super);
     function ChartModel(params) {
@@ -53444,7 +53511,7 @@ exports.ChartModel = ChartModel;
 
 
 /***/ }),
-/* 238 */
+/* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53474,8 +53541,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var aggregationStage_1 = __webpack_require__(239);
-var chartModel_1 = __webpack_require__(237);
+var aggregationStage_1 = __webpack_require__(243);
+var chartModel_1 = __webpack_require__(241);
 var ChartDatasource = /** @class */ (function (_super) {
     __extends(ChartDatasource, _super);
     function ChartDatasource() {
@@ -53587,7 +53654,7 @@ exports.ChartDatasource = ChartDatasource;
 
 
 /***/ }),
-/* 239 */
+/* 243 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53604,8 +53671,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var pivotStage_1 = __webpack_require__(240);
-var aggFuncService_1 = __webpack_require__(242);
+var pivotStage_1 = __webpack_require__(244);
+var aggFuncService_1 = __webpack_require__(246);
 var AggregationStage = /** @class */ (function () {
     function AggregationStage() {
     }
@@ -53836,7 +53903,7 @@ exports.AggregationStage = AggregationStage;
 
 
 /***/ }),
-/* 240 */
+/* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -53853,7 +53920,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var pivotColDefService_1 = __webpack_require__(241);
+var pivotColDefService_1 = __webpack_require__(245);
 var PivotStage = /** @class */ (function () {
     function PivotStage() {
         this.uniqueValues = {};
@@ -54003,7 +54070,7 @@ exports.PivotStage = PivotStage;
 
 
 /***/ }),
-/* 241 */
+/* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -54298,7 +54365,7 @@ exports.PivotColDefService = PivotColDefService;
 
 
 /***/ }),
-/* 242 */
+/* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -54542,7 +54609,7 @@ function aggAvg(input) {
 
 
 /***/ }),
-/* 243 */
+/* 247 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -54562,10 +54629,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var chartBuilder_1 = __webpack_require__(244);
+var chartBuilder_1 = __webpack_require__(248);
 var ag_grid_community_1 = __webpack_require__(2);
-var chartProxy_1 = __webpack_require__(265);
-var chartModel_1 = __webpack_require__(237);
+var chartProxy_1 = __webpack_require__(269);
+var chartModel_1 = __webpack_require__(241);
 var BarChartProxy = /** @class */ (function (_super) {
     __extends(BarChartProxy, _super);
     function BarChartProxy(params) {
@@ -54691,25 +54758,25 @@ exports.BarChartProxy = BarChartProxy;
 
 
 /***/ }),
-/* 244 */
+/* 248 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var cartesianChart_1 = __webpack_require__(245);
-var polarChart_1 = __webpack_require__(251);
-var lineSeries_1 = __webpack_require__(252);
-var scatterSeries_1 = __webpack_require__(256);
-var barSeries_1 = __webpack_require__(257);
-var areaSeries_1 = __webpack_require__(260);
-var pieSeries_1 = __webpack_require__(261);
-var dropShadow_1 = __webpack_require__(262);
-var categoryAxis_1 = __webpack_require__(258);
-var numberAxis_1 = __webpack_require__(264);
-var padding_1 = __webpack_require__(209);
-var caption_1 = __webpack_require__(208);
+var cartesianChart_1 = __webpack_require__(249);
+var polarChart_1 = __webpack_require__(255);
+var lineSeries_1 = __webpack_require__(256);
+var scatterSeries_1 = __webpack_require__(260);
+var barSeries_1 = __webpack_require__(261);
+var areaSeries_1 = __webpack_require__(264);
+var pieSeries_1 = __webpack_require__(265);
+var dropShadow_1 = __webpack_require__(266);
+var categoryAxis_1 = __webpack_require__(262);
+var numberAxis_1 = __webpack_require__(268);
+var padding_1 = __webpack_require__(213);
+var caption_1 = __webpack_require__(212);
 var ChartBuilder = /** @class */ (function () {
     function ChartBuilder() {
     }
@@ -55234,7 +55301,7 @@ exports.ChartBuilder = ChartBuilder;
 
 
 /***/ }),
-/* 245 */
+/* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55254,10 +55321,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var chart_1 = __webpack_require__(246);
-var array_1 = __webpack_require__(250);
-var padding_1 = __webpack_require__(209);
-var group_1 = __webpack_require__(220);
+var chart_1 = __webpack_require__(250);
+var array_1 = __webpack_require__(254);
+var padding_1 = __webpack_require__(213);
+var group_1 = __webpack_require__(224);
 var CartesianChart = /** @class */ (function (_super) {
     __extends(CartesianChart, _super);
     function CartesianChart(xAxis, yAxis) {
@@ -55450,20 +55517,20 @@ exports.CartesianChart = CartesianChart;
 
 
 /***/ }),
-/* 246 */
+/* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var scene_1 = __webpack_require__(221);
-var group_1 = __webpack_require__(220);
-var padding_1 = __webpack_require__(209);
-var shape_1 = __webpack_require__(211);
-var rect_1 = __webpack_require__(235);
-var legend_1 = __webpack_require__(247);
-var array_1 = __webpack_require__(250);
+var scene_1 = __webpack_require__(225);
+var group_1 = __webpack_require__(224);
+var padding_1 = __webpack_require__(213);
+var shape_1 = __webpack_require__(215);
+var rect_1 = __webpack_require__(239);
+var legend_1 = __webpack_require__(251);
+var array_1 = __webpack_require__(254);
 var Chart = /** @class */ (function () {
     function Chart() {
         var _this = this;
@@ -56012,16 +56079,16 @@ exports.Chart = Chart;
 
 
 /***/ }),
-/* 247 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var group_1 = __webpack_require__(220);
-var selection_1 = __webpack_require__(248);
-var markerLabel_1 = __webpack_require__(249);
+var group_1 = __webpack_require__(224);
+var selection_1 = __webpack_require__(252);
+var markerLabel_1 = __webpack_require__(253);
 var Orientation;
 (function (Orientation) {
     Orientation[Orientation["Vertical"] = 0] = "Vertical";
@@ -56402,14 +56469,14 @@ exports.Legend = Legend;
 
 
 /***/ }),
-/* 248 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var node_1 = __webpack_require__(212);
+var node_1 = __webpack_require__(216);
 var EnterNode = /** @class */ (function () {
     function EnterNode(parent, datum) {
         this.next = null;
@@ -56891,7 +56958,7 @@ exports.Selection = Selection;
 
 
 /***/ }),
-/* 249 */
+/* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -56911,9 +56978,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var group_1 = __webpack_require__(220);
-var rect_1 = __webpack_require__(235);
-var text_1 = __webpack_require__(210);
+var group_1 = __webpack_require__(224);
+var rect_1 = __webpack_require__(239);
+var text_1 = __webpack_require__(214);
 var MarkerLabel = /** @class */ (function (_super) {
     __extends(MarkerLabel, _super);
     function MarkerLabel() {
@@ -57088,7 +57155,7 @@ exports.MarkerLabel = MarkerLabel;
 
 
 /***/ }),
-/* 250 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57143,7 +57210,7 @@ exports.checkExtent = checkExtent;
 
 
 /***/ }),
-/* 251 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57163,8 +57230,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var chart_1 = __webpack_require__(246);
-var padding_1 = __webpack_require__(209);
+var chart_1 = __webpack_require__(250);
+var padding_1 = __webpack_require__(213);
 var PolarChart = /** @class */ (function (_super) {
     __extends(PolarChart, _super);
     function PolarChart() {
@@ -57263,7 +57330,7 @@ exports.PolarChart = PolarChart;
 
 
 /***/ }),
-/* 252 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57283,16 +57350,16 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __webpack_require__(228);
-var continuousScale_1 = __webpack_require__(230);
-var selection_1 = __webpack_require__(248);
-var group_1 = __webpack_require__(220);
-var arc_1 = __webpack_require__(253);
-var array_1 = __webpack_require__(250);
-var palettes_1 = __webpack_require__(254);
-var series_1 = __webpack_require__(255);
-var number_1 = __webpack_require__(227);
-var node_1 = __webpack_require__(212);
+var path_1 = __webpack_require__(232);
+var continuousScale_1 = __webpack_require__(234);
+var selection_1 = __webpack_require__(252);
+var group_1 = __webpack_require__(224);
+var arc_1 = __webpack_require__(257);
+var array_1 = __webpack_require__(254);
+var palettes_1 = __webpack_require__(258);
+var series_1 = __webpack_require__(259);
+var number_1 = __webpack_require__(231);
+var node_1 = __webpack_require__(216);
 var ag_grid_community_1 = __webpack_require__(2);
 var LineSeries = /** @class */ (function (_super) {
     __extends(LineSeries, _super);
@@ -57655,7 +57722,7 @@ exports.LineSeries = LineSeries;
 
 
 /***/ }),
-/* 253 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -57675,12 +57742,12 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var shape_1 = __webpack_require__(211);
-var path2D_1 = __webpack_require__(224);
-var bbox_1 = __webpack_require__(214);
-var angle_1 = __webpack_require__(222);
-var object_1 = __webpack_require__(215);
-var number_1 = __webpack_require__(227);
+var shape_1 = __webpack_require__(215);
+var path2D_1 = __webpack_require__(228);
+var bbox_1 = __webpack_require__(218);
+var angle_1 = __webpack_require__(226);
+var object_1 = __webpack_require__(219);
+var number_1 = __webpack_require__(231);
 var ArcType;
 (function (ArcType) {
     ArcType[ArcType["Open"] = 0] = "Open";
@@ -57924,7 +57991,7 @@ exports.Arc = Arc;
 
 
 /***/ }),
-/* 254 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58064,14 +58131,14 @@ exports.palettes = [
 
 
 /***/ }),
-/* 255 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var group_1 = __webpack_require__(220);
+var group_1 = __webpack_require__(224);
 var Series = /** @class */ (function () {
     function Series() {
         this.id = this.createId();
@@ -58151,7 +58218,7 @@ exports.Series = Series;
 
 
 /***/ }),
-/* 256 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58171,14 +58238,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var continuousScale_1 = __webpack_require__(230);
-var selection_1 = __webpack_require__(248);
-var group_1 = __webpack_require__(220);
-var arc_1 = __webpack_require__(253);
-var array_1 = __webpack_require__(250);
-var palettes_1 = __webpack_require__(254);
-var series_1 = __webpack_require__(255);
-var number_1 = __webpack_require__(227);
+var continuousScale_1 = __webpack_require__(234);
+var selection_1 = __webpack_require__(252);
+var group_1 = __webpack_require__(224);
+var arc_1 = __webpack_require__(257);
+var array_1 = __webpack_require__(254);
+var palettes_1 = __webpack_require__(258);
+var series_1 = __webpack_require__(259);
+var number_1 = __webpack_require__(231);
 var ag_grid_community_1 = __webpack_require__(2);
 var ScatterSeries = /** @class */ (function (_super) {
     __extends(ScatterSeries, _super);
@@ -58508,7 +58575,7 @@ exports.ScatterSeries = ScatterSeries;
 
 
 /***/ }),
-/* 257 */
+/* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -58528,17 +58595,17 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var group_1 = __webpack_require__(220);
-var selection_1 = __webpack_require__(248);
-var rect_1 = __webpack_require__(235);
-var text_1 = __webpack_require__(210);
-var bandScale_1 = __webpack_require__(236);
-var palettes_1 = __webpack_require__(254);
-var series_1 = __webpack_require__(255);
-var node_1 = __webpack_require__(212);
-var number_1 = __webpack_require__(227);
+var group_1 = __webpack_require__(224);
+var selection_1 = __webpack_require__(252);
+var rect_1 = __webpack_require__(239);
+var text_1 = __webpack_require__(214);
+var bandScale_1 = __webpack_require__(240);
+var palettes_1 = __webpack_require__(258);
+var series_1 = __webpack_require__(259);
+var node_1 = __webpack_require__(216);
+var number_1 = __webpack_require__(231);
 var ag_grid_community_1 = __webpack_require__(2);
-var categoryAxis_1 = __webpack_require__(258);
+var categoryAxis_1 = __webpack_require__(262);
 var BarSeriesNodeTag;
 (function (BarSeriesNodeTag) {
     BarSeriesNodeTag[BarSeriesNodeTag["Bar"] = 0] = "Bar";
@@ -59191,7 +59258,7 @@ exports.BarSeries = BarSeries;
 
 
 /***/ }),
-/* 258 */
+/* 262 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -59211,8 +59278,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var bandScale_1 = __webpack_require__(236);
-var axis_1 = __webpack_require__(259);
+var bandScale_1 = __webpack_require__(240);
+var axis_1 = __webpack_require__(263);
 var CategoryAxis = /** @class */ (function (_super) {
     __extends(CategoryAxis, _super);
     function CategoryAxis() {
@@ -59229,22 +59296,22 @@ exports.CategoryAxis = CategoryAxis;
 
 
 /***/ }),
-/* 259 */
+/* 263 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var group_1 = __webpack_require__(220);
-var selection_1 = __webpack_require__(248);
-var line_1 = __webpack_require__(233);
-var ticks_1 = __webpack_require__(232);
-var angle_1 = __webpack_require__(222);
-var text_1 = __webpack_require__(210);
-var arc_1 = __webpack_require__(253);
-var bbox_1 = __webpack_require__(214);
-var matrix_1 = __webpack_require__(213);
+var group_1 = __webpack_require__(224);
+var selection_1 = __webpack_require__(252);
+var line_1 = __webpack_require__(237);
+var ticks_1 = __webpack_require__(236);
+var angle_1 = __webpack_require__(226);
+var text_1 = __webpack_require__(214);
+var arc_1 = __webpack_require__(257);
+var bbox_1 = __webpack_require__(218);
+var matrix_1 = __webpack_require__(217);
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 var Tags;
 (function (Tags) {
@@ -59658,7 +59725,7 @@ exports.Axis = Axis;
 
 
 /***/ }),
-/* 260 */
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -59678,16 +59745,16 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var group_1 = __webpack_require__(220);
-var selection_1 = __webpack_require__(248);
-var series_1 = __webpack_require__(255);
-var continuousScale_1 = __webpack_require__(230);
-var node_1 = __webpack_require__(212);
-var number_1 = __webpack_require__(227);
-var path_1 = __webpack_require__(228);
-var arc_1 = __webpack_require__(253);
-var palettes_1 = __webpack_require__(254);
-var array_1 = __webpack_require__(250);
+var group_1 = __webpack_require__(224);
+var selection_1 = __webpack_require__(252);
+var series_1 = __webpack_require__(259);
+var continuousScale_1 = __webpack_require__(234);
+var node_1 = __webpack_require__(216);
+var number_1 = __webpack_require__(231);
+var path_1 = __webpack_require__(232);
+var arc_1 = __webpack_require__(257);
+var palettes_1 = __webpack_require__(258);
+var array_1 = __webpack_require__(254);
 var AreaSeries = /** @class */ (function (_super) {
     __extends(AreaSeries, _super);
     function AreaSeries() {
@@ -60262,7 +60329,7 @@ exports.AreaSeries = AreaSeries;
 
 
 /***/ }),
-/* 261 */
+/* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -60282,17 +60349,17 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var group_1 = __webpack_require__(220);
-var line_1 = __webpack_require__(233);
-var text_1 = __webpack_require__(210);
-var selection_1 = __webpack_require__(248);
-var linearScale_1 = __webpack_require__(229);
-var angle_1 = __webpack_require__(222);
-var palettes_1 = __webpack_require__(254);
-var sector_1 = __webpack_require__(223);
-var series_1 = __webpack_require__(255);
-var node_1 = __webpack_require__(212);
-var number_1 = __webpack_require__(227);
+var group_1 = __webpack_require__(224);
+var line_1 = __webpack_require__(237);
+var text_1 = __webpack_require__(214);
+var selection_1 = __webpack_require__(252);
+var linearScale_1 = __webpack_require__(233);
+var angle_1 = __webpack_require__(226);
+var palettes_1 = __webpack_require__(258);
+var sector_1 = __webpack_require__(227);
+var series_1 = __webpack_require__(259);
+var node_1 = __webpack_require__(216);
+var number_1 = __webpack_require__(231);
 var ag_grid_community_1 = __webpack_require__(2);
 var PieSeriesNodeTag;
 (function (PieSeriesNodeTag) {
@@ -60988,14 +61055,14 @@ exports.PieSeries = PieSeries;
 
 
 /***/ }),
-/* 262 */
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var offset_1 = __webpack_require__(263);
+var offset_1 = __webpack_require__(267);
 exports.Offset = offset_1.Offset;
 var DropShadow = /** @class */ (function () {
     function DropShadow(color, offset, blur) {
@@ -61010,7 +61077,7 @@ exports.DropShadow = DropShadow;
 
 
 /***/ }),
-/* 263 */
+/* 267 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61029,7 +61096,7 @@ exports.Offset = Offset;
 
 
 /***/ }),
-/* 264 */
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61049,8 +61116,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var axis_1 = __webpack_require__(259);
-var linearScale_1 = __webpack_require__(229);
+var axis_1 = __webpack_require__(263);
+var linearScale_1 = __webpack_require__(233);
 var NumberAxis = /** @class */ (function (_super) {
     __extends(NumberAxis, _super);
     function NumberAxis() {
@@ -61093,7 +61160,7 @@ exports.NumberAxis = NumberAxis;
 
 
 /***/ }),
-/* 265 */
+/* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61153,7 +61220,7 @@ exports.ChartProxy = ChartProxy;
 
 
 /***/ }),
-/* 266 */
+/* 270 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61173,11 +61240,11 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var chartBuilder_1 = __webpack_require__(244);
+var chartBuilder_1 = __webpack_require__(248);
 var ag_grid_community_1 = __webpack_require__(2);
-var chartProxy_1 = __webpack_require__(265);
-var categoryAxis_1 = __webpack_require__(258);
-var chartModel_1 = __webpack_require__(237);
+var chartProxy_1 = __webpack_require__(269);
+var categoryAxis_1 = __webpack_require__(262);
+var chartModel_1 = __webpack_require__(241);
 var AreaChartProxy = /** @class */ (function (_super) {
     __extends(AreaChartProxy, _super);
     function AreaChartProxy(params) {
@@ -61346,7 +61413,7 @@ exports.AreaChartProxy = AreaChartProxy;
 
 
 /***/ }),
-/* 267 */
+/* 271 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61366,10 +61433,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var chartBuilder_1 = __webpack_require__(244);
+var chartBuilder_1 = __webpack_require__(248);
 var ag_grid_community_1 = __webpack_require__(2);
-var chartProxy_1 = __webpack_require__(265);
-var chartModel_1 = __webpack_require__(237);
+var chartProxy_1 = __webpack_require__(269);
+var chartModel_1 = __webpack_require__(241);
 var LineChartProxy = /** @class */ (function (_super) {
     __extends(LineChartProxy, _super);
     function LineChartProxy(params) {
@@ -61506,7 +61573,7 @@ exports.LineChartProxy = LineChartProxy;
 
 
 /***/ }),
-/* 268 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61526,9 +61593,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var chartBuilder_1 = __webpack_require__(244);
+var chartBuilder_1 = __webpack_require__(248);
 var ag_grid_community_1 = __webpack_require__(2);
-var chartProxy_1 = __webpack_require__(265);
+var chartProxy_1 = __webpack_require__(269);
 var PieChartProxy = /** @class */ (function (_super) {
     __extends(PieChartProxy, _super);
     function PieChartProxy(params) {
@@ -61630,7 +61697,7 @@ exports.PieChartProxy = PieChartProxy;
 
 
 /***/ }),
-/* 269 */
+/* 273 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61650,9 +61717,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var chartBuilder_1 = __webpack_require__(244);
+var chartBuilder_1 = __webpack_require__(248);
 var ag_grid_community_1 = __webpack_require__(2);
-var chartProxy_1 = __webpack_require__(265);
+var chartProxy_1 = __webpack_require__(269);
 var DoughnutChartProxy = /** @class */ (function (_super) {
     __extends(DoughnutChartProxy, _super);
     function DoughnutChartProxy(params) {
@@ -61670,11 +61737,18 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         var doughnutChart = this.chart;
         var fieldIds = params.fields.map(function (f) { return f.colId; });
         var existingSeriesMap = {};
+        var removedSeriesList = [];
         doughnutChart.series.forEach(function (series) {
             var pieSeries = series;
             var id = pieSeries.angleField;
-            fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = pieSeries : doughnutChart.removeSeries(pieSeries);
+            if (fieldIds.indexOf(id) > -1) {
+                existingSeriesMap[id] = pieSeries;
+            }
+            else {
+                removedSeriesList.push(pieSeries);
+            }
         });
+        removedSeriesList.forEach(function (series) { return doughnutChart.removeSeries(series); });
         var seriesOptions = this.chartOptions.seriesDefaults;
         // Use `Object.create` to prevent mutating the original user config that is possibly reused.
         var title = (seriesOptions.title ? Object.create(seriesOptions.title) : {});
@@ -61778,7 +61852,7 @@ exports.DoughnutChartProxy = DoughnutChartProxy;
 
 
 /***/ }),
-/* 270 */
+/* 274 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61786,107 +61860,107 @@ exports.DoughnutChartProxy = DoughnutChartProxy;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var enterpriseMenu_1 = __webpack_require__(271);
-var rangeController_1 = __webpack_require__(188);
-var clipboardService_1 = __webpack_require__(275);
-var groupStage_1 = __webpack_require__(281);
-var aggregationStage_1 = __webpack_require__(239);
-var enterpriseBoot_1 = __webpack_require__(282);
-var contextMenu_1 = __webpack_require__(308);
-var viewportRowModel_1 = __webpack_require__(309);
-var sideBarComp_1 = __webpack_require__(310);
-var licenseManager_1 = __webpack_require__(289);
-var md5_1 = __webpack_require__(290);
-var pivotStage_1 = __webpack_require__(240);
-var pivotColDefService_1 = __webpack_require__(241);
-var aggFuncService_1 = __webpack_require__(242);
-var menuItemMapper_1 = __webpack_require__(274);
-var excelCreator_1 = __webpack_require__(314);
-var excelXmlFactory_1 = __webpack_require__(317);
-var excelXlsxFactory_1 = __webpack_require__(332);
-var serverSideRowModel_1 = __webpack_require__(368);
-var horizontalResizeComp_1 = __webpack_require__(313);
-var sideBarButtonsComp_1 = __webpack_require__(311);
-var statusBarService_1 = __webpack_require__(371);
-var statusBar_1 = __webpack_require__(372);
-var nameValueComp_1 = __webpack_require__(293);
-var primaryColsHeaderPanel_1 = __webpack_require__(280);
-var primaryColsListPanel_1 = __webpack_require__(277);
-var gridHeaderDropZones_1 = __webpack_require__(373);
-var watermark_1 = __webpack_require__(374);
-var fillHandle_1 = __webpack_require__(375);
-var rangeHandle_1 = __webpack_require__(377);
-var aggregationStage_2 = __webpack_require__(239);
+var enterpriseMenu_1 = __webpack_require__(275);
+var rangeController_1 = __webpack_require__(192);
+var clipboardService_1 = __webpack_require__(279);
+var groupStage_1 = __webpack_require__(285);
+var aggregationStage_1 = __webpack_require__(243);
+var enterpriseBoot_1 = __webpack_require__(286);
+var contextMenu_1 = __webpack_require__(312);
+var viewportRowModel_1 = __webpack_require__(313);
+var sideBarComp_1 = __webpack_require__(314);
+var licenseManager_1 = __webpack_require__(293);
+var md5_1 = __webpack_require__(294);
+var pivotStage_1 = __webpack_require__(244);
+var pivotColDefService_1 = __webpack_require__(245);
+var aggFuncService_1 = __webpack_require__(246);
+var menuItemMapper_1 = __webpack_require__(278);
+var excelCreator_1 = __webpack_require__(318);
+var excelXmlFactory_1 = __webpack_require__(321);
+var excelXlsxFactory_1 = __webpack_require__(336);
+var serverSideRowModel_1 = __webpack_require__(372);
+var horizontalResizeComp_1 = __webpack_require__(317);
+var sideBarButtonsComp_1 = __webpack_require__(315);
+var statusBarService_1 = __webpack_require__(375);
+var statusBar_1 = __webpack_require__(376);
+var nameValueComp_1 = __webpack_require__(297);
+var primaryColsHeaderPanel_1 = __webpack_require__(284);
+var primaryColsListPanel_1 = __webpack_require__(281);
+var gridHeaderDropZones_1 = __webpack_require__(377);
+var watermark_1 = __webpack_require__(378);
+var fillHandle_1 = __webpack_require__(379);
+var rangeHandle_1 = __webpack_require__(381);
+var aggregationStage_2 = __webpack_require__(243);
 exports.AggregationStage = aggregationStage_2.AggregationStage;
-var groupStage_2 = __webpack_require__(281);
+var groupStage_2 = __webpack_require__(285);
 exports.GroupStage = groupStage_2.GroupStage;
-var setFilter_1 = __webpack_require__(283);
+var setFilter_1 = __webpack_require__(287);
 exports.SetFilter = setFilter_1.SetFilter;
-var setValueModel_1 = __webpack_require__(284);
+var setValueModel_1 = __webpack_require__(288);
 exports.SetValueModel = setValueModel_1.SetValueModel;
-var statusBar_2 = __webpack_require__(372);
+var statusBar_2 = __webpack_require__(376);
 exports.StatusBar = statusBar_2.StatusBar;
-var statusBarService_2 = __webpack_require__(371);
+var statusBarService_2 = __webpack_require__(375);
 exports.StatusBarService = statusBarService_2.StatusBarService;
-var clipboardService_2 = __webpack_require__(275);
+var clipboardService_2 = __webpack_require__(279);
 exports.ClipboardService = clipboardService_2.ClipboardService;
-var enterpriseBoot_2 = __webpack_require__(282);
+var enterpriseBoot_2 = __webpack_require__(286);
 exports.EnterpriseBoot = enterpriseBoot_2.EnterpriseBoot;
-var enterpriseMenu_2 = __webpack_require__(271);
+var enterpriseMenu_2 = __webpack_require__(275);
 exports.EnterpriseMenu = enterpriseMenu_2.EnterpriseMenu;
-var menuItemComponent_1 = __webpack_require__(273);
+var menuItemComponent_1 = __webpack_require__(277);
 exports.MenuItemComponent = menuItemComponent_1.MenuItemComponent;
-var menuList_1 = __webpack_require__(272);
+var menuList_1 = __webpack_require__(276);
 exports.MenuList = menuList_1.MenuList;
-var rangeController_2 = __webpack_require__(188);
+var rangeController_2 = __webpack_require__(192);
 exports.RangeController = rangeController_2.RangeController;
-var rowGroupDropZonePanel_1 = __webpack_require__(297);
+var rowGroupDropZonePanel_1 = __webpack_require__(301);
 exports.RowGroupDropZonePanel = rowGroupDropZonePanel_1.RowGroupDropZonePanel;
-var contextMenu_2 = __webpack_require__(308);
+var contextMenu_2 = __webpack_require__(312);
 exports.ContextMenuFactory = contextMenu_2.ContextMenuFactory;
-var viewportRowModel_2 = __webpack_require__(309);
+var viewportRowModel_2 = __webpack_require__(313);
 exports.ViewportRowModel = viewportRowModel_2.ViewportRowModel;
-var richSelectCellEditor_1 = __webpack_require__(287);
+var richSelectCellEditor_1 = __webpack_require__(291);
 exports.RichSelectCellEditor = richSelectCellEditor_1.RichSelectCellEditor;
-var richSelectRow_1 = __webpack_require__(288);
+var richSelectRow_1 = __webpack_require__(292);
 exports.RichSelectRow = richSelectRow_1.RichSelectRow;
-var virtualList_1 = __webpack_require__(286);
+var virtualList_1 = __webpack_require__(290);
 exports.VirtualList = virtualList_1.VirtualList;
-var baseDropZonePanel_1 = __webpack_require__(298);
+var baseDropZonePanel_1 = __webpack_require__(302);
 exports.BaseDropZonePanel = baseDropZonePanel_1.BaseDropZonePanel;
-var pivotDropZonePanel_1 = __webpack_require__(301);
+var pivotDropZonePanel_1 = __webpack_require__(305);
 exports.PivotDropZonePanel = pivotDropZonePanel_1.PivotDropZonePanel;
-var sideBarComp_2 = __webpack_require__(310);
+var sideBarComp_2 = __webpack_require__(314);
 exports.SideBarComp = sideBarComp_2.SideBarComp;
-var licenseManager_2 = __webpack_require__(289);
+var licenseManager_2 = __webpack_require__(293);
 exports.LicenseManager = licenseManager_2.LicenseManager;
-var pivotStage_2 = __webpack_require__(240);
+var pivotStage_2 = __webpack_require__(244);
 exports.PivotStage = pivotStage_2.PivotStage;
-var pivotColDefService_2 = __webpack_require__(241);
+var pivotColDefService_2 = __webpack_require__(245);
 exports.PivotColDefService = pivotColDefService_2.PivotColDefService;
-var pivotModePanel_1 = __webpack_require__(296);
+var pivotModePanel_1 = __webpack_require__(300);
 exports.PivotModePanel = pivotModePanel_1.PivotModePanel;
-var aggFuncService_2 = __webpack_require__(242);
+var aggFuncService_2 = __webpack_require__(246);
 exports.AggFuncService = aggFuncService_2.AggFuncService;
-var md5_2 = __webpack_require__(290);
+var md5_2 = __webpack_require__(294);
 exports.MD5 = md5_2.MD5;
-var setFilterListItem_1 = __webpack_require__(285);
+var setFilterListItem_1 = __webpack_require__(289);
 exports.SetFilterListItem = setFilterListItem_1.SetFilterListItem;
-var dropZoneColumnComp_1 = __webpack_require__(299);
+var dropZoneColumnComp_1 = __webpack_require__(303);
 exports.DropZoneColumnComp = dropZoneColumnComp_1.DropZoneColumnComp;
-var valueDropZonePanel_1 = __webpack_require__(300);
+var valueDropZonePanel_1 = __webpack_require__(304);
 exports.ValuesDropZonePanel = valueDropZonePanel_1.ValuesDropZonePanel;
-var excelCreator_2 = __webpack_require__(314);
+var excelCreator_2 = __webpack_require__(318);
 exports.ExcelCreator = excelCreator_2.ExcelCreator;
-var excelXmlFactory_2 = __webpack_require__(317);
+var excelXmlFactory_2 = __webpack_require__(321);
 exports.ExcelXmlFactory = excelXmlFactory_2.ExcelXmlFactory;
-var excelXlsxFactory_2 = __webpack_require__(332);
+var excelXlsxFactory_2 = __webpack_require__(336);
 exports.ExcelXlsxFactory = excelXlsxFactory_2.ExcelXlsxFactory;
-var watermark_2 = __webpack_require__(374);
+var watermark_2 = __webpack_require__(378);
 exports.WatermarkComp = watermark_2.WatermarkComp;
-var fillHandle_2 = __webpack_require__(375);
+var fillHandle_2 = __webpack_require__(379);
 exports.FillHandle = fillHandle_2.FillHandle;
-var rangeHandle_2 = __webpack_require__(377);
+var rangeHandle_2 = __webpack_require__(381);
 exports.RangeHandle = rangeHandle_2.RangeHandle;
 var rowModelTypes = { viewport: viewportRowModel_1.ViewportRowModel, serverSide: serverSideRowModel_1.ServerSideRowModel };
 ag_grid_community_1.Grid.setEnterpriseBeans([enterpriseMenu_1.EnterpriseMenuFactory, excelCreator_1.ExcelCreator, excelXmlFactory_1.ExcelXmlFactory, excelXlsxFactory_1.ExcelXlsxFactory,
@@ -61909,7 +61983,7 @@ ag_grid_community_1.Grid.setEnterpriseComponents([
 
 
 /***/ }),
-/* 271 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -61939,10 +62013,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var menuList_1 = __webpack_require__(272);
-var menuItemComponent_1 = __webpack_require__(273);
-var menuItemMapper_1 = __webpack_require__(274);
-var primaryColsPanel_1 = __webpack_require__(276);
+var menuList_1 = __webpack_require__(276);
+var menuItemComponent_1 = __webpack_require__(277);
+var menuItemMapper_1 = __webpack_require__(278);
+var primaryColsPanel_1 = __webpack_require__(280);
 var EnterpriseMenuFactory = /** @class */ (function () {
     function EnterpriseMenuFactory() {
     }
@@ -62357,7 +62431,7 @@ exports.EnterpriseMenu = EnterpriseMenu;
 
 
 /***/ }),
-/* 272 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62387,7 +62461,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var menuItemComponent_1 = __webpack_require__(273);
+var menuItemComponent_1 = __webpack_require__(277);
 var MenuList = /** @class */ (function (_super) {
     __extends(MenuList, _super);
     function MenuList() {
@@ -62518,7 +62592,7 @@ exports.MenuList = MenuList;
 
 
 /***/ }),
-/* 273 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62681,7 +62755,7 @@ exports.MenuItemComponent = MenuItemComponent;
 
 
 /***/ }),
-/* 274 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -62698,8 +62772,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var clipboardService_1 = __webpack_require__(275);
-var aggFuncService_1 = __webpack_require__(242);
+var clipboardService_1 = __webpack_require__(279);
+var aggFuncService_1 = __webpack_require__(246);
 var MenuItemMapper = /** @class */ (function () {
     function MenuItemMapper() {
     }
@@ -63038,7 +63112,7 @@ exports.MenuItemMapper = MenuItemMapper;
 
 
 /***/ }),
-/* 275 */
+/* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -63055,7 +63129,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var rangeController_1 = __webpack_require__(188);
+var rangeController_1 = __webpack_require__(192);
 var ClipboardService = /** @class */ (function () {
     function ClipboardService() {
     }
@@ -63725,7 +63799,7 @@ exports.ClipboardService = ClipboardService;
 
 
 /***/ }),
-/* 276 */
+/* 280 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -63755,8 +63829,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = __webpack_require__(2);
-var primaryColsListPanel_1 = __webpack_require__(277);
-var primaryColsHeaderPanel_1 = __webpack_require__(280);
+var primaryColsListPanel_1 = __webpack_require__(281);
+var primaryColsHeaderPanel_1 = __webpack_require__(284);
 var PrimaryColsPanel = /** @class */ (function (_super) {
     __extends(PrimaryColsPanel, _super);
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
@@ -63825,7 +63899,7 @@ exports.PrimaryColsPanel = PrimaryColsPanel;
 
 
 /***/ }),
-/* 277 */
+/* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -63855,9 +63929,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = __webpack_require__(2);
-var toolPanelColumnGroupComp_1 = __webpack_require__(278);
-var toolPanelColumnComp_1 = __webpack_require__(279);
-var primaryColsHeaderPanel_1 = __webpack_require__(280);
+var toolPanelColumnGroupComp_1 = __webpack_require__(282);
+var toolPanelColumnComp_1 = __webpack_require__(283);
+var primaryColsHeaderPanel_1 = __webpack_require__(284);
 var PrimaryColsListPanel = /** @class */ (function (_super) {
     __extends(PrimaryColsListPanel, _super);
     function PrimaryColsListPanel() {
@@ -64073,7 +64147,7 @@ exports.PrimaryColsListPanel = PrimaryColsListPanel;
 
 
 /***/ }),
-/* 278 */
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64419,7 +64493,7 @@ exports.ToolPanelColumnGroupComp = ToolPanelColumnGroupComp;
 
 
 /***/ }),
-/* 279 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64759,7 +64833,7 @@ exports.ToolPanelColumnComp = ToolPanelColumnComp;
 
 
 /***/ }),
-/* 280 */
+/* 284 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -64992,7 +65066,7 @@ exports.PrimaryColsHeaderPanel = PrimaryColsHeaderPanel;
 
 
 /***/ }),
-/* 281 */
+/* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -65557,7 +65631,7 @@ var BatchRemover = /** @class */ (function () {
 
 
 /***/ }),
-/* 282 */
+/* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -65574,18 +65648,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var setFilter_1 = __webpack_require__(283);
-var richSelectCellEditor_1 = __webpack_require__(287);
-var licenseManager_1 = __webpack_require__(289);
-var detailCellRenderer_1 = __webpack_require__(291);
-var totalRowsComp_1 = __webpack_require__(292);
-var totalAndFilteredRowsComp_1 = __webpack_require__(294);
-var columnToolPanel_1 = __webpack_require__(295);
-var aggregationComp_1 = __webpack_require__(302);
-var selectedRowsComp_1 = __webpack_require__(303);
-var filteredRowsComp_1 = __webpack_require__(304);
-var filtersToolPanel_1 = __webpack_require__(305);
-var setFloatingFilter_1 = __webpack_require__(307);
+var setFilter_1 = __webpack_require__(287);
+var richSelectCellEditor_1 = __webpack_require__(291);
+var licenseManager_1 = __webpack_require__(293);
+var detailCellRenderer_1 = __webpack_require__(295);
+var totalRowsComp_1 = __webpack_require__(296);
+var totalAndFilteredRowsComp_1 = __webpack_require__(298);
+var columnToolPanel_1 = __webpack_require__(299);
+var aggregationComp_1 = __webpack_require__(306);
+var selectedRowsComp_1 = __webpack_require__(307);
+var filteredRowsComp_1 = __webpack_require__(308);
+var filtersToolPanel_1 = __webpack_require__(309);
+var setFloatingFilter_1 = __webpack_require__(311);
 var EnterpriseBoot = /** @class */ (function () {
     function EnterpriseBoot() {
     }
@@ -65630,7 +65704,7 @@ exports.EnterpriseBoot = EnterpriseBoot;
 
 
 /***/ }),
-/* 283 */
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -65660,9 +65734,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var setValueModel_1 = __webpack_require__(284);
-var setFilterListItem_1 = __webpack_require__(285);
-var virtualList_1 = __webpack_require__(286);
+var setValueModel_1 = __webpack_require__(288);
+var setFilterListItem_1 = __webpack_require__(289);
+var virtualList_1 = __webpack_require__(290);
 var CheckboxState;
 (function (CheckboxState) {
     CheckboxState[CheckboxState["CHECKED"] = 0] = "CHECKED";
@@ -65993,7 +66067,7 @@ var ModelWrapper = /** @class */ (function () {
 
 
 /***/ }),
-/* 284 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -66392,7 +66466,7 @@ exports.SetValueModel = SetValueModel;
 
 
 /***/ }),
-/* 285 */
+/* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -66529,7 +66603,7 @@ exports.SetFilterListItem = SetFilterListItem;
 
 
 /***/ }),
-/* 286 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -66702,7 +66776,7 @@ exports.VirtualList = VirtualList;
 
 
 /***/ }),
-/* 287 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -66732,8 +66806,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var richSelectRow_1 = __webpack_require__(288);
-var virtualList_1 = __webpack_require__(286);
+var richSelectRow_1 = __webpack_require__(292);
+var virtualList_1 = __webpack_require__(290);
 var RichSelectCellEditor = /** @class */ (function (_super) {
     __extends(RichSelectCellEditor, _super);
     function RichSelectCellEditor() {
@@ -66903,7 +66977,7 @@ exports.RichSelectCellEditor = RichSelectCellEditor;
 
 
 /***/ }),
-/* 288 */
+/* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -66999,7 +67073,7 @@ exports.RichSelectRow = RichSelectRow;
 
 
 /***/ }),
-/* 289 */
+/* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67016,7 +67090,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var md5_1 = __webpack_require__(290);
+var md5_1 = __webpack_require__(294);
 var LicenseManager = /** @class */ (function () {
     function LicenseManager() {
         this.watermarkMessage = undefined;
@@ -67261,7 +67335,7 @@ exports.LicenseManager = LicenseManager;
 
 
 /***/ }),
-/* 290 */
+/* 294 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67459,7 +67533,7 @@ exports.MD5 = MD5;
 
 
 /***/ }),
-/* 291 */
+/* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67649,7 +67723,7 @@ exports.DetailCellRenderer = DetailCellRenderer;
 
 
 /***/ }),
-/* 292 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67679,7 +67753,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var nameValueComp_1 = __webpack_require__(293);
+var nameValueComp_1 = __webpack_require__(297);
 var TotalRowsComp = /** @class */ (function (_super) {
     __extends(TotalRowsComp, _super);
     function TotalRowsComp() {
@@ -67728,7 +67802,7 @@ exports.TotalRowsComp = TotalRowsComp;
 
 
 /***/ }),
-/* 293 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67791,7 +67865,7 @@ exports.NameValueComp = NameValueComp;
 
 
 /***/ }),
-/* 294 */
+/* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67821,7 +67895,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var nameValueComp_1 = __webpack_require__(293);
+var nameValueComp_1 = __webpack_require__(297);
 var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     __extends(TotalAndFilteredRowsComp, _super);
     function TotalAndFilteredRowsComp() {
@@ -67883,7 +67957,7 @@ exports.TotalAndFilteredRowsComp = TotalAndFilteredRowsComp;
 
 
 /***/ }),
-/* 295 */
+/* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -67913,11 +67987,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = __webpack_require__(2);
-var pivotModePanel_1 = __webpack_require__(296);
-var rowGroupDropZonePanel_1 = __webpack_require__(297);
-var valueDropZonePanel_1 = __webpack_require__(300);
-var pivotDropZonePanel_1 = __webpack_require__(301);
-var primaryColsPanel_1 = __webpack_require__(276);
+var pivotModePanel_1 = __webpack_require__(300);
+var rowGroupDropZonePanel_1 = __webpack_require__(301);
+var valueDropZonePanel_1 = __webpack_require__(304);
+var pivotDropZonePanel_1 = __webpack_require__(305);
+var primaryColsPanel_1 = __webpack_require__(280);
 var ColumnToolPanel = /** @class */ (function (_super) {
     __extends(ColumnToolPanel, _super);
     function ColumnToolPanel() {
@@ -68000,7 +68074,7 @@ exports.ColumnToolPanel = ColumnToolPanel;
 
 
 /***/ }),
-/* 296 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68089,7 +68163,7 @@ exports.PivotModePanel = PivotModePanel;
 
 
 /***/ }),
-/* 297 */
+/* 301 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68119,7 +68193,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = __webpack_require__(2);
-var baseDropZonePanel_1 = __webpack_require__(298);
+var baseDropZonePanel_1 = __webpack_require__(302);
 var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __extends(RowGroupDropZonePanel, _super);
     function RowGroupDropZonePanel(horizontal) {
@@ -68216,7 +68290,7 @@ exports.RowGroupDropZonePanel = RowGroupDropZonePanel;
 
 
 /***/ }),
-/* 298 */
+/* 302 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68237,7 +68311,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = __webpack_require__(2);
-var dropZoneColumnComp_1 = __webpack_require__(299);
+var dropZoneColumnComp_1 = __webpack_require__(303);
 var BaseDropZonePanel = /** @class */ (function (_super) {
     __extends(BaseDropZonePanel, _super);
     function BaseDropZonePanel(horizontal, valueColumn, name) {
@@ -68571,7 +68645,7 @@ exports.BaseDropZonePanel = BaseDropZonePanel;
 
 
 /***/ }),
-/* 299 */
+/* 303 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68601,8 +68675,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var aggFuncService_1 = __webpack_require__(242);
-var virtualList_1 = __webpack_require__(286);
+var aggFuncService_1 = __webpack_require__(246);
+var virtualList_1 = __webpack_require__(290);
 var DropZoneColumnComp = /** @class */ (function (_super) {
     __extends(DropZoneColumnComp, _super);
     function DropZoneColumnComp(column, dragSourceDropTarget, ghost, valueColumn) {
@@ -68812,7 +68886,7 @@ var AggItemComp = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 300 */
+/* 304 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68842,7 +68916,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = __webpack_require__(2);
-var baseDropZonePanel_1 = __webpack_require__(298);
+var baseDropZonePanel_1 = __webpack_require__(302);
 var ValuesDropZonePanel = /** @class */ (function (_super) {
     __extends(ValuesDropZonePanel, _super);
     function ValuesDropZonePanel(horizontal) {
@@ -68939,7 +69013,7 @@ exports.ValuesDropZonePanel = ValuesDropZonePanel;
 
 
 /***/ }),
-/* 301 */
+/* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68969,7 +69043,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = __webpack_require__(2);
-var baseDropZonePanel_1 = __webpack_require__(298);
+var baseDropZonePanel_1 = __webpack_require__(302);
 var PivotDropZonePanel = /** @class */ (function (_super) {
     __extends(PivotDropZonePanel, _super);
     function PivotDropZonePanel(horizontal) {
@@ -69097,7 +69171,7 @@ exports.PivotDropZonePanel = PivotDropZonePanel;
 
 
 /***/ }),
-/* 302 */
+/* 306 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69127,8 +69201,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var rangeController_1 = __webpack_require__(188);
-var nameValueComp_1 = __webpack_require__(293);
+var rangeController_1 = __webpack_require__(192);
+var nameValueComp_1 = __webpack_require__(297);
 var AggregationComp = /** @class */ (function (_super) {
     __extends(AggregationComp, _super);
     function AggregationComp() {
@@ -69324,7 +69398,7 @@ exports.AggregationComp = AggregationComp;
 
 
 /***/ }),
-/* 303 */
+/* 307 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69354,7 +69428,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var nameValueComp_1 = __webpack_require__(293);
+var nameValueComp_1 = __webpack_require__(297);
 var SelectedRowsComp = /** @class */ (function (_super) {
     __extends(SelectedRowsComp, _super);
     function SelectedRowsComp() {
@@ -69407,7 +69481,7 @@ exports.SelectedRowsComp = SelectedRowsComp;
 
 
 /***/ }),
-/* 304 */
+/* 308 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69437,7 +69511,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var nameValueComp_1 = __webpack_require__(293);
+var nameValueComp_1 = __webpack_require__(297);
 var FilteredRowsComp = /** @class */ (function (_super) {
     __extends(FilteredRowsComp, _super);
     function FilteredRowsComp() {
@@ -69497,7 +69571,7 @@ exports.FilteredRowsComp = FilteredRowsComp;
 
 
 /***/ }),
-/* 305 */
+/* 309 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69527,7 +69601,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var toolPanelFilterComp_1 = __webpack_require__(306);
+var toolPanelFilterComp_1 = __webpack_require__(310);
 var FiltersToolPanel = /** @class */ (function (_super) {
     __extends(FiltersToolPanel, _super);
     function FiltersToolPanel() {
@@ -69585,7 +69659,7 @@ exports.FiltersToolPanel = FiltersToolPanel;
 
 
 /***/ }),
-/* 306 */
+/* 310 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69741,7 +69815,7 @@ exports.ToolPanelFilterComp = ToolPanelFilterComp;
 
 
 /***/ }),
-/* 307 */
+/* 311 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69817,7 +69891,7 @@ exports.SetFloatingFilterComp = SetFloatingFilterComp;
 
 
 /***/ }),
-/* 308 */
+/* 312 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -69847,10 +69921,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var menuItemComponent_1 = __webpack_require__(273);
-var menuList_1 = __webpack_require__(272);
-var menuItemMapper_1 = __webpack_require__(274);
-var rangeController_1 = __webpack_require__(188);
+var menuItemComponent_1 = __webpack_require__(277);
+var menuList_1 = __webpack_require__(276);
+var menuItemMapper_1 = __webpack_require__(278);
+var rangeController_1 = __webpack_require__(192);
 var ContextMenuFactory = /** @class */ (function () {
     function ContextMenuFactory() {
     }
@@ -70006,7 +70080,7 @@ var ContextMenu = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 309 */
+/* 313 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70286,7 +70360,7 @@ exports.ViewportRowModel = ViewportRowModel;
 
 
 /***/ }),
-/* 310 */
+/* 314 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70316,8 +70390,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var sideBarButtonsComp_1 = __webpack_require__(311);
-var toolPanelWrapper_1 = __webpack_require__(312);
+var sideBarButtonsComp_1 = __webpack_require__(315);
+var toolPanelWrapper_1 = __webpack_require__(316);
 var SideBarComp = /** @class */ (function (_super) {
     __extends(SideBarComp, _super);
     function SideBarComp() {
@@ -70458,7 +70532,7 @@ exports.SideBarComp = SideBarComp;
 
 
 /***/ }),
-/* 311 */
+/* 315 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70587,7 +70661,7 @@ var SideBarButtonComp = /** @class */ (function (_super) {
 
 
 /***/ }),
-/* 312 */
+/* 316 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70617,7 +70691,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var horizontalResizeComp_1 = __webpack_require__(313);
+var horizontalResizeComp_1 = __webpack_require__(317);
 var ToolPanelWrapper = /** @class */ (function (_super) {
     __extends(ToolPanelWrapper, _super);
     function ToolPanelWrapper() {
@@ -70672,7 +70746,7 @@ exports.ToolPanelWrapper = ToolPanelWrapper;
 
 
 /***/ }),
-/* 313 */
+/* 317 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70752,7 +70826,7 @@ exports.HorizontalResizeComp = HorizontalResizeComp;
 
 
 /***/ }),
-/* 314 */
+/* 318 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -70782,10 +70856,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var excelXmlSerializingSession_1 = __webpack_require__(315);
-var excelXlsxSerializingSession_1 = __webpack_require__(316);
-var excelXmlFactory_1 = __webpack_require__(317);
-var excelXlsxFactory_1 = __webpack_require__(332);
+var excelXmlSerializingSession_1 = __webpack_require__(319);
+var excelXlsxSerializingSession_1 = __webpack_require__(320);
+var excelXmlFactory_1 = __webpack_require__(321);
+var excelXlsxFactory_1 = __webpack_require__(336);
 var ExcelCreator = /** @class */ (function (_super) {
     __extends(ExcelCreator, _super);
     function ExcelCreator() {
@@ -70962,7 +71036,7 @@ exports.ExcelCreator = ExcelCreator;
 
 
 /***/ }),
-/* 315 */
+/* 319 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71196,7 +71270,7 @@ exports.ExcelXmlSerializingSession = ExcelXmlSerializingSession;
 
 
 /***/ }),
-/* 316 */
+/* 320 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71217,7 +71291,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var excelXmlSerializingSession_1 = __webpack_require__(315);
+var excelXmlSerializingSession_1 = __webpack_require__(319);
 var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
     __extends(ExcelXlsxSerializingSession, _super);
     function ExcelXlsxSerializingSession() {
@@ -71351,7 +71425,7 @@ exports.ExcelXlsxSerializingSession = ExcelXlsxSerializingSession;
 
 
 /***/ }),
-/* 317 */
+/* 321 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71369,17 +71443,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
 var ag_grid_community_2 = __webpack_require__(2);
-var workbook_1 = __webpack_require__(318);
-var excelWorkbook_1 = __webpack_require__(319);
-var worksheet_1 = __webpack_require__(320);
-var documentProperties_1 = __webpack_require__(324);
-var alignment_1 = __webpack_require__(325);
-var borders_1 = __webpack_require__(326);
-var font_1 = __webpack_require__(327);
-var interior_1 = __webpack_require__(328);
-var protection_1 = __webpack_require__(329);
-var numberFormat_1 = __webpack_require__(330);
-var style_1 = __webpack_require__(331);
+var workbook_1 = __webpack_require__(322);
+var excelWorkbook_1 = __webpack_require__(323);
+var worksheet_1 = __webpack_require__(324);
+var documentProperties_1 = __webpack_require__(328);
+var alignment_1 = __webpack_require__(329);
+var borders_1 = __webpack_require__(330);
+var font_1 = __webpack_require__(331);
+var interior_1 = __webpack_require__(332);
+var protection_1 = __webpack_require__(333);
+var numberFormat_1 = __webpack_require__(334);
+var style_1 = __webpack_require__(335);
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */
@@ -71446,7 +71520,7 @@ exports.ExcelXmlFactory = ExcelXmlFactory;
 
 
 /***/ }),
-/* 318 */
+/* 322 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71478,7 +71552,7 @@ exports.default = workbook;
 
 
 /***/ }),
-/* 319 */
+/* 323 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71523,7 +71597,7 @@ exports.default = excelWorkbook;
 
 
 /***/ }),
-/* 320 */
+/* 324 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71531,8 +71605,8 @@ exports.default = excelWorkbook;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var column_1 = __webpack_require__(321);
-var row_1 = __webpack_require__(322);
+var column_1 = __webpack_require__(325);
+var row_1 = __webpack_require__(326);
 var worksheet = {
     getTemplate: function (ws) {
         var table = ws.table, name = ws.name;
@@ -71560,7 +71634,7 @@ exports.default = worksheet;
 
 
 /***/ }),
-/* 321 */
+/* 325 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71587,7 +71661,7 @@ exports.default = column;
 
 
 /***/ }),
-/* 322 */
+/* 326 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71595,7 +71669,7 @@ exports.default = column;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var cell_1 = __webpack_require__(323);
+var cell_1 = __webpack_require__(327);
 var row = {
     getTemplate: function (r) {
         var cells = r.cells;
@@ -71611,7 +71685,7 @@ exports.default = row;
 
 
 /***/ }),
-/* 323 */
+/* 327 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71655,7 +71729,7 @@ exports.default = cell;
 
 
 /***/ }),
-/* 324 */
+/* 328 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71682,7 +71756,7 @@ exports.default = documentProperties;
 
 
 /***/ }),
-/* 325 */
+/* 329 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71716,7 +71790,7 @@ exports.default = alignment;
 
 
 /***/ }),
-/* 326 */
+/* 330 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71752,7 +71826,7 @@ exports.default = borders;
 
 
 /***/ }),
-/* 327 */
+/* 331 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71794,7 +71868,7 @@ exports.default = font;
 
 
 /***/ }),
-/* 328 */
+/* 332 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71823,7 +71897,7 @@ exports.default = interior;
 
 
 /***/ }),
-/* 329 */
+/* 333 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71850,7 +71924,7 @@ exports.default = protection;
 
 
 /***/ }),
-/* 330 */
+/* 334 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71877,7 +71951,7 @@ exports.default = numberFormat;
 
 
 /***/ }),
-/* 331 */
+/* 335 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71905,7 +71979,7 @@ exports.default = style;
 
 
 /***/ }),
-/* 332 */
+/* 336 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71922,14 +71996,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var core_1 = __webpack_require__(333);
-var contentTypes_1 = __webpack_require__(334);
-var office_1 = __webpack_require__(336);
-var sharedStrings_1 = __webpack_require__(341);
-var stylesheet_1 = __webpack_require__(342);
-var workbook_1 = __webpack_require__(358);
-var worksheet_1 = __webpack_require__(361);
-var relationships_1 = __webpack_require__(366);
+var core_1 = __webpack_require__(337);
+var contentTypes_1 = __webpack_require__(338);
+var office_1 = __webpack_require__(340);
+var sharedStrings_1 = __webpack_require__(345);
+var stylesheet_1 = __webpack_require__(346);
+var workbook_1 = __webpack_require__(362);
+var worksheet_1 = __webpack_require__(365);
+var relationships_1 = __webpack_require__(370);
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
  */
@@ -72018,7 +72092,7 @@ exports.ExcelXlsxFactory = ExcelXlsxFactory;
 
 
 /***/ }),
-/* 333 */
+/* 337 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72072,7 +72146,7 @@ exports.default = coreFactory;
 
 
 /***/ }),
-/* 334 */
+/* 338 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72080,7 +72154,7 @@ exports.default = coreFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var contentType_1 = __webpack_require__(335);
+var contentType_1 = __webpack_require__(339);
 var contentTypesFactory = {
     getTemplate: function () {
         var children = ag_grid_community_1._.map([{
@@ -72131,7 +72205,7 @@ exports.default = contentTypesFactory;
 
 
 /***/ }),
-/* 335 */
+/* 339 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72157,14 +72231,14 @@ exports.default = contentTypeFactory;
 
 
 /***/ }),
-/* 336 */
+/* 340 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var themeElements_1 = __webpack_require__(337);
+var themeElements_1 = __webpack_require__(341);
 var officeTheme = {
     getTemplate: function () {
         return {
@@ -72196,16 +72270,16 @@ exports.default = officeTheme;
 
 
 /***/ }),
-/* 337 */
+/* 341 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var colorScheme_1 = __webpack_require__(338);
-var fontScheme_1 = __webpack_require__(339);
-var formatScheme_1 = __webpack_require__(340);
+var colorScheme_1 = __webpack_require__(342);
+var fontScheme_1 = __webpack_require__(343);
+var formatScheme_1 = __webpack_require__(344);
 var themeElements = {
     getTemplate: function () {
         return {
@@ -72222,7 +72296,7 @@ exports.default = themeElements;
 
 
 /***/ }),
-/* 338 */
+/* 342 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72274,7 +72348,7 @@ exports.default = colorScheme;
 
 
 /***/ }),
-/* 339 */
+/* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72421,7 +72495,7 @@ exports.default = fontScheme;
 
 
 /***/ }),
-/* 340 */
+/* 344 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72618,7 +72692,7 @@ exports.default = formatScheme;
 
 
 /***/ }),
-/* 341 */
+/* 345 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72652,7 +72726,7 @@ exports.default = sharedStrings;
 
 
 /***/ }),
-/* 342 */
+/* 346 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72660,16 +72734,16 @@ exports.default = sharedStrings;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var numberFormats_1 = __webpack_require__(343);
-var fonts_1 = __webpack_require__(345);
-var fills_1 = __webpack_require__(347);
-var borders_1 = __webpack_require__(349);
-var cellStyleXfs_1 = __webpack_require__(351);
-var cellXfs_1 = __webpack_require__(355);
-var cellStyles_1 = __webpack_require__(356);
-var numberFormat_1 = __webpack_require__(344);
-var font_1 = __webpack_require__(346);
-var border_1 = __webpack_require__(350);
+var numberFormats_1 = __webpack_require__(347);
+var fonts_1 = __webpack_require__(349);
+var fills_1 = __webpack_require__(351);
+var borders_1 = __webpack_require__(353);
+var cellStyleXfs_1 = __webpack_require__(355);
+var cellXfs_1 = __webpack_require__(359);
+var cellStyles_1 = __webpack_require__(360);
+var numberFormat_1 = __webpack_require__(348);
+var font_1 = __webpack_require__(350);
+var border_1 = __webpack_require__(354);
 var stylesMap;
 var registeredNumberFmts;
 var registeredFonts;
@@ -72949,7 +73023,7 @@ exports.default = stylesheetFactory;
 
 
 /***/ }),
-/* 343 */
+/* 347 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72957,7 +73031,7 @@ exports.default = stylesheetFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var numberFormat_1 = __webpack_require__(344);
+var numberFormat_1 = __webpack_require__(348);
 var numberFormatsFactory = {
     getTemplate: function (numberFormats) {
         return {
@@ -72975,7 +73049,7 @@ exports.default = numberFormatsFactory;
 
 
 /***/ }),
-/* 344 */
+/* 348 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73029,7 +73103,7 @@ exports.numberFormatMap = {
 
 
 /***/ }),
-/* 345 */
+/* 349 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73037,7 +73111,7 @@ exports.numberFormatMap = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var font_1 = __webpack_require__(346);
+var font_1 = __webpack_require__(350);
 var fontsFactory = {
     getTemplate: function (fonts) {
         return {
@@ -73055,7 +73129,7 @@ exports.default = fontsFactory;
 
 
 /***/ }),
-/* 346 */
+/* 350 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73110,7 +73184,7 @@ exports.getFamilyId = function (name) {
 
 
 /***/ }),
-/* 347 */
+/* 351 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73118,7 +73192,7 @@ exports.getFamilyId = function (name) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var fill_1 = __webpack_require__(348);
+var fill_1 = __webpack_require__(352);
 var fillsFactory = {
     getTemplate: function (fills) {
         return {
@@ -73136,7 +73210,7 @@ exports.default = fillsFactory;
 
 
 /***/ }),
-/* 348 */
+/* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73190,7 +73264,7 @@ exports.default = fillFactory;
 
 
 /***/ }),
-/* 349 */
+/* 353 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73198,7 +73272,7 @@ exports.default = fillFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var border_1 = __webpack_require__(350);
+var border_1 = __webpack_require__(354);
 var bordersFactory = {
     getTemplate: function (borders) {
         return {
@@ -73216,14 +73290,14 @@ exports.default = bordersFactory;
 
 
 /***/ }),
-/* 350 */
+/* 354 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var stylesheet_1 = __webpack_require__(342);
+var stylesheet_1 = __webpack_require__(346);
 var getBorderColor = function (color) {
     return {
         name: 'color',
@@ -73312,7 +73386,7 @@ exports.convertLegacyBorder = function (type, weight) {
 
 
 /***/ }),
-/* 351 */
+/* 355 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73320,7 +73394,7 @@ exports.convertLegacyBorder = function (type, weight) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var xf_1 = __webpack_require__(352);
+var xf_1 = __webpack_require__(356);
 var cellStylesXfsFactory = {
     getTemplate: function (xf) {
         return {
@@ -73338,15 +73412,15 @@ exports.default = cellStylesXfsFactory;
 
 
 /***/ }),
-/* 352 */
+/* 356 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var alignment_1 = __webpack_require__(353);
-var protection_1 = __webpack_require__(354);
+var alignment_1 = __webpack_require__(357);
+var protection_1 = __webpack_require__(358);
 var xfFactory = {
     getTemplate: function (xf) {
         var alignment = xf.alignment, borderId = xf.borderId, fillId = xf.fillId, fontId = xf.fontId, numFmtId = xf.numFmtId, protection = xf.protection, xfId = xf.xfId;
@@ -73381,7 +73455,7 @@ exports.default = xfFactory;
 
 
 /***/ }),
-/* 353 */
+/* 357 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73442,7 +73516,7 @@ exports.default = alignmentFactory;
 
 
 /***/ }),
-/* 354 */
+/* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73468,7 +73542,7 @@ exports.default = protectionFactory;
 
 
 /***/ }),
-/* 355 */
+/* 359 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73476,7 +73550,7 @@ exports.default = protectionFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var xf_1 = __webpack_require__(352);
+var xf_1 = __webpack_require__(356);
 var cellXfsFactory = {
     getTemplate: function (xf) {
         return {
@@ -73494,7 +73568,7 @@ exports.default = cellXfsFactory;
 
 
 /***/ }),
-/* 356 */
+/* 360 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73502,7 +73576,7 @@ exports.default = cellXfsFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var cellStyle_1 = __webpack_require__(357);
+var cellStyle_1 = __webpack_require__(361);
 var cellStylesFactory = {
     getTemplate: function (cellStyles) {
         return {
@@ -73520,7 +73594,7 @@ exports.default = cellStylesFactory;
 
 
 /***/ }),
-/* 357 */
+/* 361 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73546,14 +73620,14 @@ exports.default = borderFactory;
 
 
 /***/ }),
-/* 358 */
+/* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // ag-grid-enterprise v21.1.0
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var sheets_1 = __webpack_require__(359);
+var sheets_1 = __webpack_require__(363);
 var workbookFactory = {
     getTemplate: function (names) {
         return {
@@ -73577,7 +73651,7 @@ exports.default = workbookFactory;
 
 
 /***/ }),
-/* 359 */
+/* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73585,7 +73659,7 @@ exports.default = workbookFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var sheet_1 = __webpack_require__(360);
+var sheet_1 = __webpack_require__(364);
 var sheetsFactory = {
     getTemplate: function (names) {
         return {
@@ -73598,7 +73672,7 @@ exports.default = sheetsFactory;
 
 
 /***/ }),
-/* 360 */
+/* 364 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73624,7 +73698,7 @@ exports.default = sheetFactory;
 
 
 /***/ }),
-/* 361 */
+/* 365 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73632,9 +73706,9 @@ exports.default = sheetFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var column_1 = __webpack_require__(362);
-var row_1 = __webpack_require__(363);
-var mergeCell_1 = __webpack_require__(365);
+var column_1 = __webpack_require__(366);
+var row_1 = __webpack_require__(367);
+var mergeCell_1 = __webpack_require__(369);
 var updateColMinMax = function (col, min, range, prevCol) {
     if (!col.min) {
         col.min = min;
@@ -73741,7 +73815,7 @@ exports.default = worksheetFactory;
 
 
 /***/ }),
-/* 362 */
+/* 366 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73773,7 +73847,7 @@ exports.default = columnFactory;
 
 
 /***/ }),
-/* 363 */
+/* 367 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73781,8 +73855,8 @@ exports.default = columnFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var worksheet_1 = __webpack_require__(361);
-var cell_1 = __webpack_require__(364);
+var worksheet_1 = __webpack_require__(365);
+var cell_1 = __webpack_require__(368);
 var addEmptyCells = function (cells, rowIdx) {
     var mergeMap = [];
     var posCounter = 0;
@@ -73840,7 +73914,7 @@ exports.default = rowFactory;
 
 
 /***/ }),
-/* 364 */
+/* 368 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73848,7 +73922,7 @@ exports.default = rowFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var stylesheet_1 = __webpack_require__(342);
+var stylesheet_1 = __webpack_require__(346);
 var convertLegacyType = function (type) {
     var t = type.charAt(0).toLowerCase();
     return t === 's' ? 'inlineStr' : t;
@@ -73894,7 +73968,7 @@ exports.default = cellFactory;
 
 
 /***/ }),
-/* 365 */
+/* 369 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73917,7 +73991,7 @@ exports.default = mergeCell;
 
 
 /***/ }),
-/* 366 */
+/* 370 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73925,7 +73999,7 @@ exports.default = mergeCell;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var relationship_1 = __webpack_require__(367);
+var relationship_1 = __webpack_require__(371);
 var relationshipsFactory = {
     getTemplate: function (c) {
         var children = ag_grid_community_1._.map(c, relationship_1.default.getTemplate);
@@ -73944,7 +74018,7 @@ exports.default = relationshipsFactory;
 
 
 /***/ }),
-/* 367 */
+/* 371 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73970,7 +74044,7 @@ exports.default = relationshipFactory;
 
 
 /***/ }),
-/* 368 */
+/* 372 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74003,8 +74077,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var serverSideCache_1 = __webpack_require__(369);
-var serverSideBlock_1 = __webpack_require__(370);
+var serverSideCache_1 = __webpack_require__(373);
+var serverSideBlock_1 = __webpack_require__(374);
 var ServerSideRowModel = /** @class */ (function (_super) {
     __extends(ServerSideRowModel, _super);
     function ServerSideRowModel() {
@@ -74595,7 +74669,7 @@ exports.ServerSideRowModel = ServerSideRowModel;
 
 
 /***/ }),
-/* 369 */
+/* 373 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74628,7 +74702,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var serverSideBlock_1 = __webpack_require__(370);
+var serverSideBlock_1 = __webpack_require__(374);
 var ServerSideCache = /** @class */ (function (_super) {
     __extends(ServerSideCache, _super);
     function ServerSideCache(cacheParams, parentRowNode) {
@@ -74960,7 +75034,7 @@ exports.ServerSideCache = ServerSideCache;
 
 
 /***/ }),
-/* 370 */
+/* 374 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75413,7 +75487,7 @@ exports.ServerSideBlock = ServerSideBlock;
 
 
 /***/ }),
-/* 371 */
+/* 375 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75451,7 +75525,7 @@ exports.StatusBarService = StatusBarService;
 
 
 /***/ }),
-/* 372 */
+/* 376 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75481,7 +75555,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var statusBarService_1 = __webpack_require__(371);
+var statusBarService_1 = __webpack_require__(375);
 var StatusBar = /** @class */ (function (_super) {
     __extends(StatusBar, _super);
     function StatusBar() {
@@ -75578,7 +75652,7 @@ exports.StatusBar = StatusBar;
 
 
 /***/ }),
-/* 373 */
+/* 377 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75608,8 +75682,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = __webpack_require__(2);
-var rowGroupDropZonePanel_1 = __webpack_require__(297);
-var pivotDropZonePanel_1 = __webpack_require__(301);
+var rowGroupDropZonePanel_1 = __webpack_require__(301);
+var pivotDropZonePanel_1 = __webpack_require__(305);
 var GridHeaderDropZones = /** @class */ (function (_super) {
     __extends(GridHeaderDropZones, _super);
     function GridHeaderDropZones() {
@@ -75687,7 +75761,7 @@ exports.GridHeaderDropZones = GridHeaderDropZones;
 
 
 /***/ }),
-/* 374 */
+/* 378 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75717,7 +75791,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var licenseManager_1 = __webpack_require__(289);
+var licenseManager_1 = __webpack_require__(293);
 var WatermarkComp = /** @class */ (function (_super) {
     __extends(WatermarkComp, _super);
     function WatermarkComp() {
@@ -75763,7 +75837,7 @@ exports.WatermarkComp = WatermarkComp;
 
 
 /***/ }),
-/* 375 */
+/* 379 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75804,7 +75878,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var abstractSelectionHandle_1 = __webpack_require__(376);
+var abstractSelectionHandle_1 = __webpack_require__(380);
 var FillHandle = /** @class */ (function (_super) {
     __extends(FillHandle, _super);
     function FillHandle() {
@@ -76128,7 +76202,7 @@ exports.FillHandle = FillHandle;
 
 
 /***/ }),
-/* 376 */
+/* 380 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76158,7 +76232,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var rangeController_1 = __webpack_require__(188);
+var rangeController_1 = __webpack_require__(192);
 var AbstractSelectionHandle = /** @class */ (function (_super) {
     __extends(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
@@ -76332,7 +76406,7 @@ exports.AbstractSelectionHandle = AbstractSelectionHandle;
 
 
 /***/ }),
-/* 377 */
+/* 381 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76364,7 +76438,7 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var abstractSelectionHandle_1 = __webpack_require__(376);
+var abstractSelectionHandle_1 = __webpack_require__(380);
 var RangeHandle = /** @class */ (function (_super) {
     __extends(RangeHandle, _super);
     function RangeHandle() {
@@ -76418,7 +76492,7 @@ exports.RangeHandle = RangeHandle;
 
 
 /***/ }),
-/* 378 */
+/* 382 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76426,107 +76500,107 @@ exports.RangeHandle = RangeHandle;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = __webpack_require__(2);
-var enterpriseMenu_1 = __webpack_require__(271);
-var rangeController_1 = __webpack_require__(188);
-var clipboardService_1 = __webpack_require__(275);
-var groupStage_1 = __webpack_require__(281);
-var aggregationStage_1 = __webpack_require__(239);
-var enterpriseBoot_1 = __webpack_require__(282);
-var contextMenu_1 = __webpack_require__(308);
-var viewportRowModel_1 = __webpack_require__(309);
-var sideBarComp_1 = __webpack_require__(310);
-var licenseManager_1 = __webpack_require__(289);
-var md5_1 = __webpack_require__(290);
-var pivotStage_1 = __webpack_require__(240);
-var pivotColDefService_1 = __webpack_require__(241);
-var aggFuncService_1 = __webpack_require__(242);
-var menuItemMapper_1 = __webpack_require__(274);
-var excelCreator_1 = __webpack_require__(314);
-var excelXmlFactory_1 = __webpack_require__(317);
-var excelXlsxFactory_1 = __webpack_require__(332);
-var serverSideRowModel_1 = __webpack_require__(368);
-var horizontalResizeComp_1 = __webpack_require__(313);
-var sideBarButtonsComp_1 = __webpack_require__(311);
-var statusBarService_1 = __webpack_require__(371);
-var statusBar_1 = __webpack_require__(372);
-var nameValueComp_1 = __webpack_require__(293);
-var primaryColsHeaderPanel_1 = __webpack_require__(280);
-var primaryColsListPanel_1 = __webpack_require__(277);
-var gridHeaderDropZones_1 = __webpack_require__(373);
-var watermark_1 = __webpack_require__(374);
-var fillHandle_1 = __webpack_require__(375);
-var rangeHandle_1 = __webpack_require__(377);
-var aggregationStage_2 = __webpack_require__(239);
+var enterpriseMenu_1 = __webpack_require__(275);
+var rangeController_1 = __webpack_require__(192);
+var clipboardService_1 = __webpack_require__(279);
+var groupStage_1 = __webpack_require__(285);
+var aggregationStage_1 = __webpack_require__(243);
+var enterpriseBoot_1 = __webpack_require__(286);
+var contextMenu_1 = __webpack_require__(312);
+var viewportRowModel_1 = __webpack_require__(313);
+var sideBarComp_1 = __webpack_require__(314);
+var licenseManager_1 = __webpack_require__(293);
+var md5_1 = __webpack_require__(294);
+var pivotStage_1 = __webpack_require__(244);
+var pivotColDefService_1 = __webpack_require__(245);
+var aggFuncService_1 = __webpack_require__(246);
+var menuItemMapper_1 = __webpack_require__(278);
+var excelCreator_1 = __webpack_require__(318);
+var excelXmlFactory_1 = __webpack_require__(321);
+var excelXlsxFactory_1 = __webpack_require__(336);
+var serverSideRowModel_1 = __webpack_require__(372);
+var horizontalResizeComp_1 = __webpack_require__(317);
+var sideBarButtonsComp_1 = __webpack_require__(315);
+var statusBarService_1 = __webpack_require__(375);
+var statusBar_1 = __webpack_require__(376);
+var nameValueComp_1 = __webpack_require__(297);
+var primaryColsHeaderPanel_1 = __webpack_require__(284);
+var primaryColsListPanel_1 = __webpack_require__(281);
+var gridHeaderDropZones_1 = __webpack_require__(377);
+var watermark_1 = __webpack_require__(378);
+var fillHandle_1 = __webpack_require__(379);
+var rangeHandle_1 = __webpack_require__(381);
+var aggregationStage_2 = __webpack_require__(243);
 exports.AggregationStage = aggregationStage_2.AggregationStage;
-var groupStage_2 = __webpack_require__(281);
+var groupStage_2 = __webpack_require__(285);
 exports.GroupStage = groupStage_2.GroupStage;
-var setFilter_1 = __webpack_require__(283);
+var setFilter_1 = __webpack_require__(287);
 exports.SetFilter = setFilter_1.SetFilter;
-var setValueModel_1 = __webpack_require__(284);
+var setValueModel_1 = __webpack_require__(288);
 exports.SetValueModel = setValueModel_1.SetValueModel;
-var statusBar_2 = __webpack_require__(372);
+var statusBar_2 = __webpack_require__(376);
 exports.StatusBar = statusBar_2.StatusBar;
-var statusBarService_2 = __webpack_require__(371);
+var statusBarService_2 = __webpack_require__(375);
 exports.StatusBarService = statusBarService_2.StatusBarService;
-var clipboardService_2 = __webpack_require__(275);
+var clipboardService_2 = __webpack_require__(279);
 exports.ClipboardService = clipboardService_2.ClipboardService;
-var enterpriseBoot_2 = __webpack_require__(282);
+var enterpriseBoot_2 = __webpack_require__(286);
 exports.EnterpriseBoot = enterpriseBoot_2.EnterpriseBoot;
-var enterpriseMenu_2 = __webpack_require__(271);
+var enterpriseMenu_2 = __webpack_require__(275);
 exports.EnterpriseMenu = enterpriseMenu_2.EnterpriseMenu;
-var menuItemComponent_1 = __webpack_require__(273);
+var menuItemComponent_1 = __webpack_require__(277);
 exports.MenuItemComponent = menuItemComponent_1.MenuItemComponent;
-var menuList_1 = __webpack_require__(272);
+var menuList_1 = __webpack_require__(276);
 exports.MenuList = menuList_1.MenuList;
-var rangeController_2 = __webpack_require__(188);
+var rangeController_2 = __webpack_require__(192);
 exports.RangeController = rangeController_2.RangeController;
-var rowGroupDropZonePanel_1 = __webpack_require__(297);
+var rowGroupDropZonePanel_1 = __webpack_require__(301);
 exports.RowGroupDropZonePanel = rowGroupDropZonePanel_1.RowGroupDropZonePanel;
-var contextMenu_2 = __webpack_require__(308);
+var contextMenu_2 = __webpack_require__(312);
 exports.ContextMenuFactory = contextMenu_2.ContextMenuFactory;
-var viewportRowModel_2 = __webpack_require__(309);
+var viewportRowModel_2 = __webpack_require__(313);
 exports.ViewportRowModel = viewportRowModel_2.ViewportRowModel;
-var richSelectCellEditor_1 = __webpack_require__(287);
+var richSelectCellEditor_1 = __webpack_require__(291);
 exports.RichSelectCellEditor = richSelectCellEditor_1.RichSelectCellEditor;
-var richSelectRow_1 = __webpack_require__(288);
+var richSelectRow_1 = __webpack_require__(292);
 exports.RichSelectRow = richSelectRow_1.RichSelectRow;
-var virtualList_1 = __webpack_require__(286);
+var virtualList_1 = __webpack_require__(290);
 exports.VirtualList = virtualList_1.VirtualList;
-var baseDropZonePanel_1 = __webpack_require__(298);
+var baseDropZonePanel_1 = __webpack_require__(302);
 exports.BaseDropZonePanel = baseDropZonePanel_1.BaseDropZonePanel;
-var pivotDropZonePanel_1 = __webpack_require__(301);
+var pivotDropZonePanel_1 = __webpack_require__(305);
 exports.PivotDropZonePanel = pivotDropZonePanel_1.PivotDropZonePanel;
-var sideBarComp_2 = __webpack_require__(310);
+var sideBarComp_2 = __webpack_require__(314);
 exports.SideBarComp = sideBarComp_2.SideBarComp;
-var licenseManager_2 = __webpack_require__(289);
+var licenseManager_2 = __webpack_require__(293);
 exports.LicenseManager = licenseManager_2.LicenseManager;
-var pivotStage_2 = __webpack_require__(240);
+var pivotStage_2 = __webpack_require__(244);
 exports.PivotStage = pivotStage_2.PivotStage;
-var pivotColDefService_2 = __webpack_require__(241);
+var pivotColDefService_2 = __webpack_require__(245);
 exports.PivotColDefService = pivotColDefService_2.PivotColDefService;
-var pivotModePanel_1 = __webpack_require__(296);
+var pivotModePanel_1 = __webpack_require__(300);
 exports.PivotModePanel = pivotModePanel_1.PivotModePanel;
-var aggFuncService_2 = __webpack_require__(242);
+var aggFuncService_2 = __webpack_require__(246);
 exports.AggFuncService = aggFuncService_2.AggFuncService;
-var md5_2 = __webpack_require__(290);
+var md5_2 = __webpack_require__(294);
 exports.MD5 = md5_2.MD5;
-var setFilterListItem_1 = __webpack_require__(285);
+var setFilterListItem_1 = __webpack_require__(289);
 exports.SetFilterListItem = setFilterListItem_1.SetFilterListItem;
-var dropZoneColumnComp_1 = __webpack_require__(299);
+var dropZoneColumnComp_1 = __webpack_require__(303);
 exports.DropZoneColumnComp = dropZoneColumnComp_1.DropZoneColumnComp;
-var valueDropZonePanel_1 = __webpack_require__(300);
+var valueDropZonePanel_1 = __webpack_require__(304);
 exports.ValuesDropZonePanel = valueDropZonePanel_1.ValuesDropZonePanel;
-var excelCreator_2 = __webpack_require__(314);
+var excelCreator_2 = __webpack_require__(318);
 exports.ExcelCreator = excelCreator_2.ExcelCreator;
-var excelXmlFactory_2 = __webpack_require__(317);
+var excelXmlFactory_2 = __webpack_require__(321);
 exports.ExcelXmlFactory = excelXmlFactory_2.ExcelXmlFactory;
-var excelXlsxFactory_2 = __webpack_require__(332);
+var excelXlsxFactory_2 = __webpack_require__(336);
 exports.ExcelXlsxFactory = excelXlsxFactory_2.ExcelXlsxFactory;
-var watermark_2 = __webpack_require__(374);
+var watermark_2 = __webpack_require__(378);
 exports.WatermarkComp = watermark_2.WatermarkComp;
-var fillHandle_2 = __webpack_require__(375);
+var fillHandle_2 = __webpack_require__(379);
 exports.FillHandle = fillHandle_2.FillHandle;
-var rangeHandle_2 = __webpack_require__(377);
+var rangeHandle_2 = __webpack_require__(381);
 exports.RangeHandle = rangeHandle_2.RangeHandle;
 var rowModelTypes = { viewport: viewportRowModel_1.ViewportRowModel, serverSide: serverSideRowModel_1.ServerSideRowModel };
 ag_grid_community_1.Grid.setEnterpriseBeans([enterpriseMenu_1.EnterpriseMenuFactory, excelCreator_1.ExcelCreator, excelXmlFactory_1.ExcelXmlFactory, excelXlsxFactory_1.ExcelXlsxFactory,

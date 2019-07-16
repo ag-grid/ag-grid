@@ -84,7 +84,7 @@ export class PieSeriesPanel extends Component {
 
         this.seriesStrokeWidthSlider
             .setLabel(this.chartTranslator.translate('strokeWidth'))
-            .setMaxValue(30)
+            .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue(`${strokeWidth}`)
             .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));

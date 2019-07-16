@@ -63,7 +63,7 @@ var PaddingPanel = /** @class */ (function (_super) {
         initInput('bottom', this.paddingBottomSlider, 'bottom', "" + this.chart.padding.bottom);
         initInput('left', this.paddingLeftSlider, 'left', "" + this.chart.padding.left);
     };
-    PaddingPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartPaddingGroup\">                                                   \n                <ag-slider ref=\"paddingTopSlider\"></ag-slider>\n                <ag-slider ref=\"paddingRightSlider\"></ag-slider>\n                <ag-slider ref=\"paddingBottomSlider\"></ag-slider>\n                <ag-slider ref=\"paddingLeftSlider\"></ag-slider>\n            </ag-group-component>\n        <div>";
+    PaddingPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartPaddingGroup\">\n                <ag-slider ref=\"paddingTopSlider\"></ag-slider>\n                <ag-slider ref=\"paddingRightSlider\"></ag-slider>\n                <ag-slider ref=\"paddingBottomSlider\"></ag-slider>\n                <ag-slider ref=\"paddingLeftSlider\"></ag-slider>\n            </ag-group-component>\n        <div>";
     __decorate([
         ag_grid_community_1.RefSelector('chartPaddingGroup'),
         __metadata("design:type", ag_grid_community_1.AgGroupComponent)

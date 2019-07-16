@@ -5,6 +5,7 @@ $pageKeyboards = "ag-Grid JavaScript Grid Documentation";
 define('skipInPageNav', true);
 include 'documentation_header.php';
 ?>
+<link rel="stylesheet" href="../documentation-main/new_documentation.css">
 
 <?php
 

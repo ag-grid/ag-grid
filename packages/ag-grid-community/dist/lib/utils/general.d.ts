@@ -1,19 +1,13 @@
 // Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { Column } from "./entities/column";
-import { RowNode } from "./entities/rowNode";
-import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
-import { CellComp } from "./rendering/cellComp";
-import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
-/**
- * A Util Class only used when debugging for printing time to console
- */
-export declare class Timer {
-    private timestamp;
-    print(msg: string): void;
-}
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
+import { ICellRendererComp } from "../rendering/cellRenderers/iCellRenderer";
+import { CellComp } from "../rendering/cellComp";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { Promise } from "./promise";
 export declare class Utils {
     private static PASSIVE_EVENTS;
     private static OUTSIDE_ANGULAR_EVENTS;
@@ -520,87 +514,4 @@ export declare class NumberSequence {
     peek(): number;
     skip(count: number): void;
 }
-export declare let _: typeof Utils;
-export declare type ResolveAndRejectCallback<T> = (resolve: (value: T) => void, reject: (params: any) => void) => void;
-export declare enum PromiseStatus {
-    IN_PROGRESS = 0,
-    RESOLVED = 1
-}
-export interface ExternalPromise<T> {
-    resolve: (value: T) => void;
-    promise: Promise<T>;
-}
-export declare class Promise<T> {
-    private status;
-    private resolution;
-    private listOfWaiters;
-    static all<T>(toCombine: Promise<T>[]): Promise<T[]>;
-    static resolve<T>(value: T): Promise<T>;
-    static external<T>(): ExternalPromise<T>;
-    constructor(callback: ResolveAndRejectCallback<T>);
-    then(func: (result: any) => void): void;
-    firstOneOnly(func: (result: any) => void): void;
-    map<Z>(adapter: (from: T) => Z): Promise<Z>;
-    resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z;
-    private onDone;
-    private onReject;
-}
-export declare class Color {
-    readonly r: number;
-    readonly g: number;
-    readonly b: number;
-    readonly a: number;
-    /**
-     * Every color component should be in the [0, 1] range.
-     * Some easing functions (such as elastic easing) can overshoot the target value by some amount.
-     * So, when animating colors, if the source or target color components are already near
-     * or at the edge of the allowed [0, 1] range, it is possible for the intermediate color
-     * component value to end up outside of that range mid-animation. For this reason the constructor
-     * performs range checking/constraining.
-     * @param r Red component.
-     * @param g Green component.
-     * @param b Blue component.
-     * @param a Alpha (opacity) component.
-     */
-    constructor(r: number, g: number, b: number, a?: number);
-    /**
-     * The given string can be in one of the following formats:
-     * - #rgb
-     * - #rrggbb
-     * - rgb(r, g, b)
-     * - rgba(r, g, b, a)
-     * - CSS color name such as 'white', 'orange', 'cyan', etc.
-     * @param str
-     */
-    static fromString(str: string): Color;
-    private static hexRe;
-    private static shortHexRe;
-    static fromHexString(str: string): Color;
-    private static rgbRe;
-    private static rgbaRe;
-    static fromRgbaString(str: string): Color;
-    static fromArray(arr: [number, number, number] | [number, number, number, number]): Color;
-    static fromHSB(h: number, s: number, b: number, alpha?: number): Color;
-    private static padHex;
-    toHexString(): string;
-    toRgbaString(fractionDigits?: number): string;
-    toString(): string;
-    toHSB(): [number, number, number];
-    /**
-     * Converts the given RGB triple to an array of HSB (HSV) components.
-     * The hue component will be `NaN` for achromatic colors.
-     */
-    static RGBtoHSB(r: number, g: number, b: number): [number, number, number];
-    /**
-     * Converts the given HSB (HSV) triple to an array of RGB components.
-     */
-    static HSBtoRGB(H: number, S: number, B: number): [number, number, number];
-    private derive;
-    brighter(): Color;
-    darker(): Color;
-    /**
-     * CSS Color Module Level 4:
-     * https://drafts.csswg.org/css-color/#named-colors
-     */
-    private static nameToHex;
-}
+export declare const _: typeof Utils;

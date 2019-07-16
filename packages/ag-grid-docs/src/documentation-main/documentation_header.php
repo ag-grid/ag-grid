@@ -34,7 +34,6 @@ function enterprise_feature($name)
     meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
     ?>
     <link rel="stylesheet" href="../dist/docs.css">
-    <link rel="stylesheet" href="../documentation-main/new_documentation.css">
 </head>
 
 <body ng-app="documentation">
