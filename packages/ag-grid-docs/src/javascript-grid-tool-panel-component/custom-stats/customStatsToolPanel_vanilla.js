@@ -29,7 +29,7 @@ function calculateStats(params) {
                  <dt style="padding-bottom: 15px">Total Medals: <b>${numGold + numSilver + numBronze}</b></dt>
                  <dt style="padding-bottom: 15px">Total Gold: <b>${numGold}</b></dt>
                  <dt style="padding-bottom: 15px">Total Silver: <b>${numSilver}</b></dt>
-                 <dt style="padding-bottom: 15px">Total Bronze: <b>${numBronze}</b></dt>          
+                 <dt style="padding-bottom: 15px">Total Bronze: <b>${numBronze}</b></dt>
                </dl>
             </span>`;
 }

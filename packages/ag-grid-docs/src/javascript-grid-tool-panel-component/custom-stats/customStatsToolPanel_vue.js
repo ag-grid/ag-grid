@@ -9,7 +9,7 @@ export default Vue.extend({
                  <dt style="padding-bottom: 15px">Total Medals: <b>{{numGold + numSilver + numBronze}}</b></dt>
                  <dt style="padding-bottom: 15px">Total Gold: <b>{{numGold}}</b></dt>
                  <dt style="padding-bottom: 15px">Total Silver: <b>{{numSilver}}</b></dt>
-                 <dt style="padding-bottom: 15px">Total Bronze: <b>{{numBronze}}</b></dt>          
+                 <dt style="padding-bottom: 15px">Total Bronze: <b>{{numBronze}}</b></dt>
                </dl>
             </span>
         </div>
@@ -19,7 +19,7 @@ export default Vue.extend({
             numGold: 0,
             numSilver: 0,
             numBronze: 0
-        }
+        };
     },
     methods: {
         renderStats() {
@@ -34,4 +34,4 @@ export default Vue.extend({
     created() {
         this.params.api.addEventListener('modelUpdated', this.renderStats.bind(this));
     }
-})
+});
