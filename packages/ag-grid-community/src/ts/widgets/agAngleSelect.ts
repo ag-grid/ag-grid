@@ -73,14 +73,23 @@ export class AgAngleSelect extends AgAbstractLabel {
                 this.setValue(floatValue);
             });
 
+        this.updateNumberInput();
+
+        if (_.exists(this.getValue())) {
+            this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
+        }
+
         this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
             if (this.eAngleValue.getInputElement().contains(document.activeElement)) {
                 return;
             }
-            const val = this.getValue();
-            const normalizedValue = val < 0 ? 360 + val : val;
-            this.eAngleValue.setValue(normalizedValue.toString());
+            this.updateNumberInput();
         });
+    }
+
+    private updateNumberInput(): void {
+        const normalizedValue = this.normalizeNegativeValue(this.getValue());
+        this.eAngleValue.setValue(normalizedValue.toString());
     }
 
     private positionChildCircle(radians: number) {
@@ -153,6 +162,10 @@ export class AgAngleSelect extends AgAbstractLabel {
 
     private toRadians(degrees: number): number {
         return degrees / 180 * Math.PI;
+    }
+
+    private normalizeNegativeValue(degrees: number): number {
+        return degrees < 0 ? 360 + degrees : degrees;
     }
 
     private normalizeAngle180(radians: number): number {
