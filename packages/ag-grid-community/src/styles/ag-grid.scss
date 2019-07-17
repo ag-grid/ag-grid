@@ -1131,9 +1131,10 @@ $handleSize: 5px;
         align-items: center;
         > span {
             flex: 1 1 auto;
-        }
-        .ag-icon {
-            order :1;
+            &.ag-icon {
+                order: 1;
+                flex: none;
+            }
         }
     }
     .ag-rich-select-list {
