@@ -1,4 +1,17 @@
 function copyCode(event) {
+
+// changing style of button 
+var button =  document.activeElement;
+button.innerHTML = "Copied!"
+setTimeout(() => {
+    button.innerHTML = "Copy Code"
+  }, 5000);
+
+
+// Copy to Clipboard
+
+try {
+
   var text = event.target.parentElement.querySelector('code').textContent;
   let tempTextArea = document.createElement('textarea');
   tempTextArea.style.cssText = 'position: absolute; top: -9999px; left: -9999px';
@@ -10,9 +23,14 @@ function copyCode(event) {
     tempTextArea.remove();
   }, 0);
 
+} catch(err) {
 
-  console.log(this)
+console.error(err)
+
 }
 
+  
+
+}
 
 
