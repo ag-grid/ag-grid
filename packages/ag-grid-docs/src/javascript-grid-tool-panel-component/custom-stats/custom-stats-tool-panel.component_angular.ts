@@ -4,7 +4,7 @@ import {IToolPanel, IToolPanelParams} from "ag-grid-community";
 
 @Component({
     selector: 'custom-stats',
-    template: `        
+    template: `
         <div style="text-align: center">
         <span>
             <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
@@ -58,5 +58,4 @@ export class CustomStatsToolPanel implements IToolPanel{
         this.numSilver = numSilver;
         this.numBronze = numBronze;
     }
-
 }
