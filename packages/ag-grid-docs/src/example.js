@@ -393,10 +393,13 @@ var gridOptions = {
             };
 
         } else {
+
+            let isBarChart = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
+            if (!isBarChart) {
+                options.xAxis.labelRotation = 335;
+            }
+
             let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
-
-            options.xAxis.labelRotation = 335;
-
             options.yAxis.labelFormatter = function(params) {
                 let n = params.value;
 
