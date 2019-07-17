@@ -395,6 +395,8 @@ var gridOptions = {
         } else {
             let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
 
+            options.xAxis.labelRotation = 335;
+
             options.yAxis.labelFormatter = function(params) {
                 let n = params.value;
 
