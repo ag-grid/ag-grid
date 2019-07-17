@@ -97,6 +97,10 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
     }
 
     private onLabelClicked(): void {
+        if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
+            return;
+        }
+
         const nextState = !this.cbSelect.getValue();
         this.onChangeCommon(nextState);
     }
@@ -289,6 +293,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         }
 
         let checkboxReadOnly: boolean;
+
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
             //  a) gui is not allowed make any changes
