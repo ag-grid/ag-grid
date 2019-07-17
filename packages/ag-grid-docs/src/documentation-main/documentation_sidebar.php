@@ -2,26 +2,32 @@
 </div>
 <div class="card card-highlight">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.0.0">Version 21.0.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Jun 4</h6>
-        <p class="card-text">
-            Major release with new features and bug fixes:
+        <h5 class="card-title">Charts Session</h5>
+        <p>With Bill Odom and Lance Finney from Oasis Digital</p>
+        <iframe style="max-width: 100%" src="https://www.youtube.com/embed/VzZG85t87bQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <p>Join ag-Grid's Niall and Rob show ag-Grid's integrated charting to Bill and Lance.</p>
+    </div>
+</div>
+<br>
+<div class="card card-highlight">
+    <div class="card-body">
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.0.0">ag-Grid v21 Released</a></h5>
+        <p>
+            ag-Grid now supports charting
+            data from inside the grid.
         </p>
-        <ul>
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-overview">Integrated Charts</a></li>
+        <p>
 
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-filtering">Filtering Improvements</a></li>
+        </p>
+                <img src="../images/charting-news.png" style="max-width: 100%; margin-bottom: 10px;"/>
 
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-icons/">Icon Customisation</a></li>
+                <a class="learn-more"
+                   href="https://blog.ag-grid.com/introducing-javascript-charts/">Read the charting blog</a>
 
-            <li>Better Scroll Performance</li>
-        </ul>
-
-        <p class="text-right">
+        <p style="margin-top: 20px;">
+            See the
             <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.0.0">Change Log</a>
+            for full release details.
         </p>
     </div>
 </div>
@@ -76,8 +82,8 @@
     </div>
 </div>
 <br>
-<hr>
-<!-- Begin Mailchimp Signup Form -->
+
+    <!-- Begin Mailchimp Signup Form -->
 <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
 <style type="text/css">
     #mc_embed_signup {
@@ -143,34 +149,6 @@
     }(jQuery));
     var $mcj = jQuery.noConflict(true);</script>
 <!--End mc_embed_signup-->
-<div id="side-bar-announcements" style="margin-top: 10px">
-    <p>From our <a href="https://medium.com/ag-grid/">blog</a>:</p>
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title"><a
-                        href="https://medium.com/ag-grid/learn-to-customize-react-grid-in-less-than-10-minutes-2ce6845646bb">Learn
-                    to customize React grid in less than 10 minutes</a></h5>
-            <h6 class="card-subtitle mb-2 text-muted">Oct 16</h6>
-            <p class="card-text">Implement custom filtering logic, cell editor and renderer in this walk through.</p>
-            <p class="text-right">
-                <a class="learn-more"
-                   href="https://medium.com/ag-grid/learn-to-customize-react-grid-in-less-than-10-minutes-2ce6845646bb">Full
-                    Article</a>
-            </p>
-            <h5 class="card-title"><a
-                        href="https://medium.com/ag-grid/learn-to-customize-angular-grid-in-less-than-10-minutes-88005d53808d?source=collection_home---2------0---------------------">Learn
-                    to customize Angular grid in less than 10 minutes</a></h5>
-            <h6 class="card-subtitle mb-2 text-muted">Oct 16</h6>
-            <p class="card-text">Implement custom filtering logic, cell editor and renderer in this walk through.</p>
-            <p class="text-right">
-                <a class="learn-more"
-                   href="https://medium.com/ag-grid/learn-to-customize-angular-grid-in-less-than-10-minutes-88005d53808d?source=collection_home---2------0---------------------">Full
-                    Article
-                </a>
-            </p>
-        </div>
-    </div>
-    <br>
     <div class="card">
         <div class="card-body">
             <p>Work at ag-Grid</a>:</p>

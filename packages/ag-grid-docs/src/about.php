@@ -148,16 +148,6 @@ gtm_data_layer('about');
                                 on ag-Grid and how it's used in our customers' applications.
                             </p>
                         </div>
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/robin.jpg' alt=" Robin Denton, Support Engineer"/>
-                            </div>
-                            <h3>Robin Denton</h3>
-                            <h4>ag-Grid Consultant</h4>
-                            <p>
-                                Robin joins the team to work on support for our growing customer base through Zendesk. He is the youngest developer in the company, and has worked in a variety of web & software development roles.
-                            </p>
-                        </div>
 
                         <div class="col-md-4">
                             <div>
@@ -240,17 +230,6 @@ gtm_data_layer('about');
                             <h4>Business Development Manager</h4>
                             <p>
                                 Ashley moved to the UK from Canada for an adventure.  With a background in Pharmacy and Law, she enjoys working with people.  Having worked at a start-up previously, she enjoys being in the thick of things and being a part of a growing company.  As the business development manager, she focuses on working with our bigger clients to understand their needs and also acts as our contracts specialist.
-                            </p>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/caroline.jpg' alt="Caroline Gordon , Business Development Manager"/>
-                            </div>
-                            <h3>Caroline Gordon</h3>
-                            <h4>Business Development Manager</h4>
-                            <p>
-                                Caroline is originally from New Zealand and recently completed an MBA at Oxford University. With a career background as a dentist, Caroline is now part of our Operations team, working in sales and business development. She focuses on implementing processes to support ag-Grid’s growth from a start-up to a developed enterprise.
                             </p>
                         </div>
 

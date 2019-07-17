@@ -8,7 +8,7 @@ if [ "$#" -ne 1 ]
 fi
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
-echo "Merging $current_branch into $1"
+echo "Merging $1 into $current_branch"
 git stash
 git pull
 git checkout $1

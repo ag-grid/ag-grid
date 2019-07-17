@@ -105,6 +105,9 @@
     & > div {
         @extend .text-center, .col, %card, .py-3, .display-5, .mb-5;
         color: $gray-700;
+        background: aliceblue;
+        font-size: 20px;
+        margin-top: -20px;
 
         a {
             @extend .text-primary;
