@@ -742,6 +742,79 @@
         ]
       },
       {
+        "title": "Components",
+        "icon": "icon-components",
+        "items": [
+          {
+            "title": "Registering Components",
+            "url": "javascript-grid-components/"
+          },
+          {
+            "title": "Component Types",
+            "url": "javascript-grid-component-types/",
+            "items": [
+              {
+                "title": "Cell Renderer",
+                "box-title": "Cell",
+                "url": "javascript-grid-cell-rendering-components/"
+              },
+              {
+                "title": "Cell Editor",
+                "box-title": "Editor",
+                "url": "javascript-grid-cell-editor/"
+              },
+              {
+                "title": "Date Component",
+                "box-title": "Date",
+                "url": "javascript-grid-date-component/"
+              },
+              {
+                "title": "Filter Component",
+                "box-title": "Filter",
+                "url": "javascript-grid-filter-component/"
+              },
+              {
+                "title": "Floating Filter Component",
+                "box-title": "Floating Filter",
+                "url": "javascript-grid-floating-filter-component/"
+              },
+              {
+                "title": "Header Component",
+                "box-title": "Header",
+                "url": "javascript-grid-header-rendering/"
+              },
+              {
+                "title": "Loading Cell Renderer",
+                "box-title": "Loading",
+                "url": "javascript-grid-loading-cell-renderer/"
+              },
+              {
+                "title": "Overlay Component",
+                "box-title": "Overlays",
+                "url": "javascript-grid-overlay-component/"
+              },
+              {
+                "title": "Status Bar Component",
+                "box-title": "Status Bar",
+                "url": "javascript-grid-status-bar-component/",
+                "enterprise": true
+              },
+              {
+                "title": "Tool Panel Component",
+                "box-title": "Tool Panel",
+                "url": "javascript-grid-tool-panel-component/",
+                "enterprise": true
+              },
+              {
+                "title": "Tooltip Component",
+                "box-title": "Tooltip",
+                "url": "javascript-grid-tooltip-component/"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "title": "Charts",
         "icon": "icon-charts",
         "level-2-display-style-forced": "block",
@@ -811,74 +884,6 @@
                 "url": "javascript-grid-graphing/"
               }
             ]
-          }
-        ]
-      },
-      {
-        "title": "Components",
-        "icon": "icon-components",
-        "level-2-text-decorator": ",&nbsp;",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-components/"
-          },
-          {
-            "title": "Cell Renderer",
-            "box-title": "Cell",
-            "url": "javascript-grid-cell-rendering-components/"
-          },
-          {
-            "title": "Cell Editor",
-            "box-title": "Editor",
-            "url": "javascript-grid-cell-editor/"
-          },
-          {
-            "title": "Date Component",
-            "box-title": "Date",
-            "url": "javascript-grid-date-component/"
-          },
-          {
-            "title": "Filter Component",
-            "box-title": "Filter",
-            "url": "javascript-grid-filter-component/"
-          },
-          {
-            "title": "Floating Filter Component",
-            "box-title": "Floating Filter",
-            "url": "javascript-grid-floating-filter-component/"
-          },
-          {
-            "title": "Header Component",
-            "box-title": "Header",
-            "url": "javascript-grid-header-rendering/"
-          },
-          {
-            "title": "Loading Cell Renderer",
-            "box-title": "Loading",
-            "url": "javascript-grid-loading-cell-renderer/"
-          },
-          {
-            "title": "Overlay Component",
-            "box-title": "Overlays",
-            "url": "javascript-grid-overlay-component/"
-          },
-          {
-            "title": "Status Bar Component",
-            "box-title": "Status Bar",
-            "url": "javascript-grid-status-bar-component/",
-            "enterprise": true
-          },
-          {
-            "title": "Tool Panel Component",
-            "box-title": "Tool Panel",
-            "url": "javascript-grid-tool-panel-component/",
-            "enterprise": true
-          },
-          {
-            "title": "Tooltip Component",
-            "box-title": "Tooltip",
-            "url": "javascript-grid-tooltip-component/"
           }
         ]
       }

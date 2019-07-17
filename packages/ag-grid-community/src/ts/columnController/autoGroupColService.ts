@@ -86,9 +86,7 @@ export class AutoGroupColService {
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
         const defaultAutoColDef: ColDef = {
-            headerName: localeTextFunc('group', 'Group'),
-            // this is needed for charting, so that the group column can be used as a dimension
-            enableRowGroup: true
+            headerName: localeTextFunc('group', 'Group')
         };
 
         const userHasProvidedGroupCellRenderer =

@@ -21,7 +21,7 @@ var gridOptions = {
     sideBar: 'columns',
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
-    functionsReadOnly: true
+    functionsReadOnly: false
 };
 
 function setReadOnly() {
@@ -31,6 +31,7 @@ function setReadOnly() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
+
     new agGrid.Grid(gridDiv, gridOptions);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.

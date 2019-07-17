@@ -71,7 +71,7 @@ export class TooltipManager {
             this.hideTooltip();
         }
 
-        if (targetCmp.isAlive() && registeredComponent.eventDestroyFuncs.length) {
+        if (targetCmp.isAlive() && registeredComponent && registeredComponent.eventDestroyFuncs.length) {
             registeredComponent.eventDestroyFuncs.forEach(func => func());
         }
 

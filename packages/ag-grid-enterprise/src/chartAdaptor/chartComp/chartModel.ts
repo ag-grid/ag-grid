@@ -9,12 +9,12 @@ import {
     Column,
     RowRenderer,
     ColumnController,
-    PostConstruct
+    PostConstruct, RowNode,
 } from "ag-grid-community";
-import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { RangeController } from "../../rangeController";
-import { Palette } from "../../charts/chart/palettes";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
+import {RangeController} from "../../rangeController";
+import {Palette} from "../../charts/chart/palettes";
+import {ChartProxy} from "./chartProxies/chartProxy";
 
 export interface ColState {
     column?: Column;
@@ -326,9 +326,6 @@ export class ChartModel extends BeanStub {
     }
 
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
-        const firstRow = this.rowRenderer.getRowNode({rowIndex: 0, rowPinned: undefined}) as any;
-        const firstRowData = firstRow ? firstRow.data : null;
-
         const displayedCols = this.columnController.getAllDisplayedColumns();
 
         const dimensionCols: Column[] = [];
@@ -352,20 +349,48 @@ export class ChartModel extends BeanStub {
                     validChartType = false;
                 }
 
-                if (validChartType) { return; }
+                if (validChartType) {
+                    return;
+                }
             }
 
-            if (col.isValueActive()) {
+            if (!col.isPrimary()) {
                 valueCols.push(col);
                 return;
             }
 
             // if 'chartDataType' is not provided then infer type based data contained in first row
-            const isNumberCol = firstRowData && typeof firstRowData[col.getColId()] === 'number';
-            isNumberCol ? valueCols.push(col) : dimensionCols.push(col);
+            this.isNumberCol(col.getColId()) ? valueCols.push(col) : dimensionCols.push(col);
         });
 
         return {dimensionCols, valueCols};
+    }
+
+    private isNumberCol(colId: any) {
+        if (colId === 'ag-Grid-AutoColumn') return false;
+
+        const row = this.rowRenderer.getRowNode({rowIndex: 0, rowPinned: undefined});
+        const rowData = row ? row.data : null;
+
+        let cellData;
+        if (row && row.group) {
+            cellData = this.extractLeafData(row, colId);
+        } else {
+            cellData = rowData ? rowData[colId] : null;
+        }
+
+        return typeof cellData === 'number';
+    }
+
+    private extractLeafData(row: RowNode, colId: any) {
+        const leafRowData = row.allLeafChildren.map(row => row.data);
+        const leafCellData = leafRowData.map(rowData => rowData[colId]);
+        for (let i = 0; i < leafCellData.length; i++) {
+            if (leafCellData[i] !== null) {
+                return leafCellData[i];
+            }
+        }
+        return null;
     }
 
     private generateId(): string {
