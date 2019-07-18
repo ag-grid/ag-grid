@@ -2,32 +2,27 @@
 </div>
 <div class="card card-highlight">
     <div class="card-body">
-        <h5 class="card-title">Charts Session</h5>
-        <p>With Bill Odom and Lance Finney from Oasis Digital</p>
-        <iframe style="max-width: 100%" src="https://www.youtube.com/embed/VzZG85t87bQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <p>Join ag-Grid's Niall and Rob show ag-Grid's integrated charting to Bill and Lance.</p>
-    </div>
-</div>
-<br>
-<div class="card card-highlight">
-    <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.0.0">ag-Grid v21 Released</a></h5>
-        <p>
-            ag-Grid now supports charting
-            data from inside the grid.
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.1.0">Version 21.1.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Jul 18</h6>
+        <p class="card-text">
+            Minor release with new features and bug fixes:
         </p>
-        <p>
+        <ul>
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-charts-chart-toolbar/#chart-format">Chart Format Panel</a></li>
 
-        </p>
-                <img src="../images/charting-news.png" style="max-width: 100%; margin-bottom: 10px;"/>
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-charts-customisation-area/">Area Charts</a></li>
 
-                <a class="learn-more"
-                   href="https://blog.ag-grid.com/introducing-javascript-charts/">Read the charting blog</a>
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-drag-and-drop/">Native Drag & Drop</a></li>
 
-        <p style="margin-top: 20px;">
-            See the
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.0.0">Change Log</a>
-            for full release details.
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-master-detail/#keeping-row-details">Keeping Detail Rows</a></li>
+        </ul>
+
+        <p class="text-right">
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.1.0">Change Log</a>
         </p>
     </div>
 </div>

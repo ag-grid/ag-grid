@@ -66,7 +66,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                <strong>ag-Grid Charting is now live!</strong> A seamless charting experience from within the grid. Read more in our <a href="https://blog.ag-grid.com/introducing-javascript-charts/">release blog</a>. 
+                18th Jul 2019: <a href="./ag-grid-changelog/?fixVersion=21.1.0">Version 21.1.0</a> Chart Format Panel, Area Charts, Native Drag & Drop, Master Detail Improvements ...
             </div>
         </section>
 
