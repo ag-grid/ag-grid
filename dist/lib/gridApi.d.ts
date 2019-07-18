@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -25,7 +25,7 @@ import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
-import { ChartOptions } from "./interfaces/iChartOptions";
+import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -51,7 +51,7 @@ export interface RedrawRowsParams {
 }
 export interface ChartRangeParams {
     cellRange: CellRangeParams;
-    chartType: string;
+    chartType: ChartType;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggregate?: boolean;

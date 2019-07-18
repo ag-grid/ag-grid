@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,7 +40,7 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TextInputFloatingFilter.prototype.postConstruct = function () {
-        this.setTemplate("<div class=\"ag-input-text-wrapper\">\n                <input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\">\n            </div>");
+        this.setTemplate("<div class=\"ag-input-wrapper\">\n                <input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\">\n            </div>");
     };
     TextInputFloatingFilter.prototype.getDefaultDebounceMs = function () {
         return 500;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,7 +101,7 @@ var NumberFilter = /** @class */ (function (_super) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
         var pos = positionOne ? '1' : '2';
         var translate = this.translate.bind(this);
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n            <div class=\"ag-input-text-wrapper\">\n                <input class=\"ag-filter-filter\" ref=\"eValueFrom" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n             <div class=\"ag-input-text-wrapper ag-filter-number-to\" ref=\"ePanel" + pos + "\">\n                <input class=\"ag-filter-filter\" ref=\"eValueTo" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n        </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n            <div class=\"ag-input-wrapper\">\n                <input class=\"ag-filter-filter\" ref=\"eValueFrom" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n             <div class=\"ag-input-wrapper ag-filter-number-to\" ref=\"ePanel" + pos + "\">\n                <input class=\"ag-filter-filter\" ref=\"eValueTo" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n        </div>";
     };
     NumberFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,44 +28,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = require("./component");
-var componentAnnotations_1 = require("./componentAnnotations");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var agAbstractInputField_1 = require("./agAbstractInputField");
+var agAbstractField_1 = require("./agAbstractField");
 var utils_1 = require("../utils");
 var AgCheckbox = /** @class */ (function (_super) {
     __extends(AgCheckbox, _super);
     function AgCheckbox() {
         var _this = _super.call(this) || this;
+        _this.className = 'ag-checkbox';
+        _this.displayTag = 'input';
+        _this.inputType = 'checkbox';
+        _this.labelAlignment = 'right';
+        _this.iconMap = {
+            selected: 'checkboxChecked',
+            unselected: 'checkboxUnchecked',
+            indeterminate: 'checkboxIndeterminate'
+        };
         _this.selected = false;
         _this.readOnly = false;
         _this.passive = false;
+        _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
         return _this;
     }
-    AgCheckbox.prototype.preConstruct = function () {
-        this.setTemplate(AgCheckbox.TEMPLATE);
-    };
     AgCheckbox.prototype.postConstruct = function () {
-        this.loadIcons();
+        _super.prototype.postConstruct.call(this);
+        utils_1._.addCssClass(this.eInput, 'ag-hidden');
+        this.addIconsPlaceholder();
         this.updateIcons();
     };
-    AgCheckbox.prototype.setLabel = function (label) {
-        this.eLabel.innerText = label;
+    AgCheckbox.prototype.addInputListeners = function () {
+        var _this = this;
+        this.addDestroyableEventListener(this.getGui(), 'click', function (e) { return _this.onClick(e); });
+        this.addDestroyableEventListener(this.eInput, 'change', function (e) { return _this.setValue(e.target.checked, true); });
     };
-    AgCheckbox.prototype.loadIcons = function () {
-        utils_1._.clearElement(this.eChecked);
-        utils_1._.clearElement(this.eUnchecked);
-        utils_1._.clearElement(this.eIndeterminate);
-        if (this.readOnly) {
-            this.eChecked.appendChild(utils_1._.createIconNoSpan('checkboxCheckedReadOnly', this.gridOptionsWrapper, null));
-            this.eUnchecked.appendChild(utils_1._.createIconNoSpan('checkboxUncheckedReadOnly', this.gridOptionsWrapper, null));
-            this.eIndeterminate.appendChild(utils_1._.createIconNoSpan('checkboxIndeterminateReadOnly', this.gridOptionsWrapper, null));
-        }
-        else {
-            this.eChecked.appendChild(utils_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null));
-            this.eUnchecked.appendChild(utils_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null));
-            this.eIndeterminate.appendChild(utils_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null));
-        }
+    AgCheckbox.prototype.addIconsPlaceholder = function () {
+        var iconDiv = document.createElement('div');
+        this.eWrapper.appendChild(iconDiv);
+        this.eIconEl = iconDiv;
     };
     AgCheckbox.prototype.onClick = function (event) {
         // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
@@ -77,19 +78,14 @@ var AgCheckbox = /** @class */ (function (_super) {
         }
     };
     AgCheckbox.prototype.getNextValue = function () {
-        if (this.selected === undefined) {
-            return true;
-        }
-        else {
-            return !this.selected;
-        }
+        return this.selected === undefined ? true : !this.selected;
     };
     AgCheckbox.prototype.setPassive = function (passive) {
         this.passive = passive;
     };
     AgCheckbox.prototype.setReadOnly = function (readOnly) {
         this.readOnly = readOnly;
-        this.loadIcons();
+        this.updateIcons();
     };
     AgCheckbox.prototype.isReadOnly = function () {
         return this.readOnly;
@@ -107,79 +103,45 @@ var AgCheckbox = /** @class */ (function (_super) {
             this.dispatchEvent(event_1);
         }
         else {
-            this.setSelected(nextValue);
+            this.setValue(nextValue);
         }
     };
-    AgCheckbox.prototype.setSelected = function (selected) {
+    AgCheckbox.prototype.setSelected = function (selected, silent) {
         if (this.selected === selected) {
             return;
         }
-        if (selected === true) {
-            this.selected = true;
-        }
-        else if (selected === false) {
-            this.selected = false;
-        }
-        else {
-            this.selected = undefined;
-        }
+        this.selected = typeof selected === 'boolean' ? selected : undefined;
+        this.eInput.checked = this.selected;
         this.updateIcons();
-        var event = {
-            type: AgCheckbox.EVENT_CHANGED,
-            selected: this.selected
-        };
-        this.dispatchEvent(event);
+        if (!silent) {
+            var event_2 = {
+                type: agAbstractField_1.AgAbstractField.EVENT_CHANGED,
+                selected: this.selected
+            };
+            this.dispatchEvent(event_2);
+        }
+    };
+    AgCheckbox.prototype.getIconName = function () {
+        var value = this.getValue();
+        var prop = value === undefined ? 'indeterminate' : (value ? 'selected' : 'unselected');
+        var readOnlyStr = this.isReadOnly() ? 'ReadOnly' : '';
+        return "" + this.iconMap[prop] + readOnlyStr;
     };
     AgCheckbox.prototype.updateIcons = function () {
-        utils_1._.setVisible(this.eChecked, this.selected === true);
-        utils_1._.setVisible(this.eUnchecked, this.selected === false);
-        utils_1._.setVisible(this.eIndeterminate, this.selected === undefined);
+        utils_1._.clearElement(this.eIconEl);
+        this.eIconEl.appendChild(utils_1._.createIconNoSpan(this.getIconName(), this.gridOptionsWrapper, null));
     };
-    AgCheckbox.EVENT_CHANGED = 'change';
-    AgCheckbox.TEMPLATE = '<div class="ag-checkbox" role="presentation">' +
-        '  <span class="ag-checkbox-checked" role="presentation"></span>' +
-        '  <span class="ag-checkbox-unchecked" role="presentation"></span>' +
-        '  <span class="ag-checkbox-indeterminate" role="presentation"></span>' +
-        '  <span class="ag-checkbox-label" role="presentation"></span>' +
-        '</div>';
+    AgCheckbox.prototype.getValue = function () {
+        return this.isSelected();
+    };
+    AgCheckbox.prototype.setValue = function (value, silent) {
+        this.setSelected(value, silent);
+        return this;
+    };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('.ag-checkbox-checked'),
-        __metadata("design:type", HTMLElement)
-    ], AgCheckbox.prototype, "eChecked", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('.ag-checkbox-unchecked'),
-        __metadata("design:type", HTMLElement)
-    ], AgCheckbox.prototype, "eUnchecked", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('.ag-checkbox-indeterminate'),
-        __metadata("design:type", HTMLElement)
-    ], AgCheckbox.prototype, "eIndeterminate", void 0);
-    __decorate([
-        componentAnnotations_1.QuerySelector('.ag-checkbox-label'),
-        __metadata("design:type", HTMLElement)
-    ], AgCheckbox.prototype, "eLabel", void 0);
-    __decorate([
-        context_1.PreConstruct,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], AgCheckbox.prototype, "preConstruct", null);
-    __decorate([
-        context_1.PostConstruct,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], AgCheckbox.prototype, "postConstruct", null);
-    __decorate([
-        componentAnnotations_1.Listener('click'),
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", [MouseEvent]),
-        __metadata("design:returntype", void 0)
-    ], AgCheckbox.prototype, "onClick", null);
     return AgCheckbox;
-}(component_1.Component));
+}(agAbstractInputField_1.AgAbstractInputField));
 exports.AgCheckbox = AgCheckbox;

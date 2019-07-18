@@ -1,34 +1,41 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Component } from "./component";
 import { AgEvent } from "../events";
+import { AgAbstractInputField } from "./agAbstractInputField";
+import { LabelAlignment } from "./agAbstractLabel";
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
-export declare class AgCheckbox extends Component {
-    static EVENT_CHANGED: string;
-    private static TEMPLATE;
+export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
+    protected className: string;
+    protected displayTag: string;
+    protected inputType: string;
+    protected labelAlignment: LabelAlignment;
+    protected iconMap: {
+        selected: string;
+        unselected: string;
+        indeterminate?: string;
+    };
     private gridOptionsWrapper;
-    private eChecked;
-    private eUnchecked;
-    private eIndeterminate;
-    private eLabel;
     private selected;
     private readOnly;
     private passive;
+    protected eIconEl: HTMLElement;
     constructor();
-    private preConstruct;
-    private postConstruct;
-    setLabel(label: string): void;
-    private loadIcons;
+    protected postConstruct(): void;
+    protected addInputListeners(): void;
+    private addIconsPlaceholder;
     private onClick;
     getNextValue(): boolean;
     setPassive(passive: boolean): void;
     setReadOnly(readOnly: boolean): void;
     isReadOnly(): boolean;
-    isSelected(): boolean;
+    protected isSelected(): boolean;
     toggle(): void;
-    setSelected(selected: boolean | null): void;
-    private updateIcons;
+    protected setSelected(selected?: boolean, silent?: boolean): void;
+    protected getIconName(): string;
+    protected updateIcons(): void;
+    getValue(): boolean;
+    setValue(value: boolean | undefined, silent?: boolean): this;
 }

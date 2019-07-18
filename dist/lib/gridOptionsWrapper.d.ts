@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -207,6 +207,8 @@ export declare class GridOptionsWrapper {
     getSortingOrder(): string[] | undefined;
     getAlignedGrids(): GridOptions[] | undefined;
     isMasterDetail(): boolean;
+    isKeepDetailRows(): boolean;
+    getKeepDetailRowsCount(): number;
     getIsRowMasterFunc(): IsRowMaster | undefined;
     getIsRowSelectableFunc(): IsRowSelectable | undefined;
     getGroupRowRendererParams(): any;

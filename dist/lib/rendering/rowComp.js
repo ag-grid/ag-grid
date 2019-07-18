@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -422,27 +422,19 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.destroyFullWidthComponents = function () {
         if (this.fullWidthRowComponent) {
-            if (this.fullWidthRowComponent.destroy) {
-                this.fullWidthRowComponent.destroy();
-            }
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponent);
             this.fullWidthRowComponent = null;
         }
         if (this.fullWidthRowComponentBody) {
-            if (this.fullWidthRowComponentBody.destroy) {
-                this.fullWidthRowComponentBody.destroy();
-            }
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponentBody);
             this.fullWidthRowComponent = null;
         }
         if (this.fullWidthRowComponentLeft) {
-            if (this.fullWidthRowComponentLeft.destroy) {
-                this.fullWidthRowComponentLeft.destroy();
-            }
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, column_1.Column.PINNED_LEFT, this.fullWidthRowComponentLeft);
             this.fullWidthRowComponentLeft = null;
         }
         if (this.fullWidthRowComponentRight) {
-            if (this.fullWidthRowComponentRight.destroy) {
-                this.fullWidthRowComponentRight.destroy();
-            }
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, column_1.Column.PINNED_RIGHT, this.fullWidthRowComponentRight);
             this.fullWidthRowComponent = null;
         }
     };
@@ -719,12 +711,19 @@ var RowComp = /** @class */ (function (_super) {
                     }
                 }
             };
-            var res = _this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
-            if (!res) {
-                console.error('ag-Grid: fullWidthCellRenderer not defined');
-                return;
+            // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
+            var cachedRowComp = _this.beans.detailRowCompCache.get(_this.rowNode, pinned);
+            if (cachedRowComp) {
+                callback(cachedRowComp);
             }
-            res.then(callback);
+            else {
+                var res = _this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
+                if (!res) {
+                    console.error('ag-Grid: fullWidthCellRenderer not defined');
+                    return;
+                }
+                res.then(callback);
+            }
             _this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);
             _this.angular1Compile(eRow);

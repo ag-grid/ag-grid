@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,7 @@ var rowDragComp_1 = require("./rowDragComp");
 var popupEditorWrapper_1 = require("./cellEditors/popupEditorWrapper");
 var rowPosition_1 = require("../entities/rowPosition");
 var utils_1 = require("../utils");
+var dndSourceComp_1 = require("./dndSourceComp");
 var CellComp = /** @class */ (function (_super) {
     __extends(CellComp, _super);
     function CellComp(scope, beans, column, rowNode, rowComp, autoHeightCell, printLayout) {
@@ -520,17 +521,32 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.refreshToolTip = function () {
         var newTooltip = this.getToolTip();
-        if (this.tooltip !== newTooltip) {
-            this.tooltip = newTooltip;
-            if (!this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-                return;
-            }
-            if (utils_1._.exists(newTooltip)) {
+        if (this.tooltip === newTooltip) {
+            return;
+        }
+        var hasNewTooltip = utils_1._.exists(newTooltip);
+        var hadTooltip = utils_1._.exists(this.tooltip);
+        if (hasNewTooltip && this.tooltip === newTooltip.toString()) {
+            return;
+        }
+        this.tooltip = newTooltip;
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
+            if (hasNewTooltip) {
                 var tooltipSanitised = utils_1._.escape(this.tooltip);
                 this.eParentOfValue.setAttribute('title', tooltipSanitised);
             }
             else {
                 this.eParentOfValue.removeAttribute('title');
+            }
+        }
+        else {
+            if (hadTooltip) {
+                if (!hasNewTooltip) {
+                    this.beans.tooltipManager.unregisterTooltip(this);
+                }
+            }
+            else if (hasNewTooltip) {
+                this.beans.tooltipManager.registerTooltip(this);
             }
         }
     };
@@ -611,13 +627,16 @@ var CellComp = /** @class */ (function (_super) {
             this.usingWrapper = false;
             this.includeSelectionComponent = false;
             this.includeRowDraggingComponent = false;
+            this.includeDndSourceComponent = false;
             return;
         }
         var cbSelectionIsFunc = typeof colDef.checkboxSelection === 'function';
         var rowDraggableIsFunc = typeof colDef.rowDrag === 'function';
+        var dndSourceIsFunc = typeof colDef.dndSource === 'function';
         this.includeSelectionComponent = cbSelectionIsFunc || colDef.checkboxSelection === true;
         this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDrag === true;
-        this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent;
+        this.includeDndSourceComponent = dndSourceIsFunc || colDef.dndSource === true;
+        this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent || this.includeDndSourceComponent;
     };
     CellComp.prototype.chooseCellRenderer = function () {
         // template gets preference, then cellRenderer, then do it ourselves
@@ -650,8 +669,13 @@ var CellComp = /** @class */ (function (_super) {
             return;
         }
         // never use task service if angularCompileRows=true, as that assume the cell renderers
-        // are finished when the row is created.
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
+        // are finished when the row is created. also we never use it if animation frame service
+        // is turned off.
+        // and lastly we never use it if doing auto-height, as the auto-height service checks the
+        // row height directly after the cell is created, it doesn't wait around for the tasks to complete
+        var angularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
+        var suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
+        if (angularCompileRows || suppressAnimationFrame || this.autoHeightCell) {
             useTaskService = false;
         }
         var params = this.createCellRendererParams();
@@ -1563,6 +1587,9 @@ var CellComp = /** @class */ (function (_super) {
             if (this.includeRowDraggingComponent) {
                 this.addRowDragging();
             }
+            if (this.includeDndSourceComponent) {
+                this.addDndSource();
+            }
             if (this.includeSelectionComponent) {
                 this.addSelectionCheckbox();
             }
@@ -1575,22 +1602,30 @@ var CellComp = /** @class */ (function (_super) {
         return this.beans.frameworkOverrides;
     };
     CellComp.prototype.addRowDragging = function () {
-        // row dragging only available in default row model
-        if (!this.beans.gridOptionsWrapper.isRowModelDefault()) {
-            utils_1._.doOnce(function () { return console.warn('ag-Grid: row dragging is only allowed in the In Memory Row Model'); }, 'CellComp.addRowDragging');
-            return;
-        }
-        if (this.beans.gridOptionsWrapper.isPagination()) {
-            utils_1._.doOnce(function () { return console.warn('ag-Grid: row dragging is not possible when doing pagination'); }, 'CellComp.addRowDragging');
-            return;
+        var pagination = this.beans.gridOptionsWrapper.isPagination();
+        var rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
+        var clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
+        if (rowDragManaged) {
+            // row dragging only available in default row model
+            if (!clientSideRowModelActive) {
+                utils_1._.doOnce(function () { return console.warn('ag-Grid: managed row dragging is only allowed in the Client Side Row Model'); }, 'CellComp.addRowDragging');
+                return;
+            }
+            if (pagination) {
+                utils_1._.doOnce(function () { return console.warn('ag-Grid: managed row dragging is not possible when doing pagination'); }, 'CellComp.addRowDragging');
+                return;
+            }
         }
         var rowDraggingComp = new rowDragComp_1.RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
         this.addFeature(this.beans.context, rowDraggingComp);
-        // let visibleFunc = this.getComponentHolder().checkboxSelection;
-        // visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
-        // cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
+    };
+    CellComp.prototype.addDndSource = function () {
+        var dndSourceComp = new dndSourceComp_1.DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
+        this.addFeature(this.beans.context, dndSourceComp);
+        // put the checkbox in before the value
+        this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);
     };
     CellComp.prototype.addSelectionCheckbox = function () {
         var cbSelectionComponent = new checkboxSelectionComponent_1.CheckboxSelectionComponent();

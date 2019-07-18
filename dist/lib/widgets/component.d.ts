@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -8,7 +8,7 @@ import { AgEvent } from "../events";
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
-export declare class Component extends BeanStub implements IComponent<any> {
+export declare class Component extends BeanStub {
     static EVENT_VISIBLE_CHANGED: string;
     private eGui;
     private childComponents;

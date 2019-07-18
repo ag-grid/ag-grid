@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,7 +66,7 @@ var UserComponentFactory = /** @class */ (function () {
         return this.createAndInitUserComponent(this.gridOptions, params, "noRowsOverlayComponent", "agNoRowsOverlay");
     };
     UserComponentFactory.prototype.newTooltipComponent = function (params) {
-        var colDef = params.column && params.column.getColDef();
+        var colDef = params.colDef;
         return this.createAndInitUserComponent(colDef, params, "tooltipComponent", 'agTooltipComponent');
     };
     UserComponentFactory.prototype.newFilterComponent = function (colDef, params, defaultFilter, modifyParamsCallback) {

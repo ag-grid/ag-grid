@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "../gridPanel/gridPanel";
@@ -97,7 +97,7 @@ export declare class RowRenderer extends BeanStub {
     private ensureAllRowsInRangeHaveHeightsCalculated;
     getFirstVirtualRenderedRow(): number;
     getLastVirtualRenderedRow(): number;
-    private keepRowBecauseEditingOrFocused;
+    private doNotUnVirtualiseRow;
     private createRowComp;
     getRenderedNodes(): RowNode[];
     navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean): void;

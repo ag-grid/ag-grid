@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -180,7 +180,7 @@ var GridPanel = /** @class */ (function (_super) {
     };
     GridPanel.prototype.setCellTextSelection = function (selectable) {
         if (selectable === void 0) { selectable = false; }
-        [this.eTop, this.eCenterContainer, this.eBottom]
+        [this.eTop, this.eBodyViewport, this.eBottom]
             .forEach(function (ct) { return utils_1._.addOrRemoveCssClass(ct, 'ag-selectable', selectable); });
     };
     GridPanel.prototype.addRowDragListener = function () {
@@ -314,9 +314,6 @@ var GridPanel = /** @class */ (function (_super) {
                 _this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
-        //For some reason listening only to this.eBody doesn't work... Maybe because the event is consumed somewhere else?
-        //In any case, not expending much time on this, if anyone comes across this and knows how to make this work with
-        //one listener please go ahead and change it...
         this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
     };
     // + rangeController - used to know when to scroll when user is dragging outside the

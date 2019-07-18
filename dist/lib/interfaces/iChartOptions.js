@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8,9 +8,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var ChartType;
 (function (ChartType) {
-    ChartType[ChartType["GroupedBar"] = 0] = "GroupedBar";
-    ChartType[ChartType["StackedBar"] = 1] = "StackedBar";
-    ChartType[ChartType["Line"] = 2] = "Line";
-    ChartType[ChartType["Pie"] = 3] = "Pie";
-    ChartType[ChartType["Doughnut"] = 4] = "Doughnut";
+    ChartType["GroupedColumn"] = "groupedColumn";
+    ChartType["StackedColumn"] = "stackedColumn";
+    ChartType["NormalizedColumn"] = "normalizedColumn";
+    ChartType["GroupedBar"] = "groupedBar";
+    ChartType["StackedBar"] = "stackedBar";
+    ChartType["NormalizedBar"] = "normalizedBar";
+    ChartType["Line"] = "line";
+    ChartType["Pie"] = "pie";
+    ChartType["Doughnut"] = "doughnut";
+    ChartType["Area"] = "area";
+    ChartType["StackedArea"] = "stackedArea";
+    ChartType["NormalizedArea"] = "normalizedArea";
 })(ChartType = exports.ChartType || (exports.ChartType = {}));

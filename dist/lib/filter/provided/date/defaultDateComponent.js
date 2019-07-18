@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,7 @@ var utils_1 = require("../../../utils");
 var DefaultDateComponent = /** @class */ (function (_super) {
     __extends(DefaultDateComponent, _super);
     function DefaultDateComponent() {
-        return _super.call(this, "<div class=\"ag-input-text-wrapper\"><input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\"></div>") || this;
+        return _super.call(this, "<div class=\"ag-input-wrapper\"><input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\"></div>") || this;
     }
     DefaultDateComponent.prototype.init = function (params) {
         this.eDateInput = this.getGui().querySelector('input');

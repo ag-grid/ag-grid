@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -116,7 +116,7 @@ var TextCellEditor = /** @class */ (function (_super) {
     TextCellEditor.prototype.isPopup = function () {
         return false;
     };
-    TextCellEditor.TEMPLATE = '<div class="ag-input-text-wrapper"><input class="ag-cell-edit-input" type="text"/></div>';
+    TextCellEditor.TEMPLATE = '<div class="ag-input-wrapper"><input class="ag-cell-edit-input" type="text"/></div>';
     return TextCellEditor;
 }(popupComponent_1.PopupComponent));
 exports.TextCellEditor = TextCellEditor;

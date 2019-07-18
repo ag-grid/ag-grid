@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -106,12 +106,14 @@ var ColDefUtil = /** @class */ (function () {
         'suppressNavigable',
         'enableCellChangeFlash',
         'rowDrag',
+        'dndSource',
         'autoHeight',
         'sortable',
         'resizable',
         'singleClickEdit'
     ];
     ColDefUtil.FUNCTION_PROPERTIES = [
+        'dndSourceOnRowDrag',
         'valueGetter',
         'valueSetter',
         'filterValueGetter',

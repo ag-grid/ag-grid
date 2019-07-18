@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,6 +64,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.setupOnBtApplyDebounce();
     };
     ProvidedFilter.prototype.setParams = function (params) {
+        var _this = this;
         this.providedFilterParams = params;
         this.clearActive = params.clearButton === true;
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
@@ -80,7 +81,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
             this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
         }
         utils_1._.setVisible(this.eApplyButton, this.applyActive);
-        this.addDestroyableEventListener(this.eApplyButton, "click", this.onBtApply.bind(this));
+        // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
+        // just applied, the event would get passed as the second parameter, which we do not want.
+        this.addDestroyableEventListener(this.eApplyButton, "click", function () { return _this.onBtApply(); });
         utils_1._.setVisible(this.eClearButton, this.clearActive);
         this.addDestroyableEventListener(this.eClearButton, "click", this.onBtClear.bind(this));
         var anyButtonVisible = this.applyActive || this.clearActive;

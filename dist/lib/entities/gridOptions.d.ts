@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -20,7 +20,7 @@ import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayCompone
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
-import { ChartOptions } from "../interfaces/iChartOptions";
+import { ChartOptions, ChartType } from "../interfaces/iChartOptions";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -238,6 +238,8 @@ export interface GridOptions {
     detailRowHeight?: number;
     popupParent?: HTMLElement;
     masterDetail?: boolean;
+    keepDetailRows?: boolean;
+    keepDetailRowsCount?: number;
     isRowMaster?: IsRowMaster;
     detailCellRenderer?: {
         new (): ICellRendererComp;
@@ -447,7 +449,7 @@ export interface NodeChildDetails {
     key?: any;
 }
 export interface ProcessChartOptionsParams {
-    type: string;
+    type: ChartType;
     options: ChartOptions;
 }
 export interface GetContextMenuItemsParams {

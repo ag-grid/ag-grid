@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -78,9 +78,22 @@ var autoHeightCalculator_1 = require("./rendering/autoHeightCalculator");
 var paginationComp_1 = require("./rowModels/pagination/paginationComp");
 var resizeObserverService_1 = require("./misc/resizeObserverService");
 var zipContainer_1 = require("./exporter/files/zip/zipContainer");
-var utils_1 = require("./utils");
 var tooltipManager_1 = require("./widgets/tooltipManager");
 var overlayWrapperComponent_1 = require("./rendering/overlays/overlayWrapperComponent");
+var agGroupComponent_1 = require("./widgets/agGroupComponent");
+var agDialog_1 = require("./widgets/agDialog");
+var agPanel_1 = require("./widgets/agPanel");
+var agInputTextField_1 = require("./widgets/agInputTextField");
+var agInputTextArea_1 = require("./widgets/agInputTextArea");
+var agSlider_1 = require("./widgets/agSlider");
+var utils_1 = require("./utils");
+var agColorPicker_1 = require("./widgets/agColorPicker");
+var agInputNumberField_1 = require("./widgets/agInputNumberField");
+var agInputRange_1 = require("./widgets/agInputRange");
+var agSelect_1 = require("./widgets/agSelect");
+var agAngleSelect_1 = require("./widgets/agAngleSelect");
+var agToggleButton_1 = require("./widgets/agToggleButton");
+var detailRowCompCache_1 = require("./rendering/detailRowCompCache");
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -124,10 +137,22 @@ var Grid = /** @class */ (function () {
         var components = [
             { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox },
             { componentName: 'AgRadioButton', theClass: agRadioButton_1.AgRadioButton },
+            { componentName: 'AgToggleButton', theClass: agToggleButton_1.AgToggleButton },
+            { componentName: 'AgInputTextField', theClass: agInputTextField_1.AgInputTextField },
+            { componentName: 'AgInputTextArea', theClass: agInputTextArea_1.AgInputTextArea },
+            { componentName: 'AgInputNumberField', theClass: agInputNumberField_1.AgInputNumberField },
+            { componentName: 'AgInputRange', theClass: agInputRange_1.AgInputRange },
+            { componentName: 'AgSelect', theClass: agSelect_1.AgSelect },
+            { componentName: 'AgSlider', theClass: agSlider_1.AgSlider },
+            { componentName: 'AgAngleSelect', theClass: agAngleSelect_1.AgAngleSelect },
+            { componentName: 'AgColorPicker', theClass: agColorPicker_1.AgColorPicker },
             { componentName: 'AgGridComp', theClass: gridPanel_1.GridPanel },
             { componentName: 'AgHeaderRoot', theClass: headerRootComp_1.HeaderRootComp },
             { componentName: 'AgPagination', theClass: paginationComp_1.PaginationComp },
-            { componentName: 'AgOverlayWrapper', theClass: overlayWrapperComponent_1.OverlayWrapperComponent }
+            { componentName: 'AgOverlayWrapper', theClass: overlayWrapperComponent_1.OverlayWrapperComponent },
+            { componentName: 'AgGroupComponent', theClass: agGroupComponent_1.AgGroupComponent },
+            { componentName: 'AgPanel', theClass: agPanel_1.AgPanel },
+            { componentName: 'AgDialog', theClass: agDialog_1.AgDialog }
         ];
         if (Grid.enterpriseComponents) {
             components = components.concat(Grid.enterpriseComponents)
@@ -150,7 +175,8 @@ var Grid = /** @class */ (function () {
                 cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, filterService_1.FilterService,
                 valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService, sortController_1.SortController,
                 columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService,
-                immutableService_1.ImmutableService, changeDetectionService_1.ChangeDetectionService, animationFrameService_1.AnimationFrameService, tooltipManager_1.TooltipManager, zipContainer_1.ZipContainer
+                immutableService_1.ImmutableService, changeDetectionService_1.ChangeDetectionService, animationFrameService_1.AnimationFrameService, tooltipManager_1.TooltipManager, zipContainer_1.ZipContainer,
+                detailRowCompCache_1.DetailRowCompCache
             ].concat(moduleBeans),
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents.concat(modulesEnterpriseDefaultComponents),

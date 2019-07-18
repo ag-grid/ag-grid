@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -189,14 +189,36 @@ exports.RowNodeCache = rowNodeCache_1.RowNodeCache;
 var stylingService_1 = require("./styling/stylingService");
 exports.StylingService = stylingService_1.StylingService;
 // widgets
+var agAbstractField_1 = require("./widgets/agAbstractField");
+exports.AgAbstractField = agAbstractField_1.AgAbstractField;
 var agCheckbox_1 = require("./widgets/agCheckbox");
 exports.AgCheckbox = agCheckbox_1.AgCheckbox;
 var agRadioButton_1 = require("./widgets/agRadioButton");
 exports.AgRadioButton = agRadioButton_1.AgRadioButton;
+var agToggleButton_1 = require("./widgets/agToggleButton");
+exports.AgToggleButton = agToggleButton_1.AgToggleButton;
+var agInputTextField_1 = require("./widgets/agInputTextField");
+exports.AgInputTextField = agInputTextField_1.AgInputTextField;
+var agInputTextArea_1 = require("./widgets/agInputTextArea");
+exports.AgInputTextArea = agInputTextArea_1.AgInputTextArea;
+var agInputNumberField_1 = require("./widgets/agInputNumberField");
+exports.AgInputNumberField = agInputNumberField_1.AgInputNumberField;
+var agInputRange_1 = require("./widgets/agInputRange");
+exports.AgInputRange = agInputRange_1.AgInputRange;
+var agSelect_1 = require("./widgets/agSelect");
+exports.AgSelect = agSelect_1.AgSelect;
+var agSlider_1 = require("./widgets/agSlider");
+exports.AgSlider = agSlider_1.AgSlider;
+var agAngleSelect_1 = require("./widgets/agAngleSelect");
+exports.AgAngleSelect = agAngleSelect_1.AgAngleSelect;
+var agColorPicker_1 = require("./widgets/agColorPicker");
+exports.AgColorPicker = agColorPicker_1.AgColorPicker;
 var agGroupComponent_1 = require("./widgets/agGroupComponent");
 exports.AgGroupComponent = agGroupComponent_1.AgGroupComponent;
-var dialog_1 = require("./widgets/dialog");
-exports.Dialog = dialog_1.Dialog;
+var agDialog_1 = require("./widgets/agDialog");
+exports.AgDialog = agDialog_1.AgDialog;
+var agPanel_1 = require("./widgets/agPanel");
+exports.AgPanel = agPanel_1.AgPanel;
 var messageBox_1 = require("./widgets/messageBox");
 exports.MessageBox = messageBox_1.MessageBox;
 var component_1 = require("./widgets/component");
@@ -261,6 +283,7 @@ exports.SortController = sortController_1.SortController;
 var templateService_1 = require("./templateService");
 exports.TemplateService = templateService_1.TemplateService;
 var utils_1 = require("./utils");
+exports.Color = utils_1.Color;
 exports.Utils = utils_1.Utils;
 exports.NumberSequence = utils_1.NumberSequence;
 exports._ = utils_1._;

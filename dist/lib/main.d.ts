@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./columnController/columnFactory";
@@ -97,10 +97,21 @@ export { ISideBar } from "./interfaces/ISideBar";
 export { RowNodeCache, RowNodeCacheParams } from "./rowModels/cache/rowNodeCache";
 export { IGetRowsParams, IDatasource } from "./rowModels/iDatasource";
 export { StylingService } from "./styling/stylingService";
+export { AgAbstractField } from "./widgets/agAbstractField";
 export { AgCheckbox } from "./widgets/agCheckbox";
 export { AgRadioButton } from "./widgets/agRadioButton";
+export { AgToggleButton } from "./widgets/agToggleButton";
+export { AgInputTextField } from "./widgets/agInputTextField";
+export { AgInputTextArea } from "./widgets/agInputTextArea";
+export { AgInputNumberField } from "./widgets/agInputNumberField";
+export { AgInputRange } from "./widgets/agInputRange";
+export { AgSelect } from "./widgets/agSelect";
+export { AgSlider } from "./widgets/agSlider";
+export { AgAngleSelect } from "./widgets/agAngleSelect";
+export { AgColorPicker } from "./widgets/agColorPicker";
 export { AgGroupComponent } from "./widgets/agGroupComponent";
-export { Dialog } from "./widgets/dialog";
+export { AgDialog } from "./widgets/agDialog";
+export { AgPanel } from "./widgets/agPanel";
 export { MessageBox } from "./widgets/messageBox";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { PopupComponent } from "./widgets/popupComponent";
@@ -134,7 +145,7 @@ export { Logger } from "./logger";
 export { SelectionController } from "./selectionController";
 export { SortController } from "./sortController";
 export { TemplateService } from "./templateService";
-export { Utils, NumberSequence, _, Promise, ExternalPromise } from "./utils";
+export { Color, Utils, NumberSequence, _, Promise, ExternalPromise } from "./utils";
 export { ValueService } from "./valueService/valueService";
 export { ExpressionService } from "./valueService/expressionService";
 export { LoggerFactory } from "./logger";
@@ -176,7 +187,7 @@ export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
 export { TooltipManager } from "./widgets/tooltipManager";
-export { ChartOptions, ChartType, ChartToolbarOptions, BarChartOptions, LineChartOptions, PieChartOptions, DoughnutChartOptions, CaptionOptions, AxisOptions, BarSeriesOptions, CartesianChartOptions, DropShadowOptions, LineSeriesOptions, PieSeriesOptions, PolarChartOptions, LegendOptions, SeriesOptions, LineTooltipRendererParams } from "./interfaces/iChartOptions";
+export { ChartOptions, ChartType, ChartMenuOptions, BarChartOptions, AreaChartOptions, LineChartOptions, ScatterChartOptions, PieChartOptions, DoughnutChartOptions, CaptionOptions, AxisOptions, BarSeriesOptions, AreaSeriesOptions, CartesianChartOptions, DropShadowOptions, LineSeriesOptions, ScatterSeriesOptions, PieSeriesOptions, PolarChartOptions, LegendOptions, SeriesOptions, LineTooltipRendererParams } from "./interfaces/iChartOptions";
 export { Module } from "./interfaces/iModule";
 export { ModuleNames } from "./modules/moduleNames";
 export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent, ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent, RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent, DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent, BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent, ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent, ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent, CellMouseDownEvent, CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent, ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent, RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent, PasteEndEvent, PasteStartEvent, GridSizeChangedEvent, ChartRangeSelectionChanged } from "./events";

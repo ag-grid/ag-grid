@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -103,7 +103,7 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.createValueTemplate = function (position) {
         var pos = position === simpleFilter_1.ConditionPosition.One ? '1' : '2';
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n            <div class=\"ag-input-text-wrapper\" ref=\"eInputWrapper" + pos + "\">\n                <input class=\"ag-filter-filter\" ref=\"eValue" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n            </div>\n        </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n            <div class=\"ag-input-wrapper\" ref=\"eInputWrapper" + pos + "\">\n                <input class=\"ag-filter-filter\" ref=\"eValue" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n            </div>\n        </div>";
     };
     TextFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);

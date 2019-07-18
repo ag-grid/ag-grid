@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -78,6 +78,9 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
             _this.addDestroyableEventListener(col, column_1.Column.EVENT_MOVING_CHANGED, _this.onColumnMovingChanged.bind(_this));
         });
         this.onColumnMovingChanged();
+    };
+    HeaderGroupWrapperComp.prototype.getColumn = function () {
+        return this.columnGroup;
     };
     HeaderGroupWrapperComp.prototype.getComponentHolder = function () {
         return this.columnGroup.getColGroupDef();

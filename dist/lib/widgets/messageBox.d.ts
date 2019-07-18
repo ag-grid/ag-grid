@@ -1,13 +1,13 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Dialog, DialogOptions } from "./dialog";
+import { AgDialog, DialogOptions } from "./agDialog";
 interface MessageBoxConfig extends DialogOptions {
     message?: string;
 }
-export declare class MessageBox extends Dialog {
+export declare class MessageBox extends AgDialog {
     private message;
     constructor(config: MessageBoxConfig);
-    protected postConstruct(): void;
+    postConstruct(): void;
 }
 export {};

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,18 +37,27 @@ var TooltipManager = /** @class */ (function () {
         var _this = this;
         var el = targetCmp.getGui();
         var id = targetCmp.getCompId();
-        targetCmp.addDestroyableEventListener(el, 'mouseover', function (e) { return _this.processMouseOver(e, targetCmp); });
-        targetCmp.addDestroyableEventListener(el, 'mousemove', function (e) { return _this.processMouseMove(e); });
-        targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this));
-        targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this));
-        this.registeredComponents[id] = { tooltipComp: undefined, destroyFunc: undefined };
+        this.registeredComponents[id] = {
+            tooltipComp: undefined,
+            destroyFunc: undefined,
+            eventDestroyFuncs: [
+                targetCmp.addDestroyableEventListener(el, 'mouseover', function (e) { return _this.processMouseOver(e, targetCmp); }),
+                targetCmp.addDestroyableEventListener(el, 'mousemove', function (e) { return _this.processMouseMove(e); }),
+                targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this)),
+                targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this))
+            ]
+        };
         targetCmp.addDestroyFunc(function () { return _this.unregisterTooltip(targetCmp); });
     };
     TooltipManager.prototype.unregisterTooltip = function (targetCmp) {
         var id = targetCmp.getCompId();
+        var registeredComponent = this.registeredComponents[id];
         // hide the tooltip if it's being displayed while unregistering the component
         if (this.activeComponent === targetCmp) {
             this.hideTooltip();
+        }
+        if (targetCmp.isAlive() && registeredComponent && registeredComponent.eventDestroyFuncs.length) {
+            registeredComponent.eventDestroyFuncs.forEach(function (func) { return func(); });
         }
         delete this.registeredComponents[id];
     };
@@ -137,6 +146,9 @@ var TooltipManager = /** @class */ (function () {
             }
             cmp.tooltipComp = tooltipComp;
             var eGui = tooltipComp.getGui();
+            if (!utils_1._.containsClass(eGui, 'ag-tooltip')) {
+                utils_1._.addCssClass(eGui, 'ag-tooltip-custom');
+            }
             var closeFnc = _this.popupService.addPopup(false, eGui, false);
             cmp.destroyFunc = function () {
                 closeFnc();

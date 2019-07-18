@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,6 +36,7 @@ var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
+var DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 function isTrue(value) {
     return value === true || value === 'true';
 }
@@ -634,6 +635,17 @@ var GridOptionsWrapper = /** @class */ (function () {
         }, 'MasterDetailEnterpriseCheck');
         return usingMasterDetail && this.enterprise;
     };
+    GridOptionsWrapper.prototype.isKeepDetailRows = function () {
+        return isTrue(this.gridOptions.keepDetailRows);
+    };
+    GridOptionsWrapper.prototype.getKeepDetailRowsCount = function () {
+        if (this.gridOptions.keepDetailRowsCount > 0) {
+            return this.gridOptions.keepDetailRowsCount;
+        }
+        else {
+            return DEFAULT_KEEP_DETAIL_ROW_COUNT;
+        }
+    };
     GridOptionsWrapper.prototype.getIsRowMasterFunc = function () {
         return this.gridOptions.isRowMaster;
     };
@@ -1141,6 +1153,9 @@ var GridOptionsWrapper = /** @class */ (function () {
         }
         if (options.suppressTabbing) {
             console.warn("ag-Grid: since v20.1, suppressTabbing is replaced with the more powerful grid callback suppressKeyboardEvent(params) which can suppress any keyboard event including tabbing.");
+        }
+        if (options.doesDataFlower) {
+            console.warn('ag-Grid: since v21.1, doesDataFlower is deprecated. Master/Detail is the new way for showing child data for a row and was introduced over a year ago. Please migrate your code to use master/detail instead.');
         }
     };
     GridOptionsWrapper.prototype.checkForViolations = function () {
