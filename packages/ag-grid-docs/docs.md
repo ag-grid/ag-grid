@@ -18,7 +18,6 @@
  - [ ] polymer-more-details/
  - [ ] best-angularjs-data-grid/
  - [ ] best-vuejs-data-grid/
- - [ ] best-aurelia-data-grid/
  - [ ] best-web-component-data-grid/
  - [ ] ag-grid-typescript-webpack-2/
  - [ ] javascript-grid-reference-overview/

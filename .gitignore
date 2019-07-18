@@ -34,7 +34,6 @@ packages/ag-grid-angular/main.js.map
 packages/ag-grid-angular/main.js
 packages/ag-grid-angular/main.d.ts
 packages/ag-grid-angular/main.metadata.json
-packages/ag-grid-aurelia/lib/**
 packages/ag-grid-enterprise/dist/**
 packages/ag-grid-react/lib/**
 packages/ag-grid-react/umd/ag-grid-react.min.js
