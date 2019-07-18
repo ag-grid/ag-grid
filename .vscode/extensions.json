@@ -11,7 +11,7 @@
         // code spelling
         "streetsidesoftware.code-spell-checker",
         // sass helper
-        "robinbentley.sass-indented",
+        "syler.sass-indented",
         // shows the cost of each import
         "wix.vscode-import-cost",
         // shows the cost of CSS properties
