@@ -1,3 +1,32 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_21_1_0">
+    <p>Release 21.1.0 (18th July 2019)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-3002 - Charts: Add Chart Format Panel
+            (see <a href="/javascript-grid-charts-chart-toolbar/#chart-format">Chart Format Panel</a>).
+        </li>
+
+        <li>
+            AG-2833 - Charts: Add Area Charts
+            (see <a href="/javascript-grid-charts-customisation-area/">Area Charts</a>).
+        </li>
+
+        <li>AG-1708 - Row dragging: Allow dragging between grids or between the grid and a external element
+            (see <a href="/javascript-grid-drag-and-drop/">Drag & Drop</a>).
+        </li>
+
+        <li>
+            AG-3012 - Master/Detail: Detail row state now kept when detail row is closed
+            (see <a href="/javascript-grid-master-detail/#keeping-row-details">Keeping Detail Rows</a>).
+        </li>
+
+        <li>AG-2912 - Master/Detail: Keep detail state when scrolled out of view.</li>
+    </ul>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_21_0_0">
     <p>Release 21.0.0 (4th June 2019)</p>
 

@@ -2,26 +2,27 @@
 </div>
 <div class="card card-highlight">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.0.0">Version 21.0.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Jun 4</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.1.0">Version 21.1.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Jul 18</h6>
         <p class="card-text">
-            Major release with new features and bug fixes:
+            Minor release with new features and bug fixes:
         </p>
         <ul>
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-overview">Integrated Charts</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-charts-chart-toolbar/#chart-format">Chart Format Panel</a></li>
 
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-filtering">Filtering Improvements</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-charts-customisation-area/">Area Charts</a></li>
 
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-icons/">Icon Customisation</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-drag-and-drop/">Native Drag & Drop</a></li>
 
-            <li>Better Scroll Performance</li>
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-master-detail/#keeping-row-details">Keeping Detail Rows</a></li>
         </ul>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.0.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.1.0">Change Log</a>
         </p>
     </div>
 </div>
