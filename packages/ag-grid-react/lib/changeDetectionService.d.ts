@@ -1,4 +1,4 @@
-// ag-grid-react v21.0.1
+// ag-grid-react v21.1.0
 export declare enum ChangeDetectionStrategyType {
     IdentityCheck = "IdentityCheck",
     DeepValueCheck = "DeepValueCheck",

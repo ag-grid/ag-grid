@@ -11,8 +11,9 @@
     .topContainer {
         display: flex;
         font-family: Verdana, Geneva, Tahoma, sans-serif;
-        font-size: 14px;
+        font-size: 13px;
         align-items: center;
+        margin-bottom: 5px;
     }
     .topContainer label {
         margin-right: 15px;
@@ -36,4 +37,4 @@
         <button onclick="onBtExport()">Export to Excel</button>
     </label>
 </div>
-<div id="myGrid" style="margin-top: 5px; height: 380px;" class="ag-theme-balham"></div>
+<div id="myGrid" style="height: calc(100% - 30px);" class="ag-theme-balham"></div>

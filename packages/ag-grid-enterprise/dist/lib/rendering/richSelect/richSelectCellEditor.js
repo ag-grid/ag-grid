@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38,10 +38,11 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
         this.focusAfterAttached = params.cellStartedEdit;
+        this.eValue.appendChild(ag_grid_community_1._.createIconNoSpan('smallDown', this.gridOptionsWrapper));
         this.virtualList = new virtualList_1.VirtualList();
         this.getContext().wireBean(this.virtualList);
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
-        this.getRefElement('eList').appendChild(this.virtualList.getGui());
+        this.eList.appendChild(this.virtualList.getGui());
         if (ag_grid_community_1.Utils.exists(this.params.cellHeight)) {
             this.virtualList.setRowHeight(this.params.cellHeight);
         }
@@ -56,8 +57,9 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
             getRow: function (index) { return values[index]; }
         });
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
-        this.addDestroyableEventListener(this.virtualList.getGui(), 'click', this.onClick.bind(this));
-        this.addDestroyableEventListener(this.virtualList.getGui(), 'mousemove', this.onMouseMove.bind(this));
+        var virtualListGui = this.virtualList.getGui();
+        this.addDestroyableEventListener(virtualListGui, 'click', this.onClick.bind(this));
+        this.addDestroyableEventListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
     };
     RichSelectCellEditor.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
@@ -88,7 +90,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     RichSelectCellEditor.prototype.renderSelectedValue = function () {
         var _this = this;
         var valueFormatted = this.params.formatValue(this.selectedValue);
-        var eValue = this.getRefElement('eValue');
+        var eValue = this.eValue;
         var params = {
             value: this.selectedValue,
             valueFormatted: valueFormatted,
@@ -167,15 +169,10 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         }
     };
     RichSelectCellEditor.prototype.getValue = function () {
-        if (this.selectionConfirmed) {
-            return this.selectedValue;
-        }
-        else {
-            return this.originalSelectedValue;
-        }
+        return this.selectionConfirmed ? this.selectedValue : this.originalSelectedValue;
     };
     // tab index is needed so we can focus, which is needed for keyboard events
-    RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\">\n                <div class=\"ag-icon ag-icon-small-down\"></div>\n            </div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
+    RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
     __decorate([
         ag_grid_community_1.Autowired('userComponentFactory'),
         __metadata("design:type", ag_grid_community_1.UserComponentFactory)
@@ -184,6 +181,14 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], RichSelectCellEditor.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('eValue'),
+        __metadata("design:type", HTMLElement)
+    ], RichSelectCellEditor.prototype, "eValue", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('eList'),
+        __metadata("design:type", HTMLElement)
+    ], RichSelectCellEditor.prototype, "eList", void 0);
     return RichSelectCellEditor;
 }(ag_grid_community_1.PopupComponent));
 exports.RichSelectCellEditor = RichSelectCellEditor;

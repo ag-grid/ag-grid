@@ -30,7 +30,7 @@ function indexTemplate(bindings, componentFilenames, isDev) {
             // for when binding a method
             // see javascript-grid-keyboard-navigation for an example
             // tabToNextCell needs to be bound to the react component
-            if(isInstanceMethod(bindings.instance, property)) {
+            if (isInstanceMethod(bindings.instance, property)) {
                 instanceBindings.push(`this.${property.name}=${property.value}`);
             } else {
                 propertyAssignments.push(`${property.name}: ${property.value}`);
@@ -51,7 +51,7 @@ function indexTemplate(bindings, componentFilenames, isDev) {
     }
 
     const chartsEnabled = bindings.properties.filter(property => property.name === 'enableCharts' && property.value === 'true').length >= 1;
-    if(chartsEnabled && !isDev) {
+    if (chartsEnabled && !isDev) {
         imports.push('import "ag-grid-enterprise/chartsModule";');
     }
 
@@ -117,13 +117,29 @@ function indexTemplate(bindings, componentFilenames, isDev) {
 
     recognizedDomEvents.forEach(event => {
         const jsEvent = 'on' + event[0].toUpperCase() + event.substr(1, event.length);
-        const matcher = new RegExp(`on${event}="(\\w+)\\((.*)\\)"`, 'g');
+        const matcher = new RegExp(`on${event}="(\\w+)\\((.*?)\\)"`, 'g');
+
         template = template.replace(matcher, `${jsEvent}={this.$1.bind(this, $2)}`);
+        template = template.replace(/, event\)/g, ")");
+        template = template.replace(/, event,/g, ", ");
+    });
+    recognizedDomEvents.forEach(event => {
+        // react events are case sensitive - could do something tricky here, but as there are only 2 events effected so far
+        // I'll keep it simple
+        const domEventsCaseSensitive = [
+            {name: 'ondragover',  replacement: 'onDragOver'},
+            {name: 'ondragstart', replacement: 'onDragStart'}
+        ];
+
+        domEventsCaseSensitive.forEach(event => {
+            template = template.replace(new RegExp(event.name, 'ig'), event.replacement);
+        });
     });
     template = template.replace(/\(this\, \)/g, '(this)');
 
     template = template.replace(/<input type="(radio|checkbox|text)" (.+?)>/g, '<input type="$1" $2 />');
     template = template.replace(/<input placeholder(.+?)>/g, '<input placeholder$1 />');
+    template = template.replace(/ class=/g, " className=");
 
     template = styleConvertor(template);
 

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -62,22 +62,12 @@ var HdpiCanvas = /** @class */ (function () {
      * @param options.fileName The `.png` extension is going to be added automatically.
      * @param [options.background] Defaults to `white`.
      */
-    HdpiCanvas.prototype.download = function (options) {
-        if (options === void 0) { options = {}; }
+    HdpiCanvas.prototype.download = function (fileName) {
+        fileName = ((fileName || '').trim() || 'image') + '.png';
         // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
         // so we don't support saving to JPEG.
         var type = 'image/png';
-        // The background of our canvas is transparent, so we create a temporary canvas
-        // with the white background and paint our canvas on top of it.
-        var canvas = document.createElement('canvas');
-        canvas.width = this.canvas.width;
-        canvas.height = this.canvas.height;
-        var ctx = canvas.getContext('2d');
-        ctx.fillStyle = options.background || 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(this.canvas, 0, 0);
-        var dataUrl = canvas.toDataURL(type);
-        var fileName = ((options.fileName || '').trim() || 'image') + '.png';
+        var dataUrl = this.canvas.toDataURL(type);
         if (navigator.msSaveOrOpenBlob) { // IE11
             var binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
             var array = [];

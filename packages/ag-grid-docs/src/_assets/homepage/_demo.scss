@@ -1,0 +1,26 @@
+.div-percent-bar {
+    display: inline-block;
+    height: 100%;
+    position: absolute;
+}
+
+.div-percent-value {
+    position: absolute;
+    padding-left: 4px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.div-outer-div {
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+}
+
+[class^='ag-theme'][class*='dark'] {
+  @include scrollbars(15px, #6b6b6b, #1c1f20, #959595, #424242);
+}
+
+.ag-theme-balham-dark {
+    @include scrollbars(15px, #6b6b6b, #1c1f20, #959595, #424242);
+}

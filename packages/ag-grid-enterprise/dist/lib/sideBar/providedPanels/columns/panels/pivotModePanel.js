@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27,14 +27,14 @@ var main_1 = require("ag-grid-community/main");
 var PivotModePanel = /** @class */ (function (_super) {
     __extends(PivotModePanel, _super);
     function PivotModePanel() {
-        return _super.call(this) || this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     PivotModePanel.prototype.createTemplate = function () {
         return "<div class=\"ag-pivot-mode-panel\">\n                <ag-checkbox ref=\"cbPivotMode\" class=\"ag-pivot-mode-select\"></ag-checkbox>\n            </div>";
     };
     PivotModePanel.prototype.init = function () {
         this.setTemplate(this.createTemplate());
-        this.cbPivotMode.setSelected(this.columnController.isPivotMode());
+        this.cbPivotMode.setValue(this.columnController.isPivotMode());
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
         this.addDestroyableEventListener(this.cbPivotMode, main_1.AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
@@ -42,7 +42,7 @@ var PivotModePanel = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     };
     PivotModePanel.prototype.onBtPivotMode = function () {
-        var newValue = this.cbPivotMode.isSelected();
+        var newValue = this.cbPivotMode.getValue();
         if (newValue !== this.columnController.isPivotMode()) {
             this.columnController.setPivotMode(newValue, "toolPanelUi");
             var api = this.gridOptionsWrapper.getApi();
@@ -53,7 +53,7 @@ var PivotModePanel = /** @class */ (function (_super) {
     };
     PivotModePanel.prototype.onPivotModeChanged = function () {
         var pivotModeActive = this.columnController.isPivotMode();
-        this.cbPivotMode.setSelected(pivotModeActive);
+        this.cbPivotMode.setValue(pivotModeActive);
     };
     __decorate([
         main_1.Autowired('columnController'),

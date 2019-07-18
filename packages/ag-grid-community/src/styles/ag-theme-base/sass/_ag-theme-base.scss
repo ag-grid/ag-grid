@@ -1,6 +1,8 @@
 @import "../../mixins/ag-theme-mixins";
 
-@if $icon-font-family == 'agGridBalham' or $icon-font-family == 'agGridMaterial' or $icon-font-family == 'agGridClassic' {
+@if $icon-font-family == 'agGridBalham' or
+    $icon-font-family == 'agGridMaterial' or
+    $icon-font-family == 'agGridClassic' {
     @font-face {
         font-family: '#{$icon-font-family}';
         src: url("data:application/x-font-ttf;charset=utf-8;base64,#{$icons-data}") format('truetype');
@@ -20,8 +22,6 @@
     $virtual-item-height: map-get($params, "virtual-item-height");
     $rich-select-item-height: map-get($params, "rich-select-item-height");
     $cell-horizontal-padding: map-get($params, "cell-horizontal-padding");
-
-    $icons-data: map-get($params, "icons-data");
 
     $font-family: map-get($params, "font-family");
     $font-size: map-get($params, "font-size");
@@ -164,15 +164,21 @@
         vertical-align: middle;
     }
 
-    .ag-radio-button-label, .ag-checkbox-label {
+    .ag-checkbox, .ag-radio-button, .ag-toggle-button {
+        display: flex;
+        align-items: center;
         cursor: default;
-        &:empty {
-            margin: 0;
+        label {
+            cursor: default;
+            &:empty {
+                margin: 0;
+            }
         }
-    }
-
-    .ag-radio-button-label, .ag-checkbox-label {
-        margin-left: $grid-size;
+        &:not(.ag-label-align-left) {
+            label {
+                margin-left: $grid-size;
+            }
+        }
     }
 
     .ag-cell {
@@ -242,9 +248,10 @@
     ////////////////////////////////////////
     // Basic layout
     ////////////////////////////////////////
-    .ag-input-text-wrapper {
+    .ag-input-wrapper {
         input:not([type]),
         input[type="text"],
+        input[type="number"],
         input[type="tel"],
         input[type="date"],
         input[type="datetime-local"] {
@@ -253,6 +260,9 @@
 
         input[type="date"] {
             flex: 1 1 auto;
+        }
+        input[type="range"] {
+            padding: 0;
         }
 
         textarea {
@@ -539,7 +549,7 @@
     }
 
     .ag-tab-body {
-        padding: $grid-size 0;
+        padding: $grid-size / 2 0;
 
         .ag-menu-list {
             margin-bottom: 0;
@@ -564,7 +574,7 @@
     ////////////////////////////////////////
     .ag-filter {
         .ag-filter-select, .ag-filter-body {
-            margin-bottom: $grid-size; 
+            margin-bottom: $grid-size;
         }
 
         .ag-filter-body {
@@ -575,7 +585,7 @@
             margin-left: $grid-size;
             margin-right: $grid-size;
         }
-    
+
         // string filter type
         .ag-filter-select {
             margin: $grid-size;
@@ -695,7 +705,7 @@
                 flex-flow: column nowrap;
 
                 .ag-filter-toolpanel-header {
-                    padding: 7px 5px;
+                    padding: 0 5px;
                     > div {
                         margin: auto 0;
                     }
@@ -754,8 +764,8 @@
             }
 
             > div > :first-child {
-                padding-left: $grid-size;
-                padding-right: $grid-size;
+                margin-left: $grid-size;
+                margin-right: $grid-size;
             }
 
             &:last-child {
@@ -791,17 +801,27 @@
         .ag-icon {
             width: $icon-size;
             height: $icon-size;
-            cursor: pointer;
-            &.ag-disabled {
-                color: $disabled-foreground-color;
-                opacity: $disabled-foreground-color-opacity;
-            }
+        }
+        .ag-paging-button {
             button {
-                width: 100%;
-                height: 100%;
+                cursor: pointer;
                 opacity: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+            }
+            &.ag-disabled {
+                .ag-icon {
+                    color: $disabled-foreground-color;
+                    opacity: $disabled-foreground-color-opacity;
+                }
+                button {
+                    cursor: default;
+                }
             }
         }
+
         span {
             margin: 0 $grid-size;
         }
@@ -912,15 +932,16 @@
     ////////////////////////////////////////
     // Editing
     ////////////////////////////////////////
-    .ag-cell-inline-editing {
-        padding: $cell-horizontal-padding;
-        height: $row-height + $grid-size * 3;
-    }
+    .ag-cell {
+        &.ag-cell-inline-editing {
+            padding: $cell-horizontal-padding;
+            height: $row-height + $grid-size * 3;
+        }
+        &.ag-cell-inline-editing, &.ag-popup-editor {
+            @include card($params);
 
-    .ag-cell-inline-editing, .ag-popup-editor {
-        @include card($params);
-
-        background-color: $editor-background-color-color;
+            background-color: $editor-background-color-color;
+        }
     }
 
     .ag-popup-editor {
@@ -1021,8 +1042,8 @@
             margin-right: $cell-horizontal-padding;
         }
 
-        .ag-left-arrow,
-        .ag-right-arrow {
+        .ag-icon-small-left,
+        .ag-icon-small-right {
             margin: 0 $grid-size;
             opacity: $secondary-foreground-color-opacity;
         }
@@ -1244,46 +1265,242 @@
 
 
     ////
-    /// Group Component
+    /// Widgets
     ///
-    .ag-group-component{
-        margin: 10px 5px;
-        padding: 10px 2px;
-        border: 0px solid transparentize($border-color, 0.5);
-        border-top-width: 4px;
-        border-radius: 3px;
-        .ag-group-component-label {
-            background-color: $background-color;
-            margin-left: 8px;
-            padding: 0 2px;
-            font-size: $font-size - 2px;
-            font-weight: 500;
-            text-transform: uppercase;
+    .ag-group-component {
+        background-color: $group-component-background-color;
+        padding: 0px;
+        border: 0 solid $group-component-border-color;
+        border-top-width: 1px;
+        &.ag-disabled > {
+            .ag-group-component-label .ag-group-component-title, .ag-group-component-container {
+                opacity: 0.5;
+            }
+        }
+        .ag-group-component-title-bar {
+            background-color: $group-component-title-background-color;
+            height: $icon-size;
+            font-size: $font-size;
+            font-family: $font-family;
+            height: 26px;
+        }
+        &:not(.ag-collapsible) {
+            > {
+                div {
+                    margin-left: 0;
+                }
+                .ag-group-component-title-bar {
+                    margin-left: 0;
+                    padding: $grid-size;
+                    .ag-column-group-icons {
+                        display: none;
+                    }
+                }
+            }
+        }
+        .ag-group-component-toolbar {
+            background-color: darken($group-component-background-color, 2%);
+            padding: $grid-size;
+            border: 0 solid $border-color;
+        }
+        > .ag-group-component-container {
+            margin-left: $grid-size * 2;
+            padding: $grid-size;
         }
         .ag-group-item {
-            margin-top: 2px;
+            margin: $grid-size / 2 0;
+            .ag-group-component-title-bar {
+                height: 18px;
+            }
+        }
+    }
+
+    .ag-labeled {
+        label {
+            margin-right: $grid-size;
+            white-space: nowrap;
+        }
+    }
+
+    .ag-labeled.ag-label-align-top {
+        label {
+            margin-bottom: $grid-size / 2;
+        }
+    }
+
+    .ag-slider, .ag-angle-select {
+        > .ag-wrapper {
+            > div:not(:first-of-type) {
+                margin-left: $grid-size * 2;
+            }
+        }
+    }
+
+    .ag-angle-select {
+        .ag-angle-select-field {
+            .ag-parent-circle {
+                width: 24px;
+                height: 24px;
+                border-radius: 12px;
+                box-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
+                background-color: #ffffff;
+            }
+            .ag-child-circle {
+                top: 4px;
+                left: 12px;
+                width: 6px;
+                height: 6px;
+                margin-left: -3px;
+                margin-top: -4px;
+                border-radius: 3px;
+                background-color: #4c4c4c;
+            }
+        }
+    }
+
+    .ag-toggle-button {
+        .ag-input-wrapper {
+            height: $icon-size;
+            width: 40px;
+            background-color: $background-color;
+            border: 1px solid $icon-color;
+            border-radius: 500rem;
+            .ag-icon {
+                width: $icon-size;
+                height: $icon-size;
+                border: 1px solid $icon-color;
+                border-radius: 500rem;
+                right: calc(100% - #{$icon-size});
+            }
+        }
+        &.ag-selected {
+            .ag-input-wrapper {
+                background-color: $accent-color;
+                .ag-icon {
+                    background: $background-color;
+                    right: -1px;
+                }
+            }
+        }
+    }
+
+    .ag-color-picker {
+        > .ag-wrapper {
+            border: 1px solid $border-color;
+            border-radius: 5px;
+            > div {
+                width: $icon-size;
+                height: $icon-size;
+            }
+            button {
+                background-color: $background-color;
+            }
+            button:hover {
+                background-color: $hover-color;
+            }
+        }
+    }
+
+    .ag-dialog.ag-color-dialog {
+        border-radius: 5px;
+    }
+
+    .ag-color-panel {
+        padding: $grid-size;
+
+        .ag-spectrum-color {
+            background-color: rgb(255, 0, 0);
+            border-radius: 2px;
+        }
+
+        .ag-spectrum-tools {
+            padding: 10px;
+        }
+
+        .ag-spectrum-sat {
+            background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
+        }
+
+        .ag-spectrum-val {
+            background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
+        }
+
+        .ag-spectrum-dragger {
+            border-radius: 12px;
+            height: 12px;
+            width: 12px;
+            border: 1px solid white;
+            background: black;
+            box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
+        }
+
+        .ag-spectrum-hue-background {
+            border-radius: 2px;
+        }
+
+        .ag-spectrum-alpha-background {
+            border-radius: 2px;
+        }
+
+        .ag-hue-alpha {
+            margin-bottom: 10px;
+            height: 11px;
+            border-radius: 2px;
+        }
+
+        .ag-spectrum-slider {
+            margin-top: -12px;
+            width: 13px;
+            height: 13px;
+            border-radius: 13px;
+            background-color: rgb(248, 248, 248);
+            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .ag-spectrum-text-value {
+            font-weight: bold;
+            line-height: 20px;
+            color: #333;
+        }
+
+        .ag-spectrum-text-value:focus {
+            border: 1px solid #0d77e4;
+            padding: 2px;
+        }
+
+        .ag-recent-colors {
+            > div {
+                margin: 0 3px;
+                &:first-child {
+                    margin-left: 0;
+                }
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
         }
     }
 
     ////////////////////////////////////////
     // Popup
     ////////////////////////////////////////
-    &.ag-popup > div {
+    &.ag-popup > div:not(.ag-tooltip-custom) {
         box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
     }
     ////////////////////////////////////////
     // Dialog
     ////////////////////////////////////////
-    .ag-dialog {
+    .ag-panel {
         background-color: $dialog-background-color;
         border: $dialog-border-size $dialog-border-style $dialog-border-color;
-        .ag-dragging-range-handle &, .ag-dragging-fill-handle & {
+        .ag-dragging-range-handle &.ag-dialog, .ag-dragging-fill-handle &.ag-dialog {
             opacity: 0.7;
             pointer-events: none;
         }
 
-        .ag-dialog-title-bar {
+        .ag-title-bar {
             background-color: $dialog-title-background-color;
+            border-bottom: 1px solid lighten($border-color, 10%);
             color: $dialog-title-foreground-color;
             height: $dialog-title-height;
             font-size: $dialog-title-font-size;
@@ -1292,8 +1509,8 @@
             padding-left: $cell-horizontal-padding;
             padding: $dialog-title-padding;
 
-            .ag-dialog-title-bar-buttons {
-                .ag-dialog-button {
+            .ag-title-bar-buttons {
+                .ag-button {
                     height: $dialog-title-icon-size;
                     width: $dialog-title-icon-size;
                     .ag-icon {
@@ -1342,6 +1559,7 @@
 
     .ag-chart {
         .ag-chart-menu {
+            border-radius: 5px;
             background: $background-color;
             > span {
                 &:hover {
@@ -1353,10 +1571,27 @@
 
     .ag-chart-tabbed-menu {
         .ag-chart-settings {
-            .ag-chart-settings-mini-wrapper > div {
-                border: 1px solid $border-color;
-                &.ag-selected {
-                    border-color: $primary-color;
+            .ag-chart-settings-mini-wrapper {
+                .ag-group-component-container {
+                    margin-left: 0;
+                }
+                .ag-chart-mini-thumbnail {
+                    border: 1px solid $border-color;
+                    border-radius: 5px;
+                    margin: 5px;
+                    &:nth-child(2n + 2):not(:last-child) {
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                    &:nth-child(3n + 1) {
+                        margin-left: 2px;
+                    }
+                    &:nth-child(3n) {
+                        margin-right: 2px;
+                    }
+                    &.ag-selected {
+                        border-color: $primary-color;
+                    }
                 }
             }
 
@@ -1372,12 +1607,19 @@
                 }
             }
         }
+        .ag-chart-format {
+            .ag-chart-format-wrapper {
+                .ag-group-item {
+                    margin: $grid-size * 1.2 0;
+                }
+            }
+        }
     }
 
     ////////////////////////////////////////
     // Icons
     ////////////////////////////////////////
-    @include icons();
+    @include icons_webfont();
 
     ////////////////////////////////////////
     // Right-To-Left
@@ -1389,9 +1631,13 @@
             text-align: left;
         }
 
-        .ag-radio-button-label, .ag-checkbox-label {
-            margin-right: $grid-size;
-            margin-left: 0;
+        .ag-checkbox, .ag-radio-button, .ag-toggle-button {
+            &:not(.ag-label-align-left) {
+                label {
+                    margin-right: $grid-size;
+                    margin-left: 0;
+                }
+            }
         }
 
         .ag-tool-panel-wrapper {

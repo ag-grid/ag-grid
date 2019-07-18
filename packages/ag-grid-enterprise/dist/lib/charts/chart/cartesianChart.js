@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -15,15 +15,16 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var chart_1 = require("./chart");
-var clipRect_1 = require("../scene/clipRect");
 var array_1 = require("../util/array");
 var padding_1 = require("../util/padding");
+var group_1 = require("../scene/group");
 var CartesianChart = /** @class */ (function (_super) {
     __extends(CartesianChart, _super);
     function CartesianChart(xAxis, yAxis) {
         var _this = _super.call(this) || this;
         _this.axisAutoPadding = new padding_1.Padding();
-        _this.seriesClipRect = new clipRect_1.ClipRect();
+        _this.seriesClipRect = new group_1.Group();
+        _this._layout = 'vertical';
         _this._xAxis = xAxis;
         _this._yAxis = yAxis;
         _this.scene.root.append([xAxis.group, yAxis.group, _this.seriesClipRect]);
@@ -78,8 +79,8 @@ var CartesianChart = /** @class */ (function (_super) {
         var captionAutoPadding = this.captionAutoPadding;
         shrinkRect.y += captionAutoPadding;
         shrinkRect.height -= captionAutoPadding;
-        var legendAutoPadding = this.legendAutoPadding;
-        if (this.legend.data.length) {
+        if (this.legend.enabled && this.legend.data.length) {
+            var legendAutoPadding = this.legendAutoPadding;
             shrinkRect.x += legendAutoPadding.left;
             shrinkRect.y += legendAutoPadding.top;
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
@@ -112,11 +113,11 @@ var CartesianChart = /** @class */ (function (_super) {
         shrinkRect.y += axisAutoPadding.top;
         shrinkRect.width -= axisAutoPadding.left + axisAutoPadding.right;
         shrinkRect.height -= axisAutoPadding.top + axisAutoPadding.bottom;
-        var seriesClipRect = this.seriesClipRect;
-        seriesClipRect.x = shrinkRect.x;
-        seriesClipRect.y = shrinkRect.y;
-        seriesClipRect.width = shrinkRect.width;
-        seriesClipRect.height = shrinkRect.height;
+        // const seriesClipRect = this.seriesClipRect;
+        // seriesClipRect.x = shrinkRect.x;
+        // seriesClipRect.y = shrinkRect.y;
+        // seriesClipRect.width = shrinkRect.width;
+        // seriesClipRect.height = shrinkRect.height;
         var xAxis = this.xAxis;
         var yAxis = this.yAxis;
         xAxis.scale.range = [0, shrinkRect.width];
@@ -138,10 +139,24 @@ var CartesianChart = /** @class */ (function (_super) {
         this.positionCaptions();
         this.positionLegend();
     };
+    Object.defineProperty(CartesianChart.prototype, "layout", {
+        get: function () {
+            return this._layout;
+        },
+        set: function (value) {
+            if (this._layout !== value) {
+                this._layout = value;
+                this.layoutPending = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     CartesianChart.prototype.updateAxes = function () {
         var _a, _b;
-        var xAxis = this.xAxis;
-        var yAxis = this.yAxis;
+        var isHorizontal = this.layout === 'horizontal';
+        var xAxis = isHorizontal ? this.yAxis : this.xAxis;
+        var yAxis = isHorizontal ? this.xAxis : this.yAxis;
         if (!(xAxis && yAxis)) {
             return;
         }
@@ -177,8 +192,9 @@ var CartesianChart = /** @class */ (function (_super) {
         }
         xAxis.update();
         yAxis.update();
-        var xAxisBBox = xAxis.getBBox();
-        var yAxisBBox = yAxis.getBBox();
+        // The `xAxis` and `yAxis` have `.this` prefix on purpose here.
+        var xAxisBBox = this.xAxis.getBBox();
+        var yAxisBBox = this.yAxis.getBBox();
         if (this.axisAutoPadding.left !== yAxisBBox.width) {
             this.axisAutoPadding.left = yAxisBBox.width;
             this.layoutPending = true;

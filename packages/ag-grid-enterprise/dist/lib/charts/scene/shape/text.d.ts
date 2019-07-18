@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Shape } from "./shape";
 import { BBox } from "../bbox";
 export declare class Text extends Shape {
@@ -16,7 +16,10 @@ export declare class Text extends Shape {
         strokeShadow: undefined;
     } & {
         textAlign: CanvasTextAlign;
-        font: string;
+        fontStyle: undefined;
+        fontWeight: undefined;
+        fontSize: number;
+        fontFamily: string;
         textBaseline: CanvasTextBaseline;
     };
     private _x;
@@ -28,12 +31,24 @@ export declare class Text extends Shape {
     private splitText;
     private _text;
     text: string;
-    private _font;
-    font: string;
+    private _font?;
+    readonly font: string;
+    private _dirtyFont;
+    dirtyFont: boolean;
+    private _fontStyle;
+    fontStyle: string | undefined;
+    private _fontWeight;
+    fontWeight: string | undefined;
+    private _fontSize;
+    fontSize: number;
+    private _fontFamily;
+    fontFamily: string;
     private _textAlign;
     textAlign: CanvasTextAlign;
     private _textBaseline;
     textBaseline: CanvasTextBaseline;
+    private _lineHeight;
+    lineHeight: number;
     readonly getBBox: () => BBox;
     isPointInPath(x: number, y: number): boolean;
     isPointInStroke(x: number, y: number): boolean;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,7 @@ var PropertyKeys = /** @class */ (function () {
         'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
         'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
         'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize', 'batchUpdateWaitMillis',
-        'blockLoadDebounceMillis'
+        'blockLoadDebounceMillis', 'keepDetailRowsCount'
     ];
     PropertyKeys.BOOLEAN_PROPERTIES = [
         'toolPanelSuppressRowGroups', 'toolPanelSuppressValues', 'toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
@@ -62,7 +62,8 @@ var PropertyKeys = /** @class */ (function () {
         'contractColumnSelection', 'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel', 'suppressRowHoverHighlight',
         'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste', 'serverSideSortingAlwaysResets', 'reactNext',
         'suppressSetColumnStateEvents', 'enableCharts', 'deltaColumnMode', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection',
-        'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction', 'excludeChildrenWhenTreeDataFiltering'
+        'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction', 'excludeChildrenWhenTreeDataFiltering',
+        'keepDetailRows'
     ];
     PropertyKeys.FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',

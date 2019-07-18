@@ -2,6 +2,11 @@ import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 import { BBox } from "../bbox";
 
+export enum RectSizing {
+    Content,
+    Border
+}
+
 export class Rect extends Shape {
 
     static className = 'Rect';
@@ -104,6 +109,7 @@ export class Rect extends Shape {
         return this._crisp;
     }
 
+    private effectiveStrokeWidth: number = Shape.defaultStyles.strokeWidth;
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
@@ -112,9 +118,10 @@ export class Rect extends Shape {
             // we need to update the path to make sure the new stroke aligns to
             // the pixel grid. This is the reason we override the `lineWidth` setter
             // and getter here.
-            if (this.crisp) {
+            if (this.crisp || this.sizing === RectSizing.Border) {
                 this.dirtyPath = true;
             } else {
+                this.effectiveStrokeWidth = value;
                 this.dirty = true;
             }
         }
@@ -123,32 +130,58 @@ export class Rect extends Shape {
         return this._strokeWidth;
     }
 
+    private _sizing: RectSizing = RectSizing.Content;
+    set sizing(value: RectSizing) {
+        if (this._sizing !== value) {
+            this._sizing = value;
+            this.dirtyPath = true;
+        }
+    }
+    get sizing(): RectSizing {
+        return this._sizing;
+    }
+
     updatePath() {
         if (!this.dirtyPath) {
             return;
         }
 
-        const path = this.path;
-        const radius = this.radius;
+        const borderSizing = this.sizing === RectSizing.Border;
 
+        const path = this.path;
         path.clear();
 
-        if (!radius) {
-            if (this.crisp) {
-                const alignment = Math.floor(this.strokeWidth) % 2 / 2;
-                path.rect(
-                    Math.floor(this.x) + alignment,
-                    Math.floor(this.y) + alignment,
-                    Math.floor(this.width) + Math.floor(this.x % 1 + this.width % 1),
-                    Math.floor(this.height) + Math.floor(this.y % 1 + this.height % 1)
-                );
-            } else {
-                path.rect(this.x, this.y, this.width, this.height);
-            }
+        let x = this.x;
+        let y = this.y;
+        let width = this.width;
+        let height = this.height;
+        let strokeWidth: number;
+
+        if (borderSizing) {
+            const halfWidth = width / 2;
+            const halfHeight = height / 2;
+            strokeWidth = Math.min(this.strokeWidth, halfWidth, halfHeight);
+
+            x = Math.min(x + strokeWidth / 2, x + halfWidth);
+            y = Math.min(y + strokeWidth / 2, y + halfHeight);
+            width = Math.max(width - strokeWidth, 0);
+            height = Math.max(height - strokeWidth, 0);
         } else {
-            // TODO: rect radius, this will require implementing
-            //       another `arcTo` method in the `Path2D` class.
-            throw "TODO";
+            strokeWidth = this.strokeWidth;
+        }
+
+        this.effectiveStrokeWidth = strokeWidth;
+
+        if (this.crisp && !borderSizing) {
+            const alignment = Math.floor(strokeWidth) % 2 / 2;
+            path.rect(
+                Math.floor(x) + alignment,
+                Math.floor(y) + alignment,
+                Math.floor(width) + Math.floor(x % 1 + width % 1),
+                Math.floor(height) + Math.floor(y % 1 + height % 1)
+            );
+        } else {
+            path.rect(x, y, width, height);
         }
 
         this.dirtyPath = false;
@@ -186,5 +219,60 @@ export class Rect extends Shape {
         this.fillStroke(ctx);
 
         this.dirty = false;
+    }
+
+    protected fillStroke(ctx: CanvasRenderingContext2D) {
+        if (!this.scene) {
+            return;
+        }
+
+        const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
+            ctx.globalAlpha = this.opacity * this.fillOpacity;
+
+            // The canvas context scaling (depends on the device's pixel ratio)
+            // has no effect on shadows, so we have to account for the pixel ratio
+            // manually here.
+            const fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
+            }
+            ctx.fill();
+        }
+
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+
+        if (this.stroke && this.effectiveStrokeWidth) {
+            ctx.strokeStyle = this.stroke;
+            ctx.globalAlpha = this.opacity * this.strokeOpacity;
+
+            ctx.lineWidth = this.effectiveStrokeWidth;
+            if (this.lineDash) {
+                ctx.setLineDash(this.lineDash);
+            }
+            if (this.lineDashOffset) {
+                ctx.lineDashOffset = this.lineDashOffset;
+            }
+            if (this.lineCap) {
+                ctx.lineCap = this.lineCap;
+            }
+            if (this.lineJoin) {
+                ctx.lineJoin = this.lineJoin;
+            }
+
+            const strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.stroke();
+        }
     }
 }

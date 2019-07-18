@@ -5,7 +5,6 @@ $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
-
     <h1>Grid Properties</h1>
 
     <p class="lead">
@@ -27,6 +26,12 @@ include '../documentation-main/documentation_header.php';
             <td>A <a href="../javascript-grid-column-definitions/#default-column-definitions">default column group</a>
                 definition. All column group definitions will use these properties. Items defined in the
                 actual column group definition get precedence.</td>
+        </tr>
+        <tr>
+            <th>columnTypes</th>
+            <td>An object map of <a href="../javascript-grid-column-definitions/#default-column-definitions">custom column types</a>
+                which contain groups of properties that column definitions can inherit.
+            </td>
         </tr>
         <tr>
             <th>colResizeDefault</th>
@@ -214,13 +219,6 @@ include '../documentation-main/documentation_header.php';
                 Set to true so that neither single or double click starts editing.
                 See <a href="../javascript-grid-cell-editing/#singleClickEditing">Single Click, Double Click,
                     No Click Editing</a>
-            </td>
-        </tr>
-        <tr>
-            <th>enableGroupEdit</th>
-            <td>
-                Set to true to enable <a href="../javascript-grid-cell-editing/#groupEditing">Group Editing</a>,
-                otherwise by default, row groups cannot be edited.
             </td>
         </tr>
         <tr>
@@ -495,6 +493,8 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-master-detail">Master Detail</a> for more details.
             </td>
         </tr>
+        <?php include '../javascript-grid-master-detail/masterDetailProperties.php' ?>
+        <?php printPropertiesRowsWithHelp($masterDetailProperties) ?>
 
         </table>
 <h2>Rendering & Styling</h2>
@@ -627,7 +627,7 @@ include '../documentation-main/documentation_header.php';
             <th>popupParent</th>
             <td>DOM element to use as <a href="../javascript-grid-context-menu/#popup-parent">popup parent</a> for grid popups (context menu, column menu etc).</td>
         </tr>
-        <?php include '../javascript-grid-value-cache/valueCacheProperties.php' ?>
+        <?php include '../javascript-grid-value-getters/valueCacheProperties.php' ?>
         <?php printPropertiesRows($valueCacheProperties) ?>
         <tr>
             <th>defaultExportParams</th>

@@ -1,26 +1,47 @@
 .ag-chart {
     position: relative;
     display: flex;
-    flex: 1 1 auto;
     overflow: hidden;
     width: 100%;
     height: 100%;
-    .ag-chart-canvas-wrapper {
+    .ag-chart-components-wrapper {
+        position: relative;
+        display: flex;
         flex: 1 1 auto;
+        overflow: hidden;
+        .ag-chart-canvas-wrapper {
+            position: relative;
+            flex: 1 1 auto;
+            overflow: hidden;
+            canvas {
+                display: block;
+            }
+        }
 
-        canvas {
-            display: block;
+        .ag-chart-menu {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            width: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
     }
-
-    .ag-chart-menu {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        width: 24px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
+    &:not(.ag-has-menu):hover {
+        .ag-chart-menu {
+            opacity: 1;
+            pointer-events: all;
+        }
+    }
+    .ag-chart-docked-container {
+        position: relative;
+        width: 0;
+        min-width: 0;
+        transition: min-width 0.4s;
+        .ag-panel {
+            border-width: 0 0 0 1px;
+        }
     }
 }
 
@@ -34,13 +55,17 @@
     }
     .ag-tab-header {
         flex: none;
+        user-select: none;
+        cursor: default;
     }
     .ag-tab-body {
         display: flex;
         flex: 1 1 auto;
         align-items: stretch;
         > div {
-            flex: 1 1 auto;
+            width: 100%;
+            overflow: hidden;
+            overflow-y: auto;
         }
         overflow: hidden;
     }
@@ -49,10 +74,10 @@
         overflow-x: hidden;
         .ag-chart-settings-wrapper {
             position: relative;
+            flex-direction: column;
             width: 100%;
             height: 100%;
             display: flex;
-            flex-direction: column-reverse;
             overflow: hidden;
             .ag-chart-settings-nav-bar {
                 width: 100%;
@@ -75,10 +100,6 @@
                 .ag-chart-settings-prev-btn, .ag-chart-settings-next-btn {
                     position: relative;
                     flex: none;
-                    height: 24px;
-                    width: 24px;
-                    line-height: 24px;
-                    font-size: 24px;
                     button {
                         position: absolute;
                         top: 0;
@@ -90,34 +111,68 @@
                     }
                 }
             }
-            .ag-chart-settings-mini-wrapper {
-                position: absolute;
-                top: 0;
-                left: 0;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-around;
-                width: 100%;
-                &.ag-animating, &.ag-animating {
-                    transition: left 0.3s;
-                    transition-timing-function: ease-in-out;
-                }
-                .ag-chart-mini-thumbnail {
-                    cursor: pointer;
-                    canvas {
-                        display: block;
+            .ag-chart-settings-mini-charts-container {
+                position: relative;
+                flex: 1 1 auto;
+                overflow-x: hidden;
+                overflow-y: auto;
+                .ag-chart-settings-mini-wrapper {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+                    min-height: 100%;
+                    overflow: hidden;
+                    .ag-group-component {
+                        flex: none;
+                    }
+                    .ag-group-component-container {
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        .ag-chart-mini-thumbnail {
+                            flex: none;
+                        }
+                    }
+                    &.ag-animating, &.ag-animating {
+                        transition: left 0.3s;
+                        transition-timing-function: ease-in-out;
+                    }
+                    .ag-chart-mini-thumbnail {
+                        cursor: pointer;
+                        canvas {
+                            display: block;
+                        }
                     }
                 }
             }
         }
     }
 
-    .ag-chart-data-wrapper {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
+    .ag-chart-data-wrapper, .ag-chart-format-wrapper {
+        display: flex;
+        flex-direction: column;
         position: relative;
         user-select: none;
+        > div {
+            display: flex;
+            margin: 0;
+            padding-bottom: 2px;
+            &:not(:first-child) {
+                margin-top: 0;
+            }
+        }
+    }
+
+    .ag-chart-format-wrapper {
+        overflow-x: hidden;
+        .ag-group-component {
+            .ag-group-subgroup {
+                justify-content: space-between;
+            }
+
+        }
     }
 }
 
@@ -126,7 +181,7 @@
     .ag-chart-menu {
         opacity: 0;
         pointer-events: none;
-        
+
         > span {
             opacity: 0.5;
             line-height: 24px;
@@ -140,16 +195,10 @@
             }
         }
     }
-    &:hover {
-        .ag-chart-menu:not(.ag-has-popup) {
-            opacity: 1;
-            pointer-events: all;
-            &:hover {
-                > span {
-                    opacity: 1;
-                }
-            }
-        }
+
+    .ag-chart-docked-container {
+        min-width: 0;
+        width: 0;
     }
 }
 
@@ -159,11 +208,6 @@
     }
 
     .ag-chart-settings {
-        .ag-chart-settings-mini-wrapper > div {
-            margin: 5px;
-            border-radius: 5px;
-        }
-
         .ag-chart-settings-nav-bar {
             padding: 0 10px;
             user-select: none;
@@ -173,15 +217,6 @@
                     cursor: pointer;
                 }
             }
-        }
-    }
-}
-
-/* targets IE11 only */
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    .ag-chart-tabbed-menu {
-        .ag-chart-settings-mini-wrapper {
-            justify-content: center;
         }
     }
 }

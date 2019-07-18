@@ -1,16 +1,18 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var cartesianChart_1 = require("../../charts/chart/cartesianChart");
 var polarChart_1 = require("../../charts/chart/polarChart");
 var lineSeries_1 = require("../../charts/chart/series/lineSeries");
+var scatterSeries_1 = require("../../charts/chart/series/scatterSeries");
 var barSeries_1 = require("../../charts/chart/series/barSeries");
+var areaSeries_1 = require("../../charts/chart/series/areaSeries");
 var pieSeries_1 = require("../../charts/chart/series/pieSeries");
 var dropShadow_1 = require("../../charts/scene/dropShadow");
 var categoryAxis_1 = require("../../charts/chart/axis/categoryAxis");
 var numberAxis_1 = require("../../charts/chart/axis/numberAxis");
 var padding_1 = require("../../charts/util/padding");
-var caption_1 = require("../../charts/chart/caption");
+var caption_1 = require("../../charts/caption");
 var ChartBuilder = /** @class */ (function () {
     function ChartBuilder() {
     }
@@ -19,12 +21,21 @@ var ChartBuilder = /** @class */ (function () {
         return ChartBuilder.initCartesianChart(chart, options);
     };
     ChartBuilder.createBarChart = function (options) {
+        var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.yAxis), ChartBuilder.createAxis(options.xAxis));
+        chart.layout = 'horizontal';
+        return ChartBuilder.initCartesianChart(chart, options, 'bar');
+    };
+    ChartBuilder.createColumnChart = function (options) {
         var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis));
         return ChartBuilder.initCartesianChart(chart, options, 'bar');
     };
     ChartBuilder.createLineChart = function (options) {
         var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis));
         return ChartBuilder.initCartesianChart(chart, options, 'line');
+    };
+    ChartBuilder.createScatterChart = function (options) {
+        var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis));
+        return ChartBuilder.initCartesianChart(chart, options, 'scatter');
     };
     ChartBuilder.createPolarChart = function (options) {
         var chart = new polarChart_1.PolarChart();
@@ -38,15 +49,26 @@ var ChartBuilder = /** @class */ (function () {
         var chart = new polarChart_1.PolarChart();
         return ChartBuilder.initPolarChart(chart, options, 'pie');
     };
+    ChartBuilder.createAreaChart = function (options) {
+        var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis));
+        return ChartBuilder.initCartesianChart(chart, options, 'area');
+    };
     ChartBuilder.createLineSeries = function (options) {
         return new lineSeries_1.LineSeries();
+    };
+    ChartBuilder.createScatterSeries = function (options) {
+        return new scatterSeries_1.ScatterSeries();
     };
     ChartBuilder.createSeries = function (options, type) {
         switch (type || options && options.type) {
             case 'line':
                 return ChartBuilder.initLineSeries(new lineSeries_1.LineSeries(), options);
+            case 'scatter':
+                return ChartBuilder.initScatterSeries(new scatterSeries_1.ScatterSeries(), options);
             case 'bar':
                 return ChartBuilder.initBarSeries(new barSeries_1.BarSeries(), options);
+            case 'area':
+                return ChartBuilder.initAreaSeries(new areaSeries_1.AreaSeries(), options);
             case 'pie':
                 return ChartBuilder.initPieSeries(new pieSeries_1.PieSeries(), options);
             default:
@@ -82,6 +104,14 @@ var ChartBuilder = /** @class */ (function () {
         }
         if (options.padding !== undefined) {
             chart.padding = new padding_1.Padding(options.padding.top, options.padding.right, options.padding.bottom, options.padding.left);
+        }
+        if (options.background !== undefined) {
+            if (options.background.fill !== undefined) {
+                chart.background.fill = options.background.fill;
+            }
+            if (options.background.visible !== undefined) {
+                chart.background.visible = options.background.visible;
+            }
         }
         if (options.legendPosition !== undefined) {
             chart.legendPosition = options.legendPosition;
@@ -157,6 +187,34 @@ var ChartBuilder = /** @class */ (function () {
         }
         return series;
     };
+    ChartBuilder.initScatterSeries = function (series, options) {
+        ChartBuilder.initSeries(series, options);
+        if (options.title !== undefined) {
+            series.title = options.title;
+        }
+        if (options.xField !== undefined) {
+            series.xField = options.xField;
+        }
+        if (options.yField !== undefined) {
+            series.yField = options.yField;
+        }
+        if (options.fill !== undefined) {
+            series.fill = options.fill;
+        }
+        if (options.stroke !== undefined) {
+            series.stroke = options.stroke;
+        }
+        if (options.markerSize !== undefined) {
+            series.markerSize = options.markerSize;
+        }
+        if (options.markerStrokeWidth !== undefined) {
+            series.markerStrokeWidth = options.markerStrokeWidth;
+        }
+        if (options.tooltipRenderer !== undefined) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
+        return series;
+    };
     ChartBuilder.initBarSeries = function (series, options) {
         ChartBuilder.initSeries(series, options);
         if (options.xField !== undefined) {
@@ -171,11 +229,20 @@ var ChartBuilder = /** @class */ (function () {
         if (options.grouped !== undefined) {
             series.grouped = options.grouped;
         }
+        if (options.normalizedTo !== undefined) {
+            series.normalizedTo = options.normalizedTo;
+        }
         if (options.fills !== undefined) {
             series.fills = options.fills;
         }
         if (options.strokes !== undefined) {
             series.strokes = options.strokes;
+        }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
@@ -183,11 +250,66 @@ var ChartBuilder = /** @class */ (function () {
         if (options.labelEnabled !== undefined) {
             series.labelEnabled = options.labelEnabled;
         }
-        if (options.labelFont !== undefined) {
-            series.labelFont = options.labelFont;
+        if (options.labelFontStyle !== undefined) {
+            series.labelFontStyle = options.labelFontStyle;
         }
-        if (options.labelPadding !== undefined) {
-            series.labelPadding = options.labelPadding;
+        if (options.labelFontWeight !== undefined) {
+            series.labelFontWeight = options.labelFontWeight;
+        }
+        if (options.labelFontSize !== undefined) {
+            series.labelFontSize = options.labelFontSize;
+        }
+        if (options.labelFontFamily !== undefined) {
+            series.labelFontFamily = options.labelFontFamily;
+        }
+        if (options.labelFormatter !== undefined) {
+            series.labelFormatter = options.labelFormatter;
+        }
+        if (options.tooltipRenderer !== undefined) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
+        if (options.shadow !== undefined) {
+            series.shadow = ChartBuilder.createDropShadow(options.shadow);
+        }
+        return series;
+    };
+    ChartBuilder.initAreaSeries = function (series, options) {
+        ChartBuilder.initSeries(series, options);
+        if (options.xField !== undefined) {
+            series.xField = options.xField;
+        }
+        if (options.yFields !== undefined) {
+            series.yFields = options.yFields;
+        }
+        if (options.yFieldNames !== undefined) {
+            series.yFieldNames = options.yFieldNames;
+        }
+        if (options.normalizedTo !== undefined) {
+            series.normalizedTo = options.normalizedTo;
+        }
+        if (options.fills !== undefined) {
+            series.fills = options.fills;
+        }
+        if (options.strokes !== undefined) {
+            series.strokes = options.strokes;
+        }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
+        }
+        if (options.strokeWidth !== undefined) {
+            series.strokeWidth = options.strokeWidth;
+        }
+        if (options.marker !== undefined) {
+            series.marker = options.marker;
+        }
+        if (options.markerSize !== undefined) {
+            series.markerSize = options.markerSize;
+        }
+        if (options.markerStrokeWidth !== undefined) {
+            series.markerStrokeWidth = options.markerStrokeWidth;
         }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
@@ -214,11 +336,17 @@ var ChartBuilder = /** @class */ (function () {
         if (options.calloutLength !== undefined) {
             series.calloutLength = options.calloutLength;
         }
-        if (options.calloutPadding !== undefined) {
-            series.calloutPadding = options.calloutPadding;
+        if (options.labelFontStyle !== undefined) {
+            series.labelFontStyle = options.labelFontStyle;
         }
-        if (options.labelFont !== undefined) {
-            series.labelFont = options.labelFont;
+        if (options.labelFontWeight !== undefined) {
+            series.labelFontWeight = options.labelFontWeight;
+        }
+        if (options.labelFontSize !== undefined) {
+            series.labelFontSize = options.labelFontSize;
+        }
+        if (options.labelFontFamily !== undefined) {
+            series.labelFontFamily = options.labelFontFamily;
         }
         if (options.labelColor !== undefined) {
             series.labelColor = options.labelColor;
@@ -244,6 +372,12 @@ var ChartBuilder = /** @class */ (function () {
         if (options.strokes !== undefined) {
             series.strokes = options.strokes;
         }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
+        }
         if (options.rotation !== undefined) {
             series.rotation = options.rotation;
         }
@@ -265,6 +399,9 @@ var ChartBuilder = /** @class */ (function () {
         return series;
     };
     ChartBuilder.initLegend = function (legend, options) {
+        if (options.enabled !== undefined) {
+            legend.enabled = options.enabled;
+        }
         if (options.markerStrokeWidth !== undefined) {
             legend.markerStrokeWidth = options.markerStrokeWidth;
         }
@@ -280,8 +417,17 @@ var ChartBuilder = /** @class */ (function () {
         if (options.itemPaddingY !== undefined) {
             legend.itemPaddingY = options.itemPaddingY;
         }
-        if (options.labelFont !== undefined) {
-            legend.labelFont = options.labelFont;
+        if (options.labelFontStyle !== undefined) {
+            legend.labelFontStyle = options.labelFontStyle;
+        }
+        if (options.labelFontWeight !== undefined) {
+            legend.labelFontWeight = options.labelFontWeight;
+        }
+        if (options.labelFontSize !== undefined) {
+            legend.labelFontSize = options.labelFontSize;
+        }
+        if (options.labelFontFamily !== undefined) {
+            legend.labelFontFamily = options.labelFontFamily;
         }
         if (options.labelColor !== undefined) {
             legend.labelColor = options.labelColor;
@@ -289,28 +435,46 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createTitle = function (options) {
         options = Object.create(options);
-        if (!options.text) {
+        if (options.text === undefined) {
             options.text = 'Title';
         }
-        if (!options.font) {
-            options.font = 'bold 16px Verdana, sans-serif';
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 16;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     };
     ChartBuilder.createSubtitle = function (options) {
         options = Object.create(options);
-        if (!options.text) {
+        if (options.text === undefined) {
             options.text = 'Subtitle';
         }
-        if (!options.font) {
-            options.font = '12px Verdana, sans-serif';
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 12;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     };
     ChartBuilder.createPieTitle = function (options) {
         options = Object.create(options);
-        if (!options.font) {
-            options.font = 'bold 12px Verdana, sans-serif';
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 12;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     };
@@ -319,8 +483,17 @@ var ChartBuilder = /** @class */ (function () {
         if (options.text !== undefined) {
             caption.text = options.text;
         }
-        if (options.font !== undefined) {
-            caption.font = options.font;
+        if (options.fontStyle !== undefined) {
+            caption.fontStyle = options.fontStyle;
+        }
+        if (options.fontWeight !== undefined) {
+            caption.fontWeight = options.fontWeight;
+        }
+        if (options.fontSize !== undefined) {
+            caption.fontSize = options.fontSize;
+        }
+        if (options.fontFamily !== undefined) {
+            caption.fontFamily = options.fontFamily;
         }
         if (options.color !== undefined) {
             caption.color = options.color;

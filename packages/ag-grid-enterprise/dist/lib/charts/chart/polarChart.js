@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -70,8 +70,8 @@ var PolarChart = /** @class */ (function (_super) {
         var captionAutoPadding = this.captionAutoPadding;
         shrinkRect.y += captionAutoPadding;
         shrinkRect.height -= captionAutoPadding;
-        var legendAutoPadding = this.legendAutoPadding;
-        if (this.legend.data.length) {
+        if (this.legend.enabled && this.legend.data.length) {
+            var legendAutoPadding = this.legendAutoPadding;
             shrinkRect.x += legendAutoPadding.left;
             shrinkRect.y += legendAutoPadding.top;
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;

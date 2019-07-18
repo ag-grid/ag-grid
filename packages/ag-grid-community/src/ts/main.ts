@@ -196,10 +196,21 @@ export { IGetRowsParams, IDatasource } from "./rowModels/iDatasource";
 export { StylingService } from "./styling/stylingService";
 
 // widgets
+export { AgAbstractField } from "./widgets/agAbstractField";
 export { AgCheckbox } from "./widgets/agCheckbox";
 export { AgRadioButton } from "./widgets/agRadioButton";
+export { AgToggleButton } from "./widgets/agToggleButton";
+export { AgInputTextField } from "./widgets/agInputTextField";
+export { AgInputTextArea } from "./widgets/agInputTextArea";
+export { AgInputNumberField } from "./widgets/agInputNumberField";
+export { AgInputRange } from "./widgets/agInputRange";
+export { AgSelect } from "./widgets/agSelect";
+export { AgSlider } from "./widgets/agSlider";
+export { AgAngleSelect } from "./widgets/agAngleSelect";
+export { AgColorPicker } from "./widgets/agColorPicker";
 export { AgGroupComponent } from "./widgets/agGroupComponent";
-export { Dialog } from "./widgets/dialog";
+export { AgDialog } from "./widgets/agDialog";
+export { AgPanel } from "./widgets/agPanel";
 export { MessageBox } from "./widgets/messageBox";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { PopupComponent } from "./widgets/popupComponent";
@@ -239,7 +250,7 @@ export { Logger } from "./logger";
 export { SelectionController } from "./selectionController";
 export { SortController } from "./sortController";
 export { TemplateService } from "./templateService";
-export { Utils, NumberSequence, _, Promise, ExternalPromise } from "./utils";
+export { Color, Utils, NumberSequence, _, Promise, ExternalPromise } from "./utils";
 export { ValueService } from "./valueService/valueService";
 export { ExpressionService } from "./valueService/expressionService";
 export { LoggerFactory } from "./logger";
@@ -320,17 +331,21 @@ export { TooltipManager } from "./widgets/tooltipManager";
 export {
     ChartOptions,
     ChartType,
-    ChartToolbarOptions,
+    ChartMenuOptions,
     BarChartOptions,
+    AreaChartOptions,
     LineChartOptions,
+    ScatterChartOptions,
     PieChartOptions,
     DoughnutChartOptions,
     CaptionOptions,
     AxisOptions,
     BarSeriesOptions,
+    AreaSeriesOptions,
     CartesianChartOptions,
     DropShadowOptions,
     LineSeriesOptions,
+    ScatterSeriesOptions,
     PieSeriesOptions,
     PolarChartOptions,
     LegendOptions,

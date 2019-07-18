@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { CellPosition, Column, GridOptionsWrapper, GridPanel, IRangeController, CellRangeParams, CellRange, RowPosition } from "ag-grid-community";
 export declare class RangeController implements IRangeController {
     private loggerFactory;
@@ -23,6 +23,7 @@ export declare class RangeController implements IRangeController {
     autoScrollService: AutoScrollService;
     registerGridComp(gridPanel: GridPanel): void;
     private init;
+    onColumnVisibleChange(): void;
     refreshLastRangeStart(): void;
     isContiguousRange(cellRange: CellRange): boolean;
     getRangeStartRow(cellRange: CellRange): RowPosition;

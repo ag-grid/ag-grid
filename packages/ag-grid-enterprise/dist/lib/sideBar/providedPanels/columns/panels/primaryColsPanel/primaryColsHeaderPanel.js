@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -40,10 +40,11 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     }
     PrimaryColsHeaderPanel.prototype.preConstruct = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.setTemplate("<div class=\"ag-primary-cols-header-panel\">\n            <div ref=\"eExpand\">\n                <span class=\"ag-icon ag-icon-tree-open\" ref=\"eExpandChecked\"></span>\n                <span class=\"ag-icon ag-icon-tree-closed\" ref=\"eExpandUnchecked\"></span>\n                <span class=\"ag-icon ag-icon ag-icon-tree-indeterminate\" ref=\"eExpandIndeterminate\"></span>\n            </div>\n            <div ref=\"eSelect\"></div>\n            <div class=\"ag-input-text-wrapper ag-primary-cols-filter-wrapper\" ref=\"eFilterWrapper\">\n                <input class=\"ag-primary-cols-filter\" ref=\"eFilterTextField\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\">        \n            </div>\n        </div>");
+        this.setTemplate("<div class=\"ag-primary-cols-header-panel\">\n            <div ref=\"eExpand\"></div>\n            <div ref=\"eSelect\"></div>\n            <div class=\"ag-input-wrapper ag-primary-cols-filter-wrapper\" ref=\"eFilterWrapper\">\n                <input class=\"ag-primary-cols-filter\" ref=\"eFilterTextField\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\">        \n            </div>\n        </div>");
     };
     PrimaryColsHeaderPanel.prototype.postConstruct = function () {
         this.addEventListeners();
+        this.createExpandIcons();
         this.createCheckIcons();
         this.setExpandState(SELECTED_STATE.CHECKED);
         this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
@@ -57,13 +58,15 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
             this.showOrHideOptions();
         }
     };
+    PrimaryColsHeaderPanel.prototype.createExpandIcons = function () {
+        this.eExpand.appendChild(this.eExpandChecked = main_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandUnchecked = main_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandIndeterminate = main_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
+    };
     PrimaryColsHeaderPanel.prototype.createCheckIcons = function () {
-        var eSelectChecked = this.eSelectChecked = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
-        var eSelectUnchecked = this.eSelectUnchecked = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
-        var eSelectIndeterminate = this.eSelectIndeterminate = main_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
-        this.eSelect.appendChild(eSelectChecked);
-        this.eSelect.appendChild(eSelectUnchecked);
-        this.eSelect.appendChild(eSelectIndeterminate);
+        this.eSelect.appendChild(this.eSelectChecked = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectUnchecked = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectIndeterminate = main_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper));
     };
     // we only show expand / collapse if we are showing columns
     PrimaryColsHeaderPanel.prototype.showOrHideOptions = function () {
@@ -194,18 +197,6 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         main_1.RefSelector('eFilterTextField'),
         __metadata("design:type", HTMLInputElement)
     ], PrimaryColsHeaderPanel.prototype, "eFilterTextField", void 0);
-    __decorate([
-        main_1.RefSelector('eExpandChecked'),
-        __metadata("design:type", HTMLElement)
-    ], PrimaryColsHeaderPanel.prototype, "eExpandChecked", void 0);
-    __decorate([
-        main_1.RefSelector('eExpandUnchecked'),
-        __metadata("design:type", HTMLElement)
-    ], PrimaryColsHeaderPanel.prototype, "eExpandUnchecked", void 0);
-    __decorate([
-        main_1.RefSelector('eExpandIndeterminate'),
-        __metadata("design:type", HTMLElement)
-    ], PrimaryColsHeaderPanel.prototype, "eExpandIndeterminate", void 0);
     __decorate([
         main_1.RefSelector('eExpand'),
         __metadata("design:type", HTMLElement)

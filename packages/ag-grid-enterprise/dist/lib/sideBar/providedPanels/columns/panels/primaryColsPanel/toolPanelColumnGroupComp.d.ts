@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Component, OriginalColumnGroup } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
@@ -8,11 +8,11 @@ export declare class ToolPanelColumnGroupComp extends Component implements BaseC
     private dragAndDropService;
     private eventService;
     private cbSelect;
-    private eDragHandle;
     private eLabel;
     private eGroupOpenedIcon;
     private eGroupClosedIcon;
     private eColumnGroupIcons;
+    private eDragHandle;
     private columnGroup;
     private expanded;
     private columnDept;

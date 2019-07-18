@@ -53,6 +53,14 @@ include '../documentation-main/documentation_header.php';
             <a href="../javascript-grid-status-bar-component/">Status Bar Component</a>:
             For custom status bar components.
         </li>
+        <li>
+            <a href="../javascript-grid-tool-panel-component/">Tool Panel Component</a>:
+            For custom tool panel components.
+        </li>
+        <li>
+            <a href="../javascript-grid-status-bar-component/">Tooltip Component</a>:
+            For custom cell tooltip components.
+        </li>
     </ul>
     The remainder of this page gives information that is common across all the component types.
 </p>

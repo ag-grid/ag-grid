@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Component, IComponent, ISideBar } from "ag-grid-community";
 export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void;

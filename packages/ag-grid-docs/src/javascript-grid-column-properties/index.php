@@ -143,7 +143,15 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowDrag</th>
-            <td>Boolean or Function. Set to true (or return true from function) to render a row drag area in the column.</td>
+            <td>Boolean or Function. Set to true (or return true from function) to allow row dragging.</td>
+        </tr>
+        <tr>
+            <th>dndSource</th>
+            <td>Boolean or Function. Set to true (or return true from function) to allow dragging for native drag and drop.</td>
+        </tr>
+        <tr>
+            <th>dndSourceOnRowDrag</th>
+            <td>Function to allow customer drag functionality for native drag and drop.</td>
         </tr>
         <tr>
             <th>cellClass</th>
@@ -202,11 +210,20 @@ include '../documentation-main/documentation_header.php';
         </tr>
 
 
-        <?php include '../javascript-grid-value-getters/gettersAndFormattersProperties.php' ?>
-        <?php printPropertiesRows($gettersAndFormattersProperties) ?>
+        <?php include '../javascript-grid-value-getters/valueGetterProperties.php' ?>
+        <?php printPropertiesRows($valueGetterProperties) ?>
 
-        <?php include '../javascript-grid-value-setters/settersAndParsersProperties.php' ?>
-        <?php printPropertiesRows($settersAndParsersProperties) ?>
+        <?php include '../javascript-grid-value-formatters/valueFormatterProperties.php' ?>
+        <?php printPropertiesRows($valueFormatterProperties) ?>
+
+        <tr>
+            <th>valueSetter(params)</th>
+            <td>Function or expression. Sets the value into your data for saving. Return true if the data changed.</td>
+        </tr>
+        <tr>
+            <th>valueParser(params)</th>
+            <td>Function or expression. Parses the value for saving.</td>
+        </tr>
 
         <tr>
             <th>keyCreator(params)</th>
@@ -360,10 +377,6 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>openByDefault</th>
             <td>Set to 'true' if this group should be opened by default.</td>
-        </tr>
-        <tr>
-            <th>headerGroupTooltip</th>
-            <td>Tooltip for the column group header</td>
         </tr>
         <tr>
             <th>headerGroupComponent<br/>headerGroupComponentFramework</th>

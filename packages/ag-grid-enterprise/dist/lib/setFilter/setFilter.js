@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -36,14 +36,14 @@ var CheckboxState;
 var SetFilter = /** @class */ (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
-        return _super.call(this) || this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     // unlike the simple filter's, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
     SetFilter.prototype.updateUiVisibility = function () { };
     SetFilter.prototype.createBodyTemplate = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div ref=\"ag-filter-loading\" class=\"loading-filter ag-hidden\">" + translate('loadingOoo', 'Loading...') + "</div>\n                <div>\n                    <div class=\"ag-input-text-wrapper ag-filter-header-container\" id=\"ag-mini-filter\">\n                        <input class=\"ag-filter-filter\" type=\"text\" placeholder=\"" + translate('searchOoo', 'Search...') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-header-container\">\n                        <label id=\"selectAllContainer\" class=\"ag-set-filter-item\">\n                            <div id=\"selectAll\" class=\"ag-filter-checkbox\"></div><span class=\"ag-filter-value\">(" + translate('selectAll', 'Select All') + ")</span>\n                        </label>\n                    </div>\n                    <div id=\"richList\" class=\"ag-set-filter-list\"></div>\n                </div>";
+        return "<div ref=\"ag-filter-loading\" class=\"loading-filter ag-hidden\">" + translate('loadingOoo', 'Loading...') + "</div>\n                <div>\n                    <div class=\"ag-input-wrapper ag-filter-header-container\" id=\"ag-mini-filter\">\n                        <input class=\"ag-filter-filter\" type=\"text\" placeholder=\"" + translate('searchOoo', 'Search...') + "\"/>\n                    </div>\n                    <div class=\"ag-filter-header-container\">\n                        <label id=\"selectAllContainer\" class=\"ag-set-filter-item\">\n                            <div id=\"selectAll\" class=\"ag-filter-checkbox\"></div><span class=\"ag-filter-value\">(" + translate('selectAll', 'Select All') + ")</span>\n                        </label>\n                    </div>\n                    <div id=\"richList\" class=\"ag-set-filter-list\"></div>\n                </div>";
     };
     SetFilter.prototype.resetUiToDefaults = function () {
         this.setMiniFilter(null);
@@ -245,6 +245,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.updateSelectAll();
     };
     SetFilter.prototype.onSelectAll = function (event) {
+        event.preventDefault();
         ag_grid_community_1._.addAgGridEventPath(event);
         if (this.selectAllState === CheckboxState.CHECKED) {
             this.selectAllState = CheckboxState.UNCHECKED;

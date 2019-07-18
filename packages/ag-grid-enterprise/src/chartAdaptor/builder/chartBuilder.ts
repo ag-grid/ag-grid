@@ -1,16 +1,20 @@
 import {
     AxisOptions,
     BarSeriesOptions,
+    AreaSeriesOptions,
     CartesianChartOptions,
     DropShadowOptions,
     LineSeriesOptions,
+    ScatterSeriesOptions,
     PieSeriesOptions,
     DoughnutChartOptions,
     ChartOptions,
     BarChartOptions,
+    AreaChartOptions,
     LegendOptions,
     PolarChartOptions,
     LineChartOptions,
+    ScatterChartOptions,
     PieChartOptions,
     SeriesOptions,
     CaptionOptions,
@@ -19,7 +23,9 @@ import {
 import { CartesianChart } from "../../charts/chart/cartesianChart";
 import { PolarChart } from "../../charts/chart/polarChart";
 import { LineSeries } from "../../charts/chart/series/lineSeries";
+import { ScatterSeries } from "../../charts/chart/series/scatterSeries";
 import { BarSeries } from "../../charts/chart/series/barSeries";
+import { AreaSeries } from "../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../charts/chart/series/pieSeries";
 import { Chart } from "../../charts/chart/chart";
 import { Series } from "../../charts/chart/series/series";
@@ -28,9 +34,9 @@ import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
 import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
-import { Caption } from "../../charts/chart/caption";
+import { Caption } from "../../charts/caption";
 
-type CartesianSeriesType = 'line' | 'bar';
+type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
 type PolarSeriesType = 'pie';
 type SeriesType = CartesianSeriesType | PolarSeriesType;
 
@@ -46,6 +52,15 @@ export class ChartBuilder {
 
     static createBarChart(options: BarChartOptions): CartesianChart {
         const chart = new CartesianChart(
+            ChartBuilder.createAxis(options.yAxis),
+            ChartBuilder.createAxis(options.xAxis)
+        );
+        chart.layout = 'horizontal';
+        return ChartBuilder.initCartesianChart(chart, options, 'bar');
+    }
+
+    static createColumnChart(options: BarChartOptions): CartesianChart {
+        const chart = new CartesianChart(
             ChartBuilder.createAxis(options.xAxis),
             ChartBuilder.createAxis(options.yAxis)
         );
@@ -58,6 +73,14 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis)
         );
         return ChartBuilder.initCartesianChart(chart, options, 'line');
+    }
+
+    static createScatterChart(options: ScatterChartOptions): CartesianChart {
+        const chart = new CartesianChart(
+            ChartBuilder.createAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+        return ChartBuilder.initCartesianChart(chart, options, 'scatter');
     }
 
     static createPolarChart(options: PolarChartOptions): PolarChart {
@@ -75,16 +98,32 @@ export class ChartBuilder {
         return ChartBuilder.initPolarChart(chart, options, 'pie');
     }
 
+    static createAreaChart(options: AreaChartOptions): CartesianChart {
+        const chart = new CartesianChart(
+            ChartBuilder.createAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+        return ChartBuilder.initCartesianChart(chart, options, 'area');
+    }
+
     static createLineSeries(options: LineSeriesOptions): LineSeries {
         return new LineSeries();
+    }
+
+    static createScatterSeries(options: ScatterSeriesOptions): ScatterSeries {
+        return new ScatterSeries();
     }
 
     static createSeries(options: any, type?: string) {
         switch (type || options && options.type) {
             case 'line':
                 return ChartBuilder.initLineSeries(new LineSeries(), options);
+            case 'scatter':
+                return ChartBuilder.initScatterSeries(new ScatterSeries(), options);
             case 'bar':
                 return ChartBuilder.initBarSeries(new BarSeries(), options);
+            case 'area':
+                return ChartBuilder.initAreaSeries(new AreaSeries(), options);
             case 'pie':
                 return ChartBuilder.initPieSeries(new PieSeries(), options);
             default:
@@ -126,6 +165,14 @@ export class ChartBuilder {
                 options.padding.bottom,
                 options.padding.left
             );
+        }
+        if (options.background !== undefined) {
+            if (options.background.fill !== undefined) {
+                chart.background.fill = options.background.fill;
+            }
+            if (options.background.visible !== undefined) {
+                chart.background.visible = options.background.visible;
+            }
         }
         if (options.legendPosition !== undefined) {
             chart.legendPosition = options.legendPosition;
@@ -210,6 +257,37 @@ export class ChartBuilder {
         return series;
     }
 
+    static initScatterSeries(series: ScatterSeries, options: ScatterSeriesOptions) {
+        ChartBuilder.initSeries(series, options);
+
+        if (options.title !== undefined) {
+            series.title = options.title;
+        }
+        if (options.xField !== undefined) {
+            series.xField = options.xField;
+        }
+        if (options.yField !== undefined) {
+            series.yField = options.yField;
+        }
+        if (options.fill !== undefined) {
+            series.fill = options.fill;
+        }
+        if (options.stroke !== undefined) {
+            series.stroke = options.stroke;
+        }
+        if (options.markerSize !== undefined) {
+            series.markerSize = options.markerSize;
+        }
+        if (options.markerStrokeWidth !== undefined) {
+            series.markerStrokeWidth = options.markerStrokeWidth;
+        }
+        if (options.tooltipRenderer !== undefined) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
+
+        return series;
+    }
+
     static initBarSeries(series: BarSeries, options: BarSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
@@ -225,11 +303,20 @@ export class ChartBuilder {
         if (options.grouped !== undefined) {
             series.grouped = options.grouped;
         }
+        if (options.normalizedTo !== undefined) {
+            series.normalizedTo = options.normalizedTo;
+        }
         if (options.fills !== undefined) {
             series.fills = options.fills;
         }
         if (options.strokes !== undefined) {
             series.strokes = options.strokes;
+        }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
@@ -237,11 +324,69 @@ export class ChartBuilder {
         if (options.labelEnabled !== undefined) {
             series.labelEnabled = options.labelEnabled;
         }
-        if (options.labelFont !== undefined) {
-            series.labelFont = options.labelFont;
+        if (options.labelFontStyle !== undefined) {
+            series.labelFontStyle = options.labelFontStyle;
         }
-        if (options.labelPadding !== undefined) {
-            series.labelPadding = options.labelPadding;
+        if (options.labelFontWeight !== undefined) {
+            series.labelFontWeight = options.labelFontWeight;
+        }
+        if (options.labelFontSize !== undefined) {
+            series.labelFontSize = options.labelFontSize;
+        }
+        if (options.labelFontFamily !== undefined) {
+            series.labelFontFamily = options.labelFontFamily;
+        }
+        if (options.labelFormatter !== undefined) {
+            series.labelFormatter = options.labelFormatter;
+        }
+        if (options.tooltipRenderer !== undefined) {
+            series.tooltipRenderer = options.tooltipRenderer;
+        }
+        if (options.shadow !== undefined) {
+            series.shadow = ChartBuilder.createDropShadow(options.shadow);
+        }
+
+        return series;
+    }
+
+    static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions) {
+        ChartBuilder.initSeries(series, options);
+
+        if (options.xField !== undefined) {
+            series.xField = options.xField;
+        }
+        if (options.yFields !== undefined) {
+            series.yFields = options.yFields;
+        }
+        if (options.yFieldNames !== undefined) {
+            series.yFieldNames = options.yFieldNames;
+        }
+        if (options.normalizedTo !== undefined) {
+            series.normalizedTo = options.normalizedTo;
+        }
+        if (options.fills !== undefined) {
+            series.fills = options.fills;
+        }
+        if (options.strokes !== undefined) {
+            series.strokes = options.strokes;
+        }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
+        }
+        if (options.strokeWidth !== undefined) {
+            series.strokeWidth = options.strokeWidth;
+        }
+        if (options.marker !== undefined) {
+            series.marker = options.marker;
+        }
+        if (options.markerSize !== undefined) {
+            series.markerSize = options.markerSize;
+        }
+        if (options.markerStrokeWidth !== undefined) {
+            series.markerStrokeWidth = options.markerStrokeWidth;
         }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
@@ -271,11 +416,17 @@ export class ChartBuilder {
         if (options.calloutLength !== undefined) {
             series.calloutLength = options.calloutLength;
         }
-        if (options.calloutPadding !== undefined) {
-            series.calloutPadding = options.calloutPadding;
+        if (options.labelFontStyle !== undefined) {
+            series.labelFontStyle = options.labelFontStyle;
         }
-        if (options.labelFont !== undefined) {
-            series.labelFont = options.labelFont;
+        if (options.labelFontWeight !== undefined) {
+            series.labelFontWeight = options.labelFontWeight;
+        }
+        if (options.labelFontSize !== undefined) {
+            series.labelFontSize = options.labelFontSize;
+        }
+        if (options.labelFontFamily !== undefined) {
+            series.labelFontFamily = options.labelFontFamily;
         }
         if (options.labelColor !== undefined) {
             series.labelColor = options.labelColor;
@@ -301,6 +452,12 @@ export class ChartBuilder {
         if (options.strokes !== undefined) {
             series.strokes = options.strokes;
         }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
+        }
         if (options.rotation !== undefined) {
             series.rotation = options.rotation;
         }
@@ -324,6 +481,9 @@ export class ChartBuilder {
     }
 
     static initLegend(legend: Legend, options: LegendOptions) {
+        if (options.enabled !== undefined) {
+            legend.enabled = options.enabled;
+        }
         if (options.markerStrokeWidth !== undefined) {
             legend.markerStrokeWidth = options.markerStrokeWidth;
         }
@@ -339,8 +499,17 @@ export class ChartBuilder {
         if (options.itemPaddingY !== undefined) {
             legend.itemPaddingY = options.itemPaddingY;
         }
-        if (options.labelFont !== undefined) {
-            legend.labelFont = options.labelFont;
+        if (options.labelFontStyle !== undefined) {
+            legend.labelFontStyle = options.labelFontStyle;
+        }
+        if (options.labelFontWeight !== undefined) {
+            legend.labelFontWeight = options.labelFontWeight;
+        }
+        if (options.labelFontSize !== undefined) {
+            legend.labelFontSize = options.labelFontSize;
+        }
+        if (options.labelFontFamily !== undefined) {
+            legend.labelFontFamily = options.labelFontFamily;
         }
         if (options.labelColor !== undefined) {
             legend.labelColor = options.labelColor;
@@ -350,11 +519,17 @@ export class ChartBuilder {
     static createTitle(options: CaptionOptions) {
         options = Object.create(options);
 
-        if (!options.text) {
+        if (options.text === undefined) {
             options.text = 'Title';
         }
-        if (!options.font) {
-            options.font = 'bold 16px Verdana, sans-serif';
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 16;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     }
@@ -362,11 +537,17 @@ export class ChartBuilder {
     static createSubtitle(options: CaptionOptions) {
         options = Object.create(options);
 
-        if (!options.text) {
+        if (options.text === undefined) {
             options.text = 'Subtitle';
         }
-        if (!options.font) {
-            options.font = '12px Verdana, sans-serif';
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 12;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     }
@@ -374,8 +555,14 @@ export class ChartBuilder {
     static createPieTitle(options: CaptionOptions) {
         options = Object.create(options);
 
-        if (!options.font) {
-            options.font = 'bold 12px Verdana, sans-serif';
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 12;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
         }
         return ChartBuilder.createCaption(options);
     }
@@ -386,8 +573,17 @@ export class ChartBuilder {
         if (options.text !== undefined) {
             caption.text = options.text;
         }
-        if (options.font !== undefined) {
-            caption.font = options.font;
+        if (options.fontStyle !== undefined) {
+            caption.fontStyle = options.fontStyle;
+        }
+        if (options.fontWeight !== undefined) {
+            caption.fontWeight = options.fontWeight;
+        }
+        if (options.fontSize !== undefined) {
+            caption.fontSize = options.fontSize;
+        }
+        if (options.fontFamily !== undefined) {
+            caption.fontFamily = options.fontFamily;
         }
         if (options.color !== undefined) {
             caption.color = options.color;
@@ -407,7 +603,7 @@ export class ChartBuilder {
         );
     }
 
-    static createAxis(options: AxisOptions) {
+    static createAxis(options: AxisOptions): CategoryAxis | NumberAxis {
         let axis: CategoryAxis | NumberAxis | undefined = undefined;
 
         switch (options.type) {

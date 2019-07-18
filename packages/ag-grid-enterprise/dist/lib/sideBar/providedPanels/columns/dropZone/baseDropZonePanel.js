@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -335,11 +335,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
             var enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-            var spanClass = enableRtl ? 'ag-left-arrow' : 'ag-right-arrow';
-            var eArrow = document.createElement('span');
-            main_1._.addCssClass(eArrow, spanClass);
-            main_1._.addCssClass(eArrow, 'ag-icon');
-            eParent.appendChild(eArrow);
+            eParent.appendChild(main_1._.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper));
         }
     };
     BaseDropZonePanel.STATE_NOT_DRAGGING = 'notDragging';

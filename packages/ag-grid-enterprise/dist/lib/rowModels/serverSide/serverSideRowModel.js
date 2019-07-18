@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -440,6 +440,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.forEachNode(function (rowNode) {
             if (rowNode.id === id) {
                 result = rowNode;
+            }
+            if (rowNode.detailNode && rowNode.detailNode.id === id) {
+                result = rowNode.detailNode;
             }
         });
         return result;

@@ -5,7 +5,7 @@ $pageKeyboards = "ag-Grid Grid Grouping";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-    <h1>Row Grouping</h1>
+    <h1 class="heading-enterprise">Row Grouping</h1>
 
     <p class="lead">
         This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row

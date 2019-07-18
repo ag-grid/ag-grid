@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Component } from "ag-grid-community/main";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export declare enum SELECTED_STATE {
@@ -27,6 +27,7 @@ export declare class PrimaryColsHeaderPanel extends Component {
     private preConstruct;
     postConstruct(): void;
     init(params: ToolPanelColumnCompParams): void;
+    private createExpandIcons;
     private createCheckIcons;
     private showOrHideOptions;
     private addEventListeners;

@@ -10,8 +10,9 @@ include '../documentation-main/documentation_header.php';
 
     <h1>Expressions and Context</h1>
 
-    <p>
-        Below shows extensive use of value getters (using expressions) and class rules (again using expressions).
+    <p class="lead">
+        Below shows a complex example making use of value getters (using expressions)
+        and class rules (again using expressions).
         The grid shows 'actual vs budget data and yearly total' for widget sales split by city and country.
     </p>
 

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./dist/lib/columnController/columnFactory";
@@ -97,10 +97,21 @@ export { ISideBar } from "./dist/lib/interfaces/ISideBar";
 export { RowNodeCache, RowNodeCacheParams } from "./dist/lib/rowModels/cache/rowNodeCache";
 export { IGetRowsParams, IDatasource } from "./dist/lib/rowModels/iDatasource";
 export { StylingService } from "./dist/lib/styling/stylingService";
+export { AgAbstractField } from "./dist/lib/widgets/agAbstractField";
 export { AgCheckbox } from "./dist/lib/widgets/agCheckbox";
 export { AgRadioButton } from "./dist/lib/widgets/agRadioButton";
+export { AgToggleButton } from "./dist/lib/widgets/agToggleButton";
+export { AgInputTextField } from "./dist/lib/widgets/agInputTextField";
+export { AgInputTextArea } from "./dist/lib/widgets/agInputTextArea";
+export { AgInputNumberField } from "./dist/lib/widgets/agInputNumberField";
+export { AgInputRange } from "./dist/lib/widgets/agInputRange";
+export { AgSelect } from "./dist/lib/widgets/agSelect";
+export { AgSlider } from "./dist/lib/widgets/agSlider";
+export { AgAngleSelect } from "./dist/lib/widgets/agAngleSelect";
+export { AgColorPicker } from "./dist/lib/widgets/agColorPicker";
 export { AgGroupComponent } from "./dist/lib/widgets/agGroupComponent";
-export { Dialog } from "./dist/lib/widgets/dialog";
+export { AgDialog } from "./dist/lib/widgets/agDialog";
+export { AgPanel } from "./dist/lib/widgets/agPanel";
 export { MessageBox } from "./dist/lib/widgets/messageBox";
 export { Component, VisibleChangedEvent } from "./dist/lib/widgets/component";
 export { PopupComponent } from "./dist/lib/widgets/popupComponent";
@@ -134,7 +145,7 @@ export { Logger } from "./dist/lib/logger";
 export { SelectionController } from "./dist/lib/selectionController";
 export { SortController } from "./dist/lib/sortController";
 export { TemplateService } from "./dist/lib/templateService";
-export { Utils, NumberSequence, _, Promise, ExternalPromise } from "./dist/lib/utils";
+export { Color, Utils, NumberSequence, _, Promise, ExternalPromise } from "./dist/lib/utils";
 export { ValueService } from "./dist/lib/valueService/valueService";
 export { ExpressionService } from "./dist/lib/valueService/expressionService";
 export { LoggerFactory } from "./dist/lib/logger";
@@ -176,7 +187,7 @@ export { IFrameworkOverrides } from "./dist/lib/interfaces/iFrameworkOverrides";
 export { Environment } from "./dist/lib/environment";
 export { ITooltipComp, ITooltipParams } from "./dist/lib/rendering/tooltipComponent";
 export { TooltipManager } from "./dist/lib/widgets/tooltipManager";
-export { ChartOptions, ChartType, ChartToolbarOptions, BarChartOptions, LineChartOptions, PieChartOptions, DoughnutChartOptions, CaptionOptions, AxisOptions, BarSeriesOptions, CartesianChartOptions, DropShadowOptions, LineSeriesOptions, PieSeriesOptions, PolarChartOptions, LegendOptions, SeriesOptions, LineTooltipRendererParams } from "./dist/lib/interfaces/iChartOptions";
+export { ChartOptions, ChartType, ChartMenuOptions, BarChartOptions, AreaChartOptions, LineChartOptions, ScatterChartOptions, PieChartOptions, DoughnutChartOptions, CaptionOptions, AxisOptions, BarSeriesOptions, AreaSeriesOptions, CartesianChartOptions, DropShadowOptions, LineSeriesOptions, ScatterSeriesOptions, PieSeriesOptions, PolarChartOptions, LegendOptions, SeriesOptions, LineTooltipRendererParams } from "./dist/lib/interfaces/iChartOptions";
 export { Module } from "./dist/lib/interfaces/iModule";
 export { ModuleNames } from "./dist/lib/modules/moduleNames";
 export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, VirtualColumnsChangedEvent, ColumnEverythingChangedEvent, NewColumnsLoadedEvent, GridColumnsChangedEvent, DisplayedColumnsChangedEvent, RowDataChangedEvent, RowDataUpdatedEvent, PinnedRowDataChangedEvent, SelectionChangedEvent, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, SortChangedEvent, GridReadyEvent, DragStartedEvent, DragStoppedEvent, DisplayedColumnsWidthChangedEvent, ColumnHoverChangedEvent, BodyHeightChangedEvent, ComponentStateChangedEvent, ViewportChangedEvent, RangeSelectionChangedEvent, ColumnGroupOpenedEvent, ItemsAddedEvent, BodyScrollEvent, FlashCellsEvent, PaginationChangedEvent, CellFocusedEvent, ColumnEvent, ColumnResizedEvent, ColumnPivotChangedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnMovedEvent, ColumnVisibleEvent, ColumnPinnedEvent, RowEvent, RowGroupOpenedEvent, RowValueChangedEvent, RowSelectedEvent, VirtualRowRemovedEvent, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, CellEvent, CellClickedEvent, CellMouseDownEvent, CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent, ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent, RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent, PasteEndEvent, PasteStartEvent, GridSizeChangedEvent, ChartRangeSelectionChanged } from "./dist/lib/events";

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var path2D_1 = require("./path2D");

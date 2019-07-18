@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -438,14 +438,7 @@ var GroupStage = /** @class */ (function () {
         }
     };
     GroupStage.prototype.getGroupInfoFromCallback = function (rowNode) {
-        var keys = [];
-        if (this.getDataPath) {
-            var path = this.getDataPath(rowNode.data);
-            if (path) {
-                // sanitize
-                keys = path.map(function (p) { return ag_grid_community_1._.escape(p); });
-            }
-        }
+        var keys = this.getDataPath ? this.getDataPath(rowNode.data) : null;
         if (keys === null || keys === undefined || keys.length === 0) {
             ag_grid_community_1._.doOnce(function () { return console.warn("getDataPath() should not return an empty path for data", rowNode.data); }, 'groupStage.getGroupInfoFromCallback');
         }

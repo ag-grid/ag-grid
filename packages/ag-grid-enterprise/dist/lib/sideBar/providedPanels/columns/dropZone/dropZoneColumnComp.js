@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -39,6 +39,8 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     }
     DropZoneColumnComp.prototype.init = function () {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
+        this.eDragHandle.appendChild(ag_grid_community_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper));
+        this.btRemove.appendChild(ag_grid_community_1._.createIconNoSpan('cancel', this.gridOptionsWrapper));
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -165,7 +167,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         return comp;
     };
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
-    DropZoneColumnComp.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span class=\"ag-icon ag-icon-grip ag-column-drag\" ref=\"eDragHandle\"></span>\n          <span class=\"ag-column-drop-cell-text\"></span>\n          <span class=\"ag-column-drop-cell-button ag-icon ag-icon-cancel\"></span>\n        </span>";
+    DropZoneColumnComp.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span ref=\"eDragHandle\" class=\"ag-column-drag\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\"></span>\n          <span ref=\"btRemove\" class=\"ag-column-drop-cell-button\"></span>\n        </span>";
     __decorate([
         ag_grid_community_1.Autowired('dragAndDropService'),
         __metadata("design:type", ag_grid_community_1.DragAndDropService)
@@ -199,17 +201,17 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         __metadata("design:type", ag_grid_community_1.GridApi)
     ], DropZoneColumnComp.prototype, "gridApi", void 0);
     __decorate([
-        ag_grid_community_1.QuerySelector('.ag-column-drop-cell-text'),
+        ag_grid_community_1.RefSelector('eText'),
         __metadata("design:type", HTMLElement)
     ], DropZoneColumnComp.prototype, "eText", void 0);
-    __decorate([
-        ag_grid_community_1.QuerySelector('.ag-column-drop-cell-button'),
-        __metadata("design:type", HTMLElement)
-    ], DropZoneColumnComp.prototype, "btRemove", void 0);
     __decorate([
         ag_grid_community_1.RefSelector('eDragHandle'),
         __metadata("design:type", HTMLElement)
     ], DropZoneColumnComp.prototype, "eDragHandle", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('btRemove'),
+        __metadata("design:type", HTMLElement)
+    ], DropZoneColumnComp.prototype, "btRemove", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

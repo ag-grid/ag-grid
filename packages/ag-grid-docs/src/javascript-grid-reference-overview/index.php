@@ -7,81 +7,46 @@ include '../documentation-main/documentation_header.php';
 ?>
 
     <h1>
-        Reference
+        Grid Interface
     </h1>
 
     <p class="lead">
-        This section explains how to configure the the grid's properties, events, callbacks and API.
+        Your application interacts with the grid through the grid's interface. The grid's interface
+        is defined as all the public facing parts of the grids that your application interacts with.
+        This section list all the grid's methods, properties, events e.t.c. for interacting with
+        the grid.
     </p>
 
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Grid Properties</h2>
+
     <p>
-
-                    Most features of the grid are set using grid properties. Eg turn on row animation by setting
-                    <code>animateRows = true</code>.
-
-    </p>
-    <p> <a href="../javascript-grid-properties/">Go to Grid Properties</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Grid API</h2>
-    <p> Interacting with the grid at run time is done through the grid API. Eg to get all the selected rows, call <code>api.getSelectedRows()</code>.
-                </p>
-        <p> <a href="../javascript-grid-api/">Go to Grid API</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Grid Events</h2>
-    <p>
-        Your application can listen for certain events within the grid to act on them.
-        Eg <code>sortChanged</code> gets fired when the grid is sorted, <code>rowSelected</code>
-        gets fired when a row is selected.
+        The grid interface is the combination of the following items:
     </p>
 
-    <p> <a href="../javascript-grid-events/">Go to Grid Events</a> </p>
-    </div>
-</div>
+    <ul>
+        <li>
+            <a href="../javascript-grid-properties/">Grid Properties</a>: Properties that set configuration into
+            the grid e.g. <code>pagination=true</code>.
+        </li>
+        <li>
+            <a href="../javascript-grid-api/">Grid API</a>: Methods to interact with the grid after it's created
+            e.g. <code>api.getSelectedRows()</code>.
+        </li>
+        <li>
+            <a href="../javascript-grid-events/">Events</a>: The grid fires events to information applications
+            of grid state changes, e.g. <code>rowSelected</code>.
+        </li>
+        <li>
+            <a href="../javascript-grid-callbacks/">Grid Callbacks</a>: If the grid requires information from
+            your application it is done through a grid callback e.g. <code>getRowHeight()</code>.
+        </li>
+        <li>
+            <a href="../javascript-grid-row-node/">Row Node</a>:
+            Each row in the grid is represented by a Row Node object, which in turn has a reference to the piece of
+            row data provided by the application. The Row Node wraps the row data item. The Row Node has attributes,
+            methods and events for interacting with the specific row e.g. <code>rowNode.setSelected(true)</code>.
+        </li>
+    </ul>
 
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Grid Callbacks</h2>
-    <p>
-
-                    If the grid requires information from your application it is done through a grid callback.
-                    Eg <code>getMainMenuItems()</code> is called each time a menu is shown and allows your application
-                    to customise the menu.
-
-    </p>
-    <p> <a href="../javascript-grid-callbacks/">Go to Grid Callbacks</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Column Properties</h2>
-    <p> Columns are configured through column definitions. A column definition contains the column properties. Eg <code>colDef.pinned='left'</code> will set a column to be pinned to the left.  </p>
-    <p> <a href="../javascript-grid-column-properties/">Go to Column Properties</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Column API</h2>
-    <p>
-                    The column API is similar to the grid API, the difference is that the column API groups
-                    a set of API methods relevant to columns. Eg the method <code>columnApi.setColumnVisible('country',false)</code>
-                    will cause the 'country' column to be hidden.
-                </p>
-    <p> <a href="../javascript-grid-column-api/">Go to Column API</a> </p>
-    </div>
-</div>
 
 <h2> Grid Options </h2>
 

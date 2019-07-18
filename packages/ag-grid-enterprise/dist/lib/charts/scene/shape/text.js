@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27,9 +27,14 @@ var Text = /** @class */ (function (_super) {
         _this.lineBreakRe = /\r?\n/g;
         _this.lines = [];
         _this._text = '';
-        _this._font = Text.defaultStyles.font;
+        _this._dirtyFont = true;
+        _this._fontStyle = undefined;
+        _this._fontWeight = undefined;
+        _this._fontSize = 10;
+        _this._fontFamily = 'sans-serif';
         _this._textAlign = Text.defaultStyles.textAlign;
         _this._textBaseline = Text.defaultStyles.textBaseline;
+        _this._lineHeight = 14;
         _this.getBBox = hdpiCanvas_1.HdpiCanvas.has.textMetrics
             ? function () {
                 var metrics = hdpiCanvas_1.HdpiCanvas.measureText(_this.text, _this.font, _this.textBaseline, _this.textAlign);
@@ -114,12 +119,85 @@ var Text = /** @class */ (function (_super) {
     });
     Object.defineProperty(Text.prototype, "font", {
         get: function () {
+            if (this.dirtyFont) {
+                this.dirtyFont = false;
+                return this._font = [
+                    this.fontStyle || '',
+                    this.fontWeight || '',
+                    this.fontSize + 'px',
+                    this.fontFamily
+                ].join(' ').trim();
+            }
             return this._font;
         },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "dirtyFont", {
+        get: function () {
+            return this._dirtyFont;
+        },
         set: function (value) {
-            if (this._font !== value) {
-                this._font = value;
-                this.dirty = true;
+            if (this._dirtyFont !== value) {
+                this._dirtyFont = value;
+                if (value) {
+                    this.dirty = true;
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "fontStyle", {
+        get: function () {
+            return this._fontStyle;
+        },
+        set: function (value) {
+            if (this._fontStyle !== value) {
+                this._fontStyle = value;
+                this.dirtyFont = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "fontWeight", {
+        get: function () {
+            return this._fontWeight;
+        },
+        set: function (value) {
+            if (this._fontWeight !== value) {
+                this._fontWeight = value;
+                this.dirtyFont = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "fontSize", {
+        get: function () {
+            return this._fontSize;
+        },
+        set: function (value) {
+            if (!isFinite(value)) {
+                value = 10;
+            }
+            if (this._fontSize !== value) {
+                this._fontSize = value;
+                this.dirtyFont = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "fontFamily", {
+        get: function () {
+            return this._fontFamily;
+        },
+        set: function (value) {
+            if (this._fontFamily !== value) {
+                this._fontFamily = value;
+                this.dirtyFont = true;
             }
         },
         enumerable: true,
@@ -145,6 +223,27 @@ var Text = /** @class */ (function (_super) {
         set: function (value) {
             if (this._textBaseline !== value) {
                 this._textBaseline = value;
+                this.dirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Text.prototype, "lineHeight", {
+        get: function () {
+            return this._lineHeight;
+        },
+        set: function (value) {
+            // Multi-line text is complicated because:
+            // - Canvas does not support it natively, so we have to implement it manually
+            // - need to know the height of each line -> need to parse the font shorthand ->
+            //   generally impossible to do because font size may not be in pixels
+            // - so, need to measure the text instead, each line individually -> expensive
+            // - or make the user provide the line height manually for multi-line text
+            // - getBBox should use the lineHeight for multi-line text but ignore it otherwise
+            // - textBaseline kind of loses its meaning for multi-line text
+            if (this._lineHeight !== value) {
+                this._lineHeight = value;
                 this.dirty = true;
             }
         },
@@ -184,6 +283,9 @@ var Text = /** @class */ (function (_super) {
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fillText(this.text, this.x, this.y);
+            // this.lines.forEach((text, index) => {
+            //     ctx.fillText(text, this.x, this.y + index * this.lineHeight);
+            // });
         }
         if (this.stroke && this.strokeWidth) {
             ctx.strokeStyle = this.stroke;
@@ -216,7 +318,10 @@ var Text = /** @class */ (function (_super) {
     Text.className = 'Text';
     Text.defaultStyles = object_1.chainObjects(shape_1.Shape.defaultStyles, {
         textAlign: 'start',
-        font: '10px sans-serif',
+        fontStyle: undefined,
+        fontWeight: undefined,
+        fontSize: 10,
+        fontFamily: 'sans-serif',
         textBaseline: 'alphabetic'
     });
     return Text;

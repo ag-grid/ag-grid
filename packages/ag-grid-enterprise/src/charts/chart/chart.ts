@@ -4,16 +4,18 @@ import { Series, SeriesNodeDatum } from "./series/series";
 import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
+import { Rect } from "../scene/shape/rect";
 import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
-import { Caption } from "./caption";
-import { PieSeries } from "./series/pieSeries";
+import { Caption } from "../caption";
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export abstract class Chart {
     readonly scene: Scene = new Scene();
+    readonly background: Rect = new Rect();
+
     legend = new Legend();
 
     protected legendAutoPadding = new Padding();
@@ -27,10 +29,15 @@ export abstract class Chart {
     private defaultTooltipClass = 'ag-chart-tooltip';
 
     protected constructor() {
-        this.scene.root = new Group();
+        const root = new Group();
+        const background = this.background;
+
+        background.fill = 'white';
+        root.appendChild(background);
+
+        this.scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
 
-        this.tooltipElement.style.display = 'none';
         this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
 
@@ -83,8 +90,8 @@ export abstract class Chart {
         return this._title;
     }
 
-    private _subtitle: Caption | null = null;
-    set subtitle(value: Caption | null) {
+    private _subtitle: Caption | undefined = undefined;
+    set subtitle(value: Caption | undefined) {
         const oldSubtitle = this._subtitle;
         if (oldSubtitle !== value) {
             if (oldSubtitle) {
@@ -99,7 +106,7 @@ export abstract class Chart {
             this.layoutPending = true;
         }
     }
-    get subtitle(): Caption | null {
+    get subtitle(): Caption | undefined {
         return this._subtitle;
     }
 
@@ -139,7 +146,7 @@ export abstract class Chart {
 
         if (index >= 0) {
             this.series.splice(index, 1);
-            series.chart = null;
+            series.chart = undefined;
             this.seriesRoot.removeChild(series.group);
             this.dataPending = true;
             return true;
@@ -150,7 +157,7 @@ export abstract class Chart {
 
     removeAllSeries(): void {
         this.series.forEach(series => {
-            series.chart = null;
+            series.chart = undefined;
             this.seriesRoot.removeChild(series.group);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
@@ -181,6 +188,7 @@ export abstract class Chart {
 
     private _legendPadding: number = 20;
     set legendPadding(value: number) {
+        value = isFinite(value) ? value : 20;
         if (this._legendPadding !== value) {
             this._legendPadding = value;
             this.layoutPending = true;
@@ -213,7 +221,7 @@ export abstract class Chart {
         this.layoutPending = true;
     }
     get size(): [number, number] {
-        return [this.scene.width, this.scene.height];
+        return this.scene.size;
     }
 
     /**
@@ -259,6 +267,8 @@ export abstract class Chart {
 
     private readonly _performLayout = () => {
         this.layoutCallbackId = 0;
+        this.background.width = this.width;
+        this.background.height = this.height;
         this.performLayout();
         if (this.onLayoutDone) {
             this.onLayoutDone();
@@ -349,8 +359,8 @@ export abstract class Chart {
     private legendBBox?: BBox;
 
     protected positionLegend() {
-        if (!this.legend.data.length) {
-            return; // TODO: figure out why we ever arrive here (data should be processed before layout)
+        if (!this.legend.enabled || !this.legend.data.length) {
+            return;
         }
 
         const captionAutoPadding = this.captionAutoPadding;
@@ -483,14 +493,14 @@ export abstract class Chart {
                 }
             }
         } else if (this.lastPick) { // cursor moved from a node to empty space
-            this.lastPick.series.dehighlight();
+            this.lastPick.series.dehighlightNode();
             this.hideTooltip();
             this.lastPick = undefined;
         }
     };
 
     private readonly onMouseOut = (event: MouseEvent) => {
-        this.tooltipElement.style.display = 'none';
+        this.toggleTooltip(false);
     };
 
     private readonly onClick = (event: MouseEvent) => {
@@ -514,7 +524,7 @@ export abstract class Chart {
             node
         };
 
-        series.highlight(node);
+        series.highlightNode(node);
 
         const html = series.tooltipEnabled && series.getTooltipHtml(node.datum as SeriesNodeDatum);
         if (html) {
@@ -526,11 +536,19 @@ export abstract class Chart {
     set tooltipClass(value: string) {
         if (this._tooltipClass !== value) {
             this._tooltipClass = value;
-            this.tooltipElement.setAttribute('class', this.defaultTooltipClass + ' ' + value);
+            this.toggleTooltip();
         }
     }
     get tooltipClass(): string {
         return this._tooltipClass;
+    }
+
+    private toggleTooltip(visible?: boolean) {
+        const classList = [this.defaultTooltipClass, this._tooltipClass];
+        if (visible) {
+            classList.push('visible');
+        }
+        this.tooltipElement.setAttribute('class', classList.join(' '));
     }
 
     /**
@@ -548,14 +566,16 @@ export abstract class Chart {
             return;
         }
 
-        el.style.display = 'table';
+        if (html) {
+            this.toggleTooltip(true);
+        }
         const tooltipRect = this.tooltipRect = el.getBoundingClientRect();
 
-        let left = event.pageX + pageXOffset + offset[0];
-        const top = event.pageY + pageYOffset + offset[1];
+        let left = event.pageX + offset[0];
+        const top = event.pageY + offset[1];
 
         if (tooltipRect && parent && parent.parentElement) {
-            if (left + tooltipRect.width > parent.parentElement.offsetWidth) {
+            if (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth) {
                 left -= tooltipRect.width + offset[0];
             }
         }
@@ -564,9 +584,6 @@ export abstract class Chart {
     }
 
     private hideTooltip() {
-        const el = this.tooltipElement;
-
-        el.style.display = 'none';
-        el.innerHTML = '';
+        this.toggleTooltip(false);
     }
 }

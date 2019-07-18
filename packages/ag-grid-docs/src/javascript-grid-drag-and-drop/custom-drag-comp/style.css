@@ -1,0 +1,50 @@
+.outer {
+    display: flex;
+    height: 100%;
+}
+
+.drop-col {
+    padding-left: 10px;
+    box-sizing: border-box;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.drop-target {
+    border: 1px solid #888;
+    background-color: #88cc88;
+    padding: 10px;
+}
+
+.json-display {
+    padding-top: 10px;
+    box-sizing: border-box;
+    flex: 1;
+    border: 1px solid #888;
+    background-color: #f8f8f8;
+    overflow: auto;
+}
+
+.json-row {
+    border: 1px solid grey;
+    margin: 4px;
+}
+
+.grid-col {
+    flex: 1;
+    height: 100%;
+}
+
+.green-row {
+    background-color: #ddffdd !important;
+}
+
+.red-row {
+    background-color: #ffdddd !important;
+}
+
+.blue-row {
+    background-color: #ddddff !important;
+}

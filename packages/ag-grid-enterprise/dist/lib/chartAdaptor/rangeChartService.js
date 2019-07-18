@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20,7 +20,7 @@ var RangeChartService = /** @class */ (function () {
         this.activeCharts = [];
     }
     RangeChartService.prototype.chartCurrentRange = function (chartType) {
-        if (chartType === void 0) { chartType = ag_grid_community_1.ChartType.GroupedBar; }
+        if (chartType === void 0) { chartType = ag_grid_community_1.ChartType.GroupedColumn; }
         var selectedRange = this.getSelectedRange();
         return this.chartRange(selectedRange, chartType);
     };
@@ -30,28 +30,8 @@ var RangeChartService = /** @class */ (function () {
             console.warn("ag-Grid - unable to chart as no range is selected");
             return;
         }
-        var chartType;
-        switch (params.chartType) {
-            case 'groupedBar':
-                chartType = ag_grid_community_1.ChartType.GroupedBar;
-                break;
-            case 'stackedBar':
-                chartType = ag_grid_community_1.ChartType.StackedBar;
-                break;
-            case 'pie':
-                chartType = ag_grid_community_1.ChartType.Pie;
-                break;
-            case 'doughnut':
-                chartType = ag_grid_community_1.ChartType.Doughnut;
-                break;
-            case 'line':
-                chartType = ag_grid_community_1.ChartType.Line;
-                break;
-            default:
-                chartType = ag_grid_community_1.ChartType.GroupedBar;
-        }
         if (cellRange) {
-            return this.chartRange(cellRange, chartType, params.chartContainer, params.suppressChartRanges, params.aggregate, params.processChartOptions);
+            return this.chartRange(cellRange, params.chartType, params.chartContainer, params.suppressChartRanges, params.aggregate, params.processChartOptions);
         }
     };
     RangeChartService.prototype.chartRange = function (cellRange, chartType, container, suppressChartRanges, aggregate, processChartOptions) {

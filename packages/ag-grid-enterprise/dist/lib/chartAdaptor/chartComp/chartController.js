@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -44,7 +44,7 @@ var ChartController = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_CELL_VALUE_CHANGED, this.updateForGridChange.bind(this));
-        // this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
     };
     ChartController.prototype.updateForGridChange = function () {
         // update the model with changes to the cell ranges from the grid before updating the column state
@@ -89,6 +89,9 @@ var ChartController = /** @class */ (function (_super) {
         if (!this.model.isSuppressChartRanges()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
+    };
+    ChartController.prototype.getChartProxy = function () {
+        return this.model.getChartProxy();
     };
     ChartController.prototype.raiseChartUpdatedEvent = function () {
         var event = {

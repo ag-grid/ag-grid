@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -80,6 +80,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isSuppressNavigable(rowNode: RowNode): boolean;
     isCellEditable(rowNode: RowNode): boolean;
     isRowDrag(rowNode: RowNode): boolean;
+    isDndSource(rowNode: RowNode): boolean;
     isCellCheckboxSelection(rowNode: RowNode): boolean;
     isSuppressPaste(rowNode: RowNode): boolean;
     isResizable(): boolean;

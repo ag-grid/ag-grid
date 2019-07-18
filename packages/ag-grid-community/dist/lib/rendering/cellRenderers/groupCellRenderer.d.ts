@@ -1,8 +1,8 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
-import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
+import { ICellRendererComp, ICellRendererParams } from "./iCellRenderer";
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;
     suppressPadding: boolean;
@@ -16,7 +16,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     /** @deprecated */
     padding: number;
 }
-export declare class GroupCellRenderer extends Component implements ICellRenderer {
+export declare class GroupCellRenderer extends Component implements ICellRendererComp {
     private static TEMPLATE;
     private gridOptionsWrapper;
     private expressionService;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var number_1 = require("./number");

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -21,11 +21,11 @@ var selection_1 = require("../../scene/selection");
 var linearScale_1 = require("../../scale/linearScale");
 var angle_1 = require("../../util/angle");
 var palettes_1 = require("../palettes");
-var color_1 = require("../../util/color");
 var sector_1 = require("../../scene/shape/sector");
 var series_1 = require("./series");
 var node_1 = require("../../scene/node");
 var number_1 = require("../../util/number");
+var ag_grid_community_1 = require("ag-grid-community");
 var PieSeriesNodeTag;
 (function (PieSeriesNodeTag) {
     PieSeriesNodeTag[PieSeriesNodeTag["Sector"] = 0] = "Sector";
@@ -58,8 +58,11 @@ var PieSeries = /** @class */ (function (_super) {
         _this._calloutColors = palettes_1.default.strokes;
         _this._calloutStrokeWidth = 1;
         _this._calloutLength = 10;
-        _this._calloutPadding = 3;
-        _this._labelFont = '12px Verdana, sans-serif';
+        _this._labelOffset = 3; // from the callout line
+        _this._labelFontStyle = undefined;
+        _this._labelFontWeight = undefined;
+        _this._labelFontSize = 12;
+        _this._labelFontFamily = 'Verdana, sans-serif';
         _this._labelColor = 'black';
         _this._labelMinAngle = 20; // in degrees
         /**
@@ -82,6 +85,8 @@ var PieSeries = /** @class */ (function (_super) {
         _this._labelEnabled = true;
         _this._fills = palettes_1.default.fills;
         _this._strokes = palettes_1.default.strokes;
+        _this._fillOpacity = 1;
+        _this._strokeOpacity = 1;
         /**
          * The series rotation in degrees.
          */
@@ -174,26 +179,65 @@ var PieSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(PieSeries.prototype, "calloutPadding", {
+    Object.defineProperty(PieSeries.prototype, "labelOffset", {
         get: function () {
-            return this._calloutPadding;
+            return this._labelOffset;
         },
         set: function (value) {
-            if (this._calloutPadding !== value) {
-                this._calloutPadding = value;
+            if (this._labelOffset !== value) {
+                this._labelOffset = value;
                 this.update();
             }
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(PieSeries.prototype, "labelFont", {
+    Object.defineProperty(PieSeries.prototype, "labelFontStyle", {
         get: function () {
-            return this._labelFont;
+            return this._labelFontStyle;
         },
         set: function (value) {
-            if (this._labelFont !== value) {
-                this._labelFont = value;
+            if (this._labelFontStyle !== value) {
+                this._labelFontStyle = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "labelFontWeight", {
+        get: function () {
+            return this._labelFontWeight;
+        },
+        set: function (value) {
+            if (this._labelFontWeight !== value) {
+                this._labelFontWeight = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "labelFontSize", {
+        get: function () {
+            return this._labelFontSize;
+        },
+        set: function (value) {
+            if (this._labelFontSize !== value) {
+                this._labelFontSize = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "labelFontFamily", {
+        get: function () {
+            return this._labelFontFamily;
+        },
+        set: function (value) {
+            if (this._labelFontFamily !== value) {
+                this._labelFontFamily = value;
                 this.update();
             }
         },
@@ -297,7 +341,7 @@ var PieSeries = /** @class */ (function (_super) {
         },
         set: function (values) {
             this._fills = values;
-            this.strokes = values.map(function (color) { return color_1.Color.fromString(color).darker().toHexString(); });
+            this.strokes = values.map(function (color) { return ag_grid_community_1.Color.fromString(color).darker().toHexString(); });
             this.scheduleData();
         },
         enumerable: true,
@@ -311,6 +355,32 @@ var PieSeries = /** @class */ (function (_super) {
             this._strokes = values;
             this.calloutColors = values;
             this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "fillOpacity", {
+        get: function () {
+            return this._fillOpacity;
+        },
+        set: function (value) {
+            if (this._fillOpacity !== value) {
+                this._fillOpacity = value;
+                this.scheduleLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(PieSeries.prototype, "strokeOpacity", {
+        get: function () {
+            return this._strokeOpacity;
+        },
+        set: function (value) {
+            if (this._strokeOpacity !== value) {
+                this._strokeOpacity = value;
+                this.scheduleLayout();
+            }
         },
         enumerable: true,
         configurable: true
@@ -380,14 +450,14 @@ var PieSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    PieSeries.prototype.highlight = function (node) {
+    PieSeries.prototype.highlightNode = function (node) {
         if (!(node instanceof sector_1.Sector)) {
             return;
         }
         this.highlightedNode = node;
         this.scheduleLayout();
     };
-    PieSeries.prototype.dehighlight = function () {
+    PieSeries.prototype.dehighlightNode = function () {
         this.highlightedNode = undefined;
         this.scheduleLayout();
     };
@@ -461,6 +531,7 @@ var PieSeries = /** @class */ (function (_super) {
                 textBaseline = 'middle';
             }
             groupSelectionData.push({
+                index: datumIndex,
                 seriesDatum: data[datumIndex],
                 radius: radius,
                 startAngle: startAngle,
@@ -488,6 +559,8 @@ var PieSeries = /** @class */ (function (_super) {
         }
         var fills = this.fills;
         var strokes = this.strokes;
+        var fillOpacity = this.fillOpacity;
+        var strokeOpacity = this.strokeOpacity;
         var calloutColors = this.calloutColors;
         var outerRadiusOffset = this.outerRadiusOffset;
         var innerRadiusOffset = this.innerRadiusOffset;
@@ -534,6 +607,8 @@ var PieSeries = /** @class */ (function (_super) {
             sector.stroke = sector === highlightedNode && _this.highlightStyle.stroke !== undefined
                 ? _this.highlightStyle.stroke
                 : strokes[index % strokes.length];
+            sector.fillOpacity = fillOpacity;
+            sector.strokeOpacity = strokeOpacity;
             sector.centerOffset = sector === highlightedNode && _this.highlightStyle.centerOffset !== undefined
                 ? _this.highlightStyle.centerOffset
                 : 0;
@@ -559,14 +634,17 @@ var PieSeries = /** @class */ (function (_super) {
                 line.stroke = undefined;
             }
         });
-        var calloutPadding = this.calloutPadding;
+        var labelOffset = this.labelOffset;
         groupSelection.selectByTag(PieSeriesNodeTag.Label)
             .each(function (text, datum, index) {
             var label = datum.label;
             if (label) {
                 var outerRadius = outerRadii[index];
-                var labelRadius = centerOffsets[index] + outerRadius + calloutLength + calloutPadding;
-                text.font = _this.labelFont;
+                var labelRadius = centerOffsets[index] + outerRadius + calloutLength + labelOffset;
+                text.fontStyle = _this.labelFontStyle;
+                text.fontWeight = _this.labelFontWeight;
+                text.fontSize = _this.labelFontSize;
+                text.fontFamily = _this.labelFontFamily;
                 text.text = label.text;
                 text.x = datum.midCos * labelRadius;
                 text.y = datum.midSin * labelRadius;
@@ -586,20 +664,25 @@ var PieSeries = /** @class */ (function (_super) {
         if (!angleField) {
             return html;
         }
+        var title = this.title ? this.title.text : undefined;
+        var color = this.fills[nodeDatum.index % this.fills.length];
         if (this.tooltipRenderer) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 angleField: angleField,
                 radiusField: this.radiusField,
-                labelField: this.labelField
+                labelField: this.labelField,
+                title: title,
+                color: color
             });
         }
         else {
-            var title = this.title ? "<div class=\"title\">" + this.title.text + "</div>" : '';
+            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
+            title = title ? "<div class=\"title\" " + titleStyle + ">" + title + "</div>" : '';
             var label = this.labelField ? nodeDatum.seriesDatum[this.labelField] + ": " : '';
             var value = nodeDatum.seriesDatum[angleField];
             var formattedValue = typeof (value) === 'number' ? number_1.toFixed(value) : value.toString();
-            html = "" + title + label + formattedValue;
+            html = title + "<div class=\"content\">" + label + formattedValue + "</div>";
         }
         return html;
     };
@@ -619,8 +702,8 @@ var PieSeries = /** @class */ (function (_super) {
                         text: String(datum[labelField])
                     },
                     marker: {
-                        fillStyle: fills_1[index % fills_1.length],
-                        strokeStyle: strokes_1[index % strokes_1.length]
+                        fill: fills_1[index % fills_1.length],
+                        stroke: strokes_1[index % strokes_1.length]
                     }
                 });
             });

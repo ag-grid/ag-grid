@@ -1,41 +1,41 @@
 import {
-    Autowired,
     Component,
-    Dialog,
     ChartType,
-    GridOptionsWrapper,
     TabbedLayout,
     PostConstruct,
     TabbedItem,
     Promise,
-    _,
-    ChartToolbarOptions
+    ChartMenuOptions,
+    _, Autowired
 } from "ag-grid-community";
 import { ChartController } from "../chartController";
-import { ChartSettingsPanel } from "./chartSettingsPanel";
-import { ChartDataPanel } from "./chartDataPanel";
+import { ChartDataPanel } from "./data/chartDataPanel";
+import { ChartFormattingPanel } from "./format/chartFormatingPanel";
+import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
+import { ChartTranslator } from "../chartTranslator";
 
 export class TabbedChartMenu extends Component {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
     public static TAB_MAIN = 'settings';
     public static TAB_DATA = 'data';
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    public static TAB_FORMAT = 'format';
 
     private tabbedLayout: TabbedLayout;
     private currentChartType: ChartType;
 
-    private panels: ChartToolbarOptions[];
-    private tabs: TabbedItem[] = []
+    private panels: ChartMenuOptions[];
+    private tabs: TabbedItem[] = [];
     private readonly chartController: ChartController;
 
-    private chartIcons: HTMLElement[] = [];
+    private chartIcons: { [key in string]: HTMLElement } = {};
+
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     constructor(params: {
-        controller: ChartController, 
+        controller: ChartController,
         type: ChartType,
-        panels: ChartToolbarOptions[]
+        panels: ChartMenuOptions[]
     }) {
         super();
 
@@ -48,18 +48,14 @@ export class TabbedChartMenu extends Component {
 
     @PostConstruct
     public init(): void {
-        
+
         this.panels.forEach(panel => {
             const panelType = panel.replace('chart', '').toLowerCase();
-            const isMain = panelType === TabbedChartMenu.TAB_MAIN;
-            const iconCls = isMain ? 'chart' : 'data';
-            const panelClass = isMain ? ChartSettingsPanel : ChartDataPanel;
-
-            const { comp, tab } = this.createTab(panelType, iconCls, panelClass);
+            const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
 
             this.tabs.push(tab);
             this.addDestroyFunc(() => comp.destroy());
-        })
+        });
 
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,
@@ -67,33 +63,34 @@ export class TabbedChartMenu extends Component {
         });
     }
 
-    public getMinDimensions(): {width: number, height: number} {
-        return this.tabbedLayout.getMinDimensions();
-    }
-
     private createTab(
-        name: string,
-        iconName: string, 
+        name: ChartMenuOptions,
+        title: string,
         ChildClass: new (controller: ChartController) => Component
     ): {comp: Component, tab: TabbedItem} {
         const eWrapperDiv = document.createElement('div');
-        _.addCssClass(eWrapperDiv, `ag-chart-${name}`);
+        _.addCssClass(eWrapperDiv, `ag-chart-${title}`);
 
         const comp = new ChildClass(this.chartController);
         this.getContext().wireBean(comp);
+
         eWrapperDiv.appendChild(comp.getGui());
+
+        const titleEl = document.createElement('div');
+        titleEl.innerText = this.chartTranslator.translate(title);
 
         return {
             comp,
             tab: {
-                title: _.createIconNoSpan(iconName, this.gridOptionsWrapper, null),
+                title: titleEl,
                 bodyPromise: Promise.resolve(eWrapperDiv),
-                name,
-                afterAttachedCallback: () => {
-                    (this.parentComponent as Dialog).setTitle(`Chart ${_.capitalise(name)}`)
-                }
+                name
             }
         }
+    }
+
+    public getMinDimensions(): {width: number, height: number} {
+        return this.tabbedLayout.getMinDimensions();
     }
 
     public updateCurrentChartType(chartType: ChartType) {
@@ -117,5 +114,11 @@ export class TabbedChartMenu extends Component {
             this.parentComponent.destroy();
         }
         super.destroy();
+    }
+
+    private getPanelClass(panelType: string) {
+        const isDataPanel = panelType === TabbedChartMenu.TAB_DATA;
+        const isFormatPanel = panelType === TabbedChartMenu.TAB_FORMAT;
+        return isDataPanel ? ChartDataPanel : (isFormatPanel ? ChartFormattingPanel : ChartSettingsPanel);
     }
 }

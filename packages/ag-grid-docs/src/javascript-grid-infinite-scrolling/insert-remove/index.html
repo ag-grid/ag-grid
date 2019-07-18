@@ -1,8 +1,4 @@
-<div style="height: 100%; padding-top: 60px; box-sizing: border-box;">
-    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
-</div>
-
-<div style="position: absolute; top: 0px; left: 0px;">
+<div style="margin-bottom: 5px;">
     <div>
         <button onclick="liveInsertItemsAt2(1)">Inject 1 Row @ 2</button>
         <button onclick="liveInsertItemsAt2(5)">Inject 5 Rows @ 2</button>
@@ -19,6 +15,9 @@
         <button onclick="refreshCache()">Refresh Cache</button>
         <button onclick="purgeCache()">Purge Cache</button>
     </div>
+</div>
+<div style="height: calc(100% - 60px);">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
 </div>
 
 

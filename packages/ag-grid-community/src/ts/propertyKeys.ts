@@ -26,7 +26,7 @@ export class PropertyKeys {
         'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
         'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
         'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize', 'batchUpdateWaitMillis',
-        'blockLoadDebounceMillis'
+        'blockLoadDebounceMillis', 'keepDetailRowsCount'
     ];
 
     public static BOOLEAN_PROPERTIES = [
@@ -55,7 +55,8 @@ export class PropertyKeys {
         'contractColumnSelection', 'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel', 'suppressRowHoverHighlight',
         'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste', 'serverSideSortingAlwaysResets', 'reactNext',
         'suppressSetColumnStateEvents', 'enableCharts', 'deltaColumnMode', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection',
-        'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction', 'excludeChildrenWhenTreeDataFiltering'
+        'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction', 'excludeChildrenWhenTreeDataFiltering',
+        'keepDetailRows'
     ];
 
     public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',

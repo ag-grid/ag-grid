@@ -1,13 +1,15 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Scene } from "../scene/scene";
 import { Series } from "./series/series";
 import { Padding } from "../util/padding";
 import { Node } from "../scene/node";
+import { Rect } from "../scene/shape/rect";
 import { Legend } from "./legend";
-import { Caption } from "./caption";
+import { Caption } from "../caption";
 export declare type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 export declare abstract class Chart {
     readonly scene: Scene;
+    readonly background: Rect;
     legend: Legend;
     protected legendAutoPadding: Padding;
     protected captionAutoPadding: number;
@@ -23,7 +25,7 @@ export declare abstract class Chart {
     private _title;
     title: Caption | undefined;
     private _subtitle;
-    subtitle: Caption | null;
+    subtitle: Caption | undefined;
     abstract readonly seriesRoot: Node;
     protected _series: Series<Chart>[];
     series: Series<Chart>[];
@@ -73,6 +75,7 @@ export declare abstract class Chart {
     private onSeriesNodePick;
     private _tooltipClass;
     tooltipClass: string;
+    private toggleTooltip;
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.

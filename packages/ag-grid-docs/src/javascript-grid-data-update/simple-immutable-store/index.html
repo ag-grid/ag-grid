@@ -1,8 +1,4 @@
-<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
-    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
-</div>
-
-<div style="position: absolute; top: 0; left: 0;">
+<div style="margin-bottom: 5px; height: 30px;">
     <button onclick="addFiveItems(true)">Append Items</button>
     <button onclick="addFiveItems(false)">Prepend Items</button>
     <button onclick="reverseItems()">Reverse</button>
@@ -18,4 +14,7 @@
         <button onclick="setSelectedToGroup('B')">B</button>
         <button onclick="setSelectedToGroup('C')">C</button>
     </span>
+</div>
+<div style="height: calc(100% - 35px);">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
 </div>

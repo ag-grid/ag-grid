@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,6 +28,7 @@ var chartMenu_1 = require("./menu/chartMenu");
 var chartController_1 = require("./chartController");
 var chartModel_1 = require("./chartModel");
 var barChartProxy_1 = require("./chartProxies/barChartProxy");
+var areaChartProxy_1 = require("./chartProxies/areaChartProxy");
 var lineChartProxy_1 = require("./chartProxies/lineChartProxy");
 var pieChartProxy_1 = require("./chartProxies/pieChartProxy");
 var doughnutChartProxy_1 = require("./chartProxies/doughnutChartProxy");
@@ -84,29 +85,39 @@ var GridChartComp = /** @class */ (function (_super) {
             width: width,
             height: height,
         };
-        this.chartProxy = this.createChartProxy(chartProxyParams);
+        // local state used to detect when chart type changes
         this.currentChartType = this.model.getChartType();
+        this.chartProxy = this.createChartProxy(chartProxyParams);
+        // update chart proxy ref (used by format panel)
+        this.model.setChartProxy(this.chartProxy);
     };
     GridChartComp.prototype.getSelectedPalette = function () {
         return this.model.getPalettes()[this.model.getActivePalette()];
     };
     GridChartComp.prototype.createChartProxy = function (chartOptions) {
         switch (chartOptions.chartType) {
+            case ag_grid_community_1.ChartType.GroupedColumn:
+            case ag_grid_community_1.ChartType.StackedColumn:
+            case ag_grid_community_1.ChartType.NormalizedColumn:
             case ag_grid_community_1.ChartType.GroupedBar:
-                return new barChartProxy_1.BarChartProxy(chartOptions);
             case ag_grid_community_1.ChartType.StackedBar:
+            case ag_grid_community_1.ChartType.NormalizedBar:
                 return new barChartProxy_1.BarChartProxy(chartOptions);
             case ag_grid_community_1.ChartType.Pie:
                 return new pieChartProxy_1.PieChartProxy(chartOptions);
             case ag_grid_community_1.ChartType.Doughnut:
                 return new doughnutChartProxy_1.DoughnutChartProxy(chartOptions);
+            case ag_grid_community_1.ChartType.Area:
+            case ag_grid_community_1.ChartType.StackedArea:
+            case ag_grid_community_1.ChartType.NormalizedArea:
+                return new areaChartProxy_1.AreaChartProxy(chartOptions);
             case ag_grid_community_1.ChartType.Line:
                 return new lineChartProxy_1.LineChartProxy(chartOptions);
         }
     };
     GridChartComp.prototype.addDialog = function () {
         var _this = this;
-        this.chartDialog = new ag_grid_community_1.Dialog({
+        this.chartDialog = new ag_grid_community_1.AgDialog({
             resizable: true,
             movable: true,
             maximizable: true,
@@ -116,20 +127,31 @@ var GridChartComp = /** @class */ (function (_super) {
             closable: true
         });
         this.getContext().wireBean(this.chartDialog);
-        this.chartDialog.addEventListener(ag_grid_community_1.Dialog.EVENT_DESTROYED, function () { return _this.destroy(); });
+        this.chartDialog.addEventListener(ag_grid_community_1.AgDialog.EVENT_DESTROYED, function () { return _this.destroy(); });
     };
     GridChartComp.prototype.addMenu = function () {
         this.chartMenu = new chartMenu_1.ChartMenu(this.chartController);
         this.chartMenu.setParentComponent(this);
         this.getContext().wireBean(this.chartMenu);
-        var eChart = this.getGui();
-        eChart.appendChild(this.chartMenu.getGui());
+        this.eChartComponentsWrapper.appendChild(this.chartMenu.getGui());
     };
     GridChartComp.prototype.refresh = function () {
         if (this.model.getChartType() !== this.currentChartType) {
             this.createChart();
         }
         this.updateChart();
+    };
+    GridChartComp.prototype.getChartComponentsWrapper = function () {
+        return this.eChartComponentsWrapper;
+    };
+    GridChartComp.prototype.getDockedContainer = function () {
+        return this.eDockedContainer;
+    };
+    GridChartComp.prototype.slideDockedOut = function (width) {
+        this.eDockedContainer.style.minWidth = width + 'px';
+    };
+    GridChartComp.prototype.slideDockedIn = function () {
+        this.eDockedContainer.style.minWidth = '0';
     };
     GridChartComp.prototype.getCurrentChartType = function () {
         return this.currentChartType;
@@ -147,23 +169,27 @@ var GridChartComp = /** @class */ (function (_super) {
         this.chartProxy.update(chartUpdateParams);
     };
     GridChartComp.prototype.downloadChart = function () {
-        // TODO use chart / dialog title for filename
-        this.chartProxy.getChart().scene.download({ fileName: "chart" });
+        var chart = this.chartProxy.getChart();
+        var fileName = chart.title ? chart.title.text : 'chart';
+        chart.scene.download(fileName);
+    };
+    GridChartComp.prototype.refreshCanvasSize = function () {
+        var eChartWrapper = this.eChart;
+        var chart = this.chartProxy.getChart();
+        chart.height = ag_grid_community_1._.getInnerHeight(eChartWrapper);
+        chart.width = ag_grid_community_1._.getInnerWidth(eChartWrapper);
     };
     GridChartComp.prototype.addResizeListener = function () {
         var _this = this;
         var eGui = this.getGui();
         var resizeFunc = function () {
-            var eParent = eGui.parentElement;
             if (!eGui || !eGui.offsetParent) {
                 observeResizeFunc();
                 return;
             }
-            var chart = _this.chartProxy.getChart();
-            chart.height = ag_grid_community_1._.getInnerHeight(eParent);
-            chart.width = ag_grid_community_1._.getInnerWidth(eParent);
+            _this.refreshCanvasSize();
         };
-        var observeResizeFunc = this.resizeObserverService.observeResize(eGui, resizeFunc, 5);
+        var observeResizeFunc = this.resizeObserverService.observeResize(this.eChart, resizeFunc, 5);
     };
     GridChartComp.prototype.setActiveChartCellRange = function (focusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget)) {
@@ -193,7 +219,7 @@ var GridChartComp = /** @class */ (function (_super) {
         // remove from parent, so if user provided container, we detach from the provided dom element
         ag_grid_community_1._.removeFromParent(eGui);
     };
-    GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\"></div>\n        </div>";
+    GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartComponentsWrapper\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\"></div>\n            </div>\n            <div ref=\"eDockedContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
     __decorate([
         ag_grid_community_1.Autowired('resizeObserverService'),
         __metadata("design:type", ag_grid_community_1.ResizeObserverService)
@@ -207,9 +233,17 @@ var GridChartComp = /** @class */ (function (_super) {
         __metadata("design:type", ag_grid_community_1.Environment)
     ], GridChartComp.prototype, "environment", void 0);
     __decorate([
+        ag_grid_community_1.RefSelector('eChartComponentsWrapper'),
+        __metadata("design:type", HTMLElement)
+    ], GridChartComp.prototype, "eChartComponentsWrapper", void 0);
+    __decorate([
         ag_grid_community_1.RefSelector('eChart'),
         __metadata("design:type", HTMLElement)
     ], GridChartComp.prototype, "eChart", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('eDockedContainer'),
+        __metadata("design:type", HTMLElement)
+    ], GridChartComp.prototype, "eDockedContainer", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

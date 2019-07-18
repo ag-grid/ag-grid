@@ -1,6 +1,7 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Axis } from "../../axis";
-export declare class NumberAxis extends Axis<number> {
+import { LinearScale } from "../../scale/linearScale";
+export declare class NumberAxis extends Axis<LinearScale<number>> {
     constructor();
     private _nice;
     nice: boolean;

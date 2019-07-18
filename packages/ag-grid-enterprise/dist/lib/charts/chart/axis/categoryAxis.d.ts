@@ -1,5 +1,6 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
+import { BandScale } from "../../scale/bandScale";
 import { Axis } from "../../axis";
-export declare class CategoryAxis extends Axis<string> {
+export declare class CategoryAxis extends Axis<BandScale<string>> {
     constructor();
 }

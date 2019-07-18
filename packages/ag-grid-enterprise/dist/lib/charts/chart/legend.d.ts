@@ -1,12 +1,12 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Group } from "../scene/group";
 export interface LegendDatum {
     id: string;
     itemId: any;
     enabled: boolean;
     marker: {
-        fillStyle: string;
-        strokeStyle: string;
+        fill: string;
+        stroke: string;
     };
     label: {
         text: string;
@@ -27,6 +27,8 @@ export declare class Legend {
     data: LegendDatum[];
     private _orientation;
     orientation: Orientation;
+    private _enabled;
+    enabled: boolean;
     private _itemPaddingX;
     itemPaddingX: number;
     private _itemPaddingY;
@@ -35,8 +37,14 @@ export declare class Legend {
     markerPadding: number;
     private _labelColor;
     labelColor: string;
-    private _labelFont;
-    labelFont: string;
+    private _labelFontStyle;
+    labelFontStyle: string | undefined;
+    private _labelFontWeight;
+    labelFontWeight: string | undefined;
+    private _labelFontSize;
+    labelFontSize: number;
+    private _labelFontFamily;
+    labelFontFamily: string;
     private _markerSize;
     markerSize: number;
     private _markerStrokeWidth;

@@ -74,8 +74,35 @@ export class RangeController implements IRangeController {
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.refreshLastRangeStart.bind(this));
 
+        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
+    }
+
+    public onColumnVisibleChange(): void {
+        // first move start column in last cell range (i.e. series chart range)
+        this.refreshLastRangeStart();
+
+        // then check if the column visibility has changed in any cell range
+        this.cellRanges.forEach(cellRange => {
+            const beforeCols = cellRange.columns;
+
+            // remove hidden cols from cell range
+            cellRange.columns = cellRange.columns.filter(col => col.isVisible());
+
+            const colsInRangeChanged = !_.compareArrays(beforeCols, cellRange.columns);
+            if (colsInRangeChanged) {
+
+                // notify users and other parts of grid (i.e. status panel) that range has changed
+                this.onRangeChanged({ started: false, finished: true });
+
+                // notify chart of cell range change
+                const event = {
+                    id: cellRange.id,
+                    type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED
+                };
+                this.eventService.dispatchEvent(event);
+            }
+        });
     }
 
     public refreshLastRangeStart(): void {
@@ -87,7 +114,7 @@ export class RangeController implements IRangeController {
 
     public isContiguousRange(cellRange: CellRange): boolean {
         const rangeColumns = cellRange.columns;
-        
+
         if (!rangeColumns.length) { return false; }
 
         const allColumns = this.columnController.getAllDisplayedColumns();
@@ -124,7 +151,7 @@ export class RangeController implements IRangeController {
                 rowPinned: Constants.PINNED_BOTTOM
             } as RowPosition;
         }
- 
+
         return {
             rowIndex: this.rowModel.getRowCount() - 1,
             rowPinned: undefined
@@ -135,7 +162,7 @@ export class RangeController implements IRangeController {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
             return;
         }
- 
+
         const columns = this.calculateColumnsBetween(cell.column, cell.column);
         if (!columns) { return; }
 
@@ -237,26 +264,34 @@ export class RangeController implements IRangeController {
     }
 
     private refreshRangeStart(cellRange: CellRange) {
-        const { left, right } = this.getRangeEdgeColumns(cellRange);
         const { startColumn, columns } = cellRange;
-        const isFirst = startColumn === left;
-        const isLast = startColumn === right;
-        const wasFirst = startColumn === columns[0];
-        const wasLast = startColumn === _.last(columns);
 
-        if (wasFirst && !isFirst) {
-            cellRange.startColumn = left;
-            cellRange.columns = [left, ...cellRange.columns.filter(col => col !== left)];
-        } else if (wasLast && !isLast) {
-            cellRange.startColumn = right;
-            cellRange.columns = [...cellRange.columns.filter(col => col !== right), right];
+        const moveColInCellRange = (colToMove: Column, moveToFront: boolean) => {
+            const otherCols = cellRange.columns.filter(col => col !== colToMove);
+            if (colToMove) {
+                cellRange.startColumn = colToMove;
+                cellRange.columns = moveToFront ? [colToMove, ...otherCols] : [...otherCols, colToMove];
+            } else {
+                cellRange.columns = otherCols;
+            }
+        };
+
+        const { left, right } = this.getRangeEdgeColumns(cellRange);
+        const shouldMoveLeftCol = startColumn === columns[0] && startColumn !== left;
+        if (shouldMoveLeftCol) {
+            moveColInCellRange(left, true);
+            return;
+        }
+        const shouldMoveRightCol = startColumn === _.last(columns) && startColumn === right;
+        if (shouldMoveRightCol) {
+            moveColInCellRange(right, false);
+            return;
         }
     }
 
     public getRangeEdgeColumns(cellRange: CellRange): { left: Column, right: Column } {
         const allColumns = this.columnController.getAllDisplayedColumns();
         const allIndices: number[] = [];
-
         for (const column of cellRange.columns) {
             const idx = allColumns.indexOf(column);
             if (idx > -1) {
@@ -269,7 +304,7 @@ export class RangeController implements IRangeController {
         return {
             left: allColumns[allIndices[0]],
             right: allColumns[_.last(allIndices)!]
-        }
+        };
     }
 
     // returns true if successful, false if not successful

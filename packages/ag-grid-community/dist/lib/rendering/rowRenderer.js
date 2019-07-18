@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -591,7 +591,7 @@ var RowRenderer = /** @class */ (function (_super) {
         utils_1._.iterateObject(this.rowCompsByIndex, function (indexStr, rowComp) {
             var index = Number(indexStr);
             if (index < _this.firstRenderedRow || index > _this.lastRenderedRow) {
-                if (_this.keepRowBecauseEditingOrFocused(rowComp)) {
+                if (_this.doNotUnVirtualiseRow(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
@@ -845,13 +845,18 @@ var RowRenderer = /** @class */ (function (_super) {
     // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
     //    otherwise the user can range select and drag (with focus cell going out of the viewport)
     //    and then ctrl+c, nothing will happen if cell is removed from dom.
-    RowRenderer.prototype.keepRowBecauseEditingOrFocused = function (rowComp) {
+    // c) if detail record of master detail, as users complained that the context of detail rows
+    //    was getting lost when detail row out of view. eg user expands to show detail row,
+    //    then manipulates the detail panel (eg sorts the detail grid), then context is lost
+    //    after detail panel is scrolled out of / into view.
+    RowRenderer.prototype.doNotUnVirtualiseRow = function (rowComp) {
         var REMOVE_ROW = false;
         var KEEP_ROW = true;
         var rowNode = rowComp.getRowNode();
         var rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
         var rowIsEditing = rowComp.isEditing();
-        var mightWantToKeepRow = rowHasFocus || rowIsEditing;
+        var rowIsDetail = rowNode.detail;
+        var mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;
         // if we deffo don't want to keep it,
         if (!mightWantToKeepRow) {
             return REMOVE_ROW;
@@ -894,27 +899,28 @@ var RowRenderer = /** @class */ (function (_super) {
                 nextCell = this.getLastCellOfColSpan(nextCell);
             }
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
-            if (utils_1._.missing(nextCell)) {
-                // pointer points to nothing, we have hit a border of the grid
+            // eg if going down, and nextCell=undefined, means we are gone past the last row
+            var hitEdgeOfGrid = utils_1._.missing(nextCell);
+            if (hitEdgeOfGrid) {
                 finished = true;
+                continue;
             }
-            else {
-                var rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
-                if (rowNode.group) {
-                    // full width rows cannot be focused, so if it's a group and using full width rows,
-                    // we need to skip over the row
-                    var pivotMode = this.columnController.isPivotMode();
-                    var usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
-                    if (usingFullWidthRows) {
-                        finished = !rowNode.group;
-                    }
-                    else {
-                        finished = true;
-                    }
-                }
-                else {
-                    finished = true;
-                }
+            var rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+            // we do not allow focusing on full width rows, this includes details rows
+            if (rowNode.detail) {
+                continue;
+            }
+            // if not a group, then we have a valid row, so quit the search
+            if (!rowNode.group) {
+                finished = true;
+                continue;
+            }
+            // full width rows cannot be focused, so if it's a group and using full width rows,
+            // we need to skip over the row
+            var pivotMode = this.columnController.isPivotMode();
+            var usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+            if (!usingFullWidthRows) {
+                finished = true;
             }
         }
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)

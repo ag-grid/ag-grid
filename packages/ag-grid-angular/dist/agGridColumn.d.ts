@@ -59,6 +59,7 @@ export declare class AgGridColumn {
     maxWidth: any;
     rowGroupIndex: any;
     pivotIndex: any;
+    dndSourceOnRowDrag: any;
     valueGetter: any;
     valueSetter: any;
     filterValueGetter: any;
@@ -113,6 +114,7 @@ export declare class AgGridColumn {
     suppressNavigable: any;
     enableCellChangeFlash: any;
     rowDrag: any;
+    dndSource: any;
     autoHeight: any;
     sortable: any;
     resizable: any;

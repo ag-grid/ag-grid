@@ -144,7 +144,7 @@ export class UserComponentFactory {
     }
 
     public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> {
-        const colDef = params.column && params.column.getColDef();
+        const colDef = params.colDef;
         return this.createAndInitUserComponent<ITooltipComp>(
             colDef, params, "tooltipComponent", 'agTooltipComponent');
     }

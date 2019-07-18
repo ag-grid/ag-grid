@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { ExcelOOXMLTemplate, ExcelAlignment, ExcelProtection } from 'ag-grid-community';
 declare const xfFactory: ExcelOOXMLTemplate;
 export default xfFactory;

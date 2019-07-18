@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -31,6 +31,12 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         _this.expanded = false;
         return _this;
     }
+    ToolPanelFilterComp.prototype.postConstruct = function () {
+        this.eExpandChecked = ag_grid_community_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper);
+        this.eExpandUnchecked = ag_grid_community_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper);
+        this.eExpand.appendChild(this.eExpandChecked);
+        this.eExpand.appendChild(this.eExpandUnchecked);
+    };
     ToolPanelFilterComp.prototype.setColumn = function (column) {
         this.column = column;
         var displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', false);
@@ -91,7 +97,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         }
         this.doCollapse();
     };
-    ToolPanelFilterComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-instance\" >\n            <div class=\"ag-filter-toolpanel-header ag-header-cell-label\" ref=\"eFilterToolPanelHeader\">\n                <div ref=\"eExpand\">\n                    <span class=\"ag-icon ag-icon-tree-open\" ref=\"eExpandChecked\"></span>\n                    <span class=\"ag-icon ag-icon-tree-closed\" ref=\"eExpandUnchecked\"></span>\n                </div>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-body ag-filter\" ref=\"agFilterToolPanelBody\"/>\n        </div>";
+    ToolPanelFilterComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-instance\" >\n            <div class=\"ag-filter-toolpanel-header ag-header-cell-label\" ref=\"eFilterToolPanelHeader\">\n                <div ref=\"eExpand\"></div>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-body ag-filter\" ref=\"agFilterToolPanelBody\"/>\n        </div>";
     __decorate([
         ag_grid_community_1.Autowired('gridApi'),
         __metadata("design:type", ag_grid_community_1.GridApi)
@@ -129,13 +135,15 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         __metadata("design:type", HTMLElement)
     ], ToolPanelFilterComp.prototype, "eFilterIcon", void 0);
     __decorate([
-        ag_grid_community_1.RefSelector('eExpandChecked'),
+        ag_grid_community_1.RefSelector('eExpand'),
         __metadata("design:type", HTMLElement)
-    ], ToolPanelFilterComp.prototype, "eExpandChecked", void 0);
+    ], ToolPanelFilterComp.prototype, "eExpand", void 0);
     __decorate([
-        ag_grid_community_1.RefSelector('eExpandUnchecked'),
-        __metadata("design:type", HTMLElement)
-    ], ToolPanelFilterComp.prototype, "eExpandUnchecked", void 0);
+        ag_grid_community_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ToolPanelFilterComp.prototype, "postConstruct", null);
     return ToolPanelFilterComp;
 }(ag_grid_community_1.Component));
 exports.ToolPanelFilterComp = ToolPanelFilterComp;

@@ -32,16 +32,33 @@ function should_expand($item) {
     return false;
 }
 
-function render_menu_items($items, $gtm = array()) {
+function render_titles($items, $gtm = array()) {
+    echo "<ul>";
+    foreach($items as $item) {
+        $actualMenuItems = $item['items'];
+        render_menu_items($actualMenuItems, $gtm, 1);
+    }
+    echo "</ul>";
+
+}
+
+function render_menu_items($items, $gtm, $level) {
     if (count($items) == 0) {
         return;
     }
 
-    echo "<ul>";
+    if ($level > 1) {
+        echo "<ul>";
+    }
+
     foreach($items as $item) {
         $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
         $current = is_current($item);
-        $li_class = should_expand($item) || $current ? ' class="expanded"' : '';
+        if ($level == 1) {
+            $li_class = should_expand($item) || $current ? ' class="expanded"' : '';
+        } else {
+            $li_class = ' class="expanded"';
+        }
 
         echo "<li$li_class>";
 
@@ -52,9 +69,9 @@ function render_menu_items($items, $gtm = array()) {
             $a_classes = array();
             if ($current) {
                 array_push($a_classes, 'active');
-            } 
+            }
 
-            if (count($item['items']) > 0) {
+            if ($level == 1) {
                 array_push($a_classes, 'has-children');
             }
 
@@ -70,13 +87,17 @@ LINK;
             echo "<span>{$item['title']}</span>";
         }
 
-        render_menu_items($item['items'], $item_gtm);
+        render_menu_items($item['items'], $item_gtm, $level + 1);
         echo "</li>";
     }
-    echo "</ul>";
+
+    if ($level > 1) {
+        echo "</ul>";
+    }
+
 }
 
-render_menu_items($menu_items, array());
+render_titles($menu_items, array());
 ?>
 <script>
 dataLayer.push(<?=$GLOBALS['DOC_GTM'] ?>);

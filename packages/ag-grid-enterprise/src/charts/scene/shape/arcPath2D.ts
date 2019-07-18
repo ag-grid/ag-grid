@@ -1,5 +1,12 @@
 import { Shape } from "./shape";
-import { chainObjects } from "../../util/object";
+import { isEqual } from "../../util/number";
+import { normalizeAngle360 } from "../../util/angle";
+
+export enum ArcType {
+    Open,
+    Chord,
+    Round
+}
 
 /**
  * Circular arc node that uses the experimental `Path2D` class to define
@@ -13,11 +20,30 @@ export class Arc extends Shape {
     // Doesn't work in IE.
     protected path = new Path2D();
 
+    /**
+     * It's not always that the path has to be updated.
+     * For example, if transform attributes (such as `translationX`)
+     * are changed, we don't have to update the path. The `dirtyFlag`
+     * is how we keep track if the path has to be updated or not.
+     */
+    private _dirtyPath: boolean = true;
+    set dirtyPath(value: boolean) {
+        if (this._dirtyPath !== value) {
+            this._dirtyPath = value;
+            if (value) {
+                this.dirty = true;
+            }
+        }
+    }
+    get dirtyPath(): boolean {
+        return this._dirtyPath;
+    }
+
     private _x: number = 0;
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get x(): number {
@@ -28,7 +54,7 @@ export class Arc extends Shape {
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get y(): number {
@@ -39,7 +65,7 @@ export class Arc extends Shape {
     set radius(value: number) {
         if (this._radius !== value) {
             this._radius = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get radius(): number {
@@ -50,7 +76,7 @@ export class Arc extends Shape {
     set startAngle(value: number) {
         if (this._startAngle !== value) {
             this._startAngle = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get startAngle(): number {
@@ -61,29 +87,68 @@ export class Arc extends Shape {
     set endAngle(value: number) {
         if (this._endAngle !== value) {
             this._endAngle = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get endAngle(): number {
         return this._endAngle;
     }
 
+    private get fullPie(): boolean {
+        return isEqual(normalizeAngle360(this.startAngle), normalizeAngle360(this.endAngle));
+    }
+
     private _counterClockwise: boolean = false;
     set counterClockwise(value: boolean) {
         if (this._counterClockwise !== value) {
             this._counterClockwise = value;
-            this.dirty = true;
+            this.dirtyPath = true;
         }
     }
     get counterClockwise(): boolean {
         return this._counterClockwise;
     }
 
+    /**
+     * The type of arc to render:
+     * - {@link ArcType.Open} - end points of the arc segment are not connected (default)
+     * - {@link ArcType.Chord} - end points of the arc segment are connected by a line segment
+     * - {@link ArcType.Round} - each of the end points of the arc segment are connected
+     *                           to the center of the arc
+     * Arcs with {@link ArcType.Open} do not support hit testing, even if they have their
+     * {@link Shape.fillStyle} set, because they are not closed paths. Hit testing support
+     * would require using two paths - one for rendering, another for hit testing - and there
+     * doesn't seem to be a compelling reason to do that, when one can just use {@link ArcType.Chord}
+     * to create a closed path.
+     */
+    private _type: ArcType = ArcType.Open;
+    set type(value: ArcType) {
+        if (this._type !== value) {
+            this._type = value;
+            this.dirtyPath = true;
+        }
+    }
+    get type(): ArcType {
+        return this._type;
+    }
+
     updatePath() {
-        this.path = new Path2D();
+        if (!this.dirtyPath) {
+            return;
+        }
+
         // No way to clear existing Path2D, have to create a new one each time.
-        this.path.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.counterClockwise);
-        this.path.closePath();
+        const path = this.path = new Path2D();
+
+        path.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.counterClockwise);
+        if (this.type === ArcType.Chord) {
+            path.closePath();
+        } else if (this.type === ArcType.Round && !this.fullPie) {
+            path.lineTo(this.x, this.y);
+            path.closePath();
+        }
+
+        this.dirtyPath = false;
     }
 
     // Native Path2D's isPointInPath/isPointInStroke require multiplying by the pixelRatio:
@@ -98,18 +163,66 @@ export class Arc extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        // Path2D approach:
-        this.updatePath();
-        // this.applyContextAttributes(ctx);
-        ctx.fill(this.path);
-        ctx.stroke(this.path);
+        if (!this.scene) {
+            return;
+        }
 
-        // Traditional approach:
-        // this.applyContextAttributes(ctx);
-        // ctx.beginPath();
-        // ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, this.anticlockwise);
-        // ctx.fill();
-        // ctx.stroke();
+        if (this.dirtyTransform) {
+            this.computeTransformMatrix();
+        }
+        this.matrix.toContext(ctx);
+
+        this.updatePath();
+
+        if (this.opacity < 1) {
+            ctx.globalAlpha = this.opacity;
+        }
+
+        const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+
+        if (this.fill) {
+            ctx.fillStyle = this.fill;
+
+            // The canvas context scaling (depends on the device's pixel ratio)
+            // has no effect on shadows, so we have to account for the pixel ratio
+            // manually here.
+            const fillShadow = this.fillShadow;
+            if (fillShadow) {
+                ctx.shadowColor = fillShadow.color;
+                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = fillShadow.blur * pixelRatio;
+            }
+            ctx.fill(this.path);
+        }
+
+        ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+
+        if (this.stroke && this.strokeWidth) {
+            ctx.strokeStyle = this.stroke;
+            ctx.lineWidth = this.strokeWidth;
+            if (this.lineDash) {
+                ctx.setLineDash(this.lineDash);
+            }
+            if (this.lineDashOffset) {
+                ctx.lineDashOffset = this.lineDashOffset;
+            }
+            if (this.lineCap) {
+                ctx.lineCap = this.lineCap;
+            }
+            if (this.lineJoin) {
+                ctx.lineJoin = this.lineJoin;
+            }
+
+            const strokeShadow = this.strokeShadow;
+            if (strokeShadow) {
+                ctx.shadowColor = strokeShadow.color;
+                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowBlur = strokeShadow.blur * pixelRatio;
+            }
+            ctx.stroke(this.path);
+        }
 
         // About 15% performance loss for re-creating and retaining a Path2D
         // object for hit testing.

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -20,10 +20,11 @@ var rect_1 = require("../../scene/shape/rect");
 var text_1 = require("../../scene/shape/text");
 var bandScale_1 = require("../../scale/bandScale");
 var palettes_1 = require("../palettes");
-var color_1 = require("../../util/color");
 var series_1 = require("./series");
 var node_1 = require("../../scene/node");
 var number_1 = require("../../util/number");
+var ag_grid_community_1 = require("ag-grid-community");
+var categoryAxis_1 = require("../axis/categoryAxis");
 var BarSeriesNodeTag;
 (function (BarSeriesNodeTag) {
     BarSeriesNodeTag[BarSeriesNodeTag["Bar"] = 0] = "Bar";
@@ -33,10 +34,14 @@ var BarSeries = /** @class */ (function (_super) {
     __extends(BarSeries, _super);
     function BarSeries() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        /**
-         * The selection of Group elements, each containing a Rect (bar) and a Text (label) nodes.
-         */
-        _this.groupSelection = selection_1.Selection.select(_this.group).selectAll();
+        // Need to put bar and label nodes into separate groups, because even though label nodes are
+        // created after the bar nodes, this only guarantees that labels will always be on top of bars
+        // on the first run. If on the next run more bars are added, they might clip the labels
+        // rendered during the previous run.
+        _this.rectGroup = _this.group.appendChild(new group_1.Group);
+        _this.textGroup = _this.group.appendChild(new group_1.Group);
+        _this.rectSelection = selection_1.Selection.select(_this.rectGroup).selectAll();
+        _this.textSelection = selection_1.Selection.select(_this.textGroup).selectAll();
         /**
          * The assumption is that the values will be reset (to `true`)
          * in the {@link yFields} setter.
@@ -44,8 +49,11 @@ var BarSeries = /** @class */ (function (_super) {
         _this.enabled = new Map();
         _this._fills = palettes_1.default.fills;
         _this._strokes = palettes_1.default.strokes;
+        _this._fillOpacity = 1;
+        _this._strokeOpacity = 1;
         _this.xData = [];
         _this.yData = [];
+        _this.ySums = [];
         _this.domainY = [];
         /**
          * Used to get the position of bars within each group.
@@ -61,15 +69,21 @@ var BarSeries = /** @class */ (function (_super) {
         _this._yFields = [];
         _this._yFieldNames = [];
         _this._grouped = false;
+        /**
+         * The value to normalize the stacks to, when {@link grouped} is `false`.
+         * Should be a finite positive value or `NaN`.
+         * Defaults to `NaN` - stacks are not normalized.
+         */
+        _this._normalizedTo = NaN;
         _this._strokeWidth = 1;
         _this._shadow = undefined;
         _this._labelEnabled = true;
-        _this._labelFont = '12px Verdana, sans-serif';
+        _this._labelFontStyle = undefined;
+        _this._labelFontWeight = undefined;
+        _this._labelFontSize = 12;
+        _this._labelFontFamily = 'Verdana, sans-serif';
         _this._labelColor = 'black';
-        /**
-         * Vertical and horizontal label padding as an array of two numbers.
-         */
-        _this._labelPadding = { x: 10, y: 10 };
+        _this._labelFormatter = undefined;
         _this.highlightStyle = {
             fill: 'yellow'
         };
@@ -81,7 +95,7 @@ var BarSeries = /** @class */ (function (_super) {
         },
         set: function (values) {
             this._fills = values;
-            this.strokes = values.map(function (color) { return color_1.Color.fromString(color).darker().toHexString(); });
+            this.strokes = values.map(function (color) { return ag_grid_community_1.Color.fromString(color).darker().toHexString(); });
             this.scheduleData();
         },
         enumerable: true,
@@ -94,6 +108,32 @@ var BarSeries = /** @class */ (function (_super) {
         set: function (values) {
             this._strokes = values;
             this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BarSeries.prototype, "fillOpacity", {
+        get: function () {
+            return this._fillOpacity;
+        },
+        set: function (value) {
+            if (this._fillOpacity !== value) {
+                this._fillOpacity = value;
+                this.scheduleLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BarSeries.prototype, "strokeOpacity", {
+        get: function () {
+            return this._strokeOpacity;
+        },
+        set: function (value) {
+            if (this._strokeOpacity !== value) {
+                this._strokeOpacity = value;
+                this.scheduleLayout();
+            }
         },
         enumerable: true,
         configurable: true
@@ -168,6 +208,23 @@ var BarSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(BarSeries.prototype, "normalizedTo", {
+        get: function () {
+            return this._normalizedTo;
+        },
+        set: function (value) {
+            if (value === 0) {
+                value = NaN;
+            }
+            var absValue = Math.abs(value);
+            if (this._normalizedTo !== absValue) {
+                this._normalizedTo = absValue;
+                this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(BarSeries.prototype, "strokeWidth", {
         get: function () {
             return this._strokeWidth;
@@ -207,13 +264,52 @@ var BarSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(BarSeries.prototype, "labelFont", {
+    Object.defineProperty(BarSeries.prototype, "labelFontStyle", {
         get: function () {
-            return this._labelFont;
+            return this._labelFontStyle;
         },
         set: function (value) {
-            if (this._labelFont !== value) {
-                this._labelFont = value;
+            if (this._labelFontStyle !== value) {
+                this._labelFontStyle = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BarSeries.prototype, "labelFontWeight", {
+        get: function () {
+            return this._labelFontWeight;
+        },
+        set: function (value) {
+            if (this._labelFontWeight !== value) {
+                this._labelFontWeight = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BarSeries.prototype, "labelFontSize", {
+        get: function () {
+            return this._labelFontSize;
+        },
+        set: function (value) {
+            if (this._labelFontSize !== value) {
+                this._labelFontSize = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(BarSeries.prototype, "labelFontFamily", {
+        get: function () {
+            return this._labelFontFamily;
+        },
+        set: function (value) {
+            if (this._labelFontFamily !== value) {
+                this._labelFontFamily = value;
                 this.update();
             }
         },
@@ -233,27 +329,27 @@ var BarSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(BarSeries.prototype, "labelPadding", {
+    Object.defineProperty(BarSeries.prototype, "labelFormatter", {
         get: function () {
-            return this._labelPadding;
+            return this._labelFormatter;
         },
         set: function (value) {
-            if (this._labelPadding !== value) {
-                this._labelPadding = value;
+            if (this._labelFormatter !== value) {
+                this._labelFormatter = value;
                 this.update();
             }
         },
         enumerable: true,
         configurable: true
     });
-    BarSeries.prototype.highlight = function (node) {
+    BarSeries.prototype.highlightNode = function (node) {
         if (!(node instanceof rect_1.Rect)) {
             return;
         }
         this.highlightedNode = node;
         this.scheduleLayout();
     };
-    BarSeries.prototype.dehighlight = function () {
+    BarSeries.prototype.dehighlightNode = function () {
         this.highlightedNode = undefined;
         this.scheduleLayout();
     };
@@ -279,16 +375,23 @@ var BarSeries = /** @class */ (function (_super) {
         // }]
         //
         var enabled = this.enabled;
+        var normalizedTo = this.normalizedTo;
         var xData = this.xData = data.map(function (datum) { return datum[xField]; });
-        var yData = this.yData = data.map(function (datum) {
+        var ySums = this.ySums = []; // used for normalization of stacked bars
+        var yData = this.yData = data.map(function (datum, xIndex) {
             var values = [];
+            var ySum = 0;
             yFields.forEach(function (field) {
                 var value = datum[field];
-                if (isNaN(value) || !isFinite(value)) {
+                if (!isFinite(value) || !enabled.get(field)) {
                     value = 0;
                 }
-                values.push(enabled.get(field) ? value : 0);
+                if (value > 0) {
+                    ySum += value;
+                }
+                values.push(value);
             });
+            ySums[xIndex] = ySum;
             return values;
         });
         // xData: ['Jan', 'Feb']
@@ -309,26 +412,36 @@ var BarSeries = /** @class */ (function (_super) {
             yMax = Math.max.apply(Math, yData.map(function (groupValues) { return Math.max.apply(Math, groupValues); }));
         }
         else { // stacked or regular
-            // Find the height of each stack in the positive and negative directions,
-            // then find the tallest stacks in both directions.
-            yMin = Math.min.apply(Math, [0].concat(yData.map(function (stackValues) {
-                var min = 0;
-                stackValues.forEach(function (value) {
-                    if (value < 0) {
-                        min -= value;
-                    }
+            if (isFinite(normalizedTo)) {
+                yMin = 0;
+                yMax = normalizedTo;
+                yData.forEach(function (stackValues, i) {
+                    var ySum = ySums[i];
+                    stackValues.forEach(function (y, j) { return stackValues[j] = y / ySum * normalizedTo; });
                 });
-                return min;
-            })));
-            yMax = Math.max.apply(Math, yData.map(function (stackValues) {
-                var max = 0;
-                stackValues.forEach(function (value) {
-                    if (value > 0) {
-                        max += value;
-                    }
-                });
-                return max;
-            }));
+            }
+            else {
+                // Find the height of each stack in the positive and negative directions,
+                // then find the tallest stacks in both directions.
+                yMin = Math.min.apply(Math, [0].concat(yData.map(function (stackValues) {
+                    var min = 0;
+                    stackValues.forEach(function (y) {
+                        if (y < 0) {
+                            min -= y;
+                        }
+                    });
+                    return min;
+                })));
+                yMax = Math.max.apply(Math, yData.map(function (stackValues) {
+                    var max = 0;
+                    stackValues.forEach(function (y) {
+                        if (y > 0) {
+                            max += y;
+                        }
+                    });
+                    return max;
+                }));
+            }
         }
         if (yMin === yMax || !isFinite(yMin) || !isFinite(yMax)) {
             yMin = 0;
@@ -355,80 +468,108 @@ var BarSeries = /** @class */ (function (_super) {
         if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
             return;
         }
-        var n = this.data.length;
-        var xAxis = chart.xAxis;
-        var yAxis = chart.yAxis;
+        var categoryCount = this.data.length;
+        var flipXY = !(chart.xAxis instanceof categoryAxis_1.CategoryAxis);
+        var xAxis = flipXY ? chart.yAxis : chart.xAxis;
+        var yAxis = flipXY ? chart.xAxis : chart.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
         var groupScale = this.groupScale;
         var yFields = this.yFields;
         var fills = this.fills;
         var strokes = this.strokes;
+        var fillOpacity = this.fillOpacity;
+        var strokeOpacity = this.strokeOpacity;
         var grouped = this.grouped;
         var strokeWidth = this.strokeWidth;
-        var labelFont = this.labelFont;
+        var enabled = this.enabled;
+        var labelEnabled = this.labelEnabled;
+        var labelFontStyle = this.labelFontStyle;
+        var labelFontWeight = this.labelFontWeight;
+        var labelFontSize = this.labelFontSize;
+        var labelFontFamily = this.labelFontFamily;
         var labelColor = this.labelColor;
-        var labelPadding = this.labelPadding;
+        var labelFormatter = this.labelFormatter;
         var data = this.data;
         var xData = this.xData;
         var yData = this.yData;
-        var labelEnabled = this.labelEnabled;
         groupScale.range = [0, xScale.bandwidth];
         var barWidth = grouped ? groupScale.bandwidth : xScale.bandwidth;
-        var groupSelectionData = [];
-        var _loop_1 = function (i) {
+        var selectionData = [];
+        for (var i = 0; i < categoryCount; i++) {
             var category = xData[i];
             var values = yData[i];
+            var valueCount = values.length;
             var x = xScale.convert(category);
-            var yFieldIndex = 0;
-            values.reduce(function (prev, curr) {
-                var yField = yFields[yFieldIndex];
+            var prev = 0;
+            var curr = void 0;
+            for (var j = 0; j < valueCount; j++) {
+                curr = values[j];
+                var yField = yFields[j];
+                var yFieldEnabled = enabled.get(yField);
                 var barX = grouped ? x + groupScale.convert(yField) : x;
                 var y = yScale.convert((grouped ? curr : prev + curr));
                 var bottomY = yScale.convert((grouped ? 0 : prev));
-                var labelText = _this.yFieldNames[yFieldIndex];
-                groupSelectionData.push({
-                    seriesDatum: data[i],
+                var seriesDatum = data[i];
+                var yValue = seriesDatum[yField]; // unprocessed y-value
+                var labelText = void 0;
+                if (labelFormatter) {
+                    labelText = labelFormatter({
+                        value: typeof yValue === 'number' ? yValue : NaN
+                    });
+                }
+                else {
+                    labelText = isFinite(yValue) ? yValue.toFixed(2) : '';
+                }
+                selectionData.push({
+                    seriesDatum: seriesDatum,
+                    yValue: yValue,
                     yField: yField,
-                    x: barX,
-                    y: Math.min(y, bottomY),
-                    width: barWidth,
-                    height: Math.abs(bottomY - y),
-                    fill: fills[yFieldIndex % fills.length],
-                    stroke: strokes[yFieldIndex % strokes.length],
+                    x: flipXY ? Math.min(y, bottomY) : barX,
+                    y: flipXY ? barX : Math.min(y, bottomY),
+                    width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                    height: flipXY ? barWidth : Math.abs(bottomY - y),
+                    fill: fills[j % fills.length],
+                    stroke: strokes[j % strokes.length],
                     strokeWidth: strokeWidth,
-                    label: labelText ? {
+                    label: yFieldEnabled && labelText ? {
                         text: labelText,
-                        font: labelFont,
+                        fontStyle: labelFontStyle,
+                        fontWeight: labelFontWeight,
+                        fontSize: labelFontSize,
+                        fontFamily: labelFontFamily,
                         fill: labelColor,
-                        x: barX + barWidth / 2,
-                        y: y + strokeWidth / 2 + labelPadding.x
+                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
+                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
                     } : undefined
                 });
-                yFieldIndex++;
-                return grouped ? curr : curr + prev;
-            }, 0);
-        };
-        for (var i = 0; i < n; i++) {
-            _loop_1(i);
+                if (grouped) {
+                    prev = curr;
+                }
+                else {
+                    prev += curr;
+                }
+            }
         }
-        var updateGroups = this.groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
-        var enterGroups = updateGroups.enter.append(group_1.Group);
-        enterGroups.append(rect_1.Rect).each(function (rect) {
+        var updateRects = this.rectSelection.setData(selectionData);
+        var updateTexts = this.textSelection.setData(selectionData);
+        updateRects.exit.remove();
+        updateTexts.exit.remove();
+        var enterRects = updateRects.enter.append(rect_1.Rect).each(function (rect) {
             rect.tag = BarSeriesNodeTag.Bar;
+            // rect.sizing = RectSizing.Border;
             rect.crisp = true;
         });
-        enterGroups.append(text_1.Text).each(function (text) {
+        var enterTexts = updateTexts.enter.append(text_1.Text).each(function (text) {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = node_1.PointerEvents.None;
-            text.textBaseline = 'hanging';
             text.textAlign = 'center';
+            text.textBaseline = 'middle';
         });
         var highlightedNode = this.highlightedNode;
-        var groupSelection = updateGroups.merge(enterGroups);
-        groupSelection.selectByTag(BarSeriesNodeTag.Bar)
-            .each(function (rect, datum) {
+        var rectSelection = updateRects.merge(enterRects);
+        var textSelection = updateTexts.merge(enterTexts);
+        rectSelection.each(function (rect, datum) {
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
@@ -439,49 +580,59 @@ var BarSeries = /** @class */ (function (_super) {
             rect.stroke = rect === highlightedNode && _this.highlightStyle.stroke !== undefined
                 ? _this.highlightStyle.stroke
                 : datum.stroke;
+            rect.fillOpacity = fillOpacity;
+            rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;
             rect.fillShadow = _this.shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });
-        groupSelection.selectByTag(BarSeriesNodeTag.Label)
-            .each(function (text, datum) {
+        textSelection.each(function (text, datum) {
             var label = datum.label;
             if (label && labelEnabled) {
-                text.font = label.font;
+                text.fontStyle = label.fontStyle;
+                text.fontWeight = label.fontWeight;
+                text.fontSize = label.fontSize;
+                text.fontFamily = label.fontFamily;
                 text.text = label.text;
                 text.x = label.x;
                 text.y = label.y;
                 text.fill = label.fill;
-                var textBBox = text.getBBox();
-                text.visible = datum.height > (textBBox.height + datum.strokeWidth + labelPadding.x * 2)
-                    && datum.width > (textBBox.width + datum.strokeWidth + labelPadding.y * 2);
+                text.visible = true;
             }
             else {
                 text.visible = false;
             }
         });
-        this.groupSelection = groupSelection;
+        this.rectSelection = rectSelection;
+        this.textSelection = textSelection;
     };
     BarSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var html = '';
         if (this.tooltipEnabled) {
             var xField = this.xField;
             var yField = nodeDatum.yField;
+            var yFields = this.yFields;
+            var yFieldIndex = yFields.indexOf(yField);
+            var datum = nodeDatum.seriesDatum;
+            var color = this.fills[yFieldIndex % this.fills.length];
+            var title = this.yFieldNames[yFieldIndex] || undefined;
             if (this.tooltipRenderer && xField) {
                 html = this.tooltipRenderer({
-                    datum: nodeDatum.seriesDatum,
+                    datum: datum,
                     xField: xField,
                     yField: yField,
+                    title: title,
+                    color: color
                 });
             }
             else {
-                var title = nodeDatum.label ? "<div class=\"title\">" + nodeDatum.label.text + "</div>" : '';
-                var seriesDatum = nodeDatum.seriesDatum;
-                var xValue = seriesDatum[xField];
-                var yValue = seriesDatum[yField];
+                var titleStyle = "style=\"color: white; background-color: " + color + "\"";
+                title = title ? "<div class=\"title\" " + titleStyle + ">" + title + "</div>" : '';
+                var xValue = datum[xField];
+                var yValue = datum[yField];
                 var xString = typeof (xValue) === 'number' ? number_1.toFixed(xValue) : String(xValue);
                 var yString = typeof (yValue) === 'number' ? number_1.toFixed(yValue) : String(yValue);
-                html = "" + title + xString + ": " + yString;
+                html = title + "<div class=\"content\">" + xString + ": " + yString + "</div>";
             }
         }
         return html;
@@ -501,8 +652,8 @@ var BarSeries = /** @class */ (function (_super) {
                         text: _this.yFieldNames[index] || _this.yFields[index]
                     },
                     marker: {
-                        fillStyle: fills_1[index % fills_1.length],
-                        strokeStyle: strokes_1[index % strokes_1.length]
+                        fill: fills_1[index % fills_1.length],
+                        stroke: strokes_1[index % strokes_1.length]
                     }
                 });
             });

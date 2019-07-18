@@ -1,9 +1,11 @@
-// ag-grid-enterprise v21.0.1
-import { AxisOptions, BarSeriesOptions, CartesianChartOptions, DropShadowOptions, LineSeriesOptions, PieSeriesOptions, DoughnutChartOptions, ChartOptions, BarChartOptions, LegendOptions, PolarChartOptions, LineChartOptions, PieChartOptions, SeriesOptions, CaptionOptions } from "ag-grid-community";
+// ag-grid-enterprise v21.1.0
+import { AxisOptions, BarSeriesOptions, AreaSeriesOptions, CartesianChartOptions, DropShadowOptions, LineSeriesOptions, ScatterSeriesOptions, PieSeriesOptions, DoughnutChartOptions, ChartOptions, BarChartOptions, AreaChartOptions, LegendOptions, PolarChartOptions, LineChartOptions, ScatterChartOptions, PieChartOptions, SeriesOptions, CaptionOptions } from "ag-grid-community";
 import { CartesianChart } from "../../charts/chart/cartesianChart";
 import { PolarChart } from "../../charts/chart/polarChart";
 import { LineSeries } from "../../charts/chart/series/lineSeries";
+import { ScatterSeries } from "../../charts/chart/series/scatterSeries";
 import { BarSeries } from "../../charts/chart/series/barSeries";
+import { AreaSeries } from "../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../charts/chart/series/pieSeries";
 import { Chart } from "../../charts/chart/chart";
 import { Series } from "../../charts/chart/series/series";
@@ -11,25 +13,31 @@ import { DropShadow } from "../../charts/scene/dropShadow";
 import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
 import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Legend } from "../../charts/chart/legend";
-import { Caption } from "../../charts/chart/caption";
-declare type CartesianSeriesType = 'line' | 'bar';
+import { Caption } from "../../charts/caption";
+declare type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
 declare type PolarSeriesType = 'pie';
 declare type SeriesType = CartesianSeriesType | PolarSeriesType;
 export declare class ChartBuilder {
     static createCartesianChart(options: CartesianChartOptions): CartesianChart;
     static createBarChart(options: BarChartOptions): CartesianChart;
+    static createColumnChart(options: BarChartOptions): CartesianChart;
     static createLineChart(options: LineChartOptions): CartesianChart;
+    static createScatterChart(options: ScatterChartOptions): CartesianChart;
     static createPolarChart(options: PolarChartOptions): PolarChart;
     static createDoughnutChart(options: DoughnutChartOptions): PolarChart;
     static createPieChart(options: PieChartOptions): PolarChart;
+    static createAreaChart(options: AreaChartOptions): CartesianChart;
     static createLineSeries(options: LineSeriesOptions): LineSeries;
-    static createSeries(options: any, type?: string): PieSeries | LineSeries | BarSeries | null;
+    static createScatterSeries(options: ScatterSeriesOptions): ScatterSeries;
+    static createSeries(options: any, type?: string): BarSeries | PieSeries | LineSeries | AreaSeries | ScatterSeries | null;
     static initChart<C extends Chart>(chart: C, options: ChartOptions, seriesType?: SeriesType): C;
     static initCartesianChart(chart: CartesianChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType): CartesianChart;
     static initPolarChart(chart: PolarChart, options: PolarChartOptions, seriesType?: PolarSeriesType): PolarChart;
     static initSeries<S extends Series<any>>(series: S, options: SeriesOptions): S;
     static initLineSeries(series: LineSeries, options: LineSeriesOptions): LineSeries;
+    static initScatterSeries(series: ScatterSeries, options: ScatterSeriesOptions): ScatterSeries;
     static initBarSeries(series: BarSeries, options: BarSeriesOptions): BarSeries;
+    static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions): AreaSeries;
     static initPieSeries(series: PieSeries, options: PieSeriesOptions): PieSeries;
     static initLegend(legend: Legend, options: LegendOptions): void;
     static createTitle(options: CaptionOptions): Caption;

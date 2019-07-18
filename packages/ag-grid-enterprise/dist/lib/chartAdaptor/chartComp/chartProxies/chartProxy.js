@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ChartProxy = /** @class */ (function () {
@@ -13,6 +13,9 @@ var ChartProxy = /** @class */ (function () {
     };
     ChartProxy.prototype.getAxisGridColor = function () {
         return this.chartProxyParams.isDarkTheme() ? ChartProxy.darkAxisColour : ChartProxy.lightAxisColour;
+    };
+    ChartProxy.prototype.getBackgroundColor = function () {
+        return this.chartProxyParams.isDarkTheme() ? '#2d3436' : 'white';
     };
     ChartProxy.prototype.getChartOptions = function (type, options) {
         // allow users to override options before they are applied

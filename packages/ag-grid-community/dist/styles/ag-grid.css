@@ -34,7 +34,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 .ag-select-agg-func-popup {
   position: absolute; }
 
-.ag-input-text-wrapper {
+.ag-input-wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -506,7 +506,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   .ag-column-drop.ag-column-drop-vertical > div {
     display: -webkit-box;
     display: -ms-flexbox;
-    display: flex; }
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center; }
   .ag-column-drop.ag-column-drop-vertical .ag-column-drop-list {
     -webkit-box-align: stretch;
     -ms-flex-align: stretch;
@@ -624,7 +627,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 
 .ag-cell-inline-editing {
   z-index: 1; }
-  .ag-cell-inline-editing .ag-cell-edit-input, .ag-cell-inline-editing .ag-input-text-wrapper {
+  .ag-cell-inline-editing .ag-cell-edit-input, .ag-cell-inline-editing .ag-input-wrapper {
     height: 100%;
     width: 100%;
     line-height: normal; }
@@ -671,12 +674,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -webkit-box-flex: 1;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
-  height: 20px; }
+  height: 100%; }
   .ag-floating-filter-body input {
     margin: 0;
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;
-    flex: 1 1 auto; }
+    flex: 1 1 auto;
+    max-height: calc(100% - 1px); }
 
 .ag-floating-filter-full-body {
   display: -webkit-box;
@@ -897,7 +901,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
  * Dialog
  ****************************
 */
-.ag-dialog {
+.ag-dialog, .ag-panel {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -905,8 +909,44 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  position: absolute;
+  position: relative;
   overflow: hidden; }
+  .ag-dialog .ag-title-bar, .ag-panel .ag-title-bar {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 0;
+    -ms-flex: none;
+    flex: none;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    cursor: default; }
+    .ag-dialog .ag-title-bar .ag-title-bar-title, .ag-panel .ag-title-bar .ag-title-bar-title {
+      -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+      flex: 1 1 auto; }
+    .ag-dialog .ag-title-bar .ag-title-bar-buttons, .ag-panel .ag-title-bar .ag-title-bar-buttons {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex; }
+      .ag-dialog .ag-title-bar .ag-title-bar-buttons .ag-button, .ag-panel .ag-title-bar .ag-title-bar-buttons .ag-button {
+        cursor: pointer; }
+  .ag-dialog .ag-panel-content-wrapper, .ag-panel .ag-panel-content-wrapper {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden; }
+    .ag-dialog .ag-panel-content-wrapper > div, .ag-panel .ag-panel-content-wrapper > div {
+      width: 100%;
+      height: 100%; }
+
+.ag-dialog {
+  position: absolute; }
   .ag-dialog .ag-resizer {
     position: absolute;
     pointer-events: none;
@@ -959,42 +999,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       bottom: 5px;
       width: 5px;
       cursor: ew-resize; }
-  .ag-dialog .ag-dialog-title-bar {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-flex: 0;
-    -ms-flex: none;
-    flex: none;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    cursor: default; }
-    .ag-dialog .ag-dialog-title-bar .ag-dialog-title-bar-title {
-      -webkit-box-flex: 1;
-      -ms-flex: 1 1 auto;
-      flex: 1 1 auto; }
-    .ag-dialog .ag-dialog-title-bar .ag-dialog-title-bar-buttons {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex; }
-      .ag-dialog .ag-dialog-title-bar .ag-dialog-title-bar-buttons .ag-dialog-button {
-        cursor: pointer;
-        height: 100%;
-        width: 100%;
-        background-size: contain; }
-  .ag-dialog .ag-dialog-content-wrapper {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
-    position: relative;
-    overflow: hidden; }
-    .ag-dialog .ag-dialog-content-wrapper > div {
-      width: 100%;
-      height: 100%; }
   .ag-dialog .ag-message-box {
     width: 100%;
     height: 100%;
@@ -1037,6 +1041,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   z-index: 99999; }
 
 .ag-chart-tooltip {
+  display: table;
   position: absolute;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1045,15 +1050,34 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   pointer-events: none;
   white-space: nowrap;
   z-index: 99999;
-  border: 1px solid gray;
   font: 12px Verdana, sans-serif;
-  padding: 7px;
   color: black;
-  background: rgba(244, 244, 244, 0.9);
-  -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
-  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3); }
+  background: #f4f4f4;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
+  box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
+  opacity: 0;
+  -webkit-transform: scale(0.9);
+  transform: scale(0.9);
+  -webkit-transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  -webkit-transition-property: opacity, -webkit-transform;
+  transition-property: opacity, -webkit-transform;
+  transition-property: opacity, transform;
+  transition-property: opacity, transform, -webkit-transform; }
+  .ag-chart-tooltip.visible {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1); }
   .ag-chart-tooltip .title {
-    font-weight: bold; }
+    font-weight: bold;
+    padding: 7px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: white;
+    background-color: #888888; }
+  .ag-chart-tooltip .content {
+    padding: 7px; }
 
 /**
  ****************************
@@ -1128,10 +1152,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       -webkit-box-flex: 1;
       -ms-flex: 1 1 auto;
       flex: 1 1 auto; }
-    .ag-rich-select .ag-rich-select-value .ag-icon {
-      -webkit-box-ordinal-group: 2;
-      -ms-flex-order: 1;
-      order: 1; }
+      .ag-rich-select .ag-rich-select-value > span.ag-icon {
+        -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+        order: 1;
+        -webkit-box-flex: 0;
+        -ms-flex: none;
+        flex: none; }
   .ag-rich-select .ag-rich-select-list .ag-virtual-list-item {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -1173,6 +1200,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   align-items: center; }
   .ag-paging-page-summary-panel .ag-disabled {
     pointer-events: none; }
+  .ag-paging-page-summary-panel .ag-paging-button {
+    position: relative; }
+    .ag-paging-page-summary-panel .ag-paging-button button {
+      position: absolute; }
 
 /**
  ****************************
@@ -1191,6 +1222,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   user-select: none;
   width: 200px; }
   .ag-tool-panel-wrapper .ag-filter-toolpanel-header {
+    line-height: 1.5;
     cursor: pointer; }
 
 .ag-column-tool-panel-column,
@@ -1293,34 +1325,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 
 /**
  ****************************
- * Group Component
- ****************************
- */
-.ag-group-component {
-  position: relative;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column; }
-  .ag-group-component .ag-group-component-label {
-    position: absolute;
-    top: -10px; }
-  .ag-group-component .ag-group-item {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto; }
-
-/**
- ****************************
  * Side Bar
  ****************************
 */
@@ -1389,6 +1393,221 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex; }
+
+/**
+ ****************************
+ * Widgets
+ ****************************
+*/
+.ag-group-component {
+  position: relative;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 100%;
+  flex: 1 1 100%; }
+  .ag-group-component .ag-group-component-title-bar {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center; }
+  .ag-group-component .ag-group-component-toolbar {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center; }
+  .ag-group-component .ag-group-component-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column; }
+    .ag-group-component .ag-group-component-container .ag-group-subgroup {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-item-align: stretch;
+      align-self: stretch; }
+  .ag-group-component .ag-group-item {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center; }
+  .ag-group-component.ag-disabled .ag-group-component-container {
+    pointer-events: none; }
+  .ag-group-component.ag-collapsed .ag-group-component-toolbar, .ag-group-component.ag-collapsed .ag-group-component-container {
+    display: none; }
+
+.ag-toggle-button .ag-input-wrapper .ag-icon {
+  -webkit-transition: right 0.3s;
+  transition: right 0.3s;
+  position: absolute;
+  top: -1px; }
+
+.ag-input-field {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+  .ag-input-field input, .ag-input-field select, .ag-input-field textarea {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0; }
+
+.ag-range-field {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+
+.ag-picker-field > .ag-wrapper, .ag-slider > .ag-wrapper, .ag-angle-select > .ag-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex; }
+  .ag-picker-field > .ag-wrapper > div, .ag-slider > .ag-wrapper > div, .ag-angle-select > .ag-wrapper > div {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto; }
+
+.ag-angle-select {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+  .ag-angle-select .ag-angle-select-field .ag-parent-circle {
+    display: block;
+    position: relative; }
+  .ag-angle-select .ag-angle-select-field .ag-child-circle {
+    position: absolute; }
+
+.ag-picker-field {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+  .ag-picker-field > .ag-wrapper > button {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    border: 0;
+    padding: 0;
+    margin: 0; }
+
+.ag-color-picker > .ag-wrapper {
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  overflow: hidden; }
+
+.ag-color-picker button {
+  cursor: pointer; }
+
+.ag-labeled.ag-label-align-right label {
+  -webkit-box-ordinal-group: 2;
+  -ms-flex-order: 1;
+  order: 1; }
+
+.ag-labeled.ag-label-align-right > div {
+  -webkit-box-flex: 0;
+  -ms-flex: none;
+  flex: none; }
+
+.ag-labeled.ag-label-align-top {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start; }
+  .ag-labeled.ag-label-align-top > div {
+    -ms-flex-item-align: stretch;
+    align-self: stretch; }
+
+.ag-color-panel {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  text-align: center; }
+  .ag-color-panel .ag-spectrum-color {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
+    cursor: default; }
+  .ag-color-panel .ag-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0; }
+  .ag-color-panel .ag-spectrum-val {
+    cursor: pointer; }
+  .ag-color-panel .ag-spectrum-dragger {
+    position: absolute;
+    pointer-events: none;
+    cursor: pointer; }
+  .ag-color-panel .ag-spectrum-hue {
+    cursor: default;
+    background: -webkit-gradient(linear, right top, left top, color-stop(3%, #ff0000), color-stop(17%, #ffff00), color-stop(33%, #00ff00), color-stop(50%, #00ffff), color-stop(67%, #0000ff), color-stop(83%, #ff00ff), to(#ff0000));
+    background: linear-gradient(to left, #ff0000 3%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%); }
+  .ag-color-panel .ag-spectrum-alpha {
+    cursor: default; }
+  .ag-color-panel .ag-spectrum-hue-background {
+    width: 100%;
+    height: 100%; }
+  .ag-color-panel .ag-spectrum-alpha-background {
+    background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0)), to(black));
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), black);
+    width: 100%;
+    height: 100%; }
+  .ag-color-panel .ag-hue-alpha {
+    cursor: pointer; }
+  .ag-color-panel .ag-spectrum-slider {
+    position: absolute;
+    pointer-events: none; }
+  .ag-color-panel .ag-spectrum-text-value {
+    display: inline-block;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap; }
+  .ag-color-panel .ag-spectrum-text-value:focus {
+    outline: none;
+    outline-offset: 0; }
+  .ag-color-panel .ag-recent-colors {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex; }
+    .ag-color-panel .ag-recent-colors > div {
+      cursor: pointer; }
 
 .ag-ltr .ag-toolpanel-indent-1 {
   padding-left: 10px; }
@@ -2014,22 +2233,38 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 .ag-chart {
   position: relative;
   display: flex;
-  flex: 1 1 auto;
   overflow: hidden;
   width: 100%;
   height: 100%; }
-  .ag-chart .ag-chart-canvas-wrapper {
-    flex: 1 1 auto; }
-    .ag-chart .ag-chart-canvas-wrapper canvas {
-      display: block; }
-  .ag-chart .ag-chart-menu {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    width: 24px;
-    overflow: hidden;
+  .ag-chart .ag-chart-components-wrapper {
+    position: relative;
     display: flex;
-    flex-direction: column; }
+    flex: 1 1 auto;
+    overflow: hidden; }
+    .ag-chart .ag-chart-components-wrapper .ag-chart-canvas-wrapper {
+      position: relative;
+      flex: 1 1 auto;
+      overflow: hidden; }
+      .ag-chart .ag-chart-components-wrapper .ag-chart-canvas-wrapper canvas {
+        display: block; }
+    .ag-chart .ag-chart-components-wrapper .ag-chart-menu {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      width: 24px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column; }
+  .ag-chart:not(.ag-has-menu):hover .ag-chart-menu {
+    opacity: 1;
+    pointer-events: all; }
+  .ag-chart .ag-chart-docked-container {
+    position: relative;
+    width: 0;
+    min-width: 0;
+    transition: min-width 0.4s; }
+    .ag-chart .ag-chart-docked-container .ag-panel {
+      border-width: 0 0 0 1px; }
 
 .ag-chart-tabbed-menu > div {
   width: 100%;
@@ -2039,7 +2274,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   overflow: hidden; }
 
 .ag-chart-tabbed-menu .ag-tab-header {
-  flex: none; }
+  flex: none;
+  user-select: none;
+  cursor: default; }
 
 .ag-chart-tabbed-menu .ag-tab-body {
   display: flex;
@@ -2047,16 +2284,18 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   align-items: stretch;
   overflow: hidden; }
   .ag-chart-tabbed-menu .ag-tab-body > div {
-    flex: 1 1 auto; }
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto; }
 
 .ag-chart-tabbed-menu .ag-chart-settings {
   overflow-x: hidden; }
   .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper {
     position: relative;
+    flex-direction: column;
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column-reverse;
     overflow: hidden; }
     .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar {
       width: 100%;
@@ -2075,11 +2314,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
             opacity: 1; }
       .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-prev-btn, .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-next-btn {
         position: relative;
-        flex: none;
-        height: 24px;
-        width: 24px;
-        line-height: 24px;
-        font-size: 24px; }
+        flex: none; }
         .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-prev-btn button, .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-next-btn button {
           position: absolute;
           top: 0;
@@ -2088,28 +2323,51 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
           height: 100%;
           cursor: pointer;
           opacity: 0; }
-    .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-wrapper {
-      position: absolute;
-      top: 0;
-      left: 0;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      width: 100%; }
-      .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-wrapper.ag-animating, .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-wrapper.ag-animating {
-        transition: left 0.3s;
-        transition-timing-function: ease-in-out; }
-      .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-wrapper .ag-chart-mini-thumbnail {
-        cursor: pointer; }
-        .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-wrapper .ag-chart-mini-thumbnail canvas {
-          display: block; }
+    .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container {
+      position: relative;
+      flex: 1 1 auto;
+      overflow-x: hidden;
+      overflow-y: auto; }
+      .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container .ag-chart-settings-mini-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-height: 100%;
+        overflow: hidden; }
+        .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container .ag-chart-settings-mini-wrapper .ag-group-component {
+          flex: none; }
+        .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container .ag-chart-settings-mini-wrapper .ag-group-component-container {
+          flex-direction: row;
+          flex-wrap: wrap; }
+          .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container .ag-chart-settings-mini-wrapper .ag-group-component-container .ag-chart-mini-thumbnail {
+            flex: none; }
+        .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container .ag-chart-settings-mini-wrapper.ag-animating, .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container .ag-chart-settings-mini-wrapper.ag-animating {
+          transition: left 0.3s;
+          transition-timing-function: ease-in-out; }
+        .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container .ag-chart-settings-mini-wrapper .ag-chart-mini-thumbnail {
+          cursor: pointer; }
+          .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container .ag-chart-settings-mini-wrapper .ag-chart-mini-thumbnail canvas {
+            display: block; }
 
-.ag-chart-tabbed-menu .ag-chart-data-wrapper {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
+.ag-chart-tabbed-menu .ag-chart-data-wrapper, .ag-chart-tabbed-menu .ag-chart-format-wrapper {
+  display: flex;
+  flex-direction: column;
   position: relative;
   user-select: none; }
+  .ag-chart-tabbed-menu .ag-chart-data-wrapper > div, .ag-chart-tabbed-menu .ag-chart-format-wrapper > div {
+    display: flex;
+    margin: 0;
+    padding-bottom: 2px; }
+    .ag-chart-tabbed-menu .ag-chart-data-wrapper > div:not(:first-child), .ag-chart-tabbed-menu .ag-chart-format-wrapper > div:not(:first-child) {
+      margin-top: 0; }
+
+.ag-chart-tabbed-menu .ag-chart-format-wrapper {
+  overflow-x: hidden; }
+  .ag-chart-tabbed-menu .ag-chart-format-wrapper .ag-group-component .ag-group-subgroup {
+    justify-content: space-between; }
 
 .ag-chart .ag-chart-menu {
   opacity: 0;
@@ -2125,18 +2383,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     .ag-chart .ag-chart-menu > span:hover {
       border-radius: 5px; }
 
-.ag-chart:hover .ag-chart-menu:not(.ag-has-popup) {
-  opacity: 1;
-  pointer-events: all; }
-  .ag-chart:hover .ag-chart-menu:not(.ag-has-popup):hover > span {
-    opacity: 1; }
+.ag-chart .ag-chart-docked-container {
+  min-width: 0;
+  width: 0; }
 
 .ag-chart-tabbed-menu .ag-tab-body {
   padding: 0; }
-
-.ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-mini-wrapper > div {
-  margin: 5px;
-  border-radius: 5px; }
 
 .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-nav-bar {
   padding: 0 10px;
@@ -2145,9 +2397,4 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     padding: 0 10px; }
     .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-nav-bar .ag-nav-card-selector .ag-nav-card-item {
       cursor: pointer; }
-
-/* targets IE11 only */
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-  .ag-chart-tabbed-menu .ag-chart-settings-mini-wrapper {
-    justify-content: center; } }
 

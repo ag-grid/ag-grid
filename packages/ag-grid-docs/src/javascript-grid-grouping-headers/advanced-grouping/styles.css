@@ -5,12 +5,8 @@
     background-color: #67b168;
 }
 .wrapper {
-    height: 100%;
-    padding-top: 38px;
-    box-sizing: border-box;
+    height: calc(100% - 25px);
 }
 .button-bar {
-    position: fixed;
-    top: 0px;
-    left: 0px;
+    margin-bottom: 5px;
 }

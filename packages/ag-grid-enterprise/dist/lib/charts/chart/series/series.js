@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("../../scene/group");
@@ -10,7 +10,7 @@ var Series = /** @class */ (function () {
          */
         this.group = new group_1.Group();
         this._data = [];
-        this._chart = null;
+        this._chart = undefined;
         this._visible = true;
         this.tooltipEnabled = false;
         this._showInLegend = true;

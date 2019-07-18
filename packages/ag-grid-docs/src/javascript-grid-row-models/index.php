@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
     </style>
 
     <h1>
-        Row Models
+        Server Side Data
     </h1>
     <p class="lead">
         Depending on your needs, the grid can be configured with different row models. The row models

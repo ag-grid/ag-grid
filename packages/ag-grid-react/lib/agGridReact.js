@@ -1,4 +1,4 @@
-// ag-grid-react v21.0.1
+// ag-grid-react v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38,7 +38,6 @@ var AgGridReact = /** @class */ (function (_super) {
         var _this = _super.call(this, props, state) || this;
         _this.props = props;
         _this.state = state;
-        _this.destroyed = false;
         _this.changeDetectionService = new changeDetectionService_1.ChangeDetectionService();
         _this.api = null;
         _this.portals = [];
@@ -90,6 +89,11 @@ var AgGridReact = /** @class */ (function (_super) {
     AgGridReact.prototype.waitForInstance = function (reactComponent, resolve, runningTime) {
         var _this = this;
         if (runningTime === void 0) { runningTime = 0; }
+        // if the grid has been destroyed in the meantime just resolve
+        if (!this.api) {
+            resolve(null);
+            return;
+        }
         if (reactComponent.isStatelesComponent() && reactComponent.statelessComponentRendered()) {
             resolve(null);
         }

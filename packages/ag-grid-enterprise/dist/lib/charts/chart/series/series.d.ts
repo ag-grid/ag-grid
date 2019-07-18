@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Group } from "../../scene/group";
 import { Chart } from "../chart";
 import { LegendDatum } from "../legend";
@@ -20,8 +20,8 @@ export declare abstract class Series<C extends Chart> {
     private createId;
     protected _data: any[];
     data: any[];
-    protected _chart: C | null;
-    abstract chart: C | null;
+    protected _chart: C | undefined;
+    abstract chart: C | undefined;
     protected _visible: boolean;
     visible: boolean;
     abstract getDomainX(): any[];
@@ -42,8 +42,8 @@ export declare abstract class Series<C extends Chart> {
     toggleSeriesItem(itemId: any, enabled: boolean): void;
     private _showInLegend;
     showInLegend: boolean;
-    abstract highlight(node: Shape): void;
-    abstract dehighlight(): void;
+    abstract highlightNode(node: Shape): void;
+    abstract dehighlightNode(): void;
     scheduleLayout(): void;
     scheduleData(): void;
 }

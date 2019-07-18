@@ -75,8 +75,13 @@ export default class extends Component {
 
     render() {
         return (
-            <div style={{height: '100%'}}>
-                <div style={{boxSizing: 'border-box', paddingTop: '30px', height: '100%'}} className="ag-theme-balham">
+            <div style={{ height: '100%' }}>
+                <div style={{ marginBottom: '5px' }}>
+                    <button onClick={this.fillLarge.bind(this)}>Fill 100%</button>
+                    <button onClick={this.fillMedium.bind(this)}>Fill 60%</button>
+                    <button onClick={this.fillExact.bind(this)}>Exactly 400 x 400 pixels</button>
+                </div>
+                <div style={{height: 'calc(100% - 25px)'}} className="ag-theme-balham">
                     <div style={this.state.style}>
                         <AgGridReact
                             columnDefs={this.state.columnDefs}
@@ -84,11 +89,6 @@ export default class extends Component {
                             onGridReady={this.onGridReady.bind(this)}
                         />
                     </div>
-                </div>
-                <div style={{position: 'absolute', top: 0, left: 0}}>
-                    <button onClick={this.fillLarge.bind(this)}>Fill 100%</button>
-                    <button onClick={this.fillMedium.bind(this)}>Fill 60%</button>
-                    <button onClick={this.fillExact.bind(this)}>Exactly 400 x 400 pixels</button>
                 </div>
             </div>
         );

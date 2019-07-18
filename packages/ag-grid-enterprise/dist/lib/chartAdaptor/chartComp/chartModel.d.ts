@@ -1,7 +1,8 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { BeanStub, CellRange, ChartType, Column } from "ag-grid-community";
 import { RangeController } from "../../rangeController";
 import { Palette } from "../../charts/chart/palettes";
+import { ChartProxy } from "./chartProxies/chartProxy";
 export interface ColState {
     column?: Column;
     colId: string;
@@ -34,6 +35,7 @@ export declare class ChartModel extends BeanStub {
     private initialising;
     private datasource;
     private chartId;
+    private chartProxy;
     constructor(params: ChartModelParams);
     private init;
     updateData(): void;
@@ -41,6 +43,8 @@ export declare class ChartModel extends BeanStub {
     updateColumnState(updatedCol: ColState): void;
     updateCellRanges(updatedCol?: ColState): void;
     getData(): any[];
+    setChartProxy(chartProxy: ChartProxy): void;
+    getChartProxy(): ChartProxy;
     getChartId(): string;
     getValueColState(): ColState[];
     getDimensionColState(): ColState[];
@@ -60,6 +64,8 @@ export declare class ChartModel extends BeanStub {
     private getColDisplayName;
     private getRowIndexes;
     private getAllChartColumns;
+    private isNumberCol;
+    private extractLeafData;
     private generateId;
     destroy(): void;
 }

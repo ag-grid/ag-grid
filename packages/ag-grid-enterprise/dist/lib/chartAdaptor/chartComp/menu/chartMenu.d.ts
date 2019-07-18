@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Component } from "ag-grid-community";
 import { ChartController } from "../chartController";
 export declare class ChartMenu extends Component {
@@ -9,12 +9,15 @@ export declare class ChartMenu extends Component {
     private static TEMPLATE;
     private readonly chartController;
     private tabbedMenu;
-    private menuDialog;
+    private menuPanel;
     constructor(chartController: ChartController);
     private postConstruct;
     private getToolbarOptions;
     private createButtons;
     private saveChart;
+    private createMenu;
+    private slideDockedContainer;
     private showMenu;
+    private hideMenu;
     destroy(): void;
 }

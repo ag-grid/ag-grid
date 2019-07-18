@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 import { BBox } from "../bbox";

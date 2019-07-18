@@ -1,11 +1,12 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { DropShadow } from "../../scene/dropShadow";
 import { Series, SeriesNodeDatum } from "./series";
 import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
-import { Caption } from "../caption";
+import { Caption } from "../../caption";
 import { Shape } from "../../scene/shape/shape";
 interface GroupSelectionDatum extends SeriesNodeDatum {
+    index: number;
     radius: number;
     startAngle: number;
     endAngle: number;
@@ -23,6 +24,8 @@ export interface PieTooltipRendererParams {
     angleField: string;
     radiusField?: string;
     labelField?: string;
+    title?: string;
+    color?: string;
 }
 export declare class PieSeries extends Series<PolarChart> {
     static className: string;
@@ -46,15 +49,21 @@ export declare class PieSeries extends Series<PolarChart> {
     calloutStrokeWidth: number;
     private _calloutLength;
     calloutLength: number;
-    private _calloutPadding;
-    calloutPadding: number;
-    private _labelFont;
-    labelFont: string;
+    private _labelOffset;
+    labelOffset: number;
+    private _labelFontStyle;
+    labelFontStyle: string | undefined;
+    private _labelFontWeight;
+    labelFontWeight: string | undefined;
+    private _labelFontSize;
+    labelFontSize: number;
+    private _labelFontFamily;
+    labelFontFamily: string;
     private _labelColor;
     labelColor: string;
     private _labelMinAngle;
     labelMinAngle: number;
-    chart: PolarChart | null;
+    chart: PolarChart | undefined;
     /**
      * The name of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
@@ -81,6 +90,10 @@ export declare class PieSeries extends Series<PolarChart> {
     fills: string[];
     private _strokes;
     strokes: string[];
+    private _fillOpacity;
+    fillOpacity: number;
+    private _strokeOpacity;
+    strokeOpacity: number;
     /**
      * The series rotation in degrees.
      */
@@ -100,8 +113,8 @@ export declare class PieSeries extends Series<PolarChart> {
         centerOffset?: number;
     };
     private highlightedNode?;
-    highlight(node: Shape): void;
-    dehighlight(): void;
+    highlightNode(node: Shape): void;
+    dehighlightNode(): void;
     getDomainX(): [number, number];
     getDomainY(): [number, number];
     processData(): boolean;

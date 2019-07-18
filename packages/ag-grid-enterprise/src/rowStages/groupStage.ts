@@ -559,14 +559,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getGroupInfoFromCallback(rowNode: RowNode): GroupInfo[] {
-        let keys: (string | null)[] = [];
-        if (this.getDataPath) {
-            const path = this.getDataPath(rowNode.data);
-            if (path) {
-                // sanitize
-                keys = path.map(p => _.escape(p));
-            }
-        }
+        const keys: string[] | null = this.getDataPath ? this.getDataPath(rowNode.data) : null;
 
         if (keys === null || keys === undefined || keys.length === 0) {
             _.doOnce(

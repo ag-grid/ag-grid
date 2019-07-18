@@ -80,6 +80,7 @@ $ag-icon-chart: "\f080";
 $ag-icon-checkbox-checked: "\f14a";
 $ag-icon-checkbox-indeterminate: "\f146";
 $ag-icon-checkbox-unchecked: "\f0c8";
+$ag-icon-color-picker: "\f576";
 $ag-icon-column: "\f142";
 $ag-icon-columns: "\f0db";
 $ag-icon-contracted: "\f146";
@@ -124,8 +125,8 @@ $ag-icon-tree-closed: "\f105";
 $ag-icon-tree-indeterminate: "\f068";
 $ag-icon-tree-open: "\f107";
 
-@import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/ag-theme-balham.scss";
+@import "~ag-grid-community/src/styles/ag-grid.scss";
+@import "~ag-grid-community/src/styles/ag-theme-balham.scss";
 
 .ag-icon {
     font-weight: bold;
@@ -148,7 +149,7 @@ $ag-icon-tree-open: "\f107";
         The icons are set as follows:
     </p>
 
-    <snippet>
+<snippet>
 // column header items
 menu
 filter
@@ -168,16 +169,16 @@ columnGroupClosed
 // tool panel column group open / close
 columnSelectOpen
 columnSelectClosed
+columnSelectIndeterminate
 
-// row checkbox selection and tool panel column selection
+// grid checkboxes
 checkboxChecked
 checkboxUnchecked
 checkboxIndeterminate
 
-// tool panel column selection, when read only (ie disabled checkboxes)
-checkboxCheckedReadOnly
-checkboxUncheckedReadOnly
-checkboxIndeterminateReadOnly
+// grid radio buttons
+radioButtonOn
+radioButtonOff
 
 // when moving columns
 columnMovePin // when column is to the left, before it gets pinned
@@ -197,15 +198,44 @@ menuValue // beside the column value menu item
 menuAddRowGroup // beside the column row group menu item
 menuRemoveRowGroup // beside the column row group menu item
 clipboardCopy // beside the copy to clipboard menu item
+clipboardCut // beside the cut to clipboard menu item
 clipboardPaste // beside the paste from clipboard menu item
 
 // column drop panels
 rowGroupPanel // beside where to drop columns for row group
 pivotPanel // beside where to drop columns for pivot
-valuePanel // beside where to drop columns for value</snippet>
+valuePanel // beside where to drop columns for valuePanel
 
 // drag
-rowDrag // the column dragger icon
+rowDrag // the row drag icon
+columnDrag // the column drag icon
+
+// panels and dialogs
+close
+maximize
+minimize
+
+// paging toolbar
+first
+previous
+next
+last
+
+// chevrons (small arrows)
+smallLeft
+smallRight
+smallUp
+smallDown
+
+// generic
+chart
+cancel
+check 
+colorPicker
+groupLoading
+data
+save
+</snippet>
     <p>
         Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
     </p>

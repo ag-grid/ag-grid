@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Component, IStatusPanelComp } from 'ag-grid-community';
 export declare class AggregationComp extends Component implements IStatusPanelComp {
     private static TEMPLATE;

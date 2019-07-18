@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders, ExcelFont } from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders, ExcelFont, _ } from 'ag-grid-community';
 import numberFormatsFactory from './numberFormats';
 import fontsFactory from './fonts';
 import fillsFactory from './fills';
@@ -85,15 +85,19 @@ const registerFill = (fill: ExcelInterior): number => {
     const convertedPattern =  convertLegacyPattern(fill.pattern);
     const convertedFillColor = convertLegacyColor(fill.color);
     const convertedPatternColor = convertLegacyColor(fill.patternColor);
-    const reg = registeredFills.filter(currentFill => {
-        if (currentFill.patternType != convertedPattern) { return false; }
-        if (currentFill.fgRgb != convertedFillColor) { return false; }
-        if (currentFill.bgRgb != convertedPatternColor) { return false; }
 
+    let pos = _.findIndex(registeredFills, currentFill => {
+        const { patternType, fgRgb, bgRgb } = currentFill;
+
+        if (
+            patternType != convertedPattern ||
+            fgRgb != convertedFillColor ||
+            bgRgb != convertedPatternColor
+        ) {
+            return false;
+        }
         return true;
     });
-
-    let pos = reg.length ? registeredFills.indexOf(reg[0]) : -1;
 
     if (pos === -1) {
         pos = registeredFills.length;
@@ -104,12 +108,10 @@ const registerFill = (fill: ExcelInterior): number => {
 };
 
 const registerNumberFmt = (format: string): number => {
+    format = _.utf8_encode(format);
     if (numberFormatMap[format]) { return numberFormatMap[format]; }
-    const reg = registeredNumberFmts.filter((currentFmt) => {
-        if (currentFmt.formatCode !== format) { return false; }
-    });
 
-    let pos = reg.length ? reg[0].numFmtId : -1;
+    let pos = _.findIndex(registeredNumberFmts, currentFormat => currentFormat.formatCode === format);
 
     if (pos === -1) {
         pos = registeredNumberFmts.length + 164;
@@ -143,17 +145,17 @@ const registerBorders = (borders: ExcelBorders): number => {
         topColor = convertLegacyColor(borderTop.color);
     }
 
-    const reg = registeredBorders.filter(currentBorder => {
-        const {left, right, top, bottom} = currentBorder;
+    let pos = _.findIndex(registeredBorders, currentBorder => {
+        const { left, right, top, bottom } = currentBorder;
         if (!left && (leftStyle || leftColor)) { return false; }
         if (!right && (rightStyle || rightColor)) { return false; }
         if (!top && (topStyle || topColor)) { return false; }
         if (!bottom && (bottomStyle || bottomColor)) { return false; }
 
-        const {style: clS, color: clC} = left || {} as Border;
-        const {style: crS, color: crC} = right || {} as Border;
-        const {style: ctS, color: ctC} = top || {} as Border;
-        const {style: cbS, color: cbC} = bottom || {} as Border;
+        const { style: clS, color: clC } = left || {} as Border;
+        const { style: crS, color: crC } = right || {} as Border;
+        const { style: ctS, color: ctC } = top || {} as Border;
+        const { style: cbS, color: cbC } = bottom || {} as Border;
 
         if (clS != leftStyle || clC != leftColor) { return false; }
         if (crS != rightStyle || crC != rightColor) { return false; }
@@ -162,8 +164,6 @@ const registerBorders = (borders: ExcelBorders): number => {
 
         return true;
     });
-
-    let pos = reg.length ? registeredBorders.indexOf(reg[0]) : -1;
 
     if (pos === -1) {
         pos = registeredBorders.length;
@@ -192,30 +192,33 @@ const registerBorders = (borders: ExcelBorders): number => {
 
 const registerFont = (font: ExcelFont): number => {
     const {fontName: name, color, size, bold, italic, outline, shadow, strikeThrough, underline, family} = font;
+    const utf8Name = name ? _.utf8_encode(name) : name;
     const convertedColor = convertLegacyColor(color);
     const familyId = getFamilyId(family);
 
-    const reg = registeredFonts.filter(currentFont => {
-        if (currentFont.name != name) { return false; }
-        if (currentFont.color != convertedColor) { return false; }
-        if (currentFont.size != size) { return false; }
-        if (currentFont.bold != bold) { return false; }
-        if (currentFont.italic != italic) { return false; }
-        if (currentFont.outline != outline) { return false; }
-        if (currentFont.shadow != shadow) { return false; }
-        if (currentFont.strike != strikeThrough) { return false; }
-        if (currentFont.underline != underline) { return false; }
-        if (currentFont.family != familyId) { return false; }
+    let pos = _.findIndex(registeredFonts, (currentFont) => {
+        if (
+            currentFont.name != utf8Name ||
+            currentFont.color != convertedColor ||
+            currentFont.size != size ||
+            currentFont.bold != bold ||
+            currentFont.italic != italic ||
+            currentFont.outline != outline ||
+            currentFont.shadow != shadow ||
+            currentFont.strike != strikeThrough ||
+            currentFont.underline != underline ||
+            currentFont.family != familyId
+        ) {
+            return false;
+        }
 
         return true;
     });
 
-    let pos = reg.length ? registeredFonts.indexOf(reg[0]) : -1;
-
     if (pos === -1) {
         pos = registeredFonts.length;
         registeredFonts.push({
-            name,
+            name: utf8Name,
             color: convertedColor,
             size,
             bold,
@@ -232,7 +235,7 @@ const registerFont = (font: ExcelFont): number => {
 };
 
 const registerStyle = (config: ExcelStyle): void => {
-    const {id, alignment, borders, font, interior, numberFormat, protection} = config;
+    const { id, alignment, borders, font, interior, numberFormat, protection } = config;
     let currentFill = 0;
     let currentBorder = 0;
     let currentFont = 0;

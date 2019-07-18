@@ -11,14 +11,10 @@
 }
 
 .grid-wrapper {
-    height: 100%;
-    padding-top: 26px;
+    height: calc(100% - 25px);
 }
 .legend-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 1px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
+    margin-bottom: 5px;
 }

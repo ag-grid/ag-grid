@@ -1,0 +1,356 @@
+import { CartesianChart } from "../cartesianChart";
+import ContinuousScale from "../../scale/continuousScale";
+import { Selection } from "../../scene/selection";
+import { Group } from "../../scene/group";
+import { Arc, ArcType } from "../../scene/shape/arc";
+import { extent } from "../../util/array";
+import palette from "../palettes";
+import { Series, SeriesNodeDatum } from "./series";
+import { toFixed } from "../../util/number";
+import { LegendDatum } from "../legend";
+import { Shape } from "../../scene/shape/shape";
+import { Color } from "ag-grid-community";
+
+interface GroupSelectionDatum extends SeriesNodeDatum {
+    x: number,
+    y: number,
+    fill?: string,
+    stroke?: string,
+    strokeWidth: number,
+    radius: number
+}
+
+export interface ScatterTooltipRendererParams {
+    datum: any,
+    xField: string,
+    yField: string,
+    title?: string,
+    color?: string
+}
+
+export class ScatterSeries extends Series<CartesianChart> {
+
+    static className = 'ScatterSeries';
+
+    private domainX: any[] = [];
+    private domainY: any[] = [];
+    private xData: any[] = [];
+    private yData: any[] = [];
+
+    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
+
+    set chart(chart: CartesianChart | undefined) {
+        if (this._chart !== chart) {
+            this._chart = chart;
+            this.scheduleData();
+        }
+    }
+    get chart(): CartesianChart | undefined {
+        return this._chart as CartesianChart;
+    }
+
+    protected _title: string = '';
+    set title(value: string) {
+        if (this._title !== value) {
+            this._title = value;
+            this.scheduleLayout();
+        }
+    }
+    get title(): string {
+        return this._title;
+    }
+
+    protected _xField: string = '';
+    set xField(value: string) {
+        if (this._xField !== value) {
+            this._xField = value;
+            this.xData = [];
+            this.scheduleData();
+        }
+    }
+    get xField(): string {
+        return this._xField;
+    }
+
+    protected _yField: string = '';
+    set yField(value: string) {
+        if (this._yField !== value) {
+            this._yField = value;
+            this.yData = [];
+            this.scheduleData();
+        }
+    }
+    get yField(): string {
+        return this._yField;
+    }
+
+    private _marker: boolean = false;
+    set marker(value: boolean) {
+        if (this._marker !== value) {
+            this._marker = value;
+            this.update();
+        }
+    }
+    get marker(): boolean {
+        return this._marker;
+    }
+
+    private _markerSize: number = 8;
+    set markerSize(value: number) {
+        if (this._markerSize !== value) {
+            this._markerSize = Math.abs(value);
+            this.update();
+        }
+    }
+    get markerSize(): number {
+        return this._markerSize;
+    }
+
+    private _markerStrokeWidth: number = 2;
+    set markerStrokeWidth(value: number) {
+        if (this._markerStrokeWidth !== value) {
+            this._markerStrokeWidth = value;
+            this.update();
+        }
+    }
+    get markerStrokeWidth(): number {
+        return this._markerStrokeWidth;
+    }
+
+    processData(): boolean {
+        const chart = this.chart;
+        const xField = this.xField;
+        const yField = this.yField;
+        let data = this.data as any[];
+
+        if (!(chart && chart.xAxis && chart.yAxis)) {
+            return false;
+        }
+
+        if (!(xField && yField)) {
+            this._data = data = [];
+        }
+
+        this.xData = data.map(datum => datum[xField]);
+        this.yData = data.map(datum => datum[yField]);
+
+        const continuousX = chart.xAxis.scale instanceof ContinuousScale;
+        const domainX = continuousX ? extent(this.xData) : this.xData;
+        const domainY = extent(this.yData);
+
+        if (continuousX) {
+            const min = domainX[0];
+            const max = domainX[1];
+            if (min === max) {
+                if (typeof min === 'number' && isFinite(min)) {
+                    (domainX[0] as any) -= 1;
+                } else {
+                    (domainX[0] as any) = 0;
+                }
+                if (typeof max === 'number' && isFinite(max)) {
+                    (domainX[1] as any) += 1;
+                } else {
+                    (domainX[1] as any) = 1;
+                }
+            }
+        }
+
+        if (domainY[0] === domainY[1]) {
+            const min = domainY[0];
+            const max = domainY[1];
+            if (typeof min === 'number' && isFinite(min)) {
+                (domainY[0] as any) -= 1;
+            } else {
+                (domainY[0] as any) = 0;
+            }
+            if (typeof max === 'number' && isFinite(max)) {
+                (domainY[1] as any) += 1;
+            } else {
+                (domainY[1] as any) = 1;
+            }
+        }
+        this.domainX = domainX;
+        this.domainY = domainY;
+
+        return true;
+    }
+
+    private _fill: string = palette.fills[0];
+    set fill(value: string) {
+        if (this._fill !== value) {
+            this._fill = value;
+            this.stroke = Color.fromString(value).darker().toHexString();
+            this.scheduleData();
+        }
+    }
+    get fill(): string {
+        return this._fill;
+    }
+
+    private _stroke: string = palette.strokes[0];
+    set stroke(value: string) {
+        if (this._stroke !== value) {
+            this._stroke = value;
+            this.scheduleData();
+        }
+    }
+    get stroke(): string {
+        return this._stroke;
+    }
+
+    highlightStyle: {
+        fill?: string,
+        stroke?: string
+    } = {
+        fill: 'yellow'
+    };
+
+    private highlightedNode?: Arc;
+
+    highlightNode(node: Shape) {
+        if (!(node instanceof Arc)) {
+            return;
+        }
+
+        this.highlightedNode = node;
+        this.scheduleLayout();
+    }
+
+    dehighlightNode() {
+        this.highlightedNode = undefined;
+        this.scheduleLayout();
+    }
+
+    update(): void {
+        const chart = this.chart;
+        const visible = this.group.visible = this.visible;
+
+        if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+            return;
+        }
+
+        const xAxis = chart.xAxis;
+        const yAxis = chart.yAxis;
+        const xScale = xAxis.scale;
+        const yScale = yAxis.scale;
+        const xOffset = (xScale.bandwidth || 0) / 2;
+        const yOffset = (yScale.bandwidth || 0) / 2;
+        const data = this.data;
+        const xData = this.xData;
+        const yData = this.yData;
+        const n = xData.length;
+        const fill = this.fill;
+        const stroke = this.stroke;
+        const markerStrokeWidth = this.markerStrokeWidth;
+        const markerSize = this.markerSize;
+
+        const groupSelectionData: GroupSelectionDatum[] = [];
+
+        for (let i = 0; i < n; i++) {
+            const xDatum = xData[i];
+            const yDatum = yData[i];
+            const x = xScale.convert(xDatum) + xOffset;
+            const y = yScale.convert(yDatum) + yOffset;
+
+            groupSelectionData.push({
+                seriesDatum: data[i],
+                x,
+                y,
+                fill,
+                stroke,
+                strokeWidth: markerStrokeWidth,
+                radius: markerSize / 2
+            });
+        }
+
+        // ------------------------------------------
+
+        const updateGroups = this.groupSelection.setData(groupSelectionData);
+        updateGroups.exit.remove();
+
+        const enterGroups = updateGroups.enter.append(Group);
+        enterGroups.append(Arc).each(arc => arc.type = ArcType.Chord);
+
+        const highlightedNode = this.highlightedNode;
+        const groupSelection = updateGroups.merge(enterGroups);
+
+        groupSelection.selectByClass(Arc)
+            .each((arc, datum) => {
+                arc.centerX = datum.x;
+                arc.centerY = datum.y;
+                arc.radiusX = datum.radius;
+                arc.radiusY = datum.radius;
+                arc.fill = arc === highlightedNode && this.highlightStyle.fill !== undefined
+                    ? this.highlightStyle.fill
+                    : datum.fill;
+                arc.stroke = arc === highlightedNode && this.highlightStyle.stroke !== undefined
+                    ? this.highlightStyle.stroke
+                    : datum.stroke;
+                arc.strokeWidth = datum.strokeWidth;
+                arc.visible = datum.radius > 0;
+            });
+
+        this.groupSelection = groupSelection;
+    }
+
+    getDomainX(): any[] {
+        return this.domainX;
+    }
+
+    getDomainY(): any[] {
+        return this.domainY;
+    }
+
+    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
+        const xField = this.xField;
+        const yField = this.yField;
+        const color = this.fill;
+        let html: string = '';
+
+        if (!xField || !yField) {
+            return html;
+        }
+
+        let title = this.title;
+        if (this.tooltipRenderer && this.xField) {
+            html = this.tooltipRenderer({
+                datum: nodeDatum.seriesDatum,
+                xField,
+                yField,
+                title,
+                color
+            });
+        } else {
+            const titleStyle = `style="color: white; background-color: ${color}"`;
+            title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
+            const seriesDatum = nodeDatum.seriesDatum;
+            const xValue = seriesDatum[xField];
+            const yValue = seriesDatum[yField];
+            const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
+            const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+
+            html = `${title}<div class="content">${xString}: ${yString}</div>`;
+            // html = `${title}<div class="content">${xField}: ${xString}<br>${yField}: ${yString}</div>`;
+        }
+        return html;
+    }
+
+    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
+
+    listSeriesItems(data: LegendDatum[]): void {
+        if (this.data.length && this.xField && this.yField) {
+            data.push({
+                id: this.id,
+                itemId: undefined,
+                enabled: this.visible,
+                label: {
+                    text: this.title || this.yField
+                },
+                marker: {
+                    fill: this.fill,
+                    stroke: this.stroke
+                }
+            });
+        }
+    }
+}

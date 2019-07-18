@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -22,9 +22,9 @@ var BarChartProxy = /** @class */ (function (_super) {
     __extends(BarChartProxy, _super);
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
-        var barChartType = params.chartType === ag_grid_community_1.ChartType.GroupedBar ? 'groupedBar' : 'stackedBar';
-        _this.chartOptions = _this.getChartOptions(barChartType, _this.defaultOptions());
-        _this.chart = chartBuilder_1.ChartBuilder.createBarChart(_this.chartOptions);
+        _this.chartOptions = _this.getChartOptions(params.chartType, _this.defaultOptions());
+        _this.chart = BarChartProxy.isBarChart(params.chartType) ?
+            chartBuilder_1.ChartBuilder.createBarChart(_this.chartOptions) : chartBuilder_1.ChartBuilder.createColumnChart(_this.chartOptions);
         var barSeries = chartBuilder_1.ChartBuilder.createSeries(_this.chartOptions.seriesDefaults);
         if (barSeries) {
             _this.chart.addSeries(barSeries);
@@ -37,6 +37,7 @@ var BarChartProxy = /** @class */ (function (_super) {
         barSeries.xField = params.categoryId;
         barSeries.yFields = params.fields.map(function (f) { return f.colId; });
         barSeries.yFieldNames = params.fields.map(function (f) { return f.displayName; });
+        // always set the label rotation of the default category to 0 degrees
         var chart = this.chart;
         if (params.categoryId === chartModel_1.ChartModel.DEFAULT_CATEGORY) {
             chart.xAxis.labelRotation = 0;
@@ -48,12 +49,19 @@ var BarChartProxy = /** @class */ (function (_super) {
         barSeries.fills = palette.fills;
         barSeries.strokes = palette.strokes;
     };
+    BarChartProxy.isBarChart = function (type) {
+        return type === ag_grid_community_1.ChartType.GroupedBar || type === ag_grid_community_1.ChartType.StackedBar || type === ag_grid_community_1.ChartType.NormalizedBar;
+    };
     BarChartProxy.prototype.defaultOptions = function () {
         var palette = this.chartProxyParams.getSelectedPalette();
+        var chartType = this.chartProxyParams.chartType;
         return {
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,
+            background: {
+                fill: this.getBackgroundColor()
+            },
             padding: {
                 top: 20,
                 right: 20,
@@ -62,9 +70,12 @@ var BarChartProxy = /** @class */ (function (_super) {
             },
             xAxis: {
                 type: 'category',
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 45,
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -77,8 +88,12 @@ var BarChartProxy = /** @class */ (function (_super) {
             },
             yAxis: {
                 type: 'number',
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -90,7 +105,11 @@ var BarChartProxy = /** @class */ (function (_super) {
                     }]
             },
             legend: {
-                labelFont: '12px Verdana, sans-serif',
+                enabled: true,
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 itemPaddingX: 16,
                 itemPaddingY: 8,
@@ -102,13 +121,16 @@ var BarChartProxy = /** @class */ (function (_super) {
                 type: 'bar',
                 fills: palette.fills,
                 strokes: palette.strokes,
-                grouped: this.chartProxyParams.chartType === ag_grid_community_1.ChartType.GroupedBar,
+                grouped: chartType === ag_grid_community_1.ChartType.GroupedColumn || chartType === ag_grid_community_1.ChartType.GroupedBar,
+                normalizedTo: (chartType === ag_grid_community_1.ChartType.NormalizedColumn || chartType === ag_grid_community_1.ChartType.NormalizedBar) ? 100 : undefined,
                 strokeWidth: 1,
                 tooltipEnabled: true,
                 labelEnabled: false,
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelPadding: { x: 10, y: 10 },
                 tooltipRenderer: undefined,
                 showInLegend: true,
                 shadow: undefined

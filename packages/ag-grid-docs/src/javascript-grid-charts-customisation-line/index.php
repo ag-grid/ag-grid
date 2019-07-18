@@ -47,6 +47,8 @@ interface LineChartOptions {
     legendPadding?: number;
 
     legend?: {
+        // Whether to show the legend or not.
+        enabled?: boolean;
         // The stroke width of a legend marker. Defaults to `1`.
         markerStrokeWidth?: number;
         // The size of a legend marker. Defaults to `14`.
@@ -57,9 +59,16 @@ interface LineChartOptions {
         itemPaddingX?: number;
         // The amount of vertical padding between legend items. Defaults to `8`.
         itemPaddingY?: number;
-        // The font to be used by the legend's labels, in the CSS `font` property format.
-        // Defaults to `12px Verdana, sans-serif`.
-        labelFont?: string;
+        // The font style to be used by legend's labels. For example, 'italic'.
+        // Not used by default.
+        labelFontStyle?: string;
+        // The font weight to be used by legend's labels. For example, 'bold'.
+        // Not used by default.
+        labelFontWeight?: string;
+        // The font size to be used by legend's labels. Defaults to `12`.
+        labelFontSize?: number;
+        // The font family to be used by legend's labels. Defaults to `Verdana, sans-serif`.
+        labelFontFamily?: string;
         // The color to be used by the legend's labels. Default depends on ag-Grid theme used
         labelColor?: string;
     };
@@ -80,9 +89,9 @@ interface LineChartOptions {
         // Whether to show line series markers at each data point or not. Defaults to `true`.
         // Note: tooltips won't show without markers.
         marker?: boolean;
-        // The size of the marker. Defaults to `8`.
+        // The size of the marker. Defaults to `6`.
         markerSize?: number;
-        // The stroke width of the marker. Defaults to `2`.
+        // The stroke width of the marker. Defaults to `1`.
         markerStrokeWidth?: number;
 
         // Whether to show the tooltip for bars when they are hovered/tapped.

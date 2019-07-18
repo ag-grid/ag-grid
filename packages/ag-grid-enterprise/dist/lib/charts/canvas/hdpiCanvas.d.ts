@@ -1,12 +1,8 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 declare type Size = {
     width: number;
     height: number;
 };
-export interface DownloadOptions {
-    fileName?: string;
-    background?: string;
-}
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.
@@ -29,7 +25,7 @@ export declare class HdpiCanvas {
      * @param options.fileName The `.png` extension is going to be added automatically.
      * @param [options.background] Defaults to `white`.
      */
-    download(options?: DownloadOptions): void;
+    download(fileName?: string): void;
     _pixelRatio: number;
     readonly pixelRatio: number;
     private overrides;

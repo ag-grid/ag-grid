@@ -2,8 +2,8 @@
 
 
     var columnDefs = [
-        {headerName: 'Product', field: 'product', chartType: 'category'},
-        {headerName: 'Book', field: 'book', chartType: 'category'},
+        {headerName: 'Product', field: 'product', chartDataType: 'category'},
+        {headerName: 'Book', field: 'book', chartDataType: 'category'},
 
         {headerName: 'Current', field: 'current', type: 'measure'},
         {headerName: 'Previous', field: 'previous', type: 'measure'},
@@ -32,7 +32,7 @@
         },
         columnTypes: {
             measure: {
-                chartType: 'series',
+                chartDataType: 'series',
                 cellClass: 'number',
                 valueFormatter: numberCellFormatter,
                 cellRenderer:'agAnimateShowChangeCellRenderer'
@@ -47,7 +47,7 @@
                 cellRange: {
                     columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
                 },
-                chartType: 'groupedBar',
+                chartType: 'groupedColumn',
                 chartContainer: document.querySelector('#integrated-charting-chart'),
                 suppressChartRanges: true,
                 aggregate: true
@@ -65,14 +65,11 @@
             opts.seriesDefaults.fills =['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
             opts.seriesDefaults.strokes =['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
-            opts.seriesDefaults.tooltipEnabled = false;
-            // opts.seriesDefaults.tooltipRenderer = (params) => {
-            //
-            //     var strArr = params.yField.replace(/([A-Z])/g, " $1");
-            //     var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
-            //     var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-            //     return `<b>${seriesName}</b>: ${value}`;
-            // };
+            opts.seriesDefaults.tooltipEnabled = true;
+            opts.seriesDefaults.tooltipRenderer = (params) => {
+                let value = '$' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return `<div style="padding: 5px"><b>${params.title}</b>: ${value}</div>`;
+            };
 
             return opts;
         },
@@ -85,7 +82,8 @@
         return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 
-    function yAxisLabelFormatter(n) {
+    function yAxisLabelFormatter(params) {
+        let n = params.value;
         if (n < 1e3) return n;
         if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + "K";
         if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + "M";

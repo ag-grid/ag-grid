@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "21.0.1",
+  "version": "21.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "scripts": {
@@ -46,7 +46,7 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
-    "autoprefixer": "^9.3.1",
+    "autoprefixer": "^9.6.0",
     "cache-loader": "^1.2.5",
     "css-loader": "^1.0.1",
     "del": "^3.0.0",

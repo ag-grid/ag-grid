@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -15,14 +15,14 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var chartBuilder_1 = require("../../builder/chartBuilder");
+var ag_grid_community_1 = require("ag-grid-community");
 var chartProxy_1 = require("./chartProxy");
 var chartModel_1 = require("../chartModel");
 var LineChartProxy = /** @class */ (function (_super) {
     __extends(LineChartProxy, _super);
     function LineChartProxy(params) {
         var _this = _super.call(this, params) || this;
-        var defaultOpts = _this.defaultOptions();
-        _this.chartOptions = _this.getChartOptions('line', _this.defaultOptions());
+        _this.chartOptions = _this.getChartOptions(ag_grid_community_1.ChartType.Line, _this.defaultOptions());
         _this.chart = chartBuilder_1.ChartBuilder.createLineChart(_this.chartOptions);
         return _this;
     }
@@ -40,16 +40,7 @@ var LineChartProxy = /** @class */ (function (_super) {
             var seriesExists = fieldIds.indexOf(id) > -1;
             seriesExists ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
         };
-        lineChart.series
-            .map(function (series) { return series; })
-            .forEach(updateSeries);
-        var chart = this.chart;
-        if (params.categoryId === chartModel_1.ChartModel.DEFAULT_CATEGORY) {
-            chart.xAxis.labelRotation = 0;
-        }
-        else {
-            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation;
-        }
+        lineChart.series.map(function (series) { return series; }).forEach(updateSeries);
         params.fields.forEach(function (f, index) {
             var seriesOptions = _this.chartOptions.seriesDefaults;
             var existingSeries = existingSeriesMap[f.colId];
@@ -69,6 +60,14 @@ var LineChartProxy = /** @class */ (function (_super) {
                 }
             }
         });
+        // always set the label rotation of the default category to 0 degrees
+        var chart = this.chart;
+        if (params.categoryId === chartModel_1.ChartModel.DEFAULT_CATEGORY) {
+            chart.xAxis.labelRotation = 0;
+        }
+        else {
+            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation;
+        }
     };
     LineChartProxy.prototype.defaultOptions = function () {
         var palette = this.chartProxyParams.getSelectedPalette();
@@ -76,6 +75,9 @@ var LineChartProxy = /** @class */ (function (_super) {
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,
+            background: {
+                fill: this.getBackgroundColor()
+            },
             padding: {
                 top: 20,
                 right: 20,
@@ -84,9 +86,12 @@ var LineChartProxy = /** @class */ (function (_super) {
             },
             xAxis: {
                 type: 'category',
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 45,
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -99,8 +104,12 @@ var LineChartProxy = /** @class */ (function (_super) {
             },
             yAxis: {
                 type: 'number',
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
+                labelRotation: 0,
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -112,7 +121,11 @@ var LineChartProxy = /** @class */ (function (_super) {
                     }]
             },
             legend: {
-                labelFont: '12px Verdana, sans-serif',
+                enabled: true,
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 itemPaddingX: 16,
                 itemPaddingY: 8,

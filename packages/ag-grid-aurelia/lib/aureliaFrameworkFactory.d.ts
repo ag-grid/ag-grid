@@ -1,4 +1,4 @@
-// ag-grid-aurelia v21.0.1
+// ag-grid-aurelia v21.1.0
 import { Container, ViewResources } from "aurelia-framework";
 import { IFrameworkOverrides } from "ag-grid-community";
 export declare class AureliaFrameworkFactory implements IFrameworkOverrides {

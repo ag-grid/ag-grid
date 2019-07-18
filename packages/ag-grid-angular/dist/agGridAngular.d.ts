@@ -100,6 +100,7 @@ export declare class AgGridAngular implements AfterViewInit {
     infiniteBlockSize: any;
     batchUpdateWaitMillis: any;
     blockLoadDebounceMillis: any;
+    keepDetailRowsCount: any;
     localeTextFunc: any;
     groupRowInnerRenderer: any;
     groupRowInnerRendererFramework: any;
@@ -286,6 +287,7 @@ export declare class AgGridAngular implements AfterViewInit {
     suppressBrowserResizeObserver: any;
     suppressMaxRenderedRowRestriction: any;
     excludeChildrenWhenTreeDataFiltering: any;
+    keepDetailRows: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;

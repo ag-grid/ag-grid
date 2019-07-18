@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Node } from "../node";
 import { DropShadow } from "../dropShadow";
 export declare type ShapeLineCap = null | 'round' | 'square';
@@ -33,6 +33,10 @@ export declare abstract class Shape extends Node {
      * Restores the base class default styles that have been overridden by this subclass.
      */
     protected restoreOverriddenStyles(): void;
+    private _fillOpacity;
+    fillOpacity: number;
+    private _strokeOpacity;
+    strokeOpacity: number;
     private _fill;
     fill: string | undefined;
     /**

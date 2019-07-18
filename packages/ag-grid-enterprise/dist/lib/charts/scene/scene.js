@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var hdpiCanvas_1 = require("../canvas/hdpiCanvas");
@@ -49,8 +49,8 @@ var Scene = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Scene.prototype.download = function (options) {
-        this.hdpiCanvas.download(options);
+    Scene.prototype.download = function (fileName) {
+        this.hdpiCanvas.download(fileName);
     };
     Object.defineProperty(Scene.prototype, "width", {
         get: function () {
@@ -73,6 +73,9 @@ var Scene = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Scene.prototype, "size", {
+        get: function () {
+            return [this._width, this._height];
+        },
         set: function (value) {
             if (this._width !== value[0] || this._height !== value[1]) {
                 this.hdpiCanvas.resize(value[0], value[1]);

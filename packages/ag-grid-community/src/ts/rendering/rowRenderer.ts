@@ -735,7 +735,7 @@ export class RowRenderer extends BeanStub {
         _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
             const index = Number(indexStr);
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
-                if (this.keepRowBecauseEditingOrFocused(rowComp)) {
+                if (this.doNotUnVirtualiseRow(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
@@ -1035,15 +1035,20 @@ export class RowRenderer extends BeanStub {
     // b) if focused, we want ot keep keyboard focus, so if user ctrl+c, it goes to clipboard,
     //    otherwise the user can range select and drag (with focus cell going out of the viewport)
     //    and then ctrl+c, nothing will happen if cell is removed from dom.
-    private keepRowBecauseEditingOrFocused(rowComp: RowComp): boolean {
+    // c) if detail record of master detail, as users complained that the context of detail rows
+    //    was getting lost when detail row out of view. eg user expands to show detail row,
+    //    then manipulates the detail panel (eg sorts the detail grid), then context is lost
+    //    after detail panel is scrolled out of / into view.
+    private doNotUnVirtualiseRow(rowComp: RowComp): boolean {
         const REMOVE_ROW: boolean = false;
         const KEEP_ROW: boolean = true;
         const rowNode = rowComp.getRowNode();
 
         const rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
         const rowIsEditing = rowComp.isEditing();
+        const rowIsDetail = rowNode.detail;
 
-        const mightWantToKeepRow = rowHasFocus || rowIsEditing;
+        const mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;
 
         // if we deffo don't want to keep it,
         if (!mightWantToKeepRow) {
@@ -1112,24 +1117,32 @@ export class RowRenderer extends BeanStub {
 
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
 
-            if (_.missing(nextCell)) {
-                // pointer points to nothing, we have hit a border of the grid
+            // eg if going down, and nextCell=undefined, means we are gone past the last row
+            const hitEdgeOfGrid = _.missing(nextCell);
+            if (hitEdgeOfGrid) {
                 finished = true;
-            } else {
-                const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
-                if (rowNode.group) {
-                    // full width rows cannot be focused, so if it's a group and using full width rows,
-                    // we need to skip over the row
-                    const pivotMode = this.columnController.isPivotMode();
-                    const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
-                    if (usingFullWidthRows) {
-                        finished = !rowNode.group;
-                    } else {
-                        finished = true;
-                    }
-                } else {
-                    finished = true;
-                }
+                continue;
+            }
+
+            const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+
+            // we do not allow focusing on full width rows, this includes details rows
+            if (rowNode.detail) {
+                continue;
+            }
+
+            // if not a group, then we have a valid row, so quit the search
+            if (!rowNode.group) {
+                finished = true;
+                continue;
+            }
+
+            // full width rows cannot be focused, so if it's a group and using full width rows,
+            // we need to skip over the row
+            const pivotMode = this.columnController.isPivotMode();
+            const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+            if (!usingFullWidthRows) {
+                finished = true;
             }
         }
 

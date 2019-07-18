@@ -24,7 +24,7 @@ export abstract class Series<C extends Chart> {
     // Uniquely identify series.
     private createId(): string {
         const constructor = this.constructor as any;
-        let className = constructor.className;
+        const className = constructor.className;
         if (!className) {
             throw new Error(`The ${constructor} is missing the 'className' property.`);
         }
@@ -40,9 +40,9 @@ export abstract class Series<C extends Chart> {
         return this._data;
     }
 
-    protected _chart: C | null = null;
-    abstract set chart(chart: C | null);
-    abstract get chart(): C | null;
+    protected _chart: C | undefined = undefined;
+    abstract set chart(chart: C | undefined);
+    abstract get chart(): C | undefined;
 
     protected _visible: boolean = true;
     set visible(value: boolean) {
@@ -90,8 +90,8 @@ export abstract class Series<C extends Chart> {
         return this._showInLegend;
     }
 
-    abstract highlight(node: Shape): void;
-    abstract dehighlight(): void;
+    abstract highlightNode(node: Shape): void;
+    abstract dehighlightNode(): void;
 
     scheduleLayout() {
         if (this.chart) {

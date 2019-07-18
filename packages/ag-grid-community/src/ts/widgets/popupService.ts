@@ -10,6 +10,11 @@ import { EventService } from "../eventService";
 import { Events } from '../events';
 import { _ } from "../utils";
 
+interface AgPopup {
+    element: HTMLElement;
+    hideFunc: () => void;
+}
+
 @Bean('popupService')
 export class PopupService {
 
@@ -19,9 +24,8 @@ export class PopupService {
     @Autowired('environment') private environment: Environment;
     @Autowired('eventService') private eventService: EventService;
 
-    private activePopupElements: HTMLElement[] = [];
-
     private gridCore: GridCore;
+    private popupList: AgPopup[] = [];
 
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
@@ -110,6 +114,7 @@ export class PopupService {
 
         const {x, y} = this.calculatePointerAlign(params.mouseEvent);
         const { ePopup, nudgeX, nudgeY} = params;
+
         this.positionPopup({
             ePopup: ePopup,
             x,
@@ -323,31 +328,43 @@ export class PopupService {
         return Math.min(Math.max(x, 0), Math.abs(maxX));
     }
 
-    //adds an element to a div, but also listens to background checking for clicks,
-    //so that when the background is clicked, the child is removed again, giving
-    //a model look to popups.
+    // adds an element to a div, but also listens to background checking for clicks,
+    // so that when the background is clicked, the child is removed again, giving
+    // a model look to popups.
     public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void {
         return this.addPopup(true, eChild, closeOnEsc, closedCallback, click);
     }
 
-    public addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void {
+    public addPopup(
+        modal: boolean,
+        eChild: any,
+        closeOnEsc: boolean,
+        closedCallback?: () => void,
+        click?: MouseEvent | Touch | null,
+        alwaysOnTop?: boolean
+    ): (event?: any) => void {
         const eDocument = this.gridOptionsWrapper.getDocument();
 
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return () => {
-            };
+            return () => {};
         }
 
-        eChild.style.top = '0px';
-        eChild.style.left = '0px';
+        const pos = _.findIndex(this.popupList, popup => popup.element === eChild);
+
+        if (pos !== -1) {
+            const popup = this.popupList[pos];
+            return popup.hideFunc;
+        }
 
         const ePopupParent = this.getPopupParent();
 
-        const popupAlreadyShown = _.isVisible(eChild);
-        if (popupAlreadyShown && ePopupParent.contains(eChild)) {
-            return () => {};
-        }
+        // for angular specifically, but shouldn't cause an issue with js or other fw's
+        // https://github.com/angular/angular/issues/8563
+        ePopupParent.appendChild(eChild);
+
+        eChild.style.top = '0px';
+        eChild.style.left = '0px';
 
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
@@ -364,7 +381,12 @@ export class PopupService {
         eWrapper.appendChild(eChild);
 
         ePopupParent.appendChild(eWrapper);
-        this.activePopupElements.push(eChild);
+
+        if (alwaysOnTop) {
+            this.setAlwaysOnTop(eWrapper, true);
+        } else {
+            this.bringPopupToFront(eWrapper);
+        }
 
         let popupHidden = false;
 
@@ -384,35 +406,34 @@ export class PopupService {
         };
 
         const hidePopup = (mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent) => {
-            // we don't hide popup if the event was on the child, or any
-            // children of this child
-            if (this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild)) {
+            if (
+                // we don't hide popup if the event was on the child, or any
+                // children of this child
+                this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild) ||
+                // if the event to close is actually the open event, then ignore it
+                this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) ||
+                // this method should only be called once. the client can have different
+                // paths, each one wanting to close, so this method may be called multiple times.
+                popupHidden
+            ) {
                 return;
             }
 
-            // if the event to close is actually the open event, then ignore it
-            if (this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent)) {
-                return;
-            }
-
-            // this method should only be called once. the client can have different
-            // paths, each one wanting to close, so this method may be called multiple times.
-            if (popupHidden) {
-                return;
-            }
             popupHidden = true;
 
             ePopupParent.removeChild(eWrapper);
-            _.removeFromArray(this.activePopupElements, eChild);
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
+
             if (closedCallback) {
                 closedCallback();
             }
+
+            this.popupList = this.popupList.filter(popup => popup.element !== eChild);
         };
 
         // if we add these listeners now, then the current mouse
@@ -429,6 +450,11 @@ export class PopupService {
             }
         }, 0);
 
+        this.popupList.push({
+            element: eChild,
+            hideFunc: hidePopup
+        });
+
         return hidePopup;
     }
 
@@ -439,10 +465,16 @@ export class PopupService {
             return false;
         }
 
-        const indexOfThisChild = this.activePopupElements.indexOf(eChild);
-        for (let i = indexOfThisChild; i < this.activePopupElements.length; i++) {
-            const element = this.activePopupElements[i];
-            if (_.isElementInEventPath(element, event)) {
+        const indexOfThisChild = _.findIndex(this.popupList, popup => popup.element === eChild);
+
+        if (indexOfThisChild === -1) {
+            return false;
+        }
+
+        for (let i = indexOfThisChild; i < this.popupList.length; i++) {
+            const popup = this.popupList[i];
+
+            if (_.isElementInEventPath(popup.element, event)) {
                 return true;
             }
         }
@@ -481,6 +513,7 @@ export class PopupService {
 
             const xMatch = Math.abs(originalClick.screenX - screenX) < 5;
             const yMatch = Math.abs(originalClick.screenY - screenY) < 5;
+
             if (xMatch && yMatch) {
                 return true;
             }
@@ -489,27 +522,56 @@ export class PopupService {
         return false;
     }
 
-    public bringPopupToFront(ePopup: HTMLElement) {
-        const parent = this.getPopupParent();
-        const popupList = parent.querySelectorAll('.ag-popup');
-
+    private getWrapper(ePopup: HTMLElement): HTMLElement | null {
         while (!_.containsClass(ePopup, 'ag-popup') && ePopup.parentElement) {
             ePopup = ePopup.parentElement;
         }
 
-        if (
-            popupList.length <= 1 ||
-            popupList[popupList.length - 1] === ePopup ||
-            !parent.contains(ePopup)
-        ) { return; }
+        return _.containsClass(ePopup, 'ag-popup') ? ePopup : null;
+    }
 
-        popupList[popupList.length - 1].insertAdjacentElement('afterend', ePopup);
+    public setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void {
+        const eWrapper = this.getWrapper(ePopup);
+
+        if (!eWrapper) { return; }
+
+        _.addOrRemoveCssClass(eWrapper, 'ag-always-on-top', !!alwaysOnTop);
+
+        if (alwaysOnTop) {
+            this.bringPopupToFront(eWrapper);
+        }
+    }
+
+    public bringPopupToFront(ePopup: HTMLElement) {
+        const parent = this.getPopupParent();
+        const popupList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
+        const popupLen = popupList.length;
+        const alwaysOnTopList = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup.ag-always-on-top'));
+        const onTopLength = alwaysOnTopList.length;
+        const eWrapper = this.getWrapper(ePopup);
+
+        if (!eWrapper || popupLen <= 1 || !parent.contains(ePopup)) { return; }
+
+        const pos = popupList.indexOf(eWrapper);
+
+        if (onTopLength) {
+            const isPopupAlwaysOnTop = _.containsClass(eWrapper, 'ag-always-on-top');
+            if (isPopupAlwaysOnTop) {
+                if (pos !== popupLen - 1) {
+                    (_.last(alwaysOnTopList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+                }
+            } else if (pos !== popupLen - onTopLength - 1) {
+                alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
+            }
+        } else if (pos !== popupLen - 1) {
+            (_.last(popupList) as HTMLElement).insertAdjacentElement('afterend', eWrapper);
+        }
 
         const params = {
             type: 'popupToFront',
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
-            ePopup
+            eWrapper
         };
 
         this.eventService.dispatchEvent(params);

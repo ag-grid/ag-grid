@@ -1,19 +1,19 @@
 var columnDefs = [
     // different ways to define 'categories'
     {field: "athlete", width: 150, chartDataType: 'category'},
-    {field: "age", enableRowGroup: true, sort: 'asc'},
-    {field: "sport"},
+    {field: "age", chartDataType: 'category', sort: 'asc'},
+    {field: "sport"}, // inferred as category by grid
 
     // excludes year from charts
     {field: "year", chartDataType: 'excluded'},
 
     // different ways to define 'series'
-    {field: "gold", enableValue: true},
+    {field: "gold", chartDataType: 'series'},
     {field: "silver", chartDataType: 'series'},
-    {field: "bronze"}
+    {field: "bronze"} // inferred as series by grid
 ];
 
-var gridOptions = {
+let gridOptions = {
     defaultColDef: {
         width: 100,
         resizable: true
@@ -23,33 +23,31 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     processChartOptions: function (params) {
-        var opt = params.options;
+        let opts = params.options;
 
-        opt.title = {text: "Medals by Age"};
-        opt.legendPosition = 'bottom';
+        opts.title = {text: "Medals by Age"};
+        opts.legendPosition = 'bottom';
 
-        if (params.type === 'groupedBar') {
-            opt.xAxis.labelRotation = 0;
-        }
-
-        opt.seriesDefaults.tooltipRenderer = function (params) {
-            var value = params.datum[params.yField];
-            return `<b>${params.yField}</b>: ${value}`;
+        opts.seriesDefaults.tooltipRenderer = function (params) {
+            let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+            let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+            let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            return title + '<div class="content" style="text-align: center">' + value + '</div>';
         };
 
-        return opt;
+        return opts;
     },
     onFirstDataRendered: onFirstDataRendered
 };
 
 function onFirstDataRendered(params) {
-    var chartRangeParams = {
+    let chartRangeParams = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 79,
             columns: ['age', 'gold', 'silver', 'bronze']
         },
-        chartType: 'groupedBar',
+        chartType: 'groupedColumn',
         chartContainer: document.querySelector('#myChart'),
         aggregate: true
     };

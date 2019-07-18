@@ -1,4 +1,4 @@
-import { Dialog, DialogOptions } from "./dialog";
+import { AgDialog, DialogOptions } from "./agDialog";
 import { PostConstruct } from "../context/context";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
@@ -7,7 +7,7 @@ interface MessageBoxConfig extends DialogOptions {
     message?: string;
 }
 
-export class MessageBox extends Dialog {
+export class MessageBox extends AgDialog {
 
     private message: string;
 
@@ -16,7 +16,7 @@ export class MessageBox extends Dialog {
         this.message = config.message;
     }
 
-    protected postConstruct() {
+    postConstruct() {
         const messageBodyComp = new MessageBody();
         this.addFeature(this.getContext(), messageBodyComp);
 

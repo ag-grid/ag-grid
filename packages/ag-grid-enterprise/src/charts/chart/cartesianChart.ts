@@ -1,15 +1,20 @@
 import { Chart } from "./chart";
 import { Axis } from "../axis";
+import Scale from "../scale/scale";
 import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
 import { extent, checkExtent } from "../util/array";
 import { Padding } from "../util/padding";
+import { Group } from "../scene/group";
+import { CategoryAxis } from "./axis/categoryAxis";
+
+export type CartesianChartLayout = 'vertical' | 'horizontal';
 
 export class CartesianChart extends Chart {
 
     private axisAutoPadding = new Padding();
 
-    constructor(xAxis: Axis, yAxis: Axis) {
+    constructor(xAxis: Axis<Scale<any, number>>, yAxis: Axis<Scale<any, number>>) {
         super();
 
         this._xAxis = xAxis;
@@ -19,19 +24,19 @@ export class CartesianChart extends Chart {
         this.scene.root!.append(this.legend.group);
     }
 
-    private seriesClipRect = new ClipRect();
+    private seriesClipRect = new Group();
 
-    get seriesRoot(): ClipRect {
+    get seriesRoot(): Group {
         return this.seriesClipRect;
     }
 
-    private readonly _xAxis: Axis;
-    get xAxis(): Axis {
+    private readonly _xAxis: Axis<Scale<any, number>>;
+    get xAxis(): Axis<Scale<any, number>> {
         return this._xAxis;
     }
 
-    private readonly _yAxis: Axis;
-    get yAxis(): Axis {
+    private readonly _yAxis: Axis<Scale<any, number>>;
+    get yAxis(): Axis<Scale<any, number>> {
         return this._yAxis;
     }
 
@@ -61,8 +66,8 @@ export class CartesianChart extends Chart {
         shrinkRect.y += captionAutoPadding;
         shrinkRect.height -= captionAutoPadding;
 
-        const legendAutoPadding = this.legendAutoPadding;
-        if (this.legend.data.length) {
+        if (this.legend.enabled && this.legend.data.length) {
+            const legendAutoPadding = this.legendAutoPadding;
             shrinkRect.x += legendAutoPadding.left;
             shrinkRect.y += legendAutoPadding.top;
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
@@ -99,11 +104,11 @@ export class CartesianChart extends Chart {
         shrinkRect.width -= axisAutoPadding.left + axisAutoPadding.right;
         shrinkRect.height -= axisAutoPadding.top + axisAutoPadding.bottom;
 
-        const seriesClipRect = this.seriesClipRect;
-        seriesClipRect.x = shrinkRect.x;
-        seriesClipRect.y = shrinkRect.y;
-        seriesClipRect.width = shrinkRect.width;
-        seriesClipRect.height = shrinkRect.height;
+        // const seriesClipRect = this.seriesClipRect;
+        // seriesClipRect.x = shrinkRect.x;
+        // seriesClipRect.y = shrinkRect.y;
+        // seriesClipRect.width = shrinkRect.width;
+        // seriesClipRect.height = shrinkRect.height;
 
         const xAxis = this.xAxis;
         const yAxis = this.yAxis;
@@ -132,9 +137,21 @@ export class CartesianChart extends Chart {
         this.positionLegend();
     }
 
+    private _layout: CartesianChartLayout = 'vertical';
+    set layout(value: CartesianChartLayout) {
+        if (this._layout !== value) {
+            this._layout = value;
+            this.layoutPending = true;
+        }
+    }
+    get layout(): CartesianChartLayout {
+        return this._layout;
+    }
+
     updateAxes() {
-        const xAxis = this.xAxis;
-        const yAxis = this.yAxis;
+        const isHorizontal = this.layout === 'horizontal';
+        const xAxis = isHorizontal ? this.yAxis : this.xAxis;
+        const yAxis = isHorizontal ? this.xAxis : this.yAxis;
 
         if (!(xAxis && yAxis)) {
             return;
@@ -177,8 +194,9 @@ export class CartesianChart extends Chart {
         xAxis.update();
         yAxis.update();
 
-        const xAxisBBox = xAxis.getBBox();
-        const yAxisBBox = yAxis.getBBox();
+        // The `xAxis` and `yAxis` have `.this` prefix on purpose here.
+        const xAxisBBox = this.xAxis.getBBox();
+        const yAxisBBox = this.yAxis.getBBox();
 
         if (this.axisAutoPadding.left !== yAxisBBox.width) {
             this.axisAutoPadding.left = yAxisBBox.width;

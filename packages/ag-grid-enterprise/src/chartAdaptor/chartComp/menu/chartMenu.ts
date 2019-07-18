@@ -2,20 +2,21 @@ import {
     Autowired,
     AgEvent,
     Component,
-    ChartToolbarOptions,
-    Dialog,
+    ChartMenuOptions,
+    AgDialog,
     GetChartToolbarItemsParams,
     GridOptionsWrapper,
     PostConstruct,
     Promise,
-    _
+    _,
+    AgPanel
 } from "ag-grid-community";
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { GridChartComp } from "../gridChartComp";
 
 type ChartToolbarButtons = {
-    [key in ChartToolbarOptions]: [string, () => any]
+    [key in ChartMenuOptions]: [string, () => any]
 }
 
 export class ChartMenu extends Component {
@@ -25,19 +26,20 @@ export class ChartMenu extends Component {
     public static EVENT_DOWNLOAD_CHART = 'downloadChart';
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['ag-icon-chart', () => this.showMenu('chartSettings')],
-        chartData: ['ag-icon-data', () => this.showMenu('chartData')],
-        chartDownload: ['ag-icon-save', () => this.saveChart()]
+        chartSettings: ['menu', () => this.showMenu('chartSettings')],
+        chartData: ['data' , () => this.showMenu('chartData')],
+        chartFormat: ['data', () => this.showMenu('chartFormat')],
+        chartDownload: ['save', () => this.saveChart()]
     };
 
-    private tabs: ChartToolbarOptions[] = [];
+    private tabs: ChartMenuOptions[] = [];
 
     private static TEMPLATE =
         `<div class="ag-chart-menu"></div>`;
 
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
-    private menuDialog: Dialog;
+    private menuPanel: AgPanel | AgDialog | undefined;
 
     constructor(chartController: ChartController) {
         super(ChartMenu.TEMPLATE);
@@ -49,18 +51,19 @@ export class ChartMenu extends Component {
         this.createButtons();
     }
 
-    private getToolbarOptions(): ChartToolbarOptions[] {
-        let chartToolbarOptions: ChartToolbarOptions[] = ['chartSettings', 'chartData', 'chartDownload'];
+    private getToolbarOptions(): ChartMenuOptions[] {
+        let tabOptions: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartDownload'];
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
+        const ret = [] as ChartMenuOptions[];
 
         if (toolbarItemsFunc) {
             const params: GetChartToolbarItemsParams = {
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
-                defaultItems: chartToolbarOptions
+                defaultItems: tabOptions
             };
 
-            chartToolbarOptions = (toolbarItemsFunc(params) as ChartToolbarOptions[]).filter(option => {
+            tabOptions = (toolbarItemsFunc(params) as ChartMenuOptions[]).filter(option => {
                 if (!this.buttons[option]) {
                     console.warn(`ag-Grid: '${option} is not a valid Chart Toolbar Option`);
                     return false;
@@ -69,9 +72,21 @@ export class ChartMenu extends Component {
             });
         }
 
-        this.tabs = chartToolbarOptions.filter(option => option !== 'chartDownload');
+        this.tabs = tabOptions.filter(option => option !== 'chartDownload');
 
-        return chartToolbarOptions;
+        const downloadIdx = tabOptions.indexOf('chartDownload');
+        const firstItem = tabOptions.find(option => option !== 'chartDownload') as ChartMenuOptions;
+        const chartDownload = 'chartDownload' as ChartMenuOptions;
+
+        if (firstItem) {
+            ret.push(firstItem);
+        }
+
+        if (downloadIdx !== -1) {
+            return downloadIdx === 0 ? [chartDownload].concat(ret) : ret.concat([chartDownload]);
+        }
+
+        return ret;
     }
 
     private createButtons(): void {
@@ -79,10 +94,8 @@ export class ChartMenu extends Component {
 
         chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
-            const [ iconCls, callback ] = buttonConfig;
-            const buttonEl = document.createElement('span');
-            _.addCssClass(buttonEl, 'ag-icon');
-            _.addCssClass(buttonEl, iconCls);
+            const [ iconName, callback ] = buttonConfig;
+            const buttonEl = _.createIconNoSpan(iconName, this.gridOptionsWrapper);
             this.addDestroyableEventListener(buttonEl, 'click', callback);
             this.getGui().appendChild(buttonEl);
         });
@@ -95,56 +108,79 @@ export class ChartMenu extends Component {
         this.dispatchEvent(event);
     }
 
-    private showMenu(tabName: ChartToolbarOptions): void {
-        const chartComp = this.parentComponent as GridChartComp;
-        const parentGui = chartComp.getGui();
-        const parentRect = parentGui.getBoundingClientRect();
-        const tab = this.tabs.indexOf(tabName);
+    private createMenu(defaultTab: number): Promise<AgPanel> {
+        const chartComp = this.getParentComponent() as GridChartComp;
+        const dockedContainer = chartComp.getDockedContainer();
+        const context = this.getContext();
 
-        this.menuDialog = new Dialog({
-            alwaysOnTop: true,
-            movable: true,
-            resizable: {
-                bottom: true,
-                top: true
-            },
-            maximizable: false,
+        const menuPanel = this.menuPanel = new AgPanel({
             minWidth: 220,
             width: 220,
-            height: Math.min(390, parentRect.height),
-            x: parentRect.right - 225,
-            y: parentRect.top + 5
+            height: '100%',
+            closable: true,
+            hideTitleBar: true
         });
+        context.wireBean(this.menuPanel);
+
+        menuPanel.setParentComponent(this);
+        dockedContainer.appendChild(menuPanel.getGui());
 
         this.tabbedMenu = new TabbedChartMenu({
-            controller: this.chartController, 
+            controller: this.chartController,
             type: chartComp.getCurrentChartType(),
             panels: this.tabs
         });
+        context.wireBean(this.tabbedMenu);
 
-        new Promise((res) => {
-            window.setTimeout(() => {
-                this.menuDialog.setBodyComponent(this.tabbedMenu);
-                this.tabbedMenu.showTab(tab);
-            }, 100);
-        });
-
-        this.menuDialog.addDestroyableEventListener(this.menuDialog, Component.EVENT_DESTROYED, () => {
+        this.addDestroyableEventListener(this.menuPanel, Component.EVENT_DESTROYED, () => {
             this.tabbedMenu.destroy();
         });
 
-        const context = this.getContext();
+        return new Promise((res) => {
+            window.setTimeout(() => {
+                menuPanel.setBodyComponent(this.tabbedMenu);
+                this.tabbedMenu.showTab(defaultTab);
+                this.addDestroyableEventListener(chartComp.getChartComponentsWrapper(), 'click', () => {
+                    if (_.containsClass(chartComp.getGui(), 'ag-has-menu')) {
+                        this.hideMenu();
+                    }
+                });
+                res(menuPanel);
+            }, 100);
+        });
+    }
 
-        context.wireBean(this.menuDialog);
-        context.wireBean(this.tabbedMenu);
+    private slideDockedContainer() {
+        const chartComp = this.getParentComponent() as GridChartComp;
+        chartComp.slideDockedOut((this.menuPanel as AgPanel).getWidth());
+        window.setTimeout(() => {
+            _.addCssClass(this.getParentComponent()!.getGui(), 'ag-has-menu');
+        }, 500);
+    }
 
-        this.menuDialog.setParentComponent(this);
+    private showMenu(tabName: ChartMenuOptions): void {
+        const tab = this.tabs.indexOf(tabName);
+
+        if (!this.menuPanel) {
+            this.createMenu(tab)
+            .then(() => {
+                this.slideDockedContainer();
+            });
+        } else {
+            this.slideDockedContainer();
+        }
+    }
+
+    private hideMenu(): void {
+        const chartComp = this.getParentComponent() as GridChartComp;
+        chartComp.slideDockedIn();
+        _.removeCssClass(this.getParentComponent()!.getGui(), 'ag-has-menu');
     }
 
     public destroy() {
         super.destroy();
-        if (this.tabbedMenu) {
-            this.menuDialog.destroy();
+        if (this.menuPanel && this.menuPanel.isAlive()) {
+            this.menuPanel.destroy();
         }
     }
 }

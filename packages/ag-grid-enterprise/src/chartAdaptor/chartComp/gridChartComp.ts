@@ -1,27 +1,28 @@
 import {
     _,
+    AgDialog,
     Autowired,
     CellRange,
+    ChartOptions,
     ChartType,
     Component,
-    Dialog,
     Environment,
     GridOptionsWrapper,
     PostConstruct,
-    RefSelector,
-    ResizeObserverService,
     ProcessChartOptionsParams,
-    ChartOptions
+    RefSelector,
+    ResizeObserverService
 } from "ag-grid-community";
-import { ChartMenu } from "./menu/chartMenu";
-import { ChartController } from "./chartController";
-import { ChartModel, ChartModelParams } from "./chartModel";
-import { BarChartProxy } from "./chartProxies/barChartProxy";
-import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
-import { LineChartProxy } from "./chartProxies/lineChartProxy";
-import { PieChartProxy } from "./chartProxies/pieChartProxy";
-import { DoughnutChartProxy } from "./chartProxies/doughnutChartProxy";
-import { Palette, palettes } from "../../charts/chart/palettes";
+import {ChartMenu} from "./menu/chartMenu";
+import {ChartController} from "./chartController";
+import {ChartModel, ChartModelParams} from "./chartModel";
+import {BarChartProxy} from "./chartProxies/barChartProxy";
+import {AreaChartProxy} from "./chartProxies/areaChartProxy";
+import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
+import {LineChartProxy} from "./chartProxies/lineChartProxy";
+import {PieChartProxy} from "./chartProxies/pieChartProxy";
+import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
+import {Palette, palettes} from "../../charts/chart/palettes";
 
 export interface GridChartParams {
     cellRange: CellRange;
@@ -37,17 +38,22 @@ export interface GridChartParams {
 export class GridChartComp extends Component {
     private static TEMPLATE =
         `<div class="ag-chart" tabindex="-1">
-            <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
+            <div ref="eChartComponentsWrapper" tabindex="-1" class="ag-chart-components-wrapper">
+                <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
+            </div>
+            <div ref="eDockedContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
 
+    @RefSelector('eChartComponentsWrapper') private eChartComponentsWrapper: HTMLElement;
     @RefSelector('eChart') private eChart: HTMLElement;
+    @RefSelector('eDockedContainer') private eDockedContainer: HTMLElement;
 
     private chartMenu: ChartMenu;
-    private chartDialog: Dialog;
+    private chartDialog: AgDialog;
 
     private model: ChartModel;
     private chartController: ChartController;
@@ -120,9 +126,12 @@ export class GridChartComp extends Component {
             height: height,
         };
 
+        // local state used to detect when chart type changes
+        this.currentChartType = this.model.getChartType();
         this.chartProxy = this.createChartProxy(chartProxyParams);
 
-        this.currentChartType = this.model.getChartType();
+        // update chart proxy ref (used by format panel)
+        this.model.setChartProxy(this.chartProxy);
     }
 
     private getSelectedPalette(): Palette {
@@ -131,21 +140,28 @@ export class GridChartComp extends Component {
 
     private createChartProxy(chartOptions: ChartProxyParams): ChartProxy {
         switch (chartOptions.chartType) {
+            case ChartType.GroupedColumn:
+            case ChartType.StackedColumn:
+            case ChartType.NormalizedColumn:
             case ChartType.GroupedBar:
-                return new BarChartProxy(chartOptions);
             case ChartType.StackedBar:
+            case ChartType.NormalizedBar:
                 return new BarChartProxy(chartOptions);
             case ChartType.Pie:
                 return new PieChartProxy(chartOptions);
             case ChartType.Doughnut:
                 return new DoughnutChartProxy(chartOptions);
+            case ChartType.Area:
+            case ChartType.StackedArea:
+            case ChartType.NormalizedArea:
+                return new AreaChartProxy(chartOptions);
             case ChartType.Line:
                 return new LineChartProxy(chartOptions);
         }
     }
 
     private addDialog() {
-        this.chartDialog = new Dialog({
+        this.chartDialog = new AgDialog({
             resizable: true,
             movable: true,
             maximizable: true,
@@ -156,7 +172,7 @@ export class GridChartComp extends Component {
         });
         this.getContext().wireBean(this.chartDialog);
 
-        this.chartDialog.addEventListener(Dialog.EVENT_DESTROYED, () => this.destroy());
+        this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());
     }
 
     private addMenu() {
@@ -164,8 +180,7 @@ export class GridChartComp extends Component {
         this.chartMenu.setParentComponent(this);
         this.getContext().wireBean(this.chartMenu);
 
-        const eChart: HTMLElement = this.getGui();
-        eChart.appendChild(this.chartMenu.getGui());
+        this.eChartComponentsWrapper.appendChild(this.chartMenu.getGui());
     }
 
     private refresh(): void {
@@ -173,6 +188,22 @@ export class GridChartComp extends Component {
             this.createChart();
         }
         this.updateChart();
+    }
+
+    public getChartComponentsWrapper(): HTMLElement {
+        return this.eChartComponentsWrapper;
+    }
+
+    public getDockedContainer(): HTMLElement {
+        return this.eDockedContainer;
+    }
+
+    public slideDockedOut(width: number) {
+        this.eDockedContainer.style.minWidth = width + 'px';
+    }
+
+    public slideDockedIn() {
+        this.eDockedContainer.style.minWidth = '0';
     }
 
     public getCurrentChartType(): ChartType {
@@ -195,26 +226,32 @@ export class GridChartComp extends Component {
     }
 
     private downloadChart() {
-        // TODO use chart / dialog title for filename
-        this.chartProxy.getChart().scene.download({fileName: "chart"});
+        const chart = this.chartProxy.getChart();
+        const fileName = chart.title ? chart.title.text : 'chart';
+        chart.scene.download(fileName);
+    }
+
+    public refreshCanvasSize() {
+        const eChartWrapper = this.eChart;
+
+        const chart = this.chartProxy.getChart();
+        chart.height = _.getInnerHeight(eChartWrapper);
+        chart.width = _.getInnerWidth(eChartWrapper)
     }
 
     private addResizeListener() {
         const eGui = this.getGui();
 
         const resizeFunc = () => {
-            const eParent = eGui.parentElement as HTMLElement;
             if (!eGui || !eGui.offsetParent) {
                 observeResizeFunc();
                 return;
             }
 
-            const chart = this.chartProxy.getChart();
-            chart.height = _.getInnerHeight(eParent);
-            chart.width = _.getInnerWidth(eParent);
+            this.refreshCanvasSize();
         };
 
-        const observeResizeFunc = this.resizeObserverService.observeResize(eGui, resizeFunc, 5);
+        const observeResizeFunc = this.resizeObserverService.observeResize(this.eChart, resizeFunc, 5);
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent) {

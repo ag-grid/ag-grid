@@ -9,6 +9,7 @@ import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
+import { Caption } from "./caption";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -30,7 +31,7 @@ export interface GridStyle {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<D = any> {
+export class Axis<S extends Scale<D, number>, D = any> {
 
     // debug (bbox)
     // private bboxRect = (() => {
@@ -41,17 +42,18 @@ export class Axis<D = any> {
     //     return rect;
     // })();
 
-    constructor(scale: Scale<D, number>) {
+    readonly scale: S;
+    readonly group = new Group();
+    private groupSelection: Selection<Group, Group, D, D>;
+    private line = new Line();
+    // onLayoutChange?: () => void;
+
+    constructor(scale: S) {
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
         this.group.append(this.line);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
-
-    readonly scale: Scale<D, number>;
-    readonly group = new Group();
-    private groupSelection: Selection<Group, Group, D, D>;
-    private line = new Line();
 
     set domain(value: D[]) {
         this.scale.domain = value;
@@ -113,13 +115,33 @@ export class Axis<D = any> {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    labelFormatter?: (value: any, fractionDigits?: number) => string;
+    labelFormatter?: (params: {value: any, index: number, fractionDigits?: number}) => string;
 
-    /**
-     * The font to be used by the labels. The given font string should use the
-     * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
-     */
-    labelFont: string = '12px Verdana, sans-serif';
+    labelFontStyle: string = '';
+    labelFontWeight: string = '';
+    labelFontSize: number = 12;
+    labelFontFamily: string = 'Verdana, sans-serif';
+
+    private _title: Caption | undefined = undefined;
+    set title(value: Caption | undefined) {
+        const oldTitle = this._title;
+        if (oldTitle !== value) {
+            if (oldTitle) {
+                // oldTitle.onLayoutChange = undefined;
+                this.group.removeChild(oldTitle.node);
+            }
+            if (value) {
+                value.node.rotation = -Math.PI / 2;
+                // value.onLayoutChange = this.onLayoutChange;
+                this.group.appendChild(value.node);
+            }
+            this._title = value;
+            // this.requestLayout();
+        }
+    }
+    get title(): Caption | undefined {
+        return this._title;
+    }
 
     /**
      * The color of the labels.
@@ -333,14 +355,21 @@ export class Axis<D = any> {
 
         const labelFormatter = this.labelFormatter;
         const labels = groupSelection.selectByClass(Text)
-            .each((label, datum) => {
-                label.font = this.labelFont;
+            .each((label, datum, index) => {
+                label.fontStyle = this.labelFontStyle;
+                label.fontWeight = this.labelFontWeight;
+                label.fontSize = this.labelFontSize;
+                label.fontFamily = this.labelFontFamily;
                 label.fill = this.labelColor;
                 label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
                 label.text = labelFormatter
-                    ? labelFormatter(fractionDigits ? datum : String(datum), fractionDigits)
+                    ? labelFormatter({
+                        value: fractionDigits >= 0 ? datum : String(datum),
+                        index,
+                        fractionDigits
+                    })
                     : fractionDigits
                         // the `datum` is a floating point number
                         ? (datum as any as number).toFixed(fractionDigits)
@@ -373,6 +402,21 @@ export class Axis<D = any> {
         line.strokeWidth = this.lineWidth;
         line.stroke = this.lineColor;
         line.visible = ticks.length > 0;
+
+        // const title = this.title;
+        // if (title) {
+        //     const titleRotation = normalizeAngle360(rotation);
+        //     const titleRotationFlag = (titleRotation >= 0 && titleRotation < Math.PI) ? -1 : 1;
+        //     const node = title.node;
+        //
+        //     const bbox = this.getBBox();
+        //
+        //     const titleSideFlag = -1;
+        //     node.textBaseline = titleSideFlag * sideFlag * titleRotationFlag === -1 ? 'bottom' : 'top';
+        //     node.rotation = titleRotationFlag * Math.PI / 2;
+        //     node.x = titleRotationFlag * (line.y1 + line.y2) / 2;
+        //     node.y = sideFlag * titleSideFlag * titleRotationFlag * (10 + bbox.width - Math.max(bbox.x + bbox.width, 0));
+        // }
 
         // debug (bbox)
         // const bbox = this.getBBox();
@@ -426,4 +470,10 @@ export class Axis<D = any> {
             bottom - top
         );
     }
+
+    // private requestLayout() {
+    //     if (this.onLayoutChange) {
+    //         this.onLayoutChange();
+    //     }
+    // }
 }

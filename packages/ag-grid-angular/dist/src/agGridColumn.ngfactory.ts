@@ -40,9 +40,9 @@ export const AgGridColumnNgFactory:i0.ComponentFactory<i1.AgGridColumn> = i0.ɵc
         cellClass:'cellClass',showRowGroup:'showRowGroup',filter:'filter',aggFunc:'aggFunc',
         cellRenderer:'cellRenderer',cellEditor:'cellEditor',pinned:'pinned',chartDataType:'chartDataType',
         sortedAt:'sortedAt',width:'width',minWidth:'minWidth',maxWidth:'maxWidth',
-        rowGroupIndex:'rowGroupIndex',pivotIndex:'pivotIndex',valueGetter:'valueGetter',
-        valueSetter:'valueSetter',filterValueGetter:'filterValueGetter',keyCreator:'keyCreator',
-        cellRendererFramework:'cellRendererFramework',pinnedRowCellRenderer:'pinnedRowCellRenderer',
+        rowGroupIndex:'rowGroupIndex',pivotIndex:'pivotIndex',dndSourceOnRowDrag:'dndSourceOnRowDrag',
+        valueGetter:'valueGetter',valueSetter:'valueSetter',filterValueGetter:'filterValueGetter',
+        keyCreator:'keyCreator',cellRendererFramework:'cellRendererFramework',pinnedRowCellRenderer:'pinnedRowCellRenderer',
         valueFormatter:'valueFormatter',pinnedRowValueFormatter:'pinnedRowValueFormatter',
         valueParser:'valueParser',comparator:'comparator',equals:'equals',pivotComparator:'pivotComparator',
         suppressKeyboardEvent:'suppressKeyboardEvent',colSpan:'colSpan',rowSpan:'rowSpan',
@@ -60,6 +60,6 @@ export const AgGridColumnNgFactory:i0.ComponentFactory<i1.AgGridColumn> = i0.ɵc
         suppressResize:'suppressResize',suppressAutoSize:'suppressAutoSize',enableRowGroup:'enableRowGroup',
         enablePivot:'enablePivot',enableValue:'enableValue',editable:'editable',suppressPaste:'suppressPaste',
         suppressNavigable:'suppressNavigable',enableCellChangeFlash:'enableCellChangeFlash',
-        rowDrag:'rowDrag',autoHeight:'autoHeight',sortable:'sortable',resizable:'resizable',
-        singleClickEdit:'singleClickEdit'},{},([] as any[]));
-//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL3NlYW5sYW5kc21hbi9JZGVhUHJvamVjdHMvYWcvYWctZ3JpZC9yZWxlYXNlcy8yMS4wLjEvcGFja2FnZXMvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWRDb2x1bW4ubmdmYWN0b3J5LnRzIiwidmVyc2lvbiI6Mywic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsibmc6Ly8vVXNlcnMvc2VhbmxhbmRzbWFuL0lkZWFQcm9qZWN0cy9hZy9hZy1ncmlkL3JlbGVhc2VzLzIxLjAuMS9wYWNrYWdlcy9hZy1ncmlkLWFuZ3VsYXIvc3JjL2FnR3JpZENvbHVtbi50cyIsIm5nOi8vL1VzZXJzL3NlYW5sYW5kc21hbi9JZGVhUHJvamVjdHMvYWcvYWctZ3JpZC9yZWxlYXNlcy8yMS4wLjEvcGFja2FnZXMvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWRDb2x1bW4udHMuQWdHcmlkQ29sdW1uX0hvc3QuaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyIgIiwiPGFnLWdyaWQtY29sdW1uPjwvYWctZ3JpZC1jb2x1bW4+Il0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7b0JDQUE7TUFBQTs2QkFBQSxVQUFBO01BQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=
+        rowDrag:'rowDrag',dndSource:'dndSource',autoHeight:'autoHeight',sortable:'sortable',
+        resizable:'resizable',singleClickEdit:'singleClickEdit'},{},([] as any[]));
+//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL3NlYW5sYW5kc21hbi9JZGVhUHJvamVjdHMvYWcvYWctZ3JpZC9yZWxlYXNlcy8yMS4xLjAvcGFja2FnZXMvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWRDb2x1bW4ubmdmYWN0b3J5LnRzIiwidmVyc2lvbiI6Mywic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsibmc6Ly8vVXNlcnMvc2VhbmxhbmRzbWFuL0lkZWFQcm9qZWN0cy9hZy9hZy1ncmlkL3JlbGVhc2VzLzIxLjEuMC9wYWNrYWdlcy9hZy1ncmlkLWFuZ3VsYXIvc3JjL2FnR3JpZENvbHVtbi50cyIsIm5nOi8vL1VzZXJzL3NlYW5sYW5kc21hbi9JZGVhUHJvamVjdHMvYWcvYWctZ3JpZC9yZWxlYXNlcy8yMS4xLjAvcGFja2FnZXMvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWRDb2x1bW4udHMuQWdHcmlkQ29sdW1uX0hvc3QuaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyIgIiwiPGFnLWdyaWQtY29sdW1uPjwvYWctZ3JpZC1jb2x1bW4+Il0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7b0JDQUE7TUFBQTs2QkFBQSxVQUFBO01BQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7In0=

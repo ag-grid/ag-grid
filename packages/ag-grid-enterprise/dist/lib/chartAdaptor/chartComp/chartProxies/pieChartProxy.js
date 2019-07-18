@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -15,12 +15,13 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var chartBuilder_1 = require("../../builder/chartBuilder");
+var ag_grid_community_1 = require("ag-grid-community");
 var chartProxy_1 = require("./chartProxy");
 var PieChartProxy = /** @class */ (function (_super) {
     __extends(PieChartProxy, _super);
     function PieChartProxy(params) {
         var _this = _super.call(this, params) || this;
-        _this.chartOptions = _this.getChartOptions('pie', _this.defaultOptions());
+        _this.chartOptions = _this.getChartOptions(ag_grid_community_1.ChartType.Pie, _this.defaultOptions());
         _this.chart = chartBuilder_1.ChartBuilder.createPolarChart(_this.chartOptions);
         return _this;
     }
@@ -65,6 +66,9 @@ var PieChartProxy = /** @class */ (function (_super) {
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,
+            background: {
+                fill: this.getBackgroundColor()
+            },
             padding: {
                 top: 50,
                 right: 50,
@@ -72,6 +76,7 @@ var PieChartProxy = /** @class */ (function (_super) {
                 left: 50
             },
             legend: {
+                enabled: true,
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 itemPaddingX: 16,
@@ -88,9 +93,11 @@ var PieChartProxy = /** @class */ (function (_super) {
                 calloutColors: palette.strokes,
                 calloutWidth: 2,
                 calloutLength: 10,
-                calloutPadding: 3,
                 labelEnabled: false,
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelMinAngle: 20,
                 tooltipEnabled: true,

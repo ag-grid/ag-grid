@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -62,7 +62,7 @@ var MenuList = /** @class */ (function (_super) {
         this.getGui().appendChild(cMenuItem.getGui());
         this.addDestroyFunc(function () { return cMenuItem.destroy(); });
         cMenuItem.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, function (event) {
-            if (menuItemDef.subMenu) {
+            if (menuItemDef.subMenu && !menuItemDef.action) {
                 _this.showChildMenu(menuItemDef, cMenuItem, event.mouseEvent);
             }
             else {

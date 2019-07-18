@@ -98,6 +98,7 @@ MenuItemDef {
         <li><code>csvExport</code>: Export to CSV using all default export values.</li>
         <li><code>excelExport</code>: Export to Excel (.xlsx) using all default export values.</li>
         <li><code>excelXmlExport</code>: Export to Excel (.xml) using all default export values.</li>
+        <li><code>chartRange</code>: Chart a range of selected cells.</li>
     </ul>
 
     <h2>Default Context Menu</h2>

@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Tooltip Component</h1>
 
 <p class="lead">
-    Tooltip components allow you to add your own tooltips to ag-Grid's column header and cells. Use these when the provided 
+    Tooltip components allow you to add your own tooltips to the grids column header and cells. Use these when the provided
     tooltip component or the default browser tooltip do not meet your requirements.
 </p>
 
@@ -79,7 +79,7 @@ interface ITooltipParams {
 <h2>Default Browser Tooltip</h2>
 
 <p>
-    If you don't want to use Ag-Grid's tooltip component, you can use the <code>enableBrowserTooltips</code> config to use
+    If you don't want to use the grid's tooltip component, you can use the <code>enableBrowserTooltips</code> config to use
     the browser's default tootip. 
 
     Note: That will use the element's title attribute to display the tooltip.
@@ -97,6 +97,76 @@ interface ITooltipParams {
 </ul>
 
 <?= example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', array('processVue' => true) ) ?>
+
+<h2>Showing Blank Values</h2>
+
+<p>
+    The grid will not show a tooltip if there is no value to show. This is the default behaviour as the
+    simplest form of tooltip will show the value it is provided without any additional information.
+    In the simplest case, it would be wrong to show the tooltip with no value as that would result
+    in a tooltip as a blank box.
+</p>
+
+<p>
+    This can be a problem if you wish a tooltip to display for blank values. For example you might want to
+    display the tooltip "This cell has no value".
+</p>
+
+<p>
+    To get around this, you should utilise <code>tooltipValueGetter</code> to return something else when the value
+    is blank. This is displayed in the example below.
+</p>
+
+<p>
+    The example below shows both displaying and not displaying the tooltip for blank values. Note the following:
+</p>
+
+<ul>
+    <li>
+        The first three rows have athlete values of <code>undefined</code>, <code>null</code> and '' (empty string).
+    </li>
+    <li>
+        The column <b>Athlete Col 1</b> uses <code>tooltipField</code> for the tooltip field. When there is no value
+        (the first three rows) no tooltip is displayed.
+    </li>
+    <li>
+        The column <b>Athlete Col 2</b> uses <code>tooltipValueGetter</code> for the tooltip field. The value getter
+        will return a value (an object) regardless of whether the value to display is empty or not. This ensures
+        the tooltip gets displayed even when no cell value is present.
+    </li>
+</ul>
+
+<?= example('Blank Values', 'blank-values', 'generated') ?>
+
+<h2>Header Tooltip with Custom Tooltip</h2>
+
+<p>
+    When we want to display a header tooltip, we set the headerTooltip config as a string,
+    and that string will be displayed as the tooltip. But when working with custom tooltips we set 
+    use <code>colDef.tooltipComponent</code> to assign the column's tooltip component and the 
+    <code>headerTooltip</code> value will passed to the <code>params</code> object. <br>
+    Note: If <code>headerTooltip</code> or <code>tooltipValueGetter</code> are not present, the 
+    tooltip will not be rendered.
+</p>
+
+<p>
+    The example below shows how to set a custom tooltip to a header and to a grouped header. Note the following:
+</p>
+
+<ul>
+    <li>
+        The column <b>Athlete Col 1</b> does not have a <code>tooltipComponent</code> so it will render the value
+        set in it's <code>headerTooltip</code> config.
+    </li>
+    <li>
+        The column <b>Athlete Col 2</b> uses <code>tooltipComponent</code> so the the value in <code>headerTooltip</code>
+        is passed to the tooltipComponent </code>params</code> to be used.
+    </li>
+    <li>The <code>tooltipComponent</code> detect that it's being rendered by a header because the <code>params</code> object 
+    does not contain a <code>rowIndex</code> value.
+</ul>
+
+<?= example('Header Custom Tooltip', 'header-tooltip', 'generated') ?>
 
 <h2>Example: Using Browser Tooltips</h2>
 

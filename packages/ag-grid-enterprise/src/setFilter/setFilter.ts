@@ -1,5 +1,4 @@
 import {
-    _,
     ProvidedFilter,
     Autowired,
     Component,
@@ -7,7 +6,8 @@ import {
     ISetFilterParams,
     QuerySelector,
     RefSelector,
-    ValueFormatterService
+    ValueFormatterService,
+    _
 } from "ag-grid-community";
 import { SetFilterModelValuesType, SetValueModel } from "./setValueModel";
 import { SetFilterListItem } from "./setFilterListItem";
@@ -20,14 +20,11 @@ export class SetFilter extends ProvidedFilter {
 
     private valueModel: SetValueModel;
 
-    @QuerySelector('#selectAll')
-    private eSelectAll: HTMLInputElement;
-    @QuerySelector('#selectAllContainer')
-    private eSelectAllContainer: HTMLElement;
-    @QuerySelector('.ag-filter-filter')
-    private eMiniFilter: HTMLInputElement;
-    @RefSelector('ag-filter-loading')
-    private eFilterLoading: HTMLInputElement;
+    @QuerySelector('#selectAll') private eSelectAll: HTMLInputElement;
+    @QuerySelector('#selectAllContainer') private eSelectAllContainer: HTMLElement;
+    @QuerySelector('.ag-filter-filter') private eMiniFilter: HTMLInputElement;
+    @RefSelector('ag-filter-loading') private eFilterLoading: HTMLInputElement;
+    
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
 
     private selectAllState: CheckboxState;
@@ -40,10 +37,6 @@ export class SetFilter extends ProvidedFilter {
     private eUncheckedIcon: HTMLElement;
     private eIndeterminateCheckedIcon: HTMLElement;
 
-    constructor() {
-        super();
-    }
-
     // unlike the simple filter's, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
     protected updateUiVisibility(): void {}
@@ -53,7 +46,7 @@ export class SetFilter extends ProvidedFilter {
 
         return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
                 <div>
-                    <div class="ag-input-text-wrapper ag-filter-header-container" id="ag-mini-filter">
+                    <div class="ag-input-wrapper ag-filter-header-container" id="ag-mini-filter">
                         <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
                     </div>
                     <div class="ag-filter-header-container">
@@ -305,6 +298,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onSelectAll(event: Event) {
+        event.preventDefault();
         _.addAgGridEventPath(event);
         if (this.selectAllState === CheckboxState.CHECKED) {
             this.selectAllState = CheckboxState.UNCHECKED;

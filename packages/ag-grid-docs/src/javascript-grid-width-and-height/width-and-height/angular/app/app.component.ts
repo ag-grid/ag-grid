@@ -5,22 +5,20 @@ import {HttpClient} from '@angular/common/http';
     selector: 'my-app',
     template: `
         <div style='height: 100%'>
-
+            <div style="margin-bottom: 5px;">
+                <button (click)="fillLarge()">Fill 100%</button>
+                <button (click)="fillMedium()">Fill 60%</button>
+                <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
+            </div>
             <div [ngStyle]="style">
                 <ag-grid-angular
-                        style="width: 100%; height: 100%"
+                        style="width: 100%; height: calc(100% - 25px);"
                         #agGrid
                         class="ag-theme-balham"
                         [rowData]="rowData"
                         [columnDefs]="columnDefs"
                         (firstDataRendered)="onFirstDataRendered($event)">
                 </ag-grid-angular>
-            </div>
-
-            <div style="position: absolute; top: 0; left: 0">
-                <button (click)="fillLarge()">Fill 100%</button>
-                <button (click)="fillMedium()">Fill 60%</button>
-                <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
             </div>
         </div>
     `
@@ -29,7 +27,6 @@ export class AppComponent {
     columnDefs;
     rowData;
     style = {
-        marginTop: '20px',
         width: '100%',
         height: '100%',
         boxSizing: 'border-box'

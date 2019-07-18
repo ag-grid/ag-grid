@@ -193,7 +193,7 @@
         color: $foreground-color;
     }
 
-    .ag-cell-inline-editing {
+    .ag-cell.ag-cell-inline-editing {
         height: $row-height;
         padding: 0;
     }

@@ -43,6 +43,7 @@ const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
 const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
+const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
@@ -873,6 +874,18 @@ export class GridOptionsWrapper {
         return usingMasterDetail && this.enterprise;
     }
 
+    public isKeepDetailRows(): boolean {
+        return isTrue(this.gridOptions.keepDetailRows);
+    }
+
+    public getKeepDetailRowsCount(): number {
+        if (this.gridOptions.keepDetailRowsCount > 0) {
+            return this.gridOptions.keepDetailRowsCount;
+        } else {
+            return DEFAULT_KEEP_DETAIL_ROW_COUNT;
+        }
+    }
+
     public getIsRowMasterFunc(): IsRowMaster | undefined {
         return this.gridOptions.isRowMaster;
     }
@@ -1482,6 +1495,9 @@ export class GridOptionsWrapper {
             console.warn(`ag-Grid: since v20.1, suppressTabbing is replaced with the more powerful grid callback suppressKeyboardEvent(params) which can suppress any keyboard event including tabbing.`);
         }
 
+        if (options.doesDataFlower) {
+            console.warn('ag-Grid: since v21.1, doesDataFlower is deprecated. Master/Detail is the new way for showing child data for a row and was introduced over a year ago. Please migrate your code to use master/detail instead.');
+        }
     }
 
     private checkForViolations() {

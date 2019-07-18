@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -69,18 +69,6 @@ var FiltersToolPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanel.TEMPLATE = "<div class=\"ag-filter-panel\" ref=\"ePanelContainer\" />";
     __decorate([
-        ag_grid_community_1.Autowired('columnApi'),
-        __metadata("design:type", ag_grid_community_1.ColumnApi)
-    ], FiltersToolPanel.prototype, "columnApi", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired("gridOptionsWrapper"),
-        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
-    ], FiltersToolPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired("gridApi"),
-        __metadata("design:type", ag_grid_community_1.GridApi)
-    ], FiltersToolPanel.prototype, "gridApi", void 0);
-    __decorate([
         ag_grid_community_1.Autowired("eventService"),
         __metadata("design:type", ag_grid_community_1.EventService)
     ], FiltersToolPanel.prototype, "eventService", void 0);
@@ -88,22 +76,6 @@ var FiltersToolPanel = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('columnController'),
         __metadata("design:type", ag_grid_community_1.ColumnController)
     ], FiltersToolPanel.prototype, "columnController", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('rowModel'),
-        __metadata("design:type", Object)
-    ], FiltersToolPanel.prototype, "rowModel", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('userComponentFactory'),
-        __metadata("design:type", ag_grid_community_1.UserComponentFactory)
-    ], FiltersToolPanel.prototype, "userComponentFactory", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('valueService'),
-        __metadata("design:type", ag_grid_community_1.ValueService)
-    ], FiltersToolPanel.prototype, "valueService", void 0);
-    __decorate([
-        ag_grid_community_1.Autowired('$scope'),
-        __metadata("design:type", Object)
-    ], FiltersToolPanel.prototype, "$scope", void 0);
     return FiltersToolPanel;
 }(ag_grid_community_1.Component));
 exports.FiltersToolPanel = FiltersToolPanel;

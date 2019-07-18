@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { PopupService, Component, ColumnController, EventService, DragAndDropService, GridOptionsWrapper, DropTarget, Column, AgEvent } from "ag-grid-community";
 import { AggFuncService } from "../../../../aggregation/aggFuncService";
 export interface ColumnRemoveEvent extends AgEvent {
@@ -15,8 +15,8 @@ export declare class DropZoneColumnComp extends Component {
     private columnApi;
     private gridApi;
     private eText;
-    private btRemove;
     private eDragHandle;
+    private btRemove;
     private column;
     private dragSourceDropTarget;
     private ghost;

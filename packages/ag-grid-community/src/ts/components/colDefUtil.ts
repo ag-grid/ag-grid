@@ -97,6 +97,7 @@ export class ColDefUtil {
         'suppressNavigable',
         'enableCellChangeFlash',
         'rowDrag',
+        'dndSource',
         'autoHeight',
         'sortable',
         'resizable',
@@ -104,6 +105,7 @@ export class ColDefUtil {
     ];
 
     public static FUNCTION_PROPERTIES = [
+        'dndSourceOnRowDrag',
         'valueGetter',
         'valueSetter',
         'filterValueGetter',

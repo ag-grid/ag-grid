@@ -86,15 +86,17 @@
         background-color: $white;
 
         .result {
-            padding: 1rem;
+            padding: 0;
             position: relative;
             width: 100%;
         }
 
         iframe,
         .iframe-placeholder {
+            display: block;
             height: 500px;
-            width: 100%;
+            width: 1px;
+            min-width: 100%;
             background-color: transparent;
             border: 0;
             margin: 0;

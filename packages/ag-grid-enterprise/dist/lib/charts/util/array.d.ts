@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 /**
  * Returns the minimum and maximum value in the given iterable using natural order.
  * If the iterable contains no comparable values, returns `[undefined, undefined]`.

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -30,9 +30,10 @@ var ChartMenu = /** @class */ (function (_super) {
     function ChartMenu(chartController) {
         var _this = _super.call(this, ChartMenu.TEMPLATE) || this;
         _this.buttons = {
-            chartSettings: ['ag-icon-chart', function () { return _this.showMenu('chartSettings'); }],
-            chartData: ['ag-icon-data', function () { return _this.showMenu('chartData'); }],
-            chartDownload: ['ag-icon-save', function () { return _this.saveChart(); }]
+            chartSettings: ['menu', function () { return _this.showMenu('chartSettings'); }],
+            chartData: ['data', function () { return _this.showMenu('chartData'); }],
+            chartFormat: ['data', function () { return _this.showMenu('chartFormat'); }],
+            chartDownload: ['save', function () { return _this.saveChart(); }]
         };
         _this.tabs = [];
         _this.chartController = chartController;
@@ -43,15 +44,16 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.prototype.getToolbarOptions = function () {
         var _this = this;
-        var chartToolbarOptions = ['chartSettings', 'chartData', 'chartDownload'];
+        var tabOptions = ['chartSettings', 'chartData', 'chartFormat', 'chartDownload'];
         var toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
+        var ret = [];
         if (toolbarItemsFunc) {
             var params = {
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
-                defaultItems: chartToolbarOptions
+                defaultItems: tabOptions
             };
-            chartToolbarOptions = toolbarItemsFunc(params).filter(function (option) {
+            tabOptions = toolbarItemsFunc(params).filter(function (option) {
                 if (!_this.buttons[option]) {
                     console.warn("ag-Grid: '" + option + " is not a valid Chart Toolbar Option");
                     return false;
@@ -59,18 +61,25 @@ var ChartMenu = /** @class */ (function (_super) {
                 return true;
             });
         }
-        this.tabs = chartToolbarOptions.filter(function (option) { return option !== 'chartDownload'; });
-        return chartToolbarOptions;
+        this.tabs = tabOptions.filter(function (option) { return option !== 'chartDownload'; });
+        var downloadIdx = tabOptions.indexOf('chartDownload');
+        var firstItem = tabOptions.find(function (option) { return option !== 'chartDownload'; });
+        var chartDownload = 'chartDownload';
+        if (firstItem) {
+            ret.push(firstItem);
+        }
+        if (downloadIdx !== -1) {
+            return downloadIdx === 0 ? [chartDownload].concat(ret) : ret.concat([chartDownload]);
+        }
+        return ret;
     };
     ChartMenu.prototype.createButtons = function () {
         var _this = this;
         var chartToolbarOptions = this.getToolbarOptions();
         chartToolbarOptions.forEach(function (button) {
             var buttonConfig = _this.buttons[button];
-            var iconCls = buttonConfig[0], callback = buttonConfig[1];
-            var buttonEl = document.createElement('span');
-            ag_grid_community_1._.addCssClass(buttonEl, 'ag-icon');
-            ag_grid_community_1._.addCssClass(buttonEl, iconCls);
+            var iconName = buttonConfig[0], callback = buttonConfig[1];
+            var buttonEl = ag_grid_community_1._.createIconNoSpan(iconName, _this.gridOptionsWrapper);
             _this.addDestroyableEventListener(buttonEl, 'click', callback);
             _this.getGui().appendChild(buttonEl);
         });
@@ -81,49 +90,73 @@ var ChartMenu = /** @class */ (function (_super) {
         };
         this.dispatchEvent(event);
     };
-    ChartMenu.prototype.showMenu = function (tabName) {
+    ChartMenu.prototype.createMenu = function (defaultTab) {
         var _this = this;
-        var chartComp = this.parentComponent;
-        var parentGui = chartComp.getGui();
-        var parentRect = parentGui.getBoundingClientRect();
-        var tab = this.tabs.indexOf(tabName);
-        this.menuDialog = new ag_grid_community_1.Dialog({
-            alwaysOnTop: true,
-            movable: true,
-            resizable: {
-                bottom: true,
-                top: true
-            },
-            maximizable: false,
+        var chartComp = this.getParentComponent();
+        var dockedContainer = chartComp.getDockedContainer();
+        var context = this.getContext();
+        var menuPanel = this.menuPanel = new ag_grid_community_1.AgPanel({
             minWidth: 220,
             width: 220,
-            height: Math.min(390, parentRect.height),
-            x: parentRect.right - 225,
-            y: parentRect.top + 5
+            height: '100%',
+            closable: true,
+            hideTitleBar: true
         });
+        context.wireBean(this.menuPanel);
+        menuPanel.setParentComponent(this);
+        dockedContainer.appendChild(menuPanel.getGui());
         this.tabbedMenu = new tabbedChartMenu_1.TabbedChartMenu({
             controller: this.chartController,
             type: chartComp.getCurrentChartType(),
             panels: this.tabs
         });
-        new ag_grid_community_1.Promise(function (res) {
-            window.setTimeout(function () {
-                _this.menuDialog.setBodyComponent(_this.tabbedMenu);
-                _this.tabbedMenu.showTab(tab);
-            }, 100);
-        });
-        this.menuDialog.addDestroyableEventListener(this.menuDialog, ag_grid_community_1.Component.EVENT_DESTROYED, function () {
+        context.wireBean(this.tabbedMenu);
+        this.addDestroyableEventListener(this.menuPanel, ag_grid_community_1.Component.EVENT_DESTROYED, function () {
             _this.tabbedMenu.destroy();
         });
-        var context = this.getContext();
-        context.wireBean(this.menuDialog);
-        context.wireBean(this.tabbedMenu);
-        this.menuDialog.setParentComponent(this);
+        return new ag_grid_community_1.Promise(function (res) {
+            window.setTimeout(function () {
+                menuPanel.setBodyComponent(_this.tabbedMenu);
+                _this.tabbedMenu.showTab(defaultTab);
+                _this.addDestroyableEventListener(chartComp.getChartComponentsWrapper(), 'click', function () {
+                    if (ag_grid_community_1._.containsClass(chartComp.getGui(), 'ag-has-menu')) {
+                        _this.hideMenu();
+                    }
+                });
+                res(menuPanel);
+            }, 100);
+        });
+    };
+    ChartMenu.prototype.slideDockedContainer = function () {
+        var _this = this;
+        var chartComp = this.getParentComponent();
+        chartComp.slideDockedOut(this.menuPanel.getWidth());
+        window.setTimeout(function () {
+            ag_grid_community_1._.addCssClass(_this.getParentComponent().getGui(), 'ag-has-menu');
+        }, 500);
+    };
+    ChartMenu.prototype.showMenu = function (tabName) {
+        var _this = this;
+        var tab = this.tabs.indexOf(tabName);
+        if (!this.menuPanel) {
+            this.createMenu(tab)
+                .then(function () {
+                _this.slideDockedContainer();
+            });
+        }
+        else {
+            this.slideDockedContainer();
+        }
+    };
+    ChartMenu.prototype.hideMenu = function () {
+        var chartComp = this.getParentComponent();
+        chartComp.slideDockedIn();
+        ag_grid_community_1._.removeCssClass(this.getParentComponent().getGui(), 'ag-has-menu');
     };
     ChartMenu.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
-        if (this.tabbedMenu) {
-            this.menuDialog.destroy();
+        if (this.menuPanel && this.menuPanel.isAlive()) {
+            this.menuPanel.destroy();
         }
     };
     ChartMenu.EVENT_DOWNLOAD_CHART = 'downloadChart';

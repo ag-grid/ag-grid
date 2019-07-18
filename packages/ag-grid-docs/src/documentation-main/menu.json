@@ -1,729 +1,965 @@
 [
   {
-    "title": "Reference",
-    "gtm": {
-      "category": "reference"
-    },
+    "group": "Basics",
     "items": [
       {
-        "title": "Overview",
-        "url": "javascript-grid-reference-overview/"
-      },
-      {
-        "title": "Grid Properties",
-        "url": "javascript-grid-properties/"
-      },
-      {
-        "title": "Grid Events",
-        "url": "javascript-grid-events/"
-      },
-      {
-        "title": "Grid Callbacks",
-        "url": "javascript-grid-callbacks/"
-      },
-      {
-        "title": "Grid API",
-        "url": "javascript-grid-api/"
-      },
-      {
-        "title": "Column Properties",
-        "url": "javascript-grid-column-properties/"
-      },
-      {
-        "title": "Column API",
-        "url": "javascript-grid-column-api/"
-      },
-      {
-        "title": "Supported Browsers",
-        "url": "javascript-grid-supported-browsers/"
-      }
-    ]
-  },
-  {
-    "title": "Features",
-    "gtm": {
-      "category": "features"
-    },
-    "items": [
-      {
-        "title": "Overview",
-        "url": "javascript-grid-features/"
-      },
-      {
-        "title": "ag-Grid Enterprise",
-        "url": "javascript-grid-set-license/",
-        "enterprise": true
-      },
-      {
-        "title": "Column Definitions",
-        "url": "javascript-grid-column-definitions/"
-      },
-      {
-        "title": "Column Groups",
-        "url": "javascript-grid-grouping-headers/"
-      },
-      {
-        "title": "Column Headers",
-        "url": "javascript-grid-column-header/"
-      },
-      {
-        "title": "Column Resizing",
-        "url": "javascript-grid-resizing/"
-      },
-      {
-        "title": "Column Moving",
-        "url": "javascript-grid-column-moving/"
-      },
-      {
-        "title": "Column Filter",
-        "url": "javascript-grid-filtering/",
+        "title": "Introduction",
+        "icon": "icon-information",
+        "max-box-show-level": 2,
+        "matrixExclude": true,
+        "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Provided Filters",
-            "url": "javascript-grid-filter-provided/"
-          },
-          {
-            "title": "&nbsp;> Simple Filters",
-            "url": "javascript-grid-filter-provided-simple/"
-          },
-          {
-            "title": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;> Text Filter",
-            "url": "javascript-grid-filter-text/"
-          },
-          {
-            "title": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;> Number Filter",
-            "url": "javascript-grid-filter-number/"
-          },
-          {
-            "title": "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;> Date Filter",
-            "url": "javascript-grid-filter-date/"
-          },
-          {
-            "title": "&nbsp;> Set Filter",
-            "url": "javascript-grid-filter-set/",
+            "title": "Community & Enterprise",
+            "url": "javascript-grid-set-license/",
             "enterprise": true
           },
           {
-            "title": "Filter API",
-            "url": "javascript-grid-filter-api/"
+            "title": "Supported Browsers",
+            "url": "javascript-grid-supported-browsers/"
           },
           {
-            "title": "Floating Filters",
-            "url": "javascript-grid-floating-filters/"
-          },
-          {
-            "title": "Custom Filter",
-            "url": "javascript-grid-filter-custom/"
-          }
-        ]
-      },
-      {
-        "title": "Quick Filter",
-        "url": "javascript-grid-filter-quick/"
-      },
-      {
-        "title": "External Filter",
-        "url": "javascript-grid-filter-external/"
-      },
-      {
-        "title": "Row Sorting",
-        "url": "javascript-grid-sorting/"
-      },
-      {
-        "title": "Row Dragging",
-        "url": "javascript-grid-row-dragging/"
-      },
-      {
-        "title": "Row Selection",
-        "url": "javascript-grid-selection/"
-      },
-      {
-        "title": "Range Selection",
-        "url": "javascript-grid-range-selection/",
-        "enterprise": true
-      },
-      {
-        "title": "Grid Size",
-        "url": "javascript-grid-width-and-height/"
-      },
-      {
-        "title": "Column Spanning",
-        "url": "javascript-grid-column-spanning/"
-      },
-      {
-        "title": "Row Spanning",
-        "url": "javascript-grid-row-spanning/"
-      },
-      {
-        "title": "Column Pinning",
-        "url": "javascript-grid-pinning/"
-      },
-      {
-        "title": "Row Pinning",
-        "url": "javascript-grid-row-pinning/"
-      },
-      {
-        "title": "Row Height",
-        "url": "javascript-grid-row-height/"
-      },
-      {
-        "title": "Cell Styles",
-        "url": "javascript-grid-cell-styles/"
-      },
-      {
-        "title": "Row Styles",
-        "url": "javascript-grid-row-styles/"
-      },
-      {
-        "title": "Value Handlers",
-        "url": "javascript-grid-value-handlers/",
-        "items": [
-          {
-            "title": "Getters & Formatters",
-            "url": "javascript-grid-value-getters/"
-          },
-          {
-            "title": "Setters and Parsers",
-            "url": "javascript-grid-value-setters/"
-          },
-          {
-            "title": "Expressions",
-            "url": "javascript-grid-cell-expressions/"
-          },
-          {
-            "title": "Value Cache",
-            "url": "javascript-grid-value-cache/"
-          },
-          {
-            "title": "Reference Data",
-            "url": "javascript-grid-reference-data/"
-          }
-        ]
-      },
-      {
-        "title": "Cell Rendering",
-        "url": "javascript-grid-cell-rendering/"
-      },
-      {
-        "title": "Cell Editing",
-        "url": "javascript-grid-cell-editing/"
-      },
-      {
-        "title": "Keyboard Interaction",
-        "url": "javascript-grid-keyboard-navigation/"
-      },
-      {
-        "title": "Touch Support",
-        "url": "javascript-grid-touch/"
-      },
-      {
-        "title": "Animation",
-        "url": "javascript-grid-animation/"
-      },
-      {
-        "title": "Accessing Data",
-        "url": "javascript-grid-accessing-data/"
-      },
-      {
-        "title": "Pagination",
-        "url": "javascript-grid-pagination/"
-      },
-      {
-        "title": "Updating Data",
-        "url": "javascript-grid-data-update/"
-      },
-      {
-        "title": "View Refresh",
-        "url": "javascript-grid-refresh/"
-      },
-      {
-        "title": "Change Detection",
-        "url": "javascript-grid-change-detection/"
-      },
-      {
-        "title": "Internationalisation",
-        "url": "javascript-grid-internationalisation/"
-      },
-      {
-        "title": "Performance",
-        "url": "javascript-grid-performance/"
-      },
-      {
-        "title": "Accessibility",
-        "url": "javascript-grid-accessibility/"
-      },
-      {
-        "title": "Full Width Rows",
-        "url": "javascript-grid-full-width-rows/"
-      },
-      {
-        "title": "Master / Detail",
-        "url": "javascript-grid-master-detail/",
-        "enterprise": true
-      },
-      {
-        "title": "Aligned Grids",
-        "url": "javascript-grid-aligned-grids/"
-      },
-      {
-        "title": "CSV Export",
-        "url": "javascript-grid-export/"
-      },
-      {
-        "title": "Excel Export",
-        "url": "javascript-grid-excel/",
-        "enterprise": true
-      },
-      {
-        "title": "RTL",
-        "url": "javascript-grid-rtl/"
-      },
-      {
-        "title": "Custom Icons",
-        "url": "javascript-grid-icons/"
-      },
-      {
-        "title": "Overlays",
-        "url": "javascript-grid-overlays/"
-      },
-      {
-        "title": "Printing",
-        "url": "javascript-grid-for-print/"
-      },
-      {
-        "title": "Row Grouping",
-        "url": "javascript-grid-grouping/",
-        "enterprise": true
-      },
-      {
-        "title": "Tree Data",
-        "url": "javascript-grid-tree-data/",
-        "enterprise": true
-      },
-      {
-        "title": "Aggregation",
-        "url": "javascript-grid-aggregation/",
-        "enterprise": true
-      },
-      {
-        "title": "Pivoting",
-        "url": "javascript-grid-pivoting/",
-        "enterprise": true
-      },
-      {
-        "title": "Tool Panels",
-        "url": "javascript-grid-tool-panel/",
-        "enterprise": true,
-        "items": [
-          {
-            "title": "Side Bar",
-            "url": "javascript-grid-side-bar/",
-            "enterprise": true
-          },
-          {
-            "title": "Columns Tool Panel",
-            "url": "javascript-grid-tool-panel-columns/",
-            "enterprise": true
-          },
-          {
-            "title": "Filters Tool Panel",
-            "url": "javascript-grid-tool-panel-filters/",
-            "enterprise": true
-          }
-        ]
-      },
-      {
-        "title": "Clipboard",
-        "url": "javascript-grid-clipboard/",
-        "enterprise": true
-      },
-      {
-        "title": "Column Menu",
-        "url": "javascript-grid-column-menu/",
-        "enterprise": true
-      },
-      {
-        "title": "Context Menu",
-        "url": "javascript-grid-context-menu/",
-        "enterprise": true
-      },
-      {
-        "title": "Status Bar",
-        "url": "javascript-grid-status-bar/",
-        "enterprise": true
-      },
-      {
-        "title": "Context",
-        "url": "javascript-grid-context/"
-      }
-    ]
-  },
-  {
-    "title": "Charts",
-    "gtm": {
-      "category": "charts"
-    },
-    "items": [
-      {
-        "title": "Overview",
-        "url": "javascript-grid-charts-overview/",
-        "enterprise": true
-      },
-      {
-        "title": "Chart Ranges",
-        "url": "javascript-grid-charts-chart-ranges/",
-        "enterprise": true
-      },
-      {
-        "title": "Chart Toolbar",
-        "url": "javascript-grid-charts-chart-toolbar/",
-        "enterprise": true
-      },
-      {
-        "title": "Chart API",
-        "url": "javascript-grid-charts-chart-range-api/",
-        "enterprise": true
-      },
-      {
-        "title": "Chart Container",
-        "url": "javascript-grid-charts-container/",
-        "enterprise": true
-      },
-      {
-        "title": "Customising",
-        "url": "javascript-grid-charts-customisation/",
-        "enterprise": true,
-        "items": [
-          {
-            "title": "Bar",
-            "url": "javascript-grid-charts-customisation-bar/"
-          },
-          {
-            "title": "Line",
-            "url": "javascript-grid-charts-customisation-line/"
-          },
-          {
-            "title": "Pie",
-            "url": "javascript-grid-charts-customisation-pie/"
-          },
-          {
-            "title": "Doughnut",
-            "url": "javascript-grid-charts-customisation-doughnut/"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Row Models",
-    "gtm": {
-      "category": "row-models"
-    },
-    "items": [
-      {
-        "title": "Overview",
-        "url": "javascript-grid-row-models/"
-      },
-      {
-        "title": "Row Node",
-        "url": "javascript-grid-row-node/"
-      },
-      {
-        "title": "Client-side",
-        "url": "javascript-grid-client-side-model/"
-      },
-      {
-        "title": "Infinite Scrolling",
-        "url": "javascript-grid-infinite-scrolling/"
-      },
-      {
-        "title": "Server-side",
-        "url": "javascript-grid-server-side-model/",
-        "enterprise": true,
-        "items": [
-          {
-            "title": "Infinite Scroll",
-            "url": "javascript-grid-server-side-model-infinite/"
-          },
-          {
-            "title": "Row Grouping",
-            "url": "javascript-grid-server-side-model-grouping/"
-          },
-          {
-            "title": "Pivoting",
-            "url": "javascript-grid-server-side-model-pivoting/"
-          },
-          {
-            "title": "Pagination",
-            "url": "javascript-grid-server-side-model-pagination/"
-          },
-          {
-            "title": "Row Selection",
-            "url": "javascript-grid-server-side-model-selection/"
-          },
-          {
-            "title": "Row Height",
-            "url": "javascript-grid-server-side-model-row-height/"
-          },
-          {
-            "title": "Master Detail",
-            "url": "javascript-grid-server-side-model-master-detail/"
-          },
-          {
-            "title": "Tree Data",
-            "url": "javascript-grid-server-side-model-tree-data/"
-          },
-          {
-            "title": "Changing Columns",
-            "url": "javascript-grid-server-side-model-changing-columns/"
-          },
-          {
-            "title": "CRUD",
-            "url": "javascript-grid-server-side-model-crud/"
-          }
-        ]
-      },
-      {
-        "title": "Viewport",
-        "url": "javascript-grid-viewport/",
-        "enterprise": true
-      }
-    ]
-  },
-  {
-    "title": "Themes",
-    "gtm": {
-      "category": "themes"
-    },
-    "items": [
-      {
-        "title": "Overview",
-        "url": "javascript-grid-styling/"
-      },
-      {
-        "title": "Balham",
-        "url": "javascript-grid-themes/balham-theme.php"
-      },
-      {
-        "title": "Material",
-        "url": "javascript-grid-themes/material-theme.php"
-      },
-      {
-        "title": "Fresh ",
-        "url": "javascript-grid-themes/fresh-theme.php"
-      },
-      {
-        "title": "Blue",
-        "url": "javascript-grid-themes/blue-theme.php"
-      },
-      {
-        "title": "Dark",
-        "url": "javascript-grid-themes/dark-theme.php"
-      },
-      {
-        "title": "Bootstrap",
-        "url": "javascript-grid-themes/bootstrap-theme.php"
-      }
-    ]
-  },
-  {
-    "title": "Components",
-    "gtm": {
-      "category": "components"
-    },
-    "items": [
-      {
-        "title": "Overview",
-        "url": "javascript-grid-components/"
-      },
-      {
-        "title": "Cell Renderer",
-        "url": "javascript-grid-cell-rendering-components/"
-      },
-      {
-        "title": "Cell Editor",
-        "url": "javascript-grid-cell-editor/"
-      },
-      {
-        "title": "Date Component",
-        "url": "javascript-grid-date-component/"
-      },
-      {
-        "title": "Filter Component",
-        "url": "javascript-grid-filter-component/"
-      },
-      {
-        "title": "Floating Filter Component",
-        "url": "javascript-grid-floating-filter-component/"
-      },
-      {
-        "title": "Header Component",
-        "url": "javascript-grid-header-rendering/"
-      },
-      {
-        "title": "Loading Cell Renderer",
-        "url": "javascript-grid-loading-cell-renderer/"
-      },
-      {
-        "title": "Overlay Component",
-        "url": "javascript-grid-overlay-component/"
-      },
-      {
-        "title": "Status Bar Component",
-        "url": "javascript-grid-status-bar-component/"
-      },
-      {
-        "title": "Tool Panel Component",
-        "url": "javascript-grid-tool-panel-component/"
-      },
-      {
-        "title": "Tooltip Component",
-        "url": "javascript-grid-tooltip-component/"
-      }
-    ]
-  },
-  {
-    "title": "Guides",
-    "gtm": {
-      "category": "guides"
-    },
-    "items": [
-      {
-        "title": "Vanilla JavaScript",
-        "gtm": {
-          "tech": "vanilla"
-        },
-        "items": [
-          {
-            "title": "Install with NPM",
-            "url": "javascript-grid-npm/"
-          },
-          {
-            "title": "Download for Local Usage",
-            "url": "javascript-grid-download/"
-          },
-          {
-            "title": "Use with TypeScript",
-            "gtm": {
-              "tech": "typescript"
-            },
-            "url": "ag-grid-typescript-webpack-2/"
-          }
-        ]
-      },
-      {
-        "title": "Angular",
-        "gtm": {
-          "tech": "angular"
-        },
-        "items": [
-          {
-            "title": "Ag-Grid Angular Overview",
-            "url": "angular-more-details/"
-          },
-          {
-            "title": "Building",
+            "title": "Frameworks Info",
+            "url": "javascript-grid-frameworks-info/",
             "items": [
               {
-                "title": "SystemJS",
-                "url": "ag-grid-angular-systemjs/"
+                "title": "Vanilla JavaScript",
+                "url": "javascript-grid-npm/",
+                "items": [
+                  {
+                    "title": "Getting Started",
+                    "url": "javascript-getting-started/"
+                  },
+                  {
+                    "title": "Download for Local Usage",
+                    "url": "javascript-grid-download/"
+                  },
+                  {
+                    "title": "Use with TypeScript",
+                    "url": "ag-grid-typescript-webpack-2/"
+                  }
+                ]
               },
               {
-                "title": "Webpack 3",
-                "url": "ag-grid-angular-webpack-3/"
+                "title": "Angular",
+                "url": "angular-more-details/",
+                "items": [
+                  {
+                    "title": "Getting Started",
+                    "url": "angular-getting-started/"
+                  },
+                  {
+                    "title": "SystemJS",
+                    "url": "ag-grid-angular-systemjs/"
+                  },
+                  {
+                    "title": "Webpack 3",
+                    "url": "ag-grid-angular-webpack-3/"
+                  },
+                  {
+                    "title": "Webpack 2",
+                    "url": "ag-grid-angular-webpack-2/"
+                  },
+                  {
+                    "title": "Webpack 1",
+                    "url": "ag-grid-angular-webpack/"
+                  },
+                  {
+                    "title": "Angular & Material Design",
+                    "url": "example-angular-material-design/"
+                  },
+                  {
+                    "title": "Use with RxJS",
+                    "url": "example-angular-rxjs/"
+                  }
+                ]
               },
               {
-                "title": "Webpack 2",
-                "url": "ag-grid-angular-webpack-2/"
+                "title": "React",
+                "url": "react-more-details/",
+                "items": [
+                  {
+                    "title": "Getting Started",
+                    "url": "react-getting-started/"
+                  },
+                  {
+                    "title": "Redux Integration Part 1",
+                    "url": "react-redux-integration-pt1/"
+                  },
+                  {
+                    "title": "Redux Integration Part 2",
+                    "url": "react-redux-integration-pt2/"
+                  }
+                ]
               },
               {
-                "title": "Webpack",
-                "url": "ag-grid-angular-webpack/"
+                "title": "Vue",
+                "url": "best-vuejs-data-grid/",
+                "items": [
+                  {
+                    "title": "Getting Started",
+                    "url": "vue-getting-started/"
+                  },
+                  {
+                    "title": "Vue & Unidirectional Data Flow",
+                    "url": "vuex-data-flow/"
+                  }
+                ]
+              },              {
+                "title": "AngularJS",
+                "url": "best-angularjs-data-grid/"
+              },
+              {
+                "title": "Polymer",
+                "url": "polymer-getting-started/"
+              },
+              {
+                "title": "Web Component",
+                "url": "best-web-component-data-grid/"
+              }
+
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Interface / API",
+        "icon": "icon-api",
+        "matrixExclude": true,
+        "items": [
+          {
+            "title": "Grid Interface",
+            "url": "javascript-grid-reference-overview/",
+            "items": [
+              {
+                "title": "Grid Properties",
+                "url": "javascript-grid-properties/"
+              },
+              {
+                "title": "Grid API",
+                "url": "javascript-grid-api/"
+              },
+              {
+                "title": "Grid Events",
+                "box-title": "Events",
+                "url": "javascript-grid-events/"
+              },
+              {
+                "title": "Grid Callbacks",
+                "url": "javascript-grid-callbacks/"
+              },
+              {
+                "title": "Row Object",
+                "url": "javascript-grid-row-node/"
               }
             ]
           },
           {
-            "title": "Use with RxJS",
-            "url": "example-angular-rxjs/"
+            "title": "Column Interface",
+            "url": "javascript-grid-column-definitions/",
+            "items": [
+              {
+                "title": "Column Properties",
+                "url": "javascript-grid-column-properties/"
+              },
+              {
+                "title": "Column API",
+                "url": "javascript-grid-column-api/"
+              },
+              {
+                "title": "Column Object",
+                "url": "javascript-grid-column/"
+              }
+            ]
           }
         ]
       },
       {
-        "title": "React",
-        "gtm": {
-          "tech": "react"
-        },
+        "title": "Columns",
+        "icon": "icon-columns",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
-            "title": "Ag-Grid React Overview",
-            "url": "react-more-details/"
+            "title": "Column Headers",
+            "box-title": "Headers",
+            "url": "javascript-grid-column-header/"
           },
           {
-            "title": "Redux Integration Part 1",
-            "url": "react-redux-integration-pt1/"
+            "title": "Column Groups",
+            "box-title": "Groups",
+            "url": "javascript-grid-grouping-headers/"
           },
           {
-            "title": "Redux Integration Part 2",
-            "url": "react-redux-integration-pt2/"
+            "title": "Column Sizing",
+            "box-title": "Sizing",
+            "url": "javascript-grid-resizing/"
+          },
+          {
+            "title": "Column Moving",
+            "box-title": "Moving",
+            "url": "javascript-grid-column-moving/"
+          },
+          {
+            "title": "Column Pinning",
+            "box-title": "Pinning",
+            "url": "javascript-grid-pinning/"
+          },
+          {
+            "title": "Column Spanning",
+            "box-title": "Spanning",
+            "url": "javascript-grid-column-spanning/"
           }
         ]
       },
       {
-        "title": "Vue.js",
-        "gtm": {
-          "tech": "vue"
-        },
+        "title": "Rows",
+        "icon": "icon-rows",
+        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
-            "title": "Ag-Grid Vue.js Overview",
-            "url": "best-vuejs-data-grid/"
+            "title": "Row Sorting",
+            "box-title": "Sorting",
+            "url": "javascript-grid-sorting/"
           },
           {
-            "title": "Vuex & Unidirectional Data Flow",
-            "url": "vuex-data-flow/"
+            "title": "Row Dragging",
+            "box-title": "Dragging",
+            "url": "javascript-grid-row-dragging/"
+          },
+          {
+            "title": "Row Spanning",
+            "box-title": "Spanning",
+            "url": "javascript-grid-row-spanning/"
+          },
+          {
+            "title": "Row Pinning",
+            "box-title": "Pinning",
+            "url": "javascript-grid-row-pinning/"
+          },
+          {
+            "title": "Row Height",
+            "box-title": "Height",
+            "url": "javascript-grid-row-height/"
+          },
+          {
+            "title": "Full Width Rows",
+            "box-title": "Full Width",
+            "url": "javascript-grid-full-width-rows/"
+          },
+          {
+            "title": "Row Animation",
+            "box-title": "Animation",
+            "url": "javascript-grid-animation/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Core Features",
+    "items": [
+      {
+        "title": "Layout & Styling",
+        "icon": "icon-style",
+        "level-2-text-decorator": ",&nbsp;",
+        "items": [
+          {
+            "title": "Styling Rows",
+            "box-title": "Rows",
+            "url": "javascript-grid-row-styles/"
+          },
+          {
+            "title": "Styling Cells",
+            "box-title": "Cells",
+            "url": "javascript-grid-cell-styles/"
+          },
+          {
+            "title": "Highlighting Rows & Columns",
+            "box-title": "Highlighting",
+            "url": "javascript-grid-highlighting-rows-and-columns/"
+          },
+          {
+            "title": "Themes",
+            "url": "javascript-grid-styling/",
+            "matrixExcludeChildren": true,
+            "items": [
+              {
+                "title": "Provided Themes",
+                "url": "javascript-grid-themes-provided/"
+              }
+            ]
+          },
+          {
+            "title": "Grid Size",
+            "url": "javascript-grid-width-and-height/"
+          },
+          {
+            "title": "Resize with Parent Container",
+            "box-title": "Responsiveness",
+            "url": "javascript-grid-responsiveness/"
+          },
+          {
+            "title": "Custom Icons",
+            "box-title": "Icons",
+            "url": "javascript-grid-icons/"
+          },
+          {
+            "title": "Printing",
+            "url": "javascript-grid-for-print/"
           }
         ]
       },
       {
-        "title": "Server-side Operations",
-        "gtm": {
-          "tech": "server-side-operations"
-        },
+        "title": "Data",
+        "icon": "icon-data",
+        "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Using Node.js & MySQL",
-            "url": "nodejs-server-side-operations/"
+            "title": "Client Side Data",
+            "url": "javascript-grid-client-side-model/"
           },
           {
-            "title": "Using GraphQL & MySQL",
-            "url": "graphql-server-side-operations/"
+            "title": "Server Side Data",
+            "url": "javascript-grid-row-models/",
+            "items": [
+              {
+                "title": "Server Side Row Model",
+                "url": "javascript-grid-server-side-model/",
+                "enterprise": true,
+                "matrixExcludeChildren": true,
+                "items": [
+                  {
+                    "title": "Infinite Scroll",
+                    "url": "javascript-grid-server-side-model-infinite/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Row Grouping",
+                    "url": "javascript-grid-server-side-model-grouping/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Pivoting",
+                    "url": "javascript-grid-server-side-model-pivoting/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Pagination",
+                    "url": "javascript-grid-server-side-model-pagination/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Row Selection",
+                    "url": "javascript-grid-server-side-model-selection/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Row Height",
+                    "url": "javascript-grid-server-side-model-row-height/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Master Detail",
+                    "url": "javascript-grid-server-side-model-master-detail/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Tree Data",
+                    "url": "javascript-grid-server-side-model-tree-data/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Changing Columns",
+                    "url": "javascript-grid-server-side-model-changing-columns/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "CRUD",
+                    "url": "javascript-grid-server-side-model-crud/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "See Also",
+                    "url": "",
+                    "items": [
+                      {
+                        "title": "Using Node.js & MySQL",
+                        "url": "nodejs-server-side-operations/",
+                        "enterprise": true
+                      },
+                      {
+                        "title": "Using GraphQL & MySQL",
+                        "url": "graphql-server-side-operations/",
+                        "enterprise": true
+                      },
+                      {
+                        "title": "Using Java & Oracle",
+                        "url": "oracle-server-side-operations/",
+                        "enterprise": true
+                      },
+                      {
+                        "title": "Using Java & Apache Apache Spark",
+                        "url": "spark-server-side-operations/",
+                        "enterprise": true
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "title": "Infinite Row Model",
+                "url": "javascript-grid-infinite-scrolling/"
+              },
+              {
+                "title": "Viewport Row Model",
+                "url": "javascript-grid-viewport/",
+                "enterprise": true
+              }
+            ]
           },
           {
-            "title": "Using Java & Oracle",
-            "url": "oracle-server-side-operations/"
+            "title": "Accessing Data",
+            "url": "javascript-grid-accessing-data/"
           },
           {
-            "title": "Using Java & Apache Spark",
-            "url": "spark-server-side-operations/"
+            "title": "Updating Data",
+            "url": "javascript-grid-data-update/"
+          },
+          {
+            "title": "Context",
+            "url": "javascript-grid-context/"
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Use with RxJS",
+                "url": "javascript-grid-rxjs/"
+              }
+            ]
           }
         ]
       },
       {
-        "title": "Use  With RxJS",
-        "url": "javascript-grid-rxjs/"
-      },
-      {
-        "title": "Resize With Parent Container",
-        "url": "javascript-grid-responsiveness/"
-      },
-      {
-        "title": "Testing ag-Grid",
-        "gtm": {
-          "tech": "ag-grid testing"
-        },
+        "title": "Selection",
+        "icon": "icon-selection",
+        "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Testing Overview",
+            "title": "Overview",
+            "url": "javascript-grid-selection-overview/"
+          },
+          {
+            "title": "Row Selection",
+            "url": "javascript-grid-selection/"
+          },
+          {
+            "title": "Range Selection",
+            "url": "javascript-grid-range-selection/",
+            "enterprise": true
+          }
+        ]
+      },
+      {
+        "title": "Filtering",
+        "icon": "icon-filter",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "javascript-grid-filtering-overview/"
+          },
+          {
+            "title": "Column Filters",
+            "url": "javascript-grid-filtering/",
+            "items": [
+              {
+                "title": "Provided Column Filters",
+                "url": "javascript-grid-filter-provided/",
+                "items": [
+                  {
+                    "title": "Simple Column Filters",
+                    "url": "javascript-grid-filter-provided-simple/",
+                    "items": [
+                      {
+                        "title": "Text Filter",
+                        "url": "javascript-grid-filter-text/"
+                      },
+                      {
+                        "title": "Number Filter",
+                        "url": "javascript-grid-filter-number/"
+                      },
+                      {
+                        "title": "Date Filter",
+                        "url": "javascript-grid-filter-date/"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Set Filter",
+                    "url": "javascript-grid-filter-set/",
+                    "enterprise": true
+                  }
+                ]
+              },
+              {
+                "title": "Filter API",
+                "url": "javascript-grid-filter-api/"
+              },
+              {
+                "title": "Floating Filters",
+                "url": "javascript-grid-floating-filters/"
+              },
+              {
+                "title": "Custom Filter",
+                "url": "javascript-grid-filter-custom/"
+              }
+            ]
+          },
+          {
+            "title": "External Filter",
+            "url": "javascript-grid-filter-external/"
+          },
+          {
+            "title": "Quick Filter",
+            "url": "javascript-grid-filter-quick/"
+          }
+        ]
+      },
+      {
+        "title": "Rendering Cells",
+        "icon": "icon-render-cells",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Cell Content",
+            "url": "javascript-grid-rendering-flow/",
+            "items": [
+              {
+                "title": "Value Getters",
+                "url": "javascript-grid-value-getters/"
+              },
+              {
+                "title": "Value Formatters",
+                "url": "javascript-grid-value-formatters/"
+              },
+              {
+                "title": "Expressions",
+                "url": "javascript-grid-cell-expressions/"
+              },
+              {
+                "title": "Reference Data",
+                "url": "javascript-grid-reference-data/"
+              }
+            ]
+          },
+          {
+            "title": "Cell Rendering",
+            "url": "javascript-grid-cell-rendering/"
+          },
+          {
+            "title": "Provided Renderers",
+            "url": "javascript-grid-provided-renderers/",
+            "items": [
+              {
+                "title": "Group Cell Renderer",
+                "url": "javascript-grid-provided-renderer-group/"
+              },
+              {
+                "title": "Show Change Cell Renderers",
+                "url": "javascript-grid-provided-renderer-change/"
+              }
+            ]
+          },
+          {
+            "title": "View Refresh",
+            "url": "javascript-grid-refresh/"
+          },
+          {
+            "title": "Change Detection",
+            "url": "javascript-grid-change-detection/"
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Expressions & Context",
+                "url": "example-expressions-and-context/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Editing Cells",
+        "icon": "icon-edit-cells",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Cell Editing",
+            "url": "javascript-grid-cell-editing/"
+          },
+          {
+            "title": "Saving Content",
+            "url": "javascript-grid-editing-flow/",
+            "items": [
+              {
+                "title": "Value Setters",
+                "url": "javascript-grid-value-setters/"
+              },
+              {
+                "title": "Value Parsers",
+                "url": "javascript-grid-value-parsers/"
+              }
+            ]
+          },
+          {
+            "title": "Provided Editors",
+            "url": "javascript-grid-provided-cell-editors/"
+          }
+        ]
+      },
+      {
+        "title": "Group & Pivot",
+        "icon": "icon-group",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Row Grouping",
+            "url": "javascript-grid-grouping/",
+            "enterprise": true
+          },
+          {
+            "title": "Master Detail",
+            "url": "javascript-grid-master-detail/",
+            "enterprise": true
+          },
+          {
+            "title": "Tree Data",
+            "url": "javascript-grid-tree-data/",
+            "enterprise": true
+          },
+          {
+            "title": "Aggregation",
+            "url": "javascript-grid-aggregation/",
+            "enterprise": true
+          },
+          {
+            "title": "Pivoting",
+            "url": "javascript-grid-pivoting/",
+            "enterprise": true
+          }
+        ]
+      },
+      {
+        "title": "Import & Export",
+        "icon": "icon-import-export",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "CSV Export",
+            "url": "javascript-grid-export/"
+          },
+          {
+            "title": "Excel Export",
+            "url": "javascript-grid-excel/",
+            "enterprise": true
+          },
+          {
+            "title": "Clipboard",
+            "url": "javascript-grid-clipboard/",
+            "enterprise": true
+          },
+          {
+            "title": "Drag & Drop",
+            "url": "javascript-grid-drag-and-drop/"
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Import Excel",
+                "url": "example-excel-import/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Extending the grid",
+    "items": [
+      {
+        "title": "Accessories",
+        "icon": "icon-accessories",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Tool Panels",
+            "url": "javascript-grid-tool-panel/",
+            "enterprise": true,
+            "items": [
+              {
+                "title": "Side Bar",
+                "url": "javascript-grid-side-bar/",
+                "enterprise": true
+              },
+              {
+                "title": "Columns Tool Panel",
+                "url": "javascript-grid-tool-panel-columns/",
+                "enterprise": true
+              },
+              {
+                "title": "Filters Tool Panel",
+                "url": "javascript-grid-tool-panel-filters/",
+                "enterprise": true
+              }
+            ]
+          },
+          {
+            "title": "Column Menu",
+            "url": "javascript-grid-column-menu/",
+            "enterprise": true
+          },
+          {
+            "title": "Context Menu",
+            "url": "javascript-grid-context-menu/",
+            "enterprise": true
+          },
+          {
+            "title": "Status Bar",
+            "url": "javascript-grid-status-bar/",
+            "enterprise": true
+          },
+          {
+            "title": "Overlays",
+            "url": "javascript-grid-overlays/"
+          }
+        ]
+      },
+      {
+        "title": "Components",
+        "icon": "icon-components",
+        "items": [
+          {
+            "title": "Registering Components",
+            "url": "javascript-grid-components/"
+          },
+          {
+            "title": "Component Types",
+            "url": "javascript-grid-component-types/",
+            "items": [
+              {
+                "title": "Cell Renderer",
+                "box-title": "Cell",
+                "url": "javascript-grid-cell-rendering-components/"
+              },
+              {
+                "title": "Cell Editor",
+                "box-title": "Editor",
+                "url": "javascript-grid-cell-editor/"
+              },
+              {
+                "title": "Date Component",
+                "box-title": "Date",
+                "url": "javascript-grid-date-component/"
+              },
+              {
+                "title": "Filter Component",
+                "box-title": "Filter",
+                "url": "javascript-grid-filter-component/"
+              },
+              {
+                "title": "Floating Filter Component",
+                "box-title": "Floating Filter",
+                "url": "javascript-grid-floating-filter-component/"
+              },
+              {
+                "title": "Header Component",
+                "box-title": "Header",
+                "url": "javascript-grid-header-rendering/"
+              },
+              {
+                "title": "Loading Cell Renderer",
+                "box-title": "Loading",
+                "url": "javascript-grid-loading-cell-renderer/"
+              },
+              {
+                "title": "Overlay Component",
+                "box-title": "Overlays",
+                "url": "javascript-grid-overlay-component/"
+              },
+              {
+                "title": "Status Bar Component",
+                "box-title": "Status Bar",
+                "url": "javascript-grid-status-bar-component/",
+                "enterprise": true
+              },
+              {
+                "title": "Tool Panel Component",
+                "box-title": "Tool Panel",
+                "url": "javascript-grid-tool-panel-component/",
+                "enterprise": true
+              },
+              {
+                "title": "Tooltip Component",
+                "box-title": "Tooltip",
+                "url": "javascript-grid-tooltip-component/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Charts",
+        "icon": "icon-charts",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "javascript-grid-charts-overview/",
+            "enterprise": true
+          },
+          {
+            "title": "Chart Ranges",
+            "url": "javascript-grid-charts-chart-ranges/",
+            "enterprise": true
+          },
+          {
+            "title": "Chart Toolbar",
+            "url": "javascript-grid-charts-chart-toolbar/",
+            "enterprise": true
+          },
+          {
+            "title": "Chart API",
+            "url": "javascript-grid-charts-chart-range-api/",
+            "enterprise": true
+          },
+          {
+            "title": "Chart Container",
+            "url": "javascript-grid-charts-container/",
+            "enterprise": true
+          },
+          {
+            "title": "Customising",
+            "url": "javascript-grid-charts-customisation/",
+            "enterprise": true,
+            "items": [
+              {
+                "title": "Bar",
+                "url": "javascript-grid-charts-customisation-bar/",
+                "enterprise": true
+              },
+              {
+                "title": "Line",
+                "url": "javascript-grid-charts-customisation-line/",
+                "enterprise": true
+              },
+              {
+                "title": "Area",
+                "url": "javascript-grid-charts-customisation-area/",
+                "enterprise": true
+              },
+              {
+                "title": "Pie",
+                "url": "javascript-grid-charts-customisation-pie/",
+                "enterprise": true
+              },
+              {
+                "title": "Doughnut",
+                "url": "javascript-grid-charts-customisation-doughnut/",
+                "enterprise": true
+              }
+            ]
+          },
+          {
+            "title": "See Also",
+            "items": [
+              {
+                "title": "Third Party Charting",
+                "url": "javascript-grid-graphing/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Other",
+    "items": [
+      {
+        "title": "Scrolling",
+        "icon": "icon-scrolling",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "DOM Virtualisation",
+            "url": "javascript-grid-dom-virtualisation/"
+          },
+          {
+            "title": "Row Pagination",
+            "url": "javascript-grid-pagination/"
+          },
+          {
+            "title": "Aligned Grids",
+            "url": "javascript-grid-aligned-grids/"
+          },
+          {
+            "title": "Scrolling Performance",
+            "url": "javascript-grid-performance/"
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Scrolling Scenarios",
+                "url": "javascript-grid-scrolling-scenarios/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Interactivity",
+        "icon": "icon-interactivity",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Keyboard Navigation",
+            "url": "javascript-grid-keyboard-navigation/"
+          },
+          {
+            "title": "Touch",
+            "url": "javascript-grid-touch/"
+          },
+          {
+            "title": "Accessibility (ARIA)",
+            "url": "javascript-grid-accessibility/"
+          },
+          {
+            "title": "RTL Text Direction",
+            "url": "javascript-grid-rtl/"
+          },
+          {
+            "title": "Internationalisation",
+            "url": "javascript-grid-internationalisation/"
+          }
+        ]
+      },
+      {
+        "title": "Testing",
+        "icon": "icon-test",
+        "matrixExclude": true,
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Overview",
             "url": "javascript-grid-testing/"
           },
           {
@@ -739,35 +975,10 @@
             "url": "javascript-grid-testing-vue/"
           },
           {
-            "title": "Jasmine &amp; Protractor ",
+            "title": "Jasmine & Protractor",
             "url": "javascript-grid-e2e-test-with-jasmine/"
           }
         ]
-      },
-
-      {
-        "title": "Use in OpenFin",
-        "url": "javascript-grid-openfin/"
-      },
-      {
-        "title": "Angular & Material Design",
-        "url": "example-angular-material-design/"
-      },
-      {
-        "title": "Expressions & Context",
-        "url": "example-expressions-and-context/"
-      },
-      {
-        "title": "Import Excel",
-        "url": "example-excel-import/"
-      },
-      {
-        "title": "Gallery",
-        "url": "example-gallery/"
-      },
-      {
-        "title": "Graphing",
-        "url": "javascript-grid-graphing/"
       }
     ]
   }

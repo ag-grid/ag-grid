@@ -25,12 +25,6 @@ var gridOptions = {
         // specify which group key to use
         return dataItem.employeeName;
     },
-    isRowSelectable: function (rowNode) {
-        return rowNode.data && rowNode.data.group;
-    },
-    onRowSelected: function (params) {
-        console.log("onRowSelected: ", params);
-    },
     onGridReady: function (params) {
         // initialise with the first 2 groups arbitrarily expanded
         setTimeout(function () {

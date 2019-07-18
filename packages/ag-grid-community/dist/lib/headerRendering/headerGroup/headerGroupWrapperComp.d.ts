@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColGroupDef } from "../../entities/colDef";
@@ -29,6 +29,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string);
     private postConstruct;
     private setupMovingCss;
+    getColumn(): ColumnGroup;
     getComponentHolder(): ColGroupDef;
     getTooltipText(): string | undefined;
     private setupTooltip;

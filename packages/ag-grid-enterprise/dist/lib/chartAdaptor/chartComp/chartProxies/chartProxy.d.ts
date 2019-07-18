@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { ChartOptions, ChartType, ProcessChartOptionsParams } from "ag-grid-community";
 import { Chart } from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
@@ -32,7 +32,8 @@ export declare abstract class ChartProxy {
     getChart(): Chart;
     protected getLabelColor(): string;
     protected getAxisGridColor(): string;
-    protected getChartOptions(type: string, options: ChartOptions): ChartOptions;
+    protected getBackgroundColor(): string;
+    protected getChartOptions(type: ChartType, options: ChartOptions): ChartOptions;
     private overridePalette;
     destroy(): void;
 }

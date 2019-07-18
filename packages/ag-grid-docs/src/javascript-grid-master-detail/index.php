@@ -530,6 +530,51 @@ var masterGridOptions = {
 
 <?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
+<h2 id="keeping-row-details">Keeping Detail Rows</h2>
+
+<p>
+    When a master row is expanded a detail row is created. When the master row is collapsed, the detail row is
+    destroyed. When the master row is expanded a second time, a detail rows is created again from scratch. This can
+    be undesirable behaviour if there was context in the detail row, e.g. if the user sorted or filtered data
+    in the detail row, the sort or filter will be reset the second time the detail row is displayed.
+</p>
+
+<p>
+    To prevent losing the context of details rows, the grid provides two properties to cache the details rows
+    to be reused the next time the row is shows. The properties are as follows:
+</p>
+
+<table class="table reference">
+    <?php include './masterDetailProperties.php' ?>
+    <?php printPropertiesRows($masterDetailProperties) ?>
+</table>
+
+<p>
+    The example below demonstrates keeping detail rows. Note the following:
+</p>
+
+<ul>
+    <li>
+        The detail grid has property <code>keepDetailRows=true</code> to turn on keeping detail rows.
+    </li>
+    <li>
+        The detail grid has property <code>keepDetailRowsCount=2</code> which sets the number of details rows
+        to keep to 2.
+    </li>
+    <li>
+        All the detail grids allow moving and sorting columns. If you change the state of a detail grid
+        (e.g. by sorting a detail grid), that state will be kept if you close the parent row and then open
+        the parent row again.
+    </li>
+    <li>
+        The maximum number of detail rows kept is two. If you open three detail grids and apply sorting on
+        each grid, then close all three detail grids (so none are showing) and then open the three grids
+        again, only two of the grids will have the sort state kept.
+    </li>
+</ul>
+
+<?= example('Keep Detail Rows', 'keep-detail-rows', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
+
 <h2>Changing Data & Refresh</h2>
 
 <p>

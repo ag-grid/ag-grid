@@ -24,7 +24,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     constructor() {
         super(
-            `<div class="ag-input-text-wrapper">
+            `<div class="ag-input-wrapper">
                 <input ref="eReadOnlyText" disabled="true" class="ag-floating-filter-input">
                 <div ref="eDateWrapper" style="display: flex; flex: 1 1 auto; overflow: hidden;"></div>
             </div>`);

@@ -95,6 +95,7 @@ var AgGridAngular = /** @class */ (function () {
         this.infiniteBlockSize = undefined;
         this.batchUpdateWaitMillis = undefined;
         this.blockLoadDebounceMillis = undefined;
+        this.keepDetailRowsCount = undefined;
         this.localeTextFunc = undefined;
         this.groupRowInnerRenderer = undefined;
         this.groupRowInnerRendererFramework = undefined;
@@ -281,6 +282,7 @@ var AgGridAngular = /** @class */ (function () {
         this.suppressBrowserResizeObserver = undefined;
         this.suppressMaxRenderedRowRestriction = undefined;
         this.excludeChildrenWhenTreeDataFiltering = undefined;
+        this.keepDetailRows = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
@@ -535,6 +537,7 @@ var AgGridAngular = /** @class */ (function () {
         'infiniteBlockSize': [{ type: core_1.Input },],
         'batchUpdateWaitMillis': [{ type: core_1.Input },],
         'blockLoadDebounceMillis': [{ type: core_1.Input },],
+        'keepDetailRowsCount': [{ type: core_1.Input },],
         'localeTextFunc': [{ type: core_1.Input },],
         'groupRowInnerRenderer': [{ type: core_1.Input },],
         'groupRowInnerRendererFramework': [{ type: core_1.Input },],
@@ -721,6 +724,7 @@ var AgGridAngular = /** @class */ (function () {
         'suppressBrowserResizeObserver': [{ type: core_1.Input },],
         'suppressMaxRenderedRowRestriction': [{ type: core_1.Input },],
         'excludeChildrenWhenTreeDataFiltering': [{ type: core_1.Input },],
+        'keepDetailRows': [{ type: core_1.Input },],
         'columnEverythingChanged': [{ type: core_1.Output },],
         'newColumnsLoaded': [{ type: core_1.Output },],
         'columnPivotModeChanged': [{ type: core_1.Output },],

@@ -5,15 +5,12 @@ import {
     Autowired,
     ColumnController,
     Events,
-    Context,
     EventService,
     TouchListener,
     DragAndDropService,
-    GridPanel,
     GridOptionsWrapper,
     DropTarget,
     PostConstruct,
-    QuerySelector,
     Column,
     DragSource,
     ColumnAggFuncChangeRequestEvent,
@@ -35,9 +32,9 @@ export class DropZoneColumnComp extends Component {
 
     private static TEMPLATE =
        `<span class="ag-column-drop-cell">
-          <span class="ag-icon ag-icon-grip ag-column-drag" ref="eDragHandle"></span>
-          <span class="ag-column-drop-cell-text"></span>
-          <span class="ag-column-drop-cell-button ag-icon ag-icon-cancel"></span>
+          <span ref="eDragHandle" class="ag-column-drag"></span>
+          <span ref="eText" class="ag-column-drop-cell-text"></span>
+          <span ref="btRemove" class="ag-column-drop-cell-button"></span>
         </span>`;
 
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
@@ -49,10 +46,9 @@ export class DropZoneColumnComp extends Component {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    @QuerySelector('.ag-column-drop-cell-text') private eText: HTMLElement;
-    @QuerySelector('.ag-column-drop-cell-button') private btRemove: HTMLElement;
-
+    @RefSelector('eText') private eText: HTMLElement;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
+    @RefSelector('btRemove') private btRemove: HTMLElement;
 
     private column: Column;
     private dragSourceDropTarget: DropTarget;
@@ -73,6 +69,8 @@ export class DropZoneColumnComp extends Component {
     @PostConstruct
     public init(): void {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
+        this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsWrapper));
+        this.btRemove.appendChild(_.createIconNoSpan('cancel', this.gridOptionsWrapper));
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();

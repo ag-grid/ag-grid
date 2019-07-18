@@ -1,5 +1,5 @@
 "use strict";
-var columnDefs = [
+let columnDefs = [
     {headerName: 'Product', field: 'product', chartDataType: 'category'},
     {headerName: 'Book', field: 'book', chartDataType: 'category'},
 
@@ -19,9 +19,9 @@ var columnDefs = [
     {headerName: 'Bid', field: 'bidFlag'}
 ];
 
-var chartRef;
+let chartRef;
 
-var gridOptions = {
+let gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         width: 120,
@@ -41,11 +41,11 @@ var gridOptions = {
     suppressAggFuncInHeader: true,
     getRowNodeId: function(data) { return data.trade; },
     onFirstDataRendered: function(params) {
-        var chartRangeParams = {
+        let chartRangeParams = {
             cellRange: {
                 columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
             },
-            chartType: 'groupedBar',
+            chartType: 'groupedColumn',
             chartContainer: document.querySelector('#myChart'),
             suppressChartRanges: true,
             aggregate: true
@@ -54,7 +54,7 @@ var gridOptions = {
         chartRef = params.api.chartRange(chartRangeParams);
     },
     processChartOptions: function(params) {
-        var opts = params.options;
+        let opts = params.options;
 
         opts.legendPosition = 'bottom';
         opts.yAxis.labelFormatter = yAxisLabelFormatter;
@@ -63,10 +63,8 @@ var gridOptions = {
         opts.seriesDefaults.strokes =['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
         opts.seriesDefaults.tooltipRenderer = (params) => {
-            var strArr = params.yField.replace(/([A-Z])/g, " $1");
-            var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
-            var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-            return `<b>${seriesName}</b>: ${value}`;
+            let value = '$' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            return `<div style="padding: 5px"><b>${params.title}</b>: ${value}</div>`;
         };
 
         return opts;
@@ -83,7 +81,7 @@ function createChart(type) {
         chartRef.destroyChart();
     }
 
-    var params = {
+    let params = {
         cellRange: {
             columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
         },
@@ -100,7 +98,8 @@ function numberCellFormatter(params) {
     return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 
-function yAxisLabelFormatter(n) {
+function yAxisLabelFormatter(params) {
+    let n = params.value;
     if (n < 1e3) return n;
     if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + "K";
     if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + "M";
@@ -110,11 +109,11 @@ function yAxisLabelFormatter(n) {
 
 // after page is loaded, create the grid
 document.addEventListener("DOMContentLoaded", function() {
-    var eGridDiv = document.querySelector('#myGrid');
+    let eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
 });
 
-var worker;
+let worker;
 (function startWorker() {
     worker = new Worker(__basePath + 'dataUpdateWorker.js');
     worker.onmessage = function(e) {

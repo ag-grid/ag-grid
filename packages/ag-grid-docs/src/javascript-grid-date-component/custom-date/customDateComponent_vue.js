@@ -2,7 +2,7 @@ import Vue from "vue";
 
 export default Vue.extend({
     template: `
-        <div class="ag-input-text-wrapper custom-date-filter" ref="flatpickr">
+        <div class="ag-input-wrapper custom-date-filter" ref="flatpickr">
             <input type='text' data-input />
             <a class='input-button' title='clear' data-clear>
                 <i class='fa fa-times'></i>

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 export declare class DoughnutChartProxy extends ChartProxy {
     private readonly chartOptions;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,6 +40,7 @@ var sortController_1 = require("../sortController");
 var filterManager_1 = require("../filter/filterManager");
 var maxDivHeightScaler_1 = require("./maxDivHeightScaler");
 var tooltipManager_1 = require("../widgets/tooltipManager");
+var detailRowCompCache_1 = require("./detailRowCompCache");
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
  * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
@@ -174,6 +175,10 @@ var Beans = /** @class */ (function () {
         context_1.Autowired('frameworkOverrides'),
         __metadata("design:type", Object)
     ], Beans.prototype, "frameworkOverrides", void 0);
+    __decorate([
+        context_1.Autowired('detailRowCompCache'),
+        __metadata("design:type", detailRowCompCache_1.DetailRowCompCache)
+    ], Beans.prototype, "detailRowCompCache", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

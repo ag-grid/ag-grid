@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var dialog_1 = require("./dialog");
+var agDialog_1 = require("./agDialog");
 var context_1 = require("../context/context");
 var component_1 = require("./component");
 var componentAnnotations_1 = require("./componentAnnotations");
@@ -49,7 +49,7 @@ var MessageBox = /** @class */ (function (_super) {
         this.addDestroyableEventListener(messageBodyComp, 'onBtOk', function () { return _this.close(); });
     };
     return MessageBox;
-}(dialog_1.Dialog));
+}(agDialog_1.AgDialog));
 exports.MessageBox = MessageBox;
 var MessageBody = /** @class */ (function (_super) {
     __extends(MessageBody, _super);

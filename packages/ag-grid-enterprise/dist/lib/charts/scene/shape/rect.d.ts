@@ -1,7 +1,11 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 import { BBox } from "../bbox";
+export declare enum RectSizing {
+    Content = 0,
+    Border = 1
+}
 export declare class Rect extends Shape {
     static className: string;
     static create(x: number, y: number, width: number, height: number, radius?: number): Rect;
@@ -25,10 +29,14 @@ export declare class Rect extends Shape {
      */
     private _crisp;
     crisp: boolean;
+    private effectiveStrokeWidth;
     strokeWidth: number;
+    private _sizing;
+    sizing: RectSizing;
     updatePath(): void;
     readonly getBBox: () => BBox;
     isPointInPath(x: number, y: number): boolean;
     isPointInStroke(x: number, y: number): boolean;
     render(ctx: CanvasRenderingContext2D): void;
+    protected fillStroke(ctx: CanvasRenderingContext2D): void;
 }

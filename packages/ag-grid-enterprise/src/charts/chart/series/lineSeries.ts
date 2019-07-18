@@ -1,7 +1,6 @@
 import { CartesianChart } from "../cartesianChart";
 import { Path } from "../../scene/shape/path";
 import { Path2D } from "../../scene/path2D";
-import { Color } from "../../util/color";
 import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
@@ -13,6 +12,7 @@ import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
+import { Color } from "ag-grid-community";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number,
@@ -26,7 +26,9 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
 export interface LineTooltipRendererParams {
     datum: any,
     xField: string,
-    yField: string
+    yField: string,
+    title?: string,
+    color?: string
 }
 
 export class LineSeries extends Series<CartesianChart> {
@@ -52,13 +54,13 @@ export class LineSeries extends Series<CartesianChart> {
         this.group.append(lineNode);
     }
 
-    set chart(chart: CartesianChart | null) {
+    set chart(chart: CartesianChart | undefined) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.scheduleData();
         }
     }
-    get chart(): CartesianChart | null {
+    get chart(): CartesianChart | undefined {
         return this._chart as CartesianChart;
     }
 
@@ -231,7 +233,7 @@ export class LineSeries extends Series<CartesianChart> {
 
     private highlightedNode?: Arc;
 
-    highlight(node: Shape) {
+    highlightNode(node: Shape) {
         if (!(node instanceof Arc)) {
             return;
         }
@@ -240,7 +242,7 @@ export class LineSeries extends Series<CartesianChart> {
         this.scheduleLayout();
     }
 
-    dehighlight() {
+    dehighlightNode() {
         this.highlightedNode = undefined;
         this.scheduleLayout();
     }
@@ -266,8 +268,8 @@ export class LineSeries extends Series<CartesianChart> {
         const fill = this.fill;
         const stroke = this.stroke;
         const marker = this.marker;
-        const markerStrokeWidth = this.markerStrokeWidth;
         const markerSize = this.markerSize;
+        const markerStrokeWidth = this.markerStrokeWidth;
 
         const lineNode: Path = this.lineNode;
         const linePath: Path2D = lineNode.path;
@@ -343,27 +345,32 @@ export class LineSeries extends Series<CartesianChart> {
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         const xField = this.xField;
         const yField = this.yField;
+        const color = this.fill;
         let html: string = '';
 
         if (!xField || !yField) {
             return html;
         }
 
+        let title = this.title;
         if (this.tooltipRenderer && this.xField) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 xField,
-                yField
+                yField,
+                title,
+                color
             });
         } else {
-            const title = this.title ? `<div class="title">${this.title}</div>` : '';
+            const titleStyle = `style="color: white; background-color: ${color}"`;
+            title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xField];
             const yValue = seriesDatum[yField];
             const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
             const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
 
-            html = `${title}${xString}: ${yString}`;
+            html = `${title}<div class="content">${xString}: ${yString}</div>`;
         }
         return html;
     }
@@ -380,8 +387,8 @@ export class LineSeries extends Series<CartesianChart> {
                     text: this.title || this.yField
                 },
                 marker: {
-                    fillStyle: this.fill,
-                    strokeStyle: this.stroke
+                    fill: this.fill,
+                    stroke: this.stroke
                 }
             });
         }

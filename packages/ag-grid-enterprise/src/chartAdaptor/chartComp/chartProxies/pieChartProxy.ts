@@ -1,6 +1,6 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
-import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
-import { ChartProxy, UpdateChartParams, ChartProxyParams } from "./chartProxy";
+import { ChartType, PieChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
 import { CaptionOptions } from "ag-grid-community/src/ts/interfaces/iChartOptions";
@@ -11,7 +11,7 @@ export class PieChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions('pie', this.defaultOptions()) as PieChartOptions;
+        this.chartOptions = this.getChartOptions(ChartType.Pie, this.defaultOptions()) as PieChartOptions;
         this.chart = ChartBuilder.createPolarChart(this.chartOptions);
     }
 
@@ -35,6 +35,7 @@ export class PieChartProxy extends ChartProxy {
             pieChart.removeSeries(existingSeries);
 
             const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+
             // Use `Object.create` to prevent mutating the original user config that is possibly reused.
             const title = (seriesOptions.title ? Object.create(seriesOptions.title) : {}) as CaptionOptions;
             title.text = pieSeriesName;
@@ -58,7 +59,7 @@ export class PieChartProxy extends ChartProxy {
         }
 
         if (!existingSeries) {
-            pieChart.addSeries(pieSeries)
+            pieChart.addSeries(pieSeries);
         }
     }
 
@@ -69,6 +70,9 @@ export class PieChartProxy extends ChartProxy {
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,
+            background: {
+                fill: this.getBackgroundColor()
+            },
             padding: {
                 top: 50,
                 right: 50,
@@ -76,6 +80,7 @@ export class PieChartProxy extends ChartProxy {
                 left: 50
             },
             legend: {
+                enabled: true,
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 itemPaddingX: 16,
@@ -92,9 +97,11 @@ export class PieChartProxy extends ChartProxy {
                 calloutColors: palette.strokes,
                 calloutWidth: 2,
                 calloutLength: 10,
-                calloutPadding: 3,
                 labelEnabled: false,
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelMinAngle: 20,
                 tooltipEnabled: true,

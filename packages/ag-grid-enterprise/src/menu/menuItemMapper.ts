@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     ChartType,
@@ -9,7 +8,7 @@ import {
     GridOptionsWrapper,
     IRangeChartService,
     MenuItemDef, Optional,
-    Utils
+    _
 } from 'ag-grid-community';
 import { ClipboardService } from "../clipboardService";
 import { AggFuncService } from "../aggregation/aggFuncService";
@@ -59,7 +58,7 @@ export class MenuItemMapper {
             case 'pinSubMenu':
                 return {
                     name: localeTextFunc('pinColumn', 'Pin Column'),
-                    icon: Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
                     subMenu: ['pinLeft', 'pinRight', 'clearPinned']
                 };
             case 'pinLeft':
@@ -83,7 +82,7 @@ export class MenuItemMapper {
             case 'valueAggSubMenu':
                 return {
                     name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                    icon: Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
                     subMenu: this.createAggregationSubMenu((column as Column))
                 };
             case 'autoSizeThis':
@@ -100,13 +99,13 @@ export class MenuItemMapper {
                 return {
                     name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: () => this.columnController.addRowGroupColumn(column, "contextMenu"),
-                    icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
+                    icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'rowUnGroup':
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: () => this.columnController.removeRowGroupColumn(column, "contextMenu"),
-                    icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
+                    icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'resetColumns':
                 return {
@@ -127,14 +126,14 @@ export class MenuItemMapper {
                 return {
                     name: localeTextFunc('copy', 'Copy'),
                     shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                    icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                     action: () => this.clipboardService.copyToClipboard(false)
                 };
             case 'copyWithHeaders':
                 return {
                     name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                     // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                    icon: Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                     action: () => this.clipboardService.copyToClipboard(true)
                 };
             case 'paste':
@@ -142,7 +141,7 @@ export class MenuItemMapper {
                     name: localeTextFunc('paste', 'Paste'),
                     shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                     disabled: true,
-                    icon: Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
+                    icon: _.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
                     action: () => this.clipboardService.pasteFromClipboard()
                 };
             case 'export':
@@ -156,7 +155,8 @@ export class MenuItemMapper {
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
-                    subMenu: exportSubMenuItems
+                    subMenu: exportSubMenuItems,
+                    icon: _.createIconNoSpan('save', this.gridOptionsWrapper, null),
                 };
             case 'csvExport':
                 return {
@@ -181,43 +181,131 @@ export class MenuItemMapper {
                 return 'separator';
             case 'chartRange':
                 const chartRangeSubMenuItems: string[] = [];
-                chartRangeSubMenuItems.push('groupedBarRangeChart');
-                chartRangeSubMenuItems.push('stackedBarRangeChart');
-                chartRangeSubMenuItems.push('lineRangeChart');
+                chartRangeSubMenuItems.push('columnRangeChart');
+                chartRangeSubMenuItems.push('barRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
-                chartRangeSubMenuItems.push('doughnutRangeChart');
+                chartRangeSubMenuItems.push('lineRangeChart');
+                chartRangeSubMenuItems.push('areaRangeChart');
                 return {
-                    name: 'Chart Range',
-                    subMenu: chartRangeSubMenuItems
+                    name: localeTextFunc('chartRange', 'Chart Range'),
+                    subMenu: chartRangeSubMenuItems,
+                    icon: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
-            case 'groupedBarRangeChart': return {
-                name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
+
+            case 'columnRangeChart':
+                const columnSubMenuItems: string[] = [];
+                columnSubMenuItems.push('groupedColumnChart');
+                columnSubMenuItems.push('stackedColumnChart');
+                columnSubMenuItems.push('normalizedColumnChart');
+
+                return {
+                    name: localeTextFunc('columnRangeChart', 'Column'),
+                    subMenu: columnSubMenuItems
+                };
+
+            case 'groupedColumnChart': return {
+                name: localeTextFunc('groupedColumnChart', 'Grouped&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.GroupedColumn);
+                }
+            };
+            case 'stackedColumnChart': return {
+                name: localeTextFunc('stackedColumnChart', 'Stacked&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.StackedColumn);
+                }
+            };
+            case 'normalizedColumnChart': return {
+                name: localeTextFunc('normalizedColumnChart', '100% Stacked&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.NormalizedColumn);
+                }
+            };
+
+            case 'barRangeChart':
+                const barSubMenuItems: string[] = [];
+                barSubMenuItems.push('groupedBarChart');
+                barSubMenuItems.push('stackedBarChart');
+                barSubMenuItems.push('normalizedBarChart');
+
+                return {
+                    name: localeTextFunc('barRangeChart', 'Bar'),
+                    subMenu: barSubMenuItems
+                };
+            case 'groupedBarChart': return {
+                name: localeTextFunc('groupedBarChart', 'Grouped&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.GroupedBar);
                 }
             };
-            case 'stackedBarRangeChart': return {
-                name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
+            case 'stackedBarChart': return {
+                name: localeTextFunc('stackedBarChart', 'Stacked&lrm;'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.StackedBar);
                 }
             };
+            case 'normalizedBarChart': return {
+                name: localeTextFunc('normalizedBarChart', '100% Stacked&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.NormalizedBar);
+                }
+            };
+
+            case 'pieRangeChart':
+                const pieSubMenuItems: string[] = [];
+                pieSubMenuItems.push('pieChart');
+                pieSubMenuItems.push('doughnutChart');
+
+                return {
+                    name: localeTextFunc('pieRangeChart', 'Pie'),
+                    subMenu: pieSubMenuItems
+                };
+            case 'pieChart': return {
+                name: localeTextFunc('pieChart', 'Pie'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.Pie);
+                }
+            };
+            case 'doughnutChart': return {
+                name: localeTextFunc('doughnutChart', 'Doughnut'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.Doughnut);
+                }
+            };
+
             case 'lineRangeChart': return {
                 name: localeTextFunc('lineRangeChart', 'Line'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.Line);
                 }
             };
-            case 'pieRangeChart': return {
-                name: localeTextFunc('pieRangeChart', 'Pie'),
+
+            case 'areaRangeChart':
+                const areaSubMenuItems: string[] = [];
+                areaSubMenuItems.push('areaChart');
+                areaSubMenuItems.push('stackedAreaChart');
+                areaSubMenuItems.push('normalizedAreaChart');
+
+                return {
+                    name: localeTextFunc('areaRangeChart', 'Area'),
+                    subMenu: areaSubMenuItems
+                };
+            case 'areaChart': return {
+                name: localeTextFunc('areaChart', 'Area&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Pie);
+                    this.rangeChartService.chartCurrentRange(ChartType.Area);
                 }
             };
-            case 'doughnutRangeChart': return {
-                name: localeTextFunc('doughnutRangeChart', 'Doughnut'),
+            case 'stackedAreaChart': return {
+                name: localeTextFunc('stackedAreaChart', 'Stacked&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Doughnut);
+                    this.rangeChartService.chartCurrentRange(ChartType.StackedArea);
+                }
+            };
+            case 'normalizedAreaChart': return {
+                name: localeTextFunc('normalizedAreaChart', '100% Stacked&lrm;'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.NormalizedArea);
                 }
             };
             default:

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -234,6 +234,9 @@ var Column = /** @class */ (function () {
     };
     Column.prototype.isRowDrag = function (rowNode) {
         return this.isColumnFunc(rowNode, this.colDef.rowDrag);
+    };
+    Column.prototype.isDndSource = function (rowNode) {
+        return this.isColumnFunc(rowNode, this.colDef.dndSource);
     };
     Column.prototype.isCellCheckboxSelection = function (rowNode) {
         return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);

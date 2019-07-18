@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 
 
-    <h1>ag-Grid with RxJS</h1>
+    <h1>Use with RxJS</h1>
 
     <p class="lead">It is possible to use RxJS with ag-Grid - with the rich <a href="/javascript-grid-api">API</a> and numerous <a
             href="/javascript-grid-data-update">Data Update Options</a> the two can interoperate very well.</p>

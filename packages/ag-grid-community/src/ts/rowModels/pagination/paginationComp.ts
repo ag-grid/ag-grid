@@ -19,10 +19,10 @@ export class PaginationComp extends Component {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('rowModel') private rowModel: IRowModel;
 
-    @RefSelector('btFirst') private btFirst: HTMLButtonElement;
-    @RefSelector('btPrevious') private btPrevious: HTMLButtonElement;
-    @RefSelector('btNext') private btNext: HTMLButtonElement;
-    @RefSelector('btLast') private btLast: HTMLButtonElement;
+    @RefSelector('btFirst') private btFirst: HTMLElement;
+    @RefSelector('btPrevious') private btPrevious: HTMLElement;
+    @RefSelector('btNext') private btNext: HTMLElement;
+    @RefSelector('btLast') private btLast: HTMLElement;
 
     @RefSelector('lbRecordCount') private lbRecordCount: any;
     @RefSelector('lbFirstRowOnPage') private lbFirstRowOnPage: any;
@@ -41,6 +41,10 @@ export class PaginationComp extends Component {
     private postConstruct(): void {
 
         this.setTemplate(this.getTemplate());
+        this.btFirst.insertAdjacentElement('afterbegin', _.createIconNoSpan('first', this.gridOptionsWrapper));
+        this.btPrevious.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
+        this.btNext.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
+        this.btLast.insertAdjacentElement('afterbegin', _.createIconNoSpan('last', this.gridOptionsWrapper));
 
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
             this.serverSideRowModel = this.rowModel as IServerSideRowModel;
@@ -105,18 +109,18 @@ export class PaginationComp extends Component {
                     <span ref="lbFirstRowOnPage"></span> ${strTo} <span ref="lbLastRowOnPage"></span> ${strOf} <span ref="lbRecordCount"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel">
-                    <div class="ag-icon ag-icon-first" ref="btFirst">
-                        <button type="button" class="ag-paging-button">${strFirst}</button>
+                    <div ref="btFirst" class="ag-paging-button">
+                        <button type="button">${strFirst}</button>
                     </div>
-                    <div class="ag-icon ag-icon-previous" ref="btPrevious">
-                        <button type="button" class="ag-paging-button">${strPrevious}</button>
+                    <div ref="btPrevious" class="ag-paging-button">
+                        <button type="button">${strPrevious}</button>
                     </div>
                     ${strPage} <span ref="lbCurrent"></span> ${strOf} <span ref="lbTotal"></span>
-                    <div class="ag-icon ag-icon-next" ref="btNext">
-                        <button type="button" class="ag-paging-button">${strNext}</button>
+                    <div ref="btNext" class="ag-paging-button">
+                        <button type="button">${strNext}</button>
                     </div>
-                    <div class="ag-icon ag-icon-last" ref="btLast">
-                        <button type="button" class="ag-paging-button">${strLast}</button>
+                    <div ref="btLast" class="ag-paging-button">
+                        <button type="button">${strLast}</button>
                     </div>
                 </span>
             </div>`;

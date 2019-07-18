@@ -95,6 +95,10 @@ export class HeaderGroupWrapperComp extends Component {
         this.onColumnMovingChanged();
     }
 
+    public getColumn(): ColumnGroup {
+        return this.columnGroup;
+    }
+
     public getComponentHolder(): ColGroupDef {
         return this.columnGroup.getColGroupDef();
     }

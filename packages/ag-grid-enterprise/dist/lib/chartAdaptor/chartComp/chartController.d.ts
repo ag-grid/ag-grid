@@ -1,8 +1,9 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { AgEvent, BeanStub, ChartType } from "ag-grid-community";
 import { RangeController } from "../../rangeController";
 import { ChartModel, ColState } from "./chartModel";
 import { Palette } from "../../charts/chart/palettes";
+import { ChartProxy } from "./chartProxies/chartProxy";
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
 export declare class ChartController extends BeanStub {
@@ -24,6 +25,7 @@ export declare class ChartController extends BeanStub {
         valueCols: ColState[];
     };
     setChartRange(): void;
+    getChartProxy(): ChartProxy;
     private raiseChartUpdatedEvent;
     destroy(): void;
 }

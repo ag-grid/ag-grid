@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,6 +64,12 @@ var Component = /** @class */ (function (_super) {
                 _this.copyAttributesFromNode(childNode, childComp.getGui());
             });
             if (childComp) {
+                if (childComp.addItems && childNode.children.length) {
+                    _this.createChildComponentsFromTags(childNode);
+                    // converting from HTMLCollection to Array
+                    var items = Array.prototype.slice.call(childNode.children);
+                    childComp.addItems(items);
+                }
                 // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 _this.swapComponentForNode(childComp, parentNode, childNode);
             }
@@ -182,6 +188,16 @@ var Component = /** @class */ (function (_super) {
         while (thisProto != null) {
             var metaData = thisProto.__agComponentMetaData;
             var currentProtoName = (thisProto.constructor).name;
+            // IE does not support Function.prototype.name, so we need to extract
+            // the name using a RegEx
+            // from: https://matt.scharley.me/2012/03/monkey-patch-name-ie.html
+            if (currentProtoName === undefined) {
+                var funcNameRegex = /function\s([^(]{1,})\(/;
+                var results = funcNameRegex.exec(thisProto.constructor.toString());
+                if (results && results.length > 1) {
+                    currentProtoName = results[1].trim();
+                }
+            }
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
                 res = res.concat(metaData[currentProtoName][key]);
             }

@@ -104,9 +104,8 @@ export class ReactComponent extends BaseReactComponent {
         if (!this.unwrapComponent) {
             AgGrid.Utils.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
 
-            // so user can have access to the react container,
-            // to add css class or style
-            params.reactContainer = this.eParentElement;
+            // so user can have access to the react container, to add css class or style
+            params.reactContainer = eParentElement;
         }
         return eParentElement;
     }

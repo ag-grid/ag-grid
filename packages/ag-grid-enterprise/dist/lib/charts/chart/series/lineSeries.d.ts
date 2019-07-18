@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { CartesianChart } from "../cartesianChart";
 import { Series, SeriesNodeDatum } from "./series";
 import { LegendDatum } from "../legend";
@@ -15,6 +15,8 @@ export interface LineTooltipRendererParams {
     datum: any;
     xField: string;
     yField: string;
+    title?: string;
+    color?: string;
 }
 export declare class LineSeries extends Series<CartesianChart> {
     static className: string;
@@ -25,7 +27,7 @@ export declare class LineSeries extends Series<CartesianChart> {
     private lineNode;
     private groupSelection;
     constructor();
-    chart: CartesianChart | null;
+    chart: CartesianChart | undefined;
     protected _title: string;
     title: string;
     protected _xField: string;
@@ -50,8 +52,8 @@ export declare class LineSeries extends Series<CartesianChart> {
         stroke?: string;
     };
     private highlightedNode?;
-    highlight(node: Shape): void;
-    dehighlight(): void;
+    highlightNode(node: Shape): void;
+    dehighlightNode(): void;
     update(): void;
     getDomainX(): any[];
     getDomainY(): any[];

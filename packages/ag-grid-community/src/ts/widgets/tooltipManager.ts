@@ -19,6 +19,7 @@ interface TooltipTarget extends Component {
 interface RegisteredComponent {
     tooltipComp?: Component;
     destroyFunc?: () => void;
+    eventDestroyFuncs: (() => void)[];
 }
 
 @Bean('tooltipManager')
@@ -48,22 +49,32 @@ export class TooltipManager {
         const el = targetCmp.getGui();
         const id = targetCmp.getCompId();
 
-        targetCmp.addDestroyableEventListener(el, 'mouseover', (e) => this.processMouseOver(e, targetCmp));
-        targetCmp.addDestroyableEventListener(el, 'mousemove', (e) => this.processMouseMove(e));
-        targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this));
-        targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this));
-
-        this.registeredComponents[id] = { tooltipComp: undefined, destroyFunc: undefined };
+        this.registeredComponents[id] = {
+            tooltipComp: undefined,
+            destroyFunc: undefined,
+            eventDestroyFuncs: [
+                targetCmp.addDestroyableEventListener(el, 'mouseover', (e) => this.processMouseOver(e, targetCmp)),
+                targetCmp.addDestroyableEventListener(el, 'mousemove', (e) => this.processMouseMove(e)),
+                targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this)),
+                targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this))
+            ]
+        };
         targetCmp.addDestroyFunc(() => this.unregisterTooltip(targetCmp));
     }
 
-    private unregisterTooltip(targetCmp: TooltipTarget): void {
+    public unregisterTooltip(targetCmp: TooltipTarget): void {
         const id = targetCmp.getCompId();
+        const registeredComponent = this.registeredComponents[id];
 
         // hide the tooltip if it's being displayed while unregistering the component
         if (this.activeComponent === targetCmp) {
             this.hideTooltip();
         }
+
+        if (targetCmp.isAlive() && registeredComponent && registeredComponent.eventDestroyFuncs.length) {
+            registeredComponent.eventDestroyFuncs.forEach(func => func());
+        }
+
         delete this.registeredComponents[id];
     }
 
@@ -158,6 +169,10 @@ export class TooltipManager {
             }
             cmp.tooltipComp = tooltipComp;
             const eGui = tooltipComp.getGui();
+
+            if (!_.containsClass(eGui, 'ag-tooltip')) {
+                _.addCssClass(eGui, 'ag-tooltip-custom');
+            }
 
             const closeFnc = this.popupService.addPopup(false, eGui, false);
             cmp.destroyFunc = () => {

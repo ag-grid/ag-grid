@@ -2,6 +2,7 @@ export interface ChartOptions {
     parent?: HTMLElement;
     width?: number;
     height?: number;
+    background?: BackgroundOptions;
     series?: any[];
     data?: any;
     padding?: IPadding;
@@ -13,14 +14,21 @@ export interface ChartOptions {
     subtitle?: CaptionOptions;
 }
 
-export type ChartToolbarOptions = 'chartSettings' | 'chartData' | 'chartDownload';
+export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartDownload';
 
 export enum ChartType {
-    GroupedBar,
-    StackedBar,
-    Line,
-    Pie,
-    Doughnut
+    GroupedColumn = 'groupedColumn',
+    StackedColumn = 'stackedColumn',
+    NormalizedColumn = 'normalizedColumn',
+    GroupedBar = 'groupedBar',
+    StackedBar = 'stackedBar',
+    NormalizedBar = 'normalizedBar',
+    Line = 'line',
+    Pie = 'pie',
+    Doughnut = 'doughnut',
+    Area = 'area',
+    StackedArea = 'stackedArea',
+    NormalizedArea = 'normalizedArea'
 }
 
 export interface CartesianChartOptions extends ChartOptions {
@@ -38,6 +46,11 @@ export interface LineChartOptions extends CartesianChartOptions {
     seriesDefaults?: LineSeriesDefaultOptions;
 }
 
+export interface ScatterChartOptions extends CartesianChartOptions {
+    series?: ScatterChartOptions[];
+    seriesDefaults?: ScatterSeriesDefaultOptions;
+}
+
 export interface PolarChartOptions extends ChartOptions {}
 
 export interface PieChartOptions extends PolarChartOptions {
@@ -48,6 +61,11 @@ export interface PieChartOptions extends PolarChartOptions {
 export interface DoughnutChartOptions extends PolarChartOptions {
     series?: PieSeriesOptions[];
     seriesDefaults?: PieSeriesOptions;
+}
+
+export interface AreaChartOptions extends CartesianChartOptions {
+    series?: AreaSeriesOptions[];
+    seriesDefaults?: AreaSeriesOptions;
 }
 
 interface IPadding {
@@ -70,7 +88,10 @@ export interface AxisOptions {
     tickPadding?: number;
     tickColor?: string;
 
-    labelFont?: string;
+    labelFontStyle?: string;
+    labelFontWeight?: string;
+    labelFontSize?: number;
+    labelFontFamily?: string;
     labelColor?: string;
     labelRotation?: number;
     mirrorLabels?: boolean;
@@ -102,6 +123,8 @@ export interface LineTooltipRendererParams {
     datum: any;
     xField: string;
     yField: string;
+    title?: string;
+    color?: string;
 }
 
 export interface LineSeriesOptions extends SeriesOptions {
@@ -121,7 +144,34 @@ export interface LineSeriesOptions extends SeriesOptions {
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 }
 
+export interface ScatterTooltipRendererParams {
+    datum: any;
+    xField: string;
+    yField: string;
+}
+
+export interface ScatterSeriesOptions extends SeriesOptions {
+    title?: string;
+
+    xField?: string;
+    yField?: string;
+
+    fill?: string;
+    stroke?: string;
+
+    marker?: boolean;
+    markerSize?: number;
+    markerStrokeWidth?: number;
+
+    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
+}
+
 export interface LineSeriesDefaultOptions extends LineSeriesOptions {
+    fills?: string[];
+    strokes?: string[];
+}
+
+export interface ScatterSeriesDefaultOptions extends LineSeriesOptions {
     fills?: string[];
     strokes?: string[];
 }
@@ -130,7 +180,22 @@ export interface BarTooltipRendererParams {
     datum: any;
     xField: string;
     yField: string;
+    title?: string;
+    color?: string;
 }
+
+export interface AreaTooltipRendererParams {
+    datum: any;
+    xField: string;
+    yField: string;
+    title?: string;
+    color?: string;
+}
+
+export interface BarLabelFormatterParams {
+    value: number;
+}
+export type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
 
 export interface BarSeriesOptions extends SeriesOptions {
     xField?: string;
@@ -138,19 +203,48 @@ export interface BarSeriesOptions extends SeriesOptions {
     yFieldNames?: string[];
 
     grouped?: boolean;
+    normalizedTo?: number;
 
     fills?: string[];
     strokes?: string[];
+    fillOpacity?: number;
+    strokeOpacity?: number;
     strokeWidth?: number;
 
     shadow?: DropShadowOptions;
 
     labelEnabled?: boolean;
-    labelFont?: string;
+    labelFontStyle?: string;
+    labelFontWeight?: string;
+    labelFontSize?: number;
+    labelFontFamily?: string;
     labelColor?: string;
-    labelPadding?: {x: number, y: number};
+    labelFormatter?: BarLabelFormatter;
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
+}
+
+export interface AreaSeriesOptions extends SeriesOptions {
+    xField?: string;
+    yFields?: string[];
+    yFieldNames?: string[];
+
+    grouped?: boolean;
+    normalizedTo?: number;
+
+    fills?: string[];
+    strokes?: string[];
+    fillOpacity?: number;
+    strokeOpacity?: number;
+    strokeWidth?: number;
+
+    marker?: boolean;
+    markerSize?: number;
+    markerStrokeWidth?: number;
+
+    shadow?: DropShadowOptions;
+
+    tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
 }
 
 export interface PieTooltipRendererParams {
@@ -165,6 +259,8 @@ export interface PieSeriesOptions extends SeriesOptions {
 
     fills?: string[];
     strokes?: string[];
+    fillOpacity?: number;
+    strokeOpacity?: number;
     strokeWidth?: number;
 
     angleField?: string;
@@ -172,13 +268,16 @@ export interface PieSeriesOptions extends SeriesOptions {
 
     labelEnabled?: boolean;
     labelField?: string;
-    labelFont?: string;
+    labelFontStyle?: string;
+    labelFontWeight?: string;
+    labelFontSize?: number;
+    labelFontFamily?: string;
     labelColor?: string;
     labelMinAngle?: number;
+    labelOffset?: number;
 
     calloutLength?: number;
     calloutStrokeWidth?: number;
-    calloutPadding?: number;
     calloutColors?: string[];
 
     rotation?: number;
@@ -192,6 +291,7 @@ export interface PieSeriesOptions extends SeriesOptions {
 }
 
 export interface LegendOptions {
+    enabled?: boolean;
     markerSize?: number;
     markerPadding?: number;
     markerStrokeWidth?: number;
@@ -199,13 +299,24 @@ export interface LegendOptions {
     itemPaddingX?: number;
     itemPaddingY?: number;
 
-    labelFont?: string;
+    labelFontStyle?: string;
+    labelFontWeight?: string;
+    labelFontSize?: number;
+    labelFontFamily?: string;
     labelColor?: string;
+}
+
+export interface BackgroundOptions {
+    fill?: string;
+    visible?: boolean;
 }
 
 export interface CaptionOptions {
     text?: string;
-    font?: string;
+    fontStyle?: string;
+    fontWeight?: string;
+    fontSize?: number;
+    fontFamily?: string;
     color?: string;
     enabled?: boolean;
 }

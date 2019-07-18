@@ -35,7 +35,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     padding: number;
 }
 
-export class GroupCellRenderer extends Component implements ICellRenderer {
+export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private static TEMPLATE =
         '<span class="ag-cell-wrapper">' +
@@ -346,7 +346,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private createLeafCell(): void {
         if (_.exists(this.params.value)) {
-            this.eValue.innerHTML = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
+            this.eValue.innerText = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
         }
     }
 
@@ -418,7 +418,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (enterKeyPressed) {
             if (this.params.suppressEnterExpand) { return; }
 
-            const cellEditable = this.params.column.isCellEditable(this.params.node);
+            const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
             if (cellEditable) { return; }
 
             event.preventDefault();

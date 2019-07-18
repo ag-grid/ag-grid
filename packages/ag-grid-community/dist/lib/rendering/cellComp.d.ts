@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -28,6 +28,7 @@ export declare class CellComp extends Component {
     private usingWrapper;
     private includeSelectionComponent;
     private includeRowDraggingComponent;
+    private includeDndSourceComponent;
     private cellFocused;
     private editingCell;
     private cellEditorInPopup;
@@ -167,6 +168,7 @@ export declare class CellComp extends Component {
     private populateTemplate;
     protected getFrameworkOverrides(): IFrameworkOverrides;
     private addRowDragging;
+    private addDndSource;
     private addSelectionCheckbox;
     private addDomData;
     onCellFocused(event?: any): void;

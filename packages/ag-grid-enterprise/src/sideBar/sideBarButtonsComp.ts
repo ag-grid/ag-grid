@@ -1,11 +1,12 @@
 import {
     Autowired,
+    AgEvent,
     Component,
     GridOptionsWrapper,
     PostConstruct,
     ToolPanelDef,
-    Context,
-    _, RefSelector, AgEvent
+    RefSelector,
+    _
 } from "ag-grid-community";
 
 export interface SideBarButtonClickedEvent extends AgEvent {
@@ -88,6 +89,10 @@ class SideBarButtonComp extends Component {
         const template = this.createTemplate();
         this.setTemplate(template);
 
+        const toggleButton = this.eToggleButton;
+        const iconDiv = toggleButton.querySelector('div') as HTMLElement;
+
+        iconDiv.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
         this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
     }
 
@@ -98,9 +103,7 @@ class SideBarButtonComp extends Component {
         const res =
             `<div class="ag-side-button">
                 <button type="button" ref="eToggleButton">
-                    <div>
-                        <span class="ag-icon ag-icon-${def.iconKey}"></span>
-                    </div>
+                    <div></div>
                     <span>${label}</span>
                 </button>
             </div>`;

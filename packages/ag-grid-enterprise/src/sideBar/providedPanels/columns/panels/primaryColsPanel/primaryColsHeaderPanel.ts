@@ -28,9 +28,9 @@ export class PrimaryColsHeaderPanel extends Component {
     private eSelectUnchecked: HTMLElement;
     private eSelectIndeterminate: HTMLElement;
 
-    @RefSelector('eExpandChecked') private eExpandChecked: HTMLElement;
-    @RefSelector('eExpandUnchecked') private eExpandUnchecked: HTMLElement;
-    @RefSelector('eExpandIndeterminate') private eExpandIndeterminate: HTMLElement;
+    private eExpandChecked: HTMLElement;
+    private eExpandUnchecked: HTMLElement;
+    private eExpandIndeterminate: HTMLElement;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
     @RefSelector('eSelect') private eSelect: HTMLElement;
@@ -49,13 +49,9 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.setTemplate(
         `<div class="ag-primary-cols-header-panel">
-            <div ref="eExpand">
-                <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
-                <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
-                <span class="ag-icon ag-icon ag-icon-tree-indeterminate" ref="eExpandIndeterminate"></span>
-            </div>
+            <div ref="eExpand"></div>
             <div ref="eSelect"></div>
-            <div class="ag-input-text-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
+            <div class="ag-input-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
                 <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}">        
             </div>
         </div>`);
@@ -64,6 +60,7 @@ export class PrimaryColsHeaderPanel extends Component {
     @PostConstruct
     public postConstruct(): void {
         this.addEventListeners();
+        this.createExpandIcons();
         this.createCheckIcons();
         this.setExpandState(SELECTED_STATE.CHECKED);
 
@@ -81,14 +78,16 @@ export class PrimaryColsHeaderPanel extends Component {
         }
     }
 
+    private createExpandIcons() {
+        this.eExpand.appendChild(this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandIndeterminate = _.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
+    }
+
     private createCheckIcons() {
-        const eSelectChecked = this.eSelectChecked = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
-        const eSelectUnchecked = this.eSelectUnchecked = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
-        const eSelectIndeterminate = this.eSelectIndeterminate =  _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
-        
-        this.eSelect.appendChild(eSelectChecked);
-        this.eSelect.appendChild(eSelectUnchecked);
-        this.eSelect.appendChild(eSelectIndeterminate);
+        this.eSelect.appendChild(this.eSelectChecked = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectUnchecked = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectIndeterminate =  _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper));
     }
 
     // we only show expand / collapse if we are showing columns

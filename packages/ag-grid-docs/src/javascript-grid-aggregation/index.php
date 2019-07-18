@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Aggregation</h1>
+    <h1 class="heading-enterprise">Aggregation</h1>
 
     <p class="lead">
         When grouping, you can apply an aggregation function to any column to populate the group

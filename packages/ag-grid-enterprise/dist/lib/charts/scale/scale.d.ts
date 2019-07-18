@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 export default interface Scale<D, R> {
     domain: D[];
     range: R[];

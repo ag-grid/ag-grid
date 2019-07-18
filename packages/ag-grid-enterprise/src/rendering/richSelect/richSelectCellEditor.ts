@@ -11,7 +11,8 @@ import {
     Promise,
     UserComponentFactory,
     Utils,
-    GridOptionsWrapper
+    GridOptionsWrapper,
+    RefSelector
 } from "ag-grid-community";
 import { RichSelectRow } from "./richSelectRow";
 import { VirtualList } from "../virtualList";
@@ -21,14 +22,15 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     // tab index is needed so we can focus, which is needed for keyboard events
     private static TEMPLATE =
         `<div class="ag-rich-select" tabindex="0">
-            <div ref="eValue" class="ag-rich-select-value">
-                <div class="ag-icon ag-icon-small-down"></div>
-            </div>
+            <div ref="eValue" class="ag-rich-select-value"></div>
             <div ref="eList" class="ag-rich-select-list"></div>
         </div>`;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    @RefSelector('eValue') private eValue: HTMLElement;
+    @RefSelector('eList') private eList: HTMLElement;
 
     private params: IRichCellEditorParams;
     private virtualList: VirtualList;
@@ -56,13 +58,14 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
         this.focusAfterAttached = params.cellStartedEdit;
+        this.eValue.appendChild(_.createIconNoSpan('smallDown', this.gridOptionsWrapper));
 
         this.virtualList = new VirtualList();
         this.getContext().wireBean(this.virtualList);
 
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
 
-        this.getRefElement('eList').appendChild(this.virtualList.getGui());
+        this.eList.appendChild(this.virtualList.getGui());
 
         if (Utils.exists(this.params.cellHeight)) {
             this.virtualList.setRowHeight(this.params.cellHeight);
@@ -82,9 +85,10 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         });
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
+        const virtualListGui = this.virtualList.getGui();
 
-        this.addDestroyableEventListener(this.virtualList.getGui(), 'click', this.onClick.bind(this));
-        this.addDestroyableEventListener(this.virtualList.getGui(), 'mousemove', this.onMouseMove.bind(this));
+        this.addDestroyableEventListener(virtualListGui, 'click', this.onClick.bind(this));
+        this.addDestroyableEventListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -121,7 +125,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
     private renderSelectedValue(): void {
         const valueFormatted = this.params.formatValue(this.selectedValue);
-        const eValue = this.getRefElement('eValue') as HTMLElement;
+        const eValue = this.eValue;
 
         const params = {
             value: this.selectedValue,
@@ -215,10 +219,6 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     public getValue(): any {
-        if (this.selectionConfirmed) {
-            return this.selectedValue;
-        } else {
-            return this.originalSelectedValue;
-        }
+        return this.selectionConfirmed ? this.selectedValue : this.originalSelectedValue;
     }
 }

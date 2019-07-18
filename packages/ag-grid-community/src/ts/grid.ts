@@ -73,10 +73,23 @@ import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { PaginationComp } from "./rowModels/pagination/paginationComp";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { ZipContainer } from "./exporter/files/zip/zipContainer";
-import { _ } from "./utils";
 import { TooltipManager } from "./widgets/tooltipManager";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { Module } from "./interfaces/iModule";
+import { AgGroupComponent } from "./widgets/agGroupComponent";
+import { AgDialog } from "./widgets/agDialog";
+import { AgPanel } from "./widgets/agPanel";
+import { AgInputTextField } from "./widgets/agInputTextField";
+import { AgInputTextArea } from "./widgets/agInputTextArea";
+import { AgSlider } from "./widgets/agSlider";
+import { _ } from "./utils";
+import { AgColorPicker } from "./widgets/agColorPicker";
+import { AgInputNumberField } from "./widgets/agInputNumberField";
+import { AgInputRange } from "./widgets/agInputRange";
+import { AgSelect } from "./widgets/agSelect";
+import { AgAngleSelect } from "./widgets/agAngleSelect";
+import { AgToggleButton } from "./widgets/agToggleButton";
+import { DetailRowCompCache } from "./rendering/detailRowCompCache";
 
 export interface GridParams {
     // used by Web Components
@@ -191,12 +204,24 @@ export class Grid {
         }
 
         let components = [
-            {componentName: 'AgCheckbox', theClass: AgCheckbox},
-            {componentName: 'AgRadioButton', theClass: AgRadioButton},
-            {componentName: 'AgGridComp', theClass: GridPanel},
-            {componentName: 'AgHeaderRoot', theClass: HeaderRootComp},
-            {componentName: 'AgPagination', theClass: PaginationComp},
-            {componentName: 'AgOverlayWrapper', theClass: OverlayWrapperComponent}
+            { componentName: 'AgCheckbox', theClass: AgCheckbox },
+            { componentName: 'AgRadioButton', theClass: AgRadioButton },
+            { componentName: 'AgToggleButton', theClass: AgToggleButton },
+            { componentName: 'AgInputTextField', theClass: AgInputTextField},
+            { componentName: 'AgInputTextArea', theClass: AgInputTextArea},
+            { componentName: 'AgInputNumberField', theClass: AgInputNumberField},
+            { componentName: 'AgInputRange', theClass: AgInputRange},
+            { componentName: 'AgSelect', theClass: AgSelect},
+            { componentName: 'AgSlider', theClass: AgSlider},
+            { componentName: 'AgAngleSelect', theClass: AgAngleSelect },
+            { componentName: 'AgColorPicker', theClass: AgColorPicker },
+            { componentName: 'AgGridComp', theClass: GridPanel },
+            { componentName: 'AgHeaderRoot', theClass: HeaderRootComp },
+            { componentName: 'AgPagination', theClass: PaginationComp },
+            { componentName: 'AgOverlayWrapper', theClass: OverlayWrapperComponent },
+            { componentName: 'AgGroupComponent', theClass: AgGroupComponent },
+            { componentName: 'AgPanel', theClass: AgPanel },
+            { componentName: 'AgDialog', theClass: AgDialog }
         ];
 
         if (Grid.enterpriseComponents) {
@@ -222,6 +247,7 @@ export class Grid {
                 ValueFormatterService, StylingService, ScrollVisibleService, SortController,
                 ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
                 ImmutableService, ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer,
+                DetailRowCompCache,
                 ...moduleBeans
             ],
             components: components,

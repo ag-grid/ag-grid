@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { AgEvent, Component, MenuItemDef } from "ag-grid-community";
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
@@ -16,6 +16,10 @@ export declare class MenuItemComponent extends Component {
     private gridOptionsWrapper;
     private tooltipManager;
     private static TEMPLATE;
+    private eIcon;
+    private eName;
+    private eShortcut;
+    private ePopupPointer;
     static EVENT_ITEM_SELECTED: string;
     private params;
     private tooltip;

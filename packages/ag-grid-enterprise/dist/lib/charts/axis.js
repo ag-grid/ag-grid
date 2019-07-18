@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("./scene/group");
@@ -26,14 +26,7 @@ var Tags;
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var Axis = /** @class */ (function () {
-    // debug (bbox)
-    // private bboxRect = (() => {
-    //     const rect = new Rect();
-    //     rect.fillStyle = null;
-    //     rect.strokeStyle = 'blue';
-    //     rect.lineWidth = 1;
-    //     return rect;
-    // })();
+    // onLayoutChange?: () => void;
     function Axis(scale) {
         this.group = new group_1.Group();
         this.line = new line_1.Line();
@@ -75,11 +68,11 @@ var Axis = /** @class */ (function () {
          * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
          */
         this.tickColor = 'rgba(195, 195, 195, 1)';
-        /**
-         * The font to be used by the labels. The given font string should use the
-         * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
-         */
-        this.labelFont = '12px Verdana, sans-serif';
+        this.labelFontStyle = '';
+        this.labelFontWeight = '';
+        this.labelFontSize = 12;
+        this.labelFontFamily = 'Verdana, sans-serif';
+        this._title = undefined;
         /**
          * The color of the labels.
          * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
@@ -146,6 +139,29 @@ var Axis = /** @class */ (function () {
         },
         set: function (value) {
             this.scale.domain = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Axis.prototype, "title", {
+        get: function () {
+            return this._title;
+        },
+        set: function (value) {
+            var oldTitle = this._title;
+            if (oldTitle !== value) {
+                if (oldTitle) {
+                    // oldTitle.onLayoutChange = undefined;
+                    this.group.removeChild(oldTitle.node);
+                }
+                if (value) {
+                    value.node.rotation = -Math.PI / 2;
+                    // value.onLayoutChange = this.onLayoutChange;
+                    this.group.appendChild(value.node);
+                }
+                this._title = value;
+                // this.requestLayout();
+            }
         },
         enumerable: true,
         configurable: true
@@ -302,14 +318,21 @@ var Axis = /** @class */ (function () {
         }
         var labelFormatter = this.labelFormatter;
         var labels = groupSelection.selectByClass(text_1.Text)
-            .each(function (label, datum) {
-            label.font = _this.labelFont;
+            .each(function (label, datum, index) {
+            label.fontStyle = _this.labelFontStyle;
+            label.fontWeight = _this.labelFontWeight;
+            label.fontSize = _this.labelFontSize;
+            label.fontFamily = _this.labelFontFamily;
             label.fill = _this.labelColor;
             label.textBaseline = parallelLabels && !labelRotation
                 ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                 : 'middle';
             label.text = labelFormatter
-                ? labelFormatter(fractionDigits ? datum : String(datum), fractionDigits)
+                ? labelFormatter({
+                    value: fractionDigits >= 0 ? datum : String(datum),
+                    index: index,
+                    fractionDigits: fractionDigits
+                })
                 : fractionDigits
                     // the `datum` is a floating point number
                     ? datum.toFixed(fractionDigits)
@@ -338,6 +361,20 @@ var Axis = /** @class */ (function () {
         line.strokeWidth = this.lineWidth;
         line.stroke = this.lineColor;
         line.visible = ticks.length > 0;
+        // const title = this.title;
+        // if (title) {
+        //     const titleRotation = normalizeAngle360(rotation);
+        //     const titleRotationFlag = (titleRotation >= 0 && titleRotation < Math.PI) ? -1 : 1;
+        //     const node = title.node;
+        //
+        //     const bbox = this.getBBox();
+        //
+        //     const titleSideFlag = -1;
+        //     node.textBaseline = titleSideFlag * sideFlag * titleRotationFlag === -1 ? 'bottom' : 'top';
+        //     node.rotation = titleRotationFlag * Math.PI / 2;
+        //     node.x = titleRotationFlag * (line.y1 + line.y2) / 2;
+        //     node.y = sideFlag * titleSideFlag * titleRotationFlag * (10 + bbox.width - Math.max(bbox.x + bbox.width, 0));
+        // }
         // debug (bbox)
         // const bbox = this.getBBox();
         // const bboxRect = this.bboxRect;

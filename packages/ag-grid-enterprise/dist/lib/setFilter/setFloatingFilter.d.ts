@@ -1,9 +1,11 @@
-// ag-grid-enterprise v21.0.1
-import { Component, IFloatingFilter } from "ag-grid-community";
+// ag-grid-enterprise v21.1.0
+import { Component, IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
 import { SetFilterModel } from "./setFilterModel";
 export declare class SetFloatingFilterComp extends Component implements IFloatingFilter {
     private eFloatingFilterText;
+    private valueFormatterService;
+    private column;
     constructor();
-    init(): void;
+    init(params: IFloatingFilterParams): void;
     onParentModelChanged(parentModel: SetFilterModel): void;
 }

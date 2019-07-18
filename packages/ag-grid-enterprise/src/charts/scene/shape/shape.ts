@@ -66,6 +66,28 @@ export abstract class Shape extends Node {
         }
     }
 
+    private _fillOpacity: number = 1;
+    set fillOpacity(value: number) {
+        if (this._fillOpacity !== value) {
+            this._fillOpacity = value;
+            this.dirty = true;
+        }
+    }
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    private _strokeOpacity: number = 1;
+    set strokeOpacity(value: number) {
+        if (this._strokeOpacity !== value) {
+            this._strokeOpacity = value;
+            this.dirty = true;
+        }
+    }
+    get strokeOpacity(): number {
+        return this._strokeOpacity;
+    }
+
     private _fill: string | undefined = Shape.defaultStyles.fill; //| CanvasGradient | CanvasPattern;
     set fill(value: string | undefined) {
         if (this._fill !== value) {
@@ -207,14 +229,11 @@ export abstract class Shape extends Node {
             return;
         }
 
-        if (this.opacity < 1) {
-            ctx.globalAlpha = this.opacity;
-        }
-
         const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
 
         if (this.fill) {
             ctx.fillStyle = this.fill;
+            ctx.globalAlpha = this.opacity * this.fillOpacity;
 
             // The canvas context scaling (depends on the device's pixel ratio)
             // has no effect on shadows, so we have to account for the pixel ratio
@@ -233,6 +252,8 @@ export abstract class Shape extends Node {
 
         if (this.stroke && this.strokeWidth) {
             ctx.strokeStyle = this.stroke;
+            ctx.globalAlpha = this.opacity * this.strokeOpacity;
+
             ctx.lineWidth = this.strokeWidth;
             if (this.lineDash) {
                 ctx.setLineDash(this.lineDash);

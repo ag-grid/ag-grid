@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,7 +28,10 @@ var MarkerLabel = /** @class */ (function (_super) {
         _this.marker.crisp = true;
         var label = _this.label;
         label.textBaseline = 'middle';
-        label.font = MarkerLabel.defaults.labelFont;
+        label.fontStyle = MarkerLabel.defaults.labelFontStyle;
+        label.fontWeight = MarkerLabel.defaults.labelFontWeight;
+        label.fontSize = MarkerLabel.defaults.labelFontSize;
+        label.fontFamily = MarkerLabel.defaults.labelFontFamily;
         label.fill = MarkerLabel.defaults.labelColor;
         label.y = 2; // for better looking vertical alignment of labels to markers
         _this.append([_this.marker, label]);
@@ -45,12 +48,42 @@ var MarkerLabel = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(MarkerLabel.prototype, "labelFont", {
+    Object.defineProperty(MarkerLabel.prototype, "labelFontStyle", {
         get: function () {
-            return this.label.font;
+            return this.label.fontStyle;
         },
         set: function (value) {
-            this.label.font = value;
+            this.label.fontStyle = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MarkerLabel.prototype, "labelFontWeight", {
+        get: function () {
+            return this.label.fontWeight;
+        },
+        set: function (value) {
+            this.label.fontWeight = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MarkerLabel.prototype, "labelFontSize", {
+        get: function () {
+            return this.label.fontSize;
+        },
+        set: function (value) {
+            this.label.fontSize = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MarkerLabel.prototype, "labelFontFamily", {
+        get: function () {
+            return this.label.fontFamily;
+        },
+        set: function (value) {
+            this.label.fontFamily = value;
         },
         enumerable: true,
         configurable: true
@@ -146,6 +179,10 @@ var MarkerLabel = /** @class */ (function (_super) {
         padding: 4,
         markerSize: 14,
         labelFont: '12px Verdana, sans-serif',
+        labelFontStyle: undefined,
+        labelFontWeight: undefined,
+        labelFontSize: 12,
+        labelFontFamily: 'Verdana, sans-serif',
         labelColor: 'black'
     });
     return MarkerLabel;

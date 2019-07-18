@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.0.1
+// Type definitions for ag-grid-community v21.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridCore } from "../gridCore";
@@ -8,8 +8,8 @@ export declare class PopupService {
     private gridOptionsWrapper;
     private environment;
     private eventService;
-    private activePopupElements;
     private gridCore;
+    private popupList;
     registerGridCore(gridCore: GridCore): void;
     private getDocument;
     getPopupParent(): HTMLElement;
@@ -65,8 +65,10 @@ export declare class PopupService {
     private keepYWithinBounds;
     private keepXWithinBounds;
     addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void;
-    addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void;
+    addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null, alwaysOnTop?: boolean): (event?: any) => void;
     private isEventFromCurrentPopup;
     private isEventSameChainAsOriginalEvent;
+    private getWrapper;
+    setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void;
     bringPopupToFront(ePopup: HTMLElement): void;
 }

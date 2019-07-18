@@ -1,7 +1,8 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { BBox } from "./scene/bbox";
+import { Caption } from "./caption";
 export interface GridStyle {
     stroke?: string;
     lineDash?: number[];
@@ -15,12 +16,12 @@ export interface GridStyle {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export declare class Axis<D = any> {
-    constructor(scale: Scale<D, number>);
-    readonly scale: Scale<D, number>;
+export declare class Axis<S extends Scale<D, number>, D = any> {
+    readonly scale: S;
     readonly group: Group;
     private groupSelection;
     private line;
+    constructor(scale: S);
     domain: D[];
     /**
      * The horizontal translation of the axis group.
@@ -66,12 +67,17 @@ export declare class Axis<D = any> {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    labelFormatter?: (value: any, fractionDigits?: number) => string;
-    /**
-     * The font to be used by the labels. The given font string should use the
-     * {@link https://www.w3.org/TR/CSS2/fonts.html#font-shorthand | font shorthand} notation.
-     */
-    labelFont: string;
+    labelFormatter?: (params: {
+        value: any;
+        index: number;
+        fractionDigits?: number;
+    }) => string;
+    labelFontStyle: string;
+    labelFontWeight: string;
+    labelFontSize: number;
+    labelFontFamily: string;
+    private _title;
+    title: Caption | undefined;
     /**
      * The color of the labels.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.

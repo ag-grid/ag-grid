@@ -59,6 +59,7 @@ var gridOptions = {
             checkbox: true
         }
     },
+    animateRows: true,
     defaultColDef: {
         sortable: true,
         resizable: true

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -104,7 +104,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.processingEventFromCheckbox = true;
         var selectionCount = this.getSelectionCount();
         var allSelected = this.getNextCheckboxState(selectionCount);
-        this.cbSelectAll.setSelected(allSelected);
+        this.cbSelectAll.setValue(allSelected);
         this.processingEventFromCheckbox = false;
     };
     SelectAllFeature.prototype.getSelectionCount = function () {
@@ -150,7 +150,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
         if (!this.cbSelectAllVisible) {
             return;
         }
-        var value = this.cbSelectAll.isSelected();
+        var value = this.cbSelectAll.getValue();
         if (value) {
             this.selectionController.selectAllRowNodes(this.filteredOnly);
         }

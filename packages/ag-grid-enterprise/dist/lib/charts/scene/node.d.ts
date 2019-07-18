@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";

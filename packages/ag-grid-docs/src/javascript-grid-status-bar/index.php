@@ -226,7 +226,7 @@ ClickableStatusBarComponent.prototype.init = function (params) {
 </p>
 
 <p>
-    The have the status bar with a fixed height, add CSS to the status bar div as follows:
+    To force the the status bar to have a fixed height, add CSS to the status bar div as follows:
 </p>
 
 <code>

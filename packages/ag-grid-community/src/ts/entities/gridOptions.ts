@@ -78,7 +78,7 @@ import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayCompone
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
-import { ChartOptions } from "../interfaces/iChartOptions";
+import { ChartOptions, ChartType } from "../interfaces/iChartOptions";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -326,6 +326,8 @@ export interface GridOptions {
     popupParent?: HTMLElement;
 
     masterDetail?: boolean;
+    keepDetailRows?: boolean;
+    keepDetailRowsCount?: number;
     isRowMaster?: IsRowMaster;
     detailCellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
@@ -616,7 +618,7 @@ export interface NodeChildDetails {
 }
 
 export interface ProcessChartOptionsParams {
-    type: string;
+    type: ChartType;
     options: ChartOptions;
 }
 

@@ -439,7 +439,7 @@ docs.component("exampleRunner", {
 
         <div class="tab-contents" ng-if="$ctrl.ready">
             <div ng-show="$ctrl.selectedTab == 'result'" role="tabpanel" class="result">
-                <iframe ng-if="$ctrl.visible" ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>
+                <iframe ng-if="$ctrl.visible" ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" scrolling="no" seamless="true"></iframe>
                 <div ng-show="!$ctrl.visible" class="iframe-placeholder" ng-style="$ctrl.iframeStyle">
                     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
                 </div>

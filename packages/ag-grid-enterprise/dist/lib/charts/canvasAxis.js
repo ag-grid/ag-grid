@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var angle_1 = require("./util/angle");
@@ -39,7 +39,8 @@ var CanvasAxis = /** @class */ (function () {
             ctx.font = this.labelFont;
             ctx.beginPath();
             for (var i = 0; i < tickCount; i++) {
-                var r = scale.convert(ticks[i]) - this.tickWidth / 2 + bandwidth;
+                var tick = ticks[i];
+                var r = scale.convert(tick) - this.tickWidth / 2 + bandwidth;
                 ctx.moveTo(sideFlag * this.tickSize, r + pxShift);
                 ctx.lineTo(0, r + pxShift);
                 if (this.flippedLabels) {
@@ -48,12 +49,12 @@ var CanvasAxis = /** @class */ (function () {
                     ctx.save();
                     ctx.translate(sideFlag * (this.tickSize + this.tickPadding), r);
                     ctx.rotate(flipFlag * Math.PI / 2);
-                    var labelWidth = ctx.measureText(ticks[i].toString()).width;
-                    ctx.fillText(ticks[i].toString(), -sideFlag * labelWidth / 2, -sideFlag * flipFlag * this.tickPadding);
+                    var labelWidth = ctx.measureText(tick.toString()).width;
+                    ctx.fillText(tick.toString(), -sideFlag * labelWidth / 2, -sideFlag * flipFlag * this.tickPadding);
                     ctx.restore();
                 }
                 else {
-                    ctx.fillText(ticks[i].toString(), sideFlag * (this.tickSize + this.tickPadding), r);
+                    ctx.fillText(tick.toString(), sideFlag * (this.tickSize + this.tickPadding), r);
                 }
             }
             ctx.stroke();

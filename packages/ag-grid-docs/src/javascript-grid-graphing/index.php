@@ -6,7 +6,7 @@ $pageGroup = "thirdparty";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>ag-Grid Graphing Integration</h1>
+    <h1>Third Party Charting</h1>
 
     <p class="lead">
         This section goes through examples of integrating the grid with <a href="https://d3js.org/">D3</a>

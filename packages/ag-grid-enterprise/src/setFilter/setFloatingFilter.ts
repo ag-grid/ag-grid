@@ -1,4 +1,4 @@
-import { Component, IFloatingFilter, RefSelector } from "ag-grid-community";
+import { Autowired, Component, IFloatingFilter, RefSelector, ValueFormatterService, Column, IFloatingFilterParams } from "ag-grid-community";
 import { SetFilterModel } from "./setFilterModel";
 
 export class SetFloatingFilterComp extends Component implements IFloatingFilter {
@@ -6,12 +6,18 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     @RefSelector('eFloatingFilterText')
     private eFloatingFilterText: HTMLInputElement;
 
+    @Autowired('valueFormatterService')
+    private valueFormatterService: ValueFormatterService;
+
+    private column: Column;
+
     constructor() {
-        super(`<div class="ag-input-text-wrapper"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
+        super(`<div class="ag-input-wrapper"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
     }
 
-    public init(): void {
+    public init(params: IFloatingFilterParams): void {
         this.eFloatingFilterText.disabled = true;
+        this.column = params.column;
     }
 
     public onParentModelChanged(parentModel: SetFilterModel): void {
@@ -26,6 +32,16 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         if (!values || values.length === 0) {
             this.eFloatingFilterText.value = '';
             return;
+        }
+
+        // format all the values, if a formatter is provided
+        for (var i = 0; i < values.length; i++) {
+            var valueUnformatted = values[i];
+            const valueFormatted =
+                this.valueFormatterService.formatValue(this.column, null, null, valueUnformatted);
+            if (valueFormatted != null) {
+                values[i] = valueFormatted;
+            }
         }
 
         const arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;

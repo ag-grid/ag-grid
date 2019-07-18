@@ -28,6 +28,7 @@ import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { _, Promise } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { DndSourceComp } from "./dndSourceComp";
 
 export class CellComp extends Component {
 
@@ -51,6 +52,7 @@ export class CellComp extends Component {
 
     private includeSelectionComponent: boolean;
     private includeRowDraggingComponent: boolean;
+    private includeDndSourceComponent: boolean;
 
     private cellFocused: boolean;
     private editingCell = false;
@@ -655,17 +657,33 @@ export class CellComp extends Component {
     private refreshToolTip() {
         const newTooltip = this.getToolTip();
 
-        if (this.tooltip !== newTooltip) {
-            this.tooltip = newTooltip;
-            if (!this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-                return;
-            }
+        if (this.tooltip === newTooltip) {
+            return;
+        }
 
-            if (_.exists(newTooltip)) {
+        const hasNewTooltip = _.exists(newTooltip);
+        const hadTooltip = _.exists(this.tooltip);
+
+        if (hasNewTooltip && this.tooltip === newTooltip.toString()) {
+            return;
+        }
+
+        this.tooltip = newTooltip;
+
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
+            if (hasNewTooltip) {
                 const tooltipSanitised = _.escape(this.tooltip);
                 this.eParentOfValue.setAttribute('title', tooltipSanitised!);
             } else {
                 this.eParentOfValue.removeAttribute('title');
+            }
+        } else {
+            if (hadTooltip) {
+                if (!hasNewTooltip) {
+                    this.beans.tooltipManager.unregisterTooltip(this);
+                }
+            } else if (hasNewTooltip) {
+                this.beans.tooltipManager.registerTooltip(this);
             }
         }
     }
@@ -768,16 +786,19 @@ export class CellComp extends Component {
             this.usingWrapper = false;
             this.includeSelectionComponent = false;
             this.includeRowDraggingComponent = false;
+            this.includeDndSourceComponent = false;
             return;
         }
 
         const cbSelectionIsFunc = typeof colDef.checkboxSelection === 'function';
         const rowDraggableIsFunc = typeof colDef.rowDrag === 'function';
+        const dndSourceIsFunc = typeof colDef.dndSource === 'function';
 
         this.includeSelectionComponent = cbSelectionIsFunc || colDef.checkboxSelection === true;
         this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDrag === true;
+        this.includeDndSourceComponent = dndSourceIsFunc || colDef.dndSource === true;
 
-        this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent;
+        this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent || this.includeDndSourceComponent;
     }
 
     private chooseCellRenderer(): void {
@@ -810,8 +831,13 @@ export class CellComp extends Component {
         if (!this.usingCellRenderer) { return; }
 
         // never use task service if angularCompileRows=true, as that assume the cell renderers
-        // are finished when the row is created.
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) { useTaskService = false; }
+        // are finished when the row is created. also we never use it if animation frame service
+        // is turned off.
+        // and lastly we never use it if doing auto-height, as the auto-height service checks the
+        // row height directly after the cell is created, it doesn't wait around for the tasks to complete
+        const angularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
+        const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
+        if (angularCompileRows || suppressAnimationFrame || this.autoHeightCell) { useTaskService = false; }
 
         const params = this.createCellRendererParams();
 
@@ -1905,6 +1931,9 @@ export class CellComp extends Component {
             if (this.includeRowDraggingComponent) {
                 this.addRowDragging();
             }
+            if (this.includeDndSourceComponent) {
+                this.addDndSource();
+            }
             if (this.includeSelectionComponent) {
                 this.addSelectionCheckbox();
             }
@@ -1919,28 +1948,39 @@ export class CellComp extends Component {
 
     private addRowDragging(): void {
 
-        // row dragging only available in default row model
-        if (!this.beans.gridOptionsWrapper.isRowModelDefault()) {
-            _.doOnce(() => console.warn('ag-Grid: row dragging is only allowed in the In Memory Row Model'),
-                'CellComp.addRowDragging');
-            return;
-        }
+        const pagination = this.beans.gridOptionsWrapper.isPagination();
+        const rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
+        const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
 
-        if (this.beans.gridOptionsWrapper.isPagination()) {
-            _.doOnce(() => console.warn('ag-Grid: row dragging is not possible when doing pagination'),
-                'CellComp.addRowDragging');
-            return;
+        if (rowDragManaged) {
+            // row dragging only available in default row model
+            if (!clientSideRowModelActive) {
+                _.doOnce(() => console.warn('ag-Grid: managed row dragging is only allowed in the Client Side Row Model'),
+                    'CellComp.addRowDragging');
+                return;
+            }
+
+            if (pagination) {
+                _.doOnce(() => console.warn('ag-Grid: managed row dragging is not possible when doing pagination'),
+                    'CellComp.addRowDragging');
+                return;
+            }
         }
 
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
         this.addFeature(this.beans.context, rowDraggingComp);
 
-        // let visibleFunc = this.getComponentHolder().checkboxSelection;
-        // visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
-        // cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
-
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
+    }
+
+    private addDndSource(): void {
+
+        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
+        this.addFeature(this.beans.context, dndSourceComp);
+
+        // put the checkbox in before the value
+        this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);
     }
 
     private addSelectionCheckbox(): void {

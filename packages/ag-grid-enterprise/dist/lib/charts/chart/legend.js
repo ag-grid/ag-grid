@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("../scene/group");
@@ -17,11 +17,15 @@ var Legend = /** @class */ (function () {
         this._size = [0, 0];
         this._data = [];
         this._orientation = Orientation.Vertical;
+        this._enabled = true;
         this._itemPaddingX = 16;
         this._itemPaddingY = 8;
         this._markerPadding = markerLabel_1.MarkerLabel.defaults.padding;
         this._labelColor = markerLabel_1.MarkerLabel.defaults.labelColor;
-        this._labelFont = markerLabel_1.MarkerLabel.defaults.labelFont;
+        this._labelFontStyle = markerLabel_1.MarkerLabel.defaults.labelFontStyle;
+        this._labelFontWeight = markerLabel_1.MarkerLabel.defaults.labelFontWeight;
+        this._labelFontSize = markerLabel_1.MarkerLabel.defaults.labelFontSize;
+        this._labelFontFamily = markerLabel_1.MarkerLabel.defaults.labelFontFamily;
         this._markerSize = 14;
         this._markerStrokeWidth = 1;
     }
@@ -38,7 +42,8 @@ var Legend = /** @class */ (function () {
         },
         set: function (data) {
             this._data = data;
-            this.group.visible = data.length > 0;
+            this.group.visible = this.enabled && data.length > 0;
+            this.requestLayout();
         },
         enumerable: true,
         configurable: true
@@ -56,11 +61,26 @@ var Legend = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Legend.prototype, "enabled", {
+        get: function () {
+            return this._enabled;
+        },
+        set: function (value) {
+            if (this._enabled !== value) {
+                this._enabled = value;
+                this.group.visible = value && this.data.length > 0;
+                this.requestLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Legend.prototype, "itemPaddingX", {
         get: function () {
             return this._itemPaddingX;
         },
         set: function (value) {
+            value = isFinite(value) ? value : 16;
             if (this._itemPaddingX !== value) {
                 this._itemPaddingX = value;
                 this.requestLayout();
@@ -74,6 +94,7 @@ var Legend = /** @class */ (function () {
             return this._itemPaddingY;
         },
         set: function (value) {
+            value = isFinite(value) ? value : 8;
             if (this._itemPaddingY !== value) {
                 this._itemPaddingY = value;
                 this.requestLayout();
@@ -87,6 +108,7 @@ var Legend = /** @class */ (function () {
             return this._markerPadding;
         },
         set: function (value) {
+            value = isFinite(value) ? value : markerLabel_1.MarkerLabel.defaults.padding;
             if (this._markerPadding !== value) {
                 this._markerPadding = value;
                 this.requestLayout();
@@ -108,13 +130,52 @@ var Legend = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Legend.prototype, "labelFont", {
+    Object.defineProperty(Legend.prototype, "labelFontStyle", {
         get: function () {
-            return this._labelFont;
+            return this._labelFontStyle;
         },
         set: function (value) {
-            if (this._labelFont !== value) {
-                this._labelFont = value;
+            if (this._labelFontStyle !== value) {
+                this._labelFontStyle = value;
+                this.requestLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "labelFontWeight", {
+        get: function () {
+            return this._labelFontWeight;
+        },
+        set: function (value) {
+            if (this._labelFontWeight !== value) {
+                this._labelFontWeight = value;
+                this.requestLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "labelFontSize", {
+        get: function () {
+            return this._labelFontSize;
+        },
+        set: function (value) {
+            if (this._labelFontSize !== value) {
+                this._labelFontSize = value;
+                this.requestLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Legend.prototype, "labelFontFamily", {
+        get: function () {
+            return this._labelFontFamily;
+        },
+        set: function (value) {
+            if (this._labelFontFamily !== value) {
+                this._labelFontFamily = value;
                 this.requestLayout();
             }
         },
@@ -126,6 +187,7 @@ var Legend = /** @class */ (function () {
             return this._markerSize;
         },
         set: function (value) {
+            value = isFinite(value) ? value : 14;
             if (this._markerSize !== value) {
                 this._markerSize = value;
                 this.requestLayout();
@@ -139,6 +201,7 @@ var Legend = /** @class */ (function () {
             return this._markerStrokeWidth;
         },
         set: function (value) {
+            value = isFinite(value) ? value : 1;
             if (this._markerStrokeWidth !== value) {
                 this._markerStrokeWidth = value;
                 this.update();
@@ -178,7 +241,10 @@ var Legend = /** @class */ (function () {
         itemSelection.each(function (markerLabel, datum) {
             // TODO: measure only when one of these properties or data change (in a separate routine)
             markerLabel.markerSize = _this.markerSize;
-            markerLabel.labelFont = _this.labelFont;
+            markerLabel.labelFontStyle = _this.labelFontStyle;
+            markerLabel.labelFontWeight = _this.labelFontWeight;
+            markerLabel.labelFontSize = _this.labelFontSize;
+            markerLabel.labelFontFamily = _this.labelFontFamily;
             markerLabel.labelText = datum.label.text;
             markerLabel.padding = _this.markerPadding;
             bboxes.push(markerLabel.getBBox());
@@ -299,8 +365,8 @@ var Legend = /** @class */ (function () {
         var _this = this;
         this.itemSelection.each(function (markerLabel, datum) {
             var marker = datum.marker;
-            markerLabel.markerFill = marker.fillStyle;
-            markerLabel.markerStroke = marker.strokeStyle;
+            markerLabel.markerFill = marker.fill;
+            markerLabel.markerStroke = marker.stroke;
             markerLabel.markerStrokeWidth = _this.markerStrokeWidth;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
             markerLabel.labelColor = _this.labelColor;

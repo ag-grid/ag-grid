@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47,7 +47,7 @@ var MenuItemMapper = /** @class */ (function () {
             case 'pinSubMenu':
                 return {
                     name: localeTextFunc('pinColumn', 'Pin Column'),
-                    icon: ag_grid_community_1.Utils.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
+                    icon: ag_grid_community_1._.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
                     subMenu: ['pinLeft', 'pinRight', 'clearPinned']
                 };
             case 'pinLeft':
@@ -71,7 +71,7 @@ var MenuItemMapper = /** @class */ (function () {
             case 'valueAggSubMenu':
                 return {
                     name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                    icon: ag_grid_community_1.Utils.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
+                    icon: ag_grid_community_1._.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
                     subMenu: this.createAggregationSubMenu(column)
                 };
             case 'autoSizeThis':
@@ -88,13 +88,13 @@ var MenuItemMapper = /** @class */ (function () {
                 return {
                     name: localeTextFunc('groupBy', 'Group by') + ' ' + ag_grid_community_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: function () { return _this.columnController.addRowGroupColumn(column, "contextMenu"); },
-                    icon: ag_grid_community_1.Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
+                    icon: ag_grid_community_1._.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'rowUnGroup':
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ag_grid_community_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: function () { return _this.columnController.removeRowGroupColumn(column, "contextMenu"); },
-                    icon: ag_grid_community_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
+                    icon: ag_grid_community_1._.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'resetColumns':
                 return {
@@ -115,14 +115,14 @@ var MenuItemMapper = /** @class */ (function () {
                 return {
                     name: localeTextFunc('copy', 'Copy'),
                     shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                    icon: ag_grid_community_1.Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                    icon: ag_grid_community_1._.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                     action: function () { return _this.clipboardService.copyToClipboard(false); }
                 };
             case 'copyWithHeaders':
                 return {
                     name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                     // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                    icon: ag_grid_community_1.Utils.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                    icon: ag_grid_community_1._.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                     action: function () { return _this.clipboardService.copyToClipboard(true); }
                 };
             case 'paste':
@@ -130,7 +130,7 @@ var MenuItemMapper = /** @class */ (function () {
                     name: localeTextFunc('paste', 'Paste'),
                     shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                     disabled: true,
-                    icon: ag_grid_community_1.Utils.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
+                    icon: ag_grid_community_1._.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
                     action: function () { return _this.clipboardService.pasteFromClipboard(); }
                 };
             case 'export':
@@ -144,7 +144,8 @@ var MenuItemMapper = /** @class */ (function () {
                 }
                 return {
                     name: localeTextFunc('export', 'Export'),
-                    subMenu: exportSubMenuItems
+                    subMenu: exportSubMenuItems,
+                    icon: ag_grid_community_1._.createIconNoSpan('save', this.gridOptionsWrapper, null),
                 };
             case 'csvExport':
                 return {
@@ -169,25 +170,88 @@ var MenuItemMapper = /** @class */ (function () {
                 return 'separator';
             case 'chartRange':
                 var chartRangeSubMenuItems = [];
-                chartRangeSubMenuItems.push('groupedBarRangeChart');
-                chartRangeSubMenuItems.push('stackedBarRangeChart');
-                chartRangeSubMenuItems.push('lineRangeChart');
+                chartRangeSubMenuItems.push('columnRangeChart');
+                chartRangeSubMenuItems.push('barRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
-                chartRangeSubMenuItems.push('doughnutRangeChart');
+                chartRangeSubMenuItems.push('lineRangeChart');
+                chartRangeSubMenuItems.push('areaRangeChart');
                 return {
-                    name: 'Chart Range',
-                    subMenu: chartRangeSubMenuItems
+                    name: localeTextFunc('chartRange', 'Chart Range'),
+                    subMenu: chartRangeSubMenuItems,
+                    icon: ag_grid_community_1._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
-            case 'groupedBarRangeChart': return {
-                name: localeTextFunc('groupedBarRangeChart', 'Bar (Grouped)'),
+            case 'columnRangeChart':
+                var columnSubMenuItems = [];
+                columnSubMenuItems.push('groupedColumnChart');
+                columnSubMenuItems.push('stackedColumnChart');
+                columnSubMenuItems.push('normalizedColumnChart');
+                return {
+                    name: localeTextFunc('columnRangeChart', 'Column'),
+                    subMenu: columnSubMenuItems
+                };
+            case 'groupedColumnChart': return {
+                name: localeTextFunc('groupedColumnChart', 'Grouped&lrm;'),
+                action: function () {
+                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.GroupedColumn);
+                }
+            };
+            case 'stackedColumnChart': return {
+                name: localeTextFunc('stackedColumnChart', 'Stacked&lrm;'),
+                action: function () {
+                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.StackedColumn);
+                }
+            };
+            case 'normalizedColumnChart': return {
+                name: localeTextFunc('normalizedColumnChart', '100% Stacked&lrm;'),
+                action: function () {
+                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.NormalizedColumn);
+                }
+            };
+            case 'barRangeChart':
+                var barSubMenuItems = [];
+                barSubMenuItems.push('groupedBarChart');
+                barSubMenuItems.push('stackedBarChart');
+                barSubMenuItems.push('normalizedBarChart');
+                return {
+                    name: localeTextFunc('barRangeChart', 'Bar'),
+                    subMenu: barSubMenuItems
+                };
+            case 'groupedBarChart': return {
+                name: localeTextFunc('groupedBarChart', 'Grouped&lrm;'),
                 action: function () {
                     _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.GroupedBar);
                 }
             };
-            case 'stackedBarRangeChart': return {
-                name: localeTextFunc('stackedBarRangeChart', 'Bar (Stacked)'),
+            case 'stackedBarChart': return {
+                name: localeTextFunc('stackedBarChart', 'Stacked&lrm;'),
                 action: function () {
                     _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.StackedBar);
+                }
+            };
+            case 'normalizedBarChart': return {
+                name: localeTextFunc('normalizedBarChart', '100% Stacked&lrm;'),
+                action: function () {
+                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.NormalizedBar);
+                }
+            };
+            case 'pieRangeChart':
+                var pieSubMenuItems = [];
+                pieSubMenuItems.push('pieChart');
+                pieSubMenuItems.push('doughnutChart');
+                return {
+                    name: localeTextFunc('pieRangeChart', 'Pie'),
+                    subMenu: pieSubMenuItems
+                };
+            case 'pieChart': return {
+                name: localeTextFunc('pieChart', 'Pie'),
+                action: function () {
+                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.Pie);
+                }
+            };
+            case 'doughnutChart': return {
+                name: localeTextFunc('doughnutChart', 'Doughnut'),
+                action: function () {
+                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.Doughnut);
                 }
             };
             case 'lineRangeChart': return {
@@ -196,16 +260,31 @@ var MenuItemMapper = /** @class */ (function () {
                     _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.Line);
                 }
             };
-            case 'pieRangeChart': return {
-                name: localeTextFunc('pieRangeChart', 'Pie'),
+            case 'areaRangeChart':
+                var areaSubMenuItems = [];
+                areaSubMenuItems.push('areaChart');
+                areaSubMenuItems.push('stackedAreaChart');
+                areaSubMenuItems.push('normalizedAreaChart');
+                return {
+                    name: localeTextFunc('areaRangeChart', 'Area'),
+                    subMenu: areaSubMenuItems
+                };
+            case 'areaChart': return {
+                name: localeTextFunc('areaChart', 'Area&lrm;'),
                 action: function () {
-                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.Pie);
+                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.Area);
                 }
             };
-            case 'doughnutRangeChart': return {
-                name: localeTextFunc('doughnutRangeChart', 'Doughnut'),
+            case 'stackedAreaChart': return {
+                name: localeTextFunc('stackedAreaChart', 'Stacked&lrm;'),
                 action: function () {
-                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.Doughnut);
+                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.StackedArea);
+                }
+            };
+            case 'normalizedAreaChart': return {
+                name: localeTextFunc('normalizedAreaChart', '100% Stacked&lrm;'),
+                action: function () {
+                    _this.rangeChartService.chartCurrentRange(ag_grid_community_1.ChartType.NormalizedArea);
                 }
             };
             default:

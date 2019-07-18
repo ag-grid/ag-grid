@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Shape } from "./shape";
 import { BBox } from "../bbox";
 export declare class Line extends Shape {

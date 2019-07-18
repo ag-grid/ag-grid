@@ -1,0 +1,21 @@
+{
+    // See http://go.microsoft.com/fwlink/?LinkId=827846
+    // for the documentation about the extensions.json format
+    "recommendations": [
+        // mono repo import path fixer
+        "q.typescript-mono-repo-import-helper",
+        // ts-lint
+        "ms-vscode.vscode-typescript-tslint-plugin",
+        // git helper
+        "eamodio.gitlens",
+        // code spelling
+        "streetsidesoftware.code-spell-checker",
+        // sass helper
+        "robinbentley.sass-indented",
+        // shows the cost of each import
+        "wix.vscode-import-cost",
+        // shows the cost of CSS properties
+        "kisstkondoros.csstriggers"
+    ]
+  }
+  

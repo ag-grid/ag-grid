@@ -7,11 +7,9 @@
 @import "../common/content.scss";
 @import "../common/note.scss";
 @import "../common/roadshow.scss";
+@import "../common/mixins.scss";
 @import "./punch.scss";
-@import "./demo-1.scss";
-@import "./demo-2.scss";
-@import "./demo-3.scss";
-@import "./demo-api.scss";
+@import "./demo.scss";
 @import "../pages/example.scss";
 @import "../pages/support.scss";
 @import "../pages/license-pricing.scss";
@@ -107,6 +105,9 @@
     & > div {
         @extend .text-center, .col, %card, .py-3, .display-5, .mb-5;
         color: $gray-700;
+        background: aliceblue;
+        font-size: 20px;
+        margin-top: -20px;
 
         a {
             @extend .text-primary;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -39,7 +39,7 @@ var ChartModel = /** @class */ (function (_super) {
         _this.palettes = params.palettes;
         _this.activePalette = params.activePalette;
         _this.suppressChartRanges = params.suppressChartRanges;
-        // this is used associate chart ranges with charts
+        // this is used to associate chart ranges with charts
         _this.chartId = _this.generateId();
         return _this;
     }
@@ -67,7 +67,7 @@ var ChartModel = /** @class */ (function (_super) {
         var allColsFromRanges = this.getAllColumnsFromRanges();
         var _a = this.getAllChartColumns(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
         if (valueCols.length === 0) {
-            console.warn("ag-Grid - charts require at least one visible column set with 'enableValue=true'");
+            console.warn("ag-Grid - charts require at least one visible 'series' column.");
             return;
         }
         this.valueColState = valueCols.map(function (column) {
@@ -171,6 +171,12 @@ var ChartModel = /** @class */ (function (_super) {
             return d;
         });
     };
+    ChartModel.prototype.setChartProxy = function (chartProxy) {
+        this.chartProxy = chartProxy;
+    };
+    ChartModel.prototype.getChartProxy = function () {
+        return this.chartProxy;
+    };
     ChartModel.prototype.getChartId = function () {
         return this.chartId;
     };
@@ -246,13 +252,13 @@ var ChartModel = /** @class */ (function (_super) {
         return { startRow: startRow, endRow: endRow };
     };
     ChartModel.prototype.getAllChartColumns = function () {
-        var firstRow = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: undefined });
-        var firstRowData = firstRow ? firstRow.data : null;
+        var _this = this;
         var displayedCols = this.columnController.getAllDisplayedColumns();
         var dimensionCols = [];
         var valueCols = [];
         displayedCols.forEach(function (col) {
             var colDef = col.getColDef();
+            // first check column for 'chartDataType'
             var chartDataType = colDef.chartDataType;
             if (chartDataType) {
                 var validChartType = true;
@@ -273,18 +279,38 @@ var ChartModel = /** @class */ (function (_super) {
                     return;
                 }
             }
-            if (!!colDef.enableRowGroup || !!colDef.enablePivot) {
-                dimensionCols.push(col);
-                return;
-            }
-            if (!!colDef.enableValue) {
+            if (!col.isPrimary()) {
                 valueCols.push(col);
                 return;
             }
-            var isNumberCol = firstRowData && typeof firstRowData[col.getColId()] === 'number';
-            isNumberCol ? valueCols.push(col) : dimensionCols.push(col);
+            // if 'chartDataType' is not provided then infer type based data contained in first row
+            _this.isNumberCol(col.getColId()) ? valueCols.push(col) : dimensionCols.push(col);
         });
         return { dimensionCols: dimensionCols, valueCols: valueCols };
+    };
+    ChartModel.prototype.isNumberCol = function (colId) {
+        if (colId === 'ag-Grid-AutoColumn')
+            return false;
+        var row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: undefined });
+        var rowData = row ? row.data : null;
+        var cellData;
+        if (row && row.group) {
+            cellData = this.extractLeafData(row, colId);
+        }
+        else {
+            cellData = rowData ? rowData[colId] : null;
+        }
+        return typeof cellData === 'number';
+    };
+    ChartModel.prototype.extractLeafData = function (row, colId) {
+        var leafRowData = row.allLeafChildren.map(function (row) { return row.data; });
+        var leafCellData = leafRowData.map(function (rowData) { return rowData[colId]; });
+        for (var i = 0; i < leafCellData.length; i++) {
+            if (leafCellData[i] !== null) {
+                return leafCellData[i];
+            }
+        }
+        return null;
     };
     ChartModel.prototype.generateId = function () {
         return 'id-' + Math.random().toString(36).substr(2, 16);

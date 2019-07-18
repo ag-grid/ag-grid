@@ -38,7 +38,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
 }
 
-.ag-input-text-wrapper {
+.ag-input-wrapper {
     display: flex;
     flex: 1 1 auto;
     align-items: center;
@@ -488,6 +488,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: stretch;
     > div {
         display: flex;
+        align-items: center;
     }
 
     .ag-column-drop-list {
@@ -614,7 +615,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-cell-inline-editing {
     z-index: 1;
-    .ag-cell-edit-input, .ag-input-text-wrapper {
+    .ag-cell-edit-input, .ag-input-wrapper {
         height: 100%;
         width: 100%;
         line-height: normal;
@@ -664,11 +665,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-floating-filter-body {
     display: flex;
     flex: 1 1 auto;
-    height: 20px;
+    height: 100%;
 
     input {
         margin: 0;
         flex: 1 1 auto;
+        max-height: calc(100% - 1px);
     }
 }
 
@@ -883,11 +885,44 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 $handleSize: 5px;
 
-.ag-dialog {
+.ag-dialog, .ag-panel {
     display: flex;
     flex-direction: column;
-    position: absolute;
+    position: relative;
     overflow: hidden;
+
+    .ag-title-bar {
+        display: flex;
+        flex: none;
+        align-items: center;
+        cursor: default;
+
+        .ag-title-bar-title {
+            flex: 1 1 auto;
+        }
+
+        .ag-title-bar-buttons {
+            display: flex;
+            .ag-button {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .ag-panel-content-wrapper {
+        display: flex;
+        flex: 1 1 auto;
+        position: relative;
+        overflow: hidden;
+        > div {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+.ag-dialog {
+    position: absolute;
 
     .ag-resizer {
         position: absolute;
@@ -951,38 +986,6 @@ $handleSize: 5px;
         }
     }
 
-    .ag-dialog-title-bar {
-        display: flex;
-        flex: none;
-        align-items: center;
-        cursor: default;
-
-        .ag-dialog-title-bar-title {
-            flex: 1 1 auto;
-        }
-
-        .ag-dialog-title-bar-buttons {
-            display: flex;
-            .ag-dialog-button {
-                cursor: pointer;
-                height: 100%;
-                width: 100%;
-                background-size: contain;
-            }
-        }
-    }
-
-    .ag-dialog-content-wrapper {
-        display: flex;
-        flex: 1 1 auto;
-        position: relative;
-        overflow: hidden;
-        > div {
-            width: 100%;
-            height: 100%;
-        }
-    }
-
     .ag-message-box {
         width: 100%;
         height: 100%;
@@ -1014,20 +1017,39 @@ $handleSize: 5px;
 }
 
 .ag-chart-tooltip {
+    display: table;
     position: absolute;
     user-select: none;
     pointer-events: none;
     white-space: nowrap;
     z-index: 99999;
-    border: 1px solid gray;
     font: 12px Verdana, sans-serif;
-    padding: 7px;
     color: black;
-    background: rgba(244, 244, 244, 0.9);
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    background: rgb(244, 244, 244);
+    border-radius: 5px;
+    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
+
+    opacity: 0;
+    transform: scale(0.90);
+    transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    transition-property: opacity, transform;
+
+    &.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
 
     .title {
         font-weight: bold;
+        padding: 7px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        color: white;
+        background-color: #888888;
+    }
+
+    .content {
+        padding: 7px;
     }
 }
 
@@ -1109,9 +1131,10 @@ $handleSize: 5px;
         align-items: center;
         > span {
             flex: 1 1 auto;
-        }
-        .ag-icon {
-            order :1;
+            &.ag-icon {
+                order: 1;
+                flex: none;
+            }
         }
     }
     .ag-rich-select-list {
@@ -1141,8 +1164,14 @@ $handleSize: 5px;
 .ag-paging-page-summary-panel {
     display: flex;
     align-items: center;
-    .ag-disabled { 
+    .ag-disabled {
         pointer-events: none;
+    }
+    .ag-paging-button {
+        position: relative;
+        button {
+            position: absolute;
+        }
     }
 }
 
@@ -1158,6 +1187,7 @@ $handleSize: 5px;
     user-select: none;
     width: 200px;
     .ag-filter-toolpanel-header {
+        line-height: 1.5;
         cursor: pointer;
     }
 }
@@ -1240,28 +1270,6 @@ $handleSize: 5px;
 .ag-numeric-header .ag-cell-label-container {
     flex-direction: row;
 }
-/**
- ****************************
- * Group Component
- ****************************
- */
-
- .ag-group-component {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-
-    .ag-group-component-label {
-        position: absolute;
-        top: -10px;
-    }
-
-    .ag-group-item {
-        display: flex;
-        align-items: center;
-        flex: 1 1 auto;
-    }
-}
 
 /**
  ****************************
@@ -1334,6 +1342,231 @@ $handleSize: 5px;
 .ag-status-bar-right {
     display: inline-flex;
 }
+
+/**
+ ****************************
+ * Widgets
+ ****************************
+*/
+
+.ag-group-component {
+    position: relative;
+    flex: 1 1 100%;
+
+    .ag-group-component-title-bar {
+        display: flex;
+        align-items: center;
+    }
+
+    .ag-group-component-toolbar {
+        display: flex;
+        align-items: center;
+    }
+
+    .ag-group-component-container {
+        display: flex;
+        flex-direction: column;
+        .ag-group-subgroup {
+            display: flex;
+            align-self: stretch;
+        }
+    }
+
+    .ag-group-item {
+        display: flex;
+        flex: 1 1 auto;
+        align-items: center;
+    }
+
+    &.ag-disabled {
+        .ag-group-component-container {
+            pointer-events: none;
+        }
+    }
+
+    &.ag-collapsed {
+        .ag-group-component-toolbar, .ag-group-component-container {
+            display: none;
+        }
+    }
+}
+
+.ag-toggle-button {
+    .ag-input-wrapper {
+        .ag-icon {
+            transition: right 0.3s;
+            position: absolute;
+            top: -1px;
+        }
+    }
+}
+
+
+.ag-input-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    input, select, textarea {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+.ag-range-field {
+    display: flex;
+    align-items: center;
+}
+
+.ag-picker-field, .ag-slider, .ag-angle-select {
+    > .ag-wrapper {
+        display: flex;
+        > div {
+            flex: 1 1 auto;
+        }
+    }
+}
+
+.ag-angle-select {
+    display: flex;
+    align-items: center;
+    .ag-angle-select-field {
+        .ag-parent-circle {
+            display: block;
+            position: relative;
+        }
+        .ag-child-circle {
+            position: absolute;
+        }
+    }
+}
+
+.ag-picker-field {
+    display: flex;
+    align-items: center;
+    > .ag-wrapper {
+        > button {
+            display: flex;
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+
+.ag-color-picker {
+    > .ag-wrapper {
+        align-items: stretch;
+        overflow: hidden;
+    }
+    button {
+        cursor: pointer;
+    }
+}
+
+.ag-labeled {
+    &.ag-label-align-right {
+        label {
+            order: 1;
+        }
+        > div {
+            flex: none;
+        }
+    }
+    
+    &.ag-label-align-top {
+        flex-direction: column;
+        align-items: flex-start;
+        > div {
+            align-self: stretch;
+        }
+    }
+}
+
+.ag-color-panel {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+   
+    .ag-spectrum-color {
+        flex: 1 1 auto;
+        position: relative;
+        overflow: hidden;
+        cursor: default;
+    }
+
+    .ag-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .ag-spectrum-val {
+       cursor: pointer;
+    }
+   
+    .ag-spectrum-dragger {
+        position: absolute;
+        pointer-events: none;
+        cursor: pointer;
+    }
+   
+    .ag-spectrum-hue {
+        cursor: default;
+        background: linear-gradient(to left,
+            #ff0000 3%, #ffff00 17%,
+            #00ff00 33%, #00ffff 50%,
+            #0000ff 67%, #ff00ff 83%,
+            #ff0000 100%
+        );
+    }
+   
+    .ag-spectrum-alpha {
+        cursor: default;
+    }
+   
+    .ag-spectrum-hue-background {
+        width: 100%;
+        height: 100%;
+    }
+   
+    .ag-spectrum-alpha-background {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
+        width: 100%;
+        height: 100%;
+    }
+   
+    .ag-hue-alpha {
+        cursor: pointer;
+    }
+   
+    .ag-spectrum-slider {
+        position: absolute;
+        pointer-events: none;
+    }
+   
+    .ag-spectrum-text-value {
+        display: inline-block;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+   
+    .ag-spectrum-text-value:focus {
+        outline: none;
+        outline-offset: 0;
+    }
+
+    .ag-recent-colors {
+        display: flex;
+        > div {
+            cursor: pointer;
+        }
+    }
+}
+
 
 $toolpanel-indent-size: 10px !default;
 $row-group-indent-size: 10px !default;

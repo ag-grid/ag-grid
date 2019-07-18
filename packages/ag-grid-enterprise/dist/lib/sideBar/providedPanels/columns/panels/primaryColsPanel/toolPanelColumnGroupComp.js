@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -38,6 +38,9 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     }
     ToolPanelColumnGroupComp.prototype.init = function () {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
+        this.eDragHandle = main_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        main_1._.addCssClass(this.eDragHandle, 'ag-column-drag');
+        this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
         // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
         if (main_1._.missing(this.displayName)) {
@@ -48,7 +51,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, 'change', this.onCheckboxChanged.bind(this));
+        this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.setOpenClosedIcons();
         this.setupDragging();
         this.onColumnStateChanged();
@@ -99,7 +102,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
     ToolPanelColumnGroupComp.prototype.onLabelClicked = function () {
-        var nextState = !this.cbSelect.isSelected();
+        var nextState = !this.cbSelect.getValue();
         this.onChangeCommon(nextState);
     };
     ToolPanelColumnGroupComp.prototype.onCheckboxChanged = function (event) {
@@ -185,7 +188,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         var selectedValue = this.workOutSelectedValue();
         var readOnlyValue = this.workOutReadOnlyValue();
         this.processingColumnStateChange = true;
-        this.cbSelect.setSelected(selectedValue);
+        this.cbSelect.setValue(selectedValue);
         if (this.selectionCallback) {
             this.selectionCallback(this.isSelected());
         }
@@ -237,7 +240,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         else {
             selectedValue = false;
         }
-        return selectedValue;
+        return selectedValue == null ? undefined : selectedValue;
     };
     ToolPanelColumnGroupComp.prototype.isColumnVisible = function (column, pivotMode) {
         if (pivotMode) {
@@ -267,15 +270,15 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         return this.displayName;
     };
     ToolPanelColumnGroupComp.prototype.onSelectAllChanged = function (value) {
-        if ((value && !this.cbSelect.isSelected()) ||
-            (!value && this.cbSelect.isSelected())) {
+        if ((value && !this.cbSelect.getValue()) ||
+            (!value && this.cbSelect.getValue())) {
             if (!this.cbSelect.isReadOnly()) {
                 this.cbSelect.toggle();
             }
         }
     };
     ToolPanelColumnGroupComp.prototype.isSelected = function () {
-        return this.cbSelect.isSelected();
+        return this.cbSelect.getValue();
     };
     ToolPanelColumnGroupComp.prototype.isSelectable = function () {
         return !this.cbSelect.isReadOnly();
@@ -288,7 +291,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             this.onExpandOrContractClicked();
         }
     };
-    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupClosedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-icon ag-icon-grip ag-column-drag\" ref=\"eDragHandle\"></span>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
+    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupClosedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
         main_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", main_1.GridOptionsWrapper)
@@ -309,10 +312,6 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         main_1.RefSelector('cbSelect'),
         __metadata("design:type", main_1.AgCheckbox)
     ], ToolPanelColumnGroupComp.prototype, "cbSelect", void 0);
-    __decorate([
-        main_1.RefSelector('eDragHandle'),
-        __metadata("design:type", HTMLElement)
-    ], ToolPanelColumnGroupComp.prototype, "eDragHandle", void 0);
     __decorate([
         main_1.RefSelector('eLabel'),
         __metadata("design:type", HTMLElement)

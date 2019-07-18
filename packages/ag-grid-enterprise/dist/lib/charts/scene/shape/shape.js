@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -20,6 +20,8 @@ var Shape = /** @class */ (function (_super) {
     __extends(Shape, _super);
     function Shape() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._fillOpacity = 1;
+        _this._strokeOpacity = 1;
         _this._fill = Shape.defaultStyles.fill; //| CanvasGradient | CanvasPattern;
         /**
          * Note that `strokeStyle = null` means invisible stroke,
@@ -75,6 +77,32 @@ var Shape = /** @class */ (function (_super) {
             }
         }
     };
+    Object.defineProperty(Shape.prototype, "fillOpacity", {
+        get: function () {
+            return this._fillOpacity;
+        },
+        set: function (value) {
+            if (this._fillOpacity !== value) {
+                this._fillOpacity = value;
+                this.dirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Shape.prototype, "strokeOpacity", {
+        get: function () {
+            return this._strokeOpacity;
+        },
+        set: function (value) {
+            if (this._strokeOpacity !== value) {
+                this._strokeOpacity = value;
+                this.dirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Shape.prototype, "fill", {
         get: function () {
             return this._fill;
@@ -224,12 +252,10 @@ var Shape = /** @class */ (function (_super) {
         if (!this.scene) {
             return;
         }
-        if (this.opacity < 1) {
-            ctx.globalAlpha = this.opacity;
-        }
         var pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
         if (this.fill) {
             ctx.fillStyle = this.fill;
+            ctx.globalAlpha = this.opacity * this.fillOpacity;
             // The canvas context scaling (depends on the device's pixel ratio)
             // has no effect on shadows, so we have to account for the pixel ratio
             // manually here.
@@ -245,6 +271,7 @@ var Shape = /** @class */ (function (_super) {
         ctx.shadowColor = 'rgba(0, 0, 0, 0)';
         if (this.stroke && this.strokeWidth) {
             ctx.strokeStyle = this.stroke;
+            ctx.globalAlpha = this.opacity * this.strokeOpacity;
             ctx.lineWidth = this.strokeWidth;
             if (this.lineDash) {
                 ctx.setLineDash(this.lineDash);

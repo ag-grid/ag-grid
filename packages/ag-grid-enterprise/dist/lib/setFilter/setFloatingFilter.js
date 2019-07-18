@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27,10 +27,11 @@ var ag_grid_community_1 = require("ag-grid-community");
 var SetFloatingFilterComp = /** @class */ (function (_super) {
     __extends(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
-        return _super.call(this, "<div class=\"ag-input-text-wrapper\"><input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\"></div>") || this;
+        return _super.call(this, "<div class=\"ag-input-wrapper\"><input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\"></div>") || this;
     }
-    SetFloatingFilterComp.prototype.init = function () {
+    SetFloatingFilterComp.prototype.init = function (params) {
         this.eFloatingFilterText.disabled = true;
+        this.column = params.column;
     };
     SetFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
         if (!parentModel) {
@@ -43,6 +44,14 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
             this.eFloatingFilterText.value = '';
             return;
         }
+        // format all the values, if a formatter is provided
+        for (var i = 0; i < values.length; i++) {
+            var valueUnformatted = values[i];
+            var valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, valueUnformatted);
+            if (valueFormatted != null) {
+                values[i] = valueFormatted;
+            }
+        }
         var arrayToDisplay = values.length > 10 ? values.slice(0, 10).concat('...') : values;
         var valuesString = "(" + values.length + ") " + arrayToDisplay.join(",");
         this.eFloatingFilterText.value = valuesString;
@@ -51,6 +60,10 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         ag_grid_community_1.RefSelector('eFloatingFilterText'),
         __metadata("design:type", HTMLInputElement)
     ], SetFloatingFilterComp.prototype, "eFloatingFilterText", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('valueFormatterService'),
+        __metadata("design:type", ag_grid_community_1.ValueFormatterService)
+    ], SetFloatingFilterComp.prototype, "valueFormatterService", void 0);
     return SetFloatingFilterComp;
 }(ag_grid_community_1.Component));
 exports.SetFloatingFilterComp = SetFloatingFilterComp;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -15,7 +15,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = require("../../scene/shape/path");
-var color_1 = require("../../util/color");
 var continuousScale_1 = require("../../scale/continuousScale");
 var selection_1 = require("../../scene/selection");
 var group_1 = require("../../scene/group");
@@ -25,6 +24,7 @@ var palettes_1 = require("../palettes");
 var series_1 = require("./series");
 var number_1 = require("../../util/number");
 var node_1 = require("../../scene/node");
+var ag_grid_community_1 = require("ag-grid-community");
 var LineSeries = /** @class */ (function (_super) {
     __extends(LineSeries, _super);
     function LineSeries() {
@@ -208,7 +208,7 @@ var LineSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._fill !== value) {
                 this._fill = value;
-                this.stroke = color_1.Color.fromString(value).darker().toHexString();
+                this.stroke = ag_grid_community_1.Color.fromString(value).darker().toHexString();
                 this.scheduleData();
             }
         },
@@ -241,14 +241,14 @@ var LineSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    LineSeries.prototype.highlight = function (node) {
+    LineSeries.prototype.highlightNode = function (node) {
         if (!(node instanceof arc_1.Arc)) {
             return;
         }
         this.highlightedNode = node;
         this.scheduleLayout();
     };
-    LineSeries.prototype.dehighlight = function () {
+    LineSeries.prototype.dehighlightNode = function () {
         this.highlightedNode = undefined;
         this.scheduleLayout();
     };
@@ -272,8 +272,8 @@ var LineSeries = /** @class */ (function (_super) {
         var fill = this.fill;
         var stroke = this.stroke;
         var marker = this.marker;
-        var markerStrokeWidth = this.markerStrokeWidth;
         var markerSize = this.markerSize;
+        var markerStrokeWidth = this.markerStrokeWidth;
         var lineNode = this.lineNode;
         var linePath = lineNode.path;
         var groupSelectionData = [];
@@ -336,25 +336,30 @@ var LineSeries = /** @class */ (function (_super) {
     LineSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var xField = this.xField;
         var yField = this.yField;
+        var color = this.fill;
         var html = '';
         if (!xField || !yField) {
             return html;
         }
+        var title = this.title;
         if (this.tooltipRenderer && this.xField) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
                 xField: xField,
-                yField: yField
+                yField: yField,
+                title: title,
+                color: color
             });
         }
         else {
-            var title = this.title ? "<div class=\"title\">" + this.title + "</div>" : '';
+            var titleStyle = "style=\"color: white; background-color: " + color + "\"";
+            title = title ? "<div class=\"title\" " + titleStyle + ">" + title + "</div>" : '';
             var seriesDatum = nodeDatum.seriesDatum;
             var xValue = seriesDatum[xField];
             var yValue = seriesDatum[yField];
             var xString = typeof (xValue) === 'number' ? number_1.toFixed(xValue) : String(xValue);
             var yString = typeof (yValue) === 'number' ? number_1.toFixed(yValue) : String(yValue);
-            html = "" + title + xString + ": " + yString;
+            html = title + "<div class=\"content\">" + xString + ": " + yString + "</div>";
         }
         return html;
     };
@@ -368,8 +373,8 @@ var LineSeries = /** @class */ (function (_super) {
                     text: this.title || this.yField
                 },
                 marker: {
-                    fillStyle: this.fill,
-                    strokeStyle: this.stroke
+                    fill: this.fill,
+                    stroke: this.stroke
                 }
             });
         }

@@ -545,27 +545,19 @@ export class RowComp extends Component {
 
     private destroyFullWidthComponents(): void {
         if (this.fullWidthRowComponent) {
-            if (this.fullWidthRowComponent.destroy) {
-                this.fullWidthRowComponent.destroy();
-            }
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponent);
             this.fullWidthRowComponent = null;
         }
         if (this.fullWidthRowComponentBody) {
-            if (this.fullWidthRowComponentBody.destroy) {
-                this.fullWidthRowComponentBody.destroy();
-            }
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, null, this.fullWidthRowComponentBody);
             this.fullWidthRowComponent = null;
         }
         if (this.fullWidthRowComponentLeft) {
-            if (this.fullWidthRowComponentLeft.destroy) {
-                this.fullWidthRowComponentLeft.destroy();
-            }
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Column.PINNED_LEFT, this.fullWidthRowComponentLeft);
             this.fullWidthRowComponentLeft = null;
         }
         if (this.fullWidthRowComponentRight) {
-            if (this.fullWidthRowComponentRight.destroy) {
-                this.fullWidthRowComponentRight.destroy();
-            }
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Column.PINNED_RIGHT, this.fullWidthRowComponentRight);
             this.fullWidthRowComponent = null;
         }
     }
@@ -868,13 +860,18 @@ export class RowComp extends Component {
                 }
             };
 
-            const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
-
-            if (!res) {
-                console.error('ag-Grid: fullWidthCellRenderer not defined');
-                return;
+            // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
+            const cachedRowComp = this.beans.detailRowCompCache.get(this.rowNode, pinned);
+            if (cachedRowComp) {
+                callback(cachedRowComp);
+            } else {
+                const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
+                if (!res) {
+                    console.error('ag-Grid: fullWidthCellRenderer not defined');
+                    return;
+                }
+                res.then(callback);
             }
-            res.then(callback);
 
             this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);

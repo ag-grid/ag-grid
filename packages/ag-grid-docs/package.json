@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-docs",
-  "version": "21.0.1",
+  "version": "21.1.0",
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
@@ -83,7 +83,7 @@
     "ag-grid-testing": "0.0.2",
     "anchor-js": "4.1.0",
     "autocomplete.js": "0.33.0",
-    "autoprefixer": "9.1.1",
+    "autoprefixer": "^9.6.0",
     "awesome-typescript-loader": "5.2.1",
     "babel-loader": "8.0.5",
     "bootstrap": "4.1.3",

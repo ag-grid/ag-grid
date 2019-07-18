@@ -1,14 +1,14 @@
 {
   "name": "ag-grid-react",
-  "version": "21.0.1",
+  "version": "21.1.0",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
   "scripts": {
     "build": "gulp",
     "umd": "rollup -c",
-    "test": "CI=true react-scripts test --verbose=false",
-    "test:watch": "react-scripts test --verbose=false",
+    "test": "CI=true react-scripts test --verbose=false --env=jest-environment-jsdom-fourteen",
+    "test:watch": "react-scripts test --verbose=false --env=jest-environment-jsdom-fourteen",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache"
   },
   "repository": {
@@ -38,7 +38,7 @@
     "@types/prop-types": "^15.5.6",
     "@types/react": "16.8.17",
     "@types/react-dom": "16.8.4",
-    "ag-grid-community": "^21.0.0",
+    "ag-grid-community": "^21.1.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",
     "gulp": "^3.9.1",
@@ -47,6 +47,7 @@
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^5.0.0-alpha.3",
+    "jest-environment-jsdom-fourteen": "1.0.0-alpha.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-scripts": "2.1.5",
@@ -60,7 +61,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {
-    "ag-grid-community": "^21.0.0",
+    "ag-grid-community": "^21.1.0",
     "react": "^15.5.0 || ^16.0.0",
     "react-dom": "^15.5.0 || ^16.0.0"
   }

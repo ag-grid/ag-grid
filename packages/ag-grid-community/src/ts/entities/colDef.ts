@@ -36,7 +36,7 @@ export interface AbstractColDef {
 
     tooltipComponent?: { new(): ITooltipComp } | string;
     tooltipComponentFramework?: any;
-    tooltipComponentParams?: ITooltipParams;
+    tooltipComponentParams?: any;
 }
 
 export interface ColGroupDef extends AbstractColDef {
@@ -196,7 +196,14 @@ export interface ColDef extends AbstractColDef {
     /** If true, the header checkbox selection will work on filtered items*/
     headerCheckboxSelectionFilteredOnly?: boolean;
 
+    /** For grid row dragging, set to true to enable row dragging within the grid */
     rowDrag?: boolean | ((params: any) => boolean);
+
+    /** For native drag and drop, set to true to enable drag source */
+    dndSource?: boolean | ((params: any) => boolean);
+
+    /** For native drag and drop, set to true to allow custom onRowDrag processing */
+    dndSourceOnRowDrag?: ((params: {rowNode: RowNode, dragEvent: DragEvent}) => void);
 
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;

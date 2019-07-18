@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -21,6 +21,7 @@ var NumberAxis = /** @class */ (function (_super) {
     function NumberAxis() {
         var _this = _super.call(this, linearScale_1.default()) || this;
         _this._nice = true;
+        _this.scale.clamp = true;
         return _this;
     }
     Object.defineProperty(NumberAxis.prototype, "nice", {

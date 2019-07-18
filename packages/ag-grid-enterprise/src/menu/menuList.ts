@@ -57,7 +57,7 @@ export class MenuList extends Component {
         this.addDestroyFunc(() => cMenuItem.destroy());
 
         cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
-            if (menuItemDef.subMenu) {
+            if (menuItemDef.subMenu && !menuItemDef.action) {
                 this.showChildMenu(menuItemDef, cMenuItem, event.mouseEvent);
             } else {
                 this.dispatchEvent(event);

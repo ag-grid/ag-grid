@@ -1,4 +1,4 @@
-// ag-grid-react v21.0.1
+// ag-grid-react v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -97,9 +97,8 @@ var ReactComponent = /** @class */ (function (_super) {
         var eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
         if (!this.unwrapComponent) {
             AgGrid.Utils.addCssClass(eParentElement, 'ag-react-container');
-            // so user can have access to the react container,
-            // to add css class or style
-            params.reactContainer = this.eParentElement;
+            // so user can have access to the react container, to add css class or style
+            params.reactContainer = eParentElement;
         }
         return eParentElement;
     };

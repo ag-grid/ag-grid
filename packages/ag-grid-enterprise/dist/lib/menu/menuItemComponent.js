@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -34,14 +34,14 @@ var MenuItemComponent = /** @class */ (function (_super) {
     MenuItemComponent.prototype.init = function () {
         var _this = this;
         if (this.params.checked) {
-            this.queryForHtmlElement('#eIcon').innerHTML = '<span class="ag-icon ag-icon-tick"></span>';
+            this.eIcon.appendChild(ag_grid_community_1._.createIconNoSpan('check', this.gridOptionsWrapper));
         }
         else if (this.params.icon) {
             if (ag_grid_community_1._.isNodeOrElement(this.params.icon)) {
-                this.queryForHtmlElement('#eIcon').appendChild(this.params.icon);
+                this.eIcon.appendChild(this.params.icon);
             }
             else if (typeof this.params.icon === 'string') {
-                this.queryForHtmlElement('#eIcon').innerHTML = this.params.icon;
+                this.eIcon.innerHTML = this.params.icon;
             }
             else {
                 console.warn('ag-Grid: menu item icon must be DOM node or string');
@@ -51,7 +51,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
             // if i didn't put space here, the alignment was messed up, probably
             // fixable with CSS but i was spending to much time trying to figure
             // it out.
-            this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
+            this.eIcon.innerHTML = '&nbsp;';
         }
         if (this.params.tooltip) {
             this.tooltip = this.params.tooltip;
@@ -63,22 +63,22 @@ var MenuItemComponent = /** @class */ (function (_super) {
             }
         }
         if (this.params.shortcut) {
-            this.queryForHtmlElement('#eShortcut').innerHTML = this.params.shortcut;
+            this.eShortcut.innerHTML = this.params.shortcut;
         }
         if (this.params.subMenu) {
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 // for RTL, we show arrow going left
-                this.queryForHtmlElement('#ePopupPointer').classList.add('ag-icon-small-left');
+                this.ePopupPointer.appendChild(ag_grid_community_1._.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
             }
             else {
                 // for normal, we show arrow going right
-                this.queryForHtmlElement('#ePopupPointer').classList.add('ag-icon-small-right');
+                this.ePopupPointer.appendChild(ag_grid_community_1._.createIconNoSpan('smallRight', this.gridOptionsWrapper));
             }
         }
         else {
-            this.queryForHtmlElement('#ePopupPointer').innerHTML = '&nbsp;';
+            this.ePopupPointer.innerHTML = '&nbsp;';
         }
-        this.queryForHtmlElement('#eName').innerHTML = this.params.name;
+        this.eName.innerHTML = this.params.name;
         if (this.params.disabled) {
             ag_grid_community_1._.addCssClass(this.getGui(), 'ag-menu-option-disabled');
         }
@@ -119,7 +119,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     // private instance = Math.random();
-    MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\">\n            <span id=\"eIcon\" class=\"ag-menu-option-icon\"></span>\n            <span id=\"eName\" class=\"ag-menu-option-text\"></span>\n            <span id=\"eShortcut\" class=\"ag-menu-option-shortcut\"></span>\n            <span id=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer ag-icon\"></span>\n        </div>";
+    MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\">\n            <span ref=\"eIcon\" class=\"ag-menu-option-icon\"></span>\n            <span ref=\"eName\" class=\"ag-menu-option-text\"></span>\n            <span ref=\"eShortcut\" class=\"ag-menu-option-shortcut\"></span>\n            <span ref=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer\"></span>\n        </div>";
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
     __decorate([
         ag_grid_community_1.Autowired('gridOptionsWrapper'),
@@ -129,6 +129,22 @@ var MenuItemComponent = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('tooltipManager'),
         __metadata("design:type", ag_grid_community_1.TooltipManager)
     ], MenuItemComponent.prototype, "tooltipManager", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('eIcon'),
+        __metadata("design:type", HTMLElement)
+    ], MenuItemComponent.prototype, "eIcon", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('eName'),
+        __metadata("design:type", HTMLElement)
+    ], MenuItemComponent.prototype, "eName", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('eShortcut'),
+        __metadata("design:type", HTMLElement)
+    ], MenuItemComponent.prototype, "eShortcut", void 0);
+    __decorate([
+        ag_grid_community_1.RefSelector('ePopupPointer'),
+        __metadata("design:type", HTMLElement)
+    ], MenuItemComponent.prototype, "ePopupPointer", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

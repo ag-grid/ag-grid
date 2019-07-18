@@ -1,5 +1,5 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
-import { DoughnutChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { ChartType, DoughnutChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
@@ -11,7 +11,7 @@ export class DoughnutChartProxy extends ChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions('doughnut', this.defaultOptions()) as DoughnutChartOptions;
+        this.chartOptions = this.getChartOptions(ChartType.Doughnut, this.defaultOptions()) as DoughnutChartOptions;
         this.chart = ChartBuilder.createDoughnutChart(this.chartOptions);
     }
 
@@ -25,13 +25,20 @@ export class DoughnutChartProxy extends ChartProxy {
         const fieldIds = params.fields.map(f => f.colId);
 
         const existingSeriesMap: { [id: string]: PieSeries } = {};
+        const removedSeriesList: PieSeries[] = [];
         doughnutChart.series.forEach(series => {
             const pieSeries = (series as PieSeries);
             const id = pieSeries.angleField as string;
-            fieldIds.indexOf(id) > -1 ? existingSeriesMap[id] = pieSeries : doughnutChart.removeSeries(pieSeries);
+            if (fieldIds.indexOf(id) > -1) {
+                existingSeriesMap[id] = pieSeries;
+            } else {
+                removedSeriesList.push(pieSeries);
+            }
         });
+        removedSeriesList.forEach(series => doughnutChart.removeSeries(series));
 
         const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+
         // Use `Object.create` to prevent mutating the original user config that is possibly reused.
         const title = (seriesOptions.title ? Object.create(seriesOptions.title) : {}) as CaptionOptions;
         seriesOptions.title = title;
@@ -93,6 +100,9 @@ export class DoughnutChartProxy extends ChartProxy {
             parent: this.chartProxyParams.parentElement,
             width: this.chartProxyParams.width,
             height: this.chartProxyParams.height,
+            background: {
+                fill: this.getBackgroundColor()
+            },
             padding: {
                 top: 50,
                 right: 50,
@@ -100,6 +110,7 @@ export class DoughnutChartProxy extends ChartProxy {
                 left: 50
             },
             legend: {
+                enabled: true,
                 labelFont: '12px Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 itemPaddingX: 16,
@@ -116,9 +127,11 @@ export class DoughnutChartProxy extends ChartProxy {
                 calloutColors: palette.strokes,
                 calloutWidth: 2,
                 calloutLength: 10,
-                calloutPadding: 3,
                 labelEnabled: false,
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelMinAngle: 20,
                 tooltipEnabled: true,

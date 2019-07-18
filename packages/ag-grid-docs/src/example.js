@@ -381,30 +381,56 @@ var gridOptions = {
     },
 
     processChartOptions: function(params) {
-        var options = params.options;
-        if (params.type === 'groupedBar' || params.type === 'stackedBar' || params.type === 'line') {
-            options.yAxis.labelFormatter = function(n) {
-                if (n < 1e3) return n;
-                if (n >= 1e3 && n < 1e6) return '$' + +(n / 1e3).toFixed(1) + 'K';
-                if (n >= 1e6 && n < 1e9) return '$' + +(n / 1e6).toFixed(1) + 'M';
-                if (n >= 1e9 && n < 1e12) return '$' + +(n / 1e9).toFixed(1) + 'B';
-                if (n >= 1e12) return '$' + +(n / 1e12).toFixed(1) + 'T';
-            };
-
-            options.seriesDefaults.tooltipRenderer = function(params) {
-                var strArr = params.yField.replace(/([A-Z])/g, " $1");
-                var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
-                var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return '<b>' + seriesName + '</b>: $' + value;
-            };
-        }
+        let type = params.type;
+        let options = params.options;
 
         if (params.type === 'pie' || params.type === 'doughnut')  {
-            options.seriesDefaults.tooltipRenderer = function(params) {
-                var strArr = params.angleField.replace(/([A-Z])/g, " $1");
-                var seriesName = strArr.charAt(0).toUpperCase() + strArr.slice(1);
-                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return '<b>' + seriesName + '</b>: $' + value;
+            options.seriesDefaults.tooltipRenderer = function (params) {
+                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                let value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return title + '<div class="content">' + '$' + value + '</div>';
+            };
+
+        } else {
+
+            let isBarChart = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
+            if (!isBarChart) {
+                options.xAxis.labelRotation = 335;
+            }
+
+            let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
+            options.yAxis.labelFormatter = function(params) {
+                let n = params.value;
+
+                let res = '';
+                if (n < 1e3) res = n;
+                if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
+                if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
+                if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
+                if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
+
+                return isNormalized ? res + '%' : res;
+            };
+
+            options.seriesDefaults.labelFormatter = function (params) {
+                let n = params.value;
+
+                let res = '';
+                if (n < 1e3) res = n;
+                if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
+                if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
+                if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
+                if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
+
+                return res;
+            };
+
+            options.seriesDefaults.tooltipRenderer = function (params) {
+                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                return title + '<div class="content">' + '$' + value + '</div>';
             };
         }
 
@@ -1033,8 +1059,6 @@ function onThemeChanged(newTheme) {
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
 
     document.body.classList.toggle('dark', isDark);
-
-    document.body.style.scrollbarColor = isDark ? '#6B6B6B #1c1f20' : 'inherit';
 }
 
 var filterCount = 0;
@@ -1099,7 +1123,7 @@ PersonFilter.prototype.setupGui = function () {
     this.gui.innerHTML =
         '<div style="padding: 4px;">' +
         '<div style="font-weight: bold;">Custom Athlete Filter</div>' +
-        '<div class="ag-input-text-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
+        '<div class="ag-input-wrapper"><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
         '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, e.g. "mich phel" still brings back Michael Phelps.</div>' +
         '<div style="margin-top: 20px; width: 200px;">Just to illustrate that anything can go in here, here is an image:</div>' +
         '<div><img src="images/ag-Grid2-200.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/></div>' +
@@ -1170,7 +1194,7 @@ function PersonFloatingFilterComponent() {
 PersonFloatingFilterComponent.prototype.init = function (params) {
     this.params = params;
     var eGui = this.eGui = document.createElement('div');
-    eGui.className = 'ag-input-text-wrapper';
+    eGui.className = 'ag-input-wrapper';
     var input = this.input = document.createElement('input');
     input.className = 'ag-floating-filter-input';
     eGui.appendChild(input);

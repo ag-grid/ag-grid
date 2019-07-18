@@ -11,6 +11,7 @@ import {
     GridOptionsWrapper,
     IFilterComp,
     RefSelector,
+    PostConstruct,
     _
 } from "ag-grid-community";
 
@@ -26,39 +27,35 @@ export class ToolPanelFilterComp extends Component {
     private expanded: boolean = false;
     // private filter: IFilterComp;
 
-    @RefSelector('eFilterToolPanelHeader')
-    private eFilterToolPanelHeader: HTMLElement;
-
-    @RefSelector('eFilterName')
-    private eFilterName: HTMLElement;
-
-    @RefSelector('agFilterToolPanelBody')
-    private agFilterToolPanelBody: HTMLElement;
-
-    @RefSelector('eFilterIcon')
-    private eFilterIcon: HTMLElement;
-
-    @RefSelector('eExpandChecked')
-    private eExpandChecked: HTMLElement;
-
-    @RefSelector('eExpandUnchecked')
-    private eExpandUnchecked: HTMLElement;
-
+    @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
+    @RefSelector('eFilterName') private eFilterName: HTMLElement;
+    @RefSelector('agFilterToolPanelBody') private agFilterToolPanelBody: HTMLElement;
+    @RefSelector('eFilterIcon') private eFilterIcon: HTMLElement;
+    @RefSelector('eExpand') private eExpand: HTMLElement;
+    
     private static TEMPLATE =
         `<div class="ag-filter-toolpanel-instance" >
             <div class="ag-filter-toolpanel-header ag-header-cell-label" ref="eFilterToolPanelHeader">
-                <div ref="eExpand">
-                    <span class="ag-icon ag-icon-tree-open" ref="eExpandChecked"></span>
-                    <span class="ag-icon ag-icon-tree-closed" ref="eExpandUnchecked"></span>
-                </div>
+                <div ref="eExpand"></div>
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
                 <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>
             </div>
             <div class="ag-filter-toolpanel-body ag-filter" ref="agFilterToolPanelBody"/>
         </div>`;
+    
+    private eExpandChecked: HTMLElement;
+    private eExpandUnchecked: HTMLElement;
 
     constructor() {
         super(ToolPanelFilterComp.TEMPLATE);
+    }
+
+    @PostConstruct
+    private postConstruct() {
+        this.eExpandChecked = _.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper);
+        this.eExpandUnchecked = _.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper);
+        this.eExpand.appendChild(this.eExpandChecked);
+        this.eExpand.appendChild(this.eExpandUnchecked);
     }
 
     public setColumn(column: Column): void {

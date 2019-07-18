@@ -1,5 +1,5 @@
-// ag-grid-enterprise v21.0.1
-import { CellRange, ChartType, Component, ProcessChartOptionsParams, ChartOptions } from "ag-grid-community";
+// ag-grid-enterprise v21.1.0
+import { CellRange, ChartOptions, ChartType, Component, ProcessChartOptionsParams } from "ag-grid-community";
 export interface GridChartParams {
     cellRange: CellRange;
     chartType: ChartType;
@@ -15,7 +15,9 @@ export declare class GridChartComp extends Component {
     private resizeObserverService;
     private gridOptionsWrapper;
     private environment;
+    private eChartComponentsWrapper;
     private eChart;
+    private eDockedContainer;
     private chartMenu;
     private chartDialog;
     private model;
@@ -31,9 +33,14 @@ export declare class GridChartComp extends Component {
     private addDialog;
     private addMenu;
     private refresh;
+    getChartComponentsWrapper(): HTMLElement;
+    getDockedContainer(): HTMLElement;
+    slideDockedOut(width: number): void;
+    slideDockedIn(): void;
     getCurrentChartType(): ChartType;
     updateChart(): void;
     private downloadChart;
+    refreshCanvasSize(): void;
     private addResizeListener;
     private setActiveChartCellRange;
     destroy(): void;

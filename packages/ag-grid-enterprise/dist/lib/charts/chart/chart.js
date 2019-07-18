@@ -1,16 +1,18 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var scene_1 = require("../scene/scene");
 var group_1 = require("../scene/group");
 var padding_1 = require("../util/padding");
 var shape_1 = require("../scene/shape/shape");
+var rect_1 = require("../scene/shape/rect");
 var legend_1 = require("./legend");
 var array_1 = require("../util/array");
 var Chart = /** @class */ (function () {
     function Chart() {
         var _this = this;
         this.scene = new scene_1.Scene();
+        this.background = new rect_1.Rect();
         this.legend = new legend_1.Legend();
         this.legendAutoPadding = new padding_1.Padding();
         this.captionAutoPadding = 0; // top padding only
@@ -21,7 +23,7 @@ var Chart = /** @class */ (function () {
             _this.layoutPending = true;
         };
         this._title = undefined;
-        this._subtitle = null;
+        this._subtitle = undefined;
         this._series = [];
         this._legendPosition = 'right';
         this._legendPadding = 20;
@@ -30,6 +32,8 @@ var Chart = /** @class */ (function () {
         this.layoutCallbackId = 0;
         this._performLayout = function () {
             _this.layoutCallbackId = 0;
+            _this.background.width = _this.width;
+            _this.background.height = _this.height;
             _this.performLayout();
             if (_this.onLayoutDone) {
                 _this.onLayoutDone();
@@ -63,13 +67,13 @@ var Chart = /** @class */ (function () {
                 }
             }
             else if (_this.lastPick) { // cursor moved from a node to empty space
-                _this.lastPick.series.dehighlight();
+                _this.lastPick.series.dehighlightNode();
                 _this.hideTooltip();
                 _this.lastPick = undefined;
             }
         };
         this.onMouseOut = function (event) {
-            _this.tooltipElement.style.display = 'none';
+            _this.toggleTooltip(false);
         };
         this.onClick = function (event) {
             var x = event.offsetX;
@@ -84,9 +88,12 @@ var Chart = /** @class */ (function () {
             }
         };
         this._tooltipClass = this.defaultTooltipClass;
-        this.scene.root = new group_1.Group();
+        var root = new group_1.Group();
+        var background = this.background;
+        background.fill = 'white';
+        root.appendChild(background);
+        this.scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
-        this.tooltipElement.style.display = 'none';
         this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
         this.setupListeners(this.scene.hdpiCanvas.canvas);
@@ -194,7 +201,7 @@ var Chart = /** @class */ (function () {
         var index = this.series.indexOf(series);
         if (index >= 0) {
             this.series.splice(index, 1);
-            series.chart = null;
+            series.chart = undefined;
             this.seriesRoot.removeChild(series.group);
             this.dataPending = true;
             return true;
@@ -204,7 +211,7 @@ var Chart = /** @class */ (function () {
     Chart.prototype.removeAllSeries = function () {
         var _this = this;
         this.series.forEach(function (series) {
-            series.chart = null;
+            series.chart = undefined;
             _this.seriesRoot.removeChild(series.group);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
@@ -239,6 +246,7 @@ var Chart = /** @class */ (function () {
             return this._legendPadding;
         },
         set: function (value) {
+            value = isFinite(value) ? value : 20;
             if (this._legendPadding !== value) {
                 this._legendPadding = value;
                 this.layoutPending = true;
@@ -271,7 +279,7 @@ var Chart = /** @class */ (function () {
     });
     Object.defineProperty(Chart.prototype, "size", {
         get: function () {
-            return [this.scene.width, this.scene.height];
+            return this.scene.size;
         },
         set: function (value) {
             this.scene.size = value;
@@ -396,8 +404,8 @@ var Chart = /** @class */ (function () {
         }
     };
     Chart.prototype.positionLegend = function () {
-        if (!this.legend.data.length) {
-            return; // TODO: figure out why we ever arrive here (data should be processed before layout)
+        if (!this.legend.enabled || !this.legend.data.length) {
+            return;
         }
         var captionAutoPadding = this.captionAutoPadding;
         var width = this.width;
@@ -485,7 +493,7 @@ var Chart = /** @class */ (function () {
             series: series,
             node: node
         };
-        series.highlight(node);
+        series.highlightNode(node);
         var html = series.tooltipEnabled && series.getTooltipHtml(node.datum);
         if (html) {
             this.showTooltip(event, html);
@@ -498,12 +506,19 @@ var Chart = /** @class */ (function () {
         set: function (value) {
             if (this._tooltipClass !== value) {
                 this._tooltipClass = value;
-                this.tooltipElement.setAttribute('class', this.defaultTooltipClass + ' ' + value);
+                this.toggleTooltip();
             }
         },
         enumerable: true,
         configurable: true
     });
+    Chart.prototype.toggleTooltip = function (visible) {
+        var classList = [this.defaultTooltipClass, this._tooltipClass];
+        if (visible) {
+            classList.push('visible');
+        }
+        this.tooltipElement.setAttribute('class', classList.join(' '));
+    };
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
@@ -518,12 +533,14 @@ var Chart = /** @class */ (function () {
         else if (!el.innerHTML) {
             return;
         }
-        el.style.display = 'table';
+        if (html) {
+            this.toggleTooltip(true);
+        }
         var tooltipRect = this.tooltipRect = el.getBoundingClientRect();
-        var left = event.pageX + pageXOffset + offset[0];
-        var top = event.pageY + pageYOffset + offset[1];
+        var left = event.pageX + offset[0];
+        var top = event.pageY + offset[1];
         if (tooltipRect && parent && parent.parentElement) {
-            if (left + tooltipRect.width > parent.parentElement.offsetWidth) {
+            if (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth) {
                 left -= tooltipRect.width + offset[0];
             }
         }
@@ -531,9 +548,7 @@ var Chart = /** @class */ (function () {
         el.style.top = top + "px";
     };
     Chart.prototype.hideTooltip = function () {
-        var el = this.tooltipElement;
-        el.style.display = 'none';
-        el.innerHTML = '';
+        this.toggleTooltip(false);
     };
     return Chart;
 }());

@@ -2,6 +2,7 @@ import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostCons
 import { RangeController } from "../../rangeController";
 import { ChartModel, ColState } from "./chartModel";
 import { Palette } from "../../charts/chart/palettes";
+import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -35,7 +36,7 @@ export class ChartController extends BeanStub {
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForGridChange.bind(this));
-        // this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
     }
 
     public updateForGridChange() {
@@ -95,6 +96,10 @@ export class ChartController extends BeanStub {
         if (!this.model.isSuppressChartRanges()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
+    }
+
+    public getChartProxy(): ChartProxy {
+        return this.model.getChartProxy();
     }
 
     private raiseChartUpdatedEvent() {

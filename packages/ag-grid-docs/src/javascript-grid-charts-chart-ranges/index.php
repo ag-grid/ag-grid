@@ -86,9 +86,9 @@ include '../documentation-main/documentation_header.php';
         columns around in the grid to connect the series range.
     </note>
 
-    <p>
-        <img alt="Charting Ranges" src="contiguous-range.gif" style="margin-bottom: 0px; width: 100%">
-    </p>
+<!--    <p>-->
+<!--        <img alt="Charting Ranges" src="contiguous-range.gif" style="margin-bottom: 0px; width: 100%">-->
+<!--    </p>-->
 
     <h2>Defining categories and series</h2>
 
@@ -134,27 +134,6 @@ include '../documentation-main/documentation_header.php';
         {field: "silver", width: 100} // contains numbers
     </snippet>
 
-    <h3>Existing ColDef properties</h3>
-
-    <p>
-        When <code>ColDef.chartType</code> is <code>undefined</code> the grid will then consider then the following properties:
-    </p>
-
-    <ul>
-        <li><b>enableRowGroup / enablePivot</b>: Row grouping and pivoting enabled columns map to chart 'categories'.</li>
-        <li><b>enableValue</b>: Value columns will be considered chart 'series' columns.</li>
-    </ul>
-
-    <snippet>
-        // 'category' columns
-        {field: "athlete", enableRowGroup: true},
-        {field: "age", enablePivot: true}, // despite containing numbers
-
-        // 'series' columns
-        {field: "gold", enableValue: true},
-        {field: "silver", width: 100} // contains numbers
-    </snippet>
-
     <h3>Inferred by the Grid</h3>
 
     <p>
@@ -170,10 +149,10 @@ include '../documentation-main/documentation_header.php';
     </p>
     <ul class="content">
         <li><b>Athlete</b>: defined as a 'category' as <code>chartType='category'</code>.</li>
-        <li><b>Age</b>: defined as a 'category' as <code>enableRowGroup=true</code>.</li>
+        <li><b>Age</b>: defined as a 'category' as <code>chartType='category'</code>.</li>
         <li><b>Sport</b>: considered a 'category' as data is a <code>string</code>.</li>
         <li><b>Year</b>: defined 'excluded' from charting as data is of type <code>chartType='excluded'</code>.</li>
-        <li><b>Gold</b>: defined as 'series' as <code>enableValue=true</code>.</li>
+        <li><b>Gold</b>: defined as 'series' as <code>chartType='series'</code>.</li>
         <li><b>Silver</b>: defined as 'series' as <code>chartType='series'</code>.</li>
         <li><b>Bronze</b>: considered a 'series' as data is a <code>number</code>.</li>
     </ul>

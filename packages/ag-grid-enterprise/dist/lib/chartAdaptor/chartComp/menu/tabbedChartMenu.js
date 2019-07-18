@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24,14 +24,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
-var chartSettingsPanel_1 = require("./chartSettingsPanel");
-var chartDataPanel_1 = require("./chartDataPanel");
+var chartDataPanel_1 = require("./data/chartDataPanel");
+var chartFormatingPanel_1 = require("./format/chartFormatingPanel");
+var chartSettingsPanel_1 = require("./settings/chartSettingsPanel");
+var chartTranslator_1 = require("../chartTranslator");
 var TabbedChartMenu = /** @class */ (function (_super) {
     __extends(TabbedChartMenu, _super);
     function TabbedChartMenu(params) {
         var _this = _super.call(this) || this;
         _this.tabs = [];
-        _this.chartIcons = [];
+        _this.chartIcons = {};
         var controller = params.controller, type = params.type, panels = params.panels;
         _this.chartController = controller;
         _this.currentChartType = type;
@@ -42,10 +44,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
         var _this = this;
         this.panels.forEach(function (panel) {
             var panelType = panel.replace('chart', '').toLowerCase();
-            var isMain = panelType === TabbedChartMenu.TAB_MAIN;
-            var iconCls = isMain ? 'chart' : 'data';
-            var panelClass = isMain ? chartSettingsPanel_1.ChartSettingsPanel : chartDataPanel_1.ChartDataPanel;
-            var _a = _this.createTab(panelType, iconCls, panelClass), comp = _a.comp, tab = _a.tab;
+            var _a = _this.createTab(panel, panelType, _this.getPanelClass(panelType)), comp = _a.comp, tab = _a.tab;
             _this.tabs.push(tab);
             _this.addDestroyFunc(function () { return comp.destroy(); });
         });
@@ -54,27 +53,25 @@ var TabbedChartMenu = /** @class */ (function (_super) {
             cssClass: 'ag-chart-tabbed-menu'
         });
     };
-    TabbedChartMenu.prototype.getMinDimensions = function () {
-        return this.tabbedLayout.getMinDimensions();
-    };
-    TabbedChartMenu.prototype.createTab = function (name, iconName, ChildClass) {
-        var _this = this;
+    TabbedChartMenu.prototype.createTab = function (name, title, ChildClass) {
         var eWrapperDiv = document.createElement('div');
-        ag_grid_community_1._.addCssClass(eWrapperDiv, "ag-chart-" + name);
+        ag_grid_community_1._.addCssClass(eWrapperDiv, "ag-chart-" + title);
         var comp = new ChildClass(this.chartController);
         this.getContext().wireBean(comp);
         eWrapperDiv.appendChild(comp.getGui());
+        var titleEl = document.createElement('div');
+        titleEl.innerText = this.chartTranslator.translate(title);
         return {
             comp: comp,
             tab: {
-                title: ag_grid_community_1._.createIconNoSpan(iconName, this.gridOptionsWrapper, null),
+                title: titleEl,
                 bodyPromise: ag_grid_community_1.Promise.resolve(eWrapperDiv),
-                name: name,
-                afterAttachedCallback: function () {
-                    _this.parentComponent.setTitle("Chart " + ag_grid_community_1._.capitalise(name));
-                }
+                name: name
             }
         };
+    };
+    TabbedChartMenu.prototype.getMinDimensions = function () {
+        return this.tabbedLayout.getMinDimensions();
     };
     TabbedChartMenu.prototype.updateCurrentChartType = function (chartType) {
         ag_grid_community_1._.removeCssClass(this.chartIcons[this.currentChartType], 'ag-selected');
@@ -94,13 +91,19 @@ var TabbedChartMenu = /** @class */ (function (_super) {
         }
         _super.prototype.destroy.call(this);
     };
+    TabbedChartMenu.prototype.getPanelClass = function (panelType) {
+        var isDataPanel = panelType === TabbedChartMenu.TAB_DATA;
+        var isFormatPanel = panelType === TabbedChartMenu.TAB_FORMAT;
+        return isDataPanel ? chartDataPanel_1.ChartDataPanel : (isFormatPanel ? chartFormatingPanel_1.ChartFormattingPanel : chartSettingsPanel_1.ChartSettingsPanel);
+    };
     TabbedChartMenu.EVENT_TAB_SELECTED = 'tabSelected';
     TabbedChartMenu.TAB_MAIN = 'settings';
     TabbedChartMenu.TAB_DATA = 'data';
+    TabbedChartMenu.TAB_FORMAT = 'format';
     __decorate([
-        ag_grid_community_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
-    ], TabbedChartMenu.prototype, "gridOptionsWrapper", void 0);
+        ag_grid_community_1.Autowired('chartTranslator'),
+        __metadata("design:type", chartTranslator_1.ChartTranslator)
+    ], TabbedChartMenu.prototype, "chartTranslator", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

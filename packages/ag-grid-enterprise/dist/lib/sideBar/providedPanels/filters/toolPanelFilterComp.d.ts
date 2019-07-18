@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.0.1
+// ag-grid-enterprise v21.1.0
 import { Column, Component } from "ag-grid-community";
 export declare class ToolPanelFilterComp extends Component {
     private gridApi;
@@ -12,10 +12,12 @@ export declare class ToolPanelFilterComp extends Component {
     private eFilterName;
     private agFilterToolPanelBody;
     private eFilterIcon;
+    private eExpand;
+    private static TEMPLATE;
     private eExpandChecked;
     private eExpandUnchecked;
-    private static TEMPLATE;
     constructor();
+    private postConstruct;
     setColumn(column: Column): void;
     private addInIcon;
     private isFilterActive;

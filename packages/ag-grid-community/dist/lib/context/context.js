@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.0.1
+ * @version v21.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,11 +55,6 @@ var Context = /** @class */ (function () {
         }
         return null;
     };
-    // public createBean(BeanClass: new () => any): Component {
-    //     const beanInstance = new BeanClass();
-    //     this.wireBean(beanInstance);
-    //     return beanInstance;
-    // }
     Context.prototype.wireBean = function (bean, afterPreCreateCallback) {
         if (!bean) {
             throw Error("Can't wire to bean since it is null");

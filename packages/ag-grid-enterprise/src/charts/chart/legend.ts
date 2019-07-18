@@ -8,8 +8,8 @@ export interface LegendDatum {
     itemId: any,      // sub-component ID
     enabled: boolean, // the current state of the sub-component
     marker: {
-        fillStyle: string,
-        strokeStyle: string
+        fill: string,
+        stroke: string
     },
     label: {
         text: string  // display name for the sub-component
@@ -39,7 +39,8 @@ export class Legend {
     private _data: LegendDatum[] = [];
     set data(data: LegendDatum[]) {
         this._data = data;
-        this.group.visible = data.length > 0;
+        this.group.visible = this.enabled && data.length > 0;
+        this.requestLayout();
     }
     get data(): LegendDatum[] {
         return this._data;
@@ -56,8 +57,21 @@ export class Legend {
         return this._orientation;
     }
 
+    private _enabled: boolean = true;
+    set enabled(value: boolean) {
+        if (this._enabled !== value) {
+            this._enabled = value;
+            this.group.visible = value && this.data.length > 0;
+            this.requestLayout();
+        }
+    }
+    get enabled(): boolean {
+        return this._enabled;
+    }
+
     private _itemPaddingX: number = 16;
     set itemPaddingX(value: number) {
+        value = isFinite(value) ? value : 16;
         if (this._itemPaddingX !== value) {
             this._itemPaddingX = value;
             this.requestLayout();
@@ -69,6 +83,7 @@ export class Legend {
 
     private _itemPaddingY: number = 8;
     set itemPaddingY(value: number) {
+        value = isFinite(value) ? value : 8;
         if (this._itemPaddingY !== value) {
             this._itemPaddingY = value;
             this.requestLayout();
@@ -80,6 +95,7 @@ export class Legend {
 
     private _markerPadding: number = MarkerLabel.defaults.padding;
     set markerPadding(value: number) {
+        value = isFinite(value) ? value : MarkerLabel.defaults.padding;
         if (this._markerPadding !== value) {
             this._markerPadding = value;
             this.requestLayout();
@@ -100,19 +116,53 @@ export class Legend {
         return this._labelColor;
     }
 
-    private _labelFont: string = MarkerLabel.defaults.labelFont;
-    set labelFont(value: string) {
-        if (this._labelFont !== value) {
-            this._labelFont = value;
+    private _labelFontStyle: string | undefined = MarkerLabel.defaults.labelFontStyle;
+    set labelFontStyle(value: string | undefined) {
+        if (this._labelFontStyle !== value) {
+            this._labelFontStyle = value;
             this.requestLayout();
         }
     }
-    get labelFont(): string {
-        return this._labelFont;
+    get labelFontStyle(): string | undefined {
+        return this._labelFontStyle;
+    }
+
+    private _labelFontWeight: string | undefined = MarkerLabel.defaults.labelFontWeight;
+    set labelFontWeight(value: string | undefined) {
+        if (this._labelFontWeight !== value) {
+            this._labelFontWeight = value;
+            this.requestLayout();
+        }
+    }
+    get labelFontWeight(): string | undefined {
+        return this._labelFontWeight;
+    }
+
+    private _labelFontSize: number = MarkerLabel.defaults.labelFontSize;
+    set labelFontSize(value: number) {
+        if (this._labelFontSize !== value) {
+            this._labelFontSize = value;
+            this.requestLayout();
+        }
+    }
+    get labelFontSize(): number {
+        return this._labelFontSize;
+    }
+
+    private _labelFontFamily: string = MarkerLabel.defaults.labelFontFamily;
+    set labelFontFamily(value: string) {
+        if (this._labelFontFamily !== value) {
+            this._labelFontFamily = value;
+            this.requestLayout();
+        }
+    }
+    get labelFontFamily(): string {
+        return this._labelFontFamily;
     }
 
     private _markerSize: number = 14;
     set markerSize(value: number) {
+        value = isFinite(value) ? value : 14;
         if (this._markerSize !== value) {
             this._markerSize = value;
             this.requestLayout();
@@ -124,6 +174,7 @@ export class Legend {
 
     private _markerStrokeWidth: number = 1;
     set markerStrokeWidth(value: number) {
+        value = isFinite(value) ? value : 1;
         if (this._markerStrokeWidth !== value) {
             this._markerStrokeWidth = value;
             this.update();
@@ -167,7 +218,10 @@ export class Legend {
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
             markerLabel.markerSize = this.markerSize;
-            markerLabel.labelFont = this.labelFont;
+            markerLabel.labelFontStyle = this.labelFontStyle;
+            markerLabel.labelFontWeight = this.labelFontWeight;
+            markerLabel.labelFontSize = this.labelFontSize;
+            markerLabel.labelFontFamily = this.labelFontFamily;
             markerLabel.labelText = datum.label.text;
             markerLabel.padding = this.markerPadding;
 
@@ -314,8 +368,8 @@ export class Legend {
     update() {
         this.itemSelection.each((markerLabel, datum) => {
             const marker = datum.marker;
-            markerLabel.markerFill = marker.fillStyle;
-            markerLabel.markerStroke = marker.strokeStyle;
+            markerLabel.markerFill = marker.fill;
+            markerLabel.markerStroke = marker.stroke;
             markerLabel.markerStrokeWidth = this.markerStrokeWidth;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
 
