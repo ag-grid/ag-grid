@@ -22,7 +22,7 @@ index.batchSynonyms(synonyms, { forwardToReplicas: true, replaceExistingSynonyms
 
 async function forEachMenu(callback) {
     rank = 10000;
-    async function iterateItems(items, prefix = '') {
+    async function iterateItems(items, prefix = null) {
         if (!items) {
             return
         }
@@ -45,6 +45,9 @@ async function forEachMenu(callback) {
 
 async function crawl(title, path) {
     console.log('Indexing ', path)
+
+    // TODO: hack to accommodate new menu structure
+    title = title.replace("undefined > ", "");
 
     await page.goto(`${host}${path}`, { waitUntil: 'domcontentloaded' });
 
@@ -78,7 +81,6 @@ async function run() {
     index.saveObjects(records, function(err, content) {
         console.log('response from algolia:', content)
     })
-
 
     browser.close()
 }
