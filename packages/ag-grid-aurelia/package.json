@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-aurelia",
-  "version": "21.0.1",
+  "version": "20.0.0",
   "description": "ag-Grid Aurelia Component",
   "main": "./main.js",
   "typings": "./main.d.ts",
@@ -25,7 +25,7 @@
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
     "@types/core-js": "^2.5.0",
-    "ag-grid-community": "^21.0.0",
+    "ag-grid-community": "^20.0.0",
     "aurelia-framework": "1.x",
     "gulp": "^3.9.1",
     "gulp-header": "^2.0.5",
@@ -36,7 +36,7 @@
     "typescript": "~3.4.1"
   },
   "peerDependencies": {
-    "ag-grid-community": "^21.0.0",
+    "ag-grid-community": "^20.0.0",
     "aurelia-framework": "1.x"
   },
   "aurelia": {
