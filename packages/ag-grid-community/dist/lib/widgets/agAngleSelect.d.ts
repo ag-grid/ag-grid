@@ -18,6 +18,7 @@ export declare class AgAngleSelect extends AgAbstractLabel {
     private dragListener;
     constructor();
     postConstruct(): void;
+    private updateNumberInput;
     private positionChildCircle;
     private calculatePolar;
     private calculateCartesian;
@@ -26,6 +27,7 @@ export declare class AgAngleSelect extends AgAbstractLabel {
     private calculateAngleDrag;
     private toDegrees;
     private toRadians;
+    private normalizeNegativeValue;
     private normalizeAngle180;
     getRadius(): number;
     setRadius(r: number): this;

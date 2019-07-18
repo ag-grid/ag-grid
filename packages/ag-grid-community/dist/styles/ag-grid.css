@@ -1152,10 +1152,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       -webkit-box-flex: 1;
       -ms-flex: 1 1 auto;
       flex: 1 1 auto; }
-    .ag-rich-select .ag-rich-select-value .ag-icon {
-      -webkit-box-ordinal-group: 2;
-      -ms-flex-order: 1;
-      order: 1; }
+      .ag-rich-select .ag-rich-select-value > span.ag-icon {
+        -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+        order: 1;
+        -webkit-box-flex: 0;
+        -ms-flex: none;
+        flex: none; }
   .ag-rich-select .ag-rich-select-list .ag-virtual-list-item {
     display: -webkit-box;
     display: -ms-flexbox;

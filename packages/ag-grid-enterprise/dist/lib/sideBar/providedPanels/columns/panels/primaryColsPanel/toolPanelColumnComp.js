@@ -62,6 +62,9 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
     ToolPanelColumnComp.prototype.onLabelClicked = function () {
+        if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
+            return;
+        }
         var nextState = !this.cbSelect.getValue();
         this.onChangeCommon(nextState);
     };

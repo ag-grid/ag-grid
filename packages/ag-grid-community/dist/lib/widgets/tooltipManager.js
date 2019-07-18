@@ -56,7 +56,7 @@ var TooltipManager = /** @class */ (function () {
         if (this.activeComponent === targetCmp) {
             this.hideTooltip();
         }
-        if (targetCmp.isAlive() && registeredComponent.eventDestroyFuncs.length) {
+        if (targetCmp.isAlive() && registeredComponent && registeredComponent.eventDestroyFuncs.length) {
             registeredComponent.eventDestroyFuncs.forEach(function (func) { return func(); });
         }
         delete this.registeredComponents[id];

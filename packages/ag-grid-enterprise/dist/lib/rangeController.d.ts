@@ -23,6 +23,7 @@ export declare class RangeController implements IRangeController {
     autoScrollService: AutoScrollService;
     registerGridComp(gridPanel: GridPanel): void;
     private init;
+    onColumnVisibleChange(): void;
     refreshLastRangeStart(): void;
     isContiguousRange(cellRange: CellRange): boolean;
     getRangeStartRow(cellRange: CellRange): RowPosition;

@@ -138,6 +138,36 @@ interface ITooltipParams {
 
 <?= example('Blank Values', 'blank-values', 'generated') ?>
 
+<h2>Header Tooltip with Custom Tooltip</h2>
+
+<p>
+    When we want to display a header tooltip, we set the headerTooltip config as a string,
+    and that string will be displayed as the tooltip. But when working with custom tooltips we set 
+    use <code>colDef.tooltipComponent</code> to assign the column's tooltip component and the 
+    <code>headerTooltip</code> value will passed to the <code>params</code> object. <br>
+    Note: If <code>headerTooltip</code> or <code>tooltipValueGetter</code> are not present, the 
+    tooltip will not be rendered.
+</p>
+
+<p>
+    The example below shows how to set a custom tooltip to a header and to a grouped header. Note the following:
+</p>
+
+<ul>
+    <li>
+        The column <b>Athlete Col 1</b> does not have a <code>tooltipComponent</code> so it will render the value
+        set in it's <code>headerTooltip</code> config.
+    </li>
+    <li>
+        The column <b>Athlete Col 2</b> uses <code>tooltipComponent</code> so the the value in <code>headerTooltip</code>
+        is passed to the tooltipComponent </code>params</code> to be used.
+    </li>
+    <li>The <code>tooltipComponent</code> detect that it's being rendered by a header because the <code>params</code> object 
+    does not contain a <code>rowIndex</code> value.
+</ul>
+
+<?= example('Header Custom Tooltip', 'header-tooltip', 'generated') ?>
+
 <h2>Example: Using Browser Tooltips</h2>
 
 <p>

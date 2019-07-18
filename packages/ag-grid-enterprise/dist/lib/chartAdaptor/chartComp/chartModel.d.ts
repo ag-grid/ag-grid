@@ -64,6 +64,8 @@ export declare class ChartModel extends BeanStub {
     private getColDisplayName;
     private getRowIndexes;
     private getAllChartColumns;
+    private isNumberCol;
+    private extractLeafData;
     private generateId;
     destroy(): void;
 }

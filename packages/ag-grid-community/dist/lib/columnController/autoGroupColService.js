@@ -84,9 +84,7 @@ var AutoGroupColService = /** @class */ (function () {
         var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var defaultAutoColDef = {
-            headerName: localeTextFunc('group', 'Group'),
-            // this is needed for charting, so that the group column can be used as a dimension
-            enableRowGroup: true
+            headerName: localeTextFunc('group', 'Group')
         };
         var userHasProvidedGroupCellRenderer = userAutoColDef && (userAutoColDef.cellRenderer || userAutoColDef.cellRendererFramework);
         // only add the default group cell renderer if user hasn't provided one

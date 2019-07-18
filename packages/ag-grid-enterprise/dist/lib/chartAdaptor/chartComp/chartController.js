@@ -44,7 +44,7 @@ var ChartController = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_CELL_VALUE_CHANGED, this.updateForGridChange.bind(this));
-        // this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
     };
     ChartController.prototype.updateForGridChange = function () {
         // update the model with changes to the cell ranges from the grid before updating the column state

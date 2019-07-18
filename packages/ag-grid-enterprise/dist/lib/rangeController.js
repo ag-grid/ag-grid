@@ -28,7 +28,29 @@ var RangeController = /** @class */ (function () {
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE, this.refreshLastRangeStart.bind(this));
+        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
+    };
+    RangeController.prototype.onColumnVisibleChange = function () {
+        var _this = this;
+        // first move start column in last cell range (i.e. series chart range)
+        this.refreshLastRangeStart();
+        // then check if the column visibility has changed in any cell range
+        this.cellRanges.forEach(function (cellRange) {
+            var beforeCols = cellRange.columns;
+            // remove hidden cols from cell range
+            cellRange.columns = cellRange.columns.filter(function (col) { return col.isVisible(); });
+            var colsInRangeChanged = !ag_grid_community_1._.compareArrays(beforeCols, cellRange.columns);
+            if (colsInRangeChanged) {
+                // notify users and other parts of grid (i.e. status panel) that range has changed
+                _this.onRangeChanged({ started: false, finished: true });
+                // notify chart of cell range change
+                var event_1 = {
+                    id: cellRange.id,
+                    type: ag_grid_community_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED
+                };
+                _this.eventService.dispatchEvent(event_1);
+            }
+        });
     };
     RangeController.prototype.refreshLastRangeStart = function () {
         var lastRange = ag_grid_community_1._.last(this.cellRanges);
@@ -158,27 +180,35 @@ var RangeController = /** @class */ (function () {
         if (colsChanged || endRowChanged) {
             // Note that we are raising a new event as the Chart shouldn't be notified when other ranges are changed
             // or when the chart setCellRanges when the chart gains focus!
-            var event_1 = {
+            var event_2 = {
                 id: cellRange.id,
                 type: ag_grid_community_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED
             };
-            this.eventService.dispatchEvent(event_1);
+            this.eventService.dispatchEvent(event_2);
         }
     };
     RangeController.prototype.refreshRangeStart = function (cellRange) {
-        var _a = this.getRangeEdgeColumns(cellRange), left = _a.left, right = _a.right;
         var startColumn = cellRange.startColumn, columns = cellRange.columns;
-        var isFirst = startColumn === left;
-        var isLast = startColumn === right;
-        var wasFirst = startColumn === columns[0];
-        var wasLast = startColumn === ag_grid_community_1._.last(columns);
-        if (wasFirst && !isFirst) {
-            cellRange.startColumn = left;
-            cellRange.columns = [left].concat(cellRange.columns.filter(function (col) { return col !== left; }));
+        var moveColInCellRange = function (colToMove, moveToFront) {
+            var otherCols = cellRange.columns.filter(function (col) { return col !== colToMove; });
+            if (colToMove) {
+                cellRange.startColumn = colToMove;
+                cellRange.columns = moveToFront ? [colToMove].concat(otherCols) : otherCols.concat([colToMove]);
+            }
+            else {
+                cellRange.columns = otherCols;
+            }
+        };
+        var _a = this.getRangeEdgeColumns(cellRange), left = _a.left, right = _a.right;
+        var shouldMoveLeftCol = startColumn === columns[0] && startColumn !== left;
+        if (shouldMoveLeftCol) {
+            moveColInCellRange(left, true);
+            return;
         }
-        else if (wasLast && !isLast) {
-            cellRange.startColumn = right;
-            cellRange.columns = cellRange.columns.filter(function (col) { return col !== right; }).concat([right]);
+        var shouldMoveRightCol = startColumn === ag_grid_community_1._.last(columns) && startColumn === right;
+        if (shouldMoveRightCol) {
+            moveColInCellRange(right, false);
+            return;
         }
     };
     RangeController.prototype.getRangeEdgeColumns = function (cellRange) {

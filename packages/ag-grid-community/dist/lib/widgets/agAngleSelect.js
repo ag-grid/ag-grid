@@ -75,14 +75,20 @@ var AgAngleSelect = /** @class */ (function (_super) {
             }
             _this.setValue(floatValue);
         });
+        this.updateNumberInput();
+        if (utils_1._.exists(this.getValue())) {
+            this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
+        }
         this.addDestroyableEventListener(this, agAbstractField_1.AgAbstractField.EVENT_CHANGED, function () {
             if (_this.eAngleValue.getInputElement().contains(document.activeElement)) {
                 return;
             }
-            var val = _this.getValue();
-            var normalizedValue = val < 0 ? 360 + val : val;
-            _this.eAngleValue.setValue(normalizedValue.toString());
+            _this.updateNumberInput();
         });
+    };
+    AgAngleSelect.prototype.updateNumberInput = function () {
+        var normalizedValue = this.normalizeNegativeValue(this.getValue());
+        this.eAngleValue.setValue(normalizedValue.toString());
     };
     AgAngleSelect.prototype.positionChildCircle = function (radians) {
         var rect = this.parentCircleRect || { width: 24, height: 24 };
@@ -137,6 +143,9 @@ var AgAngleSelect = /** @class */ (function (_super) {
     };
     AgAngleSelect.prototype.toRadians = function (degrees) {
         return degrees / 180 * Math.PI;
+    };
+    AgAngleSelect.prototype.normalizeNegativeValue = function (degrees) {
+        return degrees < 0 ? 360 + degrees : degrees;
     };
     AgAngleSelect.prototype.normalizeAngle180 = function (radians) {
         radians %= Math.PI * 2;

@@ -166,6 +166,7 @@ gridOptions = {
                         <li style="padding-bottom: 5px">Change the chart type</li>
                         <li style="padding-bottom: 5px">Change the colour palette</li>
                         <li style="padding-bottom: 5px">Select categories and series columns</li>
+                        <li style="padding-bottom: 5px">Format the chart</li>
                         <li>Download the chart</li>
                     </ul>
                     </p>

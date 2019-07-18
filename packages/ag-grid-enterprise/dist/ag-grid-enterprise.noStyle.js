@@ -28771,7 +28771,7 @@ var TooltipManager = /** @class */ (function () {
         if (this.activeComponent === targetCmp) {
             this.hideTooltip();
         }
-        if (targetCmp.isAlive() && registeredComponent.eventDestroyFuncs.length) {
+        if (targetCmp.isAlive() && registeredComponent && registeredComponent.eventDestroyFuncs.length) {
             registeredComponent.eventDestroyFuncs.forEach(function (func) { return func(); });
         }
         delete this.registeredComponents[id];
@@ -30618,9 +30618,7 @@ var AutoGroupColService = /** @class */ (function () {
         var userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var defaultAutoColDef = {
-            headerName: localeTextFunc('group', 'Group'),
-            // this is needed for charting, so that the group column can be used as a dimension
-            enableRowGroup: true
+            headerName: localeTextFunc('group', 'Group')
         };
         var userHasProvidedGroupCellRenderer = userAutoColDef && (userAutoColDef.cellRenderer || userAutoColDef.cellRendererFramework);
         // only add the default group cell renderer if user hasn't provided one
@@ -42721,14 +42719,20 @@ var AgAngleSelect = /** @class */ (function (_super) {
             }
             _this.setValue(floatValue);
         });
+        this.updateNumberInput();
+        if (utils_1._.exists(this.getValue())) {
+            this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
+        }
         this.addDestroyableEventListener(this, agAbstractField_1.AgAbstractField.EVENT_CHANGED, function () {
             if (_this.eAngleValue.getInputElement().contains(document.activeElement)) {
                 return;
             }
-            var val = _this.getValue();
-            var normalizedValue = val < 0 ? 360 + val : val;
-            _this.eAngleValue.setValue(normalizedValue.toString());
+            _this.updateNumberInput();
         });
+    };
+    AgAngleSelect.prototype.updateNumberInput = function () {
+        var normalizedValue = this.normalizeNegativeValue(this.getValue());
+        this.eAngleValue.setValue(normalizedValue.toString());
     };
     AgAngleSelect.prototype.positionChildCircle = function (radians) {
         var rect = this.parentCircleRect || { width: 24, height: 24 };
@@ -42783,6 +42787,9 @@ var AgAngleSelect = /** @class */ (function (_super) {
     };
     AgAngleSelect.prototype.toRadians = function (degrees) {
         return degrees / 180 * Math.PI;
+    };
+    AgAngleSelect.prototype.normalizeNegativeValue = function (degrees) {
+        return degrees < 0 ? 360 + degrees : degrees;
     };
     AgAngleSelect.prototype.normalizeAngle180 = function (radians) {
         radians %= Math.PI * 2;
@@ -43607,7 +43614,29 @@ var RangeController = /** @class */ (function () {
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE, this.refreshLastRangeStart.bind(this));
+        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
+    };
+    RangeController.prototype.onColumnVisibleChange = function () {
+        var _this = this;
+        // first move start column in last cell range (i.e. series chart range)
+        this.refreshLastRangeStart();
+        // then check if the column visibility has changed in any cell range
+        this.cellRanges.forEach(function (cellRange) {
+            var beforeCols = cellRange.columns;
+            // remove hidden cols from cell range
+            cellRange.columns = cellRange.columns.filter(function (col) { return col.isVisible(); });
+            var colsInRangeChanged = !ag_grid_community_1._.compareArrays(beforeCols, cellRange.columns);
+            if (colsInRangeChanged) {
+                // notify users and other parts of grid (i.e. status panel) that range has changed
+                _this.onRangeChanged({ started: false, finished: true });
+                // notify chart of cell range change
+                var event_1 = {
+                    id: cellRange.id,
+                    type: ag_grid_community_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED
+                };
+                _this.eventService.dispatchEvent(event_1);
+            }
+        });
     };
     RangeController.prototype.refreshLastRangeStart = function () {
         var lastRange = ag_grid_community_1._.last(this.cellRanges);
@@ -43737,27 +43766,35 @@ var RangeController = /** @class */ (function () {
         if (colsChanged || endRowChanged) {
             // Note that we are raising a new event as the Chart shouldn't be notified when other ranges are changed
             // or when the chart setCellRanges when the chart gains focus!
-            var event_1 = {
+            var event_2 = {
                 id: cellRange.id,
                 type: ag_grid_community_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED
             };
-            this.eventService.dispatchEvent(event_1);
+            this.eventService.dispatchEvent(event_2);
         }
     };
     RangeController.prototype.refreshRangeStart = function (cellRange) {
-        var _a = this.getRangeEdgeColumns(cellRange), left = _a.left, right = _a.right;
         var startColumn = cellRange.startColumn, columns = cellRange.columns;
-        var isFirst = startColumn === left;
-        var isLast = startColumn === right;
-        var wasFirst = startColumn === columns[0];
-        var wasLast = startColumn === ag_grid_community_1._.last(columns);
-        if (wasFirst && !isFirst) {
-            cellRange.startColumn = left;
-            cellRange.columns = [left].concat(cellRange.columns.filter(function (col) { return col !== left; }));
+        var moveColInCellRange = function (colToMove, moveToFront) {
+            var otherCols = cellRange.columns.filter(function (col) { return col !== colToMove; });
+            if (colToMove) {
+                cellRange.startColumn = colToMove;
+                cellRange.columns = moveToFront ? [colToMove].concat(otherCols) : otherCols.concat([colToMove]);
+            }
+            else {
+                cellRange.columns = otherCols;
+            }
+        };
+        var _a = this.getRangeEdgeColumns(cellRange), left = _a.left, right = _a.right;
+        var shouldMoveLeftCol = startColumn === columns[0] && startColumn !== left;
+        if (shouldMoveLeftCol) {
+            moveColInCellRange(left, true);
+            return;
         }
-        else if (wasLast && !isLast) {
-            cellRange.startColumn = right;
-            cellRange.columns = cellRange.columns.filter(function (col) { return col !== right; }).concat([right]);
+        var shouldMoveRightCol = startColumn === ag_grid_community_1._.last(columns) && startColumn === right;
+        if (shouldMoveRightCol) {
+            moveColInCellRange(right, false);
+            return;
         }
     };
     RangeController.prototype.getRangeEdgeColumns = function (cellRange) {
@@ -44931,7 +44968,7 @@ var ChartController = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_CELL_VALUE_CHANGED, this.updateForGridChange.bind(this));
-        // this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
     };
     ChartController.prototype.updateForGridChange = function () {
         // update the model with changes to the cell ranges from the grid before updating the column state
@@ -53439,8 +53476,7 @@ var ChartModel = /** @class */ (function (_super) {
         return { startRow: startRow, endRow: endRow };
     };
     ChartModel.prototype.getAllChartColumns = function () {
-        var firstRow = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: undefined });
-        var firstRowData = firstRow ? firstRow.data : null;
+        var _this = this;
         var displayedCols = this.columnController.getAllDisplayedColumns();
         var dimensionCols = [];
         var valueCols = [];
@@ -53467,15 +53503,38 @@ var ChartModel = /** @class */ (function (_super) {
                     return;
                 }
             }
-            if (col.isValueActive()) {
+            if (!col.isPrimary()) {
                 valueCols.push(col);
                 return;
             }
             // if 'chartDataType' is not provided then infer type based data contained in first row
-            var isNumberCol = firstRowData && typeof firstRowData[col.getColId()] === 'number';
-            isNumberCol ? valueCols.push(col) : dimensionCols.push(col);
+            _this.isNumberCol(col.getColId()) ? valueCols.push(col) : dimensionCols.push(col);
         });
         return { dimensionCols: dimensionCols, valueCols: valueCols };
+    };
+    ChartModel.prototype.isNumberCol = function (colId) {
+        if (colId === 'ag-Grid-AutoColumn')
+            return false;
+        var row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: undefined });
+        var rowData = row ? row.data : null;
+        var cellData;
+        if (row && row.group) {
+            cellData = this.extractLeafData(row, colId);
+        }
+        else {
+            cellData = rowData ? rowData[colId] : null;
+        }
+        return typeof cellData === 'number';
+    };
+    ChartModel.prototype.extractLeafData = function (row, colId) {
+        var leafRowData = row.allLeafChildren.map(function (row) { return row.data; });
+        var leafCellData = leafRowData.map(function (rowData) { return rowData[colId]; });
+        for (var i = 0; i < leafCellData.length; i++) {
+            if (leafCellData[i] !== null) {
+                return leafCellData[i];
+            }
+        }
+        return null;
     };
     ChartModel.prototype.generateId = function () {
         return 'id-' + Math.random().toString(36).substr(2, 16);
@@ -64561,6 +64620,9 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
     ToolPanelColumnComp.prototype.onLabelClicked = function () {
+        if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
+            return;
+        }
         var nextState = !this.cbSelect.getValue();
         this.onChangeCommon(nextState);
     };
@@ -67315,7 +67377,7 @@ var LicenseManager = /** @class */ (function () {
         this.watermarkMessage = "Incompatible License Version";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU2MzE3NTc2NTI2Ng==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU1OTc0OTQ0MzUwMA==';
     __decorate([
         ag_grid_community_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)
