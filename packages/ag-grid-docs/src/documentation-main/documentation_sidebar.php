@@ -77,8 +77,8 @@
     </div>
 </div>
 <br>
-<hr>
-<!-- Begin Mailchimp Signup Form -->
+
+    <!-- Begin Mailchimp Signup Form -->
 <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
 <style type="text/css">
     #mc_embed_signup {
@@ -144,34 +144,6 @@
     }(jQuery));
     var $mcj = jQuery.noConflict(true);</script>
 <!--End mc_embed_signup-->
-<div id="side-bar-announcements" style="margin-top: 10px">
-    <p>From our <a href="https://medium.com/ag-grid/">blog</a>:</p>
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title"><a
-                        href="https://medium.com/ag-grid/learn-to-customize-react-grid-in-less-than-10-minutes-2ce6845646bb">Learn
-                    to customize React grid in less than 10 minutes</a></h5>
-            <h6 class="card-subtitle mb-2 text-muted">Oct 16</h6>
-            <p class="card-text">Implement custom filtering logic, cell editor and renderer in this walk through.</p>
-            <p class="text-right">
-                <a class="learn-more"
-                   href="https://medium.com/ag-grid/learn-to-customize-react-grid-in-less-than-10-minutes-2ce6845646bb">Full
-                    Article</a>
-            </p>
-            <h5 class="card-title"><a
-                        href="https://medium.com/ag-grid/learn-to-customize-angular-grid-in-less-than-10-minutes-88005d53808d?source=collection_home---2------0---------------------">Learn
-                    to customize Angular grid in less than 10 minutes</a></h5>
-            <h6 class="card-subtitle mb-2 text-muted">Oct 16</h6>
-            <p class="card-text">Implement custom filtering logic, cell editor and renderer in this walk through.</p>
-            <p class="text-right">
-                <a class="learn-more"
-                   href="https://medium.com/ag-grid/learn-to-customize-angular-grid-in-less-than-10-minutes-88005d53808d?source=collection_home---2------0---------------------">Full
-                    Article
-                </a>
-            </p>
-        </div>
-    </div>
-    <br>
     <div class="card">
         <div class="card-body">
             <p>Work at ag-Grid</a>:</p>

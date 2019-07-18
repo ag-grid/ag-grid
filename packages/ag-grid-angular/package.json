@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "21.0.1",
+  "version": "21.1.0",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
@@ -39,7 +39,7 @@
     "@angular/compiler": "^4.4.7",
     "@angular/compiler-cli": "^4.4.7",
     "@angular/core": "^4.4.7",
-    "ag-grid-community": "^21.0.0",
+    "ag-grid-community": "^21.1.0",
     "core-js": "^2.5.7",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
@@ -59,7 +59,7 @@
   "peerDependencies": {
     "@angular/compiler": ">=2.1.x",
     "@angular/core": ">=2.1.x",
-    "ag-grid-community": "^21.0.0",
+    "ag-grid-community": "^21.1.0",
     "rxjs": ">=5.0.0-beta.12",
     "zone.js": ">=0.6.x"
   }
