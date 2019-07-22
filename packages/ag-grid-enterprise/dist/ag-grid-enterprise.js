@@ -63898,7 +63898,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var primaryColsListPanel_1 = __webpack_require__(281);
 var primaryColsHeaderPanel_1 = __webpack_require__(284);
 var PrimaryColsPanel = /** @class */ (function (_super) {
@@ -63946,25 +63946,25 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
     };
     PrimaryColsPanel.TEMPLATE = "<div class=\"ag-column-select-panel\">\n            <ag-primary-cols-header ref=\"primaryColsHeaderPanel\"></ag-primary-cols-header>\n            <ag-primary-cols-list ref=\"primaryColsListPanel\"></ag-primary-cols-list>\n        </div>";
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], PrimaryColsPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.RefSelector('primaryColsHeaderPanel'),
+        ag_grid_community_1.RefSelector('primaryColsHeaderPanel'),
         __metadata("design:type", primaryColsHeaderPanel_1.PrimaryColsHeaderPanel)
     ], PrimaryColsPanel.prototype, "primaryColsHeaderPanel", void 0);
     __decorate([
-        main_1.RefSelector('primaryColsListPanel'),
+        ag_grid_community_1.RefSelector('primaryColsListPanel'),
         __metadata("design:type", primaryColsListPanel_1.PrimaryColsListPanel)
     ], PrimaryColsPanel.prototype, "primaryColsListPanel", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], PrimaryColsPanel.prototype, "init", null);
     return PrimaryColsPanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.PrimaryColsPanel = PrimaryColsPanel;
 
 
@@ -63998,7 +63998,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var toolPanelColumnGroupComp_1 = __webpack_require__(282);
 var toolPanelColumnComp_1 = __webpack_require__(283);
 var primaryColsHeaderPanel_1 = __webpack_require__(284);
@@ -64010,7 +64010,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     PrimaryColsListPanel.prototype.init = function (params, allowDragging) {
         this.params = params;
         this.allowDragging = allowDragging;
-        this.addDestroyableEventListener(this.globalEventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.globalEventService, ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
@@ -64024,9 +64024,9 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.updateVisibilityOfRows();
     };
     PrimaryColsListPanel.prototype.destroyColumnComps = function () {
-        main_1._.clearElement(this.getGui());
+        ag_grid_community_1._.clearElement(this.getGui());
         if (this.columnComps) {
-            main_1._.iterateObject(this.columnComps, function (key, renderedItem) { return renderedItem.destroy(); });
+            ag_grid_community_1._.iterateObject(this.columnComps, function (key, renderedItem) { return renderedItem.destroy(); });
         }
         this.columnComps = {};
     };
@@ -64061,7 +64061,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         var recursiveFunc = function (items) {
             items.forEach(function (item) {
                 // only interested in groups
-                if (item instanceof main_1.OriginalColumnGroup) {
+                if (item instanceof ag_grid_community_1.OriginalColumnGroup) {
                     var comp = _this.columnComps[item.getId()];
                     if (comp) {
                         if (comp.isExpanded()) {
@@ -64102,7 +64102,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     PrimaryColsListPanel.prototype.recursivelyAddComps = function (tree, dept, groupsExist) {
         var _this = this;
         tree.forEach(function (child) {
-            if (child instanceof main_1.OriginalColumnGroup) {
+            if (child instanceof ag_grid_community_1.OriginalColumnGroup) {
                 _this.recursivelyAddGroupComps(child, dept, groupsExist);
             }
             else {
@@ -64115,14 +64115,14 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.destroyColumnComps();
     };
     PrimaryColsListPanel.prototype.doSetExpandedAll = function (value) {
-        main_1._.iterateObject(this.columnComps, function (key, renderedItem) {
+        ag_grid_community_1._.iterateObject(this.columnComps, function (key, renderedItem) {
             if (renderedItem.isExpandable()) {
                 renderedItem.setExpanded(value);
             }
         });
     };
     PrimaryColsListPanel.prototype.setFilterText = function (filterText) {
-        this.filterText = main_1._.exists(filterText) ? filterText.toLowerCase() : null;
+        this.filterText = ag_grid_community_1._.exists(filterText) ? filterText.toLowerCase() : null;
         this.updateVisibilityOfRows();
     };
     PrimaryColsListPanel.prototype.updateVisibilityOfRows = function () {
@@ -64130,7 +64130,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         // the visibility requires breadth first search. this is because a group passes filter if CHILDREN
         // pass filter, a column passes group open/closed visibility if a PARENT is open. so we need to do
         // two recursions. we pass the result of the first recursion to the second.
-        var filterResults = main_1._.exists(this.filterText) ? this.createFilterResults() : null;
+        var filterResults = ag_grid_community_1._.exists(this.filterText) ? this.createFilterResults() : null;
         this.recursivelySetVisibility(this.columnTree, true, filterResults);
     };
     PrimaryColsListPanel.prototype.createFilterResults = function () {
@@ -64141,7 +64141,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             var atLeastOneThisLevelPassed = false;
             items.forEach(function (item) {
                 var atLeastOneChildPassed = false;
-                if (item instanceof main_1.OriginalColumnGroup) {
+                if (item instanceof ag_grid_community_1.OriginalColumnGroup) {
                     var columnGroup = item;
                     var groupChildren = columnGroup.getChildren();
                     atLeastOneChildPassed = recursivelyCheckFilter(groupChildren);
@@ -64178,7 +64178,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 var passesFilter = filterResults ? filterResults[child.getId()] : true;
                 comp.setVisible(parentGroupsOpen && passesFilter);
             }
-            if (child instanceof main_1.OriginalColumnGroup) {
+            if (child instanceof ag_grid_community_1.OriginalColumnGroup) {
                 var columnGroup = child;
                 var childrenOpen = void 0;
                 if (comp) {
@@ -64194,25 +64194,25 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         });
     };
     PrimaryColsListPanel.prototype.doSetSelectedAll = function (checked) {
-        main_1._.iterateObject(this.columnComps, function (key, column) {
+        ag_grid_community_1._.iterateObject(this.columnComps, function (key, column) {
             column.onSelectAllChanged(checked);
         });
     };
     PrimaryColsListPanel.TEMPLATE = "<div class=\"ag-primary-cols-list-panel\"></div>";
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], PrimaryColsListPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], PrimaryColsListPanel.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], PrimaryColsListPanel.prototype, "globalEventService", void 0);
     return PrimaryColsListPanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.PrimaryColsListPanel = PrimaryColsListPanel;
 
 
@@ -64246,7 +64246,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     __extends(ToolPanelColumnGroupComp, _super);
     function ToolPanelColumnGroupComp(columnGroup, columnDept, expandedCallback, allowDragging, expandByDefault) {
@@ -64261,43 +64261,43 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     }
     ToolPanelColumnGroupComp.prototype.init = function () {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
-        this.eDragHandle = main_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
-        main_1._.addCssClass(this.eDragHandle, 'ag-column-drag');
+        this.eDragHandle = ag_grid_community_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        ag_grid_community_1._.addCssClass(this.eDragHandle, 'ag-column-drag');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
         // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
-        if (main_1._.missing(this.displayName)) {
+        if (ag_grid_community_1._.missing(this.displayName)) {
             this.displayName = '>>';
         }
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
         this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addDestroyableEventListener(this.cbSelect, ag_grid_community_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.setOpenClosedIcons();
         this.setupDragging();
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
-        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        ag_grid_community_1.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     };
     ToolPanelColumnGroupComp.prototype.addVisibilityListenersToAllChildren = function () {
         var _this = this;
         this.columnGroup.getLeafColumns().forEach(function (column) {
-            _this.addDestroyableEventListener(column, main_1.Column.EVENT_VISIBLE_CHANGED, _this.onColumnStateChanged.bind(_this));
-            _this.addDestroyableEventListener(column, main_1.Column.EVENT_VALUE_CHANGED, _this.onColumnStateChanged.bind(_this));
-            _this.addDestroyableEventListener(column, main_1.Column.EVENT_PIVOT_CHANGED, _this.onColumnStateChanged.bind(_this));
-            _this.addDestroyableEventListener(column, main_1.Column.EVENT_ROW_GROUP_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addDestroyableEventListener(column, ag_grid_community_1.Column.EVENT_VISIBLE_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addDestroyableEventListener(column, ag_grid_community_1.Column.EVENT_VALUE_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addDestroyableEventListener(column, ag_grid_community_1.Column.EVENT_PIVOT_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addDestroyableEventListener(column, ag_grid_community_1.Column.EVENT_ROW_GROUP_CHANGED, _this.onColumnStateChanged.bind(_this));
         });
     };
     ToolPanelColumnGroupComp.prototype.setupDragging = function () {
         var _this = this;
         if (!this.allowDragging) {
-            main_1._.setVisible(this.eDragHandle, false);
+            ag_grid_community_1._.setVisible(this.eDragHandle, false);
             return;
         }
         var dragSource = {
-            type: main_1.DragSourceType.ToolPanel,
+            type: ag_grid_community_1.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
             dragItemCallback: function () { return _this.createDragItem(); }
@@ -64316,12 +64316,12 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         };
     };
     ToolPanelColumnGroupComp.prototype.setupExpandContract = function () {
-        this.eGroupClosedIcon.appendChild(main_1._.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
-        this.eGroupOpenedIcon.appendChild(main_1._.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
+        this.eGroupClosedIcon.appendChild(ag_grid_community_1._.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
+        this.eGroupOpenedIcon.appendChild(ag_grid_community_1._.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
         this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-        var touchListener = new main_1.TouchListener(this.eColumnGroupIcons, true);
-        this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
+        var touchListener = new ag_grid_community_1.TouchListener(this.eColumnGroupIcons, true);
+        this.addDestroyableEventListener(touchListener, ag_grid_community_1.TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
     ToolPanelColumnGroupComp.prototype.onLabelClicked = function () {
@@ -64483,8 +64483,8 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnGroupComp.prototype.setOpenClosedIcons = function () {
         var folderOpen = this.expanded;
-        main_1._.setVisible(this.eGroupClosedIcon, !folderOpen);
-        main_1._.setVisible(this.eGroupOpenedIcon, folderOpen);
+        ag_grid_community_1._.setVisible(this.eGroupClosedIcon, !folderOpen);
+        ag_grid_community_1._.setVisible(this.eGroupOpenedIcon, folderOpen);
     };
     ToolPanelColumnGroupComp.prototype.isExpanded = function () {
         return this.expanded;
@@ -64516,49 +64516,49 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupClosedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ToolPanelColumnGroupComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], ToolPanelColumnGroupComp.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('dragAndDropService'),
-        __metadata("design:type", main_1.DragAndDropService)
+        ag_grid_community_1.Autowired('dragAndDropService'),
+        __metadata("design:type", ag_grid_community_1.DragAndDropService)
     ], ToolPanelColumnGroupComp.prototype, "dragAndDropService", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], ToolPanelColumnGroupComp.prototype, "eventService", void 0);
     __decorate([
-        main_1.RefSelector('cbSelect'),
-        __metadata("design:type", main_1.AgCheckbox)
+        ag_grid_community_1.RefSelector('cbSelect'),
+        __metadata("design:type", ag_grid_community_1.AgCheckbox)
     ], ToolPanelColumnGroupComp.prototype, "cbSelect", void 0);
     __decorate([
-        main_1.RefSelector('eLabel'),
+        ag_grid_community_1.RefSelector('eLabel'),
         __metadata("design:type", HTMLElement)
     ], ToolPanelColumnGroupComp.prototype, "eLabel", void 0);
     __decorate([
-        main_1.RefSelector('eGroupOpenedIcon'),
+        ag_grid_community_1.RefSelector('eGroupOpenedIcon'),
         __metadata("design:type", HTMLElement)
     ], ToolPanelColumnGroupComp.prototype, "eGroupOpenedIcon", void 0);
     __decorate([
-        main_1.RefSelector('eGroupClosedIcon'),
+        ag_grid_community_1.RefSelector('eGroupClosedIcon'),
         __metadata("design:type", HTMLElement)
     ], ToolPanelColumnGroupComp.prototype, "eGroupClosedIcon", void 0);
     __decorate([
-        main_1.RefSelector('eColumnGroupIcons'),
+        ag_grid_community_1.RefSelector('eColumnGroupIcons'),
         __metadata("design:type", HTMLElement)
     ], ToolPanelColumnGroupComp.prototype, "eColumnGroupIcons", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ToolPanelColumnGroupComp.prototype, "init", null);
     return ToolPanelColumnGroupComp;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.ToolPanelColumnGroupComp = ToolPanelColumnGroupComp;
 
 
@@ -64592,7 +64592,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var ToolPanelColumnComp = /** @class */ (function (_super) {
     __extends(ToolPanelColumnComp, _super);
     function ToolPanelColumnComp(column, columnDept, allowDragging, groupsExist) {
@@ -64606,11 +64606,11 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     }
     ToolPanelColumnComp.prototype.init = function () {
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
-        this.eDragHandle = main_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
-        main_1._.addCssClass(this.eDragHandle, 'ag-column-drag');
+        this.eDragHandle = ag_grid_community_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        ag_grid_community_1._.addCssClass(this.eDragHandle, 'ag-column-drag');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        var displayNameSanitised = main_1._.escape(this.displayName);
+        var displayNameSanitised = ag_grid_community_1._.escape(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         var indent = this.columnDept;
@@ -64619,16 +64619,16 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         }
         this.addCssClass("ag-toolpanel-indent-" + indent);
         this.setupDragging();
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, main_1.Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, main_1.Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, main_1.Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, main_1.Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, ag_grid_community_1.Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, ag_grid_community_1.Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, ag_grid_community_1.Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, ag_grid_community_1.Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addDestroyableEventListener(this.cbSelect, ag_grid_community_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.onColumnStateChanged();
-        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+        ag_grid_community_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
     ToolPanelColumnComp.prototype.onLabelClicked = function () {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -64678,7 +64678,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
                 var copyOfPivotColumns = this.columnController.getPivotColumns().slice();
                 copyOfPivotColumns.push(column);
                 var event_1 = {
-                    type: main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                    type: ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                     columns: copyOfPivotColumns,
                     api: this.gridApi,
                     columnApi: this.columnApi
@@ -64695,7 +64695,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
                 var copyOfValueColumns = this.columnController.getValueColumns().slice();
                 copyOfValueColumns.push(column);
                 var event_2 = {
-                    type: main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
+                    type: ag_grid_community_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                     columns: copyOfValueColumns,
                     api: this.gridApi,
                     columnApi: this.columnApi
@@ -64712,7 +64712,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
                 var copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
                 copyOfRowGroupColumns.push(column);
                 var event_3 = {
-                    type: main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                    type: ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                     columns: copyOfRowGroupColumns,
                     api: this.gridApi,
                     columnApi: this.columnApi
@@ -64734,9 +64734,9 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         if (column.isAllowValue()) {
             if (functionPassive) {
                 var copyOfValueColumns = this.columnController.getValueColumns().slice();
-                main_1._.removeFromArray(copyOfValueColumns, column);
+                ag_grid_community_1._.removeFromArray(copyOfValueColumns, column);
                 var event_4 = {
-                    type: main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
+                    type: ag_grid_community_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                     api: this.gridApi,
                     columnApi: this.columnApi,
                     columns: copyOfValueColumns
@@ -64750,9 +64750,9 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         else if (column.isAllowRowGroup()) {
             if (functionPassive) {
                 var copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
-                main_1._.removeFromArray(copyOfRowGroupColumns, column);
+                ag_grid_community_1._.removeFromArray(copyOfRowGroupColumns, column);
                 var event_5 = {
-                    type: main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                    type: ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                     api: this.gridApi,
                     columnApi: this.columnApi,
                     columns: copyOfRowGroupColumns
@@ -64766,9 +64766,9 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         else if (column.isAllowPivot()) {
             if (functionPassive) {
                 var copyOfPivotColumns = this.columnController.getPivotColumns().slice();
-                main_1._.removeFromArray(copyOfPivotColumns, column);
+                ag_grid_community_1._.removeFromArray(copyOfPivotColumns, column);
                 var event_6 = {
-                    type: main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                    type: ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                     api: this.gridApi,
                     columnApi: this.columnApi,
                     columns: copyOfPivotColumns
@@ -64783,11 +64783,11 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.setupDragging = function () {
         var _this = this;
         if (!this.allowDragging) {
-            main_1._.setVisible(this.eDragHandle, false);
+            ag_grid_community_1._.setVisible(this.eDragHandle, false);
             return;
         }
         var dragSource = {
-            type: main_1.DragSourceType.ToolPanel,
+            type: ag_grid_community_1.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
             dragItemCallback: function () { return _this.createDragItem(); }
@@ -64863,45 +64863,45 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ToolPanelColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], ToolPanelColumnComp.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], ToolPanelColumnComp.prototype, "eventService", void 0);
     __decorate([
-        main_1.Autowired('dragAndDropService'),
-        __metadata("design:type", main_1.DragAndDropService)
+        ag_grid_community_1.Autowired('dragAndDropService'),
+        __metadata("design:type", ag_grid_community_1.DragAndDropService)
     ], ToolPanelColumnComp.prototype, "dragAndDropService", void 0);
     __decorate([
-        main_1.Autowired('columnApi'),
-        __metadata("design:type", main_1.ColumnApi)
+        ag_grid_community_1.Autowired('columnApi'),
+        __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], ToolPanelColumnComp.prototype, "columnApi", void 0);
     __decorate([
-        main_1.Autowired('gridApi'),
-        __metadata("design:type", main_1.GridApi)
+        ag_grid_community_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], ToolPanelColumnComp.prototype, "gridApi", void 0);
     __decorate([
-        main_1.RefSelector('eLabel'),
+        ag_grid_community_1.RefSelector('eLabel'),
         __metadata("design:type", HTMLElement)
     ], ToolPanelColumnComp.prototype, "eLabel", void 0);
     __decorate([
-        main_1.RefSelector('cbSelect'),
-        __metadata("design:type", main_1.AgCheckbox)
+        ag_grid_community_1.RefSelector('cbSelect'),
+        __metadata("design:type", ag_grid_community_1.AgCheckbox)
     ], ToolPanelColumnComp.prototype, "cbSelect", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ToolPanelColumnComp.prototype, "init", null);
     return ToolPanelColumnComp;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.ToolPanelColumnComp = ToolPanelColumnComp;
 
 
@@ -64935,7 +64935,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var SELECTED_STATE;
 (function (SELECTED_STATE) {
     SELECTED_STATE[SELECTED_STATE["CHECKED"] = 0] = "CHECKED";
@@ -64971,14 +64971,14 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         }
     };
     PrimaryColsHeaderPanel.prototype.createExpandIcons = function () {
-        this.eExpand.appendChild(this.eExpandChecked = main_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandUnchecked = main_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandIndeterminate = main_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandChecked = ag_grid_community_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandUnchecked = ag_grid_community_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandIndeterminate = ag_grid_community_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
     };
     PrimaryColsHeaderPanel.prototype.createCheckIcons = function () {
-        this.eSelect.appendChild(this.eSelectChecked = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper));
-        this.eSelect.appendChild(this.eSelectUnchecked = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper));
-        this.eSelect.appendChild(this.eSelectIndeterminate = main_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectChecked = ag_grid_community_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectUnchecked = ag_grid_community_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectIndeterminate = ag_grid_community_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper));
     };
     // we only show expand / collapse if we are showing columns
     PrimaryColsHeaderPanel.prototype.showOrHideOptions = function () {
@@ -64986,30 +64986,30 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         var showSelect = !this.params.suppressColumnSelectAll;
         var showExpand = !this.params.suppressColumnExpandAll;
         var groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
-        main_1._.setVisible(this.eFilterWrapper, showFilter);
-        main_1._.setVisible(this.eSelect, showSelect);
-        main_1._.setVisible(this.eExpand, showExpand && groupsPresent);
+        ag_grid_community_1._.setVisible(this.eFilterWrapper, showFilter);
+        ag_grid_community_1._.setVisible(this.eSelect, showSelect);
+        ag_grid_community_1._.setVisible(this.eExpand, showExpand && groupsPresent);
     };
     PrimaryColsHeaderPanel.prototype.addEventListeners = function () {
         var _this = this;
         var eventsImpactingCheckedState = [
-            main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            main_1.Events.EVENT_COLUMN_PIVOT_CHANGED,
-            main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            main_1.Events.EVENT_COLUMN_VALUE_CHANGED,
-            main_1.Events.EVENT_COLUMN_VISIBLE,
-            main_1.Events.EVENT_NEW_COLUMNS_LOADED
+            ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_VALUE_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE,
+            ag_grid_community_1.Events.EVENT_NEW_COLUMNS_LOADED
         ];
         eventsImpactingCheckedState.forEach(function (event) {
             _this.addDestroyableEventListener(_this.eventService, event, _this.setColumnsCheckedState.bind(_this));
         });
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     };
     PrimaryColsHeaderPanel.prototype.onFilterTextChanged = function () {
         var _this = this;
         if (!this.onFilterTextChangedDebounced) {
-            this.onFilterTextChangedDebounced = main_1._.debounce(function () {
+            this.onFilterTextChangedDebounced = ag_grid_community_1._.debounce(function () {
                 var filterText = _this.eFilterTextField.value;
                 _this.dispatchEvent({ type: 'filterChanged', filterText: filterText });
             }, 400);
@@ -65039,9 +65039,9 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     };
     PrimaryColsHeaderPanel.prototype.setExpandState = function (state) {
         this.expandState = state;
-        main_1._.setVisible(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
-        main_1._.setVisible(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
-        main_1._.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINIATE);
+        ag_grid_community_1._.setVisible(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
+        ag_grid_community_1._.setVisible(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
+        ag_grid_community_1._.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINIATE);
     };
     PrimaryColsHeaderPanel.prototype.setColumnsCheckedState = function () {
         var allPrimaryColumns = this.columnController.getAllPrimaryColumns();
@@ -65089,52 +65089,52 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         else {
             this.selectState = SELECTED_STATE.CHECKED;
         }
-        main_1._.setVisible(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
-        main_1._.setVisible(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
-        main_1._.setVisible(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINIATE);
+        ag_grid_community_1._.setVisible(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
+        ag_grid_community_1._.setVisible(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
+        ag_grid_community_1._.setVisible(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINIATE);
     };
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], PrimaryColsHeaderPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], PrimaryColsHeaderPanel.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], PrimaryColsHeaderPanel.prototype, "eventService", void 0);
     __decorate([
-        main_1.RefSelector('eFilterTextField'),
+        ag_grid_community_1.RefSelector('eFilterTextField'),
         __metadata("design:type", HTMLInputElement)
     ], PrimaryColsHeaderPanel.prototype, "eFilterTextField", void 0);
     __decorate([
-        main_1.RefSelector('eExpand'),
+        ag_grid_community_1.RefSelector('eExpand'),
         __metadata("design:type", HTMLElement)
     ], PrimaryColsHeaderPanel.prototype, "eExpand", void 0);
     __decorate([
-        main_1.RefSelector('eSelect'),
+        ag_grid_community_1.RefSelector('eSelect'),
         __metadata("design:type", HTMLElement)
     ], PrimaryColsHeaderPanel.prototype, "eSelect", void 0);
     __decorate([
-        main_1.RefSelector('eFilterWrapper'),
+        ag_grid_community_1.RefSelector('eFilterWrapper'),
         __metadata("design:type", HTMLElement)
     ], PrimaryColsHeaderPanel.prototype, "eFilterWrapper", void 0);
     __decorate([
-        main_1.PreConstruct,
+        ag_grid_community_1.PreConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], PrimaryColsHeaderPanel.prototype, "preConstruct", null);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], PrimaryColsHeaderPanel.prototype, "postConstruct", null);
     return PrimaryColsHeaderPanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.PrimaryColsHeaderPanel = PrimaryColsHeaderPanel;
 
 
@@ -68059,7 +68059,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var pivotModePanel_1 = __webpack_require__(300);
 var rowGroupDropZonePanel_1 = __webpack_require__(301);
 var valueDropZonePanel_1 = __webpack_require__(304);
@@ -68093,7 +68093,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             suppressPivots: false,
             api: this.gridApi
         };
-        main_1._.mergeDeep(defaultParams, params);
+        ag_grid_community_1._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         if (!this.params.suppressPivotMode) {
             this.addComponent(new pivotModePanel_1.PivotModePanel());
@@ -68118,7 +68118,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     ColumnToolPanel.prototype.destroyChildren = function () {
         this.childDestroyFuncs.forEach(function (func) { return func(); });
         this.childDestroyFuncs.length = 0;
-        main_1._.clearElement(this.getGui());
+        ag_grid_community_1._.clearElement(this.getGui());
     };
     ColumnToolPanel.prototype.refresh = function () {
         this.destroyChildren();
@@ -68130,19 +68130,19 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     };
     ColumnToolPanel.TEMPLATE = "<div class=\"ag-column-panel\"></div>";
     __decorate([
-        main_1.Autowired("gridOptionsWrapper"),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired("gridOptionsWrapper"),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ColumnToolPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired("gridApi"),
-        __metadata("design:type", main_1.GridApi)
+        ag_grid_community_1.Autowired("gridApi"),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], ColumnToolPanel.prototype, "gridApi", void 0);
     __decorate([
-        main_1.Autowired("eventService"),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired("eventService"),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], ColumnToolPanel.prototype, "eventService", void 0);
     return ColumnToolPanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.ColumnToolPanel = ColumnToolPanel;
 
 
@@ -68176,7 +68176,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var PivotModePanel = /** @class */ (function (_super) {
     __extends(PivotModePanel, _super);
     function PivotModePanel() {
@@ -68190,9 +68190,9 @@ var PivotModePanel = /** @class */ (function (_super) {
         this.cbPivotMode.setValue(this.columnController.isPivotMode());
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
-        this.addDestroyableEventListener(this.cbPivotMode, main_1.AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.cbPivotMode, ag_grid_community_1.AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     };
     PivotModePanel.prototype.onBtPivotMode = function () {
         var newValue = this.cbPivotMode.getValue();
@@ -68209,29 +68209,29 @@ var PivotModePanel = /** @class */ (function (_super) {
         this.cbPivotMode.setValue(pivotModeActive);
     };
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], PivotModePanel.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], PivotModePanel.prototype, "eventService", void 0);
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], PivotModePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.RefSelector('cbPivotMode'),
-        __metadata("design:type", main_1.AgCheckbox)
+        ag_grid_community_1.RefSelector('cbPivotMode'),
+        __metadata("design:type", ag_grid_community_1.AgCheckbox)
     ], PivotModePanel.prototype, "cbPivotMode", void 0);
     __decorate([
-        main_1.PreConstruct,
+        ag_grid_community_1.PreConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], PivotModePanel.prototype, "init", null);
     return PivotModePanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.PivotModePanel = PivotModePanel;
 
 
@@ -68265,7 +68265,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var baseDropZonePanel_1 = __webpack_require__(302);
 var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __extends(RowGroupDropZonePanel, _super);
@@ -68284,12 +68284,12 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         var emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         var title = localeTextFunc('groups', 'Row Groups');
         _super.prototype.init.call(this, {
-            dragAndDropIcon: main_1.DragAndDropService.ICON_GROUP,
-            icon: main_1._.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
+            dragAndDropIcon: ag_grid_community_1.DragAndDropService.ICON_GROUP,
+            icon: ag_grid_community_1._.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     };
     RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -68306,7 +68306,7 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
     RowGroupDropZonePanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
             var event_1 = {
-                type: main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                type: ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns,
                 api: this.gridApi,
                 columnApi: this.columnApi
@@ -68318,41 +68318,41 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         }
     };
     RowGroupDropZonePanel.prototype.getIconName = function () {
-        return this.isPotentialDndColumns() ? main_1.DragAndDropService.ICON_GROUP : main_1.DragAndDropService.ICON_NOT_ALLOWED;
+        return this.isPotentialDndColumns() ? ag_grid_community_1.DragAndDropService.ICON_GROUP : ag_grid_community_1.DragAndDropService.ICON_NOT_ALLOWED;
     };
     RowGroupDropZonePanel.prototype.getExistingColumns = function () {
         return this.columnController.getRowGroupColumns();
     };
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], RowGroupDropZonePanel.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], RowGroupDropZonePanel.prototype, "eventService", void 0);
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], RowGroupDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('loggerFactory'),
-        __metadata("design:type", main_1.LoggerFactory)
+        ag_grid_community_1.Autowired('loggerFactory'),
+        __metadata("design:type", ag_grid_community_1.LoggerFactory)
     ], RowGroupDropZonePanel.prototype, "loggerFactory", void 0);
     __decorate([
-        main_1.Autowired('dragAndDropService'),
-        __metadata("design:type", main_1.DragAndDropService)
+        ag_grid_community_1.Autowired('dragAndDropService'),
+        __metadata("design:type", ag_grid_community_1.DragAndDropService)
     ], RowGroupDropZonePanel.prototype, "dragAndDropService", void 0);
     __decorate([
-        main_1.Autowired('columnApi'),
-        __metadata("design:type", main_1.ColumnApi)
+        ag_grid_community_1.Autowired('columnApi'),
+        __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], RowGroupDropZonePanel.prototype, "columnApi", void 0);
     __decorate([
-        main_1.Autowired('gridApi'),
-        __metadata("design:type", main_1.GridApi)
+        ag_grid_community_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], RowGroupDropZonePanel.prototype, "gridApi", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
@@ -68383,7 +68383,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var dropZoneColumnComp_1 = __webpack_require__(303);
 var BaseDropZonePanel = /** @class */ (function (_super) {
     __extends(BaseDropZonePanel, _super);
@@ -68394,7 +68394,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         _this.childColumnComponents = [];
         _this.horizontal = horizontal;
         _this.valueColumn = valueColumn;
-        _this.eColumnDropList = main_1._.loadTemplate('<div class="ag-column-drop-list"></div>');
+        _this.eColumnDropList = ag_grid_community_1._.loadTemplate('<div class="ag-column-drop-list"></div>');
         return _this;
     }
     BaseDropZonePanel.prototype.isHorizontal = function () {
@@ -68411,13 +68411,13 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         this.guiDestroyFunctions.forEach(function (func) { return func(); });
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
-        main_1._.clearElement(this.getGui());
-        main_1._.clearElement(this.eColumnDropList);
+        ag_grid_community_1._.clearElement(this.getGui());
+        ag_grid_community_1._.clearElement(this.eColumnDropList);
     };
     BaseDropZonePanel.prototype.init = function (params) {
         this.params = params;
         this.logger = this.beans.loggerFactory.create('AbstractColumnDropPanel');
-        this.beans.eventService.addEventListener(main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.beans.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
@@ -68439,7 +68439,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.isInterestedIn = function (type) {
         // not interested in row drags
-        return type === main_1.DragSourceType.HeaderCell || type === main_1.DragSourceType.ToolPanel;
+        return type === ag_grid_community_1.DragSourceType.HeaderCell || type === ag_grid_community_1.DragSourceType.ToolPanel;
     };
     BaseDropZonePanel.prototype.checkInsertIndex = function (draggingEvent) {
         var newIndex;
@@ -68460,13 +68460,13 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         return changed;
     };
     BaseDropZonePanel.prototype.getNewHorizontalInsertIndex = function (draggingEvent) {
-        if (main_1._.missing(draggingEvent.hDirection)) {
+        if (ag_grid_community_1._.missing(draggingEvent.hDirection)) {
             return -1;
         }
         var newIndex = 0;
         var mouseEvent = draggingEvent.event;
         var enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-        var goingLeft = draggingEvent.hDirection === main_1.HDirection.Left;
+        var goingLeft = draggingEvent.hDirection === ag_grid_community_1.HDirection.Left;
         var mouseX = mouseEvent.clientX;
         this.childColumnComponents.forEach(function (childColumn) {
             var rect = childColumn.getGui().getBoundingClientRect();
@@ -68479,14 +68479,14 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         return newIndex;
     };
     BaseDropZonePanel.prototype.getNewVerticalInsertIndex = function (draggingEvent) {
-        if (main_1._.missing(draggingEvent.vDirection)) {
+        if (ag_grid_community_1._.missing(draggingEvent.vDirection)) {
             return -1;
         }
         var newIndex = 0;
         var mouseEvent = draggingEvent.event;
         this.childColumnComponents.forEach(function (childColumn) {
             var rect = childColumn.getGui().getBoundingClientRect();
-            if (draggingEvent.vDirection === main_1.VDirection.Down) {
+            if (draggingEvent.vDirection === ag_grid_community_1.VDirection.Down) {
                 var verticalFit = mouseEvent.clientY >= rect.top;
                 if (verticalFit) {
                     newIndex++;
@@ -68523,7 +68523,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var dragColumns = draggingEvent.dragSource.dragItemCallback().columns || [];
         this.state = BaseDropZonePanel.STATE_NEW_COLUMNS_IN;
         // take out columns that are not groupable
-        var goodDragColumns = main_1._.filter(dragColumns, this.isColumnDroppable.bind(this));
+        var goodDragColumns = ag_grid_community_1._.filter(dragColumns, this.isColumnDroppable.bind(this));
         var weHaveColumnsToDrag = goodDragColumns.length > 0;
         if (weHaveColumnsToDrag) {
             this.potentialDndColumns = goodDragColumns;
@@ -68532,7 +68532,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         }
     };
     BaseDropZonePanel.prototype.isPotentialDndColumns = function () {
-        return main_1._.existsAndNotEmpty(this.potentialDndColumns);
+        return ag_grid_community_1._.existsAndNotEmpty(this.potentialDndColumns);
     };
     BaseDropZonePanel.prototype.onDragLeave = function (draggingEvent) {
         // if the dragging started from us, we remove the group, however if it started
@@ -68578,18 +68578,18 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.removeColumns = function (columnsToRemove) {
         var newColumnList = this.getExistingColumns().slice();
-        columnsToRemove.forEach(function (column) { return main_1._.removeFromArray(newColumnList, column); });
+        columnsToRemove.forEach(function (column) { return ag_grid_community_1._.removeFromArray(newColumnList, column); });
         this.updateColumns(newColumnList);
     };
     BaseDropZonePanel.prototype.addColumns = function (columnsToAdd) {
         var newColumnList = this.getExistingColumns().slice();
-        main_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
+        ag_grid_community_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
         this.updateColumns(newColumnList);
     };
     BaseDropZonePanel.prototype.rearrangeColumns = function (columnsToAdd) {
         var newColumnList = this.getNonGhostColumns().slice();
-        main_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
-        var noChangeDetected = main_1._.shallowCompare(newColumnList, this.getExistingColumns());
+        ag_grid_community_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
+        var noChangeDetected = ag_grid_community_1._.shallowCompare(newColumnList, this.getExistingColumns());
         if (noChangeDetected) {
             return false;
         }
@@ -68619,7 +68619,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var existingColumns = this.getExistingColumns();
         var nonGhostColumns;
         if (this.isPotentialDndColumns()) {
-            nonGhostColumns = main_1._.filter(existingColumns, function (column) { return _this.potentialDndColumns.indexOf(column) < 0; });
+            nonGhostColumns = ag_grid_community_1._.filter(existingColumns, function (column) { return _this.potentialDndColumns.indexOf(column) < 0; });
         }
         else {
             nonGhostColumns = existingColumns;
@@ -68674,14 +68674,14 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var iconFaded = this.horizontal && this.isExistingColumnsEmpty();
         var eGroupIcon = this.params.icon;
         var eContainer = document.createElement('div');
-        main_1._.addCssClass(eGroupIcon, 'ag-column-drop-icon');
-        main_1._.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
+        ag_grid_community_1._.addCssClass(eGroupIcon, 'ag-column-drop-icon');
+        ag_grid_community_1._.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
         eContainer.appendChild(eGroupIcon);
         if (!this.horizontal) {
             var eTitle = document.createElement('span');
             eTitle.innerHTML = this.params.title;
-            main_1._.addCssClass(eTitle, 'ag-column-drop-title');
-            main_1._.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
+            ag_grid_community_1._.addCssClass(eTitle, 'ag-column-drop-title');
+            ag_grid_community_1._.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
             eContainer.appendChild(eTitle);
         }
         this.getGui().appendChild(eContainer);
@@ -68696,7 +68696,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         }
         var eMessage = document.createElement('span');
         eMessage.innerHTML = this.params.emptyMessage;
-        main_1._.addCssClass(eMessage, 'ag-column-drop-empty-message');
+        ag_grid_community_1._.addCssClass(eMessage, 'ag-column-drop-empty-message');
         this.getGui().appendChild(eMessage);
     };
     BaseDropZonePanel.prototype.addArrow = function (eParent) {
@@ -68704,7 +68704,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
             var enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-            eParent.appendChild(main_1._.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper));
+            eParent.appendChild(ag_grid_community_1._.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper));
         }
     };
     BaseDropZonePanel.STATE_NOT_DRAGGING = 'notDragging';
@@ -68713,7 +68713,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     BaseDropZonePanel.CHAR_LEFT_ARROW = '&#8592;';
     BaseDropZonePanel.CHAR_RIGHT_ARROW = '&#8594;';
     return BaseDropZonePanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.BaseDropZonePanel = BaseDropZonePanel;
 
 
@@ -68988,7 +68988,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var baseDropZonePanel_1 = __webpack_require__(302);
 var ValuesDropZonePanel = /** @class */ (function (_super) {
     __extends(ValuesDropZonePanel, _super);
@@ -69007,15 +69007,15 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
         var emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         var title = localeTextFunc('values', 'Values');
         _super.prototype.init.call(this, {
-            dragAndDropIcon: main_1.DragAndDropService.ICON_AGGREGATE,
-            icon: main_1._.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null),
+            dragAndDropIcon: ag_grid_community_1.DragAndDropService.ICON_AGGREGATE,
+            icon: ag_grid_community_1._.createIconNoSpan('valuePanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     };
     ValuesDropZonePanel.prototype.getIconName = function () {
-        return this.isPotentialDndColumns() ? main_1.DragAndDropService.ICON_AGGREGATE : main_1.DragAndDropService.ICON_NOT_ALLOWED;
+        return this.isPotentialDndColumns() ? ag_grid_community_1.DragAndDropService.ICON_AGGREGATE : ag_grid_community_1.DragAndDropService.ICON_NOT_ALLOWED;
     };
     ValuesDropZonePanel.prototype.isColumnDroppable = function (column) {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -69032,7 +69032,7 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
     ValuesDropZonePanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
             var event_1 = {
-                type: main_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
+                type: ag_grid_community_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns,
                 api: this.gridApi,
                 columnApi: this.columnApi
@@ -69047,35 +69047,35 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
         return this.columnController.getValueColumns();
     };
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], ValuesDropZonePanel.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], ValuesDropZonePanel.prototype, "eventService", void 0);
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ValuesDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('loggerFactory'),
-        __metadata("design:type", main_1.LoggerFactory)
+        ag_grid_community_1.Autowired('loggerFactory'),
+        __metadata("design:type", ag_grid_community_1.LoggerFactory)
     ], ValuesDropZonePanel.prototype, "loggerFactory", void 0);
     __decorate([
-        main_1.Autowired('dragAndDropService'),
-        __metadata("design:type", main_1.DragAndDropService)
+        ag_grid_community_1.Autowired('dragAndDropService'),
+        __metadata("design:type", ag_grid_community_1.DragAndDropService)
     ], ValuesDropZonePanel.prototype, "dragAndDropService", void 0);
     __decorate([
-        main_1.Autowired('columnApi'),
-        __metadata("design:type", main_1.ColumnApi)
+        ag_grid_community_1.Autowired('columnApi'),
+        __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], ValuesDropZonePanel.prototype, "columnApi", void 0);
     __decorate([
-        main_1.Autowired('gridApi'),
-        __metadata("design:type", main_1.GridApi)
+        ag_grid_community_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], ValuesDropZonePanel.prototype, "gridApi", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
@@ -69115,7 +69115,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var baseDropZonePanel_1 = __webpack_require__(302);
 var PivotDropZonePanel = /** @class */ (function (_super) {
     __extends(PivotDropZonePanel, _super);
@@ -69134,14 +69134,14 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
         var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
         var title = localeTextFunc('pivots', 'Column Labels');
         _super.prototype.init.call(this, {
-            dragAndDropIcon: main_1.DragAndDropService.ICON_GROUP,
-            icon: main_1._.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null),
+            dragAndDropIcon: ag_grid_community_1.DragAndDropService.ICON_GROUP,
+            icon: ag_grid_community_1._.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
         this.refresh();
     };
     PivotDropZonePanel.prototype.refresh = function () {
@@ -69187,7 +69187,7 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
     PivotDropZonePanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
             var event_1 = {
-                type: main_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                type: ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                 columns: columns,
                 api: this.gridApi,
                 columnApi: this.columnApi
@@ -69199,41 +69199,41 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
         }
     };
     PivotDropZonePanel.prototype.getIconName = function () {
-        return this.isPotentialDndColumns() ? main_1.DragAndDropService.ICON_PIVOT : main_1.DragAndDropService.ICON_NOT_ALLOWED;
+        return this.isPotentialDndColumns() ? ag_grid_community_1.DragAndDropService.ICON_PIVOT : ag_grid_community_1.DragAndDropService.ICON_NOT_ALLOWED;
     };
     PivotDropZonePanel.prototype.getExistingColumns = function () {
         return this.columnController.getPivotColumns();
     };
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], PivotDropZonePanel.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], PivotDropZonePanel.prototype, "eventService", void 0);
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], PivotDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('loggerFactory'),
-        __metadata("design:type", main_1.LoggerFactory)
+        ag_grid_community_1.Autowired('loggerFactory'),
+        __metadata("design:type", ag_grid_community_1.LoggerFactory)
     ], PivotDropZonePanel.prototype, "loggerFactory", void 0);
     __decorate([
-        main_1.Autowired('dragAndDropService'),
-        __metadata("design:type", main_1.DragAndDropService)
+        ag_grid_community_1.Autowired('dragAndDropService'),
+        __metadata("design:type", ag_grid_community_1.DragAndDropService)
     ], PivotDropZonePanel.prototype, "dragAndDropService", void 0);
     __decorate([
-        main_1.Autowired('columnApi'),
-        __metadata("design:type", main_1.ColumnApi)
+        ag_grid_community_1.Autowired('columnApi'),
+        __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], PivotDropZonePanel.prototype, "columnApi", void 0);
     __decorate([
-        main_1.Autowired('gridApi'),
-        __metadata("design:type", main_1.GridApi)
+        ag_grid_community_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], PivotDropZonePanel.prototype, "gridApi", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
@@ -75754,7 +75754,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = __webpack_require__(2);
+var ag_grid_community_1 = __webpack_require__(2);
 var rowGroupDropZonePanel_1 = __webpack_require__(301);
 var pivotDropZonePanel_1 = __webpack_require__(305);
 var GridHeaderDropZones = /** @class */ (function (_super) {
@@ -75764,8 +75764,8 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
     }
     GridHeaderDropZones.prototype.postConstruct = function () {
         this.setGui(this.createNorthPanel());
-        this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.eventService.addEventListener(main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
         this.onRowGroupChanged();
     };
     GridHeaderDropZones.prototype.createNorthPanel = function () {
@@ -75780,11 +75780,11 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return _this.pivotComp.destroy(); });
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
-        this.rowGroupComp.addEventListener(main_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-        this.pivotComp.addEventListener(main_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+        this.rowGroupComp.addEventListener(ag_grid_community_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+        this.pivotComp.addEventListener(ag_grid_community_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         this.addDestroyFunc(function () {
-            _this.rowGroupComp.removeEventListener(main_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-            _this.pivotComp.removeEventListener(main_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+            _this.rowGroupComp.removeEventListener(ag_grid_community_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+            _this.pivotComp.removeEventListener(ag_grid_community_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         });
         this.onDropPanelVisible();
         return topPanelGui;
@@ -75799,10 +75799,10 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
             return;
         }
         var rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
-        if (rowGroupPanelShow === main_1.Constants.ALWAYS) {
+        if (rowGroupPanelShow === ag_grid_community_1.Constants.ALWAYS) {
             this.rowGroupComp.setVisible(true);
         }
-        else if (rowGroupPanelShow === main_1.Constants.ONLY_WHEN_GROUPING) {
+        else if (rowGroupPanelShow === ag_grid_community_1.Constants.ONLY_WHEN_GROUPING) {
             var grouping = !this.columnController.isRowGroupEmpty();
             this.rowGroupComp.setVisible(grouping);
         }
@@ -75811,25 +75811,25 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], GridHeaderDropZones.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], GridHeaderDropZones.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], GridHeaderDropZones.prototype, "eventService", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], GridHeaderDropZones.prototype, "postConstruct", null);
     return GridHeaderDropZones;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.GridHeaderDropZones = GridHeaderDropZones;
 
 

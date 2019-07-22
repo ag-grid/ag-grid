@@ -23,7 +23,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid-community/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var pivotModePanel_1 = require("./panels/pivotModePanel");
 var rowGroupDropZonePanel_1 = require("./panels/rowGroupDropZonePanel");
 var valueDropZonePanel_1 = require("./panels/valueDropZonePanel");
@@ -57,7 +57,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             suppressPivots: false,
             api: this.gridApi
         };
-        main_1._.mergeDeep(defaultParams, params);
+        ag_grid_community_1._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         if (!this.params.suppressPivotMode) {
             this.addComponent(new pivotModePanel_1.PivotModePanel());
@@ -82,7 +82,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     ColumnToolPanel.prototype.destroyChildren = function () {
         this.childDestroyFuncs.forEach(function (func) { return func(); });
         this.childDestroyFuncs.length = 0;
-        main_1._.clearElement(this.getGui());
+        ag_grid_community_1._.clearElement(this.getGui());
     };
     ColumnToolPanel.prototype.refresh = function () {
         this.destroyChildren();
@@ -94,17 +94,17 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     };
     ColumnToolPanel.TEMPLATE = "<div class=\"ag-column-panel\"></div>";
     __decorate([
-        main_1.Autowired("gridOptionsWrapper"),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired("gridOptionsWrapper"),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], ColumnToolPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired("gridApi"),
-        __metadata("design:type", main_1.GridApi)
+        ag_grid_community_1.Autowired("gridApi"),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], ColumnToolPanel.prototype, "gridApi", void 0);
     __decorate([
-        main_1.Autowired("eventService"),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired("eventService"),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], ColumnToolPanel.prototype, "eventService", void 0);
     return ColumnToolPanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.ColumnToolPanel = ColumnToolPanel;

@@ -23,7 +23,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid-community/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var primaryColsListPanel_1 = require("./primaryColsListPanel");
 var primaryColsHeaderPanel_1 = require("./primaryColsHeaderPanel");
 var PrimaryColsPanel = /** @class */ (function (_super) {
@@ -71,23 +71,23 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
     };
     PrimaryColsPanel.TEMPLATE = "<div class=\"ag-column-select-panel\">\n            <ag-primary-cols-header ref=\"primaryColsHeaderPanel\"></ag-primary-cols-header>\n            <ag-primary-cols-list ref=\"primaryColsListPanel\"></ag-primary-cols-list>\n        </div>";
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], PrimaryColsPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.RefSelector('primaryColsHeaderPanel'),
+        ag_grid_community_1.RefSelector('primaryColsHeaderPanel'),
         __metadata("design:type", primaryColsHeaderPanel_1.PrimaryColsHeaderPanel)
     ], PrimaryColsPanel.prototype, "primaryColsHeaderPanel", void 0);
     __decorate([
-        main_1.RefSelector('primaryColsListPanel'),
+        ag_grid_community_1.RefSelector('primaryColsListPanel'),
         __metadata("design:type", primaryColsListPanel_1.PrimaryColsListPanel)
     ], PrimaryColsPanel.prototype, "primaryColsListPanel", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], PrimaryColsPanel.prototype, "init", null);
     return PrimaryColsPanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.PrimaryColsPanel = PrimaryColsPanel;

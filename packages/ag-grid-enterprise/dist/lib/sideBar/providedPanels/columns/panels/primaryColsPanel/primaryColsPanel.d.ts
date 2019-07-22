@@ -1,5 +1,5 @@
 // ag-grid-enterprise v21.1.0
-import { Component } from "ag-grid-community/main";
+import { Component } from "ag-grid-community";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export interface BaseColumnItem {
     getDisplayName(): string | null;

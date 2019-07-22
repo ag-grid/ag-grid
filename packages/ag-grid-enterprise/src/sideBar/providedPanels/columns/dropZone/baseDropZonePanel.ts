@@ -14,7 +14,7 @@ import {
     LoggerFactory,
     VDirection,
     _
-} from "ag-grid-community/main";
+} from "ag-grid-community";
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
 
 export interface BaseDropZonePanelParams {

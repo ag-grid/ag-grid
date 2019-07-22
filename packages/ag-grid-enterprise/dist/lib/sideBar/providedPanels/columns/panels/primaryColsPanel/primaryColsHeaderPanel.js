@@ -23,7 +23,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid-community/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var SELECTED_STATE;
 (function (SELECTED_STATE) {
     SELECTED_STATE[SELECTED_STATE["CHECKED"] = 0] = "CHECKED";
@@ -59,14 +59,14 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         }
     };
     PrimaryColsHeaderPanel.prototype.createExpandIcons = function () {
-        this.eExpand.appendChild(this.eExpandChecked = main_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandUnchecked = main_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandIndeterminate = main_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandChecked = ag_grid_community_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandUnchecked = ag_grid_community_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandIndeterminate = ag_grid_community_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
     };
     PrimaryColsHeaderPanel.prototype.createCheckIcons = function () {
-        this.eSelect.appendChild(this.eSelectChecked = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper));
-        this.eSelect.appendChild(this.eSelectUnchecked = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper));
-        this.eSelect.appendChild(this.eSelectIndeterminate = main_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectChecked = ag_grid_community_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectUnchecked = ag_grid_community_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectIndeterminate = ag_grid_community_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper));
     };
     // we only show expand / collapse if we are showing columns
     PrimaryColsHeaderPanel.prototype.showOrHideOptions = function () {
@@ -74,30 +74,30 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         var showSelect = !this.params.suppressColumnSelectAll;
         var showExpand = !this.params.suppressColumnExpandAll;
         var groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
-        main_1._.setVisible(this.eFilterWrapper, showFilter);
-        main_1._.setVisible(this.eSelect, showSelect);
-        main_1._.setVisible(this.eExpand, showExpand && groupsPresent);
+        ag_grid_community_1._.setVisible(this.eFilterWrapper, showFilter);
+        ag_grid_community_1._.setVisible(this.eSelect, showSelect);
+        ag_grid_community_1._.setVisible(this.eExpand, showExpand && groupsPresent);
     };
     PrimaryColsHeaderPanel.prototype.addEventListeners = function () {
         var _this = this;
         var eventsImpactingCheckedState = [
-            main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            main_1.Events.EVENT_COLUMN_PIVOT_CHANGED,
-            main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            main_1.Events.EVENT_COLUMN_VALUE_CHANGED,
-            main_1.Events.EVENT_COLUMN_VISIBLE,
-            main_1.Events.EVENT_NEW_COLUMNS_LOADED
+            ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_VALUE_CHANGED,
+            ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE,
+            ag_grid_community_1.Events.EVENT_NEW_COLUMNS_LOADED
         ];
         eventsImpactingCheckedState.forEach(function (event) {
             _this.addDestroyableEventListener(_this.eventService, event, _this.setColumnsCheckedState.bind(_this));
         });
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     };
     PrimaryColsHeaderPanel.prototype.onFilterTextChanged = function () {
         var _this = this;
         if (!this.onFilterTextChangedDebounced) {
-            this.onFilterTextChangedDebounced = main_1._.debounce(function () {
+            this.onFilterTextChangedDebounced = ag_grid_community_1._.debounce(function () {
                 var filterText = _this.eFilterTextField.value;
                 _this.dispatchEvent({ type: 'filterChanged', filterText: filterText });
             }, 400);
@@ -127,9 +127,9 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     };
     PrimaryColsHeaderPanel.prototype.setExpandState = function (state) {
         this.expandState = state;
-        main_1._.setVisible(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
-        main_1._.setVisible(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
-        main_1._.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINIATE);
+        ag_grid_community_1._.setVisible(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
+        ag_grid_community_1._.setVisible(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
+        ag_grid_community_1._.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINIATE);
     };
     PrimaryColsHeaderPanel.prototype.setColumnsCheckedState = function () {
         var allPrimaryColumns = this.columnController.getAllPrimaryColumns();
@@ -177,50 +177,50 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         else {
             this.selectState = SELECTED_STATE.CHECKED;
         }
-        main_1._.setVisible(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
-        main_1._.setVisible(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
-        main_1._.setVisible(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINIATE);
+        ag_grid_community_1._.setVisible(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
+        ag_grid_community_1._.setVisible(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
+        ag_grid_community_1._.setVisible(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINIATE);
     };
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], PrimaryColsHeaderPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], PrimaryColsHeaderPanel.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], PrimaryColsHeaderPanel.prototype, "eventService", void 0);
     __decorate([
-        main_1.RefSelector('eFilterTextField'),
+        ag_grid_community_1.RefSelector('eFilterTextField'),
         __metadata("design:type", HTMLInputElement)
     ], PrimaryColsHeaderPanel.prototype, "eFilterTextField", void 0);
     __decorate([
-        main_1.RefSelector('eExpand'),
+        ag_grid_community_1.RefSelector('eExpand'),
         __metadata("design:type", HTMLElement)
     ], PrimaryColsHeaderPanel.prototype, "eExpand", void 0);
     __decorate([
-        main_1.RefSelector('eSelect'),
+        ag_grid_community_1.RefSelector('eSelect'),
         __metadata("design:type", HTMLElement)
     ], PrimaryColsHeaderPanel.prototype, "eSelect", void 0);
     __decorate([
-        main_1.RefSelector('eFilterWrapper'),
+        ag_grid_community_1.RefSelector('eFilterWrapper'),
         __metadata("design:type", HTMLElement)
     ], PrimaryColsHeaderPanel.prototype, "eFilterWrapper", void 0);
     __decorate([
-        main_1.PreConstruct,
+        ag_grid_community_1.PreConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], PrimaryColsHeaderPanel.prototype, "preConstruct", null);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], PrimaryColsHeaderPanel.prototype, "postConstruct", null);
     return PrimaryColsHeaderPanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.PrimaryColsHeaderPanel = PrimaryColsHeaderPanel;

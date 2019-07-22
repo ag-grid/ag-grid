@@ -8,7 +8,7 @@ import {
     IToolPanelComp,
     IToolPanelParams,
     _
-} from "ag-grid-community/main";
+} from "ag-grid-community";
 import { PivotModePanel } from "./panels/pivotModePanel";
 import { RowGroupDropZonePanel } from "./panels/rowGroupDropZonePanel";
 import { ValuesDropZonePanel } from "./panels/valueDropZonePanel";

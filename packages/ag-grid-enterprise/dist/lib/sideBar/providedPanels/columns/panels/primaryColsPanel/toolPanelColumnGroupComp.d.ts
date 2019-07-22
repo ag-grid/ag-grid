@@ -1,5 +1,5 @@
 // ag-grid-enterprise v21.1.0
-import { Component, OriginalColumnGroup } from "ag-grid-community/main";
+import { Component, OriginalColumnGroup } from "ag-grid-community";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
     private static TEMPLATE;

@@ -23,7 +23,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid-community/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var baseDropZonePanel_1 = require("../dropZone/baseDropZonePanel");
 var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __extends(RowGroupDropZonePanel, _super);
@@ -42,12 +42,12 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         var emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         var title = localeTextFunc('groups', 'Row Groups');
         _super.prototype.init.call(this, {
-            dragAndDropIcon: main_1.DragAndDropService.ICON_GROUP,
-            icon: main_1._.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
+            dragAndDropIcon: ag_grid_community_1.DragAndDropService.ICON_GROUP,
+            icon: ag_grid_community_1._.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     };
     RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -64,7 +64,7 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
     RowGroupDropZonePanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
             var event_1 = {
-                type: main_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                type: ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns,
                 api: this.gridApi,
                 columnApi: this.columnApi
@@ -76,41 +76,41 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         }
     };
     RowGroupDropZonePanel.prototype.getIconName = function () {
-        return this.isPotentialDndColumns() ? main_1.DragAndDropService.ICON_GROUP : main_1.DragAndDropService.ICON_NOT_ALLOWED;
+        return this.isPotentialDndColumns() ? ag_grid_community_1.DragAndDropService.ICON_GROUP : ag_grid_community_1.DragAndDropService.ICON_NOT_ALLOWED;
     };
     RowGroupDropZonePanel.prototype.getExistingColumns = function () {
         return this.columnController.getRowGroupColumns();
     };
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], RowGroupDropZonePanel.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], RowGroupDropZonePanel.prototype, "eventService", void 0);
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], RowGroupDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('loggerFactory'),
-        __metadata("design:type", main_1.LoggerFactory)
+        ag_grid_community_1.Autowired('loggerFactory'),
+        __metadata("design:type", ag_grid_community_1.LoggerFactory)
     ], RowGroupDropZonePanel.prototype, "loggerFactory", void 0);
     __decorate([
-        main_1.Autowired('dragAndDropService'),
-        __metadata("design:type", main_1.DragAndDropService)
+        ag_grid_community_1.Autowired('dragAndDropService'),
+        __metadata("design:type", ag_grid_community_1.DragAndDropService)
     ], RowGroupDropZonePanel.prototype, "dragAndDropService", void 0);
     __decorate([
-        main_1.Autowired('columnApi'),
-        __metadata("design:type", main_1.ColumnApi)
+        ag_grid_community_1.Autowired('columnApi'),
+        __metadata("design:type", ag_grid_community_1.ColumnApi)
     ], RowGroupDropZonePanel.prototype, "columnApi", void 0);
     __decorate([
-        main_1.Autowired('gridApi'),
-        __metadata("design:type", main_1.GridApi)
+        ag_grid_community_1.Autowired('gridApi'),
+        __metadata("design:type", ag_grid_community_1.GridApi)
     ], RowGroupDropZonePanel.prototype, "gridApi", void 0);
     __decorate([
-        main_1.PostConstruct,
+        ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)

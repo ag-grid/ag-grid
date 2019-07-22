@@ -23,7 +23,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var main_1 = require("ag-grid-community/main");
+var ag_grid_community_1 = require("ag-grid-community");
 var toolPanelColumnGroupComp_1 = require("./toolPanelColumnGroupComp");
 var toolPanelColumnComp_1 = require("./toolPanelColumnComp");
 var primaryColsHeaderPanel_1 = require("./primaryColsHeaderPanel");
@@ -35,7 +35,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     PrimaryColsListPanel.prototype.init = function (params, allowDragging) {
         this.params = params;
         this.allowDragging = allowDragging;
-        this.addDestroyableEventListener(this.globalEventService, main_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.globalEventService, ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
@@ -49,9 +49,9 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.updateVisibilityOfRows();
     };
     PrimaryColsListPanel.prototype.destroyColumnComps = function () {
-        main_1._.clearElement(this.getGui());
+        ag_grid_community_1._.clearElement(this.getGui());
         if (this.columnComps) {
-            main_1._.iterateObject(this.columnComps, function (key, renderedItem) { return renderedItem.destroy(); });
+            ag_grid_community_1._.iterateObject(this.columnComps, function (key, renderedItem) { return renderedItem.destroy(); });
         }
         this.columnComps = {};
     };
@@ -86,7 +86,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         var recursiveFunc = function (items) {
             items.forEach(function (item) {
                 // only interested in groups
-                if (item instanceof main_1.OriginalColumnGroup) {
+                if (item instanceof ag_grid_community_1.OriginalColumnGroup) {
                     var comp = _this.columnComps[item.getId()];
                     if (comp) {
                         if (comp.isExpanded()) {
@@ -127,7 +127,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     PrimaryColsListPanel.prototype.recursivelyAddComps = function (tree, dept, groupsExist) {
         var _this = this;
         tree.forEach(function (child) {
-            if (child instanceof main_1.OriginalColumnGroup) {
+            if (child instanceof ag_grid_community_1.OriginalColumnGroup) {
                 _this.recursivelyAddGroupComps(child, dept, groupsExist);
             }
             else {
@@ -140,14 +140,14 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.destroyColumnComps();
     };
     PrimaryColsListPanel.prototype.doSetExpandedAll = function (value) {
-        main_1._.iterateObject(this.columnComps, function (key, renderedItem) {
+        ag_grid_community_1._.iterateObject(this.columnComps, function (key, renderedItem) {
             if (renderedItem.isExpandable()) {
                 renderedItem.setExpanded(value);
             }
         });
     };
     PrimaryColsListPanel.prototype.setFilterText = function (filterText) {
-        this.filterText = main_1._.exists(filterText) ? filterText.toLowerCase() : null;
+        this.filterText = ag_grid_community_1._.exists(filterText) ? filterText.toLowerCase() : null;
         this.updateVisibilityOfRows();
     };
     PrimaryColsListPanel.prototype.updateVisibilityOfRows = function () {
@@ -155,7 +155,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         // the visibility requires breadth first search. this is because a group passes filter if CHILDREN
         // pass filter, a column passes group open/closed visibility if a PARENT is open. so we need to do
         // two recursions. we pass the result of the first recursion to the second.
-        var filterResults = main_1._.exists(this.filterText) ? this.createFilterResults() : null;
+        var filterResults = ag_grid_community_1._.exists(this.filterText) ? this.createFilterResults() : null;
         this.recursivelySetVisibility(this.columnTree, true, filterResults);
     };
     PrimaryColsListPanel.prototype.createFilterResults = function () {
@@ -166,7 +166,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             var atLeastOneThisLevelPassed = false;
             items.forEach(function (item) {
                 var atLeastOneChildPassed = false;
-                if (item instanceof main_1.OriginalColumnGroup) {
+                if (item instanceof ag_grid_community_1.OriginalColumnGroup) {
                     var columnGroup = item;
                     var groupChildren = columnGroup.getChildren();
                     atLeastOneChildPassed = recursivelyCheckFilter(groupChildren);
@@ -203,7 +203,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 var passesFilter = filterResults ? filterResults[child.getId()] : true;
                 comp.setVisible(parentGroupsOpen && passesFilter);
             }
-            if (child instanceof main_1.OriginalColumnGroup) {
+            if (child instanceof ag_grid_community_1.OriginalColumnGroup) {
                 var columnGroup = child;
                 var childrenOpen = void 0;
                 if (comp) {
@@ -219,23 +219,23 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         });
     };
     PrimaryColsListPanel.prototype.doSetSelectedAll = function (checked) {
-        main_1._.iterateObject(this.columnComps, function (key, column) {
+        ag_grid_community_1._.iterateObject(this.columnComps, function (key, column) {
             column.onSelectAllChanged(checked);
         });
     };
     PrimaryColsListPanel.TEMPLATE = "<div class=\"ag-primary-cols-list-panel\"></div>";
     __decorate([
-        main_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", main_1.GridOptionsWrapper)
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
     ], PrimaryColsListPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        main_1.Autowired('columnController'),
-        __metadata("design:type", main_1.ColumnController)
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
     ], PrimaryColsListPanel.prototype, "columnController", void 0);
     __decorate([
-        main_1.Autowired('eventService'),
-        __metadata("design:type", main_1.EventService)
+        ag_grid_community_1.Autowired('eventService'),
+        __metadata("design:type", ag_grid_community_1.EventService)
     ], PrimaryColsListPanel.prototype, "globalEventService", void 0);
     return PrimaryColsListPanel;
-}(main_1.Component));
+}(ag_grid_community_1.Component));
 exports.PrimaryColsListPanel = PrimaryColsListPanel;

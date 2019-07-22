@@ -1,5 +1,5 @@
 // ag-grid-enterprise v21.1.0
-import { Component } from "ag-grid-community/main";
+import { Component } from "ag-grid-community";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export declare type ColumnItem = BaseColumnItem & Component;
