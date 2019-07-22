@@ -142,10 +142,10 @@ export class ChartBuilder {
             chart.height = options.height;
         }
         if (options.title) {
-            chart.title = ChartBuilder.createTitle(options.title);
+            chart.title = ChartBuilder.createChartTitle(options.title);
         }
         if (options.subtitle) {
-            chart.subtitle = ChartBuilder.createSubtitle(options.subtitle);
+            chart.subtitle = ChartBuilder.createChartSubtitle(options.subtitle);
         }
         if (options.series !== undefined) {
             const seriesConfigs = options.series;
@@ -516,7 +516,7 @@ export class ChartBuilder {
         }
     }
 
-    static createTitle(options: CaptionOptions) {
+    static createAxisTitle(options: CaptionOptions) {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -534,7 +534,25 @@ export class ChartBuilder {
         return ChartBuilder.createCaption(options);
     }
 
-    static createSubtitle(options: CaptionOptions) {
+    static createChartTitle(options: CaptionOptions) {
+        options = Object.create(options);
+
+        if (options.text === undefined) {
+            options.text = 'Title';
+        }
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 16;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
+        }
+        return ChartBuilder.createCaption(options);
+    }
+
+    static createChartSubtitle(options: CaptionOptions) {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -621,6 +639,10 @@ export class ChartBuilder {
 
         for (const name in options) {
             if (name === 'type') {
+                continue;
+            }
+            if (name === 'title' && options.title) {
+                axis.title = ChartBuilder.createAxisTitle(options.title);
                 continue;
             }
             const value = (options as any)[name];

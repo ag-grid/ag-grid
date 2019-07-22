@@ -80,6 +80,8 @@ export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 export interface AxisOptions {
     type?: 'category' | 'number';
 
+    title?: CaptionOptions;
+
     lineWidth?: number;
     lineColor?: string;
 

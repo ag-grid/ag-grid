@@ -93,6 +93,9 @@ function processChartOptions(params) {
     legend.labelColor = '#555';
 
     var xAxis = options.xAxis;
+    xAxis.title = {
+        text: 'Gold'
+    };
     xAxis.lineWidth = 2;
     xAxis.lineColor = 'gray';
     xAxis.tickWidth = 2;

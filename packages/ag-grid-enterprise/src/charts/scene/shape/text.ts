@@ -239,6 +239,7 @@ export class Text extends Shape {
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
+        // this.matrix.transformBBox(this.getBBox!()).render(ctx); // debug
         this.matrix.toContext(ctx);
 
         if (this.opacity < 1) {
@@ -291,9 +292,6 @@ export class Text extends Shape {
             }
             ctx.strokeText(this.text, this.x, this.y);
         }
-
-        // // debug
-        // this.matrix.transformBBox(this.getBBox!()).render(ctx);
 
         this.dirty = false;
     }

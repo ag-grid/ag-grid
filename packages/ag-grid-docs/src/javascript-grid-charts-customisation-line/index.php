@@ -126,6 +126,8 @@ interface LineTooltipRendererParams {
 }
 
 interface AxisOptions {
+    // The title of the axis.
+    title?: CaptionOptions;
     // The thickness of the axis line. Defaults to `1`.
     lineWidth?: number;
     // The color of the axis line. Depends on whether the light or dark mode is used.
