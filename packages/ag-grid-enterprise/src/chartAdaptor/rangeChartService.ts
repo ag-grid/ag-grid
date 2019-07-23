@@ -11,7 +11,8 @@ import {
     IRangeChartService,
     PreDestroy,
     ProcessChartOptionsParams,
-    ChartOptions
+    ChartOptions,
+    IAggFunc
 } from "ag-grid-community";
 import { RangeController } from "../rangeController";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
@@ -40,11 +41,15 @@ export class RangeChartService implements IRangeChartService {
             return;
         }
         if (cellRange) {
-            return this.chartRange(cellRange, params.chartType, params.chartContainer, params.suppressChartRanges, params.aggregate, params.processChartOptions);
+            return this.chartRange(cellRange, params.chartType, params.chartContainer, params.suppressChartRanges, params.aggFunc, params.processChartOptions);
         }
     }
 
-    private chartRange(cellRange: CellRange, chartType: ChartType, container?: HTMLElement, suppressChartRanges = false, aggregate = false,
+    private chartRange(cellRange: CellRange,
+                       chartType: ChartType,
+                       container?: HTMLElement,
+                       suppressChartRanges = false,
+                       aggFunc?: string | IAggFunc,
                        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
@@ -54,7 +59,7 @@ export class RangeChartService implements IRangeChartService {
             chartType,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
-            aggregate,
+            aggFunc,
             processChartOptions,
             height: 400, //TODO
             width: 800   //TODO

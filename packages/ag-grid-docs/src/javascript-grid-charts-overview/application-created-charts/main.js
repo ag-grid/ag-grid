@@ -48,7 +48,7 @@ let gridOptions = {
             chartType: 'groupedColumn',
             chartContainer: document.querySelector('#myChart'),
             suppressChartRanges: true,
-            aggregate: true
+            aggFunc: 'sum'
         };
 
         chartRef = params.api.chartRange(chartRangeParams);
@@ -88,7 +88,7 @@ function createChart(type) {
         chartContainer: document.querySelector('#myChart'),
         chartType: type,
         suppressChartRanges: true,
-        aggregate: true
+        aggFunc: 'sum'
     };
 
     chartRef = gridOptions.api.chartRange(params);

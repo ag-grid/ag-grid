@@ -11,7 +11,8 @@ import {
     PostConstruct,
     ProcessChartOptionsParams,
     RefSelector,
-    ResizeObserverService
+    ResizeObserverService,
+    IAggFunc
 } from "ag-grid-community";
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
@@ -29,7 +30,7 @@ export interface GridChartParams {
     chartType: ChartType;
     insideDialog: boolean;
     suppressChartRanges: boolean;
-    aggregate: boolean;
+    aggFunc?: string | IAggFunc,
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
     height: number;
     width: number;
@@ -72,7 +73,7 @@ export class GridChartComp extends Component {
     public init(): void {
         const modelParams: ChartModelParams = {
             chartType: this.params.chartType,
-            aggregate: this.params.aggregate,
+            aggFunc: this.params.aggFunc,
             cellRanges: [this.params.cellRange],
             suppressChartRanges: this.params.suppressChartRanges,
             palettes: palettes,

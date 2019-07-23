@@ -49,7 +49,7 @@ function onFirstDataRendered(params) {
         },
         chartType: 'groupedColumn',
         chartContainer: document.querySelector('#myChart'),
-        aggregate: true
+        aggFunc: 'sum'
     };
 
     params.api.chartRange(chartRangeParams);

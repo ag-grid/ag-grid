@@ -1,4 +1,4 @@
-import { _, Autowired, BeanStub, Column, ColumnController, IRowModel, ValueService } from "ag-grid-community";
+import { _, Autowired, BeanStub, Column, ColumnController, IRowModel, ValueService, IAggFunc } from "ag-grid-community";
 import { AggregationStage } from "../../rowStages/aggregationStage";
 import { ChartModel } from "./chartModel";
 
@@ -7,7 +7,7 @@ export interface ChartDatasourceParams {
     valueCols: Column[];
     startRow: number;
     endRow: number;
-    aggregate: boolean;
+    aggFunc?: string | IAggFunc;
 }
 
 export class ChartDatasource extends BeanStub {
@@ -58,7 +58,7 @@ export class ChartDatasource extends BeanStub {
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
         const dimensionColIds = params.dimensionColIds;
-        const dontAggregate = !params.aggregate || dimensionColIds.length === 0;
+        const dontAggregate = !params.aggFunc || dimensionColIds.length === 0;
         if (dontAggregate) {
             return dataFromGrid;
         }
@@ -99,11 +99,17 @@ export class ChartDatasource extends BeanStub {
                 groupItem.__children.forEach((child:any) => {
                     dataToAgg.push(child[col.getId()]);
                 });
-                // always use 'sum' agg func, is that right????
-                groupItem[col.getId()] = this.aggregationStage.aggregateValues(dataToAgg, 'sum');
+
+                const aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc as IAggFunc);
+
+                if (typeof(aggResult.value) !== 'undefined') {
+                    groupItem[col.getId()] = aggResult.value;
+                } else {
+                    groupItem[col.getId()] = aggResult;
+                }
             });
         });
 
-        return dataAggregated
+        return dataAggregated;
     }
 }

@@ -90,7 +90,7 @@ export interface ChartRangeParams {
     chartType: ChartType;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
-    aggregate?: boolean;
+    aggFunc?: string | IAggFunc;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 

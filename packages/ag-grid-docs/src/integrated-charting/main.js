@@ -50,7 +50,7 @@
                 chartType: 'groupedColumn',
                 chartContainer: document.querySelector('#integrated-charting-chart'),
                 suppressChartRanges: true,
-                aggregate: true
+                aggFunc: 'sum'
             };
 
             chartRef = params.api.chartRange(chartRangeParams);

@@ -9,7 +9,9 @@ import {
     Column,
     RowRenderer,
     ColumnController,
-    PostConstruct, RowNode,
+    PostConstruct,
+    RowNode,
+    IAggFunc
 } from "ag-grid-community";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {RangeController} from "../../rangeController";
@@ -25,7 +27,7 @@ export interface ColState {
 
 export interface ChartModelParams {
     chartType: ChartType;
-    aggregate: boolean;
+    aggFunc?: string | IAggFunc,
     cellRanges: CellRange[];
     palettes: Palette[];
     activePalette: number;
@@ -52,7 +54,7 @@ export class ChartModel extends BeanStub {
     private palettes: Palette[];
     private suppressChartRanges: boolean;
 
-    private readonly aggregate: boolean;
+    private aggFunc?: string | IAggFunc;
 
     private initialising = true;
 
@@ -65,7 +67,7 @@ export class ChartModel extends BeanStub {
         super();
 
         this.chartType = params.chartType;
-        this.aggregate = params.aggregate;
+        this.aggFunc = params.aggFunc;
         this.cellRanges = params.cellRanges;
         this.palettes = params.palettes;
         this.activePalette = params.activePalette;
@@ -90,7 +92,7 @@ export class ChartModel extends BeanStub {
         const selectedValueCols = this.getSelectedValueCols();
 
         const params: ChartDatasourceParams = {
-            aggregate: this.aggregate,
+            aggFunc: this.aggFunc,
             dimensionColIds: [selectedDimension],
             valueCols: selectedValueCols,
             startRow: startRow,

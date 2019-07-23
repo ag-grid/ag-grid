@@ -25,7 +25,7 @@ function chartRange(params: ChartRangeParams): ChartRef | undefined {
     chartType: string;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
-    aggregate?: boolean;
+    aggFunc?: string | IAggFunc;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 
@@ -44,7 +44,11 @@ interface CellRangeParams {
     columns?: (string | Column)[];
 }
 
-export interface ProcessChartOptionsParams {
+interface IAggFunc {
+    (input: any[]): any;
+}
+
+interface ProcessChartOptionsParams {
     type: string;
     options: ChartOptions;
 }</snippet>
@@ -78,7 +82,10 @@ export interface ProcessChartOptionsParams {
             set <code>suppressChartRanges=true</code>.
         </li>
         <li>
-            <code>aggregate</code>: When set to true, series values will be summed for each category before charting.
+            <code>aggFunc</code>: The aggregation function that should be applied to all series data. Built in agg
+            functions can be used by supplying one of the strings keys: <code>sum, min, max, count, avg, first, last</code>.
+            Custom agg functions can also be directly supplied once they conforms to the <code>IAggFunc</code> interface
+            shown above.
         </li>
         <li>
             <code>processChartOptions</code>: Options for changing the display of the chart. This works the same
