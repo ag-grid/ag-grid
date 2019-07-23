@@ -22,8 +22,9 @@ include '../documentation-main/documentation_header.php';
         </p>
 
         <p>
-            For backwards compatibility you can still provide icons using the 'icons' grid option.
-            If you want to use the old icons, you can set them this way.
+            For backwards compatibility you can still provide icons using the 'icons' grid option.<br>
+            You can also provide your own SVG files and replace the default WebFont following this example: 
+            <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-svg-icons">SVG Icons Example</a>.
         </p>
 
         <p>
