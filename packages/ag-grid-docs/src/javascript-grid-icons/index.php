@@ -266,6 +266,19 @@ save
 <h2>List of Icons</h2>
 
 <style>
+    .tabpanel .content > div {
+        border-left-width: 1px;
+    }
+    .tabpanel .content > div.download {
+        overflow-y: hidden;
+        order: 1;
+        flex: none;
+        border: none;
+        background-color: #0070c4;
+        color: white;
+        padding-left: 5px;
+        margin-top: 0;
+    }
     .tile {
         display: inline-flex;
         flex-direction: column;
@@ -277,9 +290,15 @@ save
         white-space: nowrap;
         text-align: center;
     }
-    .tabpanel .content > div {
-        border-left-width: 1px;
+
+    .download a {
+        color: #b3d4ed;
     }
+    .download a:hover {
+        color: white;
+        text-decoration: none;
+    }
+    
 </style>
 
 <script>
@@ -372,10 +391,13 @@ save
             <div class="tab">Base Icons</div>
         </div>
         <div class="content balham">
+        <div class="download"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
         </div>
         <div class="content material hidden">
+            <div class="download"><a href="./resources/material/material-icons.zip">Download All</a></div>
         </div>
         <div class="content base hidden">
+            <div class="download"><a href="./resources/base/base-icons.zip">Download All</a></div>
         </div>
     </div>
 

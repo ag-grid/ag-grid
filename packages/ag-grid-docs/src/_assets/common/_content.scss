@@ -113,10 +113,10 @@ h4 {
 }
 .tabpanel .content {
     height: calc(100% - 45px);
+    flex-direction: column;
+    overflow: hidden;
 }
 .tabpanel .content > div {
-    width: 100%;
-    max-height: 100%;
     overflow-y: auto;
     margin: 10px;
     border: 1px solid lightgray;
