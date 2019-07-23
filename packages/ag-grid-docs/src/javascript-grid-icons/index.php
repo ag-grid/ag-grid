@@ -137,17 +137,17 @@ $ag-icon-tree-open: "\f107";
 
 <h2>Set the icons through <code>gridOptions</code> (JavaScript)</h2>
 
-    <p>
-        The icons can either be set on the grid options (all icons) or on the column definition (all except group).
-        If defined in both the grid options and column definitions, the column definition will get used. This
-        allows you to specify defaults in the grid options to fall back on, and then provide individual icons for
-        specific columns. This is handy if, for example, you want to include 'A..Z' as string sort icons and just
-        the simple arrow for other columns.
-    </p>
+<p>
+    The icons can either be set on the grid options (all icons) or on the column definition (all except group).
+    If defined in both the grid options and column definitions, the column definition will get used. This
+    allows you to specify defaults in the grid options to fall back on, and then provide individual icons for
+    specific columns. This is handy if, for example, you want to include 'A..Z' as string sort icons and just
+    the simple arrow for other columns.
+</p>
 
-    <p>
-        The icons are set as follows:
-    </p>
+<p>
+    The icons are set as follows:
+</p>
 
 <snippet>
 // column header items
@@ -236,32 +236,147 @@ groupLoading
 data
 save
 </snippet>
-    <p>
-        Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
-    </p>
+<p>
+    Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
+</p>
 
-    <p>
-        The icon can be any of the following:
-    </p>
-        <ul class="content">
-            <li>
-                <b>String:</b> The string will be treated as html. Use to return just text, or HTML tags.
-            </li>
-            <li>
-                <b>Function:</b> A function that returns either a String or a DOM node or element.
-            </li>
-        </ul>
+<p>
+    The icon can be any of the following:
+</p>
+    <ul class="content">
+        <li>
+            <b>String:</b> The string will be treated as html. Use to return just text, or HTML tags.
+        </li>
+        <li>
+            <b>Function:</b> A function that returns either a String or a DOM node or element.
+        </li>
+    </ul>
 
-    <p>
-        The example below shows a mixture of different methods for providing icons. The grouping is done with images,
-        and the header icons use a mix of Font Awesome and strings.
-    </p>
+<p>
+    The example below shows a mixture of different methods for providing icons. The grouping is done with images,
+    and the header icons use a mix of Font Awesome and strings.
+</p>
 
-    <p>
-        (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
-    </p>
+<p>
+    (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
+</p>
 
-    <?= example('Icons', 'icons', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome') )) ?>
+<?= example('Icons', 'icons', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome') )) ?>
 
+<h2>List of Icons</h2>
+
+<style>
+    .tile {
+        display: inline-flex;
+        flex-direction: column;
+        margin: 5px;
+        width: 175px;
+    }
+    
+    .tile p {
+        white-space: nowrap;
+        text-align: center;
+    }
+    .tabpanel .content > div {
+        border-left-width: 1px;
+    }
+</style>
+
+<script>
+    var tabs;
+    function changeActiveTab(e) {
+        var tab, selectedIdx, currentIdx, i, cts;
+
+        if (e.target.classList.contains('selected')) { return; }
+        for (i = 0; i < tabs.length; i++) {
+            tab = tabs[i];
+            if (tab.classList.contains('selected')) {
+                selectedIdx = i;
+            }
+            if (tab === e.target) {
+                currentIdx = i;
+            }
+            if (currentIdx != null && selectedIdx != null) { break; }
+        }
+
+        tabs[selectedIdx].classList.toggle('selected');
+        tabs[currentIdx].classList.toggle('selected');
+
+        cts = document.querySelectorAll('.tabpanel .content');
+
+        cts[selectedIdx].classList.toggle('hidden');
+        cts[currentIdx].classList.toggle('hidden');
+    }
+
+    function addIconsToContainer(theme) {
+        var icons = [
+            'aggregation', 'arrows', 'asc', 'cancel', 'chart',
+            'checkbox-checked', 'checkbox-indeterminate',
+            'checkbox-unchecked', 'color-picker', 'column',
+            'columns', 'contracted', 'copy', 'cross', 'cut', 'data',
+            'desc', 'expanded', 'eye-slash', 'eye', 'filter', 'first',
+            'grip', 'group', 'indeterminate', 'last', 'left', 'loading',
+            'maximize', 'menu', 'minimize', 'minus', 'next', 'none', 
+            'not-allowed', 'paste', 'pin', 'pivot', 'plus', 'previous', 
+            'radio-button-off', 'radio-button-on', 'right', 'save',
+            'small-down', 'small-left', 'small-right', 'small-up', 
+            'tick', 'tree-closed', 'tree-indeterminate', 'tree-open'
+        ];
+
+        var container = document.querySelector('.content.' + theme);
+
+        if (!container) {
+            return;
+        }
+        var wrapper = document.createElement('div');
+        container.appendChild(wrapper);
+
+        icons.forEach(function(icon) {
+            var tile = document.createElement('div');
+            var img = document.createElement('img');
+            var name = document.createElement('p');
+            tile.classList.add('tile');
+
+            tile.appendChild(img);
+            tile.appendChild(name);
+
+
+            img.setAttribute('src', './resources/' + theme + '/' + icon + '.svg');
+            img.setAttribute('title', icon);
+
+            name.innerHTML = icon;
+
+            wrapper.appendChild(tile);
+        });
+    }
+
+    window.addEventListener("load", function() {
+        tabs = document.querySelectorAll('.tabpanel .tab');
+
+        for (var i = 0; i < tabs.length; i++) {
+            var tab = tabs[i];
+            tab.addEventListener('click', changeActiveTab);
+        }
+
+        var themes = ['balham', 'material', 'base'];
+
+        themes.forEach(function(theme) {
+            addIconsToContainer(theme);
+        });
+    });
+</script>
+    <div class="tabpanel">
+        <div class="tabheader">
+            <div class="tab selected">Balham Icons</div>
+            <div class="tab">Material Icons</div>
+            <div class="tab">Base Icons</div>
+        </div>
+        <div class="content balham">
+        </div>
+        <div class="content material hidden">
+        </div>
+        <div class="content base hidden">
+        </div>
+    </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

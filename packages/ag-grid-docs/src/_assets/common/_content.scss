@@ -77,3 +77,72 @@ h4 {
     font-size: 1.3rem;
     font-weight: 300;
 }
+
+.tabpanel, .tabheader, .tabpanel .content {
+    display: flex
+}
+.tabpanel {
+    flex-direction: column;
+    height: 500px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+}
+.tabheader {
+    background-image: linear-gradient(to bottom right, #0084e7, #0067b4);
+    height: 50px;
+    flex: none;
+    align-items: flex-end;
+}
+.tab {
+    height: 40px;
+    line-height: 40px;
+    background-color: #ebebeb;
+    cursor: pointer;
+    margin: 0 0 0 10px;
+    padding: 0 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    user-select: none;
+    -ms-user-select: none;
+}
+.tab.selected {
+    border: 1px solid #ebebeb;
+    border-bottom-width: 0;
+    background-color: white;
+    color: #0084e7;
+}
+.tabpanel .content {
+    height: calc(100% - 45px);
+}
+.tabpanel .content > div {
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    margin: 10px;
+    border: 1px solid lightgray;
+    border-left-width: 0;
+}
+.tabpanel table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.tabpanel tr {
+    height: 40px;
+}
+.tabpanel table th, .tabpanel table td {
+    border: 1px solid #ebebeb;
+    padding: 5px;
+}
+.tabpanel table tr:first-of-type th {
+    border-top-width: 0;
+}
+.tabpanel table th {
+    text-align: center;
+}
+.tabpanel table tbody tr td:first-of-type {
+    white-space: pre;
+}
+.hidden {
+    display: none !important;
+}
