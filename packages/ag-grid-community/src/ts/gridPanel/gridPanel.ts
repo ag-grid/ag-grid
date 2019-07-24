@@ -885,7 +885,11 @@ export class GridPanel extends Component {
     }
 
     public updateRowCount(): void {
-        this.getGui().setAttribute('aria-rowcount', this.paginationProxy.getTotalRowCount().toString());
+        const headerCount = this.headerRootComp.getHeaderRowCount();
+        const rowCount = this.paginationProxy.getTotalRowCount();
+        const total = (headerCount + rowCount).toString();
+
+        this.getGui().setAttribute('aria-rowcount', total);
     }
 
     public ensureColumnVisible(key: any): void {
