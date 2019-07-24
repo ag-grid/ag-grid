@@ -17,14 +17,13 @@ include '../documentation-main/documentation_header.php';
     <note>
         <p>
             In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were
-            svg files that you could override via the '$icons-path' variable in SASS files. v21 uses a WebFont 
+            svg files that you could override via the '$icons-path' variable in SASS files. v21 uses WebFonts
             and CSS for the icons which is the best way to allow icon theming.
         </p>
 
         <p>
             For backwards compatibility you can still provide icons using the 'icons' grid option.<br>
-            You can also provide your own SVG files and replace the default WebFont following this example: 
-            <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-svg-icons">SVG Icons Example</a>.
+            If you need to reintroduce SVG icons, see this section: <a href="#svg-icons">SVG Icons</a>
         </p>
 
         <p>
@@ -264,7 +263,26 @@ save
 
 <?= example('Icons', 'icons', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome') )) ?>
 
-<h2>List of Icons</h2>
+<h2>SVG Icons</h2>
+
+<p>
+    When you create your own theme as described <a href="/javascript-grid-themes-provided/#customizing-sass-variables">here</a>, 
+    you are also able to replace the WebFont with SVG Icons.
+
+    To do that you will need to override the <code>ag-icon</code> SASS rules and also the rules for each icon.
+    You can see the example <code>styles.scss</code> file in our custom theme with SVG icons example here: 
+    <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-svg-icons">SVG Icons Example</a>.
+</p>
+
+<p>
+    Below you can see a list with all available icons for each theme, their names, and download them.
+</p>
+<note>
+    <p>
+        SVG Icons will not use the <code>$icon-color</code>, <code>$alt-icon-color</code> and <code>$accent-color</code> 
+        variables to colorize icons. This means you will need to add the colors you want to the SVG icons code.
+    </p>
+</note>
 
 <style>
     .tabpanel .content > div {
