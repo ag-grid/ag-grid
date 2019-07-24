@@ -18,7 +18,7 @@ $foreground-color: rgba($foreground-color, $foreground-opacity) !default; // for
 $secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default; // foreground-secondary
 $disabled-foreground-color: rgba($foreground-color, $disabled-foreground-color-opacity) !default; // foreground-disabled
 $input-border-color: #ecf0f1 !default;
-$input-disabled-background-color: rgba(48, 46, 46, 0.3);
+$input-disabled-background-color: rgba(48, 46, 46, 0.3) !default;
 
 $primary-color: $active !default;
 $accent-color: $active !default;
