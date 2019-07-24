@@ -103,6 +103,7 @@ include '../documentation-main/documentation_header.php';
 
         <ul class="content">
             <li><b>role="grid"</b> - marks the enclosing element of the grid</li>
+            <li><b>role="rowgroup"</b> - element that serve as container for the table header rows and grid rows</li>
             <li><b>role="row"</b> - a row of column headers or grid cells</li>
             <li><b>role="columnheader"</b> - element containing a column header</li>
             <li><b>role="gridcell"</b> - element containing a grid cell </li>

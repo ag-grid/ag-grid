@@ -16,10 +16,10 @@ import { _ } from "../utils";
 export class HeaderRootComp extends Component {
 
     private static TEMPLATE =
-        `<div class="ag-header" role="row">
+        `<div class="ag-header" role="presentation">
             <div class="ag-pinned-left-header" ref="ePinnedLeftHeader" role="presentation"></div>
             <div class="ag-header-viewport" ref="eHeaderViewport" role="presentation">
-                <div class="ag-header-container" ref="eHeaderContainer" role="presentation"></div>
+                <div class="ag-header-container" ref="eHeaderContainer" role="rowgroup"></div>
             </div>
             <div class="ag-pinned-right-header" ref="ePinnedRightHeader" role="presentation"></div>
         </div>`;
@@ -149,5 +149,13 @@ export class HeaderRootComp extends Component {
 
     public setRightVisible(visible: boolean): void {
         _.setVisible(this.ePinnedRightHeader, visible);
+    }
+
+    public getHeaderRowCount(): number {
+        if (this.childContainers.length === 0) {
+            return 0;
+        }
+
+        return this.childContainers[0].getRowComps().length;
     }
 }

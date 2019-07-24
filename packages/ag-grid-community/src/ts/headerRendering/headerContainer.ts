@@ -111,6 +111,10 @@ export class HeaderContainer {
         this.removeHeaderRowComps();
     }
 
+    public getRowComps(): HeaderRowComp[] {
+        return this.headerRowComps;
+    }
+
     // grid cols have changed - this also means the number of rows in the header can have
     // changed. so we remove all the old rows and insert new ones for a complete refresh
     private onGridColumnsChanged() {
@@ -153,6 +157,7 @@ export class HeaderContainer {
             const headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
+            headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
             this.eContainer.appendChild(headerRowComp.getGui());
         }
 
@@ -162,6 +167,7 @@ export class HeaderContainer {
             const headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned,  this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
+            headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
             this.eContainer.appendChild(headerRowComp.getGui());
         }
     }
