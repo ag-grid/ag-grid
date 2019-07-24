@@ -791,6 +791,7 @@ export class RowRenderer extends BeanStub {
         }
 
         this.checkAngularCompile();
+        this.gridPanel.updateRowCount();
     }
 
     private flushContainers(rowComps: RowComp[]): void {

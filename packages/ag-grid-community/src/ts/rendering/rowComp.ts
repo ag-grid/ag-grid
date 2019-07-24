@@ -169,10 +169,11 @@ export class RowComp extends Component {
         const businessKey = this.getRowBusinessKey();
         const businessKeySanitised = _.escape(businessKey);
         const rowTopStyle = this.getInitialRowTopStyle();
+        const rowIdx = this.rowNode.getRowIndexString();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
-        templateParts.push(` row-index="${this.rowNode.getRowIndexString()}"`);
+        templateParts.push(` row-index="${rowIdx}" aria-rowindex="${rowIdx}"`);
         templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
         templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
@@ -1471,6 +1472,7 @@ export class RowComp extends Component {
 
         this.eAllRowContainers.forEach(eRow => {
             eRow.setAttribute('row-index', rowIndexStr);
+            eRow.setAttribute('aria-rowindex', rowIndexStr);
 
             if (!rowIsEvenChanged) { return; }
             _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);

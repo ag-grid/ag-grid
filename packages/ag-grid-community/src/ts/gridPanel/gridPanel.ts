@@ -56,9 +56,9 @@ const GRID_PANEL_NORMAL_TEMPLATE =
         </div>
         <div class="ag-body-viewport" ref="eBodyViewport" role="presentation" unselectable="on">
             <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation" unselectable="on"></div>
-            <div class="ag-center-cols-clipper" ref="eCenterColsClipper">
+            <div class="ag-center-cols-clipper" ref="eCenterColsClipper" role="presentation" unselectable="on">
                 <div class="ag-center-cols-viewport" ref="eCenterViewport" role="presentation" unselectable="on">
-                    <div class="ag-center-cols-container" ref="eCenterContainer" role="presentation" unselectable="on"></div>
+                    <div class="ag-center-cols-container" ref="eCenterContainer" role="rowgroup" unselectable="on"></div>
                 </div>
             </div>
             <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation" unselectable="on"></div>
@@ -72,7 +72,7 @@ const GRID_PANEL_NORMAL_TEMPLATE =
             <div class="ag-pinned-right-floating-bottom" ref="eRightBottom" role="presentation" unselectable="on"></div>
             <div class="ag-floating-bottom-full-width-container" ref="eBottomFullWidthContainer" role="presentation" unselectable="on"></div>
         </div>
-        <div class="ag-body-horizontal-scroll" ref="eHorizontalScrollBody">
+        <div class="ag-body-horizontal-scroll" ref="eHorizontalScrollBody" aria-hidden="true">
             <div class="ag-horizontal-left-spacer" ref="eHorizontalLeftSpacer"></div>
             <div class="ag-body-horizontal-scroll-viewport" ref="eBodyHorizontalScrollViewport">
                 <div class="ag-body-horizontal-scroll-container" ref="eBodyHorizontalScrollContainer"></div>
@@ -882,6 +882,10 @@ export class GridPanel extends Component {
 
         this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
         this.setFakeHScrollSpacerWidths();
+    }
+
+    public updateRowCount(): void {
+        this.getGui().setAttribute('aria-rowcount', this.paginationProxy.getTotalRowCount().toString());
     }
 
     public ensureColumnVisible(key: any): void {

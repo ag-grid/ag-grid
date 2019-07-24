@@ -13,8 +13,8 @@ export class OverlayWrapperComponent extends Component {
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
     private static TEMPLATE =
-        `<div class="ag-overlay">
-            <div class="ag-overlay-panel" role="presentation">
+        `<div class="ag-overlay" aria-hidden="true">
+            <div class="ag-overlay-panel">
                 <div class="ag-overlay-wrapper" ref="eOverlayWrapper"></div>
             </div>
         </div>`;
