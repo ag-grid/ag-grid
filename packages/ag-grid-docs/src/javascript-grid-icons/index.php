@@ -16,13 +16,13 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         <p>
-            In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were
-            svg files that you could override via the '$icons-path' variable in SASS files. v21 uses WebFonts
-            and CSS for the icons which is the best way to allow icon theming.
+            In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were svg files that you could 
+            override via the <code<$icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is 
+            the best way to allow icon theming.
         </p>
 
         <p>
-            For backwards compatibility you can still provide icons using the 'icons' grid option.<br>
+            For backwards compatibility you can still provide icons using the <code>icons</code> grid option.<br>
             If you need to reintroduce SVG icons, see this section: <a href="#svg-icons">SVG Icons</a>
         </p>
 
@@ -266,7 +266,7 @@ save
 <h2>SVG Icons</h2>
 
 <p>
-    When you create your own theme as described <a href="/javascript-grid-themes-provided/#customizing-sass-variables">here</a>, 
+    When you create your own theme as described in <a href="/javascript-grid-themes-provided/#customizing-sass-variables">Customizing Themes</a>, 
     you are also able to replace the WebFont with SVG Icons.
 
     To do that you will need to override the <code>ag-icon</code> SASS rules and also the rules for each icon.
