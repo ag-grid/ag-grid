@@ -12,7 +12,7 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Color } from "ag-grid-community";
-import { CategoryAxis } from "../axis/categoryAxis";
+import { NumberAxis } from "../axis/numberAxis";
 
 interface SelectionDatum extends SeriesNodeDatum {
     yField: string,
@@ -465,7 +465,7 @@ export class BarSeries extends Series<CartesianChart> {
         }
 
         const categoryCount = this.data.length;
-        const flipXY = !(chart.xAxis instanceof CategoryAxis);
+        const flipXY = !(chart.yAxis instanceof NumberAxis);
         const xAxis = flipXY ? chart.yAxis : chart.xAxis;
         const yAxis = flipXY ? chart.xAxis : chart.yAxis;
         const xScale = xAxis.scale;
