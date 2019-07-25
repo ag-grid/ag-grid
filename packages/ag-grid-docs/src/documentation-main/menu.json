@@ -860,6 +860,11 @@
                 "enterprise": true
               },
               {
+                "title": "Scatter",
+                "url": "javascript-grid-charts-customisation-scatter/",
+                "enterprise": true
+              },
+              {
                 "title": "Area",
                 "url": "javascript-grid-charts-customisation-area/",
                 "enterprise": true
