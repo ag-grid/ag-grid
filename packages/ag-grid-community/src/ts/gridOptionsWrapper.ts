@@ -1576,28 +1576,29 @@ export class GridOptionsWrapper {
             return { height: this.gridOptions.getRowHeight(params), estimated: false };
         } else if (rowNode.detail && this.isMasterDetail()) {
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
-                return {height: this.gridOptions.detailRowHeight, estimated: false};
+                return { height: this.gridOptions.detailRowHeight, estimated: false };
             } else {
-                return {height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false};
+                return { height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false };
             }
         }
 
-        const minRowHeight = this.getDefaultRowHeight();
-
+        const defaultRowHeight = this.getDefaultRowHeight();
         const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
-            this.gridOptions.rowHeight : minRowHeight;
+            this.gridOptions.rowHeight : defaultRowHeight;
+
+        const minRowHeight = Math.min(defaultRowHeight, rowHeight);
 
         if (this.columnController.isAutoRowHeightActive()) {
             if (allowEstimate) {
-                return {height: rowHeight, estimated: true};
+                return { height: rowHeight, estimated: true };
             }
             const autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
             // never return less than the default row height - covers when auto height
             // cells are blank.
-            return {height: Math.max(autoHeight, minRowHeight), estimated: false};
+            return { height: Math.max(autoHeight, minRowHeight), estimated: false };
         }
 
-        return {height: rowHeight, estimated: false};
+        return { height: rowHeight, estimated: false };
     }
 
     public isDynamicRowHeight(): boolean {
