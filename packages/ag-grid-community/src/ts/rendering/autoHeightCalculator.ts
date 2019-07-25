@@ -22,7 +22,6 @@ export class AutoHeightCalculator {
     }
 
     public getPreferredHeightForRow(rowNode: RowNode): number {
-
         if (!this.eDummyContainer) {
             this.eDummyContainer = document.createElement('div');
 
