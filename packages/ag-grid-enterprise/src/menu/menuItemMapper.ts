@@ -185,6 +185,7 @@ export class MenuItemMapper {
                 chartRangeSubMenuItems.push('barRangeChart');
                 chartRangeSubMenuItems.push('pieRangeChart');
                 chartRangeSubMenuItems.push('lineRangeChart');
+                chartRangeSubMenuItems.push('scatterRangeChart');
                 chartRangeSubMenuItems.push('areaRangeChart');
                 return {
                     name: localeTextFunc('chartRange', 'Chart Range'),
@@ -277,6 +278,13 @@ export class MenuItemMapper {
                 name: localeTextFunc('lineRangeChart', 'Line'),
                 action: () => {
                     this.rangeChartService.chartCurrentRange(ChartType.Line);
+                }
+            };
+
+            case 'scatterRangeChart': return {
+                name: localeTextFunc('scatterRangeChart', 'Scatter'),
+                action: () => {
+                    this.rangeChartService.chartCurrentRange(ChartType.Scatter);
                 }
             };
 

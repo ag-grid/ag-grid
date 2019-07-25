@@ -23,6 +23,7 @@ import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/lineChartProxy";
 import {PieChartProxy} from "./chartProxies/pieChartProxy";
 import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
+import {ScatterChartProxy} from "./chartProxies/scatterChartProxy";
 import {Palette, palettes} from "../../charts/chart/palettes";
 
 export interface GridChartParams {
@@ -158,6 +159,8 @@ export class GridChartComp extends Component {
                 return new AreaChartProxy(chartOptions);
             case ChartType.Line:
                 return new LineChartProxy(chartOptions);
+            case ChartType.Scatter:
+                return new ScatterChartProxy(chartOptions);
         }
     }
 

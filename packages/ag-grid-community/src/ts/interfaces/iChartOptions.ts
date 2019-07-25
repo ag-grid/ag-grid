@@ -24,6 +24,7 @@ export enum ChartType {
     StackedBar = 'stackedBar',
     NormalizedBar = 'normalizedBar',
     Line = 'line',
+    Scatter = 'scatter',
     Pie = 'pie',
     Doughnut = 'doughnut',
     Area = 'area',

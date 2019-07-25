@@ -8,7 +8,7 @@ import {
 
 import { ChartController } from "../../chartController";
 
-type ChartGroupsType = 'bar' | 'column' | 'pie' | 'line' | 'area';
+type ChartGroupsType = 'bar' | 'column' | 'pie' | 'line' | 'scatter' | 'area';
 
 type ChartGroups = {
     [key in ChartGroupsType]: any[];
@@ -52,6 +52,9 @@ export class MiniChartsContainer extends Component {
             ],
             line: [
                 MiniLine
+            ],
+            scatter: [
+                MiniScatter
             ],
             area: [
                 MiniArea,
@@ -745,79 +748,84 @@ class MiniNormalizedBar extends MiniChart {
         });
     }
 }
-//
-// class MiniScatter extends MiniChart {
-//     static chartType = ChartType.Scatter;
-//     private readonly points: Shape[];
-//
-//     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-//         super();
-//
-//         this.scene.parent = parent;
-//
-//         const size = this.size;
-//         const padding = this.padding;
-//
-//         // [x, y] pairs
-//         const data = [
-//             [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
-//             [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
-//         ];
-//
-//         const xScale = linearScale();
-//         xScale.domain = [-0.5, 4];
-//         xScale.range = [padding * 2, size - padding];
-//
-//         const yScale = linearScale();
-//         yScale.domain = [-0.5, 3.5];
-//         yScale.range = [size - padding, padding];
-//
-//         const axisOvershoot = 3;
-//
-//         const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
-//         leftAxis.stroke = 'gray';
-//         leftAxis.strokeWidth = 1;
-//
-//         const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
-//         bottomAxis.stroke = 'gray';
-//         bottomAxis.strokeWidth = 1;
-//
-//         const points: Shape[] = [];
-//         data.forEach((series, i) => {
-//             series.forEach((datum, j) => {
-//                 const arc = new Arc();
-//                 arc.strokeWidth = 1;
-//                 arc.centerX = xScale.convert(datum[0]);
-//                 arc.centerY = yScale.convert(datum[1]);
-//                 arc.radiusX = 3;
-//                 arc.radiusY = 3;
-//                 points.push(arc);
-//             });
-//         });
-//         this.points = points;
-//
-//         const clipRect = new ClipRect();
-//         clipRect.x = padding;
-//         clipRect.y = padding;
-//         clipRect.width = size - padding * 2;
-//         clipRect.height = size - padding * 2;
-//
-//         clipRect.append(this.points);
-//         const root = this.root;
-//         root.append(clipRect);
-//         root.append(leftAxis);
-//         root.append(bottomAxis);
-//
-//         this.updateColors(fills, strokes);
-//     }
-//
-//     updateColors(fills: string[], strokes: string[]) {
-//         this.points.forEach((line, i) => {
-//             line.stroke = strokes[i % strokes.length];
-//             line.fill = fills[i % fills.length];
-//         });
-//     }
-// }
+
+class MiniScatter extends MiniChart {
+    static chartType = ChartType.Scatter;
+    private readonly points: Shape[];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+
+        // [x, y] pairs
+        const data = [
+            [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
+            [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
+        ];
+
+        const xScale = linearScale();
+        xScale.domain = [-0.5, 4];
+        xScale.range = [padding * 2, size - padding];
+
+        const yScale = linearScale();
+        yScale.domain = [-0.5, 3.5];
+        yScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+
+        const points: Shape[] = [];
+        data.forEach((series, i) => {
+            series.forEach((datum, j) => {
+                const arc = new Arc();
+                arc.strokeWidth = 1;
+                arc.centerX = xScale.convert(datum[0]);
+                arc.centerY = yScale.convert(datum[1]);
+                arc.radiusX = 3;
+                arc.radiusY = 3;
+                points.push(arc);
+            });
+        });
+        this.points = points;
+
+        const clipRect = new ClipRect();
+        clipRect.x = padding;
+        clipRect.y = padding;
+        clipRect.width = size - padding * 2;
+        clipRect.height = size - padding * 2;
+
+        clipRect.append(this.points);
+        const root = this.root;
+        root.append(clipRect);
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    @PostConstruct
+    private init() {
+        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('scatterTooltip');
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.points.forEach((line, i) => {
+            line.stroke = strokes[i % strokes.length];
+            line.fill = fills[i % fills.length];
+        });
+    }
+}
 
 class MiniArea extends MiniChart {
     static chartType = ChartType.Area;
