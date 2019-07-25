@@ -81,7 +81,7 @@ interface ScatterChartOptions {
     seriesDefaults?: {
         // The fill colors to be used by the series' markers.
         fills?: string[];
-        // The stroke colors to be used by the series' markers and the line itself.
+        // The stroke colors to be used by the series' markers.
         strokes?: string[];
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;

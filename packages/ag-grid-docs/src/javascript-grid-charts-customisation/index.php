@@ -42,6 +42,7 @@ include '../documentation-main/documentation_header.php';
         <ul>
             <li><a href="../javascript-grid-charts-customisation-bar/">Customising Bar Charts</a></li>
             <li><a href="../javascript-grid-charts-customisation-line/">Customising Line Charts</a></li>
+            <li><a href="../javascript-grid-charts-customisation-scatter/">Customising Scatter Charts</a></li>
             <li><a href="../javascript-grid-charts-customisation-area/">Customising Area Charts</a></li>
             <li><a href="../javascript-grid-charts-customisation-pie/">Customising Pie Charts</a></li>
             <li><a href="../javascript-grid-charts-customisation-doughnut/">Customising Doughnut Charts</a></li>
@@ -52,7 +53,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The params passed to <code>ProcessChartOptionsParams</code> details the chart type. The type will be
-        one of <code>{groupedBar, stackedBar, normalizedBar, groupedColumn, stackedColumn, normalizedColumn, line, pie,
+        one of <code>{groupedBar, stackedBar, normalizedBar, groupedColumn, stackedColumn, normalizedColumn, line, scatter, pie,
         doughnut, area, stackedArea, normalizedArea}</code>. The example below demonstrates customising based on chart type.
         The following can be noted:
     </p>
@@ -62,6 +63,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>Stacked Bar</b>, <b>Grouped Bar</b> and <b>Normalized Bar</b> charts have the legend docked to the <b>bottom</b>.</li>
         <li><b>Stacked Column</b>, <b>Grouped Column</b> and <b>Normalized Column</b> charts have the legend docked to the <b>right</b>.</li>
         <li><b>Line</b> charts have the legend docked to the <b>left</b>.</li>
+        <li><b>Scatter</b> charts have the legend docked to the <b>right</b>.</li>
         <li><b>Pie</b> charts have the legend docked to the <b>top</b>.</li>
         <li><b>Doughnut</b> charts have the legend docked to the <b>right</b>.</li>
     </ul>
