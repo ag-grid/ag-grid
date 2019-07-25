@@ -630,7 +630,7 @@ export class RangeController implements IRangeController {
         this.draggingRange = undefined;
         this.draggingCell = undefined;
 
-        this.onRangeChanged({ started: false, finished: false });
+        this.onRangeChanged({ started: false, finished: true });
     }
 
     private onRangeChanged(params: { started: boolean, finished: boolean}) {
