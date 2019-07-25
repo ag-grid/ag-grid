@@ -513,13 +513,14 @@ export class BarSeries extends Series<CartesianChart> {
                 const bottomY = yScale.convert((grouped ? 0 : prev));
                 const seriesDatum = data[i];
                 const yValue = seriesDatum[yField]; // unprocessed y-value
+                const yValueIsNumber = typeof yValue === 'number';
                 let labelText: string;
                 if (labelFormatter) {
                     labelText = labelFormatter({
-                        value: typeof yValue === 'number' ? yValue : NaN
+                        value: yValueIsNumber ? yValue : NaN
                     });
                 } else {
-                    labelText = isFinite(yValue) ? yValue.toFixed(2) : ''
+                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : ''
                 }
 
                 selectionData.push({
