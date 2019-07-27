@@ -8,7 +8,6 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
 import {ChartTranslator} from "../../../chartTranslator";
 
 export type LabelFont = {
@@ -53,11 +52,9 @@ export class LabelPanel extends Component {
 
     private params: LabelPanelParams;
     private activeComps: Component[] = [];
-    private chartController: ChartController;
 
-    constructor(chartController: ChartController, params: LabelPanelParams) {
+    constructor(params: LabelPanelParams) {
         super();
-        this.chartController = chartController;
         this.params = params;
     }
 

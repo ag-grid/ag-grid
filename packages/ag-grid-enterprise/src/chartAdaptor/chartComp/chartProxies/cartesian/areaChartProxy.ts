@@ -1,12 +1,14 @@
-import {ChartBuilder} from "../../builder/chartBuilder";
 import {AreaChartOptions, AreaSeriesOptions, ChartType} from "ag-grid-community";
-import {AreaSeries} from "../../../charts/chart/series/areaSeries";
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxy";
-import {CartesianChart} from "../../../charts/chart/cartesianChart";
-import {CategoryAxis} from "../../../charts/chart/axis/categoryAxis";
-import {ChartModel} from "../chartModel";
+import {ChartBuilder} from "../../../builder/chartBuilder";
+import {AreaSeries} from "../../../../charts/chart/series/areaSeries";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import {CategoryAxis} from "../../../../charts/chart/axis/categoryAxis";
+import {ChartModel} from "../../chartModel";
+import {CartesianChartProxy} from "./cartesianChartProxy";
 
-export class AreaChartProxy extends ChartProxy<AreaChartOptions> {
+export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
+
     private readonly chartType: ChartType;
 
     public constructor(params: ChartProxyParams) {
@@ -146,6 +148,7 @@ export class AreaChartProxy extends ChartProxy<AreaChartOptions> {
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelRotation: 0,
+                tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -164,6 +167,7 @@ export class AreaChartProxy extends ChartProxy<AreaChartOptions> {
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelRotation: 0,
+                tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,

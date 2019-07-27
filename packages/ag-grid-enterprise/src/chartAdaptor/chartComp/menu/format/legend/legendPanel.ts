@@ -49,13 +49,12 @@ export class LegendPanel extends Component {
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
+        this.chartProxy = this.chartController.getChartProxy();
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(LegendPanel.TEMPLATE);
-
-        this.chartProxy = this.chartController.getChartProxy();
 
         this.initLegendGroup();
         this.initLegendPosition();
@@ -142,7 +141,7 @@ export class LegendPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = new LabelPanel(this.chartController, params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.legendGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);

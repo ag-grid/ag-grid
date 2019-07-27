@@ -1,40 +1,34 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { ChartType, ScatterChartOptions, ScatterSeriesOptions } from "ag-grid-community";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
-import { CartesianChart } from "../../../charts/chart/cartesianChart";
-import { ScatterSeries } from "../../../charts/chart/series/scatterSeries";
-import { ChartModel } from "../chartModel";
+import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
+import {ChartBuilder} from "../../../builder/chartBuilder";
+import {BarSeries} from "../../../../charts/chart/series/barSeries";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import {ChartModel} from "../../chartModel";
+import {CartesianChartProxy} from "./cartesianChartProxy";
 
-export class ScatterChartProxy extends ChartProxy<ScatterChartOptions> {
+export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.initChartOptions(ChartType.Scatter, this.defaultOptions());
-        this.chart = ChartBuilder.createScatterChart(this.chartOptions);
+        this.initChartOptions(params.chartType, this.defaultOptions());
+
+        this.chart = BarChartProxy.isBarChart(params.chartType) ?
+            ChartBuilder.createBarChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
+
+        const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as BarSeriesOptions);
+        if (barSeries) { this.chart.addSeries(barSeries); }
     }
 
     public update(params: UpdateChartParams): void {
-        if (params.fields.length === 0) {
-            this.chart.removeAllSeries();
-            return;
-        }
+        const barSeries = this.chart.series[0] as BarSeries;
 
-        const scatterChart = this.chart as CartesianChart;
-        const fieldIds = params.fields.map(f => f.colId);
+        barSeries.data = params.data;
+        barSeries.xField = params.categoryId;
+        barSeries.yFields = params.fields.map(f => f.colId);
+        barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        const existingSeriesMap: { [id: string]: ScatterSeries } = {};
-
-        const updateSeries = (scatterSeries: ScatterSeries) => {
-            const id = scatterSeries.yField as string;
-            const seriesExists = fieldIds.indexOf(id) > -1;
-            seriesExists ? existingSeriesMap[id] = scatterSeries : scatterChart.removeSeries(scatterSeries);
-        };
-
-        scatterChart.series
-            .map(series => series as ScatterSeries)
-            .forEach(updateSeries);
-
+        // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
         if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
             chart.xAxis.labelRotation = 0;
@@ -42,35 +36,18 @@ export class ScatterChartProxy extends ChartProxy<ScatterChartOptions> {
             chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
         }
 
-        params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
-            const seriesOptions = this.chartOptions.seriesDefaults as ScatterSeriesOptions;
-
-            const existingSeries = existingSeriesMap[f.colId];
-            const scatterSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
-
-            if (scatterSeries) {
-                scatterSeries.title = f.displayName;
-                scatterSeries.data = params.data;
-                scatterSeries.xField = params.categoryId;
-                scatterSeries.yField = f.colId;
-
-                const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
-
-                const fills = palette.fills;
-                scatterSeries.fill = fills[index % fills.length];
-
-                const strokes = palette.strokes;
-                scatterSeries.stroke = strokes[index % strokes.length];
-
-                if (!existingSeries) {
-                    scatterChart.addSeries(scatterSeries);
-                }
-            }
-        });
+        const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+        barSeries.fills = palette.fills;
+        barSeries.strokes = palette.strokes;
     }
 
-    private defaultOptions(): ScatterChartOptions {
+    private static isBarChart(type: ChartType) {
+        return type === ChartType.GroupedBar || type === ChartType.StackedBar || type === ChartType.NormalizedBar;
+    }
+
+    private defaultOptions(): BarChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
+        const chartType = this.chartProxyParams.chartType;
 
         return {
             parent: this.chartProxyParams.parentElement,
@@ -108,6 +85,7 @@ export class ScatterChartProxy extends ChartProxy<ScatterChartOptions> {
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelRotation: 0,
+                tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -126,6 +104,7 @@ export class ScatterChartProxy extends ChartProxy<ScatterChartOptions> {
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelRotation: 0,
+                tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -137,16 +116,22 @@ export class ScatterChartProxy extends ChartProxy<ScatterChartOptions> {
                 }]
             },
             seriesDefaults: {
-                type: 'scatter',
+                type: 'bar',
                 fills: palette.fills,
                 strokes: palette.strokes,
-                strokeWidth: 3,
-                markerSize: 6,
-                markerStrokeWidth: 1,
+                grouped: chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar,
+                normalizedTo: (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar) ? 100 : undefined,
+                strokeWidth: 1,
                 tooltipEnabled: true,
+                labelEnabled: false,
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
+                labelColor: this.getLabelColor(),
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                title: ''
+                shadow: undefined
             }
         };
     }

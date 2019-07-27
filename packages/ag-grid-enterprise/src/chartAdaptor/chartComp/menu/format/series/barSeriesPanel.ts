@@ -133,7 +133,7 @@ export class BarSeriesPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = new LabelPanel(this.chartController, params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 

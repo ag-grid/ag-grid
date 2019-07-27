@@ -1,7 +1,7 @@
 import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
 import {ChartController} from "../../../chartController";
 import {ChartTranslator} from "../../../chartTranslator";
-import {ChartPaddingProperty} from "../../../chartProxies/chartProxy";
+import {ChartPaddingProperty, ChartProxy} from "../../../chartProxies/chartProxy";
 
 export class PaddingPanel extends Component {
 
@@ -23,11 +23,11 @@ export class PaddingPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
+    private chartProxy: ChartProxy<any>;
 
     constructor(chartController: ChartController) {
         super();
-        this.chartController = chartController;
+        this.chartProxy = chartController.getChartProxy();
     }
 
     @PostConstruct
@@ -47,14 +47,11 @@ export class PaddingPanel extends Component {
 
     private initChartPaddingItems(): void {
         const initInput = (property: ChartPaddingProperty, input: AgSlider, labelKey: string) => {
-
-            const proxy = this.chartController.getChartProxy();
-
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(proxy.getChartPadding(property))
+                .setValue(this.chartProxy.getChartPadding(property))
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => proxy.setChartPaddingProperty(property, newValue))
+                .onValueChange(newValue => this.chartProxy.setChartPaddingProperty(property, newValue));
         };
 
         initInput('top', this.paddingTopSlider, 'top');

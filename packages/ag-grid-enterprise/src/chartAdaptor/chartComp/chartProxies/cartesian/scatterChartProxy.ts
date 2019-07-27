@@ -1,17 +1,18 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { ChartType, LineChartOptions, LineSeriesOptions } from "ag-grid-community";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
-import { CartesianChart } from "../../../charts/chart/cartesianChart";
-import { LineSeries } from "../../../charts/chart/series/lineSeries";
-import {ChartModel} from "../chartModel";
+import {ChartType, ScatterChartOptions, ScatterSeriesOptions} from "ag-grid-community";
+import {ChartBuilder} from "../../../builder/chartBuilder";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import {ScatterSeries} from "../../../../charts/chart/series/scatterSeries";
+import {ChartModel} from "../../chartModel";
+import {CartesianChartProxy} from "./cartesianChartProxy";
 
-export class LineChartProxy extends ChartProxy<LineChartOptions> {
+export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.initChartOptions(ChartType.Line, this.defaultOptions());
-        this.chart = ChartBuilder.createLineChart(this.chartOptions);
+        this.initChartOptions(ChartType.Scatter, this.defaultOptions());
+        this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
@@ -20,46 +21,21 @@ export class LineChartProxy extends ChartProxy<LineChartOptions> {
             return;
         }
 
-        const lineChart = this.chart as CartesianChart;
+        const scatterChart = this.chart as CartesianChart;
         const fieldIds = params.fields.map(f => f.colId);
 
-        const existingSeriesMap: { [id: string]: LineSeries } = {};
+        const existingSeriesMap: { [id: string]: ScatterSeries } = {};
 
-        const updateSeries = (lineSeries: LineSeries) => {
-            const id = lineSeries.yField as string;
+        const updateSeries = (scatterSeries: ScatterSeries) => {
+            const id = scatterSeries.yField as string;
             const seriesExists = fieldIds.indexOf(id) > -1;
-            seriesExists ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
+            seriesExists ? existingSeriesMap[id] = scatterSeries : scatterChart.removeSeries(scatterSeries);
         };
 
-        lineChart.series.map(series => series as LineSeries).forEach(updateSeries);
+        scatterChart.series
+            .map(series => series as ScatterSeries)
+            .forEach(updateSeries);
 
-        params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
-            const seriesOptions = this.chartOptions.seriesDefaults as LineSeriesOptions;
-
-            const existingSeries = existingSeriesMap[f.colId];
-            const lineSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as LineSeries;
-
-            if (lineSeries) {
-                lineSeries.title = f.displayName;
-                lineSeries.data = params.data;
-                lineSeries.xField = params.categoryId;
-                lineSeries.yField = f.colId;
-
-                const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
-
-                const fills = palette.fills;
-                lineSeries.fill = fills[index % fills.length];
-
-                const strokes = palette.strokes;
-                lineSeries.stroke = strokes[index % strokes.length];
-
-                if (!existingSeries) {
-                    lineChart.addSeries(lineSeries);
-                }
-            }
-        });
-
-        // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
         if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
             chart.xAxis.labelRotation = 0;
@@ -67,9 +43,34 @@ export class LineChartProxy extends ChartProxy<LineChartOptions> {
             chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
         }
 
+        params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
+            const seriesOptions = this.chartOptions.seriesDefaults as ScatterSeriesOptions;
+
+            const existingSeries = existingSeriesMap[f.colId];
+            const scatterSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
+
+            if (scatterSeries) {
+                scatterSeries.title = f.displayName;
+                scatterSeries.data = params.data;
+                scatterSeries.xField = params.categoryId;
+                scatterSeries.yField = f.colId;
+
+                const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+                const fills = palette.fills;
+                scatterSeries.fill = fills[index % fills.length];
+
+                const strokes = palette.strokes;
+                scatterSeries.stroke = strokes[index % strokes.length];
+
+                if (!existingSeries) {
+                    scatterChart.addSeries(scatterSeries);
+                }
+            }
+        });
     }
 
-    private defaultOptions(): LineChartOptions {
+    private defaultOptions(): ScatterChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
@@ -90,7 +91,7 @@ export class LineChartProxy extends ChartProxy<LineChartOptions> {
             legend: {
                 enabled: true,
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
@@ -103,11 +104,12 @@ export class LineChartProxy extends ChartProxy<LineChartOptions> {
             xAxis: {
                 type: 'category',
                 labelFontStyle: undefined,
-                labelFontWeight: 'normal',
+                labelFontWeight: undefined,
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelRotation: 0,
+                tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -126,6 +128,7 @@ export class LineChartProxy extends ChartProxy<LineChartOptions> {
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelRotation: 0,
+                tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -137,11 +140,10 @@ export class LineChartProxy extends ChartProxy<LineChartOptions> {
                 }]
             },
             seriesDefaults: {
-                type: 'line',
+                type: 'scatter',
                 fills: palette.fills,
                 strokes: palette.strokes,
                 strokeWidth: 3,
-                marker: true,
                 markerSize: 6,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,

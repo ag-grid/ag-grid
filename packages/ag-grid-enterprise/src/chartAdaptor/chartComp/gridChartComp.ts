@@ -17,13 +17,13 @@ import {
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
 import {ChartModel, ChartModelParams} from "./chartModel";
-import {BarChartProxy} from "./chartProxies/barChartProxy";
-import {AreaChartProxy} from "./chartProxies/areaChartProxy";
+import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
+import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
 import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
-import {LineChartProxy} from "./chartProxies/lineChartProxy";
+import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
 import {PieChartProxy} from "./chartProxies/pieChartProxy";
 import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
-import {ScatterChartProxy} from "./chartProxies/scatterChartProxy";
+import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
 import {Palette, palettes} from "../../charts/chart/palettes";
 
 export interface GridChartParams {

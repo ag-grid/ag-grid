@@ -1,31 +1,64 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
-import { BarSeries } from "../../../charts/chart/series/barSeries";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
-import {CartesianChart} from "../../../charts/chart/cartesianChart";
-import {ChartModel} from "../chartModel";
+import {ChartType, LineChartOptions, LineSeriesOptions} from "ag-grid-community";
+import {ChartBuilder} from "../../../builder/chartBuilder";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import {LineSeries} from "../../../../charts/chart/series/lineSeries";
+import {ChartModel} from "../../chartModel";
+import {CartesianChartProxy} from "./cartesianChartProxy";
 
-export class BarChartProxy extends ChartProxy<BarChartOptions> {
+export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.initChartOptions(params.chartType, this.defaultOptions());
-
-        this.chart = BarChartProxy.isBarChart(params.chartType) ?
-            ChartBuilder.createBarChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
-
-        const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as BarSeriesOptions);
-        if (barSeries) { this.chart.addSeries(barSeries); }
+        this.initChartOptions(ChartType.Line, this.defaultOptions());
+        this.chart = ChartBuilder.createLineChart(this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
-        const barSeries = this.chart.series[0] as BarSeries;
+        if (params.fields.length === 0) {
+            this.chart.removeAllSeries();
+            return;
+        }
 
-        barSeries.data = params.data;
-        barSeries.xField = params.categoryId;
-        barSeries.yFields = params.fields.map(f => f.colId);
-        barSeries.yFieldNames = params.fields.map(f => f.displayName);
+        const lineChart = this.chart as CartesianChart;
+        const fieldIds = params.fields.map(f => f.colId);
+
+        const existingSeriesMap: { [id: string]: LineSeries } = {};
+
+        const updateSeries = (lineSeries: LineSeries) => {
+            const id = lineSeries.yField as string;
+            const seriesExists = fieldIds.indexOf(id) > -1;
+            seriesExists ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
+        };
+
+        lineChart.series.map(series => series as LineSeries).forEach(updateSeries);
+
+        params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
+            const seriesOptions = this.chartOptions.seriesDefaults as LineSeriesOptions;
+
+            const existingSeries = existingSeriesMap[f.colId];
+            const lineSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as LineSeries;
+
+            if (lineSeries) {
+                lineSeries.title = f.displayName;
+                lineSeries.data = params.data;
+                lineSeries.xField = params.categoryId;
+                lineSeries.yField = f.colId;
+
+                const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+
+                const fills = palette.fills;
+                lineSeries.fill = fills[index % fills.length];
+
+                const strokes = palette.strokes;
+                lineSeries.stroke = strokes[index % strokes.length];
+
+                if (!existingSeries) {
+                    lineChart.addSeries(lineSeries);
+                }
+            }
+        });
 
         // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
@@ -35,18 +68,10 @@ export class BarChartProxy extends ChartProxy<BarChartOptions> {
             chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
         }
 
-        const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
-        barSeries.fills = palette.fills;
-        barSeries.strokes = palette.strokes;
     }
 
-    private static isBarChart(type: ChartType) {
-        return type === ChartType.GroupedBar || type === ChartType.StackedBar || type === ChartType.NormalizedBar;
-    }
-
-    private defaultOptions(): BarChartOptions {
+    private defaultOptions(): LineChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
-        const chartType = this.chartProxyParams.chartType;
 
         return {
             parent: this.chartProxyParams.parentElement,
@@ -66,7 +91,7 @@ export class BarChartProxy extends ChartProxy<BarChartOptions> {
             legend: {
                 enabled: true,
                 labelFontStyle: undefined,
-                labelFontWeight: 'normal',
+                labelFontWeight: undefined,
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
@@ -79,11 +104,12 @@ export class BarChartProxy extends ChartProxy<BarChartOptions> {
             xAxis: {
                 type: 'category',
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelRotation: 0,
+                tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -102,6 +128,7 @@ export class BarChartProxy extends ChartProxy<BarChartOptions> {
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 labelRotation: 0,
+                tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
                 tickPadding: 5,
@@ -113,22 +140,17 @@ export class BarChartProxy extends ChartProxy<BarChartOptions> {
                 }]
             },
             seriesDefaults: {
-                type: 'bar',
+                type: 'line',
                 fills: palette.fills,
                 strokes: palette.strokes,
-                grouped: chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar,
-                normalizedTo: (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar) ? 100 : undefined,
-                strokeWidth: 1,
+                strokeWidth: 3,
+                marker: true,
+                markerSize: 6,
+                markerStrokeWidth: 1,
                 tooltipEnabled: true,
-                labelEnabled: false,
-                labelFontStyle: undefined,
-                labelFontWeight: undefined,
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                shadow: undefined
+                title: ''
             }
         };
     }

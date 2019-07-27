@@ -37,14 +37,13 @@ export class ChartPanel extends Component {
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
+        this.chartProxy = this.chartController.getChartProxy();
+        this.chart = this.chartProxy.getChart();
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(ChartPanel.TEMPLATE);
-
-        this.chartProxy = this.chartController.getChartProxy();
-        this.chart = this.chartProxy.getChart();
 
         this.initGroup();
         this.initTitles();
@@ -104,7 +103,7 @@ export class ChartPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = new LabelPanel(this.chartController, params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.chartGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
