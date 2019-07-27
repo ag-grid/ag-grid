@@ -2312,9 +2312,9 @@ export class Utils {
                                    allSuggestions: string[],
                                    hideIrrelevant?: boolean
                                    ): string[] {
-        const thisSuggestions: { value: string, relevance: number }[] = allSuggestions.map((text) => ({
+        let thisSuggestions: { value: string, relevance: number }[] = allSuggestions.map((text) => ({
             value: text,
-            relevance: _.string_intersections(inputValue.toLowerCase(), text.toLocaleLowerCase())
+            relevance: _.string_distances(inputValue.toLowerCase(), text.toLocaleLowerCase())
         }));
 
         thisSuggestions.sort((a, b) => {
@@ -2322,37 +2322,31 @@ export class Utils {
         });
 
         if (hideIrrelevant) {
-            thisSuggestions.filter(suggestion => suggestion.relevance !== 0);
+            thisSuggestions = thisSuggestions.filter(suggestion => suggestion.relevance !== 0);
         }
 
         return thisSuggestions.map(suggestion => suggestion.value);
     }
 
-    static string_intersections = function(str1: string, str2: string): number {
-        if (!str1.length && !str2.length) {
-            return  0;
-        }
-        const letters1 = str1.replace(/\s/s, '').split('').sort();
-        const letters2 = str2.replace(/\s/g, '').split('').sort();
-        let matchCounter = 0;
+    static string_distances(str1: string, str2: string): number {
+        const a = str1.replace(/\s/g, '');
+        const b = str2.replace(/\s/g, '');
 
-        let i = 0;
-        let j = 0;
-
-        while (i < letters1.length && j < letters2.length) {
-            if (letters1[i].charCodeAt(0) < letters2[j].charCodeAt(0)) {
-                i++;
-            } else if (letters2[j].charCodeAt(0) < letters1[i].charCodeAt(0)) {
-                j++;
-            } else { // if letters1[i].charCodeAt(0) === letters2[j].charCodeAt(0)
-                matchCounter++;
-                i++;
-                j++;
+        let weight = 0;
+        let lastIndex = 0;
+        for (let i = 0; i < a.length; i++) {
+            const idx = b.indexOf(a[i]);
+            if (idx === -1) {
+                continue;
             }
+
+            lastIndex = idx;
+            weight += ((b.length - lastIndex) * 100) / b.length;
+            weight *= weight;
         }
 
-        return matchCounter;
-    };
+        return weight;
+    }
 
     private static isNumpadDelWithNumlockOnForEdgeOrIe(event: KeyboardEvent) {
         if (Utils.isBrowserEdge() || Utils.isBrowserIE()) {
