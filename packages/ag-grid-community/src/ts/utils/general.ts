@@ -1527,6 +1527,17 @@ export class Utils {
         return pressedKey === keyToCheck;
     }
 
+    static isCharacterKey(event: KeyboardEvent): boolean {
+        // from: https://stackoverflow.com/questions/4179708/how-to-detect-if-the-pressed-key-will-produce-a-character-inside-an-input-text
+        const { which } = event;
+
+        if (typeof which === 'number' && which) {
+            return !event.ctrlKey && !event.metaKey && !event.altKey && event.which !== 8 && event.which !== 16;
+        }
+
+        return which === undefined;
+    }
+
     static setVisible(element: HTMLElement, visible: boolean) {
         this.addOrRemoveCssClass(element, 'ag-hidden', !visible);
     }
@@ -2290,7 +2301,7 @@ export class Utils {
 
         if (invalidInputs.length > 0) {
             invalidInputs.forEach(invalidInput =>
-                fuzzyMatches[invalidInput] = this.fuzzySuggestions(invalidInput, validValues, allSuggestions)
+                fuzzyMatches[invalidInput] = this.fuzzySuggestions(invalidInput, allSuggestions)
             );
         }
 
@@ -2298,65 +2309,49 @@ export class Utils {
     }
 
     public static fuzzySuggestions(inputValue: string,
-                                   validValues: string[],
-                                   allSuggestions: string[]): string[] {
-        const thisSuggestions: string [] = allSuggestions.slice(0);
-        thisSuggestions.sort((suggestedValueLeft, suggestedValueRight) => {
-                const leftDifference = _.string_similarity(suggestedValueLeft.toLowerCase(), inputValue.toLowerCase());
-                const rightDifference = _.string_similarity(suggestedValueRight.toLowerCase(), inputValue.toLowerCase());
-                return leftDifference > rightDifference ? -1 :
-                    leftDifference === rightDifference ? 0 :
-                        1;
-            }
-        );
+                                   allSuggestions: string[],
+                                   hideIrrelevant?: boolean
+                                   ): string[] {
+        const thisSuggestions: { value: string, relevance: number }[] = allSuggestions.map((text) => ({
+            value: text,
+            relevance: _.string_intersections(inputValue.toLowerCase(), text.toLocaleLowerCase())
+        }));
 
-        return thisSuggestions;
+        thisSuggestions.sort((a, b) => {
+            return b.relevance - a.relevance;
+        });
+
+        if (hideIrrelevant) {
+            thisSuggestions.filter(suggestion => suggestion.relevance !== 0);
+        }
+
+        return thisSuggestions.map(suggestion => suggestion.value);
     }
 
-    /**
-     * Algorithm to do fuzzy search
-     * from https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
-     * @param {string} from
-     * @return {[]}
-     */
-    static get_bigrams(from: string) {
-        const s = from.toLowerCase();
-        const v = new Array(s.length - 1);
-        let i;
-        let j;
-        let ref;
-
-        for (i = j = 0, ref = v.length; j <= ref; i = j += 1) {
-            v[i] = s.slice(i, i + 2);
-
+    static string_intersections = function(str1: string, str2: string): number {
+        if (!str1.length && !str2.length) {
+            return  0;
         }
-        return v;
-    }
+        const letters1 = str1.replace(/\s/s, '').split('').sort();
+        const letters2 = str2.replace(/\s/g, '').split('').sort();
+        let matchCounter = 0;
 
-    static string_similarity = function(str1: string, str2: string) {
-        if (str1.length > 0 && str2.length > 0) {
-            const pairs1 = Utils.get_bigrams(str1);
-            const pairs2 = Utils.get_bigrams(str2);
-            const union = pairs1.length + pairs2.length;
-            let hit_count = 0;
-            let j;
-            let len;
-            for (j = 0, len = pairs1.length; j < len; j++) {
-                const x = pairs1[j];
-                let k;
-                let len1;
-                for (k = 0, len1 = pairs2.length; k < len1; k++) {
-                    const y = pairs2[k];
-                    if (x === y) {
-                        hit_count++;
-                    }
-                }
-            }
-            if (hit_count > 0) {
-                return (2.0 * hit_count) / union;
+        let i = 0;
+        let j = 0;
+
+        while (i < letters1.length && j < letters2.length) {
+            if (letters1[i].charCodeAt(0) < letters2[j].charCodeAt(0)) {
+                i++;
+            } else if (letters2[j].charCodeAt(0) < letters1[i].charCodeAt(0)) {
+                j++;
+            } else { // if letters1[i].charCodeAt(0) === letters2[j].charCodeAt(0)
+                matchCounter++;
+                i++;
+                j++;
             }
         }
-        return 0.0;
+
+        return matchCounter;
     };
 
     private static isNumpadDelWithNumlockOnForEdgeOrIe(event: KeyboardEvent) {

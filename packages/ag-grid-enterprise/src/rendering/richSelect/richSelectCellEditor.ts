@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Component,
     Constants,
@@ -10,9 +9,9 @@ import {
     PopupComponent,
     Promise,
     UserComponentFactory,
-    Utils,
     GridOptionsWrapper,
-    RefSelector
+    RefSelector,
+    _
 } from "ag-grid-community";
 import { RichSelectRow } from "./richSelectRow";
 import { VirtualList } from "../virtualList";
@@ -46,8 +45,8 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     // the editing). in this instance, selectedValue will be a new value, however
     // the editing was effectively cancelled.
     private originalSelectedValue: any;
-
     private selectionConfirmed = false;
+    private searchString = '';
 
     constructor() {
         super(RichSelectCellEditor.TEMPLATE);
@@ -67,21 +66,21 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         this.eList.appendChild(this.virtualList.getGui());
 
-        if (Utils.exists(this.params.cellHeight)) {
+        if (_.exists(this.params.cellHeight)) {
             this.virtualList.setRowHeight(this.params.cellHeight);
         }
 
         this.renderSelectedValue();
 
-        if (Utils.missing(params.values)) {
+        if (_.missing(params.values)) {
             console.warn('ag-Grid: richSelectCellEditor requires values for it to work');
             return;
         }
         const values = params.values;
 
         this.virtualList.setModel({
-            getRowCount: function() { return values.length; },
-            getRow(index: number) { return values[index]; }
+            getRowCount: () => values.length,
+            getRow: (index: number) => values[index]
         });
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
@@ -89,6 +88,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         this.addDestroyableEventListener(virtualListGui, 'click', this.onClick.bind(this));
         this.addDestroyableEventListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
+        this.runSearch = _.debounce(this.runSearch, 300);
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -102,6 +102,8 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             case Constants.KEY_UP:
                 this.onNavigationKeyPressed(event, key);
                 break;
+            default:
+                this.searchText(event, key);
         }
     }
 
@@ -121,6 +123,24 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             const valueToSelect = this.params.values[newIndex];
             this.setSelectedValue(valueToSelect);
         }
+    }
+
+    private searchText(event: KeyboardEvent, key: number) {
+        if (!_.isCharacterKey(event)) { return; }
+        
+        this.searchString += event.key;
+        this.runSearch();
+    }
+
+    private runSearch() {
+        const suggestions = _.fuzzySuggestions(this.searchString, this.params.values, true);
+        this.searchString = '';
+
+        if (!suggestions.length) {
+            return;
+        }
+
+        this.setSelectedValue(suggestions[0]);
     }
 
     private renderSelectedValue(): void {
@@ -147,7 +167,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
                 }
             });
         } else {
-            if (Utils.exists(this.selectedValue)) {
+            if (_.exists(this.selectedValue)) {
                 eValue.innerHTML = valueFormatted;
             } else {
                 _.clearElement(eValue);
@@ -174,6 +194,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const row = new RichSelectRow(this.params);
         this.getContext().wireBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
+
         return row;
     }
 
@@ -203,7 +224,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         const selectedIndex = this.params.values.indexOf(this.selectedValue);
 
         // we have to call this here to get the list to have the right height, ie
-        // otherwise it would not have scrolls yet and ensureIndeVisible would do nothing
+        // otherwise it would not have scrolls yet and ensureIndexVisible would do nothing
         this.virtualList.refresh();
 
         if (selectedIndex >= 0) {
