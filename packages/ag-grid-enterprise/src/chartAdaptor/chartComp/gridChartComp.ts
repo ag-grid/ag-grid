@@ -61,7 +61,7 @@ export class GridChartComp extends Component {
     private chartController: ChartController;
 
     private currentChartType: ChartType;
-    private chartProxy: ChartProxy;
+    private chartProxy: ChartProxy<any>;
 
     private readonly params: GridChartParams;
 
@@ -140,7 +140,7 @@ export class GridChartComp extends Component {
         return this.model.getPalettes()[this.model.getActivePalette()];
     }
 
-    private createChartProxy(chartOptions: ChartProxyParams): ChartProxy {
+    private createChartProxy(chartOptions: ChartProxyParams): ChartProxy<any> {
         switch (chartOptions.chartType) {
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:

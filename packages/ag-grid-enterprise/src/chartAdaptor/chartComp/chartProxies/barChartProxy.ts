@@ -1,17 +1,16 @@
 import { ChartBuilder } from "../../builder/chartBuilder";
-import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
+import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import {CartesianChart} from "../../../charts/chart/cartesianChart";
 import {ChartModel} from "../chartModel";
 
-export class BarChartProxy extends ChartProxy {
-    private readonly chartOptions: BarChartOptions;
+export class BarChartProxy extends ChartProxy<BarChartOptions> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions(params.chartType, this.defaultOptions()) as BarChartOptions;
+        this.initChartOptions(params.chartType, this.defaultOptions());
 
         this.chart = BarChartProxy.isBarChart(params.chartType) ?
             ChartBuilder.createBarChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
@@ -62,6 +61,21 @@ export class BarChartProxy extends ChartProxy {
                 bottom: 20,
                 left: 20
             },
+            legendPosition: 'right',
+            legendPadding: 20,
+            legend: {
+                enabled: true,
+                labelFontStyle: undefined,
+                labelFontWeight: 'normal',
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
+                labelColor: this.getLabelColor(),
+                itemPaddingX: 16,
+                itemPaddingY: 8,
+                markerPadding: 4,
+                markerSize: 14,
+                markerStrokeWidth: 1
+            },
             xAxis: {
                 type: 'category',
                 labelFontStyle: undefined,
@@ -97,19 +111,6 @@ export class BarChartProxy extends ChartProxy {
                     stroke: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }]
-            },
-            legend: {
-                enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: undefined,
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
-                itemPaddingX: 16,
-                itemPaddingY: 8,
-                markerPadding: 4,
-                markerSize: 14,
-                markerStrokeWidth: 1
             },
             seriesDefaults: {
                 type: 'bar',

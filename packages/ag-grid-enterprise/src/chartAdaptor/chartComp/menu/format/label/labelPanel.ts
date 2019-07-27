@@ -2,14 +2,14 @@ import {
     _,
     AgColorPicker,
     AgGroupComponent,
-    AgSelect, Autowired,
+    AgSelect,
+    Autowired,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export type LabelFont = {
     family?: string;
@@ -51,7 +51,6 @@ export class LabelPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chart: Chart;
     private params: LabelPanelParams;
     private activeComps: Component[] = [];
     private chartController: ChartController;
@@ -65,9 +64,6 @@ export class LabelPanel extends Component {
     @PostConstruct
     private init() {
         this.setTemplate(LabelPanel.TEMPLATE);
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
 
         this.initGroup();
         this.initFontSelects();

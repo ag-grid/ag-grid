@@ -3,15 +3,14 @@ import { ChartType, DoughnutChartOptions, PieSeriesOptions } from "ag-grid-commu
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
-import { CaptionOptions } from "ag-grid-community/src/ts/interfaces/iChartOptions";
+import {CaptionOptions, LegendPosition} from "ag-grid-community/src/ts/interfaces/iChartOptions";
 
-export class DoughnutChartProxy extends ChartProxy {
-    private readonly chartOptions: DoughnutChartOptions;
+export class DoughnutChartProxy extends ChartProxy<DoughnutChartOptions> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions(ChartType.Doughnut, this.defaultOptions()) as DoughnutChartOptions;
+        this.initChartOptions(ChartType.Doughnut, this.defaultOptions());
         this.chart = ChartBuilder.createDoughnutChart(this.chartOptions);
     }
 
@@ -109,15 +108,20 @@ export class DoughnutChartProxy extends ChartProxy {
                 bottom: 50,
                 left: 50
             },
+            legendPosition: 'right' as LegendPosition,
+            legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: 'normal',
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 itemPaddingX: 16,
                 itemPaddingY: 8,
                 markerPadding: 4,
                 markerSize: 14,
-                markerLineWidth: 1
+                markerStrokeWidth: 1
             },
             seriesDefaults: {
                 type: 'pie',

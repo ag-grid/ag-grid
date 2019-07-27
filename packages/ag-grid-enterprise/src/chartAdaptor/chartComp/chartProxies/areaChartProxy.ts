@@ -6,16 +6,15 @@ import {CartesianChart} from "../../../charts/chart/cartesianChart";
 import {CategoryAxis} from "../../../charts/chart/axis/categoryAxis";
 import {ChartModel} from "../chartModel";
 
-export class AreaChartProxy extends ChartProxy {
+export class AreaChartProxy extends ChartProxy<AreaChartOptions> {
     private readonly chartType: ChartType;
-    private readonly chartOptions: AreaChartOptions;
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
         this.chartType = params.chartType;
 
-        this.chartOptions = this.getChartOptions(params.chartType, this.defaultOptions()) as AreaChartOptions;
+        this.initChartOptions(params.chartType, this.defaultOptions());
         this.chart = ChartBuilder.createAreaChart(this.chartOptions);
 
         this.setAxisPadding(this.chart as CartesianChart);
@@ -124,6 +123,21 @@ export class AreaChartProxy extends ChartProxy {
                 bottom: 20,
                 left: 20
             },
+            legendPosition: 'right',
+            legendPadding: 20,
+            legend: {
+                enabled: true,
+                labelFontStyle: undefined,
+                labelFontWeight: 'normal',
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
+                labelColor: this.getLabelColor(),
+                itemPaddingX: 16,
+                itemPaddingY: 8,
+                markerPadding: 4,
+                markerSize: 14,
+                markerStrokeWidth: 1
+            },
             xAxis: {
                 type: 'category',
                 labelFontStyle: undefined,
@@ -159,19 +173,6 @@ export class AreaChartProxy extends ChartProxy {
                     stroke: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }]
-            },
-            legend: {
-                enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: undefined,
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
-                itemPaddingX: 16,
-                itemPaddingY: 8,
-                markerPadding: 4,
-                markerSize: 14,
-                markerStrokeWidth: 1
             },
             seriesDefaults: {
                 type: 'area',

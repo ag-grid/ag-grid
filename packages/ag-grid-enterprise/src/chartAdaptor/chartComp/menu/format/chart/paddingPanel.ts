@@ -1,7 +1,7 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
-import { ChartTranslator } from "../../../chartTranslator";
+import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {ChartController} from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
+import {ChartPaddingProperty} from "../../../chartProxies/chartProxy";
 
 export class PaddingPanel extends Component {
 
@@ -23,7 +23,6 @@ export class PaddingPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chart: Chart;
     private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
@@ -34,9 +33,6 @@ export class PaddingPanel extends Component {
     @PostConstruct
     private init() {
         this.setTemplate(PaddingPanel.TEMPLATE);
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
 
         this.initGroup();
         this.initChartPaddingItems();
@@ -50,23 +46,20 @@ export class PaddingPanel extends Component {
     }
 
     private initChartPaddingItems(): void {
-        type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
+        const initInput = (property: ChartPaddingProperty, input: AgSlider, labelKey: string) => {
 
-        const initInput = (property: ChartPaddingProperty, input: AgSlider, labelKey: string, value: string) => {
+            const proxy = this.chartController.getChartProxy();
+
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(value)
+                .setValue(proxy.getChartPadding(property))
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => {
-                    const padding = this.chart.padding;
-                    padding[property] = newValue;
-                    this.chart.padding = padding;
-                });
+                .onValueChange(newValue => proxy.setChartPaddingProperty(property, newValue))
         };
 
-        initInput('top', this.paddingTopSlider, 'top', `${this.chart.padding.top}`);
-        initInput('right', this.paddingRightSlider, 'right', `${this.chart.padding.right}`);
-        initInput('bottom', this.paddingBottomSlider, 'bottom', `${this.chart.padding.bottom}`);
-        initInput('left', this.paddingLeftSlider, 'left', `${this.chart.padding.left}`);
+        initInput('top', this.paddingTopSlider, 'top');
+        initInput('right', this.paddingRightSlider, 'right');
+        initInput('bottom', this.paddingBottomSlider, 'bottom');
+        initInput('left', this.paddingLeftSlider, 'left');
     }
 }

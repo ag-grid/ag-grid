@@ -5,12 +5,12 @@ import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { LineSeries } from "../../../charts/chart/series/lineSeries";
 import {ChartModel} from "../chartModel";
 
-export class LineChartProxy extends ChartProxy {
-    private readonly chartOptions: LineChartOptions;
+export class LineChartProxy extends ChartProxy<LineChartOptions> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-        this.chartOptions = this.getChartOptions(ChartType.Line, this.defaultOptions()) as LineChartOptions;
+
+        this.initChartOptions(ChartType.Line, this.defaultOptions());
         this.chart = ChartBuilder.createLineChart(this.chartOptions);
     }
 
@@ -85,10 +85,25 @@ export class LineChartProxy extends ChartProxy {
                 bottom: 20,
                 left: 20
             },
+            legendPosition: 'right',
+            legendPadding: 20,
+            legend: {
+                enabled: true,
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
+                labelColor: this.getLabelColor(),
+                itemPaddingX: 16,
+                itemPaddingY: 8,
+                markerPadding: 4,
+                markerSize: 14,
+                markerStrokeWidth: 1
+            },
             xAxis: {
                 type: 'category',
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
@@ -120,19 +135,6 @@ export class LineChartProxy extends ChartProxy {
                     stroke: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }]
-            },
-            legend: {
-                enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: undefined,
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
-                itemPaddingX: 16,
-                itemPaddingY: 8,
-                markerPadding: 4,
-                markerSize: 14,
-                markerStrokeWidth: 1
             },
             seriesDefaults: {
                 type: 'line',

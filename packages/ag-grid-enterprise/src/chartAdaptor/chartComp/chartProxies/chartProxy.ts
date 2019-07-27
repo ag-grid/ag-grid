@@ -1,6 +1,7 @@
 import { ChartOptions, ChartType, ProcessChartOptionsParams } from "ag-grid-community";
-import { Chart } from "../../../charts/chart/chart";
+import {Chart, LegendPosition} from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
+import {Caption} from "../../../charts/caption";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -18,7 +19,12 @@ export interface UpdateChartParams {
     data: any[];
 }
 
-export abstract class ChartProxy {
+export type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
+export type LegendProperty = 'enabled' | 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
+export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
+export type TitleFontProperty = 'fontFamily' | 'fontStyle' | 'fontWeight' | 'fontSize' | 'color';
+
+export abstract class ChartProxy<T extends ChartOptions> {
     protected static darkLabelColour = 'rgb(221, 221, 221)';
     protected static lightLabelColour = 'rgb(87, 87, 87)';
 
@@ -28,6 +34,7 @@ export abstract class ChartProxy {
     protected chart: Chart;
     protected chartProxyParams: ChartProxyParams;
     protected overriddenPalette: Palette;
+    protected chartOptions: T;
 
     protected constructor(options: ChartProxyParams) {
         this.chartProxyParams = options;
@@ -51,17 +58,18 @@ export abstract class ChartProxy {
         return this.chartProxyParams.isDarkTheme() ? '#2d3436' : 'white';
     }
 
-    protected getChartOptions(type: ChartType, options: ChartOptions): ChartOptions {
+    protected initChartOptions(type: ChartType, options: T): void {
         // allow users to override options before they are applied
         if (this.chartProxyParams.processChartOptions) {
             const params: ProcessChartOptionsParams = {type, options};
-            const overriddenOptions = this.chartProxyParams.processChartOptions(params);
+            const overriddenOptions = this.chartProxyParams.processChartOptions(params) as T;
             this.overridePalette(overriddenOptions);
-            return overriddenOptions;
+            this.chartOptions = overriddenOptions;
         }
 
-        return options;
+        this.chartOptions = options;
     }
+
 
     private overridePalette(chartOptions: any) {
         const seriesDefaults = chartOptions.seriesDefaults;
@@ -79,6 +87,68 @@ export abstract class ChartProxy {
                 strokes: strokesOverridden && seriesDefaults.strokes ? seriesDefaults.strokes : defaultStrokes
             };
         }
+    }
+
+    public setChartPaddingProperty(property: ChartPaddingProperty, value: number): void {
+        const padding = this.chart.padding;
+        padding[property] = value;
+
+        this.chart.padding = padding;
+        this.chartOptions.padding = padding;
+    }
+
+    public getChartPadding(property: ChartPaddingProperty): string {
+        return this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : '';
+    }
+
+    public setLegendProperty(property: LegendProperty | LegendFontProperty, value: any) {
+        this.chart.legend[property] = value;
+        if (!this.chartOptions.legend) {
+            this.chartOptions.legend = {};
+        }
+        this.chartOptions.legend[property] = value;
+    }
+
+    public getLegendProperty(property: LegendProperty | LegendFontProperty): string {
+        return this.chartOptions.legend ? `${this.chartOptions.legend[property]}` : '';
+    }
+
+    public getLegendEnabled(): boolean {
+        return this.chartOptions.legend ? !!this.chartOptions.legend.enabled : false;
+    }
+
+    public setLegendPadding(padding: number) {
+        this.chart.legendPadding = padding;
+        this.chartOptions.legendPadding = padding;
+    }
+
+    public getLegendPadding(): string {
+        return `${this.chartOptions.legendPadding}`;
+    }
+
+    public setLegendPosition(position: LegendPosition) {
+        this.chart.legendPosition = position;
+        this.chartOptions.legendPosition = position;
+    }
+
+    public getLegendPosition(): string {
+        return `${this.chartOptions.legendPosition}`;
+    }
+
+    public setTitleProperty(property: TitleFontProperty, value: any) {
+        if (!this.chart.title) {
+            this.chart.title = {} as Caption;
+        }
+        this.chart.title[property] = value;
+
+        if (!this.chartOptions.title) {
+            this.chartOptions.title = {} as Caption;
+        }
+        this.chartOptions.title[property] = value;
+    }
+
+    public getTitleProperty(property: TitleFontProperty): string {
+        return this.chartOptions.title ? `${this.chartOptions.title[property]}` : '';
     }
 
     public destroy(): void {

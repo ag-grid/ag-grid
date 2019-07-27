@@ -61,7 +61,7 @@ export class ChartModel extends BeanStub {
     private datasource: ChartDatasource;
 
     private chartId: string;
-    private chartProxy: ChartProxy;
+    private chartProxy: ChartProxy<any>;
 
     public constructor(params: ChartModelParams) {
         super();
@@ -226,11 +226,11 @@ export class ChartModel extends BeanStub {
         });
     }
 
-    public setChartProxy(chartProxy: ChartProxy): void {
+    public setChartProxy(chartProxy: ChartProxy<any>): void {
         this.chartProxy = chartProxy;
     }
 
-    public getChartProxy(): ChartProxy {
+    public getChartProxy(): ChartProxy<any> {
         return this.chartProxy;
     }
 

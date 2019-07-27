@@ -5,13 +5,12 @@ import { CartesianChart } from "../../../charts/chart/cartesianChart";
 import { ScatterSeries } from "../../../charts/chart/series/scatterSeries";
 import { ChartModel } from "../chartModel";
 
-export class ScatterChartProxy extends ChartProxy {
-    private readonly chartOptions: ScatterChartOptions;
+export class ScatterChartProxy extends ChartProxy<ScatterChartOptions> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions(ChartType.Scatter, this.defaultOptions()) as ScatterChartOptions;
+        this.initChartOptions(ChartType.Scatter, this.defaultOptions());
         this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
 
@@ -86,6 +85,21 @@ export class ScatterChartProxy extends ChartProxy {
                 bottom: 20,
                 left: 20
             },
+            legendPosition: 'right',
+            legendPadding: 20,
+            legend: {
+                enabled: true,
+                labelFontStyle: undefined,
+                labelFontWeight: 'normal',
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
+                labelColor: this.getLabelColor(),
+                itemPaddingX: 16,
+                itemPaddingY: 8,
+                markerPadding: 4,
+                markerSize: 14,
+                markerStrokeWidth: 1
+            },
             xAxis: {
                 type: 'category',
                 labelFontStyle: undefined,
@@ -121,19 +135,6 @@ export class ScatterChartProxy extends ChartProxy {
                     stroke: this.getAxisGridColor(),
                     lineDash: [4, 2]
                 }]
-            },
-            legend: {
-                enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: undefined,
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
-                itemPaddingX: 16,
-                itemPaddingY: 8,
-                markerPadding: 4,
-                markerSize: 14,
-                markerStrokeWidth: 1
             },
             seriesDefaults: {
                 type: 'scatter',

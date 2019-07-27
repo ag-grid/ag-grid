@@ -3,15 +3,13 @@ import { ChartType, PieChartOptions, PieSeriesOptions } from "ag-grid-community"
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 import { PolarChart } from "../../../charts/chart/polarChart";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
-import { CaptionOptions } from "ag-grid-community/src/ts/interfaces/iChartOptions";
+import {CaptionOptions, LegendPosition} from "ag-grid-community/src/ts/interfaces/iChartOptions";
 
-export class PieChartProxy extends ChartProxy {
-    private readonly chartOptions: PieChartOptions;
-
+export class PieChartProxy extends ChartProxy<PieChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.chartOptions = this.getChartOptions(ChartType.Pie, this.defaultOptions()) as PieChartOptions;
+        this.initChartOptions(ChartType.Pie, this.defaultOptions());
         this.chart = ChartBuilder.createPolarChart(this.chartOptions);
     }
 
@@ -79,15 +77,20 @@ export class PieChartProxy extends ChartProxy {
                 bottom: 50,
                 left: 50
             },
+            legendPosition: 'right' as LegendPosition,
+            legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFont: '12px Verdana, sans-serif',
+                labelFontStyle: undefined,
+                labelFontWeight: 'normal',
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 itemPaddingX: 16,
                 itemPaddingY: 8,
                 markerPadding: 4,
                 markerSize: 14,
-                markerLineWidth: 1
+                markerStrokeWidth: 1
             },
             seriesDefaults: {
                 type: 'pie',

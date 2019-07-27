@@ -98,7 +98,7 @@ export class ChartController extends BeanStub {
         }
     }
 
-    public getChartProxy(): ChartProxy {
+    public getChartProxy(): ChartProxy<any> {
         return this.model.getChartProxy();
     }
 
