@@ -1,6 +1,8 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector } from "ag-grid-community";
-import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
-import { ChartTranslator } from "../../../chartTranslator";
+import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {ChartTranslator} from "../../../chartTranslator";
+import {CalloutProperty} from "../../../chartProxies/polar/polarChartProxy";
+import {PieChartProxy} from "../../../chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy";
 
 export class CalloutPanel extends Component {
 
@@ -22,11 +24,11 @@ export class CalloutPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private series: PieSeries[];
+    private chartProxy: PieChartProxy | DoughnutChartProxy;
 
-    constructor(series: PieSeries[]) {
+    constructor(chartProxy: PieChartProxy | DoughnutChartProxy) {
         super();
-        this.series = series;
+        this.chartProxy = chartProxy;
     }
 
     @PostConstruct
@@ -42,23 +44,16 @@ export class CalloutPanel extends Component {
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
-        type CalloutProperty = 'calloutLength' | 'calloutStrokeWidth' | 'labelOffset';
-
-        const initInput = (property: CalloutProperty, input: AgSlider, labelKey: string, initialValue: string, maxValue: number) => {
+        const initInput = (property: CalloutProperty, input: AgSlider, labelKey: string, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(initialValue)
+                .setValue(this.chartProxy.getSeriesProperty(property))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.series.forEach(s => s[property] = newValue));
+                .onValueChange(newValue => this.chartProxy.setSeriesProperty(property, newValue));
         };
 
-        const initialLength = this.series.length > 0 ? this.series[0].calloutLength : 10;
-        initInput('calloutLength', this.calloutLengthSlider, 'length', `${initialLength}`, 40);
-
-        const initialStrokeWidth = this.series.length > 0 ? this.series[0].calloutStrokeWidth : 1;
-        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', `${initialStrokeWidth}`, 10);
-
-        const initialOffset = this.series.length > 0 ? this.series[0].labelOffset : 3;
-        initInput('labelOffset', this.labelOffsetSlider, 'offset', `${initialOffset}`, 30);
+        initInput('calloutLength', this.calloutLengthSlider, 'length', 40);
+        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', 10);
+        initInput('labelOffset', this.labelOffsetSlider, 'offset', 30);
     }
 }

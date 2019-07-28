@@ -1,11 +1,12 @@
-import { ChartBuilder } from "../../builder/chartBuilder";
-import { ChartType, PieChartOptions, PieSeriesOptions } from "ag-grid-community";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
-import { PolarChart } from "../../../charts/chart/polarChart";
-import { PieSeries } from "../../../charts/chart/series/pieSeries";
+import {ChartBuilder} from "../../../builder/chartBuilder";
+import {ChartType, PieChartOptions, PieSeriesOptions} from "ag-grid-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {PolarChart} from "../../../../charts/chart/polarChart";
+import {PieSeries} from "../../../../charts/chart/series/pieSeries";
 import {CaptionOptions, LegendPosition} from "ag-grid-community/src/ts/interfaces/iChartOptions";
+import {PolarChartProxy} from "./polarChartProxy";
 
-export class PieChartProxy extends ChartProxy<PieChartOptions> {
+export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
@@ -96,17 +97,20 @@ export class PieChartProxy extends ChartProxy<PieChartOptions> {
                 type: 'pie',
                 fills: palette.fills,
                 strokes: palette.strokes,
-                lineWidth: 1,
+                strokeWidth: 1,
+                strokeOpacity: 1,
+                fillOpacity: 1,
                 calloutColors: palette.strokes,
-                calloutWidth: 2,
                 calloutLength: 10,
+                calloutStrokeWidth: 1,
+                labelOffset: 3,
                 labelEnabled: false,
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelMinAngle: 20,
+                labelMinAngle: 0,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,

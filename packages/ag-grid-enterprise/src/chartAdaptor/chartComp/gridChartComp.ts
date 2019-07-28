@@ -21,8 +21,8 @@ import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
 import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
 import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
-import {PieChartProxy} from "./chartProxies/pieChartProxy";
-import {DoughnutChartProxy} from "./chartProxies/doughnutChartProxy";
+import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
 import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
 import {Palette, palettes} from "../../charts/chart/palettes";
 
