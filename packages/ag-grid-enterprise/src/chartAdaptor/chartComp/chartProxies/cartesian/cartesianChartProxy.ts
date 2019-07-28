@@ -4,6 +4,7 @@ import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 
 export type CommonAxisProperty = 'lineColor' | 'lineWidth' | 'tickColor' | 'tickWidth' | 'tickSize' | 'tickPadding';
 export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
+export type LineMarkerProperty = 'marker' | 'markerSize' | 'markerStrokeWidth';
 
 export abstract class CartesianChartProxy<T extends CartesianChartOptions> extends ChartProxy<T> {
     protected constructor(params: ChartProxyParams) {

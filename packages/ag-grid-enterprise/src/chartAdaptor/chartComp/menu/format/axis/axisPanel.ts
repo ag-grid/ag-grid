@@ -1,19 +1,18 @@
 import {
     _,
+    AgAngleSelect,
+    AgColorPicker,
     AgGroupComponent,
+    AgSlider,
+    Autowired,
     Component,
     PostConstruct,
     RefSelector,
-    Autowired,
-    AgColorPicker,
-    AgSlider,
-    AgAngleSelect,
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
-import { AxisTicksPanel } from "./axisTicksPanel";
-import { LabelPanelParams, LabelPanel, LabelFont } from "../label/labelPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {AxisTicksPanel} from "./axisTicksPanel";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {ChartTranslator} from "../../../chartTranslator";
 import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisPanel extends Component {
@@ -34,7 +33,6 @@ export class AxisPanel extends Component {
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
-    private chart: CartesianChart;
     private chartProxy: CartesianChartProxy<any>;
 
     constructor(chartController: ChartController) {
@@ -46,8 +44,6 @@ export class AxisPanel extends Component {
     @PostConstruct
     private init() {
         this.setTemplate(AxisPanel.TEMPLATE);
-
-        this.chart = this.chartProxy.getChart() as CartesianChart;
 
         this.initAxis();
         this.initAxisTicks();
@@ -98,7 +94,7 @@ export class AxisPanel extends Component {
             if (font.size) { this.chartProxy.setCommonAxisProperty('labelFontSize', font.size); }
             if (font.color) { this.chartProxy.setCommonAxisProperty('labelColor', font.color); }
 
-            this.chart.performLayout();
+            this.chartProxy.getChart().performLayout();
         };
 
         const params: LabelPanelParams = {
@@ -132,10 +128,12 @@ export class AxisPanel extends Component {
         const degreesSymbol = String.fromCharCode(176);
 
         const xRotationLabel = `${this.chartTranslator.translate('xRotation')} ${degreesSymbol}`;
-        createAngleComp(xRotationLabel, this.chartProxy.getXRotation(), this.chartProxy.setXRotation);
+        const xUpdateFunc = (newValue: number) => this.chartProxy.setXRotation(newValue);
+        createAngleComp(xRotationLabel, this.chartProxy.getXRotation(), xUpdateFunc);
 
         const yRotationLabel = `${this.chartTranslator.translate('yRotation')} ${degreesSymbol}`;
-        createAngleComp(yRotationLabel, this.chartProxy.getYRotation(), this.chartProxy.setYRotation);
+        const yUpdateFunc = (newValue: number) => this.chartProxy.setYRotation(newValue);
+        createAngleComp(yRotationLabel, this.chartProxy.getYRotation(), yUpdateFunc);
     }
 
     private destroyActivePanels(): void {

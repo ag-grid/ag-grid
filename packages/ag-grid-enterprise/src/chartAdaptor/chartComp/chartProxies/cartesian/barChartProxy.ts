@@ -6,6 +6,9 @@ import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy} from "./cartesianChartProxy";
 
+export type BarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
+export type BarSeriesFontProperty = 'labelEnabled' | 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
+
 export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
     public constructor(params: ChartProxyParams) {
@@ -39,6 +42,28 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
         barSeries.fills = palette.fills;
         barSeries.strokes = palette.strokes;
+    }
+
+    public setSeriesProperty(property: BarSeriesProperty | BarSeriesFontProperty, value: any): void {
+        const series = this.getChart().series as BarSeries[];
+        series.forEach(s => s[property] = value);
+
+        if (!this.chartOptions.seriesDefaults) {
+            this.chartOptions.seriesDefaults = {};
+        }
+        this.chartOptions.seriesDefaults[property] = value;
+    }
+
+    public getSeriesProperty(property: BarSeriesProperty | BarSeriesFontProperty): string {
+        return this.chartOptions.seriesDefaults ? `${this.chartOptions.seriesDefaults[property]}` : '';
+    }
+
+    public getTooltipsEnabled(): boolean {
+        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.tooltipEnabled : false;
+    }
+
+    public getLabelEnabled(): boolean {
+        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.labelEnabled : false;
     }
 
     private static isBarChart(type: ChartType) {
@@ -125,13 +150,15 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 tooltipEnabled: true,
                 labelEnabled: false,
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                shadow: undefined
+                shadow: undefined,
+                strokeOpacity: 1,
+                fillOpacity: 1
             }
         };
     }

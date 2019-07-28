@@ -5,7 +5,9 @@ import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {CategoryAxis} from "../../../../charts/chart/axis/categoryAxis";
 import {ChartModel} from "../../chartModel";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import {CartesianChartProxy, LineMarkerProperty} from "./cartesianChartProxy";
+
+export type AreaSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 
 export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
 
@@ -109,6 +111,28 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         });
     }
 
+    public setSeriesProperty(property: AreaSeriesProperty | LineMarkerProperty, value: any): void {
+        const series = this.getChart().series as AreaSeries[];
+        series.forEach(s => s[property] = value);
+
+        if (!this.chartOptions.seriesDefaults) {
+            this.chartOptions.seriesDefaults = {};
+        }
+        this.chartOptions.seriesDefaults[property] = value;
+    }
+
+    public getSeriesProperty(property: AreaSeriesProperty | LineMarkerProperty): string {
+        return this.chartOptions.seriesDefaults ? `${this.chartOptions.seriesDefaults[property]}` : '';
+    }
+
+    public getTooltipsEnabled(): boolean {
+        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.tooltipEnabled : false;
+    }
+
+    public getMarkersEnabled(): boolean {
+        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.marker : false;
+    }
+
     private defaultOptions(): AreaChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
 
@@ -182,9 +206,10 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
                 type: 'area',
                 fills: palette.fills,
                 strokes: palette.strokes,
+                strokeWidth: 3,
+                strokeOpacity: 1,
                 fillOpacity: this.chartProxyParams.chartType === ChartType.Area ? 0.7 : 1,
                 normalizedTo: this.chartProxyParams.chartType === ChartType.NormalizedArea ? 100 : undefined,
-                strokeWidth: 3,
                 marker: true,
                 markerSize: 6,
                 markerStrokeWidth: 1,

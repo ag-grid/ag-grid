@@ -1,7 +1,8 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector } from "ag-grid-community";
-import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
-import { ChartTranslator } from "../../../chartTranslator";
-import { AreaSeries } from "../../../../../charts/chart/series/areaSeries";
+import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {ChartTranslator} from "../../../chartTranslator";
+import {LineChartProxy} from "../../../chartProxies/cartesian/lineChartProxy";
+import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
+import {LineMarkerProperty} from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class MarkersPanel extends Component {
 
@@ -19,11 +20,11 @@ export class MarkersPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private series: LineSeries[] | AreaSeries[];
+    private chartProxy: LineChartProxy | AreaChartProxy;
 
-    constructor(series: LineSeries[] | AreaSeries[]) {
+    constructor(chartProxy: LineChartProxy | AreaChartProxy) {
         super();
-        this.series = series;
+        this.chartProxy = chartProxy;
     }
 
     @PostConstruct
@@ -33,32 +34,22 @@ export class MarkersPanel extends Component {
     }
 
     private initMarkers() {
-        const enabled = this.series.some((s: LineSeries | AreaSeries) => s.marker);
-
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate('markers'))
-            .setEnabled(enabled)
+            .hideEnabledCheckbox(false)
+            .setEnabled(this.chartProxy.getMarkersEnabled())
             .hideOpenCloseIcons(true)
-            .onEnableChange(enabled => {
-                this.series.forEach((s: LineSeries | AreaSeries) => s.marker = enabled);
-            });
+            .onEnableChange(newValue => this.chartProxy.setSeriesProperty('marker', newValue));
 
-        type LineMarkerProperty = 'markerSize' | 'markerStrokeWidth';
-
-        const initInput = (property: LineMarkerProperty, input: AgSlider, labelKey: string, initialValue: string, maxValue: number) => {
+        const initInput = (property: LineMarkerProperty, input: AgSlider, labelKey: string, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(initialValue)
+                .setValue(this.chartProxy.getSeriesProperty(property))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => {
-                    this.series.forEach((s: LineSeries | AreaSeries) => s[property] = newValue)
-                });
+                .onValueChange(newValue => this.chartProxy.setSeriesProperty(property, newValue))
         };
 
-        const initialSize = this.series.length > 0 ? this.series[0].markerSize : 6;
-        initInput('markerSize', this.seriesMarkerSizeSlider, 'size', `${initialSize}`, 30);
-
-        const initialStrokeWidth = this.series.length > 0 ? this.series[0].markerStrokeWidth : 1;
-        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', `${initialStrokeWidth}`, 10);
+        initInput('markerSize', this.seriesMarkerSizeSlider, 'size', 30);
+        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', 10);
     }
 }

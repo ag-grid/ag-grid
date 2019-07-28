@@ -4,7 +4,9 @@ import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {LineSeries} from "../../../../charts/chart/series/lineSeries";
 import {ChartModel} from "../../chartModel";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import {CartesianChartProxy, LineMarkerProperty} from "./cartesianChartProxy";
+
+export type LineSeriesProperty = 'strokeWidth' | 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
 
 export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 
@@ -67,7 +69,28 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
         } else {
             chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
         }
+    }
 
+    public setSeriesProperty(property: LineSeriesProperty | LineMarkerProperty, value: any): void {
+        const series = this.getChart().series as LineSeries[];
+        series.forEach(s => s[property] = value);
+
+        if (!this.chartOptions.seriesDefaults) {
+            this.chartOptions.seriesDefaults = {};
+        }
+        this.chartOptions.seriesDefaults[property] = value;
+    }
+
+    public getSeriesProperty(property: LineSeriesProperty | LineMarkerProperty): string {
+        return this.chartOptions.seriesDefaults ? `${this.chartOptions.seriesDefaults[property]}` : '';
+    }
+
+    public getTooltipsEnabled(): boolean {
+        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.tooltipEnabled : false;
+    }
+
+    public getMarkersEnabled(): boolean {
+        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.marker : false;
     }
 
     private defaultOptions(): LineChartOptions {
