@@ -216,7 +216,8 @@ export class PrimaryColsListPanel extends Component {
                         const displayName = comp.getDisplayName();
                         filterPasses = displayName !== null ? displayName.toLowerCase().indexOf(this.filterText) >= 0 : true;
                     } else {
-                        filterPasses = true;
+                        // if this is a dummy column group, we should return false here
+                        filterPasses = item instanceof OriginalColumnGroup && item.getOriginalParent() ? true : false;
                     }
                 }
 
