@@ -35,6 +35,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         const chart = this.chart as CartesianChart;
         if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
             chart.xAxis.labelRotation = 0;
+            this.chartOptions.xAxis.labelRotation = 0;
         } else {
             chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
         }
