@@ -37,8 +37,8 @@ export abstract class ChartProxy<T extends ChartOptions> {
     protected overriddenPalette: Palette;
     protected chartOptions: T;
 
-    protected constructor(options: ChartProxyParams) {
-        this.chartProxyParams = options;
+    protected constructor(chartProxyParams: ChartProxyParams) {
+        this.chartProxyParams = chartProxyParams;
     }
 
     public abstract update(params: UpdateChartParams): void;
@@ -69,6 +69,10 @@ export abstract class ChartProxy<T extends ChartOptions> {
         } else {
             this.chartOptions = options;
         }
+
+        // always set chart width and height as these can't be overridden
+        this.chartOptions.width = this.chartProxyParams.width;
+        this.chartOptions.height = this.chartProxyParams.height;
     }
 
     private overridePalette(chartOptions: any) {

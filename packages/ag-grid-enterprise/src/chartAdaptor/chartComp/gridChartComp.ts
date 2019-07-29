@@ -7,12 +7,13 @@ import {
     ChartType,
     Component,
     Environment,
+    EventService,
     GridOptionsWrapper,
+    IAggFunc,
     PostConstruct,
     ProcessChartOptionsParams,
     RefSelector,
-    ResizeObserverService,
-    IAggFunc, EventService
+    ResizeObserverService
 } from "ag-grid-community";
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";

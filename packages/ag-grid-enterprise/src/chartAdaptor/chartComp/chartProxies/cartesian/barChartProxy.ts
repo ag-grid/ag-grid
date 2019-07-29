@@ -79,8 +79,6 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
         return {
             parent: this.chartProxyParams.parentElement,
-            width: this.chartProxyParams.width,
-            height: this.chartProxyParams.height,
             background: {
                 fill: this.getBackgroundColor()
             },
@@ -108,7 +106,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
             xAxis: {
                 type: 'category',
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
@@ -127,7 +125,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
             yAxis: {
                 type: 'number',
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),

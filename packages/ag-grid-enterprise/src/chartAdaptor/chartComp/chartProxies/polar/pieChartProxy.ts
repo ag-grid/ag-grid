@@ -67,8 +67,6 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
 
         return {
             parent: this.chartProxyParams.parentElement,
-            width: this.chartProxyParams.width,
-            height: this.chartProxyParams.height,
             background: {
                 fill: this.getBackgroundColor()
             },

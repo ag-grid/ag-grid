@@ -141,8 +141,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
 
         return {
             parent: this.chartProxyParams.parentElement,
-            width: this.chartProxyParams.width,
-            height: this.chartProxyParams.height,
             background: {
                 fill: this.getBackgroundColor()
             },
