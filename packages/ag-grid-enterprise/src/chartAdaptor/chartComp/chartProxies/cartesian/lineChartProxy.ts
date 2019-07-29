@@ -80,6 +80,8 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             this.chartOptions.seriesDefaults = {};
         }
         this.chartOptions.seriesDefaults[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getSeriesProperty(property: LineSeriesProperty | LineMarkerProperty): string {

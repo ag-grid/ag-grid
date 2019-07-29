@@ -12,7 +12,7 @@ import {
     ProcessChartOptionsParams,
     RefSelector,
     ResizeObserverService,
-    IAggFunc
+    IAggFunc, EventService
 } from "ag-grid-community";
 import {ChartMenu} from "./menu/chartMenu";
 import {ChartController} from "./chartController";
@@ -53,6 +53,8 @@ export class GridChartComp extends Component {
     @RefSelector('eChartComponentsWrapper') private eChartComponentsWrapper: HTMLElement;
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eDockedContainer') private eDockedContainer: HTMLElement;
+
+    @Autowired('eventService') private eventService: EventService;
 
     private chartMenu: ChartMenu;
     private chartDialog: AgDialog;
@@ -126,6 +128,7 @@ export class GridChartComp extends Component {
             parentElement: this.eChart,
             width: width,
             height: height,
+            eventService: this.eventService
         };
 
         // local state used to detect when chart type changes

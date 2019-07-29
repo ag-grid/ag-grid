@@ -1,4 +1,4 @@
-import { ChartOptions, ChartType, ProcessChartOptionsParams } from "ag-grid-community";
+import {ChartOptions, ChartType, Events, EventService, ProcessChartOptionsParams, ChartOptionsChanged} from "ag-grid-community";
 import {Chart, LegendPosition} from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
 import {Caption} from "../../../charts/caption";
@@ -11,6 +11,7 @@ export interface ChartProxyParams {
     width: number;
     height: number;
     parentElement: HTMLElement;
+    eventService: EventService;
 }
 
 export interface UpdateChartParams {
@@ -65,11 +66,10 @@ export abstract class ChartProxy<T extends ChartOptions> {
             const overriddenOptions = this.chartProxyParams.processChartOptions(params) as T;
             this.overridePalette(overriddenOptions);
             this.chartOptions = overriddenOptions;
+        } else {
+            this.chartOptions = options;
         }
-
-        this.chartOptions = options;
     }
-
 
     private overridePalette(chartOptions: any) {
         const seriesDefaults = chartOptions.seriesDefaults;
@@ -95,6 +95,8 @@ export abstract class ChartProxy<T extends ChartOptions> {
 
         this.chart.padding = padding;
         this.chartOptions.padding = padding;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getChartPadding(property: ChartPaddingProperty): string {
@@ -103,10 +105,13 @@ export abstract class ChartProxy<T extends ChartOptions> {
 
     public setLegendProperty(property: LegendProperty | LegendFontProperty, value: any) {
         this.chart.legend[property] = value;
+
         if (!this.chartOptions.legend) {
             this.chartOptions.legend = {};
         }
         this.chartOptions.legend[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getLegendProperty(property: LegendProperty | LegendFontProperty): string {
@@ -120,6 +125,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
     public setLegendPadding(padding: number) {
         this.chart.legendPadding = padding;
         this.chartOptions.legendPadding = padding;
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getLegendPadding(): string {
@@ -129,6 +135,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
     public setLegendPosition(position: LegendPosition) {
         this.chart.legendPosition = position;
         this.chartOptions.legendPosition = position;
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getLegendPosition(): string {
@@ -145,10 +152,20 @@ export abstract class ChartProxy<T extends ChartOptions> {
             this.chartOptions.title = {} as Caption;
         }
         this.chartOptions.title[property] = value;
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getTitleProperty(property: TitleFontProperty): string {
         return this.chartOptions.title ? `${this.chartOptions.title[property]}` : '';
+    }
+
+    protected raiseChartOptionsChangedEvent(): void {
+        const event: ChartOptionsChanged = {
+            type: Events.EVENT_CHART_OPTIONS_CHANGED,
+            chartType: this.chartProxyParams.chartType,
+            chartOptions: this.chartOptions
+        };
+        this.chartProxyParams.eventService.dispatchEvent(event);
     }
 
     public destroy(): void {

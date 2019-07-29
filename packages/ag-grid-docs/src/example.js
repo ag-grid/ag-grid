@@ -104,6 +104,9 @@ var groupColumn = {
     }
 };
 
+// used to keep track of chart options per chart
+var chartOptions = {};
+
 //var aVisible = true;
 //setTimeout( function() {
 //    var start = new Date().getTime();
@@ -379,10 +382,17 @@ var gridOptions = {
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-
+    onChartOptionsChanged: function(event) {
+        console.log('Callback onChartOptionsChanged:', event);
+    },
     processChartOptions: function(params) {
         let type = params.type;
         let options = params.options;
+
+        // use saved chart options for specific chart type
+        if (chartOptions[type]) {
+            return chartOptions[type];
+        }
 
         if (params.type === 'pie' || params.type === 'doughnut')  {
             options.seriesDefaults.tooltipRenderer = function (params) {
@@ -435,6 +445,9 @@ var gridOptions = {
         }
 
         return options;
+    },
+    onChartOptionsChanged: function(event) {
+        chartOptions[event.chartType] = event.chartOptions;
     },
     getContextMenuItems: getContextMenuItems,
     excelStyles: [

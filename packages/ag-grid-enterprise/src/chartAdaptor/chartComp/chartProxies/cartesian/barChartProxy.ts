@@ -53,6 +53,8 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
             this.chartOptions.seriesDefaults = {};
         }
         this.chartOptions.seriesDefaults[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getSeriesProperty(property: BarSeriesProperty | BarSeriesFontProperty): string {

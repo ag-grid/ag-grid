@@ -19,6 +19,8 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
 
         this.chartOptions.xAxis[property] = value;
         this.chartOptions.yAxis[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getCommonAxisProperty(property: CommonAxisProperty | LegendFontProperty): string {
@@ -34,6 +36,8 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
         cartesianChart.xAxis.labelRotation = rotation;
         this.chartOptions.xAxis.labelRotation = rotation;
         this.chart.layoutPending = true;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getYRotation(): number {
@@ -45,5 +49,7 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
         cartesianChart.yAxis.labelRotation = rotation;
         this.chartOptions.yAxis.labelRotation = rotation;
         this.chart.layoutPending = true;
+
+        this.raiseChartOptionsChangedEvent();
     }
 }

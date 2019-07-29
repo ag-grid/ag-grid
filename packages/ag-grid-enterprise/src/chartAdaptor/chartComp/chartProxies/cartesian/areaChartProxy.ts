@@ -120,6 +120,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             this.chartOptions.seriesDefaults = {};
         }
         this.chartOptions.seriesDefaults[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getSeriesProperty(property: AreaSeriesProperty | LineMarkerProperty): string {

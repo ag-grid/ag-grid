@@ -372,5 +372,5 @@ export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, V
     CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent,
     ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent,
     RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent,
-    PasteEndEvent, PasteStartEvent, GridSizeChangedEvent, ChartRangeSelectionChanged }
+    PasteEndEvent, PasteStartEvent, GridSizeChangedEvent, ChartRangeSelectionChanged, ChartOptionsChanged }
     from "./events";

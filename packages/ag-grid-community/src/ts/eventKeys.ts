@@ -63,6 +63,9 @@ export class Events {
     /** Chart Range selection has changed */
     public static EVENT_CHART_RANGE_SELECTION_CHANGED = 'chartRangeSelectionChanged';
 
+    /** Chart Options have changed */
+    public static EVENT_CHART_OPTIONS_CHANGED = 'chartOptionsChanged';
+
     /** For when the tool panel is shown / hidden */
     public static EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
 

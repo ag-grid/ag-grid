@@ -19,6 +19,8 @@ export abstract class PolarChartProxy<T extends PieChartOptions | DoughnutChartO
             this.chartOptions.seriesDefaults = {};
         }
         this.chartOptions.seriesDefaults[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getSeriesProperty(property: PolarSeriesProperty | PolarSeriesFontProperty | CalloutProperty): string {
