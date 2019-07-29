@@ -133,7 +133,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private runSearch() {
-        const suggestions = _.fuzzySuggestions(this.searchString, this.params.values, true);
+        const suggestions = _.fuzzySuggestions(this.searchString, this.params.values, true, true);
         this.searchString = '';
 
         if (!suggestions.length) {
