@@ -20,7 +20,6 @@
     $row-height: map-get($params, "row-height");
     $header-height: map-get($params, "header-height");
     $virtual-item-height: map-get($params, "virtual-item-height");
-    $rich-select-item-height: map-get($params, "rich-select-item-height");
     $cell-horizontal-padding: map-get($params, "cell-horizontal-padding");
 
     $font-family: map-get($params, "font-family");
@@ -610,12 +609,9 @@
 
         .ag-set-filter-item {
             height: $virtual-item-height;
-            display: flex;
-            align-items: center;
             > {
                 div, span {
                     margin-left: 5px;
-                    display: flex;
                 }
             }
         }
@@ -953,6 +949,14 @@
         }
     }
 
+    ////////////////////////////////////////
+    // Virtual List
+    ////////////////////////////////////////
+    .ag-virtual-list-container {
+        .ag-virtual-list-item {
+            height: $virtual-item-height;
+        }
+    }
     ////////////////////////////////////////
     // Rich Select
     ////////////////////////////////////////

@@ -43,24 +43,25 @@ export class Environment {
     }
 
     public isThemeDark(): boolean {
-        const theme = this.getTheme();
+        const { theme } = this.getTheme();
         return !!theme && theme.indexOf('dark') >= 0;
     }
 
-    public getTheme(): string | undefined {
+    public getTheme(): { theme?: string, el?: HTMLElement } {
         const reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
         let el: HTMLElement = this.eGridDiv;
         let themeMatch: RegExpMatchArray;
 
         while (el) {
             themeMatch = reg.exec(el.className);
-            el = el.parentElement;
-            if (el == null || themeMatch) {
+            if (!themeMatch) {
+                el = el.parentElement;
+            } else {
                 break;
             }
         }
 
-        if (!themeMatch) { return; }
+        if (!themeMatch) { return {}; }
 
         const theme = themeMatch[0];
         const usingOldTheme = themeMatch[2] === undefined;
@@ -70,6 +71,6 @@ export class Environment {
             _.doOnce(() => console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
         }
 
-        return theme;
+        return { theme, el };
     }
 }

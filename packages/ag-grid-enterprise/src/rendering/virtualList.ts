@@ -36,7 +36,30 @@ export class VirtualList extends Component {
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
 
         this.addScrollListener();
-        this.rowHeight = this.gridOptionsWrapper.getVirtualItemHeight();
+        const item = document.createElement('div');
+        _.addCssClass(item, 'ag-virtual-list-item');
+        this.rowHeight = this.getItemHeight();
+    }
+
+    private getItemHeight(): number {
+        const { theme, el } = this.environment.getTheme();
+        const defaultItemHeight = this.gridOptionsWrapper.getVirtualItemHeight()
+
+        if (!theme || ! el) {
+            return defaultItemHeight
+        }
+
+        const wrapper = document.createElement('div');
+        const item = document.createElement('div');
+
+        _.addCssClass(wrapper, 'ag-virtual-list-container');
+        _.addCssClass(item, 'ag-virtual-list-item');
+        wrapper.appendChild(item);
+        el.appendChild(wrapper);
+
+        const height = parseInt(window.getComputedStyle(item).height as string, 10) || defaultItemHeight;
+        el.removeChild(wrapper);
+        return height
     }
 
     public ensureIndexVisible(index: number): void {
