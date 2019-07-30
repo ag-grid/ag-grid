@@ -382,9 +382,6 @@ var gridOptions = {
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-    onChartOptionsChanged: function(event) {
-        console.log('Callback onChartOptionsChanged:', event);
-    },
     processChartOptions: function(params) {
         let type = params.type;
         let options = params.options;

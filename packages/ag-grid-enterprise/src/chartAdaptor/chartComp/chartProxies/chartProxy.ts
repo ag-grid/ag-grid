@@ -70,7 +70,8 @@ export abstract class ChartProxy<T extends ChartOptions> {
             this.chartOptions = options;
         }
 
-        // always set chart width and height as these can't be overridden
+        // these chart options are not overridable via the processChartOptions callback
+        this.chartOptions.parent = this.chartProxyParams.parentElement;
         this.chartOptions.width = this.chartProxyParams.width;
         this.chartOptions.height = this.chartProxyParams.height;
     }

@@ -97,7 +97,6 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
-            parent: this.chartProxyParams.parentElement,
             background: {
                 fill: this.getBackgroundColor()
             },
