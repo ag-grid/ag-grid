@@ -186,7 +186,7 @@ export class GridChartComp extends Component {
     }
 
     private createLinkButton(): Component {
-        const button = new Component('<div style="color: #0091EA; text-align: center; font-size: 18px" title="Click to disconnect the data between the Chart and the Grid" class="active">&supdsub;</div>')
+        const button = new Component('<div style="color: #0091EA; text-align: center; font-size: 18px" title="Detach Chart from Grid" class="active">&supdsub;</div>')
         const eGui = button.getGui();
         this.getContext().wireBean(button);
 
@@ -196,7 +196,9 @@ export class GridChartComp extends Component {
 
             eGui.innerHTML = !isActive ? '&supdsub;' : '&suphsub;';
             eGui.style.color = !isActive ? '#0091EA' : '#7F8C8D';
-            eGui.setAttribute('title', `Click to ${!isActive ? 'dis' : ''}connect the data between the Chart and the Grid`)
+            eGui.setAttribute('title', `${!isActive ? 'Detach Chart from Grid' : 'Attach Chart to Grid'}`);
+
+            this.chartController.detachChartRange();
         });
 
         return button;
