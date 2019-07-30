@@ -1159,6 +1159,12 @@ $handleSize: 5px;
     align-items: center;
     display: flex;
     justify-content: flex-end;
+    .ag-paging-row-summary-panel {
+        display: flex;
+        span {
+            margin: 0 3px;
+        }
+    }
 }
 
 .ag-paging-page-summary-panel {
@@ -1169,6 +1175,7 @@ $handleSize: 5px;
     }
     .ag-paging-button {
         position: relative;
+        overflow: hidden;
         button {
             position: absolute;
         }

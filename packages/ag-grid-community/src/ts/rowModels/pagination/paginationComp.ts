@@ -39,12 +39,12 @@ export class PaginationComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', _.createIconNoSpan('first', this.gridOptionsWrapper));
-        this.btPrevious.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
-        this.btNext.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
-        this.btLast.insertAdjacentElement('afterbegin', _.createIconNoSpan('last', this.gridOptionsWrapper));
+        this.btFirst.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper));
+        this.btPrevious.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
+        this.btNext.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
+        this.btLast.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
 
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
             this.serverSideRowModel = this.rowModel as IServerSideRowModel;
