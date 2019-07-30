@@ -179,8 +179,27 @@ export class GridChartComp extends Component {
             closable: true
         });
         this.getContext().wireBean(this.chartDialog);
+        const linkButton = this.createLinkButton();
+        this.chartDialog.addTitleBarButton(linkButton, 0);
 
         this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());
+    }
+
+    private createLinkButton(): Component {
+        const button = new Component('<div style="color: #0091EA; text-align: center; font-size: 18px" title="Click to disconnect the data between the Chart and the Grid" class="active">&supdsub;</div>')
+        const eGui = button.getGui();
+        this.getContext().wireBean(button);
+
+        button.addGuiEventListener('click', () => {
+            const isActive = _.containsClass(eGui, 'active');
+            _.addOrRemoveCssClass(eGui, 'active', !isActive);
+
+            eGui.innerHTML = !isActive ? '&supdsub;' : '&suphsub;';
+            eGui.style.color = !isActive ? '#0091EA' : '#7F8C8D';
+            eGui.setAttribute('title', `Click to ${!isActive ? 'dis' : ''}connect the data between the Chart and the Grid`)
+        });
+
+        return button;
     }
 
     private addMenu() {
