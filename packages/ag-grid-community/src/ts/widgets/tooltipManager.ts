@@ -54,12 +54,12 @@ export class TooltipManager {
             destroyFunc: undefined,
             eventDestroyFuncs: [
                 targetCmp.addDestroyableEventListener(el, 'mouseover', (e) => this.processMouseOver(e, targetCmp)),
-                targetCmp.addDestroyableEventListener(el, 'mousemove', (e) => this.processMouseMove(e)),
-                targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this)),
-                targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this))
+                // targetCmp.addDestroyableEventListener(el, 'mousemove', (e) => this.processMouseMove(e)),
+                // targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this)),
+                // targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this))
             ]
         };
-        targetCmp.addDestroyFunc(() => this.unregisterTooltip(targetCmp));
+        // targetCmp.addDestroyFunc(() => this.unregisterTooltip(targetCmp));
     }
 
     public unregisterTooltip(targetCmp: TooltipTarget): void {

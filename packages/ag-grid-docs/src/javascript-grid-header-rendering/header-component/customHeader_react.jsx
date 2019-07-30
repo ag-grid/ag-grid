@@ -4,8 +4,6 @@ export default class CustomHeader extends Component {
     constructor(props) {
         super(props);
 
-        props.reactContainer.style.display = "inline-block";
-
         this.state = {
             ascSort: 'inactive',
             descSort: 'inactive',
