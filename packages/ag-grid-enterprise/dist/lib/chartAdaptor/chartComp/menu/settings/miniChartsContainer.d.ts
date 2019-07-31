@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { ChartType, Component } from "ag-grid-community";
 import { ChartController } from "../../chartController";
 export declare class MiniChartsContainer extends Component {

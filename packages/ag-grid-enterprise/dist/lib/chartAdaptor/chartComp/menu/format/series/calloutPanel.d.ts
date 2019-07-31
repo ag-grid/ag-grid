@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { Component } from "ag-grid-community";
 import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
 export declare class CalloutPanel extends Component {

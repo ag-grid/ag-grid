@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { Component } from "ag-grid-community/main";
 export declare class PivotModePanel extends Component {
     private columnController;

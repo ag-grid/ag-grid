@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";
 export declare class AreaChartProxy extends ChartProxy {
     private readonly chartType;

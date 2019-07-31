@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -145,7 +145,7 @@ var LicenseManager = /** @class */ (function () {
             return [null, null];
         }
         var isTrial = matches.filter(function (match) { return match === 'TRIAL'; }).length === 1;
-        var version = matches.filter(function (match) { return match.startsWith("v"); }).map(function (match) { return match.replace(/^v/, ""); })[0];
+        var version = matches.filter(function (match) { return match.indexOf("v") === 0; }).map(function (match) { return match.replace(/^v/, ""); })[0];
         return [version, isTrial];
     };
     LicenseManager.prototype.validateLicenseKeyForVersion = function (version, isTrial, license) {

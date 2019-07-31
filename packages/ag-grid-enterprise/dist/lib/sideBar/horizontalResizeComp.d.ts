@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { Component } from "ag-grid-community";
 export declare class HorizontalResizeComp extends Component {
     private horizontalResizeService;

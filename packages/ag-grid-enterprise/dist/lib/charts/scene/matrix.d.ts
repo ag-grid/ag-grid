@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { BBox } from "./bbox";
 /**
  * As of Jan 8, 2019, Firefox still doesn't implement

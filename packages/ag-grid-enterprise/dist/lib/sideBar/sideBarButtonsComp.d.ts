@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { AgEvent, Component, ToolPanelDef } from "ag-grid-community";
 export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;

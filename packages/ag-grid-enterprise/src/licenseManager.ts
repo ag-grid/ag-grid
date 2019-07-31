@@ -151,7 +151,7 @@ export class LicenseManager {
         }
 
         const isTrial = matches.filter(match => match === 'TRIAL').length === 1;
-        const version = matches.filter(match => match.startsWith("v")).map(match => match.replace(/^v/, ""))[0];
+        const version = matches.filter(match => match.indexOf("v") === 0).map(match => match.replace(/^v/, ""))[0];
 
         return [version, isTrial];
     }

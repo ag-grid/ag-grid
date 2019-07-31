@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { ExcelOOXMLTemplate, ExcelStyle } from 'ag-grid-community';
 export declare const convertLegacyColor: (color: string) => string;
 declare const stylesheetFactory: ExcelOOXMLTemplate;

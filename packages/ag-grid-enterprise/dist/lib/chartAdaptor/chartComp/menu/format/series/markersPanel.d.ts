@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { Component } from "ag-grid-community";
 import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
 import { AreaSeries } from "../../../../../charts/chart/series/areaSeries";

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { ExcelStyle, ExcelWorksheet } from 'ag-grid-community';
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
