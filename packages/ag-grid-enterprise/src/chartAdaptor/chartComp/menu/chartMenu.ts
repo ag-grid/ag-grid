@@ -53,7 +53,7 @@ export class ChartMenu extends Component {
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
-        let tabOptions: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartToggleDetached', 'chartDownload'];
+        let tabOptions: ChartMenuOptions[] = ['chartToggleDetached', 'chartSettings', 'chartData', 'chartFormat', 'chartDownload'];
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
 
         if (toolbarItemsFunc) {
