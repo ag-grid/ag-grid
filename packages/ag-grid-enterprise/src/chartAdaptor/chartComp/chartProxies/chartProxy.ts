@@ -212,8 +212,6 @@ export abstract class ChartProxy<T extends ChartOptions> {
     }
 
     protected raiseChartOptionsChangedEvent(): void {
-        console.log('raiseChartOptionsChangedEvent');
-
         const event: ChartOptionsChanged = {
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartType: this.chartProxyParams.chartType,
