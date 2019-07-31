@@ -167,7 +167,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             xAxis: {
                 type: 'category',
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
@@ -186,7 +186,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             yAxis: {
                 type: 'number',
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),

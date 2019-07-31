@@ -4,7 +4,8 @@ import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {ScatterSeries} from "../../../../charts/chart/series/scatterSeries";
 import {ChartModel} from "../../chartModel";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty} from "./cartesianChartProxy";
+import {LineSeries} from "../../../../charts/chart/series/lineSeries";
 
 export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> {
 
@@ -71,6 +72,31 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         });
     }
 
+    public setSeriesProperty(property: LineSeriesProperty | LineMarkerProperty, value: any): void {
+        const series = this.getChart().series as LineSeries[];
+        series.forEach(s => s[property] = value);
+
+        if (!this.chartOptions.seriesDefaults) {
+            this.chartOptions.seriesDefaults = {};
+        }
+        this.chartOptions.seriesDefaults[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
+    }
+
+    public getSeriesProperty(property: LineSeriesProperty | LineMarkerProperty): string {
+        return this.chartOptions.seriesDefaults ? `${this.chartOptions.seriesDefaults[property]}` : '';
+    }
+
+    public getTooltipsEnabled(): boolean {
+        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.tooltipEnabled : false;
+    }
+
+    public getMarkersEnabled(): boolean {
+        // markers are always enabled on scatter charts
+        return true;
+    }
+
     private defaultOptions(): ScatterChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
 
@@ -102,7 +128,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             xAxis: {
                 type: 'category',
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
@@ -121,7 +147,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             yAxis: {
                 type: 'number',
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
@@ -141,7 +167,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 type: 'scatter',
                 fills: palette.fills,
                 strokes: palette.strokes,
-                strokeWidth: 3,
+                marker: true,
                 markerSize: 6,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,

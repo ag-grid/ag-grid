@@ -4,9 +4,7 @@ import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {LineSeries} from "../../../../charts/chart/series/lineSeries";
 import {ChartModel} from "../../chartModel";
-import {CartesianChartProxy, LineMarkerProperty} from "./cartesianChartProxy";
-
-export type LineSeriesProperty = 'strokeWidth' | 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
+import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty} from "./cartesianChartProxy";
 
 export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 
@@ -114,7 +112,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             legend: {
                 enabled: true,
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
@@ -146,7 +144,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             yAxis: {
                 type: 'number',
                 labelFontStyle: undefined,
-                labelFontWeight: undefined,
+                labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
