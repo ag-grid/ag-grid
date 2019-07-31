@@ -251,9 +251,9 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
                 showInLegend: true,
                 shadow: {
                     enabled: false,
-                    blur: 0,
-                    xOffset: 0,
-                    yOffset: 0,
+                    blur: 5,
+                    xOffset: 3,
+                    yOffset: 3,
                     color: 'rgba(0,0,0,0.5)'
                 }
             }
