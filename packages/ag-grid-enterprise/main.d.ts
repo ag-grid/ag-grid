@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 export { AggregationStage } from "./dist/lib/rowStages/aggregationStage";
 export { GroupStage } from "./dist/lib/rowStages/groupStage";
 export { SetFilter } from "./dist/lib/setFilter/setFilter";

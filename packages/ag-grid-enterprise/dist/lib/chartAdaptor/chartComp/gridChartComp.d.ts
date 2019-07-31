@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { CellRange, ChartOptions, ChartType, Component, ProcessChartOptionsParams } from "ag-grid-community";
 export interface GridChartParams {
     cellRange: CellRange;

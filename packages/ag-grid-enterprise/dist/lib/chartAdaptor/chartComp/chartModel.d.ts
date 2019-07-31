@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { BeanStub, CellRange, ChartType, Column } from "ag-grid-community";
 import { RangeController } from "../../rangeController";
 import { Palette } from "../../charts/chart/palettes";

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 // import { ChartBuilder } from "../../builder/chartBuilder";
 // import { ChartType, ScatterChartOptions, ScatterSeriesOptions } from "ag-grid-community";
 // import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxy";

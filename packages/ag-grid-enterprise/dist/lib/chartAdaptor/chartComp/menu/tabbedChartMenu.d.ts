@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { Component, ChartType, ChartMenuOptions } from "ag-grid-community";
 import { ChartController } from "../chartController";
 export declare class TabbedChartMenu extends Component {

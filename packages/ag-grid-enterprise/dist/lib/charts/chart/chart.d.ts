@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.0
+// ag-grid-enterprise v21.1.1
 import { Scene } from "../scene/scene";
 import { Series } from "./series/series";
 import { Padding } from "../util/padding";
