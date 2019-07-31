@@ -1,6 +1,5 @@
 import { Bean, Autowired } from './context/context';
 import { _ } from "./utils";
-import { PopupService } from './widgets/popupService';
 
 const MAT_GRID_SIZE = 8;
 
@@ -31,35 +30,43 @@ const HARD_CODED_SIZES: HardCodedSize = {
    }
 };
 
-const HEIGHT_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
+/**
+ * this object contains a list of Sass variables and an array
+ * of CSS styles required to get the correct value.
+ * eg. $virtual-item-height requires a structure, so we can get it's height.
+ * <div class="ag-theme-balham">
+ *     <div class="ag-virtual-list-container">
+ *         <div class="ag-virtual-list-item"></div>
+ *     </div>
+ */
+const SASS_PROPERTY_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
     headerHeight: ['ag-header-row'],
     virtualItemHeight: ['ag-virtual-list-container', 'ag-virtual-list-item'],
     rowHeight: ['ag-row']
 };
 
-const CALCULATED_HEIGHTS: HardCodedSize = {};
+const CALCULATED_SIZES: HardCodedSize = {};
 
 @Bean('environment')
 export class Environment {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-    @Autowired('popupService') private popupService: PopupService;
 
     public getSassVariable(theme: string, key: SASS_PROPERTIES): number {
         const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : (theme.match('balham') ? 'balham' : 'classic'));
         const defaultValue = HARD_CODED_SIZES[useTheme][key];
         let calculatedValue = 0;
 
-        if (!CALCULATED_HEIGHTS[theme]) {
-            CALCULATED_HEIGHTS[theme] = {};
+        if (!CALCULATED_SIZES[theme]) {
+            CALCULATED_SIZES[theme] = {};
         }
 
-        if (CALCULATED_HEIGHTS[theme][key]) {
-            return CALCULATED_HEIGHTS[theme][key];
+        if (CALCULATED_SIZES[theme][key]) {
+            return CALCULATED_SIZES[theme][key];
         }
 
-        if (HEIGHT_BUILDER[key]) {
-            const classList = HEIGHT_BUILDER[key];
+        if (SASS_PROPERTY_BUILDER[key]) {
+            const classList = SASS_PROPERTY_BUILDER[key];
             const div = document.createElement('div');
             const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string, idx: number) => {
                 if (idx === 0) {
@@ -80,9 +87,9 @@ export class Environment {
             }
         }
 
-        CALCULATED_HEIGHTS[theme][key] = calculatedValue || defaultValue;
+        CALCULATED_SIZES[theme][key] = calculatedValue || defaultValue;
 
-        return CALCULATED_HEIGHTS[theme][key];
+        return CALCULATED_SIZES[theme][key];
     }
 
     public isThemeDark(): boolean {
