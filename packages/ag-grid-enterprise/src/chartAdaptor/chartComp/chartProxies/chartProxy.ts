@@ -173,8 +173,8 @@ export abstract class ChartProxy<T extends ChartOptions> {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getTitleProperty(property: TitleFontProperty): string | undefined {
-        return this.chartOptions.title ? `${this.chartOptions.title[property]}` : undefined;
+    public getTitleProperty(property: TitleFontProperty): string {
+        return this.chartOptions.title ? `${this.chartOptions.title[property]}` : '';
     }
 
     public getShadowEnabled(): boolean {
@@ -212,6 +212,8 @@ export abstract class ChartProxy<T extends ChartOptions> {
     }
 
     protected raiseChartOptionsChangedEvent(): void {
+        console.log('raiseChartOptionsChangedEvent');
+
         const event: ChartOptionsChanged = {
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartType: this.chartProxyParams.chartType,
