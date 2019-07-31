@@ -1,13 +1,11 @@
 import {AreaChartOptions, AreaSeriesOptions, ChartType} from "ag-grid-community";
 import {ChartBuilder} from "../../../builder/chartBuilder";
 import {AreaSeries} from "../../../../charts/chart/series/areaSeries";
-import {ChartProxyParams, ShadowProperty, UpdateChartParams} from "../chartProxy";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {CategoryAxis} from "../../../../charts/chart/axis/categoryAxis";
 import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy, LineMarkerProperty} from "./cartesianChartProxy";
-import {BarSeries} from "../../../../charts/chart/series/barSeries";
-import {DropShadow} from "../../../../charts/scene/dropShadow";
 
 export type AreaSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 
@@ -136,37 +134,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
 
     public getMarkersEnabled(): boolean {
         return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.marker : false;
-    }
-
-    public getShadowEnabled(): boolean {
-        return this.chartOptions.seriesDefaults && this.chartOptions.seriesDefaults.shadow ? !!this.chartOptions.seriesDefaults.shadow.enabled : false;
-    }
-
-    public getShadowProperty(property: ShadowProperty): any {
-        return this.chartOptions.seriesDefaults && this.chartOptions.seriesDefaults.shadow ? this.chartOptions.seriesDefaults.shadow[property] : '';
-    }
-
-    public setShadowProperty(property: ShadowProperty, value: any): void {
-        const series = this.getChart().series as BarSeries[];
-        series.forEach(s => {
-            if (!s.shadow) {
-                s.shadow = new DropShadow({enabled: false, blur: 0, xOffset: 0, yOffset: 0, color: 'rgba(0,0,0,0.5)'});
-            }
-
-            s.shadow[property] = value
-        });
-
-        if (!this.chartOptions.seriesDefaults) {
-            this.chartOptions.seriesDefaults = {};
-        }
-
-        if (!this.chartOptions.seriesDefaults.shadow) {
-            this.chartOptions.seriesDefaults.shadow = {};
-        }
-
-        this.chartOptions.seriesDefaults.shadow[property] = value;
-
-        this.raiseChartOptionsChangedEvent();
     }
 
     private defaultOptions(): AreaChartOptions {

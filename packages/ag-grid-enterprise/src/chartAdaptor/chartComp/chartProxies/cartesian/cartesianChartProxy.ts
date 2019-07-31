@@ -1,8 +1,6 @@
-import {ChartProxy, ChartProxyParams, ShadowProperty} from "../chartProxy";
+import {ChartProxy, ChartProxyParams} from "../chartProxy";
 import {CartesianChartOptions} from "ag-grid-community";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
-import {BarSeries} from "../../../../charts/chart/series/barSeries";
-import {DropShadow} from "../../../../charts/scene/dropShadow";
 
 export type CommonAxisProperty = 'lineColor' | 'lineWidth' | 'tickColor' | 'tickWidth' | 'tickSize' | 'tickPadding';
 export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';

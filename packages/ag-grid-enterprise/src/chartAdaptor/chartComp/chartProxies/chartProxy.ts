@@ -1,9 +1,19 @@
-import {ChartOptions, ChartType, Events, EventService, ProcessChartOptionsParams, ChartOptionsChanged} from "ag-grid-community";
+import {
+    ChartOptions,
+    ChartType,
+    Events,
+    EventService,
+    ProcessChartOptionsParams,
+    ChartOptionsChanged,
+    BarChartOptions, AreaChartOptions, PieChartOptions
+} from "ag-grid-community";
 import {Chart, LegendPosition} from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
 import {Caption} from "../../../charts/caption";
 import {BarSeries} from "../../../charts/chart/series/barSeries";
 import {DropShadow} from "../../../charts/scene/dropShadow";
+import {AreaSeries} from "../../../charts/chart/series/areaSeries";
+import {PieSeries} from "../../../charts/chart/series/pieSeries";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -163,8 +173,42 @@ export abstract class ChartProxy<T extends ChartOptions> {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getTitleProperty(property: TitleFontProperty): string {
-        return this.chartOptions.title ? `${this.chartOptions.title[property]}` : '';
+    public getTitleProperty(property: TitleFontProperty): string | undefined {
+        return this.chartOptions.title ? `${this.chartOptions.title[property]}` : undefined;
+    }
+
+    public getShadowEnabled(): boolean {
+        const chartOptions = this.chartOptions as BarChartOptions | AreaChartOptions | PieChartOptions;
+        return chartOptions.seriesDefaults && chartOptions.seriesDefaults.shadow ? !!chartOptions.seriesDefaults.shadow.enabled : false;
+    }
+
+    public getShadowProperty(property: ShadowProperty): any {
+        const chartOptions = this.chartOptions as BarChartOptions | AreaChartOptions | PieChartOptions;
+        return chartOptions.seriesDefaults && chartOptions.seriesDefaults.shadow ? chartOptions.seriesDefaults.shadow[property] : '';
+    }
+
+    public setShadowProperty(property: ShadowProperty, value: any): void {
+        const series = this.getChart().series as BarSeries[] | AreaSeries[] | PieSeries[];
+        series.forEach((s: BarSeries | AreaSeries | PieSeries) => {
+            if (!s.shadow) {
+                s.shadow = new DropShadow({enabled: false, blur: 0, xOffset: 0, yOffset: 0, color: 'rgba(0,0,0,0.5)'});
+            }
+
+            s.shadow[property] = value;
+        });
+
+        const chartOptions = this.chartOptions as BarChartOptions | AreaChartOptions | PieChartOptions;
+        if (!chartOptions.seriesDefaults) {
+            chartOptions.seriesDefaults = {};
+        }
+
+        if (!chartOptions.seriesDefaults.shadow) {
+            chartOptions.seriesDefaults.shadow = {};
+        }
+
+        chartOptions.seriesDefaults.shadow[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     protected raiseChartOptionsChangedEvent(): void {
