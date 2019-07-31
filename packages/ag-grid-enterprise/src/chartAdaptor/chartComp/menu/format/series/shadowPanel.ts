@@ -14,6 +14,8 @@ import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy
 import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
 import {ShadowProperty} from "../../../chartProxies/chartProxy";
 
+type ShadowProxy = BarChartProxy | AreaChartProxy | PieChartProxy | DoughnutChartProxy;
+
 export class ShadowPanel extends Component {
 
     public static TEMPLATE =
@@ -34,9 +36,9 @@ export class ShadowPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: BarChartProxy | AreaChartProxy | PieChartProxy | DoughnutChartProxy;
+    private chartProxy: ShadowProxy;
 
-    constructor(chartProxy: BarChartProxy | AreaChartProxy | PieChartProxy | DoughnutChartProxy) {
+    constructor(chartProxy: ShadowProxy) {
         super();
         this.chartProxy = chartProxy;
     }
