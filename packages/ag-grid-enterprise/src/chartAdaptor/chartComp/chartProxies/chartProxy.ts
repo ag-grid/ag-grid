@@ -2,6 +2,8 @@ import {ChartOptions, ChartType, Events, EventService, ProcessChartOptionsParams
 import {Chart, LegendPosition} from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
 import {Caption} from "../../../charts/caption";
+import {BarSeries} from "../../../charts/chart/series/barSeries";
+import {DropShadow} from "../../../charts/scene/dropShadow";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -24,6 +26,7 @@ export type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
 export type LegendProperty = 'enabled' | 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
 export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
 export type TitleFontProperty = 'fontFamily' | 'fontStyle' | 'fontWeight' | 'fontSize' | 'color';
+export type ShadowProperty = 'enabled' | 'blur' | 'xOffset' | 'yOffset' | 'color';
 
 export abstract class ChartProxy<T extends ChartOptions> {
     protected static darkLabelColour = 'rgb(221, 221, 221)';

@@ -1,10 +1,11 @@
 import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
 import {ChartBuilder} from "../../../builder/chartBuilder";
 import {BarSeries} from "../../../../charts/chart/series/barSeries";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {ChartProxyParams, ShadowProperty, UpdateChartParams} from "../chartProxy";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy} from "./cartesianChartProxy";
+import {DropShadow} from "../../../../charts/scene/dropShadow";
 
 export type BarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 export type BarSeriesFontProperty = 'labelEnabled' | 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
@@ -71,6 +72,37 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
     private static isBarChart(type: ChartType) {
         return type === ChartType.GroupedBar || type === ChartType.StackedBar || type === ChartType.NormalizedBar;
+    }
+
+    public getShadowEnabled(): boolean {
+        return this.chartOptions.seriesDefaults && this.chartOptions.seriesDefaults.shadow ? !!this.chartOptions.seriesDefaults.shadow.enabled : false;
+    }
+
+    public getShadowProperty(property: ShadowProperty): any {
+        return this.chartOptions.seriesDefaults && this.chartOptions.seriesDefaults.shadow ? this.chartOptions.seriesDefaults.shadow[property] : '';
+    }
+
+    public setShadowProperty(property: ShadowProperty, value: any): void {
+        const series = this.getChart().series as BarSeries[];
+        series.forEach(s => {
+            if (!s.shadow) {
+                s.shadow = new DropShadow({enabled: false, blur: 0, xOffset: 0, yOffset: 0, color: 'rgba(0,0,0,0.5)'});
+            }
+
+            s.shadow[property] = value
+        });
+
+        if (!this.chartOptions.seriesDefaults) {
+            this.chartOptions.seriesDefaults = {};
+        }
+
+        if (!this.chartOptions.seriesDefaults.shadow) {
+            this.chartOptions.seriesDefaults.shadow = {};
+        }
+
+        this.chartOptions.seriesDefaults.shadow[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     private defaultOptions(): BarChartOptions {
@@ -157,7 +189,13 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 labelColor: this.getLabelColor(),
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                shadow: undefined,
+                shadow: {
+                    enabled: false,
+                    blur: 5,
+                    xOffset: 3,
+                    yOffset: 3,
+                    color: 'rgba(0,0,0,0.5)'
+                },
                 strokeOpacity: 1,
                 fillOpacity: 1
             }
