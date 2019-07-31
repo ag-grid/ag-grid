@@ -16,7 +16,7 @@ import { ChartController } from "../chartController";
 import { GridChartComp } from "../gridChartComp";
 
 type ChartToolbarButtons = {
-    [key in ChartMenuOptions]: [string, () => any]
+    [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
 }
 
 export class ChartMenu extends Component {
@@ -29,6 +29,7 @@ export class ChartMenu extends Component {
         chartSettings: ['menu', () => this.showMenu('chartSettings')],
         chartData: ['data' , () => this.showMenu('chartData')],
         chartFormat: ['data', () => this.showMenu('chartFormat')],
+        chartToggleDetached: ['linked', (e) => this.toggleDetached(e)],
         chartDownload: ['save', () => this.saveChart()]
     };
 
@@ -52,9 +53,8 @@ export class ChartMenu extends Component {
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
-        let tabOptions: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartDownload'];
+        let tabOptions: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartToggleDetached', 'chartDownload'];
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
-        const ret = [] as ChartMenuOptions[];
 
         if (toolbarItemsFunc) {
             const params: GetChartToolbarItemsParams = {
@@ -72,21 +72,24 @@ export class ChartMenu extends Component {
             });
         }
 
-        this.tabs = tabOptions.filter(option => option !== 'chartDownload');
+        const ignoreOptions: ChartMenuOptions[] = ['chartToggleDetached', 'chartDownload']
+        this.tabs = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1);
 
-        const downloadIdx = tabOptions.indexOf('chartDownload');
-        const firstItem = tabOptions.find(option => option !== 'chartDownload') as ChartMenuOptions;
-        const chartDownload = 'chartDownload' as ChartMenuOptions;
+        return tabOptions.filter(value => ignoreOptions.indexOf(value) !== -1 || (this.tabs.length && value === this.tabs[0]));
+    }
 
-        if (firstItem) {
-            ret.push(firstItem);
-        }
+    private toggleDetached(e: MouseEvent): void {
+        const target = e.target as HTMLElement;
+        const active = _.containsClass(target, 'ag-icon-linked');
+        _.addOrRemoveCssClass(target, 'ag-icon-linked', !active);
+        _.addOrRemoveCssClass(target, 'ag-icon-unlinked', active);
 
-        if (downloadIdx !== -1) {
-            return downloadIdx === 0 ? [chartDownload].concat(ret) : ret.concat([chartDownload]);
-        }
+        target.innerHTML = !active ? '&supdsub;' : '&suphsub;';
+        target.style.color = !active ? '#0091EA' : '#7F8C8D';
+        target.style.opacity = !active ? '1' : '0.5';
+        target.setAttribute('title', `${!active ? 'Detach Chart from Grid' : 'Attach Chart to Grid'}`);
 
-        return ret;
+        this.chartController.detachChartRange();
     }
 
     private createButtons(): void {
@@ -95,7 +98,16 @@ export class ChartMenu extends Component {
         chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
             const [ iconName, callback ] = buttonConfig;
-            const buttonEl = _.createIconNoSpan(iconName, this.gridOptionsWrapper);
+            let buttonEl = _.createIconNoSpan(iconName, this.gridOptionsWrapper, undefined, true);
+            if (iconName === 'linked') {
+                buttonEl.innerHTML = '&supdsub;';
+                buttonEl.style.color = '#0091EA';
+                buttonEl.style.userSelect = 'none';
+                buttonEl.style.fontFamily = 'initial';
+                buttonEl.style.textAlign = 'center';
+                buttonEl.style.opacity = '1';
+                buttonEl.setAttribute('title', 'Detach Chart from Grid');
+            }
             this.addDestroyableEventListener(buttonEl, 'click', callback);
             this.getGui().appendChild(buttonEl);
         });

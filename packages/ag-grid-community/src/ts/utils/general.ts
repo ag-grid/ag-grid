@@ -1375,7 +1375,7 @@ export class Utils {
         }
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null): HTMLElement {
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement {
         let userProvidedIcon: Function | string | null = null;
 
         // check col for icon first
@@ -1412,9 +1412,13 @@ export class Utils {
             }
         } else {
             const span = document.createElement('span');
-            const cssClass = this.iconNameClassMap[iconName];
+            let cssClass = this.iconNameClassMap[iconName];
             if (!cssClass) {
-                throw new Error(`${iconName} did not find class`);
+                if (!forceCreate) {
+                    throw new Error(`${iconName} did not find class`);
+                } else {
+                    cssClass = iconName;
+                }
             }
             span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
             span.setAttribute("unselectable", "on");
