@@ -109,8 +109,10 @@ export interface IGridStyle {
 }
 
 export interface DropShadowOptions {
+    enabled?: boolean;
     color?: string;
-    offset?: [number, number];
+    xOffset?: number;
+    yOffset?: number;
     blur?: number;
 }
 

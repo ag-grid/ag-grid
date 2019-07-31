@@ -64,11 +64,11 @@ export class ShadowPanel extends Component {
                     const xOffset = this.shadowXOffsetSlider.getValue() ? Number.parseInt(this.shadowXOffsetSlider.getValue()) : 0;
                     const yOffset = this.shadowYOffsetSlider.getValue() ? Number.parseInt(this.shadowYOffsetSlider.getValue()) : 0;
                     const color = this.shadowColorPicker.getValue() ? this.shadowColorPicker.getValue() : 'rgba(0,0,0,0.5)';
-                    series.shadow = {
-                        color: color,
-                        offset: {x: xOffset, y: yOffset},
-                        blur: blur
-                    }
+                    // series.shadow = {
+                    //     color: color,
+                    //     offset: {x: xOffset, y: yOffset},
+                    //     blur: blur
+                    // }
                 }
             });
         };
@@ -82,18 +82,19 @@ export class ShadowPanel extends Component {
             .hideEnabledCheckbox(false)
             .onEnableChange(enabled => {
                 this.series.forEach((series: BarSeries | PieSeries) => {
-                    if (enabled) {
-                        series.shadow = {
-                            color: this.shadowColorPicker.getValue(),
-                            offset: {
-                                x: Number.parseInt(this.shadowXOffsetSlider.getValue()),
-                                y: Number.parseInt(this.shadowYOffsetSlider.getValue())
-                            },
-                            blur: Number.parseInt(this.shadowBlurSlider.getValue())
-                        };
-                    } else {
-                        series.shadow = undefined;
-                    }
+                    // if (enabled) {
+                    //     series.shadow = {
+                    //         enabled: true,
+                    //         color: this.shadowColorPicker.getValue(),
+                    //         offset: {
+                    //             x: Number.parseInt(this.shadowXOffsetSlider.getValue()),
+                    //             y: Number.parseInt(this.shadowYOffsetSlider.getValue())
+                    //         },
+                    //         blur: Number.parseInt(this.shadowBlurSlider.getValue())
+                    //     };
+                    // } else {
+                    //     series.shadow = undefined;
+                    // }
                 });
             });
 

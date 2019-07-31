@@ -204,7 +204,14 @@ export abstract class Shape extends Node {
 
     private _fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
     set fillShadow(value: DropShadow | undefined) {
-        if (this._fillShadow !== value) {
+        const fillShadow = this._fillShadow;
+        if (fillShadow !== value) {
+            if (fillShadow) {
+                fillShadow.onChange = undefined;
+            }
+            if (value) {
+                value.onChange = () => this.dirty = true;
+            }
             this._fillShadow = value;
             this.dirty = true;
         }
@@ -215,7 +222,14 @@ export abstract class Shape extends Node {
 
     private _strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
     set strokeShadow(value: DropShadow | undefined) {
-        if (this._strokeShadow !== value) {
+        const strokeShadow = this._strokeShadow;
+        if (strokeShadow !== value) {
+            if (strokeShadow) {
+                strokeShadow.onChange = undefined;
+            }
+            if (value) {
+                value.onChange = () => this.dirty = true;
+            }
             this._strokeShadow = value;
             this.dirty = true;
         }
@@ -239,10 +253,10 @@ export abstract class Shape extends Node {
             // has no effect on shadows, so we have to account for the pixel ratio
             // manually here.
             const fillShadow = this.fillShadow;
-            if (fillShadow) {
+            if (fillShadow && fillShadow.enabled) {
                 ctx.shadowColor = fillShadow.color;
-                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fill();
@@ -269,10 +283,10 @@ export abstract class Shape extends Node {
             }
 
             const strokeShadow = this.strokeShadow;
-            if (strokeShadow) {
+            if (strokeShadow && strokeShadow.enabled) {
                 ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = strokeShadow.blur * pixelRatio;
             }
             ctx.stroke();

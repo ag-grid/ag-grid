@@ -29,7 +29,7 @@ import { AreaSeries } from "../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../charts/chart/series/pieSeries";
 import { Chart } from "../../charts/chart/chart";
 import { Series } from "../../charts/chart/series/series";
-import { DropShadow, Offset } from "../../charts/scene/dropShadow";
+import { DropShadow } from "../../charts/scene/dropShadow";
 import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
 import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Padding } from "../../charts/util/padding";
@@ -614,11 +614,7 @@ export class ChartBuilder {
     }
 
     static createDropShadow(options: DropShadowOptions = {}): DropShadow {
-        return new DropShadow(
-            options.color || 'black',
-            options.offset ? new Offset(options.offset[0], options.offset[1]) : new Offset(0, 0),
-            options.blur || 0
-        );
+        return new DropShadow(options);
     }
 
     static createAxis(options: AxisOptions): CategoryAxis | NumberAxis {

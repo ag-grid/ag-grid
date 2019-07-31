@@ -236,10 +236,10 @@ export class Rect extends Shape {
             // has no effect on shadows, so we have to account for the pixel ratio
             // manually here.
             const fillShadow = this.fillShadow;
-            if (fillShadow) {
+            if (fillShadow && fillShadow.enabled) {
                 ctx.shadowColor = fillShadow.color;
-                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fill();
@@ -266,10 +266,10 @@ export class Rect extends Shape {
             }
 
             const strokeShadow = this.strokeShadow;
-            if (strokeShadow) {
+            if (strokeShadow && strokeShadow.enabled) {
                 ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = strokeShadow.blur * pixelRatio;
             }
             ctx.stroke();
