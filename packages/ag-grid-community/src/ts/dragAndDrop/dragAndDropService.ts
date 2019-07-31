@@ -395,7 +395,7 @@ export class DragAndDropService {
 
     private createGhost(): void {
         this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
-        const theme = this.environment.getTheme();
+        const { theme } = this.environment.getTheme();
 
         if (theme) {
             _.addCssClass(this.eGhost, theme);

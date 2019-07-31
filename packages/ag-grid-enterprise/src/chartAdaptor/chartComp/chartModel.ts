@@ -62,6 +62,7 @@ export class ChartModel extends BeanStub {
 
     private chartId: string;
     private chartProxy: ChartProxy<any>;
+    private detached: boolean = false;
 
     public constructor(params: ChartModelParams) {
         super();
@@ -272,6 +273,14 @@ export class ChartModel extends BeanStub {
 
     public isSuppressChartRanges(): boolean {
         return this.suppressChartRanges;
+    }
+
+    public isDetached(): boolean {
+        return this.detached;
+    }
+
+    public toggleDetached(): void {
+        this.detached = !this.detached;
     }
 
     public getSelectedColState(): ColState[] {

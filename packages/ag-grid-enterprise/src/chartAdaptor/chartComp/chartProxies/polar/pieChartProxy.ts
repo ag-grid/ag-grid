@@ -66,7 +66,6 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
-            parent: this.chartProxyParams.parentElement,
             background: {
                 fill: this.getBackgroundColor()
             },

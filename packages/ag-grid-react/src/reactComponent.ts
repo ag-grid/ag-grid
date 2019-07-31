@@ -5,6 +5,7 @@ import * as AgGrid from 'ag-grid-community';
 import {Promise} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
+import {assignProperties} from "./utils";
 
 export class ReactComponent extends BaseReactComponent {
 
@@ -34,7 +35,7 @@ export class ReactComponent extends BaseReactComponent {
         return this.componentInstance;
     }
 
-    public isStatelesComponent(): boolean {
+    public isStatelessComponent(): boolean {
         return this.statelessComponent;
     }
 
@@ -86,6 +87,8 @@ export class ReactComponent extends BaseReactComponent {
             // retrieve the created instance from either createPortal or render
             params.ref = (element: any) => {
                 this.componentInstance = element;
+
+                this.addParentContainerStyleAndClasses();
             };
         }
 
@@ -96,6 +99,20 @@ export class ReactComponent extends BaseReactComponent {
         );
         this.portal = portal;
         this.parentComponent.mountReactPortal(portal!, this, resolve);
+    }
+
+    private addParentContainerStyleAndClasses() {
+        if(!this.componentInstance) {
+            return;
+        }
+
+        if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
+            assignProperties(this.eParentElement.style, this.componentInstance.getReactContainerStyle())
+        }
+        if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
+            const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
+            parentContainerClasses.forEach(className => AgGrid.Utils.addCssClass(this.eParentElement as HTMLElement, className));
+        }
     }
 
     private createParentElement(params: any) {

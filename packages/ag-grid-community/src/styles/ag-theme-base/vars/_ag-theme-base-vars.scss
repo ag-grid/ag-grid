@@ -19,6 +19,7 @@ $grid-size: 4px !default;
 $icon-size: 12px !default;
 $header-height: $grid-size * 6 + 1 !default;
 $row-height: ($grid-size * 6 + 1) !default;
+$rich-select-item-height: $row-height !default;
 $cell-horizontal-padding: $grid-size * 3 !default;
 $virtual-item-height: $grid-size * 5 !default;
 $header-icon-size: 14px !default;

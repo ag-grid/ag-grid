@@ -75,7 +75,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
-            parent: this.chartProxyParams.parentElement,
             background: {
                 fill: this.getBackgroundColor()
             },

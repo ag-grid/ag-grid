@@ -1616,7 +1616,7 @@ export class GridOptionsWrapper {
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
-        const theme = this.environment.getTheme();
+        const { theme } = this.environment.getTheme();
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
         }

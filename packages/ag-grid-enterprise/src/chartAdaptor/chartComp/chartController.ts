@@ -40,6 +40,9 @@ export class ChartController extends BeanStub {
     }
 
     public updateForGridChange() {
+        // don't update chart if chart is detached from grid data
+        if (this.model.isDetached()) return;
+
         // update the model with changes to the cell ranges from the grid before updating the column state
         this.model.updateCellRanges();
         this.model.resetColumnState();
@@ -96,6 +99,11 @@ export class ChartController extends BeanStub {
         if (!this.model.isSuppressChartRanges()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
+    }
+
+    public detachChartRange() {
+        this.model.toggleDetached();
+        this.model.isDetached()? this.rangeController.setCellRanges([]) : this.setChartRange();
     }
 
     public getChartProxy(): ChartProxy<any> {

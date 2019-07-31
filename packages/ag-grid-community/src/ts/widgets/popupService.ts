@@ -369,7 +369,7 @@ export class PopupService {
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         const eWrapper = document.createElement('div');
-        const theme = this.environment.getTheme();
+        const { theme } = this.environment.getTheme();
 
         if (theme) {
             _.addCssClass(eWrapper, theme);

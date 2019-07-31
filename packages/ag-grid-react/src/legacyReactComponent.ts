@@ -4,6 +4,7 @@ import * as AgGrid from 'ag-grid-community';
 import {Promise} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
+import {assignProperties} from "./utils";
 
 export class LegacyReactComponent extends BaseReactComponent {
     private eParentElement!: HTMLElement;
@@ -55,15 +56,37 @@ export class LegacyReactComponent extends BaseReactComponent {
         if (!this.parentComponent) {
             // MUST be a function, not an arrow function
             ReactDOM.render(ReactComponent as any, this.eParentElement as any, function () {
+                // @ts-ignore
                 self.componentInstance = this;
+
+                self.addParentContainerStyleAndClasses();
+
                 resolve(null);
             });
         } else {
             // MUST be a function, not an arrow function
             ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement as any, function () {
+                // @ts-ignore
                 self.componentInstance = this;
+
+                self.addParentContainerStyleAndClasses();
+
                 resolve(null);
             });
+        }
+    }
+
+    private addParentContainerStyleAndClasses() {
+        if(!this.componentInstance) {
+            return;
+        }
+
+        if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
+            assignProperties(this.eParentElement.style, this.componentInstance.getReactContainerStyle())
+        }
+        if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
+            const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
+            parentContainerClasses.forEach(className => AgGrid.Utils.addCssClass(this.eParentElement as HTMLElement, className));
         }
     }
 }

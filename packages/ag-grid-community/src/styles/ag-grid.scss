@@ -631,6 +631,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    > {
+        div, span {
+            display: flex;
+        }
+    }
 }
 
 .ag-filter {
@@ -1159,6 +1166,12 @@ $handleSize: 5px;
     align-items: center;
     display: flex;
     justify-content: flex-end;
+    .ag-paging-row-summary-panel {
+        display: flex;
+        span {
+            margin: 0 3px;
+        }
+    }
 }
 
 .ag-paging-page-summary-panel {
@@ -1169,6 +1182,7 @@ $handleSize: 5px;
     }
     .ag-paging-button {
         position: relative;
+        overflow: hidden;
         button {
             position: absolute;
         }

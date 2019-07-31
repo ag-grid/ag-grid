@@ -4,9 +4,6 @@ import ReactDOM from "react-dom";
 export default class FullWidthCellRenderer extends Component {
     constructor(props) {
         super(props);
-
-        props.reactContainer.style.display = "inline-block";
-        props.reactContainer.style.height = "100%";
     }
 
     componentDidMount() {
@@ -14,6 +11,13 @@ export default class FullWidthCellRenderer extends Component {
         ReactDOM.findDOMNode(this).addEventListener('mousewheel', (event) => {
             event.stopPropagation();
         }, false);
+    }
+
+    getReactContainerStyle() {
+        return {
+            display: 'inline-block',
+            height: '100%'
+        };
     }
 
     render() {
