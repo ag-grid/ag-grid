@@ -140,14 +140,15 @@ function insertTick(root: TreeNode, tick: Tick) {
 
     pathParts.forEach((pathPart, partIndex) => {
         const children = root.children;
-        const find = children.find(child => child.label === pathPart);
-        if (find) {
-            root = find;
+        const existingNode = children.find(child => child.label === pathPart);
+        const isNotLeaf = partIndex !== lastPartIndex;
+        if (existingNode && isNotLeaf) { // the isNotLeaf check is to allow duplicate leafs
+            root = existingNode;
         } else {
             const node = new TreeNode(pathPart, root);
             node.number = children.length;
             children.push(node);
-            if (partIndex !== lastPartIndex) {
+            if (isNotLeaf) {
                 root = node;
             }
         }

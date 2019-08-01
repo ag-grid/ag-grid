@@ -73,7 +73,7 @@ export class GroupedCategoryAxis {
     set domain(value: any[]) {
         this.scale.domain = value;
         const tickTree = ticksToTree(value);
-        const tickTreeLayout = this.tickTreeLayout = treeLayout(tickTree);
+        this.tickTreeLayout = treeLayout(tickTree);
 
         const domain = value.slice();
         domain.push('');
