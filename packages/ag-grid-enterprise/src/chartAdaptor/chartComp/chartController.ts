@@ -96,14 +96,14 @@ export class ChartController extends BeanStub {
     }
 
     public setChartRange() {
-        if (!this.model.isSuppressChartRanges()) {
+        if (!this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
     }
 
     public detachChartRange() {
         this.model.toggleDetached();
-        this.model.isDetached()? this.rangeController.setCellRanges([]) : this.setChartRange();
+        this.model.isDetached() ? this.rangeController.setCellRanges([]) : this.setChartRange();
     }
 
     public getChartProxy(): ChartProxy<any> {

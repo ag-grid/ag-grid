@@ -137,6 +137,8 @@ var gridOptions = {
         stackedAreaChart: 'laStacked',
         normalizedAreaChart: 'la100% Stacked',
 
+        scatterRangeChart: 'laScatter',
+
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',
         pinRight: 'laPin &gt;&gt;',
@@ -205,6 +207,12 @@ var gridOptions = {
         boldItalic: 'laBold Italic',
         fillOpacity: 'laFill Opacity',
         strokeOpacity: 'laLine Opacity',
+        columnGroup: 'laColumn',
+        barGroup: 'laBar',
+        pieGroup: 'laPie',
+        lineGroup: 'laLine',
+        scatterGroup: 'laScatter',
+        areaGroup: 'laArea',
         groupedColumnTooltip: 'laGrouped',
         stackedColumnTooltip: 'laStacked',
         normalizedColumnTooltip: 'la100% Stacked',
@@ -216,7 +224,8 @@ var gridOptions = {
         lineTooltip: 'laLine',
         groupedAreaTooltip: 'laGrouped',
         stackedAreaTooltip: 'laStacked',
-        normalizedAreaTooltip: 'la100% Stacked'
+        normalizedAreaTooltip: 'la100% Stacked',
+        scatterTooltip: 'laScatter'
     }
 };
 

@@ -119,6 +119,8 @@ localeText = {
         stackedAreaChart: 'laStacked',
         normalizedAreaChart: 'la100% Stacked',
 
+        scatterRangeChart: 'laScatter',
+
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',
         pinRight: 'laPin &gt;&gt;',
@@ -191,6 +193,12 @@ localeText = {
         boldItalic: 'laBold Italic',
         fillOpacity: 'laFill Opacity',
         strokeOpacity: 'laLine Opacity',
+        columnGroup: 'Column',
+        barGroup: 'Bar',
+        pieGroup: 'Pie',
+        lineGroup: 'Line',
+        scatterGroup: 'Scatter',
+        areaGroup: 'Area',
         groupedColumnTooltip: 'laGrouped',
         stackedColumnTooltip: 'laStacked',
         normalizedColumnTooltip: 'la100% Stacked',
@@ -202,7 +210,8 @@ localeText = {
         lineTooltip: 'laLine',
         groupedAreaTooltip: 'laGrouped',
         stackedAreaTooltip: 'laStacked',
-        normalizedAreaTooltip: 'la100% Stacked'
+        normalizedAreaTooltip: 'la100% Stacked',
+        scatterTooltip: 'laScatter'
 }</snippet>
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>
@@ -230,8 +239,8 @@ var gridOptions = {
         // to avoid key clash with external keys, we add 'grid' to the start of each key.
         var gridKey = 'grid.' + key;
 
-        // look the value up. here we use the AngularJS 1.x $filter service, however you can use whatever
-        // service you want, AngularJS 1.x or otherwise.
+        // look the value up. here we use the AngularJS 1.x $filter service, however you
+        // can use whatever service you want, AngularJS 1.x or otherwise.
         var value = $filter('translate')(gridKey);
         return value === gridKey ? defaultValue : value;
     }
