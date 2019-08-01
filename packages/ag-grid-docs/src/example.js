@@ -420,6 +420,22 @@ var gridOptions = {
                 return isNormalized ? res + '%' : res;
             };
 
+            if (type === 'scatter') {
+                options.xAxis.labelFormatter = function(params) {
+                    let n = params.value;
+                    if (isNaN(n)) return n;
+
+                    let res = '';
+                    if (n < 1e3) res = n;
+                    if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
+                    if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
+                    if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
+                    if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
+
+                    return res;
+                };
+            }
+
             options.seriesDefaults.labelFormatter = function (params) {
                 let n = params.value;
 
@@ -433,12 +449,14 @@ var gridOptions = {
                 return res;
             };
 
-            options.seriesDefaults.tooltipRenderer = function (params) {
-                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return title + '<div class="content">' + '$' + value + '</div>';
-            };
+            if (type !== 'scatter') {
+                options.seriesDefaults.tooltipRenderer = function (params) {
+                    let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    return title + '<div class="content">' + '$' + value + '</div>';
+                };
+            }
         }
 
         return options;

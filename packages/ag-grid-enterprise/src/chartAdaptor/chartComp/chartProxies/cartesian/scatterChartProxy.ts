@@ -13,6 +13,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         super(params);
 
         this.initChartOptions(ChartType.Scatter, this.defaultOptions());
+
         this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
 
@@ -45,7 +46,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
         }
 
-        params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
+        const xField = params.categoryId === ChartModel.DEFAULT_CATEGORY ? params.fields[0].colId : params.categoryId;
+        const updateFunc = (f: { colId: string, displayName: string }, index: number) => {
             const seriesOptions = this.chartOptions.seriesDefaults as ScatterSeriesOptions;
 
             const existingSeries = existingSeriesMap[f.colId];
@@ -54,7 +56,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             if (scatterSeries) {
                 scatterSeries.title = f.displayName;
                 scatterSeries.data = params.data;
-                scatterSeries.xField = params.categoryId;
+                scatterSeries.xField = xField;
                 scatterSeries.yField = f.colId;
 
                 const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
@@ -69,7 +71,13 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                     scatterChart.addSeries(scatterSeries);
                 }
             }
-        });
+        };
+
+        if (params.categoryId !== ChartModel.DEFAULT_CATEGORY) {
+            params.fields.forEach(updateFunc);
+        } else {
+            params.fields.slice(1, params.fields.length).forEach(updateFunc);
+        }
     }
 
     public setSeriesProperty(property: LineSeriesProperty | LineMarkerProperty, value: any): void {
@@ -98,6 +106,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     }
 
     private defaultOptions(): ScatterChartOptions {
+
+        const showLegend = this.chartProxyParams.categorySelected;
+        const xAxisType = this.chartProxyParams.categorySelected ? 'category' : 'number';
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
@@ -126,7 +137,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 markerStrokeWidth: 1
             },
             xAxis: {
-                type: 'category',
+                type: xAxisType,
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
@@ -172,7 +183,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
-                showInLegend: true,
+                showInLegend: showLegend,
                 title: ''
             }
         };

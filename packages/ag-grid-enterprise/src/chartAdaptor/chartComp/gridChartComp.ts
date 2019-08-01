@@ -121,6 +121,8 @@ export class GridChartComp extends Component {
         const processChartOptionsFunc = this.params.processChartOptions ?
             this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
 
+        const categorySelected = this.model.getSelectedDimensionId() !== ChartModel.DEFAULT_CATEGORY;
+
         const chartProxyParams: ChartProxyParams = {
             chartType: this.model.getChartType(),
             processChartOptions: processChartOptionsFunc,
@@ -129,7 +131,8 @@ export class GridChartComp extends Component {
             parentElement: this.eChart,
             width: width,
             height: height,
-            eventService: this.eventService
+            eventService: this.eventService,
+            categorySelected: categorySelected
         };
 
         // local state used to detect when chart type changes
