@@ -2,78 +2,12 @@ interface Tick {
     labels: string[];
 }
 
-// Every tree path has the same depth.
-const tickData = [
-    {
-        "labels": [
-            "A",
-            "B",
-            "F",
-            "O"
-        ]
-    },
-    {
-        "labels": [
-            "C",
-            "E",
-            "F",
-            "O"
-        ]
-    },
-    {
-        "labels": [
-            "D",
-            "E",
-            "F",
-            "O"
-        ]
-    },
-    {
-        "labels": [
-            "G",
-            "I",
-            "N",
-            "O"
-        ]
-    },
-    {
-        "labels": [
-            "H",
-            "I",
-            "N",
-            "O"
-        ]
-    },
-    {
-        "labels": [
-            "J",
-            "M",
-            "N",
-            "O"
-        ]
-    },
-    {
-        "labels": [
-            "K",
-            "M",
-            "N",
-            "O"
-        ]
-    },
-    {
-        "labels": [
-            "L",
-            "M",
-            "N",
-            "O"
-        ]
-    }
-];
-
 class TreeNode {
     label: string;
     x: number;
     y: number;
+    subtreeLeft: number = NaN;
+    subtreeRight: number = NaN;
     screenX: number;
     screenY: number;
     parent?: TreeNode;
@@ -285,6 +219,36 @@ class Dimensions {
     }
 }
 
+function secondWalk(v: TreeNode, m: number, layout: TreeLayout) {
+    v.x = v.prelim + m;
+    v.y = v.depth;
+    layout.update(v);
+    v.children.forEach(w => secondWalk(w, m + v.mod, layout));
+}
+
+function thirdWalk(v: TreeNode) {
+    const children = v.children;
+    children.forEach(w => thirdWalk(w));
+    if (children.length) {
+        v.subtreeLeft = children[0].subtreeLeft;
+        v.subtreeRight = children[v.children.length - 1].subtreeRight;
+        v.x = (v.subtreeLeft + v.subtreeRight) / 2;
+    } else {
+        v.subtreeLeft = v.x;
+        v.subtreeRight = v.x;
+    }
+}
+
+export function treeLayout(root: TreeNode): TreeLayout {
+    const layout = new TreeLayout;
+
+    firstWalk(root, 1);
+    secondWalk(root, -root.prelim, layout);
+    thirdWalk(root);
+
+    return layout;
+}
+
 export class TreeLayout {
     dimensions = new Dimensions;
     leafCount = 0;
@@ -326,27 +290,6 @@ export class TreeLayout {
             node.screenY += offsetY + shiftY;
         });
     }
-}
-
-interface TreeSize {
-    width: number;
-    height: number;
-}
-
-function secondWalk(v: TreeNode, m: number, layout: TreeLayout) {
-    v.x = v.prelim + m;
-    v.y = v.depth;
-    layout.update(v);
-    v.children.forEach(w => secondWalk(w, m + v.mod, layout));
-}
-
-export function treeLayout(root: TreeNode): TreeLayout {
-    const layout = new TreeLayout;
-
-    firstWalk(root, 1);
-    secondWalk(root, -root.prelim, layout);
-
-    return layout;
 }
 
 function logTree(root: TreeNode, formatter?: (node: TreeNode) => string) {
