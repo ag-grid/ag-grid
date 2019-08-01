@@ -308,6 +308,10 @@ unlinked
         margin: 5px;
         width: 175px;
     }
+
+    .tile img {
+        height: 32px;
+    }
     
     .tile p {
         white-space: nowrap;
