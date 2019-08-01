@@ -239,8 +239,8 @@ var gridOptions = {
         // to avoid key clash with external keys, we add 'grid' to the start of each key.
         var gridKey = 'grid.' + key;
 
-        // look the value up. here we use the AngularJS 1.x $filter service, however you can use whatever
-        // service you want, AngularJS 1.x or otherwise.
+        // look the value up. here we use the AngularJS 1.x $filter service, however you
+        // can use whatever service you want, AngularJS 1.x or otherwise.
         var value = $filter('translate')(gridKey);
         return value === gridKey ? defaultValue : value;
     }
