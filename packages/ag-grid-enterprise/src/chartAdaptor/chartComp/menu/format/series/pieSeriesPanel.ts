@@ -142,7 +142,7 @@ export class PieSeriesPanel extends Component {
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = new ShadowPanel(this.chartController);
+        const shadowPanelComp = new ShadowPanel(this.chartProxy);
         this.getContext().wireBean(shadowPanelComp);
         this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
         this.seriesGroup.addItem(shadowPanelComp);

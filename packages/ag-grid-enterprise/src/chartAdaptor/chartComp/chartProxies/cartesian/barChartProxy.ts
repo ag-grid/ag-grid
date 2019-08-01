@@ -157,7 +157,13 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 labelColor: this.getLabelColor(),
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                shadow: undefined,
+                shadow: {
+                    enabled: false,
+                    blur: 5,
+                    xOffset: 3,
+                    yOffset: 3,
+                    color: 'rgba(0,0,0,0.5)'
+                },
                 strokeOpacity: 1,
                 fillOpacity: 1
             }

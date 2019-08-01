@@ -30,7 +30,7 @@ import { CellPosition } from "./entities/cellPosition";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exporter/exportParams";
 import { AgEvent } from "./events";
-import { Environment } from "./environment";
+import { Environment, SASS_PROPERTIES } from "./environment";
 import { PropertyKeys } from "./propertyKeys";
 import { ColDefUtil } from "./components/colDefUtil";
 import { Events } from "./eventKeys";
@@ -1615,7 +1615,7 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
+    private specialForNewMaterial(defaultValue: number, sassVariableName: SASS_PROPERTIES): number {
         const { theme } = this.environment.getTheme();
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);

@@ -14,7 +14,7 @@ export interface ChartOptions {
     subtitle?: CaptionOptions;
 }
 
-export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartDownload';
+export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartToggleDetached' | 'chartDownload';
 
 export enum ChartType {
     GroupedColumn = 'groupedColumn',

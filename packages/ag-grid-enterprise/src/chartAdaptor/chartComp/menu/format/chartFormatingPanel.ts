@@ -7,6 +7,7 @@ import { LineSeriesPanel } from "./series/lineSeriesPanel";
 import { PieSeriesPanel } from "./series/pieSeriesPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { AreaSeriesPanel } from "./series/areaSeriesPanel";
+import {ScatterSeriesPanel} from "./series/scatterSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
 
@@ -49,6 +50,10 @@ export class ChartFormattingPanel extends Component {
         } else if (chartType === ChartType.Line) {
             this.addComponent(new AxisPanel(this.chartController));
             this.addComponent(new LineSeriesPanel(this.chartController));
+
+        } else if (chartType === ChartType.Scatter) {
+            this.addComponent(new AxisPanel(this.chartController));
+            this.addComponent(new ScatterSeriesPanel(this.chartController));
 
         } else if (chartType === ChartType.Area || chartType === ChartType.StackedArea || chartType === ChartType.NormalizedArea) {
             this.addComponent(new AxisPanel(this.chartController));

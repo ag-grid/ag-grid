@@ -294,10 +294,12 @@
 
     .ag-header-row {
         border: none;
+        height: $header-height;
     }
 
     .ag-row {
         @include row-border($border-color);
+        height: $row-height;
         border-width: 0;
         &:not(.ag-row-first) {
             border-width: $row-border-width 0 0;

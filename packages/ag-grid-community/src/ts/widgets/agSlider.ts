@@ -33,7 +33,7 @@ export class AgSlider extends AgAbstractLabel {
     public onValueChange(callbackFn: (newValue: number) => void) {
         const eventChanged = AgAbstractField.EVENT_CHANGED;
         this.addDestroyableEventListener(this.eText, eventChanged, () => {
-            const textValue = parseInt(this.eText.getValue(), 10);
+            const textValue = parseFloat(this.eText.getValue());
             this.eSlider.setValue(textValue.toString(), true);
             callbackFn(textValue || 0);
         });
@@ -89,6 +89,7 @@ export class AgSlider extends AgAbstractLabel {
 
     public setStep(step: number): this {
         this.eSlider.setStep(step);
+        this.eText.setStep(step);
         return this;
     }
 }

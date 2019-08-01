@@ -3,6 +3,7 @@ import {ChartTranslator} from "../../../chartTranslator";
 import {LineChartProxy} from "../../../chartProxies/cartesian/lineChartProxy";
 import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
 import {LineMarkerProperty} from "../../../chartProxies/cartesian/cartesianChartProxy";
+import {ScatterChartProxy} from "../../../chartProxies/cartesian/scatterChartProxy";
 
 export class MarkersPanel extends Component {
 
@@ -20,9 +21,9 @@ export class MarkersPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: LineChartProxy | AreaChartProxy;
+    private readonly chartProxy: LineChartProxy | ScatterChartProxy | AreaChartProxy;
 
-    constructor(chartProxy: LineChartProxy | AreaChartProxy) {
+    constructor(chartProxy: LineChartProxy | AreaChartProxy | ScatterChartProxy) {
         super();
         this.chartProxy = chartProxy;
     }
@@ -34,9 +35,13 @@ export class MarkersPanel extends Component {
     }
 
     private initMarkers() {
+
+        // scatter charts should always show markers
+        const shouldHideEnabledCheckbox = this.chartProxy instanceof ScatterChartProxy;
+
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate('markers'))
-            .hideEnabledCheckbox(false)
+            .hideEnabledCheckbox(shouldHideEnabledCheckbox)
             .setEnabled(this.chartProxy.getMarkersEnabled())
             .hideOpenCloseIcons(true)
             .onEnableChange(newValue => this.chartProxy.setSeriesProperty('marker', newValue));

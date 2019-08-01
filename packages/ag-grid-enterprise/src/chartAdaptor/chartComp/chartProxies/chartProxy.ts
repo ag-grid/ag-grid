@@ -1,7 +1,19 @@
-import {ChartOptions, ChartType, Events, EventService, ProcessChartOptionsParams, ChartOptionsChanged} from "ag-grid-community";
+import {
+    ChartOptions,
+    ChartType,
+    Events,
+    EventService,
+    ProcessChartOptionsParams,
+    ChartOptionsChanged,
+    BarChartOptions, AreaChartOptions, PieChartOptions
+} from "ag-grid-community";
 import {Chart, LegendPosition} from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
 import {Caption} from "../../../charts/caption";
+import {BarSeries} from "../../../charts/chart/series/barSeries";
+import {DropShadow} from "../../../charts/scene/dropShadow";
+import {AreaSeries} from "../../../charts/chart/series/areaSeries";
+import {PieSeries} from "../../../charts/chart/series/pieSeries";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -24,6 +36,7 @@ export type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
 export type LegendProperty = 'enabled' | 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
 export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
 export type TitleFontProperty = 'fontFamily' | 'fontStyle' | 'fontWeight' | 'fontSize' | 'color';
+export type ShadowProperty = 'enabled' | 'blur' | 'xOffset' | 'yOffset' | 'color';
 
 export abstract class ChartProxy<T extends ChartOptions> {
     protected static darkLabelColour = 'rgb(221, 221, 221)';
@@ -162,6 +175,40 @@ export abstract class ChartProxy<T extends ChartOptions> {
 
     public getTitleProperty(property: TitleFontProperty): string {
         return this.chartOptions.title ? `${this.chartOptions.title[property]}` : '';
+    }
+
+    public getShadowEnabled(): boolean {
+        const chartOptions = this.chartOptions as BarChartOptions | AreaChartOptions | PieChartOptions;
+        return chartOptions.seriesDefaults && chartOptions.seriesDefaults.shadow ? !!chartOptions.seriesDefaults.shadow.enabled : false;
+    }
+
+    public getShadowProperty(property: ShadowProperty): any {
+        const chartOptions = this.chartOptions as BarChartOptions | AreaChartOptions | PieChartOptions;
+        return chartOptions.seriesDefaults && chartOptions.seriesDefaults.shadow ? chartOptions.seriesDefaults.shadow[property] : '';
+    }
+
+    public setShadowProperty(property: ShadowProperty, value: any): void {
+        const series = this.getChart().series as BarSeries[] | AreaSeries[] | PieSeries[];
+        series.forEach((s: BarSeries | AreaSeries | PieSeries) => {
+            if (!s.shadow) {
+                s.shadow = new DropShadow({enabled: false, blur: 0, xOffset: 0, yOffset: 0, color: 'rgba(0,0,0,0.5)'});
+            }
+
+            s.shadow[property] = value;
+        });
+
+        const chartOptions = this.chartOptions as BarChartOptions | AreaChartOptions | PieChartOptions;
+        if (!chartOptions.seriesDefaults) {
+            chartOptions.seriesDefaults = {};
+        }
+
+        if (!chartOptions.seriesDefaults.shadow) {
+            chartOptions.seriesDefaults.shadow = {};
+        }
+
+        chartOptions.seriesDefaults.shadow[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     protected raiseChartOptionsChangedEvent(): void {

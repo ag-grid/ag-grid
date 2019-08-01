@@ -130,7 +130,7 @@ export class BarSeriesPanel extends Component {
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = new ShadowPanel(this.chartController);
+        const shadowPanelComp = new ShadowPanel(this.chartProxy);
         this.getContext().wireBean(shadowPanelComp);
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);

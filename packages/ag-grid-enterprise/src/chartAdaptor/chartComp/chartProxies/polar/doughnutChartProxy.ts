@@ -142,7 +142,13 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
                 showInLegend: true,
-                shadow: undefined,
+                shadow: {
+                    enabled: false,
+                    blur: 5,
+                    xOffset: 3,
+                    yOffset: 3,
+                    color: 'rgba(0,0,0,0.5)'
+                },
                 title: {
                     enabled: false,
                     font: 'bold 12px Verdana, sans-serif',

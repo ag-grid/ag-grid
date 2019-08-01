@@ -13,13 +13,12 @@ import {MarkersPanel} from "./markersPanel";
 import {ChartTranslator} from "../../../chartTranslator";
 import {LineChartProxy} from "../../../chartProxies/cartesian/lineChartProxy";
 
-export class LineSeriesPanel extends Component {
+export class ScatterSeriesPanel extends Component {
 
     public static TEMPLATE =
         `<div>   
             <ag-group-component ref="seriesGroup">
-                <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
-                <ag-slider ref="seriesLineWidthSlider"></ag-slider>
+                <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>                
             </ag-group-component>
         </div>`;
 
@@ -39,11 +38,10 @@ export class LineSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(LineSeriesPanel.TEMPLATE);
+        this.setTemplate(ScatterSeriesPanel.TEMPLATE);
 
         this.initSeriesGroup();
         this.initSeriesTooltips();
-        this.initSeriesLineWidth();
         this.initMarkersPanel();
     }
 
@@ -62,15 +60,6 @@ export class LineSeriesPanel extends Component {
             .setInputWidth(40)
             .setValue(this.chartProxy.getTooltipsEnabled())
             .onValueChange(newValue => this.chartProxy.setSeriesProperty('tooltipEnabled', newValue));
-    }
-
-    private initSeriesLineWidth() {
-        this.seriesLineWidthSlider
-            .setLabel(this.chartTranslator.translate('lineWidth'))
-            .setMaxValue(10)
-            .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesProperty('strokeWidth'))
-            .onValueChange(newValue => this.chartProxy.setSeriesProperty('strokeWidth', newValue));
     }
 
     private initMarkersPanel() {
