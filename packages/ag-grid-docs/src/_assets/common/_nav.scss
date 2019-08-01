@@ -79,12 +79,7 @@
             .get-started a {
                 padding: 8px;
                 border-radius: 6px;
-                color: #016dc4;
-                background-color: white;
-            }
-
-            .get-started a:hover {
-                color: black;
+                border: 1px solid currentColor;
             }
 
             .medium {
