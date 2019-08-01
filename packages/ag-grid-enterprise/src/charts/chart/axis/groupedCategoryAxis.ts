@@ -12,6 +12,7 @@ import { Matrix } from "../../scene/matrix";
 import { Caption } from "../../caption";
 import { Rect } from "../../scene/shape/rect";
 import { BandScale } from "../../scale/bandScale";
+import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
 // import { Rect } from "../../scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -51,6 +52,7 @@ export class GroupedCategoryAxis {
     private tickSelection: Selection<Group, Group, any, any>; // groups with a tick and a grid line in each
     private labelSelection: Selection<Text, Group, any, any>;
     private line = new Line();
+    private tickTreeLayout?: TreeLayout;
     // onLayoutChange?: () => void;
 
     constructor() {
@@ -70,13 +72,43 @@ export class GroupedCategoryAxis {
 
     set domain(value: any[]) {
         this.scale.domain = value;
+        const tickTree = ticksToTree(value);
+        const tickTreeLayout = this.tickTreeLayout = treeLayout(tickTree);
 
         const domain = value.slice();
         domain.push('');
         this.tickScale.domain = domain;
+
+        this.resizeTickTree();
     }
     get domain(): any[] {
         return this.scale.domain;
+    }
+
+    set range(value: [number, number]) {
+        this.scale.range = value;
+        this.tickScale.range = value;
+        this.resizeTickTree();
+    }
+    get range(): [number, number] {
+        return this.scale.range;
+    }
+
+    private resizeTickTree() {
+        const s = this.scale;
+        // const range = this.scale.range;
+        if (!s.domain.length) {
+            throw 'Whoa!';
+        }
+        const range = [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])];
+        const layout = this.tickTreeLayout;
+        const lineHeight = this.labelFontSize * 1.5;
+        const shiftX = (range[0] || 0) + (s.bandwidth || 0) / 2;
+        // const shiftX = 0;
+        if (layout) {
+            layout.resize(range[1] - range[0], layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
+            // console.log(range, layout.depth * 30, layout.nodes);
+        }
     }
 
     /**
@@ -253,6 +285,7 @@ export class GroupedCategoryAxis {
 
         // Render ticks and labels.
         const labels = scale.ticks();
+        const treeLabels = this.tickTreeLayout ? this.tickTreeLayout.nodes : [];
         const ticks = tickScale.ticks();
         const bandwidth = (scale.bandwidth || 0) / 2;
         // The side of the axis line to position the labels on.
@@ -327,7 +360,8 @@ export class GroupedCategoryAxis {
             });
         }
 
-        const updateLabels = this.labelSelection.setData(labels);
+        // const updateLabels = this.labelSelection.setData(labels);
+        const updateLabels = this.labelSelection.setData(treeLabels);
         updateLabels.exit.remove();
 
         const enterLabels = updateLabels.enter.append(Text);
@@ -345,16 +379,25 @@ export class GroupedCategoryAxis {
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
                 // the `datum` is a string or an object
+                // label.text = labelFormatter
+                //     ? labelFormatter({
+                //         value: String(datum),
+                //         index
+                //     })
+                //     : String(datum);
                 label.text = labelFormatter
                     ? labelFormatter({
-                        value: String(datum),
+                        value: String(datum.label),
                         index
                     })
-                    : String(datum);
+                    : String(datum.label);
                 label.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
-                label.translationY = Math.round(scale.convert(datum) + bandwidth);
+                // label.translationY = Math.round(scale.convert(datum) + bandwidth);
+                // console.log('screen coords', datum.screenX, datum.screenY);
+                label.translationY = datum.screenX;
+                label.translationX = datum.screenY;
             });
 
         const labelX = sideFlag * this.labelPadding; // label padding from the axis line
@@ -410,14 +453,13 @@ export class GroupedCategoryAxis {
 
     getBBox(includeTitle = true): BBox {
         const line = this.line;
-        const labels = this.labelSelection.selectByClass(Text);
 
         let left = Infinity;
         let right = -Infinity;
         let top = Infinity;
         let bottom = -Infinity;
 
-        labels.each(label => {
+        this.labelSelection.each(label => {
             // The label itself is rotated, but not translated, the group that
             // contains it is. So to capture the group transform in the label bbox
             // calculation we combine the transform matrices of the label and the group.
@@ -450,10 +492,17 @@ export class GroupedCategoryAxis {
             bottom = Math.max(bottom, bbox.y + bbox.height);
         }
 
-        left = Math.min(left, 0);
-        right = Math.max(right, 0);
-        top = Math.min(top, line.y1, line.y2);
-        bottom = Math.max(bottom, line.y1, line.y2);
+        // left = Math.min(left, 0);
+        // right = Math.max(right, 0);
+        // top = Math.min(top, line.y1, line.y2);
+        // bottom = Math.max(bottom, line.y1, line.y2);
+
+        // console.log(new BBox(
+        //     left,
+        //     top,
+        //     right - left,
+        //     bottom - top
+        // ));
 
         return new BBox(
             left,

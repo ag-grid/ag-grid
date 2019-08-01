@@ -114,8 +114,7 @@ export class GroupedCategoryChart extends Chart {
         const xAxis = this.xAxis;
         const yAxis = this.yAxis;
 
-        xAxis.scale.range = [0, shrinkRect.width];
-        xAxis.tickScale.range = xAxis.scale.range;
+        xAxis.range = [0, shrinkRect.width];
         xAxis.rotation = -90;
         xAxis.translationX = Math.floor(shrinkRect.x);
         xAxis.translationY = Math.floor(shrinkRect.y + shrinkRect.height + 1);
@@ -204,8 +203,8 @@ export class GroupedCategoryChart extends Chart {
             this.axisAutoPadding.left = yAxisBBox.width;
             this.layoutPending = true;
         }
-        if (this.axisAutoPadding.bottom !== xAxisBBox.width) {
-            this.axisAutoPadding.bottom = xAxisBBox.width;
+        if (this.axisAutoPadding.bottom !== xAxisBBox.height) {
+            this.axisAutoPadding.bottom = xAxisBBox.height;
             this.layoutPending = true;
         }
     }
