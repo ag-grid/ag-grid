@@ -84,11 +84,6 @@ export class ChartMenu extends Component {
         _.addOrRemoveCssClass(target, 'ag-icon-linked', !active);
         _.addOrRemoveCssClass(target, 'ag-icon-unlinked', active);
 
-        target.innerHTML = !active ? '&supdsub;' : '&suphsub;';
-        target.style.color = !active ? '#0091EA' : '#7F8C8D';
-        target.style.opacity = !active ? '1' : '0.5';
-        target.setAttribute('title', `${!active ? 'Detach Chart from Grid' : 'Attach Chart to Grid'}`);
-
         this.chartController.detachChartRange();
     }
 
@@ -99,15 +94,6 @@ export class ChartMenu extends Component {
             const buttonConfig = this.buttons[button];
             const [ iconName, callback ] = buttonConfig;
             let buttonEl = _.createIconNoSpan(iconName, this.gridOptionsWrapper, undefined, true);
-            if (iconName === 'linked') {
-                buttonEl.innerHTML = '&supdsub;';
-                buttonEl.style.color = '#0091EA';
-                buttonEl.style.userSelect = 'none';
-                buttonEl.style.fontFamily = 'initial';
-                buttonEl.style.textAlign = 'center';
-                buttonEl.style.opacity = '1';
-                buttonEl.setAttribute('title', 'Detach Chart from Grid');
-            }
             this.addDestroyableEventListener(buttonEl, 'click', callback);
             this.getGui().appendChild(buttonEl);
         });

@@ -97,6 +97,7 @@ $ag-icon-first: "\f100";
 $ag-icon-grip: "\f58e";
 $ag-icon-group: "\f5fd";
 $ag-icon-indeterminate: "\f06e";
+$ag-icon-linked: "\f0c1";
 $ag-icon-last: "\f101";
 $ag-icon-left: "\f060";
 $ag-icon-loading: "\f110";
@@ -124,6 +125,7 @@ $ag-icon-tick: "\f00c";
 $ag-icon-tree-closed: "\f105";
 $ag-icon-tree-indeterminate: "\f068";
 $ag-icon-tree-open: "\f107";
+$ag-icon-unlinked: "\f127";
 
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-balham.scss";
@@ -235,6 +237,8 @@ colorPicker
 groupLoading
 data
 save
+linked
+unlinked
 </snippet>
 <p>
     Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
@@ -353,12 +357,12 @@ save
             'checkbox-unchecked', 'color-picker', 'column',
             'columns', 'contracted', 'copy', 'cross', 'cut', 'data',
             'desc', 'expanded', 'eye-slash', 'eye', 'filter', 'first',
-            'grip', 'group', 'indeterminate', 'last', 'left', 'loading',
-            'maximize', 'menu', 'minimize', 'minus', 'next', 'none', 
-            'not-allowed', 'paste', 'pin', 'pivot', 'plus', 'previous', 
-            'radio-button-off', 'radio-button-on', 'right', 'save',
-            'small-down', 'small-left', 'small-right', 'small-up', 
-            'tick', 'tree-closed', 'tree-indeterminate', 'tree-open'
+            'grip', 'group', 'indeterminate', 'last', 'left', 'linked',
+            'loading', 'maximize', 'menu', 'minimize', 'minus', 'next',
+            'none', 'not-allowed', 'paste', 'pin', 'pivot', 'plus',
+            'previous', 'radio-button-off', 'radio-button-on', 'right',
+            'save', 'small-down', 'small-left', 'small-right', 'small-up',
+            'tick', 'tree-closed', 'tree-indeterminate', 'tree-open', 'unlinked'
         ];
 
         var container = document.querySelector('.content.' + theme);

@@ -1324,6 +1324,8 @@ export class Utils {
         previous: 'previous',
         next: 'next',
         last: 'last',
+        linked: 'linked',
+        unlinked: 'unlinked',
         colorPicker: 'color-picker',
         radioButtonOn: 'radio-button-on',
         radioButtonOff: 'radio-button-off',
