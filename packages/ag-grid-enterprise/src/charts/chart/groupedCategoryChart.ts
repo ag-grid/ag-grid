@@ -161,13 +161,19 @@ export class GroupedCategoryChart extends Chart {
         const xDomains: any[][] = [];
         const yDomains: any[][] = [];
 
-        this.series.forEach(series => {
+        let isNumericX = false;
+        this.series.forEach((series, index) => {
             if (series.visible) {
                 const xDomain = series.getDomainX();
                 const yDomain = series.getDomainY();
 
-                xDomains.push(xDomain);
-                yDomains.push(yDomain);
+                if (!index) {
+                    isNumericX = typeof xDomain[0] === 'number';
+                }
+                if (isNumericX || !index) {
+                    xDomains.push(xDomain);
+                    yDomains.push(yDomain);
+                }
             }
         });
 
