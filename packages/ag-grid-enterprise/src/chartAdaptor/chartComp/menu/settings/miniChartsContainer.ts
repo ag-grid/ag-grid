@@ -3,12 +3,14 @@ import {
     Component,
     PostConstruct,
     _,
-    AgGroupComponent, Autowired
+    AgGroupComponent,
+    Autowired
 } from "ag-grid-community";
 
 import { ChartController } from "../../chartController";
+import { ChartTranslator } from "../../chartTranslator";
 
-type ChartGroupsType = 'bar' | 'column' | 'pie' | 'line' | 'scatter' | 'area';
+type ChartGroupsType = 'barGroup' | 'columnGroup' | 'pieGroup' | 'lineGroup' | 'scatterGroup' | 'areaGroup';
 
 type ChartGroups = {
     [key in ChartGroupsType]: any[];
@@ -22,6 +24,8 @@ export class MiniChartsContainer extends Component {
     private wrappers: { [key: string ]: HTMLElement } = {};
     private chartController: ChartController;
 
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+
     constructor(activePalette: number, chartController: ChartController) {
         super(MiniChartsContainer.TEMPLATE);
 
@@ -34,29 +38,28 @@ export class MiniChartsContainer extends Component {
 
     @PostConstruct
     private init() {
-        // TODO: reintroduce MiniScatter when chart ranges support it
         const chartGroups: ChartGroups = {
-            column: [
+            columnGroup: [
                 MiniColumn,
                 MiniStackedColumn,
                 MiniNormalizedColumn
             ],
-            bar: [
+            barGroup: [
                 MiniBar,
                 MiniStackedBar,
                 MiniNormalizedBar
             ],
-            pie: [
+            pieGroup: [
                 MiniPie,
                 MiniDoughnut
             ],
-            line: [
+            lineGroup: [
                 MiniLine
             ],
-            scatter: [
+            scatterGroup: [
                 MiniScatter
             ],
-            area: [
+            areaGroup: [
                 MiniArea,
                 MiniStackedArea,
                 MiniNormalizedArea
@@ -67,7 +70,7 @@ export class MiniChartsContainer extends Component {
         Object.keys(chartGroups).forEach(group => {
             const chartGroup = chartGroups[group as ChartGroupsType];
             const groupComponent = new AgGroupComponent({
-                title: _.capitalise(group),
+                title: this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
                 suppressOpenCloseIcons: true
@@ -117,7 +120,6 @@ import { Rect } from "../../../../charts/scene/shape/rect";
 import { BandScale } from "../../../../charts/scale/bandScale";
 import { Arc } from "../../../../charts/scene/shape/arc";
 import { Shape } from "../../../../charts/scene/shape/shape";
-import { ChartTranslator } from "../../chartTranslator";
 
 export abstract class MiniChart extends Component {
     @Autowired('chartTranslator') protected chartTranslator: ChartTranslator;

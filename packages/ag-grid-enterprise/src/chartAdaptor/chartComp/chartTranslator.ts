@@ -64,7 +64,14 @@ export class ChartTranslator {
         lineTooltip: 'Line',
         groupedAreaTooltip: 'Grouped',
         stackedAreaTooltip: 'Stacked',
-        normalizedAreaTooltip: '100% Stacked'
+        normalizedAreaTooltip: '100% Stacked',
+        scatterTooltip: 'Scatter',
+        columnGroup: 'Column',
+        barGroup: 'Bar',
+        pieGroup: 'Pie',
+        lineGroup: 'Line',
+        scatterGroup: 'Scatter',
+        areaGroup: 'Area'
     };
 
     public translate(toTranslate: string): string {
