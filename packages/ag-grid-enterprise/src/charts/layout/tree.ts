@@ -226,6 +226,9 @@ function secondWalk(v: TreeNode, m: number, layout: TreeLayout) {
     v.children.forEach(w => secondWalk(w, m + v.mod, layout));
 }
 
+// After the second walk the parent nodes are positioned at the center of their immediate children.
+// If we want the parent nodes to be positioned at the center of the subtree for which they are roots,
+// we need a third walk to adjust the positions.
 function thirdWalk(v: TreeNode) {
     const children = v.children;
     children.forEach(w => thirdWalk(w));
@@ -267,14 +270,22 @@ export class TreeLayout {
     }
 
     resize(width: number, height: number, shiftX = 0, shiftY = 0) {
-        const spaceCount = this.leafCount - 1;
+        const xSteps = this.leafCount - 1;
+        const ySteps = this.depth;
         const dimensions = this.dimensions;
-        const existingSpacingX = (dimensions.right - dimensions.left) / spaceCount;
-        const desiredSpacingX = width / spaceCount;
-        const scalingX = desiredSpacingX / existingSpacingX;
-        const existingSpacingY = (dimensions.bottom - dimensions.top) / spaceCount;
-        const desiredSpacingY = height / spaceCount;
-        const scalingY = desiredSpacingY / existingSpacingY;
+
+        let scalingX = 1;
+        let scalingY = 1;
+        if (width > 0 && xSteps) {
+            const existingSpacingX = (dimensions.right - dimensions.left) / xSteps;
+            const desiredSpacingX = width / xSteps;
+            scalingX = desiredSpacingX / existingSpacingX;
+        }
+        if (height > 0 && ySteps) {
+            const existingSpacingY = (dimensions.bottom - dimensions.top) / ySteps;
+            const desiredSpacingY = height / ySteps;
+            scalingY = desiredSpacingY / existingSpacingY;
+        }
 
         const screenDimensions = new Dimensions();
         this.nodes.forEach(node => {
