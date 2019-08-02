@@ -165,12 +165,12 @@ export class GroupedCategoryAxis {
         if (oldTitle !== value) {
             if (oldTitle) {
                 // oldTitle.onLayoutChange = undefined;
-                this.group.removeChild(oldTitle.node);
+                // this.group.removeChild(oldTitle.node);
             }
             if (value) {
                 value.node.rotation = -Math.PI / 2;
                 // value.onLayoutChange = this.onLayoutChange;
-                this.group.appendChild(value.node);
+                // this.group.appendChild(value.node);
             }
             this._title = value;
             // this.requestLayout();
@@ -277,11 +277,12 @@ export class GroupedCategoryAxis {
         group.translationY = this.translationY;
         group.rotation = rotation;
 
+        const title = this.title;
+
         // Render ticks and labels.
         const labels = scale.ticks();
         const treeLabels = this.tickTreeLayout ? this.tickTreeLayout.nodes : [];
         const ticks = tickScale.ticks();
-        const bandwidth = (scale.bandwidth || 0) / 2;
         // The side of the axis line to position the labels on.
         // -1 = left (default)
         //  1 = right
@@ -354,7 +355,6 @@ export class GroupedCategoryAxis {
             });
         }
 
-        // const updateLabels = this.labelSelection.setData(labels);
         const updateLabels = this.labelSelection.setData(treeLabels);
         updateLabels.exit.remove();
 
@@ -372,26 +372,29 @@ export class GroupedCategoryAxis {
                 label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
-                // the `datum` is a string or an object
-                // label.text = labelFormatter
-                //     ? labelFormatter({
-                //         value: String(datum),
-                //         index
-                //     })
-                //     : String(datum);
-                label.text = labelFormatter
-                    ? labelFormatter({
-                        value: String(datum.label),
-                        index
-                    })
-                    : String(datum.label);
+                if (!index && title) {
+                    label.text = title.text;
+                    label.fontSize = title.fontSize;
+                    label.fontStyle = title.fontStyle;
+                    label.fontWeight = title.fontWeight;
+                    label.fontFamily = title.fontFamily;
+                    label.textBaseline = 'hanging';
+                } else {
+                    label.text = labelFormatter
+                        ? labelFormatter({
+                            value: String(datum.label),
+                            index
+                        })
+                        : String(datum.label);
+                }
                 label.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
-                // label.translationY = Math.round(scale.convert(datum) + bandwidth);
-                // console.log('screen coords', datum.screenX, datum.screenY);
                 label.translationY = datum.screenX;
                 label.translationX = datum.screenY;
+                if (!index && title) {
+                    label.translationY += title.fontSize * 1.5;
+                }
             });
 
         const labelX = sideFlag * this.labelPadding; // label padding from the axis line
@@ -418,24 +421,6 @@ export class GroupedCategoryAxis {
         line.stroke = this.lineColor;
         line.visible = labels.length > 0;
 
-        const title = this.title;
-        if (title) {
-            const padding = title.padding.bottom;
-            const node = title.node;
-            const bbox = this.getBBox(false);
-            const titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
-
-            node.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
-            node.x = titleRotationFlag * sideFlag * (line.y1 + line.y2) / 2;
-            if (sideFlag === -1) {
-                node.y = titleRotationFlag * (-padding - bbox.width + Math.max(bbox.x + bbox.width, 0));
-            } else {
-                node.y = -padding - bbox.width - Math.min(bbox.x, 0);
-            }
-            // title.text = `Axis Title: ${sideFlag} ${toDegrees(parallelFlipRotation).toFixed(0)} ${titleRotationFlag}`;
-            node.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
-        }
-
         // debug (bbox)
         // const bbox = this.getBBox();
         // const bboxRect = this.bboxRect;
@@ -453,7 +438,7 @@ export class GroupedCategoryAxis {
         let top = Infinity;
         let bottom = -Infinity;
 
-        this.labelSelection.each(label => {
+        this.labelSelection.each((label, datum, index) => {
             // The label itself is rotated, but not translated, the group that
             // contains it is. So to capture the group transform in the label bbox
             // calculation we combine the transform matrices of the label and the group.
@@ -463,28 +448,19 @@ export class GroupedCategoryAxis {
             // change, instead it's marked for recalculation on the next frame by setting
             // the node's `dirtyTransform` flag to `true`), so we force them to update
             // right here by calling `computeTransformMatrix`.
-            label.computeTransformMatrix();
-            const matrix = Matrix.flyweight(label.matrix);
-            const group = label.parent!;
-            group.computeTransformMatrix();
-            matrix.preMultiplySelf(group.matrix);
-            const bbox = matrix.transformBBox(label.getBBox());
-            left = Math.min(left, bbox.x);
-            right = Math.max(right, bbox.x + bbox.width);
-            top = Math.min(top, bbox.y);
-            bottom = Math.max(bottom, bbox.y + bbox.height);
+            if (index > 0 || includeTitle) { // first node is the root (title)
+                label.computeTransformMatrix();
+                const matrix = Matrix.flyweight(label.matrix);
+                const group = label.parent!;
+                group.computeTransformMatrix();
+                matrix.preMultiplySelf(group.matrix);
+                const bbox = matrix.transformBBox(label.getBBox());
+                left = Math.min(left, bbox.x);
+                right = Math.max(right, bbox.x + bbox.width);
+                top = Math.min(top, bbox.y);
+                bottom = Math.max(bottom, bbox.y + bbox.height);
+            }
         });
-
-        if (includeTitle && this.title) {
-            const label = this.title.node;
-            label.computeTransformMatrix();
-            const matrix = Matrix.flyweight(label.matrix);
-            const bbox = matrix.transformBBox(label.getBBox());
-            left = Math.min(left, bbox.x);
-            right = Math.max(right, bbox.x + bbox.width);
-            top = Math.min(top, bbox.y);
-            bottom = Math.max(bottom, bbox.y + bbox.height);
-        }
 
         // left = Math.min(left, 0);
         // right = Math.max(right, 0);
@@ -497,6 +473,16 @@ export class GroupedCategoryAxis {
         //     right - left,
         //     bottom - top
         // ));
+
+        // if (this.rotation === -90) {
+        //     debugger;
+        //     console.log(new BBox(
+        //         left,
+        //         top,
+        //         right - left,
+        //         bottom - top
+        //     ));
+        // }
 
         return new BBox(
             left,

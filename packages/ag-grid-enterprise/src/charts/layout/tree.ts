@@ -256,12 +256,19 @@ export class TreeLayout {
     dimensions = new Dimensions;
     leafCount = 0;
     nodes: TreeNode[] = [];
+    // One might want to process leaf nodes separately from the rest of the tree.
+    // For example, position labels corresponding to leafs vertically, rather than horizontally.
+    leafNodes: TreeNode[] = [];
+    nonLeafNodes: TreeNode[] = [];
     depth = 0;
 
     update(node: TreeNode) {
         this.dimensions.update(node, node => ({x: node.x, y: node.y}));
         if (!node.children.length) {
             this.leafCount++;
+            this.leafNodes.push(node);
+        } else {
+            this.nonLeafNodes.push(node);
         }
         if (node.depth > this.depth) {
             this.depth = node.depth;
