@@ -96,18 +96,12 @@ export class GroupedCategoryAxis {
 
     private resizeTickTree() {
         const s = this.scale;
-        // const range = this.scale.range;
-        if (!s.domain.length) {
-            throw 'Whoa!';
-        }
-        const range = [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])];
+        const range = s.domain.length ? [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])] : s.range;
         const layout = this.tickTreeLayout;
         const lineHeight = this.labelFontSize * 1.5;
         const shiftX = (range[0] || 0) + (s.bandwidth || 0) / 2;
-        // const shiftX = 0;
         if (layout) {
             layout.resize(range[1] - range[0], layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
-            // console.log(range, layout.depth * 30, layout.nodes);
         }
     }
 
