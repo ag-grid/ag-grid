@@ -7,7 +7,7 @@ import { ICellEditorAngularComp } from "ag-grid-angular";
     <mat-card>
         <div class="container" #group tabindex="0" (keydown)="onKeyDown($event)">
         <mat-form-field>
-            <mat-select [(ngModel)]="favouriteVegetable">
+            <mat-select panelClass="ag-custom-component-popup" [(ngModel)]="favouriteVegetable">
                 <mat-option *ngFor="let vegetable of vegetables" [value]="vegetable">
                     {{ vegetable }}
                 </mat-option>
