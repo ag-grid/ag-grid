@@ -524,7 +524,7 @@ export class ClipboardService implements IClipboardService {
         if (_.missing(processedValue)) {
             // copy the new line character to clipboard instead of an empty string, as the 'execCommand' will ignore it.
             // this behaviour is consistent with how Excel works!
-            processedValue = '\n';
+            processedValue = '\t';
         }
 
         let data = '';
