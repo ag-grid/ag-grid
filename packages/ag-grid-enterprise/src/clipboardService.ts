@@ -529,7 +529,9 @@ export class ClipboardService implements IClipboardService {
 
         let data = '';
         if (includeHeaders) {
-            data = this.columnController.getDisplayNameForColumn(column, 'clipboard', true) + '\r\n';
+            const headerValue = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+            data = this.userProcessHeader(column, headerValue, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc());
+            data += '\r\n';
         }
         data += processedValue.toString();
 
