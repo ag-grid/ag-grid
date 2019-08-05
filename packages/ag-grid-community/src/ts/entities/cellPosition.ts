@@ -9,7 +9,8 @@ export interface CellPosition extends RowPosition {
 export class CellPositionUtils {
 
     public static createId(cellPosition: CellPosition): string {
-        return `${cellPosition.rowIndex}.${cellPosition.rowPinned}.${cellPosition.column.getId()}`;
+        const { rowIndex, rowPinned, column } = cellPosition;
+        return `${rowIndex}.${rowPinned == null ? null : rowPinned}.${column.getId()}`;
     }
 
     public static equals(cellA: CellPosition, cellB: CellPosition): boolean {

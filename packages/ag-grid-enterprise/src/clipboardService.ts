@@ -512,7 +512,7 @@ export class ClipboardService implements IClipboardService {
     private copyFocusedCellToClipboard(includeHeaders = false): void {
         const focusedCell: CellPosition = this.focusedCellController.getFocusedCell();
         if (_.missing(focusedCell)) { return; }
-
+        const cellId = CellPositionUtils.createId(focusedCell);
         const currentRow: RowPosition = {rowPinned: focusedCell.rowPinned, rowIndex: focusedCell.rowIndex};
 
         const rowNode = this.getRowNode(currentRow);
@@ -534,13 +534,8 @@ export class ClipboardService implements IClipboardService {
             data += '\r\n';
         }
         data += processedValue.toString();
-
         this.copyDataToClipboard(data);
-
-        const cellId = CellPositionUtils.createId(focusedCell);
-        const cellsToFlash = {};
-        (cellsToFlash as any)[cellId] = true;
-        this.dispatchFlashCells(cellsToFlash);
+        this.dispatchFlashCells({ [cellId]: true });
     }
 
     private dispatchFlashCells(cellsToFlash: {}): void {
