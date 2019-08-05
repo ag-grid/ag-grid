@@ -88,7 +88,12 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         this.addDestroyableEventListener(virtualListGui, 'click', this.onClick.bind(this));
         this.addDestroyableEventListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
+
         this.runSearch = _.debounce(this.runSearch, 300);
+        if (_.exists(params.charPress)) {
+            this.searchString = params.charPress as string;
+            this.runSearch();
+        }
     }
 
     private onKeyDown(event: KeyboardEvent): void {
