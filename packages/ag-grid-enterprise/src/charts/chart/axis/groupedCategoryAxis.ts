@@ -362,6 +362,7 @@ export class GroupedCategoryAxis {
         const labelSelection = updateLabels.merge(enterLabels);
 
         const labelFormatter = this.labelFormatter;
+        let maxLeafLabelWidth = 0;
         labelSelection
             .each((label, datum, index) => {
                 label.fontStyle = this.labelFontStyle;
@@ -392,6 +393,10 @@ export class GroupedCategoryAxis {
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
                 label.translationX = datum.screenY;
                 label.translationY = datum.screenX;
+                const bbox = label.getBBox();
+                if (bbox.width > maxLeafLabelWidth) {
+                    maxLeafLabelWidth = bbox.width;
+                }
             });
 
         const labelX = sideFlag * this.labelPadding; // label padding from the axis line
@@ -399,10 +404,17 @@ export class GroupedCategoryAxis {
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
-        labelSelection.each(label => {
+        labelSelection.each((label, datum) => {
             label.x = labelX;
             label.rotationCenterX = labelX;
-            label.rotation = autoRotation + labelRotation;
+            if (!datum.children.length) {
+                label.rotation = 0;
+                label.textAlign = 'end';
+                label.textBaseline = 'middle';
+            } else {
+                label.translationX -= maxLeafLabelWidth - this.labelFontSize * 1.5 + this.labelPadding;
+                label.rotation = autoRotation + labelRotation;
+            }
         });
 
         this.tickSelection = tickSelection;
