@@ -123,6 +123,7 @@ export class ClipboardService implements IClipboardService {
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
         const updatedColumnIds: string[] = [];
+        const focusedCell = this.focusedCellController.getFocusedCell();
 
         // true if clipboard data can be evenly pasted into range, otherwise false
         const abortRepeatingPasteIntoRows = this.rangeSize() % clipboardData.length != 0;
@@ -170,6 +171,10 @@ export class ClipboardService implements IClipboardService {
         this.iterateActiveRanges(false, rowCallback);
         this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
         this.dispatchFlashCells(cellsToFlash);
+
+        if (focusedCell) {
+            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
+        }
 
         this.fireRowChanged(updatedRowNodes);
     }
