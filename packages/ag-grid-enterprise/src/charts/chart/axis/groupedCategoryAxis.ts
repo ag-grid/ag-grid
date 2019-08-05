@@ -372,7 +372,7 @@ export class GroupedCategoryAxis {
                 label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
-                if (!index && title) {
+                if (title && index === 0) { // use the phantom root as the axis title
                     label.text = title.text;
                     label.fontSize = title.fontSize;
                     label.fontStyle = title.fontStyle;
@@ -390,11 +390,8 @@ export class GroupedCategoryAxis {
                 label.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
-                label.translationY = datum.screenX;
                 label.translationX = datum.screenY;
-                if (!index && title) {
-                    label.translationY += title.fontSize * 1.5;
-                }
+                label.translationY = datum.screenX;
             });
 
         const labelX = sideFlag * this.labelPadding; // label padding from the axis line
