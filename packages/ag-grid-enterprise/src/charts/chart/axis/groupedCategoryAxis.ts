@@ -50,6 +50,7 @@ export class GroupedCategoryAxis {
     readonly tickScale = new BandScale<string>();
     readonly group = new Group();
     private tickSelection: Selection<Group, Group, any, any>; // groups with a tick and a grid line in each
+    private lineSelection: Selection<Line, Group, any, any>;
     private labelSelection: Selection<Text, Group, any, any>;
     private line = new Line();
     private tickTreeLayout?: TreeLayout;
@@ -65,6 +66,7 @@ export class GroupedCategoryAxis {
         tickScale.paddingOuter = 0;
 
         this.tickSelection = Selection.select(this.group).selectAll<Group>();
+        this.lineSelection = Selection.select(this.group).selectAll<Line>();
         this.labelSelection = Selection.select(this.group).selectAll<Text>();
         this.group.append(this.line);
         // this.group.append(this.bboxRect); // debug (bbox)
@@ -280,8 +282,9 @@ export class GroupedCategoryAxis {
         const title = this.title;
 
         // Render ticks and labels.
+        const tickTreeLayout = this.tickTreeLayout;
         const labels = scale.ticks();
-        const treeLabels = this.tickTreeLayout ? this.tickTreeLayout.nodes : [];
+        const treeLabels = tickTreeLayout ? tickTreeLayout.nodes : [];
         const ticks = tickScale.ticks();
         // The side of the axis line to position the labels on.
         // -1 = left (default)
@@ -391,7 +394,7 @@ export class GroupedCategoryAxis {
                 label.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
-                label.translationX = datum.screenY;
+                label.translationX = datum.screenY - this.labelFontSize * 0.25;
                 label.translationY = datum.screenX;
                 const bbox = label.getBBox();
                 if (bbox.width > maxLeafLabelWidth) {
@@ -417,18 +420,46 @@ export class GroupedCategoryAxis {
             }
         });
 
+        tickSelection.selectByTag<Line>(Tags.Tick).each(tick => {
+            tick.x1 = sideFlag * (maxLeafLabelWidth + this.labelPadding * 2);
+        });
+
         this.tickSelection = tickSelection;
         this.labelSelection = labelSelection;
 
-        // Render axis line.
-        const line = this.line;
-        line.x1 = 0;
-        line.x2 = 0;
-        line.y1 = scale.range[0];
-        line.y2 = scale.range[scale.range.length - 1];
-        line.strokeWidth = this.lineWidth;
-        line.stroke = this.lineColor;
-        line.visible = labels.length > 0;
+        // Render axis lines.
+        const lineCount = tickTreeLayout ? tickTreeLayout.depth + 1 : 1;
+        const lines = [];
+        for (let i = 0; i < lineCount; i++) {
+            lines.push(i);
+        }
+
+        const updateLines = this.lineSelection.setData(lines);
+        updateLines.exit.remove();
+        const enterLines = updateLines.enter.append(Line);
+        const lineSelection = updateLines.merge(enterLines);
+        this.lineSelection = lineSelection;
+
+        lineSelection.each((line, datum, index) => {
+            // TODO: why do we have to do Math.round?
+            let x = index > 0 ? Math.round(-maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * this.labelFontSize * 1.5) : 0;
+            line.x1 = x;
+            line.x2 = x;
+            line.y1 = scale.range[0];
+            line.y2 = scale.range[1];
+            line.strokeWidth = this.lineWidth;
+            line.stroke = this.lineColor;
+            line.visible = labels.length > 0;
+        });
+
+        // const line = this.line;
+        // line.x1 = 0;
+        // line.x2 = 0;
+        // line.y1 = scale.range[0];
+        // line.y2 = scale.range[scale.range.length - 1];
+        // line.strokeWidth = this.lineWidth;
+        // line.stroke = this.lineColor;
+        // line.visible = labels.length > 0;
 
         // debug (bbox)
         // const bbox = this.getBBox();
