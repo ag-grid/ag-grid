@@ -10,7 +10,7 @@ export class CellPositionUtils {
 
     public static createId(cellPosition: CellPosition): string {
         const { rowIndex, rowPinned, column } = cellPosition;
-        return `${rowIndex}.${rowPinned == null ? null : rowPinned}.${column.getId()}`;
+        return `${rowIndex}.${rowPinned == null ? 'null' : rowPinned}.${column.getId()}`;
     }
 
     public static equals(cellA: CellPosition, cellB: CellPosition): boolean {

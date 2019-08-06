@@ -637,7 +637,10 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>suppressMiddleClickScrolls</th>
             <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser
-                will use middle click to scroll the grid.</td>
+                will use middle click to scroll the grid.<br>
+                <strong>Note:</strong> Not all browsers fire <code>click</code> events with the middle button. Most will
+                fire only <code>mousedown</code> and <code>mouseup</code> events, which can be used to focus a cell, but 
+                will not work to call the <code>onCellClicked</code> function.</td>
         </tr>
         <tr>
             <th>suppressPreventDefaultOnMouseWheel</th>
