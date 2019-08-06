@@ -4,37 +4,30 @@ interface Tick {
 
 class TreeNode {
     label: string;
-    x: number;
-    y: number;
+    x: number = 0;
+    y: number = 0;
     subtreeLeft: number = NaN;
     subtreeRight: number = NaN;
-    screenX: number;
-    screenY: number;
+    screenX: number = 0;
+    screenY: number = 0;
     parent?: TreeNode;
     children = [] as TreeNode[];
+    leafCount: number = 0;
     depth: number;
-    prelim: number;
-    mod: number;
+    prelim: number = 0;
+    mod: number = 0;
     thread?: TreeNode;
     ancestor = this;
-    change: number;
-    shift: number;
+    change: number = 0;
+    shift: number = 0;
     number: number; // current number in sibling group (index)
 
     constructor(label = '', parent?: any, number = 0) {
         this.label = label;
-        this.x = 0;
-        this.y = 0;
         // screenX and screenY are meant to be recomputed from (layout) x and y
         // when the tree is resized (without performing another layout)
-        this.screenX = 0;
-        this.screenY = 0;
         this.parent = parent;
         this.depth = parent ? parent.depth + 1 : 0;
-        this.prelim = 0;
-        this.mod = 0;
-        this.change = 0;
-        this.shift = 0;
         this.number = number;
     }
 
@@ -231,7 +224,16 @@ function secondWalk(v: TreeNode, m: number, layout: TreeLayout) {
 // we need a third walk to adjust the positions.
 function thirdWalk(v: TreeNode) {
     const children = v.children;
-    children.forEach(w => thirdWalk(w));
+    let leafCount = 0;
+    children.forEach(w => {
+        thirdWalk(w);
+        if (w.children.length) {
+            leafCount += w.leafCount;
+        } else {
+            leafCount++;
+        }
+    });
+    v.leafCount = leafCount;
     if (children.length) {
         v.subtreeLeft = children[0].subtreeLeft;
         v.subtreeRight = children[v.children.length - 1].subtreeRight;
