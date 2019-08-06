@@ -512,7 +512,7 @@ export class ClipboardService implements IClipboardService {
     private copyFocusedCellToClipboard(includeHeaders = false): void {
         const focusedCell: CellPosition = this.focusedCellController.getFocusedCell();
         if (_.missing(focusedCell)) { return; }
-
+        const cellId = CellPositionUtils.createId(focusedCell);
         const currentRow: RowPosition = {rowPinned: focusedCell.rowPinned, rowIndex: focusedCell.rowIndex};
 
         const rowNode = this.getRowNode(currentRow);
@@ -524,21 +524,18 @@ export class ClipboardService implements IClipboardService {
         if (_.missing(processedValue)) {
             // copy the new line character to clipboard instead of an empty string, as the 'execCommand' will ignore it.
             // this behaviour is consistent with how Excel works!
-            processedValue = '\n';
+            processedValue = '\t';
         }
 
         let data = '';
         if (includeHeaders) {
-            data = this.columnController.getDisplayNameForColumn(column, 'clipboard', true) + '\r\n';
+            const headerValue = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+            data = this.userProcessHeader(column, headerValue, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc());
+            data += '\r\n';
         }
         data += processedValue.toString();
-
         this.copyDataToClipboard(data);
-
-        const cellId = CellPositionUtils.createId(focusedCell);
-        const cellsToFlash = {};
-        (cellsToFlash as any)[cellId] = true;
-        this.dispatchFlashCells(cellsToFlash);
+        this.dispatchFlashCells({ [cellId]: true });
     }
 
     private dispatchFlashCells(cellsToFlash: {}): void {
