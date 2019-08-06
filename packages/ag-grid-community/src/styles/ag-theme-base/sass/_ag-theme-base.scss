@@ -934,7 +934,7 @@
     ////////////////////////////////////////
     .ag-cell {
         &.ag-cell-inline-editing {
-            padding: $cell-horizontal-padding;
+            padding: 0 $cell-horizontal-padding;
             height: $row-height + $grid-size * 3;
         }
         &.ag-cell-inline-editing, &.ag-popup-editor {
