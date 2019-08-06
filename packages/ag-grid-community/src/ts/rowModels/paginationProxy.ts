@@ -156,7 +156,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         if (_.missing(this.topRowBounds) || _.missing(this.bottomRowBounds)) {
             return 0;
         }
-        return this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop;
+        return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
