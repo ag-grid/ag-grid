@@ -132,7 +132,8 @@ export class GridChartComp extends Component {
             width: width,
             height: height,
             eventService: this.eventService,
-            categorySelected: categorySelected
+            categorySelected: categorySelected,
+            grouping: this.model.isGrouping()
         };
 
         // local state used to detect when chart type changes

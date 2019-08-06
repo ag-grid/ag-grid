@@ -25,6 +25,7 @@ export interface ChartProxyParams {
     parentElement: HTMLElement;
     eventService: EventService;
     categorySelected: boolean;
+    grouping: boolean;
 }
 
 export interface UpdateChartParams {

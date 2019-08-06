@@ -1,9 +1,21 @@
-import { _, Autowired, BeanStub, Column, ColumnController, IRowModel, ValueService, IAggFunc } from "ag-grid-community";
+import {
+    _,
+    Autowired,
+    BeanStub,
+    Column,
+    ColumnController,
+    IRowModel,
+    ValueService,
+    IAggFunc,
+    RowNode
+} from "ag-grid-community";
 import { AggregationStage } from "../../rowStages/aggregationStage";
 import { ChartModel } from "./chartModel";
 
 export interface ChartDatasourceParams {
     dimensionColIds: string[];
+    grouping: boolean;
+    pivoting: boolean;
     valueCols: Column[];
     startRow: number;
     endRow: number;
@@ -18,7 +30,6 @@ export class ChartDatasource extends BeanStub {
 
     public getData(params: ChartDatasourceParams): any [] {
         const dataFromGrid = this.extractRowsFromGridRowModel(params);
-
         return this.aggregateRowsByDimension(params, dataFromGrid);
     }
 
@@ -28,19 +39,41 @@ export class ChartDatasource extends BeanStub {
         const modelLastRow = this.gridRowModel.getRowCount() - 1;
         const rangeLastRow = Math.min(params.endRow, modelLastRow);
 
-        const rowCount = rangeLastRow - params.startRow + 1;
+        let maxGroupLevel = 0;
+        const groupNodeIndexes: { [key: string]: number } = {};
+        const groupsToRemove: { [key: string]: number } = {};
 
         const dataFromGrid = [];
+        const rowCount = rangeLastRow - params.startRow + 1;
         for (let i = 0; i < rowCount; i++) {
             const rowNode = this.gridRowModel.getRow(i + params.startRow)!;
             const data: any = {};
 
             params.dimensionColIds.forEach(colId => {
                 const column = this.columnController.getGridColumn(colId);
+
                 if (column) {
                     const part = this.valueService.getValue(column, rowNode);
-                    // force return type to be string or empty string (as value can be an object)
-                    data[colId] = (part && part.toString) ? part.toString() : '';
+                    const value = (part && part.toString) ? part.toString() : '';
+
+                    if (params.grouping) {
+                        const labels = this.addParentKeys(rowNode, [String(value)]);
+                        maxGroupLevel = Math.max(labels.length, maxGroupLevel);
+
+                        data[colId] = {labels: labels.slice()};
+
+                        if (rowNode.group) {
+                            groupNodeIndexes[labels.join('-')] = i;
+                        }
+
+                        labels.shift();
+                        const groupKey = labels.join('-');
+                        groupsToRemove[groupKey] = groupNodeIndexes[groupKey];
+                    } else {
+                        // force return type to be string or empty string (as value can be an object)
+                        data[colId] = value;
+                    }
+
                 } else {
                     data[ChartModel.DEFAULT_CATEGORY] = (i + 1).toString();
                 }
@@ -53,7 +86,24 @@ export class ChartDatasource extends BeanStub {
             dataFromGrid.push(data);
         }
 
-        return dataFromGrid;
+        const groupIndexesToRemove = Object.keys(groupsToRemove).map(key => groupsToRemove[key]);
+
+        return this.processGroupData(groupIndexesToRemove, dataFromGrid, maxGroupLevel);
+    }
+
+    private processGroupData(groupIndexesToRemove: number[], dataFromGrid: any[], maxGroupLevel: number) {
+        const groupsToRemoveFilter = (d: any, index: number) => groupIndexesToRemove.indexOf(index) < 0;
+
+        const padGroupLevels = (d: any) => {
+            // TODO handle all group column types
+            const groupCol = d['ag-Grid-AutoColumn'];
+            for (let i = groupCol.labels.length; i < maxGroupLevel; i++) {
+                groupCol.labels.unshift('');
+            }
+            return d;
+        };
+
+        return dataFromGrid.filter(groupsToRemoveFilter).map(padGroupLevels);
     }
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
@@ -112,4 +162,11 @@ export class ChartDatasource extends BeanStub {
 
         return dataAggregated;
     }
+
+    private addParentKeys(rowNode: RowNode, acc: string[]): string[] {
+        if (rowNode.level === 0) return acc;
+        const parentNode = rowNode.parent as RowNode;
+        acc.push(parentNode.key);
+        return this.addParentKeys(parentNode, acc);
+    };
 }

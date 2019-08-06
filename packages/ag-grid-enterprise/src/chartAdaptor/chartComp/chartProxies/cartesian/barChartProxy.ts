@@ -16,8 +16,13 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
         this.initChartOptions(params.chartType, this.defaultOptions());
 
-        this.chart = BarChartProxy.isBarChart(params.chartType) ?
-            ChartBuilder.createBarChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
+        if (params.grouping) {
+            // TODO include grouped bar charts once available
+            this.chart = ChartBuilder.createGroupedColumnChart(this.chartOptions);
+        } else {
+            this.chart = BarChartProxy.isBarChart(params.chartType) ?
+                ChartBuilder.createBarChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
+        }
 
         const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as BarSeriesOptions);
         if (barSeries) { this.chart.addSeries(barSeries); }
@@ -25,7 +30,6 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
     public update(params: UpdateChartParams): void {
         const barSeries = this.chart.series[0] as BarSeries;
-
         barSeries.data = params.data;
         barSeries.xField = params.categoryId;
         barSeries.yFields = params.fields.map(f => f.colId);

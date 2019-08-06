@@ -35,6 +35,8 @@ import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
 import { Caption } from "../../charts/caption";
+import {GroupedCategoryAxis} from "../../charts/chart/axis/groupedCategoryAxis";
+import {GroupedCategoryChart} from "../../charts/chart/groupedCategoryChart";
 
 type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
 type PolarSeriesType = 'pie';
@@ -48,6 +50,14 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis)
         );
         return ChartBuilder.initCartesianChart(chart, options);
+    }
+
+    static createGroupedColumnChart(options: BarChartOptions): GroupedCategoryChart {
+        const chart = new GroupedCategoryChart(
+            ChartBuilder.createGroupedAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
     }
 
     static createBarChart(options: BarChartOptions): CartesianChart {
@@ -194,6 +204,11 @@ export class ChartBuilder {
     }
 
     static initCartesianChart(chart: CartesianChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType) {
+        ChartBuilder.initChart(chart, options, seriesType);
+        return chart;
+    }
+
+    static initGroupedCategoryChart(chart: GroupedCategoryChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType) {
         ChartBuilder.initChart(chart, options, seriesType);
         return chart;
     }
@@ -628,6 +643,30 @@ export class ChartBuilder {
                 axis = new NumberAxis();
                 break;
         }
+
+        if (!axis) {
+            throw new Error('Unknown axis type.');
+        }
+
+        for (const name in options) {
+            if (name === 'type') {
+                continue;
+            }
+            if (name === 'title' && options.title) {
+                axis.title = ChartBuilder.createAxisTitle(options.title);
+                continue;
+            }
+            const value = (options as any)[name];
+            if (value !== undefined) {
+                (axis as any)[name] = value;
+            }
+        }
+
+        return axis;
+    }
+
+    static createGroupedAxis(options: AxisOptions): GroupedCategoryAxis {
+        const axis = new GroupedCategoryAxis();
 
         if (!axis) {
             throw new Error('Unknown axis type.');

@@ -7,11 +7,12 @@ import {
     ChartType,
     ColDef,
     Column,
-    RowRenderer,
     ColumnController,
+    GridOptionsWrapper,
+    IAggFunc,
     PostConstruct,
     RowNode,
-    IAggFunc
+    RowRenderer
 } from "ag-grid-community";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {RangeController} from "../../rangeController";
@@ -39,6 +40,7 @@ export class ChartModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rangeController') rangeController: RangeController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
@@ -63,6 +65,7 @@ export class ChartModel extends BeanStub {
     private chartId: string;
     private chartProxy: ChartProxy<any>;
     private detached: boolean = false;
+    private grouping: boolean;
 
     public constructor(params: ChartModelParams) {
         super();
@@ -92,9 +95,13 @@ export class ChartModel extends BeanStub {
         const selectedDimension = this.getSelectedDimensionId();
         const selectedValueCols = this.getSelectedValueCols();
 
+        this.grouping = this.isGrouping();
+
         const params: ChartDatasourceParams = {
             aggFunc: this.aggFunc,
             dimensionColIds: [selectedDimension],
+            grouping: this.grouping,
+            pivoting: this.isPivotActive(),
             valueCols: selectedValueCols,
             startRow: startRow,
             endRow: endRow
@@ -218,6 +225,9 @@ export class ChartModel extends BeanStub {
     }
 
     public getData(): any[] {
+        // grouped data contains label fields rather than objects with toString
+        if (this.grouping) return this.chartData;
+
         const selectedDimension = this.getSelectedDimensionId();
         // replacing the selected dimension with a complex object to facilitate duplicated categories
         return this.chartData.map((d: any, index: number) => {
@@ -225,6 +235,16 @@ export class ChartModel extends BeanStub {
             d[selectedDimension] = {toString: () => dimensionValue, id: index};
             return d;
         });
+    }
+
+    public isGrouping(): boolean {
+        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const groupedCols = usingTreeData ? null : this.columnController.getRowGroupColumns();
+        return usingTreeData || (groupedCols && groupedCols.length > 0) as boolean;
+    }
+
+    public isPivotActive(): boolean {
+        return this.columnController.isPivotActive();
     }
 
     public setChartProxy(chartProxy: ChartProxy<any>): void {
