@@ -89,10 +89,10 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.addDestroyableEventListener(virtualListGui, 'click', this.onClick.bind(this));
         this.addDestroyableEventListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
 
-        this.runSearch = _.debounce(this.runSearch, 300);
+        this.clearSearchString = _.debounce(this.clearSearchString, 300);
+
         if (_.exists(params.charPress)) {
-            this.searchString = params.charPress as string;
-            this.runSearch();
+            this.searchText(params.charPress as string);
         }
     }
 
@@ -108,7 +108,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
                 this.onNavigationKeyPressed(event, key);
                 break;
             default:
-                this.searchText(event, key);
+                this.searchText(event);
         }
     }
 
@@ -130,22 +130,31 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         }
     }
 
-    private searchText(event: KeyboardEvent, key: number) {
-        if (!_.isCharacterKey(event)) { return; }
-        
-        this.searchString += event.key;
+    private searchText(key: KeyboardEvent | string) {
+        if (typeof key !== 'string') {
+            if (!_.isCharacterKey(key)) {
+                return;
+            }
+            key = key.key as string;
+        }
+
+        this.searchString += key;
         this.runSearch();
+        this.clearSearchString();
     }
 
     private runSearch() {
         const suggestions = _.fuzzySuggestions(this.searchString, this.params.values, true, true);
-        this.searchString = '';
 
         if (!suggestions.length) {
             return;
         }
 
         this.setSelectedValue(suggestions[0]);
+    }
+
+    private clearSearchString(): void {
+        this.searchString = '';
     }
 
     private renderSelectedValue(): void {
