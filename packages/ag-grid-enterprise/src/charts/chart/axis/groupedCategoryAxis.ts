@@ -150,6 +150,8 @@ export class GroupedCategoryAxis {
      */
     labelPadding: number = 5;
 
+    fred: boolean = false;
+
     /**
      * The color of the axis ticks.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
@@ -273,7 +275,8 @@ export class GroupedCategoryAxis {
         const group = this.group;
         const scale = this.scale;
         const tickScale = this.tickScale;
-        const bandWidth = tickScale.convert(tickScale.domain[1]) || 0;
+        // const bandwidth = scale.domain.length ? (scale.range[1] - scale.range[0]) / scale.domain.length : 0;
+        const bandwidth = tickScale.convert(tickScale.domain[1]) || 0;
 
         const rotation = toRadians(this.rotation);
         const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
@@ -317,7 +320,7 @@ export class GroupedCategoryAxis {
 
         const enterTicks = updateTicks.enter.append(Group);
         // Line auto-snaps to pixel grid if vertical or horizontal.
-        enterTicks.append(Line).each(node => node.tag = Tags.Tick);
+        // enterTicks.append(Line).each(node => node.tag = Tags.Tick);
         if (this.gridLength) {
             enterTicks.append(Line).each(node => node.tag = Tags.GridLine);
         }
@@ -390,14 +393,37 @@ export class GroupedCategoryAxis {
                 label.translationX -= maxLeafLabelWidth - this.labelFontSize * 1.5 + this.labelPadding;
                 label.rotation = autoRotation + labelRotation;
             }
-            if (datum.children.length && datum.parent) {
-                separatorData.push({
-                    x: Math.round(datum.screenX - datum.leafCount * bandWidth / 2),
-                    y1: -maxLeafLabelWidth + datum.screenY - this.labelFontSize * 1.5 / 2,
-                    y2: -maxLeafLabelWidth + datum.screenY + this.labelFontSize * 1.5 / 2,
-                    toString: () => String(index)
-                });
+            // if (datum.children.length && datum.parent) {
+            if (datum.parent) {
+                const x = !datum.children.length ? Math.round(datum.screenX - bandwidth / 2) : Math.round(datum.screenX - datum.leafCount * bandwidth / 2);
+                if (!datum.children.length) {
+                    if (!datum.number || this.fred) {
+                        separatorData.push({
+                            x,
+                            y1: 0,
+                            y2: -maxLeafLabelWidth - this.labelPadding * 2,
+                            toString: () => String(index)
+                        });
+                    }
+                } else {
+                    separatorData.push({
+                        x,
+                        y1: -maxLeafLabelWidth + datum.screenY + this.labelFontSize * 1.5 / 2,
+                        y2: -maxLeafLabelWidth + datum.screenY - this.labelFontSize * 1.5 / 2,
+                        toString: () => String(index)
+                    });
+                }
             }
+        });
+
+        // add last long tick
+        let minY = 0;
+        separatorData.forEach(d => minY = Math.min(minY, d.y2));
+        separatorData.push({
+            x: Math.round(this.scale.range[1]),
+            y1: 0,
+            y2: minY,
+            toString: () => String(separatorData.length)
         });
 
         const updateSeparators = this.separatorSelection.setData(separatorData);
@@ -412,7 +438,6 @@ export class GroupedCategoryAxis {
             line.y1 = datum.x;
             line.y2 = datum.x;
             line.stroke = this.tickColor;
-            // line.stroke = 'red';
             line.fill = undefined;
             line.strokeWidth = 1;
         });
@@ -442,26 +467,26 @@ export class GroupedCategoryAxis {
             line.y2 = scale.range[1];
             line.strokeWidth = this.lineWidth;
             line.stroke = this.lineColor;
-            line.visible = labels.length > 0;
+            line.visible = labels.length > 0 && (index === 0 || this.fred);
         });
 
-        tickSelection.selectByTag<Line>(Tags.Tick)
-            .each((line, datum, index) => {
-                line.strokeWidth = this.tickWidth;
-                line.stroke = this.tickColor;
-                // if (index === ticks.length - 1) {
-                //     line.x1 = sideFlag * (maxLeafLabelWidth + (lineCount - 1) * this.labelFontSize * 1.5);
-                // } else {
-                //     line.x1 = sideFlag * (maxLeafLabelWidth + this.labelPadding * 2);
-                // }
-                line.x1 = sideFlag * (maxLeafLabelWidth + this.labelPadding * 2);
-                if (index === ticks.length - 1) {
-                    line.x1 -= (lineCount - 2) * this.labelFontSize * 1.5;
-                }
-                line.x2 = 0;
-                line.y1 = 0;
-                line.y2 = 0;
-            });
+        // tickSelection.selectByTag<Line>(Tags.Tick)
+        //     .each((line, datum, index) => {
+        //         line.strokeWidth = this.tickWidth;
+        //         line.stroke = this.tickColor;
+        //         // if (index === ticks.length - 1) {
+        //         //     line.x1 = sideFlag * (maxLeafLabelWidth + (lineCount - 1) * this.labelFontSize * 1.5);
+        //         // } else {
+        //         //     line.x1 = sideFlag * (maxLeafLabelWidth + this.labelPadding * 2);
+        //         // }
+        //         line.x1 = sideFlag * (maxLeafLabelWidth + this.labelPadding * 2);
+        //         if (index === ticks.length - 1) {
+        //             line.x1 -= (lineCount - 2) * this.labelFontSize * 1.5;
+        //         }
+        //         line.x2 = 0;
+        //         line.y1 = 0;
+        //         line.y2 = 0;
+        //     });
 
         if (this.gridLength) {
             const styles = this.gridStyle;
