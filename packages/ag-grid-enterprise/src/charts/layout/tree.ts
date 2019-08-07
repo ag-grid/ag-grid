@@ -53,10 +53,21 @@ class TreeNode {
     }
 }
 
-export function ticksToTree(ticks: Tick[]): TreeNode {
+export function ticksToTree(ticks: Tick[], pad = true): TreeNode {
     const root: any = new TreeNode();
+    let depth = 0;
 
-    ticks.forEach(tick => insertTick(root, tick));
+    if (pad) {
+        ticks.forEach(tick => depth = Math.max(depth, tick.labels.length));
+    }
+    ticks.forEach(tick => {
+        if (pad) {
+            while (tick.labels.length < depth) {
+                tick.labels.unshift('');
+            }
+        }
+        insertTick(root, tick);
+    });
 
     return root;
 }
