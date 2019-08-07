@@ -29,9 +29,6 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-
-        console.log('>>> params: ', params);
-
         const barSeries = this.chart.series[0] as BarSeries;
         barSeries.data = params.data;
         barSeries.xField = params.categoryId;
@@ -83,6 +80,8 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     private defaultOptions(): BarChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
         const chartType = this.chartProxyParams.chartType;
+
+        const isBarChart = BarChartProxy.isBarChart(this.chartProxyParams.chartType);
 
         return {
             parent: this.chartProxyParams.parentElement,
