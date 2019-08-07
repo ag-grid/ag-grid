@@ -62,8 +62,8 @@ export class ChartBuilder {
 
     static createGroupedBarChart(options: BarChartOptions): GroupedCategoryChart {
         const chart = new GroupedCategoryChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createGroupedAxis(options.yAxis)
+            ChartBuilder.createAxis(options.yAxis),
+            ChartBuilder.createGroupedAxis(options.xAxis)
         );
         chart.layout = 'horizontal';
         return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
@@ -88,8 +88,8 @@ export class ChartBuilder {
 
     static createBarChart(options: BarChartOptions): CartesianChart {
         const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
+            ChartBuilder.createAxis(options.yAxis),
+            ChartBuilder.createAxis(options.xAxis)
         );
         chart.layout = 'horizontal';
         return ChartBuilder.initCartesianChart(chart, options, 'bar');

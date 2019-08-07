@@ -29,9 +29,6 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-
-        console.log('>>> params: ', params);
-
         const barSeries = this.chart.series[0] as BarSeries;
         barSeries.data = params.data;
         barSeries.xField = params.categoryId;
@@ -113,7 +110,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 markerStrokeWidth: 1
             },
             xAxis: {
-                type: isBarChart ? 'number' : 'category',
+                type: 'category',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
@@ -132,7 +129,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 }]
             },
             yAxis: {
-                type: isBarChart ? 'category' : 'number',
+                type: 'number',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
