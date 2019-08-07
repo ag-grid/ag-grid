@@ -270,7 +270,7 @@ export class GroupedCategoryAxis {
         const bandwidth = tickScale.convert(tickScale.domain[1]) || 0;
 
         const rotation = toRadians(this.rotation);
-        const isVertical = Math.abs(Math.cos(rotation)) < 1e-8;
+        const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
         const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
 
         group.translationX = this.translationX;
@@ -351,9 +351,7 @@ export class GroupedCategoryAxis {
                         })
                         : String(datum.label);
                 }
-                label.textAlign = parallelLabels
-                    ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
-                    : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
+                label.textAlign = 'center';
                 label.translationX = datum.screenY - this.labelFontSize * 0.25;
                 // console.log(this.id, this.rotation, label.text, datum.screenY, datum.screenX);
                 label.translationY = datum.screenX;
@@ -377,7 +375,11 @@ export class GroupedCategoryAxis {
                 label.textBaseline = 'middle';
             } else {
                 label.translationX -= maxLeafLabelWidth - this.labelFontSize * 1.5 + this.labelPadding;
-                label.rotation = autoRotation + labelRotation;
+                if (isHorizontal) {
+                    label.rotation = autoRotation + labelRotation;
+                } else {
+                    label.rotation = -Math.PI / 2;
+                }
             }
             if (datum.parent) {
                 const x = !datum.children.length ? Math.round(datum.screenX - bandwidth / 2) : Math.round(datum.screenX - datum.leafCount * bandwidth / 2);
