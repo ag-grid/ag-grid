@@ -18,7 +18,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
         if (params.grouping) {
             // TODO include grouped bar charts once available
-            this.chart = ChartBuilder.createGroupedColumnChart(this.chartOptions);
+            this.chart = ChartBuilder.createGroupedBarChart(this.chartOptions);
         } else {
             this.chart = BarChartProxy.isBarChart(params.chartType) ?
                 ChartBuilder.createBarChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
