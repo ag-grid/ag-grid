@@ -268,6 +268,7 @@ export class GroupedCategoryAxis {
         const tickScale = this.tickScale;
         const bandwidth = Math.abs(scale.range[1] - scale.range[0]) / scale.domain.length || 0;
 
+        const parallelLabels = this.parallelLabels;
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
         const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
@@ -302,9 +303,6 @@ export class GroupedCategoryAxis {
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         // Flip if the axis rotation angle is in the top hemisphere.
         const regularFlipFlag = (!labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI) ? -1 : 1;
-
-        const alignFlag = (labelRotation >= 0 && labelRotation <= Math.PI) ? -1 : 1;
-        const parallelLabels = this.parallelLabels;
 
         const updateGridLines = this.gridLineSelection.setData(this.gridLength ? ticks : []);
         updateGridLines.exit.remove();
@@ -406,7 +404,7 @@ export class GroupedCategoryAxis {
         let minY = 0;
         separatorData.forEach(d => minY = Math.min(minY, d.y2));
         separatorData.push({
-            x: Math.round(this.scale.range[1]),
+            x: Math.round(Math.max(scale.range[0], scale.range[1])),
             y1: 0,
             y2: minY,
             toString: () => String(separatorData.length)
