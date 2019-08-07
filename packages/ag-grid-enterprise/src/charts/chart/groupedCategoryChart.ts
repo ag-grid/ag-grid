@@ -162,19 +162,20 @@ export class GroupedCategoryChart extends Chart {
         const xDomains: any[][] = [];
         const yDomains: any[][] = [];
 
-        let isNumericX = false;
+        let isNumericX: boolean | undefined = undefined;
         this.series.forEach((series, index) => {
             if (series.visible) {
                 const xDomain = series.getDomainX();
                 const yDomain = series.getDomainY();
 
-                if (!index) {
+                const isFirstVisibleSeries = isNumericX === undefined;
+                if (isFirstVisibleSeries) {
                     isNumericX = typeof xDomain[0] === 'number';
                 }
-                if (isNumericX || !index) {
+                if (isNumericX || isFirstVisibleSeries) {
                     xDomains.push(xDomain);
-                    yDomains.push(yDomain);
                 }
+                yDomains.push(yDomain);
             }
         });
 
