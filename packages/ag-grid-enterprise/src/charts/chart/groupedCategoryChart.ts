@@ -10,12 +10,13 @@ import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 
 export type CartesianChartLayout = 'vertical' | 'horizontal';
+type GroupedCategoryChartAxis = GroupedCategoryAxis | Axis<Scale<any, number>>;
 
 export class GroupedCategoryChart extends Chart {
 
     private axisAutoPadding = new Padding();
 
-    constructor(xAxis: GroupedCategoryAxis, yAxis: Axis<Scale<any, number>>) {
+    constructor(xAxis: GroupedCategoryChartAxis, yAxis: GroupedCategoryChartAxis) {
         super();
 
         this._xAxis = xAxis;
@@ -31,13 +32,13 @@ export class GroupedCategoryChart extends Chart {
         return this.seriesClipRect;
     }
 
-    private readonly _xAxis: GroupedCategoryAxis;
-    get xAxis(): GroupedCategoryAxis {
+    private readonly _xAxis: GroupedCategoryChartAxis;
+    get xAxis(): GroupedCategoryChartAxis {
         return this._xAxis;
     }
 
-    private readonly _yAxis: Axis<Scale<any, number>>;
-    get yAxis(): Axis<Scale<any, number>> {
+    private readonly _yAxis: GroupedCategoryChartAxis;
+    get yAxis(): GroupedCategoryChartAxis {
         return this._yAxis;
     }
 
@@ -205,13 +206,33 @@ export class GroupedCategoryChart extends Chart {
         const xAxisBBox = this.xAxis.getBBox();
         const yAxisBBox = this.yAxis.getBBox();
 
-        if (this.axisAutoPadding.left !== yAxisBBox.width) {
-            this.axisAutoPadding.left = yAxisBBox.width;
-            this.layoutPending = true;
-        }
-        if (this.axisAutoPadding.bottom !== xAxisBBox.height) {
-            this.axisAutoPadding.bottom = xAxisBBox.height;
-            this.layoutPending = true;
+        // if (this.axisAutoPadding.left !== yAxisBBox.width) {
+        //     this.axisAutoPadding.left = yAxisBBox.width;
+        //     this.layoutPending = true;
+        // }
+        // if (this.axisAutoPadding.bottom !== xAxisBBox.height) {
+        //     this.axisAutoPadding.bottom = xAxisBBox.height;
+        //     this.layoutPending = true;
+        // }
+
+        if (isHorizontal) {
+            if (this.axisAutoPadding.left !== yAxisBBox.width) {
+                this.axisAutoPadding.left = yAxisBBox.width;
+                this.layoutPending = true;
+            }
+            if (this.axisAutoPadding.bottom !== xAxisBBox.width) {
+                this.axisAutoPadding.bottom = xAxisBBox.width;
+                this.layoutPending = true;
+            }
+        } else {
+            if (this.axisAutoPadding.left !== yAxisBBox.width) {
+                this.axisAutoPadding.left = yAxisBBox.width;
+                this.layoutPending = true;
+            }
+            if (this.axisAutoPadding.bottom !== xAxisBBox.height) {
+                this.axisAutoPadding.bottom = xAxisBBox.height;
+                this.layoutPending = true;
+            }
         }
     }
 }

@@ -46,6 +46,8 @@ export class GroupedCategoryAxis {
     //     return rect;
     // })();
 
+    static className = 'GroupedCategoryAxis';
+    readonly id: string = this.createId();
     readonly scale = new BandScale<string>();
     readonly tickScale = new BandScale<string>();
     readonly group = new Group();
@@ -53,7 +55,6 @@ export class GroupedCategoryAxis {
     private lineSelection: Selection<Line, Group, any, any>;
     private separatorSelection: Selection<Line, Group, any, any>;
     private labelSelection: Selection<Text, Group, any, any>;
-    private line = new Line();
     private tickTreeLayout?: TreeLayout;
     // onLayoutChange?: () => void;
 
@@ -70,9 +71,17 @@ export class GroupedCategoryAxis {
         this.lineSelection = Selection.select(this.group).selectAll<Line>();
         this.separatorSelection = Selection.select(this.group).selectAll<Line>();
         this.labelSelection = Selection.select(this.group).selectAll<Text>();
-        this.group.append(this.line);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+
+    private createId(): string {
+        const constructor = this.constructor as any;
+        const className = constructor.className;
+        if (!className) {
+            throw new Error(`The ${constructor} is missing the 'className' property.`);
+        }
+        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
+    };
 
     set domain(value: any[]) {
         this.scale.domain = value;
@@ -103,9 +112,10 @@ export class GroupedCategoryAxis {
         const range = s.domain.length ? [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])] : s.range;
         const layout = this.tickTreeLayout;
         const lineHeight = this.labelFontSize * 1.5;
-        const shiftX = (range[0] || 0) + (s.bandwidth || 0) / 2;
+        const shiftX = (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2;
         if (layout) {
-            layout.resize(range[1] - range[0], layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
+            // console.log('!!!', this.id, this.rotation, range[0], range[1], range[1] - range[0], layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
+            layout.resize(Math.abs(range[1] - range[0]), layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
         }
     }
 
@@ -260,6 +270,7 @@ export class GroupedCategoryAxis {
         const bandwidth = tickScale.convert(tickScale.domain[1]) || 0;
 
         const rotation = toRadians(this.rotation);
+        const isVertical = Math.abs(Math.cos(rotation)) < 1e-8;
         const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
 
         group.translationX = this.translationX;
@@ -344,6 +355,7 @@ export class GroupedCategoryAxis {
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
                 label.translationX = datum.screenY - this.labelFontSize * 0.25;
+                // console.log(this.id, this.rotation, label.text, datum.screenY, datum.screenX);
                 label.translationY = datum.screenX;
                 const bbox = label.getBBox();
                 if (bbox.width > maxLeafLabelWidth) {
@@ -367,7 +379,6 @@ export class GroupedCategoryAxis {
                 label.translationX -= maxLeafLabelWidth - this.labelFontSize * 1.5 + this.labelPadding;
                 label.rotation = autoRotation + labelRotation;
             }
-            // if (datum.children.length && datum.parent) {
             if (datum.parent) {
                 const x = !datum.children.length ? Math.round(datum.screenX - bandwidth / 2) : Math.round(datum.screenX - datum.leafCount * bandwidth / 2);
                 if (!datum.children.length) {
@@ -474,8 +485,6 @@ export class GroupedCategoryAxis {
     }
 
     getBBox(includeTitle = true): BBox {
-        const line = this.line;
-
         let left = Infinity;
         let right = -Infinity;
         let top = Infinity;
@@ -504,28 +513,6 @@ export class GroupedCategoryAxis {
                 bottom = Math.max(bottom, bbox.y + bbox.height);
             }
         });
-
-        // left = Math.min(left, 0);
-        // right = Math.max(right, 0);
-        // top = Math.min(top, line.y1, line.y2);
-        // bottom = Math.max(bottom, line.y1, line.y2);
-
-        // console.log(new BBox(
-        //     left,
-        //     top,
-        //     right - left,
-        //     bottom - top
-        // ));
-
-        // if (this.rotation === -90) {
-        //     debugger;
-        //     console.log(new BBox(
-        //         left,
-        //         top,
-        //         right - left,
-        //         bottom - top
-        //     ));
-        // }
 
         return new BBox(
             left,
