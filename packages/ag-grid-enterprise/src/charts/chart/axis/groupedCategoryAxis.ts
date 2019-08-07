@@ -266,8 +266,7 @@ export class GroupedCategoryAxis {
         const group = this.group;
         const scale = this.scale;
         const tickScale = this.tickScale;
-        // const bandwidth = scale.domain.length ? (scale.range[1] - scale.range[0]) / scale.domain.length : 0;
-        const bandwidth = tickScale.convert(tickScale.domain[1]) || 0;
+        const bandwidth = Math.abs(scale.range[1] - scale.range[0]) / scale.domain.length || 0;
 
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
