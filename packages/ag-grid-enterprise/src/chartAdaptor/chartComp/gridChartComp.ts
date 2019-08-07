@@ -64,6 +64,7 @@ export class GridChartComp extends Component {
     private chartController: ChartController;
 
     private currentChartType: ChartType;
+    private currentChartGroupingActive: boolean;
     private chartProxy: ChartProxy<any>;
 
     private readonly params: GridChartParams;
@@ -138,6 +139,7 @@ export class GridChartComp extends Component {
 
         // local state used to detect when chart type changes
         this.currentChartType = this.model.getChartType();
+        this.currentChartGroupingActive = this.model.isGrouping();
         this.chartProxy = this.createChartProxy(chartProxyParams);
 
         // update chart proxy ref (used by format panel)
@@ -196,7 +198,9 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
-        if (this.model.getChartType() !== this.currentChartType) {
+        const chartTypeChanged = this.model.getChartType() !== this.currentChartType;
+        const groupingChanged = this.currentChartGroupingActive !== this.model.isGrouping();
+        if (chartTypeChanged || groupingChanged) {
             this.createChart();
         }
         this.updateChart();
