@@ -403,7 +403,7 @@ var gridOptions = {
 
             let isBarChart = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
             if (!isBarChart) {
-                options.xAxis.labelRotation = 335;
+                options.xAxis.labelRotation = 0;
             }
 
             let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
