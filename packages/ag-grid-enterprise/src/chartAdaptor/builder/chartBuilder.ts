@@ -68,6 +68,15 @@ export class ChartBuilder {
         return ChartBuilder.initGroupedCategoryChart(chart, options, 'line');
     }
 
+    static createGroupedAreaChart(options: AreaChartOptions): GroupedCategoryChart {
+        const chart = new GroupedCategoryChart(
+            ChartBuilder.createGroupedAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'area');
+    }
+
     static createBarChart(options: BarChartOptions): CartesianChart {
         const chart = new CartesianChart(
             ChartBuilder.createAxis(options.yAxis),

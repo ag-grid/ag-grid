@@ -19,7 +19,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         this.chartType = params.chartType;
 
         this.initChartOptions(params.chartType, this.defaultOptions());
-        this.chart = ChartBuilder.createAreaChart(this.chartOptions);
+
+        if (params.grouping) {
+            this.chart = ChartBuilder.createGroupedAreaChart(this.chartOptions);
+        } else {
+            this.chart = ChartBuilder.createAreaChart(this.chartOptions);
+        }
 
         this.setAxisPadding(this.chart as CartesianChart);
 
