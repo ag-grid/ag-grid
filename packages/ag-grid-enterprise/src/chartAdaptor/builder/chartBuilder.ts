@@ -52,12 +52,29 @@ export class ChartBuilder {
         return ChartBuilder.initCartesianChart(chart, options);
     }
 
-    static createGroupedColumnChart(options: BarChartOptions): GroupedCategoryChart {
+    static createGroupedBarChart(options: BarChartOptions): GroupedCategoryChart {
         const chart = new GroupedCategoryChart(
             ChartBuilder.createGroupedAxis(options.xAxis),
             ChartBuilder.createAxis(options.yAxis)
         );
         return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
+    }
+
+    static createGroupedLineChart(options: BarChartOptions): GroupedCategoryChart {
+        const chart = new GroupedCategoryChart(
+            ChartBuilder.createGroupedAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'line');
+    }
+
+    static createGroupedAreaChart(options: AreaChartOptions): GroupedCategoryChart {
+        const chart = new GroupedCategoryChart(
+            ChartBuilder.createGroupedAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis)
+        );
+
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'area');
     }
 
     static createBarChart(options: BarChartOptions): CartesianChart {

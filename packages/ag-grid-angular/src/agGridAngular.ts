@@ -310,6 +310,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
     @Input() public suppressHorizontalScroll : any = undefined;
+    @Input() public alwaysShowVerticalScroll : any = undefined;
     @Input() public debug : any = undefined;
     @Input() public enableBrowserTooltips : any = undefined;
     @Input() public enableColResize : any = undefined;

@@ -53,6 +53,8 @@ export class ChartDatasource extends BeanStub {
 
                 if (column) {
                     const part = this.valueService.getValue(column, rowNode);
+
+                    // force return type to be string or empty string (as value can be an object)
                     const value = (part && part.toString) ? part.toString() : '';
 
                     if (params.grouping) {
@@ -67,7 +69,6 @@ export class ChartDatasource extends BeanStub {
                         const groupKey = labels.join('-');
                         groupsToRemove[groupKey] = groupNodeIndexes[groupKey];
                     } else {
-                        // force return type to be string or empty string (as value can be an object)
                         data[colId] = value;
                     }
 
