@@ -86,24 +86,27 @@ export class ChartDatasource extends BeanStub {
             dataFromGrid.push(data);
         }
 
-        const groupIndexesToRemove = Object.keys(groupsToRemove).map(key => groupsToRemove[key]);
-
-        return this.processGroupData(groupIndexesToRemove, dataFromGrid, maxGroupLevel);
+        if (params.grouping) {
+            const groupIndexesToRemove = Object.keys(groupsToRemove).map(key => groupsToRemove[key]);
+            return this.processGroupData(groupIndexesToRemove, dataFromGrid, maxGroupLevel);
+        } else {
+            return dataFromGrid;
+        }
     }
 
     private processGroupData(groupIndexesToRemove: number[], dataFromGrid: any[], maxGroupLevel: number) {
         const groupsToRemoveFilter = (d: any, index: number) => groupIndexesToRemove.indexOf(index) < 0;
 
-        const padGroupLevels = (d: any) => {
-            // TODO handle all group column types
-            const groupCol = d['ag-Grid-AutoColumn'];
-            for (let i = groupCol.labels.length; i < maxGroupLevel; i++) {
-                groupCol.labels.unshift('');
-            }
-            return d;
-        };
+        // const padGroupLevels = (d: any) => {
+        //     // TODO handle all group column types
+        //     const groupCol = d['ag-Grid-AutoColumn'];
+        //     for (let i = groupCol.labels.length; i < maxGroupLevel; i++) {
+        //         groupCol.labels.unshift('');
+        //     }
+        //     return d;
+        // };
 
-        return dataFromGrid.filter(groupsToRemoveFilter).map(padGroupLevels);
+        return dataFromGrid.filter(groupsToRemoveFilter);
     }
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
