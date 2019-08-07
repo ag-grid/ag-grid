@@ -12,7 +12,12 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
         super(params);
 
         this.initChartOptions(ChartType.Line, this.defaultOptions());
-        this.chart = ChartBuilder.createLineChart(this.chartOptions);
+
+        if (params.grouping) {
+            this.chart = ChartBuilder.createGroupedLineChart(this.chartOptions);
+        } else {
+            this.chart = ChartBuilder.createLineChart(this.chartOptions);
+        }
     }
 
     public update(params: UpdateChartParams): void {
