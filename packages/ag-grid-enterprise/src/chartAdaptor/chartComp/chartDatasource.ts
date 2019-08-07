@@ -39,7 +39,6 @@ export class ChartDatasource extends BeanStub {
         const modelLastRow = this.gridRowModel.getRowCount() - 1;
         const rangeLastRow = Math.min(params.endRow, modelLastRow);
 
-        let maxGroupLevel = 0;
         const groupNodeIndexes: { [key: string]: number } = {};
         const groupsToRemove: { [key: string]: number } = {};
 
@@ -58,8 +57,6 @@ export class ChartDatasource extends BeanStub {
 
                     if (params.grouping) {
                         const labels = this.addParentKeys(rowNode, [String(value)]);
-                        maxGroupLevel = Math.max(labels.length, maxGroupLevel);
-
                         data[colId] = {labels: labels.slice()};
 
                         if (rowNode.group) {
@@ -88,25 +85,10 @@ export class ChartDatasource extends BeanStub {
 
         if (params.grouping) {
             const groupIndexesToRemove = Object.keys(groupsToRemove).map(key => groupsToRemove[key]);
-            return this.processGroupData(groupIndexesToRemove, dataFromGrid, maxGroupLevel);
-        } else {
-            return dataFromGrid;
+            return dataFromGrid.filter((d: any, index: number) => groupIndexesToRemove.indexOf(index) < 0);
         }
-    }
 
-    private processGroupData(groupIndexesToRemove: number[], dataFromGrid: any[], maxGroupLevel: number) {
-        const groupsToRemoveFilter = (d: any, index: number) => groupIndexesToRemove.indexOf(index) < 0;
-
-        // const padGroupLevels = (d: any) => {
-        //     // TODO handle all group column types
-        //     const groupCol = d['ag-Grid-AutoColumn'];
-        //     for (let i = groupCol.labels.length; i < maxGroupLevel; i++) {
-        //         groupCol.labels.unshift('');
-        //     }
-        //     return d;
-        // };
-
-        return dataFromGrid.filter(groupsToRemoveFilter);
+        return dataFromGrid;
     }
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
