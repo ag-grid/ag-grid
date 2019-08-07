@@ -572,7 +572,7 @@ export class GridOptionsWrapper {
     }
 
     public isEmbedFullWidthRows() {
-        return isTrue(this.gridOptions.embedFullWidthRows);
+        return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
     }
 
     public getSuppressKeyboardEventFunc(): (params: SuppressKeyboardEventParams) => boolean {
