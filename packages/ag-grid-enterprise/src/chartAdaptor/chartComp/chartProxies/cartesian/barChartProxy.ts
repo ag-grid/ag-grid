@@ -84,6 +84,8 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         const palette = this.chartProxyParams.getSelectedPalette();
         const chartType = this.chartProxyParams.chartType;
 
+        const isBarChart = BarChartProxy.isBarChart(this.chartProxyParams.chartType);
+
         return {
             parent: this.chartProxyParams.parentElement,
             background: {
@@ -111,7 +113,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 markerStrokeWidth: 1
             },
             xAxis: {
-                type: 'category',
+                type: isBarChart ? 'number' : 'category',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
@@ -130,7 +132,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 }]
             },
             yAxis: {
-                type: 'number',
+                type: isBarChart ? 'category' : 'number',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
