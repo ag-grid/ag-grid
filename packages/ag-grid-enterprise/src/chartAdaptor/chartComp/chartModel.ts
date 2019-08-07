@@ -240,7 +240,13 @@ export class ChartModel extends BeanStub {
     public isGrouping(): boolean {
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
         const groupedCols = usingTreeData ? null : this.columnController.getRowGroupColumns();
-        return usingTreeData || (groupedCols && groupedCols.length > 0) as boolean;
+        const groupActive = usingTreeData || (groupedCols && groupedCols.length > 0) as boolean;
+
+        // charts only group when the selected category is a group column
+        const groupCols = this.columnController.getGroupDisplayColumns();
+        const groupDimensionSelected = groupCols.map(col => col.getColId()).some(id => id === this.getSelectedDimensionId());
+
+        return groupActive && groupDimensionSelected;
     }
 
     public isPivotActive(): boolean {

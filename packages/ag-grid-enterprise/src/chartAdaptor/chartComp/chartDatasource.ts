@@ -57,7 +57,7 @@ export class ChartDatasource extends BeanStub {
                     // force return type to be string or empty string (as value can be an object)
                     const value = (part && part.toString) ? part.toString() : '';
 
-                    if (params.grouping) {
+                    if (params.grouping ) {
                         const labels = this.addParentKeys(rowNode, [String(value)]);
                         data[colId] = {labels: labels};
 
