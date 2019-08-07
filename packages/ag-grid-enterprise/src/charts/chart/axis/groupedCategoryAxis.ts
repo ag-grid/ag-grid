@@ -150,7 +150,7 @@ export class GroupedCategoryAxis {
      */
     labelPadding: number = 5;
 
-    fred: boolean = false;
+    gridLines: boolean = false;
 
     /**
      * The color of the axis ticks.
@@ -397,7 +397,7 @@ export class GroupedCategoryAxis {
             if (datum.parent) {
                 const x = !datum.children.length ? Math.round(datum.screenX - bandwidth / 2) : Math.round(datum.screenX - datum.leafCount * bandwidth / 2);
                 if (!datum.children.length) {
-                    if (!datum.number || this.fred) {
+                    if (!datum.number || this.gridLines) {
                         separatorData.push({
                             x,
                             y1: 0,
@@ -467,7 +467,7 @@ export class GroupedCategoryAxis {
             line.y2 = scale.range[1];
             line.strokeWidth = this.lineWidth;
             line.stroke = this.lineColor;
-            line.visible = labels.length > 0 && (index === 0 || this.fred);
+            line.visible = labels.length > 0 && (index === 0 || this.gridLines);
         });
 
         // tickSelection.selectByTag<Line>(Tags.Tick)
