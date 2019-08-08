@@ -5,7 +5,7 @@ import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
-import { extent } from "../../util/array";
+import { numericExtent } from "../../util/array";
 import palette from "../palettes";
 import { Series, SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
@@ -150,8 +150,8 @@ export class LineSeries extends Series<CartesianChart> {
         this.yData = data.map(datum => datum[yField]);
 
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
-        const domainX = continuousX ? (extent(this.xData) || [0, 1]) : this.xData;
-        const domainY = extent(this.yData) || [0, 1];
+        const domainX = continuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
+        const domainY = numericExtent(this.yData) || [0, 1];
 
         if (continuousX) {
             const [min, max] = domainX as number[];

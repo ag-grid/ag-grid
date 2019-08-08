@@ -11,7 +11,7 @@ import { Shape } from "../../scene/shape/shape";
 import { Path } from "../../scene/shape/path";
 import { Arc, ArcType } from "../../scene/shape/arc";
 import palette from "../palettes";
-import { extent } from "../../util/array";
+import { numericExtent } from "../../util/array";
 
 interface AreaSelectionDatum {
     yField: string,
@@ -342,7 +342,7 @@ export class AreaSeries extends Series<CartesianChart> {
             // console.warn('Zero or infinite y-range.');
         }
 
-        const domainX = continuousX ? (extent(xData) || [0, 1]) : xData;
+        const domainX = continuousX ? (numericExtent(xData) || [0, 1]) : xData;
         if (continuousX) {
             const [min, max] = domainX as number[];
             if (min === max) {

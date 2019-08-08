@@ -3,7 +3,7 @@ import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
-import { extent } from "../../util/array";
+import { numericExtent } from "../../util/array";
 import palette from "../palettes";
 import { Series, SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
@@ -174,12 +174,12 @@ export class ScatterSeries extends Series<CartesianChart> {
         this.xData = xData;
         this.yData = yData;
         this.radiusData = radiusData;
-        this.radiusScale.domain = extent(radiusData) || [1, 1];
+        this.radiusScale.domain = numericExtent(radiusData) || [1, 1];
         this.radiusScale.range = [minMarkerSize / 2, markerSize / 2];
 
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
-        const domainX = continuousX ? (extent(this.xData) || [0, 1]) : this.xData;
-        const domainY = extent(this.yData) || [0, 1];
+        const domainX = continuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
+        const domainY = numericExtent(this.yData) || [0, 1];
 
         if (continuousX) {
             const [min, max] = domainX as number[];

@@ -3,7 +3,7 @@
  * If the iterable contains no comparable values, returns `[undefined, undefined]`.
  * @param values
  */
-export function extent<T>(values: T[]): [T, T] | undefined {
+export function extent<T>(values: T[]): [T | undefined, T | undefined] {
     const n = values.length;
     let i = -1;
     let value;
@@ -26,9 +26,7 @@ export function extent<T>(values: T[]): [T, T] | undefined {
         }
     }
 
-    if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
-        return [min, max];
-    }
+    return [min, max];
 }
 
 export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[]) => boolean): T | undefined {
@@ -37,5 +35,20 @@ export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[])
         if (predicate(value, i, arr)) {
             return value;
         }
+    }
+}
+
+export function validExtentOrUndefined<T>(values: [T | undefined, T | undefined]): [T, T] | undefined {
+    const min = values[0];
+    const max = values[1];
+    if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
+        return [min, max];
+    }
+}
+
+export function numericExtent<T>(values: T[]): [number, number] | undefined {
+    const [min, max] = extent(values);
+    if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
+        return [min, max];
     }
 }
