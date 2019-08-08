@@ -16,7 +16,8 @@ import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleSe
 import { Column } from "../entities/column";
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
 import { RowNode } from "../entities/rowNode";
-import { PaginationAutoPageSizeService, PaginationProxy } from "../rowModels/paginationProxy";
+import { PaginationProxy } from "../rowModels/paginationProxy";
+import { PaginationAutoPageSizeService } from "../rowModels/paginationAutoPageSizeService";
 import { PopupEditorWrapper } from "../rendering/cellEditors/popupEditorWrapper";
 import { AlignedGridsService } from "../alignedGridsService";
 import { PinnedRowModel } from "../rowModels/pinnedRowModel";
@@ -667,7 +668,7 @@ export class GridPanel extends Component {
 
             if (isEmptyPinnedBottom) {
                 floatingEnd = null;
-                rowEnd = this.paginationProxy.getTotalRowCount() - 1;
+                rowEnd = this.paginationProxy.getRowCount() - 1;
             } else {
                 floatingEnd = PINNED_BOTTOM;
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
@@ -733,7 +734,7 @@ export class GridPanel extends Component {
         // if for print or auto height, everything is always visible
         if (this.printLayout) { return; }
 
-        const rowCount = this.paginationProxy.getTotalRowCount();
+        const rowCount = this.paginationProxy.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
@@ -887,7 +888,7 @@ export class GridPanel extends Component {
 
     public updateRowCount(): void {
         const headerCount = this.headerRootComp.getHeaderRowCount();
-        const rowCount = this.paginationProxy.getTotalRowCount();
+        const rowCount = this.paginationProxy.getRowCount();
         const total = (headerCount + rowCount).toString();
 
         this.getGui().setAttribute('aria-rowcount', total);

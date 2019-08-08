@@ -931,7 +931,7 @@ export class RowRenderer extends BeanStub {
             newLast = this.paginationProxy.getPageLastRow();
         } else {
 
-            const paginationOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+            const paginationOffset = this.paginationProxy.getPixelOffset();
             const maxDivHeightScaler = this.maxDivHeightScaler.getOffset();
 
             const bodyVRange = this.gridPanel.getVScrollPosition();

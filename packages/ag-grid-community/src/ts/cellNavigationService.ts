@@ -183,7 +183,7 @@ export class CellNavigationService {
             return lastBottomIndex <= index;
         }
 
-        const lastBodyIndex = this.rowModel.getPageLastRow();
+        const lastBodyIndex = this.rowModel.getRowCount() - 1;
         return lastBodyIndex <= index;
     }
 
@@ -229,7 +229,7 @@ export class CellNavigationService {
     }
 
     private getLastBodyCell(): RowPosition {
-        const lastBodyRow = this.rowModel.getPageLastRow();
+        const lastBodyRow = this.rowModel.getRowCount() - 1;
         return {rowIndex: lastBodyRow, rowPinned: null} as RowPosition;
     }
 

@@ -126,21 +126,4 @@ include '../documentation-main/documentation_header.php';
         </tr>
     </table>
 
-    <note>
-        <p>
-            In v9.0 ag-Grid pagination changed from server side pagination to client side pagination.
-            Server side pagination was then removed in v10.1.
-        </p>
-        <p>
-            If you were doing server side pagination, we recommend moving to
-            <a href="../javascript-grid-infinite-scrolling/#pagination">pagination with infinite scrolling</a>
-            as a way of migration to the new mechanism.
-        </p>
-        <p>
-            If you were slicing manually the data in your Datasource to mimic pagination done in the browser only,
-            we recommend that you use the default <a href="../javascript-grid-client-side-model/">Client-side Row Model</a> and
-            set the row data as normal and then set grid property <code>pagination=true</code>.
-        </p>
-    </note>
-
 <?php include '../documentation-main/documentation_footer.php';?>
