@@ -788,6 +788,7 @@ var desktopDefaultCols = [
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
+        chartDataType: 'category',
         filterParams: {cellRenderer: 'ratingFilterRenderer'}
     },
     {
