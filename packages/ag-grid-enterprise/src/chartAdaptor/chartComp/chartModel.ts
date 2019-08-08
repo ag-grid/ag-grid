@@ -66,7 +66,7 @@ export class ChartModel extends BeanStub {
     private chartProxy: ChartProxy<any>;
     private detached: boolean = false;
     private grouping: boolean;
-    private columnNames: { [p: string]: string[] };
+    private columnNames: { [p: string]: string[] } = {};
 
     public constructor(params: ChartModelParams) {
         super();
@@ -257,10 +257,6 @@ export class ChartModel extends BeanStub {
         return this.columnController.isPivotActive();
     }
 
-    public getColumnNames(): { [p: string]: string[] } {
-        return this.columnNames;
-    }
-
     public setChartProxy(chartProxy: ChartProxy<any>): void {
         this.chartProxy = chartProxy;
     }
@@ -274,7 +270,7 @@ export class ChartModel extends BeanStub {
     }
 
     public getValueColState(): ColState[] {
-        return this.valueColState;
+        return this.valueColState.map(this.displayNameMapper.bind(this));
     }
 
     public getDimensionColState(): ColState[] {
@@ -317,12 +313,12 @@ export class ChartModel extends BeanStub {
         this.detached = !this.detached;
     }
 
-    public getSelectedColState(): ColState[] {
-        return this.valueColState.filter(cs => cs.selected);
+    public getSelectedValueColState(): {colId: string, displayName: string}[] {
+        return this.getValueColState().filter(cs => cs.selected);
     }
 
     public getSelectedValueCols(): Column[] {
-        return this.getSelectedColState().map(cs => cs.column) as Column[];
+        return this.valueColState.filter(cs => cs.selected).map(cs => cs.column) as Column[];
     }
 
     public getSelectedDimensionId(): string {
@@ -436,6 +432,15 @@ export class ChartModel extends BeanStub {
             }
         }
         return null;
+    }
+
+    private displayNameMapper(col: ColState) {
+        if (this.columnNames[col.colId]) {
+            col.displayName = this.columnNames[col.colId].join(' - ');
+        } else {
+            col.displayName = this.getColDisplayName(col.column as Column);
+        }
+        return col;
     }
 
     private generateId(): string {

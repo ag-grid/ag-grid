@@ -227,7 +227,7 @@ export class GridChartComp extends Component {
     }
 
     public updateChart() {
-        const selectedCols = this.model.getSelectedColState();
+        const selectedCols = this.model.getSelectedValueColState();
         const fields = selectedCols.map(c => {
             return {colId: c.colId, displayName: c.displayName};
         });
@@ -235,8 +235,7 @@ export class GridChartComp extends Component {
         const chartUpdateParams: UpdateChartParams = {
             data: this.model.getData(),
             categoryId: this.model.getSelectedDimensionId(),
-            fields: fields,
-            columnNames: this.model.getColumnNames()
+            fields: fields
         };
 
         this.chartProxy.update(chartUpdateParams);

@@ -53,7 +53,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             areaSeries.data = params.data;
             areaSeries.xField = params.categoryId;
             areaSeries.yFields = params.fields.map(f => f.colId);
-            areaSeries.yFieldNames = params.fields.map(f => params.columnNames[f.colId].join(' - '));
+            areaSeries.yFieldNames = params.fields.map(f => f.displayName);
 
             const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
 
@@ -97,7 +97,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             const areaSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as AreaSeries;
 
             if (areaSeries) {
-                areaSeries.yFieldNames = [params.columnNames[f.colId].join(' - ')];
+                areaSeries.yFieldNames = [f.displayName];
                 areaSeries.data = params.data;
                 areaSeries.xField = params.categoryId;
                 areaSeries.yFields = [f.colId];

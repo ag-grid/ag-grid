@@ -46,7 +46,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             const lineSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as LineSeries;
 
             if (lineSeries) {
-                lineSeries.title = params.columnNames[f.colId].join(' - ');
+                lineSeries.title = f.displayName;
                 lineSeries.data = params.data;
                 lineSeries.xField = params.categoryId;
                 lineSeries.yField = f.colId;

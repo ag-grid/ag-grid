@@ -32,7 +32,6 @@ export interface UpdateChartParams {
     categoryId: string;
     data: any[];
     fields: { colId: string, displayName: string }[];
-    columnNames: { [p: string]: string[] };
 }
 
 export type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';

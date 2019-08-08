@@ -33,7 +33,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         barSeries.data = params.data;
         barSeries.xField = params.categoryId;
         barSeries.yFields = params.fields.map(f => f.colId);
-        barSeries.yFieldNames = params.fields.map(f => params.columnNames[f.colId].join(' - '));
+        barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
         // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
