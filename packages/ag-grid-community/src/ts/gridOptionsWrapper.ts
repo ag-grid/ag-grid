@@ -652,6 +652,17 @@ export class GridOptionsWrapper {
         return this.gridOptions.paginationPageSize;
     }
 
+    public isPaginateChildRows(): boolean {
+        // if using groupSuppressRow, means we are not showing parent rows,
+        // so we always paginate on the child rows here as there are no parent rows
+        if (this.isGroupSuppressRow() || this.isGroupRemoveSingleChildren()
+            || this.isGroupRemoveLowestSingleChildren()) {
+            return true;
+        }
+
+        return isTrue(this.gridOptions.paginateChildRows);
+    }
+
     public getCacheBlockSize(): number | undefined {
         return this.gridOptions.cacheBlockSize;
     }

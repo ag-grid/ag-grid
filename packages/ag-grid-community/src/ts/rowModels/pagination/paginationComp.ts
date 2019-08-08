@@ -166,7 +166,7 @@ export class PaginationComp extends Component {
         const pageSize = this.paginationProxy.getPageSize();
         const maxRowFound = this.paginationProxy.isLastPageFound();
         const rowCount = this.paginationProxy.isLastPageFound() ?
-            this.paginationProxy.getTotalRowCount() : null;
+            this.paginationProxy.getMasterRowCount() : null;
 
         let startRow: any;
         let endRow: any;
@@ -199,7 +199,7 @@ export class PaginationComp extends Component {
         const lastPageFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
         const rowCount = this.paginationProxy.isLastPageFound() ?
-            this.paginationProxy.getTotalRowCount() : null;
+            this.paginationProxy.getMasterRowCount() : null;
 
         if (lastPageFound) {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);

@@ -233,6 +233,7 @@ export interface GridOptions {
     suppressPaginationPanel?: boolean;
 
     pagination?: boolean;
+    paginateChildRows?: boolean;
     editType?: string;
     suppressTouch?: boolean;
     suppressAsyncEvents?: boolean;

@@ -161,14 +161,6 @@ export class ViewportRowModel implements IRowModel {
         return result;
     }
 
-    public getPageFirstRow(): number {
-        return 0;
-    }
-
-    public getPageLastRow(): number {
-        return this.rowCount - 1;
-    }
-
     public getRowCount(): number {
         return this.rowCount;
     }
@@ -186,6 +178,14 @@ export class ViewportRowModel implements IRowModel {
             rowHeight: this.rowHeight,
             rowTop: this.rowHeight * index
         };
+    }
+
+    public getTopLevelRowCount(): number {
+        return this.getRowCount();
+    }
+
+    public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
+        return topLevelIndex;
     }
 
     public getCurrentPageHeight(): number {

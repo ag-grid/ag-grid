@@ -297,25 +297,26 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         return this.getRowCount() * this.rowHeight;
     }
 
+    public getTopLevelRowCount(): number {
+        return this.getRowCount();
+    }
+
+    public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
+        return topLevelIndex;
+    }
+
     public getRowIndexAtPixel(pixel: number): number {
         if (this.rowHeight !== 0) { // avoid divide by zero error
             const rowIndexForPixel = Math.floor(pixel / this.rowHeight);
-            if (rowIndexForPixel > this.getPageLastRow()) {
-                return this.getPageLastRow();
+            const lastRowIndex = this.getRowCount() - 1;
+            if (rowIndexForPixel > lastRowIndex) {
+                return lastRowIndex;
             } else {
                 return rowIndexForPixel;
             }
         } else {
             return 0;
         }
-    }
-
-    public getPageFirstRow(): number {
-        return 0;
-    }
-
-    public getPageLastRow(): number {
-        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() - 1 : 0;
     }
 
     public getRowCount(): number {

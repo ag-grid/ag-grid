@@ -182,7 +182,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
         let lastBlockId = -1;
 
-        const blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
+        const blockSize = this.getBlockSize();
 
         this.forEachBlockInOrder((currentBlock: ServerSideBlock, blockId: number) => {
 
@@ -260,7 +260,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             return null;
         }
 
-        const blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
+        const blockSize = this.getBlockSize();
 
         // if block not found, we need to load it
         if (_.missing(block)) {
@@ -308,6 +308,55 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         const rowNode = block ? block.getRow(displayRowIndex) : null;
 
         return rowNode;
+    }
+
+    private getBlockSize(): number {
+        const blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
+        return blockSize;
+    }
+
+    public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
+        const blockSize = this.getBlockSize();
+        const blockId = Math.floor(topLevelIndex / blockSize);
+
+        const block = this.getBlock(blockId);
+
+        if (block) {
+            // if we found a block, means row is in memory, so we can report the row index directly
+            const rowNode = block.getRowUsingLocalIndex(topLevelIndex, true);
+            return rowNode.rowIndex;
+        } else {
+            // otherwise we need to calculate it from the previous block
+            let blockBefore: ServerSideBlock | undefined;
+            this.forEachBlockInOrder((currentBlock:ServerSideBlock, currentId: number) => {
+                if (blockId > currentId) {
+                    // this will get assigned many times, but the last time will
+                    // be the closest block to the required block that is BEFORE
+                    blockBefore = currentBlock;
+                }
+            });
+
+            // no blocks before means no nodes before are open (as all purged blocks are empty)
+            if (!blockBefore) {
+                return topLevelIndex;
+            }
+
+            // note: the local index is the same as the top level index, two terms for same thing
+            //
+            // get index of the last row before this row
+            // eg if blocksize = 100, then:
+            //   last row of first block is 99 (100 * 1) -1;
+            //   last row of second block is 199 (100 * 2) -1;
+            const lastRowTopLevelIndex = (blockSize * (blockId + 1)) - 1;
+            // this is the last loaded rownode in the cache that is before the row we are interested in.
+            // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
+            // same as the difference between the displayed index
+            const lastRowNode = blockBefore.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
+            const indexDiff = topLevelIndex - lastRowTopLevelIndex;
+            const res = lastRowNode.rowIndex + indexDiff;
+
+            return res;
+        }
     }
 
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): ServerSideBlock {
