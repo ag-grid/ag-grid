@@ -3,13 +3,14 @@ import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
-import { extent } from "../../util/array";
+import { extent, validExtentOrUndefined } from "../../util/array";
 import palette from "../palettes";
 import { Series, SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Color } from "ag-grid-community";
+import linearScale from "../../scale/linearScale";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number,
@@ -36,6 +37,8 @@ export class ScatterSeries extends Series<CartesianChart> {
     private domainY: any[] = [];
     private xData: any[] = [];
     private yData: any[] = [];
+    private radiusData: number[] = [];
+    private radiusScale = linearScale();
 
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
@@ -84,6 +87,17 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._yField;
     }
 
+    private _radiusField: string = '';
+    set radiusField(value: string) {
+        if (this._radiusField !== value) {
+            this._radiusField = value;
+            this.scheduleData();
+        }
+    }
+    get radiusField(): string {
+        return this._radiusField;
+    }
+
     private _marker: boolean = false;
     set marker(value: boolean) {
         if (this._marker !== value) {
@@ -121,6 +135,8 @@ export class ScatterSeries extends Series<CartesianChart> {
         const chart = this.chart;
         const xField = this.xField;
         const yField = this.yField;
+        const radiusField = this.radiusField;
+        const markerSize = this.markerSize;
         let data = this.data as any[];
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
@@ -131,8 +147,21 @@ export class ScatterSeries extends Series<CartesianChart> {
             this._data = data = [];
         }
 
-        this.xData = data.map(datum => datum[xField]);
-        this.yData = data.map(datum => datum[yField]);
+        const xData = [] as any[];
+        const yData = [] as any[];
+        const radiusData = [] as number[];
+
+        data.forEach(datum => {
+            xData.push(datum[xField]);
+            yData.push(datum[yField]);
+            radiusData.push(datum[radiusField]);
+        });
+
+        this.xData = xData;
+        this.yData = yData;
+        this.radiusData = radiusData;
+        this.radiusScale.domain = validExtentOrUndefined(extent(radiusData)) || [1, 1];
+        this.radiusScale.range = [0, markerSize / 2];
 
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
         const domainX = continuousX ? extent(this.xData) : this.xData;
@@ -238,6 +267,7 @@ export class ScatterSeries extends Series<CartesianChart> {
         const data = this.data;
         const xData = this.xData;
         const yData = this.yData;
+        const radiusData = this.radiusData;
         const n = xData.length;
         const fill = this.fill;
         const stroke = this.stroke;
@@ -259,7 +289,7 @@ export class ScatterSeries extends Series<CartesianChart> {
                 fill,
                 stroke,
                 strokeWidth: markerStrokeWidth,
-                radius: markerSize / 2
+                radius: this.radiusField ? this.radiusScale.convert(radiusData[i]) : markerSize / 2
             });
         }
 

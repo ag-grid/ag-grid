@@ -216,20 +216,16 @@ export class GroupedCategoryChart extends Chart {
         //     this.layoutPending = true;
         // }
 
+        if (this.axisAutoPadding.left !== yAxisBBox.width) {
+            this.axisAutoPadding.left = yAxisBBox.width;
+            this.layoutPending = true;
+        }
         if (isHorizontal) {
-            if (this.axisAutoPadding.left !== yAxisBBox.width) {
-                this.axisAutoPadding.left = yAxisBBox.width;
-                this.layoutPending = true;
-            }
             if (this.axisAutoPadding.bottom !== xAxisBBox.width) {
                 this.axisAutoPadding.bottom = xAxisBBox.width;
                 this.layoutPending = true;
             }
         } else {
-            if (this.axisAutoPadding.left !== yAxisBBox.width) {
-                this.axisAutoPadding.left = yAxisBBox.width;
-                this.layoutPending = true;
-            }
             if (this.axisAutoPadding.bottom !== xAxisBBox.height) {
                 this.axisAutoPadding.bottom = xAxisBBox.height;
                 this.layoutPending = true;
