@@ -1272,7 +1272,7 @@ export class GridApi {
     }
 
     public paginationGetRowCount(): number {
-        return this.paginationProxy.getRowCount();
+        return this.paginationProxy.getMasterRowCount();
     }
 
     public paginationGoToNextPage(): void {
