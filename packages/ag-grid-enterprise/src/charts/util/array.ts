@@ -39,18 +39,3 @@ export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[])
         }
     }
 }
-
-// export function validExtentOrUndefined<T>(values: [T | undefined, T | undefined]): [T, T] | undefined {
-//     const min = values[0];
-//     const max = values[1];
-//     if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
-//         return [min, max];
-//     }
-// }
-//
-// export function checkExtent<T>(values: [T | undefined, T | undefined]): [T, T] {
-//     if (values[0] !== undefined && values[1] !== undefined) {
-//         return values as [T, T];
-//     }
-//     throw new Error(`Invalid extent: ${values}`);
-// }

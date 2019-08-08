@@ -120,7 +120,7 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._markerSize;
     }
 
-    private _minMarkerSize: number = 0;
+    private _minMarkerSize: number = 4;
     set minMarkerSize(value: number) {
         if (this._minMarkerSize !== value) {
             this._minMarkerSize = value;
