@@ -305,14 +305,11 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             this.logger.log(`block missing, rowIndex = ${displayRowIndex}, creating #${blockNumber}, displayIndexStart = ${displayIndexStart}`);
         }
 
-        const rowNode = block ? block.getRow(displayRowIndex) : null;
-
-        return rowNode;
+        return block ? block.getRow(displayRowIndex) : null;
     }
 
     private getBlockSize(): number {
-        const blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
-        return blockSize;
+        return this.cacheParams.blockSize ? this.cacheParams.blockSize : ServerSideBlock.DefaultBlockSize;
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
@@ -348,14 +345,17 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             //   last row of first block is 99 (100 * 1) -1;
             //   last row of second block is 199 (100 * 2) -1;
             const lastRowTopLevelIndex = (blockSize * (blockId + 1)) - 1;
+
             // this is the last loaded rownode in the cache that is before the row we are interested in.
             // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
             // same as the difference between the displayed index
-            const lastRowNode = blockBefore.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
             const indexDiff = topLevelIndex - lastRowTopLevelIndex;
-            const res = lastRowNode.rowIndex + indexDiff;
-
-            return res;
+            if (blockBefore) {
+                const lastRowNode = blockBefore.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
+                return lastRowNode.rowIndex + indexDiff;
+            } else {
+                return indexDiff;
+            }
         }
     }
 
