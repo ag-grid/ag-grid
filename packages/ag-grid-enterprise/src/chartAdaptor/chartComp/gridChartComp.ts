@@ -20,7 +20,7 @@ import {ChartController} from "./chartController";
 import {ChartModel, ChartModelParams} from "./chartModel";
 import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
 import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
-import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
 import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
 import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
@@ -232,10 +232,11 @@ export class GridChartComp extends Component {
             return {colId: c.colId, displayName: c.displayName};
         });
 
-        const chartUpdateParams = {
+        const chartUpdateParams: UpdateChartParams = {
             data: this.model.getData(),
             categoryId: this.model.getSelectedDimensionId(),
-            fields: fields
+            fields: fields,
+            columnNames: this.model.getColumnNames()
         };
 
         this.chartProxy.update(chartUpdateParams);
