@@ -94,26 +94,26 @@ include '../documentation-main/documentation_header.php';
         Both <a href="../javascript-grid-grouping/">Row Grouping</a> and
         <a href="../javascript-grid-master-detail/">Master Detail</a> have rows that expand. When this happens,
         consideration needs to be given as to how this impacts the number of rows on the page. There are two
-        modes of operation for this scenario, depending on what best fits your application's needs.
+        modes of operation that can be used depending on what your application requirements.
     </p>
 
     <h3>Mode 1: Paginate Only Top Level Rows</h3>
 
     <p>
-        The fist mode is the default. The rows are split according to the top level rows. For example if row grouping
-        with a page size of 10, then each page will contain 10 top level groups. If a group is expanded, then all
-        children for that group, along with the 10 original groups for that page, will get display in one page, resulting
-        in a page with more than 10 rows.
+        The first mode is the default. The rows are split according to the top level rows. For example if row grouping
+        with a page size of 10, then each page will contain 10 top level groups. When expanding a group with this mode,
+        all children for that group, along with the 10 original groups for that page, will get display in one page. This
+        will result in a page size greater than the initial page size of 10 rows.
     </p>
 
     <p>
-        This mode is typically best for Row Grouping as children are always displayed alongside the parent group.
-        It is also typically best for Master Detail as detail rows (that typically contain detail tables) will always
+        This mode is typically best suited for Row Grouping as children are always displayed alongside the parent group.
+        It is also typically best for Master Detail, as detail rows (that typically contain detail tables) will always
         appear below their master rows.
     </p>
 
     <p>
-        In the example, note the following:
+        In the example below, note the following:
     </p>
     <ul>
         <li>
@@ -129,7 +129,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Mode 2: Paginate All Rows, Including Children</h3>
 
     <p>
-        The second mode paginates all rows, including child rows of row grouping and detail rows of master detail.
+        The second mode paginates all rows, including child rows when Row Grouping and detail rows with Master Detail.
         For example if row grouping with a page size of 10, then each page will always contain exactly 10 rows, even
         if it means having children appear on a page after the page containing the parent. This can be particularly
         confusing if the last row of a page is expanded, as the children will appear on the next page (not visible
@@ -148,7 +148,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        In the example, note the following:
+        In the example below, note the following:
     </p>
     <ul>
         <li>
