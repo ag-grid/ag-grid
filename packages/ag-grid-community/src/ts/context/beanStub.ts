@@ -10,7 +10,7 @@ export class BeanStub implements IEventEmitter {
 
     public static EVENT_DESTROYED = 'destroyed';
 
-    private localEventService: EventService;
+    protected localEventService: EventService;
 
     private destroyFunctions: (() => void)[] = [];
 
