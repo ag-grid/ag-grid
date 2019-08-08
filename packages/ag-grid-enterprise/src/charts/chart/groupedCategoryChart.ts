@@ -3,7 +3,7 @@ import { Axis } from "../axis";
 import Scale from "../scale/scale";
 import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
-import { extent, checkExtent } from "../util/array";
+import { extent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
 import { CategoryAxis } from "./axis/categoryAxis";
@@ -182,23 +182,8 @@ export class GroupedCategoryChart extends Chart {
         const xDomain = new Array<any>().concat(...xDomains);
         const yDomain = new Array<any>().concat(...yDomains);
 
-        if (typeof xDomain[0] === 'number') {
-            xAxis.domain = checkExtent(extent(xDomain));
-        } else {
-            // if (!xDomain.length) {
-            //     return;
-            // }
-            xAxis.domain = xDomain;
-        }
-
-        if (typeof yDomain[0] === 'number') {
-            yAxis.domain = checkExtent(extent(yDomain));
-        } else {
-            // if (!yDomain.length) {
-            //     return;
-            // }
-            yAxis.domain = yDomain;
-        }
+        xAxis.domain = extent(xDomain) || xDomain;
+        yAxis.domain = extent(yDomain) || yDomain;
 
         xAxis.update();
         yAxis.update();

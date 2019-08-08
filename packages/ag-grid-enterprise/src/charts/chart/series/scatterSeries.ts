@@ -3,7 +3,7 @@ import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
-import { extent, validExtentOrUndefined } from "../../util/array";
+import { extent } from "../../util/array";
 import palette from "../palettes";
 import { Series, SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
@@ -120,6 +120,17 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._markerSize;
     }
 
+    private _minMarkerSize: number = 0;
+    set minMarkerSize(value: number) {
+        if (this._minMarkerSize !== value) {
+            this._minMarkerSize = value;
+            this.update();
+        }
+    }
+    get minMarkerSize(): number {
+        return this._minMarkerSize;
+    }
+
     private _markerStrokeWidth: number = 2;
     set markerStrokeWidth(value: number) {
         if (this._markerStrokeWidth !== value) {
@@ -137,6 +148,7 @@ export class ScatterSeries extends Series<CartesianChart> {
         const yField = this.yField;
         const radiusField = this.radiusField;
         const markerSize = this.markerSize;
+        const minMarkerSize = this.minMarkerSize;
         let data = this.data as any[];
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
@@ -154,50 +166,37 @@ export class ScatterSeries extends Series<CartesianChart> {
         data.forEach(datum => {
             xData.push(datum[xField]);
             yData.push(datum[yField]);
-            radiusData.push(datum[radiusField]);
+            if (radiusField) {
+                radiusData.push(datum[radiusField]);
+            }
         });
 
         this.xData = xData;
         this.yData = yData;
         this.radiusData = radiusData;
-        this.radiusScale.domain = validExtentOrUndefined(extent(radiusData)) || [1, 1];
-        this.radiusScale.range = [0, markerSize / 2];
+        this.radiusScale.domain = extent(radiusData) || [1, 1];
+        this.radiusScale.range = [minMarkerSize / 2, markerSize / 2];
 
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
-        const domainX = continuousX ? extent(this.xData) : this.xData;
-        const domainY = extent(this.yData);
+        const domainX = continuousX ? (extent(this.xData) || [0, 1]) : this.xData;
+        const domainY = extent(this.yData) || [0, 1];
 
         if (continuousX) {
-            const min = domainX[0];
-            const max = domainX[1];
+            const [min, max] = domainX as number[];
             if (min === max) {
-                if (typeof min === 'number' && isFinite(min)) {
-                    (domainX[0] as any) -= 1;
-                } else {
-                    (domainX[0] as any) = 0;
-                }
-                if (typeof max === 'number' && isFinite(max)) {
-                    (domainX[1] as any) += 1;
-                } else {
-                    (domainX[1] as any) = 1;
-                }
+                domainX[0] = min - 1;
+                domainX[1] = max + 1;
             }
         }
 
-        if (domainY[0] === domainY[1]) {
-            const min = domainY[0];
-            const max = domainY[1];
-            if (typeof min === 'number' && isFinite(min)) {
-                (domainY[0] as any) -= 1;
-            } else {
-                (domainY[0] as any) = 0;
-            }
-            if (typeof max === 'number' && isFinite(max)) {
-                (domainY[1] as any) += 1;
-            } else {
-                (domainY[1] as any) = 1;
+        {
+            const [min, max] = domainY as number[];
+            if (min === max) {
+                domainY[0] = min - 1;
+                domainY[1] = max + 1;
             }
         }
+
         this.domainX = domainX;
         this.domainY = domainY;
 
