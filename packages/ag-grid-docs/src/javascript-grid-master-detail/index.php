@@ -158,7 +158,15 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 
 <?= example('Editing Cells with Master / Detail', 'cell-editing', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
+<h2>Example - Details scrolls horizontally with Master</h2>
+<p>
+    If your Grid is scrollable horizontally, you will notice that the Master Detail remains in a fixed position. This happens
+    because the Master Detail is rendered inside the <a href="/javascript-grid-full-width-rows"> Full Width Row</a> (an element 
+    that spans across the Grid Viewport). To force this full width row to fill the Grid scrollable area, it is necessary to enable 
+    the <code>embedFullWidthRows</code> property.
+</p>
 
+<?= example('Detail scrolls with Master', 'detail-scrolls-with-master', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
 <h2>Overriding the Default Detail Cell Renderer</h2>
 

@@ -46,14 +46,15 @@ export class GroupedCategoryAxis {
     //     return rect;
     // })();
 
+    static className = 'GroupedCategoryAxis';
+    readonly id: string = this.createId();
     readonly scale = new BandScale<string>();
     readonly tickScale = new BandScale<string>();
     readonly group = new Group();
-    private tickSelection: Selection<Group, Group, any, any>; // groups with a tick and a grid line in each
+    private gridLineSelection: Selection<Line, Group, any, any>;
     private lineSelection: Selection<Line, Group, any, any>;
     private separatorSelection: Selection<Line, Group, any, any>;
     private labelSelection: Selection<Text, Group, any, any>;
-    private line = new Line();
     private tickTreeLayout?: TreeLayout;
     // onLayoutChange?: () => void;
 
@@ -66,13 +67,21 @@ export class GroupedCategoryAxis {
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
 
-        this.tickSelection = Selection.select(this.group).selectAll<Group>();
+        this.gridLineSelection = Selection.select(this.group).selectAll<Line>();
         this.lineSelection = Selection.select(this.group).selectAll<Line>();
         this.separatorSelection = Selection.select(this.group).selectAll<Line>();
         this.labelSelection = Selection.select(this.group).selectAll<Text>();
-        this.group.append(this.line);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+
+    private createId(): string {
+        const constructor = this.constructor as any;
+        const className = constructor.className;
+        if (!className) {
+            throw new Error(`The ${constructor} is missing the 'className' property.`);
+        }
+        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
+    };
 
     set domain(value: any[]) {
         this.scale.domain = value;
@@ -103,9 +112,10 @@ export class GroupedCategoryAxis {
         const range = s.domain.length ? [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])] : s.range;
         const layout = this.tickTreeLayout;
         const lineHeight = this.labelFontSize * 1.5;
-        const shiftX = (range[0] || 0) + (s.bandwidth || 0) / 2;
+        const shiftX = (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2;
         if (layout) {
-            layout.resize(range[1] - range[0], layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
+            // console.log('!!!', this.id, this.rotation, range[0], range[1], range[1] - range[0], layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
+            layout.resize(Math.abs(range[1] - range[0]), layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
         }
     }
 
@@ -150,7 +160,7 @@ export class GroupedCategoryAxis {
      */
     labelPadding: number = 5;
 
-    gridLines: boolean = false;
+    labelGrid: boolean = false;
 
     /**
      * The color of the axis ticks.
@@ -165,26 +175,7 @@ export class GroupedCategoryAxis {
     labelFontSize: number = 12;
     labelFontFamily: string = 'Verdana, sans-serif';
 
-    private _title: Caption | undefined = undefined;
-    set title(value: Caption | undefined) {
-        const oldTitle = this._title;
-        if (oldTitle !== value) {
-            if (oldTitle) {
-                // oldTitle.onLayoutChange = undefined;
-                // this.group.removeChild(oldTitle.node);
-            }
-            if (value) {
-                value.node.rotation = -Math.PI / 2;
-                // value.onLayoutChange = this.onLayoutChange;
-                // this.group.appendChild(value.node);
-            }
-            this._title = value;
-            // this.requestLayout();
-        }
-    }
-    get title(): Caption | undefined {
-        return this._title;
-    }
+    title: Caption | undefined = undefined;
 
     /**
      * The color of the labels.
@@ -199,7 +190,7 @@ export class GroupedCategoryAxis {
     set gridLength(value: number) {
         // Was visible and now invisible, or was invisible and now visible.
         if (this._gridLength && !value || !this._gridLength && value) {
-            this.tickSelection = this.tickSelection.remove().setData([]);
+            this.gridLineSelection = this.gridLineSelection.remove().setData([]);
             this.labelSelection = this.labelSelection.remove().setData([]);
         }
         this._gridLength = value;
@@ -275,10 +266,11 @@ export class GroupedCategoryAxis {
         const group = this.group;
         const scale = this.scale;
         const tickScale = this.tickScale;
-        // const bandwidth = scale.domain.length ? (scale.range[1] - scale.range[0]) / scale.domain.length : 0;
-        const bandwidth = tickScale.convert(tickScale.domain[1]) || 0;
+        const bandwidth = Math.abs(scale.range[1] - scale.range[0]) / scale.domain.length || 0;
 
+        const parallelLabels = this.parallelLabels;
         const rotation = toRadians(this.rotation);
+        const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
         const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
 
         group.translationX = this.translationX;
@@ -312,22 +304,12 @@ export class GroupedCategoryAxis {
         // Flip if the axis rotation angle is in the top hemisphere.
         const regularFlipFlag = (!labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI) ? -1 : 1;
 
-        const alignFlag = (labelRotation >= 0 && labelRotation <= Math.PI) ? -1 : 1;
-        const parallelLabels = this.parallelLabels;
+        const updateGridLines = this.gridLineSelection.setData(this.gridLength ? ticks : []);
+        updateGridLines.exit.remove();
+        const enterGridLines = updateGridLines.enter.append(Line);
+        const gridLineSelection = updateGridLines.merge(enterGridLines);
 
-        const updateTicks = this.tickSelection.setData(ticks);
-        updateTicks.exit.remove();
-
-        const enterTicks = updateTicks.enter.append(Group);
-        // Line auto-snaps to pixel grid if vertical or horizontal.
-        // enterTicks.append(Line).each(node => node.tag = Tags.Tick);
-        if (this.gridLength) {
-            enterTicks.append(Line).each(node => node.tag = Tags.GridLine);
-        }
-
-        const tickSelection = updateTicks.merge(enterTicks);
-
-        tickSelection
+        gridLineSelection
             .attrFn('translationY', (_, datum) => {
                 return Math.round(tickScale.convert(datum));
             });
@@ -366,10 +348,9 @@ export class GroupedCategoryAxis {
                         })
                         : String(datum.label);
                 }
-                label.textAlign = parallelLabels
-                    ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
-                    : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
+                label.textAlign = 'center';
                 label.translationX = datum.screenY - this.labelFontSize * 0.25;
+                // console.log(this.id, this.rotation, label.text, datum.screenY, datum.screenX);
                 label.translationY = datum.screenX;
                 const bbox = label.getBBox();
                 if (bbox.width > maxLeafLabelWidth) {
@@ -391,13 +372,16 @@ export class GroupedCategoryAxis {
                 label.textBaseline = 'middle';
             } else {
                 label.translationX -= maxLeafLabelWidth - this.labelFontSize * 1.5 + this.labelPadding;
-                label.rotation = autoRotation + labelRotation;
+                if (isHorizontal) {
+                    label.rotation = autoRotation + labelRotation;
+                } else {
+                    label.rotation = -Math.PI / 2;
+                }
             }
-            // if (datum.children.length && datum.parent) {
             if (datum.parent) {
                 const x = !datum.children.length ? Math.round(datum.screenX - bandwidth / 2) : Math.round(datum.screenX - datum.leafCount * bandwidth / 2);
                 if (!datum.children.length) {
-                    if (!datum.number || this.gridLines) {
+                    if (!datum.number || this.labelGrid) {
                         separatorData.push({
                             x,
                             y1: 0,
@@ -420,7 +404,7 @@ export class GroupedCategoryAxis {
         let minY = 0;
         separatorData.forEach(d => minY = Math.min(minY, d.y2));
         separatorData.push({
-            x: Math.round(this.scale.range[1]),
+            x: Math.round(Math.max(scale.range[0], scale.range[1])),
             y1: 0,
             y2: minY,
             toString: () => String(separatorData.length)
@@ -442,7 +426,7 @@ export class GroupedCategoryAxis {
             line.strokeWidth = 1;
         });
 
-        this.tickSelection = tickSelection;
+        this.gridLineSelection = gridLineSelection;
         this.labelSelection = labelSelection;
 
         // Render axis lines.
@@ -467,57 +451,28 @@ export class GroupedCategoryAxis {
             line.y2 = scale.range[1];
             line.strokeWidth = this.lineWidth;
             line.stroke = this.lineColor;
-            line.visible = labels.length > 0 && (index === 0 || this.gridLines);
+            line.visible = labels.length > 0 && (index === 0 || this.labelGrid);
         });
-
-        // tickSelection.selectByTag<Line>(Tags.Tick)
-        //     .each((line, datum, index) => {
-        //         line.strokeWidth = this.tickWidth;
-        //         line.stroke = this.tickColor;
-        //         // if (index === ticks.length - 1) {
-        //         //     line.x1 = sideFlag * (maxLeafLabelWidth + (lineCount - 1) * this.labelFontSize * 1.5);
-        //         // } else {
-        //         //     line.x1 = sideFlag * (maxLeafLabelWidth + this.labelPadding * 2);
-        //         // }
-        //         line.x1 = sideFlag * (maxLeafLabelWidth + this.labelPadding * 2);
-        //         if (index === ticks.length - 1) {
-        //             line.x1 -= (lineCount - 2) * this.labelFontSize * 1.5;
-        //         }
-        //         line.x2 = 0;
-        //         line.y1 = 0;
-        //         line.y2 = 0;
-        //     });
 
         if (this.gridLength) {
             const styles = this.gridStyle;
             const styleCount = styles.length;
-            let gridLines: Selection<Shape, Group, any, any>;
 
-            gridLines = tickSelection.selectByTag<Line>(Tags.GridLine)
-                .each(line => {
+            gridLineSelection
+                .each((line, datum, index) => {
                     line.x1 = 0;
                     line.x2 = -sideFlag * this.gridLength;
                     line.y1 = 0;
                     line.y2 = 0;
                     line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
-                });
-            gridLines.each((gridLine, datum, index) => {
-                const style = styles[index % styleCount];
-                gridLine.stroke = style.stroke;
-                gridLine.strokeWidth = this.tickWidth;
-                gridLine.lineDash = style.lineDash;
-                gridLine.fill = undefined;
-            });
-        }
 
-        // const line = this.line;
-        // line.x1 = 0;
-        // line.x2 = 0;
-        // line.y1 = scale.range[0];
-        // line.y2 = scale.range[scale.range.length - 1];
-        // line.strokeWidth = this.lineWidth;
-        // line.stroke = this.lineColor;
-        // line.visible = labels.length > 0;
+                    const style = styles[index % styleCount];
+                    line.stroke = style.stroke;
+                    line.strokeWidth = this.tickWidth;
+                    line.lineDash = style.lineDash;
+                    line.fill = undefined;
+                });
+        }
 
         // debug (bbox)
         // const bbox = this.getBBox();
@@ -529,8 +484,6 @@ export class GroupedCategoryAxis {
     }
 
     getBBox(includeTitle = true): BBox {
-        const line = this.line;
-
         let left = Infinity;
         let right = -Infinity;
         let top = Infinity;
@@ -559,28 +512,6 @@ export class GroupedCategoryAxis {
                 bottom = Math.max(bottom, bbox.y + bbox.height);
             }
         });
-
-        // left = Math.min(left, 0);
-        // right = Math.max(right, 0);
-        // top = Math.min(top, line.y1, line.y2);
-        // bottom = Math.max(bottom, line.y1, line.y2);
-
-        // console.log(new BBox(
-        //     left,
-        //     top,
-        //     right - left,
-        //     bottom - top
-        // ));
-
-        // if (this.rotation === -90) {
-        //     debugger;
-        //     console.log(new BBox(
-        //         left,
-        //         top,
-        //         right - left,
-        //         bottom - top
-        //     ));
-        // }
 
         return new BBox(
             left,

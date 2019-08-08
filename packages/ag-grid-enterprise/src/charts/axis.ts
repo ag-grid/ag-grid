@@ -57,6 +57,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
+    set range(value: number[]) {
+        this.scale.range = value;
+    }
+    get range(): number[] {
+        return this.scale.range;
+    }
+
     set domain(value: D[]) {
         this.scale.domain = value;
     }

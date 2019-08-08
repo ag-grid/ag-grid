@@ -238,9 +238,8 @@ export interface GridOptions {
     suppressTouch?: boolean;
     suppressAsyncEvents?: boolean;
 
-    /** @deprecated */
     embedFullWidthRows?: boolean;
-    /** deprecated */
+    /** @deprecated */
     deprecatedEmbedFullWidthRows?: boolean;
 
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project

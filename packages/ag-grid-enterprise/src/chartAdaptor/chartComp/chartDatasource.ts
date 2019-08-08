@@ -53,21 +53,21 @@ export class ChartDatasource extends BeanStub {
 
                 if (column) {
                     const part = this.valueService.getValue(column, rowNode);
+
+                    // force return type to be string or empty string (as value can be an object)
                     const value = (part && part.toString) ? part.toString() : '';
 
-                    if (params.grouping) {
+                    if (params.grouping ) {
                         const labels = this.addParentKeys(rowNode, [String(value)]);
-                        data[colId] = {labels: labels.slice()};
+                        data[colId] = {labels: labels};
 
                         if (rowNode.group) {
                             groupNodeIndexes[labels.join('-')] = i;
                         }
 
-                        labels.shift();
-                        const groupKey = labels.join('-');
+                        const groupKey = labels.slice(1, labels.length).join('-');
                         groupsToRemove[groupKey] = groupNodeIndexes[groupKey];
                     } else {
-                        // force return type to be string or empty string (as value can be an object)
                         data[colId] = value;
                     }
 
