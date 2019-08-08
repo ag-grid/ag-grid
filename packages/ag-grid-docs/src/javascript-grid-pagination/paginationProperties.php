@@ -29,7 +29,7 @@ $paginationProperties = [
     ],
     [
         'paginateChildRows',
-        'Set to true to have pages split children of groups also also master detail rows.
+        'Set to true to have pages split children of groups when Row Grouping or detail rows with Master Detail.
         <a href="../javascript-grid-pagination/#childRows">Pagination & Child Rows</a>'
     ]
 ];
