@@ -150,40 +150,25 @@ export class LineSeries extends Series<CartesianChart> {
         this.yData = data.map(datum => datum[yField]);
 
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
-        const domainX = continuousX ? extent(this.xData) : this.xData;
-        const domainY = extent(this.yData);
+        const domainX = continuousX ? (extent(this.xData) || [0, 1]) : this.xData;
+        const domainY = extent(this.yData) || [0, 1];
 
         if (continuousX) {
-            const min = domainX[0];
-            const max = domainX[1];
+            const [min, max] = domainX as number[];
             if (min === max) {
-                if (typeof min === 'number' && isFinite(min)) {
-                    (domainX[0] as any) -= 1;
-                } else {
-                    (domainX[0] as any) = 0;
-                }
-                if (typeof max === 'number' && isFinite(max)) {
-                    (domainX[1] as any) += 1;
-                } else {
-                    (domainX[1] as any) = 1;
-                }
+                domainX[0] = min - 1;
+                domainX[1] = max + 1;
             }
         }
 
-        if (domainY[0] === domainY[1]) {
-            const min = domainY[0];
-            const max = domainY[1];
-            if (typeof min === 'number' && isFinite(min)) {
-                (domainY[0] as any) -= 1;
-            } else {
-                (domainY[0] as any) = 0;
-            }
-            if (typeof max === 'number' && isFinite(max)) {
-                (domainY[1] as any) += 1;
-            } else {
-                (domainY[1] as any) = 1;
+        {
+            const [min, max] = domainY as number[];
+            if (min === max) {
+                domainY[0] = min - 1;
+                domainY[1] = max + 1;
             }
         }
+
         this.domainX = domainX;
         this.domainY = domainY;
 

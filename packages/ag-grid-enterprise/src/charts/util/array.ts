@@ -3,7 +3,7 @@
  * If the iterable contains no comparable values, returns `[undefined, undefined]`.
  * @param values
  */
-export function extent<T>(values: T[]): [T | undefined, T | undefined] {
+export function extent<T>(values: T[]): [T, T] | undefined {
     const n = values.length;
     let i = -1;
     let value;
@@ -26,7 +26,9 @@ export function extent<T>(values: T[]): [T | undefined, T | undefined] {
         }
     }
 
-    return [min, max];
+    if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
+        return [min, max];
+    }
 }
 
 export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[]) => boolean): T | undefined {
@@ -38,17 +40,17 @@ export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[])
     }
 }
 
-export function validExtentOrUndefined<T>(values: [T | undefined, T | undefined]): [T, T] | undefined {
-    const min = values[0];
-    const max = values[1];
-    if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
-        return [min, max];
-    }
-}
-
-export function checkExtent<T>(values: [T | undefined, T | undefined]): [T, T] {
-    if (values[0] !== undefined && values[1] !== undefined) {
-        return values as [T, T];
-    }
-    throw new Error(`Invalid extent: ${values}`);
-}
+// export function validExtentOrUndefined<T>(values: [T | undefined, T | undefined]): [T, T] | undefined {
+//     const min = values[0];
+//     const max = values[1];
+//     if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
+//         return [min, max];
+//     }
+// }
+//
+// export function checkExtent<T>(values: [T | undefined, T | undefined]): [T, T] {
+//     if (values[0] !== undefined && values[1] !== undefined) {
+//         return values as [T, T];
+//     }
+//     throw new Error(`Invalid extent: ${values}`);
+// }
