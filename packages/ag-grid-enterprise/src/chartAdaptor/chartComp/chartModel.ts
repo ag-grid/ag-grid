@@ -66,6 +66,7 @@ export class ChartModel extends BeanStub {
     private chartProxy: ChartProxy<any>;
     private detached: boolean = false;
     private grouping: boolean;
+    private columnNames: { [p: string]: string[] };
 
     public constructor(params: ChartModelParams) {
         super();
@@ -107,7 +108,10 @@ export class ChartModel extends BeanStub {
             endRow: endRow
         };
 
-        this.chartData = this.datasource.getData(params);
+        const result = this.datasource.getData(params);
+
+        this.chartData = result.data;
+        this.columnNames = result.columnNames;
     }
 
     public resetColumnState(): void {
@@ -251,6 +255,10 @@ export class ChartModel extends BeanStub {
 
     public isPivotActive(): boolean {
         return this.columnController.isPivotActive();
+    }
+
+    public getColumnNames(): { [p: string]: string[] } {
+        return this.columnNames;
     }
 
     public setChartProxy(chartProxy: ChartProxy<any>): void {

@@ -28,12 +28,13 @@ export class ChartDatasource extends BeanStub {
     @Autowired('aggregationStage') aggregationStage: AggregationStage;
     @Autowired('columnController') private columnController: ColumnController;
 
-    public getData(params: ChartDatasourceParams): any [] {
-        const dataFromGrid = this.extractRowsFromGridRowModel(params);
-        return this.aggregateRowsByDimension(params, dataFromGrid);
+    public getData(params: ChartDatasourceParams): {data: any[], columnNames: { [key: string]: string[] }} {
+        const result = this.extractRowsFromGridRowModel(params);
+        result.data = this.aggregateRowsByDimension(params, result.data);
+        return result;
     }
 
-    private extractRowsFromGridRowModel(params: ChartDatasourceParams): any[] {
+    private extractRowsFromGridRowModel(params: ChartDatasourceParams): {data: any[], columnNames: { [key: string]: string[] }} {
         // make sure enough rows in range to chart. if user filters and less rows, then
         // end row will be the last displayed row, not where the range ends.
         const modelLastRow = this.gridRowModel.getRowCount() - 1;
@@ -42,7 +43,9 @@ export class ChartDatasource extends BeanStub {
         const groupNodeIndexes: { [key: string]: number } = {};
         const groupsToRemove: { [key: string]: number } = {};
 
-        const dataFromGrid = [];
+        let dataFromGrid = [];
+        const columnNames: { [key: string]: string[] } = {};
+
         const rowCount = rangeLastRow - params.startRow + 1;
         for (let i = 0; i < rowCount; i++) {
             const rowNode = this.gridRowModel.getRow(i + params.startRow)!;
@@ -77,6 +80,13 @@ export class ChartDatasource extends BeanStub {
             });
 
             params.valueCols.forEach(col => {
+                let columnNamesArr: string[] = [col.getColDef().headerName as string];
+                const pivotKeys = col.getColDef().pivotKeys;
+                if (pivotKeys) {
+                    columnNamesArr = columnNamesArr.concat(pivotKeys);
+                }
+
+                columnNames[col.getId()] = columnNamesArr;
                 data[col.getId()] = this.valueService.getValue(col, rowNode);
             });
 
@@ -85,10 +95,10 @@ export class ChartDatasource extends BeanStub {
 
         if (params.grouping) {
             const groupIndexesToRemove = Object.keys(groupsToRemove).map(key => groupsToRemove[key]);
-            return dataFromGrid.filter((d: any, index: number) => groupIndexesToRemove.indexOf(index) < 0);
+            dataFromGrid = dataFromGrid.filter((d: any, index: number) => groupIndexesToRemove.indexOf(index) < 0);
         }
 
-        return dataFromGrid;
+        return {data: dataFromGrid, columnNames: columnNames};
     }
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
