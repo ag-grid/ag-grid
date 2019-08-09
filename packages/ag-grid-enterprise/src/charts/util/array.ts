@@ -38,14 +38,6 @@ export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[])
     }
 }
 
-export function validExtentOrUndefined<T>(values: [T | undefined, T | undefined]): [T, T] | undefined {
-    const min = values[0];
-    const max = values[1];
-    if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
-        return [min, max];
-    }
-}
-
 export function numericExtent<T>(values: T[]): [number, number] | undefined {
     const [min, max] = extent(values);
     if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
