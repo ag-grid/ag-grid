@@ -50,10 +50,10 @@ export class SetFilter extends ProvidedFilter {
 
         return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
                 <div>
-                    <div class="ag-input-wrapper ag-filter-header-container" id="ag-mini-filter">
-                        <input ref="eMiniFilter" class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
-                    </div>
                     <div class="ag-filter-header-container">
+                        <div class="ag-input-wrapper" id="ag-mini-filter">
+                            <input ref="eMiniFilter" class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
+                        </div>
                         <label ref="eSelectAllContainer" class="ag-set-filter-item">
                             <div ref="eSelectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll', 'Select All')})</span>
                         </label>

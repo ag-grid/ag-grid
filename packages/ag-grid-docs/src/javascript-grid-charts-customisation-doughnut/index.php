@@ -81,6 +81,8 @@ interface DoughnutChartOptions {
         fills?: string[];
         // The stroke colors of pie slices. Darker versions of fill colors by default.
         strokes?: string[];
+        // The style to apply to a series item when it is hovered or tapped.
+        highlightStyle?: HighlightStyle;
         // Whether to show the tooltip for bars when they are hovered/tapped. Defaults to `false`.
         tooltipEnabled?: boolean;
 
@@ -128,6 +130,11 @@ interface DoughnutChartOptions {
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: DoughnutTooltipRendererParams) => string;
     };
+}
+
+interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
 }
 
 interface CaptionOptions {

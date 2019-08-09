@@ -85,6 +85,8 @@ interface ScatterChartOptions {
         strokes?: string[];
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
+        // The style to apply to a series item when it is hovered or tapped.
+        highlightStyle?: HighlightStyle;
 
         // The size of the marker. Defaults to `8`.
         markerSize?: number;
@@ -97,6 +99,11 @@ interface ScatterChartOptions {
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
     };
+}
+
+interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
 }
 
 interface CaptionOptions {

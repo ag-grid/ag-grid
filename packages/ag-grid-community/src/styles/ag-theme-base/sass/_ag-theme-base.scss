@@ -618,8 +618,9 @@
             }
         }
 
-        .ag-filter-header-container:nth-child(2) {
+        .ag-filter-header-container {
             border-bottom: 1px solid $border-color;
+            padding-bottom: $grid-size / 2;
         }
 
         .ag-filter-apply-panel {

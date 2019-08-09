@@ -765,6 +765,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressMiddleClickScrolls);
     }
 
+    public isPreventDefaultOnContextMenu() {
+        return isTrue(this.gridOptions.preventDefaultOnContextMenu);
+    }
+
     public isSuppressPreventDefaultOnMouseWheel() {
         return isTrue(this.gridOptions.suppressPreventDefaultOnMouseWheel);
     }

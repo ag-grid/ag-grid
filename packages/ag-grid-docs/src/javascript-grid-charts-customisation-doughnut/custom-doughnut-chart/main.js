@@ -109,6 +109,11 @@ function processChartOptions(params) {
     seriesDefaults.calloutLength = 15;
     seriesDefaults.calloutPadding = 0;
 
+    seriesDefaults.highlightStyle = {
+        fill: 'red',
+        stroke: 'maroon'
+    };
+
     seriesDefaults.title = {
         enabled: true,
         fontStyle: 'italic',

@@ -85,6 +85,8 @@ interface LineChartOptions {
         strokes?: string[];
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
+        // The style to apply to a series item when it is hovered or tapped.
+        highlightStyle?: HighlightStyle;
 
         // Whether to show line series markers at each data point or not. Defaults to `true`.
         // Note: tooltips won't show without markers.
@@ -100,6 +102,11 @@ interface LineChartOptions {
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: LineTooltipRendererParams) => string;
     };
+}
+
+interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
 }
 
 interface CaptionOptions {

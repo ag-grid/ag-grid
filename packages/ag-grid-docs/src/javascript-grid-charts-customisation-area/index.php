@@ -91,6 +91,8 @@ interface AreaChartOptions {
         strokeOpacity?: number;
         // The stroke width. Defaults to `3`.
         strokeWidth?: number;
+        // The style to apply to a series item when it is hovered or tapped.
+        highlightStyle?: HighlightStyle;
 
         // Whether to show area series markers at each data point or not. Defaults to `true`.
         // Note: tooltips won't show without markers.
@@ -116,6 +118,11 @@ interface AreaChartOptions {
         // A custom render to use for tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
     };
+}
+
+interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
 }
 
 interface CaptionOptions {

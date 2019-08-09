@@ -6,7 +6,7 @@ import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
 import palette from "../palettes";
-import { Series, SeriesNodeDatum } from "./series";
+import { HighlightStyle, Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
@@ -315,10 +315,7 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelFormatter;
     }
 
-    highlightStyle: {
-        fill?: string,
-        stroke?: string
-    } = {
+    highlightStyle: HighlightStyle = {
         fill: 'yellow'
     };
 

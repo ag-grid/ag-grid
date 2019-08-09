@@ -99,6 +99,10 @@ function processChartOptions(params) {
     seriesDefaults.fillOpacity = 0.8;
     seriesDefaults.strokeOpacity = 0.8;
     // seriesDefaults.tooltipEnabled = false;
+    seriesDefaults.highlightStyle = {
+        fill: 'red',
+        stroke: 'maroon'
+    };
 
     seriesDefaults.labelEnabled = true;
     seriesDefaults.labelMinAngle = 30;

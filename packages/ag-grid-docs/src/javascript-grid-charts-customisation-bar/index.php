@@ -91,6 +91,8 @@ interface BarChartOptions {
         strokeOpacity?: number;
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
+        // The style to apply to a series item when it is hovered or tapped.
+        highlightStyle?: HighlightStyle;
 
         // Whether to show the labels for bars (only applies to the stacked bars).
         labelEnabled?: boolean;
@@ -131,6 +133,11 @@ interface BarChartOptions {
         // Should return a valid HTML string.
         tooltipRenderer?: (params: BarTooltipRendererParams) => string;
     };
+}
+
+interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
 }
 
 interface CaptionOptions {

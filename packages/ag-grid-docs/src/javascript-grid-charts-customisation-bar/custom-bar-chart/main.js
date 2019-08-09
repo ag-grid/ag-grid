@@ -149,6 +149,10 @@ function processChartOptions(params) {
     seriesDefaults.fillOpacity = 0.8;
     seriesDefaults.strokeOpacity = 0.8;
     seriesDefaults.strokeWidth = 2;
+    seriesDefaults.highlightStyle = {
+        fill: 'red',
+        stroke: 'maroon'
+    };
 
     // only impacts stacked bar chart
     seriesDefaults.labelEnabled = true;

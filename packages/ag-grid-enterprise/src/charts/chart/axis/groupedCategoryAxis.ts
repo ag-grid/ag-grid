@@ -47,7 +47,7 @@ export class GroupedCategoryAxis {
     readonly tickScale = new BandScale<string>();
     readonly group = new Group();
     private gridLineSelection: Selection<Line, Group, any, any>;
-    private lineSelection: Selection<Line, Group, any, any>;
+    private axisLineSelection: Selection<Line, Group, any, any>;
     private separatorSelection: Selection<Line, Group, any, any>;
     private labelSelection: Selection<Text, Group, any, any>;
     private tickTreeLayout?: TreeLayout;
@@ -63,7 +63,7 @@ export class GroupedCategoryAxis {
         tickScale.paddingOuter = 0;
 
         this.gridLineSelection = Selection.select(this.group).selectAll<Line>();
-        this.lineSelection = Selection.select(this.group).selectAll<Line>();
+        this.axisLineSelection = Selection.select(this.group).selectAll<Line>();
         this.separatorSelection = Selection.select(this.group).selectAll<Line>();
         this.labelSelection = Selection.select(this.group).selectAll<Text>();
         // this.group.append(this.bboxRect); // debug (bbox)
@@ -287,6 +287,7 @@ export class GroupedCategoryAxis {
         const tickTreeLayout = this.tickTreeLayout;
         const labels = scale.ticks();
         const treeLabels = tickTreeLayout ? tickTreeLayout.nodes : [];
+        const isLabelTree = tickTreeLayout ? tickTreeLayout.depth > 1 : false;
         const ticks = tickScale.ticks();
         // The side of the axis line to position the labels on.
         // -1 = left (default)
@@ -313,11 +314,6 @@ export class GroupedCategoryAxis {
         const enterGridLines = updateGridLines.enter.append(Line);
         const gridLineSelection = updateGridLines.merge(enterGridLines);
 
-        gridLineSelection
-            .attrFn('translationY', (_, datum) => {
-                return Math.round(tickScale.convert(datum));
-            });
-
         const updateLabels = this.labelSelection.setData(treeLabels);
         updateLabels.exit.remove();
 
@@ -333,9 +329,10 @@ export class GroupedCategoryAxis {
                 label.fontSize = this.labelFontSize;
                 label.fontFamily = this.labelFontFamily;
                 label.fill = this.labelColor;
-                label.textBaseline = parallelLabels && !labelRotation
-                    ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
-                    : 'middle';
+                label.textBaseline = parallelFlipFlag === -1 ? 'bottom' : 'hanging';
+                // label.textBaseline = parallelLabels && !labelRotation
+                //     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
+                //     : 'middle';
                 if (title && index === 0) { // use the phantom root as the axis title
                     label.text = title.text;
                     label.fontSize = title.fontSize;
@@ -365,31 +362,32 @@ export class GroupedCategoryAxis {
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
+        const labelGrid = this.labelGrid;
         const separatorData = [] as {y: number, x1: number, x2: number, toString: () => string}[];
         labelSelection.each((label, datum, index) => {
             label.x = labelX;
             label.rotationCenterX = labelX;
             if (!datum.children.length) {
-                label.rotation = 0;
+                label.rotation = labelRotation;
                 label.textAlign = 'end';
                 label.textBaseline = 'middle';
             } else {
                 label.translationX -= maxLeafLabelWidth - lineHeight + this.labelPadding;
                 if (isHorizontal) {
-                    label.rotation = autoRotation + labelRotation;
+                    label.rotation = autoRotation;
                 } else {
                     label.rotation = -Math.PI / 2;
                 }
             }
             // Calculate positions of label separators for all nodes except the root.
             // Each separator is placed to the top of the current label.
-            if (datum.parent) {
+            if (datum.parent && isLabelTree) {
                 const y = !datum.children.length
                     ? datum.screenX - bandwidth / 2
                     : datum.screenX - datum.leafCount * bandwidth / 2;
 
                 if (!datum.children.length) {
-                    if (!datum.number || this.labelGrid) {
+                    if (!datum.number || labelGrid) {
                         separatorData.push({
                             y,
                             x1: 0,
@@ -444,13 +442,13 @@ export class GroupedCategoryAxis {
             lines.push(i);
         }
 
-        const updateLines = this.lineSelection.setData(lines);
-        updateLines.exit.remove();
-        const enterLines = updateLines.enter.append(Line);
-        const lineSelection = updateLines.merge(enterLines);
-        this.lineSelection = lineSelection;
+        const updateAxisLines = this.axisLineSelection.setData(lines);
+        updateAxisLines.exit.remove();
+        const enterAxisLines = updateAxisLines.enter.append(Line);
+        const axisLineSelection = updateAxisLines.merge(enterAxisLines);
+        this.axisLineSelection = axisLineSelection;
 
-        lineSelection.each((line, datum, index) => {
+        axisLineSelection.each((line, datum, index) => {
             let x = index > 0 ? -maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;
             line.x2 = x;
@@ -458,7 +456,7 @@ export class GroupedCategoryAxis {
             line.y2 = scale.range[1];
             line.strokeWidth = this.lineWidth;
             line.stroke = this.lineColor;
-            line.visible = labels.length > 0 && (index === 0 || this.labelGrid);
+            line.visible = labels.length > 0 && (index === 0 || (labelGrid && isLabelTree));
         });
 
         if (this.gridLength) {
@@ -467,10 +465,11 @@ export class GroupedCategoryAxis {
 
             gridLineSelection
                 .each((line, datum, index) => {
+                    const y = Math.round(tickScale.convert(datum));
                     line.x1 = 0;
                     line.x2 = -sideFlag * this.gridLength;
-                    line.y1 = 0;
-                    line.y2 = 0;
+                    line.y1 = y;
+                    line.y2 = y;
                     line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
 
                     const style = styles[index % styleCount];

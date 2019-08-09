@@ -152,6 +152,10 @@ function processChartOptions(params) {
     seriesDefaults.fillOpacity = 0.8;
     seriesDefaults.strokeOpacity = 0.8;
     seriesDefaults.strokeWidth = 2;
+    seriesDefaults.highlightStyle = {
+        fill: 'red',
+        stroke: 'maroon'
+    };
 
     seriesDefaults.marker = true;
     seriesDefaults.markerSize = 12;

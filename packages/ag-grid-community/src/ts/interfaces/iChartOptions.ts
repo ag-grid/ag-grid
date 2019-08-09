@@ -32,6 +32,11 @@ export enum ChartType {
     NormalizedArea = 'normalizedArea'
 }
 
+export interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
+}
+
 export interface CartesianChartOptions extends ChartOptions {
     xAxis: AxisOptions;
     yAxis: AxisOptions;
@@ -141,6 +146,7 @@ export interface LineSeriesOptions extends SeriesOptions {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
+    highlightStyle?: HighlightStyle;
 
     marker?: boolean;
     markerSize?: number;
@@ -163,6 +169,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
 
     fill?: string;
     stroke?: string;
+    highlightStyle?: HighlightStyle;
 
     marker?: boolean;
     markerSize?: number;
@@ -215,6 +222,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    highlightStyle?: HighlightStyle;
 
     shadow?: DropShadowOptions;
 
@@ -242,6 +250,7 @@ export interface AreaSeriesOptions extends SeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    highlightStyle?: HighlightStyle;
 
     marker?: boolean;
     markerSize?: number;
@@ -267,6 +276,7 @@ export interface PieSeriesOptions extends SeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    highlightStyle?: HighlightStyle;
 
     angleField?: string;
     radiusField?: string;

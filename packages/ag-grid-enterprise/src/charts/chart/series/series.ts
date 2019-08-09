@@ -12,6 +12,11 @@ export interface SeriesNodeDatum {
     seriesDatum: any;
 }
 
+export interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
+}
+
 export abstract class Series<C extends Chart> {
 
     readonly id: string = this.createId();

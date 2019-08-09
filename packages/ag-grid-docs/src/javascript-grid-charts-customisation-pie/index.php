@@ -90,6 +90,8 @@ interface PieChartOptions {
         // The opacity of all strokes. Valid range if from 0 to 1.
         // Defaults to 1 (completely opaque).
         strokeOpacity?: number;
+        // The style to apply to a series item when it is hovered or tapped.
+        highlightStyle?: HighlightStyle;
 
         // Whether to show pie slice labels or not.
         labelEnabled?: boolean;
@@ -139,6 +141,11 @@ interface PieChartOptions {
         // Should return a valid HTML string.
         tooltipRenderer?: (params: DoughnutTooltipRendererParams) => string;
     };
+}
+
+interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
 }
 
 interface CaptionOptions {
