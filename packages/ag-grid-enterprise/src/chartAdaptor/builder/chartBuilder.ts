@@ -282,6 +282,9 @@ export class ChartBuilder {
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
         }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
+        }
         if (options.marker !== undefined) {
             series.marker = options.marker;
         }
@@ -315,6 +318,9 @@ export class ChartBuilder {
         }
         if (options.stroke !== undefined) {
             series.stroke = options.stroke;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
         }
         if (options.markerSize !== undefined) {
             series.markerSize = options.markerSize;
@@ -361,6 +367,9 @@ export class ChartBuilder {
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
         }
         if (options.labelEnabled !== undefined) {
             series.labelEnabled = options.labelEnabled;
@@ -419,6 +428,9 @@ export class ChartBuilder {
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
         }
         if (options.marker !== undefined) {
             series.marker = options.marker;
@@ -498,6 +510,9 @@ export class ChartBuilder {
         }
         if (options.strokeOpacity !== undefined) {
             series.strokeOpacity = options.strokeOpacity;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
         }
         if (options.rotation !== undefined) {
             series.rotation = options.rotation;
