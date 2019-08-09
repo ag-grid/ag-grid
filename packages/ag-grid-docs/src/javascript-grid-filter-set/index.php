@@ -282,6 +282,12 @@ filterParams: {
         Excel while also providing the set filter API to allow custom behaviour.
     </p>
 
+
+<note>
+    We like the <code>syncValuesLikeExcel</code> behaviour. It is probable we will change the default
+    behaviour of the set filter to do this.
+</note>
+
     <p>
         The example below shows different approaches on handling data changes for set filters.
         The first columns has no special handling. The second column is configured to work like Excel.
