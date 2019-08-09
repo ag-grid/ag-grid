@@ -17,6 +17,7 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     suppressSorting: boolean;
     cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     suppressMiniFilter: boolean;
+    suppressSelectAll: boolean;
     selectAllOnMiniFilter: boolean;
     comparator?: (a: any, b: any) => number;
     miniFilterSearchByRefDataKey?: boolean;
