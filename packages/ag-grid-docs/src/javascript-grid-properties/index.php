@@ -765,6 +765,14 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
+            <th>preventDefaultOnContextMenu</th>
+            <td>
+                When using <code>suppressContextMenu</code>, you can use the <code>onCellContextMenu</code> function
+                to provide your own code to handle cell <code>contextmenu</code> events. This flag is useful to prevent 
+                the browser from showing it's default context menu.
+            </td>
+        </tr>
+        <tr>
             <th>allowContextMenuWithControlKey</th>
             <td>Allows <a href="../javascript-grid-context-menu">context menu</a> to show, even when ctrl key is held down.</td>
         </tr>

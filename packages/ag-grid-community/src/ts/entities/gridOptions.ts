@@ -148,6 +148,7 @@ export interface GridOptions {
     enterMovesDownAfterEdit?: boolean;
     enterMovesDown?: boolean;
     suppressMiddleClickScrolls?: boolean;
+    preventDefaultOnContextMenu?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
     suppressScrollOnNewData?: boolean;
     suppressMenuHide?: boolean;
