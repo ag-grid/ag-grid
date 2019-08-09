@@ -113,7 +113,7 @@ export class GroupedCategoryChart extends Chart {
         xAxis.parallelLabels = true;
         xAxis.gridLength = shrinkRect.height;
 
-        yAxis.scale.range = [shrinkRect.height, 0];
+        yAxis.range = [shrinkRect.height, 0];
         yAxis.translationX = Math.floor(shrinkRect.x);
         yAxis.translationY = Math.floor(shrinkRect.y);
         yAxis.gridLength = shrinkRect.width;
