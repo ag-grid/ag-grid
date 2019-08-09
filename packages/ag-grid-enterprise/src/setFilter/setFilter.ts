@@ -1,18 +1,21 @@
 import {
-    ProvidedFilter,
+    _,
     Autowired,
+    CellValueChangedEvent,
     Component,
+    Constants,
+    Events,
+    EventService,
     IDoesFilterPassParams,
     ISetFilterParams,
-    QuerySelector,
+    ProvidedFilter,
     RefSelector,
-    ValueFormatterService,
-    _, Constants
+    ValueFormatterService
 } from "ag-grid-community";
-import { SetFilterModelValuesType, SetValueModel } from "./setValueModel";
-import { SetFilterListItem } from "./setFilterListItem";
-import { VirtualList, VirtualListModel } from "../rendering/virtualList";
-import { SetFilterModel } from "./setFilterModel";
+import {SetFilterModelValuesType, SetValueModel} from "./setValueModel";
+import {SetFilterListItem} from "./setFilterListItem";
+import {VirtualList, VirtualListModel} from "../rendering/virtualList";
+import {SetFilterModel} from "./setFilterModel";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
@@ -26,6 +29,7 @@ export class SetFilter extends ProvidedFilter {
     @RefSelector('ag-filter-loading') private eFilterLoading: HTMLInputElement;
     
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('eventService') private eventService: EventService;
 
     private selectAllState: CheckboxState;
 
@@ -105,6 +109,40 @@ export class SetFilter extends ProvidedFilter {
         this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.setFilterParams.column);
 
         this.initialiseFilterBodyUi();
+
+        const doSyncLikeExcel = params.syncValuesLikeExcel
+                                    // sync like excel only withs with CSRM
+                                    && this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE
+                                    // sync only needed if user not providing values
+                                    && !params.values;
+        if (doSyncLikeExcel) {
+            this.setupSyncValuesLikeExcel();
+        }
+    }
+
+    private resetFilterValuesAndReapplyModel(): void {
+        const modelBeforeUpdate = this.getModel();
+        this.resetFilterValues();
+        if (modelBeforeUpdate) {
+            this.setModel(modelBeforeUpdate);
+        }
+    }
+
+    private setupSyncValuesLikeExcel(): void {
+        const col = this.setFilterParams.column;
+
+        const rowDataUpdatedListener = ()=> {
+            this.resetFilterValuesAndReapplyModel();
+        };
+
+        const cellValueChangedListener = (event: CellValueChangedEvent)=> {
+            // only interested in changes to do with this column
+            if (event.column!==col) { return; }
+            this.resetFilterValuesAndReapplyModel();
+        };
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, rowDataUpdatedListener);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, cellValueChangedListener);
     }
 
     private updateCheckboxIcon() {
@@ -228,6 +266,10 @@ export class SetFilter extends ProvidedFilter {
         } else {
             return this.valueModel.isValueSelected(value);
         }
+    }
+
+    public syncValuesLikeExcel(): void {
+
     }
 
     public onNewRowsLoaded(): void {

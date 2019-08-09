@@ -66,6 +66,13 @@ include '../documentation-main/documentation_header.php';
         </td>
     </tr>
     <tr>
+        <td class="parameter-key">syncValuesLikeExcel</td>
+        <td>
+            Set to true to have the values inside the set filter refresh similar to Excel as values are changed inside
+            the grid.
+        </td>
+    </tr>
+    <tr>
         <td class="parameter-key">suppressRemoveEntries</td>
         <td>
             Set to true to stop the filter from removing values that are no
@@ -244,31 +251,51 @@ filterParams: {
     <h2>Refresh After Edit or Transcation Update</h2>
 
     <p>
-        The set filter does NOT refresh after you
+        The set filter does not refresh by default after you
         a) <a href="../javascript-grid-cell-editing">edit the data</a> (eg through the grid UI) or 2) update
         the data using <a href="../javascript-grid-data-update/#transactions">Transaction Updates</a>.
-
-        If the data is changing and you want the
-        set filter values to also change, it is up to your application to get the filter to change.
+        If the data is changing and you want the filter values to also change, then you must either
+        a) set the <code>syncValuesLikeExcel=true</code> parameter or b) have your application get the
+        filter to change.
     </p>
 
     <p>
-        The grid does not update the filters for you as the as there are two many use cases that
-        are open to different interpretation. For example, different users will have different requirements
+        Syncing filter like Excel means the following:
+    </p>
+    <ul>
+        <li>
+            When no filter is active, everything in the filter is selected. Adding and removing values
+            will keep the list updated with everything selected.
+        </li>
+        <li>
+            When a filter is active, new items (either new data into the grid, or edits to current data
+            with new values not previously seen) will get added to the filter but will not be selected.
+            This will be somewhat strange as the row will not be filtered out even though the value in the
+            cell is not selected in the filter. This is how Excel works.
+        </li>
+    </ul>
+
+    <p>
+        Different users will have different requirements
         on how to handle new values or how to handle row refresh (eg if a filter is active, should the data
-        be filtered again after the value is added).
+        be filtered again after the value is added). For this reason we provide a best efforts at matching
+        Excel while also providing the set filter API to allow custom behaviour.
     </p>
 
     <p>
         The example below shows different approaches on handling data changes for set filters.
+        The first columns has no special handling. The second column is configured to work like Excel.
+        All other columns have application specific logic.
+        To understand the example it's best test one column at a time - once finished with that column,
+        refresh the example and try another column and notice the difference.
         From the example, the following can be noted:
     </p>
         <ul class="content">
             <li>
-                All 4 columns have set filter with different responses to data changing.
+                All columns have set filter with different responses to data changing.
             </li>
             <li>
-                All four columns have their filters initialised when the grid is loaded
+                All columns have their filters initialised when the grid is loaded
                 by calling <code>getFilterInstance()</code> when the <code>gridReady</code> event
                 is received. This means when you edit, the filter is already created.
             </li>
@@ -276,39 +303,30 @@ filterParams: {
                 Column 1 has no special handling of new values.
             </li>
             <li>
-                Column 2 after an update: a) gets the filter to update.
+                Column 2 has <code>syncValuesLikeExcel=true</code>, so updates to column 2 will
+                get reflected in the filter similar to Excel.
             </li>
             <li>
-                Column 3 after an update: a) gets the filter to update and b) makes sure the new value is selected.
+                Column 3 after an update: a) gets the filter to update.
             </li>
             <li>
-                Column 4 after an update: a) gets the filter to update and b) makes sure the new value is selected
+                Column 4 after an update: a) gets the filter to update and b) makes sure the new value is selected.
+            </li>
+            <li>
+                Column 5 after an update: a) gets the filter to update and b) makes sure the new value is selected
                 and c) refreshes the rows based on the new filter value. So for example if you first set the filter
                 on Col 4 to 'A' (notice that 'B' rows are removed), then change a value from 'A' to 'B', then
                 the other rows that were previously removed are added back in again.
             </li>
             <li>
-                Click 'Add C Row' to add a new row. Columns 3 and 4 will have their filters updated. Columns
-                1 and 2 will not have their filters updated.
+                Click 'Add C Row' to add a new row. Columns and 3 will not have their filters updated.
+                Column 2 will have it's filter updated by the grid.
+                Columns 4 and 5 will have their filters updated by the application.
             </li>
         </ul>
 
     <?= example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <p>
-        Why do we do this? The reason is if the filters were changing as the editing was happening, then
-        this would cause the following issues:
-    </p>
-
-    <ul class="content">
-        <li>
-            Rows could disappear while editing if there was a filter set and the edit make a row fail
-            a filter that was previously passing the filter.
-        </li>
-        <li>
-            Values could be split, eg if
-        </li>
-    </ul>
 
     <h2>New Rows Action and Values Example</h2>
 

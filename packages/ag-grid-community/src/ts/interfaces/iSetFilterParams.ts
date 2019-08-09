@@ -18,6 +18,7 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     suppressMiniFilter: boolean;
     suppressSelectAll: boolean;
     selectAllOnMiniFilter: boolean;
+    syncValuesLikeExcel: boolean;
     comparator?: (a: any, b: any) => number;
     miniFilterSearchByRefDataKey?: boolean;
     textFormatter?: (from: string) => string;
