@@ -324,7 +324,6 @@ export class GroupedCategoryAxis {
         const enterLabels = updateLabels.enter.append(Text);
         const labelSelection = updateLabels.merge(enterLabels);
 
-        const separatorData = [] as {x: number, y1: number, y2: number, toString: () => string}[];
         const labelFormatter = this.labelFormatter;
         let maxLeafLabelWidth = 0;
         labelSelection
@@ -366,6 +365,7 @@ export class GroupedCategoryAxis {
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
+        const separatorData = [] as {y: number, x1: number, x2: number, toString: () => string}[];
         labelSelection.each((label, datum, index) => {
             label.x = labelX;
             label.rotationCenterX = labelX;
@@ -381,35 +381,40 @@ export class GroupedCategoryAxis {
                     label.rotation = -Math.PI / 2;
                 }
             }
+            // Calculate positions of label separators for all nodes except the root.
+            // Each separator is placed to the top of the current label.
             if (datum.parent) {
-                const x = !datum.children.length ? Math.round(datum.screenX - bandwidth / 2) : Math.round(datum.screenX - datum.leafCount * bandwidth / 2);
-                if (!datum.children.length) { //
+                const y = !datum.children.length
+                    ? datum.screenX - bandwidth / 2
+                    : datum.screenX - datum.leafCount * bandwidth / 2;
+
+                if (!datum.children.length) {
                     if (!datum.number || this.labelGrid) {
                         separatorData.push({
-                            x,
-                            y1: 0,
-                            y2: -maxLeafLabelWidth - this.labelPadding * 2,
+                            y,
+                            x1: 0,
+                            x2: -maxLeafLabelWidth - this.labelPadding * 2,
                             toString: () => String(index)
                         });
                     }
                 } else {
                     separatorData.push({
-                        x,
-                        y1: -maxLeafLabelWidth + datum.screenY + lineHeight / 2,
-                        y2: -maxLeafLabelWidth + datum.screenY - lineHeight / 2,
+                        y,
+                        x1: -maxLeafLabelWidth + datum.screenY + lineHeight / 2,
+                        x2: -maxLeafLabelWidth + datum.screenY - lineHeight / 2,
                         toString: () => String(index)
                     });
                 }
             }
         });
 
-        // add last long tick
-        let minY = 0;
-        separatorData.forEach(d => minY = Math.min(minY, d.y2));
+        // Calculate the position of the long separator on the far bottom of the axis.
+        let minX = 0;
+        separatorData.forEach(d => minX = Math.min(minX, d.x2));
         separatorData.push({
-            x: Math.round(Math.max(scale.range[0], scale.range[1])),
-            y1: 0,
-            y2: minY,
+            y: Math.max(scale.range[0], scale.range[1]),
+            x1: 0,
+            x2: minX,
             toString: () => String(separatorData.length)
         });
 
@@ -420,10 +425,10 @@ export class GroupedCategoryAxis {
         this.separatorSelection = separatorSelection;
 
         separatorSelection.each((line, datum, index) => {
-            line.x1 = datum.y1;
-            line.x2 = datum.y2;
-            line.y1 = datum.x;
-            line.y2 = datum.x;
+            line.x1 = datum.x1;
+            line.x2 = datum.x2;
+            line.y1 = datum.y;
+            line.y2 = datum.y;
             line.stroke = this.tickColor;
             line.fill = undefined;
             line.strokeWidth = 1;
@@ -446,8 +451,7 @@ export class GroupedCategoryAxis {
         this.lineSelection = lineSelection;
 
         lineSelection.each((line, datum, index) => {
-            // TODO: why do we have to do Math.round?
-            let x = index > 0 ? Math.round(-maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * lineHeight) : 0;
+            let x = index > 0 ? -maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;
             line.x2 = x;
             line.y1 = scale.range[0];
