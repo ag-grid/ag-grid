@@ -12,7 +12,8 @@ import {
     PreDestroy,
     ProcessChartOptionsParams,
     ChartOptions,
-    IAggFunc
+    IAggFunc,
+    Environment
 } from "ag-grid-community";
 import { RangeController } from "../rangeController";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
@@ -21,6 +22,7 @@ import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
 export class RangeChartService implements IRangeChartService {
 
     @Autowired('rangeController') private rangeController: RangeController;
+    @Autowired('environment') private environment: Environment;
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -73,6 +75,14 @@ export class RangeChartService implements IRangeChartService {
         if (container) {
             // if container exists, means developer initiated chart create via API, so place in provided container
             container.appendChild(chartComp.getGui());
+
+            // if the chart container was placed outside of an element that
+            // has the grid's theme, we manually add the current theme to
+            // make sure all styles for the chartMenu are rendered correctly
+            const theme = this.environment.getTheme();
+            if (theme.el && !theme.el.contains(container)) {
+                _.addCssClass(container, theme.theme!);
+            }
         } else if (createChartContainerFunc) {
             // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
             // is using it's own dialog's rather than the grid provided dialogs)
