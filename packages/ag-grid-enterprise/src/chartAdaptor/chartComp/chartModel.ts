@@ -117,12 +117,7 @@ export class ChartModel extends BeanStub {
     public resetColumnState(): void {
         const allColsFromRanges = this.getAllColumnsFromRanges();
         const {dimensionCols, valueCols} = this.getAllChartColumns();
-
-        if (valueCols.length === 0) {
-            console.warn("ag-Grid - charts require at least one visible 'series' column.");
-            return;
-        }
-
+        
         this.valueColState = valueCols.map(column => {
             return {
                 column,
@@ -395,6 +390,11 @@ export class ChartModel extends BeanStub {
                 }
             }
 
+            if (colDef.colId === 'ag-Grid-AutoColumn') {
+                dimensionCols.push(col);
+                return;
+            }
+
             if (!col.isPrimary()) {
                 valueCols.push(col);
                 return;
@@ -404,7 +404,9 @@ export class ChartModel extends BeanStub {
             this.isNumberCol(col.getColId()) ? valueCols.push(col) : dimensionCols.push(col);
         });
 
-        return {dimensionCols, valueCols};
+        const res = {dimensionCols, valueCols};
+        console.log(res);
+        return res;
     }
 
     private isNumberCol(colId: any) {
