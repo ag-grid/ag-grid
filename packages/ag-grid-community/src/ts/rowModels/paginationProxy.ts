@@ -149,11 +149,11 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getPageFirstRow(): number {
-        return this.topRowBounds.rowIndex;
+        return this.topRowBounds ? this.topRowBounds.rowIndex : -1;
     }
 
     public getPageLastRow(): number {
-        return this.bottomRowBounds.rowIndex;
+        return this.bottomRowBounds ? this.bottomRowBounds.rowIndex : -1;
     }
 
     public getRowCount(): number {

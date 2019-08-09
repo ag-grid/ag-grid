@@ -99,7 +99,7 @@ export class SetValueModel {
         // for a map is much faster than the lookup for an array, especially when
         // the length of the array is thousands of records long
         this.selectedValuesMap = {};
-        this.selectEverything();
+        this.selectAllUsingMiniFilter();
         this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
     }
 
@@ -130,7 +130,7 @@ export class SetValueModel {
         if (keepSelection) {
             this.setModel(oldModel, isSelectAll);
         } else {
-            this.selectEverything();
+            this.selectAllUsingMiniFilter();
         }
     }
 
@@ -336,7 +336,7 @@ export class SetValueModel {
         return this.displayedValues[index];
     }
 
-    public selectEverything() {
+    public selectAllUsingMiniFilter() {
         if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
             this.selectOn(this.allUniqueValues);
         } else {
@@ -374,13 +374,17 @@ export class SetValueModel {
         return this.allUniqueValues.length !== this.selectedValuesCount;
     }
 
-    public selectNothing(): void {
+    public selectNothingUsingMiniFilter(): void {
         if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
-            this.selectedValuesMap = {};
-            this.selectedValuesCount = 0;
+            this.selectNothing();
         } else {
             this.displayedValues.forEach(it => this.unselectValue(it));
         }
+    }
+
+    private selectNothing(): void {
+        this.selectedValuesMap = {};
+        this.selectedValuesCount = 0;
     }
 
     public getUniqueValueCount(): number {
@@ -397,6 +401,11 @@ export class SetValueModel {
             delete this.selectedValuesMap[safeKey];
             this.selectedValuesCount--;
         }
+    }
+
+    public selectAllFromMiniFilter(): void {
+        this.selectNothing();
+        this.selectAllUsingMiniFilter();
     }
 
     public selectValue(value: any) {
@@ -453,7 +462,7 @@ export class SetValueModel {
 
     private setSyncModel(model: string[] | null, isSelectAll = false): void {
         if (model && !isSelectAll) {
-            this.selectNothing();
+            this.selectNothingUsingMiniFilter();
             for (let i = 0; i < model.length; i++) {
                 const rawValue = model[i];
                 const value = this.keyToValue(rawValue);
@@ -462,7 +471,7 @@ export class SetValueModel {
                 }
             }
         } else {
-            this.selectEverything();
+            this.selectAllUsingMiniFilter();
         }
     }
 
