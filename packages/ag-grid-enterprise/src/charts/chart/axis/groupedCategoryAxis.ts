@@ -1,19 +1,14 @@
-import Scale from "../../scale/scale";
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { Line } from "../../scene/shape/line";
-import { NumericTicks } from "../../util/ticks";
 import { normalizeAngle360, normalizeAngle360Inclusive, toDegrees, toRadians } from "../../util/angle";
 import { Text } from "../../scene/shape/text";
-import { Arc } from "../../scene/shape/arc";
-import { Shape } from "../../scene/shape/shape";
 import { BBox } from "../../scene/bbox";
 import { Matrix } from "../../scene/matrix";
 import { Caption } from "../../caption";
-import { Rect } from "../../scene/shape/rect";
+import { Rect } from "../../scene/shape/rect"; // debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-// import { Rect } from "../../scene/shape/rect"; // debug (bbox)
 
 enum Tags {
     Tick,
@@ -42,7 +37,7 @@ export class GroupedCategoryAxis {
     //     rect.fill = undefined;
     //     rect.stroke = 'red';
     //     rect.strokeWidth = 1;
-    //     rect.strokeOpacity = 0.2;
+    //     rect.strokeOpacity = 0.7;
     //     return rect;
     // })();
 
@@ -520,10 +515,4 @@ export class GroupedCategoryAxis {
             bottom - top
         );
     }
-
-    // private requestLayout() {
-    //     if (this.onLayoutChange) {
-    //         this.onLayoutChange();
-    //     }
-    // }
 }
