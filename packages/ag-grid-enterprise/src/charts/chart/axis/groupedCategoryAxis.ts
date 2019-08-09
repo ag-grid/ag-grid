@@ -106,11 +106,15 @@ export class GroupedCategoryAxis {
         const s = this.scale;
         const range = s.domain.length ? [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])] : s.range;
         const layout = this.tickTreeLayout;
-        const lineHeight = this.labelFontSize * 1.5;
-        const shiftX = (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2;
+        const lineHeight = this.lineHeight;
+
         if (layout) {
-            // console.log('!!!', this.id, this.rotation, range[0], range[1], range[1] - range[0], layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
-            layout.resize(Math.abs(range[1] - range[0]), layout.depth * lineHeight, shiftX, -layout.depth * lineHeight);
+            layout.resize(
+                Math.abs(range[1] - range[0]),
+                layout.depth * lineHeight,
+                (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2,
+                -layout.depth * lineHeight
+            );
         }
     }
 
@@ -169,6 +173,10 @@ export class GroupedCategoryAxis {
     labelFontWeight: string = '';
     labelFontSize: number = 12;
     labelFontFamily: string = 'Verdana, sans-serif';
+
+    private get lineHeight() {
+        return this.labelFontSize * 1.5;
+    }
 
     title: Caption | undefined = undefined;
 
@@ -273,6 +281,7 @@ export class GroupedCategoryAxis {
         group.rotation = rotation;
 
         const title = this.title;
+        const lineHeight = this.lineHeight;
 
         // Render ticks and labels.
         const tickTreeLayout = this.tickTreeLayout;
@@ -345,7 +354,6 @@ export class GroupedCategoryAxis {
                 }
                 label.textAlign = 'center';
                 label.translationX = datum.screenY - this.labelFontSize * 0.25;
-                // console.log(this.id, this.rotation, label.text, datum.screenY, datum.screenX);
                 label.translationY = datum.screenX;
                 const bbox = label.getBBox();
                 if (bbox.width > maxLeafLabelWidth) {
@@ -366,7 +374,7 @@ export class GroupedCategoryAxis {
                 label.textAlign = 'end';
                 label.textBaseline = 'middle';
             } else {
-                label.translationX -= maxLeafLabelWidth - this.labelFontSize * 1.5 + this.labelPadding;
+                label.translationX -= maxLeafLabelWidth - lineHeight + this.labelPadding;
                 if (isHorizontal) {
                     label.rotation = autoRotation + labelRotation;
                 } else {
@@ -375,7 +383,7 @@ export class GroupedCategoryAxis {
             }
             if (datum.parent) {
                 const x = !datum.children.length ? Math.round(datum.screenX - bandwidth / 2) : Math.round(datum.screenX - datum.leafCount * bandwidth / 2);
-                if (!datum.children.length) {
+                if (!datum.children.length) { //
                     if (!datum.number || this.labelGrid) {
                         separatorData.push({
                             x,
@@ -387,8 +395,8 @@ export class GroupedCategoryAxis {
                 } else {
                     separatorData.push({
                         x,
-                        y1: -maxLeafLabelWidth + datum.screenY + this.labelFontSize * 1.5 / 2,
-                        y2: -maxLeafLabelWidth + datum.screenY - this.labelFontSize * 1.5 / 2,
+                        y1: -maxLeafLabelWidth + datum.screenY + lineHeight / 2,
+                        y2: -maxLeafLabelWidth + datum.screenY - lineHeight / 2,
                         toString: () => String(index)
                     });
                 }
@@ -439,7 +447,7 @@ export class GroupedCategoryAxis {
 
         lineSelection.each((line, datum, index) => {
             // TODO: why do we have to do Math.round?
-            let x = index > 0 ? Math.round(-maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * this.labelFontSize * 1.5) : 0;
+            let x = index > 0 ? Math.round(-maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * lineHeight) : 0;
             line.x1 = x;
             line.x2 = x;
             line.y1 = scale.range[0];
