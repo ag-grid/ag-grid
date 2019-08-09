@@ -333,28 +333,25 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 }
             });
 
-            // no blocks before means no nodes before are open (as all purged blocks are empty)
-            if (!blockBefore) {
-                return topLevelIndex;
-            }
-
-            // note: the local index is the same as the top level index, two terms for same thing
-            //
-            // get index of the last row before this row
-            // eg if blocksize = 100, then:
-            //   last row of first block is 99 (100 * 1) -1;
-            //   last row of second block is 199 (100 * 2) -1;
-            const lastRowTopLevelIndex = (blockSize * (blockId + 1)) - 1;
-
-            // this is the last loaded rownode in the cache that is before the row we are interested in.
-            // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
-            // same as the difference between the displayed index
-            const indexDiff = topLevelIndex - lastRowTopLevelIndex;
             if (blockBefore) {
-                const lastRowNode = blockBefore.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
+                // note: the local index is the same as the top level index, two terms for same thing
+                //
+                // get index of the last row before this row
+                // eg if blocksize = 100, then:
+                //   last row of first block is 99 (100 * 1) -1;
+                //   last row of second block is 199 (100 * 2) -1;
+                const lastRowTopLevelIndex = (blockSize * (blockId + 1)) - 1;
+
+                // this is the last loaded rownode in the cache that is before the row we are interested in.
+                // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
+                // same as the difference between the displayed index
+                const indexDiff = topLevelIndex - lastRowTopLevelIndex;
+
+                const lastRowNode = blockBefore!.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
                 return lastRowNode.rowIndex + indexDiff;
+
             } else {
-                return indexDiff;
+                return topLevelIndex;
             }
         }
     }
