@@ -101,15 +101,20 @@ include '../documentation-main/documentation_header.php';
     <tr>
         <td class="parameter-key">suppressMiniFilter</td>
         <td>
-            Set to false(default)/true to show/hide the input text box to filter the set
-            entries displayed in the filter.
+            Set to true to hide the mini filter.
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">suppressSelectAll</td>
+        <td>
+            Set to true to remove the "select all" checkbox.
         </td>
     </tr>
     <tr>
         <td class="parameter-key">selectAllOnMiniFilter</td>
         <td>
-            Set to false(default)/true so that the checkbox "select all" applies to:
-            all the filters items/just the ones filtered by the mini filter.
+            Set to true so that the checkbox "select all" applies to the mini filter results only.
+            Otherwise it will apply to the entire list.
         </td>
     </tr>
     <tr>

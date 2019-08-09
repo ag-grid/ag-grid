@@ -690,7 +690,8 @@ var desktopDefaultCols = [
                     // cellHeight: 20,
                     newRowsAction: 'keep',
                     selectAllOnMiniFilter: true,
-                    clearButton: true
+                    clearButton: true,
+                    // suppressSelectAll: true
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
                 icons: {
