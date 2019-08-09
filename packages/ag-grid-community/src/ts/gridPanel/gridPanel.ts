@@ -646,7 +646,13 @@ export class GridPanel extends Component {
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
         // they want.
-        if (this.gridOptionsWrapper.isSuppressMiddleClickScrolls() && mouseEvent.which === 2) {
+        const { gridOptionsWrapper } = this;
+        const { which } = mouseEvent;
+
+        if (
+            gridOptionsWrapper.isPreventDefaultOnContextMenu() ||
+            (gridOptionsWrapper.isSuppressMiddleClickScrolls() && which === 2)
+        ) {
             mouseEvent.preventDefault();
         }
     }
