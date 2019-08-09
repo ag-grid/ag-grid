@@ -2,11 +2,9 @@ import { Chart } from "./chart";
 import { Axis } from "../axis";
 import Scale from "../scale/scale";
 import { Series } from "./series/series";
-import { ClipRect } from "../scene/clipRect";
 import { numericExtent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
-import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 
 export type CartesianChartLayout = 'vertical' | 'horizontal';
@@ -22,14 +20,13 @@ export class GroupedCategoryChart extends Chart {
         this._xAxis = xAxis;
         this._yAxis = yAxis;
 
-        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
+        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesRoot]);
         this.scene.root!.append(this.legend.group);
     }
 
-    private seriesClipRect = new Group();
-
+    private _seriesRoot = new Group();
     get seriesRoot(): Group {
-        return this.seriesClipRect;
+        return this._seriesRoot;
     }
 
     private readonly _xAxis: GroupedCategoryChartAxis;
@@ -105,12 +102,6 @@ export class GroupedCategoryChart extends Chart {
         shrinkRect.y += axisAutoPadding.top;
         shrinkRect.width -= axisAutoPadding.left + axisAutoPadding.right;
         shrinkRect.height -= axisAutoPadding.top + axisAutoPadding.bottom;
-
-        // const seriesClipRect = this.seriesClipRect;
-        // seriesClipRect.x = shrinkRect.x;
-        // seriesClipRect.y = shrinkRect.y;
-        // seriesClipRect.width = shrinkRect.width;
-        // seriesClipRect.height = shrinkRect.height;
 
         const xAxis = this.xAxis;
         const yAxis = this.yAxis;
@@ -192,27 +183,14 @@ export class GroupedCategoryChart extends Chart {
         const xAxisBBox = this.xAxis.getBBox();
         const yAxisBBox = this.yAxis.getBBox();
 
-        // if (this.axisAutoPadding.left !== yAxisBBox.width) {
-        //     this.axisAutoPadding.left = yAxisBBox.width;
-        //     this.layoutPending = true;
-        // }
-        // if (this.axisAutoPadding.bottom !== xAxisBBox.height) {
-        //     this.axisAutoPadding.bottom = xAxisBBox.height;
-        //     this.layoutPending = true;
-        // }
-
         if (this.axisAutoPadding.left !== yAxisBBox.width) {
             this.axisAutoPadding.left = yAxisBBox.width;
             this.layoutPending = true;
         }
-        if (isHorizontal) {
-            if (this.axisAutoPadding.bottom !== xAxisBBox.width) {
-                this.axisAutoPadding.bottom = xAxisBBox.width;
-                this.layoutPending = true;
-            }
-        } else {
-            if (this.axisAutoPadding.bottom !== xAxisBBox.height) {
-                this.axisAutoPadding.bottom = xAxisBBox.height;
+        {
+            const axisThickness = isHorizontal ? xAxisBBox.width : xAxisBBox.height;
+            if (this.axisAutoPadding.bottom !== axisThickness) {
+                this.axisAutoPadding.bottom = axisThickness;
                 this.layoutPending = true;
             }
         }
