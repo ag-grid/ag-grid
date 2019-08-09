@@ -116,6 +116,8 @@ const registerNumberFmt = (format: string): number => {
     if (pos === -1) {
         pos = registeredNumberFmts.length + 164;
         registeredNumberFmts.push({formatCode: format, numFmtId: pos});
+    } else {
+        pos = registeredNumberFmts[pos].numFmtId;
     }
 
     return pos;
