@@ -8,10 +8,6 @@
 ag-Grid
 ------
 
-
-# Please note - we are aware of connectivity issues at ag-grid.com at the moment. 
-# Our engineers are working hard to rectify this issue and ag-grid.com will be available once again as soon as possible.
-
 ag-Grid is a fully-featured and highly customizable JavaScript data grid.
 It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no 3rd party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-grid-getting-started?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github). Here's how our grid looks like with multiple filters and grouping enabled:
 
