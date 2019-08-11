@@ -106,6 +106,7 @@ export class ChartModel extends BeanStub {
             dimensionColIds: [selectedDimension],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
+            multiCategories: this.isMultiCategoryChart(),
             valueCols: selectedValueCols,
             startRow: startRow,
             endRow: endRow
@@ -229,7 +230,9 @@ export class ChartModel extends BeanStub {
 
     public getData(): any[] {
         // grouped data contains label fields rather than objects with toString
-        if (this.grouping) return this.chartData;
+        if (this.grouping && this.isMultiCategoryChart()) {
+            return this.chartData;
+        }
 
         const selectedDimension = this.getSelectedDimensionId();
         // replacing the selected dimension with a complex object to facilitate duplicated categories
@@ -238,6 +241,17 @@ export class ChartModel extends BeanStub {
             d[selectedDimension] = {toString: () => dimensionValue, id: index};
             return d;
         });
+    }
+
+    public setChartType(chartType: ChartType) {
+        const isCurrentMultiCategory = this.isMultiCategoryChart();
+
+        this.chartType = chartType;
+
+        // switching between single and multi-category charts requires data to be reformatted
+        if (isCurrentMultiCategory !== this.isMultiCategoryChart()) {
+            this.updateData();
+        }
     }
 
     public isGrouping(): boolean {
@@ -282,10 +296,6 @@ export class ChartModel extends BeanStub {
 
     public getCellRanges(): CellRange[] {
         return this.cellRanges;
-    }
-
-    public setChartType(chartType: ChartType) {
-        this.chartType = chartType;
     }
 
     public getChartType(): ChartType {
@@ -449,6 +459,14 @@ export class ChartModel extends BeanStub {
             col.displayName = this.getColDisplayName(col.column as Column);
         }
         return col;
+    }
+
+    private isMultiCategoryChart(): boolean {
+        return [
+            ChartType.Pie,
+            ChartType.Doughnut,
+            ChartType.Scatter
+        ].indexOf(this.chartType) < 0;
     }
 
     private generateId(): string {

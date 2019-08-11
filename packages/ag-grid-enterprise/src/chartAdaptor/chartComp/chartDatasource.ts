@@ -20,6 +20,7 @@ export interface ChartDatasourceParams {
     startRow: number;
     endRow: number;
     aggFunc?: string | IAggFunc;
+    multiCategories: boolean;
 }
 
 export class ChartDatasource extends BeanStub {
@@ -68,8 +69,8 @@ export class ChartDatasource extends BeanStub {
                         // traverse parents to extract group label path
                         const labels = this.getGroupLabels(rowNode, [String(value)]);
 
-                        // add group labels to group column
-                        data[colId] = {labels: labels};
+                        // add group labels to group column for multi category charts
+                        data[colId] = params.multiCategories ? {labels: labels} : value;
 
                         // keep track of group node indexes so they can be padded when other groups are expanded
                         if (rowNode.group) {
