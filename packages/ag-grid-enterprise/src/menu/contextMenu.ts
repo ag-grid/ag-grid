@@ -62,6 +62,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         }
 
         if (this.gridOptionsWrapper.isEnableCharts() && this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
+            defaultMenuOptions.push('pivotChart');
             if (!this.rangeController.isEmpty()) {
                 defaultMenuOptions.push('chartRange');
             }

@@ -52,7 +52,7 @@ import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
-import { IRangeChartService } from "./interfaces/iRangeChartService";
+import { IChartService } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
@@ -130,7 +130,7 @@ export class GridApi {
     @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
-    @Optional('rangeChartService') private rangeChartService: IRangeChartService;
+    @Optional('chartService') private chartService: IChartService;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -969,7 +969,7 @@ export class GridApi {
             }, 'ChartsModuleCheck');
             return;
         }
-        return this.rangeChartService.chartCellRange(params);
+        return this.chartService.chartCellRange(params);
     }
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {

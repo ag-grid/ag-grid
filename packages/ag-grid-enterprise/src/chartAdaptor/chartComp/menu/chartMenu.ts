@@ -72,7 +72,12 @@ export class ChartMenu extends Component {
             });
         }
 
-        const ignoreOptions: ChartMenuOptions[] = ['chartToggleDetached', 'chartDownload']
+        // pivot charts use the column tool panel instead of the data panel
+        if (this.chartController.isPivotChart()) {
+            tabOptions = tabOptions.filter(option => option !== 'chartData');
+        }
+
+        const ignoreOptions: ChartMenuOptions[] = ['chartToggleDetached', 'chartDownload'];
         this.tabs = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1);
 
         return tabOptions.filter(value => ignoreOptions.indexOf(value) !== -1 || (this.tabs.length && value === this.tabs[0]));

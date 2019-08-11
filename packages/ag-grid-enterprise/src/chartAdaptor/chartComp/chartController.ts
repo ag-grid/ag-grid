@@ -72,6 +72,10 @@ export class ChartController extends BeanStub {
         return this.model.getChartType();
     }
 
+    public isPivotChart() {
+        return this.model.isPivotChart();
+    }
+
     public getActivePalette(): number {
         return this.model.getActivePalette();
     }

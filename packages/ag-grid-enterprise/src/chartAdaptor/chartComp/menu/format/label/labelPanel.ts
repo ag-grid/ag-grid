@@ -42,7 +42,6 @@ export class LabelPanel extends Component {
         </div>`;
 
     @RefSelector('labelsGroup') private labelsGroup: AgGroupComponent;
-
     @RefSelector('labelFontFamilySelect') private labelFontFamilySelect: AgSelect;
     @RefSelector('labelFontWeightSelect') private labelFontWeightSelect: AgSelect;
     @RefSelector('labelFontSizeSelect') private labelFontSizeSelect: AgSelect;

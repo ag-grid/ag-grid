@@ -26,8 +26,10 @@ import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
 import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
 import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
 import {Palette, palettes} from "../../charts/chart/palettes";
+import {ChartTranslator} from "./chartTranslator";
 
 export interface GridChartParams {
+    pivotChart: boolean;
     cellRange: CellRange;
     chartType: ChartType;
     insideDialog: boolean;
@@ -47,14 +49,14 @@ export class GridChartComp extends Component {
             <div ref="eDockedContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
+    @RefSelector('eChart') private eChart: HTMLElement;
+    @RefSelector('eChartComponentsWrapper') private eChartComponentsWrapper: HTMLElement;
+    @RefSelector('eDockedContainer') private eDockedContainer: HTMLElement;
+
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
-
-    @RefSelector('eChartComponentsWrapper') private eChartComponentsWrapper: HTMLElement;
-    @RefSelector('eChart') private eChart: HTMLElement;
-    @RefSelector('eDockedContainer') private eDockedContainer: HTMLElement;
-
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
     @Autowired('eventService') private eventService: EventService;
 
     private chartMenu: ChartMenu;
@@ -77,6 +79,7 @@ export class GridChartComp extends Component {
     @PostConstruct
     public init(): void {
         const modelParams: ChartModelParams = {
+            pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
             aggFunc: this.params.aggFunc,
             cellRanges: [this.params.cellRange],
@@ -175,11 +178,13 @@ export class GridChartComp extends Component {
     }
 
     private addDialog() {
+        const title = this.chartTranslator.translate(this.params.pivotChart ? 'pivotChartTitle' : 'rangeChartTitle');
+
         this.chartDialog = new AgDialog({
             resizable: true,
             movable: true,
             maximizable: true,
-            title: '',
+            title: title,
             component: this,
             centered: true,
             closable: true

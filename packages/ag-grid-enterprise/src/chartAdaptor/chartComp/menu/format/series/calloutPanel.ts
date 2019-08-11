@@ -16,7 +16,6 @@ export class CalloutPanel extends Component {
         </div>`;
 
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
-
     @RefSelector('calloutGroup') private calloutGroup: AgGroupComponent;
     @RefSelector('calloutLengthSlider') private calloutLengthSlider: AgSlider;
     @RefSelector('calloutStrokeWidthSlider') private calloutStrokeWidthSlider: AgSlider;

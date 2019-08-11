@@ -7,7 +7,7 @@ import { LineSeriesPanel } from "./series/lineSeriesPanel";
 import { PieSeriesPanel } from "./series/pieSeriesPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { AreaSeriesPanel } from "./series/areaSeriesPanel";
-import {ScatterSeriesPanel} from "./series/scatterSeriesPanel";
+import { ScatterSeriesPanel } from "./series/scatterSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
 
@@ -26,9 +26,7 @@ export class ChartFormattingPanel extends Component {
     @PostConstruct
     private init() {
         this.setTemplate(ChartFormattingPanel.TEMPLATE);
-
         this.createFormatPanel();
-
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.createFormatPanel.bind(this));
     }
 

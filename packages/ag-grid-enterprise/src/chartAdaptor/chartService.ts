@@ -1,27 +1,29 @@
 import {
     _,
-    Autowired,
     Bean,
+    Autowired,
+    PreDestroy,
     CellRange,
     ChartRangeParams,
     ChartRef,
     ChartType,
     Context,
     GridOptionsWrapper,
-    IRangeChartService,
-    PreDestroy,
     ProcessChartOptionsParams,
     ChartOptions,
     IAggFunc,
-    Environment
+    Environment,
+    ColumnController,
+    IChartService,
 } from "ag-grid-community";
 import { RangeController } from "../rangeController";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
 
-@Bean('rangeChartService')
-export class RangeChartService implements IRangeChartService {
+@Bean('chartService')
+export class ChartService implements IChartService {
 
     @Autowired('rangeController') private rangeController: RangeController;
+    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('environment') private environment: Environment;
     @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -43,20 +45,45 @@ export class RangeChartService implements IRangeChartService {
             return;
         }
         if (cellRange) {
-            return this.chartRange(cellRange, params.chartType, params.chartContainer, params.suppressChartRanges, params.aggFunc, params.processChartOptions);
+            const pivotChart = false;
+            return this.chartRange(cellRange, params.chartType, pivotChart, params.suppressChartRanges,
+                params.chartContainer, params.aggFunc, params.processChartOptions);
         }
+    }
+
+    public pivotChart(): ChartRef | undefined {
+        // if required enter pivot mode
+        if (!this.columnController.isPivotMode()) {
+            this.columnController.setPivotMode(true, "pivotChart");
+        }
+
+        // pivot chart range contains all visible column without a row range to include all rows
+        const chartAllRangeParams = {
+            columns: this.columnController.getAllDisplayedColumns().map(col => col.getColId())
+        };
+
+        const cellRange = this.rangeController.createCellRangeFromCellRangeParams(chartAllRangeParams);
+        if (!cellRange) {
+            console.warn("ag-Grid - unable to chart as there are no columns in the grid.");
+            return;
+        }
+
+        const pivotChart = true, suppressChartRanges = true;
+        return this.chartRange(cellRange, ChartType.GroupedColumn, pivotChart, suppressChartRanges);
     }
 
     private chartRange(cellRange: CellRange,
                        chartType: ChartType,
-                       container?: HTMLElement,
+                       pivotChart = false,
                        suppressChartRanges = false,
+                       container?: HTMLElement,
                        aggFunc?: string | IAggFunc,
                        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
         const params: GridChartParams = {
+            pivotChart,
             cellRange,
             chartType,
             insideDialog: !(container || createChartContainerFunc),

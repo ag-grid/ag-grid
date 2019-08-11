@@ -6,6 +6,8 @@ export class ChartTranslator {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private static DEFAULT_TRANSLATIONS: {[name: string]: string} = {
+        pivotChartTitle: 'Pivot Chart',
+        rangeChartTitle: 'Range Chart',
         settings: 'Settings',
         data: 'Data',
         format: 'Format',

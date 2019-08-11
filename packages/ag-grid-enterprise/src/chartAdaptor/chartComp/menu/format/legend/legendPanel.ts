@@ -29,9 +29,7 @@ export class LegendPanel extends Component {
         </div>`;
 
     @RefSelector('legendGroup') private legendGroup: AgGroupComponent;
-
     @RefSelector('legendPositionSelect') private legendPositionSelect: AgSelect;
-
     @RefSelector('legendPaddingSlider') private legendPaddingSlider: AgSlider;
     @RefSelector('markerSizeSlider') private markerSizeSlider: AgSlider;
     @RefSelector('markerStrokeSlider') private markerStrokeSlider: AgSlider;

@@ -48,7 +48,6 @@ export class TabbedChartMenu extends Component {
 
     @PostConstruct
     public init(): void {
-
         this.panels.forEach(panel => {
             const panelType = panel.replace('chart', '').toLowerCase();
             const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
@@ -109,7 +108,6 @@ export class TabbedChartMenu extends Component {
     }
 
     public destroy(): void {
-
         if (this.parentComponent && this.parentComponent.isAlive()) {
             this.parentComponent.destroy();
         }

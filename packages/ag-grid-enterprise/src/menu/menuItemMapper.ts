@@ -1,13 +1,14 @@
 import {
     Autowired,
+    Optional,
     Bean,
     ChartType,
     Column,
     ColumnController,
     GridApi,
     GridOptionsWrapper,
-    IRangeChartService,
-    MenuItemDef, Optional,
+    IChartService,
+    MenuItemDef,
     _
 } from 'ag-grid-community';
 import { ClipboardService } from "../clipboardService";
@@ -21,7 +22,7 @@ export class MenuItemMapper {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
-    @Optional('rangeChartService') private rangeChartService: IRangeChartService;
+    @Optional('chartService') private chartService: IChartService;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
         if (!originalList) {
@@ -179,6 +180,12 @@ export class MenuItemMapper {
                 };
             case 'separator':
                 return 'separator';
+            case 'pivotChart':
+                return {
+                    name: localeTextFunc('pivotChart', 'Pivot Chart&lrm;'),
+                    action: () => this.chartService.pivotChart(),
+                    icon: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
+                };
             case 'chartRange':
                 const chartRangeSubMenuItems: string[] = [];
                 chartRangeSubMenuItems.push('columnRangeChart');
@@ -207,19 +214,19 @@ export class MenuItemMapper {
             case 'groupedColumnChart': return {
                 name: localeTextFunc('groupedColumnChart', 'Grouped&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.GroupedColumn);
+                    this.chartService.chartCurrentRange(ChartType.GroupedColumn);
                 }
             };
             case 'stackedColumnChart': return {
                 name: localeTextFunc('stackedColumnChart', 'Stacked&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.StackedColumn);
+                    this.chartService.chartCurrentRange(ChartType.StackedColumn);
                 }
             };
             case 'normalizedColumnChart': return {
                 name: localeTextFunc('normalizedColumnChart', '100% Stacked&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.NormalizedColumn);
+                    this.chartService.chartCurrentRange(ChartType.NormalizedColumn);
                 }
             };
 
@@ -236,19 +243,19 @@ export class MenuItemMapper {
             case 'groupedBarChart': return {
                 name: localeTextFunc('groupedBarChart', 'Grouped&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.GroupedBar);
+                    this.chartService.chartCurrentRange(ChartType.GroupedBar);
                 }
             };
             case 'stackedBarChart': return {
                 name: localeTextFunc('stackedBarChart', 'Stacked&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.StackedBar);
+                    this.chartService.chartCurrentRange(ChartType.StackedBar);
                 }
             };
             case 'normalizedBarChart': return {
                 name: localeTextFunc('normalizedBarChart', '100% Stacked&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.NormalizedBar);
+                    this.chartService.chartCurrentRange(ChartType.NormalizedBar);
                 }
             };
 
@@ -264,27 +271,27 @@ export class MenuItemMapper {
             case 'pieChart': return {
                 name: localeTextFunc('pieChart', 'Pie'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Pie);
+                    this.chartService.chartCurrentRange(ChartType.Pie);
                 }
             };
             case 'doughnutChart': return {
                 name: localeTextFunc('doughnutChart', 'Doughnut'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Doughnut);
+                    this.chartService.chartCurrentRange(ChartType.Doughnut);
                 }
             };
 
             case 'lineRangeChart': return {
                 name: localeTextFunc('lineRangeChart', 'Line'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Line);
+                    this.chartService.chartCurrentRange(ChartType.Line);
                 }
             };
 
             case 'scatterRangeChart': return {
                 name: localeTextFunc('scatterRangeChart', 'Scatter'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Scatter);
+                    this.chartService.chartCurrentRange(ChartType.Scatter);
                 }
             };
 
@@ -301,19 +308,19 @@ export class MenuItemMapper {
             case 'areaChart': return {
                 name: localeTextFunc('areaChart', 'Area&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.Area);
+                    this.chartService.chartCurrentRange(ChartType.Area);
                 }
             };
             case 'stackedAreaChart': return {
                 name: localeTextFunc('stackedAreaChart', 'Stacked&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.StackedArea);
+                    this.chartService.chartCurrentRange(ChartType.StackedArea);
                 }
             };
             case 'normalizedAreaChart': return {
                 name: localeTextFunc('normalizedAreaChart', '100% Stacked&lrm;'),
                 action: () => {
-                    this.rangeChartService.chartCurrentRange(ChartType.NormalizedArea);
+                    this.chartService.chartCurrentRange(ChartType.NormalizedArea);
                 }
             };
             default:

@@ -27,6 +27,7 @@ export interface ColState {
 }
 
 export interface ChartModelParams {
+    pivotChart: boolean;
     chartType: ChartType;
     aggFunc?: string | IAggFunc,
     cellRanges: CellRange[];
@@ -51,18 +52,19 @@ export class ChartModel extends BeanStub {
     private valueColState: ColState[] = [];
     private chartData: any[];
 
+    private readonly pivotChart: boolean;
     private chartType: ChartType;
     private activePalette: number;
-    private palettes: Palette[];
-    private suppressChartRanges: boolean;
+    private readonly palettes: Palette[];
+    private readonly suppressChartRanges: boolean;
 
-    private aggFunc?: string | IAggFunc;
+    private readonly aggFunc?: string | IAggFunc;
 
     private initialising = true;
 
     private datasource: ChartDatasource;
 
-    private chartId: string;
+    private readonly chartId: string;
     private chartProxy: ChartProxy<any>;
     private detached: boolean = false;
     private grouping: boolean;
@@ -71,6 +73,7 @@ export class ChartModel extends BeanStub {
     public constructor(params: ChartModelParams) {
         super();
 
+        this.pivotChart = params.pivotChart;
         this.chartType = params.chartType;
         this.aggFunc = params.aggFunc;
         this.cellRanges = params.cellRanges;
@@ -115,15 +118,16 @@ export class ChartModel extends BeanStub {
     }
 
     public resetColumnState(): void {
-        const allColsFromRanges = this.getAllColumnsFromRanges();
         const {dimensionCols, valueCols} = this.getAllChartColumns();
-        
+
+        let allCols = this.pivotChart ? this.columnController.getAllDisplayedColumns() : this.getAllColumnsFromRanges();
+
         this.valueColState = valueCols.map(column => {
             return {
                 column,
                 colId: column.getColId(),
                 displayName: this.getColDisplayName(column),
-                selected: allColsFromRanges.indexOf(column) > -1
+                selected: allCols.indexOf(column) > -1
             };
         });
 
@@ -136,7 +140,7 @@ export class ChartModel extends BeanStub {
             };
         });
 
-        const dimensionsInCellRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
+        const dimensionsInCellRange = dimensionCols.filter(col => allCols.indexOf(col) > -1);
 
         if (dimensionsInCellRange.length > 0) {
             // select the first dimension from the range
@@ -250,6 +254,10 @@ export class ChartModel extends BeanStub {
 
     public isPivotActive(): boolean {
         return this.columnController.isPivotActive();
+    }
+
+    public isPivotChart(): boolean {
+        return this.pivotChart;
     }
 
     public setChartProxy(chartProxy: ChartProxy<any>): void {
@@ -404,9 +412,7 @@ export class ChartModel extends BeanStub {
             this.isNumberCol(col.getColId()) ? valueCols.push(col) : dimensionCols.push(col);
         });
 
-        const res = {dimensionCols, valueCols};
-        console.log(res);
-        return res;
+        return {dimensionCols, valueCols};
     }
 
     private isNumberCol(colId: any) {

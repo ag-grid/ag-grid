@@ -93,9 +93,10 @@ localeText = {
         export: 'laExporto',
         csvExport: 'laCSV Exportp',
         excelExport: 'laExcel Exporto (.xlsx)',
-        excelXmlExport: 'laExcel Exporto (.xml)'
+        excelXmlExport: 'laExcel Exporto (.xml)',
 
         // enterprise menu (charts)
+        pivotChart: 'laPivot Chart',
         chartRange: 'laChart Range',
 
         columnRangeChart: 'laColumn',
@@ -146,6 +147,8 @@ localeText = {
         ctrlV: 'ctrl n V'
 
         // charts
+        pivotChartTitle: 'laPivot Chart',
+        rangeChartTitle: 'laRange Chart',
         settings: 'laSettings',
         data: 'laData',
         format: 'laFormat',

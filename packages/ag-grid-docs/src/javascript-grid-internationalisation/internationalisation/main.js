@@ -114,6 +114,7 @@ var gridOptions = {
         excelXmlExport: 'laExcel Exporto (.xml)',
 
         // enterprise menu (charts)
+        pivotChart: 'laPivot Chart',
         chartRange: 'laChart Range',
 
         columnRangeChart: 'laColumn',
@@ -160,6 +161,8 @@ var gridOptions = {
         ctrlV: 'ctrl n V',
 
         // charts
+        pivotChartTitle: 'laPivot Chart',
+        rangeChartTitle: 'laRange Chart',
         settings: 'laSettings',
         data: 'laData',
         format: 'laFormat',

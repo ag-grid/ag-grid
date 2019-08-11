@@ -188,8 +188,8 @@ var gridOptions = {
     rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
     suppressMenuHide: isSmall,
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
-    pivotColumnGroupTotals: 'before',
-    pivotRowTotals: 'before',
+    // pivotColumnGroupTotals: 'before',
+    // pivotRowTotals: 'before',
     // suppressRowTransform: true,
     // minColWidth: 50,
     // maxColWidth: 300,
@@ -387,6 +387,8 @@ var gridOptions = {
         let type = params.type;
         let options = params.options;
 
+        options.legendPosition = 'top';
+
         // use saved chart options for specific chart type
         if (chartOptions[type]) {
             return chartOptions[type];
@@ -401,11 +403,10 @@ var gridOptions = {
             };
 
         } else {
-
-            let isBarChart = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
-            if (!isBarChart) {
-                options.xAxis.labelRotation = 0;
-            }
+            // let isBarChart = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
+            // if (!isBarChart) {
+            //     options.xAxis.labelRotation = 330;
+            // }
 
             let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
             options.yAxis.labelFormatter = function(params) {
