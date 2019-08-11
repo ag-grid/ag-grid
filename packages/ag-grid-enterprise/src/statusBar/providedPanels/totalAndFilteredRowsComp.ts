@@ -1,18 +1,32 @@
-import { Autowired, Events, EventService, GridApi, PostConstruct, IStatusPanelComp } from 'ag-grid-community';
+import {
+    Autowired,
+    Events,
+    EventService,
+    GridApi,
+    PostConstruct,
+    IStatusPanelComp,
+    IRowModel,
+    ClientSideRowModel
+} from 'ag-grid-community';
 import { NameValueComp } from "./nameValueComp";
 
 export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
+    @Autowired('rowModel') gridRowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
+
+    private clientSideRowModel: ClientSideRowModel;
 
     @PostConstruct
     protected postConstruct(): void {
 
-        // this component is only really useful with client side rowmodel
+        // this component is only really useful with client side row model
         if (this.gridApi.getModel().getType() !== 'clientSide') {
             console.warn(`ag-Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);
             return;
+        } else {
+            this.clientSideRowModel = this.gridRowModel as ClientSideRowModel;
         }
 
         this.setLabel('totalAndFilteredRows', 'Rows');
@@ -26,31 +40,19 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     }
 
     private onDataChanged() {
-        const filteredRowCount = this.getFilteredRowCountValue();
-        let displayValue:any = this.getTotalRowCountValue();
+        const rowCount = this.clientSideRowModel.getRowCount();
+        const totalRowCount = this.getTotalRowCount();
 
-        if (filteredRowCount !== displayValue) {
-            displayValue = `${filteredRowCount} of ` + displayValue;
-        }
-
-        this.setValue(displayValue)
+        //TODO we should add internationalization key for 'of'
+        let displayValue = rowCount === totalRowCount ? `${rowCount}` : `${rowCount} of ${totalRowCount}`;
+        this.setValue(displayValue);
     }
 
-    private getTotalRowCountValue(): number {
+    private getTotalRowCount(): number {
         let totalRowCount = 0;
-        this.gridApi.forEachNode((node) => totalRowCount += 1);
+        this.gridApi.forEachNode(_ => totalRowCount++);
         return totalRowCount;
     }
 
-    private getFilteredRowCountValue(): number {
-        let filteredRowCount = 0;
-        this.gridApi.forEachNodeAfterFilter((node) => {
-            if (!node.group) {
-                filteredRowCount += 1
-            }});
-        return filteredRowCount;
-    }
-
-    public init() {
-    }
+    public init() {}
 }

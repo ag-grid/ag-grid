@@ -1,26 +1,48 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90, minWidth: 50},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
+    {headerName: "Age", field: "age", width: 90, minWidth: 50, filter: 'number'},
+    {headerName: "Country", field: "country", width: 120, enableRowGroup: true},
+    {headerName: "Year", field: "year", width: 90, enableRowGroup: true},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    {headerName: "Gold", field: "gold", width: 100, enableValueColumn: true},
+    {headerName: "Silver", field: "silver", width: 100, enableValueColumn: true},
+    {headerName: "Bronze", field: "bronze", width: 100, enableValueColumn: true},
+    {headerName: "Total", field: "total", width: 100, enableValueColumn: true}
 ];
 
 var gridOptions = {
+    defaultColDef: {
+      filter: true
+    },
     columnDefs: columnDefs,
     rowData: null,
     enableRangeSelection: true,
     statusBar: {
         statusPanels: [
-            { statusPanel: 'agTotalRowCountComponent', align: 'left' },
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
+            { statusPanel: 'agTotalRowCountComponent', align: 'center' },
             { statusPanel: 'agFilteredRowCountComponent' },
             { statusPanel: 'agSelectedRowCountComponent' },
             { statusPanel: 'agAggregationComponent' }
+        ]
+    },
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+            },
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
         ]
     }
 };
