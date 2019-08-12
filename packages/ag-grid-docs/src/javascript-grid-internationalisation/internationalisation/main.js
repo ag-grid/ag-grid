@@ -2,15 +2,15 @@ var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
     {headerName: "#", width: 50, cellRenderer:  'rowNodeIdRenderer'},
     {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
+    {headerName: "Age", field: "age", width: 90, enablePivot: true},
+    {headerName: "Country", field: "country", width: 120, enableRowGroup: true},
     {headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter'},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110, filter: 'agTextColumnFilter'},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100, enableRowGroup: true, enablePivot: true, enableValue:true, pivot: true},
-    {headerName: "Total", field: "total", width: 100}
+    {headerName: "Gold", field: "gold", width: 100, enableValue:true},
+    {headerName: "Silver", field: "silver", width: 100, enableValue:true},
+    {headerName: "Bronze", field: "bronze", width: 100, enableValue:true},
+    {headerName: "Total", field: "total", width: 100, enableValue:true}
 ];
 
 var gridOptions = {
@@ -228,7 +228,10 @@ var gridOptions = {
         groupedAreaTooltip: 'laGrouped',
         stackedAreaTooltip: 'laStacked',
         normalizedAreaTooltip: 'la100% Stacked',
-        scatterTooltip: 'laScatter'
+        scatterTooltip: 'laScatter',
+        pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.',
+        pivotChartNoData: 'laNo data available to be charted.',
+        rangeChartNoData: 'leNo data available to be charted.'
     }
 };
 
