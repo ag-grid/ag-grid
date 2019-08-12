@@ -45,6 +45,7 @@ body:not(.dark) {
     @include scrollbars(15px, #c2c2c2, #fafafa, #7d7d7d, #e8e8e8);
 }
 
+
 .dark {
     background-color:#222;
     color: white;
