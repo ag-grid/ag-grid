@@ -255,6 +255,7 @@ export class GridChartComp extends Component {
         };
 
         const parent = chartProxy.getChart().parent;
+        // TODO - remove once data is returned correctly
         const isEmptyChart = !data.length || data.length === 1 && !fields.length;
 
         if (parent) {
