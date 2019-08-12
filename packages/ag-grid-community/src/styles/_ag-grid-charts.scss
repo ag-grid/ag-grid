@@ -178,6 +178,24 @@
 
 // sizing
 .ag-chart {
+    .ag-chart-canvas-wrapper.ag-chart-empty {
+        > canvas {
+            visibility: hidden;
+        }
+        .ag-chart-empty-text {
+            display: flex;
+        }
+    }
+
+    .ag-chart-empty-text {
+        display: none;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+    }
     .ag-chart-menu {
         opacity: 0;
         pointer-events: none;
