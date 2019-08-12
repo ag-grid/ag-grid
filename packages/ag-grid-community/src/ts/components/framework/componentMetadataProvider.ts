@@ -25,7 +25,7 @@ export class ComponentMetadataProvider {
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['refresh']
             },
             headerComponent: {
                 mandatoryMethodList: [],
@@ -71,7 +71,7 @@ export class ComponentMetadataProvider {
             },
             fullWidthCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['afterGuiAttached'],
+                optionalMethodList: ['refresh', 'afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             pinnedRowCellRenderer: {
