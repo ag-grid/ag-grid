@@ -1976,7 +1976,7 @@ export class ColumnController {
     // used by growGroupPanel
     public getColumnWithValidation(key: string | Column | undefined): Column | null {
         if (key == null) { return null; }
-        const column = this.getPrimaryColumn(key);
+        const column = this.getGridColumn(key);
         if (!column) {
             console.warn('ag-Grid: could not find column ' + key);
         }
