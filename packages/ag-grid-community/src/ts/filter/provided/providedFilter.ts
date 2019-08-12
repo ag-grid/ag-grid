@@ -189,6 +189,11 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         }
     }
 
+    // called by set filter
+    protected isNewRowsActionKeep(): boolean {
+        return this.newRowsActionKeep;
+    }
+
     protected onUiChanged(afterFloatingFilter = false): void {
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();

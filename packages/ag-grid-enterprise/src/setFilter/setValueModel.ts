@@ -106,9 +106,9 @@ export class SetValueModel {
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
     //    unless selectAll chosen in which case will select all
-    public refreshAfterNewRowsLoaded(keepSelection: any, isSelectAll: boolean) {
+    public refreshAfterNewRowsLoaded(keepSelection: any, everythingSelected: boolean) {
         this.createAllUniqueValues();
-        this.refreshSelection(keepSelection, isSelectAll);
+        this.refreshSelection(keepSelection, everythingSelected);
     }
 
     // if keepSelection not set will always select all filters
@@ -173,6 +173,10 @@ export class SetValueModel {
 
     public setValuesType(value: SetFilterModelValuesType) {
         this.valuesType = value;
+    }
+
+    public getValuesType(): SetFilterModelValuesType {
+        return this.valuesType;
     }
 
     private setValues(valuesToUse: (string | null)[]) {
@@ -351,7 +355,7 @@ export class SetValueModel {
             const safeKey = this.valueToKey(key);
             this.selectedValuesMap[safeKey] = null;
         }
-        this.selectedValuesCount = count;
+        this.selectedValuesCount = Object.keys(this.selectedValuesMap).length;
     }
 
     private valueToKey(key: string): string {
