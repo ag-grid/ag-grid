@@ -96,7 +96,30 @@ include '../documentation-main/documentation_header.php';
     </tr>
 </table>
 
+<h2 id="providedFilterApi">Provided Filter API</h2>
 
+<p>
+    All of the provided filters have the following methods:
+</p>
+
+<table class="properties">
+    <tr>
+        <th>Method</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td class="parameter-key">getModel()</td>
+        <td>Returns the active filter model. If Apply button is used, the model will be the applied model.</td>
+    </tr>
+    <tr>
+        <td class="parameter-key">getModelFromUi()</td>
+        <td>
+            Returns the filter model from the UI regardless of Apply button pressed or not. If Apply button
+            is used, then the model returned will show the state of the UI rather than what the filter currently
+            has as active.
+        </td>
+    </tr>
+</table>
 
 <h2>Apply & Clear Buttons</h2>
 
@@ -121,9 +144,12 @@ include '../documentation-main/documentation_header.php';
     <li>The Athlete, Age and Country columns have filters with Apply and Clear buttons.</li>
     <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
     <li>onFilterChanged gets called after a new filter is applied.</li>
+    <li>Looking at the console, it can be noted when a filter is changed, the result of getModel()
+    and getModelFromUi() are different. The first reflects the active filter, the second reflects
+    what is in the UI (and not yet applied).</li>
 </ul>
 
-<?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', array("processVue" => true)) ?>
+<?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', array("enterprise" => true)) ?>
 
 
 

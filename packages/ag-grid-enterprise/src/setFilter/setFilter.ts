@@ -80,7 +80,7 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    protected getModelFromUi(): SetFilterModel | null {
+    public getModelFromUi(): SetFilterModel | null {
         const values = this.valueModel.getModel();
         if (!values) { return null; }
 

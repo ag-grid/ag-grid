@@ -59,8 +59,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected abstract resetUiToDefaults(): void;
 
     protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
-    protected abstract getModelFromUi(): ProvidedFilterModel | null;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
+
+    public abstract getModelFromUi(): ProvidedFilterModel | null;
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.

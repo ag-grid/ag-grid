@@ -8,6 +8,7 @@ var columnDefs = [
         filterParams: { applyButton: true, clearButton:true }
     },
     {headerName: "Country", field: "country", width: 120,
+        filter: 'agSetColumnFilter',
         filterParams: { applyButton: true, clearButton:true }
     },
     {headerName: "Year", field: "year", width: 90},
@@ -24,8 +25,15 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    onFilterChanged: function() {console.log('onFilterChanged');},
-    onFilterModified: function() {console.log('onFilterModified');}
+    onFilterChanged: function(e) {
+        console.log('onFilterChanged', e);
+        console.log('gridApi.getFilterModel() =>', e.api.getFilterModel());
+    },
+    onFilterModified: function(e) {
+        console.log('onFilterModified', e);
+        console.log('filterInstance.getModel() =>', e.filterInstance.getModel());
+        console.log('filterInstance.getModelFromUi() =>', e.filterInstance.getModelFromUi());
+    }
 };
 
 // setup the grid after the page has finished loading
