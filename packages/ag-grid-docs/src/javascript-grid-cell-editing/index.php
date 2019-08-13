@@ -99,7 +99,7 @@ include '../documentation-main/documentation_header.php';
         The grid will stop editing when any of the following happen:
     </p>
 
-        <ul class="content">
+    <ul class="content">
         <li><b>Callback stopEditing</b>: The callback <code>stopEditing</code> (from the params above) gets called by the
             editor. This is how your cell editor informs the grid to stop editing.</li>
         <li><b>Other Cell Focus</b>: If focus in the grid goes to another cell, the editing will stop.</li>
