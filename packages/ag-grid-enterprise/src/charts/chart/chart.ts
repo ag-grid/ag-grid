@@ -12,8 +12,12 @@ import { Caption } from "../caption";
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
+export type ChartOptions = {
+    document?: Document
+};
+
 export abstract class Chart {
-    readonly scene: Scene = new Scene();
+    readonly scene: Scene;
     readonly background: Rect = new Rect();
 
     legend = new Legend();
@@ -21,27 +25,30 @@ export abstract class Chart {
     protected legendAutoPadding = new Padding();
     protected captionAutoPadding = 0; // top padding only
 
-    private tooltipElement: HTMLDivElement = document.createElement('div');
+    private tooltipElement: HTMLDivElement;
     private tooltipRect?: ClientRect;
 
     tooltipOffset = [20, 20];
 
     private defaultTooltipClass = 'ag-chart-tooltip';
 
-    protected constructor() {
+    protected constructor(options: ChartOptions = {}) {
         const root = new Group();
         const background = this.background;
+        const document = options.document || window.document;
 
         background.fill = 'white';
         root.appendChild(background);
 
+        this.scene = new Scene({document});
         this.scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
 
+        this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
 
-        this.setupListeners(this.scene.hdpiCanvas.canvas);
+        this.setupListeners(this.scene.canvas.element);
     }
 
     destroy() {
@@ -51,7 +58,7 @@ export abstract class Chart {
         }
 
         this.legend.onLayoutChange = undefined;
-        this.cleanupListeners(this.scene.hdpiCanvas.canvas);
+        this.cleanupListeners(this.scene.canvas.element);
         this.scene.parent = undefined;
     }
 
@@ -60,7 +67,7 @@ export abstract class Chart {
     };
 
     get element(): HTMLElement {
-        return this.scene.hdpiCanvas.canvas;
+        return this.scene.canvas.element;
     }
 
     set parent(value: HTMLElement | undefined) {
@@ -332,14 +339,14 @@ export abstract class Chart {
             title.node.x = this.width / 2;
             title.node.y = paddingTop;
             titleVisible = true;
-            paddingTop += bbox.height;
+            paddingTop += bbox ? bbox.height : 0;
 
             if (subtitle && subtitle.enabled) {
                 const bbox = subtitle.node.getBBox();
                 subtitle.node.x = this.width / 2;
                 subtitle.node.y = paddingTop;
                 subtitleVisible = true;
-                paddingTop += spacing + bbox.height;
+                paddingTop += spacing + (bbox ? bbox.height : 0);
             }
         }
 

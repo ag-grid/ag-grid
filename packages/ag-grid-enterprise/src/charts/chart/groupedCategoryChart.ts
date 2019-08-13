@@ -9,13 +9,21 @@ import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 
 export type CartesianChartLayout = 'vertical' | 'horizontal';
 type GroupedCategoryChartAxis = GroupedCategoryAxis | Axis<Scale<any, number>>;
+export type GroupedCategoryChartOptions = {
+    xAxis: GroupedCategoryChartAxis,
+    yAxis: GroupedCategoryChartAxis,
+    document?: Document;
+}
 
 export class GroupedCategoryChart extends Chart {
 
     private axisAutoPadding = new Padding();
 
-    constructor(xAxis: GroupedCategoryChartAxis, yAxis: GroupedCategoryChartAxis) {
-        super();
+    constructor(options: GroupedCategoryChartOptions) {
+        super(options);
+
+        const xAxis = options.xAxis;
+        const yAxis = options.yAxis;
 
         this._xAxis = xAxis;
         this._yAxis = yAxis;

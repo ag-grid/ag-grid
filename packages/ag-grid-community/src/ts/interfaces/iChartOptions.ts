@@ -1,4 +1,5 @@
 export interface ChartOptions {
+    document?: Document;
     parent?: HTMLElement;
     width?: number;
     height?: number;

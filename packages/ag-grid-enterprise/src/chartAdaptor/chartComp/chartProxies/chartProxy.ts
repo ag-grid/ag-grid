@@ -26,6 +26,7 @@ export interface ChartProxyParams {
     eventService: EventService;
     categorySelected: boolean;
     grouping: boolean;
+    document: Document;
 }
 
 export interface UpdateChartParams {

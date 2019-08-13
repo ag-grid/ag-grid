@@ -16,7 +16,7 @@ export class EnterNode {
         this.datum = datum;
     }
 
-    scene: Scene | null;
+    scene?: Scene;
     parent: Node | EnterNode;
     datum: any;
     next: Node | EnterNode | null = null;

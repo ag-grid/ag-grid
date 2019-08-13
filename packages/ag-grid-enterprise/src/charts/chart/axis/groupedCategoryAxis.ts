@@ -352,7 +352,7 @@ export class GroupedCategoryAxis {
                 label.translationX = datum.screenY - this.labelFontSize * 0.25;
                 label.translationY = datum.screenX;
                 const bbox = label.getBBox();
-                if (bbox.width > maxLeafLabelWidth) {
+                if (bbox && bbox.width > maxLeafLabelWidth) {
                     maxLeafLabelWidth = bbox.width;
                 }
             });
@@ -511,11 +511,14 @@ export class GroupedCategoryAxis {
                 const group = label.parent!;
                 group.computeTransformMatrix();
                 matrix.preMultiplySelf(group.matrix);
-                const bbox = matrix.transformBBox(label.getBBox());
-                left = Math.min(left, bbox.x);
-                right = Math.max(right, bbox.x + bbox.width);
-                top = Math.min(top, bbox.y);
-                bottom = Math.max(bottom, bbox.y + bbox.height);
+                const labelBBox = label.getBBox();
+                if (labelBBox) {
+                    const bbox = matrix.transformBBox(labelBBox);
+                    left = Math.min(left, bbox.x);
+                    right = Math.max(right, bbox.x + bbox.width);
+                    top = Math.min(top, bbox.y);
+                    bottom = Math.max(bottom, bbox.y + bbox.height);
+                }
             }
         });
 

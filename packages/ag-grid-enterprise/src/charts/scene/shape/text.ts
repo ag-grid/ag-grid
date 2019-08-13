@@ -2,6 +2,7 @@ import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { HdpiCanvas } from "../../canvas/hdpiCanvas";
 import { BBox } from "../bbox";
+import { Scene } from "../scene";
 
 export class Text extends Shape {
 
@@ -173,58 +174,66 @@ export class Text extends Shape {
         return this._lineHeight;
     }
 
-    readonly getBBox = HdpiCanvas.has.textMetrics
-        ? (): BBox => {
-            const metrics = HdpiCanvas.measureText(this.text, this.font,
-                this.textBaseline, this.textAlign);
+    getBBox(): BBox | undefined {
+        return this.scene
+            ? this.scene.canvas.has.textMetrics
+                ? this.getPreciseBBox()
+                : this.getApproximateBBox()
+            : undefined;
+    }
 
-            return new BBox(
-                this.x - metrics.actualBoundingBoxLeft,
-                this.y - metrics.actualBoundingBoxAscent,
-                metrics.width,
-                metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
-            );
+    private getPreciseBBox(): BBox {
+        const metrics = this.scene!.canvas.measureText(this.text, this.font,
+            this.textBaseline, this.textAlign);
+
+        return new BBox(
+            this.x - metrics.actualBoundingBoxLeft,
+            this.y - metrics.actualBoundingBoxAscent,
+            metrics.width,
+            metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+        );
+    }
+
+    private getApproximateBBox(): BBox {
+        const size = this.scene!.canvas.getTextSize(this.text, this.font);
+        let x = this.x;
+        let y = this.y;
+
+        switch (this.textAlign) {
+            case 'end':
+            case 'right':
+                x -= size.width;
+                break;
+            case 'center':
+                x -= size.width / 2;
         }
-        : (): BBox => {
-            const size = HdpiCanvas.getTextSize(this.text, this.font);
-            let x = this.x;
-            let y = this.y;
 
-            switch (this.textAlign) {
-                case 'end':
-                case 'right':
-                    x -= size.width;
-                    break;
-                case 'center':
-                    x -= size.width / 2;
-            }
+        switch (this.textBaseline) {
+            case 'alphabetic':
+                y -= size.height * 0.7;
+                break;
+            case 'middle':
+                y -= size.height * 0.45;
+                break;
+            case 'ideographic':
+                y -= size.height;
+                break;
+            case 'hanging':
+                y -= size.height * 0.2;
+                break;
+            case 'bottom':
+                y -= size.height;
+                break;
+        }
 
-            switch (this.textBaseline) {
-                case 'alphabetic':
-                    y -= size.height * 0.7;
-                    break;
-                case 'middle':
-                    y -= size.height * 0.45;
-                    break;
-                case 'ideographic':
-                    y -= size.height;
-                    break;
-                case 'hanging':
-                    y -= size.height * 0.2;
-                    break;
-                case 'bottom':
-                    y -= size.height;
-                    break;
-            }
-
-            return new BBox(x, y, size.width, size.height);
-        };
+        return new BBox(x, y, size.width, size.height);
+    }
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
         const bbox = this.getBBox();
 
-        return bbox.containsPoint(point.x, point.y);
+        return bbox ? bbox.containsPoint(point.x, point.y) : false;
     }
 
     isPointInStroke(x: number, y: number): boolean {
@@ -249,7 +258,7 @@ export class Text extends Shape {
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
 
-        const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+        const pixelRatio = this.scene.canvas.pixelRatio || 1;
 
         if (this.fill) {
             ctx.fillStyle = this.fill;

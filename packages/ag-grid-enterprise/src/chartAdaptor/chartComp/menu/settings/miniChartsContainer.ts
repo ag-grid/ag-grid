@@ -127,12 +127,15 @@ export abstract class MiniChart extends Component {
     protected readonly padding = 5;
     protected readonly root = new Group();
     protected readonly scene: Scene = (() => {
-        const scene = new Scene(this.size, this.size);
+        const scene = new Scene({
+            width: this.size,
+            height: this.size
+        });
         scene.root = this.root;
         return scene;
     })();
 
-    readonly element: HTMLElement = this.scene.hdpiCanvas.canvas;
+    readonly element: HTMLElement = this.scene.canvas.element;
 
     abstract updateColors(fills: string[], strokes: string[]): void;
 }
@@ -168,7 +171,7 @@ export class MiniPie extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('pieTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('pieTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -200,7 +203,7 @@ class MiniDoughnut extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('doughnutTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('doughnutTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -275,7 +278,7 @@ class MiniLine extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('lineTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('lineTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -347,7 +350,7 @@ class MiniColumn extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('groupedColumnTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('groupedColumnTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -420,7 +423,7 @@ class MiniBar extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('groupedBarTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('groupedBarTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -498,7 +501,7 @@ class MiniStackedColumn extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('stackedColumnTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('stackedColumnTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -578,7 +581,7 @@ class MiniStackedBar extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('stackedBarTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('stackedBarTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -658,7 +661,7 @@ class MiniNormalizedColumn extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('normalizedColumnTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedColumnTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -738,7 +741,7 @@ class MiniNormalizedBar extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('normalizedBarTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedBarTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -818,7 +821,7 @@ class MiniScatter extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('scatterTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('scatterTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -922,7 +925,7 @@ class MiniArea extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('groupedAreaTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('groupedAreaTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -1027,7 +1030,7 @@ class MiniStackedArea extends MiniChart {
 
     @PostConstruct
     protected init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('stackedAreaTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('stackedAreaTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -1051,6 +1054,6 @@ class MiniNormalizedArea extends MiniStackedArea {
 
     @PostConstruct
     protected init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('normalizedAreaTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedAreaTooltip');
     }
 }
