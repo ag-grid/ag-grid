@@ -144,7 +144,7 @@ export class CellComp extends Component {
         const col = this.column;
 
         const width = this.getCellWidth();
-        const left = this.modifyLeftForPrintLayout(col.getLeft());
+        const left = this.modifyLeftForPrintLayout(this.getCellLeft());
 
         const valueToRender = this.getInitialValueToRender();
         const valueSanitised = _.get(this.column, 'colDef.template', null) ? valueToRender : _.escape(valueToRender);
