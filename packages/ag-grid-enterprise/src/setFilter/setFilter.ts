@@ -80,7 +80,7 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    protected getModelFromUi(): SetFilterModel | null {
+    public getModelFromUi(): SetFilterModel | null {
         const values = this.valueModel.getModel();
         if (!values) { return null; }
 
@@ -268,16 +268,24 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    public syncValuesLikeExcel(): void {
-
-    }
-
     public onNewRowsLoaded(): void {
-        const keepSelection = this.setFilterParams && this.setFilterParams.newRowsAction === 'keep';
-        const isSelectAll = this.selectAllState === CheckboxState.CHECKED;
+
+        const valuesType = this.valueModel.getValuesType();
+        const valuesTypeProvided =
+            valuesType===SetFilterModelValuesType.PROVIDED_CB
+            || valuesType===SetFilterModelValuesType.PROVIDED_LIST;
+
+        // if the user is providing values, and we are keeping the previous selection, then
+        // loading new rows into the grid should have no impact.
+        const newRowsActionKeep = this.isNewRowsActionKeep();
+        if (newRowsActionKeep && valuesTypeProvided) {
+            return;
+        }
+
+        const everythingSelected = !this.getModel();
 
         // default is reset
-        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
+        this.valueModel.refreshAfterNewRowsLoaded(newRowsActionKeep, everythingSelected);
         this.updateSelectAll();
         this.virtualList.refresh();
 

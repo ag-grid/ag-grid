@@ -879,9 +879,6 @@ export class GridPanel extends Component {
         // we have to add an extra pixel to the scroller viewport on IE because
         // if the container has the same size as the scrollbar, the scroll button won't work
         _.setFixedHeight(this.eBodyHorizontalScrollViewport, scrollContainerSize + (addIEPadding ? 1 : 0));
-        if (addIEPadding) {
-            this.eBodyHorizontalScrollViewport.style.bottom = '1px';
-        }
         _.setFixedHeight(this.eBodyHorizontalScrollContainer, scrollContainerSize);
     }
 

@@ -1,22 +1,11 @@
-import {
-    Autowired,
-    Events,
-    EventService,
-    GridApi,
-    PostConstruct,
-    IStatusPanelComp,
-    IRowModel,
-    ClientSideRowModel
-} from 'ag-grid-community';
-import { NameValueComp } from "./nameValueComp";
+import {Autowired, Events, EventService, GridApi, IRowModel, IStatusPanelComp, PostConstruct} from 'ag-grid-community';
+import {NameValueComp} from "./nameValueComp";
 
 export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
     @Autowired('rowModel') gridRowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
-
-    private clientSideRowModel: ClientSideRowModel;
 
     @PostConstruct
     protected postConstruct(): void {
@@ -25,8 +14,6 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         if (this.gridApi.getModel().getType() !== 'clientSide') {
             console.warn(`ag-Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);
             return;
-        } else {
-            this.clientSideRowModel = this.gridRowModel as ClientSideRowModel;
         }
 
         this.setLabel('totalAndFilteredRows', 'Rows');
@@ -40,7 +27,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     }
 
     private onDataChanged() {
-        const rowCount = this.clientSideRowModel.getRowCount();
+        const rowCount = this.getFilteredRowCountValue();
         const totalRowCount = this.getTotalRowCount();
 
         //TODO we should add internationalization key for 'of'
@@ -48,9 +35,19 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         this.setValue(displayValue);
     }
 
+    private getFilteredRowCountValue(): number {
+        let filteredRowCount = 0;
+        this.gridApi.forEachNodeAfterFilter((node) => {
+            if (!node.group) filteredRowCount++;
+        });
+        return filteredRowCount;
+    }
+
     private getTotalRowCount(): number {
         let totalRowCount = 0;
-        this.gridApi.forEachNode(_ => totalRowCount++);
+        this.gridApi.forEachNode(node => {
+            if (!node.group) totalRowCount++
+        });
         return totalRowCount;
     }
 

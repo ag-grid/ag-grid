@@ -44,7 +44,9 @@ export class GridChartComp extends Component {
     private static TEMPLATE =
         `<div class="ag-chart" tabindex="-1">
             <div ref="eChartComponentsWrapper" tabindex="-1" class="ag-chart-components-wrapper">
-                <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
+                <div ref="eChart" class="ag-chart-canvas-wrapper">
+                    <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
+                </div>
             </div>
             <div ref="eDockedContainer" class="ag-chart-docked-container"></div>
         </div>`;
@@ -52,6 +54,7 @@ export class GridChartComp extends Component {
     @RefSelector('eChart') private eChart: HTMLElement;
     @RefSelector('eChartComponentsWrapper') private eChartComponentsWrapper: HTMLElement;
     @RefSelector('eDockedContainer') private eDockedContainer: HTMLElement;
+    @RefSelector('eEmpty') private eEmpty: HTMLElement;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -119,7 +122,10 @@ export class GridChartComp extends Component {
             height = chart.height;
             width = chart.width;
             this.chartProxy.destroy();
-            _.clearElement(this.eChart);
+            const canvas = this.eChart.querySelector('canvas');
+            if (canvas) {
+                this.eChart.removeChild(canvas);
+            }
         }
 
         const processChartOptionsFunc = this.params.processChartOptions ?
@@ -233,18 +239,46 @@ export class GridChartComp extends Component {
     }
 
     public updateChart() {
-        const selectedCols = this.model.getSelectedValueColState();
+        const { model, chartProxy } = this;
+
+        const selectedCols = model.getSelectedValueColState();
         const fields = selectedCols.map(c => {
             return {colId: c.colId, displayName: c.displayName};
         });
 
+        const data = model.getData();
+
+        const chartEmpty = this.handleEmptyChart(data, fields);
+        if (chartEmpty) return;
+
         const chartUpdateParams: UpdateChartParams = {
-            data: this.model.getData(),
-            categoryId: this.model.getSelectedDimensionId(),
+            data,
+            categoryId: model.getSelectedDimensionId(),
             fields: fields
         };
+        chartProxy.update(chartUpdateParams);
+    }
 
-        this.chartProxy.update(chartUpdateParams);
+    private handleEmptyChart(data: any[], fields: any[]) {
+        const parent = this.chartProxy.getChart().parent;
+
+        const pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
+        const isEmptyChart = fields.length == 0 || data.length === 1;
+
+        if (parent) {
+            _.addOrRemoveCssClass(parent, 'ag-chart-empty', pivotModeDisabled || isEmptyChart);
+        }
+        if (pivotModeDisabled) {
+            this.eEmpty.innerText = this.chartTranslator.translate('pivotChartRequiresPivotMode');
+            return true;
+        }
+        if (isEmptyChart) {
+            const msgKey = this.model.isPivotChart() ? 'pivotChartNoData' : 'rangeChartNoData';
+            this.eEmpty.innerText = this.chartTranslator.translate(msgKey);
+            return true;
+        }
+
+        return false;
     }
 
     private downloadChart() {
@@ -269,7 +303,6 @@ export class GridChartComp extends Component {
                 observeResizeFunc();
                 return;
             }
-
             this.refreshCanvasSize();
         };
 

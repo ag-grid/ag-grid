@@ -62,9 +62,9 @@ let gridOptions = {
         opts.seriesDefaults.fills =['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
         opts.seriesDefaults.strokes =['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
-        opts.seriesDefaults.tooltipRenderer = (params) => {
+        opts.seriesDefaults.tooltipRenderer = function(params) {
             let value = '$' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-            return `<div style="padding: 5px"><b>${params.title}</b>: ${value}</div>`;
+            return '<div style="padding: 5px"><b>' + params.title + '</b>: ' + value + '</div>';
         };
 
         return opts;

@@ -141,7 +141,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.eJoinOperatorAnd.checked = true;
     }
 
-    protected getModelFromUi(): M | ICombinedSimpleModel<M> {
+    public getModelFromUi(): M | ICombinedSimpleModel<M> {
         if (!this.isConditionUiComplete(ConditionPosition.One)) { return null; }
 
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
