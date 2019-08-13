@@ -24,37 +24,41 @@ export class Group extends Node {
         }
 
         this.children.forEach(child => {
-            if (child.visible && child.getBBox) {
-                const bbox = child.getBBox();
+            if (!child.visible) {
+                return;
+            }
+            const bbox = child.getBBox();
+            if (!bbox) {
+                return;
+            }
 
-                if (!(child instanceof Group)) {
-                    if (child.dirtyTransform) {
-                        child.computeTransformMatrix();
-                    }
-                    const matrix = Matrix.flyweight(child.matrix);
-                    let parent = child.parent;
-                    while (parent) {
-                        matrix.preMultiplySelf(parent.matrix);
-                        parent = parent.parent;
-                    }
-                    matrix.transformBBox(bbox, 0, bbox);
+            if (!(child instanceof Group)) {
+                if (child.dirtyTransform) {
+                    child.computeTransformMatrix();
                 }
+                const matrix = Matrix.flyweight(child.matrix);
+                let parent = child.parent;
+                while (parent) {
+                    matrix.preMultiplySelf(parent.matrix);
+                    parent = parent.parent;
+                }
+                matrix.transformBBox(bbox, 0, bbox);
+            }
 
-                const x = bbox.x;
-                const y = bbox.y;
+            const x = bbox.x;
+            const y = bbox.y;
 
-                if (x < left) {
-                    left = x;
-                }
-                if (y < top) {
-                    top = y;
-                }
-                if (x + bbox.width > right) {
-                    right = x + bbox.width;
-                }
-                if (y + bbox.height > bottom) {
-                    bottom = y + bbox.height;
-                }
+            if (x < left) {
+                left = x;
+            }
+            if (y < top) {
+                top = y;
+            }
+            if (x + bbox.width > right) {
+                right = x + bbox.width;
+            }
+            if (y + bbox.height > bottom) {
+                bottom = y + bbox.height;
             }
         });
 

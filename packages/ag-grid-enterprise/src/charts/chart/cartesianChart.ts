@@ -6,16 +6,24 @@ import { ClipRect } from "../scene/clipRect";
 import { numericExtent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
-import { CategoryAxis } from "./axis/categoryAxis";
 
 export type CartesianChartLayout = 'vertical' | 'horizontal';
+
+export type CartesianChartOptions = {
+    xAxis: Axis<Scale<any, number>>,
+    yAxis: Axis<Scale<any, number>>,
+    document?: Document
+};
 
 export class CartesianChart extends Chart {
 
     private axisAutoPadding = new Padding();
 
-    constructor(xAxis: Axis<Scale<any, number>>, yAxis: Axis<Scale<any, number>>) {
-        super();
+    constructor(options: CartesianChartOptions) {
+        super(options);
+
+        const xAxis = options.xAxis;
+        const yAxis = options.yAxis;
 
         this._xAxis = xAxis;
         this._yAxis = yAxis;

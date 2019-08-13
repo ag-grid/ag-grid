@@ -45,78 +45,96 @@ type SeriesType = CartesianSeriesType | PolarSeriesType;
 export class ChartBuilder {
 
     static createCartesianChart(options: CartesianChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options);
     }
 
     static createGroupedColumnChart(options: BarChartOptions): GroupedCategoryChart {
-        const chart = new GroupedCategoryChart(
-            ChartBuilder.createGroupedAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
     }
 
     static createGroupedBarChart(options: BarChartOptions): GroupedCategoryChart {
-        const chart = new GroupedCategoryChart(
-            ChartBuilder.createAxis(options.yAxis),
-            ChartBuilder.createGroupedAxis(options.xAxis)
-        );
+        const chart = new GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.yAxis),
+            yAxis: ChartBuilder.createGroupedAxis(options.xAxis)
+        });
         chart.layout = 'horizontal';
         return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
     }
 
     static createGroupedLineChart(options: BarChartOptions): GroupedCategoryChart {
-        const chart = new GroupedCategoryChart(
-            ChartBuilder.createGroupedAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initGroupedCategoryChart(chart, options, 'line');
     }
 
     static createGroupedAreaChart(options: AreaChartOptions): GroupedCategoryChart {
-        const chart = new GroupedCategoryChart(
-            ChartBuilder.createGroupedAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
 
         return ChartBuilder.initGroupedCategoryChart(chart, options, 'area');
     }
 
     static createBarChart(options: BarChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.yAxis),
-            ChartBuilder.createAxis(options.xAxis)
-        );
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.yAxis),
+            yAxis: ChartBuilder.createAxis(options.xAxis)
+        });
         chart.layout = 'horizontal';
         return ChartBuilder.initCartesianChart(chart, options, 'bar');
     }
 
     static createColumnChart(options: BarChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options, 'bar');
     }
 
     static createLineChart(options: LineChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options, 'line');
     }
 
     static createScatterChart(options: ScatterChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options, 'scatter');
+    }
+
+    static createAreaChart(options: AreaChartOptions): CartesianChart {
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
+        return ChartBuilder.initCartesianChart(chart, options, 'area');
     }
 
     static createPolarChart(options: PolarChartOptions): PolarChart {
@@ -132,14 +150,6 @@ export class ChartBuilder {
     static createPieChart(options: PieChartOptions): PolarChart {
         const chart = new PolarChart();
         return ChartBuilder.initPolarChart(chart, options, 'pie');
-    }
-
-    static createAreaChart(options: AreaChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
-        return ChartBuilder.initCartesianChart(chart, options, 'area');
     }
 
     static createLineSeries(options: LineSeriesOptions): LineSeries {

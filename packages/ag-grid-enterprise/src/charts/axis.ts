@@ -19,8 +19,8 @@ enum Tags {
 }
 
 export interface GridStyle {
-    stroke?: string,
-    lineDash?: number[]
+    stroke?: string;
+    lineDash?: number[];
 }
 
 /**
@@ -463,22 +463,28 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const group = label.parent!;
             group.computeTransformMatrix();
             matrix.preMultiplySelf(group.matrix);
-            const bbox = matrix.transformBBox(label.getBBox());
-            left = Math.min(left, bbox.x);
-            right = Math.max(right, bbox.x + bbox.width);
-            top = Math.min(top, bbox.y);
-            bottom = Math.max(bottom, bbox.y + bbox.height);
+            const labelBBox = label.getBBox();
+            if (labelBBox) {
+                const bbox = matrix.transformBBox(labelBBox);
+                left = Math.min(left, bbox.x);
+                right = Math.max(right, bbox.x + bbox.width);
+                top = Math.min(top, bbox.y);
+                bottom = Math.max(bottom, bbox.y + bbox.height);
+            }
         });
 
         if (includeTitle && this.title) {
             const label = this.title.node;
             label.computeTransformMatrix();
             const matrix = Matrix.flyweight(label.matrix);
-            const bbox = matrix.transformBBox(label.getBBox());
-            left = Math.min(left, bbox.x);
-            right = Math.max(right, bbox.x + bbox.width);
-            top = Math.min(top, bbox.y);
-            bottom = Math.max(bottom, bbox.y + bbox.height);
+            const labelBBox = label.getBBox();
+            if (labelBBox) {
+                const bbox = matrix.transformBBox(labelBBox);
+                left = Math.min(left, bbox.x);
+                right = Math.max(right, bbox.x + bbox.width);
+                top = Math.min(top, bbox.y);
+                bottom = Math.max(bottom, bbox.y + bbox.height);
+            }
         }
 
         left = Math.min(left, 0);

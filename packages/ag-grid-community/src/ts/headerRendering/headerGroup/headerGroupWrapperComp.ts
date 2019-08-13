@@ -26,8 +26,8 @@ import { _ } from "../../utils";
 export class HeaderGroupWrapperComp extends Component {
 
     private static TEMPLATE =
-        '<div class="ag-header-group-cell">' +
-          '<div ref="agResize" class="ag-header-cell-resize"></div>' +
+        '<div class="ag-header-group-cell" role="presentation">' +
+          '<div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>' +
         '</div>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

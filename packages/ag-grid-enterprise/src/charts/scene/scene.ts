@@ -2,6 +2,12 @@ import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Node } from "./node";
 import { Path2D } from "./path2D";
 
+export type SceneOptions = {
+    width?: number,
+    height?: number,
+    document?: Document
+};
+
 export class Scene {
 
     private static id = 1;
@@ -10,50 +16,52 @@ export class Scene {
         return (this.constructor as any).name + '-' + (Scene.id++);
     };
 
-    readonly hdpiCanvas: HdpiCanvas;
+    readonly canvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;
 
-    constructor(width = 800, height = 600) {
-        this.hdpiCanvas = new HdpiCanvas(this._width = width, this._height = height);
-        this.ctx = this.hdpiCanvas.context;
+    constructor(options: SceneOptions = {}) {
+        this.canvas = new HdpiCanvas({
+            width: options.width || 300,
+            height: options.height || 150,
+            document: options.document || window.document
+        });
+        this.ctx = this.canvas.context;
     }
 
     set parent(value: HTMLElement | undefined) {
-        this.hdpiCanvas.parent = value;
+        this.canvas.parent = value;
     }
     get parent(): HTMLElement | undefined {
-        return this.hdpiCanvas.parent;
+        return this.canvas.parent;
     }
 
     download(fileName?: string) {
-        this.hdpiCanvas.download(fileName);
+        this.canvas.download(fileName);
     }
 
-    private _width: number;
     set width(value: number) {
-        this.size = [value, this._height];
+        this.size = [value, this.height];
     }
     get width(): number {
-        return this._width;
+        return this.canvas.width;
     }
 
-    private _height: number;
     set height(value: number) {
-        this.size = [this._width, value];
+        this.size = [this.width, value];
     }
     get height(): number {
-        return this._height;
+        return this.canvas.height;
     }
 
     set size(value: [number, number]) {
-        if (this._width !== value[0] || this._height !== value[1]) {
-            this.hdpiCanvas.resize(value[0], value[1]);
-            [this._width, this._height] = value;
+        const [width, height] = value;
+        if (this.width !== width || this.height !== height) {
+            this.canvas.resize(width, height);
             this.dirty = true;
         }
     }
     get size(): [number, number] {
-        return [this._width, this._height];
+        return [this.width, this.height];
     }
 
     private _dirty = false;
@@ -74,7 +82,7 @@ export class Scene {
         }
 
         if (this._root) {
-            this._root._setScene(null);
+            this._root._setScene(undefined);
         }
 
         this._root = node;

@@ -21,7 +21,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     @PostConstruct
     private postConstruct(): void {
         this.setTemplate(
-            `<div class="ag-input-wrapper">
+            `<div class="ag-input-wrapper" role="presentation">
                 <input ref="eFloatingFilterText" class="ag-floating-filter-input">
             </div>`);
     }

@@ -762,7 +762,7 @@
                 margin-top: $grid-size;
             }
 
-            > div > :first-child {
+            > div:first-child > span:first-child {
                 margin-left: $grid-size;
                 margin-right: $grid-size;
             }

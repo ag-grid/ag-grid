@@ -226,7 +226,7 @@ export class Rect extends Shape {
             return;
         }
 
-        const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+        const pixelRatio = this.scene.canvas.pixelRatio || 1;
 
         if (this.fill) {
             ctx.fillStyle = this.fill;

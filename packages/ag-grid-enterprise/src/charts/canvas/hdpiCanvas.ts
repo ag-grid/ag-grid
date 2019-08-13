@@ -1,26 +1,36 @@
 type Size = { width: number, height: number };
 
+export type HdpiCanvasOptions = {
+    width?: number,
+    height?: number,
+    document?: Document
+};
+
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.
  */
 export class HdpiCanvas {
-    readonly canvas = document.createElement('canvas');
-
-    readonly context = this.canvas.getContext('2d')!;
+    readonly document: Document;
+    readonly element: HTMLCanvasElement;
+    readonly context: CanvasRenderingContext2D;
 
     /**
      * The canvas flickers on size changes in Safari.
      * A temporary canvas is used (during resize only) to prevent that.
      */
-    private tempCanvas = document.createElement('canvas');
+    private tempCanvas: HTMLCanvasElement;
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
-    constructor(width = 300, height = 150) {
-        this.canvas.style.userSelect = 'none';
+    constructor(options: HdpiCanvasOptions = {}) {
+        this.document = options.document || window.document;
+        this.tempCanvas = this.document.createElement('canvas')!;
+        this.element = this.document.createElement('canvas');
+        this.element.style.userSelect = 'none';
+        this.context = this.element.getContext('2d')!;
         this.updatePixelRatio(0, false);
-        this.resize(width, height);
+        this.resize(this._width = options.width || 300, this._height = options.height || 150);
     }
 
     private _parent: HTMLElement | undefined = undefined;
@@ -28,7 +38,7 @@ export class HdpiCanvas {
         if (this._parent !== value) {
             this.remove();
             if (value) {
-                value.appendChild(this.canvas);
+                value.appendChild(this.element);
             }
             this._parent = value;
         }
@@ -39,22 +49,22 @@ export class HdpiCanvas {
     }
 
     private remove() {
-        const parent = this.canvas.parentNode;
+        const parent = this.element.parentNode;
 
         if (parent !== null) {
-            parent.removeChild(this.canvas);
+            parent.removeChild(this.element);
         }
     }
 
     destroy() {
-        this.canvas.remove();
+        this.element.remove();
         (this as any)._canvas = undefined;
         Object.freeze(this);
     }
 
     toImage(): HTMLImageElement {
-        const img = document.createElement('img');
-        img.src = this.canvas.toDataURL();
+        const img = this.document.createElement('img');
+        img.src = this.element.toDataURL();
         return img;
     }
 
@@ -69,7 +79,8 @@ export class HdpiCanvas {
         // so we don't support saving to JPEG.
         const type = 'image/png';
 
-        const dataUrl = this.canvas.toDataURL(type);
+        const dataUrl = this.element.toDataURL(type);
+        const document = this.document;
 
         if (navigator.msSaveOrOpenBlob) { // IE11
             const binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
@@ -114,7 +125,7 @@ export class HdpiCanvas {
             return;
         }
 
-        const canvas = this.canvas;
+        const canvas = this.element;
         const ctx = this.context;
         const overrides = this.overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
         for (const name in overrides) {
@@ -145,10 +156,23 @@ export class HdpiCanvas {
         this._pixelRatio = pixelRatio;
     }
 
+    private _width: number;
+    get width(): number {
+        return this._width;
+    }
+
+    private _height: number;
+    get height(): number {
+        return this._height;
+    }
+
     resize(width: number, height: number) {
-        const canvas = this.canvas;
+        const canvas = this.element;
         const context = this.context;
         const tempCanvas = this.tempCanvas;
+
+        this._width = width;
+        this._height = height;
 
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
@@ -167,23 +191,23 @@ export class HdpiCanvas {
     }
 
     // 2D canvas context used for measuring text.
-    private static _textMeasuringContext?: CanvasRenderingContext2D;
-    private static get textMeasuringContext(): CanvasRenderingContext2D {
-        if (HdpiCanvas._textMeasuringContext) {
-            return HdpiCanvas._textMeasuringContext;
+    private _textMeasuringContext?: CanvasRenderingContext2D;
+    private get textMeasuringContext(): CanvasRenderingContext2D {
+        if (this._textMeasuringContext) {
+            return this._textMeasuringContext;
         }
         const canvas = document.createElement('canvas');
-        return HdpiCanvas._textMeasuringContext = canvas.getContext('2d')!;
+        return this._textMeasuringContext = canvas.getContext('2d')!;
     }
 
     // Offscreen SVGTextElement for measuring text. This fallback method
     // is at least 25 times slower than `CanvasRenderingContext2D.measureText`.
     // Using a <span> and its `getBoundingClientRect` for text measurement
     // is also slow and often results in a grossly incorrect measured height.
-    private static _svgText: SVGTextElement;
-    private static get svgText(): SVGTextElement {
-        if (HdpiCanvas._svgText) {
-            return HdpiCanvas._svgText;
+    private _svgText?: SVGTextElement;
+    private get svgText(): SVGTextElement {
+        if (this._svgText) {
+            return this._svgText;
         }
 
         const xmlns = 'http://www.w3.org/2000/svg';
@@ -210,32 +234,32 @@ export class HdpiCanvas {
         svg.appendChild(svgText);
         document.body.appendChild(svg);
 
-        HdpiCanvas._svgText = svgText;
+        this._svgText = svgText;
 
         return svgText;
     };
 
-    private static _has?: Readonly<{
+    private _has?: Readonly<{
         textMetrics: boolean,
         getTransform: boolean,
         flicker: boolean
     }>;
-    static get has() {
-        if (HdpiCanvas._has) {
-            return HdpiCanvas._has;
+    get has() {
+        if (this._has) {
+            return this._has;
         }
-        return HdpiCanvas._has = Object.freeze({
-            textMetrics: HdpiCanvas.textMeasuringContext.measureText('test')
+        return this._has = Object.freeze({
+            textMetrics: this.textMeasuringContext.measureText('test')
                 .actualBoundingBoxDescent !== undefined,
-            getTransform: HdpiCanvas.textMeasuringContext.getTransform !== undefined,
+            getTransform: this.textMeasuringContext.getTransform !== undefined,
             flicker: !!(window as any).safari
         });
     };
 
-    static measureText(text: string, font: string,
+    measureText(text: string, font: string,
                        textBaseline: CanvasTextBaseline,
                        textAlign: CanvasTextAlign): TextMetrics {
-        const ctx = HdpiCanvas.textMeasuringContext;
+        const ctx = this.textMeasuringContext;
         ctx.font = font;
         ctx.textBaseline = textBaseline;
         ctx.textAlign = textAlign;
@@ -247,9 +271,9 @@ export class HdpiCanvas {
      * @param text The single-line text to measure.
      * @param font The font shorthand string.
      */
-    static getTextSize(text: string, font: string): Size {
-        if (HdpiCanvas.has.textMetrics) {
-            const ctx = HdpiCanvas.textMeasuringContext;
+    getTextSize(text: string, font: string): Size {
+        if (this.has.textMetrics) {
+            const ctx = this.textMeasuringContext;
             ctx.font = font;
             const metrics = ctx.measureText(text);
 
@@ -258,13 +282,13 @@ export class HdpiCanvas {
                 height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
             };
         } else {
-            return HdpiCanvas.measureSvgText(text, font);
+            return this.measureSvgText(text, font);
         }
     }
 
     private static textSizeCache: { [font: string]: { [text: string] : Size } } = {};
 
-    private static measureSvgText(text: string, font: string): Size {
+    private measureSvgText(text: string, font: string): Size {
         const cache = HdpiCanvas.textSizeCache;
         const fontCache = cache[font];
 
@@ -280,7 +304,7 @@ export class HdpiCanvas {
             cache[font] = {};
         }
 
-        const svgText = HdpiCanvas.svgText;
+        const svgText = this.svgText;
 
         svgText.style.font = font;
         svgText.textContent = text;
