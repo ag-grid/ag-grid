@@ -61,24 +61,10 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         }
 
         this.addDestroyableEventListener(eInput, 'keydown', (event: KeyboardEvent) => {
-            const isNavigationKey = event.keyCode === Constants.KEY_LEFT
-                || event.keyCode === Constants.KEY_RIGHT
-                || event.keyCode === Constants.KEY_UP
-                || event.keyCode === Constants.KEY_DOWN
-                || event.keyCode === Constants.KEY_PAGE_DOWN
-                || event.keyCode === Constants.KEY_PAGE_UP
-                || event.keyCode === Constants.KEY_PAGE_HOME
-                || event.keyCode === Constants.KEY_PAGE_END;
-            if (isNavigationKey) {
-                // this stops the grid from executing keyboard navigation
-                event.stopPropagation();
-
-                // this stops the browser from scrolling up / down
-                const pageUp = event.keyCode === Constants.KEY_PAGE_UP;
-                const pageDown = event.keyCode === Constants.KEY_PAGE_DOWN;
-                if (pageUp || pageDown) {
-                    event.preventDefault();
-                }
+            const pageUp = event.keyCode === Constants.KEY_PAGE_UP;
+            const pageDown = event.keyCode === Constants.KEY_PAGE_DOWN;
+            if (pageUp || pageDown) {
+                event.preventDefault();
             }
         });
     }
