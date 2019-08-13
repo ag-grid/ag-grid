@@ -1842,6 +1842,7 @@ export class CellComp extends Component {
 
         return this.rangeCount &&
                handlesAllowed &&
+               lastRange.endRow != null &&
                this.beans.rangeController.isContiguousRange(lastRange) &&
                (
                     _.containsClass(el, 'ag-cell-range-single-cell') ||
