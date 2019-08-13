@@ -210,8 +210,11 @@ export class Sector extends Shape {
             //         centerY + 0.5 * (innerRadius + outerRadius) * Math.sin(endAngle) + tipOffset * Math.sin(endAngle + Math.PI / 2)
             //     );
             // }
+            // Temp workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=993330
+            // Revert this commit when fixed ^^.
+            const x = centerX + innerRadius * Math.cos(endAngle);
             path.lineTo(
-                centerX + innerRadius * Math.cos(endAngle),
+                Math.abs(x) < 1e-8 ? 0 : x,
                 centerY + innerRadius * Math.sin(endAngle)
             );
         }

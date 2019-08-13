@@ -220,10 +220,13 @@ export class Path2D {
         while (theta2 >= rightAngle) {
             theta2 -= rightAngle;
             commands.push('C');
+            // Temp workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=993330
+            // Revert this commit when fixed ^^.
+            const lastX = xy + cx;
             params.push(
                 xx + xy * f90 + cx, yx + yy * f90 + cy,
                 xx * f90 + xy + cx, yx * f90 + yy + cy,
-                xy + cx, yy + cy
+                Math.abs(lastX) < 1e-8 ? 0 : lastX, yy + cy
             );
             // Prepend π/2 rotation matrix.
             // |xx xy| | 0 1| -> | xy -xx|
@@ -250,10 +253,13 @@ export class Path2D {
             const C2x = cosPhi2 + f * sinPhi2;
             const C2y = sinPhi2 - f * cosPhi2;
             commands.push('C');
+            // Temp workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=993330
+            // Revert this commit when fixed ^^.
+            const lastX = xx * cosPhi2 + xy * sinPhi2 + cx;
             params.push(
                 xx + xy * f + cx, yx + yy * f + cy,
                 xx * C2x + xy * C2y + cx, yx * C2x + yy * C2y + cy,
-                xx * cosPhi2 + xy * sinPhi2 + cx, yx * cosPhi2 + yy * sinPhi2 + cy
+                Math.abs(lastX) < 1e-8 ? 0 : lastX, yx * cosPhi2 + yy * sinPhi2 + cy
             );
         }
         if (anticlockwise) {
