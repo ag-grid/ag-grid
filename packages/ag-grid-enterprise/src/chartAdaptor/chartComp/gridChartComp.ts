@@ -263,7 +263,7 @@ export class GridChartComp extends Component {
         const parent = this.chartProxy.getChart().parent;
 
         const pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
-        const isEmptyChart = fields.length == 0 || data.length === 1;
+        const isEmptyChart = fields.length == 0 || data.length === 0;
 
         if (parent) {
             _.addOrRemoveCssClass(parent, 'ag-chart-empty', pivotModeDisabled || isEmptyChart);
