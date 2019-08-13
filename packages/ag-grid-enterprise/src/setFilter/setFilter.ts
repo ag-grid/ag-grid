@@ -234,10 +234,6 @@ export class SetFilter extends ProvidedFilter {
         this.eMiniFilter.focus();
     }
 
-    public isFilterActive(): boolean {
-        return this.valueModel.isFilterActive();
-    }
-
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
 
         // if no filter, always pass
@@ -289,7 +285,7 @@ export class SetFilter extends ProvidedFilter {
         this.updateSelectAll();
         this.virtualList.refresh();
 
-        this.updateModel();
+        this.applyModel();
     }
 
     //noinspection JSUnusedGlobalSymbols

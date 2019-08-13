@@ -119,6 +119,14 @@ include '../documentation-main/documentation_header.php';
             has as active.
         </td>
     </tr>
+    <tr>
+        <td class="parameter-key">applyModel()</td>
+        <td>
+            Applies the model (so that getModel() will return what is in the UI when applyModel() was called).
+            Useful when using <a href="../javascript-grid-filter-set/">Set Filter API</a> and making changes
+            to the UI and to have those changes applied.
+        </td>
+    </tr>
 </table>
 
 <h2>Apply & Clear Buttons</h2>

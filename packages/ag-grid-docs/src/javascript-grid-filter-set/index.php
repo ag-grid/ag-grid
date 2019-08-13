@@ -441,17 +441,45 @@ gridApi.onFilterChanged()</snippet>
         <li><b>setFilterValues(arrayOfStringOptions)</b>: Useful if you want to change on the fly the available options
         <li><b>resetFilterValues()</b>: Useful if you want to rebuild the filter options based on the underlying data</li>
         <li><b>setLoading(loading)</b>: Useful if you want to show/hide the loading overlay in the set filter.</li>
+        <li><b>applyModel()</b>: Applies the model from the UI.</li>
     </ul>
 
     <p>
         Is important to note that when updating the set filter through the API is up to the developer to call
-        gridOptions.api.onFilterChanged() at the end of the interaction with the filter.
-
-        If no call to gridOptions.api.onFilterChanged() is provided the grid will still show the data relevant to the filter
+        <code>filterInstance.applyModel()</code> and then
+        <code>gridOptions.api.onFilterChanged()</code> at the end of the interaction with the filter.
+    </p>
+    <p>
+        If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show the changes, but
+        it won't be reflected in the filter model. This will appear as if the user never hit the Apply button (regardless
+        of whether the Apply button is active or not).
+    </p>
+    <p>
+        If no call to <code>gridOptions.api.onFilterChanged()</code> is provided the grid will still show the data relevant to the filter
         before it was updated through the API.
+    </p>
 
+    <snippet>
+// Example - Interacting with Set Filter
+
+// Get filter instance
+var instance = gridOptions.api.getFilterInstance('athlete');
+
+// Set filter properties
+instance.selectNothing();
+instance.selectValue('John Joe Nevin');
+instance.selectValue('Kenny Egan');
+
+// Apply the model.
+instance.applyModel();
+
+// Get the grid to refresh the rows based on new filter
+gridOptions.api.onFilterChanged();
+    </snippet>
+
+    <p>
         In the example below, you can see how the filter for the Athlete column is modified through the API and how at the
-        end of the interaction a call to gridOptions.api.onFilterChanged() is performed.
+        end of the interaction a call to <code>gridOptions.api.onFilterChanged()</code> is performed.
     </p>
 
     <?= example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
