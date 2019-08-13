@@ -274,8 +274,8 @@ export class AgDialog extends AgPanel {
             this.lastPosition.x = this.position.x;
             this.lastPosition.y = this.position.y;
             this.offsetElement(0, 0);
-            this.setHeight(Infinity);
-            this.setWidth(Infinity);
+            this.setHeight('100%');
+            this.setWidth('100%');
         }
 
         this.isMaximized = !this.isMaximized;

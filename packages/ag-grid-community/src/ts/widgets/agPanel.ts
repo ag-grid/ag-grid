@@ -299,6 +299,9 @@ export class AgPanel extends Component {
 
         if (!isPercent) {
             _.setFixedHeight(eGui, height);
+        } else {
+            eGui.style.maxHeight = 'unset';
+            eGui.style.minHeight = 'unset';
         }
     }
 
@@ -327,6 +330,9 @@ export class AgPanel extends Component {
         this.size.width = width;
         if (!isPercent) {
             _.setFixedWidth(eGui, width);
+        } else {
+            eGui.style.maxWidth = 'unset';
+            eGui.style.minWidth = 'unset';
         }
     }
 
