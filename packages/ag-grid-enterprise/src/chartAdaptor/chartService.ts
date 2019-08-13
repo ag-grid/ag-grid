@@ -51,12 +51,7 @@ export class ChartService implements IChartService {
         }
     }
 
-    public pivotChart(): ChartRef | undefined {
-        // if required enter pivot mode
-        if (!this.columnController.isPivotMode()) {
-            this.columnController.setPivotMode(true, "pivotChart");
-        }
-
+    public pivotChart(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
         // pivot chart range contains all visible column without a row range to include all rows
         const chartAllRangeParams = {
             columns: this.columnController.getAllDisplayedColumns().map(col => col.getColId())
@@ -69,7 +64,7 @@ export class ChartService implements IChartService {
         }
 
         const pivotChart = true, suppressChartRanges = true;
-        return this.chartRange(cellRange, ChartType.GroupedColumn, pivotChart, suppressChartRanges);
+        return this.chartRange(cellRange, chartType, pivotChart, suppressChartRanges);
     }
 
     private chartRange(cellRange: CellRange,

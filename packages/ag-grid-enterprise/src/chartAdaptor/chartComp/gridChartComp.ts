@@ -111,8 +111,6 @@ export class GridChartComp extends Component {
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
         this.refresh();
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eEmpty.innerText = localeTextFunc('emptyChartText', 'No data available to be charted.');
     }
 
     private createChart() {
@@ -248,21 +246,38 @@ export class GridChartComp extends Component {
         });
 
         const data = model.getData();
+
+        const chartEmpty = this.handleEmptyChart(data, fields);
+        if (chartEmpty) return;
+
         const chartUpdateParams: UpdateChartParams = {
             data,
             categoryId: model.getSelectedDimensionId(),
             fields: fields
         };
+        chartProxy.update(chartUpdateParams);
+    }
 
-        const parent = chartProxy.getChart().parent;
-        // TODO - remove once data is returned correctly
-        const isEmptyChart = !data.length || data.length === 1 && !fields.length;
+    private handleEmptyChart(data: any[], fields: any[]) {
+        const parent = this.chartProxy.getChart().parent;
+
+        const pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
+        const isEmptyChart = fields.length == 0 || data.length === 1;
 
         if (parent) {
-            _.addOrRemoveCssClass(parent, 'ag-chart-empty', isEmptyChart);
+            _.addOrRemoveCssClass(parent, 'ag-chart-empty', pivotModeDisabled || isEmptyChart);
+        }
+        if (pivotModeDisabled) {
+            this.eEmpty.innerText = this.chartTranslator.translate('pivotChartRequiresPivotMode');
+            return true;
+        }
+        if (isEmptyChart) {
+            const msgKey = this.model.isPivotChart() ? 'pivotChartNoData' : 'rangeChartNoData';
+            this.eEmpty.innerText = this.chartTranslator.translate(msgKey);
+            return true;
         }
 
-        chartProxy.update(chartUpdateParams);
+        return false;
     }
 
     private downloadChart() {
@@ -287,7 +302,6 @@ export class GridChartComp extends Component {
                 observeResizeFunc();
                 return;
             }
-
             this.refreshCanvasSize();
         };
 

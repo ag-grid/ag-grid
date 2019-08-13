@@ -1,7 +1,8 @@
 import {
     _,
-    Autowired,
     Bean,
+    Autowired,
+    PostConstruct,
     BeanStub,
     Column,
     Component,
@@ -16,9 +17,9 @@ import {
     IRowModel,
     MenuItemDef,
     PopupService,
-    PostConstruct,
     RowNode,
-    ModuleNames
+    ModuleNames,
+    ColumnController
 } from "ag-grid-community";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
@@ -33,6 +34,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rangeController') private rangeController: RangeController;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private activeMenu: ContextMenu | null;
 
@@ -62,7 +64,11 @@ export class ContextMenuFactory implements IContextMenuFactory {
         }
 
         if (this.gridOptionsWrapper.isEnableCharts() && this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
-            defaultMenuOptions.push('pivotChart');
+
+            if (this.columnController.isPivotMode()) {
+                defaultMenuOptions.push('pivotChart');
+            }
+
             if (!this.rangeController.isEmpty()) {
                 defaultMenuOptions.push('chartRange');
             }

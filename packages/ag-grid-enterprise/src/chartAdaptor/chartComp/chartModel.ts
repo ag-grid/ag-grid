@@ -270,6 +270,10 @@ export class ChartModel extends BeanStub {
         return this.columnController.isPivotActive();
     }
 
+    public isPivotMode(): boolean {
+        return this.columnController.isPivotMode();
+    }
+
     public isPivotChart(): boolean {
         return this.pivotChart;
     }

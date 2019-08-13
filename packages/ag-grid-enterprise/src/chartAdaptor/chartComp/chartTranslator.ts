@@ -73,7 +73,10 @@ export class ChartTranslator {
         pieGroup: 'Pie',
         lineGroup: 'Line',
         scatterGroup: 'Scatter',
-        areaGroup: 'Area'
+        areaGroup: 'Area',
+        pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
+        pivotChartNoData: 'No data available to be charted.',
+        rangeChartNoData: 'No data available to be charted.'
     };
 
     public translate(toTranslate: string): string {
