@@ -254,6 +254,9 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     public getValue(): any {
+        // NOTE: we don't use valueParser for Set Filter. The user should provide values that are to be
+        // set into the data. valueParser only really makese sense when the user is typing in text (not picking
+        // form a set).
         return this.selectionConfirmed ? this.selectedValue : this.originalSelectedValue;
     }
 }
