@@ -1,8 +1,8 @@
-import { ProvidedFilterModel, IDoesFilterPassParams, IFilterOptionDef } from "../../interfaces/iFilter";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { OptionsFactory } from "./optionsFactory";
-import { ProvidedFilter, IProvidedFilterParams } from "./providedFilter";
-import { _ } from "../../utils";
+import {IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel} from "../../interfaces/iFilter";
+import {RefSelector} from "../../widgets/componentAnnotations";
+import {OptionsFactory} from "./optionsFactory";
+import {IProvidedFilterParams, ProvidedFilter} from "./providedFilter";
+import {_} from "../../utils";
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string) [];
