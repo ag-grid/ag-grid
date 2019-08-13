@@ -164,7 +164,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     // returns true if the new model is different to the old model
-    protected updateModel(): boolean {
+    public applyModel(): boolean {
         const oldAppliedModel = this.appliedModel;
         this.appliedModel = this.getModelFromUi();
 
@@ -175,7 +175,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     private onBtApply(afterFloatingFilter = false) {
-        const newModelDifferent = this.updateModel();
+        const newModelDifferent = this.applyModel();
         if (newModelDifferent) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter

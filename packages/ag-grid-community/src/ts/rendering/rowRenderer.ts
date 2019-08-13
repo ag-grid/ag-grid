@@ -1112,7 +1112,11 @@ export class RowRenderer extends BeanStub {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (key === Constants.KEY_RIGHT) {
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                if (key === Constants.KEY_LEFT) {
+                    nextCell = this.getLastCellOfColSpan(nextCell);
+                }
+            } else if (key === Constants.KEY_RIGHT) {
                 nextCell = this.getLastCellOfColSpan(nextCell);
             }
 

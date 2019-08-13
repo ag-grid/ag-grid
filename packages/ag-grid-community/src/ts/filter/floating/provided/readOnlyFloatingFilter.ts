@@ -13,7 +13,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     private params: IFloatingFilterParams;
 
     constructor() {
-        super(`<div class="ag-input-wrapper"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
+        super(`<div class="ag-input-wrapper" role="presentation"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
     }
 
     public init(params: IFloatingFilterParams): void {

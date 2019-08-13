@@ -37,10 +37,10 @@ export class FloatingFilterWrapper extends Component {
     };
 
     private static TEMPLATE =
-        `<div class="ag-header-cell" aria-hidden="true">
-            <div ref="eFloatingFilterBody" aria-hidden="true"></div>
-            <div class="ag-floating-filter-button" ref="eButtonWrapper" aria-hidden="true">
-                    <button type="button" ref="eButtonShowMainFilter"></button>
+        `<div class="ag-header-cell" role="presentation">
+            <div ref="eFloatingFilterBody" role="columnheader"></div>
+            <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
+                <button type="button" ref="eButtonShowMainFilter"></button>
             </div>
         </div>`;
 

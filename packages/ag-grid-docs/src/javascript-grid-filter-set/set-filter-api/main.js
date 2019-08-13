@@ -62,33 +62,40 @@ function patchData(data) {
 }
 
 function selectJohnAndKenny() {
-    var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
-    athleteFilterComponent.selectNothing();
-    athleteFilterComponent.selectValue('John Joe Nevin');
-    athleteFilterComponent.selectValue('Kenny Egan');
+    var instance = gridOptions.api.getFilterInstance('athlete');
+    instance.selectNothing();
+    instance.selectValue('John Joe Nevin');
+    instance.selectValue('Kenny Egan');
+    instance.applyModel();
     gridOptions.api.onFilterChanged();
 }
 
 function selectEverything() {
-    var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
-    athleteFilterComponent.selectEverything();
+    var instance = gridOptions.api.getFilterInstance('athlete');
+    instance.selectEverything();
+    instance.applyModel();
     gridOptions.api.onFilterChanged();
 }
 
 function selectNothing() {
-    var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
-    athleteFilterComponent.selectNothing();
+    var instance = gridOptions.api.getFilterInstance('athlete');
+    instance.selectNothing();
+    instance.applyModel();
     gridOptions.api.onFilterChanged();
 }
 
 function setCountriesToFranceAustralia() {
-    var countryFilterComponent = gridOptions.api.getFilterInstance('country');
-    countryFilterComponent.setFilterValues(['France', 'Australia']);
+    var instance = gridOptions.api.getFilterInstance('country');
+    instance.setFilterValues(['France', 'Australia']);
+    instance.applyModel();
+    gridOptions.api.onFilterChanged();
 }
 
 function setCountriesToAll() {
-    var countryFilterComponent = gridOptions.api.getFilterInstance('country');
-    countryFilterComponent.resetFilterValues();
+    var instance = gridOptions.api.getFilterInstance('country');
+    instance.resetFilterValues();
+    instance.applyModel();
+    gridOptions.api.onFilterChanged();
 }
 
 // setup the grid after the page has finished loading
