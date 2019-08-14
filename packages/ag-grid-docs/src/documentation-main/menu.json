@@ -954,6 +954,10 @@
           {
             "title": "Internationalisation",
             "url": "javascript-grid-internationalisation/"
+          },
+          {
+            "title": "Security",
+            "url": "javascript-grid-security/"
           }
         ]
       },

@@ -4,7 +4,7 @@ import {
     AgCheckbox,
     AgGroupComponent,
     AgRadioButton,
-    Autowired,
+    Autowired, ChartType,
     Component,
     PostConstruct
 } from "ag-grid-community";
@@ -41,12 +41,15 @@ export class ChartDataPanel extends Component {
 
         const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
 
+        const xyChart = this.isXYChart();
+
         [dimensionCols, valueCols].forEach((group, idx) => {
             const isCategory = idx === 0;
+
+            let dataGroupKey = isCategory ? 'categories' : xyChart ? 'xyValues' : 'series';
+
             const groupComp = new AgGroupComponent({
-                title: isCategory 
-                    ? this.chartTranslator.translate('categories')
-                    : this.chartTranslator.translate('series'),
+                title: this.chartTranslator.translate(dataGroupKey),
                 enabled: true,
                 suppressEnabledCheckbox: true,
                 suppressOpenCloseIcons: false
@@ -85,6 +88,12 @@ export class ChartDataPanel extends Component {
 
             container.addItem(comp);
         };
+    }
+
+    private isXYChart() {
+        const xyChartSelected = [ChartType.Scatter].indexOf(this.chartController.getChartType()) > -1;
+        // x y charts behave like regular cartesian charts if the default category is not selected, i.e. (None)
+        return xyChartSelected && this.chartController.isDefaultCategorySelected();
     }
 
     public destroy(): void {
