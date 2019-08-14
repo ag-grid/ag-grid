@@ -99,6 +99,11 @@ export class ChartController extends BeanStub {
         return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()}
     }
 
+    public isDefaultCategorySelected() {
+        const selectedDimension = this.model.getSelectedDimensionId();
+        return selectedDimension && selectedDimension === ChartModel.DEFAULT_CATEGORY;
+    }
+
     public setChartRange() {
         if (!this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
