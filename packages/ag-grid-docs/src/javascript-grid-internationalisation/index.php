@@ -114,7 +114,10 @@ localeText = {
         doughnut: 'laDoughnut',
 
         line: 'laLine',
+
+        xyChart: 'laX Y (Scatter)',
         scatter: 'laScatter',
+        bubble: 'laBubble',
 
         areaChart: 'laArea',
         area: 'laArea',
@@ -214,8 +217,8 @@ localeText = {
         stackedAreaTooltip: 'laStacked',
         normalizedAreaTooltip: 'la100% Stacked',
         scatterTooltip: 'laScatter',
-        pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.',
-        noDataToChart: 'laNo data available to be charted.'
+        noDataToChart: 'laNo data available to be charted.',
+        pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.'
 }</snippet>
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>
