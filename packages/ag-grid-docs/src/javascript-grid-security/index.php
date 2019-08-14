@@ -57,8 +57,15 @@ cellClassRules: {
     
     <p>
 
-        So the minimal rule to load the grid is: <code>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:</code>.<br>
-        If you are using code parsing as mentioned above, the rule is: <code>default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:</code>
+        So the minimal rule to load the grid is:
+        <snippet>
+        &lt;meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:"&gt;
+        </snippet>
+        If you are using code parsing as mentioned above, the rule is:
+        <snippet>
+        &lt;meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:"&gt;
+        </snippet>
+</snippet>
     </p>
 
     <h2>OWASP Benchmark</h2>
