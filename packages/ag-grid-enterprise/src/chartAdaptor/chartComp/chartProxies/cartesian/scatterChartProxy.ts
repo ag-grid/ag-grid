@@ -23,30 +23,28 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             return;
         }
 
-        const scatterChart = this.chart as CartesianChart;
+        const chart = this.chart as CartesianChart;
         const fieldIds = params.fields.map(f => f.colId);
-
         const existingSeriesMap: { [id: string]: ScatterSeries } = {};
+        const defaultCategorySelected = params.categoryId === ChartModel.DEFAULT_CATEGORY;
 
         const updateSeries = (scatterSeries: ScatterSeries) => {
             const id = scatterSeries.yField as string;
             const seriesExists = fieldIds.indexOf(id) > -1;
-            seriesExists ? existingSeriesMap[id] = scatterSeries : scatterChart.removeSeries(scatterSeries);
+            seriesExists ? existingSeriesMap[id] = scatterSeries : chart.removeSeries(scatterSeries);
         };
 
-        scatterChart.series
+        chart.series
             .map(series => series as ScatterSeries)
             .forEach(updateSeries);
 
-        const chart = this.chart as CartesianChart;
-        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
+        if (defaultCategorySelected) {
             chart.xAxis.labelRotation = 0;
             this.chartOptions.xAxis.labelRotation = 0;
         } else {
             chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
         }
 
-        const xField = params.categoryId === ChartModel.DEFAULT_CATEGORY ? params.fields[0].colId : params.categoryId;
         const updateFunc = (f: { colId: string, displayName: string }, index: number) => {
             const seriesOptions = this.chartOptions.seriesDefaults as ScatterSeriesOptions;
 
@@ -54,9 +52,15 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             const scatterSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
 
             if (scatterSeries) {
-                scatterSeries.title = f.displayName;
+                if (defaultCategorySelected) {
+                    scatterSeries.title = `${params.fields[0].displayName} vs ${f.displayName}`;
+                    scatterSeries.xField = params.fields[0].colId;
+                } else {
+                    scatterSeries.title = f.displayName;
+                    scatterSeries.xField = params.categoryId;
+                }
+
                 scatterSeries.data = params.data;
-                scatterSeries.xField = xField;
                 scatterSeries.yField = f.colId;
 
                 const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
@@ -68,7 +72,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 scatterSeries.stroke = strokes[index % strokes.length];
 
                 if (!existingSeries) {
-                    scatterChart.addSeries(scatterSeries);
+                    chart.addSeries(scatterSeries);
                 }
             }
         };
@@ -106,8 +110,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     }
 
     private defaultOptions(): ScatterChartOptions {
-
-        const showLegend = this.chartProxyParams.categorySelected;
         const xAxisType = this.chartProxyParams.categorySelected ? 'category' : 'number';
         const palette = this.chartProxyParams.getSelectedPalette();
 
@@ -183,7 +185,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,
-                showInLegend: showLegend,
+                showInLegend: true,
                 title: ''
             }
         };

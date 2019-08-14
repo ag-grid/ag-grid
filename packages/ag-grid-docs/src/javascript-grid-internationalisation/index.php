@@ -99,28 +99,27 @@ localeText = {
         pivotChart: 'laPivot Chart',
         chartRange: 'laChart Range',
 
-        columnRangeChart: 'laColumn',
-        groupedColumnChart: 'laGrouped',
-        stackedColumnChart: 'laStacked',
-        normalizedColumnChart: 'la100% Stacked',
+        columnChart: 'laColumn',
+        groupedColumn: 'laGrouped',
+        stackedColumn: 'laStacked',
+        normalizedColumn: 'la100% Stacked',
 
-        barRangeChart: 'laBar',
-        groupedBarChart: 'laGrouped',
-        stackedBarChart: 'laStacked',
-        normalizedBarChart: 'la100% Stacked',
+        barChart: 'laBar',
+        groupedBar: 'laGrouped',
+        stackedBar: 'laStacked',
+        normalizedBar: 'la100% Stacked',
 
-        lineRangeChart: 'laLine',
-
-        pieRangeChart: 'laPie',
         pieChart: 'laPie',
-        doughnutChart: 'laDoughnut',
+        pie: 'laPie',
+        doughnut: 'laDoughnut',
 
-        areaRangeChart: 'laArea',
+        line: 'laLine',
+        scatter: 'laScatter',
+
         areaChart: 'laArea',
-        stackedAreaChart: 'laStacked',
-        normalizedAreaChart: 'la100% Stacked',
-
-        scatterRangeChart: 'laScatter',
+        area: 'laArea',
+        stackedArea: 'laStacked',
+        normalizedArea: 'la100% Stacked',
 
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',
@@ -216,8 +215,7 @@ localeText = {
         normalizedAreaTooltip: 'la100% Stacked',
         scatterTooltip: 'laScatter',
         pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.',
-        pivotChartNoData: 'laNo data available to be charted.',
-        rangeChartNoData: 'leNo data available to be charted.'
+        noDataToChart: 'laNo data available to be charted.'
 }</snippet>
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>

@@ -99,6 +99,11 @@ export class ChartController extends BeanStub {
         return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()}
     }
 
+    public isDefaultCategorySelected() {
+        const selectedDimension = this.model.getSelectedDimensionId();
+        return selectedDimension && selectedDimension === ChartModel.DEFAULT_CATEGORY;
+    }
+
     public setChartRange() {
         if (!this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
@@ -112,6 +117,12 @@ export class ChartController extends BeanStub {
 
     public getChartProxy(): ChartProxy<any> {
         return this.model.getChartProxy();
+    }
+
+    public isXYChart() {
+        const xyChartSelected = [ChartType.Scatter].indexOf(this.getChartType()) > -1;
+        // x y charts behave like regular cartesian charts if the default category is not selected, i.e. (None)
+        return xyChartSelected && this.isDefaultCategorySelected();
     }
 
     private raiseChartUpdatedEvent() {

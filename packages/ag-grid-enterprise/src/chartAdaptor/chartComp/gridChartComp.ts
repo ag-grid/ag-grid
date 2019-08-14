@@ -27,6 +27,9 @@ import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
 import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
 import {Palette, palettes} from "../../charts/chart/palettes";
 import {ChartTranslator} from "./chartTranslator";
+import {CartesianChart} from "../../charts/chart/cartesianChart";
+import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
+import {NumberAxis} from "../../charts/chart/axis/numberAxis";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -210,12 +213,31 @@ export class GridChartComp extends Component {
     }
 
     private refresh(): void {
-        const chartTypeChanged = this.model.getChartType() !== this.currentChartType;
-        const groupingChanged = this.currentChartGroupingActive !== this.model.isGrouping();
-        if (chartTypeChanged || groupingChanged) {
+        if (this.shouldRecreateChart()) {
             this.createChart();
         }
+
         this.updateChart();
+    }
+
+    private shouldRecreateChart(): boolean {
+        const chartTypeChanged = this.model.getChartType() !== this.currentChartType;
+        const groupingChanged = this.currentChartGroupingActive !== this.model.isGrouping();
+        if (chartTypeChanged || groupingChanged) return true;
+
+        // we also need to recreate XY charts when xAxis changes
+
+        if (this.isXYChart()) {
+            const categorySelected = !this.chartController.isDefaultCategorySelected();
+
+            const chart = this.chartProxy.getChart() as CartesianChart;
+            const switchingToCategoryAxis = categorySelected && chart.xAxis instanceof NumberAxis;
+            const switchingToNumberAxis = !categorySelected && chart.xAxis instanceof CategoryAxis;
+
+            return switchingToCategoryAxis || switchingToNumberAxis;
+        }
+
+        return false;
     }
 
     public getChartComponentsWrapper(): HTMLElement {
@@ -263,7 +285,9 @@ export class GridChartComp extends Component {
         const parent = this.chartProxy.getChart().parent;
 
         const pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
-        const isEmptyChart = fields.length == 0 || data.length === 1;
+
+        const minFieldsRequired = this.chartController.isXYChart() ? 2 : 1;
+        const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
 
         if (parent) {
             _.addOrRemoveCssClass(parent, 'ag-chart-empty', pivotModeDisabled || isEmptyChart);
@@ -273,8 +297,7 @@ export class GridChartComp extends Component {
             return true;
         }
         if (isEmptyChart) {
-            const msgKey = this.model.isPivotChart() ? 'pivotChartNoData' : 'rangeChartNoData';
-            this.eEmpty.innerText = this.chartTranslator.translate(msgKey);
+            this.eEmpty.innerText = this.chartTranslator.translate('noDataToChart');
             return true;
         }
 
@@ -314,6 +337,10 @@ export class GridChartComp extends Component {
             return;
         }
         this.chartController.setChartRange();
+    }
+
+    private isXYChart(): boolean {
+        return [ChartType.Scatter].indexOf(this.model.getChartType()) > -1;
     }
 
     public destroy(): void {

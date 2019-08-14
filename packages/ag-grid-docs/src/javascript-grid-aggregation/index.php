@@ -117,6 +117,46 @@ colDef = {
     </note>
 
 
+    <h2 id="customAggregationFunctions">Custom Aggregation Functions</h2>
+
+    <p>
+        It is possible to add your own custom aggregation to the grid. Custom aggregation functions can be applied
+        directly to the column or registered to the grid and reference by name (similar to grid provided functions).
+    </p>
+
+    <p>
+        A custom aggregation function takes a list of values and should return the result of the aggregation.
+    </p>
+
+    <snippet>
+// custom simple aggregation, complete 'sum' of values
+function mySum(values) {
+    var result = 0;
+    values.forEach( function(value) {
+        if (typeof value === 'number') {
+            result += value;
+        }
+    });
+    return result;
+}
+
+// Option 1 - reference the function directly with a column
+var columnA = {
+    field: 'a',
+    aggFunc: mySum
+};
+
+// Option 2 - register the function with the grid property aggFuncs
+gridOptions.aggFuncs: {
+    mySumFunc: mySum
+};
+
+var columnB = {
+    field: 'a',
+    aggFunc: 'mySumFunc'
+};
+</snippet>
+
     <h2>Example 2 - Custom Aggregation Functions</h2>
 
     <p>
@@ -190,23 +230,34 @@ colDef = {
             </p>
 
             <p>
-                The 'xyz' function is set using the API.
+                The 'xyz' function is set using the API. Note that we also set 'xyz' in the grid options as otherwise
+                the grid would complain 'Function not found' as it tries to use the function before it is set
+                via the API.
             </p>
         </li>
     </ul>
 
-    <p>
-        Note that the example below gives an error on the console saying it cannot find 'xyz'. This is because
-        it tries to aggregate the empty set when the grid is been initialised.
-        The same would happen if you set the data via the rowData property. It is because 'xyz' is set after
-        the grid is initialised. To prevent this error you should opt for setting the <code>aggFunc</code> as a grid
-        property (directly into the grid options)
-        or make sure that <code>aggFunc</code> is not used in any column until it is configured into the grid.
-    </p>
-
     <?= example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h2>Aggregation API</h2>
+    <p>
+        Note that custom aggregations will get called for the top level rows to calculate a 'Grand Total',
+        not just for row groups. For example if you have 10 rows in the grid, the grid will still call the
+        aggregation with 10 values to get a grand total aggregation.
+    </p>
+
+    <p>
+        The grand total aggregation is normally not seen, unless the grid is configured with
+        <a href="../javascript-grid-grouping/#grouping-footers">Grouping Total Footers</a>. Total footers
+        display the result of the aggregation for top level, for example displaying a grand total even
+        if no row grouping is active.
+    </p>
+
+    <p>
+        When the grid is empty, the aggregations are still called once with an empty set. This is to calculate
+        the grand total aggregation for the top level.
+    </p>
+
+    <h2 id="aggregationApi">Aggregation API</h2>
 
     <p>
         After the grid is initialised, there are two steps to set an aggregation on a column:
@@ -221,7 +272,7 @@ colDef = {
         added as a value column.
     </p>
 
-    <h2>Column Headers</h2>
+    <h2 id="columnHeaders">Column Headers</h2>
 
     <p>
         When aggregating, the column headers will include the aggregation function for the column. For example the
@@ -229,7 +280,7 @@ colDef = {
         To turn this off and display simply <code>'Bank Balance'</code> then set the grid property <code>suppressAggFuncInHeader</code>.
     </p>
 
-    <h2>Custom Full Row Aggregation</h2>
+    <h2 id="customFullRowAggregation">Custom Full Row Aggregation</h2>
 
     <p>
         Using <code>colDef.aggFunc</code> is the preferred way of doing aggregations. However you may find scenarios
@@ -257,17 +308,38 @@ colDef = {
     colId: 'aaa'
 }</snippet>
     Then the result of the aggregation will be stored in <code>data.aaa</code> and not in 'abby'. Most of the time this
-    will not matter for you as the colId will default to the field if colId is missing and it doesn't violate uniqueness.
-    You need to be aware of this, as if you store the result in a place other than the colId, it won't work.
+    will not matter for you as the colId, if not provided, will default to the field.
+        In order for the grid to display the aggregation result, it must be stored in the correct field name.
     </p>
 
     <p>
-        Below shows a contrived example using <code>groupRowAggNodes</code>. The example makes no sense, however it
-        serves the demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal
+        Below shows an  example using <code>groupRowAggNodes</code>. The example doesn't represent a real world scenario,
+        it's contrived for demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal
         sum and another by multiplying the result by Math.PI.
     </p>
 
     <?= example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+    <h2>Empty Aggregation Calls</h2>
+
+    <p>
+        When providing either <a href="#customAggregationFunctions">Custom Aggregation Functions</a>
+        or <a href="#customFullRowAggregation">Custom Full Row Aggregation</a> then you will see strange calls to
+        these functions where empty lists are provided.
+    </p>
+
+    <p>
+        The empty aggregation calls happen in the following two scenarios:
+    </p>
+    <ol>
+        <li>
+            The grid has no data (usually the case when the gird is initially displayed before the application
+            has set data). Aggregating at the root level will request an aggregation of an empty set.
+        </li>
+        <li>
+            The grid has groups and a filter, such that groups are empty.
+        </li>
+    </ol>
 
     <h2>Recomputing Aggregates</h2>
 
