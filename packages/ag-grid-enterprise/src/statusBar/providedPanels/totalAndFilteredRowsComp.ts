@@ -1,11 +1,17 @@
-import {Autowired, Events, EventService, GridApi, IRowModel, IStatusPanelComp, PostConstruct} from 'ag-grid-community';
+import {
+    Autowired,
+    Events,
+    EventService,
+    GridApi,
+    IStatusPanelComp,
+    PostConstruct
+} from 'ag-grid-community';
 import {NameValueComp} from "./nameValueComp";
 
 export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
-    @Autowired('rowModel') gridRowModel: IRowModel;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('eventService') private eventService: EventService;
 
     @PostConstruct
     protected postConstruct(): void {
@@ -30,9 +36,12 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         const rowCount = this.getFilteredRowCountValue();
         const totalRowCount = this.getTotalRowCount();
 
-        //TODO we should add internationalization key for 'of'
-        let displayValue = rowCount === totalRowCount ? `${rowCount}` : `${rowCount} of ${totalRowCount}`;
-        this.setValue(displayValue);
+        if (rowCount === totalRowCount) {
+            this.setValue(rowCount);
+        } else {
+            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            this.setValue(`${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`);
+        }
     }
 
     private getFilteredRowCountValue(): number {

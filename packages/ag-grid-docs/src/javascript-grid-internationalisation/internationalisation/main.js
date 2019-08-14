@@ -30,8 +30,9 @@ var gridOptions = {
     pagination:true,
     rowGroupPanelShow: 'always',
     statusBar: {
-        items: [
-            { component: 'agAggregationComponent' }
+        statusPanels: [
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
+            { statusPanel: 'agAggregationComponent' }
         ]
     },
     paginationPageSize: 500,
@@ -154,6 +155,10 @@ var gridOptions = {
         none: 'laNone',
         count: 'laCount',
         average: 'laAverage',
+        filteredRows: 'laFiltered',
+        selectedRows: 'laSelected',
+        totalRows: 'laTotal Rows',
+        totalAndFilteredRows: 'laRows',
 
         // standard menu
         copy: 'laCopy',
