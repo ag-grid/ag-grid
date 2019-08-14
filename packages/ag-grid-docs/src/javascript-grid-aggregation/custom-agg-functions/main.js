@@ -41,7 +41,7 @@ var gridOptions = {
         // we could also register functions after the grid is created,
         // however because we are providing the columns in the grid options,
         // it will be to late (eg remove 'xyz' from aggFuncs, and you will
-        // see the grid complains.
+        // see the grid complains).
         params.api.addAggFunc('xyz', xyzFunc);
 
         // this has nothing to do with aggregation, just get cols to fit width
