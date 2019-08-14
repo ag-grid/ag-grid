@@ -215,8 +215,7 @@ localeText = {
         normalizedAreaTooltip: 'la100% Stacked',
         scatterTooltip: 'laScatter',
         pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.',
-        pivotChartNoData: 'laNo data available to be charted.',
-        rangeChartNoData: 'leNo data available to be charted.'
+        noDataToChart: 'laNo data available to be charted.'
 }</snippet>
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>

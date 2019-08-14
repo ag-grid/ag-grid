@@ -4,7 +4,7 @@ import {
     AgCheckbox,
     AgGroupComponent,
     AgRadioButton,
-    Autowired, ChartType,
+    Autowired,
     Component,
     PostConstruct
 } from "ag-grid-community";
@@ -41,12 +41,10 @@ export class ChartDataPanel extends Component {
 
         const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
 
-        const xyChart = this.isXYChart();
-
         [dimensionCols, valueCols].forEach((group, idx) => {
             const isCategory = idx === 0;
 
-            let dataGroupKey = isCategory ? 'categories' : xyChart ? 'xyValues' : 'series';
+            let dataGroupKey = isCategory ? 'categories' : this.chartController.isXYChart() ? 'xyValues' : 'series';
 
             const groupComp = new AgGroupComponent({
                 title: this.chartTranslator.translate(dataGroupKey),
@@ -88,12 +86,6 @@ export class ChartDataPanel extends Component {
 
             container.addItem(comp);
         };
-    }
-
-    private isXYChart() {
-        const xyChartSelected = [ChartType.Scatter].indexOf(this.chartController.getChartType()) > -1;
-        // x y charts behave like regular cartesian charts if the default category is not selected, i.e. (None)
-        return xyChartSelected && this.chartController.isDefaultCategorySelected();
     }
 
     public destroy(): void {

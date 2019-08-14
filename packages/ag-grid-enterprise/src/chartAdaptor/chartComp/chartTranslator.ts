@@ -76,8 +76,7 @@ export class ChartTranslator {
         scatterGroup: 'X Y (Scatter)',
         areaGroup: 'Area',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
-        pivotChartNoData: 'No data available to be charted.',
-        rangeChartNoData: 'No data available to be charted.'
+        noDataToChart: 'No data available to be charted.',
     };
 
     public translate(toTranslate: string): string {

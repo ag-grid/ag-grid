@@ -229,8 +229,7 @@ var gridOptions = {
         normalizedAreaTooltip: 'la100% Stacked',
         scatterTooltip: 'laScatter',
         pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.',
-        pivotChartNoData: 'laNo data available to be charted.',
-        rangeChartNoData: 'leNo data available to be charted.'
+        noDataToChart: 'laNo data available to be charted.'
     }
 };
 
