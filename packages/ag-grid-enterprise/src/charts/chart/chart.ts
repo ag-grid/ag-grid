@@ -286,7 +286,7 @@ export abstract class Chart {
     set dataPending(value: boolean) {
         if (value) {
             if (!this.dataCallbackId) {
-                this.dataCallbackId = setTimeout(this._processData, 0); // run on next tick
+                this.dataCallbackId = window.setTimeout(this._processData, 0); // run on next tick
             }
         } else if (this.dataCallbackId) {
             clearTimeout(this.dataCallbackId);
