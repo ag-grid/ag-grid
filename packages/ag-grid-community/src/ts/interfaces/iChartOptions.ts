@@ -26,6 +26,7 @@ export enum ChartType {
     NormalizedBar = 'normalizedBar',
     Line = 'line',
     Scatter = 'scatter',
+    Bubble = 'bubble',
     Pie = 'pie',
     Doughnut = 'doughnut',
     Area = 'area',
@@ -167,6 +168,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
 
     xField?: string;
     yField?: string;
+    radiusField?: string;
 
     fill?: string;
     stroke?: string;
@@ -174,6 +176,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
 
     marker?: boolean;
     markerSize?: number;
+    minMarkerSize?: number;
     markerStrokeWidth?: number;
 
     tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;

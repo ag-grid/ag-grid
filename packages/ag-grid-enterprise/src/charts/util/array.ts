@@ -38,6 +38,8 @@ export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[])
     }
 }
 
+// This method will only return `undefined`, if there's not a single valid finite number
+// in the given array of values.
 export function numericExtent<T>(values: T[]): [number, number] | undefined {
     const [min, max] = extent(values);
     if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {

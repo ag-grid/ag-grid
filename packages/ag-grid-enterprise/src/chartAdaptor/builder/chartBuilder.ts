@@ -323,6 +323,9 @@ export class ChartBuilder {
         if (options.yField !== undefined) {
             series.yField = options.yField;
         }
+        if (options.radiusField !== undefined) {
+            series.radiusField = options.radiusField;
+        }
         if (options.fill !== undefined) {
             series.fill = options.fill;
         }
@@ -334,6 +337,9 @@ export class ChartBuilder {
         }
         if (options.markerSize !== undefined) {
             series.markerSize = options.markerSize;
+        }
+        if (options.minMarkerSize !== undefined) {
+            series.minMarkerSize = options.minMarkerSize;
         }
         if (options.markerStrokeWidth !== undefined) {
             series.markerStrokeWidth = options.markerStrokeWidth;

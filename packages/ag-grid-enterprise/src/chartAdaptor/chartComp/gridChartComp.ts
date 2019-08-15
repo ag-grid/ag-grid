@@ -183,6 +183,7 @@ export class GridChartComp extends Component {
             case ChartType.Line:
                 return new LineChartProxy(chartOptions);
             case ChartType.Scatter:
+            case ChartType.Bubble:
                 return new ScatterChartProxy(chartOptions);
         }
     }
