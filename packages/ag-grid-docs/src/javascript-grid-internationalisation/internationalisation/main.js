@@ -30,8 +30,9 @@ var gridOptions = {
     pagination:true,
     rowGroupPanelShow: 'always',
     statusBar: {
-        items: [
-            { component: 'agAggregationComponent' }
+        statusPanels: [
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
+            { statusPanel: 'agAggregationComponent' }
         ]
     },
     paginationPageSize: 500,
@@ -132,7 +133,10 @@ var gridOptions = {
         doughnut: 'laDoughnut',
 
         line: 'laLine',
+
+        xyChart: 'laX Y (Scatter)',
         scatter: 'laScatter',
+        bubble: 'laBubble',
 
         areaChart: 'laArea',
         area: 'laArea',
@@ -151,6 +155,10 @@ var gridOptions = {
         none: 'laNone',
         count: 'laCount',
         average: 'laAverage',
+        filteredRows: 'laFiltered',
+        selectedRows: 'laSelected',
+        totalRows: 'laTotal Rows',
+        totalAndFilteredRows: 'laRows',
 
         // standard menu
         copy: 'laCopy',
@@ -228,8 +236,8 @@ var gridOptions = {
         stackedAreaTooltip: 'laStacked',
         normalizedAreaTooltip: 'la100% Stacked',
         scatterTooltip: 'laScatter',
-        pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.',
-        noDataToChart: 'laNo data available to be charted.'
+        noDataToChart: 'laNo data available to be charted.',
+        pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.'
     }
 };
 

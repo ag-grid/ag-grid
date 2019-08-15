@@ -1,16 +1,14 @@
-import { Autowired, Component, Context, GridOptionsWrapper, PostConstruct, RefSelector } from 'ag-grid-community';
+import {Autowired, Component, GridOptionsWrapper, RefSelector} from 'ag-grid-community';
 
 export class NameValueComp extends Component {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
 
     private static TEMPLATE =
         `<div class="ag-name-value">  
             <span ref="eLabel"></span>:&nbsp;
             <span ref="eValue" class="ag-name-value-value"></span>
         </div>`;
-
-    // private props: { key: string, defaultValue: string };
 
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eValue') private eValue: HTMLElement;

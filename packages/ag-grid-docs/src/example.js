@@ -387,8 +387,6 @@ var gridOptions = {
         let type = params.type;
         let options = params.options;
 
-        options.legendPosition = 'top';
-
         // use saved chart options for specific chart type
         if (chartOptions[type]) {
             return chartOptions[type];

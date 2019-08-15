@@ -217,7 +217,7 @@ export class MenuItemMapper {
                         'pivotBarChart',
                         'pivotPieChart',
                         'pivotLineChart',
-                        'pivotScatterChart',
+                        'pivotXYChart',
                         'pivotAreaChart'
                     ],
                     icon: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
@@ -231,7 +231,7 @@ export class MenuItemMapper {
                         'rangeBarChart',
                         'rangePieChart',
                         'rangeLineChart',
-                        'rangeScatterChart',
+                        'rangeXYChart',
                         'rangeAreaChart'
                     ],
                     icon: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
@@ -325,18 +325,31 @@ export class MenuItemMapper {
             case 'rangeLineChart':
                 return rangeChartMenuItem('line', 'Line&lrm;', ChartType.Line);
 
-            case 'pivotScatterChart':
+            case 'pivotXYChart':
+                return {
+                    name: localeTextFunc('xyChart', 'X Y (Scatter)'),
+                    subMenu: ['pivotScatter', 'pivotBubble']
+                };
+            case 'pivotScatter':
                 return pivotChartMenuItem('scatter', 'Scatter&lrm;', ChartType.Scatter);
+            case 'pivotBubble':
+                return pivotChartMenuItem('bubble', 'Bubble&lrm;', ChartType.Scatter);
 
-            case 'rangeScatterChart':
+            case 'rangeXYChart':
+                return {
+                    name: localeTextFunc('xyChart', 'X Y (Scatter)'),
+                    subMenu: ['rangeScatter', 'rangeBubble']
+                };
+            case 'rangeScatter':
                 return rangeChartMenuItem('scatter', 'Scatter&lrm;', ChartType.Scatter);
+            case 'rangeBubble':
+                return rangeChartMenuItem('bubble', 'Bubble&lrm;', ChartType.Scatter);
 
             case 'pivotAreaChart':
                 return {
                     name: localeTextFunc('areaChart', 'Area'),
                     subMenu: ['pivotArea', 'pivotStackedArea', 'pivotNormalizedArea']
                 };
-
             case 'pivotArea':
                 return pivotChartMenuItem('area', 'Area&lrm;', ChartType.Area);
 
