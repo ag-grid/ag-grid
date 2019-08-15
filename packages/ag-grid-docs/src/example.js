@@ -434,6 +434,14 @@ var gridOptions = {
 
                     return res;
                 };
+
+                options.seriesDefaults.tooltipRenderer = function (params) {
+                    let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    let xValue = params.xFieldName + ': $' + params.datum[params.xField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    let yValue = params.yFieldName + ': $' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    return title + '<div class="content">' + xValue + '<br>' + yValue + '</div>';
+                };
             }
 
             options.seriesDefaults.labelFormatter = function (params) {
