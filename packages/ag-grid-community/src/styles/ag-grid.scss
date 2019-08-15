@@ -1057,6 +1057,7 @@ $handleSize: 5px;
 
     .content {
         padding: 7px;
+        line-height: 1.7em;
     }
 }
 
@@ -1487,7 +1488,7 @@ $handleSize: 5px;
             flex: none;
         }
     }
-    
+
     &.ag-label-align-top {
         flex-direction: column;
         align-items: flex-start;
@@ -1501,7 +1502,7 @@ $handleSize: 5px;
     display: flex;
     flex-direction: column;
     text-align: center;
-   
+
     .ag-spectrum-color {
         flex: 1 1 auto;
         position: relative;
@@ -1520,13 +1521,13 @@ $handleSize: 5px;
     .ag-spectrum-val {
        cursor: pointer;
     }
-   
+
     .ag-spectrum-dragger {
         position: absolute;
         pointer-events: none;
         cursor: pointer;
     }
-   
+
     .ag-spectrum-hue {
         cursor: default;
         background: linear-gradient(to left,
@@ -1536,38 +1537,38 @@ $handleSize: 5px;
             #ff0000 100%
         );
     }
-   
+
     .ag-spectrum-alpha {
         cursor: default;
     }
-   
+
     .ag-spectrum-hue-background {
         width: 100%;
         height: 100%;
     }
-   
+
     .ag-spectrum-alpha-background {
         background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
         width: 100%;
         height: 100%;
     }
-   
+
     .ag-hue-alpha {
         cursor: pointer;
     }
-   
+
     .ag-spectrum-slider {
         position: absolute;
         pointer-events: none;
     }
-   
+
     .ag-spectrum-text-value {
         display: inline-block;
         text-align: center;
         overflow: hidden;
         white-space: nowrap;
     }
-   
+
     .ag-spectrum-text-value:focus {
         outline: none;
         outline-offset: 0;
