@@ -348,7 +348,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
     height: 100%;
     overflow: hidden;
-    line-height: 1.5;
 }
 
 .ag-header-group-cell-label, .ag-header-cell-label {
@@ -393,7 +392,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-header-select-all {
     display: flex;
-    line-height: 1;
 }
 
 /**
@@ -737,7 +735,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     cursor: move;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1.4;
     overflow: hidden;
     padding: 3px;
     position: absolute;
