@@ -15,16 +15,20 @@ import linearScale from "../../scale/linearScale";
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number,
     y: number,
+    radius: number,
     fill?: string,
     stroke?: string,
-    strokeWidth: number,
-    radius: number
+    strokeWidth: number
 }
 
 export interface ScatterTooltipRendererParams {
     datum: any,
     xField: string,
     yField: string,
+    radiusField: string,
+    xFieldName: string,
+    yFieldName: string,
+    radiusFieldName: string,
     title?: string,
     color?: string
 }
@@ -97,6 +101,10 @@ export class ScatterSeries extends Series<CartesianChart> {
     get radiusField(): string {
         return this._radiusField;
     }
+
+    xFieldName: string = 'X';
+    yFieldName: string = 'Y';
+    radiusFieldName: string = 'Radius';
 
     private _marker: boolean = false;
     set marker(value: boolean) {
@@ -333,6 +341,10 @@ export class ScatterSeries extends Series<CartesianChart> {
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         const xField = this.xField;
         const yField = this.yField;
+        const radiusField = this.radiusField;
+        const xFieldName = this.xFieldName;
+        const yFieldName = this.yFieldName;
+        const radiusFieldName = this.radiusFieldName;
         const color = this.fill;
         let html: string = '';
 
@@ -346,6 +358,10 @@ export class ScatterSeries extends Series<CartesianChart> {
                 datum: nodeDatum.seriesDatum,
                 xField,
                 yField,
+                radiusField,
+                xFieldName,
+                yFieldName,
+                radiusFieldName,
                 title,
                 color
             });
@@ -357,8 +373,13 @@ export class ScatterSeries extends Series<CartesianChart> {
             const yValue = seriesDatum[yField];
             const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
             const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+            let fieldString = `<b>${xFieldName}</b>: ${xString}<br><b>${yFieldName}</b>: ${yString}`;
 
-            html = `${title}<div class="content">${xString}: ${yString}</div>`;
+            if (radiusField) {
+                fieldString += `<br><b>${radiusFieldName}</b>: ${seriesDatum[radiusField]}`;
+            }
+
+            html = `${title}<div class="content">${fieldString}</div>`;
             // html = `${title}<div class="content">${xField}: ${xString}<br>${yField}: ${yString}</div>`;
         }
         return html;
