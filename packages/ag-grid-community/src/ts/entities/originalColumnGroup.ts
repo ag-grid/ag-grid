@@ -1,21 +1,15 @@
-import { Autowired } from "../context/context";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import { ColGroupDef } from "./colDef";
 import { ColumnGroup } from "./columnGroup";
 import { Column } from "./column";
 import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { ColumnApi } from "../columnController/columnApi";
-import { GridApi } from "../gridApi";
 import { AgEvent } from "../events";
 
 export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmitter {
 
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
-
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private localEventService = new EventService();
 
@@ -120,14 +114,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     public getColumnGroupShow(): string | undefined {
-        if (!this.padding) {
-            return this.colGroupDef.columnGroupShow;
-        } else {
-            // if this is padding we have exactly only child. we then
-            // take the value from the child and push it up, making
-            // this group 'invisible'.
-            return this.children[0].getColumnGroupShow();
-        }
+        return this.padding ? ColumnGroup.HEADER_GROUP_PADDING : this.colGroupDef.columnGroupShow;
     }
 
     // need to check that this group has at least one col showing when both expanded and contracted.
@@ -157,6 +144,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
             }
             // if the abstractColumn is a grid generated group, there will be no colDef
             const headerGroupShow = abstractColumn.getColumnGroupShow();
+
             if (headerGroupShow === ColumnGroup.HEADER_GROUP_SHOW_OPEN) {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneChangeable = true;
@@ -166,6 +154,11 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
             } else {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneShowingWhenClosed = true;
+
+                if (headerGroupShow === ColumnGroup.HEADER_GROUP_PADDING) {
+                    const column = abstractColumn as OriginalColumnGroup;
+                    atLeastOneChangeable = column.children.some(child => child.getColumnGroupShow() !== undefined);
+                }
             }
         }
 
