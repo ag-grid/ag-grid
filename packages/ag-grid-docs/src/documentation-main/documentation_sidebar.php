@@ -74,6 +74,12 @@
         <img src="../images/flags/spain.png" style="height: 18px; width: 18px">
         <a class="learn-more" href="https://ngspain.com/" target="_blank"> ngSpain</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 18th-20th</p>
+
+        <br>
+        <h6 class="card-subtitle mb-2 text-muted">JavaScript</h6>
+        <img src="../images/flags/united-kingdom.png">
+        <a class="learn-more" href="https://halfstackconf.com/london/" target="_blank"> Half Stack London</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Nov 2nd</p>
     </div>
 </div>
 <br>
