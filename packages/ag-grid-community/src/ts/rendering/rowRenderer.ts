@@ -1207,6 +1207,11 @@ export class RowRenderer extends BeanStub {
 
     private getLastCellOfColSpan(cell: CellPosition): CellPosition {
         const cellComp = this.getComponentForCell(cell);
+
+        if (!cellComp) {
+            return cell;
+        }
+
         const colSpanningList = cellComp.getColSpanningList();
 
         if (colSpanningList.length === 1) {
