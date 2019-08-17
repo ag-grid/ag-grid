@@ -104,7 +104,7 @@ export class ChartDatasource extends BeanStub {
                 // pivot keys should be added first
                 const pivotKeys = col.getColDef().pivotKeys;
                 if (pivotKeys) {
-                    columnNamesArr = pivotKeys;
+                    columnNamesArr = pivotKeys.slice();
                 }
 
                 // then add column header name to results
