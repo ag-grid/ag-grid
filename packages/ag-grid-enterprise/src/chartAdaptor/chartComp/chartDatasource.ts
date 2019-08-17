@@ -101,13 +101,13 @@ export class ChartDatasource extends BeanStub {
             params.valueCols.forEach(col => {
                 let columnNamesArr: string[] = [];
 
-                // concat pivot keys to header name
+                // pivot keys should be added first
                 const pivotKeys = col.getColDef().pivotKeys;
                 if (pivotKeys) {
-                    columnNamesArr = columnNamesArr.concat(pivotKeys);
+                    columnNamesArr = pivotKeys;
                 }
 
-                // add header name of column to results
+                // then add column header name to results
                 const headerName = col.getColDef().headerName;
                 headerName ? columnNamesArr.push(headerName) : columnNamesArr.push('');
 
