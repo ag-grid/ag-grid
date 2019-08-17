@@ -238,7 +238,8 @@ export type ColumnEventType =
     "contextMenu" |
     "columnMenu" |
     "rowModelUpdated" |
-    "api";
+    "api" |
+    "pivotChart";
 
 export interface ColumnEvent extends AgGridEvent {
     column: Column | null;

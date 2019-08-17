@@ -96,6 +96,7 @@ localeText = {
         excelXmlExport: 'laExcel Exporto (.xml)',
 
         // enterprise menu (charts)
+        pivotChartAndPivotMode: 'laPivot Chart & Pivot Mode',
         pivotChart: 'laPivot Chart',
         chartRange: 'laChart Range',
 

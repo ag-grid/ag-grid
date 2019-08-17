@@ -52,6 +52,11 @@ export class ChartService implements IChartService {
     }
 
     public pivotChart(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
+        // if required enter pivot mode
+        if (!this.columnController.isPivotMode()) {
+            this.columnController.setPivotMode(true, "pivotChart");
+        }
+
         // pivot chart range contains all visible column without a row range to include all rows
         const chartAllRangeParams = {
             columns: this.columnController.getAllDisplayedColumns().map(col => col.getColId())

@@ -67,6 +67,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
             if (this.columnController.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
+            } else {
+                defaultMenuOptions.push('pivotChartAndPivotMode');
             }
 
             if (!this.rangeController.isEmpty()) {
