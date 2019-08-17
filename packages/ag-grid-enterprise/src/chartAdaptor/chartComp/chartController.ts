@@ -26,6 +26,7 @@ export class ChartController extends BeanStub {
         this.updateForGridChange();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, (event) => {
+            console.log('EVENT_CHART_RANGE_SELECTION_CHANGED');
             if (event.id && event.id === this.model.getChartId()) {
                 this.updateForGridChange();
             }
@@ -111,8 +112,19 @@ export class ChartController extends BeanStub {
     }
 
     public detachChartRange() {
+        // when chart is detached it won't listen to changes from the grid
         this.model.toggleDetached();
-        this.model.isDetached() ? this.rangeController.setCellRanges([]) : this.setChartRange();
+
+        if (this.model.isDetached()) {
+            // remove range from grid
+            this.rangeController.setCellRanges([]);
+        } else {
+            // update grid with chart range
+            this.setChartRange();
+
+            // update chart data may have changed
+            this.updateForGridChange();
+        }
     }
 
     public getChartProxy(): ChartProxy<any> {
