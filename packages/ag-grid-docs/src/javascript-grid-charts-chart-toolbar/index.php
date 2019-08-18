@@ -92,6 +92,25 @@ include '../documentation-main/documentation_header.php';
         full control over the appearance of chart.
     </p>
 
+    <h2>Unlinking Charts</h2>
+    <p>
+        Charts are linked to the data in the grid default. However it is sometimes desirable to unlink a chart for the
+        grid data after it has been created. For instance users may want to prevent a chart from being updated when
+        subsequent sorts and filters are applied in the grid.
+    </p>
+
+    <p>
+        Unlinking a chart is achieved through the 'Unlink Chart' toolbar item as shown below:
+    </p>
+
+    <img alt="Unlinking Charts" src="chart-unlinking.gif" style="max-width: 100%; border: grey solid 1px">
+
+    <p>
+        <br>
+        Notice that the chart range disappears from the grid when the chart has been unlinked and grid sorting doesn't
+        impact the chart.
+    </p>
+
     <h2>Chart Download</h2>
 
     <p>
@@ -137,6 +156,21 @@ interface GetChartToolbarItemsParams {
 <p>
     The list of available toolbar items are as follows:  <code>'chartSettings', 'chartData', 'chartFormat', 'downloadChart'</code>.
 </p>
+
+<h2>Example - Custom Toolbar Layout</h2>
+
+<p>
+    The example below shows how the toolbar layout can be customised. Notice the following:
+</p>
+
+<ul class="content">
+    <li><b>Download Chart</b> - has been positioned as the first toolbar item.</li>
+    <li><b>Chart Data Panel</b> - appears first in the tabbed menu.</li>
+    <li><b>Chart Format Panel</b> - has been removed from the tabbed menu.</li>
+    <li><b>Unlink Toolbar Item</b> - has been removed from the toolbar.</li>
+</ul>
+
+<?= example('Custom Toolbar', 'custom-toolbar', 'generated', array("enterprise" => true)) ?>
 
     <h2>Next Up</h2>
 
