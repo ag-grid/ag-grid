@@ -29,7 +29,7 @@ export class ChartMenu extends Component {
         chartSettings: ['menu', () => this.showMenu('chartSettings')],
         chartData: ['data' , () => this.showMenu('chartData')],
         chartFormat: ['data', () => this.showMenu('chartFormat')],
-        chartToggleDetached: ['linked', (e) => this.toggleDetached(e)],
+        chartUnlink: ['linked', (e) => this.toggleDetached(e)],
         chartDownload: ['save', () => this.saveChart()]
     };
 
@@ -53,7 +53,7 @@ export class ChartMenu extends Component {
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
-        let tabOptions: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartToggleDetached', 'chartDownload'];
+        let tabOptions: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartUnlink', 'chartDownload'];
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
 
         if (toolbarItemsFunc) {
@@ -77,7 +77,7 @@ export class ChartMenu extends Component {
             tabOptions = tabOptions.filter(option => option !== 'chartData');
         }
 
-        const ignoreOptions: ChartMenuOptions[] = ['chartToggleDetached', 'chartDownload'];
+        const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartDownload'];
         this.tabs = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1);
 
         return tabOptions.filter(value => ignoreOptions.indexOf(value) !== -1 || (this.tabs.length && value === this.tabs[0]));
