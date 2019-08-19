@@ -7,6 +7,7 @@ export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFo
 
 export type LineMarkerProperty = 'marker' | 'markerSize' | 'markerStrokeWidth';
 export type LineSeriesProperty = 'strokeWidth' | 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
+export type ScatterSeriesProperty = 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
 
 export abstract class CartesianChartProxy<T extends CartesianChartOptions> extends ChartProxy<T> {
     protected constructor(params: ChartProxyParams) {

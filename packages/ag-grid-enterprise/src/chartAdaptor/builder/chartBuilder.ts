@@ -326,6 +326,15 @@ export class ChartBuilder {
         if (options.radiusField !== undefined) {
             series.radiusField = options.radiusField;
         }
+        if (options.xFieldName !== undefined) {
+            series.xFieldName = options.xFieldName;
+        }
+        if (options.yFieldName !== undefined) {
+            series.yFieldName = options.yFieldName;
+        }
+        if (options.radiusFieldName !== undefined) {
+            series.radiusFieldName = options.radiusFieldName;
+        }
         if (options.fill !== undefined) {
             series.fill = options.fill;
         }

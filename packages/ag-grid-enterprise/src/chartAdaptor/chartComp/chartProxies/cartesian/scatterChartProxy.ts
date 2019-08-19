@@ -4,8 +4,7 @@ import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {ScatterSeries} from "../../../../charts/chart/series/scatterSeries";
 import {ChartModel} from "../../chartModel";
-import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty} from "./cartesianChartProxy";
-import {LineSeries} from "../../../../charts/chart/series/lineSeries";
+import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty, ScatterSeriesProperty} from "./cartesianChartProxy";
 
 export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> {
 
@@ -84,8 +83,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         }
     }
 
-    public setSeriesProperty(property: LineSeriesProperty | LineMarkerProperty, value: any): void {
-        const series = this.getChart().series as LineSeries[];
+    public setSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty, value: any): void {
+        const series = this.getChart().series as ScatterSeries[];
         series.forEach(s => s[property] = value);
 
         if (!this.chartOptions.seriesDefaults) {
@@ -96,7 +95,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getSeriesProperty(property: LineSeriesProperty | LineMarkerProperty): string {
+    public getSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty): string {
         return this.chartOptions.seriesDefaults ? `${this.chartOptions.seriesDefaults[property]}` : '';
     }
 
@@ -182,6 +181,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 strokes: palette.strokes,
                 marker: true,
                 markerSize: 6,
+                minMarkerSize: 3,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,
                 tooltipRenderer: undefined,

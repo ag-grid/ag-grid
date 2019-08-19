@@ -170,6 +170,10 @@ export interface ScatterSeriesOptions extends SeriesOptions {
     yField?: string;
     radiusField?: string;
 
+    xFieldName?: string;
+    yFieldName?: string;
+    radiusFieldName?: string;
+
     fill?: string;
     stroke?: string;
     highlightStyle?: HighlightStyle;
@@ -187,7 +191,7 @@ export interface LineSeriesDefaultOptions extends LineSeriesOptions {
     strokes?: string[];
 }
 
-export interface ScatterSeriesDefaultOptions extends LineSeriesOptions {
+export interface ScatterSeriesDefaultOptions extends ScatterSeriesOptions {
     fills?: string[];
     strokes?: string[];
 }
