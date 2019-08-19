@@ -234,6 +234,28 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._stroke;
     }
 
+    private _fillOpacity: number = 1;
+    set fillOpacity(value: number) {
+        if (this._fillOpacity !== value) {
+            this._fillOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    private _strokeOpacity: number = 1;
+    set strokeOpacity(value: number) {
+        if (this._strokeOpacity !== value) {
+            this._strokeOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get strokeOpacity(): number {
+        return this._strokeOpacity;
+    }
+
     highlightStyle: {
         fill?: string,
         stroke?: string
@@ -278,6 +300,8 @@ export class ScatterSeries extends Series<CartesianChart> {
         const n = xData.length;
         const fill = this.fill;
         const stroke = this.stroke;
+        const fillOpacity = this.fillOpacity;
+        const strokeOpacity = this.strokeOpacity;
         const markerStrokeWidth = this.markerStrokeWidth;
         const markerSize = this.markerSize;
 
@@ -323,6 +347,8 @@ export class ScatterSeries extends Series<CartesianChart> {
                 arc.stroke = arc === highlightedNode && this.highlightStyle.stroke !== undefined
                     ? this.highlightStyle.stroke
                     : datum.stroke;
+                arc.fillOpacity = fillOpacity;
+                arc.strokeOpacity = strokeOpacity;
                 arc.strokeWidth = datum.strokeWidth;
                 arc.visible = datum.radius > 0;
             });

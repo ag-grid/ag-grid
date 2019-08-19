@@ -339,7 +339,7 @@ export class MenuItemMapper {
             case 'pivotScatter':
                 return pivotChartMenuItem('scatter', 'Scatter&lrm;', ChartType.Scatter);
             case 'pivotBubble':
-                return pivotChartMenuItem('bubble', 'Bubble&lrm;', ChartType.Scatter);
+                return pivotChartMenuItem('bubble', 'Bubble&lrm;', ChartType.Bubble);
 
             case 'rangeXYChart':
                 return {
@@ -349,7 +349,7 @@ export class MenuItemMapper {
             case 'rangeScatter':
                 return rangeChartMenuItem('scatter', 'Scatter&lrm;', ChartType.Scatter);
             case 'rangeBubble':
-                return rangeChartMenuItem('bubble', 'Bubble&lrm;', ChartType.Scatter);
+                return rangeChartMenuItem('bubble', 'Bubble&lrm;', ChartType.Bubble);
 
             case 'pivotAreaChart':
                 return {

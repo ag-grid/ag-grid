@@ -176,6 +176,8 @@ export interface ScatterSeriesOptions extends SeriesOptions {
 
     fill?: string;
     stroke?: string;
+    fillOpacity?: number;
+    strokeOpacity?: number;
     highlightStyle?: HighlightStyle;
 
     marker?: boolean;

@@ -341,6 +341,12 @@ export class ChartBuilder {
         if (options.stroke !== undefined) {
             series.stroke = options.stroke;
         }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
+        }
         if (options.highlightStyle !== undefined) {
             series.highlightStyle = options.highlightStyle;
         }

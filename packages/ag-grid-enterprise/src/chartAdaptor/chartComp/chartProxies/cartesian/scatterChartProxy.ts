@@ -23,6 +23,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         }
 
         const chart = this.chart as CartesianChart;
+        const chartType = this.chartProxyParams.chartType;
         const fieldIds = params.fields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: ScatterSeries } = {};
         const defaultCategorySelected = params.categoryId === ChartModel.DEFAULT_CATEGORY;
@@ -61,6 +62,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
 
                 scatterSeries.data = params.data;
                 scatterSeries.yField = f.colId;
+                if (chartType === ChartType.Bubble && defaultCategorySelected) {
+                    scatterSeries.radiusField = params.fields[index + 2].colId;
+                }
 
                 const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
 
@@ -76,10 +80,24 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             }
         };
 
-        if (params.categoryId !== ChartModel.DEFAULT_CATEGORY) {
-            params.fields.forEach(updateFunc);
+        if (chartType === ChartType.Bubble) {
+            if (defaultCategorySelected) {
+                if (params.fields.length >= 3 && params.fields.length % 2 === 1) {
+                    const fields: typeof params.fields = [];
+                    params.fields.forEach((f, i) => i % 2 === 1 && fields.push(f));
+                    fields.forEach(updateFunc);
+                } else {
+                    console.warn('Select an odd number of columns, at least three, to plot a bubble chart.');
+                }
+            } else {
+                params.fields.forEach(updateFunc);
+            }
         } else {
-            params.fields.slice(1, params.fields.length).forEach(updateFunc);
+            if (defaultCategorySelected) {
+                params.fields.slice(1, params.fields.length).forEach(updateFunc);
+            } else {
+                params.fields.forEach(updateFunc);
+            }
         }
     }
 
@@ -111,6 +129,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     private defaultOptions(): ScatterChartOptions {
         const xAxisType = this.chartProxyParams.categorySelected ? 'category' : 'number';
         const palette = this.chartProxyParams.getSelectedPalette();
+        const isBubble = this.chartProxyParams.chartType === ChartType.Bubble;
 
         return {
             background: {
@@ -178,9 +197,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             seriesDefaults: {
                 type: 'scatter',
                 fills: palette.fills,
+                fillOpacity: isBubble ? 0.7 : 1,
                 strokes: palette.strokes,
                 marker: true,
-                markerSize: 6,
+                markerSize: isBubble ? 20 : 6,
                 minMarkerSize: 3,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,
