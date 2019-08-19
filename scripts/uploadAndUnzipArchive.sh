@@ -48,10 +48,10 @@ USERNAME=`awk '{print $1}' ~/aggrid/aggrid.txt`
 PASSWORD=`awk '{print $2}' ~/aggrid/aggrid.txt`
 
 # delete dir if it exists - can ignore dir not found error
-ssh -i ~/.ssh/ag_ssh -p 2222 ceolter@kpidrill.com "cd public_html/ag-grid.com/archive/ && rm -r $VERSION"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
 
 # upload file
-curl --netrc-file ~/aggrid/.creds --ftp-create-dirs -T $ARCHIVE ftp://ftp.kpidrill.com/$VERSION/
+curl --netrc-file ~/aggrid/.creds --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 #unzip archive
-ssh -i ~/.ssh/ag_ssh -p 2222 ceolter@kpidrill.com "cd public_html/ag-grid.com/archive/$VERSION && unzip $ARCHIVE"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"
