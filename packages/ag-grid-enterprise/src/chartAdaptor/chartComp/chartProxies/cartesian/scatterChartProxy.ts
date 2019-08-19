@@ -11,7 +11,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.initChartOptions(ChartType.Scatter, this.defaultOptions());
+        this.initChartOptions(params.chartType, this.defaultOptions());
 
         this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
@@ -200,7 +200,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 fillOpacity: isBubble ? 0.7 : 1,
                 strokes: palette.strokes,
                 marker: true,
-                markerSize: isBubble ? 20 : 6,
+                markerSize: isBubble ? 30 : 6,
                 minMarkerSize: 3,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,

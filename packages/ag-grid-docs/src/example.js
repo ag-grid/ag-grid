@@ -420,7 +420,7 @@ var gridOptions = {
                 return isNormalized ? res + '%' : res;
             };
 
-            if (type === 'scatter') {
+            if (type === 'scatter' || type === 'bubble') {
                 options.xAxis.labelFormatter = function(params) {
                     let n = params.value;
                     if (isNaN(n)) return n;
@@ -440,7 +440,18 @@ var gridOptions = {
                     let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                     let xValue = params.xFieldName + ': $' + params.datum[params.xField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                     let yValue = params.yFieldName + ': $' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                    return title + '<div class="content">' + xValue + '<br>' + yValue + '</div>';
+                    let radiusValue = '';
+                    if (type === 'bubble') {
+                        radiusValue = '<br>' + params.radiusFieldName + ': $' + params.datum[params.radiusField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    }
+                    return title + '<div class="content">' + xValue + '<br>' + yValue + radiusValue + '</div>';
+                };
+            } else {
+                options.seriesDefaults.tooltipRenderer = function (params) {
+                    let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    return title + '<div class="content">' + '$' + value + '</div>';
                 };
             }
 
@@ -456,15 +467,6 @@ var gridOptions = {
 
                 return res;
             };
-
-            if (type !== 'scatter') {
-                options.seriesDefaults.tooltipRenderer = function (params) {
-                    let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                    let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                    return title + '<div class="content">' + '$' + value + '</div>';
-                };
-            }
         }
 
         return options;
