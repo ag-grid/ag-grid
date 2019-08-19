@@ -55,15 +55,20 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 if (defaultCategorySelected) {
                     scatterSeries.title = `${params.fields[0].displayName} vs ${f.displayName}`;
                     scatterSeries.xField = params.fields[0].colId;
+                    scatterSeries.xFieldName = params.fields[0].displayName;
                 } else {
                     scatterSeries.title = f.displayName;
                     scatterSeries.xField = params.categoryId;
+                    scatterSeries.xFieldName = params.categoryId;
                 }
 
                 scatterSeries.data = params.data;
                 scatterSeries.yField = f.colId;
+                scatterSeries.yFieldName = f.displayName;
                 if (chartType === ChartType.Bubble && defaultCategorySelected) {
-                    scatterSeries.radiusField = params.fields[index + 2].colId;
+                    const f = params.fields[index + 2];
+                    scatterSeries.radiusField = f.colId;
+                    scatterSeries.radiusFieldName = f.displayName;
                 }
 
                 const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();

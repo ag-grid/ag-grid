@@ -438,13 +438,14 @@ var gridOptions = {
                 options.seriesDefaults.tooltipRenderer = function (params) {
                     let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    let xValue = params.xFieldName + ': $' + params.datum[params.xField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                    let yValue = params.yFieldName + ': $' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                    let radiusValue = '';
-                    if (type === 'bubble') {
-                        radiusValue = '<br>' + params.radiusFieldName + ': $' + params.datum[params.radiusField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    const xValue = params.datum[params.xField];
+                    let xValueStr = params.xFieldName + ': ' + (typeof xValue !== 'number' ? xValue : '$' + String(xValue).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
+                    let yValueStr = params.yFieldName + ': $' + String(params.datum[params.yField]).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    let radiusValueStr = '';
+                    if (type === 'bubble' && params.radiusField) {
+                        radiusValueStr = '<br>' + params.radiusFieldName + ': $' + params.datum[params.radiusField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                     }
-                    return title + '<div class="content">' + xValue + '<br>' + yValue + radiusValue + '</div>';
+                    return title + '<div class="content">' + xValueStr + '<br>' + yValueStr + radiusValueStr + '</div>';
                 };
             } else {
                 options.seriesDefaults.tooltipRenderer = function (params) {
