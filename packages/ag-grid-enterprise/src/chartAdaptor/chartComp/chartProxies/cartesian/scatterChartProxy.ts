@@ -11,7 +11,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.initChartOptions(ChartType.Scatter, this.defaultOptions());
+        this.initChartOptions(params.chartType, this.defaultOptions());
 
         this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
