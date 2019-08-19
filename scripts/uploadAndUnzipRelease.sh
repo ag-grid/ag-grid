@@ -43,11 +43,11 @@ PASSWORD=`awk '{print $2}' ~/aggrid/aggrid.txt`
 
 # upload file - note that this will be uploaded to the archive dir as this is where this ftps home account is
 # we'll move this file up one in the next step
-curl --netrc-file ~/aggrid/.creds --ftp-create-dirs -T $FILENAME ftp://ftp.kpidrill.com/
+curl --netrc-file ~/aggrid/.creds --ftp-create-dirs -T $FILENAME ftp://ag-grid.com/
 
 # move file from the archives dir to the ag-grid root (ie live root)
-ssh -i ~/.ssh/ag_ssh -p 2222 ceolter@kpidrill.com "mv public_html/ag-grid.com/archive/$FILENAME public_html/ag-grid.com/"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv public_html/archive/$FILENAME public_html/"
 
 # unzip release
-ssh -i ~/.ssh/ag_ssh -p 2222 ceolter@kpidrill.com "cd public_html/ag-grid.com/ && unzip $FILENAME"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/ && unzip $FILENAME"
 
