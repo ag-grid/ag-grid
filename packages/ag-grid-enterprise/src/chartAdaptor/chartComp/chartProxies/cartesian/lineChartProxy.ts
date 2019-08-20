@@ -5,6 +5,7 @@ import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {LineSeries} from "../../../../charts/chart/series/lineSeries";
 import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty} from "./cartesianChartProxy";
+import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
 
 export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 
@@ -67,7 +68,8 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 
         // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
-        if (params.category.id === ChartModel.DEFAULT_CATEGORY) {
+        const categoryAxis = chart.xAxis instanceof CategoryAxis ? chart.xAxis : chart.yAxis;
+        if (params.category.id === ChartModel.DEFAULT_CATEGORY || categoryAxis === chart.yAxis) {
             chart.xAxis.labelRotation = 0;
             this.chartOptions.xAxis.labelRotation = 0;
         } else {
@@ -134,7 +136,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 0,
+                labelRotation: 335,
                 tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,

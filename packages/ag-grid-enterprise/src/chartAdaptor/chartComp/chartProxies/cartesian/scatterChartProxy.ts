@@ -5,6 +5,7 @@ import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {ScatterSeries} from "../../../../charts/chart/series/scatterSeries";
 import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty, ScatterSeriesProperty} from "./cartesianChartProxy";
+import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
 
 export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> {
 
@@ -38,7 +39,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             .map(series => series as ScatterSeries)
             .forEach(updateSeries);
 
-        if (defaultCategorySelected) {
+        const categoryAxis = chart.xAxis instanceof CategoryAxis ? chart.xAxis : chart.yAxis;
+        if (defaultCategorySelected || categoryAxis === chart.yAxis) {
             chart.xAxis.labelRotation = 0;
             this.chartOptions.xAxis.labelRotation = 0;
         } else {
@@ -168,7 +170,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 0,
+                labelRotation: 335,
                 tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,

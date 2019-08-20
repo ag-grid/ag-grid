@@ -63,7 +63,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
 
         // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
-        if (params.category.id === ChartModel.DEFAULT_CATEGORY) {
+        const categoryAxis = chart.xAxis instanceof CategoryAxis ? chart.xAxis : chart.yAxis;
+        if (params.category.id === ChartModel.DEFAULT_CATEGORY || categoryAxis === chart.yAxis) {
             chart.xAxis.labelRotation = 0;
             this.chartOptions.xAxis.labelRotation = 0;
         } else {
@@ -176,7 +177,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor: this.getLabelColor(),
-                labelRotation: 0,
+                labelRotation: 335,
                 tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
