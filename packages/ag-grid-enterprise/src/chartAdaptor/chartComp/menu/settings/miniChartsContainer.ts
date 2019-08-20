@@ -900,7 +900,7 @@ class MiniBubble extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.canvas.element.title = this.chartTranslator.translate('scatterTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('bubbleTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {

@@ -27,8 +27,8 @@ export class ChartMenu extends Component {
 
     private buttons: ChartToolbarButtons = {
         chartSettings: ['menu', () => this.showMenu('chartSettings')],
-        chartData: ['data' , () => this.showMenu('chartData')],
-        chartFormat: ['data', () => this.showMenu('chartFormat')],
+        chartData: ['menu' , () => this.showMenu('chartData')],
+        chartFormat: ['menu', () => this.showMenu('chartFormat')],
         chartUnlink: ['linked', (e) => this.toggleDetached(e)],
         chartDownload: ['save', () => this.saveChart()]
     };
