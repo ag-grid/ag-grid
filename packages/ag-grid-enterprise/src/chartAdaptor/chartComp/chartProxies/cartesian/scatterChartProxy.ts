@@ -58,6 +58,12 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                     scatterSeries.title = `${params.fields[0].displayName} vs ${f.displayName}`;
                     scatterSeries.xField = params.fields[0].colId;
                     scatterSeries.xFieldName = params.fields[0].displayName;
+
+                    if (chartType === ChartType.Bubble) {
+                        const f = params.fields[index + 2];
+                        scatterSeries.radiusField = f.colId;
+                        scatterSeries.radiusFieldName = f.displayName;
+                    }
                 } else {
                     scatterSeries.title = f.displayName;
                     scatterSeries.xField = params.category.id;
@@ -67,11 +73,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 scatterSeries.data = params.data;
                 scatterSeries.yField = f.colId;
                 scatterSeries.yFieldName = f.displayName;
-                if (chartType === ChartType.Bubble && defaultCategorySelected) {
-                    const f = params.fields[index + 2];
-                    scatterSeries.radiusField = f.colId;
-                    scatterSeries.radiusFieldName = f.displayName;
-                }
 
                 const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
 
@@ -87,9 +88,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             }
         };
 
-        if (chartType === ChartType.Bubble) {
-            if (defaultCategorySelected) {
-
+        if (defaultCategorySelected) {
+            if (chartType === ChartType.Bubble) {
                 // only update bubble chart if the correct number of fields are present
                 if (params.fields.length >= 3 && params.fields.length % 2 === 1) {
                     const fields: typeof params.fields = [];
@@ -97,14 +97,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                     fields.forEach(updateFunc);
                 }
             } else {
-                params.fields.forEach(updateFunc);
+                params.fields.slice(1, params.fields.length).forEach(updateFunc);
             }
         } else {
-            if (defaultCategorySelected) {
-                params.fields.slice(1, params.fields.length).forEach(updateFunc);
-            } else {
-                params.fields.forEach(updateFunc);
-            }
+            params.fields.forEach(updateFunc);
         }
     }
 
