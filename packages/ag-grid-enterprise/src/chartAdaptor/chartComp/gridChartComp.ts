@@ -134,7 +134,7 @@ export class GridChartComp extends Component {
         const processChartOptionsFunc = this.params.processChartOptions ?
             this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
 
-        const categorySelected = this.model.getSelectedDimensionId() !== ChartModel.DEFAULT_CATEGORY;
+        const categorySelected = this.model.getSelectedDimension().colId !== ChartModel.DEFAULT_CATEGORY;
 
         const chartProxyParams: ChartProxyParams = {
             chartType: this.model.getChartType(),
@@ -274,9 +274,13 @@ export class GridChartComp extends Component {
         const chartEmpty = this.handleEmptyChart(data, fields);
         if (chartEmpty) return;
 
+        const selectedDimension = model.getSelectedDimension();
         const chartUpdateParams: UpdateChartParams = {
             data,
-            categoryId: model.getSelectedDimensionId(),
+            category: {
+                id: selectedDimension.colId,
+                name: selectedDimension.displayName
+            },
             fields: fields
         };
         chartProxy.update(chartUpdateParams);

@@ -55,7 +55,7 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
 
             const pieSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as PieSeries;
 
-            pieSeries.labelField = params.categoryId;
+            pieSeries.labelField = params.category.id;
             pieSeries.data = params.data;
             // Normally all series provide legend items for every slice.
             // For our use case, where all series have the same number of slices in the same order with the same labels

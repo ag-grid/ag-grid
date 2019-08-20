@@ -46,7 +46,7 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
             pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
         }
 
-        pieSeries.labelField = params.categoryId;
+        pieSeries.labelField = params.category.id;
         pieSeries.data = params.data;
 
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();

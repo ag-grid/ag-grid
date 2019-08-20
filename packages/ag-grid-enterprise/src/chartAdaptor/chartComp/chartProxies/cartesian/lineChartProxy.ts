@@ -48,7 +48,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             if (lineSeries) {
                 lineSeries.title = f.displayName;
                 lineSeries.data = params.data;
-                lineSeries.xField = params.categoryId;
+                lineSeries.xField = params.category.id;
                 lineSeries.yField = f.colId;
 
                 const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
@@ -67,7 +67,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 
         // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
-        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
+        if (params.category.id === ChartModel.DEFAULT_CATEGORY) {
             chart.xAxis.labelRotation = 0;
             this.chartOptions.xAxis.labelRotation = 0;
         } else {

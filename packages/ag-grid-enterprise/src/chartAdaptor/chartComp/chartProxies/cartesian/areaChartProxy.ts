@@ -51,7 +51,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             const areaSeries = this.chart.series[0] as AreaSeries;
 
             areaSeries.data = params.data;
-            areaSeries.xField = params.categoryId;
+            areaSeries.xField = params.category.id;
             areaSeries.yFields = params.fields.map(f => f.colId);
             areaSeries.yFieldNames = params.fields.map(f => f.displayName);
 
@@ -63,7 +63,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
 
         // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
-        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
+        if (params.category.id === ChartModel.DEFAULT_CATEGORY) {
             chart.xAxis.labelRotation = 0;
             this.chartOptions.xAxis.labelRotation = 0;
         } else {
@@ -99,7 +99,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             if (areaSeries) {
                 areaSeries.yFieldNames = [f.displayName];
                 areaSeries.data = params.data;
-                areaSeries.xField = params.categoryId;
+                areaSeries.xField = params.category.id;
                 areaSeries.yFields = [f.colId];
 
                 const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
