@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul class="content">
         <li><code>paginationPageSize</code> is set to 10</li>
-        <li><code>api.paginationGoToPage(4)</code> is called to go to page 4 (0 based, so he 5th page)</li>
+        <li><code>api.paginationGoToPage(4)</code> is called to go to page 4 (0 based, so the 5th page)</li>
         <li>A dropdown to change the page size dynamically is available. This makes a call to
             <code>paginationSetPageSize(newPageSize)</code></li>
         <li>The numbers in the pagination panel are formatted differently using the grid callback
