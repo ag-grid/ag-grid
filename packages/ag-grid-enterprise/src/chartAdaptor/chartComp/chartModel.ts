@@ -472,7 +472,8 @@ export class ChartModel extends BeanStub {
         return [
             ChartType.Pie,
             ChartType.Doughnut,
-            ChartType.Scatter
+            ChartType.Scatter,
+            ChartType.Bubble
         ].indexOf(this.chartType) < 0;
     }
 

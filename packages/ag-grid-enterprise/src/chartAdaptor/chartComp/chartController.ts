@@ -26,7 +26,6 @@ export class ChartController extends BeanStub {
         this.updateForGridChange();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, (event) => {
-            console.log('EVENT_CHART_RANGE_SELECTION_CHANGED');
             if (event.id && event.id === this.model.getChartId()) {
                 this.updateForGridChange();
             }
@@ -132,7 +131,7 @@ export class ChartController extends BeanStub {
     }
 
     public isXYChart() {
-        const xyChartSelected = [ChartType.Scatter].indexOf(this.getChartType()) > -1;
+        const xyChartSelected = [ChartType.Scatter, ChartType.Bubble].indexOf(this.getChartType()) > -1;
         // x y charts behave like regular cartesian charts if the default category is not selected, i.e. (None)
         return xyChartSelected && this.isDefaultCategorySelected();
     }

@@ -104,9 +104,6 @@ var groupColumn = {
     }
 };
 
-// used to keep track of chart options per chart
-var chartOptions = {};
-
 //var aVisible = true;
 //setTimeout( function() {
 //    var start = new Date().getTime();
@@ -387,11 +384,6 @@ var gridOptions = {
         let type = params.type;
         let options = params.options;
 
-        // use saved chart options for specific chart type
-        if (chartOptions[type]) {
-            return chartOptions[type];
-        }
-
         if (params.type === 'pie' || params.type === 'doughnut')  {
             options.seriesDefaults.tooltipRenderer = function (params) {
                 let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
@@ -401,11 +393,6 @@ var gridOptions = {
             };
 
         } else {
-            // let isBarChart = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
-            // if (!isBarChart) {
-            //     options.xAxis.labelRotation = 330;
-            // }
-
             let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
             options.yAxis.labelFormatter = function(params) {
                 let n = params.value;
@@ -471,9 +458,6 @@ var gridOptions = {
         }
 
         return options;
-    },
-    onChartOptionsChanged: function(event) {
-        chartOptions[event.chartType] = event.chartOptions;
     },
     getContextMenuItems: getContextMenuItems,
     excelStyles: [

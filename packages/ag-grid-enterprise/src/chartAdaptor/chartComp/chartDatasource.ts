@@ -110,10 +110,14 @@ export class ChartDatasource extends BeanStub {
 
                 // then add column header name to results
                 const headerName = col.getColDef().headerName;
-                headerName ? columnNamesArr.push(headerName) : columnNamesArr.push('');
+                if (headerName) {
+                    columnNamesArr.push(headerName);
+                }
 
                 // add array of column names to results
-                columnNames[col.getId()] = columnNamesArr;
+                if (columnNamesArr.length > 0) {
+                    columnNames[col.getId()] = columnNamesArr;
+                }
 
                 // add data value to value column
                 data[col.getId()] = this.valueService.getValue(col, rowNode);
