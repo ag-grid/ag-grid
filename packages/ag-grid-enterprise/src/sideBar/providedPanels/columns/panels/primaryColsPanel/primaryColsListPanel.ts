@@ -91,7 +91,6 @@ export class PrimaryColsListPanel extends Component {
         }
 
         this.recursivelyAddComps(columnGroup.getChildren(), newDept, groupsExist);
-
     }
 
     public onGroupExpanded(): void {
@@ -130,7 +129,7 @@ export class PrimaryColsListPanel extends Component {
 
         let state: SELECTED_STATE;
         if (expandedCount > 0 && notExpandedCount > 0) {
-            state = SELECTED_STATE.INDETERMINIATE;
+            state = SELECTED_STATE.INDETERMINATE;
         } else if (notExpandedCount > 0) {
             state = SELECTED_STATE.UNCHECKED;
         } else {
