@@ -10,10 +10,10 @@ import {
     RowNode
 } from "ag-grid-community";
 import { AggregationStage } from "../../rowStages/aggregationStage";
-import { ChartModel } from "./chartModel";
+import { ChartModel, ColState } from "./chartModel";
 
 export interface ChartDatasourceParams {
-    dimensionColIds: string[];
+    dimensionCols: ColState[];
     grouping: boolean;
     pivoting: boolean;
     valueCols: Column[];
@@ -56,7 +56,8 @@ export class ChartDatasource extends BeanStub {
             const rowNode = this.gridRowModel.getRow(i + params.startRow)!;
 
             // first get data for dimensions columns
-            params.dimensionColIds.forEach(colId => {
+            params.dimensionCols.forEach(col => {
+                const colId = col.colId;
                 const column = this.columnController.getGridColumn(colId);
                 if (column) {
                     const valueObject = this.valueService.getValue(column, rowNode);
@@ -109,10 +110,14 @@ export class ChartDatasource extends BeanStub {
 
                 // then add column header name to results
                 const headerName = col.getColDef().headerName;
-                headerName ? columnNamesArr.push(headerName) : columnNamesArr.push('');
+                if (headerName) {
+                    columnNamesArr.push(headerName);
+                }
 
                 // add array of column names to results
-                columnNames[col.getId()] = columnNamesArr;
+                if (columnNamesArr.length > 0) {
+                    columnNames[col.getId()] = columnNamesArr;
+                }
 
                 // add data value to value column
                 data[col.getId()] = this.valueService.getValue(col, rowNode);
@@ -134,24 +139,26 @@ export class ChartDatasource extends BeanStub {
     }
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
-        const dimensionColIds = params.dimensionColIds;
-        const skipAggregation = !params.aggFunc || dimensionColIds.length === 0;
+        const dimensionCols = params.dimensionCols;
+        const skipAggregation = !params.aggFunc || dimensionCols.length === 0;
         if (skipAggregation) return dataFromGrid;
 
-        const lastColId = _.last(dimensionColIds);
-
+        const lastCol = _.last(dimensionCols);
+        const lastColId = lastCol && lastCol.colId;
         const map: any = {};
         const dataAggregated: any[] = [];
 
         dataFromGrid.forEach(data => {
             let currentMap = map;
-            dimensionColIds.forEach(colId => {
+            dimensionCols.forEach(col => {
+                const colId = col.colId;
                 const key = data[colId];
                 if (colId === lastColId) {
                     let groupItem = currentMap[key];
                     if (!groupItem) {
                         groupItem = {__children: []};
-                        dimensionColIds.forEach(colId => {
+                        dimensionCols.forEach(col => {
+                            const colId = col.colId;
                             groupItem[colId] = data[colId];
                         });
                         currentMap[key] = groupItem;

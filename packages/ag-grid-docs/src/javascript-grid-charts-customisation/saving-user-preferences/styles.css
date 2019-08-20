@@ -1,0 +1,17 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.my-grid {
+    flex-grow: 1;
+    height: 10px !important;
+}
+
+.my-chart {
+    flex-grow: 2;
+    height: 10px !important;
+    display: inline-block;
+    border: 1px solid lightgrey;
+}

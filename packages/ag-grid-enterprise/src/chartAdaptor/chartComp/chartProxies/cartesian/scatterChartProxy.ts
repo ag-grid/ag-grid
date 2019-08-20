@@ -26,7 +26,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         const chartType = this.chartProxyParams.chartType;
         const fieldIds = params.fields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: ScatterSeries } = {};
-        const defaultCategorySelected = params.categoryId === ChartModel.DEFAULT_CATEGORY;
+        const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
 
         const updateSeries = (scatterSeries: ScatterSeries) => {
             const id = scatterSeries.yField as string;
@@ -55,15 +55,20 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 if (defaultCategorySelected) {
                     scatterSeries.title = `${params.fields[0].displayName} vs ${f.displayName}`;
                     scatterSeries.xField = params.fields[0].colId;
+                    scatterSeries.xFieldName = params.fields[0].displayName;
                 } else {
                     scatterSeries.title = f.displayName;
-                    scatterSeries.xField = params.categoryId;
+                    scatterSeries.xField = params.category.id;
+                    scatterSeries.xFieldName = params.category.name;
                 }
 
                 scatterSeries.data = params.data;
                 scatterSeries.yField = f.colId;
+                scatterSeries.yFieldName = f.displayName;
                 if (chartType === ChartType.Bubble && defaultCategorySelected) {
-                    scatterSeries.radiusField = params.fields[index + 2].colId;
+                    const f = params.fields[index + 2];
+                    scatterSeries.radiusField = f.colId;
+                    scatterSeries.radiusFieldName = f.displayName;
                 }
 
                 const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();

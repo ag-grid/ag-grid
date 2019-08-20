@@ -31,13 +31,13 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     public update(params: UpdateChartParams): void {
         const barSeries = this.chart.series[0] as BarSeries;
         barSeries.data = params.data;
-        barSeries.xField = params.categoryId;
+        barSeries.xField = params.category.id;
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
         // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
-        if (params.categoryId === ChartModel.DEFAULT_CATEGORY) {
+        if (params.category.id === ChartModel.DEFAULT_CATEGORY) {
             chart.xAxis.labelRotation = 0;
             this.chartOptions.xAxis.labelRotation = 0;
         } else {

@@ -30,8 +30,11 @@ export interface ChartProxyParams {
 }
 
 export interface UpdateChartParams {
-    categoryId: string;
     data: any[];
+    category: {
+        id: string;
+        name: string;
+    },
     fields: { colId: string, displayName: string }[];
 }
 

@@ -96,14 +96,14 @@ export class ChartModel extends BeanStub {
 
     public updateData(): void {
         const {startRow, endRow} = this.getRowIndexes();
-        const selectedDimension = this.getSelectedDimensionId();
+        const selectedDimension = this.getSelectedDimension();
         const selectedValueCols = this.getSelectedValueCols();
 
         this.grouping = this.isGrouping();
 
         const params: ChartDatasourceParams = {
             aggFunc: this.aggFunc,
-            dimensionColIds: [selectedDimension],
+            dimensionCols: [selectedDimension],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             multiCategories: this.isMultiCategoryChart(),
@@ -234,11 +234,11 @@ export class ChartModel extends BeanStub {
             return this.chartData;
         }
 
-        const selectedDimension = this.getSelectedDimensionId();
+        const colId = this.getSelectedDimension().colId;
         // replacing the selected dimension with a complex object to facilitate duplicated categories
         return this.chartData.map((d: any, index: number) => {
-            const dimensionValue = d[selectedDimension] ? d[selectedDimension].toString() : '';
-            d[selectedDimension] = {toString: () => dimensionValue, id: index};
+            const dimensionValue = d[colId] ? d[colId].toString() : '';
+            d[colId] = {toString: () => dimensionValue, id: index};
             return d;
         });
     }
@@ -261,7 +261,10 @@ export class ChartModel extends BeanStub {
 
         // charts only group when the selected category is a group column
         const groupCols = this.columnController.getGroupDisplayColumns();
-        const groupDimensionSelected = groupCols.map(col => col.getColId()).some(id => id === this.getSelectedDimensionId());
+        const colId = this.getSelectedDimension().colId;
+        const groupDimensionSelected = groupCols
+            .map(col => col.getColId())
+            .some(id => id === colId);
 
         return groupActive && groupDimensionSelected;
     }
@@ -338,8 +341,8 @@ export class ChartModel extends BeanStub {
         return this.valueColState.filter(cs => cs.selected).map(cs => cs.column) as Column[];
     }
 
-    public getSelectedDimensionId(): string {
-        return this.dimensionColState.filter(cs => cs.selected)[0].colId;
+    public getSelectedDimension(): ColState {
+        return this.dimensionColState.filter(cs => cs.selected)[0];
     }
 
     private getColumnInDisplayOrder(allDisplayedColumns: Column[], listToSort: Column[]) {
@@ -469,7 +472,8 @@ export class ChartModel extends BeanStub {
         return [
             ChartType.Pie,
             ChartType.Doughnut,
-            ChartType.Scatter
+            ChartType.Scatter,
+            ChartType.Bubble
         ].indexOf(this.chartType) < 0;
     }
 
