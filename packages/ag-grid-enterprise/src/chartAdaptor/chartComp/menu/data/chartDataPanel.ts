@@ -44,7 +44,7 @@ export class ChartDataPanel extends Component {
         [dimensionCols, valueCols].forEach((group, idx) => {
             const isCategory = idx === 0;
 
-            let dataGroupKey = isCategory ? 'categories' : this.chartController.isXYChart() ? 'xyValues' : 'series';
+            let dataGroupKey = isCategory ? 'categories' : this.chartController.isActiveXYChart() ? 'xyValues' : 'series';
 
             const groupComp = new AgGroupComponent({
                 title: this.chartTranslator.translate(dataGroupKey),

@@ -291,7 +291,16 @@ export class GridChartComp extends Component {
 
         const pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
 
-        const minFieldsRequired = this.chartController.isXYChart() ? 2 : 1;
+        let minFieldsRequired = 1;
+
+        if (this.chartController.isActiveXYChart()) {
+            if (this.model.getChartType() === ChartType.Bubble) {
+                minFieldsRequired = 3;
+            } else {
+                minFieldsRequired = 2;
+            }
+        }
+
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
 
         if (parent) {

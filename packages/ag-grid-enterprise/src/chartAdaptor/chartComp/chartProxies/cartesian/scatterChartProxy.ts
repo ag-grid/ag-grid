@@ -87,12 +87,12 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
 
         if (chartType === ChartType.Bubble) {
             if (defaultCategorySelected) {
+
+                // only update bubble chart if the correct number of fields are present
                 if (params.fields.length >= 3 && params.fields.length % 2 === 1) {
                     const fields: typeof params.fields = [];
                     params.fields.forEach((f, i) => i % 2 === 1 && fields.push(f));
                     fields.forEach(updateFunc);
-                } else {
-                    console.warn('Select an odd number of columns, at least three, to plot a bubble chart.');
                 }
             } else {
                 params.fields.forEach(updateFunc);
