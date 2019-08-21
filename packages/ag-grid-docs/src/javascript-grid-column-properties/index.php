@@ -154,12 +154,16 @@ include '../documentation-main/documentation_header.php';
             <td>Function to allow customer drag functionality for native drag and drop.</td>
         </tr>
         <tr>
-            <th>cellClass</th>
-            <td>Class to use for the cell. Can be string, array of strings, or function.</td>
+            <th>cellStyle</th>
+            <td>The style to give a particular cell. See <a href="../javascript-grid-cell-styles/#cell-style">Cell Style</a>.</td>
         </tr>
         <tr>
-            <th>cellStyle</th>
-            <td>An object of css values. Or a function returning an object of css values.</td>
+            <th>cellClass</th>
+            <td>The class to give a particular cell. See <a href="../javascript-grid-cell-styles/#cell-class">Cell Class</a>.</td>
+        </tr>
+        <tr>
+            <th>cellClassRules</th>
+            <td>Rules which can be applied to include certain CSS classes. See <a href="../javascript-grid-cell-styles/#cell-class-rules">Cell Class Rules</a>.</td>
         </tr>
         <tr>
             <th>editable</th>

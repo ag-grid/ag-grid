@@ -514,18 +514,6 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to enable <a href="../javascript-grid-animation/#row-animations">Row Animation</a>.</td>
         </tr>
         <tr>
-            <th>cellStyle</th>
-            <td>The style to give a particular cell. See <a href="../javascript-grid-cell-styles/#cell-style">Cell Style</a>.</td>
-        </tr>
-        <tr>
-            <th>cellClass</th>
-            <td>The class to give a particular cell. See <a href="../javascript-grid-cell-styles/#cell-class">Cell Class</a>.</td>
-        </tr>
-        <tr>
-            <th>cellClassRules</th>
-            <td>Rules which can be applied to include certain CSS classes. See <a href="../javascript-grid-cell-styles/#cell-class-rules">Cell Class Rules</a>.</td>
-        </tr>
-        <tr>
             <th>rowStyle</th>
             <td>The style to give a particular row. See <a href="../javascript-grid-row-styles/#row-style">Row Style</a>.</td>
         </tr>
