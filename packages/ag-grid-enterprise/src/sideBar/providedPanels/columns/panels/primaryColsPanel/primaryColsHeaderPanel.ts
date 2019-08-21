@@ -13,7 +13,7 @@ import {
 } from "ag-grid-community/main";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 
-export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}
+export enum SELECTED_STATE { CHECKED, UNCHECKED, INDETERMINATE }
 
 export class PrimaryColsHeaderPanel extends Component {
 
@@ -159,7 +159,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
         _.setVisible(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
         _.setVisible(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
-        _.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINIATE);
+        _.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINATE);
     }
 
     private setColumnsCheckedState(): void {
@@ -206,7 +206,7 @@ export class PrimaryColsHeaderPanel extends Component {
         });
 
         if (checkedCount > 0 && uncheckedCount > 0) {
-            this.selectState = SELECTED_STATE.INDETERMINIATE;
+            this.selectState = SELECTED_STATE.INDETERMINATE;
         } else if (uncheckedCount > 0) {
             this.selectState = SELECTED_STATE.UNCHECKED;
         } else {
@@ -215,6 +215,6 @@ export class PrimaryColsHeaderPanel extends Component {
 
         _.setVisible(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
         _.setVisible(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
-        _.setVisible(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINIATE);
+        _.setVisible(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINATE);
     }
 }

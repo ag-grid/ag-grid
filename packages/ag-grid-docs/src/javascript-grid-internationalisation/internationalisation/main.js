@@ -237,6 +237,7 @@ var gridOptions = {
         stackedAreaTooltip: 'laStacked',
         normalizedAreaTooltip: 'la100% Stacked',
         scatterTooltip: 'laScatter',
+        bubbleTooltip: 'laBubble',
         noDataToChart: 'laNo data available to be charted.',
         pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.'
     }

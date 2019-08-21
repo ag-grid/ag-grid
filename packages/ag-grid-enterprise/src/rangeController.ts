@@ -69,6 +69,7 @@ export class RangeController implements IRangeController {
         this.logger = this.loggerFactory.create('RangeController');
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));

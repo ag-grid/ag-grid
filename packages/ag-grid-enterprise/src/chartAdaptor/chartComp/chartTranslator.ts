@@ -69,6 +69,7 @@ export class ChartTranslator {
         stackedAreaTooltip: 'Stacked',
         normalizedAreaTooltip: '100% Stacked',
         scatterTooltip: 'Scatter',
+        bubbleTooltip: 'Bubble',
         columnGroup: 'Column',
         barGroup: 'Bar',
         pieGroup: 'Pie',
