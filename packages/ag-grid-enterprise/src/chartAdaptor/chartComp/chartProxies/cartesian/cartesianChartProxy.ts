@@ -16,8 +16,8 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
 
     public setCommonAxisProperty(property: CommonAxisProperty | LegendFontProperty, value: any) {
         const cartesianChart = this.chart as CartesianChart;
-        cartesianChart.xAxis[property] = value;
-        cartesianChart.yAxis[property] = value;
+        (cartesianChart.xAxis[property] as any) = value;
+        (cartesianChart.yAxis[property] as any) = value;
         cartesianChart.performLayout();
 
         this.chartOptions.xAxis[property] = value;

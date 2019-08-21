@@ -128,7 +128,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
 
     public setSeriesProperty(property: AreaSeriesProperty | LineMarkerProperty, value: any): void {
         const series = this.getChart().series as AreaSeries[];
-        series.forEach(s => s[property] = value);
+        series.forEach(s => (s[property] as any) = value);
 
         if (!this.chartOptions.seriesDefaults) {
             this.chartOptions.seriesDefaults = {};
