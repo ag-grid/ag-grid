@@ -20,7 +20,7 @@ import {
     CaptionOptions,
 } from "ag-grid-community";
 
-import { CartesianChart } from "../../charts/chart/cartesianChart";
+import { CartesianChart, CartesianChartLayout } from "../../charts/chart/cartesianChart";
 import { PolarChart } from "../../charts/chart/polarChart";
 import { LineSeries } from "../../charts/chart/series/lineSeries";
 import { ScatterSeries } from "../../charts/chart/series/scatterSeries";
@@ -68,7 +68,7 @@ export class ChartBuilder {
             xAxis: ChartBuilder.createAxis(options.yAxis),
             yAxis: ChartBuilder.createGroupedAxis(options.xAxis)
         });
-        chart.layout = 'horizontal';
+        chart.layout = CartesianChartLayout.Horizontal;
         return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
     }
 
@@ -97,7 +97,7 @@ export class ChartBuilder {
             xAxis: ChartBuilder.createAxis(options.yAxis),
             yAxis: ChartBuilder.createAxis(options.xAxis)
         });
-        chart.layout = 'horizontal';
+        chart.layout = CartesianChartLayout.Horizontal;
         return ChartBuilder.initCartesianChart(chart, options, 'bar');
     }
 

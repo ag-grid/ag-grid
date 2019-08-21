@@ -7,7 +7,10 @@ import { numericExtent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
 
-export type CartesianChartLayout = 'vertical' | 'horizontal';
+export enum CartesianChartLayout {
+    Vertical,
+    Horizontal
+}
 
 export type CartesianChartOptions = {
     xAxis: Axis<Scale<any, number>>,
@@ -145,7 +148,7 @@ export class CartesianChart extends Chart {
         this.positionLegend();
     }
 
-    private _layout: CartesianChartLayout = 'vertical';
+    private _layout: CartesianChartLayout = CartesianChartLayout.Vertical;
     set layout(value: CartesianChartLayout) {
         if (this._layout !== value) {
             this._layout = value;
@@ -157,7 +160,7 @@ export class CartesianChart extends Chart {
     }
 
     updateAxes() {
-        const isHorizontal = this.layout === 'horizontal';
+        const isHorizontal = this.layout === CartesianChartLayout.Horizontal;
         const xAxis = isHorizontal ? this.yAxis : this.xAxis;
         const yAxis = isHorizontal ? this.xAxis : this.yAxis;
 

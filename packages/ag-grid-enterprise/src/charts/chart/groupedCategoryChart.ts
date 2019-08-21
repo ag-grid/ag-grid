@@ -1,4 +1,5 @@
 import { Chart } from "./chart";
+import { CartesianChartLayout } from "./cartesianChart";
 import { Axis } from "../axis";
 import Scale from "../scale/scale";
 import { Series } from "./series/series";
@@ -138,7 +139,7 @@ export class GroupedCategoryChart extends Chart {
         this.positionLegend();
     }
 
-    private _layout: CartesianChartLayout = 'vertical';
+    private _layout: CartesianChartLayout = CartesianChartLayout.Vertical;
     set layout(value: CartesianChartLayout) {
         if (this._layout !== value) {
             this._layout = value;
@@ -150,7 +151,7 @@ export class GroupedCategoryChart extends Chart {
     }
 
     updateAxes() {
-        const isHorizontal = this.layout === 'horizontal';
+        const isHorizontal = this.layout === CartesianChartLayout.Horizontal;
         const xAxis = isHorizontal ? this.yAxis : this.xAxis;
         const yAxis = isHorizontal ? this.xAxis : this.yAxis;
 

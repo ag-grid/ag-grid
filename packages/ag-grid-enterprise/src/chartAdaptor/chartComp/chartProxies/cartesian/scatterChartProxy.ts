@@ -1,11 +1,11 @@
 import {ChartType, ScatterChartOptions, ScatterSeriesOptions} from "ag-grid-community";
 import {ChartBuilder} from "../../../builder/chartBuilder";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import { CartesianChart, CartesianChartLayout } from "../../../../charts/chart/cartesianChart";
 import {ScatterSeries} from "../../../../charts/chart/series/scatterSeries";
 import {ChartModel} from "../../chartModel";
-import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty, ScatterSeriesProperty} from "./cartesianChartProxy";
-import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
+import {CartesianChartProxy, LineMarkerProperty, ScatterSeriesProperty} from "./cartesianChartProxy";
+import { GroupedCategoryAxis } from "../../../../charts/chart/axis/groupedCategoryAxis";
 
 export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> {
 
@@ -39,8 +39,16 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             .map(series => series as ScatterSeries)
             .forEach(updateSeries);
 
-        const categoryAxis = chart.xAxis instanceof CategoryAxis ? chart.xAxis : chart.yAxis;
-        if (defaultCategorySelected || categoryAxis === chart.yAxis) {
+        // Because of the business requirement of seamless switching between column and bar charts using the same
+        // user configs, the xAxis config is used for the vertical y-axis in bar chart mode, and the
+        // yAxis config for the horizontal x-axis.
+        const categoryAxis = chart.layout === CartesianChartLayout.Horizontal ? chart.yAxis : chart.xAxis;
+        // Don't auto rotate horizontal axis labels if categories are generated (indexes) or the axis is a grouped category axis,
+        // or the category axis is a vertical axis.
+        const noLabelRotation = params.category.id === ChartModel.DEFAULT_CATEGORY
+            || categoryAxis instanceof GroupedCategoryAxis
+            || chart.layout === CartesianChartLayout.Horizontal;
+        if (noLabelRotation) {
             chart.xAxis.labelRotation = 0;
             this.chartOptions.xAxis.labelRotation = 0;
         } else {

@@ -1,11 +1,12 @@
 import {ChartType, LineChartOptions, LineSeriesOptions} from "ag-grid-community";
 import {ChartBuilder} from "../../../builder/chartBuilder";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import { CartesianChart, CartesianChartLayout } from "../../../../charts/chart/cartesianChart";
 import {LineSeries} from "../../../../charts/chart/series/lineSeries";
 import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty} from "./cartesianChartProxy";
 import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
+import { GroupedCategoryAxis } from "../../../../charts/chart/axis/groupedCategoryAxis";
 
 export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 
@@ -66,10 +67,17 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             }
         });
 
-        // always set the label rotation of the default category to 0 degrees
         const chart = this.chart as CartesianChart;
-        const categoryAxis = chart.xAxis instanceof CategoryAxis ? chart.xAxis : chart.yAxis;
-        if (params.category.id === ChartModel.DEFAULT_CATEGORY || categoryAxis === chart.yAxis) {
+        // Because of the business requirement of seamless switching between column and bar charts using the same
+        // user configs, the xAxis config is used for the vertical y-axis in bar chart mode, and the
+        // yAxis config for the horizontal x-axis.
+        const categoryAxis = chart.layout === CartesianChartLayout.Horizontal ? chart.yAxis : chart.xAxis;
+        // Don't auto rotate horizontal axis labels if categories are generated (indexes) or the axis is a grouped category axis,
+        // or the category axis is a vertical axis.
+        const noLabelRotation = params.category.id === ChartModel.DEFAULT_CATEGORY
+            || categoryAxis instanceof GroupedCategoryAxis
+            || chart.layout === CartesianChartLayout.Horizontal;
+        if (noLabelRotation) {
             chart.xAxis.labelRotation = 0;
             this.chartOptions.xAxis.labelRotation = 0;
         } else {
