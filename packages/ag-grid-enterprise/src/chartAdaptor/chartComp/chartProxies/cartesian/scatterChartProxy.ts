@@ -88,14 +88,19 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             }
         };
 
+        
         if (defaultCategorySelected) {
             if (chartType === ChartType.Bubble) {
                 // only update bubble chart if the correct number of fields are present
-                if (params.fields.length >= 3 && params.fields.length % 2 === 1) {
-                    const fields: typeof params.fields = [];
-                    params.fields.forEach((f, i) => i % 2 === 1 && fields.push(f));
-                    fields.forEach(updateFunc);
+                const len = params.fields.length;
+                const offset = len % 2 === 0 ? 1 : 0;
+                const fields: typeof params.fields = [];
+
+                for (let i = 1; i < len - offset; i += 2) {
+                    fields.push(params.fields[i]);
                 }
+
+                fields.forEach(updateFunc);
             } else {
                 params.fields.slice(1, params.fields.length).forEach(updateFunc);
             }
