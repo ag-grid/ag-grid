@@ -119,7 +119,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
 
     public setSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty, value: any): void {
         const series = this.getChart().series as ScatterSeries[];
-        series.forEach(s => s[property] = value);
+        series.forEach(s => (s[property] as any) = value);
 
         if (!this.chartOptions.seriesDefaults) {
             this.chartOptions.seriesDefaults = {};

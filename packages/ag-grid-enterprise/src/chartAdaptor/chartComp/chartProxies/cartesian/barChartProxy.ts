@@ -61,7 +61,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
     public setSeriesProperty(property: BarSeriesProperty | BarSeriesFontProperty, value: any): void {
         const series = this.getChart().series as BarSeries[];
-        series.forEach(s => s[property] = value);
+        series.forEach(s => (s[property] as any) = value);
 
         if (!this.chartOptions.seriesDefaults) {
             this.chartOptions.seriesDefaults = {};

@@ -87,7 +87,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 
     public setSeriesProperty(property: LineSeriesProperty | LineMarkerProperty, value: any): void {
         const series = this.getChart().series as LineSeries[];
-        series.forEach(s => s[property] = value);
+        series.forEach(s => (s[property] as any) = value);
 
         if (!this.chartOptions.seriesDefaults) {
             this.chartOptions.seriesDefaults = {};

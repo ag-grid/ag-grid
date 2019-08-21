@@ -13,7 +13,7 @@ export abstract class PolarChartProxy<T extends PieChartOptions | DoughnutChartO
 
     public setSeriesProperty(property: PolarSeriesProperty | PolarSeriesFontProperty | CalloutProperty, value: any): void {
         const series = this.getChart().series as PieSeries[];
-        series.forEach(s => s[property] = value);
+        series.forEach(s => (s[property] as any) = value);
 
         if (!this.chartOptions.seriesDefaults) {
             this.chartOptions.seriesDefaults = {};

@@ -128,7 +128,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
     }
 
     public setLegendProperty(property: LegendProperty | LegendFontProperty, value: any) {
-        this.chart.legend[property] = value;
+        (this.chart.legend[property] as any) = value;
 
         if (!this.chartOptions.legend) {
             this.chartOptions.legend = {};
@@ -170,7 +170,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
         if (!this.chart.title) {
             this.chart.title = {} as Caption;
         }
-        this.chart.title[property] = value;
+        (this.chart.title[property] as any) = value;
 
         if (!this.chartOptions.title) {
             this.chartOptions.title = {} as Caption;
@@ -200,7 +200,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
                 s.shadow = new DropShadow({enabled: false, blur: 0, xOffset: 0, yOffset: 0, color: 'rgba(0,0,0,0.5)'});
             }
 
-            s.shadow[property] = value;
+            (s.shadow[property] as any) = value;
         });
 
         const chartOptions = this.chartOptions as BarChartOptions | AreaChartOptions | PieChartOptions;
