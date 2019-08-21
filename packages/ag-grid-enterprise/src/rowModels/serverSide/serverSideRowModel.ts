@@ -517,7 +517,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         if (this.cacheExists()) {
-            this.rootNode.childrenCache!.forEachNodeDeep(callback, new NumberSequence());
+            this.rootNode.childrenCache!.forEachNodeDeep(callback);
         }
     }
 

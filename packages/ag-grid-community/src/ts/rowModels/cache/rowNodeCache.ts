@@ -210,7 +210,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         this.onCacheUpdated();
     }
 
-    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence): void {
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
         this.forEachBlockInOrder(block => {
             block.forEachNodeDeep(callback, sequence, this.virtualRowCount);
         });

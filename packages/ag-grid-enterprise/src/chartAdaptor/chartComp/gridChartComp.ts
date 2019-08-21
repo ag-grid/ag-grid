@@ -354,7 +354,7 @@ export class GridChartComp extends Component {
     }
 
     private isXYChart(): boolean {
-        return [ChartType.Scatter].indexOf(this.model.getChartType()) > -1;
+        return [ChartType.Scatter, ChartType.Bubble].indexOf(this.model.getChartType()) > -1;
     }
 
     public destroy(): void {
