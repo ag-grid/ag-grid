@@ -8,7 +8,6 @@ import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 
-export type CartesianChartLayout = 'vertical' | 'horizontal';
 type GroupedCategoryChartAxis = GroupedCategoryAxis | Axis<Scale<any, number>>;
 export type GroupedCategoryChartOptions = {
     xAxis: GroupedCategoryChartAxis,

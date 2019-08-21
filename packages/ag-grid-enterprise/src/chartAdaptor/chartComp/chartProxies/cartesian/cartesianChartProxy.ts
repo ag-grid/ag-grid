@@ -38,7 +38,7 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
         const cartesianChart = this.chart as CartesianChart;
         cartesianChart.xAxis.labelRotation = rotation;
         this.chartOptions.xAxis.labelRotation = rotation;
-        this.chart.layoutPending = true;
+        this.chart.performLayout();
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -51,7 +51,7 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
         const cartesianChart = this.chart as CartesianChart;
         cartesianChart.yAxis.labelRotation = rotation;
         this.chartOptions.yAxis.labelRotation = rotation;
-        this.chart.layoutPending = true;
+        this.chart.performLayout();
 
         this.raiseChartOptionsChangedEvent();
     }
