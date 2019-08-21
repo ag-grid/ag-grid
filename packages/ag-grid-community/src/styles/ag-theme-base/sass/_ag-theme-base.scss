@@ -191,11 +191,14 @@
         .ag-cell {
             border-right: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell:not(.ag-cell-focus) {
-            &.ag-cell-first-right-pinned {
+
+        .ag-cell:not(.ag-cell-focus), 
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+        .ag-root:not(.ag-has-focus) .ag-cell {
+            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
                 border-left: 1px solid $border-color;
             }
-            &.ag-cell-last-left-pinned {
+            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
                 border-right: 1px solid $border-color;
             }
         }
@@ -208,11 +211,14 @@
         .ag-cell {
             border-left: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell:not(.ag-cell-focus) {
-            &.ag-cell-first-right-pinned {
+
+        .ag-cell:not(.ag-cell-focus), 
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+        .ag-root:not(.ag-has-focus) .ag-cell {
+            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
                 border-left: 1px solid $border-color;
             }
-            &.ag-cell-last-left-pinned {
+            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
                 border-right: 1px solid $border-color;
             }
         }
