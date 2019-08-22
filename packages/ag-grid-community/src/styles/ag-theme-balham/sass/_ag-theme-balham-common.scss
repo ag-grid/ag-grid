@@ -237,4 +237,10 @@
     .ag-filter-apply-panel {
         border-top: 1px solid $border-color;
     }
+
+    .ag-group-expanded {
+        .ag-icon-contracted:empty:before {
+            content: map-get($icons-font-codes, tree-open);
+        }
+    }
 }
