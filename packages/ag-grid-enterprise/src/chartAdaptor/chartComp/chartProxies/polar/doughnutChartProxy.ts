@@ -24,18 +24,14 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
         const doughnutChart = this.chart as PolarChart;
         const fieldIds = params.fields.map(f => f.colId);
 
-        const existingSeriesMap: { [id: string]: PieSeries } = {};
-        const removedSeriesList: PieSeries[] = [];
+        const seriesMap: { [id: string]: PieSeries } = {};
         doughnutChart.series.forEach(series => {
             const pieSeries = (series as PieSeries);
             const id = pieSeries.angleField as string;
-            if (fieldIds.indexOf(id) > -1) {
-                existingSeriesMap[id] = pieSeries;
-            } else {
-                removedSeriesList.push(pieSeries);
+            if (fieldIds.indexOf(id) >= 0) {
+                seriesMap[id] = pieSeries;
             }
         });
-        removedSeriesList.forEach(series => doughnutChart.removeSeries(series));
 
         const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
 
@@ -45,7 +41,7 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
 
         let offset = 0;
         params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
-            const existingSeries = existingSeriesMap[f.colId];
+            const existingSeries = seriesMap[f.colId];
 
             title.text = f.displayName;
 
@@ -88,9 +84,17 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
             }
 
             if (!existingSeries) {
-                doughnutChart.addSeries(pieSeries);
+                seriesMap[f.colId] = pieSeries;
             }
         });
+
+        // Because repaints are automatic, it's important to remove/add/update series at once,
+        // so that we don't get painted twice.
+        const existingSeries: PieSeries[] = [];
+        for (const id in seriesMap) {
+            existingSeries.push(seriesMap[id]);
+        }
+        doughnutChart.series = existingSeries;
     }
 
     private defaultOptions() {

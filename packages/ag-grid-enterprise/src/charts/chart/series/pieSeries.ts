@@ -113,7 +113,7 @@ export class PieSeries extends Series<PolarChart> {
     set calloutColors(value: string[]) {
         if (this._calloutColors !== value) {
             this._calloutColors = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get calloutColors(): string[] {
@@ -124,7 +124,7 @@ export class PieSeries extends Series<PolarChart> {
     set calloutStrokeWidth(value: number) {
         if (this._calloutStrokeWidth !== value) {
             this._calloutStrokeWidth = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get calloutStrokeWidth(): number {
@@ -135,7 +135,7 @@ export class PieSeries extends Series<PolarChart> {
     set calloutLength(value: number) {
         if (this._calloutLength !== value) {
             this._calloutLength = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get calloutLength(): number {
@@ -146,7 +146,7 @@ export class PieSeries extends Series<PolarChart> {
     set labelOffset(value: number) {
         if (this._labelOffset !== value) {
             this._labelOffset = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get labelOffset(): number {
@@ -157,7 +157,7 @@ export class PieSeries extends Series<PolarChart> {
     set labelFontStyle(value: string | undefined) {
         if (this._labelFontStyle !== value) {
             this._labelFontStyle = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get labelFontStyle(): string | undefined {
@@ -168,7 +168,7 @@ export class PieSeries extends Series<PolarChart> {
     set labelFontWeight(value: string | undefined) {
         if (this._labelFontWeight !== value) {
             this._labelFontWeight = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get labelFontWeight(): string | undefined {
@@ -179,7 +179,7 @@ export class PieSeries extends Series<PolarChart> {
     set labelFontSize(value: number) {
         if (this._labelFontSize !== value) {
             this._labelFontSize = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get labelFontSize(): number {
@@ -190,7 +190,7 @@ export class PieSeries extends Series<PolarChart> {
     set labelFontFamily(value: string) {
         if (this._labelFontFamily !== value) {
             this._labelFontFamily = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get labelFontFamily(): string {
@@ -201,7 +201,7 @@ export class PieSeries extends Series<PolarChart> {
     set labelColor(value: string) {
         if (this._labelColor !== value) {
             this._labelColor = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get labelColor(): string {
@@ -222,7 +222,7 @@ export class PieSeries extends Series<PolarChart> {
     set chart(chart: PolarChart | undefined) {
         if (this._chart !== chart) {
             this._chart = chart;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get chart(): PolarChart | undefined {
@@ -369,7 +369,7 @@ export class PieSeries extends Series<PolarChart> {
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get strokeWidth(): number {
@@ -380,7 +380,7 @@ export class PieSeries extends Series<PolarChart> {
     set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
-            this.update();
+            this.scheduleLayout();
         }
     }
     get shadow(): DropShadow | undefined {

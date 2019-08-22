@@ -83,7 +83,7 @@ export class AxisPanel extends Component {
             family: this.chartProxy.getCommonAxisProperty('labelFontFamily'),
             style: this.chartProxy.getCommonAxisProperty('labelFontStyle'),
             weight: this.chartProxy.getCommonAxisProperty('labelFontWeight'),
-            size: Number.parseInt(this.chartProxy.getCommonAxisProperty('labelFontSize')),
+            size: parseInt(this.chartProxy.getCommonAxisProperty('labelFontSize')),
             color: this.chartProxy.getCommonAxisProperty('labelColor')
         };
 

@@ -102,7 +102,7 @@ export class BarSeriesPanel extends Component {
             family: this.chartProxy.getSeriesProperty('labelFontFamily'),
             style: this.chartProxy.getSeriesProperty('labelFontStyle'),
             weight: this.chartProxy.getSeriesProperty('labelFontWeight'),
-            size: Number.parseInt(this.chartProxy.getSeriesProperty('labelFontSize')),
+            size: parseInt(this.chartProxy.getSeriesProperty('labelFontSize')),
             color: this.chartProxy.getSeriesProperty('labelColor')
         };
 

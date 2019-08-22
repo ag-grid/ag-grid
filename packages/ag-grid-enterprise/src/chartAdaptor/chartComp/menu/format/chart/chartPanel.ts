@@ -64,7 +64,7 @@ export class ChartPanel extends Component {
             family: this.chart.title ? this.chartProxy.getTitleProperty('fontFamily') : 'Verdana, sans-serif',
             style: this.chart.title ? this.chartProxy.getTitleProperty('fontStyle') : '',
             weight: this.chart.title ? this.chartProxy.getTitleProperty('fontWeight') : 'Normal',
-            size: this.chart.title ? Number.parseInt(this.chartProxy.getTitleProperty('fontSize')) : 22,
+            size: this.chart.title ? parseInt(this.chartProxy.getTitleProperty('fontSize')) : 22,
             color: this.chart.title ? this.chartProxy.getTitleProperty('color') : 'black'
         };
 

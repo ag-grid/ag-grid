@@ -120,7 +120,7 @@ export class LegendPanel extends Component {
             family: this.chartProxy.getLegendProperty('labelFontFamily'),
             style: this.chartProxy.getLegendProperty('labelFontStyle'),
             weight: this.chartProxy.getLegendProperty('labelFontWeight'),
-            size: Number.parseInt(this.chartProxy.getLegendProperty('labelFontSize')),
+            size: parseInt(this.chartProxy.getLegendProperty('labelFontSize')),
             color: this.chartProxy.getLegendProperty('labelColor')
         };
 
