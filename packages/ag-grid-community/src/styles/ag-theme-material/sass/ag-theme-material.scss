@@ -84,4 +84,10 @@
           padding-right: 1px;
         }
     }
+
+    .ag-group-expanded {
+        .ag-icon-contracted:empty:before {
+            content: map-get($icons-font-codes, tree-open);
+        }
+    }
 }
