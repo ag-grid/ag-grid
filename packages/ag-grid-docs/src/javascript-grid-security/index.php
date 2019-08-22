@@ -73,7 +73,8 @@ let colDef = {
     
     <p>
         The <code>img-src</code> policy requires the <code>data:</code> rule. This is because the grid pre-loads SVG
-        images as data strings. One example of such an image is the filter menu section divider.
+        images as data strings. One example of such an image is the filter menu section divider. If the image was
+        not preloaded, the grid would flicker when the menu shows, while the image is getting loaded.
     </p>
 
     <h3>font-src</h3>
