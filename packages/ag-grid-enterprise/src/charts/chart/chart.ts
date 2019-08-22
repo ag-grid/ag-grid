@@ -284,13 +284,15 @@ export abstract class Chart {
 
     private dataCallbackId: number = 0;
     set dataPending(value: boolean) {
-        if (value) {
-            if (!this.dataCallbackId) {
-                this.dataCallbackId = window.setTimeout(this._processData, 0); // run on next tick
-            }
-        } else if (this.dataCallbackId) {
+        if (this.dataCallbackId) {
             clearTimeout(this.dataCallbackId);
             this.dataCallbackId = 0;
+        }
+        if (value) {
+            // We don't want to render before the data is processed and then again after,
+            // so we cancel the auto-scheduled render, if any.
+            this.scene.cancelRender();
+            this.dataCallbackId = window.setTimeout(this._processData, 0); // run on next tick
         }
     }
     get dataPending(): boolean {
