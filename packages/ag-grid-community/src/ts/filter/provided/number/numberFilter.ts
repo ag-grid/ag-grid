@@ -195,16 +195,16 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         super.updateUiVisibility();
 
         const showFrom1 = this.showValueFrom(this.getCondition1Type());
-        _.setVisible(this.eValueFrom1, showFrom1);
+        _.setDisplayed(this.eValueFrom1, showFrom1);
 
         const showTo1 = this.showValueTo(this.getCondition1Type());
-        _.setVisible(this.eValueTo1, showTo1);
+        _.setDisplayed(this.eValueTo1, showTo1);
 
         const showFrom2 = this.showValueFrom(this.getCondition2Type());
-        _.setVisible(this.eValueFrom2, showFrom2);
+        _.setDisplayed(this.eValueFrom2, showFrom2);
 
         const showTo2 = this.showValueTo(this.getCondition2Type());
-        _.setVisible(this.eValueTo2, showTo2);
+        _.setDisplayed(this.eValueTo2, showTo2);
     }
 
 }

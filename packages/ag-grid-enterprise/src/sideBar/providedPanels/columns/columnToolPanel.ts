@@ -46,7 +46,7 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
 
     // lazy initialise the panel
     public setVisible(visible: boolean): void {
-        super.setVisible(visible);
+        super.setDisplayed(visible);
         if (visible && !this.initialised) {
             this.init(this.params);
         }

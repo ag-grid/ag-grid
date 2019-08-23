@@ -24,6 +24,7 @@
     "buildRelease": "lerna run build",
     "buildCore": "lerna run build --scope ag-grid-community --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue",
     "buildVanilla": "lerna run build --scope ag-grid-community --scope ag-grid-enterprise",
+    "buildCommunity": "lerna run build --scope ag-grid-community",
     "buildAngular": "lerna run build --scope ag-grid-community --scope ag-grid-angular",
     "buildVue": "lerna run build --scope ag-grid-community --scope ag-grid-vue",
     "buildReact": "lerna run build --scope ag-grid-community --scope ag-grid-react",

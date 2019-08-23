@@ -168,7 +168,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public setLoading(loading: boolean): void {
-        _.setVisible(this.eFilterLoading, loading);
+        _.setDisplayed(this.eFilterLoading, loading);
     }
 
     private initialiseFilterBodyUi(): void {
@@ -196,7 +196,7 @@ export class SetFilter extends ProvidedFilter {
             this.setFilterParams.column
         );
         this.virtualList.setModel(new ModelWrapper(this.valueModel));
-        _.setVisible(this.getGui().querySelector('#ag-mini-filter') as HTMLElement, !this.setFilterParams.suppressMiniFilter);
+        _.setDisplayed(this.getGui().querySelector('#ag-mini-filter') as HTMLElement, !this.setFilterParams.suppressMiniFilter);
 
         this.eMiniFilter.value = this.valueModel.getMiniFilter() as any;
         this.addDestroyableEventListener(this.eMiniFilter, 'input', this.onMiniFilterInput.bind(this));
@@ -208,7 +208,7 @@ export class SetFilter extends ProvidedFilter {
         this.updateSelectAll();
 
         if (this.setFilterParams.suppressSelectAll) {
-            _.setVisible(this.eSelectAllContainer, false);
+            _.setDisplayed(this.eSelectAllContainer, false);
         }
 
         this.virtualList.refresh();

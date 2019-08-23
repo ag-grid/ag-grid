@@ -19,7 +19,7 @@ export class NameValueComp extends Component {
 
     public setLabel(key: string, defaultValue: string): void {
         // we want to hide until the first value comes in
-        this.setVisible(false);
+        this.setDisplayed(false);
 
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eLabel.innerHTML = localeTextFunc(key, defaultValue);

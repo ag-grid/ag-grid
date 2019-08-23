@@ -166,7 +166,7 @@ export class FloatingFilterWrapper extends Component {
         _.addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-body', !this.suppressFilterButton);
         _.addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-full-body', this.suppressFilterButton);
 
-        _.setVisible(this.eButtonWrapper, !this.suppressFilterButton);
+        _.setDisplayed(this.eButtonWrapper, !this.suppressFilterButton);
 
         const eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
         this.eButtonShowMainFilter.appendChild(eIcon);
@@ -245,7 +245,7 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private setupEmpty(): void {
-        _.setVisible(this.eButtonWrapper, false);
+        _.setDisplayed(this.eButtonWrapper, false);
     }
 
     private currentParentModel(): any {

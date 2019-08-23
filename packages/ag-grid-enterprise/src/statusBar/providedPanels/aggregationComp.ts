@@ -79,7 +79,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         const statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
         if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
             statusBarValueComponent.setValue(_.formatNumberTwoDecimalPlacesAndCommas(value));
-            statusBarValueComponent.setVisible(visible);
+            statusBarValueComponent.setDisplayed(visible);
         }
     }
 

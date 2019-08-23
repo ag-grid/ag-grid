@@ -336,9 +336,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     protected updateUiVisibility(): void {
         const firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
         const showSecondFilter = this.allowTwoConditions && firstConditionComplete;
-        _.setVisible(this.eCondition2Body, showSecondFilter);
-        _.setVisible(this.eType2, showSecondFilter);
-        _.setVisible(this.eJoinOperatorPanel, showSecondFilter);
+        _.setDisplayed(this.eCondition2Body, showSecondFilter);
+        _.setDisplayed(this.eType2, showSecondFilter);
+        _.setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
     }
 
     protected resetUiToDefaults(): void {

@@ -144,11 +144,11 @@ export class HeaderRootComp extends Component {
     }
 
     public setLeftVisible(visible: boolean): void {
-        _.setVisible(this.ePinnedLeftHeader, visible);
+        _.setDisplayed(this.ePinnedLeftHeader, visible);
     }
 
     public setRightVisible(visible: boolean): void {
-        _.setVisible(this.ePinnedRightHeader, visible);
+        _.setDisplayed(this.ePinnedRightHeader, visible);
     }
 
     public getHeaderRowCount(): number {

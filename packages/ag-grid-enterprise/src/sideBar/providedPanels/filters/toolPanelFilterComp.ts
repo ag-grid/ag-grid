@@ -102,16 +102,16 @@ export class ToolPanelFilterComp extends Component {
             }
         });
 
-        _.setVisible(this.eExpandChecked, true);
-        _.setVisible(this.eExpandUnchecked, false);
+        _.setDisplayed(this.eExpandChecked, true);
+        _.setDisplayed(this.eExpandUnchecked, false);
     }
 
     private doCollapse(): void {
         this.expanded = false;
         this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
 
-        _.setVisible(this.eExpandChecked, false);
-        _.setVisible(this.eExpandUnchecked, true);
+        _.setDisplayed(this.eExpandChecked, false);
+        _.setDisplayed(this.eExpandUnchecked, true);
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {

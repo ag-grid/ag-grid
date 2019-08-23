@@ -15,7 +15,6 @@ export class RowDragComp extends Component {
     private readonly rowNode: RowNode;
     private readonly column: Column;
     private readonly cellValue: string;
-    private visibleMode: 'display' | 'visibility' | null = null;
 
     constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans) {
         super(`<div class="ag-row-drag"></div>`);
@@ -71,30 +70,48 @@ export class RowDragComp extends Component {
         this.beans.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(() => this.beans.dragAndDropService.removeDragSource(dragSource));
     }
+}
 
-    public getVisibleMode() {
-        return this.visibleMode;
+class VisibilityStrategy extends BeanStub {
+
+    private readonly parent: RowDragComp;
+    private readonly column: Column;
+    protected readonly rowNode: RowNode;
+
+    constructor(parent: RowDragComp, rowNode: RowNode, column: Column) {
+        super();
+        this.parent = parent;
+        this.column = column;
+        this.rowNode = rowNode;
     }
 
-    public setVisibleMode(type: 'display' | 'visibility') {
-        this.visibleMode = type;
+    protected setDisplayedOrVisible(neverDisplayed: boolean): void {
+        if (neverDisplayed) {
+            this.parent.setDisplayed(false);
+        } else {
+            const shown = this.column.isRowDrag(this.rowNode);
+            const isShownSometimes = _.isFunction(this.column.getColDef().rowDrag);
+
+            // if shown sometimes, them some rows can have drag handle while other don't,
+            // so we use setVisible to keep the handles horizontally aligned (as setVisible
+            // keeps the empty space, whereas setDisplayed looses the space)
+            if (isShownSometimes) {
+                this.parent.setVisible(shown);
+            } else {
+                this.parent.setDisplayed(shown);
+            }
+        }
     }
 }
 
 // when non managed, the visibility depends on suppressRowDrag property only
-class NonManagedVisibilityStrategy extends BeanStub {
+class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
-    private readonly parent: RowDragComp;
     private readonly beans: Beans;
-    private readonly column: Column;
-    private readonly rowNode: RowNode;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column: Column) {
-        super();
-        this.parent = parent;
+        super(parent, rowNode, column);
         this.beans = beans;
-        this.column = column;
-        this.rowNode = rowNode;
     }
 
     @PostConstruct
@@ -113,31 +130,16 @@ class NonManagedVisibilityStrategy extends BeanStub {
     }
 
     private workOutVisibility(): void {
-
         // only show the drag if both sort and filter are not present
-        const suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
-
-        if (suppressRowDrag) {
-            this.parent.setVisibleMode('display');
-            this.parent.setVisible(false, 'display');
-        } else {
-            const visible = this.column.isRowDrag(this.rowNode);
-            if (!this.parent.getVisibleMode()) {
-                const isRowDragFunc = _.isFunction(this.column.getColDef().rowDrag);
-                this.parent.setVisibleMode(isRowDragFunc ? 'visibility' : 'display');
-            }
-            this.parent.setVisible(visible, this.parent.getVisibleMode());
-        }
+        const neverDisplayed = this.beans.gridOptionsWrapper.isSuppressRowDrag();
+        this.setDisplayedOrVisible(neverDisplayed);
     }
 
 }
 
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
-class ManagedVisibilityStrategy extends BeanStub {
+class ManagedVisibilityStrategy extends VisibilityStrategy {
 
-    private readonly parent: RowDragComp;
-    private readonly column: Column;
-    private readonly rowNode: RowNode;
     private readonly beans: Beans;
 
     private sortActive: boolean;
@@ -145,11 +147,8 @@ class ManagedVisibilityStrategy extends BeanStub {
     private rowGroupActive: boolean;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column: Column) {
-        super();
-        this.parent = parent;
+        super(parent, rowNode, column);
         this.beans = beans;
-        this.column = column;
-        this.rowNode = rowNode;
     }
 
     @PostConstruct
@@ -211,18 +210,9 @@ class ManagedVisibilityStrategy extends BeanStub {
         const sortOrFilterOrGroupActive = this.sortActive || this.filterActive || this.rowGroupActive;
         const suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
 
-        const alwaysHide = sortOrFilterOrGroupActive || suppressRowDrag;
+        const neverDisplayed = sortOrFilterOrGroupActive || suppressRowDrag;
 
-        if (alwaysHide) {
-            this.parent.setVisibleMode('display');
-            this.parent.setVisible(false, 'display');
-        } else {
-            const visible = this.column.isRowDrag(this.rowNode);
-            if (!this.parent.getVisibleMode()) {
-                const isRowDragFunc = _.isFunction(this.column.getColDef().rowDrag);
-                this.parent.setVisibleMode(isRowDragFunc ? 'visibility' : 'display');
-            }
-            this.parent.setVisible(visible, this.parent.getVisibleMode());
-        }
+        this.setDisplayedOrVisible(neverDisplayed);
+
     }
 }

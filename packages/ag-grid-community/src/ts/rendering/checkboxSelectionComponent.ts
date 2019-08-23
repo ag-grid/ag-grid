@@ -52,9 +52,9 @@ export class CheckboxSelectionComponent extends Component {
 
     private onSelectionChanged(): void {
         const state = this.rowNode.isSelected();
-        _.setVisible(this.eCheckedIcon, state === true);
-        _.setVisible(this.eUncheckedIcon, state === false);
-        _.setVisible(this.eIndeterminateIcon, typeof state !== 'boolean');
+        _.setDisplayed(this.eCheckedIcon, state === true);
+        _.setDisplayed(this.eUncheckedIcon, state === false);
+        _.setDisplayed(this.eIndeterminateIcon, typeof state !== 'boolean');
     }
 
     private onCheckedClicked(): number {
@@ -118,7 +118,7 @@ export class CheckboxSelectionComponent extends Component {
         }
 
         // show checkbox if both conditions are true
-        this.setVisible(selectable);
+        this.setDisplayed(selectable);
     }
 
     private checkboxCallbackExists(): boolean {

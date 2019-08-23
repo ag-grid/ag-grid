@@ -1544,12 +1544,12 @@ export class Utils {
         return which === undefined;
     }
 
-    static setVisible(element: HTMLElement, visible: boolean) {
-        this.addOrRemoveCssClass(element, 'ag-hidden', !visible);
+    static setDisplayed(element: HTMLElement, displayed: boolean) {
+        this.addOrRemoveCssClass(element, 'ag-hidden', !displayed);
     }
 
-    static setHidden(element: HTMLElement, hidden: boolean) {
-        this.addOrRemoveCssClass(element, 'ag-invisible', hidden);
+    static setVisible(element: HTMLElement, visible: boolean) {
+        this.addOrRemoveCssClass(element, 'ag-invisible', !visible);
     }
 
     static setElementWidth(element: HTMLElement, width: string | number) {

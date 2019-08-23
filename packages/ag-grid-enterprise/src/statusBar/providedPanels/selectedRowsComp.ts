@@ -21,7 +21,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
         const selectedRowCount = this.gridApi.getSelectedRows().length;
         this.setValue(selectedRowCount);
-        this.setVisible(selectedRowCount > 0);
+        this.setDisplayed(selectedRowCount > 0);
 
         const eventListener = this.onRowSelectionChanged.bind(this);
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, eventListener);
@@ -37,7 +37,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
     private onRowSelectionChanged() {
         const selectedRowCount = this.gridApi.getSelectedRows().length;
         this.setValue(selectedRowCount);
-        this.setVisible(selectedRowCount > 0);
+        this.setDisplayed(selectedRowCount > 0);
     }
 
     public init() {

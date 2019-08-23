@@ -267,7 +267,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         const moreThanOneColSorting = allColumnsWithSorting.length > 1;
         const showIndex = col.isSorting() && moreThanOneColSorting;
 
-        _.setVisible(this.eSortOrder, showIndex);
+        _.setDisplayed(this.eSortOrder, showIndex);
 
         if (indexThisCol >= 0) {
             this.eSortOrder.innerHTML = (indexThisCol + 1).toString();

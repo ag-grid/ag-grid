@@ -57,8 +57,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     protected setEditable(editable: boolean): void {
-        _.setVisible(this.eDateWrapper, editable);
-        _.setVisible(this.eReadOnlyText, !editable);
+        _.setDisplayed(this.eDateWrapper, editable);
+        _.setDisplayed(this.eReadOnlyText, !editable);
     }
 
     public onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void {

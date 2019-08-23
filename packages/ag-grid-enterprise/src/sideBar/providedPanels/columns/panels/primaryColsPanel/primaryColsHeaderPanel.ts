@@ -99,9 +99,9 @@ export class PrimaryColsHeaderPanel extends Component {
 
         const groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
 
-        _.setVisible(this.eFilterWrapper, showFilter);
-        _.setVisible(this.eSelect, showSelect);
-        _.setVisible(this.eExpand, showExpand && groupsPresent);
+        _.setDisplayed(this.eFilterWrapper, showFilter);
+        _.setDisplayed(this.eSelect, showSelect);
+        _.setDisplayed(this.eExpand, showExpand && groupsPresent);
     }
 
     private addEventListeners(): void {
@@ -157,9 +157,9 @@ export class PrimaryColsHeaderPanel extends Component {
     public setExpandState(state: SELECTED_STATE): void {
         this.expandState = state;
 
-        _.setVisible(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
-        _.setVisible(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
-        _.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINATE);
+        _.setDisplayed(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
+        _.setDisplayed(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
+        _.setDisplayed(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINATE);
     }
 
     private setColumnsCheckedState(): void {
@@ -213,8 +213,8 @@ export class PrimaryColsHeaderPanel extends Component {
             this.selectState = SELECTED_STATE.CHECKED;
         }
 
-        _.setVisible(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
-        _.setVisible(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
-        _.setVisible(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINATE);
+        _.setDisplayed(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
+        _.setDisplayed(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
+        _.setDisplayed(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINATE);
     }
 }

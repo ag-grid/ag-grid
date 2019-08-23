@@ -33,7 +33,7 @@ export class OverlayWrapperComponent extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.gridOptionsWrapper.addLayoutElement(this.eOverlayWrapper);
-        this.setVisible(false);
+        this.setDisplayed(false);
     }
 
     private setWrapperTypeClass(loadingType: LoadingType): void {
@@ -52,7 +52,7 @@ export class OverlayWrapperComponent extends Component {
             this.activeOverlay = comp;
         });
 
-        this.setVisible(true);
+        this.setDisplayed(true);
     }
 
     public showNoRowsOverlay(): void {
@@ -66,7 +66,7 @@ export class OverlayWrapperComponent extends Component {
             this.activeOverlay = comp;
         });
 
-        this.setVisible(true);
+        this.setDisplayed(true);
     }
 
     private destroyActiveOverlay(): void {
@@ -82,7 +82,7 @@ export class OverlayWrapperComponent extends Component {
 
     public hideOverlay(): void {
         this.destroyActiveOverlay();
-        this.setVisible(false);
+        this.setDisplayed(false);
     }
 
     public destroy(): void {

@@ -241,7 +241,7 @@ export class PrimaryColsListPanel extends Component {
             const comp: ColumnItem = this.columnComps[child.getId()];
             if (comp) {
                 const passesFilter = filterResults ? filterResults[child.getId()] : true;
-                comp.setVisible(parentGroupsOpen && passesFilter);
+                comp.setDisplayed(parentGroupsOpen && passesFilter);
             }
 
             if (child instanceof OriginalColumnGroup) {

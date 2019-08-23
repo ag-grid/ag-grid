@@ -159,7 +159,7 @@ export class GridCore extends Component {
             return false;
         }
 
-        return this.sideBarComp.isVisible();
+        return this.sideBarComp.isDisplayed();
     }
 
     public setSideBarVisible(show:boolean) {
@@ -170,7 +170,7 @@ export class GridCore extends Component {
             return;
         }
 
-        this.sideBarComp.setVisible(show);
+        this.sideBarComp.setDisplayed(show);
     }
 
     public closeToolPanel() {

@@ -27,7 +27,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-total-and-filtered-row-count');
 
-        this.setVisible(true);
+        this.setDisplayed(true);
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
     }

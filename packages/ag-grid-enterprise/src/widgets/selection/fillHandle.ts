@@ -82,7 +82,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 rowIndex: rangeStartRow.rowIndex,
                 rowPinned: rangeStartRow.rowPinned,
                 column: cellRange.columns[0]
-            }
+            };
             this.rangeController.setRangeToCell(startPosition);
             this.rangeController.extendLatestRangeToCell({
                 rowIndex: isX ? rangeEndRow.rowIndex : this.lastCellMarked!.rowIndex,
@@ -96,7 +96,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 rowIndex: startRow.rowIndex,
                 rowPinned: startRow.rowPinned,
                 column: isX ? this.lastCellMarked!.column : cellRange.columns[0]
-            }
+            };
             this.rangeController.setRangeToCell(startPosition);
             this.rangeController.extendLatestRangeToCell({
                 rowIndex: rangeEndRow.rowIndex,
@@ -255,7 +255,7 @@ export class FillHandle extends AbstractSelectionHandle {
             row = isMovingUp ? 
                 this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string) : 
                 this.cellNavigationService.getRowBelow(row)
-        ) 
+        )
 
         this.isReduce = false;
     }

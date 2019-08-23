@@ -1156,7 +1156,7 @@ export class GridPanel extends Component {
             this.headerRootComp.setLeftVisible(newPinning);
         }
 
-        containers.forEach(e => _.setVisible(e, this.pinningLeft));
+        containers.forEach(e => _.setDisplayed(e, this.pinningLeft));
 
         if (newPinning) {
             containers.forEach(ct => _.setFixedWidth(ct, widthOfCols));
@@ -1173,7 +1173,7 @@ export class GridPanel extends Component {
             this.headerRootComp.setRightVisible(newPinning);
         }
 
-        containers.forEach(ct => _.setVisible(ct, newPinning));
+        containers.forEach(ct => _.setDisplayed(ct, newPinning));
 
         if (newPinning) {
             containers.forEach(ct => _.setFixedWidth(ct, widthOfCols));

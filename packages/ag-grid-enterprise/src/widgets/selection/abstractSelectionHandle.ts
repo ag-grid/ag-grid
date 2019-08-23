@@ -191,7 +191,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     public destroy() {
         if (!this.shouldDestroyOnEndDragging && this.isDragging()) {
-            _.setVisible(this.getGui(), false);
+            _.setDisplayed(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;
             return;
         }

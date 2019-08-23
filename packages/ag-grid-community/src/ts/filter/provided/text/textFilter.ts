@@ -180,9 +180,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         super.updateUiVisibility();
 
         const showValue1 = this.showValueFrom(this.getCondition1Type());
-        _.setVisible(this.eInputWrapper1, showValue1);
+        _.setDisplayed(this.eInputWrapper1, showValue1);
         const showValue2 = this.showValueFrom(this.getCondition2Type());
-        _.setVisible(this.eInputWrapper2, showValue2);
+        _.setDisplayed(this.eInputWrapper2, showValue2);
     }
 
     public afterGuiAttached() {
