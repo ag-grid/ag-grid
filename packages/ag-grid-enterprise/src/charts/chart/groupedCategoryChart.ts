@@ -13,7 +13,7 @@ export type GroupedCategoryChartOptions = {
     xAxis: GroupedCategoryChartAxis,
     yAxis: GroupedCategoryChartAxis,
     document?: Document;
-}
+};
 
 export class GroupedCategoryChart extends Chart {
 

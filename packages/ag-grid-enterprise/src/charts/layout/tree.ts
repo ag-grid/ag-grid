@@ -148,7 +148,7 @@ function apportion(v: TreeNode, defaultAncestor: TreeNode, distance: number) {
             vop.ancestor = v;
             const shift = (vim.prelim + sim) - (vip.prelim + sip) + distance;
             if (shift > 0) {
-                moveSubtree(ancestor(vim, v, defaultAncestor), v ,shift);
+                moveSubtree(ancestor(vim, v, defaultAncestor), v , shift);
                 sip += shift;
                 sop += shift;
             }

@@ -5,7 +5,7 @@ import { MD5 } from './license/md5';
 export class LicenseManager {
     private static RELEASE_INFORMATION: string = 'MTU1OTc0OTQ0MzUwMA==';
     private static licenseKey: string;
-    private watermarkMessage: string | undefined = undefined
+    private watermarkMessage: string | undefined = undefined;
 
     @Autowired('md5') private md5: MD5;
 
@@ -140,10 +140,10 @@ export class LicenseManager {
     private static extractBracketedInformation(licenseKey: string): [string | null, boolean | null] {
         const matches = licenseKey.split('[')
             .filter(function(v) {
-                return v.indexOf(']') > -1
+                return v.indexOf(']') > -1;
             })
             .map(function(value) {
-                return value.split(']')[0]
+                return value.split(']')[0];
             });
 
         if (!matches || matches.length === 0) {

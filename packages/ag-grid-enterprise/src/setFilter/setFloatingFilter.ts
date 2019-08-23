@@ -36,7 +36,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
 
         // format all the values, if a formatter is provided
         for (var i = 0; i < values.length; i++) {
-            var valueUnformatted = values[i];
+            const valueUnformatted = values[i];
             const valueFormatted =
                 this.valueFormatterService.formatValue(this.column, null, null, valueUnformatted);
             if (valueFormatted != null) {

@@ -237,7 +237,7 @@ export class HdpiCanvas {
         this._svgText = svgText;
 
         return svgText;
-    };
+    }
 
     private _has?: Readonly<{
         textMetrics: boolean,
@@ -254,7 +254,7 @@ export class HdpiCanvas {
             getTransform: this.textMeasuringContext.getTransform !== undefined,
             flicker: !!(window as any).safari
         });
-    };
+    }
 
     measureText(text: string, font: string,
                        textBaseline: CanvasTextBaseline,

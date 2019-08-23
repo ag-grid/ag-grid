@@ -16,7 +16,7 @@ import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsC
 import { ToolPanelWrapper } from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any> {
-    refresh(): void
+    refresh(): void;
 }
 
 export class SideBarComp extends Component implements ISideBar {

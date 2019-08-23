@@ -37,7 +37,7 @@ export interface GridChartParams {
     chartType: ChartType;
     insideDialog: boolean;
     suppressChartRanges: boolean;
-    aggFunc?: string | IAggFunc,
+    aggFunc?: string | IAggFunc;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
     height: number;
     width: number;
@@ -224,7 +224,7 @@ export class GridChartComp extends Component {
     private shouldRecreateChart(): boolean {
         const chartTypeChanged = this.model.getChartType() !== this.currentChartType;
         const groupingChanged = this.currentChartGroupingActive !== this.model.isGrouping();
-        if (chartTypeChanged || groupingChanged) return true;
+        if (chartTypeChanged || groupingChanged) { return true; }
 
         // we also need to recreate XY charts when xAxis changes
 
@@ -272,7 +272,7 @@ export class GridChartComp extends Component {
         const data = model.getData();
 
         const chartEmpty = this.handleEmptyChart(data, fields);
-        if (chartEmpty) return;
+        if (chartEmpty) { return; }
 
         const selectedDimension = model.getSelectedDimension();
         const chartUpdateParams: UpdateChartParams = {
@@ -329,7 +329,7 @@ export class GridChartComp extends Component {
 
         const chart = this.chartProxy.getChart();
         chart.height = _.getInnerHeight(eChartWrapper);
-        chart.width = _.getInnerWidth(eChartWrapper)
+        chart.width = _.getInnerWidth(eChartWrapper);
     }
 
     private addResizeListener() {

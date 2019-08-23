@@ -1,9 +1,19 @@
 {
     "defaultSeverity": "error",
-    "extends": [],
     "jsRules": {},
     "rules": {
-        "incorrect-ag-community-import": true
+        "incorrect-ag-community-import": true,
+        "semicolon": { "options": ["always"] },
+        "no-eval": true,
+        "no-string-literal": true,
+        "no-unused-expression": true,
+        "no-empty": [true, "allow-empty-functions"],
+        "prefer-const": [true, {"destructuring": "all"}],
+        "no-angle-bracket-type-assertion": true,
+        "eofline": true,
+        "indent": [true, "spaces", 4],
+        "arrow-return-shorthand": true,
+        "no-consecutive-blank-lines": true
     },
     "rulesDirectory": [
         "./ts-lint-rules/dist"

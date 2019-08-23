@@ -167,7 +167,7 @@ export class PrimaryColsHeaderPanel extends Component {
         const allPrimaryColumns = this.columnController.getAllPrimaryColumns();
         let columns: Column[] = [];
         if (allPrimaryColumns !== null) {
-            columns = allPrimaryColumns.filter(col => !col.getColDef().lockVisible)
+            columns = allPrimaryColumns.filter(col => !col.getColDef().lockVisible);
         }
         const pivotMode = this.columnController.isPivotMode();
 

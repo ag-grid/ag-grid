@@ -34,7 +34,7 @@ export interface UpdateChartParams {
     category: {
         id: string;
         name: string;
-    },
+    };
     fields: { colId: string, displayName: string }[];
 }
 

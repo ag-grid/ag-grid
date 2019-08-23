@@ -17,7 +17,7 @@ import { GridChartComp } from "../gridChartComp";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
-}
+};
 
 export class ChartMenu extends Component {
 
@@ -98,7 +98,7 @@ export class ChartMenu extends Component {
         chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
             const [ iconName, callback ] = buttonConfig;
-            let buttonEl = _.createIconNoSpan(iconName, this.gridOptionsWrapper, undefined, true);
+            const buttonEl = _.createIconNoSpan(iconName, this.gridOptionsWrapper, undefined, true);
             this.addDestroyableEventListener(buttonEl, 'click', callback);
             this.getGui().appendChild(buttonEl);
         });

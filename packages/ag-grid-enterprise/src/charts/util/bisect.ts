@@ -1,7 +1,7 @@
 import { Comparator } from "./compare";
 
 export function bisect<T>(list: T[], x: T, comparator: Comparator<T>, lo: number = 0, hi: number = list.length): number {
-    return bisectRight(list, x, comparator, lo, hi)
+    return bisectRight(list, x, comparator, lo, hi);
 }
 
 export function bisectRight<T>(list: T[], x: T, comparator: Comparator<T>, low: number = 0, high: number = list.length): number {

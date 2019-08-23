@@ -26,7 +26,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     }
 
     private onDataChanged() {
-        this.setValue(this.getRowCountValue())
+        this.setValue(this.getRowCountValue());
     }
 
     private getRowCountValue(): string {

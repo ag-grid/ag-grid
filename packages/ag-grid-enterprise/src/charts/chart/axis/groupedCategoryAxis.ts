@@ -16,8 +16,8 @@ enum Tags {
 }
 
 export interface GridStyle {
-    stroke?: string,
-    lineDash?: number[]
+    stroke?: string;
+    lineDash?: number[];
 }
 
 /**
@@ -76,7 +76,7 @@ export class GroupedCategoryAxis {
             throw new Error(`The ${constructor} is missing the 'className' property.`);
         }
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
-    };
+    }
 
     set domain(value: any[]) {
         this.scale.domain = value;
@@ -449,7 +449,7 @@ export class GroupedCategoryAxis {
         this.axisLineSelection = axisLineSelection;
 
         axisLineSelection.each((line, datum, index) => {
-            let x = index > 0 ? -maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * lineHeight : 0;
+            const x = index > 0 ? -maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;
             line.x2 = x;
             line.y1 = scale.range[0];

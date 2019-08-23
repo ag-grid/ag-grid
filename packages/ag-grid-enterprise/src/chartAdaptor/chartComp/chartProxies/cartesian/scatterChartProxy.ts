@@ -96,7 +96,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             }
         };
 
-        
         if (defaultCategorySelected) {
             if (chartType === ChartType.Bubble) {
                 // only update bubble chart if the correct number of fields are present

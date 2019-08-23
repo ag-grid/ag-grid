@@ -112,7 +112,7 @@ export class SetFilter extends ProvidedFilter {
 
         const doSyncLikeExcel = params.syncValuesLikeExcel
                                     // sync like excel only withs with CSRM
-                                    && this.rowModel.getType()===Constants.ROW_MODEL_TYPE_CLIENT_SIDE
+                                    && this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE
                                     // sync only needed if user not providing values
                                     && !params.values;
         if (doSyncLikeExcel) {
@@ -131,13 +131,13 @@ export class SetFilter extends ProvidedFilter {
     private setupSyncValuesLikeExcel(): void {
         const col = this.setFilterParams.column;
 
-        const rowDataUpdatedListener = ()=> {
+        const rowDataUpdatedListener = () => {
             this.resetFilterValuesAndReapplyModel();
         };
 
-        const cellValueChangedListener = (event: CellValueChangedEvent)=> {
+        const cellValueChangedListener = (event: CellValueChangedEvent) => {
             // only interested in changes to do with this column
-            if (event.column!==col) { return; }
+            if (event.column !== col) { return; }
             this.resetFilterValuesAndReapplyModel();
         };
 
@@ -268,8 +268,8 @@ export class SetFilter extends ProvidedFilter {
 
         const valuesType = this.valueModel.getValuesType();
         const valuesTypeProvided =
-            valuesType===SetFilterModelValuesType.PROVIDED_CB
-            || valuesType===SetFilterModelValuesType.PROVIDED_LIST;
+            valuesType === SetFilterModelValuesType.PROVIDED_CB
+            || valuesType === SetFilterModelValuesType.PROVIDED_LIST;
 
         // if the user is providing values, and we are keeping the previous selection, then
         // loading new rows into the grid should have no impact.

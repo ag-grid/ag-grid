@@ -194,7 +194,7 @@ export class Rect extends Shape {
             this.width,
             this.height
         );
-    };
+    }
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);

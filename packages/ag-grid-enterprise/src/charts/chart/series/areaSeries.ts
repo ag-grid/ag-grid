@@ -14,27 +14,27 @@ import palette from "../palettes";
 import { numericExtent } from "../../util/array";
 
 interface AreaSelectionDatum {
-    yField: string,
-    points: {x: number, y: number}[]
+    yField: string;
+    points: {x: number, y: number}[];
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
-    yField: string,
-    yValue: number,
-    x: number,
-    y: number,
-    radius: number,
-    fill?: string,
-    stroke?: string,
-    text?: string
+    yField: string;
+    yValue: number;
+    x: number;
+    y: number;
+    radius: number;
+    fill?: string;
+    stroke?: string;
+    text?: string;
 }
 
 export interface AreaTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string,
-    title?: string,
-    color?: string
+    datum: any;
+    xField: string;
+    yField: string;
+    title?: string;
+    color?: string;
 }
 
 export class AreaSeries extends Series<CartesianChart> {

@@ -16,7 +16,7 @@ export type LabelFont = {
     weight?: string;
     size?: number;
     color?: string;
-}
+};
 
 export interface LabelPanelParams {
     name?: string;
@@ -120,7 +120,7 @@ export class LabelPanel extends Component {
             }
 
             const options = values.map(value => {
-                return {value: value, text: value}
+                return {value: value, text: value};
             });
 
             input.addOptions(options)

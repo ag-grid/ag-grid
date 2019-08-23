@@ -47,7 +47,7 @@ export class SideBarButtonsComp extends Component {
             this.dispatchEvent({
                 type: SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED,
                 toolPanelId: def.id
-            })
+            });
         });
     }
 
@@ -111,7 +111,7 @@ class SideBarButtonComp extends Component {
     }
 
     private onButtonPressed(): void {
-        this.dispatchEvent({type: SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED})
+        this.dispatchEvent({type: SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED});
     }
 
     public setSelected(selected: boolean): void {

@@ -1,6 +1,6 @@
 export interface Palette {
-    fills: string[],
-    strokes: string[]
+    fills: string[];
+    strokes: string[];
 }
 
 export const borneo: Palette = {

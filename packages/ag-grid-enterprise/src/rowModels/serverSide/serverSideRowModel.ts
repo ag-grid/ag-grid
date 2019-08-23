@@ -622,7 +622,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
             for (let i = 0; i < sortModel.length; ++i) {
                 if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length)
+                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
                 }
             }
         }

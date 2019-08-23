@@ -47,7 +47,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     private getFilteredRowCountValue(): number {
         let filteredRowCount = 0;
         this.gridApi.forEachNodeAfterFilter((node) => {
-            if (!node.group) filteredRowCount++;
+            if (!node.group) { filteredRowCount++; }
         });
         return filteredRowCount;
     }
@@ -55,7 +55,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     private getTotalRowCount(): number {
         let totalRowCount = 0;
         this.gridApi.forEachNode(node => {
-            if (!node.group) totalRowCount++
+            if (!node.group) { totalRowCount++; }
         });
         return totalRowCount;
     }

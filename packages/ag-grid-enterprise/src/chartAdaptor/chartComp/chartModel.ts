@@ -29,7 +29,7 @@ export interface ColState {
 export interface ChartModelParams {
     pivotChart: boolean;
     chartType: ChartType;
-    aggFunc?: string | IAggFunc,
+    aggFunc?: string | IAggFunc;
     cellRanges: CellRange[];
     palettes: Palette[];
     activePalette: number;
@@ -121,7 +121,7 @@ export class ChartModel extends BeanStub {
     public resetColumnState(): void {
         const {dimensionCols, valueCols} = this.getAllChartColumns();
 
-        let allCols = this.pivotChart ? this.columnController.getAllDisplayedColumns() : this.getAllColumnsFromRanges();
+        const allCols = this.pivotChart ? this.columnController.getAllDisplayedColumns() : this.getAllColumnsFromRanges();
 
         this.valueColState = valueCols.map(column => {
             return {
@@ -383,7 +383,7 @@ export class ChartModel extends BeanStub {
             startRow = this.rangeController.getRangeStartRow(range).rowIndex;
             endRow = this.rangeController.getRangeEndRow(range).rowIndex;
         }
-        return {startRow, endRow}
+        return {startRow, endRow};
     }
 
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
@@ -433,7 +433,7 @@ export class ChartModel extends BeanStub {
     }
 
     private isNumberCol(colId: any) {
-        if (colId === 'ag-Grid-AutoColumn') return false;
+        if (colId === 'ag-Grid-AutoColumn') { return false; }
 
         const row = this.rowRenderer.getRowNode({rowIndex: 0, rowPinned: undefined});
         const rowData = row ? row.data : null;

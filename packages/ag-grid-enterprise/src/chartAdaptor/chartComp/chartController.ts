@@ -41,7 +41,7 @@ export class ChartController extends BeanStub {
 
     public updateForGridChange() {
         // don't update chart if chart is detached from grid data
-        if (this.model.isDetached()) return;
+        if (this.model.isDetached()) { return; }
 
         // update the model with changes to the cell ranges from the grid before updating the column state
         this.model.updateCellRanges();
@@ -96,7 +96,7 @@ export class ChartController extends BeanStub {
     }
 
     public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
-        return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()}
+        return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()};
     }
 
     public isDefaultCategorySelected() {

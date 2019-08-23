@@ -109,7 +109,7 @@ export class MD5 {
 
     private md51(s:any) {
         const n:any = s.length;
-        const state:any = [1732584193, -271733879, -1732584194, 271733878]
+        const state:any = [1732584193, -271733879, -1732584194, 271733878];
         let i:any;
         for (i = 64; i <= s.length; i += 64) {
             this.md5cycle(state, this.md5blk(s.substring(i - 64, i)));

@@ -736,7 +736,7 @@ export class ClipboardService implements IClipboardService {
             // it to the data array.
             const lastItem = _.last(arrData);
             if (lastItem) {
-                lastItem.push(strMatchedValue)
+                lastItem.push(strMatchedValue);
             }
 
             atFirstRow = false;

@@ -203,7 +203,7 @@ export class Arc extends Shape {
             this.radiusX * 2,
             this.radiusY * 2
         );
-    };
+    }
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
