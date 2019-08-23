@@ -375,6 +375,7 @@ export interface GridOptions {
     groupRowInnerRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
     groupRowInnerRendererFramework?: any;
     createChartContainer?: (params: ChartRef) => void;
+    fillOperations?: {[key: string]: IFillOperation};
 
     isExternalFilterPresent?(): boolean;
 
@@ -584,6 +585,21 @@ export interface GridOptions {
     // apis, set by the grid on init
     api?: GridApi | null; // change to typed
     columnApi?: ColumnApi | null; // change to typed
+}
+
+export interface IFillOperation {
+    (params: FillOperationParams): any[]
+}
+
+export interface FillOperationParams {
+    values: any[];
+    resultCount: number;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+    direction: string; // up, down, left or right
+    column?: Column; // only present if up / down
+    rowNode?: RowNode; // only present if left / right
 }
 
 export interface GetDataPath {
