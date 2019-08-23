@@ -305,6 +305,17 @@ var gridOptions = {
             return 0;
         }
     },
+    processCellFromClipboard: function(params) {
+        var colIdUpperCase = params.column.getId().toUpperCase();
+        var monthsUpperCase = months.map( function(month) { return month.toUpperCase(); });
+        var isMonth = monthsUpperCase.indexOf(colIdUpperCase) >= 0;
+
+        if (isMonth) {
+            return sharedNumberParser(params.value);
+        } else {
+            return params.value;
+        }
+    },
     // rowHeight: 100,
     // suppressTabbing: true,
     // rowHoverClass: true,
@@ -1122,14 +1133,15 @@ var COUNTRY_CODES = {
 };
 
 function numberParser(params) {
-    var newValue = params.newValue;
-    var valueAsNumber;
-    if (newValue === null || newValue === undefined || newValue === '') {
-        valueAsNumber = null;
+    return sharedNumberParser(params.newValue);
+}
+
+function sharedNumberParser(value) {
+    if (value === null || value === undefined || value === '') {
+        return null;
     } else {
-        valueAsNumber = parseFloat(params.newValue);
+        return parseFloat(value);
     }
-    return valueAsNumber;
 }
 
 function PersonFilter() {
