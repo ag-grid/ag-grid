@@ -154,7 +154,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
         this.addDestroyFunc(() => {
             if (this.detailGridOptions.api) {
-                this.detailGridOptions.api.destroy()
+                this.detailGridOptions.api.destroy();
             }
         });
     }

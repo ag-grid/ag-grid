@@ -105,7 +105,7 @@ export class LegendPanel extends Component {
                  .setValue(this.chartProxy.getLegendProperty(property))
                  .setMaxValue(maxValue)
                  .setTextFieldWidth(45)
-                 .onValueChange(newValue => this.chartProxy.setLegendProperty(property, newValue))
+                 .onValueChange(newValue => this.chartProxy.setLegendProperty(property, newValue));
         };
 
         initSlider('markerSize', 'markerSize', this.markerSizeSlider, 40);

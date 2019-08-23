@@ -85,7 +85,7 @@ export class TabbedChartMenu extends Component {
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name
             }
-        }
+        };
     }
 
     public getMinDimensions(): {width: number, height: number} {

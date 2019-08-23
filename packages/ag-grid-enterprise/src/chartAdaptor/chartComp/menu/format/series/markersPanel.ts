@@ -51,7 +51,7 @@ export class MarkersPanel extends Component {
                 .setValue(this.chartProxy.getSeriesProperty(property))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartProxy.setSeriesProperty(property, newValue))
+                .onValueChange(newValue => this.chartProxy.setSeriesProperty(property, newValue));
         };
 
         initInput('markerSize', this.seriesMarkerSizeSlider, 'size', 30);

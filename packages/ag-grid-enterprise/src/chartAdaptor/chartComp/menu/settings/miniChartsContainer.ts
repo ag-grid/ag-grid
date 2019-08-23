@@ -510,7 +510,7 @@ class MiniStackedColumn extends MiniChart {
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
-            })
+            });
         });
     }
 }
@@ -590,7 +590,7 @@ class MiniStackedBar extends MiniChart {
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
-            })
+            });
         });
     }
 }
@@ -670,7 +670,7 @@ class MiniNormalizedColumn extends MiniChart {
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
-            })
+            });
         });
     }
 }
@@ -750,7 +750,7 @@ class MiniNormalizedBar extends MiniChart {
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
-            })
+            });
         });
     }
 }
@@ -910,7 +910,6 @@ class MiniBubble extends MiniChart {
         });
     }
 }
-
 
 class MiniArea extends MiniChart {
     static chartType = ChartType.Area;

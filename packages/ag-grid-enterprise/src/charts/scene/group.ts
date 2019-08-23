@@ -68,7 +68,7 @@ export class Group extends Node {
             right - left,
             bottom - top
         );
-    };
+    }
 
     render(ctx: CanvasRenderingContext2D) {
         // A group can have `scaling`, `rotation`, `translation` properties

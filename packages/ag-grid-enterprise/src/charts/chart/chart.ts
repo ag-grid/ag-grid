@@ -64,7 +64,7 @@ export abstract class Chart {
 
     private readonly onLayoutChange = () => {
         this.layoutPending = true;
-    };
+    }
 
     get element(): HTMLElement {
         return this.scene.canvas.element;
@@ -280,7 +280,7 @@ export abstract class Chart {
         if (this.onLayoutDone) {
             this.onLayoutDone();
         }
-    };
+    }
 
     private dataCallbackId: number = 0;
     set dataPending(value: boolean) {
@@ -304,7 +304,7 @@ export abstract class Chart {
     private readonly _processData = () => {
         this.dataCallbackId = 0;
         this.processData();
-    };
+    }
 
     processData(): void {
         this.layoutPending = false;
@@ -506,11 +506,11 @@ export abstract class Chart {
             this.hideTooltip();
             this.lastPick = undefined;
         }
-    };
+    }
 
     private readonly onMouseOut = (event: MouseEvent) => {
         this.toggleTooltip(false);
-    };
+    }
 
     private readonly onClick = (event: MouseEvent) => {
         const x = event.offsetX;
@@ -525,7 +525,7 @@ export abstract class Chart {
                 series.toggleSeriesItem(itemId, !enabled);
             }
         }
-    };
+    }
 
     private onSeriesNodePick(event: MouseEvent, series: Series<Chart>, node: Shape) {
         this.lastPick = {

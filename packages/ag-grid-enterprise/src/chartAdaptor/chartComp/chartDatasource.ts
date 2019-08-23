@@ -141,7 +141,7 @@ export class ChartDatasource extends BeanStub {
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
         const dimensionCols = params.dimensionCols;
         const skipAggregation = !params.aggFunc || dimensionCols.length === 0;
-        if (skipAggregation) return dataFromGrid;
+        if (skipAggregation) { return dataFromGrid; }
 
         const lastCol = _.last(dimensionCols);
         const lastColId = lastCol && lastCol.colId;
@@ -197,9 +197,9 @@ export class ChartDatasource extends BeanStub {
 
     private getGroupLabels(rowNode: RowNode, result: string[]): string[] {
         // add parent group keys by walking up the tree
-        if (rowNode.level === 0) return result;
+        if (rowNode.level === 0) { return result; }
         const parentNode = rowNode.parent as RowNode;
         result.push(parentNode.key);
         return this.getGroupLabels(parentNode, result);
-    };
+    }
 }

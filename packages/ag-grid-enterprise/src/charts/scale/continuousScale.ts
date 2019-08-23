@@ -90,7 +90,7 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
      * @param a
      * @param b
      */
-    protected abstract deinterpolatorOf(a: number, b: number): Deinterpolator<number>
+    protected abstract deinterpolatorOf(a: number, b: number): Deinterpolator<number>;
 
     /**
      * Creates a new interpolator for the given pair of input domain numbers.
@@ -99,7 +99,7 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
      * @param a
      * @param b
      */
-    protected abstract reinterpolatorOf(a: number, b: number): Reinterpolator<number>
+    protected abstract reinterpolatorOf(a: number, b: number): Reinterpolator<number>;
 
     protected clampDeinterpolatorFactory(deinterpolatorOf: DeinterpolatorFactory<number>): DeinterpolatorFactory<number> {
         return (a, b) => {
@@ -112,7 +112,7 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
                 } else {
                     return deinterpolate(x);
                 }
-            }
+            };
         };
     }
 
@@ -127,7 +127,7 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
                 } else {
                     return reinterpolate(t);
                 }
-            }
+            };
         };
     }
 

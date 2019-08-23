@@ -15,15 +15,15 @@ import { Color } from "ag-grid-community";
 import { NumberAxis } from "../axis/numberAxis";
 
 interface SelectionDatum extends SeriesNodeDatum {
-    yField: string,
-    yValue: number,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    fill?: string,
-    stroke?: string,
-    strokeWidth: number,
+    yField: string;
+    yValue: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    fill?: string;
+    stroke?: string;
+    strokeWidth: number;
     label?: {
         text: string,
         fontStyle?: string,
@@ -33,7 +33,7 @@ interface SelectionDatum extends SeriesNodeDatum {
         fill: string,
         x: number,
         y: number
-    }
+    };
 }
 
 export interface BarLabelFormatterParams {
@@ -517,7 +517,7 @@ export class BarSeries extends Series<CartesianChart> {
                         value: yValueIsNumber ? yValue : NaN
                     });
                 } else {
-                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : ''
+                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
                 }
 
                 selectionData.push({

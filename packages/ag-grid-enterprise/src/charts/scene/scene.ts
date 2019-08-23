@@ -14,7 +14,7 @@ export class Scene {
     readonly id: string = this.createId();
     private createId(): string {
         return (this.constructor as any).name + '-' + (Scene.id++);
-    };
+    }
 
     readonly canvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;
@@ -179,5 +179,5 @@ export class Scene {
         }
 
         this.dirty = false;
-    };
+    }
 }

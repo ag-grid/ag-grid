@@ -101,7 +101,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
             result = {
                 rowHeight: this.cacheParams.rowHeight,
                 rowTop: nextRowTop + rowsBetween * this.cacheParams.rowHeight
-            }
+            };
         }
 
         // NOTE: what about purged blocks

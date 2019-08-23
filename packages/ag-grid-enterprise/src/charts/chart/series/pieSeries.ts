@@ -17,19 +17,19 @@ import { Shape } from "../../scene/shape/shape";
 import { Color } from "ag-grid-community";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
-    index: number,
-    radius: number, // in the [0, 1] range
-    startAngle: number,
-    endAngle: number,
-    midAngle: number,
-    midCos: number,
-    midSin: number,
+    index: number;
+    radius: number; // in the [0, 1] range
+    startAngle: number;
+    endAngle: number;
+    midAngle: number;
+    midCos: number;
+    midSin: number;
 
     label?: {
         text: string,
         textAlign: CanvasTextAlign,
         textBaseline: CanvasTextBaseline
-    }
+    };
 }
 
 enum PieSeriesNodeTag {
@@ -39,12 +39,12 @@ enum PieSeriesNodeTag {
 }
 
 export interface PieTooltipRendererParams {
-    datum: any,
-    angleField: string,
-    radiusField?: string,
-    labelField?: string,
-    title?: string,
-    color?: string
+    datum: any;
+    angleField: string;
+    radiusField?: string;
+    labelField?: string;
+    title?: string;
+    color?: string;
 }
 
 export class PieSeries extends Series<PolarChart> {

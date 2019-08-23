@@ -15,20 +15,20 @@ import { Shape } from "../../scene/shape/shape";
 import { Color } from "ag-grid-community";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
-    x: number,
-    y: number,
-    fill?: string,
-    stroke?: string,
-    strokeWidth: number,
-    radius: number
+    x: number;
+    y: number;
+    fill?: string;
+    stroke?: string;
+    strokeWidth: number;
+    radius: number;
 }
 
 export interface LineTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string,
-    title?: string,
-    color?: string
+    datum: any;
+    xField: string;
+    yField: string;
+    title?: string;
+    color?: string;
 }
 
 export class LineSeries extends Series<CartesianChart> {

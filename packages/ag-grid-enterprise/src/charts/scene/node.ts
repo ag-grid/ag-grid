@@ -21,7 +21,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             throw new Error(`The ${constructor} is missing the 'className' property.`);
         }
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
-    };
+    }
 
     /**
      * Unique node ID in the form `ClassName-NaturalNumber`.
@@ -529,7 +529,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
      *
      * @param ctx The 2D canvas rendering context.
      */
-    abstract render(ctx: CanvasRenderingContext2D): void
+    abstract render(ctx: CanvasRenderingContext2D): void;
 
     /**
      * Each time a property of the node that effects how it renders changes

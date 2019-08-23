@@ -297,6 +297,6 @@ export abstract class Shape extends Node {
         return this.isPointInPath(x, y);
     }
 
-    abstract isPointInPath(x: number, y: number): boolean
-    abstract isPointInStroke(x: number, y: number): boolean
+    abstract isPointInPath(x: number, y: number): boolean;
+    abstract isPointInStroke(x: number, y: number): boolean;
 }

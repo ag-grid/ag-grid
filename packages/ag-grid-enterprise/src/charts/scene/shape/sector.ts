@@ -133,7 +133,7 @@ export class Sector extends Shape {
             radius * 2,
             radius * 2
         );
-    };
+    }
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);

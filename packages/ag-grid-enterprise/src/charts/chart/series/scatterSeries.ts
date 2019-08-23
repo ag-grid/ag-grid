@@ -13,24 +13,24 @@ import { Color } from "ag-grid-community";
 import linearScale from "../../scale/linearScale";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
-    x: number,
-    y: number,
-    radius: number,
-    fill?: string,
-    stroke?: string,
-    strokeWidth: number
+    x: number;
+    y: number;
+    radius: number;
+    fill?: string;
+    stroke?: string;
+    strokeWidth: number;
 }
 
 export interface ScatterTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string,
-    radiusField: string,
-    xFieldName: string,
-    yFieldName: string,
-    radiusFieldName: string,
-    title?: string,
-    color?: string
+    datum: any;
+    xField: string;
+    yField: string;
+    radiusField: string;
+    xFieldName: string;
+    yFieldName: string;
+    radiusFieldName: string;
+    title?: string;
+    color?: string;
 }
 
 export class ScatterSeries extends Series<CartesianChart> {

@@ -4,16 +4,16 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 
 export interface LegendDatum {
-    id: string,       // component ID
-    itemId: any,      // sub-component ID
-    enabled: boolean, // the current state of the sub-component
+    id: string;       // component ID
+    itemId: any;      // sub-component ID
+    enabled: boolean; // the current state of the sub-component
     marker: {
         fill: string,
         stroke: string
-    },
+    };
     label: {
         text: string  // display name for the sub-component
-    }
+    };
 }
 
 export enum Orientation {

@@ -296,7 +296,7 @@ export class RangeController implements IRangeController {
         for (const column of cellRange.columns) {
             const idx = allColumns.indexOf(column);
             if (idx > -1) {
-                allIndices.push(idx)
+                allIndices.push(idx);
             }
         }
 
@@ -637,7 +637,7 @@ export class RangeController implements IRangeController {
     private onRangeChanged(params: { started: boolean, finished: boolean}) {
         const { started, finished } = params;
 
-        this.dispatchChangedEvent(started, finished)
+        this.dispatchChangedEvent(started, finished);
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean): void {

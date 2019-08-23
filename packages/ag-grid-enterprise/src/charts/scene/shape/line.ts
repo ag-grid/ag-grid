@@ -91,7 +91,7 @@ export class Line extends Shape {
             this.x2 - this.x1,
             this.y2 - this.y1
         );
-    };
+    }
 
     isPointInPath(x: number, y: number): boolean {
         return false;
