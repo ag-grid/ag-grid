@@ -2,10 +2,11 @@ import {
     Autowired,
     CellComp,
     CellPosition,
+    CellRange,
     RowPosition,
     RowPositionUtils,
     ValueService,
-    _,
+    _
 } from 'ag-grid-community';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
@@ -13,6 +14,8 @@ interface FillValues {
     position: CellPosition;
     value: any;
 }
+
+type Direction = 'x' | 'y';
 
 export class FillHandle extends AbstractSelectionHandle {
 
@@ -26,7 +29,7 @@ export class FillHandle extends AbstractSelectionHandle {
     private markedCellComps: CellComp[] = [];
     private cellValues: FillValues[][] = [];
 
-    private dragAxis: 'x' | 'y';
+    private dragAxis: Direction;
     private isUp: boolean = false;
     private isLeft: boolean = false;
     private isReduce: boolean = false;
@@ -46,7 +49,7 @@ export class FillHandle extends AbstractSelectionHandle {
         const { x, y } = this.initialXY;
         const diffX = Math.abs(x - e.clientX);
         const diffY = Math.abs(y - e.clientY);
-        const direction: 'x' | 'y' = diffX > diffY ? 'x' : 'y';
+        const direction: Direction = diffX > diffY ? 'x' : 'y';
 
         if (direction !== this.dragAxis) {
             this.dragAxis = direction;
@@ -71,60 +74,77 @@ export class FillHandle extends AbstractSelectionHandle {
         if (!this.markedCellComps.length) { return; }
 
         const isX = this.dragAxis === 'x';
-        const cellRange = this.getCellRange();
-        const colLen = cellRange.columns.length;
+        const startRange = this.getCellRange();
+        const colLen = startRange.columns.length;
         const rangeStartRow = this.getRangeStartRow();
         const rangeEndRow = this.getRangeEndRow();
+        
+        let endRange: CellRange | undefined;
 
         if (!this.isUp && !this.isLeft) {
-            const startPosition = {
-                rowIndex: rangeStartRow.rowIndex,
-                rowPinned: rangeStartRow.rowPinned,
-                column: cellRange.columns[0]
-            };
-            this.rangeController.setRangeToCell(startPosition);
-            this.rangeController.extendLatestRangeToCell({
-                rowIndex: isX ? rangeEndRow.rowIndex : this.lastCellMarked!.rowIndex,
-                rowPinned: isX ? rangeEndRow.rowPinned : this.lastCellMarked!.rowPinned,
-                column: isX ? this.lastCellMarked!.column : cellRange.columns[colLen - 1]
+            endRange = this.rangeController.createCellRangeFromCellRangeParams({
+                rowStartIndex: rangeStartRow.rowIndex,
+                rowStartPinned: rangeStartRow.rowPinned,
+                columnStart: startRange.columns[0],
+                rowEndIndex: isX ? rangeEndRow.rowIndex : this.lastCellMarked!.rowIndex,
+                rowEndPinned: isX ? rangeEndRow.rowPinned : this.lastCellMarked!.rowPinned,
+                columnEnd: isX ? this.lastCellMarked!.column : startRange.columns[colLen - 1]
             });
         } else {
             const startRow = isX ? rangeStartRow : this.lastCellMarked!;
-            const startPosition = {
-                rowIndex: startRow.rowIndex,
-                rowPinned: startRow.rowPinned,
-                column: isX ? this.lastCellMarked!.column : cellRange.columns[0]
-            };
-            this.rangeController.setRangeToCell(startPosition);
-            this.rangeController.extendLatestRangeToCell({
-                rowIndex: rangeEndRow.rowIndex,
-                rowPinned: rangeEndRow.rowPinned,
-                column: cellRange.columns[colLen - 1]
+
+            endRange = this.rangeController.createCellRangeFromCellRangeParams({
+                rowStartIndex: startRow.rowIndex,
+                rowStartPinned: startRow.rowPinned,
+                columnStart: isX ? this.lastCellMarked!.column : startRange.columns[0],
+                rowEndIndex: rangeEndRow.rowIndex,
+                rowEndPinned: rangeEndRow.rowPinned,
+                columnEnd: startRange.columns[colLen - 1]
             });
         }
 
-        if (this.cellValues.length) {
-            this.runReducers();
-            console.log('Foo');
+        if (endRange) {
+            this.handleValueChanged(startRange, endRange);
+            this.rangeController.setCellRanges([endRange]);
         }
     }
 
-    private runReducers() {
-        if (!this.isReduce) { return; }
-
+    private handleValueChanged(startRange: CellRange, endRange: CellRange) {
+        console.log(startRange, endRange, this.isReduce, this.dragAxis, this.isUp, this.isLeft);
     }
 
     protected clearValues() {
         this.clearMarkedPath();
-        this.cellValues.length = 0;
+        this.clearCellValues();
+
         this.lastCellMarked = undefined;
 
         super.clearValues();
     }
 
+    private clearMarkedPath() {
+        this.markedCellComps.forEach(cellComp => {
+            const eGui = cellComp.getGui();
+            _.removeCssClass(eGui, 'ag-selection-fill-top');
+            _.removeCssClass(eGui, 'ag-selection-fill-right');
+            _.removeCssClass(eGui, 'ag-selection-fill-bottom');
+            _.removeCssClass(eGui, 'ag-selection-fill-left');
+        });
+
+        this.markedCellComps.length = 0;
+
+        this.isUp = false;
+        this.isLeft = false;
+        this.isReduce = false;
+    }
+
+    private clearCellValues() {
+        this.cellValues.length = 0;
+    }
+
     private markPathFrom(initialPosition: CellPosition, currentPosition: CellPosition) {
         this.clearMarkedPath();
-        this.cellValues.length = 0;
+        this.clearCellValues();
 
         if (this.dragAxis === 'y') {
             if (RowPositionUtils.sameRow(currentPosition, initialPosition)) { return; }
@@ -146,8 +166,10 @@ export class FillHandle extends AbstractSelectionHandle {
                 )
             ) {
                 this.reduceVertical(initialPosition, currentPosition);
+                this.isReduce = true;
             } else {
                 this.extendVertical(initialPosition, currentPosition, isBefore);
+                this.isReduce = false;
             }
         } else {
             const initialColumn = initialPosition.column;
@@ -161,8 +183,10 @@ export class FillHandle extends AbstractSelectionHandle {
 
             if (currentIndex <= initialIndex && currentIndex >= displayedColumns.indexOf(this.getCellRange().columns[0])) {
                 this.reduceHorizontal(initialPosition, currentPosition);
+                this.isReduce = true;
             } else {
                 this.extendHorizontal(initialPosition, currentPosition, currentIndex < initialIndex);
+                this.isReduce = false;
             }
         }
     }
@@ -203,25 +227,6 @@ export class FillHandle extends AbstractSelectionHandle {
                         );
                     }
                 }
-
-                let shouldAddValue = !cellInRange;
-
-                if (!shouldAddValue) {
-                    shouldAddValue = isMovingUp ?
-                        RowPositionUtils.sameRow(rowPos, rangeController.getRangeStartRow(cellRange)) :
-                        isInitialRow;
-                }
-
-                if (shouldAddValue) {
-                    if (!this.cellValues[i]) {
-                        this.cellValues[i] = [];
-                    }
-
-                    const node = this.rowRenderer.getRowNode(rowPos);
-                    const value = this.valueService.getValue(column, node);
-
-                    this.cellValues[i].push({ position: cellPos, value: value });
-                }
             }
 
             if (RowPositionUtils.sameRow(row, endPosition)) { break; }
@@ -230,8 +235,6 @@ export class FillHandle extends AbstractSelectionHandle {
                 this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string) :
                 this.cellNavigationService.getRowBelow(row)
         );
-
-        this.isReduce = false;
     }
 
     private reduceVertical(initialPosition: CellPosition, endPosition: CellPosition) {
@@ -243,7 +246,6 @@ export class FillHandle extends AbstractSelectionHandle {
             const isLastRow = RowPositionUtils.sameRow(row, endPosition);
 
             for (let i = 0; i < colLen; i++) {
-                const column = cellRange.columns[i];
                 const rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
                 const celPos = { ...rowPos, column: cellRange.columns[i] };
                 const cellComp = this.rowRenderer.getComponentForCell(celPos);
@@ -259,21 +261,9 @@ export class FillHandle extends AbstractSelectionHandle {
                         RowPositionUtils.sameRow(row, endPosition)
                     );
                 }
-
-                if (!isLastRow) {
-                    if (!this.cellValues[i]) {
-                        this.cellValues[i] = [];
-                    }
-                    const node = this.rowRenderer.getRowNode(rowPos);
-                    const value = this.valueService.getValue(column, node);
-
-                    this.cellValues[i].push({ position: celPos, value });
-                }
             }
             if (isLastRow) { break; }
         } while (row = this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string));
-
-        this.isReduce = true;
     }
 
     private extendHorizontal(initialPosition: CellPosition, endPosition: CellPosition, isMovingLeft?: boolean) {
@@ -288,7 +278,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
         colsToMark.forEach(column => {
             let row: RowPosition = rangeStartRow;
-            let isLastRow: boolean = false;
+            let isLastRow = false;
 
             do {
                 isLastRow = RowPositionUtils.sameRow(row, rangeEndRow);
@@ -315,7 +305,6 @@ export class FillHandle extends AbstractSelectionHandle {
                 row = this.cellNavigationService.getRowBelow(row) as RowPosition;
             } while (!isLastRow);
         });
-        this.isReduce = false;
     }
 
     private reduceHorizontal(initialPosition: CellPosition, endPosition: CellPosition) {
@@ -349,21 +338,6 @@ export class FillHandle extends AbstractSelectionHandle {
             }
             while (!isLastRow);
         });
-        this.isReduce = true;
-    }
-
-    private clearMarkedPath() {
-        this.markedCellComps.forEach(cellComp => {
-            const eGui = cellComp.getGui();
-            _.removeCssClass(eGui, 'ag-selection-fill-top');
-            _.removeCssClass(eGui, 'ag-selection-fill-right');
-            _.removeCssClass(eGui, 'ag-selection-fill-bottom');
-            _.removeCssClass(eGui, 'ag-selection-fill-left');
-        });
-
-        this.markedCellComps.length = 0;
-        this.isUp = false;
-        this.isLeft = false;
     }
 
     public refresh(cellComp: CellComp) {
