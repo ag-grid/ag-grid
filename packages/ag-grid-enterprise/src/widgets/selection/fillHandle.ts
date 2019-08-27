@@ -5,7 +5,8 @@ import {
     CellRange,
     RowPosition,
     ValueService,
-    _
+    _,
+    Column
 } from 'ag-grid-community';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 import {RangeController} from "../../rangeController";
@@ -121,101 +122,42 @@ export class FillHandle extends AbstractSelectionHandle {
         const finalRangeStartRow = this.rangeController.getRangeStartRow(finalRange);
 
         if (this.isReduce) {
-            if (this.dragAxis==='y') {
-                // we clear all rows that are in startRange that are not in endRange
+            const isVertical = this.dragAxis === 'y';
+            const columns = isVertical
+                ? initialRange.columns
+                : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);
 
-                let currentRow: RowPosition | null | undefined = finalRangeEndRow;
-                currentRow = this.cellNavigationService.getRowBelow(currentRow!);
+            const startRow = isVertical ? this.cellNavigationService.getRowBelow(finalRangeEndRow) : finalRangeEndRow;
 
-                let finished = false;
-
-                while (!finished) {
-
-                    // should never happen, defensive programming
-                    if (!currentRow) { break; }
-
-                    const rowNode = this.rowPositionUtils.getRowNode(currentRow);
-
-                    // should never happen, defensive programming
-                    if (!rowNode) { break; }
-
-                    initialRange.columns.forEach( col => {
-                        this.valueService.setValue(rowNode, col, null);
-                    });
-
-                    finished = this.rowPositionUtils.sameRow(currentRow, initialRangeEndRow);
-                    currentRow = this.cellNavigationService.getRowBelow(currentRow);
-                }
-
-            } else {
-
-                // we clear all columns that are in startRange that are not in endRange
-                const columnsToClear = initialRange.columns.filter( col => finalRange.columns.indexOf(col) < 0 );
-
-                let currentRow: RowPosition | null | undefined = finalRangeStartRow;
-
-                let finished = false;
-
-                while (!finished) {
-
-                    // should never happen, defensive programming
-                    if (!currentRow) { break; }
-
-                    const rowNode = this.rowPositionUtils.getRowNode(currentRow);
-
-                    // should never happen, defensive programming
-                    if (!rowNode) { break; }
-
-                    columnsToClear.forEach( col => {
-                        this.valueService.setValue(rowNode, col, null);
-                    });
-
-                    finished = this.rowPositionUtils.sameRow(currentRow, initialRangeEndRow);
-                    currentRow = this.cellNavigationService.getRowBelow(currentRow);
-                }
-
+            if (startRow) {
+                this.clearCellsInRange(startRow, initialRangeEndRow, columns);
             }
+
         } else {
-            // !reduce, extend!!!
-
-            if (this.dragAxis==='y') {
-
-                if (this.isUp) {
-
-                } else {
-
-                    initialRange.columns.forEach( col => {
-
-                        let currentRow: RowPosition | null | undefined = initialRangeEndRow;
-                        currentRow = this.cellNavigationService.getRowBelow(currentRow!);
-
-                        let finished = false;
-
-                        while (!finished) {
-
-                            // should never happen, defensive programming
-                            if (!currentRow) { break; }
-
-                            const rowNode = this.rowPositionUtils.getRowNode(currentRow);
-
-                            // should never happen, defensive programming
-                            if (!rowNode) { break; }
-
-                            this.valueService.setValue(rowNode, col, 10);
-
-                            finished = this.rowPositionUtils.sameRow(currentRow, finalRangeEndRow);
-                            currentRow = this.cellNavigationService.getRowBelow(currentRow);
-                        }
-
-                    });
-
-                }
-
-            } else {
-            }
+            // TODO
         }
 
         // console.log(startRange, endRange, this.isReduce, this.dragAxis, this.isUp, this.isLeft);
+    }
+
+    private clearCellsInRange(startRow: RowPosition, endRow: RowPosition, columns: Column[]) {
+        let currentRow: RowPosition | null | undefined = startRow;
+
+        let finished = false;
+
+        while (!finished && currentRow) {
+            const rowNode = this.rowPositionUtils.getRowNode(currentRow);
+
+            // should never happen, defensive programming
+            if (!rowNode) { break; }
+
+            columns.forEach((col: Column) => {
+                this.valueService.setValue(rowNode, col, null);
+            });
+
+            finished = this.rowPositionUtils.sameRow(currentRow, endRow);
+            currentRow = this.cellNavigationService.getRowBelow(currentRow);
+        }
     }
 
     protected clearValues() {

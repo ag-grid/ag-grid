@@ -1,9 +1,9 @@
 import { Constants } from "../constants";
-import { _ } from "../utils";
 import {Autowired, Bean} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {RowNode} from "./rowNode";
+import { _ } from "../utils";
 
 export interface RowPosition {
     rowIndex: number;
@@ -50,13 +50,7 @@ export class RowPositionUtils {
             default:
                 // if we are not floating, but the other one is floating...
                 if (_.exists(rowB.rowPinned)) {
-                    if (rowB.rowPinned === Constants.PINNED_TOP) {
-                        // we are not floating, other is floating top, we are first
-                        return false;
-                    } else {
-                        // we are not floating, other is floating bottom, we are always first
-                        return true;
-                    }
+                    return rowB.rowPinned !== Constants.PINNED_TOP;
                 }
                 break;
         }

@@ -12,8 +12,7 @@
         "no-angle-bracket-type-assertion": true,
         "eofline": true,
         "indent": [true, "spaces", 4],
-        "arrow-return-shorthand": true,
-        "no-consecutive-blank-lines": true
+        "arrow-return-shorthand": true
     },
     "rulesDirectory": [
         "./ts-lint-rules/dist"
