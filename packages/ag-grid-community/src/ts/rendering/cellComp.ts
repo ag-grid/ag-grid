@@ -259,7 +259,7 @@ export class CellComp extends Component {
     }
 
     public onFlashCells(event: FlashCellsEvent): void {
-        const cellId = CellPositionUtils.createId(this.cellPosition);
+        const cellId = this.beans.cellPositionUtils.createId(this.cellPosition);
         const shouldFlash = event.cells[cellId];
         if (shouldFlash) {
             this.animateCell('highlight');
@@ -1701,10 +1701,10 @@ export class CellComp extends Component {
             const startRow = rangeController.getRangeStartRow(range);
             const endRow = rangeController.getRangeEndRow(range);
 
-            if (!top && RowPositionUtils.sameRow(startRow, this.cellPosition)) {
+            if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.cellPosition)) {
                 top = true;
             }
-            if (!bottom && RowPositionUtils.sameRow(endRow, this.cellPosition)) {
+            if (!bottom && this.beans.rowPositionUtils.sameRow(endRow, this.cellPosition)) {
                 bottom = true;
             }
             if (!left && range.columns.indexOf(leftCol) < 0) {

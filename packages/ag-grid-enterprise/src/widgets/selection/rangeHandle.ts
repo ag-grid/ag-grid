@@ -35,7 +35,7 @@ export class RangeHandle extends AbstractSelectionHandle {
             rowPinned: lastCellHovered.rowPinned,
         };
 
-        const rowChanged = !RowPositionUtils.sameRow(newEndRow, this.rangeController.getRangeEndRow(lastRange));
+        const rowChanged = !this.rowPositionUtils.sameRow(newEndRow, this.rangeController.getRangeEndRow(lastRange));
 
         if (cellRanges.length === 2 && rowChanged) {
             this.rangeController.updateRangeEnd({

@@ -1,7 +1,11 @@
 import {
+    _,
     Autowired,
     Bean,
     CellNavigationService,
+    CellPosition,
+    CellPositionUtils,
+    CellRange,
     Column,
     ColumnApi,
     ColumnController,
@@ -16,27 +20,22 @@ import {
     GridCore,
     GridOptionsWrapper,
     IClipboardService,
-    IRowModel,
     Logger,
     LoggerFactory,
     PasteEndEvent,
     PasteStartEvent,
-    PinnedRowModel,
     PostConstruct,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
-    CellRange,
-    RowPosition,
     RowNode,
+    RowPosition,
+    RowPositionUtils,
     RowRenderer,
     RowValueChangedEvent,
     SelectionController,
-    ValueService,
-    CellPosition,
-    CellPositionUtils,
-    _, RowPositionUtils
+    ValueService
 } from "ag-grid-community";
-import { RangeController } from "./rangeController";
+import {RangeController} from "./rangeController";
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, rangeIndex: number, isLastRow?: boolean): void;
@@ -53,8 +52,7 @@ export class ClipboardService implements IClipboardService {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('rangeController') private rangeController: RangeController;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -64,6 +62,8 @@ export class ClipboardService implements IClipboardService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
+    @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
     private logger: Logger;
 
@@ -161,7 +161,7 @@ export class ClipboardService implements IClipboardService {
                     rowPinned: currentRow.rowPinned,
                     column: column
                 };
-                const cellId = CellPositionUtils.createId(cellPosition);
+                const cellId = this.cellPositionUtils.createId(cellPosition);
                 cellsToFlash[cellId] = true;
             });
 
@@ -266,7 +266,7 @@ export class ClipboardService implements IClipboardService {
                         rowPinned: currentRow.rowPinned,
                         column: column
                     };
-                    const cellId = CellPositionUtils.createId(cellPosition);
+                    const cellId = this.cellPositionUtils.createId(cellPosition);
                     cellsToFlash[cellId] = true;
                 });
             }
@@ -316,7 +316,7 @@ export class ClipboardService implements IClipboardService {
                 return;
             }
 
-            const rowNode = this.getRowNode(currentRow);
+            const rowNode = this.rowPositionUtils.getRowNode(currentRow);
             if (rowNode) {
 
                 updatedRowNodes.push(rowNode);
@@ -370,7 +370,7 @@ export class ClipboardService implements IClipboardService {
             rowPinned: currentRow.rowPinned,
             column: column
         };
-        const cellId = CellPositionUtils.createId(cellPosition);
+        const cellId = this.cellPositionUtils.createId(cellPosition);
         cellsToFlash[cellId] = true;
 
         if (updatedColumnIds.indexOf(column.getId()) < 0) {
@@ -438,7 +438,7 @@ export class ClipboardService implements IClipboardService {
         // the currentRow could be missing if the user sets the active range manually, and sets a range
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
         while (!isLastRow && !_.missing(currentRow) && currentRow) {
-            const rowNode = this.getRowNode(currentRow);
+            const rowNode = this.rowPositionUtils.getRowNode(currentRow);
             isLastRow = currentRow.rowIndex === lastRow.rowIndex && currentRow.rowIndex === lastRow.rowIndex;
 
             rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow && isLastRange);
@@ -495,7 +495,7 @@ export class ClipboardService implements IClipboardService {
                     rowPinned: currentRow.rowPinned,
                     column: column
                 };
-                const cellId = CellPositionUtils.createId(cellPosition);
+                const cellId = this.cellPositionUtils.createId(cellPosition);
                 cellsToFlash[cellId] = true;
             });
 
@@ -512,10 +512,10 @@ export class ClipboardService implements IClipboardService {
     private copyFocusedCellToClipboard(includeHeaders = false): void {
         const focusedCell: CellPosition = this.focusedCellController.getFocusedCell();
         if (_.missing(focusedCell)) { return; }
-        const cellId = CellPositionUtils.createId(focusedCell);
+        const cellId = this.cellPositionUtils.createId(focusedCell);
         const currentRow: RowPosition = {rowPinned: focusedCell.rowPinned, rowIndex: focusedCell.rowIndex};
 
-        const rowNode = this.getRowNode(currentRow);
+        const rowNode = this.rowPositionUtils.getRowNode(currentRow);
         const column = focusedCell.column;
         const value = this.valueService.getValue(column, rowNode);
 
@@ -578,17 +578,6 @@ export class ClipboardService implements IClipboardService {
             return func(params);
         } else {
             return value;
-        }
-    }
-
-    private getRowNode(gridRow: RowPosition): RowNode | null {
-        switch (gridRow.rowPinned) {
-            case Constants.PINNED_TOP:
-                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
-            case Constants.PINNED_BOTTOM:
-                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
-            default:
-                return this.rowModel.getRow(gridRow.rowIndex);
         }
     }
 

@@ -1,19 +1,21 @@
 import { Column } from "./column";
 import { RowPosition } from "./rowPosition";
+import {Bean} from "../context/context";
 
 // this is what gets pass into and out of the api, as JavaScript users
 export interface CellPosition extends RowPosition {
     column: Column;
 }
 
+@Bean('cellPositionUtils')
 export class CellPositionUtils {
 
-    public static createId(cellPosition: CellPosition): string {
+    public createId(cellPosition: CellPosition): string {
         const { rowIndex, rowPinned, column } = cellPosition;
         return `${rowIndex}.${rowPinned == null ? 'null' : rowPinned}.${column.getId()}`;
     }
 
-    public static equals(cellA: CellPosition, cellB: CellPosition): boolean {
+    public equals(cellA: CellPosition, cellB: CellPosition): boolean {
         const colsMatch = cellA.column === cellB.column;
         const floatingMatch = cellA.rowPinned === cellB.rowPinned;
         const indexMatch = cellA.rowIndex === cellB.rowIndex;

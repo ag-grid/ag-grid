@@ -91,6 +91,8 @@ import { AgSelect } from "./widgets/agSelect";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
 import { DetailRowCompCache } from "./rendering/detailRowCompCache";
+import {RowPositionUtils} from "./entities/rowPosition";
+import {CellPositionUtils} from "./entities/cellPosition";
 
 export interface GridParams {
     // used by Web Components
@@ -236,7 +238,8 @@ export class Grid {
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [
                 // this should only contain SERVICES, it should NEVER contain COMPONENTS
-                rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
+                rowModelClass, Beans, RowPositionUtils, CellPositionUtils,
+                PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
                 ComponentMetadataProvider, ResizeObserverService, UserComponentRegistry, UserComponentFactory,
                 MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
                 PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,

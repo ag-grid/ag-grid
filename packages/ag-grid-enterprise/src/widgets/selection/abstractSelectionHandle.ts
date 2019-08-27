@@ -18,12 +18,14 @@ import {
 import { RangeController } from "../../rangeController";
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
+
     @Autowired("rowRenderer") protected rowRenderer: RowRenderer;
     @Autowired("dragService") protected dragService: DragService;
     @Autowired("rangeController") protected rangeController: RangeController;
     @Autowired("mouseEventService") protected mouseEventService: MouseEventService;
     @Autowired("columnController") protected columnController: ColumnController;
     @Autowired("cellNavigationService") protected cellNavigationService: CellNavigationService;
+    @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
 
     private cellComp: CellComp;
     private cellRange: CellRange;
@@ -154,7 +156,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         const end = cellRange.endRow as RowPosition;
         
         if (start && end) {
-            const isBefore = RowPositionUtils.before(end, start);
+            const isBefore = this.rowPositionUtils.before(end, start);
 
             if (isBefore) {
                 this.setRangeStartRow(end);
