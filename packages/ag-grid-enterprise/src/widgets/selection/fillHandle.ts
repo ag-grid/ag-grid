@@ -127,7 +127,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 ? initialRange.columns
                 : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);
 
-            const startRow = isVertical ? this.cellNavigationService.getRowBelow(finalRangeEndRow) : finalRangeEndRow;
+            const startRow = isVertical ? this.cellNavigationService.getRowBelow(finalRangeEndRow) : finalRangeStartRow;
 
             if (startRow) {
                 this.clearCellsInRange(startRow, initialRangeEndRow, columns);
