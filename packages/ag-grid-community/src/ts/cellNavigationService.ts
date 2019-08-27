@@ -187,9 +187,12 @@ export class CellNavigationService {
         return lastBodyIndex <= index;
     }
 
-    public getRowAbove(rowIndex: number, pinned: string): RowPosition | null {
+    public getRowAbove(rowPosition: RowPosition): RowPosition | null {
+            // if already on top row, do nothing
+            const index = rowPosition.rowIndex;
+            const pinned = rowPosition.rowPinned;
         // if already on top row, do nothing
-        if (rowIndex === 0) {
+        if (index === 0) {
             if (pinned === Constants.PINNED_TOP) {
                 return null;
             } else if (!pinned) {
@@ -208,7 +211,7 @@ export class CellNavigationService {
             }
         }
 
-        return {rowIndex: rowIndex - 1, rowPinned: pinned} as RowPosition;
+        return {rowIndex: index - 1, rowPinned: pinned} as RowPosition;
     }
 
     private getCellAbove(lastCell: CellPosition | null): CellPosition | null {
@@ -216,7 +219,7 @@ export class CellNavigationService {
             return null;
         }
 
-        const rowAbove = this.getRowAbove(lastCell.rowIndex, lastCell.rowPinned);
+        const rowAbove = this.getRowAbove({ rowIndex: lastCell.rowIndex, rowPinned: lastCell.rowPinned });
         if (rowAbove) {
             return {
                 rowIndex: rowAbove.rowIndex,
@@ -284,7 +287,7 @@ export class CellNavigationService {
         if (!newColumn) {
             newColumn = _.last(displayedColumns);
 
-            const rowAbove = this.getRowAbove(gridCell.rowIndex, gridCell.rowPinned);
+            const rowAbove = this.getRowAbove({ rowIndex: gridCell.rowIndex, rowPinned: gridCell.rowPinned });
             if (_.missing(rowAbove)) {
                 return null;
             }

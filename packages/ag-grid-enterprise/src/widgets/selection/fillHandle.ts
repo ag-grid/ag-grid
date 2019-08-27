@@ -3,13 +3,13 @@ import {
     CellComp,
     CellPosition,
     CellRange,
+    Column,
+    RowNode,
     RowPosition,
     ValueService,
-    _,
-    Column
+    _
 } from 'ag-grid-community';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
-import {RangeController} from "../../rangeController";
 
 interface FillValues {
     position: CellPosition;
@@ -105,24 +105,21 @@ export class FillHandle extends AbstractSelectionHandle {
         }
 
         if (finalRange) {
-            this.handleValueChanged(initialRange, finalRange);
+            this.handleValueChanged(initialRange, finalRange, e.altKey);
             this.rangeController.setCellRanges([finalRange]);
         }
     }
 
-    private handleValueChanged(initialRange: CellRange, finalRange: CellRange) {
-
-        console.log(`startRange`,initialRange);
-        console.log(`endRange`,finalRange);
-        console.log(`isReduce=${this.isReduce}, dragAxis= ${this.dragAxis} isUp=${this.isUp}, isLeft=${this.isLeft}`);
-
+    private handleValueChanged(initialRange: CellRange, finalRange: CellRange, altKey: boolean) {
         const initialRangeEndRow = this.rangeController.getRangeEndRow(initialRange);
         const initialRangeStartRow = this.rangeController.getRangeStartRow(initialRange);
         const finalRangeEndRow = this.rangeController.getRangeEndRow(finalRange);
         const finalRangeStartRow = this.rangeController.getRangeStartRow(finalRange);
+        const isVertical = this.dragAxis === 'y';
 
+        // if the range is being reduced in size, all we need to do is
+        // clear the cells that are no longer part of the range
         if (this.isReduce) {
-            const isVertical = this.dragAxis === 'y';
             const columns = isVertical
                 ? initialRange.columns
                 : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);
@@ -132,12 +129,71 @@ export class FillHandle extends AbstractSelectionHandle {
             if (startRow) {
                 this.clearCellsInRange(startRow, initialRangeEndRow, columns);
             }
-
-        } else {
-            // TODO
+            return;
         }
 
-        // console.log(startRange, endRange, this.isReduce, this.dragAxis, this.isUp, this.isLeft);
+        let withinInitialRange = true;
+        const values: any[] = [];
+
+        const resetValues = () => {
+            values.length = 0;
+        };
+
+        const iterateAcrossCells = (column?: Column, columns?: Column[]) => {
+            let currentRow: RowPosition | undefined | null = this.isUp ? initialRangeEndRow : initialRangeStartRow;
+            let finished = false;
+
+            if (isVertical) {
+                withinInitialRange = true;
+                resetValues();
+            }
+
+            while (!finished && currentRow) {
+                const rowNode = this.rowPositionUtils.getRowNode(currentRow);
+                if (!rowNode) { break; }
+
+                if (isVertical && column) {
+                    fillValues(values, column, rowNode, () => {
+                        return !this.rowPositionUtils.sameRow(currentRow!, this.isUp ? initialRangeStartRow : initialRangeEndRow);
+                    });
+                } else if (columns) {
+                    withinInitialRange = true;
+                    resetValues();
+                    _.forEach(columns, (col => fillValues(values, col, rowNode, () => {
+                        return this.isLeft ? col !== initialRange.columns[0] : col !== _.last(initialRange.columns);
+                    })));
+                }
+
+                finished = this.rowPositionUtils.sameRow(currentRow, this.isUp ? finalRangeStartRow : finalRangeEndRow);
+
+                currentRow = this.isUp 
+                    ? this.cellNavigationService.getRowAbove(currentRow)
+                    : this.cellNavigationService.getRowBelow(currentRow);
+            }
+        };
+
+        const fillValues = (values: any[], col: Column, rowNode: RowNode, updateInitialSet: () => boolean) => {
+            let currentValue: any;
+
+            if (withinInitialRange) {
+                currentValue = this.valueService.getValue(col, rowNode);
+                withinInitialRange = updateInitialSet();
+            } else {
+                currentValue = this.processValues(values, altKey);
+                this.valueService.setValue(rowNode, col, currentValue);
+            }
+            
+            values.push(currentValue);
+        };
+
+        if (isVertical) {
+            initialRange.columns.forEach(col => {
+                iterateAcrossCells(col);
+            });
+        } else {
+            const columns = this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns;
+            iterateAcrossCells(undefined, columns);
+        }
     }
 
     private clearCellsInRange(startRow: RowPosition, endRow: RowPosition, columns: Column[]) {
@@ -158,6 +214,10 @@ export class FillHandle extends AbstractSelectionHandle {
             finished = this.rowPositionUtils.sameRow(currentRow, endRow);
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
         }
+    }
+
+    private processValues(values: any[], altKey: boolean): any {
+        return 10;
     }
 
     protected clearValues() {
@@ -279,7 +339,7 @@ export class FillHandle extends AbstractSelectionHandle {
             if (this.rowPositionUtils.sameRow(row, endPosition)) { break; }
         } while (
             row = isMovingUp ?
-                this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string) :
+                this.cellNavigationService.getRowAbove(row) :
                 this.cellNavigationService.getRowBelow(row)
         );
     }
@@ -310,7 +370,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 }
             }
             if (isLastRow) { break; }
-        } while (row = this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string));
+        } while (row = this.cellNavigationService.getRowAbove(row));
     }
 
     private extendHorizontal(initialPosition: CellPosition, endPosition: CellPosition, isMovingLeft?: boolean) {
