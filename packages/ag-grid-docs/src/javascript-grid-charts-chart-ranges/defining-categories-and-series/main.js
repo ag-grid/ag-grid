@@ -35,7 +35,7 @@ let gridOptions = {
             return title + '<div class="content" style="text-align: center">' + value + '</div>';
         };
 
-        if (opts.seriesDefaults.xAxis) {
+        if (opts.xAxis) {
             opts.xAxis.labelRotation = 0;
         }
 
