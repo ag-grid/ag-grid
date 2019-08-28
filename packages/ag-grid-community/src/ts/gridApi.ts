@@ -477,6 +477,12 @@ export class GridApi {
         return this.rowModel;
     }
 
+    public setRowNodeExpanded(rowNode: RowNode, expanded: boolean): void {
+        if (rowNode) {
+            rowNode.setExpanded(expanded);
+        }
+    }
+
     public onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any) {
         if (_.missing(this.clientSideRowModel)) { console.warn('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model'); }
         if (_.exists(deprecated_refreshFromIndex)) { console.warn('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows'); }
