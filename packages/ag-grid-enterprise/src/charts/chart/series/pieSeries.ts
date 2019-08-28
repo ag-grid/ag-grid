@@ -107,7 +107,7 @@ export class PieSeries extends Series<PolarChart> {
     }
 
     /**
-     * `null` means make the callout color the same as {@link strokeStyle}.
+     * `undefined` means make the callout color the same as {@link strokeStyle}.
      */
     private _calloutColors: string[] = palette.strokes;
     set calloutColors(value: string[]) {

@@ -127,7 +127,7 @@ export abstract class Chart {
         return this._series;
     }
 
-    addSeries(series: Series<Chart>, before: Series<Chart> | null = null): boolean {
+    addSeries(series: Series<Chart>, before?: Series<Chart>): boolean {
         const canAdd = this.series.indexOf(series) < 0;
 
         if (canAdd) {

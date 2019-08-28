@@ -36,7 +36,7 @@ export class PolarChart extends Chart {
     set series(values: Series<PolarChart>[]) {
         this.removeAllSeries();
         values.forEach(series => {
-            this.addSeries(series, null);
+            this.addSeries(series);
         });
     }
     get series(): Series<PolarChart>[] {
