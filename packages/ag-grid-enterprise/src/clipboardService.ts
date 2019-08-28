@@ -69,8 +69,6 @@ export class ClipboardService implements IClipboardService {
 
     private gridCore: GridCore;
 
-    private pasting: boolean = false;
-
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
     }
@@ -78,10 +76,6 @@ export class ClipboardService implements IClipboardService {
     @PostConstruct
     private init(): void {
         this.logger = this.loggerFactory.create('ClipboardService');
-    }
-
-    public isPasting(): boolean {
-        return this.pasting;
     }
 
     public pasteFromClipboard(): void {
