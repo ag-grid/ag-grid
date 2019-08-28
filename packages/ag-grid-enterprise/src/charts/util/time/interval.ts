@@ -6,8 +6,8 @@ type CountFn = (start: Date, end: Date) => number;
 // For example, for the d3.timeDay interval, this returns the number of days since the start of the month.
 type FieldFn = (date: Date) => number;
 
-let t0 = new Date;
-let t1 = new Date;
+const t0 = new Date;
+const t1 = new Date;
 
 /**
  * The interval methods don't mutate Date parameters.
@@ -136,6 +136,11 @@ export class CountableTimeInterval extends TimeInterval {
         this._field = field;
     }
 
+    /**
+     * Returns the number of interval boundaries after start (exclusive) and before or equal to end (inclusive).
+     * @param start
+     * @param end
+     */
     count(start: Date | number, end: Date | number): number {
         t0.setTime(+start);
         t1.setTime(+end);
@@ -144,6 +149,11 @@ export class CountableTimeInterval extends TimeInterval {
         return Math.floor(this._count(t0, t1));
     }
 
+    /**
+     * Returns a filtered view of this interval representing every step'th date.
+     * The meaning of step is dependent on this interval’s parent interval as defined by the `field` function.
+     * @param step
+     */
     every(step: number): TimeInterval | undefined {
         let result: TimeInterval | undefined;
 
