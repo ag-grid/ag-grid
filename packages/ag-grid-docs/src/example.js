@@ -220,7 +220,7 @@ var gridOptions = {
     animateRows: true,
     enableRangeSelection: true,
     enableRangeHandle: false,
-    enableFillHandle: true,
+    enableFillHandle: false,
     rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
     quickFilterText: null,
