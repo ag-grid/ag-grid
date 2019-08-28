@@ -182,7 +182,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
     }
 
     public getTitleProperty(property: TitleFontProperty): string {
-        return this.chartOptions.title ? `${this.chartOptions.title[property]}` : '';
+        return this.chart.title ? `${this.chart.title[property]}` : '';
     }
 
     public getShadowEnabled(): boolean {
