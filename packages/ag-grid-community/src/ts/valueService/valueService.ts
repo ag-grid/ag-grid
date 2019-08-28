@@ -84,7 +84,7 @@ export class ValueService {
         return result;
     }
 
-    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, suppressEverythingEvent?: boolean): void {
+    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, suppressCellValueChangedEvent: boolean): void {
         const column = this.columnController.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
@@ -157,7 +157,7 @@ export class ValueService {
             setTimeout(() => onCellValueChanged(params), 0);
         }
 
-        if (suppressEverythingEvent) { return; }
+        if (suppressCellValueChangedEvent) { return; }
 
         const event: CellValueChangedEvent = {
             type: Events.EVENT_CELL_VALUE_CHANGED,
