@@ -201,6 +201,7 @@ export class ClipboardService implements IClipboardService {
         const columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
 
         const onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
+
         if (onlyOneCellInRange) {
             this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
         } else {
@@ -363,7 +364,7 @@ export class ClipboardService implements IClipboardService {
         }
 
         const processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
-        this.valueService.setValue(rowNode, column, processedValue);
+        this.valueService.setValue(rowNode, column, processedValue, true);
 
         const cellPosition: CellPosition = {
             rowIndex: currentRow.rowIndex,
