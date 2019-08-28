@@ -35,6 +35,10 @@ let gridOptions = {
             return title + '<div class="content" style="text-align: center">' + value + '</div>';
         };
 
+        if (opts.seriesDefaults.xAxis) {
+            opts.xAxis.labelRotation = 0;
+        }
+
         return opts;
     },
     onFirstDataRendered: onFirstDataRendered
