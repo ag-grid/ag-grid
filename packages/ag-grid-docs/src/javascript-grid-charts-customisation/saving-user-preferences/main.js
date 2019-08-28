@@ -52,7 +52,7 @@ function customChartOptionHandler(params) {
     // here we fix the chart and axis titles when a bubble chart is selected.
     if (params.type === 'bubble') {
         overriddenChartOptions.title = {
-            text: 'Weight for Sugar vs Fat combinations',
+            text: 'Weights for individuals Sugar vs Fat intake',
             fontStyle: 'italic',
             fontWeight: 'bold',
             fontSize: 18,
