@@ -29,7 +29,7 @@ import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { _ } from "../utils";
-import { RowPosition } from "../entities/rowPosition";
+import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -49,6 +49,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("beans") private beans: Beans;
     @Autowired("maxDivHeightScaler") private maxDivHeightScaler: MaxDivHeightScaler;
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
+    @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
     @Optional("rangeController") private rangeController: IRangeController;
 
     private gridPanel: GridPanel;
@@ -1129,7 +1130,7 @@ export class RowRenderer extends BeanStub {
                 continue;
             }
 
-            const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+            const rowNode = this.rowPositionUtils.getRowNode(nextCell);
 
             // we do not allow focusing on full width rows, this includes details rows
             if (rowNode.detail) {
