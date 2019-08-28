@@ -1,8 +1,8 @@
-import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct, } from "ag-grid-community";
-import { RangeController } from "../../rangeController";
-import { ChartModel, ColState } from "./chartModel";
-import { Palette } from "../../charts/chart/palettes";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import {AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct,} from "ag-grid-community";
+import {RangeController} from "../../rangeController";
+import {ChartModel, ColState} from "./chartModel";
+import {Palette} from "../../charts/chart/palettes";
+import {ChartProxy} from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }

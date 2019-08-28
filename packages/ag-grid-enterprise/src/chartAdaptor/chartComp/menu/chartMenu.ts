@@ -1,19 +1,19 @@
 import {
-    Autowired,
-    AgEvent,
-    Component,
-    ChartMenuOptions,
+    _,
     AgDialog,
+    AgEvent,
+    AgPanel,
+    Autowired,
+    ChartMenuOptions,
+    Component,
     GetChartToolbarItemsParams,
     GridOptionsWrapper,
     PostConstruct,
-    Promise,
-    _,
-    AgPanel
+    Promise
 } from "ag-grid-community";
-import { TabbedChartMenu } from "./tabbedChartMenu";
-import { ChartController } from "../chartController";
-import { GridChartComp } from "../gridChartComp";
+import {TabbedChartMenu} from "./tabbedChartMenu";
+import {ChartController} from "../chartController";
+import {GridChartComp} from "../gridChartComp";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]

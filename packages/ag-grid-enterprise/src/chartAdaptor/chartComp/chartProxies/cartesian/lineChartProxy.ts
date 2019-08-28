@@ -1,12 +1,9 @@
 import {ChartType, LineChartOptions, LineSeriesOptions} from "ag-grid-community";
 import {ChartBuilder} from "../../../builder/chartBuilder";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import { CartesianChart, CartesianChartLayout } from "../../../../charts/chart/cartesianChart";
+import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {LineSeries} from "../../../../charts/chart/series/lineSeries";
-import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty} from "./cartesianChartProxy";
-import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
-import { GroupedCategoryAxis } from "../../../../charts/chart/axis/groupedCategoryAxis";
 
 export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 

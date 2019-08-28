@@ -1,16 +1,17 @@
 import {
     _,
     AgGroupComponent,
+    AgSelect,
     AgSlider,
+    Autowired,
     Component,
     PostConstruct,
-    RefSelector,
-    AgSelect, Autowired
+    RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { LegendPosition } from "../../../../../charts/chart/chart";
-import { LabelPanelParams, LabelFont, LabelPanel } from "../label/labelPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {LegendPosition} from "../../../../../charts/chart/chart";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {ChartTranslator} from "../../../chartTranslator";
 import {ChartProxy, LegendProperty} from "../../../chartProxies/chartProxy";
 
 export class LegendPanel extends Component {

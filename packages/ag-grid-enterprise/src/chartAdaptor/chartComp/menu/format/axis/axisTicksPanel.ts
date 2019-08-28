@@ -9,7 +9,7 @@ import {
 } from "ag-grid-community";
 import {ChartController} from "../../../chartController";
 import {ChartTranslator} from "../../../chartTranslator";
-import {CommonAxisProperty, CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
+import {CartesianChartProxy, CommonAxisProperty} from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisTicksPanel extends Component {
 

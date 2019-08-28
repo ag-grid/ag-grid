@@ -8,9 +8,9 @@ import {
     Component,
     PostConstruct
 } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../chartModel";
-import { ChartTranslator } from "../../chartTranslator";
+import {ChartController} from "../../chartController";
+import {ColState} from "../../chartModel";
+import {ChartTranslator} from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
 

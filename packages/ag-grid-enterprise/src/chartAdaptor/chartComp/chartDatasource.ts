@@ -4,13 +4,13 @@ import {
     BeanStub,
     Column,
     ColumnController,
-    IRowModel,
-    ValueService,
     IAggFunc,
-    RowNode
+    IRowModel,
+    RowNode,
+    ValueService
 } from "ag-grid-community";
-import { AggregationStage } from "../../rowStages/aggregationStage";
-import { ChartModel, ColState } from "./chartModel";
+import {AggregationStage} from "../../rowStages/aggregationStage";
+import {ChartModel, ColState} from "./chartModel";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];

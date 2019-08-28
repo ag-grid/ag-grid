@@ -1,13 +1,13 @@
-import { _, ChartType, Component, PostConstruct, RefSelector } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { LegendPanel } from "./legend/legendPanel";
-import { BarSeriesPanel } from "./series/barSeriesPanel";
-import { AxisPanel } from "./axis/axisPanel";
-import { LineSeriesPanel } from "./series/lineSeriesPanel";
-import { PieSeriesPanel } from "./series/pieSeriesPanel";
-import { ChartPanel } from "./chart/chartPanel";
-import { AreaSeriesPanel } from "./series/areaSeriesPanel";
-import { ScatterSeriesPanel } from "./series/scatterSeriesPanel";
+import {_, ChartType, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {ChartController} from "../../chartController";
+import {LegendPanel} from "./legend/legendPanel";
+import {BarSeriesPanel} from "./series/barSeriesPanel";
+import {AxisPanel} from "./axis/axisPanel";
+import {LineSeriesPanel} from "./series/lineSeriesPanel";
+import {PieSeriesPanel} from "./series/pieSeriesPanel";
+import {ChartPanel} from "./chart/chartPanel";
+import {AreaSeriesPanel} from "./series/areaSeriesPanel";
+import {ScatterSeriesPanel} from "./series/scatterSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
 

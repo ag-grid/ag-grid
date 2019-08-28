@@ -3,7 +3,6 @@ import {ChartBuilder} from "../../../builder/chartBuilder";
 import {BarSeries} from "../../../../charts/chart/series/barSeries";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
-import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy} from "./cartesianChartProxy";
 
 export type BarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';

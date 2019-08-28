@@ -1,14 +1,16 @@
 import {
+    AreaChartOptions,
+    BarChartOptions,
     ChartOptions,
+    ChartOptionsChanged,
     ChartType,
     Events,
     EventService,
-    ProcessChartOptionsParams,
-    ChartOptionsChanged,
-    BarChartOptions, AreaChartOptions, PieChartOptions
+    PieChartOptions,
+    ProcessChartOptionsParams
 } from "ag-grid-community";
 import {Chart, LegendPosition} from "../../../charts/chart/chart";
-import { Palette } from "../../../charts/chart/palettes";
+import {Palette} from "../../../charts/chart/palettes";
 import {Caption} from "../../../charts/caption";
 import {BarSeries} from "../../../charts/chart/series/barSeries";
 import {DropShadow} from "../../../charts/scene/dropShadow";

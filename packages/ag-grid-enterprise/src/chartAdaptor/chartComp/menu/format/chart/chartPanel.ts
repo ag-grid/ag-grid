@@ -7,12 +7,12 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
-import { PaddingPanel } from "./paddingPanel";
-import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
-import { Caption } from "../../../../../charts/caption";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {Chart} from "../../../../../charts/chart/chart";
+import {PaddingPanel} from "./paddingPanel";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {Caption} from "../../../../../charts/caption";
+import {ChartTranslator} from "../../../chartTranslator";
 import {ChartProxy} from "../../../chartProxies/chartProxy";
 
 export class ChartPanel extends Component {
