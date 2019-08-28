@@ -1,6 +1,7 @@
 import {ChartProxy, ChartProxyParams} from "../chartProxy";
 import {CartesianChartOptions} from "ag-grid-community";
 import {CartesianChart} from "../../../../charts/chart/cartesianChart";
+import {ChartModel} from "../../chartModel";
 
 export type CommonAxisProperty = 'lineColor' | 'lineWidth' | 'tickColor' | 'tickWidth' | 'tickSize' | 'tickPadding';
 export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
@@ -12,6 +13,10 @@ export type ScatterSeriesProperty = 'tooltipEnabled' | 'markerSize' | 'markerStr
 export abstract class CartesianChartProxy<T extends CartesianChartOptions> extends ChartProxy<T> {
     protected constructor(params: ChartProxyParams) {
         super(params);
+    }
+
+    protected overrideLabelRotation(categoryId: string): boolean {
+        return categoryId === ChartModel.DEFAULT_CATEGORY || this.chartProxyParams.grouping;
     }
 
     public setCommonAxisProperty(property: CommonAxisProperty | LegendFontProperty, value: any) {
@@ -31,7 +36,8 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
     }
 
     public getXRotation(): number {
-        return this.chartOptions.xAxis ? this.chartOptions.xAxis.labelRotation as number : 0;
+       const cartesianChart = this.chart as CartesianChart;
+       return cartesianChart.xAxis.labelRotation;
     }
 
     public setXRotation(rotation: number): void {
@@ -44,7 +50,8 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
     }
 
     public getYRotation(): number {
-        return this.chartOptions.yAxis ? this.chartOptions.yAxis.labelRotation as number : 0;
+        const cartesianChart = this.chart as CartesianChart;
+        return cartesianChart.yAxis.labelRotation;
     }
 
     public setYRotation(rotation: number): void {

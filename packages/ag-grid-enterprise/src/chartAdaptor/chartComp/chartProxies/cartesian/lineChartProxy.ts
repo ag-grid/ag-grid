@@ -23,6 +23,8 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
     }
 
     public update(params: UpdateChartParams): void {
+        const chart = this.chart as CartesianChart;
+
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
@@ -67,22 +69,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             }
         });
 
-        const chart = this.chart as CartesianChart;
-        // Because of the business requirement of seamless switching between column and bar charts using the same
-        // user configs, the xAxis config is used for the vertical y-axis in bar chart mode, and the
-        // yAxis config for the horizontal x-axis.
-        const categoryAxis = chart.layout === CartesianChartLayout.Horizontal ? chart.yAxis : chart.xAxis;
-        // Don't auto rotate horizontal axis labels if categories are generated (indexes) or the axis is a grouped category axis,
-        // or the category axis is a vertical axis.
-        const noLabelRotation = params.category.id === ChartModel.DEFAULT_CATEGORY
-            || categoryAxis instanceof GroupedCategoryAxis
-            || chart.layout === CartesianChartLayout.Horizontal;
-        if (noLabelRotation) {
-            chart.xAxis.labelRotation = 0;
-            this.chartOptions.xAxis.labelRotation = 0;
-        } else {
-            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
-        }
+        chart.xAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.xAxis.labelRotation as number;
     }
 
     public setSeriesProperty(property: LineSeriesProperty | LineMarkerProperty, value: any): void {

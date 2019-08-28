@@ -2,11 +2,9 @@ import {AreaChartOptions, AreaSeriesOptions, ChartType} from "ag-grid-community"
 import {ChartBuilder} from "../../../builder/chartBuilder";
 import {AreaSeries} from "../../../../charts/chart/series/areaSeries";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import { CartesianChart, CartesianChartLayout } from "../../../../charts/chart/cartesianChart";
+import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {CategoryAxis} from "../../../../charts/chart/axis/categoryAxis";
-import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy, LineMarkerProperty} from "./cartesianChartProxy";
-import { GroupedCategoryAxis } from "../../../../charts/chart/axis/groupedCategoryAxis";
 
 export type AreaSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 
@@ -42,6 +40,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
     }
 
     public update(params: UpdateChartParams): void {
+        const chart = this.chart as CartesianChart;
 
         if (this.chartType === ChartType.Area) {
             // area charts have multiple series
@@ -62,22 +61,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             areaSeries.strokes = palette.strokes;
         }
 
-        const chart = this.chart as CartesianChart;
-        // Because of the business requirement of seamless switching between column and bar charts using the same
-        // user configs, the xAxis config is used for the vertical y-axis in bar chart mode, and the
-        // yAxis config for the horizontal x-axis.
-        const categoryAxis = chart.layout === CartesianChartLayout.Horizontal ? chart.yAxis : chart.xAxis;
-        // Don't auto rotate horizontal axis labels if categories are generated (indexes) or the axis is a grouped category axis,
-        // or the category axis is a vertical axis.
-        const noLabelRotation = params.category.id === ChartModel.DEFAULT_CATEGORY
-            || categoryAxis instanceof GroupedCategoryAxis
-            || chart.layout === CartesianChartLayout.Horizontal;
-        if (noLabelRotation) {
-            chart.xAxis.labelRotation = 0;
-            this.chartOptions.xAxis.labelRotation = 0;
-        } else {
-            chart.xAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
-        }
+        chart.xAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.xAxis.labelRotation as number;
     }
 
     private updateAreaChart(params: UpdateChartParams) {
