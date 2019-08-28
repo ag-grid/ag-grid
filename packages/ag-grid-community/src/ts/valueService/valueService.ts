@@ -84,7 +84,7 @@ export class ValueService {
         return result;
     }
 
-    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, suppressCellValueChangedEvent: boolean): void {
+    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, suppressCellValueChangedEvent?: boolean): void {
         const column = this.columnController.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
