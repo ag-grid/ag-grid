@@ -943,7 +943,7 @@
             padding: $cell-horizontal-padding;
             height: $row-height + $grid-size * 3;
         }
-        &.ag-cell-inline-editing, &.ag-popup-editor {
+        &.ag-cell-inline-editing {
             @include card($params);
 
             background-color: $editor-background-color-color;
@@ -951,6 +951,8 @@
     }
 
     .ag-popup-editor {
+        @include card($params);
+        background-color: $editor-background-color-color;
         padding: 0;
         .ag-large-textarea textarea {
             height: auto;
