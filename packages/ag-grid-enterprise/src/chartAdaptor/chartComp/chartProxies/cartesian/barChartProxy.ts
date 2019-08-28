@@ -2,11 +2,9 @@ import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
 import {ChartBuilder} from "../../../builder/chartBuilder";
 import {BarSeries} from "../../../../charts/chart/series/barSeries";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import { CartesianChart, CartesianChartLayout } from "../../../../charts/chart/cartesianChart";
+import {CartesianChart} from "../../../../charts/chart/cartesianChart";
 import {ChartModel} from "../../chartModel";
 import {CartesianChartProxy} from "./cartesianChartProxy";
-import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
-import { GroupedCategoryAxis } from "../../../../charts/chart/axis/groupedCategoryAxis";
 
 export type BarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 export type BarSeriesFontProperty = 'labelEnabled' | 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
@@ -31,27 +29,17 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-        const barSeries = this.chart.series[0] as BarSeries;
+        const chart = this.chart as CartesianChart;
+        const barSeries = chart.series[0] as BarSeries;
         barSeries.data = params.data;
         barSeries.xField = params.category.id;
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        const chart = this.chart as CartesianChart;
-        // Because of the business requirement of seamless switching between column and bar charts using the same
-        // user configs, the xAxis config is used for the vertical y-axis in bar chart mode, and the
-        // yAxis config for the horizontal x-axis.
-        const categoryAxis = chart.layout === CartesianChartLayout.Horizontal ? chart.yAxis : chart.xAxis;
-        // Don't auto rotate horizontal axis labels if categories are generated (indexes) or the axis is a grouped category axis,
-        // or the category axis is a vertical axis.
-        const noLabelRotation = params.category.id === ChartModel.DEFAULT_CATEGORY
-            || categoryAxis instanceof GroupedCategoryAxis
-            || chart.layout === CartesianChartLayout.Horizontal;
-        if (noLabelRotation) {
-            categoryAxis.labelRotation = 0;
-            this.chartOptions.xAxis.labelRotation = 0;
+        if (BarChartProxy.isBarChart(this.chartProxyParams.chartType)) {
+            chart.yAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.yAxis.labelRotation as number;
         } else {
-            categoryAxis.labelRotation = this.chartOptions.xAxis.labelRotation as number;
+            chart.xAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.xAxis.labelRotation as number;
         }
 
         const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
