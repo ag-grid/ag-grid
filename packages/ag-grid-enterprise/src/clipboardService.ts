@@ -69,6 +69,8 @@ export class ClipboardService implements IClipboardService {
 
     private gridCore: GridCore;
 
+    private pasting: boolean = false;
+
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
     }
@@ -76,6 +78,10 @@ export class ClipboardService implements IClipboardService {
     @PostConstruct
     private init(): void {
         this.logger = this.loggerFactory.create('ClipboardService');
+    }
+
+    public isPasting(): boolean {
+        return this.pasting;
     }
 
     public pasteFromClipboard(): void {
@@ -201,6 +207,7 @@ export class ClipboardService implements IClipboardService {
         const columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
 
         const onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
+
         if (onlyOneCellInRange) {
             this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
         } else {
@@ -363,7 +370,7 @@ export class ClipboardService implements IClipboardService {
         }
 
         const processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
-        this.valueService.setValue(rowNode, column, processedValue);
+        this.valueService.setValue(rowNode, column, processedValue, true);
 
         const cellPosition: CellPosition = {
             rowIndex: currentRow.rowIndex,
