@@ -1,16 +1,15 @@
 import { sunday } from "./week";
 import { durationMinute } from "./duration";
 
-const date = new Date(Date.UTC(2019, 7, 23, 15, 10, 5, 100)); // 7 == August
-
 test('sunday.get/floor', () => {
+    const date = new Date(Date.UTC(2019, 7, 23, 15, 10, 5, 100)); // 7 == August
     const sundayDate = sunday.floor(date);
     const utcSundayMs = Date.UTC(2019, 7, 18, 0, 0, 0, 0);
     expect(sundayDate.getTime()).toBe(utcSundayMs + sundayDate.getTimezoneOffset() * durationMinute);
 });
 
 test('sunday.range', () => {
-    const d0 = date;
+    const d0 = new Date(Date.UTC(2019, 7, 23, 15, 10, 5, 100));
     const d1 = new Date(Date.UTC(2019, 8, 27, 10, 12, 2, 700));
 
     const utcAug25Ms = Date.UTC(2019, 7, 25, 0, 0, 0, 0);
