@@ -182,7 +182,9 @@ cellClassRules: {
     </p>
         <ul class="content">
             <li><code>cellStyle</code>: All new styles are applied. If a new style is the
-            same as an old style, the new style overwrites the old style.</li>
+            same as an old style, the new style overwrites the old style. If a new style is not
+                present, the old style is left (the grid will NOT remove styles).
+            </li>
             <li><code>cellClass</code>: All new classes are applied. Old classes are not
             removed so be aware that classes will accumulate. If you want to remove
             old classes, then use cellClassRules.</li>
@@ -190,6 +192,24 @@ cellClassRules: {
             applied the second time. Rules tha return false will have the class removed
             second time.</li>
         </ul>
+
+    <note>
+        <p>
+            If you are using cellStyle to highlight changing data, then please take note
+            that grid will not remove styles. For example if you are
+            setting text color to 'red' for a condition, then you should explicitly set it
+            back to default eg 'black' when the condition is not met. Otherwise the highlight
+            will remain once it's first applied.
+        </p>
+        <snippet>
+            // unsafe, the red will stay after initially applied
+            cellStyle: params => params.value > 80 ? {color: 'red'} : null
+        </snippet>
+        <snippet>
+            // safe, to black will override the red when the condition is not true
+            cellStyle: params => params.value > 80 ? {color: 'red'} : {color: 'black'}
+        </snippet>
+    </note>
 
     <h2>Example Cell Styling</h2>
 
