@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Overriding Chart Options</h2>
 
     <p>
-        The primary mechanism for customising chart is via the following <code>gridOptions</code> callback:
+        The primary mechanism for customising charts is via the following <code>gridOptions</code> callback:
     </p>
 
 <snippet>
@@ -72,7 +72,7 @@ type ChartType =
 
     <ul>
         <li><b>Stacked Bar</b>, <b>Grouped Bar</b> and <b>Normalized Bar</b> charts have the legend docked to the <code>bottom</code>.</li>
-        <li><b>Stacked Column</b>, <b>Grouped Column</b> and <b>Normalized Column</b> charts have the legend docked to the <b>right</b>.</li>
+        <li><b>Stacked Column</b>, <b>Grouped Column</b> and <b>Normalized Column</b> charts have the legend docked to the <code>right</code>.</li>
         <li><b>Line</b> charts have the legend docked to the <code>left</code>.</li>
         <li><b>Scatter</b> charts have the legend docked to the <code>right</code>.</li>
         <li><b>Pie</b> charts have the legend docked to the <code>top</code>.</li>
@@ -120,7 +120,7 @@ type ChartType =
     <ul>
         <li><b>Saving Options by Chart Type</b>: format changes (via the format panel) are preserved after leaving and
             returning to the chart by using the <code>savedUserPreferenceByChartType</code> object to keep track of user
-            format changes on a per chart type basis.</li>
+            format changes on a per-chart type basis.</li>
         <li><b>Saving Global Chart Options</b>: changes made to the legend options are applied to all new charts by using
             the <code>savedLegendUserPreference</code> object to globally keep track of legend preferences.</li>
     </ul>

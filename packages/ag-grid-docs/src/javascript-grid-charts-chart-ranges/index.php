@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Creating Chart Ranges</h2>
 
     <p>
-        When a chart is created off a selected range of cells in the grid, or via the charting api, the underlying cell
+        When a chart is created from a selected range of cells in the grid, or via the charting API, the underlying cell
         range is replaced by a chart range.
     </p>
 
@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
             the mouse over a range of cells.
         </li>
         <li>
-            The bring up the <a href="../javascript-grid-context-menu">Context Menu</a> and select the desired chart type
+            Bring up the <a href="../javascript-grid-context-menu">Context Menu</a> and select the desired chart type
             from the 'Chart Range' sub menu.
         </li>
     </ul>
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        As illustrated above, the resulting chart range can subsequently modified by dragging on the chart range handle,
+        As illustrated above, the resulting chart range can subsequently be modified by dragging on the chart range handle,
         located at the bottom right corner of the chart range.
     </p>
 
@@ -66,7 +66,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Category and Series Ranges</h2>
 
     <p>
-        There are two types of charting ranges; a category range that is highlighted in green and a series range that
+        There are two types of charting ranges: a category range that is highlighted in green and a series range that
         is highlighted in blue.
     </p>
 
@@ -105,7 +105,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         When defining column definitions the <code>ColDef.chartDataType</code> property can be used to define how the column
-        should be considered within the context of charting. The allowed values are should below:
+        should be considered within the context of charting. The allowed values are shown below:
     </p>
 
     <snippet>

@@ -42,8 +42,8 @@ include '../documentation-main/documentation_header.php';
     <note>
         We are very excited to be introducing ag-Grid's new charting capability, however please be advised that there
         could be some breaking changes around the API while it is still in beta. Please give us your feedback via
-        <a href="https://ag-grid.zendesk.com/">Zendesk</a>, for existing customers, alternatively
-        <a href="https://github.com/ag-grid/ag-grid/">Github</a> can also be used.
+        <a href="https://ag-grid.zendesk.com/">Zendesk</a>, for existing customers, or alternatively
+        <a href="https://github.com/ag-grid/ag-grid/">GitHub</a> can also be used.
         </br>
     </note>
 
@@ -95,7 +95,7 @@ gridOptions = {
     <h2>User Created Charts</h2>
     <p>
         User created charts are designed to provide an out-of-the box charting experience, similar to that found in
-        spreadsheet applications such as Excel, but more compelling it will be integrated inside your applications.
+        spreadsheet applications such as Excel, but more compellingly it will be integrated inside your applications.
     </p>
 
     <p>
@@ -114,7 +114,7 @@ gridOptions = {
             the mouse over a range of cells.
         </li>
         <li>
-            The bring up the <a href="../javascript-grid-context-menu">Context Menu</a> and select the desired chart type
+            Bring up the <a href="../javascript-grid-context-menu">Context Menu</a> and select the desired chart type
             from the 'Chart Range' sub menu.
         </li>
     </ul>
@@ -158,8 +158,8 @@ gridOptions = {
             <ul>
                 <p>
                     <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
-                    The chart toolbar is located in the top right area of the chart and brings
-                    the user to UI components to perform the following:
+                    The chart toolbar is located in the top right area of the chart and allows
+                    the user to perform the following:
                 </p>
                     <p>
                     <ul>
@@ -179,7 +179,7 @@ gridOptions = {
 
     <p>
         By default, user created charts are displayed inside the grid's own popup windows. The windows can be moved (by mouse
-        dragging the windows title bar) and resized (by mouse dragging the windows borders).
+        dragging a window's title bar) and resized (by mouse dragging a window's borders).
     </p>
 
     <p>
@@ -237,9 +237,9 @@ gridOptions = {
     <h2>Chart Customisation</h2>
 
     <p>
-        Before each chart is created, the developer can do fine grained
-        <a href="../javascript-grid-charts-customisation/">Chart Customisation</a> to change the charts
-        appearance and behaviour. For example you can change the thickness of the lines, or customise the
+        Before each chart is created, the developer can perform fine-grained
+        <a href="../javascript-grid-charts-customisation/">Chart Customisation</a> to change the chart's
+        appearance and behaviour. For example, you can change the thickness of the lines, or customise the
         formatting of the axis labels.
     </p>
 

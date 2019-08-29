@@ -23,7 +23,7 @@ interface DoughnutChartOptions {
     // The chart title to render at the top of the chart.
     title?: CaptionOptions;
     // The subtitle to render under the chart's title.
-    // If the title is not not specified or disabled, the subtitle won't be visible either.
+    // If the title is not specified or is disabled, the subtitle won't be visible either.
     subtitle?: CaptionOptions;
     // The width of the chart.
     width?: number,
@@ -69,7 +69,7 @@ interface DoughnutChartOptions {
         labelFontSize?: number;
         // The font family to be used by legend's labels. Defaults to `Verdana, sans-serif`.
         labelFontFamily?: string;
-        // The color to be used by the legend's labels. Default depends on ag-Grid theme used
+        // The colour to be used by the legend's labels. Default depends on ag-Grid theme used
         labelColor?: string;
     };
 
@@ -77,9 +77,9 @@ interface DoughnutChartOptions {
         // The title of this series. Renders on top of the doughnut. Also shown in the tooltip.
         title?: CaptionOptions;
 
-        // The fill colors of pie slices.
+        // The fill colours of pie slices.
         fills?: string[];
-        // The stroke colors of pie slices. Darker versions of fill colors by default.
+        // The stroke colours of pie slices. Darker versions of fill colours by default.
         strokes?: string[];
         // The style to apply to a series item when it is hovered or tapped.
         highlightStyle?: HighlightStyle;
@@ -99,8 +99,7 @@ interface DoughnutChartOptions {
         labelFontSize?: number;
         // The font family to be used by slice labels. Defaults to `Verdana, sans-serif`.
         labelFontFamily?: string;
-        // The color of the axis labels. Depends on whether the light or dark mode is used.
-        // The color to use for slice labels.
+        // The colour to use for slice labels.
         labelColor?: string;
 
         // The stroke width. Defaults to `1`.
@@ -115,7 +114,7 @@ interface DoughnutChartOptions {
         // The shadow type to use for bars. Defaults to no shadow.
         // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
         shadow?: {
-            // The shadow color. For example, 'rgba(0, 0, 0, 0.3)'.
+            // The shadow colour. For example, 'rgba(0, 0, 0, 0.3)'.
             color?: string;
             // The shadow offset.
             offset?: [number, number];
@@ -151,7 +150,7 @@ interface CaptionOptions {
     // The font family to be used by the title/subtitle.
     // Defaults to `Verdana, sans-serif` for both.
     fontFamily?: string;
-    // The color of the title/subtitle's text. Defaults to `black`.
+    // The colour of the title/subtitle's text. Defaults to `black`.
     color?: string;
     // Whether to show the title/subtitle or not. Defaults to `true`.
     enabled?: boolean;
