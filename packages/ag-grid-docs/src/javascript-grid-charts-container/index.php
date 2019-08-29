@@ -10,8 +10,8 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         Displaying the generated chart within the grid provided popup window will suit most needs. However
-        you may wish to display the chart in a different location. For example
-        your application may already have popup windows and you wish use the same library for consistency.
+        you may wish to display the chart in a different location. For example,
+        your application may already have popup windows and you wish to use the same library for consistency.
     </p>
 
     <p>
@@ -37,7 +37,7 @@ interface ChartRef {
     </p>
     <ul>
         <li>
-            <code>chartElement</code>: The chart DOM element, application responsible for placing into the DOM.
+            <code>chartElement</code>: The chart DOM element, which the application is responsible for placing into the DOM.
         </li>
         <li>
             <code>destroyChart</code>: The application is responsible for calling destroyChart() when the
