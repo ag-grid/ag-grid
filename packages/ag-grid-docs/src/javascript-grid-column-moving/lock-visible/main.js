@@ -23,11 +23,21 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    showToolPanel: true,
-    toolPanelSuppressRowGroups: true,
-    toolPanelSuppressValues: true,
-    toolPanelSuppressPivots: true,
-    toolPanelSuppressPivotMode: true,
+    sideBar: {
+        toolPanels: [{
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            toolPanel: 'agColumnsToolPanel',
+            toolPanelParams: {
+                toolPanelSuppressRowGroups: true,
+                toolPanelSuppressValues: true,
+                toolPanelSuppressPivots: true,
+                toolPanelSuppressPivotMode: true
+            }
+        }]
+    },
     defaultColDef: {
         width: 100
     }
