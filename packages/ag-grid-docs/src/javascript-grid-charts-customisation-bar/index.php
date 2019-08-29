@@ -155,7 +155,7 @@ interface CaptionOptions {
     // Defaults to `Verdana, sans-serif` for both.
     fontFamily?: string;
     // The colour of the title/subtitle's text. Defaults to `black`.
-    colour?: string;
+    color?: string;
     // Whether to show the title/subtitle or not. Defaults to `true`.
     enabled?: boolean;
 }

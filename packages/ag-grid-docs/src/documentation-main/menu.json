@@ -825,8 +825,13 @@
             "enterprise": true
           },
           {
-            "title": "Chart Ranges",
-            "url": "javascript-grid-charts-chart-ranges/",
+            "title": "Range Chart",
+            "url": "javascript-grid-charts-range-chart/",
+            "enterprise": true
+          },
+          {
+            "title": "Pivot Chart",
+            "url": "javascript-grid-charts-pivot-chart/",
             "enterprise": true
           },
           {

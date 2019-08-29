@@ -120,7 +120,7 @@ gridOptions = {
     </ul>
 
     <p>
-        <img alt="Charting Toolbar" src="userChartingShowcase.gif" style="margin-bottom: 0px; width: 100%; border: grey solid 1px">
+        <img alt="User Created Charts" src="userChartingShowcase.gif" style="margin-bottom: 0px; width: 100%; border: lightgray solid 1px">
     </p>
 
     <p>
@@ -133,7 +133,7 @@ gridOptions = {
         <div style="flex-grow: 1;">
             <ul>
                 <p>
-                <li><a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a>: When a chart is created, corresponding
+                <li><a href="../javascript-grid-charts-range-chart/#creating-chart-ranges">Chart Ranges</a>: When a chart is created, corresponding
                     chart ranges appear in the grid and are adjusted via the chart range handle.
                 </li>
                 </p>
@@ -251,7 +251,7 @@ gridOptions = {
     <h2>Next Up</h2>
 
     <p>
-        Continue to the next section to learn about: <a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a>.
+        Continue to the next section to learn about the: <a href="../javascript-grid-charts-range-chart/">Range Chart</a>.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
