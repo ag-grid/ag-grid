@@ -55,3 +55,6 @@ curl --netrc-file ~/aggrid/.creds --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.co
 
 #unzip archive
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"
+
+#update folder permissions (default is 777 - change to 755)
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
