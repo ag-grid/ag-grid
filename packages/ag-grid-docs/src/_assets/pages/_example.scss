@@ -124,6 +124,27 @@ button[disabled] {
             padding-left: 15px;
             padding-right: 15px;
         }
+
+        .video-tour {
+            display: flex;
+            align-items: center;
+            a {
+                display: flex;
+                align-items: center;
+                &:hover {
+                    text-decoration: none;
+                }
+                &:before {
+                    content: '';
+                    display: inline-block;
+                    background: transparent url('../../images/YouTubeSmall.png') no-repeat;
+                    background-size: contain;
+                    width: 26px;
+                    height: 18px;
+                    margin-right: 5px;
+                }
+            }
+        }
     }
 }
 
@@ -219,6 +240,9 @@ button[disabled] {
             justify-content: center;
             > div {
                 overflow: hidden;
+                &.video-tour {
+                    display: none;
+                }
             }
             label {
                 width: 80px;
