@@ -5,10 +5,10 @@ var columnDefs = [
     {headerName: "Year", field: "year", width: 90, enableRowGroup: true},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, enableValueColumn: true},
-    {headerName: "Silver", field: "silver", width: 100, enableValueColumn: true},
-    {headerName: "Bronze", field: "bronze", width: 100, enableValueColumn: true},
-    {headerName: "Total", field: "total", width: 100, enableValueColumn: true}
+    {headerName: "Gold", field: "gold", width: 100, enableValue: true},
+    {headerName: "Silver", field: "silver", width: 100, enableValue: true},
+    {headerName: "Bronze", field: "bronze", width: 100, enableValue: true},
+    {headerName: "Total", field: "total", width: 100, enableValue: true}
 ];
 
 var gridOptions = {
