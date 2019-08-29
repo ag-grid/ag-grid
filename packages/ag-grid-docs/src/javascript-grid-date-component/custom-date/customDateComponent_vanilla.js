@@ -10,13 +10,16 @@ CustomDateComponent.prototype.init = function (params) {
 
     this.params = params;
 
+    this.eGui = document.createElement('div');
+
     var eGui = this.eGui;
-    eGui = document.createElement('div');
+
     eGui.setAttribute('role', 'presentation');
     eGui.classList.add('ag-input-wrapper');
     eGui.classList.add('custom-date-filter');
     eGui.innerHTML = template;
-    this.eInput = this.eGui.querySelector('input');
+
+    this.eInput = eGui.querySelector('input');
 
     this.picker = flatpickr(this.eGui, {
         onChange: this.onDateChanged.bind(this),

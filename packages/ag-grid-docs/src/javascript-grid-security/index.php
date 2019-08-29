@@ -99,5 +99,17 @@ let colDef = {
         </snippet>
     </p>
 
+    <h1>OWASP Benchmark</h1>
+
+    <p>
+        Static Application Security Testing is performed on each release candidate of the grid starting with version 21.2.0. Using the 
+        <a href="https://www.owasp.org/index.php/Benchmark">OWASP Benchmark</a>, SonarQube was selected to scan the grid's code.
+        ag-Grid Community and ag-Grid Enterprise version 21.2.0 passed with 0 vulnerabilities.
+    </p>
+
+    
+    <img src="./community-report.png" alt="ag-grid-community report" style="width:100%; margin-bottom: 10px; display: block; border: 1px solid lightgray;"/>
+    <img src="./enterprise-report.png" alt="ag-grid-enterprise report" style="width: 100%; border: 1px solid lightgray;" />
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
