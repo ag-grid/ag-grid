@@ -17,7 +17,7 @@ import {
     durationYear
 } from "../util/time/duration";
 
-var tickIntervals = [
+const tickIntervals = [
     [second,  1,      durationSecond],
     [second,  5,  5 * durationSecond],
     [second, 15, 15 * durationSecond],
