@@ -49,7 +49,7 @@ export class ChartFormattingPanel extends Component {
             this.addComponent(new AxisPanel(this.chartController));
             this.addComponent(new LineSeriesPanel(this.chartController));
 
-        } else if (chartType === ChartType.Scatter || ChartType.Bubble) {
+        } else if (chartType === ChartType.Scatter || chartType === ChartType.Bubble) {
             this.addComponent(new AxisPanel(this.chartController));
             this.addComponent(new ScatterSeriesPanel(this.chartController));
 
