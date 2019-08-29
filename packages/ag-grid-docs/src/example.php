@@ -57,6 +57,12 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
             style="flex: 1"
             />
         </div>
+        <div>
+            <a href="https://youtu.be/29ja0liMuv4">
+                <img src="./images/YouTubeSmall.png"/>
+                Take a video tour
+            </a>
+        </div>
     </div>
 </div>
 <div class="options-expander">
