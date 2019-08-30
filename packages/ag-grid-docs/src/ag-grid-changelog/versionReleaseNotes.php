@@ -1,3 +1,47 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_21_2_0">
+    <p>Release 21.2.0 (30th Aug 2019)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-3215 - Add Pivot Chart
+            (see <a href="/javascript-grid-charts-pivot-chart/">Pivot Chart</a>).
+        </li>
+
+        <li>
+            AG-3036 / AG-3160 - Add Scatter / Bubble Charts
+            (see <a href="/javascript-grid-charts-customisation-scatter/">Scatter Charts</a>).
+        </li>
+
+        <li>AG-2762 - Pagination - prevent separation of children from their parent rows with Master Detail and Row Grouping
+            (see <a href="/javascript-grid-pagination/#childRows">Pagination & Child Rows</a>).
+        </li>
+
+        <li>AG-1643 - RichSelect - Allow typing to automatically scroll to item</li>
+
+        <li>AG-3165 - Chart API - Add support for extra / custom aggregations
+            (see <a href="/javascript-grid-charts-chart-range-api/#chart-range-api-1">Chart API</a>).
+        </li>
+
+        <li>AG-3154 - Charts - Allow user formatting changes to be saved / restored
+            (see <a href="/javascript-grid-charts-customisation/#saving-user-preferences">Saving User Preferences</a>).
+        </li>
+
+        <li>AG-3184 - Charts - Add ability to unlink / detach charts from grid data
+            (see <a href="/javascript-grid-charts-chart-toolbar/#unlinking-charts">Unlinking Charts</a>).
+        </li>
+
+        <li>AG-2736 - Accessibility - Enhance support for Screen Readers with additional ARIA Roles
+            (see <a href="/javascript-grid-accessibility/">Accessibility</a>).
+        </li>
+
+        <li>AG-3196 - Security - Add Section to Docs for OWASP and CSP
+            (see <a href="/javascript-grid-security/">Security</a>).
+        </li>
+    </ul>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_21_1_0">
     <p>Release 21.1.0 (18th July 2019)</p>
 
