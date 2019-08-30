@@ -1,6 +1,9 @@
 import day from "../day";
 import year from "../year";
 import sunday, { monday, thursday } from "../week";
+import utcDay from "../utcDay";
+import utcYear from "../utcYear";
+import utcSunday, { utcMonday, utcThursday } from "../utcWeek";
 
 interface LocalDate {
     y: number;
@@ -211,8 +214,8 @@ export default function formatLocale(locale: TimeLocaleDefinition) {
         return pad(date.getSeconds(), fill, 2);
     }
     function formatWeekdayNumberMonday(date: Date): number {
-        const day = date.getDay();
-        return day === 0 ? 7 : day;
+        const dayOfWeek = date.getDay();
+        return dayOfWeek === 0 ? 7 : dayOfWeek;
     }
     function formatWeekNumberSunday(date: Date, fill: string): string {
         return pad(sunday.count(year.floor(date), date), fill, 2);
@@ -248,7 +251,59 @@ export default function formatLocale(locale: TimeLocaleDefinition) {
     function formatUTCHour12(date: Date, fill: string): string {
         return pad(date.getUTCHours() % 12 || 12, fill, 2);
     }
-    // function formatUTCDayOfYear(date: Date, fill: string): string {
-    //     return pad(1 + utcDay.count)
-    // }
+    function formatUTCDayOfYear(date: Date, fill: string): string {
+        return pad(1 + utcDay.count(utcYear.floor(date), date), fill, 3);
+    }
+    function formatUTCMilliseconds(date: Date, fill: string): string {
+        return pad(date.getUTCMilliseconds(), fill, 3);
+    }
+    function formatUTCMicroseconds(date: Date, fill: string): string {
+        return formatUTCMilliseconds(date, fill) + '000';
+    }
+    function formatUTCMonthNumber(date: Date, fill: string): string {
+        return pad(date.getUTCMonth() + 1, fill, 2);
+    }
+    function formatUTCMinutes(date: Date, fill: string): string {
+        return pad(date.getUTCMinutes(), fill, 2);
+    }
+    function formatUTCSeconds(date: Date, fill: string): string {
+        return pad(date.getUTCSeconds(), fill, 2);
+    }
+    function formatUTCWeekdayNumberMonday(date: Date): number {
+        const dayOfWeek = date.getUTCDay();
+        return dayOfWeek === 0 ? 7 : dayOfWeek;
+    }
+    function formatUTCWeekNumberSunday(date: Date, fill: string): string {
+        return pad(utcSunday.count(utcYear.floor(date), date), fill, 2);
+    }
+    function formatUTCWeekNumberISO(date: Date, fill: string): string {
+        const day = date.getUTCDay();
+        date = (day >= 4 || day === 0) ? utcThursday.floor(date) : utcThursday.ceil(date);
+        const yearStart = utcYear.floor(date);
+        return pad(utcThursday.count(yearStart, date) + (yearStart.getUTCDay() === 4 ? 1 : 0), fill, 4);
+    }
+    function formatUTCWeekdayNumberSunday(date: Date): number {
+        return date.getUTCDay();
+    }
+    function formatUTCWeekNumberMonday(date: Date, fill: string): string {
+        return pad(utcMonday.count(utcYear.floor(date), date), fill, 2);
+    }
+    function formatUTCYear(date: Date, fill: string): string {
+        return pad(date.getUTCFullYear() % 100, fill, 2);
+    }
+    function formatUTCFullYear(date: Date, fill: string): string {
+        return pad(date.getUTCFullYear() % 10000, fill, 4);
+    }
+    function formatUTCZone(): string {
+        return "+0000";
+    }
+    function foramtLiteralPercent(date: Date): string {
+        return '%';
+    }
+    function formatUnixTimestamp(date: Date): number {
+        return date.getTime();
+    }
+    function formatUnixTimestampSeconds(date: Date): number {
+        return Math.floor(date.getTime() / 1000);
+    }
 }
