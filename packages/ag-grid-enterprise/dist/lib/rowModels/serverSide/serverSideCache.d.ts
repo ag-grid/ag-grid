@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowBounds, RowNode, RowNodeCache, RowNodeCacheParams } from "ag-grid-community";
 import { ServerSideBlock } from "./serverSideBlock";
 export interface ServerSideCacheParams extends RowNodeCacheParams {
@@ -29,6 +29,8 @@ export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, Serve
         value: number;
     }): void;
     getRow(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | null;
+    private getBlockSize;
+    getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     private createBlock;
     getDisplayIndexEnd(): number;
     isDisplayIndexInCache(displayIndex: number): boolean;

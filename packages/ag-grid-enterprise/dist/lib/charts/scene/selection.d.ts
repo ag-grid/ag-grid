@@ -1,11 +1,11 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Node } from "./node";
 import { Scene } from "./scene";
 declare type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];
 declare type KeyFn<N, G, GDatum> = (node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string;
 export declare class EnterNode {
     constructor(parent: Node | EnterNode, datum: any);
-    scene: Scene | null;
+    scene?: Scene;
     parent: Node | EnterNode;
     datum: any;
     next: Node | EnterNode | null;

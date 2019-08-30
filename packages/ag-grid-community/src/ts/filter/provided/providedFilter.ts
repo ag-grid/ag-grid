@@ -59,8 +59,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected abstract resetUiToDefaults(): void;
 
     protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
-    protected abstract getModelFromUi(): ProvidedFilterModel | null;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
+
+    public abstract getModelFromUi(): ProvidedFilterModel | null;
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
@@ -116,16 +117,16 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
         }
 
-        _.setVisible(this.eApplyButton, this.applyActive);
+        _.setDisplayed(this.eApplyButton, this.applyActive);
         // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
         // just applied, the event would get passed as the second parameter, which we do not want.
         this.addDestroyableEventListener(this.eApplyButton, "click", () => this.onBtApply());
 
-        _.setVisible(this.eClearButton, this.clearActive);
+        _.setDisplayed(this.eClearButton, this.clearActive);
         this.addDestroyableEventListener(this.eClearButton, "click", this.onBtClear.bind(this));
 
         const anyButtonVisible: boolean = this.applyActive || this.clearActive;
-        _.setVisible(this.eButtonsPanel, anyButtonVisible);
+        _.setDisplayed(this.eButtonsPanel, anyButtonVisible);
     }
 
     // subclasses can override this to provide alternative debounce defaults
@@ -163,7 +164,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     // returns true if the new model is different to the old model
-    protected updateModel(): boolean {
+    public applyModel(): boolean {
         const oldAppliedModel = this.appliedModel;
         this.appliedModel = this.getModelFromUi();
 
@@ -174,7 +175,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     private onBtApply(afterFloatingFilter = false) {
-        const newModelDifferent = this.updateModel();
+        const newModelDifferent = this.applyModel();
         if (newModelDifferent) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
@@ -187,6 +188,11 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             this.resetUiToDefaults();
             this.appliedModel = null;
         }
+    }
+
+    // called by set filter
+    protected isNewRowsActionKeep(): boolean {
+        return this.newRowsActionKeep;
     }
 
     protected onUiChanged(afterFloatingFilter = false): void {

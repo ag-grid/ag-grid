@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -33,21 +33,30 @@ var BarSeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
+        _this.chartProxy = _this.chartController.getChartProxy();
         return _this;
     }
     BarSeriesPanel.prototype.init = function () {
         this.setTemplate(BarSeriesPanel.TEMPLATE);
-        var chartProxy = this.chartController.getChartProxy();
-        this.series = chartProxy.getChart().series;
         this.seriesGroup
             .setTitle(this.chartTranslator.translate('series'))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
+        this.initSeriesTooltips();
         this.initSeriesStrokeWidth();
         this.initOpacity();
-        this.initSeriesTooltips();
         this.initLabelPanel();
         this.initShadowPanel();
+    };
+    BarSeriesPanel.prototype.initSeriesTooltips = function () {
+        var _this = this;
+        this.seriesTooltipsToggle
+            .setLabel(this.chartTranslator.translate('tooltips'))
+            .setLabelAlignment('left')
+            .setLabelWidth('flex')
+            .setInputWidth(40)
+            .setValue(this.chartProxy.getTooltipsEnabled())
+            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesProperty('tooltipEnabled', newValue); });
     };
     BarSeriesPanel.prototype.initSeriesStrokeWidth = function () {
         var _this = this;
@@ -55,83 +64,64 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate('strokeWidth'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue("" + this.series[0].strokeWidth)
-            .onValueChange(function (newValue) { return _this.series.forEach(function (s) { return s.strokeWidth = newValue; }); });
+            .setValue(this.chartProxy.getSeriesProperty('strokeWidth'))
+            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesProperty('strokeWidth', newValue); });
     };
     BarSeriesPanel.prototype.initOpacity = function () {
         var _this = this;
-        var strokeOpacity = this.series.length > 0 ? this.series[0].strokeOpacity : 1;
         this.seriesLineOpacitySlider
             .setLabel(this.chartTranslator.translate('strokeOpacity'))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue("" + strokeOpacity)
-            .onValueChange(function (newValue) { return _this.series.forEach(function (s) { return s.strokeOpacity = newValue; }); });
-        var fillOpacity = this.series.length > 0 ? this.series[0].fillOpacity : 1;
+            .setValue(this.chartProxy.getSeriesProperty('strokeOpacity'))
+            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesProperty('strokeOpacity', newValue); });
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate('fillOpacity'))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue("" + fillOpacity)
-            .onValueChange(function (newValue) { return _this.series.forEach(function (s) { return s.fillOpacity = newValue; }); });
-    };
-    BarSeriesPanel.prototype.initSeriesTooltips = function () {
-        var _this = this;
-        var selected = this.series.some(function (s) { return s.tooltipEnabled; });
-        this.seriesTooltipsToggle
-            .setLabel(this.chartTranslator.translate('tooltips'))
-            .setLabelAlignment('left')
-            .setLabelWidth('flex')
-            .setInputWidth(40)
-            .setValue(selected)
-            .onValueChange(function (newSelection) {
-            _this.series.forEach(function (s) { return s.tooltipEnabled = newSelection; });
-        });
+            .setValue(this.chartProxy.getSeriesProperty('fillOpacity'))
+            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesProperty('fillOpacity', newValue); });
     };
     BarSeriesPanel.prototype.initLabelPanel = function () {
         var _this = this;
         var initialFont = {
-            family: this.series[0].labelFontFamily,
-            style: this.series[0].labelFontStyle,
-            weight: this.series[0].labelFontWeight,
-            size: this.series[0].labelFontSize,
-            color: this.series[0].labelColor
+            family: this.chartProxy.getSeriesProperty('labelFontFamily'),
+            style: this.chartProxy.getSeriesProperty('labelFontStyle'),
+            weight: this.chartProxy.getSeriesProperty('labelFontWeight'),
+            size: parseInt(this.chartProxy.getSeriesProperty('labelFontSize')),
+            color: this.chartProxy.getSeriesProperty('labelColor')
         };
+        // note we don't set the font style via series panel
         var setFont = function (font) {
             if (font.family) {
-                _this.series.forEach(function (s) { return s.labelFontFamily = font.family; });
-            }
-            if (font.style) {
-                _this.series.forEach(function (s) { return s.labelFontStyle = font.style; });
+                _this.chartProxy.setSeriesProperty('labelFontFamily', font.family);
             }
             if (font.weight) {
-                _this.series.forEach(function (s) { return s.labelFontWeight = font.weight; });
+                _this.chartProxy.setSeriesProperty('labelFontWeight', font.weight);
             }
             if (font.size) {
-                _this.series.forEach(function (s) { return s.labelFontSize = font.size; });
+                _this.chartProxy.setSeriesProperty('labelFontSize', font.size);
             }
             if (font.color) {
-                _this.series.forEach(function (s) { return s.labelColor = font.color; });
+                _this.chartProxy.setSeriesProperty('labelColor', font.color);
             }
         };
         var params = {
-            enabled: this.series.some(function (s) { return s.labelEnabled; }),
-            setEnabled: function (enabled) {
-                _this.series.forEach(function (s) { return s.labelEnabled = enabled; });
-            },
+            enabled: this.chartProxy.getLabelEnabled(),
+            setEnabled: function (enabled) { return _this.chartProxy.setSeriesProperty('labelEnabled', enabled); },
             suppressEnabledCheckbox: false,
             initialFont: initialFont,
             setFont: setFont
         };
-        var labelPanelComp = new labelPanel_1.LabelPanel(this.chartController, params);
+        var labelPanelComp = new labelPanel_1.LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
     };
     BarSeriesPanel.prototype.initShadowPanel = function () {
-        var shadowPanelComp = new shadowPanel_1.ShadowPanel(this.chartController);
+        var shadowPanelComp = new shadowPanel_1.ShadowPanel(this.chartProxy);
         this.getContext().wireBean(shadowPanelComp);
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);

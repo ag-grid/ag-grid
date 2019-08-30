@@ -51,7 +51,8 @@ import { ColumnAnimationService } from "./rendering/columnAnimationService";
 import { SortService } from "./rowNodes/sortService";
 import { FilterService } from "./rowNodes/filterService";
 import { AutoGroupColService } from "./columnController/autoGroupColService";
-import { PaginationAutoPageSizeService, PaginationProxy } from "./rowModels/paginationProxy";
+import { PaginationProxy } from "./rowModels/paginationProxy";
+import { PaginationAutoPageSizeService } from "./rowModels/paginationAutoPageSizeService";
 import { ImmutableService } from "./rowModels/clientSide/immutableService";
 import { IRowModel } from "./interfaces/iRowModel";
 import { Constants } from "./constants";
@@ -90,6 +91,8 @@ import { AgSelect } from "./widgets/agSelect";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
 import { DetailRowCompCache } from "./rendering/detailRowCompCache";
+import {RowPositionUtils} from "./entities/rowPosition";
+import {CellPositionUtils} from "./entities/cellPosition";
 
 export interface GridParams {
     // used by Web Components
@@ -235,7 +238,8 @@ export class Grid {
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [
                 // this should only contain SERVICES, it should NEVER contain COMPONENTS
-                rowModelClass, Beans, PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
+                rowModelClass, Beans, RowPositionUtils, CellPositionUtils,
+                PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
                 ComponentMetadataProvider, ResizeObserverService, UserComponentRegistry, UserComponentFactory,
                 MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
                 PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,

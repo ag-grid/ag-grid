@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1054,7 +1054,7 @@ var Utils = /** @class */ (function () {
             return eResult;
         }
     };
-    Utils.createIconNoSpan = function (iconName, gridOptionsWrapper, column) {
+    Utils.createIconNoSpan = function (iconName, gridOptionsWrapper, column, forceCreate) {
         var userProvidedIcon = null;
         // check col for icon first
         var icons = column && column.getColDef().icons;
@@ -1094,7 +1094,12 @@ var Utils = /** @class */ (function () {
             var span = document.createElement('span');
             var cssClass = this.iconNameClassMap[iconName];
             if (!cssClass) {
-                throw new Error(iconName + " did not find class");
+                if (!forceCreate) {
+                    throw new Error(iconName + " did not find class");
+                }
+                else {
+                    cssClass = iconName;
+                }
             }
             span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
             span.setAttribute("unselectable", "on");
@@ -1187,11 +1192,19 @@ var Utils = /** @class */ (function () {
         var pressedKey = event.which || event.keyCode;
         return pressedKey === keyToCheck;
     };
-    Utils.setVisible = function (element, visible) {
-        this.addOrRemoveCssClass(element, 'ag-hidden', !visible);
+    Utils.isCharacterKey = function (event) {
+        // from: https://stackoverflow.com/questions/4179708/how-to-detect-if-the-pressed-key-will-produce-a-character-inside-an-input-text
+        var which = event.which;
+        if (typeof which === 'number' && which) {
+            return !event.ctrlKey && !event.metaKey && !event.altKey && event.which !== 8 && event.which !== 16;
+        }
+        return which === undefined;
     };
-    Utils.setHidden = function (element, hidden) {
-        this.addOrRemoveCssClass(element, 'ag-invisible', hidden);
+    Utils.setDisplayed = function (element, displayed) {
+        this.addOrRemoveCssClass(element, 'ag-hidden', !displayed);
+    };
+    Utils.setVisible = function (element, visible) {
+        this.addOrRemoveCssClass(element, 'ag-invisible', !visible);
     };
     Utils.setElementWidth = function (element, width) {
         if (width === 'flex') {
@@ -1866,21 +1879,32 @@ var Utils = /** @class */ (function () {
         });
         if (invalidInputs.length > 0) {
             invalidInputs.forEach(function (invalidInput) {
-                return fuzzyMatches[invalidInput] = _this.fuzzySuggestions(invalidInput, validValues, allSuggestions);
+                return fuzzyMatches[invalidInput] = _this.fuzzySuggestions(invalidInput, allSuggestions);
             });
         }
         return fuzzyMatches;
     };
-    Utils.fuzzySuggestions = function (inputValue, validValues, allSuggestions) {
-        var thisSuggestions = allSuggestions.slice(0);
-        thisSuggestions.sort(function (suggestedValueLeft, suggestedValueRight) {
-            var leftDifference = exports._.string_similarity(suggestedValueLeft.toLowerCase(), inputValue.toLowerCase());
-            var rightDifference = exports._.string_similarity(suggestedValueRight.toLowerCase(), inputValue.toLowerCase());
-            return leftDifference > rightDifference ? -1 :
-                leftDifference === rightDifference ? 0 :
-                    1;
+    /**
+     *
+     * @param {String} inputValue The value to be compared against a list of strings
+     * @param allSuggestions The list of strings to be compared against
+     * @param hideIrrelevant By default, fuzzy suggestions will just sort the allSuggestions list, set this to true
+     *        to filter out the irrelevant values
+     * @param weighted Set this to true, to make letters matched in the order they were typed have priority in the results.
+     */
+    Utils.fuzzySuggestions = function (inputValue, allSuggestions, hideIrrelevant, weighted) {
+        var search = weighted ? exports._.string_weighted_distances : exports._.string_distances;
+        var thisSuggestions = allSuggestions.map(function (text) { return ({
+            value: text,
+            relevance: search(inputValue.toLowerCase(), text.toLocaleLowerCase())
+        }); });
+        thisSuggestions.sort(function (a, b) {
+            return b.relevance - a.relevance;
         });
-        return thisSuggestions;
+        if (hideIrrelevant) {
+            thisSuggestions = thisSuggestions.filter(function (suggestion) { return suggestion.relevance !== 0; });
+        }
+        return thisSuggestions.map(function (suggestion) { return suggestion.value; });
     };
     /**
      * Algorithm to do fuzzy search
@@ -1898,6 +1922,45 @@ var Utils = /** @class */ (function () {
             v[i] = s.slice(i, i + 2);
         }
         return v;
+    };
+    Utils.string_distances = function (str1, str2) {
+        if (str1.length === 0 && str2.length === 0) {
+            return 0;
+        }
+        var pairs1 = exports._.get_bigrams(str1);
+        var pairs2 = exports._.get_bigrams(str2);
+        var union = pairs1.length + pairs2.length;
+        var hit_count = 0;
+        var j;
+        var len;
+        for (j = 0, len = pairs1.length; j < len; j++) {
+            var x = pairs1[j];
+            var k = void 0;
+            var len1 = void 0;
+            for (k = 0, len1 = pairs2.length; k < len1; k++) {
+                var y = pairs2[k];
+                if (x === y) {
+                    hit_count++;
+                }
+            }
+        }
+        return hit_count > 0 ? (2 * hit_count) / union : 0;
+    };
+    Utils.string_weighted_distances = function (str1, str2) {
+        var a = str1.replace(/\s/g, '');
+        var b = str2.replace(/\s/g, '');
+        var weight = 0;
+        var lastIndex = 0;
+        for (var i = 0; i < a.length; i++) {
+            var idx = b.indexOf(a[i]);
+            if (idx === -1) {
+                continue;
+            }
+            lastIndex = idx;
+            weight += ((b.length - lastIndex) * 100) / b.length;
+            weight *= weight;
+        }
+        return weight;
     };
     Utils.isNumpadDelWithNumlockOnForEdgeOrIe = function (event) {
         if (Utils.isBrowserEdge() || Utils.isBrowserIE()) {
@@ -2054,6 +2117,8 @@ var Utils = /** @class */ (function () {
         previous: 'previous',
         next: 'next',
         last: 'last',
+        linked: 'linked',
+        unlinked: 'unlinked',
         colorPicker: 'color-picker',
         radioButtonOn: 'radio-button-on',
         radioButtonOff: 'radio-button-off',
@@ -2084,31 +2149,6 @@ var Utils = /** @class */ (function () {
         sortAscending: 'asc',
         sortDescending: 'desc',
         sortUnSort: 'none'
-    };
-    Utils.string_similarity = function (str1, str2) {
-        if (str1.length > 0 && str2.length > 0) {
-            var pairs1 = Utils.get_bigrams(str1);
-            var pairs2 = Utils.get_bigrams(str2);
-            var union = pairs1.length + pairs2.length;
-            var hit_count = 0;
-            var j = void 0;
-            var len = void 0;
-            for (j = 0, len = pairs1.length; j < len; j++) {
-                var x = pairs1[j];
-                var k = void 0;
-                var len1 = void 0;
-                for (k = 0, len1 = pairs2.length; k < len1; k++) {
-                    var y = pairs2[k];
-                    if (x === y) {
-                        hit_count++;
-                    }
-                }
-            }
-            if (hit_count > 0) {
-                return (2.0 * hit_count) / union;
-            }
-        }
-        return 0.0;
     };
     return Utils;
 }());

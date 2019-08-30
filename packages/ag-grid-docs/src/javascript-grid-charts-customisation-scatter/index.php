@@ -23,7 +23,7 @@ interface ScatterChartOptions {
     // The chart title to render at the top of the chart.
     title?: CaptionOptions;
     // The subtitle to render under the chart's title.
-    // If the title is not not specified or disabled, the subtitle won't be visible either.
+    // If the title is not specified or is disabled, the subtitle won't be visible either.
     subtitle?: CaptionOptions;
     // The width of the chart.
     width?: number,
@@ -69,7 +69,7 @@ interface ScatterChartOptions {
         labelFontSize?: number;
         // The font family to be used by legend's labels. Defaults to `Verdana, sans-serif`.
         labelFontFamily?: string;
-        // The color to be used by the legend's labels. Default depends on ag-Grid theme used
+        // The colour to be used by the legend's labels. Default depends on ag-Grid theme used
         labelColor?: string;
     };
 
@@ -79,12 +79,14 @@ interface ScatterChartOptions {
     yAxis: AxisOptions;
 
     seriesDefaults?: {
-        // The fill colors to be used by the series' markers.
+        // The fill colours to be used by the series' markers.
         fills?: string[];
-        // The stroke colors to be used by the series' markers and the line itself.
+        // The stroke colours to be used by the series' markers.
         strokes?: string[];
         // The stroke width. Defaults to `1`.
         strokeWidth?: number;
+        // The style to apply to a series item when it is hovered or tapped.
+        highlightStyle?: HighlightStyle;
 
         // The size of the marker. Defaults to `8`.
         markerSize?: number;
@@ -97,6 +99,11 @@ interface ScatterChartOptions {
         // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
         tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
     };
+}
+
+interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
 }
 
 interface CaptionOptions {
@@ -113,7 +120,7 @@ interface CaptionOptions {
     // The font family to be used by the title/subtitle.
     // Defaults to `Verdana, sans-serif` for both.
     fontFamily?: string;
-    // The color of the title/subtitle's text. Defaults to `black`.
+    // The colour of the title/subtitle's text. Defaults to `black`.
     color?: string;
     // Whether to show the title/subtitle or not. Defaults to `true`.
     enabled?: boolean;
@@ -129,15 +136,17 @@ interface ScatterTooltipRendererParams {
     yField: string;
     // The title (if set) of the series the highlighted data point belongs to.
     title?: string;
-    // The color of the series the highlighted data point belongs to.
+    // The colour of the series the highlighted data point belongs to.
     // Used by the title in the default tooltip.
     color?: string;
 }
 
 interface AxisOptions {
+    // The title of the axis.
+    title?: CaptionOptions;
     // The thickness of the axis line. Defaults to `1`.
     lineWidth?: number;
-    // The color of the axis line. Depends on whether the light or dark mode is used.
+    // The colour of the axis line. Depends on whether the light or dark mode is used.
     lineColor?: string;
 
     // The thickness of the ticks. Defaults to `1`.
@@ -146,7 +155,7 @@ interface AxisOptions {
     tickSize?: number;
     // The padding between the ticks and the labels. Defaults to `5`.
     tickPadding?: number;
-    // The color of the axis ticks. Depends on whether the light or dark mode is used.
+    // The colour of the axis ticks. Depends on whether the light or dark mode is used.
     tickColor?: string;
 
     // The font style to be used by axis labels. For example, 'italic'. Not used by default.
@@ -157,7 +166,7 @@ interface AxisOptions {
     labelFontSize?: number;
     // The font family to be used by axis labels. Defaults to `Verdana, sans-serif`.
     labelFontFamily?: string;
-    // The color of the axis labels. Depends on whether the light or dark mode is used.
+    // The colour of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
     // The rotation of the axis labels. Defaults to `45` (degrees), however when no category
     // is present the default category, i.e. (none), is used with the value  `0`.
@@ -174,7 +183,7 @@ interface AxisOptions {
 }
 
 interface IGridStyle {
-    // The stroke color of a grid line. Depends on whether the light or dark mode is used.
+    // The stroke colour of a grid line. Depends on whether the light or dark mode is used.
     stroke?: string;
     // The line dash array. Every number in the array specifies the length of alternating
     // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.

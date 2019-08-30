@@ -26,6 +26,11 @@ $paginationProperties = [
          False (Default) - when <code>pagination=true</code> It automatically shows at the bottom the necessary
          controls so that the user can navigate through the different pages.',
         'See example <a href="../javascript-grid-pagination/#custom-pagination-controls">Custom Pagination Controls</a>.'
+    ],
+    [
+        'paginateChildRows',
+        'Set to true to have pages split children of groups when Row Grouping or detail rows with Master Detail.
+        <a href="../javascript-grid-pagination/#childRows">Pagination & Child Rows</a>'
     ]
 ];
 

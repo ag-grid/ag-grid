@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -50,7 +50,7 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     protected checkBlockToLoad(): void;
     protected checkVirtualRowCount(block: T, lastRow: any): void;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;
-    forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence): void;
+    forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
     forEachBlockInOrder(callback: (block: T, id: number) => void): void;
     protected forEachBlockInReverseOrder(callback: (block: T, id: number) => void): void;
     private forEachBlockId;

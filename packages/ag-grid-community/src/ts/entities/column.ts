@@ -568,7 +568,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.colDef;
     }
 
-    public getColumnGroupShow(): string {
+    public getColumnGroupShow(): string | undefined {
         return this.colDef.columnGroupShow;
     }
 

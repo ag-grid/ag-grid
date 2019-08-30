@@ -26,7 +26,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-filtered-row-count');
 
-        this.setVisible(true);
+        this.setDisplayed(true);
 
         const listener = this.onDataChanged.bind(this);
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener);
@@ -36,7 +36,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
         const totalRowCountValue = this.getTotalRowCountValue();
         const filteredRowCountValue = this.getFilteredRowCountValue();
         this.setValue(filteredRowCountValue);
-        this.setVisible(totalRowCountValue !== filteredRowCountValue);
+        this.setDisplayed(totalRowCountValue !== filteredRowCountValue);
     }
 
     private getTotalRowCountValue(): number {
@@ -50,7 +50,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
 
         this.gridApi.forEachNodeAfterFilter((node) => {
             if (!node.group) {
-                filteredRowCount += 1
+                filteredRowCount += 1;
             }
         });
         return filteredRowCount;

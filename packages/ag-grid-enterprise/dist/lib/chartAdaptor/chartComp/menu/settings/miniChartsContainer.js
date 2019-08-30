@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24,6 +24,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
+var chartTranslator_1 = require("../../chartTranslator");
+var group_1 = require("../../../../charts/scene/group");
+var scene_1 = require("../../../../charts/scene/scene");
+var angle_1 = require("../../../../charts/util/angle");
+var sector_1 = require("../../../../charts/scene/shape/sector");
+var path_1 = require("../../../../charts/scene/shape/path");
+var linearScale_1 = require("../../../../charts/scale/linearScale");
+var line_1 = require("../../../../charts/scene/shape/line");
+var clipRect_1 = require("../../../../charts/scene/clipRect");
+var rect_1 = require("../../../../charts/scene/shape/rect");
+var bandScale_1 = require("../../../../charts/scale/bandScale");
+var arc_1 = require("../../../../charts/scene/shape/arc");
 var MiniChartsContainer = /** @class */ (function (_super) {
     __extends(MiniChartsContainer, _super);
     function MiniChartsContainer(activePalette, chartController) {
@@ -37,26 +49,29 @@ var MiniChartsContainer = /** @class */ (function (_super) {
     }
     MiniChartsContainer.prototype.init = function () {
         var _this = this;
-        // TODO: reintroduce MiniScatter when chart ranges support it
         var chartGroups = {
-            column: [
+            columnGroup: [
                 MiniColumn,
                 MiniStackedColumn,
                 MiniNormalizedColumn
             ],
-            bar: [
+            barGroup: [
                 MiniBar,
                 MiniStackedBar,
                 MiniNormalizedBar
             ],
-            pie: [
+            pieGroup: [
                 MiniPie,
                 MiniDoughnut
             ],
-            line: [
+            lineGroup: [
                 MiniLine
             ],
-            area: [
+            scatterGroup: [
+                MiniScatter,
+                MiniBubble
+            ],
+            areaGroup: [
                 MiniArea,
                 MiniStackedArea,
                 MiniNormalizedArea
@@ -66,7 +81,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         Object.keys(chartGroups).forEach(function (group) {
             var chartGroup = chartGroups[group];
             var groupComponent = new ag_grid_community_1.AgGroupComponent({
-                title: ag_grid_community_1._.capitalise(group),
+                title: _this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
                 suppressOpenCloseIcons: true
@@ -96,6 +111,10 @@ var MiniChartsContainer = /** @class */ (function (_super) {
     };
     MiniChartsContainer.TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
     __decorate([
+        ag_grid_community_1.Autowired('chartTranslator'),
+        __metadata("design:type", chartTranslator_1.ChartTranslator)
+    ], MiniChartsContainer.prototype, "chartTranslator", void 0);
+    __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
@@ -104,17 +123,6 @@ var MiniChartsContainer = /** @class */ (function (_super) {
     return MiniChartsContainer;
 }(ag_grid_community_1.Component));
 exports.MiniChartsContainer = MiniChartsContainer;
-var group_1 = require("../../../../charts/scene/group");
-var scene_1 = require("../../../../charts/scene/scene");
-var angle_1 = require("../../../../charts/util/angle");
-var sector_1 = require("../../../../charts/scene/shape/sector");
-var path_1 = require("../../../../charts/scene/shape/path");
-var linearScale_1 = require("../../../../charts/scale/linearScale");
-var line_1 = require("../../../../charts/scene/shape/line");
-var clipRect_1 = require("../../../../charts/scene/clipRect");
-var rect_1 = require("../../../../charts/scene/shape/rect");
-var bandScale_1 = require("../../../../charts/scale/bandScale");
-var chartTranslator_1 = require("../../chartTranslator");
 var MiniChart = /** @class */ (function (_super) {
     __extends(MiniChart, _super);
     function MiniChart() {
@@ -123,11 +131,14 @@ var MiniChart = /** @class */ (function (_super) {
         _this.padding = 5;
         _this.root = new group_1.Group();
         _this.scene = (function () {
-            var scene = new scene_1.Scene(_this.size, _this.size);
+            var scene = new scene_1.Scene({
+                width: _this.size,
+                height: _this.size
+            });
             scene.root = _this.root;
             return scene;
         })();
-        _this.element = _this.scene.hdpiCanvas.canvas;
+        _this.element = _this.scene.canvas.element;
         return _this;
     }
     __decorate([
@@ -154,7 +165,7 @@ var MiniPie = /** @class */ (function (_super) {
         return _this;
     }
     MiniPie.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('pieTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('pieTooltip');
     };
     MiniPie.prototype.updateColors = function (fills, strokes) {
         this.sectors.forEach(function (sector, i) {
@@ -197,7 +208,7 @@ var MiniDoughnut = /** @class */ (function (_super) {
         return _this;
     }
     MiniDoughnut.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('doughnutTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('doughnutTooltip');
     };
     MiniDoughnut.prototype.updateColors = function (fills, strokes) {
         this.sectors.forEach(function (sector, i) {
@@ -263,7 +274,7 @@ var MiniLine = /** @class */ (function (_super) {
         return _this;
     }
     MiniLine.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('lineTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('lineTooltip');
     };
     MiniLine.prototype.updateColors = function (fills, strokes) {
         this.lines.forEach(function (line, i) {
@@ -326,7 +337,7 @@ var MiniColumn = /** @class */ (function (_super) {
         return _this;
     }
     MiniColumn.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('groupedColumnTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('groupedColumnTooltip');
     };
     MiniColumn.prototype.updateColors = function (fills, strokes) {
         this.bars.forEach(function (bar, i) {
@@ -390,7 +401,7 @@ var MiniBar = /** @class */ (function (_super) {
         return _this;
     }
     MiniBar.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('groupedBarTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('groupedBarTooltip');
     };
     MiniBar.prototype.updateColors = function (fills, strokes) {
         this.bars.forEach(function (bar, i) {
@@ -459,7 +470,7 @@ var MiniStackedColumn = /** @class */ (function (_super) {
         return _this;
     }
     MiniStackedColumn.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('stackedColumnTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('stackedColumnTooltip');
     };
     MiniStackedColumn.prototype.updateColors = function (fills, strokes) {
         this.bars.forEach(function (series, i) {
@@ -530,7 +541,7 @@ var MiniStackedBar = /** @class */ (function (_super) {
         return _this;
     }
     MiniStackedBar.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('stackedBarTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('stackedBarTooltip');
     };
     MiniStackedBar.prototype.updateColors = function (fills, strokes) {
         this.bars.forEach(function (series, i) {
@@ -601,7 +612,7 @@ var MiniNormalizedColumn = /** @class */ (function (_super) {
         return _this;
     }
     MiniNormalizedColumn.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('normalizedColumnTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedColumnTooltip');
     };
     MiniNormalizedColumn.prototype.updateColors = function (fills, strokes) {
         this.bars.forEach(function (series, i) {
@@ -672,7 +683,7 @@ var MiniNormalizedBar = /** @class */ (function (_super) {
         return _this;
     }
     MiniNormalizedBar.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('normalizedBarTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedBarTooltip');
     };
     MiniNormalizedBar.prototype.updateColors = function (fills, strokes) {
         this.bars.forEach(function (series, i) {
@@ -691,79 +702,144 @@ var MiniNormalizedBar = /** @class */ (function (_super) {
     ], MiniNormalizedBar.prototype, "init", null);
     return MiniNormalizedBar;
 }(MiniChart));
-//
-// class MiniScatter extends MiniChart {
-//     static chartType = ChartType.Scatter;
-//     private readonly points: Shape[];
-//
-//     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-//         super();
-//
-//         this.scene.parent = parent;
-//
-//         const size = this.size;
-//         const padding = this.padding;
-//
-//         // [x, y] pairs
-//         const data = [
-//             [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
-//             [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
-//         ];
-//
-//         const xScale = linearScale();
-//         xScale.domain = [-0.5, 4];
-//         xScale.range = [padding * 2, size - padding];
-//
-//         const yScale = linearScale();
-//         yScale.domain = [-0.5, 3.5];
-//         yScale.range = [size - padding, padding];
-//
-//         const axisOvershoot = 3;
-//
-//         const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
-//         leftAxis.stroke = 'gray';
-//         leftAxis.strokeWidth = 1;
-//
-//         const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
-//         bottomAxis.stroke = 'gray';
-//         bottomAxis.strokeWidth = 1;
-//
-//         const points: Shape[] = [];
-//         data.forEach((series, i) => {
-//             series.forEach((datum, j) => {
-//                 const arc = new Arc();
-//                 arc.strokeWidth = 1;
-//                 arc.centerX = xScale.convert(datum[0]);
-//                 arc.centerY = yScale.convert(datum[1]);
-//                 arc.radiusX = 3;
-//                 arc.radiusY = 3;
-//                 points.push(arc);
-//             });
-//         });
-//         this.points = points;
-//
-//         const clipRect = new ClipRect();
-//         clipRect.x = padding;
-//         clipRect.y = padding;
-//         clipRect.width = size - padding * 2;
-//         clipRect.height = size - padding * 2;
-//
-//         clipRect.append(this.points);
-//         const root = this.root;
-//         root.append(clipRect);
-//         root.append(leftAxis);
-//         root.append(bottomAxis);
-//
-//         this.updateColors(fills, strokes);
-//     }
-//
-//     updateColors(fills: string[], strokes: string[]) {
-//         this.points.forEach((line, i) => {
-//             line.stroke = strokes[i % strokes.length];
-//             line.fill = fills[i % fills.length];
-//         });
-//     }
-// }
+var MiniScatter = /** @class */ (function (_super) {
+    __extends(MiniScatter, _super);
+    function MiniScatter(parent, fills, strokes) {
+        var _this = _super.call(this) || this;
+        _this.scene.parent = parent;
+        var size = _this.size;
+        var padding = _this.padding;
+        // [x, y] pairs
+        var data = [
+            [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
+            [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
+        ];
+        var xScale = linearScale_1.default();
+        xScale.domain = [-0.5, 4];
+        xScale.range = [padding * 2, size - padding];
+        var yScale = linearScale_1.default();
+        yScale.domain = [-0.5, 3.5];
+        yScale.range = [size - padding, padding];
+        var axisOvershoot = 3;
+        var leftAxis = line_1.Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+        var bottomAxis = line_1.Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+        var points = [];
+        data.forEach(function (series, i) {
+            series.forEach(function (datum, j) {
+                var arc = new arc_1.Arc();
+                arc.strokeWidth = 1;
+                arc.centerX = xScale.convert(datum[0]);
+                arc.centerY = yScale.convert(datum[1]);
+                arc.radiusX = 2.5;
+                arc.radiusY = 2.5;
+                points.push(arc);
+            });
+        });
+        _this.points = points;
+        var clipRect = new clipRect_1.ClipRect();
+        clipRect.x = padding;
+        clipRect.y = padding;
+        clipRect.width = size - padding * 2;
+        clipRect.height = size - padding * 2;
+        clipRect.append(_this.points);
+        var root = _this.root;
+        root.append(clipRect);
+        root.append(leftAxis);
+        root.append(bottomAxis);
+        _this.updateColors(fills, strokes);
+        return _this;
+    }
+    MiniScatter.prototype.init = function () {
+        this.scene.canvas.element.title = this.chartTranslator.translate('scatterTooltip');
+    };
+    MiniScatter.prototype.updateColors = function (fills, strokes) {
+        this.points.forEach(function (line, i) {
+            line.stroke = strokes[i % strokes.length];
+            line.fill = fills[i % fills.length];
+        });
+    };
+    MiniScatter.chartType = ag_grid_community_1.ChartType.Scatter;
+    __decorate([
+        ag_grid_community_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], MiniScatter.prototype, "init", null);
+    return MiniScatter;
+}(MiniChart));
+var MiniBubble = /** @class */ (function (_super) {
+    __extends(MiniBubble, _super);
+    function MiniBubble(parent, fills, strokes) {
+        var _this = _super.call(this) || this;
+        _this.scene.parent = parent;
+        var size = _this.size;
+        var padding = _this.padding;
+        // [x, y, radius] triples
+        var data = [
+            [[0.1, 0.3, 5], [0.5, 0.4, 7], [0.2, 0.8, 7]], [[0.8, 0.7, 5], [0.7, 0.3, 9]]
+        ];
+        var xScale = linearScale_1.default();
+        xScale.domain = [0, 1];
+        xScale.range = [padding * 2, size - padding];
+        var yScale = linearScale_1.default();
+        yScale.domain = [0, 1];
+        yScale.range = [size - padding, padding];
+        var axisOvershoot = 3;
+        var leftAxis = line_1.Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+        var bottomAxis = line_1.Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+        var points = [];
+        data.forEach(function (series, i) {
+            series.forEach(function (datum, j) {
+                var arc = new arc_1.Arc();
+                arc.strokeWidth = 1;
+                arc.centerX = xScale.convert(datum[0]);
+                arc.centerY = yScale.convert(datum[1]);
+                arc.radiusX = datum[2];
+                arc.radiusY = datum[2];
+                arc.fillOpacity = 0.7;
+                points.push(arc);
+            });
+        });
+        _this.points = points;
+        var clipRect = new clipRect_1.ClipRect();
+        clipRect.x = padding;
+        clipRect.y = padding;
+        clipRect.width = size - padding * 2;
+        clipRect.height = size - padding * 2;
+        clipRect.append(_this.points);
+        var root = _this.root;
+        root.append(clipRect);
+        root.append(leftAxis);
+        root.append(bottomAxis);
+        _this.updateColors(fills, strokes);
+        return _this;
+    }
+    MiniBubble.prototype.init = function () {
+        this.scene.canvas.element.title = this.chartTranslator.translate('bubbleTooltip');
+    };
+    MiniBubble.prototype.updateColors = function (fills, strokes) {
+        this.points.forEach(function (line, i) {
+            line.stroke = strokes[i % strokes.length];
+            line.fill = fills[i % fills.length];
+        });
+    };
+    MiniBubble.chartType = ag_grid_community_1.ChartType.Bubble;
+    __decorate([
+        ag_grid_community_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], MiniBubble.prototype, "init", null);
+    return MiniBubble;
+}(MiniChart));
 var MiniArea = /** @class */ (function (_super) {
     __extends(MiniArea, _super);
     function MiniArea(parent, fills, strokes, data) {
@@ -835,7 +911,7 @@ var MiniArea = /** @class */ (function (_super) {
         return _this;
     }
     MiniArea.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('groupedAreaTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('groupedAreaTooltip');
     };
     MiniArea.prototype.updateColors = function (fills, strokes) {
         this.areas.forEach(function (area, i) {
@@ -928,7 +1004,7 @@ var MiniStackedArea = /** @class */ (function (_super) {
         return _this;
     }
     MiniStackedArea.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('stackedAreaTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('stackedAreaTooltip');
     };
     MiniStackedArea.prototype.updateColors = function (fills, strokes) {
         this.areas.forEach(function (area, i) {
@@ -957,7 +1033,7 @@ var MiniNormalizedArea = /** @class */ (function (_super) {
         return _super.call(this, parent, fills, strokes, data) || this;
     }
     MiniNormalizedArea.prototype.init = function () {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('normalizedAreaTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedAreaTooltip');
     };
     MiniNormalizedArea.chartType = ag_grid_community_1.ChartType.NormalizedArea;
     MiniNormalizedArea.data = MiniStackedArea.data.map(function (stack) {

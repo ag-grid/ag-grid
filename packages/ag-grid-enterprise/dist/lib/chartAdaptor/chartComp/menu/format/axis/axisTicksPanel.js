@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -29,13 +29,11 @@ var AxisTicksPanel = /** @class */ (function (_super) {
     __extends(AxisTicksPanel, _super);
     function AxisTicksPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartController = chartController;
+        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     AxisTicksPanel.prototype.init = function () {
         this.setTemplate(AxisTicksPanel.TEMPLATE);
-        var chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
         this.initAxisTicks();
     };
     AxisTicksPanel.prototype.initAxisTicks = function () {
@@ -48,29 +46,18 @@ var AxisTicksPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
-            .setValue("" + this.chart.xAxis.lineColor)
-            .onValueChange(function (newColor) {
-            _this.chart.xAxis.tickColor = newColor;
-            _this.chart.yAxis.tickColor = newColor;
-            _this.chart.performLayout();
-        });
-        var initInput = function (property, input, label, initialValue, maxValue) {
+            .setValue(this.chartProxy.getCommonAxisProperty('tickColor'))
+            .onValueChange(function (newColor) { return _this.chartProxy.setCommonAxisProperty('tickColor', newColor); });
+        var initInput = function (property, input, label, maxValue) {
             input.setLabel(label)
-                .setValue(initialValue)
+                .setValue(_this.chartProxy.getCommonAxisProperty(property))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) {
-                _this.chart.xAxis[property] = newValue;
-                _this.chart.yAxis[property] = newValue;
-                _this.chart.performLayout();
-            });
+                .onValueChange(function (newValue) { return _this.chartProxy.setCommonAxisProperty(property, newValue); });
         };
-        var initialWidth = "" + this.chart.xAxis.tickWidth;
-        initInput('tickWidth', this.axisTicksWidthSlider, this.chartTranslator.translate('width'), initialWidth, 10);
-        var initialLength = "" + this.chart.xAxis.tickSize;
-        initInput('tickSize', this.axisTicksSizeSlider, this.chartTranslator.translate('length'), initialLength, 30);
-        var initialPadding = "" + this.chart.xAxis.tickPadding;
-        initInput('tickPadding', this.axisTicksPaddingSlider, this.chartTranslator.translate('padding'), initialPadding, 30);
+        initInput('tickWidth', this.axisTicksWidthSlider, this.chartTranslator.translate('width'), 10);
+        initInput('tickSize', this.axisTicksSizeSlider, this.chartTranslator.translate('length'), 30);
+        initInput('tickPadding', this.axisTicksPaddingSlider, this.chartTranslator.translate('padding'), 30);
     };
     AxisTicksPanel.TEMPLATE = "<div>         \n            <ag-group-component ref=\"axisTicksGroup\">\n                <ag-color-picker ref=\"axisTicksColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"axisTicksWidthSlider\"></ag-slider>\n                <ag-slider ref=\"axisTicksSizeSlider\"></ag-slider>\n                <ag-slider ref=\"axisTicksPaddingSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([

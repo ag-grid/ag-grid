@@ -16,7 +16,7 @@ import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsC
 import { ToolPanelWrapper } from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any> {
-    refresh(): void
+    refresh(): void;
 }
 
 export class SideBarComp extends Component implements ISideBar {
@@ -75,7 +75,7 @@ export class SideBarComp extends Component implements ISideBar {
         }
 
         const sideBarVisible = sideBarExists && !sideBar.hiddenByDefault;
-        setTimeout(() => this.setVisible(sideBarVisible), 0);
+        setTimeout(() => this.setDisplayed(sideBarVisible), 0);
     }
 
     private setupToolPanels(defs: ToolPanelDef[]): void {
@@ -88,7 +88,7 @@ export class SideBarComp extends Component implements ISideBar {
             const wrapper = new ToolPanelWrapper();
             this.getContext().wireBean(wrapper);
             wrapper.setToolPanelDef(def);
-            wrapper.setVisible(false);
+            wrapper.setDisplayed(false);
             this.getGui().appendChild(wrapper.getGui());
 
             this.toolPanelWrappers.push(wrapper);
@@ -105,7 +105,7 @@ export class SideBarComp extends Component implements ISideBar {
 
         this.toolPanelWrappers.forEach(wrapper => {
             const show = key === wrapper.getToolPanelId();
-            wrapper.setVisible(show);
+            wrapper.setDisplayed(show);
         });
 
         const newlyOpenedKey = this.openedItem();
@@ -137,7 +137,7 @@ export class SideBarComp extends Component implements ISideBar {
     public openedItem(): string | null {
         let activeToolPanel: string | null = null;
         this.toolPanelWrappers.forEach(wrapper => {
-            if (wrapper.isVisible()) {
+            if (wrapper.isDisplayed()) {
                 activeToolPanel = wrapper.getToolPanelId();
             }
         });

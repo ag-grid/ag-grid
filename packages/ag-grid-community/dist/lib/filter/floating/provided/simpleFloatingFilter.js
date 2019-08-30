@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -87,9 +87,9 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         return typeIsEditable;
     };
     SimpleFloatingFilter.prototype.init = function (params) {
-        var optionsFactory = new optionsFactory_1.OptionsFactory();
-        optionsFactory.init(params.filterParams, this.getDefaultFilterOptions());
-        this.lastType = optionsFactory.getDefaultOption();
+        this.optionsFactory = new optionsFactory_1.OptionsFactory();
+        this.optionsFactory.init(params.filterParams, this.getDefaultFilterOptions());
+        this.lastType = this.optionsFactory.getDefaultOption();
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
@@ -97,7 +97,14 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         var editable = this.isTypeEditable(this.lastType);
         this.setEditable(editable);
     };
+    SimpleFloatingFilter.prototype.doesFilterHaveHiddenInput = function (filterType) {
+        var customFilterOption = this.optionsFactory.getCustomOption(filterType);
+        return customFilterOption && customFilterOption.hideFilterInput;
+    };
     SimpleFloatingFilter.prototype.isTypeEditable = function (type) {
+        if (this.doesFilterHaveHiddenInput(type)) {
+            return false;
+        }
         return type
             && (type != simpleFilter_1.SimpleFilter.IN_RANGE)
             && (type != simpleFilter_1.SimpleFilter.EMPTY);

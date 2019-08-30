@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -33,12 +33,11 @@ var AxisPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
+        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     AxisPanel.prototype.init = function () {
         this.setTemplate(AxisPanel.TEMPLATE);
-        var chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
@@ -53,22 +52,14 @@ var AxisPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
-            .setValue("" + this.chart.xAxis.lineColor)
-            .onValueChange(function (newColor) {
-            _this.chart.xAxis.lineColor = newColor;
-            _this.chart.yAxis.lineColor = newColor;
-            _this.chart.performLayout();
-        });
+            .setValue(this.chartProxy.getCommonAxisProperty('lineColor'))
+            .onValueChange(function (newColor) { return _this.chartProxy.setCommonAxisProperty('lineColor', newColor); });
         this.axisLineWidthSlider
             .setLabel(this.chartTranslator.translate('thickness'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue("" + this.chart.xAxis.lineWidth)
-            .onValueChange(function (newValue) {
-            _this.chart.xAxis.lineWidth = newValue;
-            _this.chart.yAxis.lineWidth = newValue;
-            _this.chart.performLayout();
-        });
+            .setValue(this.chartProxy.getCommonAxisProperty('lineWidth'))
+            .onValueChange(function (newValue) { return _this.chartProxy.setCommonAxisProperty('lineWidth', newValue); });
     };
     AxisPanel.prototype.initAxisTicks = function () {
         var axisTicksComp = new axisTicksPanel_1.AxisTicksPanel(this.chartController);
@@ -79,34 +70,27 @@ var AxisPanel = /** @class */ (function (_super) {
     AxisPanel.prototype.initAxisLabels = function () {
         var _this = this;
         var initialFont = {
-            family: this.chart.xAxis.labelFontFamily,
-            style: this.chart.xAxis.labelFontStyle,
-            weight: this.chart.xAxis.labelFontWeight,
-            size: this.chart.xAxis.labelFontSize,
-            color: this.chart.xAxis.labelColor
+            family: this.chartProxy.getCommonAxisProperty('labelFontFamily'),
+            style: this.chartProxy.getCommonAxisProperty('labelFontStyle'),
+            weight: this.chartProxy.getCommonAxisProperty('labelFontWeight'),
+            size: parseInt(this.chartProxy.getCommonAxisProperty('labelFontSize')),
+            color: this.chartProxy.getCommonAxisProperty('labelColor')
         };
+        // note we don't set the font style via legend panel
         var setFont = function (font) {
             if (font.family) {
-                _this.chart.xAxis.labelFontFamily = font.family;
-                _this.chart.yAxis.labelFontFamily = font.family;
-            }
-            if (font.style) {
-                _this.chart.xAxis.labelFontStyle = font.style;
-                _this.chart.yAxis.labelFontStyle = font.style;
+                _this.chartProxy.setCommonAxisProperty('labelFontFamily', font.family);
             }
             if (font.weight) {
-                _this.chart.xAxis.labelFontWeight = font.weight;
-                _this.chart.yAxis.labelFontWeight = font.weight;
+                _this.chartProxy.setCommonAxisProperty('labelFontWeight', font.weight);
             }
             if (font.size) {
-                _this.chart.xAxis.labelFontSize = font.size;
-                _this.chart.yAxis.labelFontSize = font.size;
+                _this.chartProxy.setCommonAxisProperty('labelFontSize', font.size);
             }
             if (font.color) {
-                _this.chart.xAxis.labelColor = font.color;
-                _this.chart.yAxis.labelColor = font.color;
+                _this.chartProxy.setCommonAxisProperty('labelColor', font.color);
             }
-            _this.chart.performLayout();
+            _this.chartProxy.getChart().performLayout();
         };
         var params = {
             enabled: true,
@@ -114,7 +98,7 @@ var AxisPanel = /** @class */ (function (_super) {
             initialFont: initialFont,
             setFont: setFont
         };
-        var labelPanelComp = new labelPanel_1.LabelPanel(this.chartController, params);
+        var labelPanelComp = new labelPanel_1.LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.axisGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
@@ -127,20 +111,17 @@ var AxisPanel = /** @class */ (function (_super) {
                 .setLabel(label)
                 .setLabelWidth("flex")
                 .setValue(initialValue)
-                .onValueChange(function (newAngle) {
-                updateFunc(newAngle);
-                _this.chart.layoutPending = true;
-            });
+                .onValueChange(updateFunc);
             _this.getContext().wireBean(rotationInput);
             labelPanelComp.addCompToPanel(rotationInput);
         };
         var degreesSymbol = String.fromCharCode(176);
-        // add x-axis label rotation input to label panel
-        var updateXRotation = function (newValue) { return _this.chart.xAxis.labelRotation = newValue; };
-        createAngleComp(this.chartTranslator.translate('xRotation') + " " + degreesSymbol, this.chart.xAxis.labelRotation, updateXRotation);
-        // add y-axis label rotation input to label panel
-        var updateYRotation = function (newValue) { return _this.chart.yAxis.labelRotation = newValue; };
-        createAngleComp(this.chartTranslator.translate('yRotation') + " " + degreesSymbol, this.chart.yAxis.labelRotation, updateYRotation);
+        var xRotationLabel = this.chartTranslator.translate('xRotation') + " " + degreesSymbol;
+        var xUpdateFunc = function (newValue) { return _this.chartProxy.setXRotation(newValue); };
+        createAngleComp(xRotationLabel, this.chartProxy.getXRotation(), xUpdateFunc);
+        var yRotationLabel = this.chartTranslator.translate('yRotation') + " " + degreesSymbol;
+        var yUpdateFunc = function (newValue) { return _this.chartProxy.setYRotation(newValue); };
+        createAngleComp(yRotationLabel, this.chartProxy.getYRotation(), yUpdateFunc);
     };
     AxisPanel.prototype.destroyActivePanels = function () {
         this.activePanels.forEach(function (panel) {

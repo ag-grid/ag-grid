@@ -1,12 +1,13 @@
-import { _, ChartType, Component, PostConstruct, RefSelector } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { LegendPanel } from "./legend/legendPanel";
-import { BarSeriesPanel } from "./series/barSeriesPanel";
-import { AxisPanel } from "./axis/axisPanel";
-import { LineSeriesPanel } from "./series/lineSeriesPanel";
-import { PieSeriesPanel } from "./series/pieSeriesPanel";
-import { ChartPanel } from "./chart/chartPanel";
-import { AreaSeriesPanel } from "./series/areaSeriesPanel";
+import {_, ChartType, Component, PostConstruct, RefSelector} from "ag-grid-community";
+import {ChartController} from "../../chartController";
+import {LegendPanel} from "./legend/legendPanel";
+import {BarSeriesPanel} from "./series/barSeriesPanel";
+import {AxisPanel} from "./axis/axisPanel";
+import {LineSeriesPanel} from "./series/lineSeriesPanel";
+import {PieSeriesPanel} from "./series/pieSeriesPanel";
+import {ChartPanel} from "./chart/chartPanel";
+import {AreaSeriesPanel} from "./series/areaSeriesPanel";
+import {ScatterSeriesPanel} from "./series/scatterSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
 
@@ -25,9 +26,7 @@ export class ChartFormattingPanel extends Component {
     @PostConstruct
     private init() {
         this.setTemplate(ChartFormattingPanel.TEMPLATE);
-
         this.createFormatPanel();
-
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.createFormatPanel.bind(this));
     }
 
@@ -49,6 +48,10 @@ export class ChartFormattingPanel extends Component {
         } else if (chartType === ChartType.Line) {
             this.addComponent(new AxisPanel(this.chartController));
             this.addComponent(new LineSeriesPanel(this.chartController));
+
+        } else if (chartType === ChartType.Scatter || chartType === ChartType.Bubble) {
+            this.addComponent(new AxisPanel(this.chartController));
+            this.addComponent(new ScatterSeriesPanel(this.chartController));
 
         } else if (chartType === ChartType.Area || chartType === ChartType.StackedArea || chartType === ChartType.NormalizedArea) {
             this.addComponent(new AxisPanel(this.chartController));

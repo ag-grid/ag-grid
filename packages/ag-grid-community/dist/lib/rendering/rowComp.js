@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -100,9 +100,11 @@ var RowComp = /** @class */ (function (_super) {
         var businessKey = this.getRowBusinessKey();
         var businessKeySanitised = utils_1._.escape(businessKey);
         var rowTopStyle = this.getInitialRowTopStyle();
+        var rowIdx = this.rowNode.getRowIndexString();
+        var headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
         templateParts.push("<div");
         templateParts.push(" role=\"row\"");
-        templateParts.push(" row-index=\"" + this.rowNode.getRowIndexString() + "\"");
+        templateParts.push(" row-index=\"" + rowIdx + "\" aria-rowindex=\"" + (headerRowCount + this.rowNode.rowIndex + 1) + "\"");
         templateParts.push(rowIdSanitised ? " row-id=\"" + rowIdSanitised + "\"" : "");
         templateParts.push(businessKey ? " row-business-key=\"" + businessKeySanitised + "\"" : "");
         templateParts.push(" comp-id=\"" + this.getCompId() + "\"");
@@ -1228,14 +1230,17 @@ var RowComp = /** @class */ (function (_super) {
         this.updateRowIndexes();
     };
     RowComp.prototype.updateRowIndexes = function () {
+        var _this = this;
         var rowIndexStr = this.rowNode.getRowIndexString();
         var rowIsEven = this.rowNode.rowIndex % 2 === 0;
         var rowIsEvenChanged = this.rowIsEven !== rowIsEven;
+        var headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
         if (rowIsEvenChanged) {
             this.rowIsEven = rowIsEven;
         }
         this.eAllRowContainers.forEach(function (eRow) {
             eRow.setAttribute('row-index', rowIndexStr);
+            eRow.setAttribute('aria-rowindex', (headerRowCount + _this.rowNode.rowIndex + 1).toString());
             if (!rowIsEvenChanged) {
                 return;
             }

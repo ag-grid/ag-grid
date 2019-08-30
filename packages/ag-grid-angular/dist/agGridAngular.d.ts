@@ -172,6 +172,7 @@ export declare class AgGridAngular implements AfterViewInit {
     suppressRowClickSelection: any;
     suppressCellSelection: any;
     suppressHorizontalScroll: any;
+    alwaysShowVerticalScroll: any;
     debug: any;
     enableBrowserTooltips: any;
     enableColResize: any;
@@ -288,6 +289,8 @@ export declare class AgGridAngular implements AfterViewInit {
     suppressMaxRenderedRowRestriction: any;
     excludeChildrenWhenTreeDataFiltering: any;
     keepDetailRows: any;
+    paginateChildRows: any;
+    preventDefaultOnContextMenu: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;
@@ -309,6 +312,7 @@ export declare class AgGridAngular implements AfterViewInit {
     pinnedRowDataChanged: EventEmitter<any>;
     rangeSelectionChanged: EventEmitter<any>;
     chartRangeSelectionChanged: EventEmitter<any>;
+    chartOptionsChanged: EventEmitter<any>;
     toolPanelVisibleChanged: EventEmitter<any>;
     modelUpdated: EventEmitter<any>;
     pasteStart: EventEmitter<any>;

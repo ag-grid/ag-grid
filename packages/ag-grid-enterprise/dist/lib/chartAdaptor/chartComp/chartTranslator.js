@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -22,11 +22,14 @@ var ChartTranslator = /** @class */ (function () {
     };
     var ChartTranslator_1;
     ChartTranslator.DEFAULT_TRANSLATIONS = {
+        pivotChartTitle: 'Pivot Chart',
+        rangeChartTitle: 'Range Chart',
         settings: 'Settings',
         data: 'Data',
         format: 'Format',
         categories: 'Categories',
         series: 'Series',
+        xyValues: 'X Y Values',
         axis: 'Axis',
         color: 'Color',
         thickness: 'Thickness',
@@ -80,7 +83,17 @@ var ChartTranslator = /** @class */ (function () {
         lineTooltip: 'Line',
         groupedAreaTooltip: 'Grouped',
         stackedAreaTooltip: 'Stacked',
-        normalizedAreaTooltip: '100% Stacked'
+        normalizedAreaTooltip: '100% Stacked',
+        scatterTooltip: 'Scatter',
+        bubbleTooltip: 'Bubble',
+        columnGroup: 'Column',
+        barGroup: 'Bar',
+        pieGroup: 'Pie',
+        lineGroup: 'Line',
+        scatterGroup: 'X Y (Scatter)',
+        areaGroup: 'Area',
+        pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
+        noDataToChart: 'No data available to be charted.',
     };
     __decorate([
         ag_grid_community_1.Autowired('gridOptionsWrapper'),

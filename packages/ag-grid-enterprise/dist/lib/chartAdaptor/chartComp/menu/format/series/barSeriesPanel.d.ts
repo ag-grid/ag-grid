@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 export declare class BarSeriesPanel extends Component {
@@ -11,12 +11,12 @@ export declare class BarSeriesPanel extends Component {
     private chartTranslator;
     private readonly chartController;
     private activePanels;
-    private series;
+    private chartProxy;
     constructor(chartController: ChartController);
     private init;
+    private initSeriesTooltips;
     private initSeriesStrokeWidth;
     private initOpacity;
-    private initSeriesTooltips;
     private initLabelPanel;
     private initShadowPanel;
     private destroyActivePanels;

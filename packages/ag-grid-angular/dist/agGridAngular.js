@@ -167,6 +167,7 @@ var AgGridAngular = /** @class */ (function () {
         this.suppressRowClickSelection = undefined;
         this.suppressCellSelection = undefined;
         this.suppressHorizontalScroll = undefined;
+        this.alwaysShowVerticalScroll = undefined;
         this.debug = undefined;
         this.enableBrowserTooltips = undefined;
         this.enableColResize = undefined;
@@ -283,6 +284,8 @@ var AgGridAngular = /** @class */ (function () {
         this.suppressMaxRenderedRowRestriction = undefined;
         this.excludeChildrenWhenTreeDataFiltering = undefined;
         this.keepDetailRows = undefined;
+        this.paginateChildRows = undefined;
+        this.preventDefaultOnContextMenu = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
@@ -304,6 +307,7 @@ var AgGridAngular = /** @class */ (function () {
         this.pinnedRowDataChanged = new core_1.EventEmitter();
         this.rangeSelectionChanged = new core_1.EventEmitter();
         this.chartRangeSelectionChanged = new core_1.EventEmitter();
+        this.chartOptionsChanged = new core_1.EventEmitter();
         this.toolPanelVisibleChanged = new core_1.EventEmitter();
         this.modelUpdated = new core_1.EventEmitter();
         this.pasteStart = new core_1.EventEmitter();
@@ -609,6 +613,7 @@ var AgGridAngular = /** @class */ (function () {
         'suppressRowClickSelection': [{ type: core_1.Input },],
         'suppressCellSelection': [{ type: core_1.Input },],
         'suppressHorizontalScroll': [{ type: core_1.Input },],
+        'alwaysShowVerticalScroll': [{ type: core_1.Input },],
         'debug': [{ type: core_1.Input },],
         'enableBrowserTooltips': [{ type: core_1.Input },],
         'enableColResize': [{ type: core_1.Input },],
@@ -725,6 +730,8 @@ var AgGridAngular = /** @class */ (function () {
         'suppressMaxRenderedRowRestriction': [{ type: core_1.Input },],
         'excludeChildrenWhenTreeDataFiltering': [{ type: core_1.Input },],
         'keepDetailRows': [{ type: core_1.Input },],
+        'paginateChildRows': [{ type: core_1.Input },],
+        'preventDefaultOnContextMenu': [{ type: core_1.Input },],
         'columnEverythingChanged': [{ type: core_1.Output },],
         'newColumnsLoaded': [{ type: core_1.Output },],
         'columnPivotModeChanged': [{ type: core_1.Output },],
@@ -746,6 +753,7 @@ var AgGridAngular = /** @class */ (function () {
         'pinnedRowDataChanged': [{ type: core_1.Output },],
         'rangeSelectionChanged': [{ type: core_1.Output },],
         'chartRangeSelectionChanged': [{ type: core_1.Output },],
+        'chartOptionsChanged': [{ type: core_1.Output },],
         'toolPanelVisibleChanged': [{ type: core_1.Output },],
         'modelUpdated': [{ type: core_1.Output },],
         'pasteStart': [{ type: core_1.Output },],

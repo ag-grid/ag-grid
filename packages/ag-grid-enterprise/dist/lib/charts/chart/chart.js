@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var scene_1 = require("../scene/scene");
@@ -9,14 +9,13 @@ var rect_1 = require("../scene/shape/rect");
 var legend_1 = require("./legend");
 var array_1 = require("../util/array");
 var Chart = /** @class */ (function () {
-    function Chart() {
+    function Chart(options) {
         var _this = this;
-        this.scene = new scene_1.Scene();
+        if (options === void 0) { options = {}; }
         this.background = new rect_1.Rect();
         this.legend = new legend_1.Legend();
         this.legendAutoPadding = new padding_1.Padding();
         this.captionAutoPadding = 0; // top padding only
-        this.tooltipElement = document.createElement('div');
         this.tooltipOffset = [20, 20];
         this.defaultTooltipClass = 'ag-chart-tooltip';
         this.onLayoutChange = function () {
@@ -90,13 +89,16 @@ var Chart = /** @class */ (function () {
         this._tooltipClass = this.defaultTooltipClass;
         var root = new group_1.Group();
         var background = this.background;
+        var document = options.document || window.document;
         background.fill = 'white';
         root.appendChild(background);
+        this.scene = new scene_1.Scene({ document: document });
         this.scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
+        this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
-        this.setupListeners(this.scene.hdpiCanvas.canvas);
+        this.setupListeners(this.scene.canvas.element);
     }
     Chart.prototype.destroy = function () {
         var tooltipParent = this.tooltipElement.parentNode;
@@ -104,12 +106,12 @@ var Chart = /** @class */ (function () {
             tooltipParent.removeChild(this.tooltipElement);
         }
         this.legend.onLayoutChange = undefined;
-        this.cleanupListeners(this.scene.hdpiCanvas.canvas);
+        this.cleanupListeners(this.scene.canvas.element);
         this.scene.parent = undefined;
     };
     Object.defineProperty(Chart.prototype, "element", {
         get: function () {
-            return this.scene.hdpiCanvas.canvas;
+            return this.scene.canvas.element;
         },
         enumerable: true,
         configurable: true
@@ -343,14 +345,15 @@ var Chart = /** @class */ (function () {
             return !!this.dataCallbackId;
         },
         set: function (value) {
-            if (value) {
-                if (!this.dataCallbackId) {
-                    this.dataCallbackId = setTimeout(this._processData, 0); // run on next tick
-                }
-            }
-            else if (this.dataCallbackId) {
+            if (this.dataCallbackId) {
                 clearTimeout(this.dataCallbackId);
                 this.dataCallbackId = 0;
+            }
+            if (value) {
+                // We don't want to render before the data is processed and then again after,
+                // so we cancel the auto-scheduled render, if any.
+                this.scene.cancelRender();
+                this.dataCallbackId = window.setTimeout(this._processData, 0); // run on next tick
             }
         },
         enumerable: true,
@@ -383,13 +386,13 @@ var Chart = /** @class */ (function () {
             title.node.x = this.width / 2;
             title.node.y = paddingTop;
             titleVisible = true;
-            paddingTop += bbox.height;
+            paddingTop += bbox ? bbox.height : 0;
             if (subtitle && subtitle.enabled) {
                 var bbox_1 = subtitle.node.getBBox();
                 subtitle.node.x = this.width / 2;
                 subtitle.node.y = paddingTop;
                 subtitleVisible = true;
-                paddingTop += spacing + bbox_1.height;
+                paddingTop += spacing + (bbox_1 ? bbox_1.height : 0);
             }
         }
         if (title) {

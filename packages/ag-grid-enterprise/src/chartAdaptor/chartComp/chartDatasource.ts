@@ -1,13 +1,26 @@
-import { _, Autowired, BeanStub, Column, ColumnController, IRowModel, ValueService } from "ag-grid-community";
-import { AggregationStage } from "../../rowStages/aggregationStage";
-import { ChartModel } from "./chartModel";
+import {
+    _,
+    Autowired,
+    BeanStub,
+    Column,
+    ColumnController,
+    IAggFunc,
+    IRowModel,
+    RowNode,
+    ValueService
+} from "ag-grid-community";
+import {AggregationStage} from "../../rowStages/aggregationStage";
+import {ChartModel, ColState} from "./chartModel";
 
 export interface ChartDatasourceParams {
-    dimensionColIds: string[];
+    dimensionCols: ColState[];
+    grouping: boolean;
+    pivoting: boolean;
     valueCols: Column[];
     startRow: number;
     endRow: number;
-    aggregate: boolean;
+    aggFunc?: string | IAggFunc;
+    multiCategories: boolean;
 }
 
 export class ChartDatasource extends BeanStub {
@@ -16,67 +29,136 @@ export class ChartDatasource extends BeanStub {
     @Autowired('aggregationStage') aggregationStage: AggregationStage;
     @Autowired('columnController') private columnController: ColumnController;
 
-    public getData(params: ChartDatasourceParams): any [] {
-        const dataFromGrid = this.extractRowsFromGridRowModel(params);
-
-        return this.aggregateRowsByDimension(params, dataFromGrid);
+    public getData(params: ChartDatasourceParams): {data: any[], columnNames: { [key: string]: string[] }} {
+        const result = this.extractRowsFromGridRowModel(params);
+        result.data = this.aggregateRowsByDimension(params, result.data);
+        return result;
     }
 
-    private extractRowsFromGridRowModel(params: ChartDatasourceParams): any[] {
-        // make sure enough rows in range to chart. if user filters and less rows, then
-        // end row will be the last displayed row, not where the range ends.
+    private extractRowsFromGridRowModel(params: ChartDatasourceParams): {data: any[], columnNames: { [key: string]: string[] }} {
+        let extractedRowData = [];
+        const columnNames: { [key: string]: string[] } = {};
+
+        // maps used to keep track of expanded groups that need to be removed
+        const groupNodeIndexes: { [key: string]: number } = {};
+        const groupsToRemove: { [key: string]: number } = {};
+
+        // make sure enough rows in range to chart. if user filters and less rows, then end row will be
+        // the last displayed row, not where the range ends.
         const modelLastRow = this.gridRowModel.getRowCount() - 1;
-        const rangeLastRow = Math.min(params.endRow, modelLastRow);
+        const rangeLastRow = params.endRow > 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
 
-        const rowCount = rangeLastRow - params.startRow + 1;
-
-        const dataFromGrid = [];
-        for (let i = 0; i < rowCount; i++) {
-            const rowNode = this.gridRowModel.getRow(i + params.startRow)!;
+        const numRows = rangeLastRow - params.startRow + 1;
+        for (let i = 0; i < numRows; i++) {
             const data: any = {};
 
-            params.dimensionColIds.forEach(colId => {
+            // lookup row node from row model using row index
+            const rowNode = this.gridRowModel.getRow(i + params.startRow)!;
+
+            // first get data for dimensions columns
+            params.dimensionCols.forEach(col => {
+                const colId = col.colId;
                 const column = this.columnController.getGridColumn(colId);
                 if (column) {
-                    const part = this.valueService.getValue(column, rowNode);
+                    const valueObject = this.valueService.getValue(column, rowNode);
+
                     // force return type to be string or empty string (as value can be an object)
-                    data[colId] = (part && part.toString) ? part.toString() : '';
+                    const value = (valueObject && valueObject.toString) ? valueObject.toString() : '';
+
+                    // when grouping we also need to build up multi category labels for charts
+                    if (params.grouping) {
+                        // traverse parents to extract group label path
+                        const labels = this.getGroupLabels(rowNode, [String(value)]);
+
+                        if (params.multiCategories) {
+                            // add group labels to group column for multi category charts
+                            data[colId] = {labels: labels};
+                        } else {
+                            // concat group keys from the top group key down (used when grouping Pie charts)
+                            data[colId] = labels.slice().reverse().join(' - ');
+                        }
+
+                        // keep track of group node indexes so they can be padded when other groups are expanded
+                        if (rowNode.group) {
+                            groupNodeIndexes[labels.toString()] = i;
+                        }
+
+                        // if node (group or leaf) has parents then it is expanded and should be removed
+                        const groupKey = labels.slice(1, labels.length).toString();
+                        if (groupKey) {
+                            groupsToRemove[groupKey] = groupNodeIndexes[groupKey];
+                        }
+                    } else {
+                        // leaf nodes can be directly added to dimension columns
+                        data[colId] = value;
+                    }
                 } else {
+                    // introduce a default category when no dimensions exist with a value based off row index (+1)
                     data[ChartModel.DEFAULT_CATEGORY] = (i + 1).toString();
                 }
             });
 
+            // then get data for value columns
             params.valueCols.forEach(col => {
+                let columnNamesArr: string[] = [];
+
+                // pivot keys should be added first
+                const pivotKeys = col.getColDef().pivotKeys;
+                if (pivotKeys) {
+                    columnNamesArr = pivotKeys.slice();
+                }
+
+                // then add column header name to results
+                const headerName = col.getColDef().headerName;
+                if (headerName) {
+                    columnNamesArr.push(headerName);
+                }
+
+                // add array of column names to results
+                if (columnNamesArr.length > 0) {
+                    columnNames[col.getId()] = columnNamesArr;
+                }
+
+                // add data value to value column
                 data[col.getId()] = this.valueService.getValue(col, rowNode);
             });
 
-            dataFromGrid.push(data);
+            // add data to results
+            extractedRowData.push(data);
         }
 
-        return dataFromGrid;
+        if (params.grouping) {
+            // determine indexes of expanded group nodes to be removed
+            const groupIndexesToRemove = Object.keys(groupsToRemove).map(key => groupsToRemove[key]);
+
+            // remove expanded groups from results
+            extractedRowData = extractedRowData.filter((_, index: number) => groupIndexesToRemove.indexOf(index) < 0);
+        }
+
+        return {data: extractedRowData, columnNames: columnNames};
     }
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {
-        const dimensionColIds = params.dimensionColIds;
-        const dontAggregate = !params.aggregate || dimensionColIds.length === 0;
-        if (dontAggregate) {
-            return dataFromGrid;
-        }
+        const dimensionCols = params.dimensionCols;
+        const skipAggregation = !params.aggFunc || dimensionCols.length === 0;
+        if (skipAggregation) { return dataFromGrid; }
 
-        const lastColId = _.last(dimensionColIds);
-
+        const lastCol = _.last(dimensionCols);
+        const lastColId = lastCol && lastCol.colId;
         const map: any = {};
         const dataAggregated: any[] = [];
 
         dataFromGrid.forEach(data => {
             let currentMap = map;
-            dimensionColIds.forEach(colId => {
+            dimensionCols.forEach(col => {
+                const colId = col.colId;
                 const key = data[colId];
                 if (colId === lastColId) {
                     let groupItem = currentMap[key];
                     if (!groupItem) {
                         groupItem = {__children: []};
-                        dimensionColIds.forEach(colId => {
+                        dimensionCols.forEach(col => {
+                            const colId = col.colId;
                             groupItem[colId] = data[colId];
                         });
                         currentMap[key] = groupItem;
@@ -99,11 +181,25 @@ export class ChartDatasource extends BeanStub {
                 groupItem.__children.forEach((child:any) => {
                     dataToAgg.push(child[col.getId()]);
                 });
-                // always use 'sum' agg func, is that right????
-                groupItem[col.getId()] = this.aggregationStage.aggregateValues(dataToAgg, 'sum');
+
+                const aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc as IAggFunc);
+
+                if (typeof(aggResult.value) !== 'undefined') {
+                    groupItem[col.getId()] = aggResult.value;
+                } else {
+                    groupItem[col.getId()] = aggResult;
+                }
             });
         });
 
-        return dataAggregated
+        return dataAggregated;
+    }
+
+    private getGroupLabels(rowNode: RowNode, result: string[]): string[] {
+        // add parent group keys by walking up the tree
+        if (rowNode.level === 0) { return result; }
+        const parentNode = rowNode.parent as RowNode;
+        result.push(parentNode.key);
+        return this.getGroupLabels(parentNode, result);
     }
 }

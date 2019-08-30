@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -31,8 +31,9 @@ var ChartMenu = /** @class */ (function (_super) {
         var _this = _super.call(this, ChartMenu.TEMPLATE) || this;
         _this.buttons = {
             chartSettings: ['menu', function () { return _this.showMenu('chartSettings'); }],
-            chartData: ['data', function () { return _this.showMenu('chartData'); }],
-            chartFormat: ['data', function () { return _this.showMenu('chartFormat'); }],
+            chartData: ['menu', function () { return _this.showMenu('chartData'); }],
+            chartFormat: ['menu', function () { return _this.showMenu('chartFormat'); }],
+            chartUnlink: ['linked', function (e) { return _this.toggleDetached(e); }],
             chartDownload: ['save', function () { return _this.saveChart(); }]
         };
         _this.tabs = [];
@@ -44,9 +45,8 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.prototype.getToolbarOptions = function () {
         var _this = this;
-        var tabOptions = ['chartSettings', 'chartData', 'chartFormat', 'chartDownload'];
+        var tabOptions = ['chartSettings', 'chartData', 'chartFormat', 'chartUnlink', 'chartDownload'];
         var toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
-        var ret = [];
         if (toolbarItemsFunc) {
             var params = {
                 api: this.gridOptionsWrapper.getApi(),
@@ -61,17 +61,20 @@ var ChartMenu = /** @class */ (function (_super) {
                 return true;
             });
         }
-        this.tabs = tabOptions.filter(function (option) { return option !== 'chartDownload'; });
-        var downloadIdx = tabOptions.indexOf('chartDownload');
-        var firstItem = tabOptions.find(function (option) { return option !== 'chartDownload'; });
-        var chartDownload = 'chartDownload';
-        if (firstItem) {
-            ret.push(firstItem);
+        // pivot charts use the column tool panel instead of the data panel
+        if (this.chartController.isPivotChart()) {
+            tabOptions = tabOptions.filter(function (option) { return option !== 'chartData'; });
         }
-        if (downloadIdx !== -1) {
-            return downloadIdx === 0 ? [chartDownload].concat(ret) : ret.concat([chartDownload]);
-        }
-        return ret;
+        var ignoreOptions = ['chartUnlink', 'chartDownload'];
+        this.tabs = tabOptions.filter(function (option) { return ignoreOptions.indexOf(option) === -1; });
+        return tabOptions.filter(function (value) { return ignoreOptions.indexOf(value) !== -1 || (_this.tabs.length && value === _this.tabs[0]); });
+    };
+    ChartMenu.prototype.toggleDetached = function (e) {
+        var target = e.target;
+        var active = ag_grid_community_1._.containsClass(target, 'ag-icon-linked');
+        ag_grid_community_1._.addOrRemoveCssClass(target, 'ag-icon-linked', !active);
+        ag_grid_community_1._.addOrRemoveCssClass(target, 'ag-icon-unlinked', active);
+        this.chartController.detachChartRange();
     };
     ChartMenu.prototype.createButtons = function () {
         var _this = this;
@@ -79,7 +82,7 @@ var ChartMenu = /** @class */ (function (_super) {
         chartToolbarOptions.forEach(function (button) {
             var buttonConfig = _this.buttons[button];
             var iconName = buttonConfig[0], callback = buttonConfig[1];
-            var buttonEl = ag_grid_community_1._.createIconNoSpan(iconName, _this.gridOptionsWrapper);
+            var buttonEl = ag_grid_community_1._.createIconNoSpan(iconName, _this.gridOptionsWrapper, undefined, true);
             _this.addDestroyableEventListener(buttonEl, 'click', callback);
             _this.getGui().appendChild(buttonEl);
         });

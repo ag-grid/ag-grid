@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -168,6 +168,7 @@ var RowNodeCache = /** @class */ (function (_super) {
     };
     RowNodeCache.prototype.forEachNodeDeep = function (callback, sequence) {
         var _this = this;
+        if (sequence === void 0) { sequence = new utils_1.NumberSequence(); }
         this.forEachBlockInOrder(function (block) {
             block.forEachNodeDeep(callback, sequence, _this.virtualRowCount);
         });

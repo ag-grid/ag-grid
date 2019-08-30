@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -45,15 +45,15 @@ var SetValueModel = /** @class */ (function () {
         // for a map is much faster than the lookup for an array, especially when
         // the length of the array is thousands of records long
         this.selectedValuesMap = {};
-        this.selectEverything();
+        this.selectAllUsingMiniFilter();
         this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : ag_grid_community_1.TextFilter.DEFAULT_FORMATTER;
     }
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
     //    unless selectAll chosen in which case will select all
-    SetValueModel.prototype.refreshAfterNewRowsLoaded = function (keepSelection, isSelectAll) {
+    SetValueModel.prototype.refreshAfterNewRowsLoaded = function (keepSelection, everythingSelected) {
         this.createAllUniqueValues();
-        this.refreshSelection(keepSelection, isSelectAll);
+        this.refreshSelection(keepSelection, everythingSelected);
     };
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
@@ -71,7 +71,7 @@ var SetValueModel = /** @class */ (function () {
             this.setModel(oldModel, isSelectAll);
         }
         else {
-            this.selectEverything();
+            this.selectAllUsingMiniFilter();
         }
     };
     SetValueModel.prototype.refreshAfterAnyFilterChanged = function () {
@@ -109,6 +109,9 @@ var SetValueModel = /** @class */ (function () {
     };
     SetValueModel.prototype.setValuesType = function (value) {
         this.valuesType = value;
+    };
+    SetValueModel.prototype.getValuesType = function () {
+        return this.valuesType;
     };
     SetValueModel.prototype.setValues = function (valuesToUse) {
         this.allUniqueValues = valuesToUse;
@@ -250,7 +253,7 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.getDisplayedValue = function (index) {
         return this.displayedValues[index];
     };
-    SetValueModel.prototype.selectEverything = function () {
+    SetValueModel.prototype.selectAllUsingMiniFilter = function () {
         if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
             this.selectOn(this.allUniqueValues);
         }
@@ -265,7 +268,7 @@ var SetValueModel = /** @class */ (function () {
             var safeKey = this.valueToKey(key);
             this.selectedValuesMap[safeKey] = null;
         }
-        this.selectedValuesCount = count;
+        this.selectedValuesCount = Object.keys(this.selectedValuesMap).length;
     };
     SetValueModel.prototype.valueToKey = function (key) {
         if (key === null) {
@@ -286,15 +289,18 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.isFilterActive = function () {
         return this.allUniqueValues.length !== this.selectedValuesCount;
     };
-    SetValueModel.prototype.selectNothing = function () {
+    SetValueModel.prototype.selectNothingUsingMiniFilter = function () {
         var _this = this;
         if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
-            this.selectedValuesMap = {};
-            this.selectedValuesCount = 0;
+            this.selectNothing();
         }
         else {
             this.displayedValues.forEach(function (it) { return _this.unselectValue(it); });
         }
+    };
+    SetValueModel.prototype.selectNothing = function () {
+        this.selectedValuesMap = {};
+        this.selectedValuesCount = 0;
     };
     SetValueModel.prototype.getUniqueValueCount = function () {
         return this.allUniqueValues.length;
@@ -308,6 +314,10 @@ var SetValueModel = /** @class */ (function () {
             delete this.selectedValuesMap[safeKey];
             this.selectedValuesCount--;
         }
+    };
+    SetValueModel.prototype.selectAllFromMiniFilter = function () {
+        this.selectNothing();
+        this.selectAllUsingMiniFilter();
     };
     SetValueModel.prototype.selectValue = function (value) {
         var safeKey = this.valueToKey(value);
@@ -366,7 +376,7 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.setSyncModel = function (model, isSelectAll) {
         if (isSelectAll === void 0) { isSelectAll = false; }
         if (model && !isSelectAll) {
-            this.selectNothing();
+            this.selectNothingUsingMiniFilter();
             for (var i = 0; i < model.length; i++) {
                 var rawValue = model[i];
                 var value = this.keyToValue(rawValue);
@@ -376,7 +386,7 @@ var SetValueModel = /** @class */ (function () {
             }
         }
         else {
-            this.selectEverything();
+            this.selectAllUsingMiniFilter();
         }
     };
     SetValueModel.prototype.onFilterValuesReady = function (callback) {

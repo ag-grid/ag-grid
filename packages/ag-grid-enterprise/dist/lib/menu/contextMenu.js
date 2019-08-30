@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -52,6 +52,12 @@ var ContextMenuFactory = /** @class */ (function () {
             // nothing to show, perhaps tool panels???
         }
         if (this.gridOptionsWrapper.isEnableCharts() && this.context.isModuleRegistered("chartsModule" /* ChartsModule */)) {
+            if (this.columnController.isPivotMode()) {
+                defaultMenuOptions.push('pivotChart');
+            }
+            // else {
+            //     defaultMenuOptions.push('pivotChartAndPivotMode');
+            // }
             if (!this.rangeController.isEmpty()) {
                 defaultMenuOptions.push('chartRange');
             }
@@ -130,6 +136,10 @@ var ContextMenuFactory = /** @class */ (function () {
         ag_grid_community_1.Autowired('rangeController'),
         __metadata("design:type", rangeController_1.RangeController)
     ], ContextMenuFactory.prototype, "rangeController", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('columnController'),
+        __metadata("design:type", ag_grid_community_1.ColumnController)
+    ], ContextMenuFactory.prototype, "columnController", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

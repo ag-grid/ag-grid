@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component, GridOptionsWrapper } from "ag-grid-community";
 export interface VirtualListModel {
     getRowCount(): number;
@@ -15,6 +15,7 @@ export declare class VirtualList extends Component {
     gridOptionsWrapper: GridOptionsWrapper;
     constructor();
     private init;
+    private getItemHeight;
     ensureIndexVisible(index: number): void;
     setComponentCreator(componentCreator: (value: any) => Component): void;
     getRowHeight(): number;

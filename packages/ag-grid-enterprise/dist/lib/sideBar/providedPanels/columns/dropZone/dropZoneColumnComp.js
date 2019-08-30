@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -79,7 +79,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.setupRemove = function () {
         var _this = this;
-        ag_grid_community_1._.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        ag_grid_community_1._.setDisplayed(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
         this.addDestroyableEventListener(this.btRemove, 'click', function (mouseEvent) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -31,34 +31,38 @@ var Group = /** @class */ (function (_super) {
                 _this.computeTransformMatrix();
             }
             _this.children.forEach(function (child) {
-                if (child.visible && child.getBBox) {
-                    var bbox = child.getBBox();
-                    if (!(child instanceof Group)) {
-                        if (child.dirtyTransform) {
-                            child.computeTransformMatrix();
-                        }
-                        var matrix = matrix_1.Matrix.flyweight(child.matrix);
-                        var parent_1 = child.parent;
-                        while (parent_1) {
-                            matrix.preMultiplySelf(parent_1.matrix);
-                            parent_1 = parent_1.parent;
-                        }
-                        matrix.transformBBox(bbox, 0, bbox);
+                if (!child.visible) {
+                    return;
+                }
+                var bbox = child.getBBox();
+                if (!bbox) {
+                    return;
+                }
+                if (!(child instanceof Group)) {
+                    if (child.dirtyTransform) {
+                        child.computeTransformMatrix();
                     }
-                    var x = bbox.x;
-                    var y = bbox.y;
-                    if (x < left) {
-                        left = x;
+                    var matrix = matrix_1.Matrix.flyweight(child.matrix);
+                    var parent_1 = child.parent;
+                    while (parent_1) {
+                        matrix.preMultiplySelf(parent_1.matrix);
+                        parent_1 = parent_1.parent;
                     }
-                    if (y < top) {
-                        top = y;
-                    }
-                    if (x + bbox.width > right) {
-                        right = x + bbox.width;
-                    }
-                    if (y + bbox.height > bottom) {
-                        bottom = y + bbox.height;
-                    }
+                    matrix.transformBBox(bbox, 0, bbox);
+                }
+                var x = bbox.x;
+                var y = bbox.y;
+                if (x < left) {
+                    left = x;
+                }
+                if (y < top) {
+                    top = y;
+                }
+                if (x + bbox.width > right) {
+                    right = x + bbox.width;
+                }
+                if (y + bbox.height > bottom) {
+                    bottom = y + bbox.height;
                 }
             });
             return new bbox_1.BBox(left, top, right - left, bottom - top);

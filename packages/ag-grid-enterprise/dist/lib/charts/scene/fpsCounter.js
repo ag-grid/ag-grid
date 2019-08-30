@@ -1,8 +1,9 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var FpsCounter = /** @class */ (function () {
-    function FpsCounter(parent) {
+    function FpsCounter(parent, document) {
+        if (document === void 0) { document = window.document; }
         this.fps = 0;
         this.minFps = Infinity;
         this.maxFps = 0;

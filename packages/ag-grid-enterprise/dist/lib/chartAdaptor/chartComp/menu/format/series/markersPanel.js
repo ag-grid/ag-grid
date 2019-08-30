@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -25,11 +25,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
 var chartTranslator_1 = require("../../../chartTranslator");
+var scatterChartProxy_1 = require("../../../chartProxies/cartesian/scatterChartProxy");
 var MarkersPanel = /** @class */ (function (_super) {
     __extends(MarkersPanel, _super);
-    function MarkersPanel(series) {
+    function MarkersPanel(chartProxy) {
         var _this = _super.call(this) || this;
-        _this.series = series;
+        _this.chartProxy = chartProxy;
         return _this;
     }
     MarkersPanel.prototype.init = function () {
@@ -38,27 +39,23 @@ var MarkersPanel = /** @class */ (function (_super) {
     };
     MarkersPanel.prototype.initMarkers = function () {
         var _this = this;
-        var enabled = this.series.some(function (s) { return s.marker; });
+        // scatter charts should always show markers
+        var shouldHideEnabledCheckbox = this.chartProxy instanceof scatterChartProxy_1.ScatterChartProxy;
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate('markers'))
-            .setEnabled(enabled)
+            .hideEnabledCheckbox(shouldHideEnabledCheckbox)
+            .setEnabled(this.chartProxy.getMarkersEnabled())
             .hideOpenCloseIcons(true)
-            .onEnableChange(function (enabled) {
-            _this.series.forEach(function (s) { return s.marker = enabled; });
-        });
-        var initInput = function (property, input, labelKey, initialValue, maxValue) {
+            .onEnableChange(function (newValue) { return _this.chartProxy.setSeriesProperty('marker', newValue); });
+        var initInput = function (property, input, labelKey, maxValue) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(initialValue)
+                .setValue(_this.chartProxy.getSeriesProperty(property))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) {
-                _this.series.forEach(function (s) { return s[property] = newValue; });
-            });
+                .onValueChange(function (newValue) { return _this.chartProxy.setSeriesProperty(property, newValue); });
         };
-        var initialSize = this.series.length > 0 ? this.series[0].markerSize : 6;
-        initInput('markerSize', this.seriesMarkerSizeSlider, 'size', "" + initialSize, 30);
-        var initialStrokeWidth = this.series.length > 0 ? this.series[0].markerStrokeWidth : 1;
-        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', "" + initialStrokeWidth, 10);
+        initInput('markerSize', this.seriesMarkerSizeSlider, 'size', 30);
+        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', 10);
     };
     MarkersPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesMarkersGroup\">\n                <ag-slider ref=\"seriesMarkerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerStrokeWidthSlider\"></ag-slider>\n            </ag-group-component>  \n        </div>";
     __decorate([

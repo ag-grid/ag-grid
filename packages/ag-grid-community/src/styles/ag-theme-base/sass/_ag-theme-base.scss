@@ -20,7 +20,6 @@
     $row-height: map-get($params, "row-height");
     $header-height: map-get($params, "header-height");
     $virtual-item-height: map-get($params, "virtual-item-height");
-    $rich-select-item-height: map-get($params, "rich-select-item-height");
     $cell-horizontal-padding: map-get($params, "cell-horizontal-padding");
 
     $font-family: map-get($params, "font-family");
@@ -122,7 +121,7 @@
     font-family: $font-family;
     font-weight: $font-weight;
     font-size: $font-size;
-    line-height: 1;
+    line-height: normal;
 
     label {
         margin-bottom: 0;
@@ -192,11 +191,14 @@
         .ag-cell {
             border-right: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell:not(.ag-cell-focus) {
-            &.ag-cell-first-right-pinned {
+
+        .ag-cell:not(.ag-cell-focus), 
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+        .ag-root:not(.ag-has-focus) .ag-cell {
+            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
                 border-left: 1px solid $border-color;
             }
-            &.ag-cell-last-left-pinned {
+            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
                 border-right: 1px solid $border-color;
             }
         }
@@ -209,11 +211,14 @@
         .ag-cell {
             border-left: $cell-horizontal-border;
         }
-        .ag-row, .ag-cell:not(.ag-cell-focus) {
-            &.ag-cell-first-right-pinned {
+
+        .ag-cell:not(.ag-cell-focus), 
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+        .ag-root:not(.ag-has-focus) .ag-cell {
+            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
                 border-left: 1px solid $border-color;
             }
-            &.ag-cell-last-left-pinned {
+            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
                 border-right: 1px solid $border-color;
             }
         }
@@ -295,10 +300,12 @@
 
     .ag-header-row {
         border: none;
+        height: $header-height;
     }
 
     .ag-row {
         @include row-border($border-color);
+        height: $row-height;
         border-width: 0;
         &:not(.ag-row-first) {
             border-width: $row-border-width 0 0;
@@ -610,18 +617,16 @@
 
         .ag-set-filter-item {
             height: $virtual-item-height;
-            display: flex;
-            align-items: center;
             > {
                 div, span {
                     margin-left: 5px;
-                    display: flex;
                 }
             }
         }
 
-        .ag-filter-header-container:nth-child(2) {
+        .ag-filter-header-container {
             border-bottom: 1px solid $border-color;
+            padding-bottom: $grid-size / 2;
         }
 
         .ag-filter-apply-panel {
@@ -763,7 +768,7 @@
                 margin-top: $grid-size;
             }
 
-            > div > :first-child {
+            > div:first-child > span:first-child {
                 margin-left: $grid-size;
                 margin-right: $grid-size;
             }
@@ -810,6 +815,7 @@
                 right: 0;
                 bottom: 0;
                 left: 0;
+                padding: 0;
             }
             &.ag-disabled {
                 .ag-icon {
@@ -937,7 +943,7 @@
             padding: $cell-horizontal-padding;
             height: $row-height + $grid-size * 3;
         }
-        &.ag-cell-inline-editing, &.ag-popup-editor {
+        &.ag-cell-inline-editing {
             @include card($params);
 
             background-color: $editor-background-color-color;
@@ -945,6 +951,8 @@
     }
 
     .ag-popup-editor {
+        @include card($params);
+        background-color: $editor-background-color-color;
         padding: 0;
         .ag-large-textarea textarea {
             height: auto;
@@ -952,6 +960,14 @@
         }
     }
 
+    ////////////////////////////////////////
+    // Virtual List
+    ////////////////////////////////////////
+    .ag-virtual-list-container {
+        .ag-virtual-list-item {
+            height: $virtual-item-height;
+        }
+    }
     ////////////////////////////////////////
     // Rich Select
     ////////////////////////////////////////

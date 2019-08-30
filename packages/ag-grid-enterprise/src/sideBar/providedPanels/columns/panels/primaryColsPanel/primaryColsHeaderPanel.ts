@@ -13,7 +13,7 @@ import {
 } from "ag-grid-community/main";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 
-export enum SELECTED_STATE {CHECKED, UNCHECKED, INDETERMINIATE}
+export enum SELECTED_STATE { CHECKED, UNCHECKED, INDETERMINATE }
 
 export class PrimaryColsHeaderPanel extends Component {
 
@@ -48,10 +48,10 @@ export class PrimaryColsHeaderPanel extends Component {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.setTemplate(
-        `<div class="ag-primary-cols-header-panel">
+        `<div class="ag-primary-cols-header-panel" role="presentation">
             <div ref="eExpand"></div>
             <div ref="eSelect"></div>
-            <div class="ag-input-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper">
+            <div class="ag-input-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper" role="presentation">
                 <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}">        
             </div>
         </div>`);
@@ -99,9 +99,9 @@ export class PrimaryColsHeaderPanel extends Component {
 
         const groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
 
-        _.setVisible(this.eFilterWrapper, showFilter);
-        _.setVisible(this.eSelect, showSelect);
-        _.setVisible(this.eExpand, showExpand && groupsPresent);
+        _.setDisplayed(this.eFilterWrapper, showFilter);
+        _.setDisplayed(this.eSelect, showSelect);
+        _.setDisplayed(this.eExpand, showExpand && groupsPresent);
     }
 
     private addEventListeners(): void {
@@ -157,9 +157,9 @@ export class PrimaryColsHeaderPanel extends Component {
     public setExpandState(state: SELECTED_STATE): void {
         this.expandState = state;
 
-        _.setVisible(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
-        _.setVisible(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
-        _.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINIATE);
+        _.setDisplayed(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
+        _.setDisplayed(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
+        _.setDisplayed(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINATE);
     }
 
     private setColumnsCheckedState(): void {
@@ -167,7 +167,7 @@ export class PrimaryColsHeaderPanel extends Component {
         const allPrimaryColumns = this.columnController.getAllPrimaryColumns();
         let columns: Column[] = [];
         if (allPrimaryColumns !== null) {
-            columns = allPrimaryColumns.filter(col => !col.getColDef().lockVisible)
+            columns = allPrimaryColumns.filter(col => !col.getColDef().lockVisible);
         }
         const pivotMode = this.columnController.isPivotMode();
 
@@ -206,15 +206,15 @@ export class PrimaryColsHeaderPanel extends Component {
         });
 
         if (checkedCount > 0 && uncheckedCount > 0) {
-            this.selectState = SELECTED_STATE.INDETERMINIATE;
+            this.selectState = SELECTED_STATE.INDETERMINATE;
         } else if (uncheckedCount > 0) {
             this.selectState = SELECTED_STATE.UNCHECKED;
         } else {
             this.selectState = SELECTED_STATE.CHECKED;
         }
 
-        _.setVisible(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
-        _.setVisible(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
-        _.setVisible(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINIATE);
+        _.setDisplayed(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
+        _.setDisplayed(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
+        _.setDisplayed(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINATE);
     }
 }

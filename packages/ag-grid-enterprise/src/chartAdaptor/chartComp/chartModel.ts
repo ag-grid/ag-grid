@@ -7,9 +7,12 @@ import {
     ChartType,
     ColDef,
     Column,
-    RowRenderer,
     ColumnController,
-    PostConstruct, RowNode,
+    GridOptionsWrapper,
+    IAggFunc,
+    PostConstruct,
+    RowNode,
+    RowRenderer
 } from "ag-grid-community";
 import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 import {RangeController} from "../../rangeController";
@@ -24,8 +27,9 @@ export interface ColState {
 }
 
 export interface ChartModelParams {
+    pivotChart: boolean;
     chartType: ChartType;
-    aggregate: boolean;
+    aggFunc?: string | IAggFunc;
     cellRanges: CellRange[];
     palettes: Palette[];
     activePalette: number;
@@ -37,6 +41,7 @@ export class ChartModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rangeController') rangeController: RangeController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
@@ -47,25 +52,30 @@ export class ChartModel extends BeanStub {
     private valueColState: ColState[] = [];
     private chartData: any[];
 
+    private readonly pivotChart: boolean;
     private chartType: ChartType;
     private activePalette: number;
-    private palettes: Palette[];
-    private suppressChartRanges: boolean;
+    private readonly palettes: Palette[];
+    private readonly suppressChartRanges: boolean;
 
-    private readonly aggregate: boolean;
+    private readonly aggFunc?: string | IAggFunc;
 
     private initialising = true;
 
     private datasource: ChartDatasource;
 
-    private chartId: string;
-    private chartProxy: ChartProxy;
+    private readonly chartId: string;
+    private chartProxy: ChartProxy<any>;
+    private detached: boolean = false;
+    private grouping: boolean;
+    private columnNames: { [p: string]: string[] } = {};
 
     public constructor(params: ChartModelParams) {
         super();
 
+        this.pivotChart = params.pivotChart;
         this.chartType = params.chartType;
-        this.aggregate = params.aggregate;
+        this.aggFunc = params.aggFunc;
         this.cellRanges = params.cellRanges;
         this.palettes = params.palettes;
         this.activePalette = params.activePalette;
@@ -86,35 +96,39 @@ export class ChartModel extends BeanStub {
 
     public updateData(): void {
         const {startRow, endRow} = this.getRowIndexes();
-        const selectedDimension = this.getSelectedDimensionId();
+        const selectedDimension = this.getSelectedDimension();
         const selectedValueCols = this.getSelectedValueCols();
 
+        this.grouping = this.isGrouping();
+
         const params: ChartDatasourceParams = {
-            aggregate: this.aggregate,
-            dimensionColIds: [selectedDimension],
+            aggFunc: this.aggFunc,
+            dimensionCols: [selectedDimension],
+            grouping: this.grouping,
+            pivoting: this.isPivotActive(),
+            multiCategories: this.isMultiCategoryChart(),
             valueCols: selectedValueCols,
             startRow: startRow,
             endRow: endRow
         };
 
-        this.chartData = this.datasource.getData(params);
+        const result = this.datasource.getData(params);
+
+        this.chartData = result.data;
+        this.columnNames = result.columnNames;
     }
 
     public resetColumnState(): void {
-        const allColsFromRanges = this.getAllColumnsFromRanges();
         const {dimensionCols, valueCols} = this.getAllChartColumns();
 
-        if (valueCols.length === 0) {
-            console.warn("ag-Grid - charts require at least one visible 'series' column.");
-            return;
-        }
+        const allCols = this.pivotChart ? this.columnController.getAllDisplayedColumns() : this.getAllColumnsFromRanges();
 
         this.valueColState = valueCols.map(column => {
             return {
                 column,
                 colId: column.getColId(),
                 displayName: this.getColDisplayName(column),
-                selected: allColsFromRanges.indexOf(column) > -1
+                selected: allCols.indexOf(column) > -1
             };
         });
 
@@ -127,7 +141,7 @@ export class ChartModel extends BeanStub {
             };
         });
 
-        const dimensionsInCellRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
+        const dimensionsInCellRange = dimensionCols.filter(col => allCols.indexOf(col) > -1);
 
         if (dimensionsInCellRange.length > 0) {
             // select the first dimension from the range
@@ -215,20 +229,63 @@ export class ChartModel extends BeanStub {
     }
 
     public getData(): any[] {
-        const selectedDimension = this.getSelectedDimensionId();
+        // grouped data contains label fields rather than objects with toString
+        if (this.grouping && this.isMultiCategoryChart()) {
+            return this.chartData;
+        }
+
+        const colId = this.getSelectedDimension().colId;
         // replacing the selected dimension with a complex object to facilitate duplicated categories
         return this.chartData.map((d: any, index: number) => {
-            const dimensionValue = d[selectedDimension] ? d[selectedDimension].toString() : '';
-            d[selectedDimension] = {toString: () => dimensionValue, id: index};
+            const dimensionValue = d[colId] ? d[colId].toString() : '';
+            d[colId] = {toString: () => dimensionValue, id: index};
             return d;
         });
     }
 
-    public setChartProxy(chartProxy: ChartProxy): void {
+    public setChartType(chartType: ChartType) {
+        const isCurrentMultiCategory = this.isMultiCategoryChart();
+
+        this.chartType = chartType;
+
+        // switching between single and multi-category charts requires data to be reformatted
+        if (isCurrentMultiCategory !== this.isMultiCategoryChart()) {
+            this.updateData();
+        }
+    }
+
+    public isGrouping(): boolean {
+        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const groupedCols = usingTreeData ? null : this.columnController.getRowGroupColumns();
+        const groupActive = usingTreeData || (groupedCols && groupedCols.length > 0) as boolean;
+
+        // charts only group when the selected category is a group column
+        const groupCols = this.columnController.getGroupDisplayColumns();
+        const colId = this.getSelectedDimension().colId;
+        const groupDimensionSelected = groupCols
+            .map(col => col.getColId())
+            .some(id => id === colId);
+
+        return groupActive && groupDimensionSelected;
+    }
+
+    public isPivotActive(): boolean {
+        return this.columnController.isPivotActive();
+    }
+
+    public isPivotMode(): boolean {
+        return this.columnController.isPivotMode();
+    }
+
+    public isPivotChart(): boolean {
+        return this.pivotChart;
+    }
+
+    public setChartProxy(chartProxy: ChartProxy<any>): void {
         this.chartProxy = chartProxy;
     }
 
-    public getChartProxy(): ChartProxy {
+    public getChartProxy(): ChartProxy<any> {
         return this.chartProxy;
     }
 
@@ -237,7 +294,7 @@ export class ChartModel extends BeanStub {
     }
 
     public getValueColState(): ColState[] {
-        return this.valueColState;
+        return this.valueColState.map(this.displayNameMapper.bind(this));
     }
 
     public getDimensionColState(): ColState[] {
@@ -246,10 +303,6 @@ export class ChartModel extends BeanStub {
 
     public getCellRanges(): CellRange[] {
         return this.cellRanges;
-    }
-
-    public setChartType(chartType: ChartType) {
-        this.chartType = chartType;
     }
 
     public getChartType(): ChartType {
@@ -272,16 +325,24 @@ export class ChartModel extends BeanStub {
         return this.suppressChartRanges;
     }
 
-    public getSelectedColState(): ColState[] {
-        return this.valueColState.filter(cs => cs.selected);
+    public isDetached(): boolean {
+        return this.detached;
+    }
+
+    public toggleDetached(): void {
+        this.detached = !this.detached;
+    }
+
+    public getSelectedValueColState(): {colId: string, displayName: string}[] {
+        return this.getValueColState().filter(cs => cs.selected);
     }
 
     public getSelectedValueCols(): Column[] {
-        return this.getSelectedColState().map(cs => cs.column) as Column[];
+        return this.valueColState.filter(cs => cs.selected).map(cs => cs.column) as Column[];
     }
 
-    public getSelectedDimensionId(): string {
-        return this.dimensionColState.filter(cs => cs.selected)[0].colId;
+    public getSelectedDimension(): ColState {
+        return this.dimensionColState.filter(cs => cs.selected)[0];
     }
 
     private getColumnInDisplayOrder(allDisplayedColumns: Column[], listToSort: Column[]) {
@@ -322,7 +383,7 @@ export class ChartModel extends BeanStub {
             startRow = this.rangeController.getRangeStartRow(range).rowIndex;
             endRow = this.rangeController.getRangeEndRow(range).rowIndex;
         }
-        return {startRow, endRow}
+        return {startRow, endRow};
     }
 
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
@@ -354,6 +415,11 @@ export class ChartModel extends BeanStub {
                 }
             }
 
+            if (colDef.colId === 'ag-Grid-AutoColumn') {
+                dimensionCols.push(col);
+                return;
+            }
+
             if (!col.isPrimary()) {
                 valueCols.push(col);
                 return;
@@ -367,7 +433,7 @@ export class ChartModel extends BeanStub {
     }
 
     private isNumberCol(colId: any) {
-        if (colId === 'ag-Grid-AutoColumn') return false;
+        if (colId === 'ag-Grid-AutoColumn') { return false; }
 
         const row = this.rowRenderer.getRowNode({rowIndex: 0, rowPinned: undefined});
         const rowData = row ? row.data : null;
@@ -391,6 +457,24 @@ export class ChartModel extends BeanStub {
             }
         }
         return null;
+    }
+
+    private displayNameMapper(col: ColState) {
+        if (this.columnNames[col.colId]) {
+            col.displayName = this.columnNames[col.colId].join(' - ');
+        } else {
+            col.displayName = this.getColDisplayName(col.column as Column);
+        }
+        return col;
+    }
+
+    private isMultiCategoryChart(): boolean {
+        return [
+            ChartType.Pie,
+            ChartType.Doughnut,
+            ChartType.Scatter,
+            ChartType.Bubble
+        ].indexOf(this.chartType) < 0;
     }
 
     private generateId(): string {

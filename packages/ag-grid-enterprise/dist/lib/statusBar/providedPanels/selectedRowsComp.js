@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -40,7 +40,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel-selected-row-count');
         var selectedRowCount = this.gridApi.getSelectedRows().length;
         this.setValue(selectedRowCount);
-        this.setVisible(selectedRowCount > 0);
+        this.setDisplayed(selectedRowCount > 0);
         var eventListener = this.onRowSelectionChanged.bind(this);
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_MODEL_UPDATED, eventListener);
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_SELECTION_CHANGED, eventListener);
@@ -53,7 +53,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     SelectedRowsComp.prototype.onRowSelectionChanged = function () {
         var selectedRowCount = this.gridApi.getSelectedRows().length;
         this.setValue(selectedRowCount);
-        this.setVisible(selectedRowCount > 0);
+        this.setDisplayed(selectedRowCount > 0);
     };
     SelectedRowsComp.prototype.init = function () {
     };

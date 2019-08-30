@@ -1,10 +1,11 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { DragListenerParams } from "../dragAndDrop/dragService";
-import { PopupService } from "./popupService";
-import { ResizableStructure } from "../rendering/mixins/resizable";
 import { PanelOptions, AgPanel } from "./agPanel";
+export declare type ResizableSides = 'topLeft' | 'top' | 'topRight' | 'right' | 'bottomRight' | 'bottom' | 'bottomLeft' | 'left';
+export declare type ResizableStructure = {
+    [key in ResizableSides]?: boolean;
+};
 export interface DialogOptions extends PanelOptions {
     eWrapper?: HTMLElement;
     modal?: boolean;
@@ -16,80 +17,44 @@ export interface DialogOptions extends PanelOptions {
     y?: number;
     centered?: boolean;
 }
-declare const AgDialog_base: {
-    new (...args: any[]): {
-        [x: string]: any;
-        addDestroyableEventListener(...args: any[]): () => void;
-        MAXIMIZE_BTN_TEMPLATE: string;
-        config: any;
-        position: {
-            x: number;
-            y: number;
-        };
-        eTitleBar: HTMLElement;
-        offsetElement(x: number, y: number): void;
-        gridOptionsWrapper: import("../gridOptionsWrapper").GridOptionsWrapper;
-        isMaximizable: boolean;
-        isMaximized: boolean;
-        maximizeListeners: (() => void)[];
-        maximizeButtonComp: import("./component").Component;
-        maximizeIcon: HTMLElement;
-        minimizeIcon: HTMLElement;
-        resizeListenerDestroy: () => void;
-        lastPosition: {
-            x: number;
-            y: number;
-            width: number;
-            height: number;
-        };
-        postConstruct(): void;
-        setMaximizable(maximizable: boolean): void;
-        toggleMaximize(): void;
-        refreshMaximizeIcon(): void;
-        clearMaximizebleListeners(): void;
-        destroy(): void;
-    };
-} & {
-    new (...args: any[]): {
-        [x: string]: any;
-        dragService: import("../dragAndDrop/dragService").DragService;
-        config: any;
-        moveElement: HTMLElement;
-        moveElementDragListener: DragListenerParams;
-        updateDragStartPosition(x: number, y: number): void;
-        calculateMouseMovement(params: {
-            e: MouseEvent;
-            topBuffer?: number;
-            anywhereWithin?: boolean;
-            isLeft?: boolean;
-            isTop?: boolean;
-        }): {
-            movementX: number;
-            movementY: number;
-        };
-        position: {
-            x: number;
-            y: number;
-        };
-        getBodyHeight(): number;
-        offsetElement(x: number, y: number): void;
-        movable: boolean;
-        isMoving: boolean;
-        postConstruct(): void;
-        onMoveStart(e: MouseEvent): void;
-        onMove(e: MouseEvent): void;
-        onMoveEnd(): void;
-        destroy(): void;
-        setMovable(movable: boolean): void;
-    };
-} & typeof AgPanel;
-export declare class AgDialog extends AgDialog_base {
-    moveElement: HTMLElement;
-    moveElementDragListener: DragListenerParams;
-    config: DialogOptions | undefined;
-    popupService: PopupService;
+export declare class AgDialog extends AgPanel {
+    private RESIZE_TEMPLATE;
+    private MAXIMIZE_BTN_TEMPLATE;
+    private dragService;
+    private moveElement;
+    private moveElementDragListener;
+    private resizable;
+    private isResizable;
+    private movable;
+    private isMoving;
+    private isMaximizable;
+    private isMaximized;
+    private maximizeListeners;
+    private maximizeButtonComp;
+    private maximizeIcon;
+    private minimizeIcon;
+    private resizeListenerDestroy;
+    private resizerMap;
+    private isResizing;
+    private lastPosition;
+    protected config: DialogOptions | undefined;
     constructor(config?: DialogOptions);
-    postConstruct(): void;
-    renderComponent(): void;
+    protected postConstruct(): void;
+    protected renderComponent(): void;
+    private addResizers;
+    private createMap;
+    private getResizerElement;
+    private onResizeStart;
+    private onResize;
+    private onResizeEnd;
+    private onMoveStart;
+    private onMove;
+    private onMoveEnd;
+    private toggleMaximize;
+    private refreshMaximizeIcon;
+    private clearMaximizebleListeners;
+    destroy(): void;
+    setResizable(resizable: boolean | ResizableStructure): void;
+    setMovable(movable: boolean): void;
+    setMaximizable(maximizable: boolean): void;
 }
-export {};

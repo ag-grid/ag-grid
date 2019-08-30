@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,7 +36,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
     function AgAbstractInputField() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.config = {};
-        _this.TEMPLATE = "<div class=\"ag-input-field\">\n            <label ref=\"eLabel\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\">\n                <%displayField% ref=\"eInput\"></%displayField%>\n            </div>\n        </div>";
+        _this.TEMPLATE = "<div class=\"ag-input-field\" role=\"presentation\">\n            <label ref=\"eLabel\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                <%displayField% ref=\"eInput\"></%displayField%>\n            </div>\n        </div>";
         return _this;
     }
     AgAbstractInputField.prototype.postConstruct = function () {

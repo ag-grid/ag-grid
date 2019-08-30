@@ -3,13 +3,14 @@ import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
 import { Line } from "./scene/shape/line";
 import { NumericTicks } from "./util/ticks";
-import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
+import { normalizeAngle360, normalizeAngle360Inclusive, toDegrees, toRadians } from "./util/angle";
 import { Text } from "./scene/shape/text";
 import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
 import { Caption } from "./caption";
+import { Rect } from "./scene/shape/rect";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -18,8 +19,8 @@ enum Tags {
 }
 
 export interface GridStyle {
-    stroke?: string,
-    lineDash?: number[]
+    stroke?: string;
+    lineDash?: number[];
 }
 
 /**
@@ -36,9 +37,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
     // debug (bbox)
     // private bboxRect = (() => {
     //     const rect = new Rect();
-    //     rect.fillStyle = null;
-    //     rect.strokeStyle = 'blue';
-    //     rect.lineWidth = 1;
+    //     rect.fill = undefined;
+    //     rect.stroke = 'red';
+    //     rect.strokeWidth = 1;
+    //     rect.strokeOpacity = 0.2;
     //     return rect;
     // })();
 
@@ -53,6 +55,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
         this.group.append(this.line);
         // this.group.append(this.bboxRect); // debug (bbox)
+    }
+
+    set range(value: number[]) {
+        this.scale.range = value;
+    }
+    get range(): number[] {
+        return this.scale.range;
     }
 
     set domain(value: D[]) {
@@ -403,20 +412,23 @@ export class Axis<S extends Scale<D, number>, D = any> {
         line.stroke = this.lineColor;
         line.visible = ticks.length > 0;
 
-        // const title = this.title;
-        // if (title) {
-        //     const titleRotation = normalizeAngle360(rotation);
-        //     const titleRotationFlag = (titleRotation >= 0 && titleRotation < Math.PI) ? -1 : 1;
-        //     const node = title.node;
-        //
-        //     const bbox = this.getBBox();
-        //
-        //     const titleSideFlag = -1;
-        //     node.textBaseline = titleSideFlag * sideFlag * titleRotationFlag === -1 ? 'bottom' : 'top';
-        //     node.rotation = titleRotationFlag * Math.PI / 2;
-        //     node.x = titleRotationFlag * (line.y1 + line.y2) / 2;
-        //     node.y = sideFlag * titleSideFlag * titleRotationFlag * (10 + bbox.width - Math.max(bbox.x + bbox.width, 0));
-        // }
+        const title = this.title;
+        if (title) {
+            const padding = title.padding.bottom;
+            const node = title.node;
+            const bbox = this.getBBox(false);
+            const titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
+
+            node.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
+            node.x = titleRotationFlag * sideFlag * (line.y1 + line.y2) / 2;
+            if (sideFlag === -1) {
+                node.y = titleRotationFlag * (-padding - bbox.width + Math.max(bbox.x + bbox.width, 0));
+            } else {
+                node.y = -padding - bbox.width - Math.min(bbox.x, 0);
+            }
+            // title.text = `Axis Title: ${sideFlag} ${toDegrees(parallelFlipRotation).toFixed(0)} ${titleRotationFlag}`;
+            node.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
+        }
 
         // debug (bbox)
         // const bbox = this.getBBox();
@@ -427,7 +439,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // bboxRect.height = bbox.height;
     }
 
-    getBBox(): BBox {
+    getBBox(includeTitle = true): BBox {
         const line = this.line;
         const labels = this.groupSelection.selectByClass(Text);
 
@@ -451,12 +463,29 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const group = label.parent!;
             group.computeTransformMatrix();
             matrix.preMultiplySelf(group.matrix);
-            const bbox = matrix.transformBBox(label.getBBox());
-            left = Math.min(left, bbox.x);
-            right = Math.max(right, bbox.x + bbox.width);
-            top = Math.min(top, bbox.y);
-            bottom = Math.max(bottom, bbox.y + bbox.height);
+            const labelBBox = label.getBBox();
+            if (labelBBox) {
+                const bbox = matrix.transformBBox(labelBBox);
+                left = Math.min(left, bbox.x);
+                right = Math.max(right, bbox.x + bbox.width);
+                top = Math.min(top, bbox.y);
+                bottom = Math.max(bottom, bbox.y + bbox.height);
+            }
         });
+
+        if (includeTitle && this.title) {
+            const label = this.title.node;
+            label.computeTransformMatrix();
+            const matrix = Matrix.flyweight(label.matrix);
+            const labelBBox = label.getBBox();
+            if (labelBBox) {
+                const bbox = matrix.transformBBox(labelBBox);
+                left = Math.min(left, bbox.x);
+                right = Math.max(right, bbox.x + bbox.width);
+                top = Math.min(top, bbox.y);
+                bottom = Math.max(bottom, bbox.y + bbox.height);
+            }
+        }
 
         left = Math.min(left, 0);
         right = Math.max(right, 0);

@@ -70,6 +70,7 @@ export interface RowNodeMap { [id: string]: RowNode; }
 
 @Bean('rowModel')
 export class ClientSideRowModel {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -249,6 +250,31 @@ export class ClientSideRowModel {
             return this.rowsToDisplay.length;
         } else {
             return 0;
+        }
+    }
+
+    public getTopLevelRowCount(): number {
+        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0]===this.rootNode;
+        if (showingRootNode) {
+            return 1;
+        } else {
+            return this.rootNode.childrenAfterFilter ? this.rootNode.childrenAfterFilter.length : 0;
+        }
+    }
+
+    public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
+        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0]===this.rootNode;
+        if (showingRootNode) {
+            return topLevelIndex;
+        } else {
+            let rowNode = this.rootNode.childrenAfterSort[topLevelIndex];
+            if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
+                // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
+                while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length>0) {
+                    rowNode = rowNode.childrenAfterSort[0];
+                }
+            }
+            return rowNode.rowIndex;
         }
     }
 
@@ -464,23 +490,6 @@ export class ClientSideRowModel {
 
     public isRowPresent(rowNode: RowNode): boolean {
         return this.rowsToDisplay.indexOf(rowNode) >= 0;
-    }
-
-    public getVirtualRowCount(): number {
-        console.warn('ag-Grid: rowModel.getVirtualRowCount() is not longer a function, use rowModel.getRowCount() instead');
-        return this.getPageLastRow();
-    }
-
-    public getPageFirstRow(): number {
-        return 0;
-    }
-
-    public getPageLastRow(): number {
-        if (this.rowsToDisplay) {
-            return this.rowsToDisplay.length - 1;
-        } else {
-            return 0;
-        }
     }
 
     public getRowIndexAtPixel(pixelToMatch: number): number {

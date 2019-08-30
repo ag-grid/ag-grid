@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -282,7 +282,7 @@ var DragAndDropService = /** @class */ (function () {
     };
     DragAndDropService.prototype.createGhost = function () {
         this.eGhost = utils_1._.loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
-        var theme = this.environment.getTheme();
+        var theme = this.environment.getTheme().theme;
         if (theme) {
             utils_1._.addCssClass(this.eGhost, theme);
         }

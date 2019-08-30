@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -23,6 +23,7 @@ var palettes_1 = require("../palettes");
 var series_1 = require("./series");
 var number_1 = require("../../util/number");
 var ag_grid_community_1 = require("ag-grid-community");
+var linearScale_1 = require("../../scale/linearScale");
 var ScatterSeries = /** @class */ (function (_super) {
     __extends(ScatterSeries, _super);
     function ScatterSeries() {
@@ -31,15 +32,24 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.domainY = [];
         _this.xData = [];
         _this.yData = [];
+        _this.radiusData = [];
+        _this.radiusScale = linearScale_1.default();
         _this.groupSelection = selection_1.Selection.select(_this.group).selectAll();
         _this._title = '';
         _this._xField = '';
         _this._yField = '';
+        _this._radiusField = '';
+        _this.xFieldName = 'X';
+        _this.yFieldName = 'Y';
+        _this.radiusFieldName = 'Radius';
         _this._marker = false;
         _this._markerSize = 8;
+        _this._minMarkerSize = 4;
         _this._markerStrokeWidth = 2;
         _this._fill = palettes_1.default.fills[0];
         _this._stroke = palettes_1.default.strokes[0];
+        _this._fillOpacity = 1;
+        _this._strokeOpacity = 1;
         _this.highlightStyle = {
             fill: 'yellow'
         };
@@ -99,6 +109,19 @@ var ScatterSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(ScatterSeries.prototype, "radiusField", {
+        get: function () {
+            return this._radiusField;
+        },
+        set: function (value) {
+            if (this._radiusField !== value) {
+                this._radiusField = value;
+                this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ScatterSeries.prototype, "marker", {
         get: function () {
             return this._marker;
@@ -125,6 +148,19 @@ var ScatterSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(ScatterSeries.prototype, "minMarkerSize", {
+        get: function () {
+            return this._minMarkerSize;
+        },
+        set: function (value) {
+            if (this._minMarkerSize !== value) {
+                this._minMarkerSize = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ScatterSeries.prototype, "markerStrokeWidth", {
         get: function () {
             return this._markerStrokeWidth;
@@ -142,6 +178,9 @@ var ScatterSeries = /** @class */ (function (_super) {
         var chart = this.chart;
         var xField = this.xField;
         var yField = this.yField;
+        var radiusField = this.radiusField;
+        var markerSize = this.markerSize;
+        var minMarkerSize = this.minMarkerSize;
         var data = this.data;
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
@@ -149,43 +188,36 @@ var ScatterSeries = /** @class */ (function (_super) {
         if (!(xField && yField)) {
             this._data = data = [];
         }
-        this.xData = data.map(function (datum) { return datum[xField]; });
-        this.yData = data.map(function (datum) { return datum[yField]; });
+        var xData = [];
+        var yData = [];
+        var radiusData = [];
+        data.forEach(function (datum) {
+            xData.push(datum[xField]);
+            yData.push(datum[yField]);
+            if (radiusField) {
+                radiusData.push(datum[radiusField]);
+            }
+        });
+        this.xData = xData;
+        this.yData = yData;
+        this.radiusData = radiusData;
+        this.radiusScale.domain = array_1.numericExtent(radiusData) || [1, 1];
+        this.radiusScale.range = [minMarkerSize / 2, markerSize / 2];
         var continuousX = chart.xAxis.scale instanceof continuousScale_1.default;
-        var domainX = continuousX ? array_1.extent(this.xData) : this.xData;
-        var domainY = array_1.extent(this.yData);
+        var domainX = continuousX ? (array_1.numericExtent(this.xData) || [0, 1]) : this.xData;
+        var domainY = array_1.numericExtent(this.yData) || [0, 1];
         if (continuousX) {
-            var min = domainX[0];
-            var max = domainX[1];
+            var _a = domainX, min = _a[0], max = _a[1];
             if (min === max) {
-                if (typeof min === 'number' && isFinite(min)) {
-                    domainX[0] -= 1;
-                }
-                else {
-                    domainX[0] = 0;
-                }
-                if (typeof max === 'number' && isFinite(max)) {
-                    domainX[1] += 1;
-                }
-                else {
-                    domainX[1] = 1;
-                }
+                domainX[0] = min - 1;
+                domainX[1] = max + 1;
             }
         }
-        if (domainY[0] === domainY[1]) {
-            var min = domainY[0];
-            var max = domainY[1];
-            if (typeof min === 'number' && isFinite(min)) {
-                domainY[0] -= 1;
-            }
-            else {
-                domainY[0] = 0;
-            }
-            if (typeof max === 'number' && isFinite(max)) {
-                domainY[1] += 1;
-            }
-            else {
-                domainY[1] = 1;
+        {
+            var _b = domainY, min = _b[0], max = _b[1];
+            if (min === max) {
+                domainY[0] = min - 1;
+                domainY[1] = max + 1;
             }
         }
         this.domainX = domainX;
@@ -219,6 +251,32 @@ var ScatterSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(ScatterSeries.prototype, "fillOpacity", {
+        get: function () {
+            return this._fillOpacity;
+        },
+        set: function (value) {
+            if (this._fillOpacity !== value) {
+                this._fillOpacity = value;
+                this.scheduleLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ScatterSeries.prototype, "strokeOpacity", {
+        get: function () {
+            return this._strokeOpacity;
+        },
+        set: function (value) {
+            if (this._strokeOpacity !== value) {
+                this._strokeOpacity = value;
+                this.scheduleLayout();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     ScatterSeries.prototype.highlightNode = function (node) {
         if (!(node instanceof arc_1.Arc)) {
             return;
@@ -246,9 +304,12 @@ var ScatterSeries = /** @class */ (function (_super) {
         var data = this.data;
         var xData = this.xData;
         var yData = this.yData;
+        var radiusData = this.radiusData;
         var n = xData.length;
         var fill = this.fill;
         var stroke = this.stroke;
+        var fillOpacity = this.fillOpacity;
+        var strokeOpacity = this.strokeOpacity;
         var markerStrokeWidth = this.markerStrokeWidth;
         var markerSize = this.markerSize;
         var groupSelectionData = [];
@@ -264,7 +325,7 @@ var ScatterSeries = /** @class */ (function (_super) {
                 fill: fill,
                 stroke: stroke,
                 strokeWidth: markerStrokeWidth,
-                radius: markerSize / 2
+                radius: this.radiusField ? this.radiusScale.convert(radiusData[i]) : markerSize / 2
             });
         }
         // ------------------------------------------
@@ -286,6 +347,8 @@ var ScatterSeries = /** @class */ (function (_super) {
             arc.stroke = arc === highlightedNode && _this.highlightStyle.stroke !== undefined
                 ? _this.highlightStyle.stroke
                 : datum.stroke;
+            arc.fillOpacity = fillOpacity;
+            arc.strokeOpacity = strokeOpacity;
             arc.strokeWidth = datum.strokeWidth;
             arc.visible = datum.radius > 0;
         });
@@ -300,6 +363,10 @@ var ScatterSeries = /** @class */ (function (_super) {
     ScatterSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var xField = this.xField;
         var yField = this.yField;
+        var radiusField = this.radiusField;
+        var xFieldName = this.xFieldName;
+        var yFieldName = this.yFieldName;
+        var radiusFieldName = this.radiusFieldName;
         var color = this.fill;
         var html = '';
         if (!xField || !yField) {
@@ -311,6 +378,10 @@ var ScatterSeries = /** @class */ (function (_super) {
                 datum: nodeDatum.seriesDatum,
                 xField: xField,
                 yField: yField,
+                radiusField: radiusField,
+                xFieldName: xFieldName,
+                yFieldName: yFieldName,
+                radiusFieldName: radiusFieldName,
                 title: title,
                 color: color
             });
@@ -323,7 +394,11 @@ var ScatterSeries = /** @class */ (function (_super) {
             var yValue = seriesDatum[yField];
             var xString = typeof (xValue) === 'number' ? number_1.toFixed(xValue) : String(xValue);
             var yString = typeof (yValue) === 'number' ? number_1.toFixed(yValue) : String(yValue);
-            html = title + "<div class=\"content\">" + xString + ": " + yString + "</div>";
+            var fieldString = "<b>" + xFieldName + "</b>: " + xString + "<br><b>" + yFieldName + "</b>: " + yString;
+            if (radiusField) {
+                fieldString += "<br><b>" + radiusFieldName + "</b>: " + seriesDatum[radiusField];
+            }
+            html = title + "<div class=\"content\">" + fieldString + "</div>";
             // html = `${title}<div class="content">${xField}: ${xString}<br>${yField}: ${yString}</div>`;
         }
         return html;

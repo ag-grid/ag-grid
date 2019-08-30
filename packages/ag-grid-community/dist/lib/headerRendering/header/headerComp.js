@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -213,7 +213,7 @@ var HeaderComp = /** @class */ (function (_super) {
         var indexThisCol = allColumnsWithSorting.indexOf(col);
         var moreThanOneColSorting = allColumnsWithSorting.length > 1;
         var showIndex = col.isSorting() && moreThanOneColSorting;
-        utils_1._.setVisible(this.eSortOrder, showIndex);
+        utils_1._.setDisplayed(this.eSortOrder, showIndex);
         if (indexThisCol >= 0) {
             this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
         }

@@ -1,21 +1,27 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 declare type Size = {
     width: number;
     height: number;
+};
+export declare type HdpiCanvasOptions = {
+    width?: number;
+    height?: number;
+    document?: Document;
 };
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.
  */
 export declare class HdpiCanvas {
-    readonly canvas: HTMLCanvasElement;
+    readonly document: Document;
+    readonly element: HTMLCanvasElement;
     readonly context: CanvasRenderingContext2D;
     /**
      * The canvas flickers on size changes in Safari.
      * A temporary canvas is used (during resize only) to prevent that.
      */
     private tempCanvas;
-    constructor(width?: number, height?: number);
+    constructor(options?: HdpiCanvasOptions);
     private _parent;
     parent: HTMLElement | undefined;
     private remove;
@@ -37,26 +43,30 @@ export declare class HdpiCanvas {
      * @param resize
      */
     updatePixelRatio(ratio?: number, resize?: boolean): void;
+    private _width;
+    readonly width: number;
+    private _height;
+    readonly height: number;
     resize(width: number, height: number): void;
-    private static _textMeasuringContext?;
-    private static readonly textMeasuringContext;
-    private static _svgText;
-    private static readonly svgText;
-    private static _has?;
-    static readonly has: Readonly<{
+    private _textMeasuringContext?;
+    private readonly textMeasuringContext;
+    private _svgText?;
+    private readonly svgText;
+    private _has?;
+    readonly has: Readonly<{
         textMetrics: boolean;
         getTransform: boolean;
         flicker: boolean;
     }>;
-    static measureText(text: string, font: string, textBaseline: CanvasTextBaseline, textAlign: CanvasTextAlign): TextMetrics;
+    measureText(text: string, font: string, textBaseline: CanvasTextBaseline, textAlign: CanvasTextAlign): TextMetrics;
     /**
      * Returns the width and height of the measured text.
      * @param text The single-line text to measure.
      * @param font The font shorthand string.
      */
-    static getTextSize(text: string, font: string): Size;
+    getTextSize(text: string, font: string): Size;
     private static textSizeCache;
-    private static measureSvgText;
+    private measureSvgText;
     private static makeHdpiOverrides;
 }
 export {};

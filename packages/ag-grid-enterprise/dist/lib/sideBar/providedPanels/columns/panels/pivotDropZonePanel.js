@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -63,21 +63,21 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
             // on the user property as well as pivotMode.
             switch (this.gridOptionsWrapper.getPivotPanelShow()) {
                 case 'always':
-                    this.setVisible(pivotMode);
+                    this.setDisplayed(pivotMode);
                     break;
                 case 'onlyWhenPivoting':
                     var pivotActive = this.columnController.isPivotActive();
-                    this.setVisible(pivotMode && pivotActive);
+                    this.setDisplayed(pivotMode && pivotActive);
                     break;
                 default:
                     // never show it
-                    this.setVisible(false);
+                    this.setDisplayed(false);
                     break;
             }
         }
         else {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
-            this.setVisible(pivotMode);
+            this.setDisplayed(pivotMode);
         }
     };
     PivotDropZonePanel.prototype.isColumnDroppable = function (column) {

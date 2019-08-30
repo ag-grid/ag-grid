@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 export declare class PaddingPanel extends Component {
@@ -9,8 +9,7 @@ export declare class PaddingPanel extends Component {
     private paddingBottomSlider;
     private paddingLeftSlider;
     private chartTranslator;
-    private chart;
-    private readonly chartController;
+    private chartProxy;
     constructor(chartController: ChartController);
     private init;
     private initGroup;

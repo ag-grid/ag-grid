@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,7 @@ var AgSlider = /** @class */ (function (_super) {
         var _this = this;
         var eventChanged = agAbstractField_1.AgAbstractField.EVENT_CHANGED;
         this.addDestroyableEventListener(this.eText, eventChanged, function () {
-            var textValue = parseInt(_this.eText.getValue(), 10);
+            var textValue = parseFloat(_this.eText.getValue());
             _this.eSlider.setValue(textValue.toString(), true);
             callbackFn(textValue || 0);
         });
@@ -91,6 +91,7 @@ var AgSlider = /** @class */ (function (_super) {
     };
     AgSlider.prototype.setStep = function (step) {
         this.eSlider.setStep(step);
+        this.eText.setStep(step);
         return this;
     };
     AgSlider.TEMPLATE = "<div class=\"ag-slider\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper\">\n                <ag-input-range ref=\"eSlider\"></ag-input-range>\n                <ag-input-number-field ref=\"eText\"></ag-input-number-field>\n            </div>\n        </div>";

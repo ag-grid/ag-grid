@@ -49,8 +49,6 @@ ag-Grid-React-Example
 
 + then angular & aurelia (angular publish too)
 + angular 'npm run release' (updates docs)
-+ then aurelia (aurelia publish too)
-+ aurelia 'npm run release' (updates docs)
 
 ag-Grid-Docs
 

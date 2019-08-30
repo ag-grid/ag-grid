@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,7 +28,7 @@ var SELECTED_STATE;
 (function (SELECTED_STATE) {
     SELECTED_STATE[SELECTED_STATE["CHECKED"] = 0] = "CHECKED";
     SELECTED_STATE[SELECTED_STATE["UNCHECKED"] = 1] = "UNCHECKED";
-    SELECTED_STATE[SELECTED_STATE["INDETERMINIATE"] = 2] = "INDETERMINIATE";
+    SELECTED_STATE[SELECTED_STATE["INDETERMINATE"] = 2] = "INDETERMINATE";
 })(SELECTED_STATE = exports.SELECTED_STATE || (exports.SELECTED_STATE = {}));
 var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     __extends(PrimaryColsHeaderPanel, _super);
@@ -40,7 +40,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     }
     PrimaryColsHeaderPanel.prototype.preConstruct = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.setTemplate("<div class=\"ag-primary-cols-header-panel\">\n            <div ref=\"eExpand\"></div>\n            <div ref=\"eSelect\"></div>\n            <div class=\"ag-input-wrapper ag-primary-cols-filter-wrapper\" ref=\"eFilterWrapper\">\n                <input class=\"ag-primary-cols-filter\" ref=\"eFilterTextField\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\">        \n            </div>\n        </div>");
+        this.setTemplate("<div class=\"ag-primary-cols-header-panel\" role=\"presentation\">\n            <div ref=\"eExpand\"></div>\n            <div ref=\"eSelect\"></div>\n            <div class=\"ag-input-wrapper ag-primary-cols-filter-wrapper\" ref=\"eFilterWrapper\" role=\"presentation\">\n                <input class=\"ag-primary-cols-filter\" ref=\"eFilterTextField\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\">        \n            </div>\n        </div>");
     };
     PrimaryColsHeaderPanel.prototype.postConstruct = function () {
         this.addEventListeners();
@@ -74,9 +74,9 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         var showSelect = !this.params.suppressColumnSelectAll;
         var showExpand = !this.params.suppressColumnExpandAll;
         var groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
-        main_1._.setVisible(this.eFilterWrapper, showFilter);
-        main_1._.setVisible(this.eSelect, showSelect);
-        main_1._.setVisible(this.eExpand, showExpand && groupsPresent);
+        main_1._.setDisplayed(this.eFilterWrapper, showFilter);
+        main_1._.setDisplayed(this.eSelect, showSelect);
+        main_1._.setDisplayed(this.eExpand, showExpand && groupsPresent);
     };
     PrimaryColsHeaderPanel.prototype.addEventListeners = function () {
         var _this = this;
@@ -127,9 +127,9 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     };
     PrimaryColsHeaderPanel.prototype.setExpandState = function (state) {
         this.expandState = state;
-        main_1._.setVisible(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
-        main_1._.setVisible(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
-        main_1._.setVisible(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINIATE);
+        main_1._.setDisplayed(this.eExpandChecked, this.expandState === SELECTED_STATE.CHECKED);
+        main_1._.setDisplayed(this.eExpandUnchecked, this.expandState === SELECTED_STATE.UNCHECKED);
+        main_1._.setDisplayed(this.eExpandIndeterminate, this.expandState === SELECTED_STATE.INDETERMINATE);
     };
     PrimaryColsHeaderPanel.prototype.setColumnsCheckedState = function () {
         var allPrimaryColumns = this.columnController.getAllPrimaryColumns();
@@ -169,7 +169,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
             }
         });
         if (checkedCount > 0 && uncheckedCount > 0) {
-            this.selectState = SELECTED_STATE.INDETERMINIATE;
+            this.selectState = SELECTED_STATE.INDETERMINATE;
         }
         else if (uncheckedCount > 0) {
             this.selectState = SELECTED_STATE.UNCHECKED;
@@ -177,9 +177,9 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         else {
             this.selectState = SELECTED_STATE.CHECKED;
         }
-        main_1._.setVisible(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
-        main_1._.setVisible(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
-        main_1._.setVisible(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINIATE);
+        main_1._.setDisplayed(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
+        main_1._.setDisplayed(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
+        main_1._.setDisplayed(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINATE);
     };
     __decorate([
         main_1.Autowired('gridOptionsWrapper'),

@@ -10,10 +10,6 @@
 	path = packages/ag-grid-vue-example
 	url = https://github.com/ag-grid/ag-grid-vue-example.git
     branch = latest
-[submodule "packages/ag-grid-aurelia-example"]
-	path = packages/ag-grid-aurelia-example
-	url = https://github.com/ag-grid/ag-grid-aurelia-example.git
-    branch = latest
 [submodule "packages/ag-grid-polymer-example"]
 	path = packages/ag-grid-polymer-example
 	url = https://github.com/ag-grid/ag-grid-polymer-example.git

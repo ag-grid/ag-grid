@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 export declare function isEqual(a: number, b: number, epsilon?: number): boolean;
 /**
  * `Number.toFixed(n)` always formats a number so that it has `n` digits after the decimal point.

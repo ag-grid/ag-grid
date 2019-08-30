@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -31,7 +31,7 @@ var NameValueComp = /** @class */ (function (_super) {
     }
     NameValueComp.prototype.setLabel = function (key, defaultValue) {
         // we want to hide until the first value comes in
-        this.setVisible(false);
+        this.setDisplayed(false);
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
     };

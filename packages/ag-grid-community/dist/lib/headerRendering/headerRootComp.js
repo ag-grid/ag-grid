@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -121,12 +121,18 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.eHeaderContainer.style.width = width + "px";
     };
     HeaderRootComp.prototype.setLeftVisible = function (visible) {
-        utils_1._.setVisible(this.ePinnedLeftHeader, visible);
+        utils_1._.setDisplayed(this.ePinnedLeftHeader, visible);
     };
     HeaderRootComp.prototype.setRightVisible = function (visible) {
-        utils_1._.setVisible(this.ePinnedRightHeader, visible);
+        utils_1._.setDisplayed(this.ePinnedRightHeader, visible);
     };
-    HeaderRootComp.TEMPLATE = "<div class=\"ag-header\" role=\"row\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"presentation\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
+    HeaderRootComp.prototype.getHeaderRowCount = function () {
+        if (this.childContainers.length === 0) {
+            return 0;
+        }
+        return this.childContainers[0].getRowComps().length;
+    };
+    HeaderRootComp.TEMPLATE = "<div class=\"ag-header\" role=\"presentation\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"rowgroup\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
     __decorate([
         componentAnnotations_1.RefSelector('ePinnedLeftHeader'),
         __metadata("design:type", HTMLElement)

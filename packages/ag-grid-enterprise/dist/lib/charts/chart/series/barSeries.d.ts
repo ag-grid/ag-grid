@@ -1,7 +1,7 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { CartesianChart } from "../cartesianChart";
 import { DropShadow } from "../../scene/dropShadow";
-import { Series, SeriesNodeDatum } from "./series";
+import { HighlightStyle, Series, SeriesNodeDatum } from "./series";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 interface SelectionDatum extends SeriesNodeDatum {
@@ -104,10 +104,7 @@ export declare class BarSeries extends Series<CartesianChart> {
     labelColor: string;
     private _labelFormatter;
     labelFormatter: BarLabelFormatter | undefined;
-    highlightStyle: {
-        fill?: string;
-        stroke?: string;
-    };
+    highlightStyle: HighlightStyle;
     private highlightedNode?;
     highlightNode(node: Shape): void;
     dehighlightNode(): void;

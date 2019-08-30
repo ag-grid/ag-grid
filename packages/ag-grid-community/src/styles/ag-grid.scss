@@ -348,7 +348,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
     height: 100%;
     overflow: hidden;
-    line-height: 1.5;
 }
 
 .ag-header-group-cell-label, .ag-header-cell-label {
@@ -357,7 +356,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: hidden;
     align-items: center;
     text-overflow: ellipsis;
-    height: 100%;
+    align-self: stretch;
 }
 
 .ag-header-cell-label {
@@ -393,7 +392,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-header-select-all {
     display: flex;
-    line-height: 1;
 }
 
 /**
@@ -631,6 +629,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    > {
+        div, span {
+            display: flex;
+        }
+    }
 }
 
 .ag-filter {
@@ -730,7 +735,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     cursor: move;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
-    line-height: 1.4;
     overflow: hidden;
     padding: 3px;
     position: absolute;
@@ -1050,6 +1054,7 @@ $handleSize: 5px;
 
     .content {
         padding: 7px;
+        line-height: 1.7em;
     }
 }
 
@@ -1159,6 +1164,12 @@ $handleSize: 5px;
     align-items: center;
     display: flex;
     justify-content: flex-end;
+    .ag-paging-row-summary-panel {
+        display: flex;
+        span {
+            margin: 0 3px;
+        }
+    }
 }
 
 .ag-paging-page-summary-panel {
@@ -1169,6 +1180,7 @@ $handleSize: 5px;
     }
     .ag-paging-button {
         position: relative;
+        overflow: hidden;
         button {
             position: absolute;
         }
@@ -1473,7 +1485,7 @@ $handleSize: 5px;
             flex: none;
         }
     }
-    
+
     &.ag-label-align-top {
         flex-direction: column;
         align-items: flex-start;
@@ -1487,7 +1499,7 @@ $handleSize: 5px;
     display: flex;
     flex-direction: column;
     text-align: center;
-   
+
     .ag-spectrum-color {
         flex: 1 1 auto;
         position: relative;
@@ -1506,13 +1518,13 @@ $handleSize: 5px;
     .ag-spectrum-val {
        cursor: pointer;
     }
-   
+
     .ag-spectrum-dragger {
         position: absolute;
         pointer-events: none;
         cursor: pointer;
     }
-   
+
     .ag-spectrum-hue {
         cursor: default;
         background: linear-gradient(to left,
@@ -1522,38 +1534,38 @@ $handleSize: 5px;
             #ff0000 100%
         );
     }
-   
+
     .ag-spectrum-alpha {
         cursor: default;
     }
-   
+
     .ag-spectrum-hue-background {
         width: 100%;
         height: 100%;
     }
-   
+
     .ag-spectrum-alpha-background {
         background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
         width: 100%;
         height: 100%;
     }
-   
+
     .ag-hue-alpha {
         cursor: pointer;
     }
-   
+
     .ag-spectrum-slider {
         position: absolute;
         pointer-events: none;
     }
-   
+
     .ag-spectrum-text-value {
         display: inline-block;
         text-align: center;
         overflow: hidden;
         white-space: nowrap;
     }
-   
+
     .ag-spectrum-text-value:focus {
         outline: none;
         outline-offset: 0;

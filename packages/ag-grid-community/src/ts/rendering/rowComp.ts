@@ -169,10 +169,12 @@ export class RowComp extends Component {
         const businessKey = this.getRowBusinessKey();
         const businessKeySanitised = _.escape(businessKey);
         const rowTopStyle = this.getInitialRowTopStyle();
+        const rowIdx = this.rowNode.getRowIndexString();
+        const headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
-        templateParts.push(` row-index="${this.rowNode.getRowIndexString()}"`);
+        templateParts.push(` row-index="${rowIdx}" aria-rowindex="${headerRowCount + this.rowNode.rowIndex + 1}"`);
         templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
         templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
@@ -1464,6 +1466,7 @@ export class RowComp extends Component {
         const rowIndexStr = this.rowNode.getRowIndexString();
         const rowIsEven = this.rowNode.rowIndex % 2 === 0;
         const rowIsEvenChanged = this.rowIsEven !== rowIsEven;
+        const headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
 
         if (rowIsEvenChanged) {
             this.rowIsEven = rowIsEven;
@@ -1471,6 +1474,7 @@ export class RowComp extends Component {
 
         this.eAllRowContainers.forEach(eRow => {
             eRow.setAttribute('row-index', rowIndexStr);
+            eRow.setAttribute('aria-rowindex', (headerRowCount + this.rowNode.rowIndex + 1).toString());
 
             if (!rowIsEvenChanged) { return; }
             _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);

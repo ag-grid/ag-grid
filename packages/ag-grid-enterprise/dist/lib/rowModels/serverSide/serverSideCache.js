@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -149,7 +149,7 @@ var ServerSideCache = /** @class */ (function (_super) {
         this.displayIndexStart = displayIndexSeq.peek();
         this.cacheTop = nextRowTop.value;
         var lastBlockId = -1;
-        var blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : serverSideBlock_1.ServerSideBlock.DefaultBlockSize;
+        var blockSize = this.getBlockSize();
         this.forEachBlockInOrder(function (currentBlock, blockId) {
             // if we skipped blocks, then we need to skip the row indexes. we assume that all missing
             // blocks are made up of closed RowNodes only (if they were groups), as we never expire from
@@ -215,7 +215,7 @@ var ServerSideCache = /** @class */ (function (_super) {
         if (ag_grid_community_1._.missing(block) && dontCreateBlock) {
             return null;
         }
-        var blockSize = this.cacheParams.blockSize ? this.cacheParams.blockSize : serverSideBlock_1.ServerSideBlock.DefaultBlockSize;
+        var blockSize = this.getBlockSize();
         // if block not found, we need to load it
         if (ag_grid_community_1._.missing(block)) {
             var blockNumber = void 0;
@@ -252,8 +252,49 @@ var ServerSideCache = /** @class */ (function (_super) {
             block = this.createBlock(blockNumber, displayIndexStart_1, { value: nextRowTop });
             this.logger.log("block missing, rowIndex = " + displayRowIndex + ", creating #" + blockNumber + ", displayIndexStart = " + displayIndexStart_1);
         }
-        var rowNode = block ? block.getRow(displayRowIndex) : null;
-        return rowNode;
+        return block ? block.getRow(displayRowIndex) : null;
+    };
+    ServerSideCache.prototype.getBlockSize = function () {
+        return this.cacheParams.blockSize ? this.cacheParams.blockSize : serverSideBlock_1.ServerSideBlock.DefaultBlockSize;
+    };
+    ServerSideCache.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
+        var blockSize = this.getBlockSize();
+        var blockId = Math.floor(topLevelIndex / blockSize);
+        var block = this.getBlock(blockId);
+        if (block) {
+            // if we found a block, means row is in memory, so we can report the row index directly
+            var rowNode = block.getRowUsingLocalIndex(topLevelIndex, true);
+            return rowNode.rowIndex;
+        }
+        else {
+            // otherwise we need to calculate it from the previous block
+            var blockBefore_1;
+            this.forEachBlockInOrder(function (currentBlock, currentId) {
+                if (blockId > currentId) {
+                    // this will get assigned many times, but the last time will
+                    // be the closest block to the required block that is BEFORE
+                    blockBefore_1 = currentBlock;
+                }
+            });
+            if (blockBefore_1) {
+                // note: the local index is the same as the top level index, two terms for same thing
+                //
+                // get index of the last row before this row
+                // eg if blocksize = 100, then:
+                //   last row of first block is 99 (100 * 1) -1;
+                //   last row of second block is 199 (100 * 2) -1;
+                var lastRowTopLevelIndex = (blockSize * (blockId + 1)) - 1;
+                // this is the last loaded rownode in the cache that is before the row we are interested in.
+                // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
+                // same as the difference between the displayed index
+                var indexDiff = topLevelIndex - lastRowTopLevelIndex;
+                var lastRowNode = blockBefore_1.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
+                return lastRowNode.rowIndex + indexDiff;
+            }
+            else {
+                return topLevelIndex;
+            }
+        }
     };
     ServerSideCache.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
         var newBlock = new serverSideBlock_1.ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);

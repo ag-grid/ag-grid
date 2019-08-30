@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -76,14 +76,14 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
                 filter.afterGuiAttached({});
             }
         });
-        ag_grid_community_1._.setVisible(this.eExpandChecked, true);
-        ag_grid_community_1._.setVisible(this.eExpandUnchecked, false);
+        ag_grid_community_1._.setDisplayed(this.eExpandChecked, true);
+        ag_grid_community_1._.setDisplayed(this.eExpandUnchecked, false);
     };
     ToolPanelFilterComp.prototype.doCollapse = function () {
         this.expanded = false;
         this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
-        ag_grid_community_1._.setVisible(this.eExpandChecked, false);
-        ag_grid_community_1._.setVisible(this.eExpandUnchecked, true);
+        ag_grid_community_1._.setDisplayed(this.eExpandChecked, false);
+        ag_grid_community_1._.setDisplayed(this.eExpandUnchecked, true);
     };
     ToolPanelFilterComp.prototype.onFilterOpened = function (event) {
         if (event.source !== 'COLUMN_MENU') {

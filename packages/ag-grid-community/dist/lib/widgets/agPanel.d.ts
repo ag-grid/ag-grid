@@ -1,7 +1,9 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
+import { PopupService } from "./popupService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 export interface PanelOptions {
     component?: Component;
     hideTitleBar?: boolean;
@@ -11,65 +13,60 @@ export interface PanelOptions {
     width?: number | string;
     minHeight?: number;
     height?: number | string;
+    centered?: boolean;
+    x?: number;
+    y?: number;
 }
-declare const AgPanel_base: {
-    new (...args: any[]): {
-        [x: string]: any;
-        popupService: import("./popupService").PopupService;
-        gridOptionsWrapper: import("../gridOptionsWrapper").GridOptionsWrapper;
-        renderComponent?(): void;
-        config: any;
-        popupParent: HTMLElement;
-        minWidth: number;
-        minHeight?: number;
-        positioned: boolean;
-        dragStartPosition: {
-            x: number;
-            y: number;
-        };
-        position: {
-            x: number;
-            y: number;
-        };
-        size: {
-            width: number;
-            height: number;
-        };
-        postConstruct(): void;
-        updateDragStartPosition(x: number, y: number): void;
-        calculateMouseMovement(params: {
-            e: MouseEvent;
-            topBuffer?: number;
-            anywhereWithin?: boolean;
-            isLeft?: boolean;
-            isTop?: boolean;
-        }): {
-            movementX: number;
-            movementY: number;
-        };
-        refreshSize(): void;
-        offsetElement(x?: number, y?: number): void;
-        getHeight(): number;
-        setHeight(height: string | number): void;
-        getWidth(): number;
-        setWidth(width: string | number): void;
-        center(): void;
-    };
-} & typeof Component;
-export declare class AgPanel extends AgPanel_base {
+export declare class AgPanel extends Component {
     private static TEMPLATE;
     protected static CLOSE_BTN_TEMPLATE: string;
+    protected popupService: PopupService;
+    protected gridOptionsWrapper: GridOptionsWrapper;
     protected closable: boolean;
-    config: PanelOptions | undefined;
+    protected config: PanelOptions | undefined;
+    protected closeButtonComp: Component;
+    protected popupParent: HTMLElement;
+    protected minWidth: number;
+    protected minHeight?: number;
+    protected positioned: boolean;
+    protected dragStartPosition: {
+        x: number;
+        y: number;
+    };
+    protected position: {
+        x: number;
+        y: number;
+    };
+    protected size: {
+        width: number | undefined;
+        height: number | undefined;
+    };
+    close: () => void;
     protected eContentWrapper: HTMLElement;
     protected eTitleBar: HTMLElement;
     protected eTitleBarButtons: HTMLElement;
     protected eTitle: HTMLElement;
-    private closeButtonComp;
-    close: () => void;
     constructor(config?: PanelOptions);
-    postConstruct(): void;
-    renderComponent(): void;
+    protected postConstruct(): void;
+    protected renderComponent(): void;
+    protected updateDragStartPosition(x: number, y: number): void;
+    protected calculateMouseMovement(params: {
+        e: MouseEvent;
+        topBuffer?: number;
+        anywhereWithin?: boolean;
+        isLeft?: boolean;
+        isTop?: boolean;
+    }): {
+        movementX: number;
+        movementY: number;
+    };
+    private refreshSize;
+    protected offsetElement(x?: number, y?: number): void;
+    getHeight(): number;
+    setHeight(height: number | string): void;
+    getWidth(): number;
+    setWidth(width: number | string): void;
+    center(): void;
     setClosable(closable: boolean): void;
     setBodyComponent(bodyComponent: Component): void;
     addTitleBarButton(button: Component, position?: number): void;
@@ -79,4 +76,3 @@ export declare class AgPanel extends AgPanel_base {
     private onBtClose;
     destroy(): void;
 }
-export {};

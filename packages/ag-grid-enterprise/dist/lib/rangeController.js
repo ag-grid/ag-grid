@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -24,6 +24,7 @@ var RangeController = /** @class */ (function () {
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
@@ -72,7 +73,7 @@ var RangeController = /** @class */ (function () {
     };
     RangeController.prototype.getRangeStartRow = function (cellRange) {
         if (cellRange.startRow && cellRange.endRow) {
-            var startRowIsFirst = ag_grid_community_1.RowPositionUtils.before(cellRange.startRow, cellRange.endRow);
+            var startRowIsFirst = this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow);
             return startRowIsFirst ? cellRange.startRow : cellRange.endRow;
         }
         var pinned = (this.pinnedRowModel.getPinnedTopRowCount() > 0) ? ag_grid_community_1.Constants.PINNED_TOP : undefined;
@@ -80,7 +81,7 @@ var RangeController = /** @class */ (function () {
     };
     RangeController.prototype.getRangeEndRow = function (cellRange) {
         if (cellRange.startRow && cellRange.endRow) {
-            var startRowIsFirst = ag_grid_community_1.RowPositionUtils.before(cellRange.startRow, cellRange.endRow);
+            var startRowIsFirst = this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow);
             return startRowIsFirst ? cellRange.endRow : cellRange.startRow;
         }
         var pinnedBottomRowCount = this.pinnedRowModel.getPinnedBottomRowCount();
@@ -124,8 +125,8 @@ var RangeController = /** @class */ (function () {
             // check cols are same
             (range.columns && range.columns.length === 1 && range.columns[0] === cell.column) &&
                 // check rows are same
-                ag_grid_community_1.RowPositionUtils.sameRow(rowForCell, range.startRow) &&
-                ag_grid_community_1.RowPositionUtils.sameRow(rowForCell, range.endRow);
+                this.rowPositionUtils.sameRow(rowForCell, range.startRow) &&
+                this.rowPositionUtils.sameRow(rowForCell, range.endRow);
             if (matches) {
                 existingRange = range;
                 break;
@@ -405,8 +406,8 @@ var RangeController = /** @class */ (function () {
         if (equalsFirstRow || equalsLastRow) {
             return true;
         }
-        var afterFirstRow = !ag_grid_community_1.RowPositionUtils.before(thisRow, firstRow);
-        var beforeLastRow = ag_grid_community_1.RowPositionUtils.before(thisRow, lastRow);
+        var afterFirstRow = !this.rowPositionUtils.before(thisRow, firstRow);
+        var beforeLastRow = this.rowPositionUtils.before(thisRow, lastRow);
         return afterFirstRow && beforeLastRow;
     };
     RangeController.prototype.getDraggingRange = function () {
@@ -471,7 +472,7 @@ var RangeController = /** @class */ (function () {
         this.autoScrollService.check(mouseEvent, skipVerticalScroll);
         if (!cellPosition ||
             !this.draggingCell ||
-            ag_grid_community_1.CellPositionUtils.equals(this.draggingCell, cellPosition)) {
+            this.cellPositionUtils.equals(this.draggingCell, cellPosition)) {
             return;
         }
         var columns = this.calculateColumnsBetween(this.newestRangeStartCell.column, cellPosition.column);
@@ -496,7 +497,7 @@ var RangeController = /** @class */ (function () {
         this.dragging = false;
         this.draggingRange = undefined;
         this.draggingCell = undefined;
-        this.onRangeChanged({ started: false, finished: false });
+        this.onRangeChanged({ started: false, finished: true });
     };
     RangeController.prototype.onRangeChanged = function (params) {
         var started = params.started, finished = params.finished;
@@ -576,6 +577,14 @@ var RangeController = /** @class */ (function () {
         ag_grid_community_1.Autowired("pinnedRowModel"),
         __metadata("design:type", ag_grid_community_1.PinnedRowModel)
     ], RangeController.prototype, "pinnedRowModel", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('rowPositionUtils'),
+        __metadata("design:type", ag_grid_community_1.RowPositionUtils)
+    ], RangeController.prototype, "rowPositionUtils", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('cellPositionUtils'),
+        __metadata("design:type", ag_grid_community_1.CellPositionUtils)
+    ], RangeController.prototype, "cellPositionUtils", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

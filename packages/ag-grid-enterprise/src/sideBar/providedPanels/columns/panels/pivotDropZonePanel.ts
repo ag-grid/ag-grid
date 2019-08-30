@@ -72,20 +72,20 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
             // on the user property as well as pivotMode.
             switch (this.gridOptionsWrapper.getPivotPanelShow()) {
                 case 'always':
-                    this.setVisible(pivotMode);
+                    this.setDisplayed(pivotMode);
                     break;
                 case 'onlyWhenPivoting':
                     const pivotActive = this.columnController.isPivotActive();
-                    this.setVisible(pivotMode && pivotActive);
+                    this.setDisplayed(pivotMode && pivotActive);
                     break;
                 default:
                     // never show it
-                    this.setVisible(false);
+                    this.setDisplayed(false);
                     break;
             }
         } else {
             // in toolPanel, the pivot panel is always shown when pivot mode is on
-            this.setVisible(pivotMode);
+            this.setDisplayed(pivotMode);
         }
     }
 

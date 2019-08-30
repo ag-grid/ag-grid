@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Group } from "../../scene/group";
 import { Chart } from "../chart";
 import { LegendDatum } from "../legend";
@@ -10,6 +10,10 @@ import { Shape } from "../../scene/shape/shape";
  */
 export interface SeriesNodeDatum {
     seriesDatum: any;
+}
+export interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
 }
 export declare abstract class Series<C extends Chart> {
     readonly id: string;

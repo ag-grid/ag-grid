@@ -37,10 +37,10 @@ export class FloatingFilterWrapper extends Component {
     };
 
     private static TEMPLATE =
-        `<div class="ag-header-cell" aria-hidden="true">
-            <div ref="eFloatingFilterBody" aria-hidden="true"></div>
-            <div class="ag-floating-filter-button" ref="eButtonWrapper" aria-hidden="true">
-                    <button type="button" ref="eButtonShowMainFilter"></button>
+        `<div class="ag-header-cell" role="presentation">
+            <div ref="eFloatingFilterBody" role="columnheader"></div>
+            <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
+                <button type="button" ref="eButtonShowMainFilter"></button>
             </div>
         </div>`;
 
@@ -166,7 +166,7 @@ export class FloatingFilterWrapper extends Component {
         _.addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-body', !this.suppressFilterButton);
         _.addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-full-body', this.suppressFilterButton);
 
-        _.setVisible(this.eButtonWrapper, !this.suppressFilterButton);
+        _.setDisplayed(this.eButtonWrapper, !this.suppressFilterButton);
 
         const eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
         this.eButtonShowMainFilter.appendChild(eIcon);
@@ -245,7 +245,7 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private setupEmpty(): void {
-        _.setVisible(this.eButtonWrapper, false);
+        _.setDisplayed(this.eButtonWrapper, false);
     }
 
     private currentParentModel(): any {

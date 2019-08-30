@@ -3,29 +3,34 @@ import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
-import { extent } from "../../util/array";
+import { numericExtent } from "../../util/array";
 import palette from "../palettes";
 import { Series, SeriesNodeDatum } from "./series";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Color } from "ag-grid-community";
+import linearScale from "../../scale/linearScale";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
-    x: number,
-    y: number,
-    fill?: string,
-    stroke?: string,
-    strokeWidth: number,
-    radius: number
+    x: number;
+    y: number;
+    radius: number;
+    fill?: string;
+    stroke?: string;
+    strokeWidth: number;
 }
 
 export interface ScatterTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string,
-    title?: string,
-    color?: string
+    datum: any;
+    xField: string;
+    yField: string;
+    radiusField: string;
+    xFieldName: string;
+    yFieldName: string;
+    radiusFieldName: string;
+    title?: string;
+    color?: string;
 }
 
 export class ScatterSeries extends Series<CartesianChart> {
@@ -36,6 +41,8 @@ export class ScatterSeries extends Series<CartesianChart> {
     private domainY: any[] = [];
     private xData: any[] = [];
     private yData: any[] = [];
+    private radiusData: number[] = [];
+    private radiusScale = linearScale();
 
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
@@ -84,6 +91,21 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._yField;
     }
 
+    private _radiusField: string = '';
+    set radiusField(value: string) {
+        if (this._radiusField !== value) {
+            this._radiusField = value;
+            this.scheduleData();
+        }
+    }
+    get radiusField(): string {
+        return this._radiusField;
+    }
+
+    xFieldName: string = 'X';
+    yFieldName: string = 'Y';
+    radiusFieldName: string = 'Radius';
+
     private _marker: boolean = false;
     set marker(value: boolean) {
         if (this._marker !== value) {
@@ -106,6 +128,17 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._markerSize;
     }
 
+    private _minMarkerSize: number = 4;
+    set minMarkerSize(value: number) {
+        if (this._minMarkerSize !== value) {
+            this._minMarkerSize = value;
+            this.update();
+        }
+    }
+    get minMarkerSize(): number {
+        return this._minMarkerSize;
+    }
+
     private _markerStrokeWidth: number = 2;
     set markerStrokeWidth(value: number) {
         if (this._markerStrokeWidth !== value) {
@@ -121,6 +154,9 @@ export class ScatterSeries extends Series<CartesianChart> {
         const chart = this.chart;
         const xField = this.xField;
         const yField = this.yField;
+        const radiusField = this.radiusField;
+        const markerSize = this.markerSize;
+        const minMarkerSize = this.minMarkerSize;
         let data = this.data as any[];
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
@@ -131,44 +167,44 @@ export class ScatterSeries extends Series<CartesianChart> {
             this._data = data = [];
         }
 
-        this.xData = data.map(datum => datum[xField]);
-        this.yData = data.map(datum => datum[yField]);
+        const xData = [] as any[];
+        const yData = [] as any[];
+        const radiusData = [] as number[];
+
+        data.forEach(datum => {
+            xData.push(datum[xField]);
+            yData.push(datum[yField]);
+            if (radiusField) {
+                radiusData.push(datum[radiusField]);
+            }
+        });
+
+        this.xData = xData;
+        this.yData = yData;
+        this.radiusData = radiusData;
+        this.radiusScale.domain = numericExtent(radiusData) || [1, 1];
+        this.radiusScale.range = [minMarkerSize / 2, markerSize / 2];
 
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
-        const domainX = continuousX ? extent(this.xData) : this.xData;
-        const domainY = extent(this.yData);
+        const domainX = continuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
+        const domainY = numericExtent(this.yData) || [0, 1];
 
         if (continuousX) {
-            const min = domainX[0];
-            const max = domainX[1];
+            const [min, max] = domainX as number[];
             if (min === max) {
-                if (typeof min === 'number' && isFinite(min)) {
-                    (domainX[0] as any) -= 1;
-                } else {
-                    (domainX[0] as any) = 0;
-                }
-                if (typeof max === 'number' && isFinite(max)) {
-                    (domainX[1] as any) += 1;
-                } else {
-                    (domainX[1] as any) = 1;
-                }
+                domainX[0] = min - 1;
+                domainX[1] = max + 1;
             }
         }
 
-        if (domainY[0] === domainY[1]) {
-            const min = domainY[0];
-            const max = domainY[1];
-            if (typeof min === 'number' && isFinite(min)) {
-                (domainY[0] as any) -= 1;
-            } else {
-                (domainY[0] as any) = 0;
-            }
-            if (typeof max === 'number' && isFinite(max)) {
-                (domainY[1] as any) += 1;
-            } else {
-                (domainY[1] as any) = 1;
+        {
+            const [min, max] = domainY as number[];
+            if (min === max) {
+                domainY[0] = min - 1;
+                domainY[1] = max + 1;
             }
         }
+
         this.domainX = domainX;
         this.domainY = domainY;
 
@@ -196,6 +232,28 @@ export class ScatterSeries extends Series<CartesianChart> {
     }
     get stroke(): string {
         return this._stroke;
+    }
+
+    private _fillOpacity: number = 1;
+    set fillOpacity(value: number) {
+        if (this._fillOpacity !== value) {
+            this._fillOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    private _strokeOpacity: number = 1;
+    set strokeOpacity(value: number) {
+        if (this._strokeOpacity !== value) {
+            this._strokeOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get strokeOpacity(): number {
+        return this._strokeOpacity;
     }
 
     highlightStyle: {
@@ -238,9 +296,12 @@ export class ScatterSeries extends Series<CartesianChart> {
         const data = this.data;
         const xData = this.xData;
         const yData = this.yData;
+        const radiusData = this.radiusData;
         const n = xData.length;
         const fill = this.fill;
         const stroke = this.stroke;
+        const fillOpacity = this.fillOpacity;
+        const strokeOpacity = this.strokeOpacity;
         const markerStrokeWidth = this.markerStrokeWidth;
         const markerSize = this.markerSize;
 
@@ -259,7 +320,7 @@ export class ScatterSeries extends Series<CartesianChart> {
                 fill,
                 stroke,
                 strokeWidth: markerStrokeWidth,
-                radius: markerSize / 2
+                radius: this.radiusField ? this.radiusScale.convert(radiusData[i]) : markerSize / 2
             });
         }
 
@@ -286,6 +347,8 @@ export class ScatterSeries extends Series<CartesianChart> {
                 arc.stroke = arc === highlightedNode && this.highlightStyle.stroke !== undefined
                     ? this.highlightStyle.stroke
                     : datum.stroke;
+                arc.fillOpacity = fillOpacity;
+                arc.strokeOpacity = strokeOpacity;
                 arc.strokeWidth = datum.strokeWidth;
                 arc.visible = datum.radius > 0;
             });
@@ -304,6 +367,10 @@ export class ScatterSeries extends Series<CartesianChart> {
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
         const xField = this.xField;
         const yField = this.yField;
+        const radiusField = this.radiusField;
+        const xFieldName = this.xFieldName;
+        const yFieldName = this.yFieldName;
+        const radiusFieldName = this.radiusFieldName;
         const color = this.fill;
         let html: string = '';
 
@@ -317,6 +384,10 @@ export class ScatterSeries extends Series<CartesianChart> {
                 datum: nodeDatum.seriesDatum,
                 xField,
                 yField,
+                radiusField,
+                xFieldName,
+                yFieldName,
+                radiusFieldName,
                 title,
                 color
             });
@@ -328,8 +399,13 @@ export class ScatterSeries extends Series<CartesianChart> {
             const yValue = seriesDatum[yField];
             const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
             const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+            let fieldString = `<b>${xFieldName}</b>: ${xString}<br><b>${yFieldName}</b>: ${yString}`;
 
-            html = `${title}<div class="content">${xString}: ${yString}</div>`;
+            if (radiusField) {
+                fieldString += `<br><b>${radiusFieldName}</b>: ${seriesDatum[radiusField]}`;
+            }
+
+            html = `${title}<div class="content">${fieldString}</div>`;
             // html = `${title}<div class="content">${xField}: ${xString}<br>${yField}: ${yString}</div>`;
         }
         return html;

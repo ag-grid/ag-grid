@@ -1,21 +1,21 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
 export interface RowBounds {
     rowTop: number;
     rowHeight: number;
+    rowIndex?: number;
 }
 export interface IRowModel {
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | null;
     /** Returns the rowNode for given id. */
     getRowNode(id: string): RowNode | null;
-    /** Returns the first and last rows to render. */
-    getPageFirstRow(): number;
-    getPageLastRow(): number;
     /** This is legacy, not used by ag-Grid, but keeping for backward compatibility */
     getRowCount(): number;
+    getTopLevelRowCount(): number;
+    getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     /** Returns the row index at the given pixel */
     getRowIndexAtPixel(pixel: number): number;
     /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */

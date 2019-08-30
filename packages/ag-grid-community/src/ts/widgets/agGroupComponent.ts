@@ -108,8 +108,8 @@ export class AgGroupComponent extends Component {
 
     private setOpenClosedIcons(): void {
         const folderOpen = this.expanded;
-        _.setVisible(this.eGroupClosedIcon, !folderOpen);
-        _.setVisible(this.eGroupOpenedIcon, folderOpen);
+        _.setDisplayed(this.eGroupClosedIcon, !folderOpen);
+        _.setDisplayed(this.eGroupOpenedIcon, folderOpen);
     }
 
     public isExpanded(): boolean {

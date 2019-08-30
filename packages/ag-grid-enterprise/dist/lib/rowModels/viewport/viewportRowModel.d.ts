@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { IRowModel, RowNode, IViewportDatasource, RowBounds } from "ag-grid-community";
 export declare class ViewportRowModel implements IRowModel {
     private gridOptionsWrapper;
@@ -26,11 +26,11 @@ export declare class ViewportRowModel implements IRowModel {
     getType(): string;
     getRow(rowIndex: number): RowNode;
     getRowNode(id: string): RowNode | null;
-    getPageFirstRow(): number;
-    getPageLastRow(): number;
     getRowCount(): number;
     getRowIndexAtPixel(pixel: number): number;
     getRowBounds(index: number): RowBounds;
+    getTopLevelRowCount(): number;
+    getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     getCurrentPageHeight(): number;
     isEmpty(): boolean;
     isRowsToRender(): boolean;

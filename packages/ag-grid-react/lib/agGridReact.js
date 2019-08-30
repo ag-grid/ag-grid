@@ -1,4 +1,4 @@
-// ag-grid-react v21.1.0
+// ag-grid-react v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -94,10 +94,10 @@ var AgGridReact = /** @class */ (function (_super) {
             resolve(null);
             return;
         }
-        if (reactComponent.isStatelesComponent() && reactComponent.statelessComponentRendered()) {
+        if (reactComponent.isStatelessComponent() && reactComponent.statelessComponentRendered()) {
             resolve(null);
         }
-        else if (!reactComponent.isStatelesComponent() && reactComponent.getFrameworkComponentInstance()) {
+        else if (!reactComponent.isStatelessComponent() && reactComponent.getFrameworkComponentInstance()) {
             resolve(null);
         }
         else {

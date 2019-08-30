@@ -117,7 +117,7 @@ export class DropZoneColumnComp extends Component {
 
     private setupRemove(): void {
 
-        _.setVisible(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        _.setDisplayed(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
 
         this.addDestroyableEventListener(this.btRemove, 'click', (mouseEvent: MouseEvent) => {
             const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };

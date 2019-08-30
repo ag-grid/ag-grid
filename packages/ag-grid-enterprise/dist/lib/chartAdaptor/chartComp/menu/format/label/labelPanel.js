@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27,17 +27,14 @@ var ag_grid_community_1 = require("ag-grid-community");
 var chartTranslator_1 = require("../../../chartTranslator");
 var LabelPanel = /** @class */ (function (_super) {
     __extends(LabelPanel, _super);
-    function LabelPanel(chartController, params) {
+    function LabelPanel(params) {
         var _this = _super.call(this) || this;
         _this.activeComps = [];
-        _this.chartController = chartController;
         _this.params = params;
         return _this;
     }
     LabelPanel.prototype.init = function () {
         this.setTemplate(LabelPanel.TEMPLATE);
-        var chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
         this.initGroup();
         this.initFontSelects();
         this.initFontColorPicker();

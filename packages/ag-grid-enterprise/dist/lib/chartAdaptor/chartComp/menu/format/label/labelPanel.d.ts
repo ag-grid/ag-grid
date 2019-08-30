@@ -1,6 +1,5 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
 export declare type LabelFont = {
     family?: string;
     style?: string;
@@ -24,11 +23,9 @@ export declare class LabelPanel extends Component {
     private labelFontSizeSelect;
     private labelColorPicker;
     private chartTranslator;
-    private chart;
     private params;
     private activeComps;
-    private chartController;
-    constructor(chartController: ChartController, params: LabelPanelParams);
+    constructor(params: LabelPanelParams);
     private init;
     addCompToPanel(comp: Component): void;
     setEnabled(enabled: boolean): void;

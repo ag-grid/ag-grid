@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { ICellEditor, IRichCellEditorParams, PopupComponent } from "ag-grid-community";
 export declare class RichSelectCellEditor extends PopupComponent implements ICellEditor {
     private static TEMPLATE;
@@ -12,11 +12,15 @@ export declare class RichSelectCellEditor extends PopupComponent implements ICel
     private selectedValue;
     private originalSelectedValue;
     private selectionConfirmed;
+    private searchString;
     constructor();
     init(params: IRichCellEditorParams): void;
     private onKeyDown;
     private onEnterKeyDown;
     private onNavigationKeyPressed;
+    private searchText;
+    private runSearch;
+    private clearSearchString;
     private renderSelectedValue;
     private setSelectedValue;
     private createRowComponent;

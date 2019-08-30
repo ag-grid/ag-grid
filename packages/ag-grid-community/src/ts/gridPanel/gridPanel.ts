@@ -16,7 +16,8 @@ import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleSe
 import { Column } from "../entities/column";
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
 import { RowNode } from "../entities/rowNode";
-import { PaginationAutoPageSizeService, PaginationProxy } from "../rowModels/paginationProxy";
+import { PaginationProxy } from "../rowModels/paginationProxy";
+import { PaginationAutoPageSizeService } from "../rowModels/paginationAutoPageSizeService";
 import { PopupEditorWrapper } from "../rendering/cellEditors/popupEditorWrapper";
 import { AlignedGridsService } from "../alignedGridsService";
 import { PinnedRowModel } from "../rowModels/pinnedRowModel";
@@ -56,9 +57,9 @@ const GRID_PANEL_NORMAL_TEMPLATE =
         </div>
         <div class="ag-body-viewport" ref="eBodyViewport" role="presentation" unselectable="on">
             <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation" unselectable="on"></div>
-            <div class="ag-center-cols-clipper" ref="eCenterColsClipper">
+            <div class="ag-center-cols-clipper" ref="eCenterColsClipper" role="presentation" unselectable="on">
                 <div class="ag-center-cols-viewport" ref="eCenterViewport" role="presentation" unselectable="on">
-                    <div class="ag-center-cols-container" ref="eCenterContainer" role="presentation" unselectable="on"></div>
+                    <div class="ag-center-cols-container" ref="eCenterContainer" role="rowgroup" unselectable="on"></div>
                 </div>
             </div>
             <div class="ag-pinned-right-cols-container" ref="eRightContainer" role="presentation" unselectable="on"></div>
@@ -72,7 +73,7 @@ const GRID_PANEL_NORMAL_TEMPLATE =
             <div class="ag-pinned-right-floating-bottom" ref="eRightBottom" role="presentation" unselectable="on"></div>
             <div class="ag-floating-bottom-full-width-container" ref="eBottomFullWidthContainer" role="presentation" unselectable="on"></div>
         </div>
-        <div class="ag-body-horizontal-scroll" ref="eHorizontalScrollBody">
+        <div class="ag-body-horizontal-scroll" ref="eHorizontalScrollBody" aria-hidden="true">
             <div class="ag-horizontal-left-spacer" ref="eHorizontalLeftSpacer"></div>
             <div class="ag-body-horizontal-scroll-viewport" ref="eBodyHorizontalScrollViewport">
                 <div class="ag-body-horizontal-scroll-container" ref="eBodyHorizontalScrollContainer"></div>
@@ -231,7 +232,6 @@ export class GridPanel extends Component {
 
     @PostConstruct
     private init() {
-
         this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
@@ -308,6 +308,8 @@ export class GridPanel extends Component {
     private onCenterViewportResized(): void {
         if (_.isVisible(this.eCenterViewport)) {
             this.checkViewportAndScrolls();
+        } else {
+            this.bodyHeight = 0;
         }
     }
 
@@ -644,7 +646,13 @@ export class GridPanel extends Component {
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
         // they want.
-        if (this.gridOptionsWrapper.isSuppressMiddleClickScrolls() && mouseEvent.which === 2) {
+        const { gridOptionsWrapper } = this;
+        const { which } = mouseEvent;
+
+        if (
+            gridOptionsWrapper.isPreventDefaultOnContextMenu() ||
+            (gridOptionsWrapper.isSuppressMiddleClickScrolls() && which === 2)
+        ) {
             mouseEvent.preventDefault();
         }
     }
@@ -666,7 +674,7 @@ export class GridPanel extends Component {
 
             if (isEmptyPinnedBottom) {
                 floatingEnd = null;
-                rowEnd = this.paginationProxy.getTotalRowCount() - 1;
+                rowEnd = this.paginationProxy.getRowCount() - 1;
             } else {
                 floatingEnd = PINNED_BOTTOM;
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
@@ -732,7 +740,7 @@ export class GridPanel extends Component {
         // if for print or auto height, everything is always visible
         if (this.printLayout) { return; }
 
-        const rowCount = this.paginationProxy.getTotalRowCount();
+        const rowCount = this.paginationProxy.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
@@ -871,9 +879,6 @@ export class GridPanel extends Component {
         // we have to add an extra pixel to the scroller viewport on IE because
         // if the container has the same size as the scrollbar, the scroll button won't work
         _.setFixedHeight(this.eBodyHorizontalScrollViewport, scrollContainerSize + (addIEPadding ? 1 : 0));
-        if (addIEPadding) {
-            this.eBodyHorizontalScrollViewport.style.bottom = '1px';
-        }
         _.setFixedHeight(this.eBodyHorizontalScrollContainer, scrollContainerSize);
     }
 
@@ -882,6 +887,14 @@ export class GridPanel extends Component {
 
         this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
         this.setFakeHScrollSpacerWidths();
+    }
+
+    public updateRowCount(): void {
+        const headerCount = this.headerRootComp.getHeaderRowCount();
+        const rowCount = this.paginationProxy.getRowCount();
+        const total = (headerCount + rowCount).toString();
+
+        this.getGui().setAttribute('aria-rowcount', total);
     }
 
     public ensureColumnVisible(key: any): void {
@@ -1143,7 +1156,7 @@ export class GridPanel extends Component {
             this.headerRootComp.setLeftVisible(newPinning);
         }
 
-        containers.forEach(e => _.setVisible(e, this.pinningLeft));
+        containers.forEach(e => _.setDisplayed(e, this.pinningLeft));
 
         if (newPinning) {
             containers.forEach(ct => _.setFixedWidth(ct, widthOfCols));
@@ -1160,7 +1173,7 @@ export class GridPanel extends Component {
             this.headerRootComp.setRightVisible(newPinning);
         }
 
-        containers.forEach(ct => _.setVisible(ct, newPinning));
+        containers.forEach(ct => _.setDisplayed(ct, newPinning));
 
         if (newPinning) {
             containers.forEach(ct => _.setFixedWidth(ct, widthOfCols));

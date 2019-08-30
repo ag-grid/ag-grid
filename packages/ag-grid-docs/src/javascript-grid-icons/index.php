@@ -16,14 +16,14 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         <p>
-            In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were
-            svg files that you could override via the '$icons-path' variable in SASS files. v21 uses a WebFont 
-            and CSS for the icons which is the best way to allow icon theming.
+            In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were svg files that you could 
+            override via the <code<$icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is 
+            the best way to allow icon theming.
         </p>
 
         <p>
-            For backwards compatibility you can still provide icons using the 'icons' grid option.
-            If you want to use the old icons, you can set them this way.
+            For backwards compatibility you can still provide icons using the <code>icons</code> grid option.<br>
+            If you need to reintroduce SVG icons, see this section: <a href="#svg-icons">SVG Icons</a>
         </p>
 
         <p>
@@ -97,6 +97,7 @@ $ag-icon-first: "\f100";
 $ag-icon-grip: "\f58e";
 $ag-icon-group: "\f5fd";
 $ag-icon-indeterminate: "\f06e";
+$ag-icon-linked: "\f0c1";
 $ag-icon-last: "\f101";
 $ag-icon-left: "\f060";
 $ag-icon-loading: "\f110";
@@ -124,6 +125,7 @@ $ag-icon-tick: "\f00c";
 $ag-icon-tree-closed: "\f105";
 $ag-icon-tree-indeterminate: "\f068";
 $ag-icon-tree-open: "\f107";
+$ag-icon-unlinked: "\f127";
 
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-balham.scss";
@@ -137,17 +139,17 @@ $ag-icon-tree-open: "\f107";
 
 <h2>Set the icons through <code>gridOptions</code> (JavaScript)</h2>
 
-    <p>
-        The icons can either be set on the grid options (all icons) or on the column definition (all except group).
-        If defined in both the grid options and column definitions, the column definition will get used. This
-        allows you to specify defaults in the grid options to fall back on, and then provide individual icons for
-        specific columns. This is handy if, for example, you want to include 'A..Z' as string sort icons and just
-        the simple arrow for other columns.
-    </p>
+<p>
+    The icons can either be set on the grid options (all icons) or on the column definition (all except group).
+    If defined in both the grid options and column definitions, the column definition will get used. This
+    allows you to specify defaults in the grid options to fall back on, and then provide individual icons for
+    specific columns. This is handy if, for example, you want to include 'A..Z' as string sort icons and just
+    the simple arrow for other columns.
+</p>
 
-    <p>
-        The icons are set as follows:
-    </p>
+<p>
+    The icons are set as follows:
+</p>
 
 <snippet>
 // column header items
@@ -235,33 +237,195 @@ colorPicker
 groupLoading
 data
 save
+linked
+unlinked
 </snippet>
+<p>
+    Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
+</p>
+
+<p>
+    The icon can be any of the following:
+</p>
+    <ul class="content">
+        <li>
+            <b>String:</b> The string will be treated as html. Use to return just text, or HTML tags.
+        </li>
+        <li>
+            <b>Function:</b> A function that returns either a String or a DOM node or element.
+        </li>
+    </ul>
+
+<p>
+    The example below shows a mixture of different methods for providing icons. The grouping is done with images,
+    and the header icons use a mix of Font Awesome and strings.
+</p>
+
+<p>
+    (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
+</p>
+
+<?= example('Icons', 'icons', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome') )) ?>
+
+<h2>SVG Icons</h2>
+
+<p>
+    When you create your own theme as described in <a href="/javascript-grid-themes-provided/#customizing-sass-variables">Customizing Themes</a>, 
+    you are also able to replace the WebFont with SVG Icons.
+
+    To do that you will need to override the <code>ag-icon</code> SASS rules and also the rules for each icon.
+    You can see the example <code>styles.scss</code> file in our custom theme with SVG icons example here: 
+    <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-svg-icons">SVG Icons Example</a>.
+</p>
+
+<p>
+    Below you can see a list with all available icons for each theme, their names, and download them.
+</p>
+<note>
     <p>
-        Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
+        SVG Icons will not use the <code>$icon-color</code>, <code>$alt-icon-color</code> and <code>$accent-color</code> 
+        variables to colorize icons. This means you will need to add the colors you want to the SVG icons code.
     </p>
+</note>
 
-    <p>
-        The icon can be any of the following:
-    </p>
-        <ul class="content">
-            <li>
-                <b>String:</b> The string will be treated as html. Use to return just text, or HTML tags.
-            </li>
-            <li>
-                <b>Function:</b> A function that returns either a String or a DOM node or element.
-            </li>
-        </ul>
+<style>
+    .tabpanel .content > div {
+        border-left-width: 1px;
+    }
+    .tabpanel .content > div.download {
+        overflow-y: hidden;
+        order: 1;
+        flex: none;
+        border: none;
+        background-color: #0070c4;
+        color: white;
+        padding-left: 5px;
+        margin-top: 0;
+    }
+    .tile {
+        display: inline-flex;
+        flex-direction: column;
+        margin: 5px;
+        width: 175px;
+    }
 
-    <p>
-        The example below shows a mixture of different methods for providing icons. The grouping is done with images,
-        and the header icons use a mix of Font Awesome and strings.
-    </p>
+    .tile img {
+        height: 32px;
+    }
+    
+    .tile p {
+        white-space: nowrap;
+        text-align: center;
+    }
 
-    <p>
-        (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
-    </p>
+    .download a {
+        color: #b3d4ed;
+    }
+    .download a:hover {
+        color: white;
+        text-decoration: none;
+    }
+    
+</style>
 
-    <?= example('Icons', 'icons', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome') )) ?>
+<script>
+    var tabs;
+    function changeActiveTab(e) {
+        var tab, selectedIdx, currentIdx, i, cts;
 
+        if (e.target.classList.contains('selected')) { return; }
+        for (i = 0; i < tabs.length; i++) {
+            tab = tabs[i];
+            if (tab.classList.contains('selected')) {
+                selectedIdx = i;
+            }
+            if (tab === e.target) {
+                currentIdx = i;
+            }
+            if (currentIdx != null && selectedIdx != null) { break; }
+        }
+
+        tabs[selectedIdx].classList.toggle('selected');
+        tabs[currentIdx].classList.toggle('selected');
+
+        cts = document.querySelectorAll('.tabpanel .content');
+
+        cts[selectedIdx].classList.toggle('hidden');
+        cts[currentIdx].classList.toggle('hidden');
+    }
+
+    function addIconsToContainer(theme) {
+        var icons = [
+            'aggregation', 'arrows', 'asc', 'cancel', 'chart',
+            'checkbox-checked', 'checkbox-indeterminate',
+            'checkbox-unchecked', 'color-picker', 'column',
+            'columns', 'contracted', 'copy', 'cross', 'cut', 'data',
+            'desc', 'expanded', 'eye-slash', 'eye', 'filter', 'first',
+            'grip', 'group', 'indeterminate', 'last', 'left', 'linked',
+            'loading', 'maximize', 'menu', 'minimize', 'minus', 'next',
+            'none', 'not-allowed', 'paste', 'pin', 'pivot', 'plus',
+            'previous', 'radio-button-off', 'radio-button-on', 'right',
+            'save', 'small-down', 'small-left', 'small-right', 'small-up',
+            'tick', 'tree-closed', 'tree-indeterminate', 'tree-open', 'unlinked'
+        ];
+
+        var container = document.querySelector('.content.' + theme);
+
+        if (!container) {
+            return;
+        }
+        var wrapper = document.createElement('div');
+        container.appendChild(wrapper);
+
+        icons.forEach(function(icon) {
+            var tile = document.createElement('div');
+            var img = document.createElement('img');
+            var name = document.createElement('p');
+            tile.classList.add('tile');
+
+            tile.appendChild(img);
+            tile.appendChild(name);
+
+
+            img.setAttribute('src', './resources/' + theme + '/' + icon + '.svg');
+            img.setAttribute('title', icon);
+
+            name.innerHTML = icon;
+
+            wrapper.appendChild(tile);
+        });
+    }
+
+    window.addEventListener("load", function() {
+        tabs = document.querySelectorAll('.tabpanel .tab');
+
+        for (var i = 0; i < tabs.length; i++) {
+            var tab = tabs[i];
+            tab.addEventListener('click', changeActiveTab);
+        }
+
+        var themes = ['balham', 'material', 'base'];
+
+        themes.forEach(function(theme) {
+            addIconsToContainer(theme);
+        });
+    });
+</script>
+    <div class="tabpanel">
+        <div class="tabheader">
+            <div class="tab selected">Balham Icons</div>
+            <div class="tab">Material Icons</div>
+            <div class="tab">Base Icons</div>
+        </div>
+        <div class="content balham">
+        <div class="download"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
+        </div>
+        <div class="content material hidden">
+            <div class="download"><a href="./resources/material/material-icons.zip">Download All</a></div>
+        </div>
+        <div class="content base hidden">
+            <div class="download"><a href="./resources/base/base-icons.zip">Download All</a></div>
+        </div>
+    </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -178,7 +178,7 @@ export class Arc extends Shape {
             ctx.globalAlpha = this.opacity;
         }
 
-        const pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+        const pixelRatio = this.scene.canvas.pixelRatio || 1;
 
         if (this.fill) {
             ctx.fillStyle = this.fill;
@@ -189,8 +189,8 @@ export class Arc extends Shape {
             const fillShadow = this.fillShadow;
             if (fillShadow) {
                 ctx.shadowColor = fillShadow.color;
-                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fill(this.path);
@@ -217,8 +217,8 @@ export class Arc extends Shape {
             const strokeShadow = this.strokeShadow;
             if (strokeShadow) {
                 ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = strokeShadow.blur * pixelRatio;
             }
             ctx.stroke(this.path);

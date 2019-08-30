@@ -1,4 +1,4 @@
-import { Autowired, Bean, GridOptionsWrapper } from "ag-grid-community";
+import {Autowired, Bean, GridOptionsWrapper} from "ag-grid-community";
 
 @Bean("chartTranslator")
 export class ChartTranslator {
@@ -6,11 +6,14 @@ export class ChartTranslator {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private static DEFAULT_TRANSLATIONS: {[name: string]: string} = {
+        pivotChartTitle: 'Pivot Chart',
+        rangeChartTitle: 'Range Chart',
         settings: 'Settings',
         data: 'Data',
         format: 'Format',
         categories: 'Categories',
         series: 'Series',
+        xyValues: 'X Y Values',
         axis: 'Axis',
         color: 'Color',
         thickness: 'Thickness',
@@ -64,7 +67,17 @@ export class ChartTranslator {
         lineTooltip: 'Line',
         groupedAreaTooltip: 'Grouped',
         stackedAreaTooltip: 'Stacked',
-        normalizedAreaTooltip: '100% Stacked'
+        normalizedAreaTooltip: '100% Stacked',
+        scatterTooltip: 'Scatter',
+        bubbleTooltip: 'Bubble',
+        columnGroup: 'Column',
+        barGroup: 'Bar',
+        pieGroup: 'Pie',
+        lineGroup: 'Line',
+        scatterGroup: 'X Y (Scatter)',
+        areaGroup: 'Area',
+        pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
+        noDataToChart: 'No data available to be charted.',
     };
 
     public translate(toTranslate: string): string {

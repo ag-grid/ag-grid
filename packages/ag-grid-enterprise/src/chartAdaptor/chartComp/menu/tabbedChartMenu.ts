@@ -1,18 +1,19 @@
 import {
-    Component,
-    ChartType,
-    TabbedLayout,
-    PostConstruct,
-    TabbedItem,
-    Promise,
+    _,
+    Autowired,
     ChartMenuOptions,
-    _, Autowired
+    ChartType,
+    Component,
+    PostConstruct,
+    Promise,
+    TabbedItem,
+    TabbedLayout
 } from "ag-grid-community";
-import { ChartController } from "../chartController";
-import { ChartDataPanel } from "./data/chartDataPanel";
-import { ChartFormattingPanel } from "./format/chartFormatingPanel";
-import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
-import { ChartTranslator } from "../chartTranslator";
+import {ChartController} from "../chartController";
+import {ChartDataPanel} from "./data/chartDataPanel";
+import {ChartFormattingPanel} from "./format/chartFormatingPanel";
+import {ChartSettingsPanel} from "./settings/chartSettingsPanel";
+import {ChartTranslator} from "../chartTranslator";
 
 export class TabbedChartMenu extends Component {
 
@@ -48,7 +49,6 @@ export class TabbedChartMenu extends Component {
 
     @PostConstruct
     public init(): void {
-
         this.panels.forEach(panel => {
             const panelType = panel.replace('chart', '').toLowerCase();
             const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
@@ -86,7 +86,7 @@ export class TabbedChartMenu extends Component {
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name
             }
-        }
+        };
     }
 
     public getMinDimensions(): {width: number, height: number} {
@@ -109,7 +109,6 @@ export class TabbedChartMenu extends Component {
     }
 
     public destroy(): void {
-
         if (this.parentComponent && this.parentComponent.isAlive()) {
             this.parentComponent.destroy();
         }

@@ -3,19 +3,30 @@ import { Axis } from "../axis";
 import Scale from "../scale/scale";
 import { Series } from "./series/series";
 import { ClipRect } from "../scene/clipRect";
-import { extent, checkExtent } from "../util/array";
+import { numericExtent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
-import { CategoryAxis } from "./axis/categoryAxis";
 
-export type CartesianChartLayout = 'vertical' | 'horizontal';
+export enum CartesianChartLayout {
+    Vertical,
+    Horizontal
+}
+
+export type CartesianChartOptions = {
+    xAxis: Axis<Scale<any, number>>,
+    yAxis: Axis<Scale<any, number>>,
+    document?: Document
+};
 
 export class CartesianChart extends Chart {
 
     private axisAutoPadding = new Padding();
 
-    constructor(xAxis: Axis<Scale<any, number>>, yAxis: Axis<Scale<any, number>>) {
-        super();
+    constructor(options: CartesianChartOptions) {
+        super(options);
+
+        const xAxis = options.xAxis;
+        const yAxis = options.yAxis;
 
         this._xAxis = xAxis;
         this._yAxis = yAxis;
@@ -137,7 +148,7 @@ export class CartesianChart extends Chart {
         this.positionLegend();
     }
 
-    private _layout: CartesianChartLayout = 'vertical';
+    private _layout: CartesianChartLayout = CartesianChartLayout.Vertical;
     set layout(value: CartesianChartLayout) {
         if (this._layout !== value) {
             this._layout = value;
@@ -149,7 +160,7 @@ export class CartesianChart extends Chart {
     }
 
     updateAxes() {
-        const isHorizontal = this.layout === 'horizontal';
+        const isHorizontal = this.layout === CartesianChartLayout.Horizontal;
         const xAxis = isHorizontal ? this.yAxis : this.xAxis;
         const yAxis = isHorizontal ? this.xAxis : this.yAxis;
 
@@ -173,23 +184,8 @@ export class CartesianChart extends Chart {
         const xDomain = new Array<any>().concat(...xDomains);
         const yDomain = new Array<any>().concat(...yDomains);
 
-        if (typeof xDomain[0] === 'number') {
-            xAxis.domain = checkExtent(extent(xDomain));
-        } else {
-            // if (!xDomain.length) {
-            //     return;
-            // }
-            xAxis.domain = xDomain;
-        }
-
-        if (typeof yDomain[0] === 'number') {
-            yAxis.domain = checkExtent(extent(yDomain));
-        } else {
-            // if (!yDomain.length) {
-            //     return;
-            // }
-            yAxis.domain = yDomain;
-        }
+        xAxis.domain = numericExtent(xDomain) || xDomain;
+        yAxis.domain = numericExtent(yDomain) || yDomain;
 
         xAxis.update();
         yAxis.update();
@@ -198,13 +194,19 @@ export class CartesianChart extends Chart {
         const xAxisBBox = this.xAxis.getBBox();
         const yAxisBBox = this.yAxis.getBBox();
 
-        if (this.axisAutoPadding.left !== yAxisBBox.width) {
-            this.axisAutoPadding.left = yAxisBBox.width;
-            this.layoutPending = true;
+        {
+            const axisThickness = Math.floor(yAxisBBox.width);
+            if (this.axisAutoPadding.left !== axisThickness) {
+                this.axisAutoPadding.left = axisThickness;
+                this.layoutPending = true;
+            }
         }
-        if (this.axisAutoPadding.bottom !== xAxisBBox.width) {
-            this.axisAutoPadding.bottom = xAxisBBox.width;
-            this.layoutPending = true;
+        {
+            const axisThickness = Math.floor(xAxisBBox.width);
+            if (this.axisAutoPadding.bottom !== axisThickness) {
+                this.axisAutoPadding.bottom = axisThickness;
+                this.layoutPending = true;
+            }
         }
     }
 }

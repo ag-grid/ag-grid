@@ -6,24 +6,24 @@ import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
 import palette from "../palettes";
-import { Series, SeriesNodeDatum } from "./series";
+import { HighlightStyle, Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Color } from "ag-grid-community";
-import { CategoryAxis } from "../axis/categoryAxis";
+import { NumberAxis } from "../axis/numberAxis";
 
 interface SelectionDatum extends SeriesNodeDatum {
-    yField: string,
-    yValue: number,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    fill?: string,
-    stroke?: string,
-    strokeWidth: number,
+    yField: string;
+    yValue: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    fill?: string;
+    stroke?: string;
+    strokeWidth: number;
     label?: {
         text: string,
         fontStyle?: string,
@@ -33,7 +33,7 @@ interface SelectionDatum extends SeriesNodeDatum {
         fill: string,
         x: number,
         y: number
-    }
+    };
 }
 
 export interface BarLabelFormatterParams {
@@ -315,10 +315,7 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelFormatter;
     }
 
-    highlightStyle: {
-        fill?: string,
-        stroke?: string
-    } = {
+    highlightStyle: HighlightStyle = {
         fill: 'yellow'
     };
 
@@ -465,7 +462,7 @@ export class BarSeries extends Series<CartesianChart> {
         }
 
         const categoryCount = this.data.length;
-        const flipXY = !(chart.xAxis instanceof CategoryAxis);
+        const flipXY = !(chart.yAxis instanceof NumberAxis);
         const xAxis = flipXY ? chart.yAxis : chart.xAxis;
         const yAxis = flipXY ? chart.xAxis : chart.yAxis;
         const xScale = xAxis.scale;
@@ -513,13 +510,14 @@ export class BarSeries extends Series<CartesianChart> {
                 const bottomY = yScale.convert((grouped ? 0 : prev));
                 const seriesDatum = data[i];
                 const yValue = seriesDatum[yField]; // unprocessed y-value
+                const yValueIsNumber = typeof yValue === 'number';
                 let labelText: string;
                 if (labelFormatter) {
                     labelText = labelFormatter({
-                        value: typeof yValue === 'number' ? yValue : NaN
+                        value: yValueIsNumber ? yValue : NaN
                     });
                 } else {
-                    labelText = isFinite(yValue) ? yValue.toFixed(2) : ''
+                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
                 }
 
                 selectionData.push({

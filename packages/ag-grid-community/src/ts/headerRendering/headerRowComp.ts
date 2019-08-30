@@ -38,7 +38,7 @@ export class HeaderRowComp extends Component {
     private headerComps: { [key: string]: IComponent<any> } = {};
 
     constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget) {
-        super(`<div class="ag-header-row" role="presentation"/>`);
+        super(`<div class="ag-header-row" role="row"/>`);
         this.dept = dept;
         this.type = type;
         this.pinned = pinned;

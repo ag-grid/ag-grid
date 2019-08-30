@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -188,7 +188,7 @@ export declare class ColumnController {
     getColumnState(): ColumnState[];
     private orderColumnStateList;
     resetColumnState(suppressEverythingEvent?: boolean, source?: ColumnEventType): void;
-    setColumnState(columnState: ColumnState[], suppressEverythingEvent?: boolean, source?: ColumnEventType): boolean;
+    setColumnState(columnStates: ColumnState[], suppressEverythingEvent?: boolean, source?: ColumnEventType): boolean;
     private raiseColumnEvents;
     private raiseColumnPinnedEvent;
     private raiseColumnVisibleEvent;

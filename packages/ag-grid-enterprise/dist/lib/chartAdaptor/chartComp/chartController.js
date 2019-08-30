@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -25,6 +25,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
 var rangeController_1 = require("../../rangeController");
+var chartModel_1 = require("./chartModel");
 var ChartController = /** @class */ (function (_super) {
     __extends(ChartController, _super);
     function ChartController(chartModel) {
@@ -47,6 +48,10 @@ var ChartController = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eventService, ag_grid_community_1.Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
     };
     ChartController.prototype.updateForGridChange = function () {
+        // don't update chart if chart is detached from grid data
+        if (this.model.isDetached()) {
+            return;
+        }
         // update the model with changes to the cell ranges from the grid before updating the column state
         this.model.updateCellRanges();
         this.model.resetColumnState();
@@ -67,6 +72,9 @@ var ChartController = /** @class */ (function (_super) {
     ChartController.prototype.getChartType = function () {
         return this.model.getChartType();
     };
+    ChartController.prototype.isPivotChart = function () {
+        return this.model.isPivotChart();
+    };
     ChartController.prototype.getActivePalette = function () {
         return this.model.getActivePalette();
     };
@@ -85,13 +93,36 @@ var ChartController = /** @class */ (function (_super) {
     ChartController.prototype.getColStateForMenu = function () {
         return { dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState() };
     };
+    ChartController.prototype.isDefaultCategorySelected = function () {
+        var selectedDimension = this.model.getSelectedDimension().colId;
+        return selectedDimension && selectedDimension === chartModel_1.ChartModel.DEFAULT_CATEGORY;
+    };
     ChartController.prototype.setChartRange = function () {
-        if (!this.model.isSuppressChartRanges()) {
+        if (!this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
+        }
+    };
+    ChartController.prototype.detachChartRange = function () {
+        // when chart is detached it won't listen to changes from the grid
+        this.model.toggleDetached();
+        if (this.model.isDetached()) {
+            // remove range from grid
+            this.rangeController.setCellRanges([]);
+        }
+        else {
+            // update grid with chart range
+            this.setChartRange();
+            // update chart data may have changed
+            this.updateForGridChange();
         }
     };
     ChartController.prototype.getChartProxy = function () {
         return this.model.getChartProxy();
+    };
+    ChartController.prototype.isActiveXYChart = function () {
+        var xyChartSelected = [ag_grid_community_1.ChartType.Scatter, ag_grid_community_1.ChartType.Bubble].indexOf(this.getChartType()) > -1;
+        // x y charts behave like regular cartesian charts if the default category is not selected, i.e. (None)
+        return xyChartSelected && this.isDefaultCategorySelected();
     };
     ChartController.prototype.raiseChartUpdatedEvent = function () {
         var event = {

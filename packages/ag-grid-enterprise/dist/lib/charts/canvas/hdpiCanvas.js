@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -8,23 +8,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var HdpiCanvas = /** @class */ (function () {
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
-    function HdpiCanvas(width, height) {
-        if (width === void 0) { width = 300; }
-        if (height === void 0) { height = 150; }
-        this.canvas = document.createElement('canvas');
-        this.context = this.canvas.getContext('2d');
-        /**
-         * The canvas flickers on size changes in Safari.
-         * A temporary canvas is used (during resize only) to prevent that.
-         */
-        this.tempCanvas = document.createElement('canvas');
+    function HdpiCanvas(options) {
+        if (options === void 0) { options = {}; }
         this._parent = undefined;
         // `NaN` is deliberate here, so that overrides are always applied
         // and the `resetTransform` inside the `resize` method works in IE11.
         this._pixelRatio = NaN;
-        this.canvas.style.userSelect = 'none';
+        this.document = options.document || window.document;
+        this.tempCanvas = this.document.createElement('canvas');
+        this.element = this.document.createElement('canvas');
+        this.element.style.userSelect = 'none';
+        this.context = this.element.getContext('2d');
         this.updatePixelRatio(0, false);
-        this.resize(width, height);
+        this.resize(this._width = options.width || 300, this._height = options.height || 150);
     }
     Object.defineProperty(HdpiCanvas.prototype, "parent", {
         get: function () {
@@ -34,7 +30,7 @@ var HdpiCanvas = /** @class */ (function () {
             if (this._parent !== value) {
                 this.remove();
                 if (value) {
-                    value.appendChild(this.canvas);
+                    value.appendChild(this.element);
                 }
                 this._parent = value;
             }
@@ -43,19 +39,19 @@ var HdpiCanvas = /** @class */ (function () {
         configurable: true
     });
     HdpiCanvas.prototype.remove = function () {
-        var parent = this.canvas.parentNode;
+        var parent = this.element.parentNode;
         if (parent !== null) {
-            parent.removeChild(this.canvas);
+            parent.removeChild(this.element);
         }
     };
     HdpiCanvas.prototype.destroy = function () {
-        this.canvas.remove();
+        this.element.remove();
         this._canvas = undefined;
         Object.freeze(this);
     };
     HdpiCanvas.prototype.toImage = function () {
-        var img = document.createElement('img');
-        img.src = this.canvas.toDataURL();
+        var img = this.document.createElement('img');
+        img.src = this.element.toDataURL();
         return img;
     };
     /**
@@ -67,7 +63,8 @@ var HdpiCanvas = /** @class */ (function () {
         // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
         // so we don't support saving to JPEG.
         var type = 'image/png';
-        var dataUrl = this.canvas.toDataURL(type);
+        var dataUrl = this.element.toDataURL(type);
+        var document = this.document;
         if (navigator.msSaveOrOpenBlob) { // IE11
             var binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
             var array = [];
@@ -108,7 +105,7 @@ var HdpiCanvas = /** @class */ (function () {
         if (pixelRatio === this.pixelRatio) {
             return;
         }
-        var canvas = this.canvas;
+        var canvas = this.element;
         var ctx = this.context;
         var overrides = this.overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
         for (var name_1 in overrides) {
@@ -134,10 +131,26 @@ var HdpiCanvas = /** @class */ (function () {
         }
         this._pixelRatio = pixelRatio;
     };
+    Object.defineProperty(HdpiCanvas.prototype, "width", {
+        get: function () {
+            return this._width;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HdpiCanvas.prototype, "height", {
+        get: function () {
+            return this._height;
+        },
+        enumerable: true,
+        configurable: true
+    });
     HdpiCanvas.prototype.resize = function (width, height) {
-        var canvas = this.canvas;
+        var canvas = this.element;
         var context = this.context;
         var tempCanvas = this.tempCanvas;
+        this._width = width;
+        this._height = height;
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
         var tempContext = tempCanvas.getContext('2d');
@@ -149,21 +162,21 @@ var HdpiCanvas = /** @class */ (function () {
         context.drawImage(tempContext.canvas, 0, 0);
         context.resetTransform();
     };
-    Object.defineProperty(HdpiCanvas, "textMeasuringContext", {
+    Object.defineProperty(HdpiCanvas.prototype, "textMeasuringContext", {
         get: function () {
-            if (HdpiCanvas._textMeasuringContext) {
-                return HdpiCanvas._textMeasuringContext;
+            if (this._textMeasuringContext) {
+                return this._textMeasuringContext;
             }
             var canvas = document.createElement('canvas');
-            return HdpiCanvas._textMeasuringContext = canvas.getContext('2d');
+            return this._textMeasuringContext = canvas.getContext('2d');
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(HdpiCanvas, "svgText", {
+    Object.defineProperty(HdpiCanvas.prototype, "svgText", {
         get: function () {
-            if (HdpiCanvas._svgText) {
-                return HdpiCanvas._svgText;
+            if (this._svgText) {
+                return this._svgText;
             }
             var xmlns = 'http://www.w3.org/2000/svg';
             var svg = document.createElementNS(xmlns, 'svg');
@@ -186,31 +199,29 @@ var HdpiCanvas = /** @class */ (function () {
             svgText.setAttribute('text', 'black');
             svg.appendChild(svgText);
             document.body.appendChild(svg);
-            HdpiCanvas._svgText = svgText;
+            this._svgText = svgText;
             return svgText;
         },
         enumerable: true,
         configurable: true
     });
-    ;
-    Object.defineProperty(HdpiCanvas, "has", {
+    Object.defineProperty(HdpiCanvas.prototype, "has", {
         get: function () {
-            if (HdpiCanvas._has) {
-                return HdpiCanvas._has;
+            if (this._has) {
+                return this._has;
             }
-            return HdpiCanvas._has = Object.freeze({
-                textMetrics: HdpiCanvas.textMeasuringContext.measureText('test')
+            return this._has = Object.freeze({
+                textMetrics: this.textMeasuringContext.measureText('test')
                     .actualBoundingBoxDescent !== undefined,
-                getTransform: HdpiCanvas.textMeasuringContext.getTransform !== undefined,
+                getTransform: this.textMeasuringContext.getTransform !== undefined,
                 flicker: !!window.safari
             });
         },
         enumerable: true,
         configurable: true
     });
-    ;
-    HdpiCanvas.measureText = function (text, font, textBaseline, textAlign) {
-        var ctx = HdpiCanvas.textMeasuringContext;
+    HdpiCanvas.prototype.measureText = function (text, font, textBaseline, textAlign) {
+        var ctx = this.textMeasuringContext;
         ctx.font = font;
         ctx.textBaseline = textBaseline;
         ctx.textAlign = textAlign;
@@ -221,9 +232,9 @@ var HdpiCanvas = /** @class */ (function () {
      * @param text The single-line text to measure.
      * @param font The font shorthand string.
      */
-    HdpiCanvas.getTextSize = function (text, font) {
-        if (HdpiCanvas.has.textMetrics) {
-            var ctx = HdpiCanvas.textMeasuringContext;
+    HdpiCanvas.prototype.getTextSize = function (text, font) {
+        if (this.has.textMetrics) {
+            var ctx = this.textMeasuringContext;
             ctx.font = font;
             var metrics = ctx.measureText(text);
             return {
@@ -232,10 +243,10 @@ var HdpiCanvas = /** @class */ (function () {
             };
         }
         else {
-            return HdpiCanvas.measureSvgText(text, font);
+            return this.measureSvgText(text, font);
         }
     };
-    HdpiCanvas.measureSvgText = function (text, font) {
+    HdpiCanvas.prototype.measureSvgText = function (text, font) {
         var cache = HdpiCanvas.textSizeCache;
         var fontCache = cache[font];
         // Note: consider not caching the size of numeric strings.
@@ -249,7 +260,7 @@ var HdpiCanvas = /** @class */ (function () {
         else {
             cache[font] = {};
         }
-        var svgText = HdpiCanvas.svgText;
+        var svgText = this.svgText;
         svgText.style.font = font;
         svgText.textContent = text;
         // `getBBox` returns an instance of `SVGRect` with the same `width` and `height`

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowBounds, RowNode } from "ag-grid-community";
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;
@@ -42,9 +42,9 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     private setDisplayIndexes;
     private resetRowTops;
     getRow(index: number): RowNode | null;
-    getPageFirstRow(): number;
-    getPageLastRow(): number;
     getRowCount(): number;
+    getTopLevelRowCount(): number;
+    getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     getRowBounds(index: number): RowBounds;
     getRowIndexAtPixel(pixel: number): number;
     getCurrentPageHeight(): number;

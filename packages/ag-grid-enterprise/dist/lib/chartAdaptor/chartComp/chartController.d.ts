@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { AgEvent, BeanStub, ChartType } from "ag-grid-community";
 import { RangeController } from "../../rangeController";
 import { ChartModel, ColState } from "./chartModel";
@@ -16,6 +16,7 @@ export declare class ChartController extends BeanStub {
     updateForGridChange(): void;
     updateForMenuChange(updatedCol: ColState): void;
     getChartType(): ChartType;
+    isPivotChart(): boolean;
     getActivePalette(): number;
     getPalettes(): Palette[];
     setChartType(chartType: ChartType): void;
@@ -24,8 +25,11 @@ export declare class ChartController extends BeanStub {
         dimensionCols: ColState[];
         valueCols: ColState[];
     };
+    isDefaultCategorySelected(): boolean | "";
     setChartRange(): void;
-    getChartProxy(): ChartProxy;
+    detachChartRange(): void;
+    getChartProxy(): ChartProxy<any>;
+    isActiveXYChart(): boolean | "";
     private raiseChartUpdatedEvent;
     destroy(): void;
 }

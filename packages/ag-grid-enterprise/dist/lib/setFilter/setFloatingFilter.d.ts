@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component, IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
 import { SetFilterModel } from "./setFilterModel";
 export declare class SetFloatingFilterComp extends Component implements IFloatingFilter {

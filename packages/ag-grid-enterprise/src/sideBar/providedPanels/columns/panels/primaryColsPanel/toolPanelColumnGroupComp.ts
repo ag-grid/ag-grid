@@ -113,7 +113,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     private setupDragging(): void {
 
         if (!this.allowDragging) {
-            _.setVisible(this.eDragHandle, false);
+            _.setDisplayed(this.eDragHandle, false);
             return;
         }
 
@@ -281,27 +281,36 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
     private workOutSelectedValue(): boolean | undefined {
         const pivotMode = this.columnController.isPivotMode();
-
-        let visibleChildCount = 0;
-        let hiddenChildCount = 0;
-
-        this.columnGroup.getLeafColumns().forEach((column: Column) => {
+        const leafColumns = this.columnGroup.getLeafColumns();
+        const len = leafColumns.length;
+        const count = { visible: 0, hidden: 0 };
+        const ignoredChildCount = { visible: 0, hidden: 0 };
+        
+        for (let i = 0; i < len; i++) {
+            const column = leafColumns[i];
 
             // ignore lock visible columns and columns set to 'suppressToolPanel'
-            const ignoredColumn = column.getColDef().lockVisible || column.getColDef().suppressToolPanel;
-            if (ignoredColumn) { return null; }
+            const ignore = column.getColDef().lockVisible || column.getColDef().suppressToolPanel;
+            const type = this.isColumnVisible(column, pivotMode) ? 'visible' : 'hidden';
 
-            if (this.isColumnVisible(column, pivotMode)) {
-                visibleChildCount++;
-            } else {
-                hiddenChildCount++;
-            }
-        });
+            count[type]++;
+
+            if (!ignore) { continue; }
+
+            ignoredChildCount[type]++;
+        }
+
+        // if all columns are ignored we use the regular count, if not
+        // we only consider the columns that were not ignored
+        if (ignoredChildCount.visible + ignoredChildCount.hidden !== len) {
+            count.visible -= ignoredChildCount.visible;
+            count.hidden -= ignoredChildCount.hidden;
+        }
 
         let selectedValue: boolean | null;
-        if (visibleChildCount > 0 && hiddenChildCount > 0) {
+        if (count.visible > 0 && count.hidden > 0) {
             selectedValue = null;
-        } else if (visibleChildCount > 0) {
+        } else if (count.visible > 0) {
             selectedValue = true;
         } else {
             selectedValue = false;
@@ -329,8 +338,8 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
     private setOpenClosedIcons(): void {
         const folderOpen = this.expanded;
-        _.setVisible(this.eGroupClosedIcon, !folderOpen);
-        _.setVisible(this.eGroupOpenedIcon, folderOpen);
+        _.setDisplayed(this.eGroupClosedIcon, !folderOpen);
+        _.setDisplayed(this.eGroupOpenedIcon, folderOpen);
     }
 
     public isExpanded(): boolean {

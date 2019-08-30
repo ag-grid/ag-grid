@@ -8,9 +8,9 @@ import {
     Component,
     PostConstruct
 } from "ag-grid-community";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../chartModel";
-import { ChartTranslator } from "../../chartTranslator";
+import {ChartController} from "../../chartController";
+import {ColState} from "../../chartModel";
+import {ChartTranslator} from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
 
@@ -43,10 +43,11 @@ export class ChartDataPanel extends Component {
 
         [dimensionCols, valueCols].forEach((group, idx) => {
             const isCategory = idx === 0;
+
+            const dataGroupKey = isCategory ? 'categories' : this.chartController.isActiveXYChart() ? 'xyValues' : 'series';
+
             const groupComp = new AgGroupComponent({
-                title: isCategory 
-                    ? this.chartTranslator.translate('categories')
-                    : this.chartTranslator.translate('series'),
+                title: this.chartTranslator.translate(dataGroupKey),
                 enabled: true,
                 suppressEnabledCheckbox: true,
                 suppressOpenCloseIcons: false

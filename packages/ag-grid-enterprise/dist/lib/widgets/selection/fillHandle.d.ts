@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { CellComp } from 'ag-grid-community';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 export declare class FillHandle extends AbstractSelectionHandle {
@@ -13,18 +13,20 @@ export declare class FillHandle extends AbstractSelectionHandle {
     private isUp;
     private isLeft;
     private isReduce;
-    private extendFunction;
     protected type: string;
     constructor();
     protected onDrag(e: MouseEvent): void;
     protected onDragEnd(e: MouseEvent): void;
-    private runReducers;
+    private handleValueChanged;
+    private clearCellsInRange;
+    private processValues;
     protected clearValues(): void;
+    private clearMarkedPath;
+    private clearCellValues;
     private markPathFrom;
     private extendVertical;
     private reduceVertical;
     private extendHorizontal;
     private reduceHorizontal;
-    private clearMarkedPath;
     refresh(cellComp: CellComp): void;
 }

@@ -93,31 +93,37 @@ localeText = {
         export: 'laExporto',
         csvExport: 'laCSV Exportp',
         excelExport: 'laExcel Exporto (.xlsx)',
-        excelXmlExport: 'laExcel Exporto (.xml)'
+        excelXmlExport: 'laExcel Exporto (.xml)',
 
         // enterprise menu (charts)
+        pivotChartAndPivotMode: 'laPivot Chart & Pivot Mode',
+        pivotChart: 'laPivot Chart',
         chartRange: 'laChart Range',
 
-        columnRangeChart: 'laColumn',
-        groupedColumnChart: 'laGrouped',
-        stackedColumnChart: 'laStacked',
-        normalizedColumnChart: 'la100% Stacked',
+        columnChart: 'laColumn',
+        groupedColumn: 'laGrouped',
+        stackedColumn: 'laStacked',
+        normalizedColumn: 'la100% Stacked',
 
-        barRangeChart: 'laBar',
-        groupedBarChart: 'laGrouped',
-        stackedBarChart: 'laStacked',
-        normalizedBarChart: 'la100% Stacked',
+        barChart: 'laBar',
+        groupedBar: 'laGrouped',
+        stackedBar: 'laStacked',
+        normalizedBar: 'la100% Stacked',
 
-        lineRangeChart: 'laLine',
-
-        pieRangeChart: 'laPie',
         pieChart: 'laPie',
-        doughnutChart: 'laDoughnut',
+        pie: 'laPie',
+        doughnut: 'laDoughnut',
 
-        areaRangeChart: 'laArea',
+        line: 'laLine',
+
+        xyChart: 'laX Y (Scatter)',
+        scatter: 'laScatter',
+        bubble: 'laBubble',
+
         areaChart: 'laArea',
-        stackedAreaChart: 'laStacked',
-        normalizedAreaChart: 'la100% Stacked',
+        area: 'laArea',
+        stackedArea: 'laStacked',
+        normalizedArea: 'la100% Stacked',
 
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',
@@ -144,6 +150,8 @@ localeText = {
         ctrlV: 'ctrl n V'
 
         // charts
+        pivotChartTitle: 'laPivot Chart',
+        rangeChartTitle: 'laRange Chart',
         settings: 'laSettings',
         data: 'laData',
         format: 'laFormat',
@@ -191,6 +199,12 @@ localeText = {
         boldItalic: 'laBold Italic',
         fillOpacity: 'laFill Opacity',
         strokeOpacity: 'laLine Opacity',
+        columnGroup: 'Column',
+        barGroup: 'Bar',
+        pieGroup: 'Pie',
+        lineGroup: 'Line',
+        scatterGroup: 'Scatter',
+        areaGroup: 'Area',
         groupedColumnTooltip: 'laGrouped',
         stackedColumnTooltip: 'laStacked',
         normalizedColumnTooltip: 'la100% Stacked',
@@ -202,7 +216,11 @@ localeText = {
         lineTooltip: 'laLine',
         groupedAreaTooltip: 'laGrouped',
         stackedAreaTooltip: 'laStacked',
-        normalizedAreaTooltip: 'la100% Stacked'
+        normalizedAreaTooltip: 'la100% Stacked',
+        scatterTooltip: 'laScatter',
+        bubbleTooltip: 'laBubble',
+        noDataToChart: 'laNo data available to be charted.',
+        pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.'
 }</snippet>
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>
@@ -230,8 +248,8 @@ var gridOptions = {
         // to avoid key clash with external keys, we add 'grid' to the start of each key.
         var gridKey = 'grid.' + key;
 
-        // look the value up. here we use the AngularJS 1.x $filter service, however you can use whatever
-        // service you want, AngularJS 1.x or otherwise.
+        // look the value up. here we use the AngularJS 1.x $filter service, however you
+        // can use whatever service you want, AngularJS 1.x or otherwise.
         var value = $filter('translate')(gridKey);
         return value === gridKey ? defaultValue : value;
     }

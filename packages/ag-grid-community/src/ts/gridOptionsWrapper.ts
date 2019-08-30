@@ -30,7 +30,7 @@ import { CellPosition } from "./entities/cellPosition";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exporter/exportParams";
 import { AgEvent } from "./events";
-import { Environment } from "./environment";
+import { Environment, SASS_PROPERTIES } from "./environment";
 import { PropertyKeys } from "./propertyKeys";
 import { ColDefUtil } from "./components/colDefUtil";
 import { Events } from "./eventKeys";
@@ -572,7 +572,7 @@ export class GridOptionsWrapper {
     }
 
     public isEmbedFullWidthRows() {
-        return isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
+        return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
     }
 
     public getSuppressKeyboardEventFunc(): (params: SuppressKeyboardEventParams) => boolean {
@@ -650,6 +650,17 @@ export class GridOptionsWrapper {
 
     public getPaginationPageSize(): number | undefined {
         return this.gridOptions.paginationPageSize;
+    }
+
+    public isPaginateChildRows(): boolean {
+        // if using groupSuppressRow, means we are not showing parent rows,
+        // so we always paginate on the child rows here as there are no parent rows
+        if (this.isGroupSuppressRow() || this.isGroupRemoveSingleChildren()
+            || this.isGroupRemoveLowestSingleChildren()) {
+            return true;
+        }
+
+        return isTrue(this.gridOptions.paginateChildRows);
     }
 
     public getCacheBlockSize(): number | undefined {
@@ -752,6 +763,10 @@ export class GridOptionsWrapper {
 
     public isSuppressMiddleClickScrolls() {
         return isTrue(this.gridOptions.suppressMiddleClickScrolls);
+    }
+
+    public isPreventDefaultOnContextMenu() {
+        return isTrue(this.gridOptions.preventDefaultOnContextMenu);
     }
 
     public isSuppressPreventDefaultOnMouseWheel() {
@@ -1487,8 +1502,8 @@ export class GridOptionsWrapper {
             }
         }
 
-        if (options.embedFullWidthRows) {
-            console.warn(`ag-Grid: since v20.1, embedFullWidthRows is now gone. This property was introduced to allow faster vertical scrolling when using slow browsers (IE) and full width rows. However in v20 the dom layout was redesigned and this performance problem no longer exists, hence this property 'hack' is no longer necessary.`);
+        if (options.deprecatedEmbedFullWidthRows) {
+            console.warn(`ag-Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`);
         }
 
         if (options.suppressTabbing) {
@@ -1576,28 +1591,29 @@ export class GridOptionsWrapper {
             return { height: this.gridOptions.getRowHeight(params), estimated: false };
         } else if (rowNode.detail && this.isMasterDetail()) {
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
-                return {height: this.gridOptions.detailRowHeight, estimated: false};
+                return { height: this.gridOptions.detailRowHeight, estimated: false };
             } else {
-                return {height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false};
+                return { height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false };
             }
         }
 
-        const minRowHeight = this.getDefaultRowHeight();
-
+        const defaultRowHeight = this.getDefaultRowHeight();
         const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
-            this.gridOptions.rowHeight : minRowHeight;
+            this.gridOptions.rowHeight : defaultRowHeight;
+
+        const minRowHeight = Math.min(defaultRowHeight, rowHeight);
 
         if (this.columnController.isAutoRowHeightActive()) {
             if (allowEstimate) {
-                return {height: rowHeight, estimated: true};
+                return { height: rowHeight, estimated: true };
             }
             const autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
             // never return less than the default row height - covers when auto height
             // cells are blank.
-            return {height: Math.max(autoHeight, minRowHeight), estimated: false};
+            return { height: Math.max(autoHeight, minRowHeight), estimated: false };
         }
 
-        return {height: rowHeight, estimated: false};
+        return { height: rowHeight, estimated: false };
     }
 
     public isDynamicRowHeight(): boolean {
@@ -1614,8 +1630,8 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
-        const theme = this.environment.getTheme();
+    private specialForNewMaterial(defaultValue: number, sassVariableName: SASS_PROPERTIES): number {
+        const { theme } = this.environment.getTheme();
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
         }

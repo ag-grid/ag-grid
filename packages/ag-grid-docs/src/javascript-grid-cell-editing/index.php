@@ -99,7 +99,7 @@ include '../documentation-main/documentation_header.php';
         The grid will stop editing when any of the following happen:
     </p>
 
-        <ul class="content">
+    <ul class="content">
         <li><b>Callback stopEditing</b>: The callback <code>stopEditing</code> (from the params above) gets called by the
             editor. This is how your cell editor informs the grid to stop editing.</li>
         <li><b>Other Cell Focus</b>: If focus in the grid goes to another cell, the editing will stop.</li>
@@ -110,8 +110,6 @@ include '../documentation-main/documentation_header.php';
         Escape action will not take the new value, it will discard changes.</li>
         <li><b>Tab Key Down</b>: Editing will stop, accepting changes, and editing will move to the next cell, or
             the previous cell if 'shift' is also pressed.</li>
-        <li><b>Navigation Key Down</b>: Editing will stop, accepting changes, and editing will move to the next cell
-            in the direction of the navigation key.</li>
         <li><b>Popup Editor Closed</b>: If using popup editor, the popup is configured to close if you click
             outside the editor. Closing the popup triggers the grid to stop editing.</li>
         <li><b>gridApi.stopEditing()</b>: If you call <code>stopEditing()</code> on the grid API.</li>

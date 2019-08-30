@@ -38,6 +38,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
+    @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
     @RefSelector('sumAggregationComp') private sumAggregationComp: NameValueComp;
     @RefSelector('countAggregationComp') private countAggregationComp: NameValueComp;
@@ -79,7 +81,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         const statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
         if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
             statusBarValueComponent.setValue(_.formatNumberTwoDecimalPlacesAndCommas(value));
-            statusBarValueComponent.setVisible(visible);
+            statusBarValueComponent.setDisplayed(visible);
         }
     }
 
@@ -130,7 +132,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                 while (true) {
 
-                    const finishedAllRows = _.missing(currentRow) || !currentRow || RowPositionUtils.before(lastRow, currentRow);
+                    const finishedAllRows = _.missing(currentRow) || !currentRow || this.rowPositionUtils.before(lastRow, currentRow);
                     if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
@@ -141,7 +143,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
-                        const cellId = CellPositionUtils.createId({
+                        const cellId = this.cellPositionUtils.createId({
                             rowPinned: currentRow.rowPinned,
                             column: col,
                             rowIndex: currentRow.rowIndex

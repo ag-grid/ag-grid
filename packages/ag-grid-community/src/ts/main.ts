@@ -220,7 +220,7 @@ export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 // range
 export { CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams } from "./interfaces/iRangeController";
 export { IRangeController, ISelectionHandle } from "./interfaces/iRangeController";
-export { IRangeChartService } from "./interfaces/iRangeChartService";
+export { IChartService } from "./interfaces/IChartService";
 
 // exporter
 export { CsvCreator, BaseCreator } from "./exporter/csvCreator";
@@ -372,5 +372,5 @@ export { AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, V
     CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent,
     ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent,
     RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent, ToolPanelVisibleChangedEvent,
-    PasteEndEvent, PasteStartEvent, GridSizeChangedEvent, ChartRangeSelectionChanged }
+    PasteEndEvent, PasteStartEvent, GridSizeChangedEvent, ChartRangeSelectionChanged, ChartOptionsChanged }
     from "./events";

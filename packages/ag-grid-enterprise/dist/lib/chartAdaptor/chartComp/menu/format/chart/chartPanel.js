@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -34,12 +34,12 @@ var ChartPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
+        _this.chartProxy = _this.chartController.getChartProxy();
+        _this.chart = _this.chartProxy.getChart();
         return _this;
     }
     ChartPanel.prototype.init = function () {
         this.setTemplate(ChartPanel.TEMPLATE);
-        var chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
         this.initGroup();
         this.initTitles();
         this.initPaddingPanel();
@@ -54,29 +54,25 @@ var ChartPanel = /** @class */ (function (_super) {
         var _this = this;
         var title = this.chart.title ? this.chart.title.text : '';
         var initialFont = {
-            family: this.chart.title ? this.chart.title.fontFamily : 'Verdana, sans-serif',
-            style: this.chart.title ? this.chart.title.fontStyle : '',
-            weight: this.chart.title ? this.chart.title.fontWeight : 'Normal',
-            size: this.chart.title ? this.chart.title.fontSize : 22,
-            color: this.chart.title ? this.chart.title.color : 'black'
+            family: this.chart.title ? this.chartProxy.getTitleProperty('fontFamily') : 'Verdana, sans-serif',
+            style: this.chart.title ? this.chartProxy.getTitleProperty('fontStyle') : '',
+            weight: this.chart.title ? this.chartProxy.getTitleProperty('fontWeight') : 'Normal',
+            size: this.chart.title ? parseInt(this.chartProxy.getTitleProperty('fontSize')) : 22,
+            color: this.chart.title ? this.chartProxy.getTitleProperty('color') : 'black'
         };
+        // note we don't set the font style via chart title panel
         var setFont = function (font) {
-            var currentFont = _this.chart.title;
             if (font.family) {
-                currentFont.fontFamily = font.family;
-                _this.chart.title = currentFont;
+                _this.chartProxy.setTitleProperty('fontFamily', font.family);
             }
             if (font.weight) {
-                currentFont.fontWeight = font.weight;
-                _this.chart.title = currentFont;
+                _this.chartProxy.setTitleProperty('fontWeight', font.weight);
             }
             if (font.size) {
-                currentFont.fontSize = font.size;
-                _this.chart.title = currentFont;
+                _this.chartProxy.setTitleProperty('fontSize', font.size);
             }
             if (font.color) {
-                currentFont.color = font.color;
-                _this.chart.title = currentFont;
+                _this.chartProxy.setTitleProperty('color', font.color);
             }
         };
         this.titleInput
@@ -102,7 +98,7 @@ var ChartPanel = /** @class */ (function (_super) {
             initialFont: initialFont,
             setFont: setFont
         };
-        var labelPanelComp = new labelPanel_1.LabelPanel(this.chartController, params);
+        var labelPanelComp = new labelPanel_1.LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.chartGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);

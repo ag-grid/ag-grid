@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -44,6 +44,8 @@ export declare class Events {
     static EVENT_RANGE_SELECTION_CHANGED: string;
     /** Chart Range selection has changed */
     static EVENT_CHART_RANGE_SELECTION_CHANGED: string;
+    /** Chart Options have changed */
+    static EVENT_CHART_OPTIONS_CHANGED: string;
     /** For when the tool panel is shown / hidden */
     static EVENT_TOOL_PANEL_VISIBLE_CHANGED: string;
     /** Model was updated - grid updates the drawn rows when this happens */
@@ -97,7 +99,7 @@ export declare class Events {
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,
      * or the user has moved to a different page. */
     static EVENT_PAGINATION_CHANGED: string;
-    /** Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
+    /** Only used by React, Angular 2+, Web Components and VueJS ag-Grid components
      * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
      * to bound properties, this event fires after the grid has finished processing the change. */
     static EVENT_COMPONENT_STATE_CHANGED: string;

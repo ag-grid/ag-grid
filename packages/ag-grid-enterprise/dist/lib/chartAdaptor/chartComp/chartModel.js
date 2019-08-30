@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -33,8 +33,11 @@ var ChartModel = /** @class */ (function (_super) {
         _this.dimensionColState = [];
         _this.valueColState = [];
         _this.initialising = true;
+        _this.detached = false;
+        _this.columnNames = {};
+        _this.pivotChart = params.pivotChart;
         _this.chartType = params.chartType;
-        _this.aggregate = params.aggregate;
+        _this.aggFunc = params.aggFunc;
         _this.cellRanges = params.cellRanges;
         _this.palettes = params.palettes;
         _this.activePalette = params.activePalette;
@@ -51,31 +54,33 @@ var ChartModel = /** @class */ (function (_super) {
     };
     ChartModel.prototype.updateData = function () {
         var _a = this.getRowIndexes(), startRow = _a.startRow, endRow = _a.endRow;
-        var selectedDimension = this.getSelectedDimensionId();
+        var selectedDimension = this.getSelectedDimension();
         var selectedValueCols = this.getSelectedValueCols();
+        this.grouping = this.isGrouping();
         var params = {
-            aggregate: this.aggregate,
-            dimensionColIds: [selectedDimension],
+            aggFunc: this.aggFunc,
+            dimensionCols: [selectedDimension],
+            grouping: this.grouping,
+            pivoting: this.isPivotActive(),
+            multiCategories: this.isMultiCategoryChart(),
             valueCols: selectedValueCols,
             startRow: startRow,
             endRow: endRow
         };
-        this.chartData = this.datasource.getData(params);
+        var result = this.datasource.getData(params);
+        this.chartData = result.data;
+        this.columnNames = result.columnNames;
     };
     ChartModel.prototype.resetColumnState = function () {
         var _this = this;
-        var allColsFromRanges = this.getAllColumnsFromRanges();
         var _a = this.getAllChartColumns(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-        if (valueCols.length === 0) {
-            console.warn("ag-Grid - charts require at least one visible 'series' column.");
-            return;
-        }
+        var allCols = this.pivotChart ? this.columnController.getAllDisplayedColumns() : this.getAllColumnsFromRanges();
         this.valueColState = valueCols.map(function (column) {
             return {
                 column: column,
                 colId: column.getColId(),
                 displayName: _this.getColDisplayName(column),
-                selected: allColsFromRanges.indexOf(column) > -1
+                selected: allCols.indexOf(column) > -1
             };
         });
         this.dimensionColState = dimensionCols.map(function (column) {
@@ -86,7 +91,7 @@ var ChartModel = /** @class */ (function (_super) {
                 selected: false
             };
         });
-        var dimensionsInCellRange = dimensionCols.filter(function (col) { return allColsFromRanges.indexOf(col) > -1; });
+        var dimensionsInCellRange = dimensionCols.filter(function (col) { return allCols.indexOf(col) > -1; });
         if (dimensionsInCellRange.length > 0) {
             // select the first dimension from the range
             var selectedDimensionId_1 = dimensionsInCellRange[0].getColId();
@@ -163,13 +168,46 @@ var ChartModel = /** @class */ (function (_super) {
         }
     };
     ChartModel.prototype.getData = function () {
-        var selectedDimension = this.getSelectedDimensionId();
+        // grouped data contains label fields rather than objects with toString
+        if (this.grouping && this.isMultiCategoryChart()) {
+            return this.chartData;
+        }
+        var colId = this.getSelectedDimension().colId;
         // replacing the selected dimension with a complex object to facilitate duplicated categories
         return this.chartData.map(function (d, index) {
-            var dimensionValue = d[selectedDimension] ? d[selectedDimension].toString() : '';
-            d[selectedDimension] = { toString: function () { return dimensionValue; }, id: index };
+            var dimensionValue = d[colId] ? d[colId].toString() : '';
+            d[colId] = { toString: function () { return dimensionValue; }, id: index };
             return d;
         });
+    };
+    ChartModel.prototype.setChartType = function (chartType) {
+        var isCurrentMultiCategory = this.isMultiCategoryChart();
+        this.chartType = chartType;
+        // switching between single and multi-category charts requires data to be reformatted
+        if (isCurrentMultiCategory !== this.isMultiCategoryChart()) {
+            this.updateData();
+        }
+    };
+    ChartModel.prototype.isGrouping = function () {
+        var usingTreeData = this.gridOptionsWrapper.isTreeData();
+        var groupedCols = usingTreeData ? null : this.columnController.getRowGroupColumns();
+        var groupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
+        // charts only group when the selected category is a group column
+        var groupCols = this.columnController.getGroupDisplayColumns();
+        var colId = this.getSelectedDimension().colId;
+        var groupDimensionSelected = groupCols
+            .map(function (col) { return col.getColId(); })
+            .some(function (id) { return id === colId; });
+        return groupActive && groupDimensionSelected;
+    };
+    ChartModel.prototype.isPivotActive = function () {
+        return this.columnController.isPivotActive();
+    };
+    ChartModel.prototype.isPivotMode = function () {
+        return this.columnController.isPivotMode();
+    };
+    ChartModel.prototype.isPivotChart = function () {
+        return this.pivotChart;
     };
     ChartModel.prototype.setChartProxy = function (chartProxy) {
         this.chartProxy = chartProxy;
@@ -181,16 +219,13 @@ var ChartModel = /** @class */ (function (_super) {
         return this.chartId;
     };
     ChartModel.prototype.getValueColState = function () {
-        return this.valueColState;
+        return this.valueColState.map(this.displayNameMapper.bind(this));
     };
     ChartModel.prototype.getDimensionColState = function () {
         return this.dimensionColState;
     };
     ChartModel.prototype.getCellRanges = function () {
         return this.cellRanges;
-    };
-    ChartModel.prototype.setChartType = function (chartType) {
-        this.chartType = chartType;
     };
     ChartModel.prototype.getChartType = function () {
         return this.chartType;
@@ -207,14 +242,20 @@ var ChartModel = /** @class */ (function (_super) {
     ChartModel.prototype.isSuppressChartRanges = function () {
         return this.suppressChartRanges;
     };
-    ChartModel.prototype.getSelectedColState = function () {
-        return this.valueColState.filter(function (cs) { return cs.selected; });
+    ChartModel.prototype.isDetached = function () {
+        return this.detached;
+    };
+    ChartModel.prototype.toggleDetached = function () {
+        this.detached = !this.detached;
+    };
+    ChartModel.prototype.getSelectedValueColState = function () {
+        return this.getValueColState().filter(function (cs) { return cs.selected; });
     };
     ChartModel.prototype.getSelectedValueCols = function () {
-        return this.getSelectedColState().map(function (cs) { return cs.column; });
+        return this.valueColState.filter(function (cs) { return cs.selected; }).map(function (cs) { return cs.column; });
     };
-    ChartModel.prototype.getSelectedDimensionId = function () {
-        return this.dimensionColState.filter(function (cs) { return cs.selected; })[0].colId;
+    ChartModel.prototype.getSelectedDimension = function () {
+        return this.dimensionColState.filter(function (cs) { return cs.selected; })[0];
     };
     ChartModel.prototype.getColumnInDisplayOrder = function (allDisplayedColumns, listToSort) {
         var sortedList = [];
@@ -279,6 +320,10 @@ var ChartModel = /** @class */ (function (_super) {
                     return;
                 }
             }
+            if (colDef.colId === 'ag-Grid-AutoColumn') {
+                dimensionCols.push(col);
+                return;
+            }
             if (!col.isPrimary()) {
                 valueCols.push(col);
                 return;
@@ -289,8 +334,9 @@ var ChartModel = /** @class */ (function (_super) {
         return { dimensionCols: dimensionCols, valueCols: valueCols };
     };
     ChartModel.prototype.isNumberCol = function (colId) {
-        if (colId === 'ag-Grid-AutoColumn')
+        if (colId === 'ag-Grid-AutoColumn') {
             return false;
+        }
         var row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: undefined });
         var rowData = row ? row.data : null;
         var cellData;
@@ -312,6 +358,23 @@ var ChartModel = /** @class */ (function (_super) {
         }
         return null;
     };
+    ChartModel.prototype.displayNameMapper = function (col) {
+        if (this.columnNames[col.colId]) {
+            col.displayName = this.columnNames[col.colId].join(' - ');
+        }
+        else {
+            col.displayName = this.getColDisplayName(col.column);
+        }
+        return col;
+    };
+    ChartModel.prototype.isMultiCategoryChart = function () {
+        return [
+            ag_grid_community_1.ChartType.Pie,
+            ag_grid_community_1.ChartType.Doughnut,
+            ag_grid_community_1.ChartType.Scatter,
+            ag_grid_community_1.ChartType.Bubble
+        ].indexOf(this.chartType) < 0;
+    };
     ChartModel.prototype.generateId = function () {
         return 'id-' + Math.random().toString(36).substr(2, 16);
     };
@@ -326,6 +389,10 @@ var ChartModel = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('columnController'),
         __metadata("design:type", ag_grid_community_1.ColumnController)
     ], ChartModel.prototype, "columnController", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", ag_grid_community_1.GridOptionsWrapper)
+    ], ChartModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         ag_grid_community_1.Autowired('rangeController'),
         __metadata("design:type", rangeController_1.RangeController)

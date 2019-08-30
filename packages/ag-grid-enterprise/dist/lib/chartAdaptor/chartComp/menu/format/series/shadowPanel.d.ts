@@ -1,6 +1,10 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
+import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
+import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
+import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
+import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
+declare type ShadowProxy = BarChartProxy | AreaChartProxy | PieChartProxy | DoughnutChartProxy;
 export declare class ShadowPanel extends Component {
     static TEMPLATE: string;
     private shadowGroup;
@@ -9,10 +13,9 @@ export declare class ShadowPanel extends Component {
     private shadowXOffsetSlider;
     private shadowYOffsetSlider;
     private chartTranslator;
-    private chartController;
-    private chart;
-    private series;
-    constructor(chartController: ChartController);
+    private chartProxy;
+    constructor(chartProxy: ShadowProxy);
     private init;
     private initSeriesShadow;
 }
+export {};

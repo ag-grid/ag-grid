@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
@@ -34,15 +34,15 @@ export declare abstract class Node {
     /**
      * To simplify the type system (especially in Selections) we don't have the `Parent` node
      * (one that has children). Instead, we mimic HTML DOM, where any node can have children.
-     * But we still need to distinguish regular leaf nodes from leaf containers somehow.
+     * But we still need to distinguish regular leaf nodes from container leafs somehow.
      */
     protected isContainerNode: boolean;
-    protected _scene: Scene | null;
-    _setScene(value: Scene | null): void;
-    readonly scene: Scene | null;
-    private _parent;
-    _setParent(value: Node | null): void;
-    readonly parent: Node | null;
+    protected _scene?: Scene;
+    _setScene(value?: Scene): void;
+    readonly scene: Scene | undefined;
+    private _parent?;
+    _setParent(value?: Node): void;
+    readonly parent: Node | undefined;
     private _children;
     readonly children: ReadonlyArray<Node>;
     private static MAX_SAFE_INTEGER;
@@ -135,7 +135,7 @@ export declare abstract class Node {
      * @param y
      */
     pickNode(x: number, y: number): Node | undefined;
-    readonly getBBox?: () => BBox;
+    getBBox(): BBox | undefined;
     getBBoxCenter(): [number, number];
     computeTransformMatrix(): void;
     /**

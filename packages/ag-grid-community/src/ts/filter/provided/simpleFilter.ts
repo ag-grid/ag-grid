@@ -1,8 +1,8 @@
-import { ProvidedFilterModel, IDoesFilterPassParams, IFilterOptionDef } from "../../interfaces/iFilter";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { OptionsFactory } from "./optionsFactory";
-import { ProvidedFilter, IProvidedFilterParams } from "./providedFilter";
-import { _ } from "../../utils";
+import {IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel} from "../../interfaces/iFilter";
+import {RefSelector} from "../../widgets/componentAnnotations";
+import {OptionsFactory} from "./optionsFactory";
+import {IProvidedFilterParams, ProvidedFilter} from "./providedFilter";
+import {_} from "../../utils";
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string) [];
@@ -141,7 +141,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.eJoinOperatorAnd.checked = true;
     }
 
-    protected getModelFromUi(): M | ICombinedSimpleModel<M> {
+    public getModelFromUi(): M | ICombinedSimpleModel<M> {
         if (!this.isConditionUiComplete(ConditionPosition.One)) { return null; }
 
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
@@ -336,9 +336,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     protected updateUiVisibility(): void {
         const firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
         const showSecondFilter = this.allowTwoConditions && firstConditionComplete;
-        _.setVisible(this.eCondition2Body, showSecondFilter);
-        _.setVisible(this.eType2, showSecondFilter);
-        _.setVisible(this.eJoinOperatorPanel, showSecondFilter);
+        _.setDisplayed(this.eCondition2Body, showSecondFilter);
+        _.setDisplayed(this.eType2, showSecondFilter);
+        _.setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
     }
 
     protected resetUiToDefaults(): void {

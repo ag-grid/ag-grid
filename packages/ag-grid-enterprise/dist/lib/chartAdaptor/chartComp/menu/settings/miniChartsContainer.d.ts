@@ -1,19 +1,20 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { ChartType, Component } from "ag-grid-community";
 import { ChartController } from "../../chartController";
+import { ChartTranslator } from "../../chartTranslator";
+import { Group } from "../../../../charts/scene/group";
+import { Scene } from "../../../../charts/scene/scene";
 export declare class MiniChartsContainer extends Component {
     static TEMPLATE: string;
     private readonly fills;
     private readonly strokes;
     private wrappers;
     private chartController;
+    private chartTranslator;
     constructor(activePalette: number, chartController: ChartController);
     private init;
     refreshSelected(): void;
 }
-import { Group } from "../../../../charts/scene/group";
-import { Scene } from "../../../../charts/scene/scene";
-import { ChartTranslator } from "../../chartTranslator";
 export declare abstract class MiniChart extends Component {
     protected chartTranslator: ChartTranslator;
     protected readonly size = 58;

@@ -95,7 +95,6 @@ colDef = {
                 <li><code>suppressCount=true</code>: Suppresses the row count.</li>
                 <li><code>suppressDoubleClickExpand=true</code>: Suppress double click for expanding.</li>
                 <li><code>checkbox=true</code>: Adds a selection checkbox.</li>
-                <li><code>padding=20</code>: Changes the padding (indentation) of the levels.</li>
                 <li><code>innerRenderer=SimpleCellRenderer</code>: Puts custom rendering for displaying the value.
                     The group cellRenderer will take care of all the expand / collapse, selection etc, but then allow
                     you to customise the display of the value. In this example we add a border when the value is a group,

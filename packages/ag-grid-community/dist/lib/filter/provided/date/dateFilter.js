@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -173,13 +173,13 @@ var DateFilter = /** @class */ (function (_super) {
     DateFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
         var showFrom1 = this.showValueFrom(this.getCondition1Type());
-        utils_1._.setVisible(this.ePanelFrom1, showFrom1);
+        utils_1._.setDisplayed(this.ePanelFrom1, showFrom1);
         var showTo1 = this.showValueTo(this.getCondition1Type());
-        utils_1._.setVisible(this.ePanelTo1, showTo1);
+        utils_1._.setDisplayed(this.ePanelTo1, showTo1);
         var showFrom2 = this.showValueFrom(this.getCondition2Type());
-        utils_1._.setVisible(this.ePanelFrom2, showFrom2);
+        utils_1._.setDisplayed(this.ePanelFrom2, showFrom2);
         var showTo2 = this.showValueTo(this.getCondition2Type());
-        utils_1._.setVisible(this.ePanelTo2, showTo2);
+        utils_1._.setDisplayed(this.ePanelTo2, showTo2);
     };
     DateFilter.FILTER_TYPE = 'date';
     DateFilter.DEFAULT_FILTER_OPTIONS = [scalerFilter_1.ScalerFilter.EQUALS, scalerFilter_1.ScalerFilter.GREATER_THAN,

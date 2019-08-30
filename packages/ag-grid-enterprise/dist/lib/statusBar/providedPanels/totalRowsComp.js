@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -39,7 +39,7 @@ var TotalRowsComp = /** @class */ (function (_super) {
         }
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-total-row-count');
-        this.setVisible(true);
+        this.setDisplayed(true);
         var listener = this.onDataChanged.bind(this);
         this.eventService.addEventListener(ag_grid_community_1.Events.EVENT_MODEL_UPDATED, listener);
     };

@@ -1,5 +1,5 @@
 export class FpsCounter {
-    constructor(parent?: HTMLElement) {
+    constructor(parent?: HTMLElement, document = window.document) {
         if (parent) {
             const el = document.createElement('div');
             el.style.opacity = '0.8';

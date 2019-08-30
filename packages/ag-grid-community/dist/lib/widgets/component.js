@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,6 +38,9 @@ var Component = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.childComponents = [];
         _this.annotatedEventListeners = [];
+        // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
+        _this.displayed = true;
+        // if false, then CSS class "ag-invisible" is applied, which sets "visibility: hidden"
         _this.visible = true;
         // unique id for this row component. this is used for getting a reference to the HTML dom.
         // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
@@ -251,21 +254,42 @@ var Component = /** @class */ (function (_super) {
             this.addDestroyFunc(feature.destroy.bind(feature));
         }
     };
-    Component.prototype.isVisible = function () {
-        return this.visible;
+    Component.prototype.isDisplayed = function () {
+        return this.displayed;
     };
-    Component.prototype.setVisible = function (visible, visibilityMode) {
-        var isDisplay = visibilityMode !== 'visibility';
+    Component.prototype.setVisible = function (visible) {
         if (visible !== this.visible) {
             this.visible = visible;
-            utils_1._.addOrRemoveCssClass(this.eGui, isDisplay ? 'ag-hidden' : 'ag-invisible', !visible);
+            utils_1._.setVisible(this.eGui, visible);
+        }
+    };
+    Component.prototype.setDisplayed = function (displayed) {
+        if (displayed !== this.displayed) {
+            this.displayed = displayed;
+            utils_1._.setDisplayed(this.eGui, displayed);
             var event_1 = {
-                type: Component.EVENT_VISIBLE_CHANGED,
-                visible: this.visible
+                type: Component.EVENT_DISPLAYED_CHANGED,
+                visible: this.displayed
             };
             this.dispatchEvent(event_1);
         }
     };
+    /*    public setVisible(visible: boolean, visibilityMode?: 'display' | 'visibility'): void {
+            const isDisplay = visibilityMode !== 'visibility';
+            if (visible !== this.visible) {
+                this.visible = visible;
+    
+                // ag-hidden: display: none     -> setDisplayed();
+                // ag-invisible: visibility: hidden     => setVisible();
+    
+                _.addOrRemoveCssClass(this.eGui, isDisplay ? 'ag-hidden' : 'ag-invisible', !visible);
+                const event: VisibleChangedEvent = {
+                    type: Component.EVENT_VISIBLE_CHANGED,
+                    visible: this.visible
+                };
+                this.dispatchEvent(event);
+            }
+        }*/
     Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
         utils_1._.addOrRemoveCssClass(this.eGui, className, addOrRemove);
     };
@@ -297,7 +321,7 @@ var Component = /** @class */ (function (_super) {
     Component.prototype.getRefElement = function (refName) {
         return this.queryForHtmlElement('[ref="' + refName + '"]');
     };
-    Component.EVENT_VISIBLE_CHANGED = 'visibleChanged';
+    Component.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     __decorate([
         context_1.PreConstruct,
         __metadata("design:type", Function),

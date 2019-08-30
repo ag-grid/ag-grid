@@ -29,7 +29,7 @@ import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { _ } from "../utils";
-import { RowPosition } from "../entities/rowPosition";
+import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -49,6 +49,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("beans") private beans: Beans;
     @Autowired("maxDivHeightScaler") private maxDivHeightScaler: MaxDivHeightScaler;
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
+    @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
     @Optional("rangeController") private rangeController: IRangeController;
 
     private gridPanel: GridPanel;
@@ -791,6 +792,7 @@ export class RowRenderer extends BeanStub {
         }
 
         this.checkAngularCompile();
+        this.gridPanel.updateRowCount();
     }
 
     private flushContainers(rowComps: RowComp[]): void {
@@ -930,7 +932,7 @@ export class RowRenderer extends BeanStub {
             newLast = this.paginationProxy.getPageLastRow();
         } else {
 
-            const paginationOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+            const paginationOffset = this.paginationProxy.getPixelOffset();
             const maxDivHeightScaler = this.maxDivHeightScaler.getOffset();
 
             const bodyVRange = this.gridPanel.getVScrollPosition();
@@ -1111,7 +1113,11 @@ export class RowRenderer extends BeanStub {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (key === Constants.KEY_RIGHT) {
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                if (key === Constants.KEY_LEFT) {
+                    nextCell = this.getLastCellOfColSpan(nextCell);
+                }
+            } else if (key === Constants.KEY_RIGHT) {
                 nextCell = this.getLastCellOfColSpan(nextCell);
             }
 
@@ -1124,7 +1130,7 @@ export class RowRenderer extends BeanStub {
                 continue;
             }
 
-            const rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+            const rowNode = this.rowPositionUtils.getRowNode(nextCell);
 
             // we do not allow focusing on full width rows, this includes details rows
             if (rowNode.detail) {
@@ -1202,6 +1208,11 @@ export class RowRenderer extends BeanStub {
 
     private getLastCellOfColSpan(cell: CellPosition): CellPosition {
         const cellComp = this.getComponentForCell(cell);
+
+        if (!cellComp) {
+            return cell;
+        }
+
         const colSpanningList = cellComp.getColSpanningList();
 
         if (colSpanningList.length === 1) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -442,13 +442,13 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
             var expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
-            utils_1._.setVisible(this.eContracted, !expanded);
-            utils_1._.setVisible(this.eExpanded, expanded);
+            utils_1._.setDisplayed(this.eContracted, !expanded);
+            utils_1._.setDisplayed(this.eExpanded, expanded);
         }
         else {
             // it not expandable, show neither
-            utils_1._.setVisible(this.eExpanded, false);
-            utils_1._.setVisible(this.eContracted, false);
+            utils_1._.setDisplayed(this.eExpanded, false);
+            utils_1._.setDisplayed(this.eContracted, false);
         }
         var displayedGroup = this.displayedGroup;
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon

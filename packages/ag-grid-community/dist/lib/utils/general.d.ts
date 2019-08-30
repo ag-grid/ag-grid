@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -237,7 +237,7 @@ export declare class Utils {
      * @returns {HTMLElement}
      */
     static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement;
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null): HTMLElement;
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement;
     static addStylesToElement(eElement: any, styles: any): void;
     static isHorizontalScrollShowing(element: HTMLElement): boolean;
     static isVerticalScrollShowing(element: HTMLElement): boolean;
@@ -245,8 +245,9 @@ export declare class Utils {
     static getScrollbarWidth(): number;
     static hasOverflowScrolling(): boolean;
     static isKeyPressed(event: KeyboardEvent, keyToCheck: number): boolean;
+    static isCharacterKey(event: KeyboardEvent): boolean;
+    static setDisplayed(element: HTMLElement, displayed: boolean): void;
     static setVisible(element: HTMLElement, visible: boolean): void;
-    static setHidden(element: HTMLElement, hidden: boolean): void;
     static setElementWidth(element: HTMLElement, width: string | number): void;
     static setFixedWidth(element: HTMLElement, width: string | number): void;
     static setElementHeight(element: HTMLElement, height: string | number): void;
@@ -488,7 +489,15 @@ export declare class Utils {
     static fuzzyCheckStrings(inputValues: string[], validValues: string[], allSuggestions: string[]): {
         [p: string]: string[];
     };
-    static fuzzySuggestions(inputValue: string, validValues: string[], allSuggestions: string[]): string[];
+    /**
+     *
+     * @param {String} inputValue The value to be compared against a list of strings
+     * @param allSuggestions The list of strings to be compared against
+     * @param hideIrrelevant By default, fuzzy suggestions will just sort the allSuggestions list, set this to true
+     *        to filter out the irrelevant values
+     * @param weighted Set this to true, to make letters matched in the order they were typed have priority in the results.
+     */
+    static fuzzySuggestions(inputValue: string, allSuggestions: string[], hideIrrelevant?: boolean, weighted?: true): string[];
     /**
      * Algorithm to do fuzzy search
      * from https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
@@ -496,7 +505,8 @@ export declare class Utils {
      * @return {[]}
      */
     static get_bigrams(from: string): any[];
-    static string_similarity: (str1: string, str2: string) => number;
+    static string_distances(str1: string, str2: string): number;
+    static string_weighted_distances(str1: string, str2: string): number;
     private static isNumpadDelWithNumlockOnForEdgeOrIe;
     /**
      * cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they

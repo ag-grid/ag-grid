@@ -6,13 +6,11 @@ include_once 'includes/html-helpers.php';
 <!DOCTYPE html>
 <html class="stretch-html">
 <head lang="en">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*; style-src 'self' 'unsafe-inline' blob: https://*; img-src 'self' data: https://*; font-src 'self' data: https://*">
 <?php
 meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance", "react angular angularjs data grid example", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is our fully interactive demo showcasing all of our features and our performance with large datasets.", false);
 ?>
 <link rel="stylesheet" href="./dist/homepage.css">
-
-<style></style>
-
 </head>
 
 <body>
@@ -55,6 +53,9 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
             id="global-filter"
             style="flex: 1"
             />
+        </div>
+        <div class="video-tour">
+            <a href="https://youtu.be/29ja0liMuv4" target="_blank">Take a video tour</a>
         </div>
     </div>
 </div>

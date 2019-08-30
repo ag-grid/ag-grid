@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { CartesianChart } from "../cartesianChart";
 import { Series, SeriesNodeDatum } from "./series";
 import { LegendDatum } from "../legend";
@@ -6,15 +6,19 @@ import { Shape } from "../../scene/shape/shape";
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
     y: number;
+    radius: number;
     fill?: string;
     stroke?: string;
     strokeWidth: number;
-    radius: number;
 }
 export interface ScatterTooltipRendererParams {
     datum: any;
     xField: string;
     yField: string;
+    radiusField: string;
+    xFieldName: string;
+    yFieldName: string;
+    radiusFieldName: string;
     title?: string;
     color?: string;
 }
@@ -24,6 +28,8 @@ export declare class ScatterSeries extends Series<CartesianChart> {
     private domainY;
     private xData;
     private yData;
+    private radiusData;
+    private radiusScale;
     private groupSelection;
     chart: CartesianChart | undefined;
     protected _title: string;
@@ -32,10 +38,17 @@ export declare class ScatterSeries extends Series<CartesianChart> {
     xField: string;
     protected _yField: string;
     yField: string;
+    private _radiusField;
+    radiusField: string;
+    xFieldName: string;
+    yFieldName: string;
+    radiusFieldName: string;
     private _marker;
     marker: boolean;
     private _markerSize;
     markerSize: number;
+    private _minMarkerSize;
+    minMarkerSize: number;
     private _markerStrokeWidth;
     markerStrokeWidth: number;
     processData(): boolean;
@@ -43,6 +56,10 @@ export declare class ScatterSeries extends Series<CartesianChart> {
     fill: string;
     private _stroke;
     stroke: string;
+    private _fillOpacity;
+    fillOpacity: number;
+    private _strokeOpacity;
+    strokeOpacity: number;
     highlightStyle: {
         fill?: string;
         stroke?: string;

@@ -159,7 +159,7 @@ export class GridCore extends Component {
             return false;
         }
 
-        return this.sideBarComp.isVisible();
+        return this.sideBarComp.isDisplayed();
     }
 
     public setSideBarVisible(show:boolean) {
@@ -170,7 +170,7 @@ export class GridCore extends Component {
             return;
         }
 
-        this.sideBarComp.setVisible(show);
+        this.sideBarComp.setDisplayed(show);
     }
 
     public closeToolPanel() {
@@ -231,7 +231,7 @@ export class GridCore extends Component {
             throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
         }
         // look for the node index we want to display
-        const rowCount = this.rowModel.getPageLastRow() + 1;
+        const rowCount = this.rowModel.getRowCount();
         const comparatorIsAFunction = typeof comparator === 'function';
         let indexToSelect = -1;
         // go through all the nodes, find the one we want to show

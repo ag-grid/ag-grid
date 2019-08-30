@@ -4,8 +4,6 @@ export default class GroupRowInnerRenderer extends Component {
     constructor(props) {
         super(props);
 
-        props.reactContainer.style.display = "inline-block";
-
         this.props = props;
 
         const node = this.props.node;

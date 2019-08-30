@@ -310,6 +310,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressRowClickSelection : any = undefined;
     @Input() public suppressCellSelection : any = undefined;
     @Input() public suppressHorizontalScroll : any = undefined;
+    @Input() public alwaysShowVerticalScroll : any = undefined;
     @Input() public debug : any = undefined;
     @Input() public enableBrowserTooltips : any = undefined;
     @Input() public enableColResize : any = undefined;
@@ -426,6 +427,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressMaxRenderedRowRestriction : any = undefined;
     @Input() public excludeChildrenWhenTreeDataFiltering : any = undefined;
     @Input() public keepDetailRows : any = undefined;
+    @Input() public paginateChildRows : any = undefined;
+    @Input() public preventDefaultOnContextMenu : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -448,6 +451,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public pinnedRowDataChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rangeSelectionChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public chartRangeSelectionChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public chartOptionsChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public toolPanelVisibleChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public modelUpdated: EventEmitter<any> = new EventEmitter<any>();
     @Output() public pasteStart: EventEmitter<any> = new EventEmitter<any>();

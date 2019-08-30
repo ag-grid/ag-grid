@@ -52,7 +52,7 @@ import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
-import { IRangeChartService } from "./interfaces/iRangeChartService";
+import { IChartService } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
@@ -90,7 +90,7 @@ export interface ChartRangeParams {
     chartType: ChartType;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
-    aggregate?: boolean;
+    aggFunc?: string | IAggFunc;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 
@@ -130,7 +130,7 @@ export class GridApi {
     @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
-    @Optional('rangeChartService') private rangeChartService: IRangeChartService;
+    @Optional('chartService') private chartService: IChartService;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -477,10 +477,16 @@ export class GridApi {
         return this.rowModel;
     }
 
+    public setRowNodeExpanded(rowNode: RowNode, expanded: boolean): void {
+        if (rowNode) {
+            rowNode.setExpanded(expanded);
+        }
+    }
+
     public onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any) {
         if (_.missing(this.clientSideRowModel)) { console.warn('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model'); }
         if (_.exists(deprecated_refreshFromIndex)) { console.warn('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows'); }
-        // we don't really want the user calling this if one one rowNode was expanded, instead they should be
+        // we don't really want the user calling this if only one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
@@ -969,7 +975,7 @@ export class GridApi {
             }, 'ChartsModuleCheck');
             return;
         }
-        return this.rangeChartService.chartCellRange(params);
+        return this.chartService.chartCellRange(params);
     }
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {
@@ -1272,7 +1278,7 @@ export class GridApi {
     }
 
     public paginationGetRowCount(): number {
-        return this.paginationProxy.getTotalRowCount();
+        return this.paginationProxy.getMasterRowCount();
     }
 
     public paginationGoToNextPage(): void {

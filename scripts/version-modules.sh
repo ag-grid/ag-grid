@@ -65,14 +65,6 @@ do
         sed -i .old -e 's/"ag-grid-vue":.*/"ag-grid-vue": "'$2'"/g' package.json
     fi
     
-    # BLOCK 6 FOR DEVDEPS AND PEERDEPS FOR AG-GRID-AURELIA
-    sed -i .old -e 's/"ag-grid-aurelia":.*,/"ag-grid-aurelia": "'$2'",/g' package.json
-
-    if [ $? -ne 0 ]
-    then
-        sed -i .old -e 's/"ag-grid-aurelia":.*/"ag-grid-aurelia": "'$2'"/g' package.json
-    fi
-
     ## Remove backup files from sed
     rm bower.json.old
     rm package.json.old

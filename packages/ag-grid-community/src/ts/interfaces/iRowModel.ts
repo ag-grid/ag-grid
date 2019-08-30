@@ -3,6 +3,7 @@ import { RowNode } from "../entities/rowNode";
 export interface RowBounds {
     rowTop: number;
     rowHeight: number;
+    rowIndex?: number;
 }
 
 export interface IRowModel {
@@ -13,12 +14,11 @@ export interface IRowModel {
     /** Returns the rowNode for given id. */
     getRowNode(id: string): RowNode | null;
 
-    /** Returns the first and last rows to render. */
-    getPageFirstRow(): number;
-    getPageLastRow(): number;
-
     /** This is legacy, not used by ag-Grid, but keeping for backward compatibility */
     getRowCount(): number;
+
+    getTopLevelRowCount(): number;
+    getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
 
     /** Returns the row index at the given pixel */
     getRowIndexAtPixel(pixel: number): number;

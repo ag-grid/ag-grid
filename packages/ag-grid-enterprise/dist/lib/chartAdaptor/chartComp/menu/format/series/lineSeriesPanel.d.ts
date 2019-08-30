@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 export declare class LineSeriesPanel extends Component {
@@ -7,11 +7,11 @@ export declare class LineSeriesPanel extends Component {
     private seriesTooltipsToggle;
     private seriesLineWidthSlider;
     private chartTranslator;
-    private series;
     private activePanels;
-    private readonly chartController;
+    private readonly chartProxy;
     constructor(chartController: ChartController);
     private init;
+    private initSeriesGroup;
     private initSeriesTooltips;
     private initSeriesLineWidth;
     private initMarkersPanel;

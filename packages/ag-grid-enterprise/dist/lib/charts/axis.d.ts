@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { BBox } from "./scene/bbox";
@@ -22,6 +22,7 @@ export declare class Axis<S extends Scale<D, number>, D = any> {
     private groupSelection;
     private line;
     constructor(scale: S);
+    range: number[];
     domain: D[];
     /**
      * The horizontal translation of the axis group.
@@ -147,5 +148,5 @@ export declare class Axis<S extends Scale<D, number>, D = any> {
      * it will also make it harder to reason about the program.
      */
     update(): void;
-    getBBox(): BBox;
+    getBBox(includeTitle?: boolean): BBox;
 }

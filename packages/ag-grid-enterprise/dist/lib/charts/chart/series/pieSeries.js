@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -147,7 +147,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._calloutColors !== value) {
                 this._calloutColors = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -160,7 +160,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._calloutStrokeWidth !== value) {
                 this._calloutStrokeWidth = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -173,7 +173,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._calloutLength !== value) {
                 this._calloutLength = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -186,7 +186,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._labelOffset !== value) {
                 this._labelOffset = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -199,7 +199,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._labelFontStyle !== value) {
                 this._labelFontStyle = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -212,7 +212,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._labelFontWeight !== value) {
                 this._labelFontWeight = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -225,7 +225,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._labelFontSize !== value) {
                 this._labelFontSize = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -238,7 +238,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._labelFontFamily !== value) {
                 this._labelFontFamily = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -251,7 +251,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._labelColor !== value) {
                 this._labelColor = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -277,7 +277,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (chart) {
             if (this._chart !== chart) {
                 this._chart = chart;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -431,7 +431,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._strokeWidth !== value) {
                 this._strokeWidth = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,
@@ -444,7 +444,7 @@ var PieSeries = /** @class */ (function (_super) {
         set: function (value) {
             if (this._shadow !== value) {
                 this._shadow = value;
-                this.update();
+                this.scheduleLayout();
             }
         },
         enumerable: true,

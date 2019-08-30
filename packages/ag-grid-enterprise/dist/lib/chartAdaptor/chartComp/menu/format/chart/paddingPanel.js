@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -29,13 +29,11 @@ var PaddingPanel = /** @class */ (function (_super) {
     __extends(PaddingPanel, _super);
     function PaddingPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartController = chartController;
+        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     PaddingPanel.prototype.init = function () {
         this.setTemplate(PaddingPanel.TEMPLATE);
-        var chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
         this.initGroup();
         this.initChartPaddingItems();
     };
@@ -47,21 +45,17 @@ var PaddingPanel = /** @class */ (function (_super) {
     };
     PaddingPanel.prototype.initChartPaddingItems = function () {
         var _this = this;
-        var initInput = function (property, input, labelKey, value) {
+        var initInput = function (property, input, labelKey) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(value)
+                .setValue(_this.chartProxy.getChartPadding(property))
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) {
-                var padding = _this.chart.padding;
-                padding[property] = newValue;
-                _this.chart.padding = padding;
-            });
+                .onValueChange(function (newValue) { return _this.chartProxy.setChartPaddingProperty(property, newValue); });
         };
-        initInput('top', this.paddingTopSlider, 'top', "" + this.chart.padding.top);
-        initInput('right', this.paddingRightSlider, 'right', "" + this.chart.padding.right);
-        initInput('bottom', this.paddingBottomSlider, 'bottom', "" + this.chart.padding.bottom);
-        initInput('left', this.paddingLeftSlider, 'left', "" + this.chart.padding.left);
+        initInput('top', this.paddingTopSlider, 'top');
+        initInput('right', this.paddingRightSlider, 'right');
+        initInput('bottom', this.paddingBottomSlider, 'bottom');
+        initInput('left', this.paddingLeftSlider, 'left');
     };
     PaddingPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartPaddingGroup\">\n                <ag-slider ref=\"paddingTopSlider\"></ag-slider>\n                <ag-slider ref=\"paddingRightSlider\"></ag-slider>\n                <ag-slider ref=\"paddingBottomSlider\"></ag-slider>\n                <ag-slider ref=\"paddingLeftSlider\"></ag-slider>\n            </ag-group-component>\n        <div>";
     __decorate([

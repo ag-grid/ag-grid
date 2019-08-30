@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -39,7 +39,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     }
     // lazy initialise the panel
     ColumnToolPanel.prototype.setVisible = function (visible) {
-        _super.prototype.setVisible.call(this, visible);
+        _super.prototype.setDisplayed.call(this, visible);
         if (visible && !this.initialised) {
             this.init(this.params);
         }

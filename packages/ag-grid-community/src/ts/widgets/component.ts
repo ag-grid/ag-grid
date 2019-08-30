@@ -10,9 +10,9 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
-export class Component extends BeanStub {//implements IComponent<any> {
+export class Component extends BeanStub {
 
-    public static EVENT_VISIBLE_CHANGED = 'visibleChanged';
+    public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
 
     private eGui: HTMLElement;
 
@@ -20,6 +20,10 @@ export class Component extends BeanStub {//implements IComponent<any> {
 
     private annotatedEventListeners: any[] = [];
 
+    // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
+    private displayed = true;
+
+    // if false, then CSS class "ag-invisible" is applied, which sets "visibility: hidden"
     private visible = true;
 
     protected parentComponent: Component | undefined;
@@ -274,14 +278,39 @@ export class Component extends BeanStub {//implements IComponent<any> {
         }
     }
 
-    public isVisible(): boolean {
-        return this.visible;
+    public isDisplayed(): boolean {
+        return this.displayed;
     }
 
-    public setVisible(visible: boolean, visibilityMode?: 'display' | 'visibility'): void {
+    public setVisible(visible: boolean): void {
+        if (visible !== this.visible) {
+            this.visible = visible;
+
+            _.setVisible(this.eGui, visible);
+        }
+    }
+
+    public setDisplayed(displayed: boolean): void {
+        if (displayed !== this.displayed) {
+            this.displayed = displayed;
+
+            _.setDisplayed(this.eGui, displayed);
+            const event: VisibleChangedEvent = {
+                type: Component.EVENT_DISPLAYED_CHANGED,
+                visible: this.displayed
+            };
+            this.dispatchEvent(event);
+        }
+    }
+
+/*    public setVisible(visible: boolean, visibilityMode?: 'display' | 'visibility'): void {
         const isDisplay = visibilityMode !== 'visibility';
         if (visible !== this.visible) {
             this.visible = visible;
+
+            // ag-hidden: display: none     -> setDisplayed();
+            // ag-invisible: visibility: hidden     => setVisible();
+
             _.addOrRemoveCssClass(this.eGui, isDisplay ? 'ag-hidden' : 'ag-invisible', !visible);
             const event: VisibleChangedEvent = {
                 type: Component.EVENT_VISIBLE_CHANGED,
@@ -289,7 +318,7 @@ export class Component extends BeanStub {//implements IComponent<any> {
             };
             this.dispatchEvent(event);
         }
-    }
+    }*/
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
         _.addOrRemoveCssClass(this.eGui, className, addOrRemove);

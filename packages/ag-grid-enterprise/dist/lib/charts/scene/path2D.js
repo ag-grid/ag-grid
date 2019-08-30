@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var intersection_1 = require("./intersection");
@@ -202,7 +202,10 @@ var Path2D = /** @class */ (function () {
         while (theta2 >= rightAngle) {
             theta2 -= rightAngle;
             commands.push('C');
-            params.push(xx + xy * f90 + cx, yx + yy * f90 + cy, xx * f90 + xy + cx, yx * f90 + yy + cy, xy + cx, yy + cy);
+            // Temp workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=993330
+            // Revert this commit when fixed ^^.
+            var lastX = xy + cx;
+            params.push(xx + xy * f90 + cx, yx + yy * f90 + cy, xx * f90 + xy + cx, yx * f90 + yy + cy, Math.abs(lastX) < 1e-8 ? 0 : lastX, yy + cy);
             // Prepend π/2 rotation matrix.
             // |xx xy| | 0 1| -> | xy -xx|
             // |yx yy| |-1 0| -> | yy -yx|
@@ -227,7 +230,10 @@ var Path2D = /** @class */ (function () {
             var C2x = cosPhi2 + f * sinPhi2;
             var C2y = sinPhi2 - f * cosPhi2;
             commands.push('C');
-            params.push(xx + xy * f + cx, yx + yy * f + cy, xx * C2x + xy * C2y + cx, yx * C2x + yy * C2y + cy, xx * cosPhi2 + xy * sinPhi2 + cx, yx * cosPhi2 + yy * sinPhi2 + cy);
+            // Temp workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=993330
+            // Revert this commit when fixed ^^.
+            var lastX = xx * cosPhi2 + xy * sinPhi2 + cx;
+            params.push(xx + xy * f + cx, yx + yy * f + cy, xx * C2x + xy * C2y + cx, yx * C2x + yy * C2y + cy, Math.abs(lastX) < 1e-8 ? 0 : lastX, yx * cosPhi2 + yy * sinPhi2 + cy);
         }
         if (anticlockwise) {
             for (var i = start, j = params.length - 2; i < j; i += 2, j -= 2) {

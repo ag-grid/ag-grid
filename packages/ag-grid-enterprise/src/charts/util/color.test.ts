@@ -47,13 +47,13 @@ test('fromHexString', () => {
         expect(color.a).toBe(0.8);
     }
 
-    expect(() => { Color.fromHexString('') }).toThrow();
-    expect(() => { Color.fromHexString('#') }).toThrow();
-    expect(() => { Color.fromHexString('#a') }).toThrow();
-    expect(() => { Color.fromHexString('#ab') }).toThrow();
-    expect(() => { Color.fromHexString('#abcde') }).toThrow();
-    expect(() => { Color.fromHexString('#aabbccd') }).toThrow();
-    expect(() => { Color.fromHexString('#aabbccddf') }).toThrow();
+    expect(() => { Color.fromHexString(''); }).toThrow();
+    expect(() => { Color.fromHexString('#'); }).toThrow();
+    expect(() => { Color.fromHexString('#a'); }).toThrow();
+    expect(() => { Color.fromHexString('#ab'); }).toThrow();
+    expect(() => { Color.fromHexString('#abcde'); }).toThrow();
+    expect(() => { Color.fromHexString('#aabbccd'); }).toThrow();
+    expect(() => { Color.fromHexString('#aabbccddf'); }).toThrow();
 });
 
 test('fromArray', () => {
@@ -143,10 +143,10 @@ test('fromRgbaString', () => {
         expect(color.a).toBe(1);
         expect(color.toRgbaString()).toBe('rgb(120, 255, 255)');
     }
-    expect(() => { Color.fromRgbaString('rgb(120.5, 240, 100)') }).toThrow();
-    expect(() => { Color.fromRgbaString('rgb(120, .3, 100)') }).toThrow();
-    expect(() => { Color.fromRgbaString('rgb(120, 240, 100.)') }).toThrow();
-    expect(() => { Color.fromRgbaString('rgb(-120, 240, 100)') }).toThrow();
+    expect(() => { Color.fromRgbaString('rgb(120.5, 240, 100)'); }).toThrow();
+    expect(() => { Color.fromRgbaString('rgb(120, .3, 100)'); }).toThrow();
+    expect(() => { Color.fromRgbaString('rgb(120, 240, 100.)'); }).toThrow();
+    expect(() => { Color.fromRgbaString('rgb(-120, 240, 100)'); }).toThrow();
 });
 
 test('fromString', () => {
@@ -188,9 +188,9 @@ test('fromString', () => {
         expect(color.a).toBe(1);
         expect(color.toRgbaString()).toBe('rgb(255, 0, 255)');
     }
-    expect(() => { Color.fromRgbaString('#') }).toThrow();
-    expect(() => { Color.fromRgbaString('rgba()') }).toThrow();
-    expect(() => { Color.fromRgbaString('blah') }).toThrow();
+    expect(() => { Color.fromRgbaString('#'); }).toThrow();
+    expect(() => { Color.fromRgbaString('rgba()'); }).toThrow();
+    expect(() => { Color.fromRgbaString('blah'); }).toThrow();
 });
 
 test('toHexString', () => {

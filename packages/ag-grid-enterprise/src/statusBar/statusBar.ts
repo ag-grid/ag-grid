@@ -65,7 +65,7 @@ export class StatusBar extends Component {
                     // default to the component name if no key supplied
                     key: componentConfig.key || componentConfig.statusPanel,
                     promise
-                })
+                });
             }
         );
 
@@ -86,7 +86,7 @@ export class StatusBar extends Component {
                         } else {
                             destroyFunc();
                         }
-                    })
+                    });
                 });
             });
     }

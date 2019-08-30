@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community/main";
 export declare class GridHeaderDropZones extends Component {
     private gridOptionsWrapper;

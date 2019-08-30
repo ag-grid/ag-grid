@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -232,7 +232,10 @@ var Sector = /** @class */ (function (_super) {
             //         centerY + 0.5 * (innerRadius + outerRadius) * Math.sin(endAngle) + tipOffset * Math.sin(endAngle + Math.PI / 2)
             //     );
             // }
-            path.lineTo(centerX + innerRadius * Math.cos(endAngle), centerY + innerRadius * Math.sin(endAngle));
+            // Temp workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=993330
+            // Revert this commit when fixed ^^.
+            var x = centerX + innerRadius * Math.cos(endAngle);
+            path.lineTo(Math.abs(x) < 1e-8 ? 0 : x, centerY + innerRadius * Math.sin(endAngle));
         }
         path.cubicArc(centerX, centerY, innerRadius, innerRadius, 0, endAngle, startAngle, 1);
         path.closePath();

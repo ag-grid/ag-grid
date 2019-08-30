@@ -248,6 +248,21 @@ function chartLine() {
     gridOptions.api.chartRange(chartRangeParams);
 }
 
+function chartScatter() {
+    var cellRange = {
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
+    };
+
+    var chartRangeParams = {
+        cellRange: cellRange,
+        chartType: 'scatter'
+    };
+
+    gridOptions.api.chartRange(chartRangeParams);
+}
+
 function chartPie() {
     var cellRange = {
         rowStartIndex: 0,

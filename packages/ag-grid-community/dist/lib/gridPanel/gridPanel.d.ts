@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
@@ -126,6 +126,7 @@ export declare class GridPanel extends Component {
     private updateScrollVisibleServiceImpl;
     private setHorizontalScrollVisible;
     private setVerticalScrollPaddingVisible;
+    updateRowCount(): void;
     ensureColumnVisible(key: any): void;
     showLoadingOverlay(): void;
     showNoRowsOverlay(): void;

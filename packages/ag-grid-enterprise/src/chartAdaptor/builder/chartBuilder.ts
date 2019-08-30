@@ -20,7 +20,7 @@ import {
     CaptionOptions,
 } from "ag-grid-community";
 
-import { CartesianChart } from "../../charts/chart/cartesianChart";
+import { CartesianChart, CartesianChartLayout } from "../../charts/chart/cartesianChart";
 import { PolarChart } from "../../charts/chart/polarChart";
 import { LineSeries } from "../../charts/chart/series/lineSeries";
 import { ScatterSeries } from "../../charts/chart/series/scatterSeries";
@@ -29,12 +29,14 @@ import { AreaSeries } from "../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../charts/chart/series/pieSeries";
 import { Chart } from "../../charts/chart/chart";
 import { Series } from "../../charts/chart/series/series";
-import { DropShadow, Offset } from "../../charts/scene/dropShadow";
+import { DropShadow } from "../../charts/scene/dropShadow";
 import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
 import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
 import { Caption } from "../../charts/caption";
+import {GroupedCategoryAxis} from "../../charts/chart/axis/groupedCategoryAxis";
+import {GroupedCategoryChart} from "../../charts/chart/groupedCategoryChart";
 
 type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
 type PolarSeriesType = 'pie';
@@ -43,44 +45,96 @@ type SeriesType = CartesianSeriesType | PolarSeriesType;
 export class ChartBuilder {
 
     static createCartesianChart(options: CartesianChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options);
     }
 
+    static createGroupedColumnChart(options: BarChartOptions): GroupedCategoryChart {
+        const chart = new GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
+    }
+
+    static createGroupedBarChart(options: BarChartOptions): GroupedCategoryChart {
+        const chart = new GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.yAxis),
+            yAxis: ChartBuilder.createGroupedAxis(options.xAxis)
+        });
+        chart.layout = CartesianChartLayout.Horizontal;
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
+    }
+
+    static createGroupedLineChart(options: BarChartOptions): GroupedCategoryChart {
+        const chart = new GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'line');
+    }
+
+    static createGroupedAreaChart(options: AreaChartOptions): GroupedCategoryChart {
+        const chart = new GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
+
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'area');
+    }
+
     static createBarChart(options: BarChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.yAxis),
-            ChartBuilder.createAxis(options.xAxis)
-        );
-        chart.layout = 'horizontal';
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.yAxis),
+            yAxis: ChartBuilder.createAxis(options.xAxis)
+        });
+        chart.layout = CartesianChartLayout.Horizontal;
         return ChartBuilder.initCartesianChart(chart, options, 'bar');
     }
 
     static createColumnChart(options: BarChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options, 'bar');
     }
 
     static createLineChart(options: LineChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options, 'line');
     }
 
     static createScatterChart(options: ScatterChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options, 'scatter');
+    }
+
+    static createAreaChart(options: AreaChartOptions): CartesianChart {
+        const chart = new CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
+        return ChartBuilder.initCartesianChart(chart, options, 'area');
     }
 
     static createPolarChart(options: PolarChartOptions): PolarChart {
@@ -96,14 +150,6 @@ export class ChartBuilder {
     static createPieChart(options: PieChartOptions): PolarChart {
         const chart = new PolarChart();
         return ChartBuilder.initPolarChart(chart, options, 'pie');
-    }
-
-    static createAreaChart(options: AreaChartOptions): CartesianChart {
-        const chart = new CartesianChart(
-            ChartBuilder.createAxis(options.xAxis),
-            ChartBuilder.createAxis(options.yAxis)
-        );
-        return ChartBuilder.initCartesianChart(chart, options, 'area');
     }
 
     static createLineSeries(options: LineSeriesOptions): LineSeries {
@@ -142,10 +188,10 @@ export class ChartBuilder {
             chart.height = options.height;
         }
         if (options.title) {
-            chart.title = ChartBuilder.createTitle(options.title);
+            chart.title = ChartBuilder.createChartTitle(options.title);
         }
         if (options.subtitle) {
-            chart.subtitle = ChartBuilder.createSubtitle(options.subtitle);
+            chart.subtitle = ChartBuilder.createChartSubtitle(options.subtitle);
         }
         if (options.series !== undefined) {
             const seriesConfigs = options.series;
@@ -198,6 +244,11 @@ export class ChartBuilder {
         return chart;
     }
 
+    static initGroupedCategoryChart(chart: GroupedCategoryChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType) {
+        ChartBuilder.initChart(chart, options, seriesType);
+        return chart;
+    }
+
     static initPolarChart(chart: PolarChart, options: PolarChartOptions, seriesType?: PolarSeriesType) {
         ChartBuilder.initChart(chart, options, seriesType);
         return chart;
@@ -241,6 +292,9 @@ export class ChartBuilder {
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
         }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
+        }
         if (options.marker !== undefined) {
             series.marker = options.marker;
         }
@@ -269,14 +323,38 @@ export class ChartBuilder {
         if (options.yField !== undefined) {
             series.yField = options.yField;
         }
+        if (options.radiusField !== undefined) {
+            series.radiusField = options.radiusField;
+        }
+        if (options.xFieldName !== undefined) {
+            series.xFieldName = options.xFieldName;
+        }
+        if (options.yFieldName !== undefined) {
+            series.yFieldName = options.yFieldName;
+        }
+        if (options.radiusFieldName !== undefined) {
+            series.radiusFieldName = options.radiusFieldName;
+        }
         if (options.fill !== undefined) {
             series.fill = options.fill;
         }
         if (options.stroke !== undefined) {
             series.stroke = options.stroke;
         }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
+        }
         if (options.markerSize !== undefined) {
             series.markerSize = options.markerSize;
+        }
+        if (options.minMarkerSize !== undefined) {
+            series.minMarkerSize = options.minMarkerSize;
         }
         if (options.markerStrokeWidth !== undefined) {
             series.markerStrokeWidth = options.markerStrokeWidth;
@@ -320,6 +398,9 @@ export class ChartBuilder {
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
         }
         if (options.labelEnabled !== undefined) {
             series.labelEnabled = options.labelEnabled;
@@ -378,6 +459,9 @@ export class ChartBuilder {
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
         }
         if (options.marker !== undefined) {
             series.marker = options.marker;
@@ -458,6 +542,9 @@ export class ChartBuilder {
         if (options.strokeOpacity !== undefined) {
             series.strokeOpacity = options.strokeOpacity;
         }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
+        }
         if (options.rotation !== undefined) {
             series.rotation = options.rotation;
         }
@@ -516,7 +603,7 @@ export class ChartBuilder {
         }
     }
 
-    static createTitle(options: CaptionOptions) {
+    static createAxisTitle(options: CaptionOptions) {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -534,7 +621,25 @@ export class ChartBuilder {
         return ChartBuilder.createCaption(options);
     }
 
-    static createSubtitle(options: CaptionOptions) {
+    static createChartTitle(options: CaptionOptions) {
+        options = Object.create(options);
+
+        if (options.text === undefined) {
+            options.text = 'Title';
+        }
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 16;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
+        }
+        return ChartBuilder.createCaption(options);
+    }
+
+    static createChartSubtitle(options: CaptionOptions) {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -596,11 +701,7 @@ export class ChartBuilder {
     }
 
     static createDropShadow(options: DropShadowOptions = {}): DropShadow {
-        return new DropShadow(
-            options.color || 'black',
-            options.offset ? new Offset(options.offset[0], options.offset[1]) : new Offset(0, 0),
-            options.blur || 0
-        );
+        return new DropShadow(options);
     }
 
     static createAxis(options: AxisOptions): CategoryAxis | NumberAxis {
@@ -621,6 +722,34 @@ export class ChartBuilder {
 
         for (const name in options) {
             if (name === 'type') {
+                continue;
+            }
+            if (name === 'title' && options.title) {
+                axis.title = ChartBuilder.createAxisTitle(options.title);
+                continue;
+            }
+            const value = (options as any)[name];
+            if (value !== undefined) {
+                (axis as any)[name] = value;
+            }
+        }
+
+        return axis;
+    }
+
+    static createGroupedAxis(options: AxisOptions): GroupedCategoryAxis {
+        const axis = new GroupedCategoryAxis();
+
+        if (!axis) {
+            throw new Error('Unknown axis type.');
+        }
+
+        for (const name in options) {
+            if (name === 'type') {
+                continue;
+            }
+            if (name === 'title' && options.title) {
+                axis.title = ChartBuilder.createAxisTitle(options.title);
                 continue;
             }
             const value = (options as any)[name];

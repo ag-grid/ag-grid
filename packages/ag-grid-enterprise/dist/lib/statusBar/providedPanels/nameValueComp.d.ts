@@ -1,7 +1,7 @@
-// ag-grid-enterprise v21.1.1
-import { Component } from 'ag-grid-community';
+// ag-grid-enterprise v21.2.0
+import { Component, GridOptionsWrapper } from 'ag-grid-community';
 export declare class NameValueComp extends Component {
-    private gridOptionsWrapper;
+    protected gridOptionsWrapper: GridOptionsWrapper;
     private static TEMPLATE;
     private eLabel;
     private eValue;

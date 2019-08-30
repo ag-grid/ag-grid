@@ -6,4 +6,4 @@ if [ "$#" -ne 1 ]
     exit 1
 fi
 
-git-merge-branch-one-way.sh $1 ag-grid-community ag-grid-angular-cli-example ag-grid-aurelia-example ag-grid-react-example ag-grid-vue-example
+git-merge-branch-one-way.sh $1 ag-grid-community ag-grid-angular-cli-example ag-grid-react-example ag-grid-vue-example

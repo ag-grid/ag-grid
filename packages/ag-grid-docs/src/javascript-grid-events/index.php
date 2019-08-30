@@ -365,8 +365,6 @@ CellValueChangedEvent {
         │   }</span>
         ├── GridReadyEvent <span class="event-properties">{}</span>
         ├── SelectionChangedEvent <span class="event-properties">{}</span>
-        ├── FilterChangedEvent <span class="event-properties">{}</span>
-        ├── FilterModifiedEvent <span class="event-properties">{}</span>
         ├── SortChangedEvent <span class="event-properties">{}</span>
         ├── RowDataChangedEvent <span class="event-properties">{}</span>
         ├── RowDataUpdatedEvent <span class="event-properties">{}</span>
@@ -379,6 +377,11 @@ CellValueChangedEvent {
         ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
         ├── ToolPanelVisibleChangedEvent <span class="event-properties">{}</span>
         ├── AnimationQueueEmptyEvent <span class="event-properties">{}</span>
+        ├── FilterChangedEvent <span class="event-properties">{}</span>
+        ├── FilterModifiedEvent <span class="event-properties">{</span>
+        │       <span class="event-attribute">column</span>: Column, // the column for the event
+        │       <span class="event-attribute">filterInstance</span>: number, // the filter instance
+        │     }</span>
         ├── CellFocusedEvent <span class="event-properties">{
         │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
         │       <span class="event-attribute">column</span>: Column, // the column of the focused cell

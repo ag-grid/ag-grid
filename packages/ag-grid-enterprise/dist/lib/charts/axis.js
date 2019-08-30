@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("./scene/group");
@@ -133,6 +133,16 @@ var Axis = /** @class */ (function () {
         this.group.append(this.line);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+    Object.defineProperty(Axis.prototype, "range", {
+        get: function () {
+            return this.scale.range;
+        },
+        set: function (value) {
+            this.scale.range = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Axis.prototype, "domain", {
         get: function () {
             return this.scale.domain;
@@ -361,20 +371,23 @@ var Axis = /** @class */ (function () {
         line.strokeWidth = this.lineWidth;
         line.stroke = this.lineColor;
         line.visible = ticks.length > 0;
-        // const title = this.title;
-        // if (title) {
-        //     const titleRotation = normalizeAngle360(rotation);
-        //     const titleRotationFlag = (titleRotation >= 0 && titleRotation < Math.PI) ? -1 : 1;
-        //     const node = title.node;
-        //
-        //     const bbox = this.getBBox();
-        //
-        //     const titleSideFlag = -1;
-        //     node.textBaseline = titleSideFlag * sideFlag * titleRotationFlag === -1 ? 'bottom' : 'top';
-        //     node.rotation = titleRotationFlag * Math.PI / 2;
-        //     node.x = titleRotationFlag * (line.y1 + line.y2) / 2;
-        //     node.y = sideFlag * titleSideFlag * titleRotationFlag * (10 + bbox.width - Math.max(bbox.x + bbox.width, 0));
-        // }
+        var title = this.title;
+        if (title) {
+            var padding = title.padding.bottom;
+            var node = title.node;
+            var bbox = this.getBBox(false);
+            var titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
+            node.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
+            node.x = titleRotationFlag * sideFlag * (line.y1 + line.y2) / 2;
+            if (sideFlag === -1) {
+                node.y = titleRotationFlag * (-padding - bbox.width + Math.max(bbox.x + bbox.width, 0));
+            }
+            else {
+                node.y = -padding - bbox.width - Math.min(bbox.x, 0);
+            }
+            // title.text = `Axis Title: ${sideFlag} ${toDegrees(parallelFlipRotation).toFixed(0)} ${titleRotationFlag}`;
+            node.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
+        }
         // debug (bbox)
         // const bbox = this.getBBox();
         // const bboxRect = this.bboxRect;
@@ -383,7 +396,8 @@ var Axis = /** @class */ (function () {
         // bboxRect.width = bbox.width;
         // bboxRect.height = bbox.height;
     };
-    Axis.prototype.getBBox = function () {
+    Axis.prototype.getBBox = function (includeTitle) {
+        if (includeTitle === void 0) { includeTitle = true; }
         var line = this.line;
         var labels = this.groupSelection.selectByClass(text_1.Text);
         var left = Infinity;
@@ -405,12 +419,28 @@ var Axis = /** @class */ (function () {
             var group = label.parent;
             group.computeTransformMatrix();
             matrix.preMultiplySelf(group.matrix);
-            var bbox = matrix.transformBBox(label.getBBox());
-            left = Math.min(left, bbox.x);
-            right = Math.max(right, bbox.x + bbox.width);
-            top = Math.min(top, bbox.y);
-            bottom = Math.max(bottom, bbox.y + bbox.height);
+            var labelBBox = label.getBBox();
+            if (labelBBox) {
+                var bbox = matrix.transformBBox(labelBBox);
+                left = Math.min(left, bbox.x);
+                right = Math.max(right, bbox.x + bbox.width);
+                top = Math.min(top, bbox.y);
+                bottom = Math.max(bottom, bbox.y + bbox.height);
+            }
         });
+        if (includeTitle && this.title) {
+            var label = this.title.node;
+            label.computeTransformMatrix();
+            var matrix = matrix_1.Matrix.flyweight(label.matrix);
+            var labelBBox = label.getBBox();
+            if (labelBBox) {
+                var bbox = matrix.transformBBox(labelBBox);
+                left = Math.min(left, bbox.x);
+                right = Math.max(right, bbox.x + bbox.width);
+                top = Math.min(top, bbox.y);
+                bottom = Math.max(bottom, bbox.y + bbox.height);
+            }
+        }
         left = Math.min(left, 0);
         right = Math.max(right, 0);
         top = Math.min(top, line.y1, line.y2);

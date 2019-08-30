@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul class="content">
         <li><code>paginationPageSize</code> is set to 10</li>
-        <li><code>api.paginationGoToPage(4)</code> is called to go to page 4 (0 based, so he 5th page)</li>
+        <li><code>api.paginationGoToPage(4)</code> is called to go to page 4 (0 based, so the 5th page)</li>
         <li>A dropdown to change the page size dynamically is available. This makes a call to
             <code>paginationSetPageSize(newPageSize)</code></li>
         <li>The numbers in the pagination panel are formatted differently using the grid callback
@@ -87,6 +87,94 @@ include '../documentation-main/documentation_header.php';
     scroll to the top when the page changes.</p>
 
     <?= example('Custom Controls', 'custom-controls', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+    <h2 id="childRows">Pagination & Child Rows</h2>
+
+    <p>
+        Both <a href="../javascript-grid-grouping/">Row Grouping</a> and
+        <a href="../javascript-grid-master-detail/">Master Detail</a> have rows that expand. When this happens,
+        consideration needs to be given as to how this impacts the number of rows on the page. There are two
+        modes of operation that can be used depending on what your application requirements.
+    </p>
+
+    <h3>Mode 1: Paginate Only Top Level Rows</h3>
+
+    <p>
+        The first mode is the default. The rows are split according to the top level rows. For example if row grouping
+        with a page size of 10, then each page will contain 10 top level groups. When expanding a group with this mode,
+        all children for that group, along with the 10 original groups for that page, will get display in one page. This
+        will result in a page size greater than the initial page size of 10 rows.
+    </p>
+
+    <p>
+        This mode is typically best suited for Row Grouping as children are always displayed alongside the parent group.
+        It is also typically best for Master Detail, as detail rows (that typically contain detail tables) will always
+        appear below their master rows.
+    </p>
+
+    <p>
+        In the example below, note the following:
+    </p>
+    <ul>
+        <li>
+            Each page will always contain exactly 10 groups.
+        </li>
+        <li>
+            Expanding a group will not push rows to the next page.
+        </li>
+    </ul>
+
+    <?= example('Grouping Normal', 'grouping-normal', 'generated', array("enterprise" => 1)) ?>
+
+    <h3>Mode 2: Paginate All Rows, Including Children</h3>
+
+    <p>
+        The second mode paginates all rows, including child rows when Row Grouping and detail rows with Master Detail.
+        For example if row grouping with a page size of 10, then each page will always contain exactly 10 rows, even
+        if it means having children appear on a page after the page containing the parent. This can be particularly
+        confusing if the last row of a page is expanded, as the children will appear on the next page (not visible
+        to the user unless they navigate to the next page).
+    </p>
+
+    <p>
+        This modes is typically best if the application never wants to exceed the maximum number of rows in a page
+        past the page size. This can be helpful if designing for touch devices (eg tablets) where UX requirements
+        state no scrolls should be visible in the application - paging to a strict page size can guarantee no vertical
+        scrolls will appear.
+    </p>
+
+    <p>
+        To enable pagination on all rows, including children, set grid property <code>paginateChildRows=true</code>.
+    </p>
+
+    <p>
+        In the example below, note the following:
+    </p>
+    <ul>
+        <li>
+            Each page will always contain exactly 10 rows (not groups).
+        </li>
+        <li>
+            Expanding a group will push rows to the next page to limit the total number of rows to 10.
+        </li>
+    </ul>
+
+    <?= example('Grouping Paginate Child Rows', 'grouping-paginate-child-rows', 'generated', array("enterprise" => 1)) ?>
+
+    <h3>Fallback to Mode 2</h3>
+
+    <p>
+        If using either of the following features, the grid will be forced to use the second mode:
+    </p>
+    <ul>
+        <li><a href="../javascript-grid-grouping/#suppress-group-row">Group Suppress Row</a></li>
+        <li><a href="../javascript-grid-grouping/#removeSingleChildren">Group Remove Single Children</a></li>
+    </ul>
+
+    <p>
+        This is because both of these features remove top level rows (group rows and master rows) from the displayed rows,
+        making it impossible to paginate based on the top level rows only.
+    </p>
 
     <h2>Pagination Properties</h2>
 
@@ -125,22 +213,5 @@ include '../documentation-main/documentation_header.php';
                 </ul></p></td>
         </tr>
     </table>
-
-    <note>
-        <p>
-            In v9.0 ag-Grid pagination changed from server side pagination to client side pagination.
-            Server side pagination was then removed in v10.1.
-        </p>
-        <p>
-            If you were doing server side pagination, we recommend moving to
-            <a href="../javascript-grid-infinite-scrolling/#pagination">pagination with infinite scrolling</a>
-            as a way of migration to the new mechanism.
-        </p>
-        <p>
-            If you were slicing manually the data in your Datasource to mimic pagination done in the browser only,
-            we recommend that you use the default <a href="../javascript-grid-client-side-model/">Client-side Row Model</a> and
-            set the row data as normal and then set grid property <code>pagination=true</code>.
-        </p>
-    </note>
 
 <?php include '../documentation-main/documentation_footer.php';?>

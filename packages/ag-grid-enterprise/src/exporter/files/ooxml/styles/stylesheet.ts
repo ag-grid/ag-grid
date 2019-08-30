@@ -41,7 +41,7 @@ const resetStylesheetValues = (): void => {
     registeredCellStyleXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0 }];
     registeredCellXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0, xfId: 0 }];
     registeredCellStyles = [{ builtinId: 0, name: 'normal', xfId: 0 }];
-}
+};
 
 const convertLegacyPattern = (name: string): string => {
     const colorMap: ColorMap = {
@@ -116,6 +116,8 @@ const registerNumberFmt = (format: string): number => {
     if (pos === -1) {
         pos = registeredNumberFmts.length + 164;
         registeredNumberFmts.push({formatCode: format, numFmtId: pos});
+    } else {
+        pos = registeredNumberFmts[pos].numFmtId;
     }
 
     return pos;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27,9 +27,9 @@ var ag_grid_community_1 = require("ag-grid-community");
 var chartTranslator_1 = require("../../../chartTranslator");
 var CalloutPanel = /** @class */ (function (_super) {
     __extends(CalloutPanel, _super);
-    function CalloutPanel(series) {
+    function CalloutPanel(chartProxy) {
         var _this = _super.call(this) || this;
-        _this.series = series;
+        _this.chartProxy = chartProxy;
         return _this;
     }
     CalloutPanel.prototype.init = function () {
@@ -43,19 +43,16 @@ var CalloutPanel = /** @class */ (function (_super) {
             .setEnabled(true)
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
-        var initInput = function (property, input, labelKey, initialValue, maxValue) {
+        var initInput = function (property, input, labelKey, maxValue) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(initialValue)
+                .setValue(_this.chartProxy.getSeriesProperty(property))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.series.forEach(function (s) { return s[property] = newValue; }); });
+                .onValueChange(function (newValue) { return _this.chartProxy.setSeriesProperty(property, newValue); });
         };
-        var initialLength = this.series.length > 0 ? this.series[0].calloutLength : 10;
-        initInput('calloutLength', this.calloutLengthSlider, 'length', "" + initialLength, 40);
-        var initialStrokeWidth = this.series.length > 0 ? this.series[0].calloutStrokeWidth : 1;
-        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', "" + initialStrokeWidth, 10);
-        var initialOffset = this.series.length > 0 ? this.series[0].labelOffset : 3;
-        initInput('labelOffset', this.labelOffsetSlider, 'offset', "" + initialOffset, 30);
+        initInput('calloutLength', this.calloutLengthSlider, 'length', 40);
+        initInput('calloutStrokeWidth', this.calloutStrokeWidthSlider, 'strokeWidth', 10);
+        initInput('labelOffset', this.labelOffsetSlider, 'offset', 30);
     };
     CalloutPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"calloutGroup\">\n                <ag-slider ref=\"calloutLengthSlider\"></ag-slider>\n                <ag-slider ref=\"calloutStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"labelOffsetSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([

@@ -517,12 +517,12 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
             const expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
-            _.setVisible(this.eContracted, !expanded);
-            _.setVisible(this.eExpanded, expanded);
+            _.setDisplayed(this.eContracted, !expanded);
+            _.setDisplayed(this.eExpanded, expanded);
         } else {
             // it not expandable, show neither
-            _.setVisible(this.eExpanded, false);
-            _.setVisible(this.eContracted, false);
+            _.setDisplayed(this.eExpanded, false);
+            _.setDisplayed(this.eContracted, false);
         }
 
         const displayedGroup = this.displayedGroup;

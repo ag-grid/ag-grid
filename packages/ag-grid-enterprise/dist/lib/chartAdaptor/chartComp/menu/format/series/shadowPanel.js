@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -27,16 +27,13 @@ var ag_grid_community_1 = require("ag-grid-community");
 var chartTranslator_1 = require("../../../chartTranslator");
 var ShadowPanel = /** @class */ (function (_super) {
     __extends(ShadowPanel, _super);
-    function ShadowPanel(chartController) {
+    function ShadowPanel(chartProxy) {
         var _this = _super.call(this) || this;
-        _this.chartController = chartController;
+        _this.chartProxy = chartProxy;
         return _this;
     }
     ShadowPanel.prototype.init = function () {
         this.setTemplate(ShadowPanel.TEMPLATE);
-        var chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
-        this.series = this.chart.series;
         this.shadowBlurSlider.setTextFieldWidth(45);
         this.shadowXOffsetSlider.setTextFieldWidth(45);
         this.shadowYOffsetSlider.setTextFieldWidth(45);
@@ -44,59 +41,27 @@ var ShadowPanel = /** @class */ (function (_super) {
     };
     ShadowPanel.prototype.initSeriesShadow = function () {
         var _this = this;
-        var updateShadow = function () {
-            _this.series.forEach(function (series) {
-                if (_this.shadowGroup.isEnabled()) {
-                    var blur_1 = _this.shadowBlurSlider.getValue() ? Number.parseInt(_this.shadowBlurSlider.getValue()) : 0;
-                    var xOffset = _this.shadowXOffsetSlider.getValue() ? Number.parseInt(_this.shadowXOffsetSlider.getValue()) : 0;
-                    var yOffset = _this.shadowYOffsetSlider.getValue() ? Number.parseInt(_this.shadowYOffsetSlider.getValue()) : 0;
-                    var color = _this.shadowColorPicker.getValue() ? _this.shadowColorPicker.getValue() : 'rgba(0,0,0,0.5)';
-                    series.shadow = {
-                        color: color,
-                        offset: { x: xOffset, y: yOffset },
-                        blur: blur_1
-                    };
-                }
-            });
-        };
-        var enabled = this.series.some(function (series) { return series.shadow != undefined; });
         this.shadowGroup
             .setTitle(this.chartTranslator.translate('shadow'))
-            .setEnabled(enabled)
+            .setEnabled(this.chartProxy.getShadowEnabled())
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(function (enabled) {
-            _this.series.forEach(function (series) {
-                if (enabled) {
-                    series.shadow = {
-                        color: _this.shadowColorPicker.getValue(),
-                        offset: {
-                            x: Number.parseInt(_this.shadowXOffsetSlider.getValue()),
-                            y: Number.parseInt(_this.shadowYOffsetSlider.getValue())
-                        },
-                        blur: Number.parseInt(_this.shadowBlurSlider.getValue())
-                    };
-                }
-                else {
-                    series.shadow = undefined;
-                }
-            });
-        });
+            .onEnableChange(function (newValue) { return _this.chartProxy.setShadowProperty('enabled', newValue); });
         this.shadowColorPicker
             .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
             .setValue('rgba(0,0,0,0.5)')
-            .onValueChange(updateShadow);
-        var initInput = function (input, labelKey, initialValue, maxValue) {
-            input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(initialValue)
+            .onValueChange(function (newValue) { return _this.chartProxy.setShadowProperty('color', newValue); });
+        var initInput = function (input, property, maxValue) {
+            input.setLabel(_this.chartTranslator.translate(property))
+                .setValue(_this.chartProxy.getShadowProperty(property))
                 .setMaxValue(maxValue)
-                .onValueChange(updateShadow);
+                .onValueChange(function (newValue) { return _this.chartProxy.setShadowProperty(property, newValue); });
         };
-        initInput(this.shadowBlurSlider, 'blur', '5', 20);
-        initInput(this.shadowXOffsetSlider, 'xOffset', '3', 20);
-        initInput(this.shadowYOffsetSlider, 'yOffset', '3', 20);
+        initInput(this.shadowBlurSlider, 'blur', 20);
+        initInput(this.shadowXOffsetSlider, 'xOffset', 20);
+        initInput(this.shadowYOffsetSlider, 'yOffset', 20);
     };
     ShadowPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"shadowGroup\">\n                <ag-color-picker ref=\"shadowColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"shadowBlurSlider\"></ag-slider>\n                <ag-slider ref=\"shadowXOffsetSlider\"></ag-slider>\n                <ag-slider ref=\"shadowYOffsetSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([

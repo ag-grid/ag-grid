@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
@@ -7,6 +7,7 @@ export declare class PrimaryColsListPanel extends Component {
     private gridOptionsWrapper;
     private columnController;
     private globalEventService;
+    private columnApi;
     private allowDragging;
     private params;
     private columnTree;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -46,10 +46,9 @@ var ChartDataPanel = /** @class */ (function (_super) {
         var _a = this.chartController.getColStateForMenu(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
         [dimensionCols, valueCols].forEach(function (group, idx) {
             var isCategory = idx === 0;
+            var dataGroupKey = isCategory ? 'categories' : _this.chartController.isActiveXYChart() ? 'xyValues' : 'series';
             var groupComp = new ag_grid_community_1.AgGroupComponent({
-                title: isCategory
-                    ? _this.chartTranslator.translate('categories')
-                    : _this.chartTranslator.translate('series'),
+                title: _this.chartTranslator.translate(dataGroupKey),
                 enabled: true,
                 suppressEnabledCheckbox: true,
                 suppressOpenCloseIcons: false

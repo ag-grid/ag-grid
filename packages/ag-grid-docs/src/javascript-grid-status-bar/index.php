@@ -83,7 +83,10 @@ gridOptions: {
     The example below shows a simply configured status bar. Note the following:
 <ul>
     <li>
-        The total row count is displayed by the <code>agTotalRowCountComponent</code> component, aligned to the left.
+        The total and filtered row count is displayed using the <code>agTotalAndFilteredRowCountComponent</code> component (aligned to the left).
+    </li>
+    <li>
+        The total row count is displayed by the <code>agTotalRowCountComponent</code> component (centered).
     </li>
     <li>
         The row count after filtering is displayed by the <code>agFilteredRowCountComponent</code> component.

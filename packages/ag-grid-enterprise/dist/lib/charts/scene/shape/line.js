@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -122,14 +122,14 @@ var Line = /** @class */ (function (_super) {
         // Align to the pixel grid if the line is strictly vertical
         // or horizontal (but not both, i.e. a dot).
         if (x1 === x2) {
-            var delta = Math.floor(this.strokeWidth) % 2 / 2;
-            x1 += delta;
-            x2 += delta;
+            var x = Math.round(x1) + Math.floor(this.strokeWidth) % 2 / 2;
+            x1 = x;
+            x2 = x;
         }
         else if (y1 === y2) {
-            var delta = Math.floor(this.strokeWidth) % 2 / 2;
-            y1 += delta;
-            y2 += delta;
+            var y = Math.round(y1) + Math.floor(this.strokeWidth) % 2 / 2;
+            y1 = y;
+            y2 = y;
         }
         ctx.beginPath();
         ctx.moveTo(x1, y1);

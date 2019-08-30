@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,6 +52,7 @@ var beans_1 = require("./beans");
 var animationFrameService_1 = require("../misc/animationFrameService");
 var maxDivHeightScaler_1 = require("./maxDivHeightScaler");
 var utils_1 = require("../utils");
+var rowPosition_1 = require("../entities/rowPosition");
 var RowRenderer = /** @class */ (function (_super) {
     __extends(RowRenderer, _super);
     function RowRenderer() {
@@ -638,6 +639,7 @@ var RowRenderer = /** @class */ (function (_super) {
             this.destroyRowComps(rowsToRecycle, animate);
         }
         this.checkAngularCompile();
+        this.gridPanel.updateRowCount();
     };
     RowRenderer.prototype.flushContainers = function (rowComps) {
         utils_1._.iterateObject(this.rowContainers, function (key, rowContainerComp) {
@@ -761,7 +763,7 @@ var RowRenderer = /** @class */ (function (_super) {
             newLast = this.paginationProxy.getPageLastRow();
         }
         else {
-            var paginationOffset = this.paginationProxy ? this.paginationProxy.getPixelOffset() : 0;
+            var paginationOffset = this.paginationProxy.getPixelOffset();
             var maxDivHeightScaler = this.maxDivHeightScaler.getOffset();
             var bodyVRange = this.gridPanel.getVScrollPosition();
             var bodyTopPixel = bodyVRange.top;
@@ -895,7 +897,12 @@ var RowRenderer = /** @class */ (function (_super) {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (key === constants_1.Constants.KEY_RIGHT) {
+            if (this.gridOptionsWrapper.isEnableRtl()) {
+                if (key === constants_1.Constants.KEY_LEFT) {
+                    nextCell = this.getLastCellOfColSpan(nextCell);
+                }
+            }
+            else if (key === constants_1.Constants.KEY_RIGHT) {
                 nextCell = this.getLastCellOfColSpan(nextCell);
             }
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
@@ -905,7 +912,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 finished = true;
                 continue;
             }
-            var rowNode = this.paginationProxy.getRow(nextCell.rowIndex);
+            var rowNode = this.rowPositionUtils.getRowNode(nextCell);
             // we do not allow focusing on full width rows, this includes details rows
             if (rowNode.detail) {
                 continue;
@@ -974,6 +981,9 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.getLastCellOfColSpan = function (cell) {
         var cellComp = this.getComponentForCell(cell);
+        if (!cellComp) {
+            return cell;
+        }
         var colSpanningList = cellComp.getColSpanningList();
         if (colSpanningList.length === 1) {
             return cell;
@@ -1285,6 +1295,10 @@ var RowRenderer = /** @class */ (function (_super) {
         context_1.Autowired("animationFrameService"),
         __metadata("design:type", animationFrameService_1.AnimationFrameService)
     ], RowRenderer.prototype, "animationFrameService", void 0);
+    __decorate([
+        context_1.Autowired("rowPositionUtils"),
+        __metadata("design:type", rowPosition_1.RowPositionUtils)
+    ], RowRenderer.prototype, "rowPositionUtils", void 0);
     __decorate([
         context_1.Optional("rangeController"),
         __metadata("design:type", Object)

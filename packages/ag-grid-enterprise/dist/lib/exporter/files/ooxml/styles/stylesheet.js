@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_community_1 = require("ag-grid-community");
@@ -94,6 +94,9 @@ var registerNumberFmt = function (format) {
     if (pos === -1) {
         pos = registeredNumberFmts.length + 164;
         registeredNumberFmts.push({ formatCode: format, numFmtId: pos });
+    }
+    else {
+        pos = registeredNumberFmts[pos].numFmtId;
     }
     return pos;
 };

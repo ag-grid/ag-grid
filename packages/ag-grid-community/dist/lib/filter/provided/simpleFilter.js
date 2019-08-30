@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -232,9 +232,9 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.updateUiVisibility = function () {
         var firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
         var showSecondFilter = this.allowTwoConditions && firstConditionComplete;
-        utils_1._.setVisible(this.eCondition2Body, showSecondFilter);
-        utils_1._.setVisible(this.eType2, showSecondFilter);
-        utils_1._.setVisible(this.eJoinOperatorPanel, showSecondFilter);
+        utils_1._.setDisplayed(this.eCondition2Body, showSecondFilter);
+        utils_1._.setDisplayed(this.eType2, showSecondFilter);
+        utils_1._.setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
     };
     SimpleFilter.prototype.resetUiToDefaults = function () {
         this.eJoinOperatorAnd.checked = true;

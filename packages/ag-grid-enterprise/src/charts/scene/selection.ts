@@ -16,7 +16,7 @@ export class EnterNode {
         this.datum = datum;
     }
 
-    scene: Scene | null;
+    scene?: Scene;
     parent: Node | EnterNode;
     datum: any;
     next: Node | EnterNode | null = null;
@@ -481,7 +481,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
                         i1 = i0 + 1;
                     }
                     let next;
-                    while (!(next = updateGroup[i1]) && ++i1 < dataSize) {; }
+                    while (!(next = updateGroup[i1]) && i1 < dataSize) { i1++; }
                     previous.next = next || null;
                 }
             }

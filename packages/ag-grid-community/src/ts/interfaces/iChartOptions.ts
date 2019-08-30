@@ -1,4 +1,5 @@
 export interface ChartOptions {
+    document?: Document;
     parent?: HTMLElement;
     width?: number;
     height?: number;
@@ -14,7 +15,7 @@ export interface ChartOptions {
     subtitle?: CaptionOptions;
 }
 
-export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartDownload';
+export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUnlink' | 'chartDownload';
 
 export enum ChartType {
     GroupedColumn = 'groupedColumn',
@@ -24,11 +25,18 @@ export enum ChartType {
     StackedBar = 'stackedBar',
     NormalizedBar = 'normalizedBar',
     Line = 'line',
+    Scatter = 'scatter',
+    Bubble = 'bubble',
     Pie = 'pie',
     Doughnut = 'doughnut',
     Area = 'area',
     StackedArea = 'stackedArea',
     NormalizedArea = 'normalizedArea'
+}
+
+export interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
 }
 
 export interface CartesianChartOptions extends ChartOptions {
@@ -78,7 +86,9 @@ interface IPadding {
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface AxisOptions {
-    type?: 'category' | 'number';
+    type?: 'category' | 'number' | 'groupedCategory';
+
+    title?: CaptionOptions;
 
     lineWidth?: number;
     lineColor?: string;
@@ -106,8 +116,10 @@ export interface IGridStyle {
 }
 
 export interface DropShadowOptions {
+    enabled?: boolean;
     color?: string;
-    offset?: [number, number];
+    xOffset?: number;
+    yOffset?: number;
     blur?: number;
 }
 
@@ -136,6 +148,7 @@ export interface LineSeriesOptions extends SeriesOptions {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
+    highlightStyle?: HighlightStyle;
 
     marker?: boolean;
     markerSize?: number;
@@ -155,12 +168,21 @@ export interface ScatterSeriesOptions extends SeriesOptions {
 
     xField?: string;
     yField?: string;
+    radiusField?: string;
+
+    xFieldName?: string;
+    yFieldName?: string;
+    radiusFieldName?: string;
 
     fill?: string;
     stroke?: string;
+    fillOpacity?: number;
+    strokeOpacity?: number;
+    highlightStyle?: HighlightStyle;
 
     marker?: boolean;
     markerSize?: number;
+    minMarkerSize?: number;
     markerStrokeWidth?: number;
 
     tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
@@ -171,7 +193,7 @@ export interface LineSeriesDefaultOptions extends LineSeriesOptions {
     strokes?: string[];
 }
 
-export interface ScatterSeriesDefaultOptions extends LineSeriesOptions {
+export interface ScatterSeriesDefaultOptions extends ScatterSeriesOptions {
     fills?: string[];
     strokes?: string[];
 }
@@ -210,6 +232,7 @@ export interface BarSeriesOptions extends SeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    highlightStyle?: HighlightStyle;
 
     shadow?: DropShadowOptions;
 
@@ -237,6 +260,7 @@ export interface AreaSeriesOptions extends SeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    highlightStyle?: HighlightStyle;
 
     marker?: boolean;
     markerSize?: number;
@@ -262,6 +286,7 @@ export interface PieSeriesOptions extends SeriesOptions {
     fillOpacity?: number;
     strokeOpacity?: number;
     strokeWidth?: number;
+    highlightStyle?: HighlightStyle;
 
     angleField?: string;
     radiusField?: string;

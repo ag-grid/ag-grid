@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 export declare class Path2D {
     private xy?;
     readonly commands: string[];

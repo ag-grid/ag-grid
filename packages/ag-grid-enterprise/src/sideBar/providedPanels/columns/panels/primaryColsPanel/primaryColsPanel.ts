@@ -56,7 +56,7 @@ export class PrimaryColsPanel extends Component {
         const hideExpand = this.params.suppressColumnExpandAll;
 
         if (hideExpand && hideFilter && hideSelect) {
-            this.primaryColsHeaderPanel.setVisible(false);
+            this.primaryColsHeaderPanel.setDisplayed(false);
         }
 
         this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));

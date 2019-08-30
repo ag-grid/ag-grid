@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -118,7 +118,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         var start = cellRange.startRow;
         var end = cellRange.endRow;
         if (start && end) {
-            var isBefore = ag_grid_community_1.RowPositionUtils.before(end, start);
+            var isBefore = this.rowPositionUtils.before(end, start);
             if (isBefore) {
                 this.setRangeStartRow(end);
                 this.setRangeEndRow(start);
@@ -150,7 +150,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     };
     AbstractSelectionHandle.prototype.destroy = function () {
         if (!this.shouldDestroyOnEndDragging && this.isDragging()) {
-            ag_grid_community_1._.setVisible(this.getGui(), false);
+            ag_grid_community_1._.setDisplayed(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;
             return;
         }
@@ -186,6 +186,10 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired("cellNavigationService"),
         __metadata("design:type", ag_grid_community_1.CellNavigationService)
     ], AbstractSelectionHandle.prototype, "cellNavigationService", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('rowPositionUtils'),
+        __metadata("design:type", ag_grid_community_1.RowPositionUtils)
+    ], AbstractSelectionHandle.prototype, "rowPositionUtils", void 0);
     __decorate([
         ag_grid_community_1.PostConstruct,
         __metadata("design:type", Function),

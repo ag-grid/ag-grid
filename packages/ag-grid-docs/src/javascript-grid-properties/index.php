@@ -514,18 +514,6 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to enable <a href="../javascript-grid-animation/#row-animations">Row Animation</a>.</td>
         </tr>
         <tr>
-            <th>cellStyle</th>
-            <td>The style to give a particular cell. See <a href="../javascript-grid-cell-styles/#cell-style">Cell Style</a>.</td>
-        </tr>
-        <tr>
-            <th>cellClass</th>
-            <td>The class to give a particular cell. See <a href="../javascript-grid-cell-styles/#cell-class">Cell Class</a>.</td>
-        </tr>
-        <tr>
-            <th>cellClassRules</th>
-            <td>Rules which can be applied to include certain CSS classes. See <a href="../javascript-grid-cell-styles/#cell-class-rules">Cell Class Rules</a>.</td>
-        </tr>
-        <tr>
             <th>rowStyle</th>
             <td>The style to give a particular row. See <a href="../javascript-grid-row-styles/#row-style">Row Style</a>.</td>
         </tr>
@@ -637,7 +625,10 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>suppressMiddleClickScrolls</th>
             <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser
-                will use middle click to scroll the grid.</td>
+                will use middle click to scroll the grid.<br>
+                <strong>Note:</strong> Not all browsers fire <code>click</code> events with the middle button. Most will
+                fire only <code>mousedown</code> and <code>mouseup</code> events, which can be used to focus a cell, but 
+                will not work to call the <code>onCellClicked</code> function.</td>
         </tr>
         <tr>
             <th>suppressPreventDefaultOnMouseWheel</th>
@@ -759,6 +750,14 @@ include '../documentation-main/documentation_header.php';
             <td>
                 Set to true to not show <a href="../javascript-grid-context-menu">context menu</a>.
                 Use if you don't want to use the default 'right click' context menu.
+            </td>
+        </tr>
+        <tr>
+            <th>preventDefaultOnContextMenu</th>
+            <td>
+                When using <code>suppressContextMenu</code>, you can use the <code>onCellContextMenu</code> function
+                to provide your own code to handle cell <code>contextmenu</code> events. This flag is useful to prevent 
+                the browser from showing it's default context menu.
             </td>
         </tr>
         <tr>

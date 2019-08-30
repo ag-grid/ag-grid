@@ -8,10 +8,10 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { LineSeries } from "../../../../../charts/chart/series/lineSeries";
-import { MarkersPanel } from "./markersPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {MarkersPanel} from "./markersPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {LineChartProxy} from "../../../chartProxies/cartesian/lineChartProxy";
 
 export class LineSeriesPanel extends Component {
 
@@ -29,59 +29,52 @@ export class LineSeriesPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private series: LineSeries[];
     private activePanels: Component[] = [];
-    private readonly chartController: ChartController;
+    private readonly chartProxy: LineChartProxy;
 
     constructor(chartController: ChartController) {
         super();
-        this.chartController = chartController;
+        this.chartProxy = chartController.getChartProxy() as LineChartProxy;
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(LineSeriesPanel.TEMPLATE);
 
-        const chartProxy = this.chartController.getChartProxy();
-        this.series = chartProxy.getChart().series as LineSeries[];
-
-        this.seriesGroup
-            .setTitle(this.chartTranslator.translate('series'))
-            .toggleGroupExpand(false)
-            .hideEnabledCheckbox(true);
-
+        this.initSeriesGroup();
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
         this.initMarkersPanel();
     }
 
-    private initSeriesTooltips() {
-        const selected = this.series.some(s => s.tooltipEnabled);
+    private initSeriesGroup() {
+        this.seriesGroup
+            .setTitle(this.chartTranslator.translate('series'))
+            .toggleGroupExpand(false)
+            .hideEnabledCheckbox(true);
+    }
 
+    private initSeriesTooltips() {
         this.seriesTooltipsToggle
             .setLabel(this.chartTranslator.translate('tooltips'))
             .setLabelAlignment('left')
             .setLabelWidth('flex')
             .setInputWidth(40)
-            .setValue(selected)
-            .onValueChange(newSelection => {
-                this.series.forEach(s => s.tooltipEnabled = newSelection);
-            });
+            .setValue(this.chartProxy.getTooltipsEnabled())
+            .onValueChange(newValue => this.chartProxy.setSeriesProperty('tooltipEnabled', newValue));
     }
 
     private initSeriesLineWidth() {
-        const strokeWidth = this.series.length > 0 ? this.series[0].strokeWidth : 3;
-
         this.seriesLineWidthSlider
             .setLabel(this.chartTranslator.translate('lineWidth'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(`${strokeWidth}`)
-            .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
+            .setValue(this.chartProxy.getSeriesProperty('strokeWidth'))
+            .onValueChange(newValue => this.chartProxy.setSeriesProperty('strokeWidth', newValue));
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = new MarkersPanel(this.series);
+        const markersPanelComp = new MarkersPanel(this.chartProxy);
         this.getContext().wireBean(markersPanelComp);
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);

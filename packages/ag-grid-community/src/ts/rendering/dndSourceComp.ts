@@ -62,6 +62,6 @@ export class DndSourceComp extends Component {
 
     private checkVisibility(): void {
         const visible = this.column.isDndSource(this.rowNode);
-        this.setVisible(visible, null);
+        this.setDisplayed(visible);
     }
 }

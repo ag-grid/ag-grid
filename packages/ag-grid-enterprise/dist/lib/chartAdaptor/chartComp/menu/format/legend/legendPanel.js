@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -32,12 +32,11 @@ var LegendPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
+        _this.chartProxy = _this.chartController.getChartProxy();
         return _this;
     }
     LegendPanel.prototype.init = function () {
         this.setTemplate(LegendPanel.TEMPLATE);
-        var chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
         this.initLegendGroup();
         this.initLegendPosition();
         this.initLegendPadding();
@@ -49,14 +48,16 @@ var LegendPanel = /** @class */ (function (_super) {
         this.legendGroup
             .setTitle(this.chartTranslator.translate('legend'))
             .hideEnabledCheckbox(false)
+            .setEnabled(this.chartProxy.getLegendEnabled())
             .toggleGroupExpand(false)
             .onEnableChange(function (enabled) {
-            _this.chart.legend.enabled = enabled;
+            _this.chartProxy.setLegendProperty('enabled', enabled);
             _this.legendGroup.toggleGroupExpand(true);
         });
     };
     LegendPanel.prototype.initLegendPosition = function () {
         var _this = this;
+        var chartProxy = this.chartController.getChartProxy();
         var positions = ['top', 'right', 'bottom', 'left'];
         this.legendPositionSelect
             .setLabel(this.chartTranslator.translate('position'))
@@ -66,64 +67,55 @@ var LegendPanel = /** @class */ (function (_super) {
             value: position,
             text: _this.chartTranslator.translate(position)
         }); }))
-            .onValueChange(function (value) {
-            _this.chart.legendPosition = value;
-        })
-            .setValue(this.chart.legendPosition);
+            .setValue(chartProxy.getLegendPosition())
+            .onValueChange(function (newValue) { return chartProxy.setLegendPosition(newValue); });
     };
     LegendPanel.prototype.initLegendPadding = function () {
         var _this = this;
         this.legendPaddingSlider
             .setLabel(this.chartTranslator.translate('padding'))
-            .setValue("" + this.chart.legendPadding)
+            .setValue(this.chartProxy.getLegendPadding())
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(function (newValue) { return _this.chart.legendPadding = newValue; });
+            .onValueChange(function (newValue) { return _this.chartProxy.setLegendPadding(newValue); });
     };
     LegendPanel.prototype.initLegendItems = function () {
         var _this = this;
-        var initSlider = function (property, labelKey, input, initialValue, maxValue) {
+        var initSlider = function (property, labelKey, input, maxValue) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(initialValue)
+                .setValue(_this.chartProxy.getLegendProperty(property))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chart.legend[property] = newValue; });
+                .onValueChange(function (newValue) { return _this.chartProxy.setLegendProperty(property, newValue); });
         };
-        var initialMarkerSize = "" + this.chart.legend.markerSize;
-        initSlider('markerSize', 'markerSize', this.markerSizeSlider, initialMarkerSize, 40);
-        var initialMarkerStroke = "" + this.chart.legend.markerStrokeWidth;
-        initSlider('markerStrokeWidth', 'markerStroke', this.markerStrokeSlider, initialMarkerStroke, 10);
-        var initialMarkerPadding = "" + this.chart.legend.markerPadding;
-        initSlider('markerPadding', 'markerPadding', this.markerPaddingSlider, initialMarkerPadding, 200);
-        var initialItemPaddingX = "" + this.chart.legend.itemPaddingX;
-        initSlider('itemPaddingX', 'itemPaddingX', this.itemPaddingXSlider, initialItemPaddingX, 50);
-        var initialItemPaddingY = "" + this.chart.legend.itemPaddingY;
-        initSlider('itemPaddingY', 'itemPaddingY', this.itemPaddingYSlider, initialItemPaddingY, 50);
+        initSlider('markerSize', 'markerSize', this.markerSizeSlider, 40);
+        initSlider('markerStrokeWidth', 'markerStroke', this.markerStrokeSlider, 10);
+        initSlider('markerPadding', 'markerPadding', this.markerPaddingSlider, 200);
+        initSlider('itemPaddingX', 'itemPaddingX', this.itemPaddingXSlider, 50);
+        initSlider('itemPaddingY', 'itemPaddingY', this.itemPaddingYSlider, 50);
     };
     LegendPanel.prototype.initLabelPanel = function () {
         var _this = this;
         var initialFont = {
-            family: this.chart.legend.labelFontFamily,
-            style: this.chart.legend.labelFontStyle,
-            weight: this.chart.legend.labelFontWeight,
-            size: this.chart.legend.labelFontSize,
-            color: this.chart.legend.labelColor
+            family: this.chartProxy.getLegendProperty('labelFontFamily'),
+            style: this.chartProxy.getLegendProperty('labelFontStyle'),
+            weight: this.chartProxy.getLegendProperty('labelFontWeight'),
+            size: parseInt(this.chartProxy.getLegendProperty('labelFontSize')),
+            color: this.chartProxy.getLegendProperty('labelColor')
         };
+        // note we don't set the font style via legend panel
         var setFont = function (font) {
             if (font.family) {
-                _this.chart.legend.labelFontFamily = font.family;
-            }
-            if (font.style) {
-                _this.chart.legend.labelFontStyle = font.style;
+                _this.chartProxy.setLegendProperty('labelFontFamily', font.family);
             }
             if (font.weight) {
-                _this.chart.legend.labelFontWeight = font.weight;
+                _this.chartProxy.setLegendProperty('labelFontWeight', font.weight);
             }
             if (font.size) {
-                _this.chart.legend.labelFontSize = font.size;
+                _this.chartProxy.setLegendProperty('labelFontSize', font.size);
             }
             if (font.color) {
-                _this.chart.legend.labelColor = font.color;
+                _this.chartProxy.setLegendProperty('labelColor', font.color);
             }
         };
         var params = {
@@ -132,7 +124,7 @@ var LegendPanel = /** @class */ (function (_super) {
             initialFont: initialFont,
             setFont: setFont
         };
-        var labelPanelComp = new labelPanel_1.LabelPanel(this.chartController, params);
+        var labelPanelComp = new labelPanel_1.LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.legendGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);

@@ -12,6 +12,11 @@ export interface SeriesNodeDatum {
     seriesDatum: any;
 }
 
+export interface HighlightStyle {
+    fill?: string;
+    stroke?: string;
+}
+
 export abstract class Series<C extends Chart> {
 
     readonly id: string = this.createId();
@@ -29,7 +34,7 @@ export abstract class Series<C extends Chart> {
             throw new Error(`The ${constructor} is missing the 'className' property.`);
         }
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
-    };
+    }
 
     protected _data: any[] = [];
     set data(data: any[]) {

@@ -52,12 +52,12 @@ export class GridHeaderDropZones extends Component {
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
 
-        this.rowGroupComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-        this.pivotComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+        this.rowGroupComp.addEventListener(Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.pivotComp.addEventListener(Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
 
         this.addDestroyFunc(() => {
-            this.rowGroupComp.removeEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-            this.pivotComp.removeEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+            this.rowGroupComp.removeEventListener(Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+            this.pivotComp.removeEventListener(Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
         });
 
         this.onDropPanelVisible();
@@ -66,9 +66,9 @@ export class GridHeaderDropZones extends Component {
     }
 
     private onDropPanelVisible(): void {
-        const bothVisible = this.rowGroupComp.isVisible() && this.pivotComp.isVisible();
-        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothVisible);
-        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothVisible);
+        const bothDisplayed = this.rowGroupComp.isDisplayed() && this.pivotComp.isDisplayed();
+        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothDisplayed);
+        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothDisplayed);
     }
 
     private onRowGroupChanged(): void {
@@ -79,12 +79,12 @@ export class GridHeaderDropZones extends Component {
         const rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
 
         if (rowGroupPanelShow === Constants.ALWAYS) {
-            this.rowGroupComp.setVisible(true);
+            this.rowGroupComp.setDisplayed(true);
         } else if (rowGroupPanelShow === Constants.ONLY_WHEN_GROUPING) {
             const grouping = !this.columnController.isRowGroupEmpty();
-            this.rowGroupComp.setVisible(grouping);
+            this.rowGroupComp.setDisplayed(grouping);
         } else {
-            this.rowGroupComp.setVisible(false);
+            this.rowGroupComp.setDisplayed(false);
         }
     }
 

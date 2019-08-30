@@ -110,11 +110,11 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
 
         const translate = this.translate.bind(this);
 
-        return `<div class="ag-filter-body" ref="eCondition${pos}Body">
-            <div class="ag-input-wrapper">
+        return `<div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">
+            <div class="ag-input-wrapper" role="presentation">
                 <input class="ag-filter-filter" ref="eValueFrom${pos}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
-             <div class="ag-input-wrapper ag-filter-number-to" ref="ePanel${pos}">
+             <div class="ag-input-wrapper ag-filter-number-to" ref="ePanel${pos}" role="presentation">
                 <input class="ag-filter-filter" ref="eValueTo${pos}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
         </div>`;
@@ -195,16 +195,16 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         super.updateUiVisibility();
 
         const showFrom1 = this.showValueFrom(this.getCondition1Type());
-        _.setVisible(this.eValueFrom1, showFrom1);
+        _.setDisplayed(this.eValueFrom1, showFrom1);
 
         const showTo1 = this.showValueTo(this.getCondition1Type());
-        _.setVisible(this.eValueTo1, showTo1);
+        _.setDisplayed(this.eValueTo1, showTo1);
 
         const showFrom2 = this.showValueFrom(this.getCondition2Type());
-        _.setVisible(this.eValueFrom2, showFrom2);
+        _.setDisplayed(this.eValueFrom2, showFrom2);
 
         const showTo2 = this.showValueTo(this.getCondition2Type());
-        _.setVisible(this.eValueTo2, showTo2);
+        _.setDisplayed(this.eValueTo2, showTo2);
     }
 
 }

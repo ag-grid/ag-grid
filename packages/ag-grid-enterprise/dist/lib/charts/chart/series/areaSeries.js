@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -348,23 +348,12 @@ var AreaSeries = /** @class */ (function (_super) {
             yMax = 1;
             // console.warn('Zero or infinite y-range.');
         }
-        var domainX = continuousX ? array_1.extent(xData) : xData;
+        var domainX = continuousX ? (array_1.numericExtent(xData) || [0, 1]) : xData;
         if (continuousX) {
-            var min = domainX[0];
-            var max = domainX[1];
+            var _a = domainX, min = _a[0], max = _a[1];
             if (min === max) {
-                if (typeof min === 'number' && isFinite(min)) {
-                    domainX[0] -= 1;
-                }
-                else {
-                    domainX[0] = 0;
-                }
-                if (typeof max === 'number' && isFinite(max)) {
-                    domainX[1] += 1;
-                }
-                else {
-                    domainX[1] = 1;
-                }
+                domainX[0] = min - 1;
+                domainX[1] = max + 1;
             }
         }
         this.domainX = domainX;

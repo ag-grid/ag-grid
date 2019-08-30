@@ -20,12 +20,11 @@ import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
-import { CellPosition, CellPositionUtils } from "../entities/cellPosition";
+import { CellPosition } from "../entities/cellPosition";
 import { CellRange, CellRangeType, ISelectionHandle } from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
-import { RowPositionUtils } from "../entities/rowPosition";
 import { _, Promise } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./dndSourceComp";
@@ -144,7 +143,7 @@ export class CellComp extends Component {
         const col = this.column;
 
         const width = this.getCellWidth();
-        const left = this.modifyLeftForPrintLayout(col.getLeft());
+        const left = this.modifyLeftForPrintLayout(this.getCellLeft());
 
         const valueToRender = this.getInitialValueToRender();
         const valueSanitised = _.get(this.column, 'colDef.template', null) ? valueToRender : _.escape(valueToRender);
@@ -259,7 +258,7 @@ export class CellComp extends Component {
     }
 
     public onFlashCells(event: FlashCellsEvent): void {
-        const cellId = CellPositionUtils.createId(this.cellPosition);
+        const cellId = this.beans.cellPositionUtils.createId(this.cellPosition);
         const shouldFlash = event.cells[cellId];
         if (shouldFlash) {
             this.animateCell('highlight');
@@ -409,13 +408,8 @@ export class CellComp extends Component {
     // + rowComp: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
     public refreshCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean }) {
-
-        if (this.editingCell) {
-            return;
-        }
-
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
-        if (this.suppressRefreshCell) {
+        if (this.suppressRefreshCell || this.editingCell) {
             return;
         }
 
@@ -1701,10 +1695,10 @@ export class CellComp extends Component {
             const startRow = rangeController.getRangeStartRow(range);
             const endRow = rangeController.getRangeEndRow(range);
 
-            if (!top && RowPositionUtils.sameRow(startRow, this.cellPosition)) {
+            if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.cellPosition)) {
                 top = true;
             }
-            if (!bottom && RowPositionUtils.sameRow(endRow, this.cellPosition)) {
+            if (!bottom && this.beans.rowPositionUtils.sameRow(endRow, this.cellPosition)) {
                 bottom = true;
             }
             if (!left && range.columns.indexOf(leftCol) < 0) {
@@ -1842,6 +1836,7 @@ export class CellComp extends Component {
 
         return this.rangeCount &&
                handlesAllowed &&
+               lastRange.endRow != null &&
                this.beans.rangeController.isContiguousRange(lastRange) &&
                (
                     _.containsClass(el, 'ag-cell-range-single-cell') ||

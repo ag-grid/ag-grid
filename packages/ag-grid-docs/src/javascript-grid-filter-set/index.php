@@ -66,6 +66,13 @@ include '../documentation-main/documentation_header.php';
         </td>
     </tr>
     <tr>
+        <td class="parameter-key">syncValuesLikeExcel</td>
+        <td>
+            Set to true to have the values inside the set filter refresh similar to Excel as values are changed inside
+            the grid.
+        </td>
+    </tr>
+    <tr>
         <td class="parameter-key">suppressRemoveEntries</td>
         <td>
             Set to true to stop the filter from removing values that are no
@@ -101,15 +108,20 @@ include '../documentation-main/documentation_header.php';
     <tr>
         <td class="parameter-key">suppressMiniFilter</td>
         <td>
-            Set to false(default)/true to show/hide the input text box to filter the set
-            entries displayed in the filter.
+            Set to true to hide the mini filter.
+        </td>
+    </tr>
+    <tr>
+        <td class="parameter-key">suppressSelectAll</td>
+        <td>
+            Set to true to remove the "select all" checkbox.
         </td>
     </tr>
     <tr>
         <td class="parameter-key">selectAllOnMiniFilter</td>
         <td>
-            Set to false(default)/true so that the checkbox "select all" applies to:
-            all the filters items/just the ones filtered by the mini filter.
+            Set to true so that the checkbox "select all" applies to the mini filter results only.
+            Otherwise it will apply to the entire list.
         </td>
     </tr>
     <tr>
@@ -239,31 +251,57 @@ filterParams: {
     <h2>Refresh After Edit or Transcation Update</h2>
 
     <p>
-        The set filter does NOT refresh after you
+        The set filter does not refresh by default after you
         a) <a href="../javascript-grid-cell-editing">edit the data</a> (eg through the grid UI) or 2) update
         the data using <a href="../javascript-grid-data-update/#transactions">Transaction Updates</a>.
-
-        If the data is changing and you want the
-        set filter values to also change, it is up to your application to get the filter to change.
+        If the data is changing and you want the filter values to also change, then you must either
+        a) set the <code>syncValuesLikeExcel=true</code> parameter or b) have your application get the
+        filter to change.
     </p>
 
     <p>
-        The grid does not update the filters for you as the as there are two many use cases that
-        are open to different interpretation. For example, different users will have different requirements
-        on how to handle new values or how to handle row refresh (eg if a filter is active, should the data
-        be filtered again after the value is added).
+        Syncing filter like Excel means the following:
     </p>
+    <ul>
+        <li>
+            When no filter is active, everything in the filter is selected. Adding and removing values
+            will keep the list updated with everything selected.
+        </li>
+        <li>
+            When a filter is active, new items (either new data into the grid, or edits to current data
+            with new values not previously seen) will get added to the filter but will not be selected.
+            This will be somewhat strange as the row will not be filtered out even though the value in the
+            cell is not selected in the filter. This is how Excel works.
+        </li>
+    </ul>
+
+    <p>
+        Different users will have different requirements
+        on how to handle new values or how to handle row refresh (eg if a filter is active, should the data
+        be filtered again after the value is added). For this reason we provide a best efforts at matching
+        Excel while also providing the set filter API to allow custom behaviour.
+    </p>
+
+
+<note>
+    We like the <code>syncValuesLikeExcel</code> behaviour. It is probable we will change the default
+    behaviour of the set filter to do this.
+</note>
 
     <p>
         The example below shows different approaches on handling data changes for set filters.
+        The first columns has no special handling. The second column is configured to work like Excel.
+        All other columns have application specific logic.
+        To understand the example it's best test one column at a time - once finished with that column,
+        refresh the example and try another column and notice the difference.
         From the example, the following can be noted:
     </p>
         <ul class="content">
             <li>
-                All 4 columns have set filter with different responses to data changing.
+                All columns have set filter with different responses to data changing.
             </li>
             <li>
-                All four columns have their filters initialised when the grid is loaded
+                All columns have their filters initialised when the grid is loaded
                 by calling <code>getFilterInstance()</code> when the <code>gridReady</code> event
                 is received. This means when you edit, the filter is already created.
             </li>
@@ -271,39 +309,30 @@ filterParams: {
                 Column 1 has no special handling of new values.
             </li>
             <li>
-                Column 2 after an update: a) gets the filter to update.
+                Column 2 has <code>syncValuesLikeExcel=true</code>, so updates to column 2 will
+                get reflected in the filter similar to Excel.
             </li>
             <li>
-                Column 3 after an update: a) gets the filter to update and b) makes sure the new value is selected.
+                Column 3 after an update: a) gets the filter to update.
             </li>
             <li>
-                Column 4 after an update: a) gets the filter to update and b) makes sure the new value is selected
+                Column 4 after an update: a) gets the filter to update and b) makes sure the new value is selected.
+            </li>
+            <li>
+                Column 5 after an update: a) gets the filter to update and b) makes sure the new value is selected
                 and c) refreshes the rows based on the new filter value. So for example if you first set the filter
                 on Col 4 to 'A' (notice that 'B' rows are removed), then change a value from 'A' to 'B', then
                 the other rows that were previously removed are added back in again.
             </li>
             <li>
-                Click 'Add C Row' to add a new row. Columns 3 and 4 will have their filters updated. Columns
-                1 and 2 will not have their filters updated.
+                Click 'Add C Row' to add a new row. Columns and 3 will not have their filters updated.
+                Column 2 will have it's filter updated by the grid.
+                Columns 4 and 5 will have their filters updated by the application.
             </li>
         </ul>
 
     <?= example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <p>
-        Why do we do this? The reason is if the filters were changing as the editing was happening, then
-        this would cause the following issues:
-    </p>
-
-    <ul class="content">
-        <li>
-            Rows could disappear while editing if there was a filter set and the edit make a row fail
-            a filter that was previously passing the filter.
-        </li>
-        <li>
-            Values could be split, eg if
-        </li>
-    </ul>
 
     <h2>New Rows Action and Values Example</h2>
 
@@ -412,17 +441,45 @@ gridApi.onFilterChanged()</snippet>
         <li><b>setFilterValues(arrayOfStringOptions)</b>: Useful if you want to change on the fly the available options
         <li><b>resetFilterValues()</b>: Useful if you want to rebuild the filter options based on the underlying data</li>
         <li><b>setLoading(loading)</b>: Useful if you want to show/hide the loading overlay in the set filter.</li>
+        <li><b>applyModel()</b>: Applies the model from the UI.</li>
     </ul>
 
     <p>
         Is important to note that when updating the set filter through the API is up to the developer to call
-        gridOptions.api.onFilterChanged() at the end of the interaction with the filter.
-
-        If no call to gridOptions.api.onFilterChanged() is provided the grid will still show the data relevant to the filter
+        <code>filterInstance.applyModel()</code> and then
+        <code>gridOptions.api.onFilterChanged()</code> at the end of the interaction with the filter.
+    </p>
+    <p>
+        If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show the changes, but
+        it won't be reflected in the filter model. This will appear as if the user never hit the Apply button (regardless
+        of whether the Apply button is active or not).
+    </p>
+    <p>
+        If no call to <code>gridOptions.api.onFilterChanged()</code> is provided the grid will still show the data relevant to the filter
         before it was updated through the API.
+    </p>
 
+    <snippet>
+// Example - Interacting with Set Filter
+
+// Get filter instance
+var instance = gridOptions.api.getFilterInstance('athlete');
+
+// Set filter properties
+instance.selectNothing();
+instance.selectValue('John Joe Nevin');
+instance.selectValue('Kenny Egan');
+
+// Apply the model.
+instance.applyModel();
+
+// Get the grid to refresh the rows based on new filter
+gridOptions.api.onFilterChanged();
+    </snippet>
+
+    <p>
         In the example below, you can see how the filter for the Athlete column is modified through the API and how at the
-        end of the interaction a call to gridOptions.api.onFilterChanged() is performed.
+        end of the interaction a call to <code>gridOptions.api.onFilterChanged()</code> is performed.
     </p>
 
     <?= example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>

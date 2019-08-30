@@ -1,10 +1,10 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community/main";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 export declare enum SELECTED_STATE {
     CHECKED = 0,
     UNCHECKED = 1,
-    INDETERMINIATE = 2
+    INDETERMINATE = 2
 }
 export declare class PrimaryColsHeaderPanel extends Component {
     private gridOptionsWrapper;

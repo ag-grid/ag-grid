@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -65,7 +65,7 @@ var SideBarComp = /** @class */ (function (_super) {
             }
         }
         var sideBarVisible = sideBarExists && !sideBar.hiddenByDefault;
-        setTimeout(function () { return _this.setVisible(sideBarVisible); }, 0);
+        setTimeout(function () { return _this.setDisplayed(sideBarVisible); }, 0);
     };
     SideBarComp.prototype.setupToolPanels = function (defs) {
         var _this = this;
@@ -77,7 +77,7 @@ var SideBarComp = /** @class */ (function (_super) {
             var wrapper = new toolPanelWrapper_1.ToolPanelWrapper();
             _this.getContext().wireBean(wrapper);
             wrapper.setToolPanelDef(def);
-            wrapper.setVisible(false);
+            wrapper.setDisplayed(false);
             _this.getGui().appendChild(wrapper.getGui());
             _this.toolPanelWrappers.push(wrapper);
         });
@@ -92,7 +92,7 @@ var SideBarComp = /** @class */ (function (_super) {
         }
         this.toolPanelWrappers.forEach(function (wrapper) {
             var show = key === wrapper.getToolPanelId();
-            wrapper.setVisible(show);
+            wrapper.setDisplayed(show);
         });
         var newlyOpenedKey = this.openedItem();
         var openToolPanelChanged = currentlyOpenedKey !== newlyOpenedKey;
@@ -119,7 +119,7 @@ var SideBarComp = /** @class */ (function (_super) {
     SideBarComp.prototype.openedItem = function () {
         var activeToolPanel = null;
         this.toolPanelWrappers.forEach(function (wrapper) {
-            if (wrapper.isVisible()) {
+            if (wrapper.isDisplayed()) {
                 activeToolPanel = wrapper.getToolPanelId();
             }
         });

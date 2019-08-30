@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 export declare class LegendPanel extends Component {
@@ -12,8 +12,8 @@ export declare class LegendPanel extends Component {
     private itemPaddingXSlider;
     private itemPaddingYSlider;
     private chartTranslator;
-    private chart;
     private activePanels;
+    private chartProxy;
     private readonly chartController;
     constructor(chartController: ChartController);
     private init;

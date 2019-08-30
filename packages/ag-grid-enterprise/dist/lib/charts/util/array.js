@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
@@ -39,10 +39,12 @@ function find(arr, predicate) {
     }
 }
 exports.find = find;
-function checkExtent(values) {
-    if (values[0] !== undefined && values[1] !== undefined) {
-        return values;
+// This method will only return `undefined`, if there's not a single valid finite number
+// in the given array of values.
+function numericExtent(values) {
+    var _a = extent(values), min = _a[0], max = _a[1];
+    if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
+        return [min, max];
     }
-    throw new Error("Invalid extent: " + values);
 }
-exports.checkExtent = checkExtent;
+exports.numericExtent = numericExtent;

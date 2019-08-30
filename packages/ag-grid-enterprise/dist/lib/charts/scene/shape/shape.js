@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -227,7 +227,15 @@ var Shape = /** @class */ (function (_super) {
             return this._fillShadow;
         },
         set: function (value) {
-            if (this._fillShadow !== value) {
+            var _this = this;
+            var fillShadow = this._fillShadow;
+            if (fillShadow !== value) {
+                if (fillShadow) {
+                    fillShadow.onChange = undefined;
+                }
+                if (value) {
+                    value.onChange = function () { return _this.dirty = true; };
+                }
                 this._fillShadow = value;
                 this.dirty = true;
             }
@@ -240,7 +248,15 @@ var Shape = /** @class */ (function (_super) {
             return this._strokeShadow;
         },
         set: function (value) {
-            if (this._strokeShadow !== value) {
+            var _this = this;
+            var strokeShadow = this._strokeShadow;
+            if (strokeShadow !== value) {
+                if (strokeShadow) {
+                    strokeShadow.onChange = undefined;
+                }
+                if (value) {
+                    value.onChange = function () { return _this.dirty = true; };
+                }
                 this._strokeShadow = value;
                 this.dirty = true;
             }
@@ -252,7 +268,7 @@ var Shape = /** @class */ (function (_super) {
         if (!this.scene) {
             return;
         }
-        var pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+        var pixelRatio = this.scene.canvas.pixelRatio || 1;
         if (this.fill) {
             ctx.fillStyle = this.fill;
             ctx.globalAlpha = this.opacity * this.fillOpacity;
@@ -260,10 +276,10 @@ var Shape = /** @class */ (function (_super) {
             // has no effect on shadows, so we have to account for the pixel ratio
             // manually here.
             var fillShadow = this.fillShadow;
-            if (fillShadow) {
+            if (fillShadow && fillShadow.enabled) {
                 ctx.shadowColor = fillShadow.color;
-                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fill();
@@ -286,10 +302,10 @@ var Shape = /** @class */ (function (_super) {
                 ctx.lineJoin = this.lineJoin;
             }
             var strokeShadow = this.strokeShadow;
-            if (strokeShadow) {
+            if (strokeShadow && strokeShadow.enabled) {
                 ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = strokeShadow.blur * pixelRatio;
             }
             ctx.stroke();

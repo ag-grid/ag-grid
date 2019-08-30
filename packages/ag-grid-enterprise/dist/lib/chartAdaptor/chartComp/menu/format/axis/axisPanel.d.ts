@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 export declare class AxisPanel extends Component {
@@ -9,7 +9,7 @@ export declare class AxisPanel extends Component {
     private chartTranslator;
     private readonly chartController;
     private activePanels;
-    private chart;
+    private chartProxy;
     constructor(chartController: ChartController);
     private init;
     private initAxis;

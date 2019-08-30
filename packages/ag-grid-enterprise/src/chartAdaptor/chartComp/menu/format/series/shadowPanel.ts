@@ -1,16 +1,20 @@
 import {
     AgColorPicker,
     AgGroupComponent,
-    AgSlider, Autowired,
+    AgSlider,
+    Autowired,
     Component,
     PostConstruct,
     RefSelector,
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
-import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
-import { BarSeries } from "../../../../../charts/chart/series/barSeries";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartTranslator} from "../../../chartTranslator";
+import {BarChartProxy} from "../../../chartProxies/cartesian/barChartProxy";
+import {PieChartProxy} from "../../../chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy";
+import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
+import {ShadowProperty} from "../../../chartProxies/chartProxy";
+
+type ShadowProxy = BarChartProxy | AreaChartProxy | PieChartProxy | DoughnutChartProxy;
 
 export class ShadowPanel extends Component {
 
@@ -32,22 +36,16 @@ export class ShadowPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartController: ChartController;
-    private chart: Chart;
-    private series: PieSeries[] | BarSeries[];
+    private chartProxy: ShadowProxy;
 
-    constructor(chartController: ChartController) {
+    constructor(chartProxy: ShadowProxy) {
         super();
-        this.chartController = chartController;
+        this.chartProxy = chartProxy;
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(ShadowPanel.TEMPLATE);
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
-        this.series = this.chart.series as PieSeries[] | BarSeries[];
 
         this.shadowBlurSlider.setTextFieldWidth(45);
         this.shadowXOffsetSlider.setTextFieldWidth(45);
@@ -57,62 +55,29 @@ export class ShadowPanel extends Component {
     }
 
     private initSeriesShadow() {
-        const updateShadow = () => {
-            this.series.forEach((series: BarSeries | PieSeries) => {
-                if (this.shadowGroup.isEnabled()) {
-                    const blur = this.shadowBlurSlider.getValue() ? Number.parseInt(this.shadowBlurSlider.getValue()) : 0;
-                    const xOffset = this.shadowXOffsetSlider.getValue() ? Number.parseInt(this.shadowXOffsetSlider.getValue()) : 0;
-                    const yOffset = this.shadowYOffsetSlider.getValue() ? Number.parseInt(this.shadowYOffsetSlider.getValue()) : 0;
-                    const color = this.shadowColorPicker.getValue() ? this.shadowColorPicker.getValue() : 'rgba(0,0,0,0.5)';
-                    series.shadow = {
-                        color: color,
-                        offset: {x: xOffset, y: yOffset},
-                        blur: blur
-                    }
-                }
-            });
-        };
-
-        const enabled = this.series.some((series: BarSeries | PieSeries) => series.shadow != undefined);
-
         this.shadowGroup
             .setTitle(this.chartTranslator.translate('shadow'))
-            .setEnabled(enabled)
+            .setEnabled(this.chartProxy.getShadowEnabled())
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(enabled => {
-                this.series.forEach((series: BarSeries | PieSeries) => {
-                    if (enabled) {
-                        series.shadow = {
-                            color: this.shadowColorPicker.getValue(),
-                            offset: {
-                                x: Number.parseInt(this.shadowXOffsetSlider.getValue()),
-                                y: Number.parseInt(this.shadowYOffsetSlider.getValue())
-                            },
-                            blur: Number.parseInt(this.shadowBlurSlider.getValue())
-                        };
-                    } else {
-                        series.shadow = undefined;
-                    }
-                });
-            });
+            .onEnableChange(newValue => this.chartProxy.setShadowProperty('enabled', newValue));
 
         this.shadowColorPicker
             .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
             .setValue('rgba(0,0,0,0.5)')
-            .onValueChange(updateShadow);
+            .onValueChange(newValue => this.chartProxy.setShadowProperty('color', newValue));
 
-        const initInput = (input: AgSlider, labelKey: string, initialValue: string, maxValue: number) => {
-            input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(initialValue)
+        const initInput = (input: AgSlider, property: ShadowProperty, maxValue: number) => {
+            input.setLabel(this.chartTranslator.translate(property))
+                .setValue(this.chartProxy.getShadowProperty(property))
                 .setMaxValue(maxValue)
-                .onValueChange(updateShadow);
+                .onValueChange(newValue => this.chartProxy.setShadowProperty(property, newValue));
         };
 
-        initInput(this.shadowBlurSlider, 'blur', '5', 20);
-        initInput(this.shadowXOffsetSlider, 'xOffset', '3', 20);
-        initInput(this.shadowYOffsetSlider, 'yOffset', '3', 20);
+        initInput(this.shadowBlurSlider, 'blur', 20);
+        initInput(this.shadowXOffsetSlider, 'xOffset', 20);
+        initInput(this.shadowYOffsetSlider, 'yOffset', 20);
     }
 }

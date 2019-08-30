@@ -16,6 +16,7 @@ import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { SELECTED_STATE } from "./primaryColsHeaderPanel";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
+import {ColumnApi} from "ag-grid-community";
 
 export type ColumnItem = BaseColumnItem & Component;
 
@@ -24,6 +25,7 @@ export class PrimaryColsListPanel extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private globalEventService: EventService;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;
@@ -91,7 +93,6 @@ export class PrimaryColsListPanel extends Component {
         }
 
         this.recursivelyAddComps(columnGroup.getChildren(), newDept, groupsExist);
-
     }
 
     public onGroupExpanded(): void {
@@ -130,7 +131,7 @@ export class PrimaryColsListPanel extends Component {
 
         let state: SELECTED_STATE;
         if (expandedCount > 0 && notExpandedCount > 0) {
-            state = SELECTED_STATE.INDETERMINIATE;
+            state = SELECTED_STATE.INDETERMINATE;
         } else if (notExpandedCount > 0) {
             state = SELECTED_STATE.UNCHECKED;
         } else {
@@ -216,7 +217,8 @@ export class PrimaryColsListPanel extends Component {
                         const displayName = comp.getDisplayName();
                         filterPasses = displayName !== null ? displayName.toLowerCase().indexOf(this.filterText) >= 0 : true;
                     } else {
-                        filterPasses = true;
+                        // if this is a dummy column group, we should return false here
+                        filterPasses = item instanceof OriginalColumnGroup && item.getOriginalParent() ? true : false;
                     }
                 }
 
@@ -241,7 +243,7 @@ export class PrimaryColsListPanel extends Component {
             const comp: ColumnItem = this.columnComps[child.getId()];
             if (comp) {
                 const passesFilter = filterResults ? filterResults[child.getId()] : true;
-                comp.setVisible(parentGroupsOpen && passesFilter);
+                comp.setDisplayed(parentGroupsOpen && passesFilter);
             }
 
             if (child instanceof OriginalColumnGroup) {
@@ -262,8 +264,20 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public doSetSelectedAll(checked: boolean): void {
-        _.iterateObject(this.columnComps, (key, column) => {
-            column.onSelectAllChanged(checked);
-        });
+
+        if (this.columnApi.isPivotMode()) {
+            // if pivot mode is on, then selecting columns has special meaning (eg group, aggregate, pivot etc),
+            // so there is no bulk operation we can do.
+            _.iterateObject(this.columnComps, (key, column) => {
+                column.onSelectAllChanged(checked);
+            });
+        } else {
+            // however if pivot mode is off, then it's all about column visibility so we can do a bulk
+            // operation directly with the column controller. we could column.onSelectAllChanged(checked)
+            // as above, however this would work on each column independently and take longer.
+            const primaryCols = this.columnApi.getPrimaryColumns();
+            this.columnApi.setColumnsVisible(primaryCols, checked);
+        }
+
     }
 }

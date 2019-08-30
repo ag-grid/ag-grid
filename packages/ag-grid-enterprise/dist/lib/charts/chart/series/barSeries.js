@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24,7 +24,7 @@ var series_1 = require("./series");
 var node_1 = require("../../scene/node");
 var number_1 = require("../../util/number");
 var ag_grid_community_1 = require("ag-grid-community");
-var categoryAxis_1 = require("../axis/categoryAxis");
+var numberAxis_1 = require("../axis/numberAxis");
 var BarSeriesNodeTag;
 (function (BarSeriesNodeTag) {
     BarSeriesNodeTag[BarSeriesNodeTag["Bar"] = 0] = "Bar";
@@ -469,7 +469,7 @@ var BarSeries = /** @class */ (function (_super) {
             return;
         }
         var categoryCount = this.data.length;
-        var flipXY = !(chart.xAxis instanceof categoryAxis_1.CategoryAxis);
+        var flipXY = !(chart.yAxis instanceof numberAxis_1.NumberAxis);
         var xAxis = flipXY ? chart.yAxis : chart.xAxis;
         var yAxis = flipXY ? chart.xAxis : chart.yAxis;
         var xScale = xAxis.scale;
@@ -512,14 +512,15 @@ var BarSeries = /** @class */ (function (_super) {
                 var bottomY = yScale.convert((grouped ? 0 : prev));
                 var seriesDatum = data[i];
                 var yValue = seriesDatum[yField]; // unprocessed y-value
+                var yValueIsNumber = typeof yValue === 'number';
                 var labelText = void 0;
                 if (labelFormatter) {
                     labelText = labelFormatter({
-                        value: typeof yValue === 'number' ? yValue : NaN
+                        value: yValueIsNumber ? yValue : NaN
                     });
                 }
                 else {
-                    labelText = isFinite(yValue) ? yValue.toFixed(2) : '';
+                    labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
                 }
                 selectionData.push({
                     seriesDatum: seriesDatum,

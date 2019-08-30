@@ -1,5 +1,5 @@
-// ag-grid-enterprise v21.1.1
-import { Component, IStatusPanelComp } from 'ag-grid-community';
+// ag-grid-enterprise v21.2.0
+import { Component, IStatusPanelComp, CellPositionUtils, RowPositionUtils } from 'ag-grid-community';
 export declare class AggregationComp extends Component implements IStatusPanelComp {
     private static TEMPLATE;
     private eventService;
@@ -10,6 +10,8 @@ export declare class AggregationComp extends Component implements IStatusPanelCo
     private gridOptionsWrapper;
     private gridOptions;
     private gridApi;
+    cellPositionUtils: CellPositionUtils;
+    rowPositionUtils: RowPositionUtils;
     private sumAggregationComp;
     private countAggregationComp;
     private minAggregationComp;

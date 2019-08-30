@@ -1,63 +1,17 @@
-import { BeanStub } from "../context/beanStub";
-import { IRowModel, RowBounds } from "../interfaces/iRowModel";
-import { EventService } from "../eventService";
-import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
-import { RowNode } from "../entities/rowNode";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { GridPanel } from "../gridPanel/gridPanel";
-import { ScrollVisibleService } from "../gridPanel/scrollVisibleService";
-import { SelectionController } from "../selectionController";
-import { ColumnApi } from "../columnController/columnApi";
-import { GridApi } from "../gridApi";
-import { _ } from "../utils";
-
-@Bean('paginationAutoPageSizeService')
-export class PaginationAutoPageSizeService extends BeanStub {
-
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-
-    private gridPanel: GridPanel;
-
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
-
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.checkPageSize();
-    }
-
-    private notActive(): boolean {
-        return !this.gridOptionsWrapper.isPaginationAutoPageSize();
-    }
-
-    private onScrollVisibilityChanged(): void {
-        this.checkPageSize();
-    }
-
-    private onBodyHeightChanged(): void {
-        this.checkPageSize();
-    }
-
-    private checkPageSize(): void {
-        if (this.notActive()) {
-            return;
-        }
-
-        const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        const bodyHeight = this.gridPanel.getBodyHeight();
-
-        if (bodyHeight > 0) {
-            const newPageSize = Math.floor(bodyHeight / rowHeight);
-            this.gridOptionsWrapper.setProperty('paginationPageSize', newPageSize);
-        }
-    }
-}
+import {BeanStub} from "../context/beanStub";
+import {IRowModel, RowBounds} from "../interfaces/iRowModel";
+import {EventService} from "../eventService";
+import {Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
+import {RowNode} from "../entities/rowNode";
+import {Autowired, Bean, PostConstruct} from "../context/context";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {SelectionController} from "../selectionController";
+import {ColumnApi} from "../columnController/columnApi";
+import {GridApi} from "../gridApi";
+import {_} from "../utils";
 
 @Bean('paginationProxy')
-export class PaginationProxy extends BeanStub implements IRowModel {
+export class PaginationProxy extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('eventService') private eventService: EventService;
@@ -67,21 +21,26 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     @Autowired('gridApi') private gridApi: GridApi;
 
     private active: boolean;
+    private paginateChildRows: boolean;
 
     private pageSize: number;
 
     private totalPages: number;
     private currentPage = 0;
 
-    private topRowIndex = 0;
-    private bottomRowIndex = 0;
+    private topDisplayedRowIndex = 0;
+    private bottomDisplayedRowIndex = 0;
     private pixelOffset = 0;
     private topRowBounds: RowBounds;
     private bottomRowBounds: RowBounds;
 
+    private masterRowCount: number = 0;
+
+
     @PostConstruct
     private postConstruct() {
         this.active = this.gridOptionsWrapper.isPagination();
+        this.paginateChildRows = this.gridOptionsWrapper.isPaginateChildRows();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 
@@ -93,17 +52,13 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
         const res = this.rowModel.ensureRowHeightsValid(startPixel, endPixel, this.getPageFirstRow(), this.getPageLastRow());
         if (res) {
-            this.setIndexesAndBounds();
+            this.calculatePages();
         }
         return res;
     }
 
-    public isLastRowFound(): boolean {
-        return this.rowModel.isLastRowFound();
-    }
-
     private onModelUpdated(modelUpdatedEvent?: ModelUpdatedEvent): void {
-        this.setIndexesAndBounds();
+        this.calculatePages();
         const paginationChangedEvent: PaginationChangedEvent = {
             type: Events.EVENT_PAGINATION_CHANGED,
             animate: modelUpdatedEvent ? modelUpdatedEvent.animate : false,
@@ -156,14 +111,14 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         if (_.missing(this.topRowBounds) || _.missing(this.bottomRowBounds)) {
             return 0;
         }
-        return this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop;
+        return Math.max(this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop, 0);
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
-        const nodeIsInPage = rowNode.rowIndex >= this.topRowIndex && rowNode.rowIndex <= this.bottomRowIndex;
+        const nodeIsInPage = rowNode.rowIndex >= this.topDisplayedRowIndex && rowNode.rowIndex <= this.bottomDisplayedRowIndex;
         return nodeIsInPage;
     }
 
@@ -187,23 +142,18 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         return this.rowModel.getType();
     }
 
-    public getRowBounds(index: number): { rowTop: number, rowHeight: number } {
-        return this.rowModel.getRowBounds(index);
+    public getRowBounds(index: number): RowBounds {
+        const res = this.rowModel.getRowBounds(index);
+        res.rowIndex = index;
+        return res;
     }
 
     public getPageFirstRow(): number {
-        return this.pageSize * this.currentPage;
+        return this.topRowBounds ? this.topRowBounds.rowIndex : -1;
     }
 
     public getPageLastRow(): number {
-        const totalLastRow = (this.pageSize * (this.currentPage + 1)) - 1;
-        const pageLastRow = this.rowModel.getPageLastRow();
-
-        if (pageLastRow > totalLastRow) {
-            return totalLastRow;
-        } else {
-            return pageLastRow;
-        }
+        return this.bottomRowBounds ? this.bottomRowBounds.rowIndex : -1;
     }
 
     public getRowCount(): number {
@@ -217,10 +167,6 @@ export class PaginationProxy extends BeanStub implements IRowModel {
 
         const pageNumber = Math.floor(index / this.pageSize);
         this.goToPage(pageNumber);
-    }
-
-    public getTotalRowCount(): number {
-        return this.rowModel.getPageLastRow() + 1;
     }
 
     public isLastPageFound(): boolean {
@@ -244,7 +190,7 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public goToLastPage(): void {
-        const rowCount = this.rowModel.getPageLastRow() + 1;
+        const rowCount = this.rowModel.getRowCount();
         const lastPage = Math.floor(rowCount / this.pageSize);
         this.goToPage(lastPage);
     }
@@ -265,41 +211,123 @@ export class PaginationProxy extends BeanStub implements IRowModel {
         }
     }
 
-    private setIndexesAndBounds(): void {
+    private calculatePages(): void {
 
         if (this.active) {
             this.setPageSize();
-
-            const totalRowCount = this.getTotalRowCount();
-            this.totalPages = Math.floor((totalRowCount - 1) / this.pageSize) + 1;
-
-            if (this.currentPage >= this.totalPages) {
-                this.currentPage = this.totalPages - 1;
+            if (this.paginateChildRows) {
+                this.calculatePagesAllRows();
+            } else {
+                this.calculatePagesMasterRowsOnly();
             }
-
-            if (!_.isNumeric(this.currentPage) || this.currentPage < 0) {
-                this.currentPage = 0;
-            }
-
-            this.topRowIndex = this.pageSize * this.currentPage;
-            this.bottomRowIndex = (this.pageSize * (this.currentPage + 1)) - 1;
-
-            const maxRowAllowed = this.rowModel.getPageLastRow();
-            if (this.bottomRowIndex > maxRowAllowed) {
-                this.bottomRowIndex = maxRowAllowed;
-            }
-
         } else {
-            this.pageSize = this.rowModel.getPageLastRow() + 1;
-            this.totalPages = 1;
-            this.currentPage = 0;
-            this.topRowIndex = 0;
-            this.bottomRowIndex = this.rowModel.getPageLastRow();
+            this.calculatedPagesNotActive();
         }
 
-        this.topRowBounds = this.rowModel.getRowBounds(this.topRowIndex);
-        this.bottomRowBounds = this.rowModel.getRowBounds(this.bottomRowIndex);
+        this.topRowBounds = this.rowModel.getRowBounds(this.topDisplayedRowIndex);
+        if (this.topRowBounds) {
+            this.topRowBounds.rowIndex = this.topDisplayedRowIndex;
+        }
+
+        this.bottomRowBounds = this.rowModel.getRowBounds(this.bottomDisplayedRowIndex);
+        if (this.bottomRowBounds) {
+            this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
+        }
 
         this.pixelOffset = _.exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0;
+    }
+
+    private setZeroRows(): void {
+        this.topDisplayedRowIndex = 0;
+        this.bottomDisplayedRowIndex = -1;
+        this.currentPage = 0;
+        this.totalPages = 0;
+    }
+
+    private calculatePagesMasterRowsOnly(): void {
+
+        // const csrm = <ClientSideRowModel> this.rowModel;
+        // const rootNode = csrm.getRootNode();
+        // const masterRows = rootNode.childrenAfterSort;
+
+        this.masterRowCount = this.rowModel.getTopLevelRowCount();
+
+        if (this.masterRowCount===0) {
+            this.setZeroRows();
+            return;
+        }
+
+        const masterLastRowIndex = this.masterRowCount - 1;
+
+        this.totalPages = Math.floor((masterLastRowIndex) / this.pageSize) + 1;
+
+        if (this.currentPage >= this.totalPages) {
+            this.currentPage = this.totalPages - 1;
+        }
+
+        if (!_.isNumeric(this.currentPage) || this.currentPage < 0) {
+            this.currentPage = 0;
+        }
+
+        const masterPageStartIndex = this.pageSize * this.currentPage;
+        let masterPageEndIndex = (this.pageSize * (this.currentPage + 1)) - 1;
+
+        if (masterPageEndIndex > masterLastRowIndex) {
+            masterPageEndIndex = masterLastRowIndex;
+        }
+
+        this.topDisplayedRowIndex = this.rowModel.getTopLevelRowDisplayedIndex(masterPageStartIndex);
+        // masterRows[masterPageStartIndex].rowIndex;
+
+        if (masterPageEndIndex===masterLastRowIndex) {
+            // if showing the last master row, then we want to show the very last row of the model
+            this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
+        } else {
+            const firstIndexNotToShow = this.rowModel.getTopLevelRowDisplayedIndex(masterPageEndIndex + 1);
+            //masterRows[masterPageEndIndex + 1].rowIndex;
+            // this gets the index of the last child - eg current row is open, we want to display all children,
+            // the index of the last child is one less than the index of the next parent row.
+            this.bottomDisplayedRowIndex = firstIndexNotToShow - 1;
+        }
+    }
+
+    public getMasterRowCount(): number {
+        return this.masterRowCount;
+    }
+
+    private calculatePagesAllRows(): void {
+        this.masterRowCount = this.rowModel.getRowCount();
+
+        if (this.masterRowCount===0) {
+            this.setZeroRows();
+            return;
+        }
+
+        const maxRowIndex = this.masterRowCount - 1;
+
+        this.totalPages = Math.floor((maxRowIndex) / this.pageSize) + 1;
+
+        if (this.currentPage >= this.totalPages) {
+            this.currentPage = this.totalPages - 1;
+        }
+
+        if (!_.isNumeric(this.currentPage) || this.currentPage < 0) {
+            this.currentPage = 0;
+        }
+
+        this.topDisplayedRowIndex = this.pageSize * this.currentPage;
+        this.bottomDisplayedRowIndex = (this.pageSize * (this.currentPage + 1)) - 1;
+
+        if (this.bottomDisplayedRowIndex > maxRowIndex) {
+            this.bottomDisplayedRowIndex = maxRowIndex;
+        }
+    }
+
+    private calculatedPagesNotActive(): void {
+        this.pageSize = this.rowModel.getRowCount();
+        this.totalPages = 1;
+        this.currentPage = 0;
+        this.topDisplayedRowIndex = 0;
+        this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
     }
 }

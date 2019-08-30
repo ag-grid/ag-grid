@@ -7,14 +7,13 @@ import { EventService } from "../eventService";
 import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
-import { ColumnApi } from "../columnController/columnApi";
-import { GridApi } from "../gridApi";
 import { _ } from "../utils";
 
 export class ColumnGroup implements ColumnGroupChild {
 
     public static HEADER_GROUP_SHOW_OPEN = 'open';
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';
+    public static HEADER_GROUP_PADDING = 'padding';
 
     public static EVENT_LEFT_CHANGED = 'leftChanged';
     public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
@@ -25,8 +24,6 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children: ColumnGroupChild[];
@@ -277,7 +274,7 @@ export class ColumnGroup implements ColumnGroupChild {
         return this.children;
     }
 
-    public getColumnGroupShow(): string {
+    public getColumnGroupShow(): string | undefined {
         return this.originalColumnGroup.getColumnGroupShow();
     }
 

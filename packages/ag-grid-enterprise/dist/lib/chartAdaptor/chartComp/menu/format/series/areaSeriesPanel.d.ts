@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 export declare class AreaSeriesPanel extends Component {
@@ -9,11 +9,12 @@ export declare class AreaSeriesPanel extends Component {
     private seriesLineOpacitySlider;
     private seriesFillOpacitySlider;
     private chartTranslator;
-    private series;
-    private activePanels;
+    private readonly chartProxy;
     private readonly chartController;
+    private activePanels;
     constructor(chartController: ChartController);
     private init;
+    private initSeriesGroup;
     private initSeriesTooltips;
     private initSeriesLineWidth;
     private initOpacity;

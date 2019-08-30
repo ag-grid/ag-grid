@@ -1324,6 +1324,8 @@ export class Utils {
         previous: 'previous',
         next: 'next',
         last: 'last',
+        linked: 'linked',
+        unlinked: 'unlinked',
         colorPicker: 'color-picker',
         radioButtonOn: 'radio-button-on',
         radioButtonOff: 'radio-button-off',
@@ -1375,7 +1377,7 @@ export class Utils {
         }
     }
 
-    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null): HTMLElement {
+    static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement {
         let userProvidedIcon: Function | string | null = null;
 
         // check col for icon first
@@ -1412,9 +1414,13 @@ export class Utils {
             }
         } else {
             const span = document.createElement('span');
-            const cssClass = this.iconNameClassMap[iconName];
+            let cssClass = this.iconNameClassMap[iconName];
             if (!cssClass) {
-                throw new Error(`${iconName} did not find class`);
+                if (!forceCreate) {
+                    throw new Error(`${iconName} did not find class`);
+                } else {
+                    cssClass = iconName;
+                }
             }
             span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
             span.setAttribute("unselectable", "on");
@@ -1527,12 +1533,23 @@ export class Utils {
         return pressedKey === keyToCheck;
     }
 
-    static setVisible(element: HTMLElement, visible: boolean) {
-        this.addOrRemoveCssClass(element, 'ag-hidden', !visible);
+    static isCharacterKey(event: KeyboardEvent): boolean {
+        // from: https://stackoverflow.com/questions/4179708/how-to-detect-if-the-pressed-key-will-produce-a-character-inside-an-input-text
+        const { which } = event;
+
+        if (typeof which === 'number' && which) {
+            return !event.ctrlKey && !event.metaKey && !event.altKey && event.which !== 8 && event.which !== 16;
+        }
+
+        return which === undefined;
     }
 
-    static setHidden(element: HTMLElement, hidden: boolean) {
-        this.addOrRemoveCssClass(element, 'ag-invisible', hidden);
+    static setDisplayed(element: HTMLElement, displayed: boolean) {
+        this.addOrRemoveCssClass(element, 'ag-hidden', !displayed);
+    }
+
+    static setVisible(element: HTMLElement, visible: boolean) {
+        this.addOrRemoveCssClass(element, 'ag-invisible', !visible);
     }
 
     static setElementWidth(element: HTMLElement, width: string | number) {
@@ -2290,27 +2307,42 @@ export class Utils {
 
         if (invalidInputs.length > 0) {
             invalidInputs.forEach(invalidInput =>
-                fuzzyMatches[invalidInput] = this.fuzzySuggestions(invalidInput, validValues, allSuggestions)
+                fuzzyMatches[invalidInput] = this.fuzzySuggestions(invalidInput, allSuggestions)
             );
         }
 
         return fuzzyMatches;
     }
 
-    public static fuzzySuggestions(inputValue: string,
-                                   validValues: string[],
-                                   allSuggestions: string[]): string[] {
-        const thisSuggestions: string [] = allSuggestions.slice(0);
-        thisSuggestions.sort((suggestedValueLeft, suggestedValueRight) => {
-                const leftDifference = _.string_similarity(suggestedValueLeft.toLowerCase(), inputValue.toLowerCase());
-                const rightDifference = _.string_similarity(suggestedValueRight.toLowerCase(), inputValue.toLowerCase());
-                return leftDifference > rightDifference ? -1 :
-                    leftDifference === rightDifference ? 0 :
-                        1;
-            }
-        );
+    /**
+     *
+     * @param {String} inputValue The value to be compared against a list of strings
+     * @param allSuggestions The list of strings to be compared against
+     * @param hideIrrelevant By default, fuzzy suggestions will just sort the allSuggestions list, set this to true
+     *        to filter out the irrelevant values
+     * @param weighted Set this to true, to make letters matched in the order they were typed have priority in the results.
+     */
+    public static fuzzySuggestions(
+        inputValue: string,
+        allSuggestions: string[],
+        hideIrrelevant?: boolean,
+        weighted?: true
+    ): string[] {
+        const search = weighted ? _.string_weighted_distances : _.string_distances;
+        let thisSuggestions: { value: string, relevance: number }[] = allSuggestions.map((text) => ({
+            value: text,
+            relevance: search(inputValue.toLowerCase(), text.toLocaleLowerCase())
+        }));
 
-        return thisSuggestions;
+        thisSuggestions.sort((a, b) => {
+            return b.relevance - a.relevance;
+        });
+
+        if (hideIrrelevant) {
+            thisSuggestions = thisSuggestions.filter(suggestion => suggestion.relevance !== 0);
+        }
+
+        return thisSuggestions.map(suggestion => suggestion.value);
     }
 
     /**
@@ -2333,31 +2365,53 @@ export class Utils {
         return v;
     }
 
-    static string_similarity = function(str1: string, str2: string) {
-        if (str1.length > 0 && str2.length > 0) {
-            const pairs1 = Utils.get_bigrams(str1);
-            const pairs2 = Utils.get_bigrams(str2);
-            const union = pairs1.length + pairs2.length;
-            let hit_count = 0;
-            let j;
-            let len;
-            for (j = 0, len = pairs1.length; j < len; j++) {
-                const x = pairs1[j];
-                let k;
-                let len1;
-                for (k = 0, len1 = pairs2.length; k < len1; k++) {
-                    const y = pairs2[k];
-                    if (x === y) {
-                        hit_count++;
-                    }
+    static string_distances(str1: string, str2: string): number {
+        if (str1.length === 0 && str2.length === 0) {
+            return 0;
+        }
+
+        const pairs1 = _.get_bigrams(str1);
+        const pairs2 = _.get_bigrams(str2);
+        const union = pairs1.length + pairs2.length;
+        let hit_count = 0;
+        let j;
+        let len;
+
+        for (j = 0, len = pairs1.length; j < len; j++) {
+            const x = pairs1[j];
+            let k;
+            let len1;
+
+            for (k = 0, len1 = pairs2.length; k < len1; k++) {
+                const y = pairs2[k];
+                if (x === y) {
+                    hit_count++;
                 }
             }
-            if (hit_count > 0) {
-                return (2.0 * hit_count) / union;
-            }
         }
-        return 0.0;
-    };
+
+        return hit_count > 0 ? (2 * hit_count) / union : 0;
+    }
+
+    static string_weighted_distances(str1: string, str2: string): number {
+        const a = str1.replace(/\s/g, '');
+        const b = str2.replace(/\s/g, '');
+
+        let weight = 0;
+        let lastIndex = 0;
+        for (let i = 0; i < a.length; i++) {
+            const idx = b.indexOf(a[i]);
+            if (idx === -1) {
+                continue;
+            }
+
+            lastIndex = idx;
+            weight += ((b.length - lastIndex) * 100) / b.length;
+            weight *= weight;
+        }
+
+        return weight;
+    }
 
     private static isNumpadDelWithNumlockOnForEdgeOrIe(event: KeyboardEvent) {
         if (Utils.isBrowserEdge() || Utils.isBrowserIE()) {
@@ -2384,7 +2438,6 @@ export class Utils {
                     eTarget.innerHTML = gui;
                 }
             }
-
         });
     }
 }

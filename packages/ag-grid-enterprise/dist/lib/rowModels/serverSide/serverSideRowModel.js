@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -361,23 +361,27 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         }
         return null;
     };
-    ServerSideRowModel.prototype.getPageFirstRow = function () {
-        return 0;
-    };
-    ServerSideRowModel.prototype.getPageLastRow = function () {
-        var lastRow;
-        if (this.cacheExists()) {
-            // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?
-            var serverSideCache = this.rootNode.childrenCache;
-            lastRow = serverSideCache.getDisplayIndexEnd() - 1;
-        }
-        else {
-            lastRow = 0;
-        }
-        return lastRow;
-    };
     ServerSideRowModel.prototype.getRowCount = function () {
-        return this.getPageLastRow() + 1;
+        if (!this.cacheExists()) {
+            return 1;
+        }
+        var serverSideCache = this.rootNode.childrenCache;
+        var res = serverSideCache.getDisplayIndexEnd();
+        return res;
+    };
+    ServerSideRowModel.prototype.getTopLevelRowCount = function () {
+        if (!this.cacheExists()) {
+            return 1;
+        }
+        var serverSideCache = this.rootNode.childrenCache;
+        return serverSideCache.getVirtualRowCount();
+    };
+    ServerSideRowModel.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
+        if (!this.cacheExists()) {
+            return topLevelIndex;
+        }
+        var serverSideCache = this.rootNode.childrenCache;
+        return serverSideCache.getTopLevelRowDisplayedIndex(topLevelIndex);
     };
     ServerSideRowModel.prototype.getRowBounds = function (index) {
         if (!this.cacheExists()) {
@@ -413,7 +417,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     };
     ServerSideRowModel.prototype.forEachNode = function (callback) {
         if (this.cacheExists()) {
-            this.rootNode.childrenCache.forEachNodeDeep(callback, new ag_grid_community_1.NumberSequence());
+            this.rootNode.childrenCache.forEachNodeDeep(callback);
         }
     };
     ServerSideRowModel.prototype.executeOnCache = function (route, callback) {

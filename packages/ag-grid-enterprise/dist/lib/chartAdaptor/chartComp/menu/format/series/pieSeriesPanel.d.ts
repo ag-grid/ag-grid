@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
 export declare class PieSeriesPanel extends Component {
@@ -10,8 +10,8 @@ export declare class PieSeriesPanel extends Component {
     private seriesFillOpacitySlider;
     private chartTranslator;
     private readonly chartController;
+    private readonly chartProxy;
     private activePanels;
-    private series;
     constructor(chartController: ChartController);
     private init;
     private initGroup;

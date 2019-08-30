@@ -41,6 +41,8 @@ export class RangeController implements IRangeController {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
+    @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
+    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
 
     private logger: Logger;
     private gridPanel: GridPanel;
@@ -69,6 +71,7 @@ export class RangeController implements IRangeController {
         this.logger = this.loggerFactory.create('RangeController');
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
@@ -128,7 +131,7 @@ export class RangeController implements IRangeController {
 
     public getRangeStartRow(cellRange: CellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
-            const startRowIsFirst = RowPositionUtils.before(cellRange.startRow, cellRange.endRow);
+            const startRowIsFirst = this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow);
             return startRowIsFirst ? cellRange.startRow : cellRange.endRow;
         }
 
@@ -138,7 +141,7 @@ export class RangeController implements IRangeController {
 
     public getRangeEndRow(cellRange: CellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
-            const startRowIsFirst = RowPositionUtils.before(cellRange.startRow, cellRange.endRow);
+            const startRowIsFirst = this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow);
             return startRowIsFirst ? cellRange.endRow : cellRange.startRow;
         }
 
@@ -188,8 +191,8 @@ export class RangeController implements IRangeController {
                 // check cols are same
                 (range.columns && range.columns.length === 1 && range.columns[0] === cell.column) &&
                 // check rows are same
-                RowPositionUtils.sameRow(rowForCell, range.startRow) &&
-                RowPositionUtils.sameRow(rowForCell, range.endRow);
+                this.rowPositionUtils.sameRow(rowForCell, range.startRow) &&
+                this.rowPositionUtils.sameRow(rowForCell, range.endRow);
             if (matches) {
                 existingRange = range;
                 break;
@@ -295,7 +298,7 @@ export class RangeController implements IRangeController {
         for (const column of cellRange.columns) {
             const idx = allColumns.indexOf(column);
             if (idx > -1) {
-                allIndices.push(idx)
+                allIndices.push(idx);
             }
         }
 
@@ -518,8 +521,8 @@ export class RangeController implements IRangeController {
             return true;
         }
 
-        const afterFirstRow = !RowPositionUtils.before(thisRow, firstRow);
-        const beforeLastRow = RowPositionUtils.before(thisRow, lastRow);
+        const afterFirstRow = !this.rowPositionUtils.before(thisRow, firstRow);
+        const beforeLastRow = this.rowPositionUtils.before(thisRow, lastRow);
         return afterFirstRow && beforeLastRow;
     }
 
@@ -601,7 +604,7 @@ export class RangeController implements IRangeController {
         if (
             !cellPosition ||
             !this.draggingCell ||
-            CellPositionUtils.equals(this.draggingCell, cellPosition)
+            this.cellPositionUtils.equals(this.draggingCell, cellPosition)
         ) { return; }
 
         const columns = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
@@ -630,13 +633,13 @@ export class RangeController implements IRangeController {
         this.draggingRange = undefined;
         this.draggingCell = undefined;
 
-        this.onRangeChanged({ started: false, finished: false });
+        this.onRangeChanged({ started: false, finished: true });
     }
 
     private onRangeChanged(params: { started: boolean, finished: boolean}) {
         const { started, finished } = params;
 
-        this.dispatchChangedEvent(started, finished)
+        this.dispatchChangedEvent(started, finished);
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean): void {

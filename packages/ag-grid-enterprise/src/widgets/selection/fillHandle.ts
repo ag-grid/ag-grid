@@ -2,17 +2,21 @@ import {
     Autowired,
     CellComp,
     CellPosition,
+    CellRange,
+    Column,
+    RowNode,
     RowPosition,
-    RowPositionUtils,
     ValueService,
-    _,
+    _
 } from 'ag-grid-community';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
-type FillValues = {
+interface FillValues {
     position: CellPosition;
-    value: any
+    value: any;
 }
+
+type Direction = 'x' | 'y';
 
 export class FillHandle extends AbstractSelectionHandle {
 
@@ -26,11 +30,10 @@ export class FillHandle extends AbstractSelectionHandle {
     private markedCellComps: CellComp[] = [];
     private cellValues: FillValues[][] = [];
 
-    private dragAxis: 'x' | 'y';
+    private dragAxis: Direction;
     private isUp: boolean = false;
     private isLeft: boolean = false;
     private isReduce: boolean = false;
-    private extendFunction: (...params: any[]) => any;
 
     protected type = 'fill';
 
@@ -47,7 +50,7 @@ export class FillHandle extends AbstractSelectionHandle {
         const { x, y } = this.initialXY;
         const diffX = Math.abs(x - e.clientX);
         const diffY = Math.abs(y - e.clientY);
-        const direction: 'x' | 'y' = diffX > diffY ? 'x' : 'y';
+        const direction: Direction = diffX > diffY ? 'x' : 'y';
 
         if (direction !== this.dragAxis) {
             this.dragAxis = direction;
@@ -59,7 +62,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
             this.initialPosition = cellComp.getCellPosition();
         }
-        
+
         const lastCellHovered = this.getLastCellHovered();
 
         if (lastCellHovered && lastCellHovered !== this.lastCellMarked) {
@@ -72,87 +75,188 @@ export class FillHandle extends AbstractSelectionHandle {
         if (!this.markedCellComps.length) { return; }
 
         const isX = this.dragAxis === 'x';
-        const cellRange = this.getCellRange();
-        const colLen = cellRange.columns.length;
+        const initialRange = this.getCellRange();
+        const colLen = initialRange.columns.length;
         const rangeStartRow = this.getRangeStartRow();
         const rangeEndRow = this.getRangeEndRow();
+        
+        let finalRange: CellRange | undefined;
 
         if (!this.isUp && !this.isLeft) {
-            const startPosition = {
-                rowIndex: rangeStartRow.rowIndex,
-                rowPinned: rangeStartRow.rowPinned,
-                column: cellRange.columns[0]
-            }
-            this.rangeController.setRangeToCell(startPosition);
-            this.rangeController.extendLatestRangeToCell({
-                rowIndex: isX ? rangeEndRow.rowIndex : this.lastCellMarked!.rowIndex,
-                rowPinned: isX ? rangeEndRow.rowPinned : this.lastCellMarked!.rowPinned,
-                column: isX ? this.lastCellMarked!.column : cellRange.columns[colLen - 1]
+            finalRange = this.rangeController.createCellRangeFromCellRangeParams({
+                rowStartIndex: rangeStartRow.rowIndex,
+                rowStartPinned: rangeStartRow.rowPinned,
+                columnStart: initialRange.columns[0],
+                rowEndIndex: isX ? rangeEndRow.rowIndex : this.lastCellMarked!.rowIndex,
+                rowEndPinned: isX ? rangeEndRow.rowPinned : this.lastCellMarked!.rowPinned,
+                columnEnd: isX ? this.lastCellMarked!.column : initialRange.columns[colLen - 1]
             });
-        }
-        else {
+        } else {
             const startRow = isX ? rangeStartRow : this.lastCellMarked!;
-            const startPosition = {
-                rowIndex: startRow.rowIndex,
-                rowPinned: startRow.rowPinned,
-                column: isX ? this.lastCellMarked!.column : cellRange.columns[0]
-            }
-            this.rangeController.setRangeToCell(startPosition);
-            this.rangeController.extendLatestRangeToCell({
-                rowIndex: rangeEndRow.rowIndex,
-                rowPinned: rangeEndRow.rowPinned,
-                column: cellRange.columns[colLen - 1]
+
+            finalRange = this.rangeController.createCellRangeFromCellRangeParams({
+                rowStartIndex: startRow.rowIndex,
+                rowStartPinned: startRow.rowPinned,
+                columnStart: isX ? this.lastCellMarked!.column : initialRange.columns[0],
+                rowEndIndex: rangeEndRow.rowIndex,
+                rowEndPinned: rangeEndRow.rowPinned,
+                columnEnd: initialRange.columns[colLen - 1]
             });
         }
-        
-        if (this.cellValues.length) {
-            this.runReducers();
+
+        if (finalRange) {
+            this.handleValueChanged(initialRange, finalRange, e.altKey);
+            this.rangeController.setCellRanges([finalRange]);
         }
     }
 
-    private runReducers() {
+    private handleValueChanged(initialRange: CellRange, finalRange: CellRange, altKey: boolean) {
+        const initialRangeEndRow = this.rangeController.getRangeEndRow(initialRange);
+        const initialRangeStartRow = this.rangeController.getRangeStartRow(initialRange);
+        const finalRangeEndRow = this.rangeController.getRangeEndRow(finalRange);
+        const finalRangeStartRow = this.rangeController.getRangeStartRow(finalRange);
+        const isVertical = this.dragAxis === 'y';
 
-        if (!this.isReduce && !this.extendFunction) { return; }
+        // if the range is being reduced in size, all we need to do is
+        // clear the cells that are no longer part of the range
+        if (this.isReduce) {
+            const columns = isVertical
+                ? initialRange.columns
+                : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);
 
-        this.cellValues.forEach(column => {
-            const values = column.map(fillValue => fillValue.value);
-            const initial = [];
+            const startRow = isVertical ? this.cellNavigationService.getRowBelow(finalRangeEndRow) : finalRangeStartRow;
 
-            if (!this.isReduce) {
-                initial.push(values[0]);
+            if (startRow) {
+                this.clearCellsInRange(startRow, initialRangeEndRow, columns);
             }
-            const startAt = initial.length;
+            return;
+        }
 
-            values.slice(startAt).reduce((prev, cur, idx) => {
-                const val = this.isReduce ? null : this.extendFunction(prev, cur);
-                const position = column[idx + startAt].position;
-                const rowNode = this.rowRenderer.getRowNode({
-                    rowIndex: position.rowIndex,
-                    rowPinned: position.rowPinned
-                });
+        let withinInitialRange = true;
+        const values: any[] = [];
 
-                this.valueService.setValue(rowNode!, position.column, val);
-                return val;
-            }, initial);
-        });
+        const resetValues = () => {
+            values.length = 0;
+        };
+
+        const iterateAcrossCells = (column?: Column, columns?: Column[]) => {
+            let currentRow: RowPosition | undefined | null = this.isUp ? initialRangeEndRow : initialRangeStartRow;
+            let finished = false;
+
+            if (isVertical) {
+                withinInitialRange = true;
+                resetValues();
+            }
+
+            while (!finished && currentRow) {
+                const rowNode = this.rowPositionUtils.getRowNode(currentRow);
+                if (!rowNode) { break; }
+
+                if (isVertical && column) {
+                    fillValues(values, column, rowNode, () => {
+                        return !this.rowPositionUtils.sameRow(currentRow!, this.isUp ? initialRangeStartRow : initialRangeEndRow);
+                    });
+                } else if (columns) {
+                    withinInitialRange = true;
+                    resetValues();
+                    _.forEach(columns, (col => fillValues(values, col, rowNode, () => {
+                        return this.isLeft ? col !== initialRange.columns[0] : col !== _.last(initialRange.columns);
+                    })));
+                }
+
+                finished = this.rowPositionUtils.sameRow(currentRow, this.isUp ? finalRangeStartRow : finalRangeEndRow);
+
+                currentRow = this.isUp 
+                    ? this.cellNavigationService.getRowAbove(currentRow)
+                    : this.cellNavigationService.getRowBelow(currentRow);
+            }
+        };
+
+        const fillValues = (values: any[], col: Column, rowNode: RowNode, updateInitialSet: () => boolean) => {
+            let currentValue: any;
+
+            if (withinInitialRange) {
+                currentValue = this.valueService.getValue(col, rowNode);
+                withinInitialRange = updateInitialSet();
+            } else {
+                currentValue = this.processValues(values, altKey);
+                this.valueService.setValue(rowNode, col, currentValue);
+            }
+            
+            values.push(currentValue);
+        };
+
+        if (isVertical) {
+            initialRange.columns.forEach(col => {
+                iterateAcrossCells(col);
+            });
+        } else {
+            const columns = this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns;
+            iterateAcrossCells(undefined, columns);
+        }
+    }
+
+    private clearCellsInRange(startRow: RowPosition, endRow: RowPosition, columns: Column[]) {
+        let currentRow: RowPosition | null | undefined = startRow;
+
+        let finished = false;
+
+        while (!finished && currentRow) {
+            const rowNode = this.rowPositionUtils.getRowNode(currentRow);
+
+            // should never happen, defensive programming
+            if (!rowNode) { break; }
+
+            columns.forEach((col: Column) => {
+                this.valueService.setValue(rowNode, col, null);
+            });
+
+            finished = this.rowPositionUtils.sameRow(currentRow, endRow);
+            currentRow = this.cellNavigationService.getRowBelow(currentRow);
+        }
+    }
+
+    private processValues(values: any[], altKey: boolean): any {
+        return 10;
     }
 
     protected clearValues() {
         this.clearMarkedPath();
-        this.cellValues.length = 0;
+        this.clearCellValues();
+
         this.lastCellMarked = undefined;
 
         super.clearValues();
     }
 
+    private clearMarkedPath() {
+        this.markedCellComps.forEach(cellComp => {
+            const eGui = cellComp.getGui();
+            _.removeCssClass(eGui, 'ag-selection-fill-top');
+            _.removeCssClass(eGui, 'ag-selection-fill-right');
+            _.removeCssClass(eGui, 'ag-selection-fill-bottom');
+            _.removeCssClass(eGui, 'ag-selection-fill-left');
+        });
+
+        this.markedCellComps.length = 0;
+
+        this.isUp = false;
+        this.isLeft = false;
+        this.isReduce = false;
+    }
+
+    private clearCellValues() {
+        this.cellValues.length = 0;
+    }
+
     private markPathFrom(initialPosition: CellPosition, currentPosition: CellPosition) {
         this.clearMarkedPath();
-        this.cellValues.length = 0;
+        this.clearCellValues();
 
         if (this.dragAxis === 'y') {
-            if (RowPositionUtils.sameRow(currentPosition, initialPosition)) { return; }
+            if (this.rowPositionUtils.sameRow(currentPosition, initialPosition)) { return; }
 
-            const isBefore = RowPositionUtils.before(currentPosition, initialPosition);
+            const isBefore = this.rowPositionUtils.before(currentPosition, initialPosition);
             const rangeStartRow = this.getRangeStartRow();
             const rangeEndRow = this.getRangeEndRow();
 
@@ -167,28 +271,29 @@ export class FillHandle extends AbstractSelectionHandle {
                         currentPosition.rowIndex <= rangeEndRow.rowIndex
                     )
                 )
-            ) { 
+            ) {
                 this.reduceVertical(initialPosition, currentPosition);
-            }
-            else {
+                this.isReduce = true;
+            } else {
                 this.extendVertical(initialPosition, currentPosition, isBefore);
+                this.isReduce = false;
             }
-        }
-        else {
+        } else {
             const initialColumn = initialPosition.column;
             const currentColumn = currentPosition.column;
 
             if (initialColumn === currentColumn) { return; }
 
             const displayedColumns = this.columnController.getAllDisplayedColumns();
-            const initialIndex = displayedColumns.indexOf(initialColumn)
+            const initialIndex = displayedColumns.indexOf(initialColumn);
             const currentIndex = displayedColumns.indexOf(currentColumn);
 
             if (currentIndex <= initialIndex && currentIndex >= displayedColumns.indexOf(this.getCellRange().columns[0])) {
-                this.reduceHorizontal(initialPosition, currentPosition)
-            } 
-            else {
+                this.reduceHorizontal(initialPosition, currentPosition);
+                this.isReduce = true;
+            } else {
                 this.extendHorizontal(initialPosition, currentPosition, currentIndex < initialIndex);
+                this.isReduce = false;
             }
         }
     }
@@ -200,13 +305,13 @@ export class FillHandle extends AbstractSelectionHandle {
         do {
             const cellRange = this.getCellRange();
             const colLen = cellRange.columns.length;
-            
+
             for (let i = 0; i < colLen; i++) {
                 const column = cellRange.columns[i];
-                const rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned }
+                const rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
                 const cellPos = { ...rowPos, column };
                 const cellInRange = rangeController.isCellInSpecificRange(cellPos, cellRange);
-                const isInitialRow = RowPositionUtils.sameRow(row, initialPosition);
+                const isInitialRow = this.rowPositionUtils.sameRow(row, initialPosition);
 
                 if (isMovingUp) { this.isUp = true; }
 
@@ -223,41 +328,20 @@ export class FillHandle extends AbstractSelectionHandle {
                         }
 
                         _.addOrRemoveCssClass(
-                            eGui, 
+                            eGui,
                             isMovingUp ? 'ag-selection-fill-top' : 'ag-selection-fill-bottom',
-                            RowPositionUtils.sameRow(row, endPosition)
+                            this.rowPositionUtils.sameRow(row, endPosition)
                         );
                     }
                 }
-
-                let shouldAddValue = !cellInRange;
-
-                if (!shouldAddValue) {
-                    shouldAddValue = isMovingUp ?
-                        RowPositionUtils.sameRow(rowPos, rangeController.getRangeStartRow(cellRange)) :
-                        isInitialRow;
-                }
-
-                if (shouldAddValue) {
-                    if (!this.cellValues[i]) {
-                        this.cellValues[i] = [];
-                    }
-                    
-                    const node = this.rowRenderer.getRowNode(rowPos);
-                    const value = this.valueService.getValue(column, node);
-
-                    this.cellValues[i].push({ position: cellPos, value: value });
-                }
             }
 
-            if (RowPositionUtils.sameRow(row, endPosition)) { break; }
+            if (this.rowPositionUtils.sameRow(row, endPosition)) { break; }
         } while (
-            row = isMovingUp ? 
-                this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string) : 
+            row = isMovingUp ?
+                this.cellNavigationService.getRowAbove(row) :
                 this.cellNavigationService.getRowBelow(row)
-        ) 
-
-        this.isReduce = false;
+        );
     }
 
     private reduceVertical(initialPosition: CellPosition, endPosition: CellPosition) {
@@ -266,10 +350,9 @@ export class FillHandle extends AbstractSelectionHandle {
         do {
             const cellRange = this.getCellRange();
             const colLen = cellRange.columns.length;
-            const isLastRow = RowPositionUtils.sameRow(row, endPosition);
+            const isLastRow = this.rowPositionUtils.sameRow(row, endPosition);
 
             for (let i = 0; i < colLen; i++) {
-                const column = cellRange.columns[i];
                 const rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
                 const celPos = { ...rowPos, column: cellRange.columns[i] };
                 const cellComp = this.rowRenderer.getComponentForCell(celPos);
@@ -278,27 +361,16 @@ export class FillHandle extends AbstractSelectionHandle {
                     this.markedCellComps.push(cellComp);
 
                     const eGui = cellComp.getGui();
-            
+
                     _.addOrRemoveCssClass(
-                        eGui, 
+                        eGui,
                         'ag-selection-fill-bottom',
-                        RowPositionUtils.sameRow(row, endPosition)
+                        this.rowPositionUtils.sameRow(row, endPosition)
                     );
-                }
-
-                if (!isLastRow) {
-                    if (!this.cellValues[i]) {
-                        this.cellValues[i] = [];
-                    }
-                    const node = this.rowRenderer.getRowNode(rowPos);
-                    const value = this.valueService.getValue(column, node);
-
-                    this.cellValues[i].push({ position: celPos, value });
                 }
             }
             if (isLastRow) { break; }
-        } while (row = this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned as string))
-        this.isReduce = true;
+        } while (row = this.cellNavigationService.getRowAbove(row));
     }
 
     private extendHorizontal(initialPosition: CellPosition, endPosition: CellPosition, isMovingLeft?: boolean) {
@@ -310,12 +382,13 @@ export class FillHandle extends AbstractSelectionHandle {
         const colsToMark = allCols.slice(startCol + offset, endCol + offset);
         const rangeStartRow = this.getRangeStartRow();
         const rangeEndRow = this.getRangeEndRow();
+
         colsToMark.forEach(column => {
             let row: RowPosition = rangeStartRow;
-            let isLastRow: boolean = false;
+            let isLastRow = false;
 
             do {
-                isLastRow = RowPositionUtils.sameRow(row, rangeEndRow);
+                isLastRow = this.rowPositionUtils.sameRow(row, rangeEndRow);
                 const cellComp = this.rowRenderer.getComponentForCell({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
@@ -326,22 +399,19 @@ export class FillHandle extends AbstractSelectionHandle {
                     this.markedCellComps.push(cellComp);
                     const eGui = cellComp.getGui();
 
-                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', RowPositionUtils.sameRow(row, rangeStartRow));
-                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', RowPositionUtils.sameRow(row, rangeEndRow));
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', this.rowPositionUtils.sameRow(row, rangeStartRow));
+                    _.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', this.rowPositionUtils.sameRow(row, rangeEndRow));
                     if (isMovingLeft) {
                         this.isLeft = true;
                         _.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', column === colsToMark[0]);
-                    }
-                    else {
+                    } else {
                         _.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === _.last(colsToMark));
                     }
                 }
 
                 row = this.cellNavigationService.getRowBelow(row) as RowPosition;
-            }
-            while (!isLastRow)
+            } while (!isLastRow);
         });
-        this.isReduce = false;
     }
 
     private reduceHorizontal(initialPosition: CellPosition, endPosition: CellPosition) {
@@ -358,7 +428,7 @@ export class FillHandle extends AbstractSelectionHandle {
             let isLastRow: boolean = false;
 
             do {
-                isLastRow = RowPositionUtils.sameRow(row, rangeEndRow);
+                isLastRow = this.rowPositionUtils.sameRow(row, rangeEndRow);
                 const cellComp = this.rowRenderer.getComponentForCell({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
@@ -373,23 +443,8 @@ export class FillHandle extends AbstractSelectionHandle {
 
                 row = this.cellNavigationService.getRowBelow(row) as RowPosition;
             }
-            while (!isLastRow)
+            while (!isLastRow);
         });
-        this.isReduce = true;
-    }
-
-    private clearMarkedPath() {
-        this.markedCellComps.forEach(cellComp => {
-            const eGui = cellComp.getGui();
-            _.removeCssClass(eGui, 'ag-selection-fill-top');
-            _.removeCssClass(eGui, 'ag-selection-fill-right');
-            _.removeCssClass(eGui, 'ag-selection-fill-bottom');
-            _.removeCssClass(eGui, 'ag-selection-fill-left');
-        });
-
-        this.markedCellComps.length = 0;
-        this.isUp = false;
-        this.isLeft = false;
     }
 
     public refresh(cellComp: CellComp) {

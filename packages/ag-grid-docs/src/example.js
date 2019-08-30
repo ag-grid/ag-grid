@@ -185,8 +185,8 @@ var gridOptions = {
     rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
     suppressMenuHide: isSmall,
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
-    pivotColumnGroupTotals: 'before',
-    pivotRowTotals: 'before',
+    // pivotColumnGroupTotals: 'before',
+    // pivotRowTotals: 'before',
     // suppressRowTransform: true,
     // minColWidth: 50,
     // maxColWidth: 300,
@@ -226,7 +226,8 @@ var gridOptions = {
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
     // pagination: true,
-    // paginationPageSize: 20,
+    // paginateChildRows: true,
+    // paginationPageSize: 10,
     // groupSelectsFiltered: true,
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
@@ -304,6 +305,17 @@ var gridOptions = {
             return 0;
         }
     },
+    processCellFromClipboard: function(params) {
+        var colIdUpperCase = params.column.getId().toUpperCase();
+        var monthsUpperCase = months.map( function(month) { return month.toUpperCase(); });
+        var isMonth = monthsUpperCase.indexOf(colIdUpperCase) >= 0;
+
+        if (isMonth) {
+            return sharedNumberParser(params.value);
+        } else {
+            return params.value;
+        }
+    },
     // rowHeight: 100,
     // suppressTabbing: true,
     // rowHoverClass: true,
@@ -379,7 +391,6 @@ var gridOptions = {
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-
     processChartOptions: function(params) {
         let type = params.type;
         let options = params.options;
@@ -393,12 +404,6 @@ var gridOptions = {
             };
 
         } else {
-
-            let isBarChart = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
-            if (!isBarChart) {
-                options.xAxis.labelRotation = 335;
-            }
-
             let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
             options.yAxis.labelFormatter = function(params) {
                 let n = params.value;
@@ -413,6 +418,42 @@ var gridOptions = {
                 return isNormalized ? res + '%' : res;
             };
 
+            if (type === 'scatter' || type === 'bubble') {
+                options.xAxis.labelFormatter = function(params) {
+                    let n = params.value;
+                    if (isNaN(n)) return n;
+
+                    let res = '';
+                    if (n < 1e3) res = n;
+                    if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
+                    if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
+                    if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
+                    if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
+
+                    return res;
+                };
+
+                options.seriesDefaults.tooltipRenderer = function (params) {
+                    let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    const xValue = params.datum[params.xField];
+                    let xValueStr = params.xFieldName + ': ' + (typeof xValue !== 'number' ? xValue : '$' + String(xValue).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
+                    let yValueStr = params.yFieldName + ': $' + String(params.datum[params.yField]).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    let radiusValueStr = '';
+                    if (type === 'bubble' && params.radiusField) {
+                        radiusValueStr = '<br>' + params.radiusFieldName + ': $' + params.datum[params.radiusField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    }
+                    return title + '<div class="content">' + xValueStr + '<br>' + yValueStr + radiusValueStr + '</div>';
+                };
+            } else {
+                options.seriesDefaults.tooltipRenderer = function (params) {
+                    let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    return title + '<div class="content">' + '$' + value + '</div>';
+                };
+            }
+
             options.seriesDefaults.labelFormatter = function (params) {
                 let n = params.value;
 
@@ -424,13 +465,6 @@ var gridOptions = {
                 if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
 
                 return res;
-            };
-
-            options.seriesDefaults.tooltipRenderer = function (params) {
-                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return title + '<div class="content">' + '$' + value + '</div>';
             };
         }
 
@@ -661,7 +695,8 @@ var desktopDefaultCols = [
                     // cellHeight: 20,
                     newRowsAction: 'keep',
                     selectAllOnMiniFilter: true,
-                    clearButton: true
+                    clearButton: true,
+                    // suppressSelectAll: true
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
                 icons: {
@@ -759,6 +794,7 @@ var desktopDefaultCols = [
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
+        chartDataType: 'category',
         filterParams: {cellRenderer: 'ratingFilterRenderer'}
     },
     {
@@ -1097,14 +1133,15 @@ var COUNTRY_CODES = {
 };
 
 function numberParser(params) {
-    var newValue = params.newValue;
-    var valueAsNumber;
-    if (newValue === null || newValue === undefined || newValue === '') {
-        valueAsNumber = null;
+    return sharedNumberParser(params.newValue);
+}
+
+function sharedNumberParser(value) {
+    if (value === null || value === undefined || value === '') {
+        return null;
     } else {
-        valueAsNumber = parseFloat(params.newValue);
+        return parseFloat(value);
     }
-    return valueAsNumber;
 }
 
 function PersonFilter() {

@@ -1,18 +1,21 @@
 import {
-    ProvidedFilter,
+    _,
     Autowired,
+    CellValueChangedEvent,
     Component,
+    Constants,
+    Events,
+    EventService,
     IDoesFilterPassParams,
     ISetFilterParams,
-    QuerySelector,
+    ProvidedFilter,
     RefSelector,
-    ValueFormatterService,
-    _
+    ValueFormatterService
 } from "ag-grid-community";
-import { SetFilterModelValuesType, SetValueModel } from "./setValueModel";
-import { SetFilterListItem } from "./setFilterListItem";
-import { VirtualList, VirtualListModel } from "../rendering/virtualList";
-import { SetFilterModel } from "./setFilterModel";
+import {SetFilterModelValuesType, SetValueModel} from "./setValueModel";
+import {SetFilterListItem} from "./setFilterListItem";
+import {VirtualList, VirtualListModel} from "../rendering/virtualList";
+import {SetFilterModel} from "./setFilterModel";
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
@@ -20,12 +23,13 @@ export class SetFilter extends ProvidedFilter {
 
     private valueModel: SetValueModel;
 
-    @QuerySelector('#selectAll') private eSelectAll: HTMLInputElement;
-    @QuerySelector('#selectAllContainer') private eSelectAllContainer: HTMLElement;
-    @QuerySelector('.ag-filter-filter') private eMiniFilter: HTMLInputElement;
+    @RefSelector('eSelectAll') private eSelectAll: HTMLInputElement;
+    @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
+    @RefSelector('eMiniFilter') private eMiniFilter: HTMLInputElement;
     @RefSelector('ag-filter-loading') private eFilterLoading: HTMLInputElement;
     
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('eventService') private eventService: EventService;
 
     private selectAllState: CheckboxState;
 
@@ -46,15 +50,15 @@ export class SetFilter extends ProvidedFilter {
 
         return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
                 <div>
-                    <div class="ag-input-wrapper ag-filter-header-container" id="ag-mini-filter">
-                        <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
-                    </div>
-                    <div class="ag-filter-header-container">
-                        <label id="selectAllContainer" class="ag-set-filter-item">
-                            <div id="selectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll', 'Select All')})</span>
+                    <div class="ag-filter-header-container" role="presentation">
+                        <div class="ag-input-wrapper" id="ag-mini-filter" role="presentation">
+                            <input ref="eMiniFilter" class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
+                        </div>
+                        <label ref="eSelectAllContainer" class="ag-set-filter-item">
+                            <div ref="eSelectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll', 'Select All')})</span>
                         </label>
                     </div>
-                    <div id="richList" class="ag-set-filter-list"></div>
+                    <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
                 </div>`;
     }
 
@@ -76,7 +80,7 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    protected getModelFromUi(): SetFilterModel | null {
+    public getModelFromUi(): SetFilterModel | null {
         const values = this.valueModel.getModel();
         if (!values) { return null; }
 
@@ -105,6 +109,40 @@ export class SetFilter extends ProvidedFilter {
         this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.setFilterParams.column);
 
         this.initialiseFilterBodyUi();
+
+        const doSyncLikeExcel = params.syncValuesLikeExcel
+                                    // sync like excel only withs with CSRM
+                                    && this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE
+                                    // sync only needed if user not providing values
+                                    && !params.values;
+        if (doSyncLikeExcel) {
+            this.setupSyncValuesLikeExcel();
+        }
+    }
+
+    private resetFilterValuesAndReapplyModel(): void {
+        const modelBeforeUpdate = this.getModel();
+        this.resetFilterValues();
+        if (modelBeforeUpdate) {
+            this.setModel(modelBeforeUpdate);
+        }
+    }
+
+    private setupSyncValuesLikeExcel(): void {
+        const col = this.setFilterParams.column;
+
+        const rowDataUpdatedListener = () => {
+            this.resetFilterValuesAndReapplyModel();
+        };
+
+        const cellValueChangedListener = (event: CellValueChangedEvent) => {
+            // only interested in changes to do with this column
+            if (event.column !== col) { return; }
+            this.resetFilterValuesAndReapplyModel();
+        };
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, rowDataUpdatedListener);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, cellValueChangedListener);
     }
 
     private updateCheckboxIcon() {
@@ -130,15 +168,15 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public setLoading(loading: boolean): void {
-        _.setVisible(this.eFilterLoading, loading);
+        _.setDisplayed(this.eFilterLoading, loading);
     }
 
     private initialiseFilterBodyUi(): void {
         this.virtualList = new VirtualList();
         this.getContext().wireBean(this.virtualList);
-        const richList = this.getGui().querySelector('#richList');
-        if (richList) {
-            richList.appendChild(this.virtualList.getGui());
+        const eSetFilterList = this.getRefElement('eSetFilterList');
+        if (eSetFilterList) {
+            eSetFilterList.appendChild(this.virtualList.getGui());
         }
         if (_.exists(this.setFilterParams.cellHeight)) {
             this.virtualList.setRowHeight(this.setFilterParams.cellHeight);
@@ -158,15 +196,21 @@ export class SetFilter extends ProvidedFilter {
             this.setFilterParams.column
         );
         this.virtualList.setModel(new ModelWrapper(this.valueModel));
-        _.setVisible(this.getGui().querySelector('#ag-mini-filter') as HTMLElement, !this.setFilterParams.suppressMiniFilter);
+        _.setDisplayed(this.getGui().querySelector('#ag-mini-filter') as HTMLElement, !this.setFilterParams.suppressMiniFilter);
 
         this.eMiniFilter.value = this.valueModel.getMiniFilter() as any;
-        this.addDestroyableEventListener(this.eMiniFilter, 'input', () => this.onMiniFilterChanged());
+        this.addDestroyableEventListener(this.eMiniFilter, 'input', this.onMiniFilterInput.bind(this));
+        this.addDestroyableEventListener(this.eMiniFilter, 'keypress', this.onMiniFilterKeyPress.bind(this));
 
         this.updateCheckboxIcon();
 
         this.addDestroyableEventListener(this.eSelectAllContainer, 'click', this.onSelectAll.bind(this));
         this.updateSelectAll();
+
+        if (this.setFilterParams.suppressSelectAll) {
+            _.setDisplayed(this.eSelectAllContainer, false);
+        }
+
         this.virtualList.refresh();
     }
 
@@ -188,10 +232,6 @@ export class SetFilter extends ProvidedFilter {
     public afterGuiAttached(params: any): void {
         this.virtualList.refresh();
         this.eMiniFilter.focus();
-    }
-
-    public isFilterActive(): boolean {
-        return this.valueModel.isFilterActive();
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -225,15 +265,27 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public onNewRowsLoaded(): void {
-        const keepSelection = this.setFilterParams && this.setFilterParams.newRowsAction === 'keep';
-        const isSelectAll = this.selectAllState === CheckboxState.CHECKED;
+
+        const valuesType = this.valueModel.getValuesType();
+        const valuesTypeProvided =
+            valuesType === SetFilterModelValuesType.PROVIDED_CB
+            || valuesType === SetFilterModelValuesType.PROVIDED_LIST;
+
+        // if the user is providing values, and we are keeping the previous selection, then
+        // loading new rows into the grid should have no impact.
+        const newRowsActionKeep = this.isNewRowsActionKeep();
+        if (newRowsActionKeep && valuesTypeProvided) {
+            return;
+        }
+
+        const everythingSelected = !this.getModel();
 
         // default is reset
-        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
+        this.valueModel.refreshAfterNewRowsLoaded(newRowsActionKeep, everythingSelected);
         this.updateSelectAll();
         this.virtualList.refresh();
 
-        this.updateModel();
+        this.applyModel();
     }
 
     //noinspection JSUnusedGlobalSymbols
@@ -289,7 +341,20 @@ export class SetFilter extends ProvidedFilter {
         this.updateCheckboxIcon();
     }
 
-    private onMiniFilterChanged() {
+    private onMiniFilterKeyPress(e: KeyboardEvent): void {
+        if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
+            this.onEnterKeyOnMiniFilter();
+        }
+    }
+
+    private onEnterKeyOnMiniFilter(): void {
+        this.valueModel.selectAllFromMiniFilter();
+        this.virtualList.refresh();
+        this.updateSelectAll();
+        this.onUiChanged();
+    }
+
+    private onMiniFilterInput() {
         const miniFilterChanged = this.valueModel.setMiniFilter(this.eMiniFilter.value);
         if (miniFilterChanged) {
             this.virtualList.refresh();
@@ -311,9 +376,9 @@ export class SetFilter extends ProvidedFilter {
     private doSelectAll(): void {
         const checked = this.selectAllState === CheckboxState.CHECKED;
         if (checked) {
-            this.valueModel.selectEverything();
+            this.valueModel.selectAllUsingMiniFilter();
         } else {
-            this.valueModel.selectNothing();
+            this.valueModel.selectNothingUsingMiniFilter();
         }
         this.virtualList.refresh();
         this.onUiChanged();
@@ -342,13 +407,13 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public selectEverything() {
-        this.valueModel.selectEverything();
+        this.valueModel.selectAllUsingMiniFilter();
         this.updateSelectAll();
         this.virtualList.refresh();
     }
 
     public selectNothing() {
-        this.valueModel.selectNothing();
+        this.valueModel.selectNothingUsingMiniFilter();
         this.updateSelectAll();
         this.virtualList.refresh();
     }
@@ -384,38 +449,6 @@ export class SetFilter extends ProvidedFilter {
     public getUniqueValue(index: any) {
         return this.valueModel.getUniqueValue(index);
     }
-
-/*
-    public resetState() {
-        this.setMiniFilter(null);
-        this.valueModel.setModel(null, true);
-        this.selectEverything();
-    }
-
-    public getModel(): SetFilterModel | null  {
-        if (this.isFilterActive()) {
-            return this.getNullableModel();
-        } else {
-            return null;
-        }
-    }
-
-    public setModel(model: SetFilterModel): void {
-        if (model) {
-            this.resetState();
-            this.parse(model);
-        } else {
-            this.resetState();
-        }
-    }
-
-    public getNullableModel(): SetFilterModel | null  {
-        // we cast to SetFilterModel to cover the case where use
-        const model = this.serialize();
-        return <SetFilterModel> <any> model;
-    }
-*/
-
 }
 
 class ModelWrapper implements VirtualListModel {

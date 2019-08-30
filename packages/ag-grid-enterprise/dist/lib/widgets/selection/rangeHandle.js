@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -50,7 +50,7 @@ var RangeHandle = /** @class */ (function (_super) {
             rowIndex: lastCellHovered.rowIndex,
             rowPinned: lastCellHovered.rowPinned,
         };
-        var rowChanged = !ag_grid_community_1.RowPositionUtils.sameRow(newEndRow, this.rangeController.getRangeEndRow(lastRange));
+        var rowChanged = !this.rowPositionUtils.sameRow(newEndRow, this.rangeController.getRangeEndRow(lastRange));
         if (cellRanges.length === 2 && rowChanged) {
             this.rangeController.updateRangeEnd({
                 cellRange: cellRanges[0],

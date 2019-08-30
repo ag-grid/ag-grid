@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -157,6 +157,31 @@ var ClientSideRowModel = /** @class */ (function () {
         }
         else {
             return 0;
+        }
+    };
+    ClientSideRowModel.prototype.getTopLevelRowCount = function () {
+        var showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
+        if (showingRootNode) {
+            return 1;
+        }
+        else {
+            return this.rootNode.childrenAfterFilter ? this.rootNode.childrenAfterFilter.length : 0;
+        }
+    };
+    ClientSideRowModel.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
+        var showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
+        if (showingRootNode) {
+            return topLevelIndex;
+        }
+        else {
+            var rowNode = this.rootNode.childrenAfterSort[topLevelIndex];
+            if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
+                // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
+                while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
+                    rowNode = rowNode.childrenAfterSort[0];
+                }
+            }
+            return rowNode.rowIndex;
         }
     };
     ClientSideRowModel.prototype.getRowBounds = function (index) {
@@ -336,21 +361,6 @@ var ClientSideRowModel = /** @class */ (function () {
     };
     ClientSideRowModel.prototype.isRowPresent = function (rowNode) {
         return this.rowsToDisplay.indexOf(rowNode) >= 0;
-    };
-    ClientSideRowModel.prototype.getVirtualRowCount = function () {
-        console.warn('ag-Grid: rowModel.getVirtualRowCount() is not longer a function, use rowModel.getRowCount() instead');
-        return this.getPageLastRow();
-    };
-    ClientSideRowModel.prototype.getPageFirstRow = function () {
-        return 0;
-    };
-    ClientSideRowModel.prototype.getPageLastRow = function () {
-        if (this.rowsToDisplay) {
-            return this.rowsToDisplay.length - 1;
-        }
-        else {
-            return 0;
-        }
     };
     ClientSideRowModel.prototype.getRowIndexAtPixel = function (pixelToMatch) {
         if (this.isEmpty()) {

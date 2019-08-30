@@ -1622,7 +1622,7 @@ export class ColumnController {
 
         // we start at 1000, so if user has mix of rowGroup and group specified, it will work with both.
         // eg IF user has ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=true,
-        // THEN result will be ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=-1000
+        // THEN result will be ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=1000
         let letRowGroupIndex = 1000;
         let letPivotIndex = 1000;
 
@@ -1660,7 +1660,7 @@ export class ColumnController {
         this.setColumnState(columnStates, suppressEverythingEvent, source);
     }
 
-    public setColumnState(columnState: ColumnState[], suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
+    public setColumnState(columnStates: ColumnState[], suppressEverythingEvent = false, source: ColumnEventType = "api"): boolean {
         if (_.missingOrEmpty(this.primaryColumns)) {
             return false;
         }
@@ -1682,21 +1682,21 @@ export class ColumnController {
         const pivotIndexes: { [key: string]: number } = {};
 
         const autoGroupColumnStates: ColumnState[] = [];
-        if (columnState) {
-            columnState.forEach((stateItem: ColumnState) => {
+        if (columnStates) {
+            columnStates.forEach((state: ColumnState) => {
 
                 // auto group columns are re-created so deferring syncing with ColumnState
-                if (_.exists(this.getAutoColumn(stateItem.colId))) {
-                    autoGroupColumnStates.push(stateItem);
+                if (_.exists(this.getAutoColumn(state.colId))) {
+                    autoGroupColumnStates.push(state);
                     return;
                 }
 
-                const column = this.getPrimaryColumn(stateItem.colId);
+                const column = this.getPrimaryColumn(state.colId);
                 if (!column) {
-                    console.warn('ag-grid: column ' + stateItem.colId + ' not found');
+                    console.warn('ag-grid: column ' + state.colId + ' not found');
                     success = false;
                 } else {
-                    this.syncColumnWithStateItem(column, stateItem, rowGroupIndexes, pivotIndexes, source);
+                    this.syncColumnWithStateItem(column, state, rowGroupIndexes, pivotIndexes, source);
                     _.removeFromArray(columnsWithNoState, column);
                 }
             });
@@ -1717,14 +1717,20 @@ export class ColumnController {
             this.syncColumnWithStateItem(autoCol, stateItem, rowGroupIndexes, pivotIndexes, source);
         });
 
-        if (columnState) {
-            const orderOfColIds = columnState.map(stateItem => stateItem.colId);
+        if (columnStates) {
+            const orderOfColIds = columnStates.map(stateItem => stateItem.colId);
             this.gridColumns.sort((colA: Column, colB: Column) => {
                 const indexA = orderOfColIds.indexOf(colA.getId());
                 const indexB = orderOfColIds.indexOf(colB.getId());
                 return indexA - indexB;
             });
         }
+
+        // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
+        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
+        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
+        // is less sexy for the code here, but it keeps consistency.
+        this.putFixedColumnsFirst();
 
         this.updateDisplayedColumns(source);
 
@@ -1976,7 +1982,7 @@ export class ColumnController {
     // used by growGroupPanel
     public getColumnWithValidation(key: string | Column | undefined): Column | null {
         if (key == null) { return null; }
-        const column = this.getPrimaryColumn(key);
+        const column = this.getGridColumn(key);
         if (!column) {
             console.warn('ag-Grid: could not find column ' + key);
         }

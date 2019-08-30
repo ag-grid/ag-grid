@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -78,79 +78,174 @@ var FillHandle = /** @class */ (function (_super) {
             return;
         }
         var isX = this.dragAxis === 'x';
-        var cellRange = this.getCellRange();
-        var colLen = cellRange.columns.length;
+        var initialRange = this.getCellRange();
+        var colLen = initialRange.columns.length;
         var rangeStartRow = this.getRangeStartRow();
         var rangeEndRow = this.getRangeEndRow();
+        var finalRange;
         if (!this.isUp && !this.isLeft) {
-            var startPosition = {
-                rowIndex: rangeStartRow.rowIndex,
-                rowPinned: rangeStartRow.rowPinned,
-                column: cellRange.columns[0]
-            };
-            this.rangeController.setRangeToCell(startPosition);
-            this.rangeController.extendLatestRangeToCell({
-                rowIndex: isX ? rangeEndRow.rowIndex : this.lastCellMarked.rowIndex,
-                rowPinned: isX ? rangeEndRow.rowPinned : this.lastCellMarked.rowPinned,
-                column: isX ? this.lastCellMarked.column : cellRange.columns[colLen - 1]
+            finalRange = this.rangeController.createCellRangeFromCellRangeParams({
+                rowStartIndex: rangeStartRow.rowIndex,
+                rowStartPinned: rangeStartRow.rowPinned,
+                columnStart: initialRange.columns[0],
+                rowEndIndex: isX ? rangeEndRow.rowIndex : this.lastCellMarked.rowIndex,
+                rowEndPinned: isX ? rangeEndRow.rowPinned : this.lastCellMarked.rowPinned,
+                columnEnd: isX ? this.lastCellMarked.column : initialRange.columns[colLen - 1]
             });
         }
         else {
             var startRow = isX ? rangeStartRow : this.lastCellMarked;
-            var startPosition = {
-                rowIndex: startRow.rowIndex,
-                rowPinned: startRow.rowPinned,
-                column: isX ? this.lastCellMarked.column : cellRange.columns[0]
-            };
-            this.rangeController.setRangeToCell(startPosition);
-            this.rangeController.extendLatestRangeToCell({
-                rowIndex: rangeEndRow.rowIndex,
-                rowPinned: rangeEndRow.rowPinned,
-                column: cellRange.columns[colLen - 1]
+            finalRange = this.rangeController.createCellRangeFromCellRangeParams({
+                rowStartIndex: startRow.rowIndex,
+                rowStartPinned: startRow.rowPinned,
+                columnStart: isX ? this.lastCellMarked.column : initialRange.columns[0],
+                rowEndIndex: rangeEndRow.rowIndex,
+                rowEndPinned: rangeEndRow.rowPinned,
+                columnEnd: initialRange.columns[colLen - 1]
             });
         }
-        if (this.cellValues.length) {
-            this.runReducers();
+        if (finalRange) {
+            this.handleValueChanged(initialRange, finalRange, e.altKey);
+            this.rangeController.setCellRanges([finalRange]);
         }
     };
-    FillHandle.prototype.runReducers = function () {
+    FillHandle.prototype.handleValueChanged = function (initialRange, finalRange, altKey) {
         var _this = this;
-        if (!this.isReduce && !this.extendFunction) {
+        var initialRangeEndRow = this.rangeController.getRangeEndRow(initialRange);
+        var initialRangeStartRow = this.rangeController.getRangeStartRow(initialRange);
+        var finalRangeEndRow = this.rangeController.getRangeEndRow(finalRange);
+        var finalRangeStartRow = this.rangeController.getRangeStartRow(finalRange);
+        var isVertical = this.dragAxis === 'y';
+        // if the range is being reduced in size, all we need to do is
+        // clear the cells that are no longer part of the range
+        if (this.isReduce) {
+            var columns = isVertical
+                ? initialRange.columns
+                : initialRange.columns.filter(function (col) { return finalRange.columns.indexOf(col) < 0; });
+            var startRow = isVertical ? this.cellNavigationService.getRowBelow(finalRangeEndRow) : finalRangeStartRow;
+            if (startRow) {
+                this.clearCellsInRange(startRow, initialRangeEndRow, columns);
+            }
             return;
         }
-        this.cellValues.forEach(function (column) {
-            var values = column.map(function (fillValue) { return fillValue.value; });
-            var initial = [];
-            if (!_this.isReduce) {
-                initial.push(values[0]);
+        var withinInitialRange = true;
+        var values = [];
+        var resetValues = function () {
+            values.length = 0;
+        };
+        var iterateAcrossCells = function (column, columns) {
+            var currentRow = _this.isUp ? initialRangeEndRow : initialRangeStartRow;
+            var finished = false;
+            if (isVertical) {
+                withinInitialRange = true;
+                resetValues();
             }
-            var startAt = initial.length;
-            values.slice(startAt).reduce(function (prev, cur, idx) {
-                var val = _this.isReduce ? null : _this.extendFunction(prev, cur);
-                var position = column[idx + startAt].position;
-                var rowNode = _this.rowRenderer.getRowNode({
-                    rowIndex: position.rowIndex,
-                    rowPinned: position.rowPinned
-                });
-                _this.valueService.setValue(rowNode, position.column, val);
-                return val;
-            }, initial);
-        });
+            var _loop_1 = function () {
+                var rowNode = _this.rowPositionUtils.getRowNode(currentRow);
+                if (!rowNode) {
+                    return "break";
+                }
+                if (isVertical && column) {
+                    fillValues(values, column, rowNode, function () {
+                        return !_this.rowPositionUtils.sameRow(currentRow, _this.isUp ? initialRangeStartRow : initialRangeEndRow);
+                    });
+                }
+                else if (columns) {
+                    withinInitialRange = true;
+                    resetValues();
+                    ag_grid_community_1._.forEach(columns, (function (col) { return fillValues(values, col, rowNode, function () {
+                        return _this.isLeft ? col !== initialRange.columns[0] : col !== ag_grid_community_1._.last(initialRange.columns);
+                    }); }));
+                }
+                finished = _this.rowPositionUtils.sameRow(currentRow, _this.isUp ? finalRangeStartRow : finalRangeEndRow);
+                currentRow = _this.isUp
+                    ? _this.cellNavigationService.getRowAbove(currentRow)
+                    : _this.cellNavigationService.getRowBelow(currentRow);
+            };
+            while (!finished && currentRow) {
+                var state_1 = _loop_1();
+                if (state_1 === "break")
+                    break;
+            }
+        };
+        var fillValues = function (values, col, rowNode, updateInitialSet) {
+            var currentValue;
+            if (withinInitialRange) {
+                currentValue = _this.valueService.getValue(col, rowNode);
+                withinInitialRange = updateInitialSet();
+            }
+            else {
+                currentValue = _this.processValues(values, altKey);
+                _this.valueService.setValue(rowNode, col, currentValue);
+            }
+            values.push(currentValue);
+        };
+        if (isVertical) {
+            initialRange.columns.forEach(function (col) {
+                iterateAcrossCells(col);
+            });
+        }
+        else {
+            var columns = this.isLeft ? finalRange.columns.slice().reverse() : finalRange.columns;
+            iterateAcrossCells(undefined, columns);
+        }
+    };
+    FillHandle.prototype.clearCellsInRange = function (startRow, endRow, columns) {
+        var _this = this;
+        var currentRow = startRow;
+        var finished = false;
+        var _loop_2 = function () {
+            var rowNode = this_1.rowPositionUtils.getRowNode(currentRow);
+            // should never happen, defensive programming
+            if (!rowNode) {
+                return "break";
+            }
+            columns.forEach(function (col) {
+                _this.valueService.setValue(rowNode, col, null);
+            });
+            finished = this_1.rowPositionUtils.sameRow(currentRow, endRow);
+            currentRow = this_1.cellNavigationService.getRowBelow(currentRow);
+        };
+        var this_1 = this;
+        while (!finished && currentRow) {
+            var state_2 = _loop_2();
+            if (state_2 === "break")
+                break;
+        }
+    };
+    FillHandle.prototype.processValues = function (values, altKey) {
+        return 10;
     };
     FillHandle.prototype.clearValues = function () {
         this.clearMarkedPath();
-        this.cellValues.length = 0;
+        this.clearCellValues();
         this.lastCellMarked = undefined;
         _super.prototype.clearValues.call(this);
     };
+    FillHandle.prototype.clearMarkedPath = function () {
+        this.markedCellComps.forEach(function (cellComp) {
+            var eGui = cellComp.getGui();
+            ag_grid_community_1._.removeCssClass(eGui, 'ag-selection-fill-top');
+            ag_grid_community_1._.removeCssClass(eGui, 'ag-selection-fill-right');
+            ag_grid_community_1._.removeCssClass(eGui, 'ag-selection-fill-bottom');
+            ag_grid_community_1._.removeCssClass(eGui, 'ag-selection-fill-left');
+        });
+        this.markedCellComps.length = 0;
+        this.isUp = false;
+        this.isLeft = false;
+        this.isReduce = false;
+    };
+    FillHandle.prototype.clearCellValues = function () {
+        this.cellValues.length = 0;
+    };
     FillHandle.prototype.markPathFrom = function (initialPosition, currentPosition) {
         this.clearMarkedPath();
-        this.cellValues.length = 0;
+        this.clearCellValues();
         if (this.dragAxis === 'y') {
-            if (ag_grid_community_1.RowPositionUtils.sameRow(currentPosition, initialPosition)) {
+            if (this.rowPositionUtils.sameRow(currentPosition, initialPosition)) {
                 return;
             }
-            var isBefore = ag_grid_community_1.RowPositionUtils.before(currentPosition, initialPosition);
+            var isBefore = this.rowPositionUtils.before(currentPosition, initialPosition);
             var rangeStartRow = this.getRangeStartRow();
             var rangeEndRow = this.getRangeEndRow();
             if (isBefore && ((currentPosition.rowPinned == rangeStartRow.rowPinned &&
@@ -159,9 +254,11 @@ var FillHandle = /** @class */ (function (_super) {
                     currentPosition.rowPinned == rangeEndRow.rowPinned &&
                     currentPosition.rowIndex <= rangeEndRow.rowIndex))) {
                 this.reduceVertical(initialPosition, currentPosition);
+                this.isReduce = true;
             }
             else {
                 this.extendVertical(initialPosition, currentPosition, isBefore);
+                this.isReduce = false;
             }
         }
         else {
@@ -175,9 +272,11 @@ var FillHandle = /** @class */ (function (_super) {
             var currentIndex = displayedColumns.indexOf(currentColumn);
             if (currentIndex <= initialIndex && currentIndex >= displayedColumns.indexOf(this.getCellRange().columns[0])) {
                 this.reduceHorizontal(initialPosition, currentPosition);
+                this.isReduce = true;
             }
             else {
                 this.extendHorizontal(initialPosition, currentPosition, currentIndex < initialIndex);
+                this.isReduce = false;
             }
         }
     };
@@ -192,7 +291,7 @@ var FillHandle = /** @class */ (function (_super) {
                 var rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
                 var cellPos = __assign({}, rowPos, { column: column });
                 var cellInRange = rangeController.isCellInSpecificRange(cellPos, cellRange);
-                var isInitialRow = ag_grid_community_1.RowPositionUtils.sameRow(row, initialPosition);
+                var isInitialRow = this.rowPositionUtils.sameRow(row, initialPosition);
                 if (isMovingUp) {
                     this.isUp = true;
                 }
@@ -205,62 +304,37 @@ var FillHandle = /** @class */ (function (_super) {
                             ag_grid_community_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', i === 0);
                             ag_grid_community_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', i === colLen - 1);
                         }
-                        ag_grid_community_1._.addOrRemoveCssClass(eGui, isMovingUp ? 'ag-selection-fill-top' : 'ag-selection-fill-bottom', ag_grid_community_1.RowPositionUtils.sameRow(row, endPosition));
+                        ag_grid_community_1._.addOrRemoveCssClass(eGui, isMovingUp ? 'ag-selection-fill-top' : 'ag-selection-fill-bottom', this.rowPositionUtils.sameRow(row, endPosition));
                     }
-                }
-                var shouldAddValue = !cellInRange;
-                if (!shouldAddValue) {
-                    shouldAddValue = isMovingUp ?
-                        ag_grid_community_1.RowPositionUtils.sameRow(rowPos, rangeController.getRangeStartRow(cellRange)) :
-                        isInitialRow;
-                }
-                if (shouldAddValue) {
-                    if (!this.cellValues[i]) {
-                        this.cellValues[i] = [];
-                    }
-                    var node = this.rowRenderer.getRowNode(rowPos);
-                    var value = this.valueService.getValue(column, node);
-                    this.cellValues[i].push({ position: cellPos, value: value });
                 }
             }
-            if (ag_grid_community_1.RowPositionUtils.sameRow(row, endPosition)) {
+            if (this.rowPositionUtils.sameRow(row, endPosition)) {
                 break;
             }
         } while (row = isMovingUp ?
-            this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned) :
+            this.cellNavigationService.getRowAbove(row) :
             this.cellNavigationService.getRowBelow(row));
-        this.isReduce = false;
     };
     FillHandle.prototype.reduceVertical = function (initialPosition, endPosition) {
         var row = initialPosition;
         do {
             var cellRange = this.getCellRange();
             var colLen = cellRange.columns.length;
-            var isLastRow = ag_grid_community_1.RowPositionUtils.sameRow(row, endPosition);
+            var isLastRow = this.rowPositionUtils.sameRow(row, endPosition);
             for (var i = 0; i < colLen; i++) {
-                var column = cellRange.columns[i];
                 var rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
                 var celPos = __assign({}, rowPos, { column: cellRange.columns[i] });
                 var cellComp = this.rowRenderer.getComponentForCell(celPos);
                 if (cellComp) {
                     this.markedCellComps.push(cellComp);
                     var eGui = cellComp.getGui();
-                    ag_grid_community_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', ag_grid_community_1.RowPositionUtils.sameRow(row, endPosition));
-                }
-                if (!isLastRow) {
-                    if (!this.cellValues[i]) {
-                        this.cellValues[i] = [];
-                    }
-                    var node = this.rowRenderer.getRowNode(rowPos);
-                    var value = this.valueService.getValue(column, node);
-                    this.cellValues[i].push({ position: celPos, value: value });
+                    ag_grid_community_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', this.rowPositionUtils.sameRow(row, endPosition));
                 }
             }
             if (isLastRow) {
                 break;
             }
-        } while (row = this.cellNavigationService.getRowAbove(row.rowIndex, row.rowPinned));
-        this.isReduce = true;
+        } while (row = this.cellNavigationService.getRowAbove(row));
     };
     FillHandle.prototype.extendHorizontal = function (initialPosition, endPosition, isMovingLeft) {
         var _this = this;
@@ -275,7 +349,7 @@ var FillHandle = /** @class */ (function (_super) {
             var row = rangeStartRow;
             var isLastRow = false;
             do {
-                isLastRow = ag_grid_community_1.RowPositionUtils.sameRow(row, rangeEndRow);
+                isLastRow = _this.rowPositionUtils.sameRow(row, rangeEndRow);
                 var cellComp = _this.rowRenderer.getComponentForCell({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
@@ -284,8 +358,8 @@ var FillHandle = /** @class */ (function (_super) {
                 if (cellComp) {
                     _this.markedCellComps.push(cellComp);
                     var eGui = cellComp.getGui();
-                    ag_grid_community_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', ag_grid_community_1.RowPositionUtils.sameRow(row, rangeStartRow));
-                    ag_grid_community_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', ag_grid_community_1.RowPositionUtils.sameRow(row, rangeEndRow));
+                    ag_grid_community_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', _this.rowPositionUtils.sameRow(row, rangeStartRow));
+                    ag_grid_community_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', _this.rowPositionUtils.sameRow(row, rangeEndRow));
                     if (isMovingLeft) {
                         _this.isLeft = true;
                         ag_grid_community_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', column === colsToMark[0]);
@@ -297,7 +371,6 @@ var FillHandle = /** @class */ (function (_super) {
                 row = _this.cellNavigationService.getRowBelow(row);
             } while (!isLastRow);
         });
-        this.isReduce = false;
     };
     FillHandle.prototype.reduceHorizontal = function (initialPosition, endPosition) {
         var _this = this;
@@ -311,7 +384,7 @@ var FillHandle = /** @class */ (function (_super) {
             var row = rangeStartRow;
             var isLastRow = false;
             do {
-                isLastRow = ag_grid_community_1.RowPositionUtils.sameRow(row, rangeEndRow);
+                isLastRow = _this.rowPositionUtils.sameRow(row, rangeEndRow);
                 var cellComp = _this.rowRenderer.getComponentForCell({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
@@ -325,19 +398,6 @@ var FillHandle = /** @class */ (function (_super) {
                 row = _this.cellNavigationService.getRowBelow(row);
             } while (!isLastRow);
         });
-        this.isReduce = true;
-    };
-    FillHandle.prototype.clearMarkedPath = function () {
-        this.markedCellComps.forEach(function (cellComp) {
-            var eGui = cellComp.getGui();
-            ag_grid_community_1._.removeCssClass(eGui, 'ag-selection-fill-top');
-            ag_grid_community_1._.removeCssClass(eGui, 'ag-selection-fill-right');
-            ag_grid_community_1._.removeCssClass(eGui, 'ag-selection-fill-bottom');
-            ag_grid_community_1._.removeCssClass(eGui, 'ag-selection-fill-left');
-        });
-        this.markedCellComps.length = 0;
-        this.isUp = false;
-        this.isLeft = false;
     };
     FillHandle.prototype.refresh = function (cellComp) {
         var cellRange = this.rangeController.getCellRanges()[0];

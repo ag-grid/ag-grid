@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -75,7 +75,7 @@ var DndSourceComp = /** @class */ (function (_super) {
     };
     DndSourceComp.prototype.checkVisibility = function () {
         var visible = this.column.isDndSource(this.rowNode);
-        this.setVisible(visible, null);
+        this.setDisplayed(visible);
     };
     __decorate([
         context_1.PostConstruct,

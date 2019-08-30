@@ -21,7 +21,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             throw new Error(`The ${constructor} is missing the 'className' property.`);
         }
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
-    };
+    }
 
     /**
      * Unique node ID in the form `ClassName-NaturalNumber`.
@@ -51,12 +51,15 @@ export abstract class Node { // Don't confuse with `window.Node`.
     /**
      * To simplify the type system (especially in Selections) we don't have the `Parent` node
      * (one that has children). Instead, we mimic HTML DOM, where any node can have children.
-     * But we still need to distinguish regular leaf nodes from leaf containers somehow.
+     * But we still need to distinguish regular leaf nodes from container leafs somehow.
      */
     protected isContainerNode: boolean = false;
 
-    protected _scene: Scene | null = null;
-    _setScene(value: Scene | null) {
+    // Note: _setScene and _setParent methods are not meant for end users,
+    // but they are not quite private either, rather, they have package level visibility.
+
+    protected _scene?: Scene;
+    _setScene(value?: Scene) {
         this._scene = value;
 
         const children = this.children;
@@ -66,15 +69,15 @@ export abstract class Node { // Don't confuse with `window.Node`.
             children[i]._setScene(value);
         }
     }
-    get scene(): Scene | null {
+    get scene(): Scene | undefined {
         return this._scene;
     }
 
-    private _parent: Node | null = null;
-    _setParent(value: Node | null) {
+    private _parent?: Node;
+    _setParent(value?: Node) {
         this._parent = value;
     }
-    get parent(): Node | null {
+    get parent(): Node | undefined {
         return this._parent;
     }
 
@@ -182,8 +185,8 @@ export abstract class Node { // Don't confuse with `window.Node`.
             if (i >= 0) {
                 this._children.splice(i, 1);
                 delete this.childSet[node.id];
-                node._setParent(null);
-                node._setScene(null);
+                node._setParent(undefined);
+                node._setScene(undefined);
                 this.dirty = true;
 
                 return node;
@@ -428,8 +431,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         }
     }
 
-    readonly getBBox?: () => BBox; // we use this signature to be able to conditionally set
-                                   // this property (see Text shape)
+    getBBox(): BBox | undefined { return; }
 
     getBBoxCenter(): [number, number] {
         const bbox = this.getBBox && this.getBBox();
@@ -527,7 +529,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
      *
      * @param ctx The 2D canvas rendering context.
      */
-    abstract render(ctx: CanvasRenderingContext2D): void
+    abstract render(ctx: CanvasRenderingContext2D): void;
 
     /**
      * Each time a property of the node that effects how it renders changes

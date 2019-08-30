@@ -1,4 +1,8 @@
 import { Constants } from "../constants";
+import {Autowired, Bean} from "../context/context";
+import {IRowModel} from "../interfaces/iRowModel";
+import {PinnedRowModel} from "../rowModels/pinnedRowModel";
+import {RowNode} from "./rowNode";
 import { _ } from "../utils";
 
 export interface RowPosition {
@@ -6,9 +10,24 @@ export interface RowPosition {
     rowPinned: string | undefined;
 }
 
+@Bean('rowPositionUtils')
 export class RowPositionUtils {
 
-    public static sameRow(rowA: RowPosition | undefined, rowB: RowPosition | undefined): boolean {
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+
+    public getRowNode(gridRow: RowPosition): RowNode | null {
+        switch (gridRow.rowPinned) {
+            case Constants.PINNED_TOP:
+                return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];
+            case Constants.PINNED_BOTTOM:
+                return this.pinnedRowModel.getPinnedBottomRowData()[gridRow.rowIndex];
+            default:
+                return this.rowModel.getRow(gridRow.rowIndex);
+        }
+    }
+
+    public sameRow(rowA: RowPosition | undefined, rowB: RowPosition | undefined): boolean {
         // if both missing
         if (!rowA && !rowB) { return true; }
         // if only one missing
@@ -18,7 +37,7 @@ export class RowPositionUtils {
     }
 
     // tests if this row selection is before the other row selection
-    public static before(rowA: RowPosition, rowB: RowPosition): boolean {
+    public before(rowA: RowPosition, rowB: RowPosition): boolean {
         switch (rowA.rowPinned) {
             case Constants.PINNED_TOP:
                 // we we are floating top, and other isn't, then we are always before
@@ -31,13 +50,7 @@ export class RowPositionUtils {
             default:
                 // if we are not floating, but the other one is floating...
                 if (_.exists(rowB.rowPinned)) {
-                    if (rowB.rowPinned === Constants.PINNED_TOP) {
-                        // we are not floating, other is floating top, we are first
-                        return false;
-                    } else {
-                        // we are not floating, other is floating bottom, we are always first
-                        return true;
-                    }
+                    return rowB.rowPinned !== Constants.PINNED_TOP;
                 }
                 break;
         }

@@ -292,21 +292,31 @@ class CellRenderer extends Component {
 </snippet>
 
     <p>If you wish to override the style of this div you can either provide an implementation of the <code>ag-react-container</code> class, or
-        via the <code>reactContainer</code> property that will be made available via <code>props</code>:</p>
-    <snippet>
-constructor(props) {
-        super(props);
-        // change the containing div to be inline-block (instead of the default block for a div)
-        this.props.reactContainer.style.display = "inline-block";
-        // change the background color of the containing div to be red
-        this.props.reactContainer.style.backgroundColor = "red";
-}</snippet>
-    <p>You can see an example of this in the
-        <a href="https://github.com/ceolter/ag-grid-react-example/blob/master/src/groupedRowInnerRendererExample/MedalRenderer.jsx">Grouped Row Example</a>
-        where we change the display of the <code>groupRowInnerRendererFramework</code> to <code>inline-block</code> so that the +/- and label are inline.</p>
+        via the <code>getReactContainerStyle</code> or <code>getReactContainerClasses</code> callbacks on the React component:</p>
+
+<snippet>
+export default class CustomTooltip extends Component {
+    getReactContainerClasses() {
+        return ['custom-tooltip'];
+    }
 
 
-    <note>Functional/Stateless Components will have a wrapping container (a <code>div</code> by default) provided due to technical constraints.</note>
+    getReactContainerStyle() {
+        return {
+            display: 'inline-block',
+            height: '100%'
+        };
+    }
+</snippet>
+
+<p>Would result in the following being rendered:</p>
+
+<snippet language="html">
+&lt;div class="ag-react-container custom-tooltip" style="display: inline-block; height: 100%" &gt;
+    &lt;span&gt;Hello World&lt;/span&gt;
+&lt;/div&gt;
+</snippet>
+
 
     <h3 id="react-redux-hoc">Redux / Higher Order Components (HOC)</h3>
 
@@ -475,20 +485,32 @@ class CellRenderer extends Component {
 &lt;span class="ag-react-container"&gt;&lt;span&gt;Age: 24&lt;/span&gt;&lt;/span    &gt;
 </snippet>
 
-                    <p>If you wish to override the style of this div you can either provide an implementation of the <code>ag-react-container</code> class, or
-                        via the <code>reactContainer</code> property that will be made available via <code>props</code>:</p>
+
+    <p>If you wish to override the style of this div you can either provide an implementation of the <code>ag-react-container</code> class, or
+        via the <code>getReactContainerStyle</code> or <code>getReactContainerClasses</code> callbacks on the React component:</p>
+
 <snippet>
-constructor(props) {
-    super(props);
-    // change the containing div to be inline-block (instead of the default block for a div)
-    this.props.reactContainer.style.display = "inline-block";
-    // change the background color of the containing div to be red
-    this.props.reactContainer.style.backgroundColor = "red";
-}</snippet>
-                    <p>You can see an example of this in the
-                        <a href="https://github.com/ceolter/ag-grid-react-example/blob/master/src/groupedRowInnerRendererExample/MedalRenderer.jsx">Grouped Row Example</a>
-                        where we change the display of the <code>groupRowInnerRendererFramework</code> to <code>inline-block</code> so that the +/- and label are inline.</p>
-                </div>
+export default class CustomTooltip extends Component {
+    getReactContainerClasses() {
+    return ['custom-tooltip'];
+    }
+
+
+    getReactContainerStyle() {
+        return {
+                display: 'inline-block',
+                height: '100%'
+            };
+        }
+</snippet>
+
+    <p>Would result in the following being rendered:</p>
+
+<snippet language="html">
+&lt;div class="ag-react-container custom-tooltip" style="display: inline-block; height: 100%" &gt;
+    &lt;span&gt;Hello World&lt;/span&gt;
+&lt;/div&gt;
+</snippet>                </div>
             </div>
         </div>
     </div>

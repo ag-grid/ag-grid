@@ -1,5 +1,5 @@
-// ag-grid-enterprise v21.1.1
-import { Component, ChartType, ChartMenuOptions } from "ag-grid-community";
+// ag-grid-enterprise v21.2.0
+import { ChartMenuOptions, ChartType, Component } from "ag-grid-community";
 import { ChartController } from "../chartController";
 export declare class TabbedChartMenu extends Component {
     static EVENT_TAB_SELECTED: string;

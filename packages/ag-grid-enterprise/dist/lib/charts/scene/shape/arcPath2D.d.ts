@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Shape } from "./shape";
 export declare enum ArcType {
     Open = 0,

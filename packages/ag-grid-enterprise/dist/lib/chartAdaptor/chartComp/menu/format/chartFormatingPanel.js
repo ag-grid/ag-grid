@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -32,6 +32,7 @@ var lineSeriesPanel_1 = require("./series/lineSeriesPanel");
 var pieSeriesPanel_1 = require("./series/pieSeriesPanel");
 var chartPanel_1 = require("./chart/chartPanel");
 var areaSeriesPanel_1 = require("./series/areaSeriesPanel");
+var scatterSeriesPanel_1 = require("./series/scatterSeriesPanel");
 var ChartFormattingPanel = /** @class */ (function (_super) {
     __extends(ChartFormattingPanel, _super);
     function ChartFormattingPanel(chartController) {
@@ -60,6 +61,10 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
         else if (chartType === ag_grid_community_1.ChartType.Line) {
             this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
             this.addComponent(new lineSeriesPanel_1.LineSeriesPanel(this.chartController));
+        }
+        else if (chartType === ag_grid_community_1.ChartType.Scatter || chartType === ag_grid_community_1.ChartType.Bubble) {
+            this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
+            this.addComponent(new scatterSeriesPanel_1.ScatterSeriesPanel(this.chartController));
         }
         else if (chartType === ag_grid_community_1.ChartType.Area || chartType === ag_grid_community_1.ChartType.StackedArea || chartType === ag_grid_community_1.ChartType.NormalizedArea) {
             this.addComponent(new axisPanel_1.AxisPanel(this.chartController));

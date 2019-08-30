@@ -11,10 +11,15 @@ CustomDateComponent.prototype.init = function (params) {
     this.params = params;
 
     this.eGui = document.createElement('div');
-    this.eGui.classList.add('ag-input-wrapper');
-    this.eGui.classList.add('custom-date-filter');
-    this.eGui.innerHTML = template;
-    this.eInput = this.eGui.querySelector('input');
+
+    var eGui = this.eGui;
+
+    eGui.setAttribute('role', 'presentation');
+    eGui.classList.add('ag-input-wrapper');
+    eGui.classList.add('custom-date-filter');
+    eGui.innerHTML = template;
+
+    this.eInput = eGui.querySelector('input');
 
     this.picker = flatpickr(this.eGui, {
         onChange: this.onDateChanged.bind(this),

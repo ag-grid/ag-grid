@@ -19,14 +19,14 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-total-row-count');
 
-        this.setVisible(true);
+        this.setDisplayed(true);
 
         const listener = this.onDataChanged.bind(this);
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener);
     }
 
     private onDataChanged() {
-        this.setValue(this.getRowCountValue())
+        this.setValue(this.getRowCountValue());
     }
 
     private getRowCountValue(): string {

@@ -148,6 +148,10 @@ function processChartOptions(params) {
     seriesDefaults.fills = ['#e1ba00', 'silver', 'peru'];
     seriesDefaults.strokes = ['red', 'green', 'blue'];
     seriesDefaults.strokeWidth = 2;
+    seriesDefaults.highlightStyle = {
+        fill: 'red',
+        stroke: 'maroon'
+    };
 
     seriesDefaults.marker = true;
     seriesDefaults.markerSize = 12;

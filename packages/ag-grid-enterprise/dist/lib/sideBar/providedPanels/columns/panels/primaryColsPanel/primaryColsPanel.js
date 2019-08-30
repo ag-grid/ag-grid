@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -42,7 +42,7 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
         var hideSelect = this.params.suppressColumnSelectAll;
         var hideExpand = this.params.suppressColumnExpandAll;
         if (hideExpand && hideFilter && hideSelect) {
-            this.primaryColsHeaderPanel.setVisible(false);
+            this.primaryColsHeaderPanel.setDisplayed(false);
         }
         this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
         this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));

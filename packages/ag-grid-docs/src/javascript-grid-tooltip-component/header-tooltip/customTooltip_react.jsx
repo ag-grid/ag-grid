@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 
 export default class CustomTooltip extends Component {
-    componentDidMount() {
-        this.props.reactContainer.className = 'custom-tooltip';
+    getReactContainerClasses() {
+        return ['custom-tooltip'];
     }
 
     render() {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -70,7 +70,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.setupDragging = function () {
         var _this = this;
         if (!this.allowDragging) {
-            main_1._.setVisible(this.eDragHandle, false);
+            main_1._.setDisplayed(this.eDragHandle, false);
             return;
         }
         var dragSource = {
@@ -213,28 +213,33 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         return colsThatCanAction === 0;
     };
     ToolPanelColumnGroupComp.prototype.workOutSelectedValue = function () {
-        var _this = this;
         var pivotMode = this.columnController.isPivotMode();
-        var visibleChildCount = 0;
-        var hiddenChildCount = 0;
-        this.columnGroup.getLeafColumns().forEach(function (column) {
+        var leafColumns = this.columnGroup.getLeafColumns();
+        var len = leafColumns.length;
+        var count = { visible: 0, hidden: 0 };
+        var ignoredChildCount = { visible: 0, hidden: 0 };
+        for (var i = 0; i < len; i++) {
+            var column = leafColumns[i];
             // ignore lock visible columns and columns set to 'suppressToolPanel'
-            var ignoredColumn = column.getColDef().lockVisible || column.getColDef().suppressToolPanel;
-            if (ignoredColumn) {
-                return null;
+            var ignore = column.getColDef().lockVisible || column.getColDef().suppressToolPanel;
+            var type = this.isColumnVisible(column, pivotMode) ? 'visible' : 'hidden';
+            count[type]++;
+            if (!ignore) {
+                continue;
             }
-            if (_this.isColumnVisible(column, pivotMode)) {
-                visibleChildCount++;
-            }
-            else {
-                hiddenChildCount++;
-            }
-        });
+            ignoredChildCount[type]++;
+        }
+        // if all columns are ignored we use the regular count, if not
+        // we only consider the columns that were not ignored
+        if (ignoredChildCount.visible + ignoredChildCount.hidden !== len) {
+            count.visible -= ignoredChildCount.visible;
+            count.hidden -= ignoredChildCount.hidden;
+        }
         var selectedValue;
-        if (visibleChildCount > 0 && hiddenChildCount > 0) {
+        if (count.visible > 0 && count.hidden > 0) {
             selectedValue = null;
         }
-        else if (visibleChildCount > 0) {
+        else if (count.visible > 0) {
             selectedValue = true;
         }
         else {
@@ -260,8 +265,8 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnGroupComp.prototype.setOpenClosedIcons = function () {
         var folderOpen = this.expanded;
-        main_1._.setVisible(this.eGroupClosedIcon, !folderOpen);
-        main_1._.setVisible(this.eGroupOpenedIcon, folderOpen);
+        main_1._.setDisplayed(this.eGroupClosedIcon, !folderOpen);
+        main_1._.setDisplayed(this.eGroupOpenedIcon, folderOpen);
     };
     ToolPanelColumnGroupComp.prototype.isExpanded = function () {
         return this.expanded;

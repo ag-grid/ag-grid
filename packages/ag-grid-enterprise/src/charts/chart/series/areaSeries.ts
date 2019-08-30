@@ -11,30 +11,30 @@ import { Shape } from "../../scene/shape/shape";
 import { Path } from "../../scene/shape/path";
 import { Arc, ArcType } from "../../scene/shape/arc";
 import palette from "../palettes";
-import { extent } from "../../util/array";
+import { numericExtent } from "../../util/array";
 
 interface AreaSelectionDatum {
-    yField: string,
-    points: {x: number, y: number}[]
+    yField: string;
+    points: {x: number, y: number}[];
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
-    yField: string,
-    yValue: number,
-    x: number,
-    y: number,
-    radius: number,
-    fill?: string,
-    stroke?: string,
-    text?: string
+    yField: string;
+    yValue: number;
+    x: number;
+    y: number;
+    radius: number;
+    fill?: string;
+    stroke?: string;
+    text?: string;
 }
 
 export interface AreaTooltipRendererParams {
-    datum: any,
-    xField: string,
-    yField: string,
-    title?: string,
-    color?: string
+    datum: any;
+    xField: string;
+    yField: string;
+    title?: string;
+    color?: string;
 }
 
 export class AreaSeries extends Series<CartesianChart> {
@@ -342,21 +342,12 @@ export class AreaSeries extends Series<CartesianChart> {
             // console.warn('Zero or infinite y-range.');
         }
 
-        const domainX = continuousX ? extent(xData) : xData;
+        const domainX = continuousX ? (numericExtent(xData) || [0, 1]) : xData;
         if (continuousX) {
-            const min = domainX[0];
-            const max = domainX[1];
+            const [min, max] = domainX as number[];
             if (min === max) {
-                if (typeof min === 'number' && isFinite(min)) {
-                    (domainX[0] as any) -= 1;
-                } else {
-                    (domainX[0] as any) = 0;
-                }
-                if (typeof max === 'number' && isFinite(max)) {
-                    (domainX[1] as any) += 1;
-                } else {
-                    (domainX[1] as any) = 1;
-                }
+                domainX[0] = min - 1;
+                domainX[1] = max + 1;
             }
         }
         this.domainX = domainX;

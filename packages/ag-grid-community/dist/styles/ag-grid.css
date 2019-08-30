@@ -335,8 +335,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   align-items: center;
   position: absolute;
   height: 100%;
-  overflow: hidden;
-  line-height: 1.5; }
+  overflow: hidden; }
 
 .ag-header-group-cell-label, .ag-header-cell-label {
   display: -webkit-box;
@@ -350,7 +349,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -ms-flex-align: center;
   align-items: center;
   text-overflow: ellipsis;
-  height: 100%; }
+  -ms-flex-item-align: stretch;
+  align-self: stretch; }
 
 .ag-header-cell-label .ag-header-cell-text {
   overflow: hidden;
@@ -380,8 +380,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 .ag-header-select-all {
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
-  line-height: 1; }
+  display: flex; }
 
 /**
  ****************************
@@ -640,7 +639,17 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 .ag-set-filter-item {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap; }
+  white-space: nowrap;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+  .ag-set-filter-item > div, .ag-set-filter-item > span {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex; }
 
 .ag-filter .ag-filter-checkbox {
   pointer-events: none; }
@@ -746,7 +755,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   cursor: move;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
-  line-height: 1.4;
   overflow: hidden;
   padding: 3px;
   position: absolute;
@@ -1077,7 +1085,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     color: white;
     background-color: #888888; }
   .ag-chart-tooltip .content {
-    padding: 7px; }
+    padding: 7px;
+    line-height: 1.7em; }
 
 /**
  ****************************
@@ -1190,6 +1199,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -webkit-box-pack: end;
   -ms-flex-pack: end;
   justify-content: flex-end; }
+  .ag-paging-panel .ag-paging-row-summary-panel {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex; }
+    .ag-paging-panel .ag-paging-row-summary-panel span {
+      margin: 0 3px; }
 
 .ag-paging-page-summary-panel {
   display: -webkit-box;
@@ -1201,7 +1216,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   .ag-paging-page-summary-panel .ag-disabled {
     pointer-events: none; }
   .ag-paging-page-summary-panel .ag-paging-button {
-    position: relative; }
+    position: relative;
+    overflow: hidden; }
     .ag-paging-page-summary-panel .ag-paging-button button {
       position: absolute; }
 
@@ -2368,6 +2384,21 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   overflow-x: hidden; }
   .ag-chart-tabbed-menu .ag-chart-format-wrapper .ag-group-component .ag-group-subgroup {
     justify-content: space-between; }
+
+.ag-chart .ag-chart-canvas-wrapper.ag-chart-empty > canvas {
+  visibility: hidden; }
+
+.ag-chart .ag-chart-canvas-wrapper.ag-chart-empty .ag-chart-empty-text {
+  display: flex; }
+
+.ag-chart .ag-chart-empty-text {
+  display: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center; }
 
 .ag-chart .ag-chart-menu {
   opacity: 0;

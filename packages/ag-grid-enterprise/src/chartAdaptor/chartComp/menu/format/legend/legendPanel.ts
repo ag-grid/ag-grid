@@ -1,16 +1,18 @@
 import {
     _,
     AgGroupComponent,
+    AgSelect,
     AgSlider,
+    Autowired,
     Component,
     PostConstruct,
-    RefSelector,
-    AgSelect, Autowired
+    RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart, LegendPosition } from "../../../../../charts/chart/chart";
-import { LabelPanelParams, LabelFont, LabelPanel } from "../label/labelPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {LegendPosition} from "../../../../../charts/chart/chart";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {ChartProxy, LegendProperty} from "../../../chartProxies/chartProxy";
 
 export class LegendPanel extends Component {
 
@@ -28,9 +30,7 @@ export class LegendPanel extends Component {
         </div>`;
 
     @RefSelector('legendGroup') private legendGroup: AgGroupComponent;
-
     @RefSelector('legendPositionSelect') private legendPositionSelect: AgSelect;
-
     @RefSelector('legendPaddingSlider') private legendPaddingSlider: AgSlider;
     @RefSelector('markerSizeSlider') private markerSizeSlider: AgSlider;
     @RefSelector('markerStrokeSlider') private markerStrokeSlider: AgSlider;
@@ -40,21 +40,20 @@ export class LegendPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chart: Chart;
     private activePanels: Component[] = [];
+
+    private chartProxy: ChartProxy<any>;
     private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
+        this.chartProxy = this.chartController.getChartProxy();
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(LegendPanel.TEMPLATE);
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
 
         this.initLegendGroup();
         this.initLegendPosition();
@@ -67,14 +66,17 @@ export class LegendPanel extends Component {
         this.legendGroup
             .setTitle(this.chartTranslator.translate('legend'))
             .hideEnabledCheckbox(false)
+            .setEnabled(this.chartProxy.getLegendEnabled())
             .toggleGroupExpand(false)
             .onEnableChange(enabled => {
-                this.chart.legend.enabled = enabled;
+                this.chartProxy.setLegendProperty('enabled', enabled);
                 this.legendGroup.toggleGroupExpand(true);
             });
     }
 
     private initLegendPosition() {
+        const chartProxy = this.chartController.getChartProxy();
+
         const positions: LegendPosition[] = ['top', 'right', 'bottom', 'left'];
 
         this.legendPositionSelect
@@ -85,64 +87,50 @@ export class LegendPanel extends Component {
                 value: position,
                 text: this.chartTranslator.translate(position)
             })))
-            .onValueChange((value) => {
-                this.chart.legendPosition = value as LegendPosition;
-            })
-            .setValue(this.chart.legendPosition);
+            .setValue(chartProxy.getLegendPosition())
+            .onValueChange(newValue => chartProxy.setLegendPosition(newValue as LegendPosition));
     }
 
     private initLegendPadding() {
         this.legendPaddingSlider
             .setLabel(this.chartTranslator.translate('padding'))
-            .setValue(`${this.chart.legendPadding}`)
+            .setValue(this.chartProxy.getLegendPadding())
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(newValue => this.chart.legendPadding = newValue);
+            .onValueChange(newValue => this.chartProxy.setLegendPadding(newValue));
     }
 
     private initLegendItems() {
-        type LegendOptions = 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
-
-        const initSlider = (property: LegendOptions, labelKey: string, input: AgSlider, initialValue: string, maxValue: number) => {
+        const initSlider = (property: LegendProperty, labelKey: string, input: AgSlider, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                 .setValue(initialValue)
+                 .setValue(this.chartProxy.getLegendProperty(property))
                  .setMaxValue(maxValue)
                  .setTextFieldWidth(45)
-                 .onValueChange(newValue => this.chart.legend[property] = newValue)
+                 .onValueChange(newValue => this.chartProxy.setLegendProperty(property, newValue));
         };
 
-        const initialMarkerSize = `${this.chart.legend.markerSize}`;
-        initSlider('markerSize', 'markerSize', this.markerSizeSlider, initialMarkerSize, 40);
-
-        const initialMarkerStroke = `${this.chart.legend.markerStrokeWidth}`;
-        initSlider('markerStrokeWidth', 'markerStroke', this.markerStrokeSlider, initialMarkerStroke, 10);
-
-        const initialMarkerPadding = `${this.chart.legend.markerPadding}`;
-        initSlider('markerPadding',  'markerPadding', this.markerPaddingSlider, initialMarkerPadding, 200);
-
-        const initialItemPaddingX = `${this.chart.legend.itemPaddingX}`;
-        initSlider('itemPaddingX', 'itemPaddingX', this.itemPaddingXSlider, initialItemPaddingX, 50);
-
-        const initialItemPaddingY = `${this.chart.legend.itemPaddingY}`;
-        initSlider('itemPaddingY', 'itemPaddingY', this.itemPaddingYSlider, initialItemPaddingY, 50);
+        initSlider('markerSize', 'markerSize', this.markerSizeSlider, 40);
+        initSlider('markerStrokeWidth', 'markerStroke', this.markerStrokeSlider, 10);
+        initSlider('markerPadding',  'markerPadding', this.markerPaddingSlider, 200);
+        initSlider('itemPaddingX', 'itemPaddingX', this.itemPaddingXSlider, 50);
+        initSlider('itemPaddingY', 'itemPaddingY', this.itemPaddingYSlider, 50);
     }
 
     private initLabelPanel() {
-
         const initialFont = {
-            family: this.chart.legend.labelFontFamily,
-            style: this.chart.legend.labelFontStyle,
-            weight: this.chart.legend.labelFontWeight,
-            size: this.chart.legend.labelFontSize,
-            color: this.chart.legend.labelColor
+            family: this.chartProxy.getLegendProperty('labelFontFamily'),
+            style: this.chartProxy.getLegendProperty('labelFontStyle'),
+            weight: this.chartProxy.getLegendProperty('labelFontWeight'),
+            size: parseInt(this.chartProxy.getLegendProperty('labelFontSize')),
+            color: this.chartProxy.getLegendProperty('labelColor')
         };
 
+        // note we don't set the font style via legend panel
         const setFont = (font: LabelFont) => {
-            if (font.family) { this.chart.legend.labelFontFamily = font.family; }
-            if (font.style) { this.chart.legend.labelFontStyle = font.style; }
-            if (font.weight) { this.chart.legend.labelFontWeight = font.weight; }
-            if (font.size) { this.chart.legend.labelFontSize = font.size; }
-            if (font.color) { this.chart.legend.labelColor = font.color; }
+            if (font.family) { this.chartProxy.setLegendProperty('labelFontFamily', font.family); }
+            if (font.weight) { this.chartProxy.setLegendProperty('labelFontWeight', font.weight); }
+            if (font.size) { this.chartProxy.setLegendProperty('labelFontSize', font.size); }
+            if (font.color) { this.chartProxy.setLegendProperty('labelColor', font.color); }
         };
 
         const params: LabelPanelParams = {
@@ -152,7 +140,7 @@ export class LegendPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = new LabelPanel(this.chartController, params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.legendGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);

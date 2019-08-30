@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -404,7 +404,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         return this.gridOptions.fullWidthCellRendererParams;
     };
     GridOptionsWrapper.prototype.isEmbedFullWidthRows = function () {
-        return isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
+        return isTrue(this.gridOptions.embedFullWidthRows) || isTrue(this.gridOptions.deprecatedEmbedFullWidthRows);
     };
     GridOptionsWrapper.prototype.getSuppressKeyboardEventFunc = function () {
         return this.gridOptions.suppressKeyboardEvent;
@@ -465,6 +465,15 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.getPaginationPageSize = function () {
         return this.gridOptions.paginationPageSize;
+    };
+    GridOptionsWrapper.prototype.isPaginateChildRows = function () {
+        // if using groupSuppressRow, means we are not showing parent rows,
+        // so we always paginate on the child rows here as there are no parent rows
+        if (this.isGroupSuppressRow() || this.isGroupRemoveSingleChildren()
+            || this.isGroupRemoveLowestSingleChildren()) {
+            return true;
+        }
+        return isTrue(this.gridOptions.paginateChildRows);
     };
     GridOptionsWrapper.prototype.getCacheBlockSize = function () {
         return this.gridOptions.cacheBlockSize;
@@ -542,6 +551,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.isSuppressMiddleClickScrolls = function () {
         return isTrue(this.gridOptions.suppressMiddleClickScrolls);
+    };
+    GridOptionsWrapper.prototype.isPreventDefaultOnContextMenu = function () {
+        return isTrue(this.gridOptions.preventDefaultOnContextMenu);
     };
     GridOptionsWrapper.prototype.isSuppressPreventDefaultOnMouseWheel = function () {
         return isTrue(this.gridOptions.suppressPreventDefaultOnMouseWheel);
@@ -1148,8 +1160,8 @@ var GridOptionsWrapper = /** @class */ (function () {
                 options.defaultColDef.resizable = true;
             }
         }
-        if (options.embedFullWidthRows) {
-            console.warn("ag-Grid: since v20.1, embedFullWidthRows is now gone. This property was introduced to allow faster vertical scrolling when using slow browsers (IE) and full width rows. However in v20 the dom layout was redesigned and this performance problem no longer exists, hence this property 'hack' is no longer necessary.");
+        if (options.deprecatedEmbedFullWidthRows) {
+            console.warn("ag-Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.");
         }
         if (options.suppressTabbing) {
             console.warn("ag-Grid: since v20.1, suppressTabbing is replaced with the more powerful grid callback suppressKeyboardEvent(params) which can suppress any keyboard event including tabbing.");
@@ -1237,9 +1249,10 @@ var GridOptionsWrapper = /** @class */ (function () {
                 return { height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false };
             }
         }
-        var minRowHeight = this.getDefaultRowHeight();
+        var defaultRowHeight = this.getDefaultRowHeight();
         var rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ?
-            this.gridOptions.rowHeight : minRowHeight;
+            this.gridOptions.rowHeight : defaultRowHeight;
+        var minRowHeight = Math.min(defaultRowHeight, rowHeight);
         if (this.columnController.isAutoRowHeightActive()) {
             if (allowEstimate) {
                 return { height: rowHeight, estimated: true };
@@ -1263,7 +1276,7 @@ var GridOptionsWrapper = /** @class */ (function () {
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     GridOptionsWrapper.prototype.specialForNewMaterial = function (defaultValue, sassVariableName) {
-        var theme = this.environment.getTheme();
+        var theme = this.environment.getTheme().theme;
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
         }

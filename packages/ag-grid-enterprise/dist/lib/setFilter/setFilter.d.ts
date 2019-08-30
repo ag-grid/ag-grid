@@ -1,5 +1,5 @@
-// ag-grid-enterprise v21.1.1
-import { ProvidedFilter, IDoesFilterPassParams, ISetFilterParams } from "ag-grid-community";
+// ag-grid-enterprise v21.2.0
+import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter } from "ag-grid-community";
 import { SetFilterModel } from "./setFilterModel";
 export declare class SetFilter extends ProvidedFilter {
     private valueModel;
@@ -8,6 +8,7 @@ export declare class SetFilter extends ProvidedFilter {
     private eMiniFilter;
     private eFilterLoading;
     private valueFormatterService;
+    private eventService;
     private selectAllState;
     private setFilterParams;
     private virtualList;
@@ -18,15 +19,16 @@ export declare class SetFilter extends ProvidedFilter {
     protected createBodyTemplate(): string;
     protected resetUiToDefaults(): void;
     protected setModelIntoUi(model: SetFilterModel): void;
-    protected getModelFromUi(): SetFilterModel | null;
+    getModelFromUi(): SetFilterModel | null;
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean;
     setParams(params: ISetFilterParams): void;
+    private resetFilterValuesAndReapplyModel;
+    private setupSyncValuesLikeExcel;
     private updateCheckboxIcon;
     setLoading(loading: boolean): void;
     private initialiseFilterBodyUi;
     private createSetListItem;
     afterGuiAttached(params: any): void;
-    isFilterActive(): boolean;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
     onNewRowsLoaded(): void;
     /**
@@ -45,7 +47,9 @@ export declare class SetFilter extends ProvidedFilter {
     resetFilterValues(): void;
     onAnyFilterChanged(): void;
     private updateSelectAll;
-    private onMiniFilterChanged;
+    private onMiniFilterKeyPress;
+    private onEnterKeyOnMiniFilter;
+    private onMiniFilterInput;
     private onSelectAll;
     private doSelectAll;
     private onItemSelected;

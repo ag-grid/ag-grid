@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -16,7 +16,6 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var shape_1 = require("./shape");
 var object_1 = require("../../util/object");
-var hdpiCanvas_1 = require("../../canvas/hdpiCanvas");
 var bbox_1 = require("../bbox");
 var Text = /** @class */ (function (_super) {
     __extends(Text, _super);
@@ -35,42 +34,6 @@ var Text = /** @class */ (function (_super) {
         _this._textAlign = Text.defaultStyles.textAlign;
         _this._textBaseline = Text.defaultStyles.textBaseline;
         _this._lineHeight = 14;
-        _this.getBBox = hdpiCanvas_1.HdpiCanvas.has.textMetrics
-            ? function () {
-                var metrics = hdpiCanvas_1.HdpiCanvas.measureText(_this.text, _this.font, _this.textBaseline, _this.textAlign);
-                return new bbox_1.BBox(_this.x - metrics.actualBoundingBoxLeft, _this.y - metrics.actualBoundingBoxAscent, metrics.width, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
-            }
-            : function () {
-                var size = hdpiCanvas_1.HdpiCanvas.getTextSize(_this.text, _this.font);
-                var x = _this.x;
-                var y = _this.y;
-                switch (_this.textAlign) {
-                    case 'end':
-                    case 'right':
-                        x -= size.width;
-                        break;
-                    case 'center':
-                        x -= size.width / 2;
-                }
-                switch (_this.textBaseline) {
-                    case 'alphabetic':
-                        y -= size.height * 0.7;
-                        break;
-                    case 'middle':
-                        y -= size.height * 0.45;
-                        break;
-                    case 'ideographic':
-                        y -= size.height;
-                        break;
-                    case 'hanging':
-                        y -= size.height * 0.2;
-                        break;
-                    case 'bottom':
-                        y -= size.height;
-                        break;
-                }
-                return new bbox_1.BBox(x, y, size.width, size.height);
-            };
         return _this;
     }
     Object.defineProperty(Text.prototype, "x", {
@@ -250,10 +213,52 @@ var Text = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Text.prototype.getBBox = function () {
+        return this.scene
+            ? this.scene.canvas.has.textMetrics
+                ? this.getPreciseBBox()
+                : this.getApproximateBBox()
+            : undefined;
+    };
+    Text.prototype.getPreciseBBox = function () {
+        var metrics = this.scene.canvas.measureText(this.text, this.font, this.textBaseline, this.textAlign);
+        return new bbox_1.BBox(this.x - metrics.actualBoundingBoxLeft, this.y - metrics.actualBoundingBoxAscent, metrics.width, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
+    };
+    Text.prototype.getApproximateBBox = function () {
+        var size = this.scene.canvas.getTextSize(this.text, this.font);
+        var x = this.x;
+        var y = this.y;
+        switch (this.textAlign) {
+            case 'end':
+            case 'right':
+                x -= size.width;
+                break;
+            case 'center':
+                x -= size.width / 2;
+        }
+        switch (this.textBaseline) {
+            case 'alphabetic':
+                y -= size.height * 0.7;
+                break;
+            case 'middle':
+                y -= size.height * 0.45;
+                break;
+            case 'ideographic':
+                y -= size.height;
+                break;
+            case 'hanging':
+                y -= size.height * 0.2;
+                break;
+            case 'bottom':
+                y -= size.height;
+                break;
+        }
+        return new bbox_1.BBox(x, y, size.width, size.height);
+    };
     Text.prototype.isPointInPath = function (x, y) {
         var point = this.transformPoint(x, y);
         var bbox = this.getBBox();
-        return bbox.containsPoint(point.x, point.y);
+        return bbox ? bbox.containsPoint(point.x, point.y) : false;
     };
     Text.prototype.isPointInStroke = function (x, y) {
         return false;
@@ -265,6 +270,7 @@ var Text = /** @class */ (function (_super) {
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
+        // this.matrix.transformBBox(this.getBBox!()).render(ctx); // debug
         this.matrix.toContext(ctx);
         if (this.opacity < 1) {
             ctx.globalAlpha = this.opacity;
@@ -272,14 +278,14 @@ var Text = /** @class */ (function (_super) {
         ctx.font = this.font;
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
-        var pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+        var pixelRatio = this.scene.canvas.pixelRatio || 1;
         if (this.fill) {
             ctx.fillStyle = this.fill;
             var fillShadow = this.fillShadow;
-            if (fillShadow) {
+            if (fillShadow && fillShadow.enabled) {
                 ctx.shadowColor = fillShadow.color;
-                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fillText(this.text, this.x, this.y);
@@ -303,16 +309,14 @@ var Text = /** @class */ (function (_super) {
                 ctx.lineJoin = this.lineJoin;
             }
             var strokeShadow = this.strokeShadow;
-            if (strokeShadow) {
+            if (strokeShadow && strokeShadow.enabled) {
                 ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = strokeShadow.blur * pixelRatio;
             }
             ctx.strokeText(this.text, this.x, this.y);
         }
-        // // debug
-        // this.matrix.transformBBox(this.getBBox!()).render(ctx);
         this.dirty = false;
     };
     Text.className = 'Text';

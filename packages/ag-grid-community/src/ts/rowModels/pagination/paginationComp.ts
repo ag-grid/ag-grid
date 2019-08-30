@@ -39,12 +39,12 @@ export class PaginationComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', _.createIconNoSpan('first', this.gridOptionsWrapper));
-        this.btPrevious.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
-        this.btNext.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
-        this.btLast.insertAdjacentElement('afterbegin', _.createIconNoSpan('last', this.gridOptionsWrapper));
+        this.btFirst.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper));
+        this.btPrevious.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
+        this.btNext.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
+        this.btLast.insertAdjacentElement('afterbegin', _.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
 
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
             this.serverSideRowModel = this.rowModel as IServerSideRowModel;
@@ -53,7 +53,7 @@ export class PaginationComp extends Component {
         const isPaging = this.gridOptionsWrapper.isPagination();
         const paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
         if (!paginationPanelEnabled) {
-            this.setVisible(false);
+            this.setDisplayed(false);
             return;
         }
 
@@ -166,7 +166,7 @@ export class PaginationComp extends Component {
         const pageSize = this.paginationProxy.getPageSize();
         const maxRowFound = this.paginationProxy.isLastPageFound();
         const rowCount = this.paginationProxy.isLastPageFound() ?
-            this.paginationProxy.getTotalRowCount() : null;
+            this.paginationProxy.getMasterRowCount() : null;
 
         let startRow: any;
         let endRow: any;
@@ -199,7 +199,7 @@ export class PaginationComp extends Component {
         const lastPageFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
         const rowCount = this.paginationProxy.isLastPageFound() ?
-            this.paginationProxy.getTotalRowCount() : null;
+            this.paginationProxy.getMasterRowCount() : null;
 
         if (lastPageFound) {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);

@@ -2,7 +2,6 @@ import { Autowired, Component, Environment, GridOptionsWrapper, PostConstruct, _
 
 export interface VirtualListModel {
     getRowCount(): number;
-
     getRow(index: number): any;
 }
 
@@ -36,7 +35,13 @@ export class VirtualList extends Component {
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
 
         this.addScrollListener();
-        this.rowHeight = this.gridOptionsWrapper.getVirtualItemHeight();
+        const item = document.createElement('div');
+        _.addCssClass(item, 'ag-virtual-list-item');
+        this.rowHeight = this.getItemHeight();
+    }
+
+    private getItemHeight(): number {
+        return this.gridOptionsWrapper.getVirtualItemHeight();
     }
 
     public ensureIndexVisible(index: number): void {

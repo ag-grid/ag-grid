@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,7 +39,6 @@ var RowDragComp = /** @class */ (function (_super) {
     __extends(RowDragComp, _super);
     function RowDragComp(rowNode, column, cellValue, beans) {
         var _this = _super.call(this, "<div class=\"ag-row-drag\"></div>") || this;
-        _this.visibleMode = null;
         _this.rowNode = rowNode;
         _this.column = column;
         _this.cellValue = cellValue;
@@ -83,12 +82,6 @@ var RowDragComp = /** @class */ (function (_super) {
         this.beans.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(function () { return _this.beans.dragAndDropService.removeDragSource(dragSource); });
     };
-    RowDragComp.prototype.getVisibleMode = function () {
-        return this.visibleMode;
-    };
-    RowDragComp.prototype.setVisibleMode = function (type) {
-        this.visibleMode = type;
-    };
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),
@@ -98,15 +91,41 @@ var RowDragComp = /** @class */ (function (_super) {
     return RowDragComp;
 }(component_1.Component));
 exports.RowDragComp = RowDragComp;
+var VisibilityStrategy = /** @class */ (function (_super) {
+    __extends(VisibilityStrategy, _super);
+    function VisibilityStrategy(parent, rowNode, column) {
+        var _this = _super.call(this) || this;
+        _this.parent = parent;
+        _this.column = column;
+        _this.rowNode = rowNode;
+        return _this;
+    }
+    VisibilityStrategy.prototype.setDisplayedOrVisible = function (neverDisplayed) {
+        if (neverDisplayed) {
+            this.parent.setDisplayed(false);
+        }
+        else {
+            var shown = this.column.isRowDrag(this.rowNode);
+            var isShownSometimes = utils_1._.isFunction(this.column.getColDef().rowDrag);
+            // if shown sometimes, them some rows can have drag handle while other don't,
+            // so we use setVisible to keep the handles horizontally aligned (as setVisible
+            // keeps the empty space, whereas setDisplayed looses the space)
+            if (isShownSometimes) {
+                this.parent.setVisible(shown);
+            }
+            else {
+                this.parent.setDisplayed(shown);
+            }
+        }
+    };
+    return VisibilityStrategy;
+}(beanStub_1.BeanStub));
 // when non managed, the visibility depends on suppressRowDrag property only
 var NonManagedVisibilityStrategy = /** @class */ (function (_super) {
     __extends(NonManagedVisibilityStrategy, _super);
     function NonManagedVisibilityStrategy(parent, beans, rowNode, column) {
-        var _this = _super.call(this) || this;
-        _this.parent = parent;
+        var _this = _super.call(this, parent, rowNode, column) || this;
         _this.beans = beans;
-        _this.column = column;
-        _this.rowNode = rowNode;
         return _this;
     }
     NonManagedVisibilityStrategy.prototype.postConstruct = function () {
@@ -121,19 +140,8 @@ var NonManagedVisibilityStrategy = /** @class */ (function (_super) {
     };
     NonManagedVisibilityStrategy.prototype.workOutVisibility = function () {
         // only show the drag if both sort and filter are not present
-        var suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
-        if (suppressRowDrag) {
-            this.parent.setVisibleMode('display');
-            this.parent.setVisible(false, 'display');
-        }
-        else {
-            var visible = this.column.isRowDrag(this.rowNode);
-            if (!this.parent.getVisibleMode()) {
-                var isRowDragFunc = utils_1._.isFunction(this.column.getColDef().rowDrag);
-                this.parent.setVisibleMode(isRowDragFunc ? 'visibility' : 'display');
-            }
-            this.parent.setVisible(visible, this.parent.getVisibleMode());
-        }
+        var neverDisplayed = this.beans.gridOptionsWrapper.isSuppressRowDrag();
+        this.setDisplayedOrVisible(neverDisplayed);
     };
     __decorate([
         context_1.PostConstruct,
@@ -142,16 +150,13 @@ var NonManagedVisibilityStrategy = /** @class */ (function (_super) {
         __metadata("design:returntype", void 0)
     ], NonManagedVisibilityStrategy.prototype, "postConstruct", null);
     return NonManagedVisibilityStrategy;
-}(beanStub_1.BeanStub));
+}(VisibilityStrategy));
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 var ManagedVisibilityStrategy = /** @class */ (function (_super) {
     __extends(ManagedVisibilityStrategy, _super);
     function ManagedVisibilityStrategy(parent, beans, rowNode, column) {
-        var _this = _super.call(this) || this;
-        _this.parent = parent;
+        var _this = _super.call(this, parent, rowNode, column) || this;
         _this.beans = beans;
-        _this.column = column;
-        _this.rowNode = rowNode;
         return _this;
     }
     ManagedVisibilityStrategy.prototype.postConstruct = function () {
@@ -198,19 +203,8 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
         // only show the drag if both sort and filter are not present
         var sortOrFilterOrGroupActive = this.sortActive || this.filterActive || this.rowGroupActive;
         var suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
-        var alwaysHide = sortOrFilterOrGroupActive || suppressRowDrag;
-        if (alwaysHide) {
-            this.parent.setVisibleMode('display');
-            this.parent.setVisible(false, 'display');
-        }
-        else {
-            var visible = this.column.isRowDrag(this.rowNode);
-            if (!this.parent.getVisibleMode()) {
-                var isRowDragFunc = utils_1._.isFunction(this.column.getColDef().rowDrag);
-                this.parent.setVisibleMode(isRowDragFunc ? 'visibility' : 'display');
-            }
-            this.parent.setVisible(visible, this.parent.getVisibleMode());
-        }
+        var neverDisplayed = sortOrFilterOrGroupActive || suppressRowDrag;
+        this.setDisplayedOrVisible(neverDisplayed);
     };
     __decorate([
         context_1.PostConstruct,
@@ -219,4 +213,4 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
         __metadata("design:returntype", void 0)
     ], ManagedVisibilityStrategy.prototype, "postConstruct", null);
     return ManagedVisibilityStrategy;
-}(beanStub_1.BeanStub));
+}(VisibilityStrategy));

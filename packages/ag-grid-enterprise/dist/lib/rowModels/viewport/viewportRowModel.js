@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -119,12 +119,6 @@ var ViewportRowModel = /** @class */ (function () {
         });
         return result;
     };
-    ViewportRowModel.prototype.getPageFirstRow = function () {
-        return 0;
-    };
-    ViewportRowModel.prototype.getPageLastRow = function () {
-        return this.rowCount - 1;
-    };
     ViewportRowModel.prototype.getRowCount = function () {
         return this.rowCount;
     };
@@ -141,6 +135,12 @@ var ViewportRowModel = /** @class */ (function () {
             rowHeight: this.rowHeight,
             rowTop: this.rowHeight * index
         };
+    };
+    ViewportRowModel.prototype.getTopLevelRowCount = function () {
+        return this.getRowCount();
+    };
+    ViewportRowModel.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
+        return topLevelIndex;
     };
     ViewportRowModel.prototype.getCurrentPageHeight = function () {
         return this.rowCount * this.rowHeight;

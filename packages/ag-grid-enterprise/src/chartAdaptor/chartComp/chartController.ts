@@ -1,8 +1,8 @@
-import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct, } from "ag-grid-community";
-import { RangeController } from "../../rangeController";
-import { ChartModel, ColState } from "./chartModel";
-import { Palette } from "../../charts/chart/palettes";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import {AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct,} from "ag-grid-community";
+import {RangeController} from "../../rangeController";
+import {ChartModel, ColState} from "./chartModel";
+import {Palette} from "../../charts/chart/palettes";
+import {ChartProxy} from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -40,6 +40,9 @@ export class ChartController extends BeanStub {
     }
 
     public updateForGridChange() {
+        // don't update chart if chart is detached from grid data
+        if (this.model.isDetached()) { return; }
+
         // update the model with changes to the cell ranges from the grid before updating the column state
         this.model.updateCellRanges();
         this.model.resetColumnState();
@@ -69,6 +72,10 @@ export class ChartController extends BeanStub {
         return this.model.getChartType();
     }
 
+    public isPivotChart() {
+        return this.model.isPivotChart();
+    }
+
     public getActivePalette(): number {
         return this.model.getActivePalette();
     }
@@ -89,17 +96,44 @@ export class ChartController extends BeanStub {
     }
 
     public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
-        return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()}
+        return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()};
+    }
+
+    public isDefaultCategorySelected() {
+        const selectedDimension = this.model.getSelectedDimension().colId;
+        return selectedDimension && selectedDimension === ChartModel.DEFAULT_CATEGORY;
     }
 
     public setChartRange() {
-        if (!this.model.isSuppressChartRanges()) {
+        if (!this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
     }
 
-    public getChartProxy(): ChartProxy {
+    public detachChartRange() {
+        // when chart is detached it won't listen to changes from the grid
+        this.model.toggleDetached();
+
+        if (this.model.isDetached()) {
+            // remove range from grid
+            this.rangeController.setCellRanges([]);
+        } else {
+            // update grid with chart range
+            this.setChartRange();
+
+            // update chart data may have changed
+            this.updateForGridChange();
+        }
+    }
+
+    public getChartProxy(): ChartProxy<any> {
         return this.model.getChartProxy();
+    }
+
+    public isActiveXYChart() {
+        const xyChartSelected = [ChartType.Scatter, ChartType.Bubble].indexOf(this.getChartType()) > -1;
+        // x y charts behave like regular cartesian charts if the default category is not selected, i.e. (None)
+        return xyChartSelected && this.isDefaultCategorySelected();
     }
 
     private raiseChartUpdatedEvent() {

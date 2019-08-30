@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -72,7 +72,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
     DetailCellRenderer.prototype.addThemeToDetailGrid = function () {
         // this is needed by environment service of the child grid, the class needs to be on
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
-        var theme = this.environment.getTheme();
+        var theme = this.environment.getTheme().theme;
         if (theme) {
             ag_grid_community_1._.addCssClass(this.eDetailGrid, theme);
         }

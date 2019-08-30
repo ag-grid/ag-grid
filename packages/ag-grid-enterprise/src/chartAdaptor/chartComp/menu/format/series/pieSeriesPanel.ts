@@ -1,17 +1,20 @@
 import {
     _,
     AgGroupComponent,
-    AgSlider, AgToggleButton, Autowired,
+    AgSlider,
+    AgToggleButton,
+    Autowired,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { PieSeries } from "../../../../../charts/chart/series/pieSeries";
-import { ShadowPanel } from "./shadowPanel";
-import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
-import { CalloutPanel } from "./calloutPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {ShadowPanel} from "./shadowPanel";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {CalloutPanel} from "./calloutPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {PieChartProxy} from "../../../chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy";
 
 export class PieSeriesPanel extends Component {
 
@@ -34,21 +37,19 @@ export class PieSeriesPanel extends Component {
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private readonly chartController: ChartController;
+    private readonly chartProxy: PieChartProxy | DoughnutChartProxy;
 
     private activePanels: Component[] = [];
-    private series: PieSeries[];
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
+        this.chartProxy = chartController.getChartProxy() as PieChartProxy | DoughnutChartProxy;
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(PieSeriesPanel.TEMPLATE);
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.series = chartProxy.getChart().series as PieSeries[];
 
         this.initGroup();
         this.initSeriesTooltips();
@@ -66,88 +67,73 @@ export class PieSeriesPanel extends Component {
     }
 
     private initSeriesTooltips() {
-        const selected = this.series.some(s => s.tooltipEnabled);
-
         this.seriesTooltipsToggle
             .setLabel(this.chartTranslator.translate('tooltips'))
             .setLabelAlignment('left')
             .setLabelWidth('flex')
             .setInputWidth(40)
-            .setValue(selected)
-            .onValueChange(newSelection => {
-                this.series.forEach(s => s.tooltipEnabled = newSelection);
-            });
+            .setValue(this.chartProxy.getTooltipsEnabled())
+            .onValueChange(newValue => this.chartProxy.setSeriesProperty('tooltipEnabled', newValue));
     }
 
     private initSeriesStrokeWidth() {
-        const strokeWidth = this.series.length > 0 ? this.series[0].strokeWidth : 1;
-
         this.seriesStrokeWidthSlider
             .setLabel(this.chartTranslator.translate('strokeWidth'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(`${strokeWidth}`)
-            .onValueChange(newValue => this.series.forEach(s => s.strokeWidth = newValue));
+            .setValue(this.chartProxy.getSeriesProperty('strokeWidth'))
+            .onValueChange(newValue => this.chartProxy.setSeriesProperty('strokeWidth', newValue));
     }
 
     private initOpacity() {
-        const strokeOpacity = this.series.length > 0 ? this.series[0].strokeOpacity : 1;
-
         this.seriesLineOpacitySlider
             .setLabel(this.chartTranslator.translate('strokeOpacity'))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(`${strokeOpacity}`)
-            .onValueChange(newValue => this.series.forEach(s => s.strokeOpacity = newValue));
-
-        const fillOpacity = this.series.length > 0 ? this.series[0].fillOpacity : 1;
+            .setValue(this.chartProxy.getSeriesProperty('strokeOpacity'))
+            .onValueChange(newValue => this.chartProxy.setSeriesProperty('strokeOpacity', newValue));
 
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate('fillOpacity'))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(`${fillOpacity}`)
-            .onValueChange(newValue => this.series.forEach(s => s.fillOpacity = newValue));
+            .setValue(this.chartProxy.getSeriesProperty('fillOpacity'))
+            .onValueChange(newValue => this.chartProxy.setSeriesProperty('fillOpacity', newValue));
     }
 
     private initLabelPanel() {
-        // show all labels by default
-        this.series.forEach(s => s.labelMinAngle = 0);
-
         const initialFont = {
-            family: this.series.length > 0 ? this.series[0].labelFontFamily : 'Verdana, sans-serif',
-            style: this.series.length > 0 ? this.series[0].labelFontStyle : undefined,
-            weight: this.series.length > 0 ? this.series[0].labelFontWeight : undefined,
-            size: this.series.length > 0 ? this.series[0].labelFontSize : 12,
-            color: this.series.length > 0 ? this.series[0].labelColor : 'rgb(87, 87, 87)'
+            family: this.chartProxy.getSeriesProperty('labelFontFamily'),
+            style: this.chartProxy.getSeriesProperty('labelFontStyle'),
+            weight: this.chartProxy.getSeriesProperty('labelFontWeight'),
+            size: parseInt(this.chartProxy.getSeriesProperty('labelFontSize')),
+            color: this.chartProxy.getSeriesProperty('labelColor')
         };
 
+        // note we don't set the font style via series panel
         const setFont = (font: LabelFont) => {
-            if (font.family) { this.series.forEach(s => s.labelFontFamily = font.family as string); }
-            if (font.style) { this.series.forEach(s => s.labelFontStyle = font.style); }
-            if (font.weight) { this.series.forEach(s => s.labelFontWeight = font.weight); }
-            if (font.size) { this.series.forEach(s => s.labelFontSize = font.size as number); }
-            if (font.color) { this.series.forEach(s => s.labelColor = font.color as string); }
+            if (font.family) { this.chartProxy.setSeriesProperty('labelFontFamily', font.family); }
+            if (font.weight) { this.chartProxy.setSeriesProperty('labelFontWeight', font.weight); }
+            if (font.size) { this.chartProxy.setSeriesProperty('labelFontSize', font.size); }
+            if (font.color) { this.chartProxy.setSeriesProperty('labelColor', font.color); }
         };
 
         const params: LabelPanelParams = {
-            enabled: this.series.some(s => s.labelEnabled),
-            setEnabled: (enabled: boolean) => {
-                this.series.forEach(s => s.labelEnabled = enabled);
-            },
+            enabled: this.chartProxy.getLabelEnabled(),
+            setEnabled: (enabled: boolean) => this.chartProxy.setSeriesProperty('labelEnabled', enabled),
             suppressEnabledCheckbox: false,
             initialFont: initialFont,
             setFont: setFont
         };
 
-        const labelPanelComp = new LabelPanel(this.chartController, params);
+        const labelPanelComp = new LabelPanel(params);
 
         this.getContext().wireBean(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
-        const calloutPanelComp = new CalloutPanel(this.series);
+        const calloutPanelComp = new CalloutPanel(this.chartProxy);
         this.getContext().wireBean(calloutPanelComp);
         labelPanelComp.addCompToPanel(calloutPanelComp);
         this.activePanels.push(calloutPanelComp);
@@ -156,7 +142,7 @@ export class PieSeriesPanel extends Component {
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = new ShadowPanel(this.chartController);
+        const shadowPanelComp = new ShadowPanel(this.chartProxy);
         this.getContext().wireBean(shadowPanelComp);
         this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
         this.seriesGroup.addItem(shadowPanelComp);

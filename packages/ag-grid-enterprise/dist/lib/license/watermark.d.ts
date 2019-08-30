@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Component } from 'ag-grid-community';
 import { LicenseManager } from '../licenseManager';
 export declare class WatermarkComp extends Component {

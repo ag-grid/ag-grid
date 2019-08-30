@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Scene } from "../scene/scene";
 import { Series } from "./series/series";
 import { Padding } from "../util/padding";
@@ -7,6 +7,9 @@ import { Rect } from "../scene/shape/rect";
 import { Legend } from "./legend";
 import { Caption } from "../caption";
 export declare type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
+export declare type ChartOptions = {
+    document?: Document;
+};
 export declare abstract class Chart {
     readonly scene: Scene;
     readonly background: Rect;
@@ -17,7 +20,7 @@ export declare abstract class Chart {
     private tooltipRect?;
     tooltipOffset: number[];
     private defaultTooltipClass;
-    protected constructor();
+    protected constructor(options?: ChartOptions);
     destroy(): void;
     private readonly onLayoutChange;
     readonly element: HTMLElement;

@@ -377,7 +377,8 @@ export class FilterManager {
                 node: rowNode,
                 data: rowNode.data,
                 column: column,
-                colDef: colDef
+                colDef: colDef,
+                context: this.gridOptionsWrapper.getContext()
             };
             valueAfterCallback = column.getColDef().getQuickFilterText(params);
         } else {
@@ -461,17 +462,22 @@ export class FilterManager {
             defaultFilter = 'agSetColumnFilter';
         }
 
-        const event: FilterModifiedEvent = {
-            type: Events.EVENT_FILTER_MODIFIED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-
         const sanitisedColDef: ColDef = _.cloneObject(column.getColDef());
+
+        let filterInstance: IFilterComp;
 
         const params = this.createFilterParams(column, sanitisedColDef, $scope);
         params.filterChangedCallback = this.onFilterChanged.bind(this);
-        params.filterModifiedCallback = () => this.eventService.dispatchEvent(event);
+        params.filterModifiedCallback = () => {
+            const event: FilterModifiedEvent = {
+                type: Events.EVENT_FILTER_MODIFIED,
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                column: column,
+                filterInstance: filterInstance
+            };
+            this.eventService.dispatchEvent(event);
+        };
 
         // we modify params in a callback as we need the filter instance, and this isn't available
         // when creating the params above
@@ -479,7 +485,11 @@ export class FilterManager {
             doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filter),
         });
 
-        return this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);
+        const res = this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);
+
+        res.then(r => filterInstance = r );
+
+        return res;
     }
 
     public createFilterParams(column: Column, colDef: ColDef, $scope: any = null): IFilterParams {

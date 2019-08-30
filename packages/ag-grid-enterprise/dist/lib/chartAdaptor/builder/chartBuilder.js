@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var cartesianChart_1 = require("../../charts/chart/cartesianChart");
@@ -13,29 +13,92 @@ var categoryAxis_1 = require("../../charts/chart/axis/categoryAxis");
 var numberAxis_1 = require("../../charts/chart/axis/numberAxis");
 var padding_1 = require("../../charts/util/padding");
 var caption_1 = require("../../charts/caption");
+var groupedCategoryAxis_1 = require("../../charts/chart/axis/groupedCategoryAxis");
+var groupedCategoryChart_1 = require("../../charts/chart/groupedCategoryChart");
 var ChartBuilder = /** @class */ (function () {
     function ChartBuilder() {
     }
     ChartBuilder.createCartesianChart = function (options) {
-        var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis));
+        var chart = new cartesianChart_1.CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options);
     };
+    ChartBuilder.createGroupedColumnChart = function (options) {
+        var chart = new groupedCategoryChart_1.GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
+    };
+    ChartBuilder.createGroupedBarChart = function (options) {
+        var chart = new groupedCategoryChart_1.GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.yAxis),
+            yAxis: ChartBuilder.createGroupedAxis(options.xAxis)
+        });
+        chart.layout = cartesianChart_1.CartesianChartLayout.Horizontal;
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'bar');
+    };
+    ChartBuilder.createGroupedLineChart = function (options) {
+        var chart = new groupedCategoryChart_1.GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'line');
+    };
+    ChartBuilder.createGroupedAreaChart = function (options) {
+        var chart = new groupedCategoryChart_1.GroupedCategoryChart({
+            document: options.document,
+            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
+        return ChartBuilder.initGroupedCategoryChart(chart, options, 'area');
+    };
     ChartBuilder.createBarChart = function (options) {
-        var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.yAxis), ChartBuilder.createAxis(options.xAxis));
-        chart.layout = 'horizontal';
+        var chart = new cartesianChart_1.CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.yAxis),
+            yAxis: ChartBuilder.createAxis(options.xAxis)
+        });
+        chart.layout = cartesianChart_1.CartesianChartLayout.Horizontal;
         return ChartBuilder.initCartesianChart(chart, options, 'bar');
     };
     ChartBuilder.createColumnChart = function (options) {
-        var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis));
+        var chart = new cartesianChart_1.CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options, 'bar');
     };
     ChartBuilder.createLineChart = function (options) {
-        var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis));
+        var chart = new cartesianChart_1.CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options, 'line');
     };
     ChartBuilder.createScatterChart = function (options) {
-        var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis));
+        var chart = new cartesianChart_1.CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
         return ChartBuilder.initCartesianChart(chart, options, 'scatter');
+    };
+    ChartBuilder.createAreaChart = function (options) {
+        var chart = new cartesianChart_1.CartesianChart({
+            document: options.document,
+            xAxis: ChartBuilder.createAxis(options.xAxis),
+            yAxis: ChartBuilder.createAxis(options.yAxis)
+        });
+        return ChartBuilder.initCartesianChart(chart, options, 'area');
     };
     ChartBuilder.createPolarChart = function (options) {
         var chart = new polarChart_1.PolarChart();
@@ -48,10 +111,6 @@ var ChartBuilder = /** @class */ (function () {
     ChartBuilder.createPieChart = function (options) {
         var chart = new polarChart_1.PolarChart();
         return ChartBuilder.initPolarChart(chart, options, 'pie');
-    };
-    ChartBuilder.createAreaChart = function (options) {
-        var chart = new cartesianChart_1.CartesianChart(ChartBuilder.createAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis));
-        return ChartBuilder.initCartesianChart(chart, options, 'area');
     };
     ChartBuilder.createLineSeries = function (options) {
         return new lineSeries_1.LineSeries();
@@ -86,10 +145,10 @@ var ChartBuilder = /** @class */ (function () {
             chart.height = options.height;
         }
         if (options.title) {
-            chart.title = ChartBuilder.createTitle(options.title);
+            chart.title = ChartBuilder.createChartTitle(options.title);
         }
         if (options.subtitle) {
-            chart.subtitle = ChartBuilder.createSubtitle(options.subtitle);
+            chart.subtitle = ChartBuilder.createChartSubtitle(options.subtitle);
         }
         if (options.series !== undefined) {
             var seriesConfigs = options.series;
@@ -134,6 +193,10 @@ var ChartBuilder = /** @class */ (function () {
         ChartBuilder.initChart(chart, options, seriesType);
         return chart;
     };
+    ChartBuilder.initGroupedCategoryChart = function (chart, options, seriesType) {
+        ChartBuilder.initChart(chart, options, seriesType);
+        return chart;
+    };
     ChartBuilder.initPolarChart = function (chart, options, seriesType) {
         ChartBuilder.initChart(chart, options, seriesType);
         return chart;
@@ -173,6 +236,9 @@ var ChartBuilder = /** @class */ (function () {
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
         }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
+        }
         if (options.marker !== undefined) {
             series.marker = options.marker;
         }
@@ -198,14 +264,38 @@ var ChartBuilder = /** @class */ (function () {
         if (options.yField !== undefined) {
             series.yField = options.yField;
         }
+        if (options.radiusField !== undefined) {
+            series.radiusField = options.radiusField;
+        }
+        if (options.xFieldName !== undefined) {
+            series.xFieldName = options.xFieldName;
+        }
+        if (options.yFieldName !== undefined) {
+            series.yFieldName = options.yFieldName;
+        }
+        if (options.radiusFieldName !== undefined) {
+            series.radiusFieldName = options.radiusFieldName;
+        }
         if (options.fill !== undefined) {
             series.fill = options.fill;
         }
         if (options.stroke !== undefined) {
             series.stroke = options.stroke;
         }
+        if (options.fillOpacity !== undefined) {
+            series.fillOpacity = options.fillOpacity;
+        }
+        if (options.strokeOpacity !== undefined) {
+            series.strokeOpacity = options.strokeOpacity;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
+        }
         if (options.markerSize !== undefined) {
             series.markerSize = options.markerSize;
+        }
+        if (options.minMarkerSize !== undefined) {
+            series.minMarkerSize = options.minMarkerSize;
         }
         if (options.markerStrokeWidth !== undefined) {
             series.markerStrokeWidth = options.markerStrokeWidth;
@@ -246,6 +336,9 @@ var ChartBuilder = /** @class */ (function () {
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
         }
         if (options.labelEnabled !== undefined) {
             series.labelEnabled = options.labelEnabled;
@@ -301,6 +394,9 @@ var ChartBuilder = /** @class */ (function () {
         }
         if (options.strokeWidth !== undefined) {
             series.strokeWidth = options.strokeWidth;
+        }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
         }
         if (options.marker !== undefined) {
             series.marker = options.marker;
@@ -378,6 +474,9 @@ var ChartBuilder = /** @class */ (function () {
         if (options.strokeOpacity !== undefined) {
             series.strokeOpacity = options.strokeOpacity;
         }
+        if (options.highlightStyle !== undefined) {
+            series.highlightStyle = options.highlightStyle;
+        }
         if (options.rotation !== undefined) {
             series.rotation = options.rotation;
         }
@@ -433,7 +532,7 @@ var ChartBuilder = /** @class */ (function () {
             legend.labelColor = options.labelColor;
         }
     };
-    ChartBuilder.createTitle = function (options) {
+    ChartBuilder.createAxisTitle = function (options) {
         options = Object.create(options);
         if (options.text === undefined) {
             options.text = 'Title';
@@ -449,7 +548,23 @@ var ChartBuilder = /** @class */ (function () {
         }
         return ChartBuilder.createCaption(options);
     };
-    ChartBuilder.createSubtitle = function (options) {
+    ChartBuilder.createChartTitle = function (options) {
+        options = Object.create(options);
+        if (options.text === undefined) {
+            options.text = 'Title';
+        }
+        if (options.fontWeight === undefined) {
+            options.fontWeight = 'bold';
+        }
+        if (options.fontSize === undefined) {
+            options.fontSize = 16;
+        }
+        if (options.fontFamily === undefined) {
+            options.fontFamily = 'Verdana, sans-serif';
+        }
+        return ChartBuilder.createCaption(options);
+    };
+    ChartBuilder.createChartSubtitle = function (options) {
         options = Object.create(options);
         if (options.text === undefined) {
             options.text = 'Subtitle';
@@ -505,7 +620,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createDropShadow = function (options) {
         if (options === void 0) { options = {}; }
-        return new dropShadow_1.DropShadow(options.color || 'black', options.offset ? new dropShadow_1.Offset(options.offset[0], options.offset[1]) : new dropShadow_1.Offset(0, 0), options.blur || 0);
+        return new dropShadow_1.DropShadow(options);
     };
     ChartBuilder.createAxis = function (options) {
         var axis = undefined;
@@ -524,9 +639,33 @@ var ChartBuilder = /** @class */ (function () {
             if (name_1 === 'type') {
                 continue;
             }
+            if (name_1 === 'title' && options.title) {
+                axis.title = ChartBuilder.createAxisTitle(options.title);
+                continue;
+            }
             var value = options[name_1];
             if (value !== undefined) {
                 axis[name_1] = value;
+            }
+        }
+        return axis;
+    };
+    ChartBuilder.createGroupedAxis = function (options) {
+        var axis = new groupedCategoryAxis_1.GroupedCategoryAxis();
+        if (!axis) {
+            throw new Error('Unknown axis type.');
+        }
+        for (var name_2 in options) {
+            if (name_2 === 'type') {
+                continue;
+            }
+            if (name_2 === 'title' && options.title) {
+                axis.title = ChartBuilder.createAxisTitle(options.title);
+                continue;
+            }
+            var value = options[name_2];
+            if (value !== undefined) {
+                axis[name_2] = value;
             }
         }
         return axis;

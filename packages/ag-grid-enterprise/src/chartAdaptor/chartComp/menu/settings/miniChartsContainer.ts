@@ -1,14 +1,21 @@
-import {
-    ChartType,
-    Component,
-    PostConstruct,
-    _,
-    AgGroupComponent, Autowired
-} from "ag-grid-community";
+import {_, AgGroupComponent, Autowired, ChartType, Component, PostConstruct} from "ag-grid-community";
 
-import { ChartController } from "../../chartController";
+import {ChartController} from "../../chartController";
+import {ChartTranslator} from "../../chartTranslator";
+import {Group} from "../../../../charts/scene/group";
+import {Scene} from "../../../../charts/scene/scene";
+import {toRadians} from "../../../../charts/util/angle";
+import {Sector} from "../../../../charts/scene/shape/sector";
+import {Path} from "../../../../charts/scene/shape/path";
+import linearScale from "../../../../charts/scale/linearScale";
+import {Line} from "../../../../charts/scene/shape/line";
+import {ClipRect} from "../../../../charts/scene/clipRect";
+import {Rect} from "../../../../charts/scene/shape/rect";
+import {BandScale} from "../../../../charts/scale/bandScale";
+import {Arc} from "../../../../charts/scene/shape/arc";
+import {Shape} from "../../../../charts/scene/shape/shape";
 
-type ChartGroupsType = 'bar' | 'column' | 'pie' | 'line' | 'area';
+type ChartGroupsType = 'barGroup' | 'columnGroup' | 'pieGroup' | 'lineGroup' | 'scatterGroup' | 'areaGroup';
 
 type ChartGroups = {
     [key in ChartGroupsType]: any[];
@@ -22,6 +29,8 @@ export class MiniChartsContainer extends Component {
     private wrappers: { [key: string ]: HTMLElement } = {};
     private chartController: ChartController;
 
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+
     constructor(activePalette: number, chartController: ChartController) {
         super(MiniChartsContainer.TEMPLATE);
 
@@ -34,26 +43,29 @@ export class MiniChartsContainer extends Component {
 
     @PostConstruct
     private init() {
-        // TODO: reintroduce MiniScatter when chart ranges support it
         const chartGroups: ChartGroups = {
-            column: [
+            columnGroup: [
                 MiniColumn,
                 MiniStackedColumn,
                 MiniNormalizedColumn
             ],
-            bar: [
+            barGroup: [
                 MiniBar,
                 MiniStackedBar,
                 MiniNormalizedBar
             ],
-            pie: [
+            pieGroup: [
                 MiniPie,
                 MiniDoughnut
             ],
-            line: [
+            lineGroup: [
                 MiniLine
             ],
-            area: [
+            scatterGroup: [
+                MiniScatter,
+                MiniBubble
+            ],
+            areaGroup: [
                 MiniArea,
                 MiniStackedArea,
                 MiniNormalizedArea
@@ -64,7 +76,7 @@ export class MiniChartsContainer extends Component {
         Object.keys(chartGroups).forEach(group => {
             const chartGroup = chartGroups[group as ChartGroupsType];
             const groupComponent = new AgGroupComponent({
-                title: _.capitalise(group),
+                title: this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
                 suppressOpenCloseIcons: true
@@ -102,32 +114,21 @@ export class MiniChartsContainer extends Component {
     }
 }
 
-import { Group } from "../../../../charts/scene/group";
-import { Scene } from "../../../../charts/scene/scene";
-import { toRadians } from "../../../../charts/util/angle";
-import { Sector } from "../../../../charts/scene/shape/sector";
-import { Path } from "../../../../charts/scene/shape/path";
-import linearScale from "../../../../charts/scale/linearScale";
-import { Line } from "../../../../charts/scene/shape/line";
-import { ClipRect } from "../../../../charts/scene/clipRect";
-import { Rect } from "../../../../charts/scene/shape/rect";
-import { BandScale } from "../../../../charts/scale/bandScale";
-import { Arc } from "../../../../charts/scene/shape/arc";
-import { Shape } from "../../../../charts/scene/shape/shape";
-import { ChartTranslator } from "../../chartTranslator";
-
 export abstract class MiniChart extends Component {
     @Autowired('chartTranslator') protected chartTranslator: ChartTranslator;
     protected readonly size = 58;
     protected readonly padding = 5;
     protected readonly root = new Group();
     protected readonly scene: Scene = (() => {
-        const scene = new Scene(this.size, this.size);
+        const scene = new Scene({
+            width: this.size,
+            height: this.size
+        });
         scene.root = this.root;
         return scene;
     })();
 
-    readonly element: HTMLElement = this.scene.hdpiCanvas.canvas;
+    readonly element: HTMLElement = this.scene.canvas.element;
 
     abstract updateColors(fills: string[], strokes: string[]): void;
 }
@@ -163,7 +164,7 @@ export class MiniPie extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('pieTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('pieTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -195,7 +196,7 @@ class MiniDoughnut extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('doughnutTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('doughnutTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -270,7 +271,7 @@ class MiniLine extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('lineTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('lineTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -342,7 +343,7 @@ class MiniColumn extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('groupedColumnTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('groupedColumnTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -415,7 +416,7 @@ class MiniBar extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('groupedBarTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('groupedBarTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -493,7 +494,7 @@ class MiniStackedColumn extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('stackedColumnTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('stackedColumnTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -501,7 +502,7 @@ class MiniStackedColumn extends MiniChart {
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
-            })
+            });
         });
     }
 }
@@ -573,7 +574,7 @@ class MiniStackedBar extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('stackedBarTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('stackedBarTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -581,7 +582,7 @@ class MiniStackedBar extends MiniChart {
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
-            })
+            });
         });
     }
 }
@@ -653,7 +654,7 @@ class MiniNormalizedColumn extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('normalizedColumnTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedColumnTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -661,7 +662,7 @@ class MiniNormalizedColumn extends MiniChart {
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
-            })
+            });
         });
     }
 }
@@ -733,7 +734,7 @@ class MiniNormalizedBar extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('normalizedBarTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedBarTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -741,83 +742,166 @@ class MiniNormalizedBar extends MiniChart {
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
-            })
+            });
         });
     }
 }
-//
-// class MiniScatter extends MiniChart {
-//     static chartType = ChartType.Scatter;
-//     private readonly points: Shape[];
-//
-//     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-//         super();
-//
-//         this.scene.parent = parent;
-//
-//         const size = this.size;
-//         const padding = this.padding;
-//
-//         // [x, y] pairs
-//         const data = [
-//             [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
-//             [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
-//         ];
-//
-//         const xScale = linearScale();
-//         xScale.domain = [-0.5, 4];
-//         xScale.range = [padding * 2, size - padding];
-//
-//         const yScale = linearScale();
-//         yScale.domain = [-0.5, 3.5];
-//         yScale.range = [size - padding, padding];
-//
-//         const axisOvershoot = 3;
-//
-//         const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
-//         leftAxis.stroke = 'gray';
-//         leftAxis.strokeWidth = 1;
-//
-//         const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
-//         bottomAxis.stroke = 'gray';
-//         bottomAxis.strokeWidth = 1;
-//
-//         const points: Shape[] = [];
-//         data.forEach((series, i) => {
-//             series.forEach((datum, j) => {
-//                 const arc = new Arc();
-//                 arc.strokeWidth = 1;
-//                 arc.centerX = xScale.convert(datum[0]);
-//                 arc.centerY = yScale.convert(datum[1]);
-//                 arc.radiusX = 3;
-//                 arc.radiusY = 3;
-//                 points.push(arc);
-//             });
-//         });
-//         this.points = points;
-//
-//         const clipRect = new ClipRect();
-//         clipRect.x = padding;
-//         clipRect.y = padding;
-//         clipRect.width = size - padding * 2;
-//         clipRect.height = size - padding * 2;
-//
-//         clipRect.append(this.points);
-//         const root = this.root;
-//         root.append(clipRect);
-//         root.append(leftAxis);
-//         root.append(bottomAxis);
-//
-//         this.updateColors(fills, strokes);
-//     }
-//
-//     updateColors(fills: string[], strokes: string[]) {
-//         this.points.forEach((line, i) => {
-//             line.stroke = strokes[i % strokes.length];
-//             line.fill = fills[i % fills.length];
-//         });
-//     }
-// }
+
+class MiniScatter extends MiniChart {
+    static chartType = ChartType.Scatter;
+    private readonly points: Shape[];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+
+        // [x, y] pairs
+        const data = [
+            [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
+            [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
+        ];
+
+        const xScale = linearScale();
+        xScale.domain = [-0.5, 4];
+        xScale.range = [padding * 2, size - padding];
+
+        const yScale = linearScale();
+        yScale.domain = [-0.5, 3.5];
+        yScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+
+        const points: Shape[] = [];
+        data.forEach((series, i) => {
+            series.forEach((datum, j) => {
+                const arc = new Arc();
+                arc.strokeWidth = 1;
+                arc.centerX = xScale.convert(datum[0]);
+                arc.centerY = yScale.convert(datum[1]);
+                arc.radiusX = 2.5;
+                arc.radiusY = 2.5;
+                points.push(arc);
+            });
+        });
+        this.points = points;
+
+        const clipRect = new ClipRect();
+        clipRect.x = padding;
+        clipRect.y = padding;
+        clipRect.width = size - padding * 2;
+        clipRect.height = size - padding * 2;
+
+        clipRect.append(this.points);
+        const root = this.root;
+        root.append(clipRect);
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    @PostConstruct
+    private init() {
+        this.scene.canvas.element.title = this.chartTranslator.translate('scatterTooltip');
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.points.forEach((line, i) => {
+            line.stroke = strokes[i % strokes.length];
+            line.fill = fills[i % fills.length];
+        });
+    }
+}
+
+class MiniBubble extends MiniChart {
+    static chartType = ChartType.Bubble;
+    private readonly points: Shape[];
+
+    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
+        super();
+
+        this.scene.parent = parent;
+
+        const size = this.size;
+        const padding = this.padding;
+
+        // [x, y, radius] triples
+        const data = [
+            [[0.1, 0.3, 5], [0.5, 0.4, 7], [0.2, 0.8, 7]], [[0.8, 0.7, 5], [0.7, 0.3, 9]]
+        ];
+
+        const xScale = linearScale();
+        xScale.domain = [0, 1];
+        xScale.range = [padding * 2, size - padding];
+
+        const yScale = linearScale();
+        yScale.domain = [0, 1];
+        yScale.range = [size - padding, padding];
+
+        const axisOvershoot = 3;
+
+        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        leftAxis.stroke = 'gray';
+        leftAxis.strokeWidth = 1;
+
+        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        bottomAxis.stroke = 'gray';
+        bottomAxis.strokeWidth = 1;
+
+        const points: Shape[] = [];
+        data.forEach((series, i) => {
+            series.forEach((datum, j) => {
+                const arc = new Arc();
+                arc.strokeWidth = 1;
+                arc.centerX = xScale.convert(datum[0]);
+                arc.centerY = yScale.convert(datum[1]);
+                arc.radiusX = datum[2];
+                arc.radiusY = datum[2];
+                arc.fillOpacity = 0.7;
+                points.push(arc);
+            });
+        });
+        this.points = points;
+
+        const clipRect = new ClipRect();
+        clipRect.x = padding;
+        clipRect.y = padding;
+        clipRect.width = size - padding * 2;
+        clipRect.height = size - padding * 2;
+
+        clipRect.append(this.points);
+        const root = this.root;
+        root.append(clipRect);
+        root.append(leftAxis);
+        root.append(bottomAxis);
+
+        this.updateColors(fills, strokes);
+    }
+
+    @PostConstruct
+    private init() {
+        this.scene.canvas.element.title = this.chartTranslator.translate('bubbleTooltip');
+    }
+
+    updateColors(fills: string[], strokes: string[]) {
+        this.points.forEach((line, i) => {
+            line.stroke = strokes[i % strokes.length];
+            line.fill = fills[i % fills.length];
+        });
+    }
+}
 
 class MiniArea extends MiniChart {
     static chartType = ChartType.Area;
@@ -912,7 +996,7 @@ class MiniArea extends MiniChart {
 
     @PostConstruct
     private init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('groupedAreaTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('groupedAreaTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -1017,7 +1101,7 @@ class MiniStackedArea extends MiniChart {
 
     @PostConstruct
     protected init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('stackedAreaTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('stackedAreaTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
@@ -1041,6 +1125,6 @@ class MiniNormalizedArea extends MiniStackedArea {
 
     @PostConstruct
     protected init() {
-        this.scene.hdpiCanvas.canvas.title = this.chartTranslator.translate('normalizedAreaTooltip');
+        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedAreaTooltip');
     }
 }

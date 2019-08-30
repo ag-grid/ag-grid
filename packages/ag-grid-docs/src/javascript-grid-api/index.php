@@ -342,6 +342,10 @@ include '../documentation-main/documentation_header.php';
             <td>Collapse all groups.</td>
         </tr>
         <tr>
+            <th>setRowNodeExpanded(rowNode, expanded)</th>
+            <td>Expand or collapse a specific row node.</td>
+        </tr>
+        <tr>
             <th>onGroupExpandedOrCollapsed()</th>
             <td>
                 If after getting the model, you expand or collapse a group, call this method to inform the grid. It will

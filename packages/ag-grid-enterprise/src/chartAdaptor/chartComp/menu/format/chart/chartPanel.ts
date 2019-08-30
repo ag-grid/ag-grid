@@ -7,12 +7,13 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
-import { PaddingPanel } from "./paddingPanel";
-import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
-import { Caption } from "../../../../../charts/caption";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {Chart} from "../../../../../charts/chart/chart";
+import {PaddingPanel} from "./paddingPanel";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {Caption} from "../../../../../charts/caption";
+import {ChartTranslator} from "../../../chartTranslator";
+import {ChartProxy} from "../../../chartProxies/chartProxy";
 
 export class ChartPanel extends Component {
 
@@ -29,20 +30,20 @@ export class ChartPanel extends Component {
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private chart: Chart;
+    private chartProxy: ChartProxy<any>;
     private activePanels: Component[] = [];
     private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
+        this.chartProxy = this.chartController.getChartProxy();
+        this.chart = this.chartProxy.getChart();
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(ChartPanel.TEMPLATE);
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
 
         this.initGroup();
         this.initTitles();
@@ -60,35 +61,19 @@ export class ChartPanel extends Component {
         const title = this.chart.title ? this.chart.title.text : '';
 
         const initialFont = {
-            family: this.chart.title ? this.chart.title.fontFamily : 'Verdana, sans-serif',
-            style: this.chart.title ? this.chart.title.fontStyle : '',
-            weight: this.chart.title ? this.chart.title.fontWeight : 'Normal',
-            size: this.chart.title ? this.chart.title.fontSize : 22,
-            color: this.chart.title ? this.chart.title.color : 'black'
+            family: this.chart.title ? this.chartProxy.getTitleProperty('fontFamily') : 'Verdana, sans-serif',
+            style: this.chart.title ? this.chartProxy.getTitleProperty('fontStyle') : '',
+            weight: this.chart.title ? this.chartProxy.getTitleProperty('fontWeight') : 'Normal',
+            size: this.chart.title ? parseInt(this.chartProxy.getTitleProperty('fontSize')) : 22,
+            color: this.chart.title ? this.chartProxy.getTitleProperty('color') : 'black'
         };
 
+        // note we don't set the font style via chart title panel
         const setFont = (font: LabelFont) => {
-            const currentFont = this.chart.title as Caption;
-
-            if (font.family) {
-                currentFont.fontFamily = font.family;
-                this.chart.title = currentFont;
-            }
-
-            if (font.weight) {
-                currentFont.fontWeight = font.weight;
-                this.chart.title = currentFont;
-            }
-
-            if (font.size) {
-                currentFont.fontSize = font.size;
-                this.chart.title = currentFont;
-            }
-
-            if (font.color) {
-                currentFont.color = font.color;
-                this.chart.title = currentFont;
-            }
+            if (font.family) { this.chartProxy.setTitleProperty('fontFamily', font.family); }
+            if (font.weight) { this.chartProxy.setTitleProperty('fontWeight', font.weight); }
+            if (font.size) { this.chartProxy.setTitleProperty('fontSize', font.size); }
+            if (font.color) { this.chartProxy.setTitleProperty('color', font.color); }
         };
 
         this.titleInput
@@ -118,7 +103,7 @@ export class ChartPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = new LabelPanel(this.chartController, params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.chartGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);

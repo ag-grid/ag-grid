@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { BaseGridSerializingSession, Column, ExcelCell, ExcelColumn, ExcelDataType, ExcelOOXMLDataType, ExcelRow, ExcelStyle, GridSerializingParams, RowAccumulator, RowNode, RowSpanningAccumulator, RowType } from 'ag-grid-community';
 import { ExcelMixedStyle } from './excelCreator';
 import { ExcelXmlFactory } from './excelXmlFactory';

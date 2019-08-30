@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -101,7 +101,7 @@ var NumberFilter = /** @class */ (function (_super) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
         var pos = positionOne ? '1' : '2';
         var translate = this.translate.bind(this);
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n            <div class=\"ag-input-wrapper\">\n                <input class=\"ag-filter-filter\" ref=\"eValueFrom" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n             <div class=\"ag-input-wrapper ag-filter-number-to\" ref=\"ePanel" + pos + "\">\n                <input class=\"ag-filter-filter\" ref=\"eValueTo" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n        </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n            <div class=\"ag-input-wrapper\" role=\"presentation\">\n                <input class=\"ag-filter-filter\" ref=\"eValueFrom" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n             <div class=\"ag-input-wrapper ag-filter-number-to\" ref=\"ePanel" + pos + "\" role=\"presentation\">\n                <input class=\"ag-filter-filter\" ref=\"eValueTo" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n        </div>";
     };
     NumberFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
@@ -166,13 +166,13 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
         var showFrom1 = this.showValueFrom(this.getCondition1Type());
-        utils_1._.setVisible(this.eValueFrom1, showFrom1);
+        utils_1._.setDisplayed(this.eValueFrom1, showFrom1);
         var showTo1 = this.showValueTo(this.getCondition1Type());
-        utils_1._.setVisible(this.eValueTo1, showTo1);
+        utils_1._.setDisplayed(this.eValueTo1, showTo1);
         var showFrom2 = this.showValueFrom(this.getCondition2Type());
-        utils_1._.setVisible(this.eValueFrom2, showFrom2);
+        utils_1._.setDisplayed(this.eValueFrom2, showFrom2);
         var showTo2 = this.showValueTo(this.getCondition2Type());
-        utils_1._.setVisible(this.eValueTo2, showTo2);
+        utils_1._.setDisplayed(this.eValueTo2, showTo2);
     };
     NumberFilter.FILTER_TYPE = 'number';
     NumberFilter.DEFAULT_FILTER_OPTIONS = [scalerFilter_1.ScalerFilter.EQUALS, scalerFilter_1.ScalerFilter.NOT_EQUAL,

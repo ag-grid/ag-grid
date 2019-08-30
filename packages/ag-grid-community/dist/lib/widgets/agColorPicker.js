@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -94,6 +94,9 @@ var AgColorPicker = /** @class */ (function (_super) {
         });
     };
     AgColorPicker.prototype.setValue = function (color) {
+        if (this.value === color) {
+            return this;
+        }
         this.value = color;
         this.eDisplayField.style.backgroundColor = color;
         this.dispatchEvent({ type: agAbstractField_1.AgAbstractField.EVENT_CHANGED });

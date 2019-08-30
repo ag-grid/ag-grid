@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { ColDef, Column, IRowModel, ValueFormatterService } from "ag-grid-community";
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
@@ -28,7 +28,7 @@ export declare class SetValueModel {
     private valueFormatterService;
     private column;
     constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean, modelUpdatedFunc: (values: string[] | null, selected?: string[] | null) => void, isLoadingFunc: (loading: boolean) => void, valueFormatterService: ValueFormatterService, column: Column);
-    refreshAfterNewRowsLoaded(keepSelection: any, isSelectAll: boolean): void;
+    refreshAfterNewRowsLoaded(keepSelection: any, everythingSelected: boolean): void;
     refreshValues(valuesToUse: string[], keepSelection: any, isSelectAll: boolean): void;
     private refreshSelection;
     refreshAfterAnyFilterChanged(): void;
@@ -36,6 +36,7 @@ export declare class SetValueModel {
     private onAsyncValuesLoaded;
     private areValuesSync;
     setValuesType(value: SetFilterModelValuesType): void;
+    getValuesType(): SetFilterModelValuesType;
     private setValues;
     private extractSyncValuesToUse;
     private createAvailableUniqueValues;
@@ -46,15 +47,17 @@ export declare class SetValueModel {
     private processMiniFilter;
     getDisplayedValueCount(): number;
     getDisplayedValue(index: any): any;
-    selectEverything(): void;
+    selectAllUsingMiniFilter(): void;
     private selectOn;
     private valueToKey;
     private keyToValue;
     isFilterActive(): boolean;
-    selectNothing(): void;
+    selectNothingUsingMiniFilter(): void;
+    private selectNothing;
     getUniqueValueCount(): number;
     getUniqueValue(index: any): string | null;
     unselectValue(value: any): void;
+    selectAllFromMiniFilter(): void;
     selectValue(value: any): void;
     isValueSelected(value: any): boolean;
     isEverythingSelected(): boolean;

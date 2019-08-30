@@ -21,6 +21,12 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Pagination Example', 'pagination', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
+<p>
+    Note that it is possible to keep the page fixed in size when expanding groups by setting the grid property <code>paginateChildRows=true</code>.
+    For more details see: <a href="../javascript-grid-pagination/#childRows">Pagination & Child Rows</a>.
+</p>
+
+
 <h2>Next Up</h2>
 
 <p>

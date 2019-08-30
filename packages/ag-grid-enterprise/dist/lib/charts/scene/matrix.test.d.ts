@@ -1,2 +1,2 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 export {};

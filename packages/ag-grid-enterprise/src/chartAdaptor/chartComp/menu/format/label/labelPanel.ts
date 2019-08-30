@@ -2,14 +2,13 @@ import {
     _,
     AgColorPicker,
     AgGroupComponent,
-    AgSelect, Autowired,
+    AgSelect,
+    Autowired,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export type LabelFont = {
     family?: string;
@@ -17,7 +16,7 @@ export type LabelFont = {
     weight?: string;
     size?: number;
     color?: string;
-}
+};
 
 export interface LabelPanelParams {
     name?: string;
@@ -43,7 +42,6 @@ export class LabelPanel extends Component {
         </div>`;
 
     @RefSelector('labelsGroup') private labelsGroup: AgGroupComponent;
-
     @RefSelector('labelFontFamilySelect') private labelFontFamilySelect: AgSelect;
     @RefSelector('labelFontWeightSelect') private labelFontWeightSelect: AgSelect;
     @RefSelector('labelFontSizeSelect') private labelFontSizeSelect: AgSelect;
@@ -51,23 +49,17 @@ export class LabelPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chart: Chart;
     private params: LabelPanelParams;
     private activeComps: Component[] = [];
-    private chartController: ChartController;
 
-    constructor(chartController: ChartController, params: LabelPanelParams) {
+    constructor(params: LabelPanelParams) {
         super();
-        this.chartController = chartController;
         this.params = params;
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(LabelPanel.TEMPLATE);
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart();
 
         this.initGroup();
         this.initFontSelects();
@@ -128,7 +120,7 @@ export class LabelPanel extends Component {
             }
 
             const options = values.map(value => {
-                return {value: value, text: value}
+                return {value: value, text: value};
             });
 
             input.addOptions(options)

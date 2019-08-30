@@ -217,9 +217,8 @@ export class AgAngleSelect extends AgAbstractLabel {
             this.degrees = Math.floor(degrees);
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
+            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
         }
-
-        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
 
         return this;
     }

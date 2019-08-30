@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue",
   "description": "ag-Grid Vue Component",
-  "version": "21.1.0",
+  "version": "21.2.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -28,21 +28,21 @@
     "lint": "vue-cli-service lint"
   },
   "peerDependencies": {
-    "ag-grid-community": "^21.1.0",
+    "ag-grid-community": "^21.0.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0"
   },
   "devDependencies": {
-    "vue": ">= 2.5.20",
-    "vue-class-component": "^6.3.0",
-    "vue-property-decorator": "^7.2.0",
-    "@vue/cli-plugin-typescript": "^3.2.0",
-    "@vue/cli-plugin-unit-jest": "^3.2.0",
-    "@vue/cli-service": "^3.2.0",
-    "ag-grid-community": "^21.1.0",
-    "typescript": "~3.4.1",
-    "vue-template-compiler": "<= 2.5.17 || >= 2.5.20",
-    "gulp-typescript": "^5.0.0",
-    "gulp": "^3.9.1"
+    "vue": "2.6.10",
+    "vue-class-component": "6.3.2",
+    "vue-property-decorator": "7.3.0",
+    "@vue/cli-plugin-typescript": "3.9.0",
+    "@vue/cli-plugin-unit-jest": "3.9.0",
+    "@vue/cli-service": "3.9.3",
+    "ag-grid-community": "^21.0.0",
+    "typescript": "3.5.3",
+    "vue-template-compiler": "2.6.10",
+    "gulp-typescript": "5.0.1",
+    "gulp": "3.9.1"
   }
 }

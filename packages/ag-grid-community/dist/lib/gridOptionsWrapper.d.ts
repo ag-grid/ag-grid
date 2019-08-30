@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -151,6 +151,7 @@ export declare class GridOptionsWrapper {
     getMaxBlocksInCache(): number | undefined;
     getCacheOverflowSize(): number | undefined;
     getPaginationPageSize(): number | undefined;
+    isPaginateChildRows(): boolean;
     getCacheBlockSize(): number | undefined;
     getInfiniteInitialRowCount(): number | undefined;
     isPurgeClosedRowNodes(): boolean;
@@ -166,7 +167,7 @@ export declare class GridOptionsWrapper {
     isAngularCompileFilters(): boolean;
     isAngularCompileHeaders(): boolean;
     isDebug(): boolean;
-    getColumnDefs(): (ColDef | ColGroupDef)[];
+    getColumnDefs(): (ColGroupDef | ColDef)[];
     getColumnTypes(): {
         [key: string]: ColDef;
     } | undefined;
@@ -178,6 +179,7 @@ export declare class GridOptionsWrapper {
     isEnableCellExpressions(): boolean;
     isEnableGroupEdit(): boolean;
     isSuppressMiddleClickScrolls(): boolean;
+    isPreventDefaultOnContextMenu(): boolean;
     isSuppressPreventDefaultOnMouseWheel(): boolean;
     isSuppressColumnVirtualisation(): boolean;
     isSuppressContextMenu(): boolean;

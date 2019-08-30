@@ -9,7 +9,7 @@ $foreground-color: rgba(#222, $foreground-opacity) !default;
 $secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default;
 $disabled-foreground-color: rgba(#222, $disabled-foreground-color-opacity) !default;
 $menu-option-active-color: #c7c7c7 !default;
-$input-disabled-background-color: #dedede;
+$input-disabled-background-color: #dedede !default;
 
 $card-background-color: #f6f6f6 !default;
 $border-color: #9bc2e6 !default;

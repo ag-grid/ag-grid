@@ -13,7 +13,7 @@ export interface ITextCellEditorParams extends ICellEditorParams {
 
 export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
-    private static TEMPLATE = '<div class="ag-input-wrapper"><input class="ag-cell-edit-input" type="text"/></div>';
+    private static TEMPLATE = '<div class="ag-input-wrapper" role="presentation"><input class="ag-cell-edit-input" type="text"/></div>';
 
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
@@ -61,24 +61,10 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         }
 
         this.addDestroyableEventListener(eInput, 'keydown', (event: KeyboardEvent) => {
-            const isNavigationKey = event.keyCode === Constants.KEY_LEFT
-                || event.keyCode === Constants.KEY_RIGHT
-                || event.keyCode === Constants.KEY_UP
-                || event.keyCode === Constants.KEY_DOWN
-                || event.keyCode === Constants.KEY_PAGE_DOWN
-                || event.keyCode === Constants.KEY_PAGE_UP
-                || event.keyCode === Constants.KEY_PAGE_HOME
-                || event.keyCode === Constants.KEY_PAGE_END;
-            if (isNavigationKey) {
-                // this stops the grid from executing keyboard navigation
-                event.stopPropagation();
-
-                // this stops the browser from scrolling up / down
-                const pageUp = event.keyCode === Constants.KEY_PAGE_UP;
-                const pageDown = event.keyCode === Constants.KEY_PAGE_DOWN;
-                if (pageUp || pageDown) {
-                    event.preventDefault();
-                }
+            const pageUp = event.keyCode === Constants.KEY_PAGE_UP;
+            const pageDown = event.keyCode === Constants.KEY_PAGE_DOWN;
+            if (pageUp || pageDown) {
+                event.preventDefault();
             }
         });
     }

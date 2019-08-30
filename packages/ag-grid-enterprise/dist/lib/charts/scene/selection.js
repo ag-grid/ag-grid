@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_1 = require("./node");
@@ -400,8 +400,8 @@ var Selection = /** @class */ (function () {
                         i1 = i0 + 1;
                     }
                     var next = void 0;
-                    while (!(next = updateGroup[i1]) && ++i1 < dataSize) {
-                        ;
+                    while (!(next = updateGroup[i1]) && i1 < dataSize) {
+                        i1++;
                     }
                     previous.next = next || null;
                 }

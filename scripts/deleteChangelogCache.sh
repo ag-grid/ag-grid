@@ -30,4 +30,4 @@ USERNAME=`awk '{print $1}' ~/aggrid/aggrid.txt`
 PASSWORD=`awk '{print $2}' ~/aggrid/aggrid.txt`
 
 # delete the cache
-ssh -i ~/.ssh/ag_ssh -p 2222 ceolter@kpidrill.com "rm public_html/ag-grid.com/jira_reports/cache/changelog.json"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "rm public_html/jira_reports/cache/changelog.json"

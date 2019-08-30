@@ -445,25 +445,33 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return null;
     }
 
-    public getPageFirstRow(): number {
-        return 0;
-    }
-
-    public getPageLastRow(): number {
-        let lastRow: number;
-        if (this.cacheExists()) {
-            // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?
-            const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
-            lastRow = serverSideCache.getDisplayIndexEnd() - 1;
-        } else {
-            lastRow = 0;
+    public getRowCount(): number {
+        if (!this.cacheExists()) {
+            return 1;
         }
 
-        return lastRow;
+        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
+        const res = serverSideCache.getDisplayIndexEnd();
+
+        return res;
     }
 
-    public getRowCount(): number {
-        return this.getPageLastRow() + 1;
+    public getTopLevelRowCount(): number {
+        if (!this.cacheExists()) {
+            return 1;
+        }
+
+        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
+        return serverSideCache.getVirtualRowCount();
+    }
+
+    public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
+        if (!this.cacheExists()) {
+            return topLevelIndex;
+        }
+
+        const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
+        return serverSideCache.getTopLevelRowDisplayedIndex(topLevelIndex);
     }
 
     public getRowBounds(index: number): RowBounds {
@@ -509,7 +517,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         if (this.cacheExists()) {
-            this.rootNode.childrenCache!.forEachNodeDeep(callback, new NumberSequence());
+            this.rootNode.childrenCache!.forEachNodeDeep(callback);
         }
     }
 
@@ -614,7 +622,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
             for (let i = 0; i < sortModel.length; ++i) {
                 if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
-                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length)
+                    sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
                 }
             }
         }

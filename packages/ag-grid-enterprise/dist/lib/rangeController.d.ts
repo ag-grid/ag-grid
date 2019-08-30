@@ -1,5 +1,5 @@
-// ag-grid-enterprise v21.1.1
-import { CellPosition, Column, GridOptionsWrapper, GridPanel, IRangeController, CellRangeParams, CellRange, RowPosition } from "ag-grid-community";
+// ag-grid-enterprise v21.2.0
+import { CellPosition, CellPositionUtils, Column, GridOptionsWrapper, GridPanel, IRangeController, CellRangeParams, CellRange, RowPosition, RowPositionUtils } from "ag-grid-community";
 export declare class RangeController implements IRangeController {
     private loggerFactory;
     private rowModel;
@@ -11,6 +11,8 @@ export declare class RangeController implements IRangeController {
     private gridApi;
     private cellNavigationService;
     private pinnedRowModel;
+    rowPositionUtils: RowPositionUtils;
+    cellPositionUtils: CellPositionUtils;
     private logger;
     private gridPanel;
     private cellRanges;

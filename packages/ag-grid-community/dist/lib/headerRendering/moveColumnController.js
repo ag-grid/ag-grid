@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -129,12 +129,12 @@ var MoveColumnController = /** @class */ (function () {
         if (utils_1._.missing(draggingEvent.hDirection)) {
             return;
         }
-        var xNormalised = this.normaliseX(draggingEvent.x);
+        var mouseXNormalised = this.normaliseX(draggingEvent.x);
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping
         // each time a column is dragged in.
         if (!fromEnter) {
-            this.checkCenterForScrolling(xNormalised);
+            this.checkCenterForScrolling(mouseXNormalised);
         }
         var hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
         var dragSourceType = draggingEvent.dragSource.type;
@@ -150,7 +150,7 @@ var MoveColumnController = /** @class */ (function () {
                 return true;
             }
         });
-        this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
+        this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, mouseXNormalised, fromEnter);
     };
     MoveColumnController.prototype.normaliseDirection = function (hDirection) {
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -177,47 +177,51 @@ var MoveColumnController = /** @class */ (function () {
         var gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;
     };
-    MoveColumnController.prototype.attemptMoveColumns = function (dragSourceType, allMovingColumns, hDirection, xAdjusted, fromEnter) {
+    MoveColumnController.prototype.attemptMoveColumns = function (dragSourceType, allMovingColumns, hDirection, mouseX, fromEnter) {
         var draggingLeft = hDirection === dragAndDropService_1.HDirection.Left;
         var draggingRight = hDirection === dragAndDropService_1.HDirection.Right;
-        var validMoves = this.calculateValidMoves(allMovingColumns, draggingRight, xAdjusted);
+        var validMoves = this.calculateValidMoves(allMovingColumns, draggingRight, mouseX);
         // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
         // (ie left or right) to the mouse direction. however
         var oldIndex = this.calculateOldIndex(allMovingColumns);
+        if (validMoves.length === 0) {
+            return;
+        }
+        var firstValidMove = validMoves[0];
+        // the two check below stop an error when the user grabs a group my a middle column, then
+        // it is possible the mouse pointer is to the right of a column while been dragged left.
+        // so we need to make sure that the mouse pointer is actually left of the left most column
+        // if moving left, and right of the right most column if moving right
+        // we check 'fromEnter' below so we move the column to the new spot if the mouse is coming from
+        // outside the grid, eg if the column is moving from side panel, mouse is moving left, then we should
+        // place the column to the RHS even if the mouse is moving left and the column is already on
+        // the LHS. otherwise we stick to the rule described above.
+        var constrainDirection = oldIndex !== null && !fromEnter;
+        // don't consider 'fromEnter' when dragging header cells, otherwise group can jump to opposite direction of drag
+        if (dragSourceType == dragAndDropService_1.DragSourceType.HeaderCell) {
+            constrainDirection = oldIndex !== null;
+        }
+        if (constrainDirection) {
+            // only allow left drag if this column is moving left
+            if (draggingLeft && firstValidMove >= oldIndex) {
+                return;
+            }
+            // only allow right drag if this column is moving right
+            if (draggingRight && firstValidMove <= oldIndex) {
+                return;
+            }
+        }
         for (var i = 0; i < validMoves.length; i++) {
-            var newIndex = validMoves[i];
-            // the two check below stop an error when the user grabs a group my a middle column, then
-            // it is possible the mouse pointer is to the right of a column while been dragged left.
-            // so we need to make sure that the mouse pointer is actually left of the left most column
-            // if moving left, and right of the right most column if moving right
-            // we check 'fromEnter' below so we move the column to the new spot if the mouse is coming from
-            // outside the grid, eg if the column is moving from side panel, mouse is moving left, then we should
-            // place the column to the RHS even if the mouse is moving left and the column is already on
-            // the LHS. otherwise we stick to the rule described above.
-            var constrainDirection = oldIndex !== null && !fromEnter;
-            // don't consider 'fromEnter' when dragging header cells, otherwise group can jump to opposite direction of drag
-            if (dragSourceType == dragAndDropService_1.DragSourceType.HeaderCell) {
-                constrainDirection = oldIndex !== null;
-            }
-            if (constrainDirection) {
-                // only allow left drag if this column is moving left
-                if (draggingLeft && newIndex >= oldIndex) {
-                    continue;
-                }
-                // only allow right drag if this column is moving right
-                if (draggingRight && newIndex <= oldIndex) {
-                    continue;
-                }
-            }
-            if (!this.columnController.doesMovePassRules(allMovingColumns, newIndex)) {
+            var move = validMoves[i];
+            if (!this.columnController.doesMovePassRules(allMovingColumns, move)) {
                 continue;
             }
-            this.columnController.moveColumns(allMovingColumns, newIndex, "uiColumnDragged");
+            this.columnController.moveColumns(allMovingColumns, move, "uiColumnDragged");
             // important to return here, so once we do the first valid move, we don't try do any more
             return;
         }
     };
-    MoveColumnController.prototype.calculateValidMoves = function (movingCols, draggingRight, x) {
+    MoveColumnController.prototype.calculateValidMoves = function (movingCols, draggingRight, mouseX) {
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
         var allDisplayedCols = this.columnController.getDisplayedColumns(this.pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
@@ -232,7 +236,7 @@ var MoveColumnController = /** @class */ (function () {
         // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving
         // col between b and c (so that it is under the mouse position).
         var displayIndex = 0;
-        var availableWidth = x;
+        var availableWidth = mouseX;
         // if we are dragging right, then the columns will be to the left of the mouse, so we also want to
         // include the width of the moving columns
         if (draggingRight) {
@@ -257,24 +261,56 @@ var MoveColumnController = /** @class */ (function () {
         }
         // the display index is with respect to all the showing columns, however when we move, it's with
         // respect to all grid columns, so we need to translate from display index to grid index
-        var gridColIndex;
+        var firstValidMove;
         if (displayIndex > 0) {
             var leftColumn = otherDisplayedCols[displayIndex - 1];
-            gridColIndex = otherGridCols.indexOf(leftColumn) + 1;
+            firstValidMove = otherGridCols.indexOf(leftColumn) + 1;
         }
         else {
-            gridColIndex = 0;
+            firstValidMove = 0;
         }
-        var validMoves = [gridColIndex];
-        // add in all adjacent empty columns as other valid moves. this allows us to try putting the new
-        // column in any place of a hidden column, to try different combinations so that we don't break
-        // married children. in other words, maybe the new index breaks a group, but only because some
-        // columns are hidden, maybe we can reshuffle the hidden columns to find a place that works.
-        var nextCol = allGridCols[gridColIndex];
-        while (utils_1._.exists(nextCol) && this.isColumnHidden(allDisplayedCols, nextCol)) {
-            gridColIndex++;
-            validMoves.push(gridColIndex);
-            nextCol = allGridCols[gridColIndex];
+        var validMoves = [firstValidMove];
+        // add in other valid moves due to hidden columns and married children. for example, a particular
+        // move might break a group that has married children (so move isn't valid), however there could
+        // be hidden columns (not displayed) that we could jump over to make the move valid. because
+        // they are hidden, user doesn't see any different, however it allows moves that would otherwise
+        // not work. for example imagine a group with 9 columns and all columns are hidden except the
+        // middle one (so 4 hidden to left, 4 hidden to right), then when moving 'firstValidMove' will
+        // be relative to the not-shown column, however we need to consider the move jumping over all the
+        // hidden children. if we didn't do this, then if the group just described was at the end (RHS) of the
+        // grid, there would be no way to put a column after it (as the grid would only consider beside the
+        // visible column, which would fail valid move rules).
+        if (draggingRight) {
+            // if dragging right, then we add all the additional moves to the right. so in other words
+            // if the next move is not valid, find the next move to the right that is valid.
+            var pointer = firstValidMove + 1;
+            var lastIndex = allGridCols.length - 1;
+            while (pointer <= lastIndex) {
+                validMoves.push(pointer);
+                pointer++;
+            }
+        }
+        else {
+            // if dragging left we do the reverse of dragging right, we add in all the valid moves to the
+            // left. however we also have to consider moves to the right for all hidden columns first.
+            // (this logic is hard to reason with, it was worked out with trial and error,
+            // move observation rather than science).
+            // add moves to the right
+            var pointer = firstValidMove;
+            var lastIndex = allGridCols.length - 1;
+            var displacedCol = allGridCols[pointer];
+            while (pointer <= lastIndex && this.isColumnHidden(allDisplayedCols, displacedCol)) {
+                pointer++;
+                validMoves.push(pointer);
+                displacedCol = allGridCols[pointer];
+            }
+            // add moves to the left
+            pointer = firstValidMove - 1;
+            var firstDisplayIndex = 0;
+            while (pointer >= firstDisplayIndex) {
+                validMoves.push(pointer);
+                pointer--;
+            }
         }
         return validMoves;
     };

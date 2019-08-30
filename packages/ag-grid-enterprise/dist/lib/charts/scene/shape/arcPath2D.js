@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -212,7 +212,7 @@ var Arc = /** @class */ (function (_super) {
         if (this.opacity < 1) {
             ctx.globalAlpha = this.opacity;
         }
-        var pixelRatio = this.scene.hdpiCanvas.pixelRatio || 1;
+        var pixelRatio = this.scene.canvas.pixelRatio || 1;
         if (this.fill) {
             ctx.fillStyle = this.fill;
             // The canvas context scaling (depends on the device's pixel ratio)
@@ -221,8 +221,8 @@ var Arc = /** @class */ (function (_super) {
             var fillShadow = this.fillShadow;
             if (fillShadow) {
                 ctx.shadowColor = fillShadow.color;
-                ctx.shadowOffsetX = fillShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = fillShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
             ctx.fill(this.path);
@@ -246,8 +246,8 @@ var Arc = /** @class */ (function (_super) {
             var strokeShadow = this.strokeShadow;
             if (strokeShadow) {
                 ctx.shadowColor = strokeShadow.color;
-                ctx.shadowOffsetX = strokeShadow.offset.x * pixelRatio;
-                ctx.shadowOffsetY = strokeShadow.offset.y * pixelRatio;
+                ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
+                ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = strokeShadow.blur * pixelRatio;
             }
             ctx.stroke(this.path);

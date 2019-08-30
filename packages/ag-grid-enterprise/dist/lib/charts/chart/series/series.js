@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("../../scene/group");
@@ -24,7 +24,6 @@ var Series = /** @class */ (function () {
         }
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
-    ;
     Object.defineProperty(Series.prototype, "data", {
         get: function () {
             return this._data;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -86,6 +86,7 @@ export interface GridOptions {
     enterMovesDownAfterEdit?: boolean;
     enterMovesDown?: boolean;
     suppressMiddleClickScrolls?: boolean;
+    preventDefaultOnContextMenu?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
     suppressScrollOnNewData?: boolean;
     suppressMenuHide?: boolean;
@@ -168,12 +169,12 @@ export interface GridOptions {
     paginationStartPage?: number;
     suppressPaginationPanel?: boolean;
     pagination?: boolean;
+    paginateChildRows?: boolean;
     editType?: string;
     suppressTouch?: boolean;
     suppressAsyncEvents?: boolean;
-    /** @deprecated */
     embedFullWidthRows?: boolean;
-    /** deprecated */
+    /** @deprecated */
     deprecatedEmbedFullWidthRows?: boolean;
     excelStyles?: any[];
     floatingFilter?: boolean;
@@ -294,6 +295,9 @@ export interface GridOptions {
     } | ICellRendererFunc | string;
     groupRowInnerRendererFramework?: any;
     createChartContainer?: (params: ChartRef) => void;
+    fillOperations?: {
+        [key: string]: IFillOperation;
+    };
     isExternalFilterPresent?(): boolean;
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;
@@ -422,6 +426,19 @@ export interface GridOptions {
      ****************************************************************/
     api?: GridApi | null;
     columnApi?: ColumnApi | null;
+}
+export interface IFillOperation {
+    (params: FillOperationParams): any[];
+}
+export interface FillOperationParams {
+    values: any[];
+    resultCount: number;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+    direction: string;
+    column?: Column;
+    rowNode?: RowNode;
 }
 export interface GetDataPath {
     (data: any): string[];

@@ -93,6 +93,9 @@ function processChartOptions(params) {
     legend.labelColor = '#555';
 
     var xAxis = options.xAxis;
+    xAxis.title = {
+        text: 'Gold'
+    };
     xAxis.lineWidth = 2;
     xAxis.lineColor = 'gray';
     xAxis.tickWidth = 2;
@@ -149,6 +152,10 @@ function processChartOptions(params) {
     seriesDefaults.fillOpacity = 0.8;
     seriesDefaults.strokeOpacity = 0.8;
     seriesDefaults.strokeWidth = 2;
+    seriesDefaults.highlightStyle = {
+        fill: 'red',
+        stroke: 'maroon'
+    };
 
     seriesDefaults.marker = true;
     seriesDefaults.markerSize = 12;

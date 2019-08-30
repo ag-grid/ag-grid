@@ -251,7 +251,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private setupDragging(): void {
         if (!this.allowDragging) {
-            _.setVisible(this.eDragHandle, false);
+            _.setDisplayed(this.eDragHandle, false);
             return;
         }
 

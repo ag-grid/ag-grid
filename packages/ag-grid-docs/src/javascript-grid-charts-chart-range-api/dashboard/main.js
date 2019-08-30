@@ -92,7 +92,7 @@ function onFirstDataRendered(event) {
         },
         chartType: 'pie',
         chartContainer: eContainer2,
-        aggregate: true,
+        aggFunc: 'sum',
         processChartOptions: function(params) {
             params.options.legendPosition = 'bottom';
             params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
@@ -116,7 +116,7 @@ function onFirstDataRendered(event) {
         },
         chartType: 'pie',
         chartContainer: eContainer3,
-        aggregate: true,
+        aggFunc: 'sum',
         processChartOptions: function(params) {
             params.options.legendPosition = 'bottom';
             params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
@@ -132,7 +132,6 @@ function onFirstDataRendered(event) {
         }
     };
     event.api.chartRange(params3);
-
 }
 
 

@@ -1,19 +1,19 @@
 import {
     _,
+    AgAngleSelect,
+    AgColorPicker,
     AgGroupComponent,
+    AgSlider,
+    Autowired,
     Component,
     PostConstruct,
     RefSelector,
-    Autowired,
-    AgColorPicker,
-    AgSlider,
-    AgAngleSelect,
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
-import { AxisTicksPanel } from "./axisTicksPanel";
-import { LabelPanelParams, LabelPanel, LabelFont } from "../label/labelPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {AxisTicksPanel} from "./axisTicksPanel";
+import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisPanel extends Component {
 
@@ -33,19 +33,17 @@ export class AxisPanel extends Component {
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
-    private chart: CartesianChart;
+    private chartProxy: CartesianChartProxy<any>;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
+        this.chartProxy = chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(AxisPanel.TEMPLATE);
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart() as CartesianChart;
 
         this.initAxis();
         this.initAxisTicks();
@@ -62,23 +60,15 @@ export class AxisPanel extends Component {
             .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
-            .setValue(`${this.chart.xAxis.lineColor}`)
-            .onValueChange(newColor => {
-                this.chart.xAxis.lineColor = newColor;
-                this.chart.yAxis.lineColor = newColor;
-                this.chart.performLayout();
-            });
+            .setValue(this.chartProxy.getCommonAxisProperty('lineColor'))
+            .onValueChange(newColor => this.chartProxy.setCommonAxisProperty('lineColor', newColor));
 
         this.axisLineWidthSlider
             .setLabel(this.chartTranslator.translate('thickness'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(`${this.chart.xAxis.lineWidth}`)
-            .onValueChange(newValue => {
-                this.chart.xAxis.lineWidth = newValue;
-                this.chart.yAxis.lineWidth = newValue;
-                this.chart.performLayout();
-            });
+            .setValue(this.chartProxy.getCommonAxisProperty('lineWidth'))
+            .onValueChange(newValue => this.chartProxy.setCommonAxisProperty('lineWidth', newValue));
     }
 
     private initAxisTicks() {
@@ -90,35 +80,21 @@ export class AxisPanel extends Component {
 
     private initAxisLabels() {
         const initialFont = {
-            family: this.chart.xAxis.labelFontFamily,
-            style: this.chart.xAxis.labelFontStyle,
-            weight: this.chart.xAxis.labelFontWeight,
-            size: this.chart.xAxis.labelFontSize,
-            color: this.chart.xAxis.labelColor
+            family: this.chartProxy.getCommonAxisProperty('labelFontFamily'),
+            style: this.chartProxy.getCommonAxisProperty('labelFontStyle'),
+            weight: this.chartProxy.getCommonAxisProperty('labelFontWeight'),
+            size: parseInt(this.chartProxy.getCommonAxisProperty('labelFontSize')),
+            color: this.chartProxy.getCommonAxisProperty('labelColor')
         };
 
+        // note we don't set the font style via legend panel
         const setFont = (font: LabelFont) => {
-            if (font.family) {
-                this.chart.xAxis.labelFontFamily = font.family;
-                this.chart.yAxis.labelFontFamily = font.family;
-            }
-            if (font.style) {
-                this.chart.xAxis.labelFontStyle = font.style;
-                this.chart.yAxis.labelFontStyle = font.style;
-            }
-            if (font.weight) {
-                this.chart.xAxis.labelFontWeight = font.weight;
-                this.chart.yAxis.labelFontWeight = font.weight;
-            }
-            if (font.size) {
-                this.chart.xAxis.labelFontSize = font.size;
-                this.chart.yAxis.labelFontSize = font.size;
-            }
-            if (font.color) {
-                this.chart.xAxis.labelColor = font.color;
-                this.chart.yAxis.labelColor = font.color;
-            }
-            this.chart.performLayout();
+            if (font.family) { this.chartProxy.setCommonAxisProperty('labelFontFamily', font.family); }
+            if (font.weight) { this.chartProxy.setCommonAxisProperty('labelFontWeight', font.weight); }
+            if (font.size) { this.chartProxy.setCommonAxisProperty('labelFontSize', font.size); }
+            if (font.color) { this.chartProxy.setCommonAxisProperty('labelColor', font.color); }
+
+            this.chartProxy.getChart().performLayout();
         };
 
         const params: LabelPanelParams = {
@@ -128,7 +104,7 @@ export class AxisPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = new LabelPanel(this.chartController, params);
+        const labelPanelComp = new LabelPanel(params);
         this.getContext().wireBean(labelPanelComp);
         this.axisGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
@@ -143,10 +119,7 @@ export class AxisPanel extends Component {
             .setLabel(label)
             .setLabelWidth("flex")
             .setValue(initialValue)
-            .onValueChange(newAngle => {
-                updateFunc(newAngle);
-                this.chart.layoutPending = true;
-            });
+            .onValueChange(updateFunc);
 
             this.getContext().wireBean(rotationInput);
             labelPanelComp.addCompToPanel(rotationInput);
@@ -154,13 +127,13 @@ export class AxisPanel extends Component {
 
         const degreesSymbol = String.fromCharCode(176);
 
-        // add x-axis label rotation input to label panel
-        const updateXRotation = (newValue: number) => this.chart.xAxis.labelRotation = newValue;
-        createAngleComp(`${this.chartTranslator.translate('xRotation')} ${degreesSymbol}`, this.chart.xAxis.labelRotation, updateXRotation);
+        const xRotationLabel = `${this.chartTranslator.translate('xRotation')} ${degreesSymbol}`;
+        const xUpdateFunc = (newValue: number) => this.chartProxy.setXRotation(newValue);
+        createAngleComp(xRotationLabel, this.chartProxy.getXRotation(), xUpdateFunc);
 
-        // add y-axis label rotation input to label panel
-        const updateYRotation = (newValue: number) => this.chart.yAxis.labelRotation = newValue;
-        createAngleComp(`${this.chartTranslator.translate('yRotation')} ${degreesSymbol}`, this.chart.yAxis.labelRotation, updateYRotation);
+        const yRotationLabel = `${this.chartTranslator.translate('yRotation')} ${degreesSymbol}`;
+        const yUpdateFunc = (newValue: number) => this.chartProxy.setYRotation(newValue);
+        createAngleComp(yRotationLabel, this.chartProxy.getYRotation(), yUpdateFunc);
     }
 
     private destroyActivePanels(): void {

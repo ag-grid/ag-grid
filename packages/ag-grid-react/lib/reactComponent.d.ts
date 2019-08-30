@@ -1,4 +1,4 @@
-// ag-grid-react v21.1.0
+// ag-grid-react v21.2.0
 import { Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from "./baseReactComponent";
@@ -14,12 +14,13 @@ export declare class ReactComponent extends BaseReactComponent {
     private unwrapComponent;
     constructor(reactComponent: any, parentComponent: AgGridReact);
     getFrameworkComponentInstance(): any;
-    isStatelesComponent(): boolean;
+    isStatelessComponent(): boolean;
     getReactComponentName(): string;
     init(params: any): Promise<void>;
     getGui(): HTMLElement;
     destroy(): void;
     private createReactComponent;
+    private addParentContainerStyleAndClasses;
     private createParentElement;
     statelessComponentRendered(): boolean;
     private static isStateless;

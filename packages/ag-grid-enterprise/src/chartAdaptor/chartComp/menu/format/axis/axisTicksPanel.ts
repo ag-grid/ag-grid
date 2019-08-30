@@ -1,14 +1,15 @@
 import {
     AgColorPicker,
     AgGroupComponent,
-    AgSlider, Autowired,
+    AgSlider,
+    Autowired,
     Component,
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import { ChartController } from "../../../chartController";
-import { CartesianChart } from "../../../../../charts/chart/cartesianChart";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
+import {CartesianChartProxy, CommonAxisProperty} from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisTicksPanel extends Component {
 
@@ -30,21 +31,16 @@ export class AxisTicksPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
-    private chart: CartesianChart;
+    private chartProxy: CartesianChartProxy<any>;
 
     constructor(chartController: ChartController) {
         super();
-        this.chartController = chartController;
+        this.chartProxy = chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 
     @PostConstruct
     private init() {
         this.setTemplate(AxisTicksPanel.TEMPLATE);
-
-        const chartProxy = this.chartController.getChartProxy();
-        this.chart = chartProxy.getChart() as CartesianChart;
-
         this.initAxisTicks();
     }
 
@@ -58,34 +54,19 @@ export class AxisTicksPanel extends Component {
             .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
-            .setValue(`${this.chart.xAxis.lineColor}`)
-            .onValueChange(newColor => {
-                this.chart.xAxis.tickColor = newColor;
-                this.chart.yAxis.tickColor = newColor;
-                this.chart.performLayout();
-            });
+            .setValue(this.chartProxy.getCommonAxisProperty('tickColor'))
+            .onValueChange(newColor => this.chartProxy.setCommonAxisProperty('tickColor', newColor));
 
-        type AxisTickProperty = 'tickWidth' | 'tickSize' | 'tickPadding';
-
-        const initInput = (property: AxisTickProperty, input: AgSlider, label: string, initialValue: string, maxValue: number) => {
+        const initInput = (property: CommonAxisProperty, input: AgSlider, label: string, maxValue: number) => {
             input.setLabel(label)
-                .setValue(initialValue)
+                .setValue(this.chartProxy.getCommonAxisProperty(property))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => {
-                    this.chart.xAxis[property] = newValue;
-                    this.chart.yAxis[property] = newValue;
-                    this.chart.performLayout();
-                });
+                .onValueChange(newValue => this.chartProxy.setCommonAxisProperty(property, newValue));
         };
 
-        const initialWidth = `${this.chart.xAxis.tickWidth}`;
-        initInput('tickWidth', this.axisTicksWidthSlider, this.chartTranslator.translate('width'), initialWidth, 10);
-
-        const initialLength = `${this.chart.xAxis.tickSize}`;
-        initInput('tickSize', this.axisTicksSizeSlider, this.chartTranslator.translate('length'), initialLength, 30);
-
-        const initialPadding = `${this.chart.xAxis.tickPadding}`;
-        initInput('tickPadding', this.axisTicksPaddingSlider, this.chartTranslator.translate('padding'), initialPadding, 30);
+        initInput('tickWidth', this.axisTicksWidthSlider, this.chartTranslator.translate('width'), 10);
+        initInput('tickSize', this.axisTicksSizeSlider, this.chartTranslator.translate('length'), 30);
+        initInput('tickPadding', this.axisTicksPaddingSlider, this.chartTranslator.translate('padding'), 30);
     }
 }

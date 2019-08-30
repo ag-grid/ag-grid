@@ -1,14 +1,14 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var hdpiCanvas_1 = require("../canvas/hdpiCanvas");
 var Scene = /** @class */ (function () {
-    function Scene(width, height) {
+    function Scene(options) {
         var _this = this;
-        if (width === void 0) { width = 800; }
-        if (height === void 0) { height = 600; }
+        if (options === void 0) { options = {}; }
         this.id = this.createId();
         this._dirty = false;
+        this.animationFrameId = 0;
         this._root = null;
         this._frameIndex = 0;
         this._renderFrameIndex = false;
@@ -32,54 +32,57 @@ var Scene = /** @class */ (function () {
             }
             _this.dirty = false;
         };
-        this.hdpiCanvas = new hdpiCanvas_1.HdpiCanvas(this._width = width, this._height = height);
-        this.ctx = this.hdpiCanvas.context;
+        this.canvas = new hdpiCanvas_1.HdpiCanvas({
+            width: options.width || 300,
+            height: options.height || 150,
+            document: options.document || window.document
+        });
+        this.ctx = this.canvas.context;
     }
     Scene.prototype.createId = function () {
         return this.constructor.name + '-' + (Scene.id++);
     };
-    ;
     Object.defineProperty(Scene.prototype, "parent", {
         get: function () {
-            return this.hdpiCanvas.parent;
+            return this.canvas.parent;
         },
         set: function (value) {
-            this.hdpiCanvas.parent = value;
+            this.canvas.parent = value;
         },
         enumerable: true,
         configurable: true
     });
     Scene.prototype.download = function (fileName) {
-        this.hdpiCanvas.download(fileName);
+        this.canvas.download(fileName);
     };
     Object.defineProperty(Scene.prototype, "width", {
         get: function () {
-            return this._width;
+            return this.canvas.width;
         },
         set: function (value) {
-            this.size = [value, this._height];
+            this.size = [value, this.height];
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Scene.prototype, "height", {
         get: function () {
-            return this._height;
+            return this.canvas.height;
         },
         set: function (value) {
-            this.size = [this._width, value];
+            this.size = [this.width, value];
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Scene.prototype, "size", {
         get: function () {
-            return [this._width, this._height];
+            return [this.width, this.height];
         },
         set: function (value) {
-            if (this._width !== value[0] || this._height !== value[1]) {
-                this.hdpiCanvas.resize(value[0], value[1]);
-                this._width = value[0], this._height = value[1];
+            var width = value[0], height = value[1];
+            if (this.width !== width || this.height !== height) {
+                this.canvas.resize(width, height);
                 this.dirty = true;
             }
         },
@@ -92,13 +95,20 @@ var Scene = /** @class */ (function () {
         },
         set: function (dirty) {
             if (dirty && !this._dirty) {
-                requestAnimationFrame(this.render);
+                this.animationFrameId = requestAnimationFrame(this.render);
             }
             this._dirty = dirty;
         },
         enumerable: true,
         configurable: true
     });
+    Scene.prototype.cancelRender = function () {
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = 0;
+            this._dirty = false;
+        }
+    };
     Object.defineProperty(Scene.prototype, "root", {
         get: function () {
             return this._root;
@@ -108,7 +118,7 @@ var Scene = /** @class */ (function () {
                 return;
             }
             if (this._root) {
-                this._root._setScene(null);
+                this._root._setScene(undefined);
             }
             this._root = node;
             if (node) {

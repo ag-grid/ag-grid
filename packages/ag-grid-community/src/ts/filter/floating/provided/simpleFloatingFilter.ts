@@ -1,10 +1,10 @@
-import { Component } from "../../../widgets/component";
-import { IFloatingFilterComp, IFloatingFilterParams } from "../floatingFilter";
-import { ProvidedFilterModel } from "../../../interfaces/iFilter";
-import { SimpleFilter, ISimpleFilterModel, ICombinedSimpleModel } from "../../provided/simpleFilter";
-import { OptionsFactory } from "../../provided/optionsFactory";
-import { IScalarFilterParams } from "../../provided/scalerFilter";
-import { FilterChangedEvent } from "../../../events";
+import {Component} from "../../../widgets/component";
+import {IFloatingFilterComp, IFloatingFilterParams} from "../floatingFilter";
+import {ProvidedFilterModel} from "../../../interfaces/iFilter";
+import {ICombinedSimpleModel, ISimpleFilterModel, SimpleFilter} from "../../provided/simpleFilter";
+import {OptionsFactory} from "../../provided/optionsFactory";
+import {IScalarFilterParams} from "../../provided/scalerFilter";
+import {FilterChangedEvent} from "../../../events";
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp {
 
@@ -18,6 +18,8 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     protected abstract setEditable(editable: boolean): void;
 
     private lastType: string;
+
+    private optionsFactory: OptionsFactory;
 
     protected getDefaultDebounceMs(): number {
         return 0;
@@ -95,9 +97,9 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     public init(params: IFloatingFilterParams): void {
-        const optionsFactory = new OptionsFactory();
-        optionsFactory.init(params.filterParams as IScalarFilterParams, this.getDefaultFilterOptions());
-        this.lastType = optionsFactory.getDefaultOption();
+        this.optionsFactory = new OptionsFactory();
+        this.optionsFactory.init(params.filterParams as IScalarFilterParams, this.getDefaultFilterOptions());
+        this.lastType = this.optionsFactory.getDefaultOption();
 
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)
@@ -107,7 +109,17 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         this.setEditable(editable);
     }
 
+    private doesFilterHaveHiddenInput(filterType: string) {
+        const customFilterOption = this.optionsFactory.getCustomOption(filterType);
+        return customFilterOption && customFilterOption.hideFilterInput;
+    }
+
     private isTypeEditable(type: string): boolean {
+
+        if (this.doesFilterHaveHiddenInput(type)) {
+            return false;
+        }
+
         return type
             && (type != SimpleFilter.IN_RANGE)
             && (type != SimpleFilter.EMPTY);

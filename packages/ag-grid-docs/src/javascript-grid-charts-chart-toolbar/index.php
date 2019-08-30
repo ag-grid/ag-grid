@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Chart Settings</h2>
 
     <p>
-        The chart settings panel allows users to change the chart type as well as the color palette used in the
+        The chart settings panel allows users to change the chart type as well as the colour palette used in the
         chart as demonstrated below:
     </p>
         <img alt="Chart Settings" src="chart-settings.gif" style="max-width: 100%; border: grey solid 1px">
@@ -52,7 +52,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The color palette used by the chart can also be changed via the carousel located at the bottom of the chart
+        The colour palette used by the chart can also be changed via the carousel located at the bottom of the chart
         setting panel.
     </p>
 
@@ -89,7 +89,26 @@ include '../documentation-main/documentation_header.php';
     <p>
         <br>
         Chart options corresponding to the currently selected chart type appear in the format panel. This gives users
-        full control over the appearance of chart.
+        full control over the appearance of the chart.
+    </p>
+
+    <h2>Unlinking Charts</h2>
+    <p>
+        Charts are linked to the data in the grid by default. However it is sometimes desirable to unlink a chart for the
+        grid data after it has been created. For instance, users may want to prevent a chart from being updated when
+        subsequent sorts and filters are applied in the grid.
+    </p>
+
+    <p>
+        Unlinking a chart is achieved through the 'Unlink Chart' toolbar item as shown below:
+    </p>
+
+    <img alt="Unlinking Charts" src="chart-unlinking.gif" style="max-width: 100%; border: grey solid 1px">
+
+    <p>
+        <br>
+        Notice that the chart range disappears from the grid when the chart has been unlinked and grid sorting doesn't
+        impact the chart.
     </p>
 
     <h2>Chart Download</h2>
@@ -126,17 +145,32 @@ interface GetChartToolbarItemsParams {
 
 <p>
     This function receives the <code>GetChartToolbarItemsParams</code> object which contains the list of items that are
-    shown by default in <code>defaultItems</code> along with the grid API's.
+    shown by default in <code>defaultItems</code> along with the grid APIs.
 </p>
 
 <p>
     The list returned by the <code>gridOptions.getChartToolbarItems()</code> callback can be modified to reorder and
-    omit items from the toolbar. For instance returning an empty array will hide all toolbar items.
+    omit items from the toolbar. For instance, returning an empty array will hide all toolbar items.
 </p>
 
 <p>
     The list of available toolbar items are as follows:  <code>'chartSettings', 'chartData', 'chartFormat', 'downloadChart'</code>.
 </p>
+
+<h2>Example - Custom Toolbar Layout</h2>
+
+<p>
+    The example below shows how the toolbar layout can be customised. Notice the following:
+</p>
+
+<ul class="content">
+    <li><b>Download Chart</b> - has been positioned as the first toolbar item.</li>
+    <li><b>Chart Data Panel</b> - appears first in the tabbed menu.</li>
+    <li><b>Chart Format Panel</b> - has been removed from the tabbed menu.</li>
+    <li><b>Unlink Toolbar Item</b> - has been removed from the toolbar.</li>
+</ul>
+
+<?= example('Custom Toolbar', 'custom-toolbar', 'generated', array("enterprise" => true)) ?>
 
     <h2>Next Up</h2>
 

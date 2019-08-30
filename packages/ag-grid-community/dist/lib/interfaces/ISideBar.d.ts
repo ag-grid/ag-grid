@@ -1,10 +1,10 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "./iComponent";
 export interface ISideBar extends IComponent<any> {
     refresh(): void;
-    setVisible(show: boolean): void;
+    setDisplayed(show: boolean): void;
     isToolPanelShowing(): boolean;
     openToolPanel(key: string): void;
     close(): void;

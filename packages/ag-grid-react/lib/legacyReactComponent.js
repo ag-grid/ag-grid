@@ -1,4 +1,4 @@
-// ag-grid-react v21.1.0
+// ag-grid-react v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -19,6 +19,7 @@ var ReactDOM = require("react-dom");
 var AgGrid = require("ag-grid-community");
 var ag_grid_community_1 = require("ag-grid-community");
 var baseReactComponent_1 = require("./baseReactComponent");
+var utils_1 = require("./utils");
 var LegacyReactComponent = /** @class */ (function (_super) {
     __extends(LegacyReactComponent, _super);
     function LegacyReactComponent(reactComponent, parentComponent) {
@@ -57,16 +58,33 @@ var LegacyReactComponent = /** @class */ (function (_super) {
         if (!this.parentComponent) {
             // MUST be a function, not an arrow function
             ReactDOM.render(ReactComponent, this.eParentElement, function () {
+                // @ts-ignore
                 self.componentInstance = this;
+                self.addParentContainerStyleAndClasses();
                 resolve(null);
             });
         }
         else {
             // MUST be a function, not an arrow function
             ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement, function () {
+                // @ts-ignore
                 self.componentInstance = this;
+                self.addParentContainerStyleAndClasses();
                 resolve(null);
             });
+        }
+    };
+    LegacyReactComponent.prototype.addParentContainerStyleAndClasses = function () {
+        var _this = this;
+        if (!this.componentInstance) {
+            return;
+        }
+        if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
+            utils_1.assignProperties(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
+        }
+        if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
+            var parentContainerClasses = this.componentInstance.getReactContainerClasses();
+            parentContainerClasses.forEach(function (className) { return AgGrid.Utils.addCssClass(_this.eParentElement, className); });
         }
     };
     return LegacyReactComponent;

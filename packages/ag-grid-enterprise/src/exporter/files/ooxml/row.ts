@@ -26,7 +26,7 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
                     ref: `${getExcelColumnName(mergeMap[i].excelPos + 1 + j)}${rowIdx + 1}`,
                     styleId: cell.styleId,
                     data: { type: 'empty', value: null }
-                })
+                });
             }
             if (mergedCells.length) {
                 cells.splice(mergeMap[i].pos + 1, 0, ...mergedCells);
@@ -34,7 +34,7 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
             
         }
     }
-}
+};
 
 const rowFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelRow, idx: number) {

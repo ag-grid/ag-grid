@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -118,7 +118,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     setVisible(visible: boolean, source?: ColumnEventType): void;
     isVisible(): boolean;
     getColDef(): ColDef;
-    getColumnGroupShow(): string;
+    getColumnGroupShow(): string | undefined;
     getColId(): string;
     getId(): string;
     getDefinition(): AbstractColDef;

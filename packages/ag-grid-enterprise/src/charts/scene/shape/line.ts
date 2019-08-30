@@ -91,7 +91,7 @@ export class Line extends Shape {
             this.x2 - this.x1,
             this.y2 - this.y1
         );
-    };
+    }
 
     isPointInPath(x: number, y: number): boolean {
         return false;
@@ -115,13 +115,13 @@ export class Line extends Shape {
         // Align to the pixel grid if the line is strictly vertical
         // or horizontal (but not both, i.e. a dot).
         if (x1 === x2) {
-            const delta = Math.floor(this.strokeWidth) % 2 / 2;
-            x1 += delta;
-            x2 += delta;
+            const x = Math.round(x1) + Math.floor(this.strokeWidth) % 2 / 2;
+            x1 = x;
+            x2 = x;
         } else if (y1 === y2) {
-            const delta = Math.floor(this.strokeWidth) % 2 / 2;
-            y1 += delta;
-            y2 += delta;
+            const y = Math.round(y1) + Math.floor(this.strokeWidth) % 2 / 2;
+            y1 = y;
+            y2 = y;
         }
 
         ctx.beginPath();

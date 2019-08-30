@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -31,46 +31,43 @@ var LineSeriesPanel = /** @class */ (function (_super) {
     function LineSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
-        _this.chartController = chartController;
+        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     LineSeriesPanel.prototype.init = function () {
         this.setTemplate(LineSeriesPanel.TEMPLATE);
-        var chartProxy = this.chartController.getChartProxy();
-        this.series = chartProxy.getChart().series;
-        this.seriesGroup
-            .setTitle(this.chartTranslator.translate('series'))
-            .toggleGroupExpand(false)
-            .hideEnabledCheckbox(true);
+        this.initSeriesGroup();
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
         this.initMarkersPanel();
     };
+    LineSeriesPanel.prototype.initSeriesGroup = function () {
+        this.seriesGroup
+            .setTitle(this.chartTranslator.translate('series'))
+            .toggleGroupExpand(false)
+            .hideEnabledCheckbox(true);
+    };
     LineSeriesPanel.prototype.initSeriesTooltips = function () {
         var _this = this;
-        var selected = this.series.some(function (s) { return s.tooltipEnabled; });
         this.seriesTooltipsToggle
             .setLabel(this.chartTranslator.translate('tooltips'))
             .setLabelAlignment('left')
             .setLabelWidth('flex')
             .setInputWidth(40)
-            .setValue(selected)
-            .onValueChange(function (newSelection) {
-            _this.series.forEach(function (s) { return s.tooltipEnabled = newSelection; });
-        });
+            .setValue(this.chartProxy.getTooltipsEnabled())
+            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesProperty('tooltipEnabled', newValue); });
     };
     LineSeriesPanel.prototype.initSeriesLineWidth = function () {
         var _this = this;
-        var strokeWidth = this.series.length > 0 ? this.series[0].strokeWidth : 3;
         this.seriesLineWidthSlider
             .setLabel(this.chartTranslator.translate('lineWidth'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue("" + strokeWidth)
-            .onValueChange(function (newValue) { return _this.series.forEach(function (s) { return s.strokeWidth = newValue; }); });
+            .setValue(this.chartProxy.getSeriesProperty('strokeWidth'))
+            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesProperty('strokeWidth', newValue); });
     };
     LineSeriesPanel.prototype.initMarkersPanel = function () {
-        var markersPanelComp = new markersPanel_1.MarkersPanel(this.series);
+        var markersPanelComp = new markersPanel_1.MarkersPanel(this.chartProxy);
         this.getContext().wireBean(markersPanelComp);
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -55,7 +55,7 @@ var AggregationComp = /** @class */ (function (_super) {
         var statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
         if (ag_grid_community_1._.exists(statusBarValueComponent) && statusBarValueComponent) {
             statusBarValueComponent.setValue(ag_grid_community_1._.formatNumberTwoDecimalPlacesAndCommas(value));
-            statusBarValueComponent.setVisible(visible);
+            statusBarValueComponent.setDisplayed(visible);
         }
     };
     AggregationComp.prototype.getAggregationValueComponent = function (aggFuncName) {
@@ -96,7 +96,7 @@ var AggregationComp = /** @class */ (function (_super) {
                 var currentRow = _this.rangeController.getRangeStartRow(cellRange);
                 var lastRow = _this.rangeController.getRangeEndRow(cellRange);
                 while (true) {
-                    var finishedAllRows = ag_grid_community_1._.missing(currentRow) || !currentRow || ag_grid_community_1.RowPositionUtils.before(lastRow, currentRow);
+                    var finishedAllRows = ag_grid_community_1._.missing(currentRow) || !currentRow || _this.rowPositionUtils.before(lastRow, currentRow);
                     if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
@@ -105,7 +105,7 @@ var AggregationComp = /** @class */ (function (_super) {
                             return;
                         }
                         // we only want to include each cell once, in case a cell is in multiple ranges
-                        var cellId = ag_grid_community_1.CellPositionUtils.createId({
+                        var cellId = _this.cellPositionUtils.createId({
                             rowPinned: currentRow.rowPinned,
                             column: col,
                             rowIndex: currentRow.rowIndex
@@ -189,6 +189,14 @@ var AggregationComp = /** @class */ (function (_super) {
         ag_grid_community_1.Autowired('gridApi'),
         __metadata("design:type", ag_grid_community_1.GridApi)
     ], AggregationComp.prototype, "gridApi", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('cellPositionUtils'),
+        __metadata("design:type", ag_grid_community_1.CellPositionUtils)
+    ], AggregationComp.prototype, "cellPositionUtils", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('rowPositionUtils'),
+        __metadata("design:type", ag_grid_community_1.RowPositionUtils)
+    ], AggregationComp.prototype, "rowPositionUtils", void 0);
     __decorate([
         ag_grid_community_1.RefSelector('sumAggregationComp'),
         __metadata("design:type", nameValueComp_1.NameValueComp)

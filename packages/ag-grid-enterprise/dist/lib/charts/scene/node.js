@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var matrix_1 = require("./matrix");
@@ -25,11 +25,9 @@ var Node = /** @class */ (function () {
         /**
          * To simplify the type system (especially in Selections) we don't have the `Parent` node
          * (one that has children). Instead, we mimic HTML DOM, where any node can have children.
-         * But we still need to distinguish regular leaf nodes from leaf containers somehow.
+         * But we still need to distinguish regular leaf nodes from container leafs somehow.
          */
         this.isContainerNode = false;
-        this._scene = null;
-        this._parent = null;
         this._children = [];
         // Used to check for duplicate nodes.
         this.childSet = {}; // new Set<Node>()
@@ -84,7 +82,6 @@ var Node = /** @class */ (function () {
         }
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     };
-    ;
     /**
      * This is meaningfully faster than `instanceof` and should be the preferred way
      * of checking inside loops.
@@ -204,8 +201,8 @@ var Node = /** @class */ (function () {
             if (i >= 0) {
                 this._children.splice(i, 1);
                 delete this.childSet[node.id];
-                node._setParent(null);
-                node._setScene(null);
+                node._setParent(undefined);
+                node._setScene(undefined);
                 this.dirty = true;
                 return node;
             }
@@ -444,7 +441,7 @@ var Node = /** @class */ (function () {
             return this;
         }
     };
-    // this property (see Text shape)
+    Node.prototype.getBBox = function () { return; };
     Node.prototype.getBBoxCenter = function () {
         var bbox = this.getBBox && this.getBBox();
         if (bbox) {

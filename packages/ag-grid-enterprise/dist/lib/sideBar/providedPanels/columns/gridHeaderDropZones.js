@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -49,19 +49,19 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return _this.pivotComp.destroy(); });
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
-        this.rowGroupComp.addEventListener(main_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-        this.pivotComp.addEventListener(main_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+        this.rowGroupComp.addEventListener(main_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.pivotComp.addEventListener(main_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
         this.addDestroyFunc(function () {
-            _this.rowGroupComp.removeEventListener(main_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
-            _this.pivotComp.removeEventListener(main_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
+            _this.rowGroupComp.removeEventListener(main_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+            _this.pivotComp.removeEventListener(main_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
         });
         this.onDropPanelVisible();
         return topPanelGui;
     };
     GridHeaderDropZones.prototype.onDropPanelVisible = function () {
-        var bothVisible = this.rowGroupComp.isVisible() && this.pivotComp.isVisible();
-        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothVisible);
-        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothVisible);
+        var bothDisplayed = this.rowGroupComp.isDisplayed() && this.pivotComp.isDisplayed();
+        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothDisplayed);
+        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothDisplayed);
     };
     GridHeaderDropZones.prototype.onRowGroupChanged = function () {
         if (!this.rowGroupComp) {
@@ -69,14 +69,14 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         }
         var rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
         if (rowGroupPanelShow === main_1.Constants.ALWAYS) {
-            this.rowGroupComp.setVisible(true);
+            this.rowGroupComp.setDisplayed(true);
         }
         else if (rowGroupPanelShow === main_1.Constants.ONLY_WHEN_GROUPING) {
             var grouping = !this.columnController.isRowGroupEmpty();
-            this.rowGroupComp.setVisible(grouping);
+            this.rowGroupComp.setDisplayed(grouping);
         }
         else {
-            this.rowGroupComp.setVisible(false);
+            this.rowGroupComp.setDisplayed(false);
         }
     };
     __decorate([

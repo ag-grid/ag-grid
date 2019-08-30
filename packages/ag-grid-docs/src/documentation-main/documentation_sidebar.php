@@ -2,27 +2,27 @@
 </div>
 <div class="card card-highlight">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.1.0">Version 21.1.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Jul 18</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.2.0">Version 21.2.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Aug 30</h6>
         <p class="card-text">
             Minor release with new features and bug fixes:
         </p>
         <ul>
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-chart-toolbar/#chart-format">Chart Format Panel</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-charts-pivot-chart/">Pivot Chart</a></li>
 
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-customisation-area/">Area Charts</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-pagination/#childRows/">Pagination Enhancements</a></li>
 
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-drag-and-drop/">Native Drag & Drop</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-charts-customisation-scatter/">Scatter / Bubble Charts</a></li>
 
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-master-detail/#keeping-row-details">Keeping Detail Rows</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-accessibility/">Accessibility Enhancements</a></li>
         </ul>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.1.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.2.0">Change Log</a>
         </p>
     </div>
 </div>
@@ -74,6 +74,12 @@
         <img src="../images/flags/spain.png" style="height: 18px; width: 18px">
         <a class="learn-more" href="https://ngspain.com/" target="_blank"> ngSpain</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 18th-20th</p>
+
+        <br>
+        <h6 class="card-subtitle mb-2 text-muted">JavaScript</h6>
+        <img src="../images/flags/united-kingdom.png">
+        <a class="learn-more" href="https://halfstackconf.com/london/" target="_blank"> Half Stack London</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Nov 2nd</p>
     </div>
 </div>
 <br>

@@ -28,6 +28,7 @@
         <script src="./js/grid-performance.js" inline></script>
         <script src="./js/grid-api.js" inline></script>
         <?php include '../includes/analytics.php'; ?>
+
     </head>
     <body>
         <?php include '../includes/navbar-2.php'; ?>
@@ -67,6 +68,9 @@
                 </div>
             </div>
         </div>
+
+
+
         </section>
         <section id="example">
             <div class="container">

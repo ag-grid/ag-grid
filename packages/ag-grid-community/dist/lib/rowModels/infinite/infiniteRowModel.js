@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -261,11 +261,18 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     InfiniteRowModel.prototype.getCurrentPageHeight = function () {
         return this.getRowCount() * this.rowHeight;
     };
+    InfiniteRowModel.prototype.getTopLevelRowCount = function () {
+        return this.getRowCount();
+    };
+    InfiniteRowModel.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
+        return topLevelIndex;
+    };
     InfiniteRowModel.prototype.getRowIndexAtPixel = function (pixel) {
         if (this.rowHeight !== 0) { // avoid divide by zero error
             var rowIndexForPixel = Math.floor(pixel / this.rowHeight);
-            if (rowIndexForPixel > this.getPageLastRow()) {
-                return this.getPageLastRow();
+            var lastRowIndex = this.getRowCount() - 1;
+            if (rowIndexForPixel > lastRowIndex) {
+                return lastRowIndex;
             }
             else {
                 return rowIndexForPixel;
@@ -274,12 +281,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         else {
             return 0;
         }
-    };
-    InfiniteRowModel.prototype.getPageFirstRow = function () {
-        return 0;
-    };
-    InfiniteRowModel.prototype.getPageLastRow = function () {
-        return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() - 1 : 0;
     };
     InfiniteRowModel.prototype.getRowCount = function () {
         return this.infiniteCache ? this.infiniteCache.getVirtualRowCount() : 0;

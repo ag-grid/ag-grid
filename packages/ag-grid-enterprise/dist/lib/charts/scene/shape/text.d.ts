@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Shape } from "./shape";
 import { BBox } from "../bbox";
 export declare class Text extends Shape {
@@ -49,7 +49,9 @@ export declare class Text extends Shape {
     textBaseline: CanvasTextBaseline;
     private _lineHeight;
     lineHeight: number;
-    readonly getBBox: () => BBox;
+    getBBox(): BBox | undefined;
+    private getPreciseBBox;
+    private getApproximateBBox;
     isPointInPath(x: number, y: number): boolean;
     isPointInStroke(x: number, y: number): boolean;
     render(ctx: CanvasRenderingContext2D): void;

@@ -1,13 +1,21 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Chart } from "./chart";
 import { Axis } from "../axis";
 import Scale from "../scale/scale";
 import { Series } from "./series/series";
 import { Group } from "../scene/group";
-export declare type CartesianChartLayout = 'vertical' | 'horizontal';
+export declare enum CartesianChartLayout {
+    Vertical = 0,
+    Horizontal = 1
+}
+export declare type CartesianChartOptions = {
+    xAxis: Axis<Scale<any, number>>;
+    yAxis: Axis<Scale<any, number>>;
+    document?: Document;
+};
 export declare class CartesianChart extends Chart {
     private axisAutoPadding;
-    constructor(xAxis: Axis<Scale<any, number>>, yAxis: Axis<Scale<any, number>>);
+    constructor(options: CartesianChartOptions);
     private seriesClipRect;
     readonly seriesRoot: Group;
     private readonly _xAxis;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.1.1
+// ag-grid-enterprise v21.2.0
 import { Node } from "./node";
 import { Path2D } from "./path2D";
 /**

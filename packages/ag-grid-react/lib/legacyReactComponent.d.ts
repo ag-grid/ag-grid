@@ -1,4 +1,4 @@
-// ag-grid-react v21.1.0
+// ag-grid-react v21.2.0
 import { Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from "./baseReactComponent";
@@ -14,4 +14,5 @@ export declare class LegacyReactComponent extends BaseReactComponent {
     getGui(): HTMLElement;
     destroy(): void;
     private createReactComponentLegacy;
+    private addParentContainerStyleAndClasses;
 }
