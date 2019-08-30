@@ -55,6 +55,7 @@
     "rollup-plugin-commonjs": "^9.1.6",
     "rollup-plugin-typescript": "^1.0.0",
     "rollup-plugin-uglify": "^6.0.0",
+    "serialize-javascript": "1.8.0",
     "rollup-stream": "^1.24.1",
     "tslib": "^1.9.3",
     "typescript": "~3.4.1",
