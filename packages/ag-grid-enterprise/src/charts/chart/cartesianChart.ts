@@ -194,13 +194,19 @@ export class CartesianChart extends Chart {
         const xAxisBBox = this.xAxis.getBBox();
         const yAxisBBox = this.yAxis.getBBox();
 
-        if (this.axisAutoPadding.left !== yAxisBBox.width) {
-            this.axisAutoPadding.left = yAxisBBox.width;
-            this.layoutPending = true;
+        {
+            const axisThickness = Math.floor(yAxisBBox.width);
+            if (this.axisAutoPadding.left !== axisThickness) {
+                this.axisAutoPadding.left = axisThickness;
+                this.layoutPending = true;
+            }
         }
-        if (this.axisAutoPadding.bottom !== xAxisBBox.width) {
-            this.axisAutoPadding.bottom = xAxisBBox.width;
-            this.layoutPending = true;
+        {
+            const axisThickness = Math.floor(xAxisBBox.width);
+            if (this.axisAutoPadding.bottom !== axisThickness) {
+                this.axisAutoPadding.bottom = axisThickness;
+                this.layoutPending = true;
+            }
         }
     }
 }

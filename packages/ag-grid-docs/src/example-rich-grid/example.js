@@ -157,14 +157,14 @@
         var skills = [];
         IT_SKILLS.forEach(function (skill) {
             if (data && data.skills[skill]) {
-                skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" alt="' + skill + '" />');
             }
         });
         return skills.join(" ");
     }
 
     function countryCellRenderer(params) {
-        var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://flags.fmcdn.net/data/flags/mini/" + COUNTRY_CODES[params.value] + ".png'>";
+        var flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://flags.fmcdn.net/data/flags/mini/" + COUNTRY_CODES[params.value] + ".png' alt='" + params.value + "' />";
         return flag + " " + params.value;
     }
 
@@ -211,7 +211,7 @@
         '    <div style="text-align: center;">SKILL_NAME</div>' +
         "    <div>" +
         '      <input type="checkbox"/>' +
-        '      <img src="/images/skills/SKILL.png" width="30px"/>' +
+        '      <img src="/images/skills/SKILL.png" width="30px" alt="skill" />' +
         "    </div>" +
         "  </span>" +
         "</label>";

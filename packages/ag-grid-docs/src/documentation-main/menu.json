@@ -825,8 +825,13 @@
             "enterprise": true
           },
           {
-            "title": "Chart Ranges",
-            "url": "javascript-grid-charts-chart-ranges/",
+            "title": "Range Chart",
+            "url": "javascript-grid-charts-range-chart/",
+            "enterprise": true
+          },
+          {
+            "title": "Pivot Chart",
+            "url": "javascript-grid-charts-pivot-chart/",
             "enterprise": true
           },
           {
@@ -954,21 +959,17 @@
           {
             "title": "Internationalisation",
             "url": "javascript-grid-internationalisation/"
-          },
-          {
-            "title": "Security",
-            "url": "javascript-grid-security/"
           }
         ]
       },
       {
-        "title": "Testing",
+        "title": "Testing & Security",
         "icon": "icon-test",
         "matrixExclude": true,
         "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Overview",
+            "title": "Testing Overview",
             "url": "javascript-grid-testing/"
           },
           {
@@ -986,6 +987,10 @@
           {
             "title": "Jasmine & Protractor",
             "url": "javascript-grid-e2e-test-with-jasmine/"
+          },
+          {
+            "title": "Security",
+            "url": "javascript-grid-security/"
           }
         ]
       }

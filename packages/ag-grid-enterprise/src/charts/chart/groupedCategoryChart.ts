@@ -191,12 +191,15 @@ export class GroupedCategoryChart extends Chart {
         const xAxisBBox = this.xAxis.getBBox();
         const yAxisBBox = this.yAxis.getBBox();
 
-        if (this.axisAutoPadding.left !== yAxisBBox.width) {
-            this.axisAutoPadding.left = yAxisBBox.width;
-            this.layoutPending = true;
+        {
+            const axisThickness = Math.floor(yAxisBBox.width);
+            if (this.axisAutoPadding.left !== axisThickness) {
+                this.axisAutoPadding.left = axisThickness;
+                this.layoutPending = true;
+            }
         }
         {
-            const axisThickness = isHorizontal ? xAxisBBox.width : xAxisBBox.height;
+            const axisThickness = Math.floor(isHorizontal ? xAxisBBox.width : xAxisBBox.height);
             if (this.axisAutoPadding.bottom !== axisThickness) {
                 this.axisAutoPadding.bottom = axisThickness;
                 this.layoutPending = true;

@@ -105,7 +105,7 @@
                 <p>
                     Running the command below will add ag-Grid to your project.
                 </p>
-                <img class="example code" src="../images/get-started.png" alt="Command Code">
+                <img class="example code" src="../images/get-started-react.png" alt="Command Code">
                 <p class="lead font-weight-bold">
                     Before implementing, learn more about ag-Grid React and it's benefits below.
                 </p>

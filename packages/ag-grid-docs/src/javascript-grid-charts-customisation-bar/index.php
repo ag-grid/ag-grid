@@ -23,7 +23,7 @@ interface BarChartOptions {
     // The chart title to render at the top of the chart.
     title?: CaptionOptions;
     // The subtitle to render under the chart's title.
-    // If the title is not not specified or disabled, the subtitle won't be visible either.
+    // If the title is not specified or is disabled, the subtitle won't be visible either.
     subtitle?: CaptionOptions;
     // The width of the chart.
     width?: number,
@@ -69,7 +69,7 @@ interface BarChartOptions {
         labelFontSize?: number;
         // The font family to be used by legend's labels. Defaults to `Verdana, sans-serif`.
         labelFontFamily?: string;
-        // The color to be used by the legend's labels. Default depends on ag-Grid theme used
+        // The colour to be used by the legend's labels. Default depends on ag-Grid theme used
         labelColor?: string;
     };
 
@@ -79,14 +79,14 @@ interface BarChartOptions {
     yAxis: AxisOptions;
 
     seriesDefaults?: {
-        // The fill colors to be used by the series.
+        // The fill colours to be used by the series.
         fills?: string[];
-        // The stroke colors to be used by the series.
+        // The stroke colours to be used by the series.
         strokes?: string[];
-         // The opacity of all fills. Valid range if from 0 to 1.
+         // The opacity of all fills. Valid range from 0 to 1.
         // Defaults to 1 (completely opaque).
         fillOpacity?: number;
-        // The opacity of all strokes. Valid range if from 0 to 1.
+        // The opacity of all strokes. Valid range from 0 to 1.
         // Defaults to 1 (completely opaque).
         strokeOpacity?: number;
         // The stroke width. Defaults to `1`.
@@ -106,7 +106,7 @@ interface BarChartOptions {
         labelFontSize?: number;
         // The font family to be used by bar labels. Defaults to `Verdana, sans-serif`.
         labelFontFamily?: string;
-        // The color to be used by the bar labels.
+        // The colour to be used by the bar labels.
         // Depends on whether the light or dark mode is used.
         labelColor?: string;
         // The vertical and horizontal padding of the labels within bars (from the top
@@ -118,7 +118,7 @@ interface BarChartOptions {
         // The shadow type to use for bars. Defaults to no shadow.
         // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
         shadow?: {
-            // The shadow color. For example, 'rgba(0, 0, 0, 0.3)'.
+            // The shadow colour. For example, 'rgba(0, 0, 0, 0.3)'.
             color?: string;
             // The shadow offset.
             offset?: [number, number];
@@ -154,7 +154,7 @@ interface CaptionOptions {
     // The font family to be used by the title/subtitle.
     // Defaults to `Verdana, sans-serif` for both.
     fontFamily?: string;
-    // The color of the title/subtitle's text. Defaults to `black`.
+    // The colour of the title/subtitle's text. Defaults to `black`.
     color?: string;
     // Whether to show the title/subtitle or not. Defaults to `true`.
     enabled?: boolean;
@@ -174,7 +174,7 @@ interface AxisOptions {
     title?: CaptionOptions;
     // The thickness of the axis line. Defaults to `1`.
     lineWidth?: number;
-    // The color of the axis line. Depends on whether the light or dark mode is used.
+    // The colour of the axis line. Depends on whether the light or dark mode is used.
     lineColor?: string;
 
     // The thickness of the ticks. Defaults to `1`.
@@ -183,7 +183,7 @@ interface AxisOptions {
     tickSize?: number;
     // The padding between the ticks and the labels. Defaults to `5`.
     tickPadding?: number;
-    // The color of the axis ticks. Depends on whether the light or dark mode is used.
+    // The colour of the axis ticks. Depends on whether the light or dark mode is used.
     tickColor?: string;
 
     // The font style to be used by axis labels. For example, 'italic'. Not used by default.
@@ -194,7 +194,7 @@ interface AxisOptions {
     labelFontSize?: number;
     // The font family to be used by axis labels. Defaults to `Verdana, sans-serif`.
     labelFontFamily?: string;
-    // The color of the axis labels. Depends on whether the light or dark mode is used.
+    // The colour of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
     // The rotation of the axis labels. Defaults to `45` (degrees), however when no category
     // is present the default category, i.e. (none), is used with the value  `0`.
@@ -211,7 +211,7 @@ interface AxisOptions {
 }
 
 interface IGridStyle {
-    // The stroke color of a grid line. Depends on whether the light or dark mode is used.
+    // The stroke colour of a grid line. Depends on whether the light or dark mode is used.
     stroke?: string;
     // The line dash array. Every number in the array specifies the length of alternating
     // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.

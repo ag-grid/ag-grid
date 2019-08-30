@@ -99,5 +99,28 @@ let colDef = {
         </snippet>
     </p>
 
+    <h1>OWASP Benchmark</h1>
+
+    <p>
+        It is normal for applications to be expected to pass Application Security Testing.
+        If your application uses ag-Grid, then ag-Grid must also pass these standards.
+    </p>
+    <p>
+        To assist with this every production release of ag-Grid is tested against the
+        <a href="https://www.owasp.org/index.php/Benchmark">OWASP Benchmark</a>
+        using the <a href="https://www.sonarqube.org/">SonarQube</a> utility. The project modules
+        <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> pass with 0 vulnerabilities.
+    </p>
+
+    <p>
+        Below are the results of running SonarQube against version 21.2.0 of <code>ag-grid-community</code>
+        and <code>ag-grid-enterprise</code>.
+    </p>
+
+    <h3>SonarQube Results on ag-grid-community</h3>
+    <img src="./community-report.png" alt="ag-grid-community report" style="width:100%; margin-bottom: 10px; display: block; border: 1px solid lightgray;"/>
+
+    <h3>SonarQube Results on ag-grid-enterprise</h3>
+    <img src="./enterprise-report.png" alt="ag-grid-enterprise report" style="width: 100%; border: 1px solid lightgray;" />
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -3,7 +3,7 @@ var columnDefs = [
     {field: 'age'},
     {field: 'country', headerTooltip: 'The country the athlete represented'},
     {field: 'year', headerTooltip: 'The year of the olympics'},
-    {field: 'date', headerTooltip: 'The date of teh olympics'},
+    {field: 'date', headerTooltip: 'The date of the olympics'},
     {field: 'sport', headerTooltip: 'The sport the medal was for'},
     {field: 'gold', headerTooltip: 'How many gold medals'},
     {field: 'silver', headerTooltip: 'How many silver medals'},

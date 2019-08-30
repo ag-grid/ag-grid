@@ -102,8 +102,8 @@ meta_and_links($title, $keywords, $description, false);
         <section>
             <div class="demo" id="demo-1" data-load="home/demo-1.php">
                 <div class="loading">
-                <img src="_assets/doodles/checkbox-selection.svg">
-                <p>Loading Demo...</p>
+                    <img src="_assets/doodles/checkbox-selection.svg" alt="Loading..." />
+                    <p>Loading Demo...</p>
                 </div>
                 <div class="view-code">
                     <a href="/javascript-getting-started#summary">View Code</a>
@@ -121,7 +121,7 @@ meta_and_links($title, $keywords, $description, false);
 
             <div>
                 <div class="media">
-                    <img src="_assets/fw-logos/webpack.svg" />
+                    <img src="_assets/fw-logos/webpack.svg" alt="Webpack" />
                     <div class="media-body">
                         <h3>Webpack</h3>
                         <p><a href="/ag-grid-partners-with-webpack/">Read about our Partnership with webpack.</a></p>
@@ -129,7 +129,7 @@ meta_and_links($title, $keywords, $description, false);
                 </div>
 
                 <div class="media">
-                    <img src="_assets/fw-logos/plunker.svg" />
+                    <img src="_assets/fw-logos/plunker.svg" alt="Plunker" />
                     <div class="media-body">
                         <h3>Plunker</h3>
                         <p><a href="/ag-grid-proud-to-support-plunker/">Read about our Backing of Plunker.</a></p>
@@ -145,8 +145,8 @@ meta_and_links($title, $keywords, $description, false);
         <section>
             <div class="demo" id="demo-2" data-load="home/demo-2.php">
                 <div class="loading">
-                <img src="_assets/doodles/checkbox-selection.svg">
-                <p>Loading Demo...</p>
+                    <img src="_assets/doodles/checkbox-selection.svg" alt="Loading..." />
+                    <p>Loading Demo...</p>
                 </div>
                 <div class="view-code">
                     &nbsp;
@@ -161,7 +161,7 @@ meta_and_links($title, $keywords, $description, false);
         <section>
             <div class="demo" id="demo-2" data-load="home/demo-3.php">
                 <div class="loading">
-                    <img src="_assets/doodles/checkbox-selection.svg">
+                    <img src="_assets/doodles/checkbox-selection.svg" alt="Loading..." />
                     <p>Loading Demo...</p>
                 </div>
                 <div class="view-code">
@@ -228,8 +228,8 @@ meta_and_links($title, $keywords, $description, false);
         <section>
             <div class="demo" data-load="home/demo-api.php">
                 <div class="loading">
-                <img src="_assets/doodles/checkbox-selection.svg">
-                <p>Loading Demo...</p>
+                    <img src="_assets/doodles/checkbox-selection.svg" alt="Loading..." />
+                    <p>Loading Demo...</p>
                 </div>
                 <div class="view-code">
                     <a href="/javascript-grid-animation/">View Code</a>

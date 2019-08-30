@@ -6,13 +6,13 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Chart API</h1>
+    <h1 class="heading-enterprise">Chart Range API</h1>
 
     <p class="lead">
         This section covers how to use the chart range API in your applications.
     </p>
 
-    <h2>Charting Range API</h2>
+    <h2>Chart Range API</h2>
 
     <p>
         Charts can be created programmatically via the grid's <code>chartRange()</code> API. The interface is
@@ -61,7 +61,7 @@ interface ProcessChartOptionsParams {
         <li>
             <code>cellRange</code>: Defines the range of cells to be charted. A range is normally defined
             with start and end rows and a list of columns. If the start and end rows are omitted, the range
-            covers all rows (ie entire columns are selected).
+            covers all rows (i.e. entire columns are selected).
             The columns can either be defined using a start and end column (the range will cover the start
             and end columns and all columns in between), or columns can be supplied specifically in cases
             where the required columns are not adjacent to each other.
@@ -73,18 +73,18 @@ interface ProcessChartOptionsParams {
             'doughnut' or 'line'.
         </li>
         <li>
-            <code>chartContainer</code>: If the chart is to be displayed outside of the grid then provide a chart
-            container. If the chart is to be displayed using the grid's popup window mechanism then leave undefined.
+            <code>chartContainer</code>: If the chart is to be displayed outside of the grid then a chart container 
+            should be provided. If the chart is to be displayed using the grid's popup window mechanism then leave undefined.
         </li>
         <li>
-            <code>suppressChartRanges</code>: Normally when a chart is displayed using the grid, the grid will
+            <code>suppressChartRanges</code>: By default, when a chart is displayed using the grid, the grid will
             highlight the range the chart is charting when the chart gets focus. To suppress this behaviour,
             set <code>suppressChartRanges=true</code>.
         </li>
         <li>
-            <code>aggFunc</code>: The aggregation function that should be applied to all series data. Built in agg
+            <code>aggFunc</code>: The aggregation function that should be applied to all series data. Built-in aggregation
             functions can be used by supplying one of the strings keys: <code>sum, min, max, count, avg, first, last</code>.
-            Custom agg functions can also be directly supplied once they conforms to the <code>IAggFunc</code> interface
+            Custom aggregation functions can also be directly supplied if they conform to the <code>IAggFunc</code> interface
             shown above.
         </li>
         <li>
@@ -136,7 +136,7 @@ interface ProcessChartOptionsParams {
         </li>
         <li>All data is editable in the grid. Changes to the grid data is reflected in the charts.</li>
         <li>
-            The two pie charts have legend on the bottom. This is configured in the
+            The two pie charts have legends beneath. This is configured in the
             <code>processChartOptions()</code>.
         </li>
     </ul>
