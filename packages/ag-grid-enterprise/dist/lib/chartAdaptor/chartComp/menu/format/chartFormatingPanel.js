@@ -62,7 +62,7 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
             this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
             this.addComponent(new lineSeriesPanel_1.LineSeriesPanel(this.chartController));
         }
-        else if (chartType === ag_grid_community_1.ChartType.Scatter || ag_grid_community_1.ChartType.Bubble) {
+        else if (chartType === ag_grid_community_1.ChartType.Scatter || chartType === ag_grid_community_1.ChartType.Bubble) {
             this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
             this.addComponent(new scatterSeriesPanel_1.ScatterSeriesPanel(this.chartController));
         }

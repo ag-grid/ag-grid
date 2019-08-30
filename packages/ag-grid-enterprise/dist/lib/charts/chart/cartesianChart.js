@@ -186,13 +186,19 @@ var CartesianChart = /** @class */ (function (_super) {
         // The `xAxis` and `yAxis` have `.this` prefix on purpose here.
         var xAxisBBox = this.xAxis.getBBox();
         var yAxisBBox = this.yAxis.getBBox();
-        if (this.axisAutoPadding.left !== yAxisBBox.width) {
-            this.axisAutoPadding.left = yAxisBBox.width;
-            this.layoutPending = true;
+        {
+            var axisThickness = Math.floor(yAxisBBox.width);
+            if (this.axisAutoPadding.left !== axisThickness) {
+                this.axisAutoPadding.left = axisThickness;
+                this.layoutPending = true;
+            }
         }
-        if (this.axisAutoPadding.bottom !== xAxisBBox.width) {
-            this.axisAutoPadding.bottom = xAxisBBox.width;
-            this.layoutPending = true;
+        {
+            var axisThickness = Math.floor(xAxisBBox.width);
+            if (this.axisAutoPadding.bottom !== axisThickness) {
+                this.axisAutoPadding.bottom = axisThickness;
+                this.layoutPending = true;
+            }
         }
     };
     return CartesianChart;

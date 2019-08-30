@@ -184,12 +184,15 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
         // The `xAxis` and `yAxis` have `.this` prefix on purpose here.
         var xAxisBBox = this.xAxis.getBBox();
         var yAxisBBox = this.yAxis.getBBox();
-        if (this.axisAutoPadding.left !== yAxisBBox.width) {
-            this.axisAutoPadding.left = yAxisBBox.width;
-            this.layoutPending = true;
+        {
+            var axisThickness = Math.floor(yAxisBBox.width);
+            if (this.axisAutoPadding.left !== axisThickness) {
+                this.axisAutoPadding.left = axisThickness;
+                this.layoutPending = true;
+            }
         }
         {
-            var axisThickness = isHorizontal ? xAxisBBox.width : xAxisBBox.height;
+            var axisThickness = Math.floor(isHorizontal ? xAxisBBox.width : xAxisBBox.height);
             if (this.axisAutoPadding.bottom !== axisThickness) {
                 this.axisAutoPadding.bottom = axisThickness;
                 this.layoutPending = true;
