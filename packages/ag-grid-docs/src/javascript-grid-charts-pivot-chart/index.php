@@ -25,8 +25,8 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>
-            Enter <a href="../javascript-grid-pivoting/#pivot-mode-1">Pivot Mode</a> and select a combination of group
-            and value columns.
+            Enter <a href="../javascript-grid-pivoting/#pivot-mode-1">Pivot Mode</a> and select a combination of group,
+            pivot and value columns.
         </li>
         <li>
             Bring up the <a href="../javascript-grid-context-menu">Context Menu</a> and select the desired chart type
@@ -39,7 +39,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-
+        Notice from the demonstration above that all data is charted when using the Pivot Chart. Also note
+        that the category axis will update to reflect the expanded group categories.
     </p>
 
     <h2>Next Up</h2>
