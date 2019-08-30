@@ -71,19 +71,23 @@ function createDataItem(color) {
 }
 
 function binDragOver(event) {
-    var dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
+    var dragSupported = event.dataTransfer.types.length;
+
     if (dragSupported) {
-        event.dataTransfer.dropEffect = "move";
+        event.dataTransfer.dropEffect = 'move';
         event.preventDefault();
     }
 }
 
 function binDrop(event) {
-    var jsonData = event.dataTransfer.getData("application/json");
+    event.preventDefault();
+    var userAgent = window.navigator.userAgent;
+    var isIE = userAgent.indexOf('Trident/') >= 0;
+    var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
     var data = JSON.parse(jsonData);
 
     // if data missing or data has no id, do nothing
-    if (!data || data.id==null) { return; }
+    if (!data || data.id == null) { return; }
 
     var transaction = {
         remove: [data]
@@ -103,23 +107,33 @@ function binDrop(event) {
 function dragStart(event, color) {
     var newItem = createDataItem(color);
     var jsonData = JSON.stringify(newItem);
-    event.dataTransfer.setData('application/json', jsonData);
+    var userAgent = window.navigator.userAgent;
+    var isIE = userAgent.indexOf('Trident/') >= 0;
+
+    event.dataTransfer.setData(isIE ? 'text' : 'application/json', jsonData);
 }
 
 function gridDragOver(event) {
-    var dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
+    var dragSupported = event.dataTransfer.types.length;
+
     if (dragSupported) {
         event.dataTransfer.dropEffect = "copy";
         event.preventDefault();
     }
+
 }
 
 function gridDrop(event, grid) {
-    var jsonData = event.dataTransfer.getData("application/json");
+    event.preventDefault();
+
+    var userAgent = window.navigator.userAgent;
+    var isIE = userAgent.indexOf('Trident/') >= 0;
+
+    var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
     var data = JSON.parse(jsonData);
 
     // if data missing or data has no it, do nothing
-    if (!data || data.id==null) { return; }
+    if (!data || data.id == null) { return; }
 
     var gridApi = grid == 'left' ? leftGridOptions.api : rightGridOptions.api;
 
