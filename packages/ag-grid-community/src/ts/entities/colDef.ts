@@ -345,8 +345,6 @@ export interface ColDef extends AbstractColDef {
 
     /** Defines the column data type used when charting, i.e. 'category' | 'series' | 'excluded' | undefined **/
     chartDataType?: string;
-
-    fillOperation?: string;
 }
 
 export interface IsColumnFunc {

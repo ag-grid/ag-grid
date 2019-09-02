@@ -4,6 +4,7 @@ import {
     CellPosition,
     CellRange,
     Column,
+    GridOptionsWrapper,
     RowNode,
     RowPosition,
     ValueService,
@@ -21,6 +22,7 @@ type Direction = 'x' | 'y';
 export class FillHandle extends AbstractSelectionHandle {
 
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     static TEMPLATE = '<div class="ag-fill-handle"></div>';
 
@@ -105,12 +107,12 @@ export class FillHandle extends AbstractSelectionHandle {
         }
 
         if (finalRange) {
-            this.handleValueChanged(initialRange, finalRange, e.altKey);
+            this.handleValueChanged(initialRange, finalRange, e);
             this.rangeController.setCellRanges([finalRange]);
         }
     }
 
-    private handleValueChanged(initialRange: CellRange, finalRange: CellRange, altKey: boolean) {
+    private handleValueChanged(initialRange: CellRange, finalRange: CellRange, e: MouseEvent) {
         const initialRangeEndRow = this.rangeController.getRangeEndRow(initialRange);
         const initialRangeStartRow = this.rangeController.getRangeStartRow(initialRange);
         const finalRangeEndRow = this.rangeController.getRangeEndRow(finalRange);
@@ -134,9 +136,13 @@ export class FillHandle extends AbstractSelectionHandle {
 
         let withinInitialRange = true;
         const values: any[] = [];
+        const initialValues: any[] = [];
+        let idx = 0;
 
         const resetValues = () => {
             values.length = 0;
+            initialValues.length = 0;
+            idx = 0;
         };
 
         const iterateAcrossCells = (column?: Column, columns?: Column[]) => {
@@ -177,9 +183,10 @@ export class FillHandle extends AbstractSelectionHandle {
 
             if (withinInitialRange) {
                 currentValue = this.valueService.getValue(col, rowNode);
+                initialValues.push(currentValue);
                 withinInitialRange = updateInitialSet();
             } else {
-                currentValue = this.processValues(values, altKey);
+                currentValue = this.processValues(e, values, initialValues, col, rowNode, idx++);
                 this.valueService.setValue(rowNode, col, currentValue);
             }
             
@@ -216,8 +223,47 @@ export class FillHandle extends AbstractSelectionHandle {
         }
     }
 
-    private processValues(values: any[], altKey: boolean): any {
-        return 10;
+    private processValues(
+        event: MouseEvent,
+        values: any[],
+        initialValues: any[],
+        col: Column, 
+        rowNode: RowNode,
+        idx: number
+    ): any {
+        const userFillOperation = this.gridOptionsWrapper.getFillOperation();
+        const isVertical = this.dragAxis === 'y';
+        let direction;
+
+        if (isVertical) {
+            direction = this.isUp ? 'up' : 'down';
+        } else {
+            direction = this.isLeft ? 'left' : 'right';
+        }
+
+        if (userFillOperation) {
+            return userFillOperation({
+                event,
+                values,
+                initialValues,
+                currentIndex: idx,
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
+                context: this.gridOptionsWrapper.getContext(),
+                direction,
+                column: isVertical ? col : undefined,
+                rowNode: !isVertical ? rowNode : undefined // only present if left / right
+            });
+        }
+
+        // we should copy values using a list order if pressing the alt key
+        // or if not all values are numbers
+        if (event.altKey || values.some(val => isNaN(parseFloat(val)))) {
+            return values[idx % values.length];
+        }
+
+        return _.last(_.findLineByLeastSquares(values));
+    
     }
 
     protected clearValues() {

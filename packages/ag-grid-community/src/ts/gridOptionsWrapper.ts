@@ -13,7 +13,8 @@ import {
     PostProcessPopupParams,
     ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
-    TabToNextCellParams
+    TabToNextCellParams,
+    FillOperationParams
 } from "./entities/gridOptions";
 import { _ } from "./utils";
 import { EventService } from "./eventService";
@@ -847,6 +848,10 @@ export class GridOptionsWrapper {
 
     public isEnableFillHandle(): boolean {
         return isTrue(this.gridOptions.enableFillHandle);
+    }
+
+    public getFillOperation(): ((params: FillOperationParams) => any) | undefined {
+        return this.gridOptions.fillOperation;
     }
 
     public isSuppressMultiRangeSelection(): boolean {
