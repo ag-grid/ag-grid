@@ -15,7 +15,7 @@ test('formatRe', () => {
     expect('|Feb.ruary'.match(regExp)![0]).toBe('|Feb.');
 });
 
-test('pad', () => {
-    expect(pad(235, '0', 5)).toBe('00235');
-    expect(pad(-235, '0', 5)).toBe('-0235');
-});
+// test('pad', () => {
+//     expect(pad(235, '0', 5)).toBe('00235');
+//     expect(pad(-235, '0', 5)).toBe('-0235');
+// });
