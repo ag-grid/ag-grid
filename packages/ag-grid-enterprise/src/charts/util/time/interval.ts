@@ -48,7 +48,7 @@ export class TimeInterval {
      * Returns a new date representing the closest interval boundary date to date.
      * @param date
      */
-    round(date: Date | number) {
+    round(date: Date | number): Date {
         const d0 = this.floor(date);
         const d1 = this.ceil(date);
         const ms = +date;
@@ -60,8 +60,10 @@ export class TimeInterval {
      * @param date
      * @param step
      */
-    offset(date: Date | number, step: number = 1) {
-        return this._offset(new Date(+date), Math.floor(step));
+    offset(date: Date | number, step: number = 1): Date {
+        date = new Date(+date);
+        this._offset(date, Math.floor(step));
+        return date;
     }
 
     /**
