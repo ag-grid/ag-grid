@@ -1,4 +1,4 @@
-import {_, ChartType, PostConstruct} from "ag-grid-community";
+import {_, ChartType} from "ag-grid-community";
 
 import {MiniStackedArea} from "./miniStackedArea";
 
@@ -11,10 +11,7 @@ export class MiniNormalizedArea extends MiniStackedArea {
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniNormalizedArea.data) {
         super(parent, fills, strokes, data);
-    }
 
-    @PostConstruct
-    protected init() {
-        this.scene.canvas.element.title = this.chartTranslator.translate('normalizedAreaTooltip');
+        this.tooltipName = "normalizedAreaTooltip";
     }
 }

@@ -1,4 +1,4 @@
-import {_, ChartType, PostConstruct} from "ag-grid-community";
+import {_, ChartType} from "ag-grid-community";
 
 import {MiniChart} from "./miniChart";
 import linearScale from "../../../../../charts/scale/linearScale";
@@ -11,9 +11,7 @@ export class MiniStackedColumn extends MiniChart {
     private readonly bars: Rect[][];
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super();
-
-        this.scene.parent = parent;
+        super(parent, "stackedColumnTooltip");
 
         const size = this.size;
         const padding = this.padding;
@@ -34,13 +32,11 @@ export class MiniStackedColumn extends MiniChart {
         yScale.domain = [0, 16];
         yScale.range = [size - padding, padding];
 
-        const axisOvershoot = 3;
-
-        const leftAxis = Line.create(padding, padding, padding, size - padding + axisOvershoot);
+        const leftAxis = Line.create(padding, padding, padding, size - padding + this.axisOvershoot);
         leftAxis.stroke = this.stroke;
         leftAxis.strokeWidth = this.strokeWidth;
 
-        const bottomAxis = Line.create(padding - axisOvershoot, size - padding, size - padding, size - padding);
+        const bottomAxis = Line.create(padding - this.axisOvershoot, size - padding, size - padding, size - padding);
         bottomAxis.stroke = this.stroke;
         bottomAxis.strokeWidth = this.strokeWidth;
 
@@ -67,11 +63,6 @@ export class MiniStackedColumn extends MiniChart {
         root.append(bottomAxis);
 
         this.updateColors(fills, strokes);
-    }
-
-    @PostConstruct
-    private init() {
-        this.scene.canvas.element.title = this.chartTranslator.translate('stackedColumnTooltip');
     }
 
     updateColors(fills: string[], strokes: string[]) {
