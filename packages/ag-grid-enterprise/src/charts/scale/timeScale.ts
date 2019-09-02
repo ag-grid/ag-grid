@@ -1,22 +1,22 @@
 // import { LinearScale } from "./linearScale";
-import ContinuousScale from "./continuousScale";
-import timeMillisecond from "../util/time/millisecond";
-import timeSecond from "../util/time/second";
-import timeMinute from "../util/time/minute";
-import timeHour from "../util/time/hour";
-import timeDay from "../util/time/day";
-import timeWeek from "../util/time/week";
-import timeMonth from "../util/time/month";
-import timeYear from "../util/time/year";
-import {
-    durationSecond,
-    durationMinute,
-    durationHour,
-    durationDay,
-    durationWeek,
-    durationMonth,
-    durationYear
-} from "../util/time/duration";
+// import ContinuousScale from "./continuousScale";
+// import timeMillisecond from "../util/time/millisecond";
+// import timeSecond from "../util/time/second";
+// import timeMinute from "../util/time/minute";
+// import timeHour from "../util/time/hour";
+// import timeDay from "../util/time/day";
+// import timeWeek from "../util/time/week";
+// import timeMonth from "../util/time/month";
+// import timeYear from "../util/time/year";
+// import {
+//     durationSecond,
+//     durationMinute,
+//     durationHour,
+//     durationDay,
+//     durationWeek,
+//     durationMonth,
+//     durationYear
+// } from "../util/time/duration";
 // import * as domain from "domain";
 
 
