@@ -1,4 +1,4 @@
-import { Chart } from "./chart";
+import { Chart, ChartOptions } from "./chart";
 import { Axis } from "../axis";
 import Scale from "../scale/scale";
 import { Series } from "./series/series";
@@ -12,11 +12,10 @@ export enum CartesianChartLayout {
     Horizontal
 }
 
-export type CartesianChartOptions = {
-    xAxis: Axis<Scale<any, number>>,
-    yAxis: Axis<Scale<any, number>>,
-    document?: Document
-};
+export interface CartesianChartOptions extends ChartOptions {
+    xAxis: Axis<Scale<any, number>>;
+    yAxis: Axis<Scale<any, number>>;
+}
 
 export class CartesianChart extends Chart {
 

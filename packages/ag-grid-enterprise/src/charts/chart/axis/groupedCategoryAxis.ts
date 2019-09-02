@@ -140,7 +140,7 @@ export class GroupedCategoryAxis {
 
     /**
      * The color of the axis line.
-     * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
+     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
      */
     lineColor?: string = 'rgba(195, 195, 195, 1)';
 
@@ -163,7 +163,7 @@ export class GroupedCategoryAxis {
 
     /**
      * The color of the axis ticks.
-     * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
+     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
     tickColor?: string = 'rgba(195, 195, 195, 1)';
 
@@ -182,7 +182,7 @@ export class GroupedCategoryAxis {
 
     /**
      * The color of the labels.
-     * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
+     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
     labelColor?: string = 'rgba(87, 87, 87, 1)';
 

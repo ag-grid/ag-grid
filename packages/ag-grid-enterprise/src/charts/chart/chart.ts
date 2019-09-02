@@ -12,9 +12,10 @@ import { Caption } from "../caption";
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-export type ChartOptions = {
-    document?: Document
-};
+export interface ChartOptions {
+    document?: Document;
+    parent?: HTMLElement;
+}
 
 export abstract class Chart {
     readonly scene: Scene;
@@ -40,15 +41,17 @@ export abstract class Chart {
         background.fill = 'white';
         root.appendChild(background);
 
-        this.scene = new Scene({document});
-        this.scene.root = root;
+        const scene = new Scene({document});
+        this.scene = scene;
+        scene.parent = options.parent;
+        scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
 
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
 
-        this.setupListeners(this.scene.canvas.element);
+        this.setupListeners(scene.canvas.element);
     }
 
     destroy() {
@@ -127,7 +130,7 @@ export abstract class Chart {
         return this._series;
     }
 
-    addSeries(series: Series<Chart>, before: Series<Chart> | null = null): boolean {
+    addSeries(series: Series<Chart>, before?: Series<Chart>): boolean {
         const canAdd = this.series.indexOf(series) < 0;
 
         if (canAdd) {
