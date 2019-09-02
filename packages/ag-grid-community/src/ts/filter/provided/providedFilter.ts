@@ -154,7 +154,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         // we set the model from the gui, rather than the provided model,
         // so the model is consistent. eg handling of null/undefined will be the same,
         // of if model is case insensitive, then casing is removed.
-        this.appliedModel = this.getModelFromUi();
+        this.applyModel();
     }
 
     private onBtClear() {

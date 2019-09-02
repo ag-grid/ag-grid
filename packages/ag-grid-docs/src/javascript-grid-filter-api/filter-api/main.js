@@ -45,12 +45,14 @@ function irelandAndUk() {
     countryFilterComponent.selectNothing();
     countryFilterComponent.selectValue('Ireland');
     countryFilterComponent.selectValue('Great Britain');
+    countryFilterComponent.applyModel();
     gridOptions.api.onFilterChanged();
 }
 
 function clearCountryFilter() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     countryFilterComponent.selectEverything();
+    countryFilterComponent.applyModel();
     gridOptions.api.onFilterChanged();
 }
 
@@ -68,6 +70,7 @@ function endingStan() {
             countryFilterComponent.selectValue(value);
         }
     }
+    countryFilterComponent.applyModel();
     gridOptions.api.onFilterChanged();
 }
 
