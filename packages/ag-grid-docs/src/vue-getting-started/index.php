@@ -3,7 +3,7 @@ $pageTitle = "Get Started with Vue Grid: ag-Grid Reference";
 $pageDescription = "ag-Grid is a feature-rich Vue grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Vue application.";
 $pageKeyboards = "Vue Grid";
 $pageGroup = "basics";
-include '../getting-started/header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 <script src="../_assets/js/copy-code.js"></script>
 <style><?php include '../_assets//pages/get-started.css'; ?></style>
@@ -517,5 +517,4 @@ While doing so, we learned how to configure the grid, how to access its API obje
 <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
 <br><br>
 
-
-<?php include '../getting-started/footer.php'; ?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

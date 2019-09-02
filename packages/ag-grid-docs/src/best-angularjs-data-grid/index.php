@@ -3,7 +3,7 @@ $pageTitle = "AngularJS Datagrid | Packed with features and performance.";
 $pageDescription = "ag-Grid is a feature rich datagrid designed for AngularJS. Version 18 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.";
 $pageKeyboards = "Angular Grid";
 $pageGroup = "basics";
-include '../getting-started/header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -335,5 +335,4 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     Ready to try ag-Grid in your project? Download ag-Grid Community edition or trial ag-Grid Enterprise for free.
 </p>
 
-
-<?php include '../getting-started/footer.php'; ?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

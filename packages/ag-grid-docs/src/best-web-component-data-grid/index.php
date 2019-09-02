@@ -3,7 +3,7 @@ $pageTitle = "Web Component Datagrid | Packed with features and performance";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Web Components to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Web Component Grid";
 $pageGroup = "basics";
-include '../getting-started/header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
@@ -311,4 +311,4 @@ include '../getting-started/header.php';
 
 </div>
 
-<?php include '../getting-started/footer.php'; ?>
+<?php include '../documentation-main/documentation_footer.php'; ?>
