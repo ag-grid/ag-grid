@@ -322,6 +322,99 @@
                 }
             }
         }
+
+        #pricing-nav {
+            display: none;
+            font-size: 90%;
+            height: 100vh;
+            overflow: auto;
+            padding-left: 0;
+
+            > ul {
+                border-left: 1px solid $border-color;
+                padding-start: 2rem;
+                padding-inline-start: 2rem;
+            }
+
+            > ul > li:first-child {
+                margin-top: 3rem;
+            }
+
+            > ul > li:last-child {
+                margin-bottom: 3rem;
+            }
+
+            ul {
+                li {
+                    margin-bottom: 0.5rem;
+
+                    a {
+                        color: $gray-600;
+                        display: block;
+
+                        &:hover {
+                            color: $primary;
+                        }
+                    }
+
+                    &.level-1 {
+                        font-size: 115%;
+                        font-weight: 500;
+                    }
+
+                    &.level-3 {
+                        font-size: 95%;
+                        font-weight: 200;
+                        padding-left: 0.5rem;
+                    }
+
+                    &.level-4 {
+                        font-size: 90%;
+                        font-weight: 200;
+                        padding-left: 1.5rem;
+                    }
+                }
+            }
+
+            @media (min-width: 1024px) {
+                align-self: flex-start;
+                display: block;
+                flex: 0 0 100% / 12 * 2.5;
+                max-width: 100% / 12 * 2.5;
+                padding-left: 2rem;
+                position: sticky;
+                top: 300px;
+            }
+
+            @media (min-width: 1920px) {
+                display: block;
+                left: calc(50% + #{$max-width / 2});
+                max-width: unset;
+                padding-left: 3rem;
+                position: fixed;
+                top: auto;
+                width: calc((100vw - #{$max-width}) / 2);
+            }
+
+            a {
+                display: block;
+
+                &:hover {
+                    text-decoration: none;
+                }
+
+                &.current-section {
+                    color: $blue-2;
+
+                    &::before {
+                        border-left: 1px solid $blue-2;
+                        content: "\00a0";
+                        left: -1px;
+                        position: absolute;
+                    }
+                }
+            }
+        }
     }
 
     h1 .anchorjs-link {
