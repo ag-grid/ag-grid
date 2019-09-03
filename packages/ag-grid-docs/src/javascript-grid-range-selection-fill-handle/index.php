@@ -35,13 +35,13 @@ include '../documentation-main/documentation_header.php';
                 When a range of numbers is selected and the range is increased while pressing the <code>option / alt</code> key, the behavior
                 will be the same as when a range of strings or mixed values is selected.
             </li>
-            <li>When reducing the size of the range, cells that are no longer part of the range will be cleared (set to null)</li>
+            <li>When reducing the size of the range, cells that are no longer part of the range will be cleared (set to null).</li>
         </ul>
     </p>
 
     <?= example('Fill Handle', 'fill-handle', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h3>Reducing the range size</h3>
+    <h3>Reducing the Range Size</h3>
 
     <p>
         If the behavior for decreasing selection needs to be prevented, the flag <code>suppressClearOnFillReduction</code> should be set to true.
@@ -49,36 +49,39 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Fill Handle - Range Reduction', 'fill-handle-reduction', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h3>Custom user function</h3>
+    <h3>Custom User Function</h3>
 
     <p>
         Often times, there is a need to use a custom list to fill values instead of simply copying values or increasing number 
-        values using liner progression. On these scenarios, the <code>fillOperation</code> callback should be used.<br>
-        The interface for <code>fillOperation</code> callback is as follows: <br>
-        <snippet>
-            // function for fillOperation
-            function fillOperation(params: FillOperationParams) => any;
-
-            // interface for params
-            interface FillOperationParams {
-                event: MouseEvent, // The MouseEvent that generated the fill operation
-                values: any[], // The values that have been processed by the fill operation
-                initialValues: any[], // The values that were present before processing started
-                currentIndex: number, // Index of the current processed value
-                api: GridApi, // the grid API
-                columnApi: ColumnApi, // the grid Column API
-                context: any,  // the context
-                direction: string // up, down, left or right
-                column?: Column, // only present if direction is up / down
-                rowNode?: RowNode // only present if direction is left / right
-            }
-
-            // example fillOperation
-            gridOptions.fillOperation = function(params) {
-                return 'Foo';
-            }
-        </snippet>
+        values using liner progression. On these scenarios, the <code>fillOperation</code> callback should be used.
     </p>
+
+    <p>
+        The interface for <code>fillOperation</code> callback is as follows:
+    </p>
+    <snippet>
+        // function for fillOperation
+        function fillOperation(params: FillOperationParams) => any;
+
+        // interface for params
+        interface FillOperationParams {
+            event: MouseEvent, // The MouseEvent that generated the fill operation
+            values: any[], // The values that have been processed by the fill operation
+            initialValues: any[], // The values that were present before processing started
+            currentIndex: number, // Index of the current processed value
+            api: GridApi, // the grid API
+            columnApi: ColumnApi, // the grid Column API
+            context: any,  // the context
+            direction: string // up, down, left or right
+            column?: Column, // only present if direction is up / down
+            rowNode?: RowNode // only present if direction is left / right
+        }
+
+        // example fillOperation
+        gridOptions.fillOperation = function(params) {
+            return 'Foo';
+        }
+    </snippet>
 
     <note>
         If a fillOperation callback is provided, the fillHandle will always run it. If the current values are not
@@ -87,7 +90,7 @@ include '../documentation-main/documentation_header.php';
     </note>
 
     <p> The example below will use the custom <code>fillOperation</code> for the <strong>Day of the week</strong> column, but it will
-    use the default operation for any other column
+    use the default operation for any other column.
     </p>
 
 
