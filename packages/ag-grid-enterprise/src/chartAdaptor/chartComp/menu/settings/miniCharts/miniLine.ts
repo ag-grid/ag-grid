@@ -1,12 +1,11 @@
 import {_, ChartType} from "ag-grid-community";
 
-import {MiniChart} from "./miniChart";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
 import {Path} from "../../../../../charts/scene/shape/path";
 import linearScale from "../../../../../charts/scale/linearScale";
-import {Line} from "../../../../../charts/scene/shape/line";
 import {ClipRect} from "../../../../../charts/scene/clipRect";
 
-export class MiniLine extends MiniChart {
+export class MiniLine extends MiniChartWithAxes {
     static chartType = ChartType.Line;
     private readonly lines: Path[];
 
@@ -30,39 +29,26 @@ export class MiniLine extends MiniChart {
             [1, 3, 4, 8, 7]
         ];
 
-        const leftAxis = Line.create(padding, padding, padding, size - padding + this.axisOvershoot);
-        leftAxis.stroke = this.stroke;
-        leftAxis.strokeWidth = this.strokeWidth;
-
-        const bottomAxis = Line.create(padding - this.axisOvershoot, size - padding, size - padding, size - padding);
-        bottomAxis.stroke = this.stroke;
-        bottomAxis.strokeWidth = this.strokeWidth;
-
         this.lines = data.map(series => {
             const line = new Path();
             line.strokeWidth = 3;
-            line.lineCap = 'round';
+            line.lineCap = "round";
             line.fill = undefined;
             series.forEach((datum, i) => {
-                line.path[i > 0 ? 'lineTo' : 'moveTo'](xScale.convert(i), yScale.convert(datum));
+                line.path[i > 0 ? "lineTo" : "moveTo"](xScale.convert(i), yScale.convert(datum));
             });
 
             return line;
         });
 
+        this.updateColors(fills, strokes);
+
         const clipRect = new ClipRect();
-        clipRect.x = padding;
-        clipRect.y = padding;
-        clipRect.width = size - padding * 2;
-        clipRect.height = size - padding * 2;
+        clipRect.x = clipRect.y = padding;
+        clipRect.width = clipRect.height = size - padding * 2;
 
         clipRect.append(this.lines);
-        const root = this.root;
-        root.append(clipRect);
-        root.append(leftAxis);
-        root.append(bottomAxis);
-
-        this.updateColors(fills, strokes);
+        this.root.append(clipRect);
     }
     
     updateColors(fills: string[], strokes: string[]) {

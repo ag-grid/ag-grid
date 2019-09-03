@@ -1,13 +1,12 @@
 import {_, ChartType} from "ag-grid-community";
 
-import {MiniChart} from "./miniChart";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
 import linearScale from "../../../../../charts/scale/linearScale";
-import {Line} from "../../../../../charts/scene/shape/line";
 import {ClipRect} from "../../../../../charts/scene/clipRect";
 import {Arc} from "../../../../../charts/scene/shape/arc";
 import {Shape} from "../../../../../charts/scene/shape/shape";
 
-export class MiniBubble extends MiniChart {
+export class MiniBubble extends MiniChartWithAxes {
     static chartType = ChartType.Bubble;
     private readonly points: Shape[];
 
@@ -30,29 +29,22 @@ export class MiniBubble extends MiniChart {
         yScale.domain = [0, 1];
         yScale.range = [size - padding, padding];
 
-        const leftAxis = Line.create(padding, padding, padding, size - padding + this.axisOvershoot);
-        leftAxis.stroke = this.stroke;
-        leftAxis.strokeWidth = this.strokeWidth;
-
-        const bottomAxis = Line.create(padding - this.axisOvershoot, size - padding, size - padding, size - padding);
-        bottomAxis.stroke = this.stroke;
-        bottomAxis.strokeWidth = this.strokeWidth;
-
         const points: Shape[] = [];
+
         data.forEach(series => {
-            series.forEach(datum => {
-                const [x, y, radius] = datum;
+            series.forEach(([x, y, radius]) => {
                 const arc = new Arc();
                 arc.strokeWidth = 1;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
-                arc.radiusX = radius;
-                arc.radiusY = radius;
+                arc.radiusX = arc.radiusY = radius;
                 arc.fillOpacity = 0.7;
                 points.push(arc);
             });
         });
+
         this.points = points;
+        this.updateColors(fills, strokes);
 
         const clipRect = new ClipRect();
         clipRect.x = padding;
@@ -61,12 +53,7 @@ export class MiniBubble extends MiniChart {
         clipRect.height = size - padding * 2;
 
         clipRect.append(this.points);
-        const root = this.root;
-        root.append(clipRect);
-        root.append(leftAxis);
-        root.append(bottomAxis);
-
-        this.updateColors(fills, strokes);
+        this.root.append(clipRect);
     }
 
     updateColors(fills: string[], strokes: string[]) {

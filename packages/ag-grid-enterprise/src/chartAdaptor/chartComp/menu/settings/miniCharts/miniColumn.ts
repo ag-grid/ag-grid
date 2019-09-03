@@ -1,20 +1,20 @@
 import {_, ChartType} from "ag-grid-community";
 
-import {MiniChart} from "./miniChart";
-import linearScale from "../../../../../charts/scale/linearScale";
-import {Line} from "../../../../../charts/scene/shape/line";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
 import {Rect} from "../../../../../charts/scene/shape/rect";
 import {BandScale} from "../../../../../charts/scale/bandScale";
+import linearScale from "../../../../../charts/scale/linearScale";
 
-export class MiniColumn extends MiniChart {
+export class MiniColumn extends MiniChartWithAxes {
     static chartType = ChartType.GroupedColumn;
+
     private readonly bars: Rect[];
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
         super(parent, "groupedColumnTooltip");
 
-        const size = this.size;
         const padding = this.padding;
+        const size = this.size;
         const data = [2, 3, 4];
 
         const xScale = new BandScale<number>();
@@ -27,38 +27,24 @@ export class MiniColumn extends MiniChart {
         yScale.domain = [0, 4];
         yScale.range = [size - padding, padding];
 
-        const leftAxis = Line.create(padding, padding, padding, size - padding + this.axisOvershoot);
-        leftAxis.stroke = this.stroke;
-        leftAxis.strokeWidth = this.strokeWidth;
-
-        const bottomAxis = Line.create(padding - this.axisOvershoot, size - padding, size - padding, size - padding);
-        bottomAxis.stroke = this.stroke;
-        bottomAxis.strokeWidth = this.strokeWidth;
-        (this as any).axes = [leftAxis, bottomAxis];
-
         const rectLineWidth = 1;
-        const alignment = Math.floor(rectLineWidth) % 2 / 2;
+        const alignment = rectLineWidth % 2 / 2;
         const bottom = yScale.convert(0);
 
         this.bars = data.map((datum, i) => {
-            const top = yScale.convert(datum);
+            const top = Math.floor(yScale.convert(datum));
             const rect = new Rect();
             rect.strokeWidth = rectLineWidth;
             rect.x = Math.floor(xScale.convert(i)) + alignment;
-            rect.y = Math.floor(top) + alignment;
-            rect.width = Math.floor(xScale.bandwidth + rect.x % 1);
-            rect.height = Math.floor(bottom - top + rect.y % 1);
+            rect.y = top + alignment;
+            rect.width = Math.floor(xScale.bandwidth + alignment);
+            rect.height = Math.floor(bottom - top + alignment);
 
             return rect;
         });
 
-        const root = this.root;
-
-        root.append(this.bars);
-        root.append(leftAxis);
-        root.append(bottomAxis);
-
         this.updateColors(fills, strokes);
+        this.root.append(this.bars);
     }
 
     updateColors(fills: string[], strokes: string[]) {

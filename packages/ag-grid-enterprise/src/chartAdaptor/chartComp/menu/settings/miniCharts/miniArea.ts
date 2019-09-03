@@ -1,9 +1,8 @@
 import {_, ChartType} from "ag-grid-community";
 
-import {MiniChart} from "./miniChart";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
 import {Path} from "../../../../../charts/scene/shape/path";
 import linearScale from "../../../../../charts/scale/linearScale";
-import {Line} from "../../../../../charts/scene/shape/line";
 import {BandScale} from "../../../../../charts/scale/bandScale";
 
 export interface ICoordinate {
@@ -11,7 +10,7 @@ export interface ICoordinate {
     y: number;
 }
 
-export class MiniArea extends MiniChart {
+export class MiniArea extends MiniChartWithAxes {
     static chartType = ChartType.Area;
     private readonly areas: Path[];
 
@@ -28,35 +27,25 @@ export class MiniArea extends MiniChart {
         const padding = this.padding;
 
         const xScale = new BandScale<number>();
+        xScale.domain = [0, 1, 2];
         xScale.paddingInner = 1;
         xScale.paddingOuter = 0;
-        xScale.domain = [0, 1, 2];
         xScale.range = [padding + 0.5, size - padding - 0.5];
 
         const yScale = linearScale();
         yScale.domain = [0, 6];
         yScale.range = [size - padding + 0.5, padding];
 
-        const leftAxis = Line.create(padding, padding, padding, size - padding + this.axisOvershoot);
-        leftAxis.stroke = this.stroke;
-        leftAxis.strokeWidth = this.strokeWidth;
-
-        const bottomAxis = Line.create(padding - this.axisOvershoot, size - padding, size - padding, size - padding);
-        bottomAxis.stroke = this.stroke;
-        bottomAxis.strokeWidth = this.strokeWidth;
-
         const xCount = data.length;
         const last = xCount * 2 - 1;
         const pathData: ICoordinate[][] = [];
         const bottomY = yScale.convert(0);
 
-        for (let i = 0; i < xCount; i++) {
-            const yDatum = data[i];
-            const yCount = yDatum.length;
+        data.forEach((datum, i) => {
             const x = xScale.convert(i);
 
-            for (let j = 0; j < yCount; j++) {
-                const y = yScale.convert(yDatum[j]);
+            datum.forEach((yDatum, j) => {
+                const y = yScale.convert(yDatum);
                 const points = pathData[j] || (pathData[j] = []);
 
                 points[i] = {
@@ -68,8 +57,8 @@ export class MiniArea extends MiniChart {
                     x,
                     y: bottomY
                 };
-            }
-        }
+            });
+        });
 
         this.areas = pathData.reverse().map(points => {
             const area = new Path();
@@ -78,26 +67,14 @@ export class MiniArea extends MiniChart {
 
             const path = area.path;
             path.clear();
-
-            points.forEach((point, i) => {
-                if (!i) {
-                    path.moveTo(point.x, point.y);
-                } else {
-                    path.lineTo(point.x, point.y);
-                }
-            });
-
+            points.forEach((point, i) => path[i > 0 ? "lineTo" : "moveTo"](point.x, point.y));
             path.closePath();
 
             return area;
         });
 
-        const root = this.root;
-        root.append(this.areas);
-        root.append(leftAxis);
-        root.append(bottomAxis);
-
         this.updateColors(fills, strokes);
+        this.root.append(this.areas);
     }
 
     updateColors(fills: string[], strokes: string[]) {

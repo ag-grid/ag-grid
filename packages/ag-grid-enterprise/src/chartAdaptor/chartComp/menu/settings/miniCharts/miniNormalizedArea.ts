@@ -10,8 +10,6 @@ export class MiniNormalizedArea extends MiniStackedArea {
     });
 
     constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniNormalizedArea.data) {
-        super(parent, fills, strokes, data);
-
-        this.tooltipName = "normalizedAreaTooltip";
+        super(parent, fills, strokes, data, "normalizedAreaTooltip");
     }
 }

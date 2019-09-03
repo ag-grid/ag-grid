@@ -1,25 +1,36 @@
 import {_, ChartType} from "ag-grid-community";
 
 import {MiniChart} from "./miniChart";
-import {MiniPie} from "./miniPie";
 import {Sector} from "../../../../../charts/scene/shape/sector";
+import {toRadians} from "../../../../../charts/util/angle";
 
 export class MiniDoughnut extends MiniChart {
     static chartType = ChartType.Doughnut;
-    private readonly radius = (this.size - this.padding * 2) / 2;
-    private readonly center = this.radius + this.padding;
 
-    private readonly sectors = MiniPie.angles.map(pair => {
-        const sector = Sector.create(this.center, this.center, this.radius * 0.6, this.radius, pair[0], pair[1]);
-        sector.stroke = undefined;
-        return sector;
-    });
+    private readonly sectors: Sector[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super(parent, "doughnutTooltip");
+    constructor(parent: HTMLElement, fills: string[], strokes: string[], centerRadiusScaler = 0.6, tooltipName = "doughnutTooltip") {
+        super(parent, tooltipName);
 
-        this.root.append(this.sectors);
+        const radius = (this.size - this.padding * 2) / 2;
+        const center = radius + this.padding;
+        const angles = [
+            [toRadians(-90), toRadians(30)],
+            [toRadians(30), toRadians(120)],
+            [toRadians(120), toRadians(180)],
+            [toRadians(180), toRadians(210)],
+            [toRadians(210), toRadians(240)],
+            [toRadians(240), toRadians(270)]
+        ];
+
+        this.sectors = angles.map(([startAngle, endAngle]) => {
+            const sector = Sector.create(center, center, radius * centerRadiusScaler, radius, startAngle, endAngle);
+            sector.stroke = undefined;
+            return sector;
+        });
+
         this.updateColors(fills, strokes);
+        this.root.append(this.sectors);
     }
 
     updateColors(fills: string[], strokes: string[]) {

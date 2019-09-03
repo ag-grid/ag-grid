@@ -77,6 +77,7 @@ export class MiniChartsContainer extends Component {
         };
 
         const eGui = this.getGui();
+        
         Object.keys(chartGroups).forEach(group => {
             const chartGroup = chartGroups[group as ChartGroupsType];
             const groupComponent = new AgGroupComponent({
