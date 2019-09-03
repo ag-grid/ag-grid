@@ -72,7 +72,7 @@ export class ChartDatasource extends BeanStub {
 
                         if (params.multiCategories) {
                             // add group labels to group column for multi category charts
-                            data[colId] = {labels: labels};
+                            data[colId] = {labels, toString: () => labels[0]};
                         } else {
                             // concat group keys from the top group key down (used when grouping Pie charts)
                             data[colId] = labels.slice().reverse().join(' - ');
