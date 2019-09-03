@@ -242,7 +242,7 @@ export class SetFilter extends ProvidedFilter {
         const res = super.applyModel();
 
         // keep the appliedModelValuesMapped in sync with the applied model
-        const appliedModel = <SetFilterModel> this.getModel();
+        const appliedModel = this.getModel() as SetFilterModel;
         if (appliedModel) {
             this.appliedModelValuesMapped = {};
             appliedModel.values.forEach( value => this.appliedModelValuesMapped![value] = true );
@@ -256,7 +256,7 @@ export class SetFilter extends ProvidedFilter {
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
 
         // should never happen, if filter model not set, then this method should never be called
-        if (!this.appliedModelValuesMapped) { true; }
+        if (!this.appliedModelValuesMapped) { return true; }
 
         let value = this.setFilterParams.valueGetter(params.node);
         if (this.setFilterParams.colDef.keyCreator) {
