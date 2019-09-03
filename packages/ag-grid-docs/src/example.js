@@ -223,7 +223,7 @@ var gridOptions = {
     enableRangeHandle: false,
     enableFillHandle: false,
     suppressClearOnFillReduction: false,
-    
+
     rowSelection:  'multiple', // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
     quickFilterText: null,

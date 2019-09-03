@@ -59,9 +59,7 @@ function zeroOrGreater(value: any, defaultValue: number): number {
 }
 
 function oneOrGreater(value: any, defaultValue: number): number {
-    if (value > 0) {
-        return value;
-    }
+    if (value > 0) { return value; }
     // zero gets returned if number is missing or the wrong type
     return defaultValue;
 }
@@ -139,12 +137,12 @@ export class GridOptionsWrapper {
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
 
         if (this.isGroupSelectsChildren() && this.isSuppressParentsInRowNodes()) {
-            console.warn('ag-Grid: groupSelectsChildren does not work wth suppressParentsInRowNodes, this selection method needs the part in rowNode to work');
+            console.warn('ag-Grid: \'groupSelectsChildren\' does not work with \'suppressParentsInRowNodes\', this selection method needs the part in rowNode to work');
         }
 
         if (this.isGroupSelectsChildren()) {
             if (!this.isRowSelectionMulti()) {
-                console.warn(`ag-Grid: rowSelection must be 'multiple' for groupSelectsChildren to make sense`);
+                console.warn('ag-Grid: rowSelection must be \'multiple\' for groupSelectsChildren to make sense');
             }
             if (this.isRowModelServerSide()) {
                 console.warn('ag-Grid: group selects children is NOT support for Server Side Row Model. ' +
@@ -155,6 +153,10 @@ export class GridOptionsWrapper {
 
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
+        }
+
+        if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
+            console.warn('ag-Grid: \'enableRangeHandle\' and \'enableFillHandle\' will not work unless \'enableRangeSelection\' is set to true');
         }
 
         this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
@@ -192,11 +194,13 @@ export class GridOptionsWrapper {
         );
     }
 
-    private checkProperties(userProperties: string[],
-                            validPropertiesAndExceptions: string[],
-                            validProperties: string[],
-                            containerName: string,
-                            docsUrl: string) {
+    private checkProperties(
+        userProperties: string[],
+        validPropertiesAndExceptions: string[],
+        validProperties: string[],
+        containerName: string,
+        docsUrl: string
+    ) {
         const invalidProperties: { [p: string]: string[] } = _.fuzzyCheckStrings(
             userProperties,
             validPropertiesAndExceptions,
@@ -217,11 +221,8 @@ export class GridOptionsWrapper {
 // returns the dom data, or undefined if not found
     public getDomData(element: Node, key: string): any {
         const domData = (element as any)[this.domDataKey];
-        if (domData) {
-            return domData[key];
-        }
 
-        return;
+        return domData ? domData[key] : undefined;
     }
 
     public setDomData(element: Element, key: string, value: any): any {
@@ -341,6 +342,7 @@ export class GridOptionsWrapper {
 
     public isGroupSelectsChildren() {
         const result = isTrue(this.gridOptions.groupSelectsChildren);
+
         if (result && this.isTreeData()) {
             console.warn('ag-Grid: groupSelectsChildren does not work with tree data');
             return false;
@@ -424,20 +426,20 @@ export class GridOptionsWrapper {
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
     public getDomLayout(): string {
+        const domLayout = this.gridOptions.domLayout || Constants.DOM_LAYOUT_NORMAL;
+        const validLayouts = [
+            Constants.DOM_LAYOUT_PRINT,
+            Constants.DOM_LAYOUT_AUTO_HEIGHT,
+            Constants.DOM_LAYOUT_NORMAL
+        ];
 
-        const domLayout = this.gridOptions.domLayout;
-
-        if (domLayout === Constants.DOM_LAYOUT_PRINT
-            || domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT
-            || domLayout === Constants.DOM_LAYOUT_NORMAL) {
-            return domLayout;
-        } else if (domLayout === null || domLayout === undefined) {
-            return Constants.DOM_LAYOUT_NORMAL;
-        } else {
-            _.doOnce(() => console.warn(`ag-Grid: ${this.gridOptions.domLayout} is not valid for DOM Layout, valid values are ${Constants.DOM_LAYOUT_NORMAL}, ${Constants.DOM_LAYOUT_AUTO_HEIGHT} and ${Constants.DOM_LAYOUT_PRINT}`),
-                'warn about dom layout values');
+        if (validLayouts.indexOf(domLayout) === -1) {
+            _.doOnce(() => console.warn(`ag-Grid: ${domLayout} is not valid for DOM Layout, valid values are ${Constants.DOM_LAYOUT_NORMAL}, ${Constants.DOM_LAYOUT_AUTO_HEIGHT} and ${Constants.DOM_LAYOUT_PRINT}`),
+            'warn about dom layout values');
             return Constants.DOM_LAYOUT_NORMAL;
         }
+
+        return domLayout;
     }
 
     public isSuppressHorizontalScroll() {
@@ -660,10 +662,9 @@ export class GridOptionsWrapper {
     public isPaginateChildRows(): boolean {
         // if using groupSuppressRow, means we are not showing parent rows,
         // so we always paginate on the child rows here as there are no parent rows
-        if (this.isGroupSuppressRow() || this.isGroupRemoveSingleChildren()
-            || this.isGroupRemoveLowestSingleChildren()) {
-            return true;
-        }
+        const shouldPaginate = this.isGroupSuppressRow() || this.isGroupRemoveSingleChildren() || this.isGroupRemoveLowestSingleChildren();
+
+        if (shouldPaginate) { return true; }
 
         return isTrue(this.gridOptions.paginateChildRows);
     }
@@ -824,9 +825,8 @@ export class GridOptionsWrapper {
 
     public isAnimateRows() {
         // never allow animating if enforcing the row order
-        if (this.isEnsureDomOrder()) {
-            return false;
-        }
+        if (this.isEnsureDomOrder()) { return false; }
+
         return isTrue(this.gridOptions.animateRows);
     }
 
@@ -905,9 +905,9 @@ export class GridOptionsWrapper {
     public getKeepDetailRowsCount(): number {
         if (this.gridOptions.keepDetailRowsCount > 0) {
             return this.gridOptions.keepDetailRowsCount;
-        } else {
-            return DEFAULT_KEEP_DETAIL_ROW_COUNT;
         }
+
+        return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     }
 
     public getIsRowMasterFunc(): IsRowMaster | undefined {
@@ -1601,9 +1601,9 @@ export class GridOptionsWrapper {
         } else if (rowNode.detail && this.isMasterDetail()) {
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
                 return { height: this.gridOptions.detailRowHeight, estimated: false };
-            } else {
-                return { height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false };
             }
+
+            return { height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false };
         }
 
         const defaultRowHeight = this.getDefaultRowHeight();
