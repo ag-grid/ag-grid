@@ -3,7 +3,7 @@
     "group": "Basics",
     "items": [
       {
-        "title": "Introduction",
+        "title": "Getting Started",
         "icon": "icon-information",
         "max-box-show-level": 2,
         "matrixExclude": true,

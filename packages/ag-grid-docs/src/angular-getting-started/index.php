@@ -3,8 +3,9 @@ $pageTitle = "Angular Grid | Getting started with ag-Grid";
 $pageDescription = "ag-Grid is a feature-rich Angular Grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Angular application.";
 $pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
-include '../getting-started/header.php';
+include '../documentation-main/documentation_header.php';
 ?>
+
 <script src="../_assets/js/copy-code.js"></script>
 <style><?php include '../_assets//pages/get-started.css'; ?></style>
 
@@ -610,4 +611,4 @@ While doing so, we learned how to configure the grid, how to access its API obje
 </div>
 <br>
 
-<?php include '../getting-started/footer.php'; ?>
+<?php include '../documentation-main/documentation_footer.php'; ?>
