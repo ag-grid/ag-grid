@@ -250,6 +250,27 @@ colDefs = {
 
     <?= example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
+    <h2>Expand / Collapse Column Groups</h2>
+
+    <p>
+        It is possible to expand / collapse the column groups in the Column Tool Panel using the
+        <a href="../javascript-grid-api/">Grid API</a>. To expand column groups use: <code>expandToolPanelColumns()</code>
+        and to collapse use: <code>collapseToolPanelColumns()</code>.
+    </p>
+
+    <p>
+        The example shows how to programmatically expand / collapse column groups. Note the following:
+    </p>
+
+    <ul class="content">
+        <li>When the grid is initialised <code>collapseToolPanelColumns()</code> is invoked using the
+            <code>onGridReady()</code> event to initially collapse all column groups in the column tool panel.</li>
+        <li>Click the <b>Expand Column Groups</b> button to expand column groups.</li>
+        <li>Click the <b>Collapse Column Groups</b> button to collapse column groups.</li>
+    </ul>
+
+    <?= example('Expand / Collapse Column Groups', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
     <h2>Next Up</h2>
 
     <p>

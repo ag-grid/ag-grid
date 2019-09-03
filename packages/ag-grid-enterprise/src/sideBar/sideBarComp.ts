@@ -2,18 +2,20 @@ import {
     _,
     Autowired,
     Component,
+    Events,
     EventService,
     GridOptionsWrapper,
-    ToolPanelVisibleChangedEvent,
     IComponent,
     ISideBar,
+    IToolPanel,
     PostConstruct,
     RefSelector,
     SideBarDef,
-    ToolPanelDef, Events
+    ToolPanelDef,
+    ToolPanelVisibleChangedEvent
 } from "ag-grid-community";
-import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
-import { ToolPanelWrapper } from "./toolPanelWrapper";
+import {SideBarButtonClickedEvent, SideBarButtonsComp} from "./sideBarButtonsComp";
+import {ToolPanelWrapper} from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void;
@@ -114,6 +116,17 @@ export class SideBarComp extends Component implements ISideBar {
             this.sideBarButtonsComp.setActiveButton(key);
             this.raiseToolPanelVisibleEvent(key);
         }
+    }
+
+    public getToolPanelInstance(key: string): IToolPanel | undefined {
+        const toolPanelWrapper = this.toolPanelWrappers.filter(toolPanel => toolPanel.getToolPanelId() === key)[0];
+
+        if (!toolPanelWrapper) {
+            console.warn(`ag-grid: unable to lookup Tool Panel as invalid key supplied: ${key}`);
+            return;
+        }
+
+        return toolPanelWrapper.getToolPanelInstance();
     }
 
     private raiseToolPanelVisibleEvent(key: string | undefined): void {

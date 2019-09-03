@@ -143,7 +143,7 @@ export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams } fr
 export { IStatusBarService } from "./interfaces/iStatusBarService";
 
 // tool panel components
-export { IToolPanel, IToolPanelComp, IToolPanelParams } from "./interfaces/iToolPanel";
+export { IToolPanel, IToolPanelComp, IToolPanelParams, IToolPanelColumnComp, IToolPanelFiltersComp } from "./interfaces/iToolPanel";
 
 // overlays
 export { ILoadingOverlayComp, ILoadingOverlayParams } from "./rendering/overlays/loadingOverlayComponent";

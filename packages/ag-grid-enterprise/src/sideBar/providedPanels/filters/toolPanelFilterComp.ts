@@ -91,7 +91,9 @@ export class ToolPanelFilterComp extends Component {
         this.expanded ? this.doCollapse() : this.doExpand();
     }
 
-    private doExpand(): void {
+    public doExpand(): void {
+        if (this.expanded) return;
+
         this.expanded = true;
         const container: HTMLElement = _.loadTemplate(`<div class="ag-filter-air" />`);
         this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise.then((filter: IFilterComp): void => {
@@ -106,7 +108,9 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandUnchecked, false);
     }
 
-    private doCollapse(): void {
+    public doCollapse(): void {
+        if (!this.expanded) return;
+
         this.expanded = false;
         this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
 

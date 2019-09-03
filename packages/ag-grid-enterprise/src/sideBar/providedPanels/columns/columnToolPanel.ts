@@ -1,12 +1,11 @@
 import {
     Autowired,
     Component,
-    Context,
     EventService,
     GridApi,
     GridOptionsWrapper,
-    IToolPanelComp,
     IToolPanelParams,
+    IToolPanelColumnComp,
     _
 } from "ag-grid-community/main";
 import { PivotModePanel } from "./panels/pivotModePanel";
@@ -27,7 +26,7 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
     contractColumnSelection: boolean;
 }
 
-export class ColumnToolPanel extends Component implements IToolPanelComp {
+export class ColumnToolPanel extends Component implements IToolPanelColumnComp {
 
     private static TEMPLATE = `<div class="ag-column-panel"></div>`;
 
@@ -39,6 +38,7 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
     private params: ToolPanelColumnCompParams;
 
     private childDestroyFuncs: Function[] = [];
+    private primaryColsPanel: PrimaryColsPanel;
 
     constructor() {
         super(ColumnToolPanel.TEMPLATE);
@@ -72,7 +72,8 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
             this.addComponent(new PivotModePanel());
         }
 
-        this.addComponent(new PrimaryColsPanel(true, this.params));
+        this.primaryColsPanel = new PrimaryColsPanel(true, this.params);
+        this.addComponent(this.primaryColsPanel);
 
         if (!this.params.suppressRowGroups) {
             this.addComponent(new RowGroupDropZonePanel(false));
@@ -87,6 +88,14 @@ export class ColumnToolPanel extends Component implements IToolPanelComp {
         }
 
         this.initialised = true;
+    }
+
+    public expandAll() {
+        this.primaryColsPanel.onExpandAll();
+    }
+
+    public collapseAll() {
+        this.primaryColsPanel.onCollapseAll();
     }
 
     private addComponent(component: Component): void {

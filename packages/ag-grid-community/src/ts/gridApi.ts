@@ -1,62 +1,62 @@
-import { CsvCreator } from "./exporter/csvCreator";
-import { RowRenderer } from "./rendering/rowRenderer";
-import { FilterManager } from "./filter/filterManager";
-import { ColumnController } from "./columnController/columnController";
-import { ColumnApi } from "./columnController/columnApi";
-import { SelectionController } from "./selectionController";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { GridPanel } from "./gridPanel/gridPanel";
-import { ValueService } from "./valueService/valueService";
-import { EventService } from "./eventService";
-import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
-import { RowNode } from "./entities/rowNode";
-import { Constants } from "./constants";
-import { Column } from "./entities/column";
-import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
-import { GridCore } from "./gridCore";
-import { IRowModel } from "./interfaces/iRowModel";
-import { SortController } from "./sortController";
-import { FocusedCellController } from "./focusedCellController";
-import { CellRange, CellRangeParams, IRangeController } from "./interfaces/iRangeController";
-import { CellPosition } from "./entities/cellPosition";
-import { IClipboardService } from "./interfaces/iClipboardService";
-import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { IMenuFactory } from "./interfaces/iMenuFactory";
-import { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
-import { CellRendererFactory } from "./rendering/cellRendererFactory";
-import { IAggFuncService } from "./interfaces/iAggFuncService";
-import { IFilterComp } from "./interfaces/iFilter";
-import { CsvExportParams } from "./exporter/exportParams";
-import { ExcelExportParams, IExcelCreator } from "./interfaces/iExcelCreator";
-import { IDatasource } from "./rowModels/iDatasource";
-import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
-import { PaginationProxy } from "./rowModels/paginationProxy";
+import {CsvCreator} from "./exporter/csvCreator";
+import {RowRenderer} from "./rendering/rowRenderer";
+import {FilterManager} from "./filter/filterManager";
+import {ColumnController} from "./columnController/columnController";
+import {ColumnApi} from "./columnController/columnApi";
+import {SelectionController} from "./selectionController";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {GridPanel} from "./gridPanel/gridPanel";
+import {ValueService} from "./valueService/valueService";
+import {EventService} from "./eventService";
+import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
+import {RowNode} from "./entities/rowNode";
+import {Constants} from "./constants";
+import {Column} from "./entities/column";
+import {Autowired, Bean, Context, Optional, PostConstruct} from "./context/context";
+import {GridCore} from "./gridCore";
+import {IRowModel} from "./interfaces/iRowModel";
+import {SortController} from "./sortController";
+import {FocusedCellController} from "./focusedCellController";
+import {CellRange, CellRangeParams, IRangeController} from "./interfaces/iRangeController";
+import {CellPosition} from "./entities/cellPosition";
+import {IClipboardService} from "./interfaces/iClipboardService";
+import {IViewportDatasource} from "./interfaces/iViewportDatasource";
+import {IMenuFactory} from "./interfaces/iMenuFactory";
+import {InfiniteRowModel} from "./rowModels/infinite/infiniteRowModel";
+import {CellRendererFactory} from "./rendering/cellRendererFactory";
+import {IAggFuncService} from "./interfaces/iAggFuncService";
+import {IFilterComp} from "./interfaces/iFilter";
+import {CsvExportParams} from "./exporter/exportParams";
+import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
+import {IDatasource} from "./rowModels/iDatasource";
+import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
+import {PaginationProxy} from "./rowModels/paginationProxy";
 import {
     ClientSideRowModel,
     RefreshModelParams,
     RowDataTransaction,
     RowNodeTransaction
 } from "./rowModels/clientSide/clientSideRowModel";
-import { ImmutableService } from "./rowModels/clientSide/immutableService";
-import { ValueCache } from "./valueService/valueCache";
-import { AlignedGridsService } from "./alignedGridsService";
-import { PinnedRowModel } from "./rowModels/pinnedRowModel";
-import { AgEvent, ColumnEventType } from "./events";
-import { ISideBar } from "./interfaces/ISideBar";
-import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
-import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "./interfaces/iCellEditor";
-import { HeaderRootComp } from "./headerRendering/headerRootComp";
-import { AnimationFrameService } from "./misc/animationFrameService";
-import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
-import { IStatusBarService } from "./interfaces/iStatusBarService";
-import { IStatusPanelComp } from "./interfaces/iStatusPanel";
-import { SideBarDef } from "./entities/sideBar";
-import { IChartService } from "./interfaces/IChartService";
-import { ModuleNames } from "./modules/moduleNames";
-import { _ } from "./utils";
-import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
-import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
+import {ImmutableService} from "./rowModels/clientSide/immutableService";
+import {ValueCache} from "./valueService/valueCache";
+import {AlignedGridsService} from "./alignedGridsService";
+import {PinnedRowModel} from "./rowModels/pinnedRowModel";
+import {AgEvent, ColumnEventType} from "./events";
+import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
+import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
+import {ICellEditorComp} from "./interfaces/iCellEditor";
+import {HeaderRootComp} from "./headerRendering/headerRootComp";
+import {AnimationFrameService} from "./misc/animationFrameService";
+import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
+import {IStatusBarService} from "./interfaces/iStatusBarService";
+import {IStatusPanelComp} from "./interfaces/iStatusPanel";
+import {SideBarDef} from "./entities/sideBar";
+import {IChartService} from "./interfaces/IChartService";
+import {ModuleNames} from "./modules/moduleNames";
+import {_} from "./utils";
+import {ChartRef, ProcessChartOptionsParams} from "./entities/gridOptions";
+import {ChartOptions, ChartType} from "./interfaces/iChartOptions";
+import {IToolPanelColumnComp, IToolPanelFiltersComp} from "./interfaces/iToolPanel";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -127,7 +127,6 @@ export class GridApi {
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
-    @Optional('sideBarComp') private sideBarComp: ISideBar; // this can be removed
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
     @Optional('chartService') private chartService: IChartService;
@@ -553,6 +552,34 @@ export class GridApi {
         this.clientSideRowModel.expandOrCollapseAll(false);
     }
 
+    public expandToolPanelColumns() {
+        const columnToolPanelComp = this.gridCore.getToolPanelInstance('columns') as IToolPanelColumnComp;
+        if (columnToolPanelComp) {
+            columnToolPanelComp.expandAll();
+        }
+    }
+
+    public collapseToolPanelColumns() {
+        const columnToolPanelComp = this.gridCore.getToolPanelInstance('columns') as IToolPanelColumnComp;
+        if (columnToolPanelComp) {
+            columnToolPanelComp.collapseAll();
+        }
+    }
+
+    public expandToolPanelFilters() {
+        const filtersToolPanelComp = this.gridCore.getToolPanelInstance('filters') as IToolPanelFiltersComp;
+        if (filtersToolPanelComp) {
+            filtersToolPanelComp.expandAll();
+        }
+    }
+
+    public collapseToolPanelFilters() {
+        const filtersToolPanelComp = this.gridCore.getToolPanelInstance('filters') as IToolPanelFiltersComp;
+        if (filtersToolPanelComp) {
+            filtersToolPanelComp.collapseAll();
+        }
+    }
+
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (typeof eventName !== 'string') {
             console.warn('ag-Grid: addVirtualRowListener is deprecated, please use addRenderedRowListener.');
@@ -976,6 +1003,16 @@ export class GridApi {
             return;
         }
         return this.chartService.chartCellRange(params);
+    }
+
+    public pivotChart(): ChartRef | undefined {
+        if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
+            _.doOnce(() => {
+                console.warn('ag-grid: Cannot chart range - the Charts Module has not been included.');
+            }, 'ChartsModuleCheck');
+            return;
+        }
+        return this.chartService.pivotChart(ChartType.GroupedColumn);
     }
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {

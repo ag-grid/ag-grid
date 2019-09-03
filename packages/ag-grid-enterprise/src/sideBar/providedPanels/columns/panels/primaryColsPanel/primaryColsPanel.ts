@@ -80,11 +80,11 @@ export class PrimaryColsPanel extends Component {
         this.primaryColsListPanel.doSetSelectedAll(false);
     }
 
-    private onExpandAll() {
+    public onExpandAll() {
         this.primaryColsListPanel.doSetExpandedAll(true);
     }
 
-    private onCollapseAll() {
+    public onCollapseAll() {
         this.primaryColsListPanel.doSetExpandedAll(false);
     }
 

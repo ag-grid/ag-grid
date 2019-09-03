@@ -60,6 +60,10 @@ export class ToolPanelWrapper extends Component {
         this.appendChild(compInstance);
     }
 
+    public getToolPanelInstance(): IToolPanelComp {
+        return this.toolPanelCompInstance;
+    }
+
     public refresh(): void {
         this.toolPanelCompInstance.refresh();
     }

@@ -1,25 +1,26 @@
-import { GridOptions } from "./entities/gridOptions";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { ColumnApi } from "./columnController/columnApi";
-import { ColumnController } from "./columnController/columnController";
-import { RowRenderer } from "./rendering/rowRenderer";
-import { FilterManager } from "./filter/filterManager";
-import { EventService } from "./eventService";
-import { GridPanel } from "./gridPanel/gridPanel";
-import { Logger, LoggerFactory } from "./logger";
-import { PopupService } from "./widgets/popupService";
-import { Autowired, Optional, PostConstruct } from "./context/context";
-import { IRowModel } from "./interfaces/iRowModel";
-import { FocusedCellController } from "./focusedCellController";
-import { Component } from "./widgets/component";
-import { IClipboardService } from "./interfaces/iClipboardService";
-import { GridApi } from "./gridApi";
-import { ISideBar } from "./interfaces/ISideBar";
-import { RefSelector } from "./widgets/componentAnnotations";
-import { Events, GridSizeChangedEvent } from "./events";
-import { ResizeObserverService } from "./misc/resizeObserverService";
-import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
-import { _ } from "./utils";
+import {GridOptions} from "./entities/gridOptions";
+import {GridOptionsWrapper} from "./gridOptionsWrapper";
+import {ColumnApi} from "./columnController/columnApi";
+import {ColumnController} from "./columnController/columnController";
+import {RowRenderer} from "./rendering/rowRenderer";
+import {FilterManager} from "./filter/filterManager";
+import {EventService} from "./eventService";
+import {GridPanel} from "./gridPanel/gridPanel";
+import {Logger, LoggerFactory} from "./logger";
+import {PopupService} from "./widgets/popupService";
+import {Autowired, Optional, PostConstruct} from "./context/context";
+import {IRowModel} from "./interfaces/iRowModel";
+import {FocusedCellController} from "./focusedCellController";
+import {Component} from "./widgets/component";
+import {IClipboardService} from "./interfaces/iClipboardService";
+import {GridApi} from "./gridApi";
+import {ISideBar} from "./interfaces/ISideBar";
+import {RefSelector} from "./widgets/componentAnnotations";
+import {Events, GridSizeChangedEvent} from "./events";
+import {ResizeObserverService} from "./misc/resizeObserverService";
+import {SideBarDef, SideBarDefParser} from "./entities/sideBar";
+import {_} from "./utils";
+import {IToolPanel} from "./interfaces/iToolPanel";
 
 export class GridCore extends Component {
 
@@ -184,6 +185,14 @@ export class GridCore extends Component {
 
     public getSideBar(): SideBarDef {
         return this.gridOptions.sideBar as SideBarDef;
+    }
+
+    public getToolPanelInstance(key: string): IToolPanel | undefined {
+        if (!this.sideBarComp) {
+            console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+            return;
+        }
+        return this.sideBarComp.getToolPanelInstance(key);
     }
 
     public refreshSideBar() {

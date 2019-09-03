@@ -33,6 +33,27 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Filter Tool Panel', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
+    <h2>Expand / Collapse Filters</h2>
+
+    <p>
+        It is possible to expand / collapse the filters in the Filters Tool Panel using the
+        <a href="../javascript-grid-api/">Grid API</a>. To expand filters use: <code>expandToolPanelFilters()</code>
+        and to collapse use: <code>collapseToolPanelFilters()</code>.
+    </p>
+
+    <p>
+        The example shows how to programmatically expand / collapse filters. Note the following:
+    </p>
+
+    <ul class="content">
+        <li>When the grid is initialised <code>expandToolPanelFilters()</code> is invoked using the
+            <code>onGridReady()</code> event to initially expand all tool panel filters.</li>
+        <li>Click the <b>Collapse Filters</b> button to collapse filters.</li>
+        <li>Click the <b>Expand Filters</b> button to expand filters.</li>
+    </ul>
+
+    <?= example('Expand / Collapse Filters', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
     <h2>Filter Instances</h2>
 
     <p>
@@ -54,6 +75,7 @@ include '../documentation-main/documentation_header.php';
             it will only appear at one location at any given time.
         </li>
     </ul>
+
 
     <h2>Next Up</h2>
 

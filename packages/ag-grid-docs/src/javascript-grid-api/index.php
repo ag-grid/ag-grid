@@ -519,6 +519,34 @@ include '../documentation-main/documentation_header.php';
             <td>Returns true if the tool panel is showing, otherwise false.</td>
         </tr>
         <tr>
+            <th>expandToolPanelColumns()</th>
+            <td>
+                Expands all Column Groups in the
+                <a href="../javascript-grid-tool-panel-columns/#expand-collapse-column-groups">Column Tool Panel</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>collapseToolPanelColumns()</th>
+            <td>
+                Collapses all Column Groups in the
+                <a href="../javascript-grid-tool-panel-columns/#expand-collapse-column-groups">Column Tool Panel</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>expandToolPanelFilters()</th>
+            <td>
+                Expands all Filters in the
+                <a href="../javascript-grid-tool-panel-filters/#expand-collapse-filters">Filters Tool Panel</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>collapseToolPanelFilters()</th>
+            <td>
+                Collapse all Filters in the
+                <a href="../javascript-grid-tool-panel-filters/#expand-collapse-filters">Filters Tool Panel</a>.
+            </td>
+        </tr>
+        <tr>
             <th>doLayout()</th>
             <td>Force the grid to lay out its components. The grid, by default, resizes to fit
                 the div the grid lives in. This is done a) on initialisation b) window resize

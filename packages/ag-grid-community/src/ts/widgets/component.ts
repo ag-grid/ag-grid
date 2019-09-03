@@ -44,6 +44,10 @@ export class Component extends BeanStub {
         return this.compId;
     }
 
+    protected getChildComponents(): IComponent<any>[] {
+        return this.childComponents;
+    }
+
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
     private createChildComponentsFromTags(parentNode: Element): void {
 
