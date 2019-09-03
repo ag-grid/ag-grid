@@ -883,7 +883,7 @@ export class GridPanel extends Component {
     }
 
     private setVerticalScrollPaddingVisible(show: boolean): void {
-        const scroller = show ? `scroll` : `hidden`;
+        const scroller = show ? 'scroll' : 'hidden';
 
         this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
         this.setFakeHScrollSpacerWidths();
