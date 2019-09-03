@@ -6,7 +6,9 @@ export default class DragSourceRenderer extends Component {
     }
 
     onDragStart = (dragEvent) => {
-        dragEvent.dataTransfer.setData('text/plain', "Dragged item with ID: " + this.props.node.data.id);
+        var userAgent = window.navigator.userAgent;
+        var isIE = userAgent.indexOf('Trident/') >= 0;
+        dragEvent.dataTransfer.setData(isIE ? 'text' : 'text/plain', 'Dragged item with ID: ' + this.props.node.data.id);
     };
 
     render() {

@@ -41,22 +41,28 @@ function createRowData() {
 }
 
 function onDragOver(event) {
-    var dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
+    var dragSupported = event.dataTransfer.length;
+
     if (dragSupported) {
-        event.dataTransfer.dropEffect = "move";
-        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
     }
+
+    event.preventDefault();
 }
 
 function onDrop(event) {
-    var jsonData = event.dataTransfer.getData("application/json");
+    var userAgent = window.navigator.userAgent;
+    var isIE = userAgent.indexOf('Trident/') >= 0;
+    var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
 
     var eJsonRow = document.createElement('div');
     eJsonRow.classList.add('json-row');
     eJsonRow.innerText = jsonData;
 
     var eJsonDisplay = document.querySelector('#eJsonDisplay');
+
     eJsonDisplay.appendChild(eJsonRow);
+    event.preventDefault();
 }
 
 // setup the grid after the page has finished loading

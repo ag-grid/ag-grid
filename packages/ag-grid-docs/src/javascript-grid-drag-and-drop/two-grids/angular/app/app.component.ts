@@ -124,6 +124,7 @@ export class AppComponent {
     }
 
     binDrop(event) {
+        event.preventDefault();
         var jsonData = event.dataTransfer.getData("application/json");
         var data = JSON.parse(jsonData);
 
@@ -150,11 +151,14 @@ export class AppComponent {
     dragStart(event, color) {
         var newItem = this.createDataItem(color);
         var jsonData = JSON.stringify(newItem);
-        event.dataTransfer.setData('application/json', jsonData);
+        var userAgent = window.navigator.userAgent;
+        var isIE = userAgent.indexOf('Trident/') >= 0;
+        event.dataTransfer.setData(isIE ? 'text' : 'application/json', jsonData);
     }
 
     gridDragOver(event) {
-        var dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
+        var dragSupported = event.dataTransfer.types.length;
+
         if (dragSupported) {
             event.dataTransfer.dropEffect = "copy";
             event.preventDefault();
@@ -162,7 +166,11 @@ export class AppComponent {
     }
 
     gridDrop(event, grid) {
-        var jsonData = event.dataTransfer.getData("application/json");
+        event.preventDefault();
+
+        var userAgent = window.navigator.userAgent;
+        var isIE = userAgent.indexOf('Trident/') >= 0;
+        var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
         var data = JSON.parse(jsonData);
 
         // if data missing or data has no it, do nothing

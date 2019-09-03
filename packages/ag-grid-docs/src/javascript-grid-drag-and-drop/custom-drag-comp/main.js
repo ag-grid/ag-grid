@@ -44,16 +44,24 @@ function createRowData() {
 }
 
 function onDragOver(event) {
-    var dragSupported = event.dataTransfer.types.indexOf('text/plain') >= 0;
+    var types = event.dataTransfer.types;
+
+    var dragSupported = types.length;
+
     if (dragSupported) {
         event.dataTransfer.dropEffect = "move";
-        event.preventDefault();
     }
+
+    event.preventDefault();
 }
 
 function onDrop(event) {
-    var textData = event.dataTransfer.getData("text/plain");
+    event.preventDefault();
 
+    var userAgent = window.navigator.userAgent;
+    var isIE = userAgent.indexOf("Trident/") >= 0;
+
+    var textData = event.dataTransfer.getData(isIE ? 'text' : 'text/plain');
     var eJsonRow = document.createElement('div');
     eJsonRow.classList.add('json-row');
     eJsonRow.innerText = textData;

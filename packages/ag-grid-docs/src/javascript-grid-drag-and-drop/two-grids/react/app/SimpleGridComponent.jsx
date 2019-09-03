@@ -92,6 +92,7 @@ export default class extends Component {
     };
 
     binDrop = (event) => {
+        event.preventDefault();
         const jsonData = event.dataTransfer.getData("application/json");
         const data = JSON.parse(jsonData);
 
@@ -118,19 +119,25 @@ export default class extends Component {
     dragStart(color, event) {
         const newItem = this.createDataItem(color);
         const jsonData = JSON.stringify(newItem);
-        event.dataTransfer.setData('application/json', jsonData);
+        const userAgent = window.navigator.userAgent;
+        const isIE = userAgent.indexOf('Trident/') >= 0;
+        event.dataTransfer.setData(isIE ? 'text' : 'application/json', jsonData);
     };
 
     gridDragOver = (event) => {
-        const dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
+        const dragSupported = event.dataTransfer.types.length;
+
         if (dragSupported) {
-            event.dataTransfer.dropEffect = "copy";
+            event.dataTransfer.dropEffect = 'copy';
             event.preventDefault();
         }
     };
 
     gridDrop = (grid, event) => {
-        const jsonData = event.dataTransfer.getData("application/json");
+        event.preventDefault();
+        const userAgent = window.navigator.userAgent;
+        const isIE = userAgent.indexOf('Trident/') >= 0;
+        const jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
         const data = JSON.parse(jsonData);
 
         // if data missing or data has no it, do nothing
