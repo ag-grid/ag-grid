@@ -26,18 +26,13 @@ export  class MiniBar extends MiniChartWithAxes {
         xScale.domain = [0, 4];
         xScale.range = [size - padding, padding];
 
-        const rectLineWidth = 1;
-        const alignment = rectLineWidth % 2 / 2;
         const bottom = xScale.convert(0);
+        const height = yScale.bandwidth;
 
         this.bars = data.map((datum, i) => {
-            const top = xScale.convert(datum);
-            const rect = new Rect();
-            rect.strokeWidth = rectLineWidth;
-            rect.x = Math.floor(padding) + alignment;
-            rect.y = Math.floor(yScale.convert(i)) + alignment;
-            rect.width = Math.floor(bottom - top + alignment);
-            rect.height = Math.floor(yScale.bandwidth + alignment);
+            const rect = Rect.create(padding, yScale.convert(i), bottom - xScale.convert(datum), height);
+            rect.strokeWidth = 1;
+            rect.crisp = true;
 
             return rect;
         });

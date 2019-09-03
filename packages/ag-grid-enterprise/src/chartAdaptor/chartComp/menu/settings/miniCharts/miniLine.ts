@@ -53,7 +53,7 @@ export class MiniLine extends MiniChartWithAxes {
     
     updateColors(fills: string[], strokes: string[]) {
         this.lines.forEach((line, i) => {
-            line.stroke = strokes[i];
+            line.stroke = fills[i];
         });
     }
 }

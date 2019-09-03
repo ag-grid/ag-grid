@@ -27,18 +27,14 @@ export class MiniColumn extends MiniChartWithAxes {
         yScale.domain = [0, 4];
         yScale.range = [size - padding, padding];
 
-        const rectLineWidth = 1;
-        const alignment = rectLineWidth % 2 / 2;
         const bottom = yScale.convert(0);
+        const width = xScale.bandwidth;
 
         this.bars = data.map((datum, i) => {
-            const top = Math.floor(yScale.convert(datum));
-            const rect = new Rect();
-            rect.strokeWidth = rectLineWidth;
-            rect.x = Math.floor(xScale.convert(i)) + alignment;
-            rect.y = top + alignment;
-            rect.width = Math.floor(xScale.bandwidth + alignment);
-            rect.height = Math.floor(bottom - top + alignment);
+            const top = yScale.convert(datum);
+            const rect = Rect.create(xScale.convert(i), top, width, bottom - top);
+            rect.strokeWidth = 1;
+            rect.crisp = true;
 
             return rect;
         });
