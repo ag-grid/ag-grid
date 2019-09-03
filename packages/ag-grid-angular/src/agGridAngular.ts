@@ -298,6 +298,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public createChartContainer : any = undefined;
     @Input() public processChartOptions : any = undefined;
     @Input() public getChartToolbarItems : any = undefined;
+    @Input() public fillOperation : any = undefined;
     @Input() public toolPanelSuppressRowGroups : any = undefined;
     @Input() public toolPanelSuppressValues : any = undefined;
     @Input() public toolPanelSuppressPivots : any = undefined;
@@ -346,6 +347,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enableRangeSelection : any = undefined;
     @Input() public enableRangeHandle : any = undefined;
     @Input() public enableFillHandle : any = undefined;
+    @Input() public suppressClearOnFillReduction : any = undefined;
     @Input() public deltaSort : any = undefined;
     @Input() public suppressTouch : any = undefined;
     @Input() public suppressAsyncEvents : any = undefined;

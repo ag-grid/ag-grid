@@ -118,6 +118,7 @@ export interface GridOptions {
     suppressRowClickSelection?: boolean;
     suppressRowHoverHighlight?: boolean;
     suppressCellSelection?: boolean;
+    suppressClearOnFillReduction?: boolean;
     suppressMaintainUnsortedOrder?: boolean;
     sortingOrder?: string[];
     suppressMultiSort?: boolean;

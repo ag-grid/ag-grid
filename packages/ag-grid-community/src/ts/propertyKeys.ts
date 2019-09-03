@@ -40,12 +40,12 @@ export class PropertyKeys {
         'forPrint', 'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort', 'singleClickEdit',
         'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize', 'suppressParentsInRowNodes', 'showToolPanel',
         'suppressColumnMoveAnimation', 'suppressMovableColumns', 'suppressFieldDotNotation', 'enableRangeSelection',
-        'enableRangeHandle', 'enableFillHandle', 'deltaSort', 'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey',
-        'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel', 'rememberGroupStateWhenNewData',
-        'enableCellChangeFlash', 'suppressDragLeaveHidesColumns', 'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel',
-        'suppressUseColIdForGroups', 'suppressCopyRowsToClipboard', 'copyHeadersToClipboard', 'pivotMode', 'suppressAggFuncInHeader',
-        'suppressColumnVirtualisation', 'suppressAggAtRootLevel', 'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly',
-        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'enableRtl',
+        'enableRangeHandle', 'enableFillHandle', 'suppressClearOnFillReduction', 'deltaSort', 'suppressTouch', 'suppressAsyncEvents',
+        'allowContextMenuWithControlKey', 'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
+        'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns', 'suppressMiddleClickScrolls',
+        'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups', 'suppressCopyRowsToClipboard', 'copyHeadersToClipboard', 'pivotMode',
+        'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'suppressAggAtRootLevel', 'suppressFocusAfterRefresh', 'functionsPassive',
+        'functionsReadOnly', 'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'enableRtl',
         'suppressClickEdit', 'rowDragManaged', 'suppressRowDrag', 'enableGroupEdit', 'embedFullWidthRows', 'deprecatedEmbedFullWidthRows',
         'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter', 'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination',
         'stopEditingWhenGridLosesFocus', 'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
@@ -71,7 +71,7 @@ export class PropertyKeys {
         'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'onGridReady',
         'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort', 'processHeaderForClipboard',
         'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup',
-        'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'getChartToolbarItems'];
+        'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'getChartToolbarItems', 'fillOperation'];
 
     public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)

@@ -307,6 +307,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressMaintainUnsortedOrder);
     }
 
+    public isSuppressClearOnFillReduction() {
+        return isTrue(this.gridOptions.suppressClearOnFillReduction);
+    }
+
     public isShowToolPanel() {
         return isTrue(this.gridOptions.sideBar && Array.isArray(this.getSideBar().toolPanels));
     }

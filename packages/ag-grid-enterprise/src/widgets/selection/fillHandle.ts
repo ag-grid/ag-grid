@@ -121,7 +121,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce) {
+        if (this.isReduce && !this.gridOptionsWrapper.isSuppressClearOnFillReduction()) {
             const columns = isVertical
                 ? initialRange.columns
                 : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);
@@ -242,7 +242,7 @@ export class FillHandle extends AbstractSelectionHandle {
         }
 
         if (userFillOperation) {
-            return userFillOperation({
+            const userResult = userFillOperation({
                 event,
                 values,
                 initialValues,
@@ -254,6 +254,10 @@ export class FillHandle extends AbstractSelectionHandle {
                 column: isVertical ? col : undefined,
                 rowNode: !isVertical ? rowNode : undefined // only present if left / right
             });
+            
+            if (userResult !== false) {
+                return userResult;
+            }
         }
 
         // we should copy values using a list order if pressing the alt key

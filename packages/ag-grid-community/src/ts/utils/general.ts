@@ -1287,8 +1287,8 @@ export class Utils {
         /*
          * Nothing to do.
          */
-        if (len === 0) {
-            return [];
+        if (len <= 1) {
+            return values;
         }
 
         /*
@@ -1304,25 +1304,18 @@ export class Utils {
             count++;
         }
 
-        /*
-         * Calculate m and b for the formula:
-         * y = x * m + b
-         */
         const m = (count * sum_xy - sum_x * sum_y) / (count * sum_xx - sum_x * sum_x);
         const b = (sum_y / count) - (m * sum_x) / count;
 
-        /*
-         * We will make the x and y result line now
-         */
-        const result_values = [];
+        const result = [];
 
         for (let v = 0; v <= len; v++) {
             x = v;
             y = x * m + b;
-            result_values.push(y);
+            result.push(y);
         }
 
-        return result_values;
+        return result;
     }
 
     /**
