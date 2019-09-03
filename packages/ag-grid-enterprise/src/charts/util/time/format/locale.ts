@@ -8,7 +8,6 @@ import {
     thursday as timeThursday,
     friday as timeFriday,
     saturday as timeSaturday
-
 } from "../week";
 import utcDay from "../utcDay";
 import utcYear from "../utcYear";
@@ -17,7 +16,7 @@ import utcSunday, { utcMonday, utcThursday } from "../utcWeek";
 type DateMap = { [key in string]: number };
 
 /**
- * Specification of time locale to use when creating a new TimeLocaleObject
+ * Specification of time locale to use when creating a new TimeLocaleObject.
  */
 export interface TimeLocaleDefinition {
     /**
@@ -52,6 +51,105 @@ export interface TimeLocaleDefinition {
      * The abbreviated names of the months (starting with January).
      */
     shortMonths: [string, string, string, string, string, string, string, string, string, string, string, string];
+}
+
+/**
+ * Interface describing a time-locale-based object which exposes time-formatting/parsing
+ * methods for a specified locale definition.
+ */
+export interface TimeLocaleObject {
+    /**
+     * Returns a new formatter for the given string specifier. The specifier string may contain the following directives:
+     * - %a - abbreviated weekday name.*
+     * - %A - full weekday name.*
+     * - %b - abbreviated month name.*
+     * - %B - full month name.*
+     * - %c - the locale’s date and time, such as %x, %X.*
+     * - %d - zero-padded day of the month as a decimal number [01,31].
+     * - %e - space-padded day of the month as a decimal number [ 1,31]; equivalent to %_d.
+     * - %f - microseconds as a decimal number [000000, 999999].
+     * - %H - hour (24-hour clock) as a decimal number [00,23].
+     * - %I - hour (12-hour clock) as a decimal number [01,12].
+     * - %j - day of the year as a decimal number [001,366].
+     * - %m - month as a decimal number [01,12].
+     * - %M - minute as a decimal number [00,59].
+     * - %L - milliseconds as a decimal number [000, 999].
+     * - %p - either AM or PM.*
+     * - %Q - milliseconds since UNIX epoch.
+     * - %s - seconds since UNIX epoch.
+     * - %S - second as a decimal number [00,61].
+     * - %u - Monday-based (ISO) weekday as a decimal number [1,7].
+     * - %U - Sunday-based week of the year as a decimal number [00,53].
+     * - %V - ISO 8601 week number of the year as a decimal number [01, 53].
+     * - %w - Sunday-based weekday as a decimal number [0,6].
+     * - %W - Monday-based week of the year as a decimal number [00,53].
+     * - %x - the locale’s date, such as %-m/%-d/%Y.*
+     * - %X - the locale’s time, such as %-I:%M:%S %p.*
+     * - %y - year without century as a decimal number [00,99].
+     * - %Y - year with century as a decimal number.
+     * - %Z - time zone offset, such as -0700, -07:00, -07, or Z.
+     * - %% - a literal percent sign (%).
+     *
+     * Directives marked with an asterisk (*) may be affected by the locale definition.
+     *
+     * For %U, all days in a new year preceding the first Sunday are considered to be in week 0.
+     * For %W, all days in a new year preceding the first Monday are considered to be in week 0.
+     * Week numbers are computed using interval.count. For example, 2015-52 and 2016-00 represent
+     * Monday, December 28, 2015, while 2015-53 and 2016-01 represent Monday, January 4, 2016.
+     * This differs from the ISO week date specification (%V), which uses a more complicated definition!
+     *
+     * For %V, per the strftime man page:
+     *
+     * In this system, weeks start on a Monday, and are numbered from 01, for the first week, up to 52 or 53, for the last week.
+     * Week 1 is the first week where four or more days fall within the new year (or, synonymously,
+     * week 01 is: the first week of the year that contains a Thursday; or, the week that has 4 January in it).
+     *
+     * The % sign indicating a directive may be immediately followed by a padding modifier:
+     *
+     * 1) 0 - zero-padding
+     * 2) _ - space-padding
+     * 3) - disable padding
+     *
+     * If no padding modifier is specified, the default is 0 for all directives except %e, which defaults to _.
+     * (In some implementations of strftime and strptime, a directive may include an optional field width or precision;
+     * this feature is not yet implemented.)
+     *
+     * The returned function formats a specified date, returning the corresponding string.
+     *
+     * @param specifier A specifier string for the date format.
+     */
+    format(specifier: string): (date: Date) => string;
+    /**
+     * Returns a new parser for the given string specifier.
+     * The specifier string may contain the same directives as locale.format (TimeLocaleObject.format).
+     * The %d and %e directives are considered equivalent for parsing.
+     *
+     * The returned function parses a specified string, returning the corresponding date or undefined
+     * if the string could not be parsed according to this format’s specifier.
+     * Parsing is strict: if the specified string does not exactly match the associated specifier, this method returns undefined.
+     *
+     * For example, if the associated specifier is %Y-%m-%dT%H:%M:%SZ, then the string "2011-07-01T19:15:28Z"
+     * will be parsed as expected, but "2011-07-01T19:15:28", "2011-07-01 19:15:28" and "2011-07-01" will return undefined.
+     * (Note that the literal Z here is different from the time zone offset directive %Z.)
+     * If a more flexible parser is desired, try multiple formats sequentially until one returns non-undefined.
+     *
+     * @param specifier A specifier string for the date format.
+     */
+    parse(specifier: string): (dateString: string) => (Date | undefined);
+    /**
+     * Equivalent to locale.format (TimeLocaleObject.format),
+     * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.
+     *
+     * @param specifier A specifier string for the date format.
+     */
+    utcFormat(specifier: string): (date: Date) => string;
+    /**
+     * Equivalent to locale.parse (TimeLocaleObject.parse),
+     * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.
+     *
+     * @param specifier A specifier string for the date format.
+     */
+    utcParse(specifier: string): (dateString: string) => (Date | undefined);
 }
 
 function localDate(d: DateMap): Date {
@@ -102,6 +200,7 @@ function newYear(y: number): DateMap {
     };
 }
 
+const percentCharCode = 37;
 const numberRe = /^\s*\d+/; // ignores next directive
 const percentRe = /^%/;
 const requoteRe = /[\\^$*+?|[\]().{}]/g;
@@ -116,7 +215,7 @@ export const requote = (s: string) => s.replace(requoteRe, '\\$&'); // $& - matc
  */
 export const formatRe = (names: string[]) => new RegExp('^(?:' + names.map(requote).join('|') + ')', 'i');
 
-const pads = {
+const pads: { [key in string]: string } = {
     '-': '',
     '_': ' ',
     '0': '0'
@@ -130,15 +229,21 @@ export function pad(value: number, fill: string, width: number) {
     return sign + (length < width ? new Array(width - length + 1).join(fill) + string : string);
 }
 
-export default function formatLocale(locale: TimeLocaleDefinition) {
-    const lDateTime = locale.dateTime;
-    const lDate = locale.date;
-    const lTime = locale.time;
-    const lPeriods = locale.periods;
-    const lWeekdays = locale.days;
-    const lShortWeekdays = locale.shortDays;
-    const lMonths = locale.months;
-    const lShortMonths = locale.shortMonths;
+/**
+ * Create a new time-locale-based object which exposes time-formatting
+ * methods for the specified locale definition.
+ *
+ * @param timeLocale A time locale definition.
+ */
+export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLocaleObject {
+    const lDateTime = timeLocale.dateTime;
+    const lDate = timeLocale.date;
+    const lTime = timeLocale.time;
+    const lPeriods = timeLocale.periods;
+    const lWeekdays = timeLocale.days;
+    const lShortWeekdays = timeLocale.shortDays;
+    const lMonths = timeLocale.months;
+    const lShortMonths = timeLocale.shortMonths;
 
     const periodRe = formatRe(lPeriods);
     const periodLookup = formatLookup(lPeriods);
@@ -321,33 +426,45 @@ export default function formatLocale(locale: TimeLocaleDefinition) {
         };
     }
 
-    // function newFormat(specifier: string, formats) {
-    //     return function (date: Date): string {
-    //         var string = [],
-    //             i = -1,
-    //             j = 0,
-    //             n = specifier.length,
-    //             c,
-    //             pad,
-    //             format;
-    //
-    //         if (!(date instanceof Date)) date = new Date(+date);
-    //
-    //         while (++i < n) {
-    //             if (specifier.charCodeAt(i) === 37) {
-    //                 string.push(specifier.slice(j, i));
-    //                 if ((pad = pads[c = specifier.charAt(++i)]) != null) c = specifier.charAt(++i);
-    //                 else pad = c === "e" ? " " : "0";
-    //                 if (format = formats[c]) c = format(date, pad);
-    //                 string.push(c);
-    //                 j = i + 1;
-    //             }
-    //         }
-    //
-    //         string.push(specifier.slice(j, i));
-    //         return string.join('');
-    //     };
-    // }
+    /**
+     * Creates a new function that formats the given Date or timestamp according to specifier.
+     * @param specifier
+     * @param formats
+     */
+    function newFormat(specifier: string, formats: FormatMap) {
+        return function (date: Date | number): string {
+            const string: (string | number)[] = [];
+            const n = specifier.length;
+            let i = -1;
+            let j = 0;
+
+            if (!(date instanceof Date)) {
+                date = new Date(+date);
+            }
+
+            while (++i < n) {
+                if (specifier.charCodeAt(i) === percentCharCode) {
+                    string.push(specifier.slice(j, i)); // copy the chunks of specifier with no directives as is
+                    let c: string | number = specifier.charAt(++i);
+                    let pad = pads[c];
+                    if (pad != undefined) { // if format directive has a padding modifier in front of it
+                        c = specifier.charAt(++i);   // fetch the directive itself
+                    } else {
+                        pad = c === 'e' ? ' ' : '0'; // use the default padding modifier
+                    }
+                    const format = formats[c];
+                    if (format) { // if the directive has a corresponding formatting function
+                        c = format(date, pad); // replace the directive with the formatted date
+                    }
+                    string.push(c);
+                    j = i + 1;
+                }
+            }
+            string.push(specifier.slice(j, i));
+
+            return string.join('');
+        };
+    }
 
     function parseSpecifier(d: DateMap, specifier: string, string: string, j: number) {
         let i = 0;
@@ -358,7 +475,7 @@ export default function formatLocale(locale: TimeLocaleDefinition) {
         while (i < n) {
             if (j >= m) return -1;
             const code = specifier.charCodeAt(i++);
-            if (code === 37) {
+            if (code === percentCharCode) {
                 const char = specifier.charAt(i++);
                 const parse = parses[char in pads ? specifier.charAt(i++) : char];
                 if (!parse || ((j = parse(d, string, j)) < 0)) {
@@ -516,7 +633,7 @@ export default function formatLocale(locale: TimeLocaleDefinition) {
         return pad(date.getUTCFullYear() % 10000, fill, 4);
     }
     function formatUTCZone(): string {
-        return "+0000";
+        return '+0000';
     }
     function formatLiteralPercent(date: Date): string {
         return '%';
@@ -629,33 +746,33 @@ export default function formatLocale(locale: TimeLocaleDefinition) {
     }
     function parseZone(d: DateMap, string: string, i: number): number {
         const n = /^(Z)|([+-]\d\d)(?::?(\d\d))?/.exec(string.slice(i, i + 6));
-        return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || "00")), i + n[0].length) : -1;
+        return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || '00')), i + n[0].length) : -1;
     }
     function parseLiteralPercent(d: DateMap, string: string, i: number): number {
         const n = percentRe.exec(string.slice(i, i + 1));
         return n ? i + n[0].length : -1;
     }
 
-    // return {
-    //     format: function (specifier) {
-    //         var f = newFormat(specifier += "", formats);
-    //         f.toString = function() { return specifier; };
-    //         return f;
-    //     },
-    //     parse: function (specifier) {
-    //         var p = newParse(specifier += "", localDate);
-    //         p.toString = function() { return specifier; };
-    //         return p;
-    //     },
-    //     utcFormat: function (specifier) {
-    //         var f = newFormat(specifier += "", utcFormats);
-    //         f.toString = function() { return specifier; };
-    //         return f;
-    //     },
-    //     utcParse: function (specifier) {
-    //         var p = newParse(specifier, utcDate);
-    //         p.toString = function() { return specifier; };
-    //         return p;
-    //     }
-    // };
+    return {
+        format: (specifier: string) => {
+            const f = newFormat(specifier, formats);
+            f.toString = () => specifier;
+            return f;
+        },
+        parse: (specifier: string) => {
+            const p = newParse(specifier, localDate);
+            p.toString = () => specifier;
+            return p;
+        },
+        utcFormat: (specifier: string) => {
+            const f = newFormat(specifier, utcFormats);
+            f.toString = () => specifier;
+            return f;
+        },
+        utcParse: (specifier: string) => {
+            const p = newParse(specifier, utcDate);
+            p.toString = () => specifier;
+            return p;
+        }
+    };
 }
