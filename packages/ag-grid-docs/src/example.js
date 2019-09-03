@@ -224,7 +224,7 @@ var gridOptions = {
     enableFillHandle: false,
     suppressClearOnFillReduction: false,
     
-    rowSelection: "multiple", // one of ['single','multiple'], leave blank for no selection
+    rowSelection:  'multiple', // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]

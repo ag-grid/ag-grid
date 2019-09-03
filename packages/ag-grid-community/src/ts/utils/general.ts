@@ -1271,48 +1271,32 @@ export class Utils {
     }
 
     static findLineByLeastSquares(values: number[]) {
+        const len = values.length;
+
+        if (len <= 1) { return values; }
+
         let sum_x = 0;
         let sum_y = 0;
         let sum_xy = 0;
         let sum_xx = 0;
-        let count = 0;
-        const len = values.length;
 
-        /*
-         * We'll use those variables for faster read/write access.
-         */
-        let x = 0;
         let y = 0;
 
-        /*
-         * Nothing to do.
-         */
-        if (len <= 1) {
-            return values;
-        }
-
-        /*
-         * Calculate the sum for each of the parts necessary.
-         */
-        for (let v = 0; v < len; v++) {
-            x = v;
-            y = values[v];
+        for (let x = 0; x < len; x++) {
+            y = values[x];
             sum_x += x;
             sum_y += y;
             sum_xx += x * x;
             sum_xy += x * y;
-            count++;
         }
 
-        const m = (count * sum_xy - sum_x * sum_y) / (count * sum_xx - sum_x * sum_x);
-        const b = (sum_y / count) - (m * sum_x) / count;
+        const m = (len * sum_xy - sum_x * sum_y) / (len * sum_xx - sum_x * sum_x);
+        const b = (sum_y / len) - (m * sum_x) / len;
 
         const result = [];
 
-        for (let v = 0; v <= len; v++) {
-            x = v;
-            y = x * m + b;
-            result.push(y);
+        for (let x = 0; x <= len; x++) {
+            result.push(x * m + b);
         }
 
         return result;
@@ -1477,9 +1461,8 @@ export class Utils {
     }
 
     static addStylesToElement(eElement: any, styles: any) {
-        if (!styles) {
-            return;
-        }
+        if (!styles) { return; }
+
         Object.keys(styles).forEach((key) => {
             const keyCamelCase = this.hyphenToCamelCase(key);
             if (keyCamelCase) {
