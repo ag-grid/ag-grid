@@ -262,7 +262,7 @@ export class FillHandle extends AbstractSelectionHandle {
             return values[idx % values.length];
         }
 
-        return _.last(_.findLineByLeastSquares(values));
+        return _.last(_.findLineByLeastSquares(values.map(Number)));
     
     }
 

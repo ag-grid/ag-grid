@@ -1288,7 +1288,7 @@ export class Utils {
          * Nothing to do.
          */
         if (len === 0) {
-            return [ [] ];
+            return [];
         }
 
         /*
@@ -1316,13 +1316,13 @@ export class Utils {
          */
         const result_values = [];
 
-        for (let v = 0; v < len; v++) {
+        for (let v = 0; v <= len; v++) {
             x = v;
             y = x * m + b;
             result_values.push(y);
         }
 
-        return [result_values];
+        return result_values;
     }
 
     /**
