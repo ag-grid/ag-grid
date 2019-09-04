@@ -502,7 +502,7 @@
         }
 
         p:last-child {
-            @extend .text-right, .card-text;
+            @extend .text-center, .card-text;
 
             a {
                 @extend .btn, .btn-primary;
@@ -539,7 +539,7 @@
     }
 
     .get-started-framework.card-vue > a:first-child {
-        background-color: darken(#fcfcff, 0);
+        background-color: darken(#50c297, 0);
     }
 
     .get-started-framework.card-aurelia > a:first-child {
