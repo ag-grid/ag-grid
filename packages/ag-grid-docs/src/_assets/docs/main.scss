@@ -510,7 +510,7 @@
         }
     }
 
-    $frameworks: angular react polymer vue javascript angularjs aurelia webcomponents;
+    $frameworks: angular react polymer vue-inverted javascript angularjs aurelia webcomponents;
 
     @each $framework in $frameworks {
         .get-started-framework.card-#{$framework} > a:first-child {
@@ -538,7 +538,7 @@
         background-color: darken(#f4f5f6, 0);
     }
 
-    .get-started-framework.card-vue > a:first-child {
+    .get-started-framework.card-vue-inverted > a:first-child {
         background-color: darken(#50c297, 0);
     }
 
