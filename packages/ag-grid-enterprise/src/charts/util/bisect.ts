@@ -1,29 +1,22 @@
-import { Comparator } from "./compare";
+import { Comparator, ascending } from "./compare";
 
-export function bisect<T>(list: T[], x: T, comparator: Comparator<T>, lo: number = 0, hi: number = list.length): number {
-    return bisectRight(list, x, comparator, lo, hi);
-}
-
-export function bisectRight<T>(list: T[], x: T, comparator: Comparator<T>, low: number = 0, high: number = list.length): number {
-    let lo = low;
-    let hi = high;
+/**
+ * Returns the insertion point for `x` in array to maintain sorted order.
+ * The arguments `lo` and `hi` may be used to specify a subset of the array which should be considered;
+ * by default the entire array is used. If `x` is already present in array, the insertion point will be before
+ * (to the left of) any existing entries. The return value is suitable for use as the first argument to `splice`
+ * assuming that array is already sorted. The returned insertion point `i` partitions the array into two halves
+ * so that all `v < x` for `v` in `array.slice(lo, i)` for the left side and all `v >= x` for `v` in `array.slice(i, hi)`
+ * for the right side.
+ * @param list
+ * @param x
+ * @param comparator
+ * @param lo
+ * @param hi
+ */
+export function bisectLeft<T>(list: T[], x: T, comparator: Comparator<T>, lo: number = 0, hi: number = list.length): number {
     while (lo < hi) {
-        const mid = (lo + hi) >> 1;
-        if (comparator(list[mid], x) > 0) { // list[mid] > x
-            hi = mid;
-        }
-        else {
-            lo = mid + 1;
-        }
-    }
-    return lo;
-}
-
-export function bisectLeft<T>(list: T[], x: T, comparator: Comparator<T>, low: number = 0, high: number = list.length): number {
-    let lo = low;
-    let hi = high;
-    while (lo < hi) {
-        const mid = (lo + hi) >> 1;
+        const mid = (lo + hi) >>> 1;
         if (comparator(list[mid], x) < 0) { // list[mid] < x
             lo = mid + 1;
         } else {
@@ -31,4 +24,48 @@ export function bisectLeft<T>(list: T[], x: T, comparator: Comparator<T>, low: n
         }
     }
     return lo;
+}
+
+export function bisectRight<T>(list: T[], x: T, comparator: Comparator<T>, lo: number = 0, hi: number = list.length): number {
+    while (lo < hi) {
+        const mid = (lo + hi) >>> 1;
+        if (comparator(list[mid], x) > 0) { // list[mid] > x
+            hi = mid;
+        } else {
+            lo = mid + 1;
+        }
+    }
+    return lo;
+}
+
+export function complexBisectLeft<T, U>(list: T[], x: U, mapper: (item: T) => U, lo: number = 0, hi: number = list.length): number {
+    const comparator = ascendingComparator(mapper);
+    while (lo < hi) {
+        const mid = (lo + hi) >>> 1;
+        if (comparator(list[mid], x) < 0) {
+            lo = mid + 1;
+        } else {
+            hi = mid;
+        }
+    }
+    return lo;
+}
+
+export function complexBisectRight<T, U>(list: T[], x: U, mapper: (item: T) => U, lo: number = 0, hi: number = list.length): number {
+    const comparator = ascendingComparator(mapper);
+    while (lo < hi) {
+        const mid = (lo + hi) >>> 1;
+        if (comparator(list[mid], x) < 0) {
+            lo = mid + 1;
+        } else {
+            hi = mid;
+        }
+    }
+    return lo;
+}
+
+function ascendingComparator<T, U>(map: (item: T) => U) {
+    return function (item: T, x: U) {
+        return ascending(map(item), x);
+    };
 }
