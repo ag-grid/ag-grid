@@ -18,11 +18,11 @@ meta_and_links($title, $keywords, $description, false);
 </head><link rel="stylesheet" href="dist/homepage.css">
 
 <body>
-    <header id="nav" class="compact" style="position: fixed; position: sticky; top: 0; width: 100%; z-index: 999999;"">
+    <header id="nav" class="compact">
         <?php include 'includes/navbar.php' ?>
     </header>
     <div class="stage-scenarios" style="background-color: #125082;">
-        <h2 class="heading-scenarios" style="color: white;">The Best Grid in the World!</h2>
+        <h2 class="heading-scenarios" style="color: white;">The Best JavaScript Grid in the World</h2>
 
         <section>
             <div class="demo" id="demo-1" data-load="home/demo-1.php">
@@ -35,16 +35,11 @@ meta_and_links($title, $keywords, $description, false);
 
         <section style="display: flex; justify-content: center; margin-top: 2rem;">
             <a class="get-started-btn" href="/javascript-grid-getting-started/" role="button">Get Started</a>
+            <a class="get-started-btn" href="/example.php" role="button">View Demo</a>
         </section>
     </div>
 
     <div id="stage-frameworks">
-        <section id="news-flash">
-            <div>
-                30th Aug 2019: <a href="./ag-grid-changelog/?fixVersion=21.2.0">Version 21.2.0</a> Pivot Chart, Pagination Enhancements, Scatter / Bubble Charts, Accessibility Enhancements ...
-            </div>
-        </section>
-
         <section id="section-frameworks">
             <div>
                 <h2>
@@ -54,7 +49,6 @@ meta_and_links($title, $keywords, $description, false);
                     <small></small>
                 </h2>
                 <p>With Zero Dependencies.</p>
-                <a class="btn btn-outline-primary" href="../javascript-grid-getting-started/" role="button" style="margin-left: 320px">Choose Your Framework</a>
             </div>
 
             <div>
