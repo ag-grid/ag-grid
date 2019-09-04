@@ -89,7 +89,6 @@
         enableRangeSelection: true,
         suppressRowClickSelection: true,
         animateRows: true,
-        onModelUpdated: modelUpdated,
         debug: true
     };
 
@@ -109,7 +108,6 @@
             btDestroyGrid.addEventListener("click", onBtDestroyGrid);
         }
 
-        addQuickFilterListener();
         onBtBringGridBack();
     };
 
@@ -134,22 +132,6 @@
         btBringGridBack.disabled = false;
         btDestroyGrid.disabled = true;
         gridOptions.api.destroy();
-    }
-
-    function addQuickFilterListener() {
-        var eInput = document.querySelector("#quickFilterInput");
-        eInput.addEventListener("input", function () {
-            var text = eInput.value;
-            gridOptions.api.setQuickFilter(text);
-        });
-    }
-
-    function modelUpdated() {
-        var model = gridOptions.api.getModel();
-        var totalRows = model.getTopLevelNodes().length;
-        var processedRows = model.getRowCount();
-        var eSpan = document.querySelector("#rowCount");
-        eSpan.innerHTML = processedRows.toLocaleString() + " / " + totalRows.toLocaleString();
     }
 
     function skillsCellRenderer(params) {

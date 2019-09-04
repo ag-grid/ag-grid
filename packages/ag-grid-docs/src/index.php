@@ -18,50 +18,25 @@ meta_and_links($title, $keywords, $description, false);
 </head><link rel="stylesheet" href="dist/homepage.css">
 
 <body>
-    <header id="nav">
+    <header id="nav" class="compact" style="position: fixed; position: sticky; top: 0; width: 100%; z-index: 999999;"">
         <?php include 'includes/navbar.php' ?>
+    </header>
+    <div class="stage-scenarios" style="background-color: #125082;">
+        <h2 class="heading-scenarios" style="color: white;">The Best Grid in the World!</h2>
 
-        <section id="punch">
-            <div id="doodle-container">
-                <div id="doodle-misc"><img inline src="_assets/doodles/misc.svg" alt="doodle-misc" /></div>
-                <div id="doodle-checkbox-selection"><img inline src="_assets/doodles/checkbox-selection.svg" alt="doodle-checkbox-selection" /></div>
-                <div id="doodle-context-menu"><img inline src="_assets/doodles/context-menu.svg" alt="doodle-context-menu" /></div>
-                <div id="doodle-editing"><img inline src="_assets/doodles/editing.svg" alt="doodle-editing" /></div>
-                <div id="doodle-range-selection"><img inline src="_assets/doodles/range-selection.svg" alt="doodle-range-selection" /></div>
-                <div id="doodle-quick-filter"><img inline src="_assets/doodles/quick-filter.svg" alt="doodle-quick-filter" /></div>
-                <div id="doodle-tree-data"><img inline src="_assets/doodles/tree-data.svg" alt="doodle-tree-data" /></div>
-                <div id="doodle-column-menu"><img inline src="_assets/doodles/column-menu.svg" alt="doodle-column-menu" /></div>
-            </div>
-
-            <div>
-                <h1 title="ag-Grid">THE BEST
-                    <br>
-                    JAVASCRIPT GRID
-                    <br>
-                    IN THE WORLD
-                </h1>
-
-                <ul id="homepage-highlights">
-                    <li>
-                        Over <strong>2,500</strong> Companies
-                        use ag-Grid Enterprise.
-                    </li>
-
-                    <li>
-                        Over <strong>25%</strong> of the Fortune 500
-                        use ag-Grid Enterprise.
-                    </li>
-
-                    <li>
-                        Over <strong>500,000</strong>
-                        Downloads per month.
-                    </li>
-                </ul>
-
-                <a href="/javascript-grid-getting-started/" id="free-cta">Get Started</a>
+        <section>
+            <div class="demo" id="demo-1" data-load="home/demo-1.php">
+                <div class="loading">
+                    <img src="_assets/doodles/checkbox-selection.svg" alt="Loading..." />
+                    <p>Loading Demo...</p>
+                </div>
             </div>
         </section>
-    </header>
+
+        <section style="display: flex; justify-content: center; margin-top: 2rem;">
+            <a class="get-started-btn" href="/javascript-grid-getting-started/" role="button">Get Started</a>
+        </section>
+    </div>
 
     <div id="stage-frameworks">
         <section id="news-flash">
@@ -92,22 +67,6 @@ meta_and_links($title, $keywords, $description, false);
                     <li id="fw-polymer"><a href="./polymer-getting-started/">Polymer</a></li>
                     <li id="fw-webcomponents"><a href="./best-web-component-data-grid/">Web Components</a></li>
                 </ul>
-            </div>
-        </section>
-    </div>
-
-    <div class="stage-scenarios">
-        <h2 class="heading-scenarios">Complex Scenarios, Made Easy </h2>
-
-        <section>
-            <div class="demo" id="demo-1" data-load="home/demo-1.php">
-                <div class="loading">
-                    <img src="_assets/doodles/checkbox-selection.svg" alt="Loading..." />
-                    <p>Loading Demo...</p>
-                </div>
-                <div class="view-code">
-                    <a href="/javascript-getting-started#summary">View Code</a>
-                </div>
             </div>
         </section>
     </div>
@@ -171,57 +130,6 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
-    <div id="stage-testimonials">
-        <section>
-            <div>
-                <img src="_assets/customers/robin-cote.jpg" alt="Andrew Taft">
-                <div>
-                    <blockquote>
-                        <p>Remarkable speed and extensibility, ag-Grid is the best web feature-rich BI tool on the market.</p>
-
-                        <footer>
-                            <strong>Robin Cote</strong>
-                            <span class="position">Solutions Architect, Investment Solutions Group, Healthcare of Ontario Pension Plan</span>
-                        </footer>
-                    </blockquote>
-                </div>
-            </div>
-
-            <div>
-                <img src="_assets/customers/andrew-taft.jpg" alt="Andrew Taft">
-                <div>
-                    <blockquote>
-                        <p>We’re using <strong>ag-Grid</strong> as a major component in our enterprise analytics and reporting product and it’s incredible. Prior to <strong>ag-Grid</strong>, we tried jqGrid, jqxGrid, DataTables, and SlickGrid, which all have their strong points, but we eventually ran into a wall with certain features. <br><br>
-                            <strong>ag-Grid</strong>’s grouping, aggregation, filtering, and all-around flexibility allowed us to quickly integrate it into our product. And, the performance is truly awesome!</p>
-
-                        <footer>
-                            <!--img src="./assets/customers/andrew-taft.jpg" alt="Andrew Taft" /-->
-                            <strong>Andrew Taft</strong> 
-                            <span class="position">Head of Product Development at Insight Technology Group</span> 
-                            <br><br>
-                            <a class="btn btn-outline-primary" href="https://www.ag-grid.com/testimonials.php" role="button" style="margin-left: 50px">See Our Customers</a>
-                        </footer>
-                    </blockquote>
-                </div>
-            </div>
-
-            <div>
-                <img src="_assets/customers/jason-boorn.jpg" alt="Jason Boorn">
-
-                <div>
-                    <blockquote>
-                        <p>We just made the move from Kendo to ag-Grid and we love it. It’s fast and very flexible.</p>
-
-                        <footer>
-                            <strong>Jason Boorn</strong>
-                            <span class="position">Senior Architect, Roobricks</span>
-                        </footer>
-                    </blockquote>
-                </div>
-            </div>
-        </section>
-    </div>
-
     <div class="stage-scenarios">
         <h2 class="heading-scenarios">Developer Friendly API</h2>
 
@@ -236,11 +144,6 @@ meta_and_links($title, $keywords, $description, false);
                 </div>
             </div>
         </section>
-    </div>
-
-    <div id="stage-show-me-more">
-        <h2>Show Me More</h2>
-        <a href="/features-overview/" class="btn btn-primary btn-lg">Sure! Let's Go to the Features Overview &rarr;</a>
     </div>
 
     <?= globalAgGridScript(true, true) ?>
