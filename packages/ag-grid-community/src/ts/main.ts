@@ -238,7 +238,7 @@ export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { Constants } from "./constants";
 export { Grid , GridParams } from "./grid";
-export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, ChartRangeParams } from "./gridApi";
+export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, ChartRangeParams, CreatePivotChartParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusedCellController } from "./focusedCellController";
 export { defaultGroupComparator } from "./functions";

@@ -94,6 +94,12 @@ export interface ChartRangeParams {
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 
+export interface CreatePivotChartParams {
+    chartType: ChartType;
+    chartContainer?: HTMLElement;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
+}
+
 export interface DetailGridInfo {
     id: string;
     api: GridApi | null | undefined;
@@ -981,14 +987,14 @@ export class GridApi {
         return this.chartService.chartCellRange(params);
     }
 
-    public pivotChart(): ChartRef | undefined {
+    public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
             _.doOnce(() => {
-                console.warn('ag-grid: Cannot chart range - the Charts Module has not been included.');
+                console.warn('ag-grid: Cannot create pivot chart - the Charts Module has not been included.');
             }, 'ChartsModuleCheck');
             return;
         }
-        return this.chartService.pivotChart(ChartType.GroupedColumn);
+        return this.chartService.createPivotChart(params);
     }
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {

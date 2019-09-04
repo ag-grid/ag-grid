@@ -5,6 +5,7 @@ import {
     PreDestroy,
     CellRange,
     ChartRangeParams,
+    CreatePivotChartParams,
     ChartRef,
     ChartType,
     Context,
@@ -51,7 +52,7 @@ export class ChartService implements IChartService {
         }
     }
 
-    public pivotChart(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
+    public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         // if required enter pivot mode
         if (!this.columnController.isPivotMode()) {
             this.columnController.setPivotMode(true, "pivotChart");
@@ -68,8 +69,8 @@ export class ChartService implements IChartService {
             return;
         }
 
-        const pivotChart = true, suppressChartRanges = true;
-        return this.chartRange(cellRange, chartType, pivotChart, suppressChartRanges);
+        return this.chartRange(
+            cellRange, params.chartType, true, true, params.chartContainer, undefined, params.processChartOptions);
     }
 
     private chartRange(cellRange: CellRange,
