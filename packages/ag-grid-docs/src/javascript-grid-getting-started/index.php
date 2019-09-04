@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
     </div>
 </div></div>
 
-<div><div class="get-started-framework card-vue">
+<div><div class="get-started-framework card-vue-inverted">
     <a href="../vue-getting-started/">Vue.js</a>
     <div>
         <p><a href="../vue-getting-started/">Get Started</a></p>
