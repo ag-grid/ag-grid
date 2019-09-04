@@ -149,7 +149,7 @@ function printFeatureRecursive($parentItem, $indent) {
     <h2>Installing ag-Grid Enterprise</h2>
 
     <p>
-        Each of the <a href="../getting-started/">Getting Started</a> guides gives step by step instructions on how
+        Each of the <a href="../javascript-grid-getting-started/">Getting Started</a> guides gives step by step instructions on how
         to get started using ag-Grid Enterprise for the framework in question. In most cases, you do one of
         the following:
     </p>

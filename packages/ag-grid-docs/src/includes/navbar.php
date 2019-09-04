@@ -6,9 +6,12 @@
                 <li class="<?php if ($navKey == "demo") { ?>active<?php }?>">
                     <a href="/example.php">Demo</a>
                 </li>
+
+<!--
                 <li class="<?php if ($navKey == "features-overview") { ?>active<?php }?>">
                     <a href="/features-overview/">Features Overview</a>
                 </li>
+-->
                 <li class="<?php if ($navKey == "documentation") { ?>active<?php }?>">
                     <a href="/documentation-main/documentation.php">Documentation</a>
                 </li>
@@ -20,18 +23,21 @@
                 <li class="<?php if ($navKey == "support") { ?>active<?php }?>">
                     <a href="/support.php">Support</a>
                 </li>
--->
 
                 <li class="<?php if ($navKey == "about") { ?>active<?php }?>">
                     <a href="/about.php">About</a>
                 </li>
+-->
 
                 <li class="<?php if ($navKey == "licenseAndPricing") { ?>active<?php }?>">
                     <a href="/license-pricing.php">Pricing</a>
                 </li>
+
+<!--
                 <li class="<?php if ($navKey == "getting-started") { ?>active<?php }?> get-started">
                     <a href="/javascript-grid-getting-started/" id="get-started-nav">Get Started</a>
                 </li>
+-->
 
             </ul>
         <?php } else { ?> 

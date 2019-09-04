@@ -21,9 +21,7 @@
             <h5>The Company</h5>
             <ul class="list-unstyled">
                 <li><a href="/about.php">About</a></li>
-                <li><a href="/about.php#team">Team</a></li>
                 <li><a href="https://blog.ag-grid.com/">Blog</a></li>
-                <li><a href="/testimonials.php">Testimonials</a></li>
                 <li><a href=/privacy.php>Privacy Policy</a></li>
                 <li><a href="/cookies.php">Cookies Policy</a></li>
             </ul>
