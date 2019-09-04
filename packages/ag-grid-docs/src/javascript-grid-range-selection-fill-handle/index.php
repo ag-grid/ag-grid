@@ -15,9 +15,18 @@ include '../documentation-main/documentation_header.php';
 
     <? enterprise_feature("Fill Handle"); ?>
 
-    <h2>Range Selection Examples with Fill Handle</h2>
+    <h2>Enabling the Fill Handle</h2>
+    <p> 
+        To enable the Fill Handle, simply set <code>enableFillHandle</code> to true in the <strong>gridOptions</strong>.
+    </p>
 
-    <h3>Default Example</h3>
+    <note>
+        It's important to notice that if you enable both <code>enableFillHandle</code> and <code>enableRangeHandle</code>, 
+        the Fill Handle will take precedence.
+    </note>
+
+
+    <h3>Example - Range Selection with Fill Handle</h3>
 
     <p>
         The example below demonstrates the basic features of the fill handle: 
@@ -40,7 +49,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Fill Handle', 'fill-handle', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h3>Reducing the Range Size</h3>
+    <h3>Example - Reducing the Range Size</h3>
 
     <p>
         If the behaviour for decreasing selection needs to be prevented, the flag <code>suppressClearOnFillReduction</code> should be set to <code>true</code>.
@@ -48,7 +57,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Fill Handle - Range Reduction', 'fill-handle-reduction', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h3>Custom User Function</h3>
+    <h2>Custom User Function</h2>
 
     <p>
         Often there is a need to use a custom method to fill values instead of simply copying values or increasing number 
@@ -88,10 +97,11 @@ include '../documentation-main/documentation_header.php';
         the grid to process the values as it normally would.
     </note>
 
+    <h3>Example - Using Custom User Functions</h3>
+
     <p> The example below will use the custom <code>fillOperation</code> for the <strong>Day of the week</strong> column, but it will
     use the default operation for any other column.
     </p>
-
 
     <?= example('Custom FillOperation', 'custom-fill-operation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 

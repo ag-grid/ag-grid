@@ -16,8 +16,12 @@ include '../documentation-main/documentation_header.php';
 
     <? enterprise_feature("Range Handle"); ?>
 
-    <h2>Range Selection Example with Range Handle</h2>
+    <h2>Enabling the Range Handle</h2>
+    <p>
+        To enable the Range Handle, simply set <code>enableRangeHandle</code> to true in the <strong>gridOptions</strong>.
+    </p>
 
+    <h3>Example - Range Selection with Range Handle</h3>
     <p>
         The example below demonstrates simple range selection with a range handle.
     </p>
