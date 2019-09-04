@@ -1,6 +1,6 @@
 import { Deinterpolator, Reinterpolator } from "./scale";
 import ContinuousScale from "./continuousScale";
-import { naturalOrder } from "../util/compare";
+import { ascending } from "../util/compare";
 import ticks, { tickIncrement } from "../util/ticks";
 
 /**
@@ -72,12 +72,24 @@ export class LinearScale<R> extends ContinuousScale<R> {
     }
 }
 
-export function reinterpolateNumber(a: number, b: number): Reinterpolator<number> {
+/**
+ * Returns a function of parameter `t` that interpolates between `a` and `b`.
+ * If the `t` is outside `[0, 1]`, the returned value is not guaranteed to be inside `[a, b]`.
+ * @param a
+ * @param b
+ */
+export function numberReinterpolatorFactory(a: number, b: number): Reinterpolator<number> {
     const d = b - a;
     return t => a + d * t;
 }
 
-export function deinterpolateNumber(a: number, b: number): Deinterpolator<number> {
+/**
+ * Returns a function that returns the value of `t` for a given `x` inside `[a, b]`.
+ * If the `x` is outside `[a, b]`, the `t` is not guaranteed to be inside `[0, 1]`.
+ * @param a
+ * @param b
+ */
+export function numberDeinterpolatorFactory(a: number, b: number): Deinterpolator<number> {
     const d = b - a;
     if (d === 0 || isNaN(d)) {
         return () => d;
@@ -90,7 +102,7 @@ export function deinterpolateNumber(a: number, b: number): Deinterpolator<number
  * Creates a continuous scale with the default interpolator and no clamping.
  */
 export default function scaleLinear() {
-    const scale = new LinearScale<number>(reinterpolateNumber, deinterpolateNumber, naturalOrder);
+    const scale = new LinearScale<number>(numberReinterpolatorFactory, numberDeinterpolatorFactory, ascending);
     scale.range = [0, 1];
     return scale;
 }

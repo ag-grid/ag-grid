@@ -1,4 +1,4 @@
-import { Comparator } from "../util/compare";
+import { Comparator, ascending } from "../util/compare";
 import Scale, {
     Deinterpolator,
     DeinterpolatorFactory,
@@ -7,6 +7,7 @@ import Scale, {
     Reinterpolator,
     ReinterpolatorFactory,
 } from './scale';
+import { bisectRight } from "../util/bisect";
 
 export default abstract class ContinuousScale<R> implements Scale<number, R> {
     constructor(reinterpolatorFactory: ReinterpolatorFactory<R>,
@@ -189,59 +190,59 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
     }
 
     // TODO: not used right now, but not to be removed
-    // private polymap(domain: number[], range: R[],
-    //                 deinterpolatorOf: DeinterpolatorFactory<number>,
-    //                 reinterpolatorOf: ReinterpolatorFactory<R>): Reinterpolator<R> {
-    //
-    //     let d: number[];
-    //     let r: R[];
-    //
-    //     if (domain.slice(-1)[0] < domain[0]) {
-    //         d = domain.reverse();
-    //         r = range.reverse();
-    //     } else {
-    //         d = domain;
-    //         r = range;
-    //     }
-    //
-    //     // number of segments in the polylinear scale
-    //     const n = Math.min(domain.length, range.length) - 1;
-    //     // deinterpolators from domain segment value to t
-    //     const dt = Array.from( {length: n}, (_, i) => deinterpolatorOf(d[i], d[i+1]) );
-    //     // reinterpolators from t to range segment value
-    //     const tr = Array.from( {length: n}, (_, i) => reinterpolatorOf(r[i], r[i+1]) );
-    //
-    //     return (x) => {
-    //         const i = bisect(d, x, naturalOrder, 1, n) - 1; // Find the domain segment that `x` belongs to.
-    //         // This also tells us which deinterpolator/reinterpolator pair to use.
-    //         return tr[i](dt[i](x));
-    //     }
-    // }
+    private polymap(domain: number[], range: R[],
+                    deinterpolatorOf: DeinterpolatorFactory<number>,
+                    reinterpolatorOf: ReinterpolatorFactory<R>): Reinterpolator<R> {
 
-    // private polymapInvert(range: R[], domain: number[],
-    //                       deinterpolatorOf: DeinterpolatorFactory<R>,
-    //                       reinterpolatorOf: ReinterpolatorFactory<number>): Deinterpolator<R> {
-    //     let r: R[];
-    //     let d: number[];
-    //
-    //     if (domain.slice(-1)[0] < domain[0]) {
-    //         r = range.reverse();
-    //         d = domain.reverse();
-    //     } else {
-    //         r = range;
-    //         d = domain;
-    //     }
-    //
-    //     const n = Math.min(domain.length, range.length) - 1;
-    //     const rt = Array.from( {length: n}, (_, i) => deinterpolatorOf(r[i], r[i+1]) );
-    //     const td = Array.from( {length: n}, (_, i) => reinterpolatorOf(d[i], d[i+1]) );
-    //
-    //     return (x) => {
-    //         if (!this.rangeComparator) {
-    //             throw new Error('Missing rangeComparator');
-    //         }
-    //         const i = bisect(r, x, this.rangeComparator, 1, n) - 1;
-    //         return td[i](rt[i](x));
-    //     }
-    // }
+        let d: number[];
+        let r: R[];
+
+        if (domain.slice(-1)[0] < domain[0]) {
+            d = domain.reverse();
+            r = range.reverse();
+        } else {
+            d = domain;
+            r = range;
+        }
+
+        // number of segments in the polylinear scale
+        const n = Math.min(domain.length, range.length) - 1;
+        // deinterpolators from domain segment value to t
+        const dt = Array.from( {length: n}, (_, i) => deinterpolatorOf(d[i], d[i+1]) );
+        // reinterpolators from t to range segment value
+        const tr = Array.from( {length: n}, (_, i) => reinterpolatorOf(r[i], r[i+1]) );
+
+        return (x) => {
+            const i = bisectRight(d, x, ascending, 1, n) - 1; // Find the domain segment that `x` belongs to.
+            // This also tells us which deinterpolator/reinterpolator pair to use.
+            return tr[i](dt[i](x));
+        }
+    }
+
+    private polymapInvert(range: R[], domain: number[],
+                          deinterpolatorOf: DeinterpolatorFactory<R>,
+                          reinterpolatorOf: ReinterpolatorFactory<number>): Deinterpolator<R> {
+        let r: R[];
+        let d: number[];
+
+        if (domain.slice(-1)[0] < domain[0]) {
+            r = range.reverse();
+            d = domain.reverse();
+        } else {
+            r = range;
+            d = domain;
+        }
+
+        const n = Math.min(domain.length, range.length) - 1;
+        const rt = Array.from( {length: n}, (_, i) => deinterpolatorOf(r[i], r[i+1]) );
+        const td = Array.from( {length: n}, (_, i) => reinterpolatorOf(d[i], d[i+1]) );
+
+        return (x) => {
+            if (!this.rangeComparator) {
+                throw new Error('Missing rangeComparator');
+            }
+            const i = bisectRight(r, x, this.rangeComparator, 1, n) - 1;
+            return td[i](rt[i](x));
+        }
+    }
 }

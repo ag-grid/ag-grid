@@ -10,7 +10,7 @@ const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);
 const e2 = Math.sqrt(2);
 
-function tickStep(a: number, b: number, count: number): number {
+export function tickStep(a: number, b: number, count: number): number {
     const rawStep = Math.abs(b - a) / Math.max(0, count);
     let step = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10)); // = Math.log10(rawStep)
     const error = rawStep / step;
