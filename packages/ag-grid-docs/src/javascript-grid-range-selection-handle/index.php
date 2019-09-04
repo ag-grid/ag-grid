@@ -10,14 +10,18 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Range Handle</h1>
 
     <p class="lead">
-        When working with a Range Selection, it might be useful to have a handle inside the last cell
-        to help increment or decrement the size of the current range.
+        When working with a Range Selection, it can be useful to have a handle inside the last cell to enable the size of the current
+        range to be adjusted.
     </p>
 
     <? enterprise_feature("Range Handle"); ?>
 
-    <h2>Range Selection Example with Range Handle</h2>
+    <h2>Enabling the Range Handle</h2>
+    <p>
+        To enable the Range Handle, simply set <code>enableRangeHandle</code> to true in the <strong>gridOptions</strong>.
+    </p>
 
+    <h3>Example - Range Selection with Range Handle</h3>
     <p>
         The example below demonstrates simple range selection with a range handle.
     </p>

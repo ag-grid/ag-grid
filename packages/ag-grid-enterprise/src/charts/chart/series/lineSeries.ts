@@ -161,12 +161,11 @@ export class LineSeries extends Series<CartesianChart> {
             }
         }
 
-        {
-            const [min, max] = domainY as number[];
-            if (min === max) {
-                domainY[0] = min - 1;
-                domainY[1] = max + 1;
-            }
+        const [min, max] = domainY as number[];
+
+        if (min === max) {
+            domainY[0] = min - 1;
+            domainY[1] = max + 1;
         }
 
         this.domainX = domainX;
@@ -286,7 +285,7 @@ export class LineSeries extends Series<CartesianChart> {
             }
         }
 
-        lineNode.stroke = stroke;
+        lineNode.stroke = fill;
         lineNode.strokeWidth = this.strokeWidth;
 
         // ------------------------------------------

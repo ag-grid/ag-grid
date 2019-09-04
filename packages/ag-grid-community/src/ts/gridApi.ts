@@ -56,7 +56,7 @@ import {ModuleNames} from "./modules/moduleNames";
 import {_} from "./utils";
 import {ChartRef, ProcessChartOptionsParams} from "./entities/gridOptions";
 import {ChartOptions, ChartType} from "./interfaces/iChartOptions";
-import {IToolPanelColumnComp, IToolPanelFiltersComp} from "./interfaces/iToolPanel";
+import {IToolPanel} from "./interfaces/iToolPanel";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -552,32 +552,8 @@ export class GridApi {
         this.clientSideRowModel.expandOrCollapseAll(false);
     }
 
-    public expandToolPanelColumns() {
-        const columnToolPanelComp = this.gridCore.getToolPanelInstance('columns') as IToolPanelColumnComp;
-        if (columnToolPanelComp) {
-            columnToolPanelComp.expandAll();
-        }
-    }
-
-    public collapseToolPanelColumns() {
-        const columnToolPanelComp = this.gridCore.getToolPanelInstance('columns') as IToolPanelColumnComp;
-        if (columnToolPanelComp) {
-            columnToolPanelComp.collapseAll();
-        }
-    }
-
-    public expandToolPanelFilters() {
-        const filtersToolPanelComp = this.gridCore.getToolPanelInstance('filters') as IToolPanelFiltersComp;
-        if (filtersToolPanelComp) {
-            filtersToolPanelComp.expandAll();
-        }
-    }
-
-    public collapseToolPanelFilters() {
-        const filtersToolPanelComp = this.gridCore.getToolPanelInstance('filters') as IToolPanelFiltersComp;
-        if (filtersToolPanelComp) {
-            filtersToolPanelComp.collapseAll();
-        }
+    public getToolPanelInstance(id: string): IToolPanel {
+        return this.gridCore.getToolPanelInstance(id);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {

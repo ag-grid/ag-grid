@@ -260,9 +260,18 @@ export class FillHandle extends AbstractSelectionHandle {
             }
         }
 
-        // we should copy values using a list order if pressing the alt key
-        // or if not all values are numbers
-        if (event.altKey || values.some(val => isNaN(parseFloat(val)))) {
+        const allNumbers = !values.some(val => isNaN(parseFloat(val)));
+
+        // values should be copied in order if the alt key is pressed
+        // or if the values contain strings and numbers
+        // However, if we only have one initial value selected, and that
+        // value is a number and we are also pressing alt, then we should
+        // increment or decrement the value by 1 based on direction.
+        if (event.altKey || !allNumbers) {
+            if (allNumbers && initialValues.length === 1) {
+                const multiplier = (this.isUp || this.isLeft) ? -1 : 1;
+                return _.last(values) + 1 * multiplier;
+            }
             return values[idx % values.length];
         }
 

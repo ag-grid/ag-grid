@@ -5,7 +5,7 @@ import {
     GridApi,
     GridOptionsWrapper,
     IToolPanelParams,
-    IToolPanelColumnComp,
+    IToolPanelComp,
     _
 } from "ag-grid-community/main";
 import { PivotModePanel } from "./panels/pivotModePanel";
@@ -26,7 +26,12 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
     contractColumnSelection: boolean;
 }
 
-export class ColumnToolPanel extends Component implements IToolPanelColumnComp {
+export interface IColumnToolPanel {
+    expandColumnGroups(): void;
+    collapseColumnGroups(): void;
+}
+
+export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
 
     private static TEMPLATE = `<div class="ag-column-panel"></div>`;
 
@@ -90,11 +95,11 @@ export class ColumnToolPanel extends Component implements IToolPanelColumnComp {
         this.initialised = true;
     }
 
-    public expandAll() {
+    public expandColumnGroups() {
         this.primaryColsPanel.onExpandAll();
     }
 
-    public collapseAll() {
+    public collapseColumnGroups() {
         this.primaryColsPanel.onCollapseAll();
     }
 
