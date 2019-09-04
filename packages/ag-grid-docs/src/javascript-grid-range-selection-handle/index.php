@@ -10,8 +10,8 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Range Handle</h1>
 
     <p class="lead">
-        When working with a Range Selection, it might be useful to have a handle inside the last cell
-        to help increment or decrement the size of the current range.
+        When working with a Range Selection, it can be useful to have a handle inside the last cell to enable the size of the current
+        range to be adjusted.
     </p>
 
     <? enterprise_feature("Range Handle"); ?>
