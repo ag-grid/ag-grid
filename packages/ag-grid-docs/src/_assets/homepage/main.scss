@@ -35,6 +35,15 @@
     }
 }
 
+header {
+    position: fixed;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 999999;
+}
+
 .info-page {
     @extend .container-fluid;
     background-color: $white;
@@ -106,6 +115,7 @@
     border-radius: 5px;
     padding: 15px;
     font-size: 20px;
+    margin: 0 10px;
     &:hover {
         text-decoration: none;
     }
