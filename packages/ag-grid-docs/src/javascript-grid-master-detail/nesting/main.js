@@ -30,7 +30,7 @@ var gridOptions = {
                         params.api.sizeColumnsToFit();
                     }
                 },
-                getDetailRowData: function (params) {
+                getDetailRowData(params) {
                     params.successCallback(params.data.children);
                 }
             },
@@ -38,7 +38,7 @@ var gridOptions = {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData: function (params) {
+        getDetailRowData(params) {
             params.successCallback(params.data.children);
         }
     },

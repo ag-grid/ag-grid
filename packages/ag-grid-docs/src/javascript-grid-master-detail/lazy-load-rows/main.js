@@ -22,7 +22,7 @@ var gridOptions = {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData: function (params) {
+        getDetailRowData(params) {
             // simulate delayed supply of data to the detail pane
             setTimeout(function () {
                 params.successCallback(params.data.callRecords);
