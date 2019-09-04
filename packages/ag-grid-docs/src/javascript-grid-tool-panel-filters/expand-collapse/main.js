@@ -40,17 +40,16 @@ var gridOptions = {
     columnDefs: columnDefs,
     sideBar: 'filters',
     onGridReady: function(params) {
-        params.api.expandToolPanelFilters();
+        params.api.getToolPanelInstance('filters').expandFilters();
     }
 };
 
-
 function collapseFilters() {
-    gridOptions.api.collapseToolPanelFilters();
+    gridOptions.api.getToolPanelInstance('filters').collapseFilters();
 }
 
 function expandFilters() {
-    gridOptions.api.expandToolPanelFilters();
+    gridOptions.api.getToolPanelInstance('filters').expandFilters();
 }
 
 // setup the grid after the page has finished loading

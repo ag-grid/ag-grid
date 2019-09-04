@@ -66,6 +66,8 @@ export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
 export { WatermarkComp } from "./license/watermark";
 export { FillHandle } from "./widgets/selection/fillHandle";
 export { RangeHandle } from "./widgets/selection/rangeHandle";
+export { IColumnToolPanel } from "./sideBar/providedPanels/columns/columnToolPanel";
+export { IFiltersToolPanel } from "./sideBar/providedPanels/filters/filtersToolPanel";
 
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 

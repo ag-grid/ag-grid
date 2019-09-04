@@ -4,13 +4,18 @@ import {
     ColumnController,
     Component,
     EventService,
-    IToolPanelFiltersComp,
+    IToolPanelComp,
     _
 } from "ag-grid-community";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 
-export class FiltersToolPanel extends Component implements IToolPanelFiltersComp {
+export interface IFiltersToolPanel {
+    expandFilters(): void;
+    collapseFilters(): void;
+}
+
+export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
 
     private static TEMPLATE =
         `<div class="ag-filter-panel" ref="ePanelContainer" />`;
@@ -53,12 +58,12 @@ export class FiltersToolPanel extends Component implements IToolPanelFiltersComp
         }
     }
 
-    public expandAll() {
+    public expandFilters(): void {
         // expanding in reverse order to ensure top scroll position
         this.getChildComponents().reverse().forEach(comp => (comp as ToolPanelFilterComp).doExpand());
     }
 
-    public collapseAll() {
+    public collapseFilters(): void {
         // collapsing in reverse order to ensure top scroll position
         this.getChildComponents().reverse().forEach(comp => (comp as ToolPanelFilterComp).doCollapse());
     }

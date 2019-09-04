@@ -519,31 +519,10 @@ include '../documentation-main/documentation_header.php';
             <td>Returns true if the tool panel is showing, otherwise false.</td>
         </tr>
         <tr>
-            <th>expandToolPanelColumns()</th>
+            <th>getToolPanelInstance(id)</th>
             <td>
-                Expands all Column Groups in the
-                <a href="../javascript-grid-tool-panel-columns/#expand-collapse-column-groups">Column Tool Panel</a>.
-            </td>
-        </tr>
-        <tr>
-            <th>collapseToolPanelColumns()</th>
-            <td>
-                Collapses all Column Groups in the
-                <a href="../javascript-grid-tool-panel-columns/#expand-collapse-column-groups">Column Tool Panel</a>.
-            </td>
-        </tr>
-        <tr>
-            <th>expandToolPanelFilters()</th>
-            <td>
-                Expands all Filters in the
-                <a href="../javascript-grid-tool-panel-filters/#expand-collapse-filters">Filters Tool Panel</a>.
-            </td>
-        </tr>
-        <tr>
-            <th>collapseToolPanelFilters()</th>
-            <td>
-                Collapse all Filters in the
-                <a href="../javascript-grid-tool-panel-filters/#expand-collapse-filters">Filters Tool Panel</a>.
+                Gets the tool panel instance corresponding to the supplied id. See
+                <a href="../javascript-grid-tool-panel-columns/#expand-collapse-column-groups">Expand / Collpase Column Groups</a>.
             </td>
         </tr>
         <tr>

@@ -40,16 +40,16 @@ var gridOptions = {
     columnDefs: columnDefs,
     sideBar: 'columns',
     onGridReady: function(params) {
-        params.api.collapseToolPanelColumns();
+        params.api.getToolPanelInstance('columns').collapseColumnGroups();
     }
 };
 
 function expandColumnGroups() {
-    gridOptions.api.expandToolPanelColumns();
+    gridOptions.api.getToolPanelInstance('columns').expandColumnGroups();
 }
 
 function collapseColumnGroups() {
-    gridOptions.api.collapseToolPanelColumns();
+    gridOptions.api.getToolPanelInstance('columns').collapseColumnGroups();
 }
 
 // setup the grid after the page has finished loading

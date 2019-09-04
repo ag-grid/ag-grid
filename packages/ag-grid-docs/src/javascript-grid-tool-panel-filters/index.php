@@ -36,20 +36,30 @@ include '../documentation-main/documentation_header.php';
     <h2>Expand / Collapse Filters</h2>
 
     <p>
-        It is possible to expand / collapse the filters in the Filters Tool Panel using the
-        <a href="../javascript-grid-api/">Grid API</a>. To expand filters use: <code>expandToolPanelFilters()</code>
-        and to collapse use: <code>collapseToolPanelFilters()</code>.
+        It is possible to expand / collapse the filters in the Filters Tool Panel by directly invoking methods
+        on the Filters Tool Panel instance. This is shown in the code snippet below:
     </p>
 
+    <snippet>
+        // lookup Filters Tool Panel instance by id
+        var filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
+
+        // expand filters in the Filters Tool Panel
+        filtersToolPanel.expandFilters();
+
+        // collapse filters in the Filters Tool Panel
+        filtersToolPanel.collapseFilters();
+    </snippet>
+
     <p>
-        The example shows how to programmatically expand / collapse filters. Note the following:
+        The example below shows how to programmatically expand / collapse filters. Note the following:
     </p>
 
     <ul class="content">
-        <li>When the grid is initialised <code>expandToolPanelFilters()</code> is invoked using the
-            <code>onGridReady()</code> event to initially expand all tool panel filters.</li>
-        <li>Click the <b>Collapse Filters</b> button to collapse filters.</li>
-        <li>Click the <b>Expand Filters</b> button to expand filters.</li>
+        <li>When the grid is initialised <code>collapseFilters()</code> is invoked using the
+            <code>onGridReady</code> event to initially collapse all filters in the Filters Tool Panel.</li>
+        <li>Clicking <b>Expand Filters</b> expands filters using <code>expandFilters()</code>.</li>
+        <li>Clicking <b>Collapse Filters</b> collapses filters using <code>collapseFilters()</code>.</li>
     </ul>
 
     <?= example('Expand / Collapse Filters', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
