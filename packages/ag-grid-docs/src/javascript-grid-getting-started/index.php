@@ -3,12 +3,18 @@ $pageTitle = "ag-Grid Getting Started: Choose Your Framework";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We support all the najor JavaScript frameworks, this page is the jumping off point for all the individual guides.";
 $pageKeyboards = "JavaScript Grid";
 $pageGroup = "basics";
-define('skipInPageNav', true);
-define('skipLeftNav', true);
-include '../getting-started/header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Choose Your Framework</h1>
+<h1>Getting Started</h1>
+
+<p class="lead">
+    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with
+    zero dependencies. ag-Grid supports all major frameworks by providing ag-Grid Components for
+    each popular framework and allowing customization of the grid using the framework of your choice.
+</p>
+
+<h2>Choose Your Framework</h2>
 
 <div id="get-started-frameworks">
 
@@ -53,14 +59,12 @@ include '../getting-started/header.php';
 
 </div></div>
 
-<p>Using something else? Check the additional guides we have:</p>
+<p>Or maybe your are doing something a little less common...</p>
 
 <ul>
-<li><a href="../best-angularjs-data-grid/">Use ag-Grid in AngularJS 1.x Project</a></li>
-<li><a href="../polymer-getting-started/">Use ag-Grid with Polymer</a></li>
-<li><a href="../best-web-component-data-grid/">Use ag-Grid as a Web Component</a></li>
+    <li><a href="../best-angularjs-data-grid/">Start with AngularJS</a></li>
+    <li><a href="../polymer-getting-started/">Start with Polymer</a></li>
+    <li><a href="../best-web-component-data-grid/">Start with Web Components</a></li>
 </ul>
 
-<p>After you are done with the above, you can check <a href="../ag-grid-tutorials/">the 6 part intermediate tutorial</a> which guides you through implementing a complex use case with ag-Grid.</p>
-
-<?php include '../getting-started/footer.php'; ?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

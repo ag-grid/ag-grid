@@ -3,7 +3,7 @@
     "group": "Basics",
     "items": [
       {
-        "title": "Getting Started",
+        "title": "Introduction",
         "icon": "icon-information",
         "max-box-show-level": 2,
         "matrixExclude": true,
@@ -19,19 +19,19 @@
             "url": "javascript-grid-supported-browsers/"
           },
           {
-            "title": "Frameworks Info",
-            "url": "javascript-grid-frameworks-info/",
+            "title": "Getting Started",
+            "url": "javascript-grid-getting-started/",
             "items": [
               {
                 "title": "Vanilla JavaScript",
-                "url": "javascript-grid-npm/",
+                "url": "javascript-getting-started/",
                 "items": [
                   {
-                    "title": "Getting Started",
-                    "url": "javascript-getting-started/"
+                    "title": "Install with NPM",
+                    "url": "javascript-grid-npm/"
                   },
                   {
-                    "title": "Download for Local Usage",
+                    "title": "Download Bundles",
                     "url": "javascript-grid-download/"
                   },
                   {
@@ -42,11 +42,11 @@
               },
               {
                 "title": "Angular",
-                "url": "angular-more-details/",
+                "url": "angular-getting-started/",
                 "items": [
                   {
-                    "title": "Getting Started",
-                    "url": "angular-getting-started/"
+                    "title": "Grid Interface",
+                    "url": "angular-more-details/"
                   },
                   {
                     "title": "SystemJS",
@@ -76,11 +76,11 @@
               },
               {
                 "title": "React",
-                "url": "react-more-details/",
+                "url": "react-getting-started/",
                 "items": [
                   {
-                    "title": "Getting Started",
-                    "url": "react-getting-started/"
+                    "title": "Grid Interface",
+                    "url": "react-more-details/"
                   },
                   {
                     "title": "Redux Integration Part 1",
@@ -94,11 +94,11 @@
               },
               {
                 "title": "Vue",
-                "url": "best-vuejs-data-grid/",
+                "url": "vue-getting-started/",
                 "items": [
                   {
-                    "title": "Getting Started",
-                    "url": "vue-getting-started/"
+                    "title": "Grid Interface",
+                    "url": "best-vuejs-data-grid/"
                   },
                   {
                     "title": "Vue & Unidirectional Data Flow",
