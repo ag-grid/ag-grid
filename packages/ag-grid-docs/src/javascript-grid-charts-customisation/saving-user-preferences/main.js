@@ -101,7 +101,7 @@ function createChart() {
         suppressChartRanges: true
     };
 
-    chartRef = gridOptions.api.chartRange(params);
+    chartRef = gridOptions.api.createRangeChart(params);
 }
 
 function createRowData() {

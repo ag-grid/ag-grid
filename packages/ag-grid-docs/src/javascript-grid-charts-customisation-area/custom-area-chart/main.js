@@ -14,12 +14,12 @@ function createRowData() {
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
     let rowData = [];
-    countries.forEach( function(country, index) {
+    countries.forEach(function(country, index) {
         rowData.push({
-                country: country,
-                gold: Math.floor(((index+1 / 7) * 333)%100),
-                silver: Math.floor(((index+1 / 3) * 555)%100),
-                bronze: Math.floor(((index+1 / 7.3) * 777)%100),
+            country: country,
+            gold: Math.floor(((index+1 / 7) * 333)%100),
+            silver: Math.floor(((index+1 / 3) * 555)%100),
+            bronze: Math.floor(((index+1 / 7.3) * 777)%100),
         });
     });
     return rowData;
@@ -35,12 +35,11 @@ var gridOptions = {
     rowData: createRowData(),
     enableRangeSelection: true,
     enableCharts: true,
-    onGridReady: onGridReady,
-    processChartOptions: processChartOptions
+    onFirstDataRendered,
+    processChartOptions,
 };
 
 function processChartOptions(params) {
-
     var options = params.options;
     console.log('chart options:', options);
 
@@ -172,27 +171,25 @@ function processChartOptions(params) {
         var yField = params.yField;
         var x = params.datum[xField];
         var y = params.datum[yField];
-        return '<b>'+xField.toUpperCase()+':</b> ' + x + '<br/><b>'+yField.toUpperCase()+':</b> '+y;
+        return '<b>' + xField.toUpperCase() + ':</b> ' + x + '<br/><b>' + yField.toUpperCase() + ':</b> ' + y;
     };
 
     return options;
 }
 
-function onGridReady(params) {
+function onFirstDataRendered(params) {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'stackedArea'
     };
 
-    setTimeout(function () {
-        params.api.chartRange(chartRangeParams);
-    }, 100);
+    params.api.createRangeChart(createRangeChartParams);
 }
 
 // setup the grid after the page has finished loading

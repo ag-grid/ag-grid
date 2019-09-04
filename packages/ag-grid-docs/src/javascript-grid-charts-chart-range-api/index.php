@@ -15,12 +15,12 @@ include '../documentation-main/documentation_header.php';
     <h2>Range Charts</h2>
 
     <p>
-        Charts can be created programmatically from a range via the grid's <code>chartRange()</code> API. The interface is
+        Charts can be created programmatically from a range via the grid's <code>createRangeChart()</code> API. The interface is
         as follows:
     </p>
 
     <snippet>
-function chartRange(params: ChartRangeParams): ChartRef | undefined {
+function createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
     cellRange: CellRangeParams;
     chartType: string;
     chartContainer?: HTMLElement;
@@ -29,7 +29,7 @@ function chartRange(params: ChartRangeParams): ChartRef | undefined {
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 
-interface CellRangeParams {
+interface CreateRangeChartParams {
     // start row
     rowStartIndex?: number;
     rowStartPinned?: string;

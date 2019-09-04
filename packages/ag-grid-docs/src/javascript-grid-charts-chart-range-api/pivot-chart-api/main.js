@@ -22,7 +22,7 @@ function onFirstDataRendered(event) {
     var params = {
         chartType: 'groupedColumn',
         chartContainer,
-        processChartOptions: function(params) {
+        processChartOptions(params) {
             params.options.legendPosition = "bottom";
             
             return params.options;
@@ -32,7 +32,7 @@ function onFirstDataRendered(event) {
     event.api.createPivotChart(params);
 
     // expand one row for demonstration purposes
-    setTimeout(function() { params.api.getDisplayedRowAtIndex(2).setExpanded(true); }, 0);
+    setTimeout(function() { event.api.getDisplayedRowAtIndex(2).setExpanded(true); }, 0);
 }
 
 // setup the grid after the page has finished loading

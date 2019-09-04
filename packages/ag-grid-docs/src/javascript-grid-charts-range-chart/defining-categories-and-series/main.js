@@ -22,7 +22,7 @@ let gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
-    processChartOptions: function (params) {
+    processChartOptions(params) {
         let opts = params.options;
 
         opts.title = {text: "Medals by Age"};
@@ -41,11 +41,11 @@ let gridOptions = {
 
         return opts;
     },
-    onFirstDataRendered: onFirstDataRendered
+    onFirstDataRendered,
 };
 
 function onFirstDataRendered(params) {
-    let chartRangeParams = {
+    let createRangeChartParams = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 79,
@@ -56,8 +56,9 @@ function onFirstDataRendered(params) {
         aggFunc: 'sum'
     };
 
-    params.api.chartRange(chartRangeParams);
+    params.api.createRangeChart(createRangeChartParams);
 }
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');

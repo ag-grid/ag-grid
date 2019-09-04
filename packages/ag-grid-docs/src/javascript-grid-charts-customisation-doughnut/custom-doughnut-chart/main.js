@@ -33,8 +33,8 @@ var gridOptions = {
     rowData: createRowData(),
     enableRangeSelection: true,
     enableCharts: true,
-    onGridReady: onGridReady,
-    processChartOptions: processChartOptions
+    onFirstDataRendered,
+    processChartOptions,
 };
 
 function processChartOptions(params) {
@@ -140,21 +140,19 @@ function processChartOptions(params) {
     return options;
 }
 
-function onGridReady(params) {
+function onFirstDataRendered(params) {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'doughnut'
     };
 
-    setTimeout(function () {
-        params.api.chartRange(chartRangeParams);
-    }, 100);
+    params.api.createRangeChart(createRangeChartParams);
 }
 
 // setup the grid after the page has finished loading

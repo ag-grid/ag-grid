@@ -60,7 +60,8 @@ function onChart1() {
             return opts;
         }
     };
-    gridOptions.api.chartRange(params);
+
+    gridOptions.api.createRangeChart(params);
 }
 
 function onChart2() {
@@ -85,7 +86,8 @@ function onChart2() {
             return opts;
         }
     };
-    gridOptions.api.chartRange(params);
+    
+    gridOptions.api.createRangeChart(params);
 }
 
 // setup the grid after the page has finished loading

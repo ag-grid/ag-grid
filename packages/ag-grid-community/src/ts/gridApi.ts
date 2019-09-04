@@ -85,7 +85,17 @@ export interface RedrawRowsParams {
     rowNodes?: RowNode[];
 }
 
+/** @deprecated use CreateRangeChartParams instead */
 export interface ChartRangeParams {
+    cellRange: CellRangeParams;
+    chartType: ChartType;
+    chartContainer?: HTMLElement;
+    suppressChartRanges?: boolean;
+    aggFunc?: string | IAggFunc;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
+}
+
+export interface CreateRangeChartParams {
     cellRange: CellRangeParams;
     chartType: ChartType;
     chartContainer?: HTMLElement;
@@ -977,14 +987,20 @@ export class GridApi {
         this.rangeController.removeAllCellRanges();
     }
 
+    /** @deprecated use createRangeChart instead */
     public chartRange(params: ChartRangeParams): ChartRef | undefined {
+        return this.createRangeChart({ ...params });
+    }
+
+    public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
         if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
             _.doOnce(() => {
-                console.warn('ag-grid: Cannot chart range - the Charts Module has not been included.');
+                console.warn('ag-grid: Cannot create range chart - the Charts Module has not been included.');
             }, 'ChartsModuleCheck');
             return;
         }
-        return this.chartService.chartCellRange(params);
+
+        return this.chartService.createRangeChart(params);
     }
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
@@ -994,6 +1010,7 @@ export class GridApi {
             }, 'ChartsModuleCheck');
             return;
         }
+
         return this.chartService.createPivotChart(params);
     }
 

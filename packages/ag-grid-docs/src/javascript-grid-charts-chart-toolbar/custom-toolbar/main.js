@@ -29,7 +29,7 @@ function customChartToolbarLayout() {
 }
 
 function createPieChart(params) {
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
@@ -37,7 +37,8 @@ function createPieChart(params) {
         },
         chartType: 'pie'
     };
-    params.api.chartRange(chartRangeParams);
+
+    params.api.createRangeChart(createRangeChartParams);
 }
 
 function customChartOptions(params) {

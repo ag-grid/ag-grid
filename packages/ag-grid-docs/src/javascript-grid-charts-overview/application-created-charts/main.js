@@ -39,9 +39,9 @@ let gridOptions = {
     animateRows: true,
     enableCharts: true,
     suppressAggFuncInHeader: true,
-    getRowNodeId: function(data) { return data.trade; },
-    onFirstDataRendered: function(params) {
-        let chartRangeParams = {
+    getRowNodeId(data) { return data.trade; },
+    onFirstDataRendered(params) {
+        let createRangeChartParams = {
             cellRange: {
                 columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
             },
@@ -51,9 +51,9 @@ let gridOptions = {
             aggFunc: 'sum'
         };
 
-        chartRef = params.api.chartRange(chartRangeParams);
+        chartRef = params.api.createRangeChart(createRangeChartParams);
     },
-    processChartOptions: function(params) {
+    processChartOptions(params) {
         let opts = params.options;
 
         opts.legendPosition = 'bottom';
@@ -69,7 +69,7 @@ let gridOptions = {
 
         return opts;
     },
-    getChartToolbarItems: function() {
+    getChartToolbarItems() {
         return []; // hide toolbar items
     }
 };
@@ -91,7 +91,7 @@ function createChart(type) {
         aggFunc: 'sum'
     };
 
-    chartRef = gridOptions.api.chartRange(params);
+    chartRef = gridOptions.api.createRangeChart(params);
 }
 
 function numberCellFormatter(params) {

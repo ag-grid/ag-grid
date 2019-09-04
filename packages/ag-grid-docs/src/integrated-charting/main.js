@@ -1,6 +1,5 @@
 (function() {
 
-
     var columnDefs = [
         {headerName: 'Product', field: 'product', chartDataType: 'category'},
         {headerName: 'Book', field: 'book', chartDataType: 'category'},
@@ -21,8 +20,6 @@
         {headerName: 'Bid', field: 'bidFlag'}
     ];
 
-    var chartRef;
-
     var gridOptions = {
         columnDefs: columnDefs,
         defaultColDef: {
@@ -41,9 +38,9 @@
         animateRows: true,
         enableCharts: true,
         suppressAggFuncInHeader: true,
-        getRowNodeId: function(data) { return data.trade; },
-        onFirstDataRendered: function(params) {
-            var chartRangeParams = {
+        getRowNodeId(data) { return data.trade; },
+        onFirstDataRendered(params) {
+            var createRangeChartParams = {
                 cellRange: {
                     columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
                 },
@@ -53,9 +50,9 @@
                 aggFunc: 'sum'
             };
 
-            chartRef = params.api.chartRange(chartRangeParams);
+            chartRef = params.api.createRangeChart(createRangeChartParams);
         },
-        processChartOptions: function(params) {
+        processChartOptions(params) {
             var opts = params.options;
 
             opts.legendPosition = 'bottom';
@@ -109,7 +106,6 @@
         };
         worker.postMessage('start');
     }
-
 
     if (document.readyState == "complete") {
         initLiveStreamUpdates();

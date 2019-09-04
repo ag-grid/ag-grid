@@ -83,7 +83,8 @@ function onFirstDataRendered(event) {
             return params.options;
         }
     };
-    event.api.chartRange(params1);
+
+    event.api.createRangeChart(params1);
 
     var eContainer2 = document.querySelector('#chart2');
     var params2 = {
@@ -107,7 +108,8 @@ function onFirstDataRendered(event) {
             return params.options;
         }
     };
-    event.api.chartRange(params2);
+
+    event.api.createRangeChart(params2);
 
     var eContainer3 = document.querySelector('#chart3');
     var params3 = {
@@ -131,9 +133,9 @@ function onFirstDataRendered(event) {
             return params.options;
         }
     };
-    event.api.chartRange(params3);
-}
 
+    event.api.createRangeChart(params3);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

@@ -204,7 +204,7 @@ export class MenuItemMapper {
         const rangeChartMenuItem = (localeKey: string, defaultText: string, chartType: ChartType) => {
             return {
                 name: localeTextFunc(localeKey, defaultText),
-                action: () => this.chartService.chartCurrentRange(chartType)
+                action: () => this.chartService.createChartFromCurrentRange(chartType)
             };
         };
 
