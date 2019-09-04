@@ -36,13 +36,25 @@ include '../documentation-main/documentation_header.php';
                 When a range of numbers is selected and that range is extended, the Grid will detect the linear progression of the 
                 selected items and fill the extra cells with calculated values.
             </li>
+            <br>
             <li>When a range of strings or a mix of strings and numbers are selected and that range is extended, the range items 
                 will be copied in order until all new cells have been properly filled.
             </li>
+            <br>
             <li>
                 When a range of numbers is selected and the range is increased while pressing the <code>option / alt</code> key, the behaviour
                 will be the same as when a range of strings or mixed values is selected.
             </li>
+            <br>
+            <li>
+                When a single cell is selected and the range is increased, the value of that cell will be copied to the cells added to the range.
+            </li>
+            <br>
+            <li>
+                When a single cell containing a <strong>number</strong> value is selected and the range is increased while pressing the <code>option / alt</code> key, 
+                that value will be incremented (or decremented if dragging to the left or up) by the value of one until all new cells have been filled.
+            </li>
+            <br>
             <li>When reducing the size of the range, cells that are no longer part of the range will be cleared (set to <code>null</code>).</li>
         </ul>
     </p>
