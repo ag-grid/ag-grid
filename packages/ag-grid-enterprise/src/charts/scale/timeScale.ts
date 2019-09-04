@@ -90,7 +90,7 @@ export function calendar(
         // Otherwise, assume interval is already a time interval and use it.
         if (typeof interval === 'number') {
             const target = Math.abs(stop - start) / interval;
-            let i = complexBisectRight(tickIntervals, target, interval => interval[2]);
+            const i = complexBisectRight(tickIntervals, target, interval => interval[2]);
             if (i === tickIntervals.length) {
                 step = tickStep(start / durationYear, stop / durationYear, interval);
                 interval = year;

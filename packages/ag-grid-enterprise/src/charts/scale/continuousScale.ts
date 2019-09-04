@@ -216,7 +216,7 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
             const i = bisectRight(d, x, ascending, 1, n) - 1; // Find the domain segment that `x` belongs to.
             // This also tells us which deinterpolator/reinterpolator pair to use.
             return tr[i](dt[i](x));
-        }
+        };
     }
 
     private polymapInvert(range: R[], domain: number[],
@@ -243,6 +243,6 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
             }
             const i = bisectRight(r, x, this.rangeComparator, 1, n) - 1;
             return td[i](rt[i](x));
-        }
+        };
     }
 }
