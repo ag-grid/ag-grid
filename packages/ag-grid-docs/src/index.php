@@ -17,7 +17,7 @@ meta_and_links($title, $keywords, $description, false);
 
 </head><link rel="stylesheet" href="dist/homepage.css">
 
-<body>
+<body style="padding-top: 65px;">
     <header id="nav" class="compact">
         <?php include 'includes/navbar.php' ?>
     </header>
