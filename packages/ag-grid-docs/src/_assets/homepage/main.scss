@@ -48,13 +48,6 @@ h2 {
     -webkit-font-smoothing: antialiased;
 }
 
-header + .stage-scenarios {
-    background-color: #125082 !important;
-    h2 {
-        color: white !important;
-    }
-}
-
 .info-page {
     @extend .container-fluid;
     background-color: $white;
