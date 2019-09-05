@@ -38,7 +38,7 @@ function onFirstDataRendered(params) {
         chartType: 'pie'
     };
 
-    params.api.createRangeChart(createRangeChartParams);
+    params.api.chartRange(createRangeChartParams);
 }
 
 function processChartOptions(params) {

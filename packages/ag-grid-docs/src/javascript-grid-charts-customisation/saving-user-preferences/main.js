@@ -108,7 +108,7 @@ function onFirstDataRendered(firstDataRenderedParams) {
         suppressChartRanges: true
     };
 
-    currentChartRef = firstDataRenderedParams.api.createRangeChart(params);
+    currentChartRef = firstDataRenderedParams.api.chartRange(params);
 }
 
 function createRowData() {
