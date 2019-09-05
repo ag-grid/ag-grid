@@ -49,9 +49,9 @@ h2 {
 }
 
 header + .stage-scenarios {
-    background-color: #125082;
+    background-color: #125082 !important;
     h2 {
-        color: white;
+        color: white !important;
     }
 }
 
@@ -445,7 +445,7 @@ header + .stage-scenarios {
             @extend .rounded;
             border: 1px solid $gray-400;
             width: 100%;
-            height: 600px;
+            height: 515px;
         }
     }
 }
