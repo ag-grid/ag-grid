@@ -1,0 +1,6 @@
+**/_gen/*
+**/node_modules/*
+
+polymer-getting-started
+
+*_vue.js

@@ -4,7 +4,8 @@
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
-    "tsc": "tsc -p tests/config/tsconfig.json"
+    "tsc": "tsc -p tests/config/tsconfig.json",
+    "validate-es5": "eslint src/"
   },
   "repository": {
     "type": "git",
@@ -60,11 +61,6 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
-    "ag-grid-angular": "^21.0.0",
-    "ag-grid-community": "^21.0.0",
-    "ag-grid-enterprise": "^21.0.0",
-    "ag-grid-react": "^21.0.0",
-    "ag-grid-vue": "^21.0.0",
     "@angular/common": "7.2.3",
     "@angular/compiler": "7.2.3",
     "@angular/core": "7.2.3",
@@ -80,7 +76,12 @@
     "@types/jquery": "3.2.16",
     "@types/node": "10.12.20",
     "@types/selenium-webdriver": "3.0.x",
+    "ag-grid-angular": "^21.0.0",
+    "ag-grid-community": "^21.0.0",
+    "ag-grid-enterprise": "^21.0.0",
+    "ag-grid-react": "^21.0.0",
     "ag-grid-testing": "0.0.2",
+    "ag-grid-vue": "^21.0.0",
     "anchor-js": "4.1.0",
     "autocomplete.js": "0.33.0",
     "autoprefixer": "^9.6.0",
@@ -92,6 +93,7 @@
     "concurrently": "~4.1.0",
     "core-js": "^2.6.5",
     "css-loader": "1.0.0",
+    "eslint": "^6.3.0",
     "express": "4.16.3",
     "fork-ts-checker-webpack-plugin": "0.5.0",
     "gulp": "3.9.1",
