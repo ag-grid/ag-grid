@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Angular Grid | Getting started with ag-Grid";
+$pageTitle = "Angular Grid";
 $pageDescription = "ag-Grid is a feature-rich Angular Grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Angular application.";
 $pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
@@ -9,11 +9,16 @@ include '../documentation-main/documentation_header.php';
 <script src="../_assets/js/copy-code.js"></script>
 <style><?php include '../_assets//pages/get-started.css'; ?></style>
 
-<h1>Angular Grid | Get Started with ag-Grid</h1>
+<h1>Angular Grid | Get Started with ag-Grid and Angular</h1>
 
-<p class="lead" id="angular-grid-description">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with zero dependencies.
-ag-Grid supports Angular through a <strong>wrapper component</strong>. The wrapper lets you use ag-Grid in your application like any other Angular component &ndash; you pass configuration through property bindings and handle events through event bindings. 
-You can even use Angular components to customize the grid UI and cell contents / behavior.</p> 
+<p class="lead" id="angular-grid-description">
+    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid
+    engine is implemented in TypeScript with zero dependencies.
+    The grid supports Angular by providing an Angular Component version of the grid.
+    This allows you to use the grid as a component in your application like any other Angular
+    component &ndash; you pass configuration through property bindings and handle events through event bindings.
+    You can even use Angular components to customize the grid UI and cell contents / behavior.
+</p>
 <h2>Tutorial Overview</h2>
 <p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features of it</a>. 
 We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
@@ -578,37 +583,22 @@ While doing so, we learned how to configure the grid, how to access its API obje
 
 <p>That's just scratching the surface, though. The grid has <a href="https://www.ag-grid.com/features-overview/"> a lot more features to offer</a>; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
-<h2 id="next-steps">Next Steps</h2> 
+<note>
+    <p>
+        Want to know more?
+    </p>
 
-<p>You are hungry for more? Head over to the <a href="../angular-more-details/">Angular guides section</a> for more in-depth information about the Angular flavor of ag-Grid.  To learn more about the features used in this tutorial, you can go through the following help articles:</p>
+    <p>
+        Want to see some full examples of customising ag-Grid using Angular components? See this blog
+        written by Max Koretskyi (aka Angular in Depth Wizard)
+        <a href="https://blog.ag-grid.com/learn-to-customize-angular-grid-in-less-than-10-minutes/" target="_blank">Learn to customize Angular grid in less than 10 minutes</a>.
+    </p>
 
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-sorting/" role="button">Sorting</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-filtering/" role="button">Filtering</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
-<br>
-<br>
-<div class="card" style="background-color: aliceblue">
-  <div class="card-body">
-    <h2 id="angular-grid-resources" style="margin-top: 10px">
-    Angular Grid Resources
-    </h2>
-    <br/>
-    <ul>
-      <li>
-        Learn how to customize our Angular Grid in this <a href="https://blog.ag-grid.com/learn-to-customize-angular-grid-in-less-than-10-minutes/" target="_blank">guide</a>.
-      </li>
-      <br/>
-      <li>
-        Browse our <strong><a href="../best-angular-2-data-grid/" target="_blank">Angular Grid</a></strong> page to discover all major benefits in using ag-Grid Angular.
-      </li>
-      <br>
-      <li>
-        Visit our <strong><a href="https://blog.ag-grid.com/tag/angular/">blog</a></strong> to discover all our Angular content.
-    </ul>
-  </div>
-</div>
-<br>
+    <p>
+        A full working examples of ag-Grid and Angular can be found in
+        <a href="https://github.com/ag-grid/ag-grid-angular-cli-example">Github</a>, illustrating
+        (amongst others) rich grids, filtering with angular components and master/detail.
+    </p>
+</note>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -45,8 +45,12 @@
                 "url": "angular-getting-started/",
                 "items": [
                   {
-                    "title": "Grid Interface",
+                    "title": "Components",
                     "url": "angular-more-details/"
+                  },
+                  {
+                    "title": "Markup",
+                    "url": "angular-markup/"
                   },
                   {
                     "title": "SystemJS",
@@ -65,7 +69,7 @@
                     "url": "ag-grid-angular-webpack/"
                   },
                   {
-                    "title": "Angular & Material Design",
+                    "title": "Material Components",
                     "url": "example-angular-material-design/"
                   },
                   {

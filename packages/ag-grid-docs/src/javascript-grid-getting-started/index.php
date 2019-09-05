@@ -10,11 +10,16 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with
-    zero dependencies. ag-Grid supports all major frameworks by providing ag-Grid Components for
+    zero dependencies. It is possible to use no framework with ag-Grid and use the fully featured JavaScript only
+    version. ag-Grid also supports all major frameworks by providing ag-Grid Components for
     each popular framework and allowing customization of the grid using the framework of your choice.
 </p>
 
 <h2>Choose Your Framework</h2>
+
+<p>
+    To get started, choose the framework you intend to use.
+</p>
 
 <div id="get-started-frameworks">
 

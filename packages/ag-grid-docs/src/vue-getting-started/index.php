@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Get Started with Vue Grid: ag-Grid Reference";
+$pageTitle = "Vue Grid";
 $pageDescription = "ag-Grid is a feature-rich Vue grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Vue application.";
 $pageKeyboards = "Vue Grid";
 $pageGroup = "basics";
@@ -8,11 +8,16 @@ include '../documentation-main/documentation_header.php';
 <script src="../_assets/js/copy-code.js"></script>
 <style><?php include '../_assets//pages/get-started.css'; ?></style>
 
-<h1>Get Started with ag-Grid in Your Vue Project</h1>
+<h1>Vue Grid | Get Started with ag-Grid and Vue</h1>
 
-<p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with zero dependencies. 
-ag-Grid supports Vue through a <strong>wrapper component</strong>. The wrapper lets you use ag-Grid in your application like any other Vue component &ndash; you pass configuration through property bindings and handle events through event bindings. 
-You can even use Vue components to customize the grid UI and cell contents / behavior.</p> 
+<p class="lead">
+    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid
+    engine is implemented in TypeScript with zero dependencies.
+    The grid supports Vue by providing a Vue Component version of the grid.
+    This allows you to use the grid as a component in your application like any other Vue
+    component &ndash; you pass configuration through property bindings and handle events through event bindings.
+    You can even use Vue components to customize the grid UI and cell contents / behavior.
+</p>
 
 <p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Vue project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features</a> of it. 
 We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>

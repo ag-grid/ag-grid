@@ -9,11 +9,18 @@ include '../documentation-main/documentation_header.php';
 <div>
 <h1>Get Started with ag-Grid in Your Project</h1>
 
-<p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies. 
-If your project does not use one of the JavaScript frameworks that ag-Grid supports, or you are curious to understand how the grid works in its pure form, this guide is for you!
+<p class="lead">
+    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain
+    JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies. If your project does not
+    use one of the JavaScript frameworks that ag-Grid supports, or you are curious to understand how the
+    grid works in its pure form, this guide is for you.
 </p> 
 
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing JavaScript project, and configure some of the <a href="../features-overview" target="_blank">essential features</a> of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc).</p>
+<p>
+    In this article, we will walk you through the necessary steps to add ag-Grid to an existing JavaScript
+    project, and configure some of the <a href="../features-overview" target="_blank">essential features</a> of it.
+    We will show you some of the fundamentals of the grid (passing properties, using the API, etc).
+</p>
 
 <h2>The Project Setup</h2>
 
