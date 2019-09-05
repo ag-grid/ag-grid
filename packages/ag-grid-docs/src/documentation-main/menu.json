@@ -5,9 +5,7 @@
       {
         "title": "Introduction",
         "icon": "icon-information",
-        "max-box-show-level": 2,
         "matrixExclude": true,
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Community & Enterprise",
@@ -197,7 +195,7 @@
       {
         "title": "Columns",
         "icon": "icon-columns",
-        "level-2-text-decorator": ",&nbsp;",
+        "matrixExclude": true,
         "items": [
           {
             "title": "Column Headers",
@@ -234,7 +232,6 @@
       {
         "title": "Rows",
         "icon": "icon-rows",
-        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Row Sorting",
@@ -281,7 +278,6 @@
       {
         "title": "Layout & Styling",
         "icon": "icon-style",
-        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Styling Rows",
@@ -332,7 +328,6 @@
       {
         "title": "Data",
         "icon": "icon-data",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Client Side Data",
@@ -464,7 +459,6 @@
       {
         "title": "Selection",
         "icon": "icon-selection",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -495,7 +489,6 @@
       {
         "title": "Filtering",
         "icon": "icon-filter",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -561,7 +554,6 @@
       {
         "title": "Rendering Cells",
         "icon": "icon-render-cells",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Cell Content",
@@ -626,7 +618,6 @@
       {
         "title": "Editing Cells",
         "icon": "icon-edit-cells",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Cell Editing",
@@ -655,7 +646,6 @@
       {
         "title": "Group & Pivot",
         "icon": "icon-group",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Row Grouping",
@@ -687,7 +677,6 @@
       {
         "title": "Import & Export",
         "icon": "icon-import-export",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "CSV Export",
@@ -936,7 +925,6 @@
       {
         "title": "Scrolling",
         "icon": "icon-scrolling",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "DOM Virtualisation",
@@ -969,7 +957,6 @@
       {
         "title": "Interactivity",
         "icon": "icon-interactivity",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Keyboard Navigation",
