@@ -35,18 +35,18 @@ export class StylingService {
     public processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void) {
         const cellClass = colDef.cellClass;
         if (cellClass) {
-            let classOrClasses: any;
+            let classOrClasses: string | string[];
 
-            if (typeof colDef.cellClass === 'function') {
-                const cellClassFunc = colDef.cellClass as (cellClassParams: any) => string | string[];
-                classOrClasses = cellClassFunc(params);
+            if (typeof cellClass === 'function') {
+                classOrClasses = cellClass(params);
             } else {
-                classOrClasses = colDef.cellClass;
+                classOrClasses = cellClass;
             }
 
             if (typeof classOrClasses === 'string') {
-                onApplicableClass(classOrClasses);
-            } else if (Array.isArray(classOrClasses)) {
+                classOrClasses = classOrClasses.split(/ +/g);
+            }
+            if (Array.isArray(classOrClasses)) {
                 classOrClasses.forEach((cssClassItem: string) => {
                     onApplicableClass(cssClassItem);
                 });
