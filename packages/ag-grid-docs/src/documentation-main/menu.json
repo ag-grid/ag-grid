@@ -83,8 +83,16 @@
                 "url": "react-getting-started/",
                 "items": [
                   {
-                    "title": "Grid Interface",
+                    "title": "Columns",
                     "url": "react-more-details/"
+                  },
+                  {
+                    "title": "React 16",
+                    "url": "react-16/"
+                  },
+                  {
+                    "title": "React 15",
+                    "url": "react-15/"
                   },
                   {
                     "title": "Redux Integration Part 1",
