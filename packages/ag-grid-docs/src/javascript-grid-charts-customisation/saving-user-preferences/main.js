@@ -16,27 +16,32 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     createChartContainer: createChartContainer,
-    processChartOptions: customChartOptionHandler,
-    onChartOptionsChanged: customUserPreferenceHandler,
-    onFirstDataRendered: createChart,
+    processChartOptions: processChartOptions,
+    onChartOptionsChanged: onChartOptionsChanged,
+    onFirstDataRendered: onFirstDataRendered,
 };
 
 // used to keep track of chart options per chart type
 var savedUserPreferenceByChartType = {};
 
-// used to keep track of users legend preference
-var savedLegendUserPreference = '';
+// used to keep track of user's legend preferences
+var savedLegendUserPreference = undefined;
 
-function customUserPreferenceHandler(event) {
+function onChartOptionsChanged(event) {
+    var chartOptions = event.chartOptions;
+    
     // changes made by users via the format panel are being saved locally here,
     // however applications can choose to persist them across user sessions.
-    savedLegendUserPreference = event.chartOptions.legend;
-    savedLegendUserPreference = event.chartOptions.legendPosition;
-    savedLegendUserPreference = event.chartOptions.legendPadding;
-    savedUserPreferenceByChartType[event.chartType] = event.chartOptions;
+    savedLegendUserPreference = {
+        legend: chartOptions.legend,
+        legendPosition: chartOptions.legendPosition,
+        legendPadding: chartOptions.legendPadding
+    };
+    
+    savedUserPreferenceByChartType[event.chartType] = chartOptions;
 }
 
-function customChartOptionHandler(params) {
+function processChartOptions(params) {
     var overriddenChartOptions = params.options;
 
     // use saved chart options for specific chart type
@@ -46,7 +51,9 @@ function customChartOptionHandler(params) {
 
     // used shared legend user preference for all chart types
     if (savedLegendUserPreference) {
-        overriddenChartOptions.legend = savedLegendUserPreference;
+        overriddenChartOptions.legend = savedLegendUserPreference.legend;
+        overriddenChartOptions.legendPosition = savedLegendUserPreference.legendPosition;
+        overriddenChartOptions.legendPadding = savedLegendUserPreference.legendPadding;
     }
 
     // here we fix the chart and axis titles when a bubble chart is selected.
@@ -91,7 +98,7 @@ function createChartContainer(chartRef) {
     currentChartRef = chartRef;
 }
 
-function createChart() {
+function onFirstDataRendered() {
     let params = {
         cellRange: {
             columns: ['sugar', 'fat', 'weight']
