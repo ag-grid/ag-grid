@@ -21,8 +21,8 @@ meta_and_links($title, $keywords, $description, false);
     <header id="nav" class="compact">
         <?php include 'includes/navbar.php' ?>
     </header>
-    <div class="stage-scenarios" style="background-color: #125082;">
-        <h2 class="heading-scenarios" style="color: white;">The Best JavaScript Grid in the World</h2>
+    <div class="stage-scenarios">
+        <h2 class="heading-scenarios" style="font-weight: 500 !important;">The Best JavaScript Grid in the World</h2>
 
         <section>
             <div class="demo" id="demo-1" data-load="home/demo-1.php">
@@ -32,12 +32,12 @@ meta_and_links($title, $keywords, $description, false);
                 </div>
             </div>
         </section>
-
-        <section style="display: flex; justify-content: center; margin-top: 2rem;">
-            <a class="get-started-btn" href="/javascript-grid-getting-started/" role="button">Get Started</a>
-            <a class="get-started-btn" href="/example.php" role="button">View Demo</a>
-        </section>
     </div>
+
+    <section class="main-buttons">
+        <a class="get-started-btn" href="/javascript-grid-getting-started/" role="button">Get Started</a>
+        <a class="get-started-btn" href="/example.php" role="button">View Demo</a>
+    </section>
 
     <div id="stage-frameworks">
         <section id="section-frameworks">

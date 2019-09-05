@@ -44,6 +44,17 @@ header {
     z-index: 999999;
 }
 
+h2 {
+    -webkit-font-smoothing: antialiased;
+}
+
+header + .stage-scenarios {
+    background-color: #125082;
+    h2 {
+        color: white;
+    }
+}
+
 .info-page {
     @extend .container-fluid;
     background-color: $white;
@@ -107,17 +118,6 @@ header {
         border-bottom: 1px solid $border-color;
         padding-bottom: 2rem;
         margin-bottom: 2rem;
-    }
-}
-
-.get-started-btn {
-    background-color: white;
-    border-radius: 5px;
-    padding: 15px;
-    font-size: 20px;
-    margin: 0 10px;
-    &:hover {
-        text-decoration: none;
     }
 }
 
@@ -330,6 +330,34 @@ header {
         img {
             @extend .mr-3;
             height: 4rem;
+        }
+    }
+}
+
+.main-buttons {
+    background-color: #ebebeb;
+    display: flex;
+    justify-content: center;
+
+    .get-started-btn {
+        border-radius: 5px;
+        padding: 15px 25px;
+        font-size: 20px;
+        margin: 20px;
+        border: 1px solid #125082;
+        background-color: #125082;
+        color: darken(white, 10%);
+        &:hover {
+            color: white;
+            text-decoration: none;
+        }
+    }
+
+    .get-started-btn:not(:first-of-type) {
+        background-color: transparent;
+        color: #125082;
+        &:hover {
+            color: lighten(#125082, 10%);
         }
     }
 }
