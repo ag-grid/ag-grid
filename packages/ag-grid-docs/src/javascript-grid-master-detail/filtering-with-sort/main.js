@@ -25,15 +25,15 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData(params) {
+        getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         }
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
 
         // arbitrarily expand a row for presentational purposes

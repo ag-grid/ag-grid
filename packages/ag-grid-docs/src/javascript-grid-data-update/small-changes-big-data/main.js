@@ -67,7 +67,7 @@ function getMyFilter() {
     };
 
     MyFilter.prototype.getValueFromInput = function() {
-        let value = parseInt(this.eInput.value);
+        var value = parseInt(this.eInput.value);
         this.filterValue = isNaN(value) ? null : value;
     };
 
@@ -90,9 +90,8 @@ function getMyFilter() {
 }
 
 function isFirstColumn(params) {
-    let displayedColumns = params.columnApi.getAllDisplayedColumns();
-    let thisIsFirstColumn = displayedColumns[0] === params.column;
-    return thisIsFirstColumn;
+    var displayedColumns = params.columnApi.getAllDisplayedColumns();
+    return displayedColumns[0] === params.column;
 }
 
 var defaultColDef = {
@@ -217,11 +216,7 @@ function randomLetter() {
 }
 
 function createRowData() {
-    var nextGroup = 0;
-    for (let i = 0; i < 10000; i++) {
-        if (i % 2 === 0) {
-            nextGroup++;
-        }
+    for (var i = 0; i < 10000; i++) {
         var name = 'Mr ' + randomLetter().toUpperCase() + ' ' + randomLetter().toUpperCase() + randomLetter() + randomLetter() + randomLetter() + randomLetter();
         var city = CITIES[i%CITIES.length];
         var distro = LINUX_DISTROS[i%LINUX_DISTROS.length];

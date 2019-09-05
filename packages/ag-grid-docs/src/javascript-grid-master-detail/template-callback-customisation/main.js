@@ -18,14 +18,14 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData(params) {
+        getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         },
-        template(params) {
+        template: function(params) {
             var personName = params.data.name;
             return '<div style="height: 100%; background-color: #EDF6FF; padding: 20px; box-sizing: border-box;">'
                 + '  <div style="height: 10%;">Name: ' + personName + '</div>'
@@ -33,7 +33,7 @@ var gridOptions = {
                 + '</div>';
         }
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
 
         // arbitrarily expand a row for presentational purposes

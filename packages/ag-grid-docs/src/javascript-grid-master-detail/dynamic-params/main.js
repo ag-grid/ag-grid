@@ -10,7 +10,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     masterDetail: true,
     detailRowHeight: 150,
-    detailCellRendererParams(params) {
+    detailCellRendererParams: function(params) {
         var res = {};
 
         // we use the same getDetailRowData for both options
@@ -27,10 +27,10 @@ var gridOptions = {
                     {field: 'callId'},
                     {field: 'number'}
                 ],
-                onGridReady(params) {
+                onGridReady: function(params) {
                     console.log('Using option 1 with columns {callId, number}');
                 },
-                onFirstDataRendered(params) {
+                onFirstDataRendered: function(params) {
                     params.api.sizeColumnsToFit();
                 }
             };
@@ -43,10 +43,10 @@ var gridOptions = {
                     {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                     {field: 'switchCode'}
                 ],
-                onGridReady(params) {
+                onGridReady: function(params) {
                     console.log('Using option 2 with columns {callId, direction, duration, switchCode}');
                 },
-                onFirstDataRendered(params) {
+                onFirstDataRendered: function(params) {
                     params.api.sizeColumnsToFit();
                 }
             };
@@ -54,7 +54,7 @@ var gridOptions = {
 
         return res;
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
 
         // arbitrarily expand a row for presentational purposes

@@ -15,7 +15,7 @@ var gridOptions = {
     components: {
         myDetailCellRenderer: DetailCellRenderer
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.forEachNode(function(node) {
             node.setExpanded(node.id === "1");
         });

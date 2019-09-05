@@ -53,21 +53,18 @@ var rightGridOptions = {
 };
 
 function createLeftRowData() {
-    let data = [];
-    ['Red', 'Green', 'Blue'].forEach(function(color) {
-        data.push(createDataItem(color));
+    return ['Red', 'Green', 'Blue'].map(function(color) {
+        return createDataItem(color);
     });
-    return data;
 }
 
 function createDataItem(color) {
-    let newDataItem = {
+    return {
         id: rowIdSequence++,
         color: color,
         value1: Math.floor(Math.random()*100),
         value2: Math.floor(Math.random()*100)
     };
-    return newDataItem;
 }
 
 function binDragOver(event) {

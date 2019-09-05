@@ -18,18 +18,18 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData(params) {
+        getDetailRowData: function(params) {
             // simulate delayed supply of data to the detail pane
             setTimeout(function () {
                 params.successCallback(params.data.callRecords);
             }, 1000);
         }
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
     }
 };

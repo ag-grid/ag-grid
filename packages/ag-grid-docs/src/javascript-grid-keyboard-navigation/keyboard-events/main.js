@@ -27,7 +27,7 @@ function onCellKeyDown(e) {
 
 function onCellKeyPress(e) {
     console.log('onCellKeyPress', e);
-    let keyPressed = e.event.key;
+    var keyPressed = e.event.key;
     console.log('Key Pressed = ' + keyPressed);
     if (keyPressed==='s') {
         var rowNode = e.node;

@@ -1,5 +1,5 @@
 var columnDefs = [
-        // these are the row groups, so they are all hidden (they are showd in the group column)
+        // these are the row groups, so they are all hidden (they are shown in the group column)
         {headerName: 'Hierarchy', children: [
             {headerName: 'Product', field: 'product', type: 'dimension', rowGroupIndex: 0, hide: true},
             {headerName: 'Portfolio', field: 'portfolio', type: 'dimension', rowGroupIndex: 1, hide: true},
@@ -8,22 +8,22 @@ var columnDefs = [
 
         // some string values, that do not get aggregated
         {headerName: 'Attributes', children: [
-                {headerName: 'Trade', field: 'trade', width: 100},
-                {headerName: 'Deal Type', field: 'dealType', type: 'dimension'},
-                {headerName: 'Bid', field: 'bidFlag', type: 'dimension', width: 100}
+            {headerName: 'Trade', field: 'trade', width: 100},
+            {headerName: 'Deal Type', field: 'dealType', type: 'dimension'},
+            {headerName: 'Bid', field: 'bidFlag', type: 'dimension', width: 100}
         ]},
 
         // all the other columns (visible and not grouped)
         {headerName: 'Values', children: [
-                {headerName: 'Current', field: 'current', type: 'measure'},
-                {headerName: 'Previous', field: 'previous', type: 'measure'},
-                {headerName: 'PL 1', field: 'pl1', type: 'measure'},
-                {headerName: 'PL 2', field: 'pl2', type: 'measure'},
-                {headerName: 'Gain-DX', field: 'gainDx', type: 'measure'},
-                {headerName: 'SX / PX', field: 'sxPx', type: 'measure'},
-                {headerName: '99 Out', field: '_99Out', type: 'measure'},
-                {headerName: 'Submitter ID', field: 'submitterID', type: 'measure'},
-                {headerName: 'Submitted Deal ID', field: 'submitterDealID', type: 'measure'}
+            {headerName: 'Current', field: 'current', type: 'measure'},
+            {headerName: 'Previous', field: 'previous', type: 'measure'},
+            {headerName: 'PL 1', field: 'pl1', type: 'measure'},
+            {headerName: 'PL 2', field: 'pl2', type: 'measure'},
+            {headerName: 'Gain-DX', field: 'gainDx', type: 'measure'},
+            {headerName: 'SX / PX', field: 'sxPx', type: 'measure'},
+            {headerName: '99 Out', field: '_99Out', type: 'measure'},
+            {headerName: 'Submitter ID', field: 'submitterID', type: 'measure'},
+            {headerName: 'Submitted Deal ID', field: 'submitterDealID', type: 'measure'}
         ]}
     ];
 
@@ -134,7 +134,7 @@ function startWorker() {
 }
 
 function logTestStart(messageCount, updateCount, interval) {
-    let message = messageCount ?
+    var message = messageCount ?
         'Sending '+messageCount+' messages at once with '+updateCount+' record updates each.' :
         'Sending 1 message with '+updateCount+' updates every '+interval+' milliseconds, that\'s ' +(1000/interval*updateCount).toLocaleString()+ ' updates per second.';
 

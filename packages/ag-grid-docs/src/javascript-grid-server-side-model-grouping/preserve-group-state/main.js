@@ -42,7 +42,7 @@ var gridOptions = {
         if (params.node.expanded) {
             expandedGroupIds.push(id);
         } else {
-            expandedGroupIds = expandedGroupIds.filter(grpId => !grpId.startsWith(id));
+            expandedGroupIds = expandedGroupIds.filter(function(grpId) { return !grpId.startsWith(id); });
         }
     }
 };
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     getRowParams.successCallback(response.rowsThisBlock, response.lastRow);
 
                     // to preserve group state we expand any previously expanded groups for this block
-                    response.rowsThisBlock.forEach(row => {
+                    response.rowsThisBlock.forEach(function(row) {
                         if (expandedGroupIds.indexOf(row.id) > -1) {
                             gridOptions.api.getRowNode(row.id).setExpanded(true);
                         }
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // Note this a stripped down mock server implementation which only supports grouping
 function getMockServerResponse(request) {
     var groupKeys = request.groupKeys;
-    var rowGroupColIds = request.rowGroupCols.map(x => x.id);
+    var rowGroupColIds = request.rowGroupCols.map(function(x) { return x.id; });
     var parentId = groupKeys.length > 0 ? groupKeys.join("") : "";
 
     var rows = group(allData, rowGroupColIds, groupKeys, parentId);
@@ -113,17 +113,17 @@ function getMockServerResponse(request) {
     var rowsThisBlock = rows.slice(request.startRow, request.endRow);
     var lastRow = rows.length <= request.endRow ? rows.length : -1;
 
-    return {rowsThisBlock, lastRow};
+    return { rowsThisBlock: rowsThisBlock, lastRow: lastRow };
 }
 
 function group(data, rowGroupColIds, groupKeys, parentId) {
     var groupColId = rowGroupColIds.shift();
     if (!groupColId) return data;
 
-    var groupedData = _(data).groupBy(x => x[groupColId]).value();
+    var groupedData = _(data).groupBy(function(x) { return x[groupColId]; }).value();
 
     if (groupKeys.length === 0) {
-        return Object.keys(groupedData).map(key => {
+        return Object.keys(groupedData).map(function(key) {
             var res = {};
 
             // Note: the server provides group id's using a simple heuristic based on group keys:

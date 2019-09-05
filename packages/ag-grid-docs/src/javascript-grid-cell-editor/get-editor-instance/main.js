@@ -79,11 +79,9 @@ var gridOptions = {
     }
 };
 
-
-let KEY_BACKSPACE = 8;
-let KEY_F2 = 113;
-let KEY_DELETE = 46;
-
+var KEY_BACKSPACE = 8;
+var KEY_F2 = 113;
+var KEY_DELETE = 46;
 
 function MySimpleCellEditor() {}
 
@@ -96,7 +94,7 @@ MySimpleCellEditor.prototype.init = function(params) {
 
     var startValue;
 
-    let keyPressBackspaceOrDelete =
+    var keyPressBackspaceOrDelete =
         params.keyPress === KEY_BACKSPACE
         || params.keyPress === KEY_DELETE;
 

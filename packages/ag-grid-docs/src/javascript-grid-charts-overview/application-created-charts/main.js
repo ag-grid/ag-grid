@@ -1,5 +1,5 @@
 "use strict";
-let columnDefs = [
+var columnDefs = [
     {headerName: 'Product', field: 'product', chartDataType: 'category'},
     {headerName: 'Book', field: 'book', chartDataType: 'category'},
 
@@ -19,9 +19,9 @@ let columnDefs = [
     {headerName: 'Bid', field: 'bidFlag'}
 ];
 
-let chartRef;
+var chartRef;
 
-let gridOptions = {
+var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         width: 120,
@@ -39,9 +39,9 @@ let gridOptions = {
     animateRows: true,
     enableCharts: true,
     suppressAggFuncInHeader: true,
-    getRowNodeId(data) { return data.trade; },
-    onFirstDataRendered(params) {
-        let createRangeChartParams = {
+    getRowNodeId: function(data) { return data.trade; },
+    onFirstDataRendered: function(params) {
+        var createRangeChartParams = {
             cellRange: {
                 columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
             },
@@ -53,8 +53,8 @@ let gridOptions = {
 
         chartRef = params.api.createRangeChart(createRangeChartParams);
     },
-    processChartOptions(params) {
-        let opts = params.options;
+    processChartOptions: function(params) {
+        var opts = params.options;
 
         opts.legendPosition = 'bottom';
         opts.yAxis.labelFormatter = yAxisLabelFormatter;
@@ -63,13 +63,13 @@ let gridOptions = {
         opts.seriesDefaults.strokes =['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
         opts.seriesDefaults.tooltipRenderer = function(params) {
-            let value = '$' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            var value = '$' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
             return '<div style="padding: 5px"><b>' + params.title + '</b>: ' + value + '</div>';
         };
 
         return opts;
     },
-    getChartToolbarItems() {
+    getChartToolbarItems: function() {
         return []; // hide toolbar items
     }
 };
@@ -81,7 +81,7 @@ function createChart(type) {
         chartRef.destroyChart();
     }
 
-    let params = {
+    var params = {
         cellRange: {
             columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
         },
@@ -99,7 +99,7 @@ function numberCellFormatter(params) {
 }
 
 function yAxisLabelFormatter(params) {
-    let n = params.value;
+    var n = params.value;
     if (n < 1e3) return n;
     if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + "K";
     if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + "M";
@@ -109,11 +109,11 @@ function yAxisLabelFormatter(params) {
 
 // after page is loaded, create the grid
 document.addEventListener("DOMContentLoaded", function() {
-    let eGridDiv = document.querySelector('#myGrid');
+    var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
 });
 
-let worker;
+var worker;
 (function startWorker() {
     worker = new Worker(__basePath + 'dataUpdateWorker.js');
     worker.onmessage = function(e) {

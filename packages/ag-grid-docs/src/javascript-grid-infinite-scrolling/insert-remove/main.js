@@ -182,7 +182,7 @@ var gridOptions = {
         }
     },
 
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
     },
 

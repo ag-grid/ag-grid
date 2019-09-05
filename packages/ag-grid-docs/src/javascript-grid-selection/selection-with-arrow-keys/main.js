@@ -19,7 +19,6 @@ var gridOptions = {
 };
 
 function navigateToNextCell(params) {
-
     var previousCell = params.previousCellPosition;
     var suggestedNextCell = params.nextCellPosition;
 
@@ -32,7 +31,7 @@ function navigateToNextCell(params) {
         case KEY_DOWN:
             previousCell = params.previousCellPosition;
             // set selected cell on current cell + 1
-            gridOptions.api.forEachNode( (node) => {
+            gridOptions.api.forEachNode(function(node) {
                 if (previousCell.rowIndex + 1 === node.rowIndex) {
                     node.setSelected(true);
                 }
@@ -41,7 +40,7 @@ function navigateToNextCell(params) {
         case KEY_UP:
             previousCell = params.previousCellPosition;
             // set selected cell on current cell - 1
-            gridOptions.api.forEachNode( (node) => {
+            gridOptions.api.forEachNode(function(node) {
                 if (previousCell.rowIndex - 1 === node.rowIndex) {
                     node.setSelected(true);
                 }

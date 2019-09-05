@@ -18,19 +18,19 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            onGridReady(params) {
+            onGridReady: function(params) {
                 // using auto height to fit the height of the the detail grid
                 params.api.setDomLayout('autoHeight');
             },
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData(params) {
+        getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         }
     },
-    getRowHeight(params) {
+    getRowHeight: function(params) {
         if (params.node && params.node.detail) {
             var offset = 80;
             var allDetailRowHeight = params.data.callRecords.length * 28;
@@ -40,7 +40,7 @@ var gridOptions = {
             return 60;
         }
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
 
         // arbitrarily expand a row for presentational purposes

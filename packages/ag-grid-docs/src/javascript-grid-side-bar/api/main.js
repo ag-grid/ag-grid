@@ -1,5 +1,5 @@
 var columnDefs = [
-    { field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+    { field: "athlete", width: 150, filter: "agTextColumnFilter" },
     { field: "age", width: 90},
     { field: "country", width: 120},
     { field: "year", width: 90 },
@@ -11,37 +11,37 @@ var columnDefs = [
 ];
 
 function setSideBarVisible(value) {
-    gridOptions.api.setSideBarVisible(value)
+    gridOptions.api.setSideBarVisible(value);
 }
 
 function isSideBarVisible() {
-    alert(gridOptions.api.isSideBarVisible())
+    alert(gridOptions.api.isSideBarVisible());
 }
 
 function openToolPanel (key) {
-    gridOptions.api.openToolPanel(key)
+    gridOptions.api.openToolPanel(key);
 }
 
-function closeToolPanel () {
-    gridOptions.api.closeToolPanel()
+function closeToolPanel() {
+    gridOptions.api.closeToolPanel();
 }
 
-function getOpenedToolPanel () {
-    alert(gridOptions.api.getOpenedToolPanel())
+function getOpenedToolPanel() {
+    alert(gridOptions.api.getOpenedToolPanel());
 }
 
-function setSideBar (def) {
-    gridOptions.api.setSideBar (def);
+function setSideBar(def) {
+    gridOptions.api.setSideBar(def);
 }
 
-function getSideBar () {
-    let sideBar = gridOptions.api.getSideBar ();
+function getSideBar() {
+    var sideBar = gridOptions.api.getSideBar();
     alert(JSON.stringify(sideBar));
     console.log(sideBar);
 }
 
-function getOpenedToolPanelItem (){
-    alert (gridOptions.api.getOpenedToolPanelItem ());
+function getOpenedToolPanelItem() {
+    alert(gridOptions.api.getOpenedToolPanelItem());
 }
 
 var gridOptions = {

@@ -85,7 +85,7 @@ function processChartOptions(params) {
     return overriddenChartOptions;
 }
 
-let currentChartRef;
+var currentChartRef;
 function createChartContainer(chartRef) {
     // destroy existing chart
     if (currentChartRef) {
@@ -98,8 +98,8 @@ function createChartContainer(chartRef) {
     currentChartRef = chartRef;
 }
 
-function onFirstDataRendered(firstDataRenderedParams) {
-    let params = {
+function onFirstDataRendered(params) {
+    var createRangeChartParams = {
         cellRange: {
             columns: ['sugar', 'fat', 'weight']
         },
@@ -108,23 +108,22 @@ function onFirstDataRendered(firstDataRenderedParams) {
         suppressChartRanges: true
     };
 
-    currentChartRef = firstDataRenderedParams.api.createRangeChart(params);
+    currentChartRef = firstDataRenderedParams.api.createRangeChart(createRangeChartParams);
 }
 
 function createRowData() {
-    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+    var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
-    let rowData = [];
-    countries.forEach( function(country) {
-        rowData.push({
+
+    return countries.map(function(country) {
+        return {
             country: country,
             sugar: Math.floor(Math.floor(Math.random()*50)),
             fat: Math.floor(Math.floor(Math.random()*100)),
             weight: Math.floor(Math.floor(Math.random()*200))
-        });
+        };
     });
-    return rowData;
 }
 
 // setup the grid after the page has finished loading

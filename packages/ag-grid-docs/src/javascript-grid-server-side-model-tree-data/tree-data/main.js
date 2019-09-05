@@ -62,7 +62,7 @@ function createFakeServer(fakeServerData) {
     FakeServer.prototype.getData = function (request) {
         function extractRowsFromData(groupKeys, data) {
             if (groupKeys.length === 0) {
-                return data.map(d => {
+                return data.map(function(d) {
                     return {
                         group: !!d.children,
                         employeeId: d.employeeId,
