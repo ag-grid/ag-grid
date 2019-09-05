@@ -17,7 +17,8 @@ include '../documentation-main/documentation_header.php';
     component &ndash; you pass configuration through property bindings and handle events through event bindings.
     You can even use React components to customize the grid UI and cell contents / behavior.
   </p>
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features of it</a>. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project,
+  and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 <hr>
 <h2>
     Table of Contents
@@ -394,7 +395,6 @@ import { AgGridReact } from 'ag-grid-react';
 
   <p>With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping!
   While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p>
-  <p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
 </div>
 

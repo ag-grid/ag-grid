@@ -44,9 +44,6 @@
                             <a class="nav-link" href="../documentation-main/documentation.php">Documentation</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../features-overview">Features Overview</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="../license-pricing.php">Pricing</a>
                         </li>
                         <li class="nav-item">

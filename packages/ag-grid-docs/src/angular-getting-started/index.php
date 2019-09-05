@@ -20,7 +20,8 @@ include '../documentation-main/documentation_header.php';
     You can even use Angular components to customize the grid UI and cell contents / behavior.
 </p>
 <h2>Tutorial Overview</h2>
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features of it</a>. 
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project,
+    and configure some of the essential features of it.
 We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 
 <hr>
@@ -580,8 +581,6 @@ header background color and even the amount of spacing in the cells and columns.
 
 <p>With this Angular grid tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
 While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p> 
-
-<p>That's just scratching the surface, though. The grid has <a href="https://www.ag-grid.com/features-overview/"> a lot more features to offer</a>; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
 <note>
     <p>
