@@ -511,15 +511,5 @@ While doing so, we learned how to configure the grid, how to access its API obje
 
 <p>That's just scratching the surface, though. The grid has a lot more <a href="https://www.ag-grid.com/features-overview/">features to offer</a>; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
-<h2>Next Steps</h2> 
-
-<p>You are hungry for more? Head over to the <a href="../best-vuejs-data-grid/">Vue guides section</a> for more in-depth information about the Vue flavor of ag-Grid.  To learn more about the features used in this tutorial, you can go through the following help articles:</p>
-
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-sorting/" role="button">Sorting</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-filtering/" role="button">Filtering</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
-<br><br>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

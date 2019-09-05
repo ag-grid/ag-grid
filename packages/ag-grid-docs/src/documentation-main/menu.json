@@ -109,12 +109,20 @@
                 "url": "vue-getting-started/",
                 "items": [
                   {
-                    "title": "Grid Interface",
-                    "url": "best-vuejs-data-grid/"
+                    "title": "Components",
+                    "url": "vue-components/"
+                  },
+                  {
+                    "title": "Markup",
+                    "url": "vue-markup/"
                   },
                   {
                     "title": "Vue & Unidirectional Data Flow",
                     "url": "vuex-data-flow/"
+                  },
+                  {
+                    "title": "Misc",
+                    "url": "best-vuejs-data-grid/"
                   }
                 ]
               },              {
