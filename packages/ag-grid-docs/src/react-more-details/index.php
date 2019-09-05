@@ -176,62 +176,6 @@ somePointLater() {
     <code>api</code> and <code>columnApi</code> that way.
 </p>
 
-    <h2 id="loading-css">Loading CSS</h2>
-    <p>ag-Grid requires the core ag-Grid CSS as well as a theme.</p>
-<snippet>
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-</snippet>
-    <p>If you're using webpack you can configure an alias to allow for absolute imports (this isn't necessary when using <code>create-react-app</code>:</p>
-    <snippet>
-resolve: {
-    alias: {
-        "ag-grid-community": path.resolve('./node_modules/ag-grid-community')
-</snippet>
-
-    <h2 id="applying-theme">Applying a Theme</h2>
-    <p>
-        You need to set a theme for the grid. You do this by giving the grid a CSS class, one
-        of <code>ag-theme-balham</code>, <code>ag-theme-material</code>, <code>ag-theme-fresh</code>, <code>ag-theme-blue</code> or <code>ag-theme-dark</code>. You must have the CSS loaded as specified above
-        for this to work.
-    </p>
-    <snippet language="jsx">
-// a parent container of the grid, you could put this on your body tag
-// if you only every wanted to use one style of grid
-// HTML
-&lt;div class="ag-theme-balham"&gt;
-...
-// OR JSX
-&lt;div className="ag-theme-balham"&gt;
-...
-// then later, use the grid
-&lt;AgGridReact
-...</snippet>
-
-    <p>Putting the CSS and theme all together you'll end up with something like this:</p>
-
-<snippet language="jsx">
-// a react component
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-
-class GridComponent extends Component {
-    render() {
-        return (
-            &lt;div className="ag-theme-balham"&gt;
-                &lt;AgGridReact
-                    onGridReady={this.onGridReady}
-                    rowData={this.state.rowData}
-                    ...other bindings/properties
-                &gt;
-                    &lt;AgGridColumn field="athlete" width={30}&gt;&lt;/AgGridColumn&gt;
-                    ...other column definitions
-                &lt;/AgGridReact&gt;
-        )
-    }
-}
-</snippet>
-
     <h2 id="cell-components">Customising the Grid with React Components</h2>
 <p>
     It is possible to customise the grid with React components (for example, <a href="../javascript-grid-cell-rendering-components/#react-cell-rendering">cell renderers</a>,
@@ -239,6 +183,7 @@ class GridComponent extends Component {
     <a href="../javascript-grid-filter-component/#react-filtering">filters</a> and so on using React. For the full list of available grid components and how to configure them
     please refer to the <a href="../javascript-grid-components/">components</a> documentation</p>
 
+    <p>Niall - start new section - React 16</p>
     <h2 id="react-16">ag-Grid with React 16+</h2>
     <note>All of the documentation in this section apply to React 16+. For documentation for React 15+ please see <a
                 href="#react-15">here.</a></note>
@@ -433,9 +378,11 @@ class StyledRenderer extends Component {
         </tbody>
     </table>
 
-    <p>If you're using Redux or larger data sets thena default of <code>IdentityCheck</code> is a good idea <span>provided</span> you
+    <p>If you're using Redux or larger data sets then a default of <code>IdentityCheck</code> is a good idea <span>provided</span> you
     ensure you make a copy of thew new row data and do not mutate the <code>rowData</code> passed in.</p>
+<p>Niall - end new section - React 16</p>
 
+<p>Niall - start new section - React 15</p>
     <div class="accordion" id="react-15" style="padding-top: 20px">
         <div class="card" style="border-radius: 0.25rem">
             <div class="card-header" id="react15Heading" style="padding-left: 5px">
@@ -514,6 +461,8 @@ export default class CustomTooltip extends Component {
             </div>
         </div>
     </div>
+
+<p>Niall - end new section - React 15</p>
 
     <h3>Working Examples</h3>
     <p>You can find fully working examples at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.

@@ -10,54 +10,15 @@ include '../documentation-main/documentation_header.php';
 
     <h1>ag-Grid Angular Overview</h1>
 
-    <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ag-grid/ag-grid-angular-example">Github</a>, illustrating
+    <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ag-grid/ag-grid-angular-cli-example">Github</a>, illustrating
         (amongst others) rich grids, filtering with angular components, master/detail grid and so on.</note>
 
 
     <p>
         Every feature of ag-Grid is available when using the ag-Grid Angular component. The Angular component wraps the
-        functionality of ag-Grid, it doesn't duplicate, so there will be no difference between core ag-Grid and
+        functionality of ag-Grid, it doesn't duplicate any functionality, so there will be no difference between core ag-Grid and
         Angular ag-Grid when it comes to features.
     </p>
-
-    <h2 id="configuring-ag-grid-in-angular">Configuring ag-Grid in Angular</h2>
-
-    <p>You can configure the grid in the following ways through Angular:</p>
-
-    <ul class="content">
-        <li><b>Events:</b> All data out of the grid comes through events. These use
-            Angular event bindings eg <code>(modelUpdated)="onModelUpdated()"</code>.
-            As you interact with the grid, the different events are fixed and
-            output text to the console (open the dev tools to see the console).
-        </li>
-        <li><b>Properties:</b> All the data is provided to the grid as Angular
-            bindings. These are bound onto the ag-Grid properties bypassing the
-            elements attributes. The values for the bindings come from the parent
-            controller.
-        </li>
-        <li><b>Attributes:</b> When the property is just a simple string value, then
-            no binding is necessary, just the value is placed as an attribute
-            eg <code>rowHeight="22"</code>. Notice that boolean attributes are defaulted
-            to <code>true</code> IF they attribute is provided WITHOUT any value. If the attribute
-            is not provided, it is taken as false.
-        </li>
-        <li><b>Grid API via IDs:</b> The grid in the example is created with an id
-            by marking it with <code>#agGrid</code>. This in turn turns into a variable
-            which can be used to access the grid's controller. The buttons
-            Grid API and Column API buttons use this variable to access the grids
-            API (the APIs are attributes on the controller).
-        </li>
-        <li><b>Changing Properties:</b> When a property changes value, Angular
-            automatically passes the new value onto the grid. This is used in
-            the following locations in the feature rich grid example above:<br/>
-            a) The quick filter on the top right updates the quick filter of
-            the grid.
-            b) The 'Show Tool Panel' checkbox has its value bound to the <code>showToolPanel</code>
-            property of the grid.
-            c) The 'Refresh Data' generates new data for the grid and updates the
-            <code>rowData</code> property.
-        </li>
-    </ul>
 
     <p>
         Notice that the grid has its properties marked as <b>immutable</b>. Hence for
@@ -70,6 +31,8 @@ include '../documentation-main/documentation_header.php';
         Sometimes the <code>gridReady</code> grid event can fire before the Angular component is ready to receive it, so in
         an Angular environment its safer to rely on <code>AfterViewInit</code> instead before using the API.
     </note>
+
+    <p>Niall - start new section - components</p>
 
     <h3 id="providing-angular-components-to-ag-grid">Providing Angular Components to ag-Grid</h3>
     <p>In order for ag-Grid to be able to use your Angular components, you need to provide them in the <strong>top
@@ -184,36 +147,9 @@ this.params.context.componentParent</snippet>
                target="_blank"><i class="fa fa-external-link-alt"></i> Child Component</a></li>
     </ul>
 
-    <h3 id="building-bundling">Building & Bundling</h3>
-    <p>There are many ways to build and/or bundle an Angular Application. In the Getting Started/Overview
-        section we
-        went
-        through using Angular CLI to create an ag-Grid Angular application, but we also provide full working
-        examples
-        using
-        either SystemJS, Webpack or Webpack 2 as part of the <a
-                href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> project on
-        GitHub.
-    </p>
-    <p>We document the main parts of these tools below, but please refer to the examples for more detail.</p>
+    <p>Niall - end new section - components</p>
 
-    <ul class="content">
-        <li>
-            <a href="/angular-getting-started"> Angular CLI</a>
-        </li>
-        <li>
-            <a href="/ag-grid-angular-webpack"> Webpack</a>
-        </li>
-        <li>
-            <a href="/ag-grid-angular-webpack-2"> Webpack 2</a>
-        </li>
-        <li>
-            <a href="/ag-grid-angular-webpack-3"> Webpack 2</a>
-        </li>
-        <li>
-            <a href="/ag-grid-angular-systemjs"> SystemJS</a>
-        </li>
-    </ul>
+    <p>Niall - start new section - markup</p>
 
     <h2 id="ng2markup">Creating Grids with Markup</h2>
 
@@ -287,25 +223,7 @@ private getCountryFilterParams():any {
     </p>
     <?= example('ag-Grid in Angular with Markup', 'angular-rich-grid-markup', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
-    <h2 id="cell-rendering-cell-editing-using-angular">Cell Rendering & Cell Editing using Angular</h2>
-
-    <p>
-        It is possible to build
-        <a href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cell renderers</a>,
-        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cell editors</a> and
-        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular. Doing each of these
-        is explained in the section on each.
-    </p>
-
-    <p>
-        Although it is possible to use Angular for your customisations of ag-Grid, it is not necessary. The grid
-        will happily work with both Angular and non-Angular portions (eg cellRenderers in Angular or normal
-        JavaScript).
-    </p>
-
-    <h2 id="aggrid-angular-testing">Testing ag-Grid Angular Applications</h2>
-
-    <p>Please see the dedicated testing section <a href="../javascript-grid-testing-angular">here</a>.</p>
+    <p>Niall - end new section - markup</p>
 </div>
 <div class="card" style="background-color: aliceblue">
   <div class="card-body">
