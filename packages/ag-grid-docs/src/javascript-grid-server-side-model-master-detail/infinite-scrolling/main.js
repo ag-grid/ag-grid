@@ -1,4 +1,4 @@
-const columnDefs = [
+var columnDefs = [
     // group cell renderer needed for expand / collapse icons
     {field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer'},
     {field: 'name'},
@@ -7,7 +7,7 @@ const columnDefs = [
     {field: 'totalDuration'}
 ];
 
-const gridOptions = {
+var gridOptions = {
     columnDefs: columnDefs,
     animateRows: true,
 
@@ -26,7 +26,7 @@ const gridOptions = {
                 {field: 'switchCode'},
                 {field: 'number'},
             ],
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 // fit the detail grid columns
                 params.api.sizeColumnsToFit();
             }
@@ -36,27 +36,24 @@ const gridOptions = {
             params.successCallback(params.data.callRecords);
         }
     },
-    onGridReady(params) {
-        setTimeout(() => {
+    onGridReady: function(params) {
+        setTimeout(function() {
             // fit the master grid columns
             params.api.sizeColumnsToFit();
 
             // arbitrarily expand some master row
-            const someRow = params.api.getRowNode("1");
+            var someRow = params.api.getRowNode("1");
             if (someRow) someRow.setExpanded(true);
-
         }, 1500);
     }
 };
 
 function ServerSideDatasource(server) {
     return {
-        getRows(params) {
-
+        getRows: function(params) {
             // adding delay to simulate real sever call
             setTimeout(function () {
-
-                const response = server.getResponse(params.request);
+                var response = server.getResponse(params.request);
 
                 if (response.success) {
                     // call the success callback
@@ -65,7 +62,6 @@ function ServerSideDatasource(server) {
                     // inform the grid request failed
                     params.failCallback();
                 }
-
             }, 500);
         }
     };
@@ -73,14 +69,14 @@ function ServerSideDatasource(server) {
 
 function FakeServer(allData) {
     return {
-        getResponse(request) {
+        getResponse: function(request) {
             console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
 
             // take a slice of the total rows
-            const rowsThisPage = allData.slice(request.startRow, request.endRow);
+            var rowsThisPage = allData.slice(request.startRow, request.endRow);
 
             // work out the last row index (if unknown we could supply -1)
-            const lastRow = allData.length - 1;
+            var lastRow = allData.length - 1;
 
             return {
                 success: true,
@@ -93,12 +89,12 @@ function FakeServer(allData) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    const gridDiv = document.querySelector('#myGrid');
+    var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/packages/ag-grid-docs/src/callData.json'}).then(function(data) {
-        const server = new FakeServer(data);
-        const datasource = new ServerSideDatasource(server);
+        var server = new FakeServer(data);
+        var datasource = new ServerSideDatasource(server);
         gridOptions.api.setServerSideDatasource(datasource);
     });
 });

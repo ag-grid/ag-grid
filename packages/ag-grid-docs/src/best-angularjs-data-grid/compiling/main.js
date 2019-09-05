@@ -24,13 +24,13 @@ module.controller("exampleCtrl", function($scope, $http) {
         rowData: null,
         angularCompileRows: true,
         rowSelection: 'multiple',
-        onFirstDataRendered(params) {
+        onFirstDataRendered: function(params) {
             params.api.sizeColumnsToFit();
         }
     };
 
-    $scope.selectUnitedStatesNodes = function () {
-        $scope.gridOptions.api.forEachNode(function (node) {
+    $scope.selectUnitedStatesNodes = function() {
+        $scope.gridOptions.api.forEachNode(function(node) {
             if (node.data.country === "United States") {
                 node.setSelected(true);
             }

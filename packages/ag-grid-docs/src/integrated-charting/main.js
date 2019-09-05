@@ -38,8 +38,8 @@
         animateRows: true,
         enableCharts: true,
         suppressAggFuncInHeader: true,
-        getRowNodeId(data) { return data.trade; },
-        onFirstDataRendered(params) {
+        getRowNodeId: function(data) { return data.trade; },
+        onFirstDataRendered: function(params) {
             var createRangeChartParams = {
                 cellRange: {
                     columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
@@ -52,7 +52,7 @@
 
             chartRef = params.api.createRangeChart(createRangeChartParams);
         },
-        processChartOptions(params) {
+        processChartOptions: function(params) {
             var opts = params.options;
 
             opts.legendPosition = 'bottom';
@@ -64,7 +64,7 @@
 
             opts.seriesDefaults.tooltipEnabled = true;
             opts.seriesDefaults.tooltipRenderer = function(params) {
-                let value = '$' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var value = '$' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return '<div style="padding: 5px"><b>' + params.title + '</b>: ' + value + '</div>';
             };
 
@@ -80,7 +80,7 @@
     }
 
     function yAxisLabelFormatter(params) {
-        let n = params.value;
+        var n = params.value;
         if (n < 1e3) return n;
         if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + "K";
         if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + "M";

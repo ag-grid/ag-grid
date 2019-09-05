@@ -39,7 +39,7 @@ var gridOptions = {
     // no rows to pin to start with
     pinnedTopRowData: createData(1, 'Top'),
     pinnedBottomRowData: createData(1, 'Bottom'),
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
     },
     components: {

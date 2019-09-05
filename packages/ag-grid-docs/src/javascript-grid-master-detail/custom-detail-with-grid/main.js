@@ -14,7 +14,7 @@ var gridOptions = {
     components: {
         myDetailCellRenderer: DetailCellRenderer
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
 
         // arbitrarily expand a row for presentational purposes

@@ -3,8 +3,8 @@ var columnDefs = [{
     type: 'numericColumn'
 }];
 
-let ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
-let BIG_PRIME_NUMBER = 198491317;
+var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
+var BIG_PRIME_NUMBER = 198491317;
 
 var ONE_THOUSAND = 1000;
 var ONE_MILLION = ONE_THOUSAND * 1000;
@@ -51,17 +51,17 @@ function MyViewportDataSource() {}
 
 MyViewportDataSource.prototype.init = function(params) {
     this.initParams = params;
-    let rowCount = 2 * ONE_MILLION;
+    var rowCount = 2 * ONE_MILLION;
     console.log('row count is ' + rowCount.toLocaleString());
     params.setRowCount(rowCount);
 };
 
 MyViewportDataSource.prototype.setViewportRange = function(firstRow, lastRow) {
 
-    let rowData = {};
+    var rowData = {};
 
     for (var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
-        let item = {};
+        var item = {};
         item.row = rowIndex;
 
         ALPHABET.forEach( function(letter, index) {

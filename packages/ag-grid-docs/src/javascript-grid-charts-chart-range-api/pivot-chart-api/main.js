@@ -12,8 +12,8 @@ var gridOptions = {
         resizable: true
     },
     pivotMode: true,
-    columnDefs,
-    onFirstDataRendered,
+    columnDefs: columnDefs,
+    onFirstDataRendered: onFirstDataRendered,
 };
 
 function onFirstDataRendered(event) {
@@ -21,8 +21,8 @@ function onFirstDataRendered(event) {
 
     var params = {
         chartType: 'groupedColumn',
-        chartContainer,
-        processChartOptions(params) {
+        chartContainer: chartContainer,
+        processChartOptions: function(params) {
             params.options.legendPosition = "bottom";
             
             return params.options;

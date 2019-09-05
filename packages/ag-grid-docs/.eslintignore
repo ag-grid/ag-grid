@@ -1,6 +1,14 @@
 **/_gen/*
 **/node_modules/*
+**/dist/*
+**/polymer-*/*
+**/rxjs-*/*
+**/vue/*
+**/best-vuejs-grid/*
+**/best-web-component-data-grid/*
 
 polymer-getting-started
 
+tutorial.js
+webpack.config.js
 *_vue.js

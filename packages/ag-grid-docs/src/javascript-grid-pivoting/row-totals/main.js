@@ -20,14 +20,11 @@ var gridOptions = {
     pivotPanelShow: 'always',
     pivotColumnGroupTotals: 'after',
     pivotRowTotals: 'before',
-    onFirstDataRendered(params) {
-    },
     autoGroupColumnDef: {
       width: 200
     },
     sideBar: true,
 };
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

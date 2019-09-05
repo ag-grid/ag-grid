@@ -18,21 +18,21 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData(params) {
+        getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         }
     },
-    isRowMaster(dataItem) {
+    isRowMaster: function(dataItem) {
         return dataItem ? dataItem.callRecords.length > 0 : false;
     },
-    isFullWidthCell() {
+    isFullWidthCell: function() {
         return false;
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
 
         // arbitrarily expand a row for presentational purposes

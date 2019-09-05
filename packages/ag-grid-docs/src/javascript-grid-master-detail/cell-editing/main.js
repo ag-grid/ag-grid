@@ -22,11 +22,11 @@ var gridOptions = {
                 editable: true,
                 resizable: true
             },
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData(params) {
+        getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         }
     },
@@ -35,7 +35,7 @@ var gridOptions = {
         editable: true,
         resizable: true
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
 
         // arbitrarily expand a row for presentational purposes

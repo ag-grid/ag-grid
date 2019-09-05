@@ -1,14 +1,14 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const containers = document.querySelectorAll('.features-grid .img-container');
+document.addEventListener('DOMContentLoaded', function() {
+    var containers = document.querySelectorAll('.features-grid .img-container');
 
-    containers.forEach((container) => {
-        const video = container.querySelector('video');
+    containers.forEach(function(container) {
+        var video = container.querySelector('video');
 
-        container.addEventListener('mouseenter', () => {
+        container.addEventListener('mouseenter', function() {
             video.play();
         });
 
-        container.addEventListener('mouseleave', () => {
+        container.addEventListener('mouseleave', function() {
             video.pause();
             video.currentTime = 0;
         });
