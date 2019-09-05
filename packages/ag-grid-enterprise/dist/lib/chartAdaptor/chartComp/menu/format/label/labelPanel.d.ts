@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { Component } from "ag-grid-community";
 export declare type LabelFont = {
     family?: string;

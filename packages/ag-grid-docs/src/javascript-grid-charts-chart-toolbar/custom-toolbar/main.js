@@ -19,17 +19,17 @@ var gridOptions = {
     popupParent: document.body,
     enableCharts: true,
     enableRangeSelection: true,
-    onFirstDataRendered: createPieChart,
-    processChartOptions: customChartOptions,
-    getChartToolbarItems: customChartToolbarLayout
+    onFirstDataRendered: onFirstDataRendered,
+    processChartOptions: processChartOptions,
+    getChartToolbarItems: getChartToolbarItems
 };
 
-function customChartToolbarLayout() {
+function getChartToolbarItems() {
     return ['chartDownload', 'chartData', 'chartSettings'];
 }
 
-function createPieChart(params) {
-    var chartRangeParams = {
+function onFirstDataRendered(params) {
+    var createRangeChartParams = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
@@ -37,10 +37,11 @@ function createPieChart(params) {
         },
         chartType: 'pie'
     };
-    params.api.chartRange(chartRangeParams);
+
+    params.api.createRangeChart(createRangeChartParams);
 }
 
-function customChartOptions(params) {
+function processChartOptions(params) {
     var options = params.options;
 
     if (params.type === 'pie') {

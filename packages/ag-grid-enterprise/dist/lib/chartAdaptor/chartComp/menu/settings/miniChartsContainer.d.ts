@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { ChartType, Component } from "ag-grid-community";
 import { ChartController } from "../../chartController";
 import { ChartTranslator } from "../../chartTranslator";

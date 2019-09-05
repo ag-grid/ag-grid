@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { Axis } from "../../axis";
 import { LinearScale } from "../../scale/linearScale";
 export declare class NumberAxis extends Axis<LinearScale<number>> {

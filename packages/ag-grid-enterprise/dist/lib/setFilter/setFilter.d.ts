@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter } from "ag-grid-community";
 import { SetFilterModel } from "./setFilterModel";
 export declare class SetFilter extends ProvidedFilter {
@@ -15,6 +15,7 @@ export declare class SetFilter extends ProvidedFilter {
     private eCheckedIcon;
     private eUncheckedIcon;
     private eIndeterminateCheckedIcon;
+    private appliedModelValuesMapped;
     protected updateUiVisibility(): void;
     protected createBodyTemplate(): string;
     protected resetUiToDefaults(): void;
@@ -29,6 +30,7 @@ export declare class SetFilter extends ProvidedFilter {
     private initialiseFilterBodyUi;
     private createSetListItem;
     afterGuiAttached(params: any): void;
+    applyModel(): boolean;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
     onNewRowsLoaded(): void;
     /**

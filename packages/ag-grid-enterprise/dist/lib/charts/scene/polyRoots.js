@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore Suppress tsc error: Property 'sign' does not exist on type 'Math'

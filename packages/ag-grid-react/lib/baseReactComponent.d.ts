@@ -1,4 +1,4 @@
-// ag-grid-react v21.2.0
+// ag-grid-react v21.2.1
 import { IComponent, WrapableInterface } from 'ag-grid-community';
 export declare abstract class BaseReactComponent implements IComponent<any>, WrapableInterface {
     hasMethod(name: string): boolean;

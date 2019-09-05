@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-docs",
-  "version": "21.2.0",
+  "version": "21.2.1",
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
@@ -60,11 +60,11 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
-    "ag-grid-angular": "^21.0.0",
-    "ag-grid-community": "^21.0.0",
-    "ag-grid-enterprise": "^21.0.0",
-    "ag-grid-react": "^21.0.0",
-    "ag-grid-vue": "^21.0.0",
+    "ag-grid-angular": "^21.2.0",
+    "ag-grid-community": "^21.2.0",
+    "ag-grid-enterprise": "^21.2.0",
+    "ag-grid-react": "^21.2.0",
+    "ag-grid-vue": "^21.2.0",
     "@angular/common": "7.2.3",
     "@angular/compiler": "7.2.3",
     "@angular/core": "7.2.3",

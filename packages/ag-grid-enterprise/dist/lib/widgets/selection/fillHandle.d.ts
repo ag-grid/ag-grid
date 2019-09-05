@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { CellComp } from 'ag-grid-community';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 export declare class FillHandle extends AbstractSelectionHandle {

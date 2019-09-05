@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -182,14 +182,24 @@ var SetFilter = /** @class */ (function (_super) {
         this.virtualList.refresh();
         this.eMiniFilter.focus();
     };
-    SetFilter.prototype.doesFilterPass = function (params) {
-        // if no filter, always pass
-        if (this.valueModel.isEverythingSelected() && !this.setFilterParams.selectAllOnMiniFilter) {
-            return true;
+    SetFilter.prototype.applyModel = function () {
+        var _this = this;
+        var res = _super.prototype.applyModel.call(this);
+        // keep the appliedModelValuesMapped in sync with the applied model
+        var appliedModel = this.getModel();
+        if (appliedModel) {
+            this.appliedModelValuesMapped = {};
+            appliedModel.values.forEach(function (value) { return _this.appliedModelValuesMapped[value] = true; });
         }
-        // if nothing selected in filter, always fail
-        if (this.valueModel.isNothingSelected() && !this.setFilterParams.selectAllOnMiniFilter) {
-            return false;
+        else {
+            this.appliedModelValuesMapped = undefined;
+        }
+        return res;
+    };
+    SetFilter.prototype.doesFilterPass = function (params) {
+        // should never happen, if filter model not set, then this method should never be called
+        if (!this.appliedModelValuesMapped) {
+            return true;
         }
         var value = this.setFilterParams.valueGetter(params.node);
         if (this.setFilterParams.colDef.keyCreator) {
@@ -198,14 +208,16 @@ var SetFilter = /** @class */ (function (_super) {
         value = ag_grid_community_1._.makeNull(value);
         if (Array.isArray(value)) {
             for (var i = 0; i < value.length; i++) {
-                if (this.valueModel.isValueSelected(value[i])) {
+                var valueExistsInMap = !!this.appliedModelValuesMapped[value[i]];
+                if (valueExistsInMap) {
                     return true;
                 }
             }
             return false;
         }
         else {
-            return this.valueModel.isValueSelected(value);
+            var valueExistsInMap = !!this.appliedModelValuesMapped[value];
+            return valueExistsInMap;
         }
     };
     SetFilter.prototype.onNewRowsLoaded = function () {

@@ -13,9 +13,9 @@ include '../documentation-main/documentation_header.php';
 
     <h2 class="overview">Overview</h2>
     <p class="lead">
-        ag-Grid is designed to integrate deeply into React.<br>
-        Use our grid as a React component to quickly add a react grid table to your application.<br>
-        Discover key benefits and resources available to quickly add a data grid or React datatable to your React application.</p>
+        ag-Grid is designed to integrate deeply into Vue.<br>
+        Use our grid as a Vue component to quickly add a Vue grid table to your application.<br>
+        Discover key benefits and resources available to quickly add a data grid or Vue datatable to your Vue application.</p>
 
     <p class="lead">
         This page details how to set up ag-Grid inside a Vue application.
@@ -306,7 +306,7 @@ binding is that any data changes will emit an <code>data-model-changed</code> ev
     can then access.</p>
 
 <snippet>
-// in the parent component - the component that hosts ag-grid-angular and specifies which angular components to use in the grid
+// in the parent component - the component that hosts ag-grid-vue and specifies which vue components to use in the grid
 beforeMount() {
     this.gridOptions = {
         context: {

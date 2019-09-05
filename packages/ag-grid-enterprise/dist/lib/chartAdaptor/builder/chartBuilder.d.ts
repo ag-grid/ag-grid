@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { AxisOptions, BarSeriesOptions, AreaSeriesOptions, CartesianChartOptions, DropShadowOptions, LineSeriesOptions, ScatterSeriesOptions, PieSeriesOptions, DoughnutChartOptions, ChartOptions, BarChartOptions, AreaChartOptions, LegendOptions, PolarChartOptions, LineChartOptions, ScatterChartOptions, PieChartOptions, SeriesOptions, CaptionOptions } from "ag-grid-community";
 import { CartesianChart } from "../../charts/chart/cartesianChart";
 import { PolarChart } from "../../charts/chart/polarChart";

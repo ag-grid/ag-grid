@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { ScatterChartOptions } from "ag-grid-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy, LineMarkerProperty, ScatterSeriesProperty } from "./cartesianChartProxy";

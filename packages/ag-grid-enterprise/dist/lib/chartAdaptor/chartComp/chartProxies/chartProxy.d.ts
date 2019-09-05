@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { ChartOptions, ChartType, EventService, ProcessChartOptionsParams } from "ag-grid-community";
 import { Chart, LegendPosition } from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";

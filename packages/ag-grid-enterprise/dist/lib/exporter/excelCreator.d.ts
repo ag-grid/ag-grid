@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { BaseCreator, ExcelExportParams, GridOptionsWrapper, IExcelCreator, ZipContainer } from 'ag-grid-community';
 import { ExcelCell, ExcelStyle } from 'ag-grid-community';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';

@@ -1,4 +1,4 @@
-// ag-grid-react v21.2.0
+// ag-grid-react v21.2.1
 import * as React from "react";
 import { ReactPortal } from "react";
 import * as AgGrid from "ag-grid-community";

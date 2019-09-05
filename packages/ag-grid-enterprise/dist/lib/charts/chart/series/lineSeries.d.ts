@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { CartesianChart } from "../cartesianChart";
 import { Series, SeriesNodeDatum } from "./series";
 import { LegendDatum } from "../legend";

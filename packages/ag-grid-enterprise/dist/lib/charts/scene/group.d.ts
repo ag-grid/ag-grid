@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { Node } from "./node";
 import { BBox } from "./bbox";
 export declare class Group extends Node {
