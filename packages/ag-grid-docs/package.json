@@ -5,7 +5,8 @@
   "scripts": {
     "postinstall": "webdriver-manager update",
     "tsc": "tsc -p tests/config/tsconfig.json",
-    "validate-es5": "eslint src/"
+    "validate-es5": "eslint src/",
+    "test": "npm run validate-es5"
   },
   "repository": {
     "type": "git",
