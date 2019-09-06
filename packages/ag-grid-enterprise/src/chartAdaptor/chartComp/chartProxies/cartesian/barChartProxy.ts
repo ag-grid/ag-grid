@@ -83,6 +83,8 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
             background: {
                 fill: this.getBackgroundColor()
             },
+            width: 800,
+            height: 400,
             padding: {
                 top: 20,
                 right: 20,

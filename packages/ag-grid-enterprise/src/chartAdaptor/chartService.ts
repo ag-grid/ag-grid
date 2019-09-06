@@ -95,8 +95,6 @@ export class ChartService implements IChartService {
             suppressChartRanges,
             aggFunc,
             processChartOptions,
-            height: 400, //TODO
-            width: 800   //TODO
         };
 
         const chartComp = new GridChartComp(params);

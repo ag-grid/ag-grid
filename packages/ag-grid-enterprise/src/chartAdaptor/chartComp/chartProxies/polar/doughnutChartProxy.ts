@@ -104,6 +104,8 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
             background: {
                 fill: this.getBackgroundColor()
             },
+            width: 800,
+            height: 400,
             padding: {
                 top: 50,
                 right: 50,

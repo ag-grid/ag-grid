@@ -63,6 +63,9 @@ function processChartOptions(params) {
             break;
     }
 
+    options.width = 600;
+    options.height = 300;
+
     return options;
 }
 

@@ -98,8 +98,8 @@ function createChartContainer(chartRef) {
     currentChartRef = chartRef;
 }
 
-function onFirstDataRendered(firstDataRenderedParams) {
-    let params = {
+function onFirstDataRendered(params) {
+    let createRangeChartParams = {
         cellRange: {
             columns: ['sugar', 'fat', 'weight']
         },
@@ -108,7 +108,7 @@ function onFirstDataRendered(firstDataRenderedParams) {
         suppressChartRanges: true
     };
 
-    currentChartRef = firstDataRenderedParams.api.chartRange(params);
+    currentChartRef = params.api.createRangeChart(createRangeChartParams);
 }
 
 function createRowData() {

@@ -22,8 +22,8 @@ export interface ChartProxyParams {
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions;
     getSelectedPalette: () => Palette;
     isDarkTheme: () => boolean;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     parentElement: HTMLElement;
     eventService: EventService;
     categorySelected: boolean;
@@ -83,7 +83,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
     protected initChartOptions(type: ChartType, options: T): void {
         // allow users to override options before they are applied
         if (this.chartProxyParams.processChartOptions) {
-            const params: ProcessChartOptionsParams = {type, options};
+            const params: ProcessChartOptionsParams = { type, options };
             const overriddenOptions = this.chartProxyParams.processChartOptions(params) as T;
             this.overridePalette(overriddenOptions);
             this.chartOptions = overriddenOptions;
@@ -91,26 +91,27 @@ export abstract class ChartProxy<T extends ChartOptions> {
             this.chartOptions = options;
         }
 
-        // these chart options are not overridable via the processChartOptions callback
-        this.chartOptions.parent = this.chartProxyParams.parentElement;
-        this.chartOptions.width = this.chartProxyParams.width;
-        this.chartOptions.height = this.chartProxyParams.height;
+        // values from the options are overridden if specified directly in the chart params
+        this.chartOptions.width = this.chartProxyParams.width || this.chartOptions.width;
+        this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
+        
+        // this cannot be overridden via the processChartOptions callback
+        this.chartOptions.parent = this.chartProxyParams.parentElement; 
     }
 
     private overridePalette(chartOptions: any) {
-        const seriesDefaults = chartOptions.seriesDefaults;
-
         const palette = this.chartProxyParams.getSelectedPalette();
         const defaultFills = palette.fills;
         const defaultStrokes = palette.strokes;
-
-        const fillsOverridden = seriesDefaults.fills !== defaultFills;
-        const strokesOverridden = seriesDefaults.strokes !== defaultStrokes;
+        const { seriesDefaults } = chartOptions;
+        const { fills, strokes } = seriesDefaults;
+        const fillsOverridden = fills !== defaultFills;
+        const strokesOverridden = strokes !== defaultStrokes;
 
         if (fillsOverridden || strokesOverridden) {
             this.overriddenPalette = {
-                fills: fillsOverridden && seriesDefaults.fills ? seriesDefaults.fills : defaultFills,
-                strokes: strokesOverridden && seriesDefaults.strokes ? seriesDefaults.strokes : defaultStrokes
+                fills: fillsOverridden && fills ? fills : defaultFills,
+                strokes: strokesOverridden && strokes ? strokes : defaultStrokes
             };
         }
     }
