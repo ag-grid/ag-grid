@@ -41,7 +41,7 @@ export interface InterpolatorFactory<T, U> {
     (a: T, b: T): ((t: number) => U);
 }
 
-export default abstract class ContinuousScale implements Scale<any, any> {
+export abstract class ContinuousScaleNew implements Scale<any, any> {
     /**
      * The output value of the scale for `undefined` or `NaN` input values.
      */
@@ -185,7 +185,7 @@ export default abstract class ContinuousScale implements Scale<any, any> {
     }
 }
 
-export abstract class ContinuousScaleOld<R> implements Scale<number, R> {
+export default abstract class ContinuousScale<R> implements Scale<number, R> {
     constructor(reinterpolatorFactory: ReinterpolatorFactory<R>,
                 deinterpolatorFactory?: DeinterpolatorFactory<R>,
                 rangeComparator?: Comparator<R>) {
