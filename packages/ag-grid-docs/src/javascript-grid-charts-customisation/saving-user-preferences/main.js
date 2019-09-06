@@ -29,7 +29,7 @@ var savedLegendUserPreference = undefined;
 
 function onChartOptionsChanged(event) {
     var chartOptions = event.chartOptions;
-    
+
     // changes made by users via the format panel are being saved locally here,
     // however applications can choose to persist them across user sessions.
     savedLegendUserPreference = {
@@ -37,7 +37,7 @@ function onChartOptionsChanged(event) {
         legendPosition: chartOptions.legendPosition,
         legendPadding: chartOptions.legendPadding
     };
-    
+
     savedUserPreferenceByChartType[event.chartType] = chartOptions;
 }
 
@@ -98,8 +98,8 @@ function createChartContainer(chartRef) {
     currentChartRef = chartRef;
 }
 
-function onFirstDataRendered(params) {
-    var createRangeChartParams = {
+function onFirstDataRendered(firstDataRenderedParams) {
+    let params = {
         cellRange: {
             columns: ['sugar', 'fat', 'weight']
         },
@@ -108,7 +108,7 @@ function onFirstDataRendered(params) {
         suppressChartRanges: true
     };
 
-    currentChartRef = firstDataRenderedParams.api.createRangeChart(createRangeChartParams);
+    currentChartRef = firstDataRenderedParams.api.chartRange(params);
 }
 
 function createRowData() {
