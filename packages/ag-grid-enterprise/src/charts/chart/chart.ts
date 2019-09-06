@@ -559,6 +559,9 @@ export abstract class Chart {
         const classList = [this.defaultTooltipClass, this._tooltipClass];
         if (visible) {
             classList.push('visible');
+        } else if (this.lastPick) {
+            this.lastPick.series.dehighlightNode();
+            this.lastPick = undefined;
         }
         this.tooltipElement.setAttribute('class', classList.join(' '));
     }
