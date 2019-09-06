@@ -8,6 +8,17 @@
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
+  "keywords": [
+    "ag",
+    "ag-grid",
+    "datagrid",
+    "data-grid",
+    "datatable",
+    "data-table",
+    "grid",
+    "table",
+    "react"
+  ],
   "scripts": {
     "initSubModules": "sh ./scripts/initialiseSubModules.sh",
     "initLatest": "npm run initSubModules && sh ./scripts/switchToBranch.sh latest",
