@@ -42,8 +42,18 @@ function enterprise_feature($name)
             for (var i = 0; i < containers.length; i++) {
                 var ct = containers[i];
                 ct.addEventListener('click', toggleOpen.bind(this, ct));
-                ct.querySelector('.card').addEventListener('mouseleave', toggleOpen.bind(this, ct, false))
+                ct.querySelector('.card').addEventListener('mouseleave', toggleOpen.bind(this, ct, false));
+                var displayedItems = ct.querySelectorAll('.docs-homepage-level2-item + ul > li:not(.hide-closed)');
+                
+                if (displayedItems.length) {
+                
+                    var lastComma = displayedItems[displayedItems.length - 1].querySelector('.level-3-split');
+                    if (lastComma) {
+                        lastComma.style.display = 'none';
+                    }
+                }
             }
+            
         });
 
         function toggleOpen(container, state) {

@@ -23,6 +23,7 @@
               {
                 "title": "Vanilla JavaScript",
                 "url": "javascript-getting-started/",
+                "showInCollapsed": true,
                 "items": [
                   {
                     "title": "Install with NPM",
@@ -41,6 +42,7 @@
               {
                 "title": "Angular",
                 "url": "angular-getting-started/",
+                "showInCollapsed": true,
                 "items": [
                   {
                     "title": "Components",
@@ -79,6 +81,7 @@
               {
                 "title": "React",
                 "url": "react-getting-started/",
+                "showInCollapsed": true,
                 "items": [
                   {
                     "title": "Columns",
@@ -105,6 +108,7 @@
               {
                 "title": "Vue",
                 "url": "vue-getting-started/",
+                "showInCollapsed": true,
                 "items": [
                   {
                     "title": "Components",

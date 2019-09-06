@@ -72,6 +72,11 @@
 	margin-left: 10px;
 }
 
+.docs-homepage-section-preview:not(.open) li.hide-closed {
+	display: none !important;
+}
+
+
 .docs-homepage-section-preview:not(.open) .docs-homepage-level2-item + ul > li {
 	display: inline-block;
 }

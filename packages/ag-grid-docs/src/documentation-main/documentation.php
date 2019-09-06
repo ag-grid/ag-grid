@@ -42,8 +42,10 @@ function doLevel2($parentItem) {
         echo "<div class='card'>";
         echo "<div class='newIcon $lev2ItemIcon'></div>";
         echo "<h2>$lev2ItemName</h2>";
-        
-        doLevel3($lev2Item);
+
+        if ($lev2Item['items'] <> null) {
+            doLevel3($lev2Item);
+        }
 
         echo "</div>";
         echo "</div>";
@@ -99,7 +101,7 @@ function doLevel3($parentItem) {
             echo "</span>";
 
             $maxLevelShow = $parentItem['max-box-show-level'];
-            if ($maxLevelShow > 2 || $maxLevelShow == null) {
+            if ($item['items'] <> null && ($maxLevelShow > 2 || $maxLevelShow == null)) {
                 doLevel4($item);
             }
 
@@ -120,8 +122,13 @@ function doLevel4($parentItem) {
     foreach($items as $index=>$item) {
         $itemTitle = $item['title'];
         $itemUrl = $item['url'];
+        $hideCollapsed = '';
 
-        echo "<li>"; // start level 3
+        if (!$item['showInCollapsed']) {
+            $hideCollapsed = 'hide-closed';
+        }
+
+        echo "<li class='$hideCollapsed'>"; // start level 3
 
         echo "<span class='docs-homepage-level3-item level'>";
         if (strlen($itemUrl) > 1) {
@@ -140,7 +147,7 @@ function doLevel4($parentItem) {
 
         echo "</span>";
 
-        if ($item['items'] != null) {
+        if ($item['items'] <> null) {
             doLevel5($item);
         }
 
@@ -174,7 +181,10 @@ function doLevel5($parentItem) {
 
         echo "</span>";
 
-        doLevel6($item);
+        if ($item['items'] <> null) {
+            doLevel6($item);
+        }
+        
 
         echo "</li>"; // end level 3
     }
