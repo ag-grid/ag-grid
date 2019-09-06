@@ -102,7 +102,7 @@
         btDestroyGrid = document.querySelector("#btDestroyGrid");
 
         // this example is also used in the website landing page, where
-        // we don't display the buttons, so we check for the buttons existance
+        // we don't display the buttons, so we check for the buttons existence
         if (btBringGridBack) {
             btBringGridBack.addEventListener("click", onBtBringGridBack);
             btDestroyGrid.addEventListener("click", onBtDestroyGrid);
@@ -168,11 +168,11 @@
         eDivPercentBar.className = "div-percent-bar";
         eDivPercentBar.style.width = value + "%";
         if (value < 20) {
-            eDivPercentBar.style.backgroundColor = "#f44336";
+            eDivPercentBar.style.backgroundColor = "#f55d51";
         } else if (value < 60) {
-            eDivPercentBar.style.backgroundColor = "#FF9100";
+            eDivPercentBar.style.backgroundColor = "#ffb300";
         } else {
-            eDivPercentBar.style.backgroundColor = "#4CAF50";
+            eDivPercentBar.style.backgroundColor = "#82d249";
         }
 
         var eValue = document.createElement("div");
@@ -198,7 +198,7 @@
         "  </span>" +
         "</label>";
 
-    var FILTER_TITLE = '<div style="text-align: center; background: lightgray; width: 100%; display: block; border-bottom: 1px solid grey;">' + "<b>TITLE_NAME</b>" + "</div>";
+    var FILTER_TITLE = '<div style="text-align: center; background: lightgrey; width: 100%; display: block; border-bottom: 1px solid grey;">' + "<b>TITLE_NAME</b>" + "</div>";
 
     function SkillFilter() { }
 
