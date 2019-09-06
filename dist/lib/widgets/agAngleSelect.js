@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -191,8 +191,8 @@ var AgAngleSelect = /** @class */ (function (_super) {
             this.degrees = Math.floor(degrees);
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
+            this.dispatchEvent({ type: agAbstractField_1.AgAbstractField.EVENT_CHANGED });
         }
-        this.dispatchEvent({ type: agAbstractField_1.AgAbstractField.EVENT_CHANGED });
         return this;
     };
     AgAngleSelect.prototype.setWidth = function (width) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -171,12 +171,15 @@ var CellNavigationService = /** @class */ (function () {
             var lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
             return lastBottomIndex <= index;
         }
-        var lastBodyIndex = this.rowModel.getPageLastRow();
+        var lastBodyIndex = this.rowModel.getRowCount() - 1;
         return lastBodyIndex <= index;
     };
-    CellNavigationService.prototype.getRowAbove = function (rowIndex, pinned) {
+    CellNavigationService.prototype.getRowAbove = function (rowPosition) {
         // if already on top row, do nothing
-        if (rowIndex === 0) {
+        var index = rowPosition.rowIndex;
+        var pinned = rowPosition.rowPinned;
+        // if already on top row, do nothing
+        if (index === 0) {
             if (pinned === constants_1.Constants.PINNED_TOP) {
                 return null;
             }
@@ -197,13 +200,13 @@ var CellNavigationService = /** @class */ (function () {
                 return null;
             }
         }
-        return { rowIndex: rowIndex - 1, rowPinned: pinned };
+        return { rowIndex: index - 1, rowPinned: pinned };
     };
     CellNavigationService.prototype.getCellAbove = function (lastCell) {
         if (!lastCell) {
             return null;
         }
-        var rowAbove = this.getRowAbove(lastCell.rowIndex, lastCell.rowPinned);
+        var rowAbove = this.getRowAbove({ rowIndex: lastCell.rowIndex, rowPinned: lastCell.rowPinned });
         if (rowAbove) {
             return {
                 rowIndex: rowAbove.rowIndex,
@@ -214,7 +217,7 @@ var CellNavigationService = /** @class */ (function () {
         return null;
     };
     CellNavigationService.prototype.getLastBodyCell = function () {
-        var lastBodyRow = this.rowModel.getPageLastRow();
+        var lastBodyRow = this.rowModel.getRowCount() - 1;
         return { rowIndex: lastBodyRow, rowPinned: null };
     };
     CellNavigationService.prototype.getLastFloatingTopRow = function () {
@@ -254,7 +257,7 @@ var CellNavigationService = /** @class */ (function () {
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
             newColumn = utils_1._.last(displayedColumns);
-            var rowAbove = this.getRowAbove(gridCell.rowIndex, gridCell.rowPinned);
+            var rowAbove = this.getRowAbove({ rowIndex: gridCell.rowIndex, rowPinned: gridCell.rowPinned });
             if (utils_1._.missing(rowAbove)) {
                 return null;
             }

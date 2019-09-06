@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
@@ -8,8 +8,6 @@ import { IEventEmitter } from "../interfaces/iEventEmitter";
 export declare class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmitter {
     static EVENT_EXPANDED_CHANGED: string;
     static EVENT_EXPANDABLE_CHANGED: string;
-    private columnApi;
-    private gridApi;
     private localEventService;
     private colGroupDef;
     private originalParent;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -116,7 +116,7 @@ var GridCore = /** @class */ (function (_super) {
         if (!this.sideBarComp) {
             return false;
         }
-        return this.sideBarComp.isVisible();
+        return this.sideBarComp.isDisplayed();
     };
     GridCore.prototype.setSideBarVisible = function (show) {
         if (!this.sideBarComp) {
@@ -125,7 +125,7 @@ var GridCore = /** @class */ (function (_super) {
             }
             return;
         }
-        this.sideBarComp.setVisible(show);
+        this.sideBarComp.setDisplayed(show);
     };
     GridCore.prototype.closeToolPanel = function () {
         if (!this.sideBarComp) {
@@ -175,7 +175,7 @@ var GridCore = /** @class */ (function (_super) {
             throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
         }
         // look for the node index we want to display
-        var rowCount = this.rowModel.getPageLastRow() + 1;
+        var rowCount = this.rowModel.getRowCount();
         var comparatorIsAFunction = typeof comparator === 'function';
         var indexToSelect = -1;
         // go through all the nodes, find the one we want to show

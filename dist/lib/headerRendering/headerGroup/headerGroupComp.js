@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -86,12 +86,12 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         var columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
             var expanded = this.params.columnGroup.isExpanded();
-            utils_1._.setVisible(this.eOpenIcon, !expanded);
-            utils_1._.setVisible(this.eCloseIcon, expanded);
+            utils_1._.setDisplayed(this.eOpenIcon, !expanded);
+            utils_1._.setDisplayed(this.eCloseIcon, expanded);
         }
         else {
-            utils_1._.setVisible(this.eOpenIcon, false);
-            utils_1._.setVisible(this.eCloseIcon, false);
+            utils_1._.setDisplayed(this.eOpenIcon, false);
+            utils_1._.setDisplayed(this.eCloseIcon, false);
         }
     };
     HeaderGroupComp.prototype.addInIcon = function (iconName, refName) {
@@ -100,8 +100,8 @@ var HeaderGroupComp = /** @class */ (function (_super) {
     };
     HeaderGroupComp.prototype.addGroupExpandIcon = function () {
         if (!this.params.columnGroup.isExpandable()) {
-            utils_1._.setVisible(this.eOpenIcon, false);
-            utils_1._.setVisible(this.eCloseIcon, false);
+            utils_1._.setDisplayed(this.eOpenIcon, false);
+            utils_1._.setDisplayed(this.eCloseIcon, false);
             return;
         }
     };
@@ -112,8 +112,8 @@ var HeaderGroupComp = /** @class */ (function (_super) {
             eInnerText.innerHTML = this.params.displayName;
         }
     };
-    HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\">" +
-        "<span ref=\"agLabel\" class=\"ag-header-group-text\"></span>" +
+    HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\" role=\"presentation\">" +
+        "<span ref=\"agLabel\" class=\"ag-header-group-text\" role=\"columnheader\"></span>" +
         "<span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>" +
         "<span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>" +
         "</div>";

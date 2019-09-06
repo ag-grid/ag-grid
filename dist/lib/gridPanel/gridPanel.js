@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,6 +42,7 @@ var focusedCellController_1 = require("../focusedCellController");
 var scrollVisibleService_1 = require("./scrollVisibleService");
 var rowContainerComponent_1 = require("../rendering/rowContainerComponent");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
+var paginationAutoPageSizeService_1 = require("../rowModels/paginationAutoPageSizeService");
 var popupEditorWrapper_1 = require("../rendering/cellEditors/popupEditorWrapper");
 var alignedGridsService_1 = require("../alignedGridsService");
 var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
@@ -66,7 +67,7 @@ var resizeObserverService_1 = require("../misc/resizeObserverService");
 var utils_1 = require("../utils");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
-var GRID_PANEL_NORMAL_TEMPLATE = "<div class=\"ag-root ag-unselectable\" role=\"grid\" unselectable=\"on\">\n        <ag-header-root ref=\"headerRoot\" unselectable=\"on\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-floating-top\" ref=\"eLeftTop\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-top-viewport\" ref=\"eTopViewport\" role=\"presentation\" unselectable=\"on\">\n                <div class=\"ag-floating-top-container\" ref=\"eTopContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-top\" ref=\"eRightTop\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-top-full-width-container\" ref=\"eTopFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-cols-container\" ref=\"eLeftContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-center-cols-clipper\" ref=\"eCenterColsClipper\">\n                <div class=\"ag-center-cols-viewport\" ref=\"eCenterViewport\" role=\"presentation\" unselectable=\"on\">\n                    <div class=\"ag-center-cols-container\" ref=\"eCenterContainer\" role=\"presentation\" unselectable=\"on\"></div>\n                </div>\n            </div>\n            <div class=\"ag-pinned-right-cols-container\" ref=\"eRightContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-full-width-container\" ref=\"eFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-floating-bottom\" ref=\"eLeftBottom\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-bottom-viewport\" ref=\"eBottomViewport\" role=\"presentation\" unselectable=\"on\">\n                <div class=\"ag-floating-bottom-container\" ref=\"eBottomContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-bottom\" ref=\"eRightBottom\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-bottom-full-width-container\" ref=\"eBottomFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-body-horizontal-scroll\" ref=\"eHorizontalScrollBody\">\n            <div class=\"ag-horizontal-left-spacer\" ref=\"eHorizontalLeftSpacer\"></div>\n            <div class=\"ag-body-horizontal-scroll-viewport\" ref=\"eBodyHorizontalScrollViewport\">\n                <div class=\"ag-body-horizontal-scroll-container\" ref=\"eBodyHorizontalScrollContainer\"></div>\n            </div>\n            <div class=\"ag-horizontal-right-spacer\" ref=\"eHorizontalRightSpacer\"></div>\n        </div>\n        <ag-overlay-wrapper ref=\"overlayWrapper\"></ag-overlay-wrapper>\n    </div>";
+var GRID_PANEL_NORMAL_TEMPLATE = "<div class=\"ag-root ag-unselectable\" role=\"grid\" unselectable=\"on\">\n        <ag-header-root ref=\"headerRoot\" unselectable=\"on\"></ag-header-root>\n        <div class=\"ag-floating-top\" ref=\"eTop\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-floating-top\" ref=\"eLeftTop\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-top-viewport\" ref=\"eTopViewport\" role=\"presentation\" unselectable=\"on\">\n                <div class=\"ag-floating-top-container\" ref=\"eTopContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-top\" ref=\"eRightTop\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-top-full-width-container\" ref=\"eTopFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-body-viewport\" ref=\"eBodyViewport\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-cols-container\" ref=\"eLeftContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-center-cols-clipper\" ref=\"eCenterColsClipper\" role=\"presentation\" unselectable=\"on\">\n                <div class=\"ag-center-cols-viewport\" ref=\"eCenterViewport\" role=\"presentation\" unselectable=\"on\">\n                    <div class=\"ag-center-cols-container\" ref=\"eCenterContainer\" role=\"rowgroup\" unselectable=\"on\"></div>\n                </div>\n            </div>\n            <div class=\"ag-pinned-right-cols-container\" ref=\"eRightContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-full-width-container\" ref=\"eFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-floating-bottom\" ref=\"eBottom\" role=\"presentation\" unselectable=\"on\">\n            <div class=\"ag-pinned-left-floating-bottom\" ref=\"eLeftBottom\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-bottom-viewport\" ref=\"eBottomViewport\" role=\"presentation\" unselectable=\"on\">\n                <div class=\"ag-floating-bottom-container\" ref=\"eBottomContainer\" role=\"presentation\" unselectable=\"on\"></div>\n            </div>\n            <div class=\"ag-pinned-right-floating-bottom\" ref=\"eRightBottom\" role=\"presentation\" unselectable=\"on\"></div>\n            <div class=\"ag-floating-bottom-full-width-container\" ref=\"eBottomFullWidthContainer\" role=\"presentation\" unselectable=\"on\"></div>\n        </div>\n        <div class=\"ag-body-horizontal-scroll\" ref=\"eHorizontalScrollBody\" aria-hidden=\"true\">\n            <div class=\"ag-horizontal-left-spacer\" ref=\"eHorizontalLeftSpacer\"></div>\n            <div class=\"ag-body-horizontal-scroll-viewport\" ref=\"eBodyHorizontalScrollViewport\">\n                <div class=\"ag-body-horizontal-scroll-container\" ref=\"eBodyHorizontalScrollContainer\"></div>\n            </div>\n            <div class=\"ag-horizontal-right-spacer\" ref=\"eHorizontalRightSpacer\"></div>\n        </div>\n        <ag-overlay-wrapper ref=\"overlayWrapper\"></ag-overlay-wrapper>\n    </div>";
 var GridPanel = /** @class */ (function (_super) {
     __extends(GridPanel, _super);
     function GridPanel() {
@@ -172,6 +173,9 @@ var GridPanel = /** @class */ (function (_super) {
     GridPanel.prototype.onCenterViewportResized = function () {
         if (utils_1._.isVisible(this.eCenterViewport)) {
             this.checkViewportAndScrolls();
+        }
+        else {
+            this.bodyHeight = 0;
         }
     };
     // used by ColumnAnimationService
@@ -469,7 +473,10 @@ var GridPanel = /** @class */ (function (_super) {
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
         // they want.
-        if (this.gridOptionsWrapper.isSuppressMiddleClickScrolls() && mouseEvent.which === 2) {
+        var gridOptionsWrapper = this.gridOptionsWrapper;
+        var which = mouseEvent.which;
+        if (gridOptionsWrapper.isPreventDefaultOnContextMenu() ||
+            (gridOptionsWrapper.isSuppressMiddleClickScrolls() && which === 2)) {
             mouseEvent.preventDefault();
         }
     };
@@ -486,7 +493,7 @@ var GridPanel = /** @class */ (function (_super) {
             var rowEnd = void 0;
             if (isEmptyPinnedBottom) {
                 floatingEnd = null;
-                rowEnd = this.paginationProxy.getTotalRowCount() - 1;
+                rowEnd = this.paginationProxy.getRowCount() - 1;
             }
             else {
                 floatingEnd = PINNED_BOTTOM;
@@ -546,7 +553,7 @@ var GridPanel = /** @class */ (function (_super) {
         if (this.printLayout) {
             return;
         }
-        var rowCount = this.paginationProxy.getTotalRowCount();
+        var rowCount = this.paginationProxy.getRowCount();
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
@@ -659,15 +666,18 @@ var GridPanel = /** @class */ (function (_super) {
         // we have to add an extra pixel to the scroller viewport on IE because
         // if the container has the same size as the scrollbar, the scroll button won't work
         utils_1._.setFixedHeight(this.eBodyHorizontalScrollViewport, scrollContainerSize + (addIEPadding ? 1 : 0));
-        if (addIEPadding) {
-            this.eBodyHorizontalScrollViewport.style.bottom = '1px';
-        }
         utils_1._.setFixedHeight(this.eBodyHorizontalScrollContainer, scrollContainerSize);
     };
     GridPanel.prototype.setVerticalScrollPaddingVisible = function (show) {
         var scroller = show ? "scroll" : "hidden";
         this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
         this.setFakeHScrollSpacerWidths();
+    };
+    GridPanel.prototype.updateRowCount = function () {
+        var headerCount = this.headerRootComp.getHeaderRowCount();
+        var rowCount = this.paginationProxy.getRowCount();
+        var total = (headerCount + rowCount).toString();
+        this.getGui().setAttribute('aria-rowcount', total);
     };
     GridPanel.prototype.ensureColumnVisible = function (key) {
         var column = this.columnController.getGridColumn(key);
@@ -894,7 +904,7 @@ var GridPanel = /** @class */ (function (_super) {
         if (oldPinning !== newPinning) {
             this.headerRootComp.setLeftVisible(newPinning);
         }
-        containers.forEach(function (e) { return utils_1._.setVisible(e, _this.pinningLeft); });
+        containers.forEach(function (e) { return utils_1._.setDisplayed(e, _this.pinningLeft); });
         if (newPinning) {
             containers.forEach(function (ct) { return utils_1._.setFixedWidth(ct, widthOfCols); });
         }
@@ -907,7 +917,7 @@ var GridPanel = /** @class */ (function (_super) {
         if (oldPinning !== newPinning) {
             this.headerRootComp.setRightVisible(newPinning);
         }
-        containers.forEach(function (ct) { return utils_1._.setVisible(ct, newPinning); });
+        containers.forEach(function (ct) { return utils_1._.setDisplayed(ct, newPinning); });
         if (newPinning) {
             containers.forEach(function (ct) { return utils_1._.setFixedWidth(ct, widthOfCols); });
         }
@@ -1197,7 +1207,7 @@ var GridPanel = /** @class */ (function (_super) {
     ], GridPanel.prototype, "autoWidthCalculator", void 0);
     __decorate([
         context_1.Autowired('paginationAutoPageSizeService'),
-        __metadata("design:type", paginationProxy_1.PaginationAutoPageSizeService)
+        __metadata("design:type", paginationAutoPageSizeService_1.PaginationAutoPageSizeService)
     ], GridPanel.prototype, "paginationAutoPageSizeService", void 0);
     __decorate([
         context_1.Autowired('beans'),

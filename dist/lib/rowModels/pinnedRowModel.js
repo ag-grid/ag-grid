@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,6 +81,7 @@ var PinnedRowModel = /** @class */ (function () {
                 var rowNode = new rowNode_1.RowNode();
                 _this.context.wireBean(rowNode);
                 rowNode.data = dataItem;
+                rowNode.id = (isTop ? 't' : 'b') + "-" + index;
                 rowNode.rowPinned = isTop ? constants_1.Constants.PINNED_TOP : constants_1.Constants.PINNED_BOTTOM;
                 rowNode.setRowTop(nextRowTop_1);
                 rowNode.setRowHeight(_this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);

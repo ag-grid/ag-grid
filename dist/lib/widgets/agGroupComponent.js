@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -82,8 +82,8 @@ var AgGroupComponent = /** @class */ (function (_super) {
     };
     AgGroupComponent.prototype.setOpenClosedIcons = function () {
         var folderOpen = this.expanded;
-        utils_1._.setVisible(this.eGroupClosedIcon, !folderOpen);
-        utils_1._.setVisible(this.eGroupOpenedIcon, folderOpen);
+        utils_1._.setDisplayed(this.eGroupClosedIcon, !folderOpen);
+        utils_1._.setDisplayed(this.eGroupOpenedIcon, folderOpen);
     };
     AgGroupComponent.prototype.isExpanded = function () {
         return this.expanded;

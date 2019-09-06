@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -329,6 +329,11 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.getModel = function () {
         return this.rowModel;
     };
+    GridApi.prototype.setRowNodeExpanded = function (rowNode, expanded) {
+        if (rowNode) {
+            rowNode.setExpanded(expanded);
+        }
+    };
     GridApi.prototype.onGroupExpandedOrCollapsed = function (deprecated_refreshFromIndex) {
         if (utils_1._.missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model');
@@ -336,7 +341,7 @@ var GridApi = /** @class */ (function () {
         if (utils_1._.exists(deprecated_refreshFromIndex)) {
             console.warn('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows');
         }
-        // we don't really want the user calling this if one one rowNode was expanded, instead they should be
+        // we don't really want the user calling this if only one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
@@ -750,7 +755,7 @@ var GridApi = /** @class */ (function () {
             }, 'ChartsModuleCheck');
             return;
         }
-        return this.rangeChartService.chartCellRange(params);
+        return this.chartService.chartCellRange(params);
     };
     GridApi.prototype.copySelectedRowsToClipboard = function (includeHeader, columnKeys) {
         if (!this.clipboardService) {
@@ -1021,7 +1026,7 @@ var GridApi = /** @class */ (function () {
         return this.paginationProxy.getTotalPages();
     };
     GridApi.prototype.paginationGetRowCount = function () {
-        return this.paginationProxy.getTotalRowCount();
+        return this.paginationProxy.getMasterRowCount();
     };
     GridApi.prototype.paginationGoToNextPage = function () {
         this.paginationProxy.goToNextPage();
@@ -1147,9 +1152,9 @@ var GridApi = /** @class */ (function () {
         __metadata("design:type", Object)
     ], GridApi.prototype, "statusBarService", void 0);
     __decorate([
-        context_1.Optional('rangeChartService'),
+        context_1.Optional('chartService'),
         __metadata("design:type", Object)
-    ], GridApi.prototype, "rangeChartService", void 0);
+    ], GridApi.prototype, "chartService", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

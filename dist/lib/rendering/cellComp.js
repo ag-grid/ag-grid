@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,11 +35,9 @@ var constants_1 = require("../constants");
 var events_1 = require("../events");
 var component_1 = require("../widgets/component");
 var checkboxSelectionComponent_1 = require("./checkboxSelectionComponent");
-var cellPosition_1 = require("../entities/cellPosition");
 var iRangeController_1 = require("../interfaces/iRangeController");
 var rowDragComp_1 = require("./rowDragComp");
 var popupEditorWrapper_1 = require("./cellEditors/popupEditorWrapper");
-var rowPosition_1 = require("../entities/rowPosition");
 var utils_1 = require("../utils");
 var dndSourceComp_1 = require("./dndSourceComp");
 var CellComp = /** @class */ (function (_super) {
@@ -88,7 +86,7 @@ var CellComp = /** @class */ (function (_super) {
         var templateParts = [];
         var col = this.column;
         var width = this.getCellWidth();
-        var left = this.modifyLeftForPrintLayout(col.getLeft());
+        var left = this.modifyLeftForPrintLayout(this.getCellLeft());
         var valueToRender = this.getInitialValueToRender();
         var valueSanitised = utils_1._.get(this.column, 'colDef.template', null) ? valueToRender : utils_1._.escape(valueToRender);
         this.tooltip = this.getToolTip();
@@ -179,7 +177,7 @@ var CellComp = /** @class */ (function (_super) {
         return result;
     };
     CellComp.prototype.onFlashCells = function (event) {
-        var cellId = cellPosition_1.CellPositionUtils.createId(this.cellPosition);
+        var cellId = this.beans.cellPositionUtils.createId(this.cellPosition);
         var shouldFlash = event.cells[cellId];
         if (shouldFlash) {
             this.animateCell('highlight');
@@ -312,11 +310,8 @@ var CellComp = /** @class */ (function (_super) {
     // + rowComp: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
     CellComp.prototype.refreshCell = function (params) {
-        if (this.editingCell) {
-            return;
-        }
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
-        if (this.suppressRefreshCell) {
+        if (this.suppressRefreshCell || this.editingCell) {
             return;
         }
         var colDef = this.getComponentHolder();
@@ -1407,10 +1402,10 @@ var CellComp = /** @class */ (function (_super) {
             var range = ranges[i];
             var startRow = rangeController.getRangeStartRow(range);
             var endRow = rangeController.getRangeEndRow(range);
-            if (!top && rowPosition_1.RowPositionUtils.sameRow(startRow, this.cellPosition)) {
+            if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.cellPosition)) {
                 top = true;
             }
-            if (!bottom && rowPosition_1.RowPositionUtils.sameRow(endRow, this.cellPosition)) {
+            if (!bottom && this.beans.rowPositionUtils.sameRow(endRow, this.cellPosition)) {
                 bottom = true;
             }
             if (!left && range.columns.indexOf(leftCol) < 0) {
@@ -1519,6 +1514,7 @@ var CellComp = /** @class */ (function (_super) {
         }
         return this.rangeCount &&
             handlesAllowed &&
+            lastRange.endRow != null &&
             this.beans.rangeController.isContiguousRange(lastRange) &&
             (utils_1._.containsClass(el, 'ag-cell-range-single-cell') ||
                 (utils_1._.containsClass(el, 'ag-cell-range-bottom') && utils_1._.containsClass(el, 'ag-cell-range-right')));

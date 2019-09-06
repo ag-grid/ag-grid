@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -270,7 +270,7 @@ var PopupService = /** @class */ (function () {
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         var eWrapper = document.createElement('div');
-        var theme = this.environment.getTheme();
+        var theme = this.environment.getTheme().theme;
         if (theme) {
             utils_1._.addCssClass(eWrapper, theme);
         }

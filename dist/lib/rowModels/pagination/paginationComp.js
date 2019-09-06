@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,18 +44,19 @@ var PaginationComp = /** @class */ (function (_super) {
         return _super.call(this) || this;
     }
     PaginationComp.prototype.postConstruct = function () {
+        var isRtl = this.gridOptionsWrapper.isEnableRtl();
         this.setTemplate(this.getTemplate());
-        this.btFirst.insertAdjacentElement('afterbegin', utils_1._.createIconNoSpan('first', this.gridOptionsWrapper));
-        this.btPrevious.insertAdjacentElement('afterbegin', utils_1._.createIconNoSpan('previous', this.gridOptionsWrapper));
-        this.btNext.insertAdjacentElement('afterbegin', utils_1._.createIconNoSpan('next', this.gridOptionsWrapper));
-        this.btLast.insertAdjacentElement('afterbegin', utils_1._.createIconNoSpan('last', this.gridOptionsWrapper));
+        this.btFirst.insertAdjacentElement('afterbegin', utils_1._.createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsWrapper));
+        this.btPrevious.insertAdjacentElement('afterbegin', utils_1._.createIconNoSpan(isRtl ? 'next' : 'previous', this.gridOptionsWrapper));
+        this.btNext.insertAdjacentElement('afterbegin', utils_1._.createIconNoSpan(isRtl ? 'previous' : 'next', this.gridOptionsWrapper));
+        this.btLast.insertAdjacentElement('afterbegin', utils_1._.createIconNoSpan(isRtl ? 'first' : 'last', this.gridOptionsWrapper));
         if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
             this.serverSideRowModel = this.rowModel;
         }
         var isPaging = this.gridOptionsWrapper.isPagination();
         var paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
         if (!paginationPanelEnabled) {
-            this.setVisible(false);
+            this.setDisplayed(false);
             return;
         }
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
@@ -128,7 +129,7 @@ var PaginationComp = /** @class */ (function (_super) {
         var pageSize = this.paginationProxy.getPageSize();
         var maxRowFound = this.paginationProxy.isLastPageFound();
         var rowCount = this.paginationProxy.isLastPageFound() ?
-            this.paginationProxy.getTotalRowCount() : null;
+            this.paginationProxy.getMasterRowCount() : null;
         var startRow;
         var endRow;
         if (this.isZeroPagesToDisplay()) {
@@ -159,7 +160,7 @@ var PaginationComp = /** @class */ (function (_super) {
         var lastPageFound = this.paginationProxy.isLastPageFound();
         var totalPages = this.paginationProxy.getTotalPages();
         var rowCount = this.paginationProxy.isLastPageFound() ?
-            this.paginationProxy.getTotalRowCount() : null;
+            this.paginationProxy.getMasterRowCount() : null;
         if (lastPageFound) {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);
             this.lbRecordCount.innerHTML = this.formatNumber(rowCount);

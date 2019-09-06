@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -89,6 +89,9 @@ var HeaderContainer = /** @class */ (function () {
     HeaderContainer.prototype.destroy = function () {
         this.removeHeaderRowComps();
     };
+    HeaderContainer.prototype.getRowComps = function () {
+        return this.headerRowComps;
+    };
     // grid cols have changed - this also means the number of rows in the header can have
     // changed. so we remove all the old rows and insert new ones for a complete refresh
     HeaderContainer.prototype.onGridColumnsChanged = function () {
@@ -125,6 +128,7 @@ var HeaderContainer = /** @class */ (function () {
             var headerRowComp = new headerRowComp_1.HeaderRowComp(dept, type, this.pinned, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
+            headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
             this.eContainer.appendChild(headerRowComp.getGui());
         }
         var includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
@@ -132,6 +136,7 @@ var HeaderContainer = /** @class */ (function () {
             var headerRowComp = new headerRowComp_1.HeaderRowComp(rowCount, headerRowComp_1.HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
+            headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
             this.eContainer.appendChild(headerRowComp.getGui());
         }
     };

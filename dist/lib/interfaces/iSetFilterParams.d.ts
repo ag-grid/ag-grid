@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
@@ -19,7 +19,9 @@ export interface ISetFilterParams extends IProvidedFilterParams {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     suppressMiniFilter: boolean;
+    suppressSelectAll: boolean;
     selectAllOnMiniFilter: boolean;
+    syncValuesLikeExcel: boolean;
     comparator?: (a: any, b: any) => number;
     miniFilterSearchByRefDataKey?: boolean;
     textFormatter?: (from: string) => string;

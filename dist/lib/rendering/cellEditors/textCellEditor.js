@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59,23 +59,10 @@ var TextCellEditor = /** @class */ (function (_super) {
             eInput.value = startValue;
         }
         this.addDestroyableEventListener(eInput, 'keydown', function (event) {
-            var isNavigationKey = event.keyCode === constants_1.Constants.KEY_LEFT
-                || event.keyCode === constants_1.Constants.KEY_RIGHT
-                || event.keyCode === constants_1.Constants.KEY_UP
-                || event.keyCode === constants_1.Constants.KEY_DOWN
-                || event.keyCode === constants_1.Constants.KEY_PAGE_DOWN
-                || event.keyCode === constants_1.Constants.KEY_PAGE_UP
-                || event.keyCode === constants_1.Constants.KEY_PAGE_HOME
-                || event.keyCode === constants_1.Constants.KEY_PAGE_END;
-            if (isNavigationKey) {
-                // this stops the grid from executing keyboard navigation
-                event.stopPropagation();
-                // this stops the browser from scrolling up / down
-                var pageUp = event.keyCode === constants_1.Constants.KEY_PAGE_UP;
-                var pageDown = event.keyCode === constants_1.Constants.KEY_PAGE_DOWN;
-                if (pageUp || pageDown) {
-                    event.preventDefault();
-                }
+            var pageUp = event.keyCode === constants_1.Constants.KEY_PAGE_UP;
+            var pageDown = event.keyCode === constants_1.Constants.KEY_PAGE_DOWN;
+            if (pageUp || pageDown) {
+                event.preventDefault();
             }
         });
     };
@@ -116,7 +103,7 @@ var TextCellEditor = /** @class */ (function (_super) {
     TextCellEditor.prototype.isPopup = function () {
         return false;
     };
-    TextCellEditor.TEMPLATE = '<div class="ag-input-wrapper"><input class="ag-cell-edit-input" type="text"/></div>';
+    TextCellEditor.TEMPLATE = '<div class="ag-input-wrapper" role="presentation"><input class="ag-cell-edit-input" type="text"/></div>';
     return TextCellEditor;
 }(popupComponent_1.PopupComponent));
 exports.TextCellEditor = TextCellEditor;

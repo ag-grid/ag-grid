@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -34,8 +34,8 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     protected abstract createBodyTemplate(): string;
     protected abstract resetUiToDefaults(): void;
     protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
-    protected abstract getModelFromUi(): ProvidedFilterModel | null;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
+    abstract getModelFromUi(): ProvidedFilterModel | null;
     private appliedModel;
     private onBtApplyDebounce;
     /** @deprecated */
@@ -49,9 +49,10 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     getModel(): ProvidedFilterModel;
     setModel(model: ProvidedFilterModel): void;
     private onBtClear;
-    protected updateModel(): boolean;
+    applyModel(): boolean;
     private onBtApply;
     onNewRowsLoaded(): void;
+    protected isNewRowsActionKeep(): boolean;
     protected onUiChanged(afterFloatingFilter?: boolean): void;
     private createTemplate;
     static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number;

@@ -1,26 +1,14 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = require("../context/context");
 var columnGroup_1 = require("./columnGroup");
 var column_1 = require("./column");
 var eventService_1 = require("../eventService");
-var columnApi_1 = require("../columnController/columnApi");
-var gridApi_1 = require("../gridApi");
 var OriginalColumnGroup = /** @class */ (function () {
     function OriginalColumnGroup(colGroupDef, groupId, padding, level) {
         this.localEventService = new eventService_1.EventService();
@@ -97,15 +85,7 @@ var OriginalColumnGroup = /** @class */ (function () {
         });
     };
     OriginalColumnGroup.prototype.getColumnGroupShow = function () {
-        if (!this.padding) {
-            return this.colGroupDef.columnGroupShow;
-        }
-        else {
-            // if this is padding we have exactly only child. we then
-            // take the value from the child and push it up, making
-            // this group 'invisible'.
-            return this.children[0].getColumnGroupShow();
-        }
+        return this.padding ? columnGroup_1.ColumnGroup.HEADER_GROUP_PADDING : this.colGroupDef.columnGroupShow;
     };
     // need to check that this group has at least one col showing when both expanded and contracted.
     // if not, then we don't allow expanding and contracting on this group
@@ -144,6 +124,10 @@ var OriginalColumnGroup = /** @class */ (function () {
             else {
                 atLeastOneShowingWhenOpen = true;
                 atLeastOneShowingWhenClosed = true;
+                if (headerGroupShow === columnGroup_1.ColumnGroup.HEADER_GROUP_PADDING) {
+                    var column = abstractColumn;
+                    atLeastOneChangeable = column.children.some(function (child) { return child.getColumnGroupShow() !== undefined; });
+                }
             }
         }
         var expandable = atLeastOneShowingWhenOpen && atLeastOneShowingWhenClosed && atLeastOneChangeable;
@@ -177,14 +161,6 @@ var OriginalColumnGroup = /** @class */ (function () {
     };
     OriginalColumnGroup.EVENT_EXPANDED_CHANGED = 'expandedChanged';
     OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
-    __decorate([
-        context_1.Autowired('columnApi'),
-        __metadata("design:type", columnApi_1.ColumnApi)
-    ], OriginalColumnGroup.prototype, "columnApi", void 0);
-    __decorate([
-        context_1.Autowired('gridApi'),
-        __metadata("design:type", gridApi_1.GridApi)
-    ], OriginalColumnGroup.prototype, "gridApi", void 0);
     return OriginalColumnGroup;
 }());
 exports.OriginalColumnGroup = OriginalColumnGroup;

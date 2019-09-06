@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -9,10 +9,11 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 export declare class Component extends BeanStub {
-    static EVENT_VISIBLE_CHANGED: string;
+    static EVENT_DISPLAYED_CHANGED: string;
     private eGui;
     private childComponents;
     private annotatedEventListeners;
+    private displayed;
     private visible;
     protected parentComponent: Component | undefined;
     private compId;
@@ -37,8 +38,9 @@ export declare class Component extends BeanStub {
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;
     appendChild(newChild: Node | IComponent<any>): void;
     addFeature(context: Context, feature: BeanStub): void;
-    isVisible(): boolean;
-    setVisible(visible: boolean, visibilityMode?: 'display' | 'visibility'): void;
+    isDisplayed(): boolean;
+    setVisible(visible: boolean): void;
+    setDisplayed(displayed: boolean): void;
     addOrRemoveCssClass(className: string, addOrRemove: boolean): void;
     destroy(): void;
     addGuiEventListener(event: string, listener: (event: any) => void): void;

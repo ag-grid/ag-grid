@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "../gridPanel/gridPanel";
@@ -29,6 +29,7 @@ export declare class RowRenderer extends BeanStub {
     private beans;
     private maxDivHeightScaler;
     private animationFrameService;
+    private rowPositionUtils;
     private rangeController;
     private gridPanel;
     private destroyFuncsForColumnListeners;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,7 +51,7 @@ var HeaderRowType;
 var HeaderRowComp = /** @class */ (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, type, pinned, dropTarget) {
-        var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"presentation\"/>") || this;
+        var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"row\"/>") || this;
         _this.headerComps = {};
         _this.dept = dept;
         _this.type = type;

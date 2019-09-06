@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -134,7 +134,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         var floatingFilterCompUi = floatingFilterComp.getGui();
         utils_1._.addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-body', !this.suppressFilterButton);
         utils_1._.addOrRemoveCssClass(this.eFloatingFilterBody, 'ag-floating-filter-full-body', this.suppressFilterButton);
-        utils_1._.setVisible(this.eButtonWrapper, !this.suppressFilterButton);
+        utils_1._.setDisplayed(this.eButtonWrapper, !this.suppressFilterButton);
         var eIcon = utils_1._.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
         this.eButtonShowMainFilter.appendChild(eIcon);
         this.eFloatingFilterBody.appendChild(floatingFilterCompUi);
@@ -194,7 +194,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         return resolvedComponent ? resolvedComponent.component : null;
     };
     FloatingFilterWrapper.prototype.setupEmpty = function () {
-        utils_1._.setVisible(this.eButtonWrapper, false);
+        utils_1._.setDisplayed(this.eButtonWrapper, false);
     };
     FloatingFilterWrapper.prototype.currentParentModel = function () {
         var filterPromise = this.filterManager.getFilterComponent(this.column, 'NO_UI');
@@ -223,7 +223,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         text: 'agTextColumnFloatingFilter',
         agTextColumnFilter: 'agTextColumnFloatingFilter'
     };
-    FloatingFilterWrapper.TEMPLATE = "<div class=\"ag-header-cell\" aria-hidden=\"true\">\n            <div ref=\"eFloatingFilterBody\" aria-hidden=\"true\"></div>\n            <div class=\"ag-floating-filter-button\" ref=\"eButtonWrapper\" aria-hidden=\"true\">\n                    <button type=\"button\" ref=\"eButtonShowMainFilter\"></button>\n            </div>\n        </div>";
+    FloatingFilterWrapper.TEMPLATE = "<div class=\"ag-header-cell\" role=\"presentation\">\n            <div ref=\"eFloatingFilterBody\" role=\"columnheader\"></div>\n            <div class=\"ag-floating-filter-button\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" ref=\"eButtonShowMainFilter\"></button>\n            </div>\n        </div>";
     __decorate([
         context_1.Autowired('columnHoverService'),
         __metadata("design:type", columnHoverService_1.ColumnHoverService)

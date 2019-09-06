@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -348,8 +348,8 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         }
         return result;
     };
-    HeaderGroupWrapperComp.TEMPLATE = '<div class="ag-header-group-cell">' +
-        '<div ref="agResize" class="ag-header-cell-resize"></div>' +
+    HeaderGroupWrapperComp.TEMPLATE = '<div class="ag-header-group-cell" role="presentation">' +
+        '<div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>' +
         '</div>';
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),

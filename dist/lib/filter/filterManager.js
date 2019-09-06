@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -320,7 +320,8 @@ var FilterManager = /** @class */ (function () {
                 node: rowNode,
                 data: rowNode.data,
                 column: column,
-                colDef: colDef
+                colDef: colDef,
+                context: this.gridOptionsWrapper.getContext()
             };
             valueAfterCallback = column.getColDef().getQuickFilterText(params);
         }
@@ -398,21 +399,28 @@ var FilterManager = /** @class */ (function () {
         if (this.gridOptionsWrapper.isEnterprise()) {
             defaultFilter = 'agSetColumnFilter';
         }
-        var event = {
-            type: events_1.Events.EVENT_FILTER_MODIFIED,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
         var sanitisedColDef = utils_1._.cloneObject(column.getColDef());
+        var filterInstance;
         var params = this.createFilterParams(column, sanitisedColDef, $scope);
         params.filterChangedCallback = this.onFilterChanged.bind(this);
-        params.filterModifiedCallback = function () { return _this.eventService.dispatchEvent(event); };
+        params.filterModifiedCallback = function () {
+            var event = {
+                type: events_1.Events.EVENT_FILTER_MODIFIED,
+                api: _this.gridApi,
+                columnApi: _this.columnApi,
+                column: column,
+                filterInstance: filterInstance
+            };
+            _this.eventService.dispatchEvent(event);
+        };
         // we modify params in a callback as we need the filter instance, and this isn't available
         // when creating the params above
         var modifyParamsCallback = function (params, filter) { return utils_1._.assign(params, {
             doesRowPassOtherFilter: _this.doesRowPassOtherFilters.bind(_this, filter),
         }); };
-        return this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);
+        var res = this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);
+        res.then(function (r) { return filterInstance = r; });
+        return res;
     };
     FilterManager.prototype.createFilterParams = function (column, colDef, $scope) {
         if ($scope === void 0) { $scope = null; }

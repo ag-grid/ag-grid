@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,6 +15,8 @@ var ChartType;
     ChartType["StackedBar"] = "stackedBar";
     ChartType["NormalizedBar"] = "normalizedBar";
     ChartType["Line"] = "line";
+    ChartType["Scatter"] = "scatter";
+    ChartType["Bubble"] = "bubble";
     ChartType["Pie"] = "pie";
     ChartType["Doughnut"] = "doughnut";
     ChartType["Area"] = "area";

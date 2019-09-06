@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -45,9 +45,9 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     getRowNode(id: string): RowNode | null;
     forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
     getCurrentPageHeight(): number;
+    getTopLevelRowCount(): number;
+    getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     getRowIndexAtPixel(pixel: number): number;
-    getPageFirstRow(): number;
-    getPageLastRow(): number;
     getRowCount(): number;
     updateRowData(transaction: RowDataTransaction): void;
     isRowPresent(rowNode: RowNode): boolean;

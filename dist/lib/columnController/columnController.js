@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1302,7 +1302,7 @@ var ColumnController = /** @class */ (function () {
         var columnStates = [];
         // we start at 1000, so if user has mix of rowGroup and group specified, it will work with both.
         // eg IF user has ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=true,
-        // THEN result will be ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=-1000
+        // THEN result will be ColA.rowGroupIndex=0, ColB.rowGroupIndex=1, ColC.rowGroup=1000
         var letRowGroupIndex = 1000;
         var letPivotIndex = 1000;
         if (primaryColumns) {
@@ -1331,7 +1331,7 @@ var ColumnController = /** @class */ (function () {
         }
         this.setColumnState(columnStates, suppressEverythingEvent, source);
     };
-    ColumnController.prototype.setColumnState = function (columnState, suppressEverythingEvent, source) {
+    ColumnController.prototype.setColumnState = function (columnStates, suppressEverythingEvent, source) {
         var _this = this;
         if (suppressEverythingEvent === void 0) { suppressEverythingEvent = false; }
         if (source === void 0) { source = "api"; }
@@ -1349,20 +1349,20 @@ var ColumnController = /** @class */ (function () {
         var rowGroupIndexes = {};
         var pivotIndexes = {};
         var autoGroupColumnStates = [];
-        if (columnState) {
-            columnState.forEach(function (stateItem) {
+        if (columnStates) {
+            columnStates.forEach(function (state) {
                 // auto group columns are re-created so deferring syncing with ColumnState
-                if (utils_1._.exists(_this.getAutoColumn(stateItem.colId))) {
-                    autoGroupColumnStates.push(stateItem);
+                if (utils_1._.exists(_this.getAutoColumn(state.colId))) {
+                    autoGroupColumnStates.push(state);
                     return;
                 }
-                var column = _this.getPrimaryColumn(stateItem.colId);
+                var column = _this.getPrimaryColumn(state.colId);
                 if (!column) {
-                    console.warn('ag-grid: column ' + stateItem.colId + ' not found');
+                    console.warn('ag-grid: column ' + state.colId + ' not found');
                     success = false;
                 }
                 else {
-                    _this.syncColumnWithStateItem(column, stateItem, rowGroupIndexes, pivotIndexes, source);
+                    _this.syncColumnWithStateItem(column, state, rowGroupIndexes, pivotIndexes, source);
                     utils_1._.removeFromArray(columnsWithNoState, column);
                 }
             });
@@ -1378,14 +1378,19 @@ var ColumnController = /** @class */ (function () {
             var autoCol = _this.getAutoColumn(stateItem.colId);
             _this.syncColumnWithStateItem(autoCol, stateItem, rowGroupIndexes, pivotIndexes, source);
         });
-        if (columnState) {
-            var orderOfColIds_1 = columnState.map(function (stateItem) { return stateItem.colId; });
+        if (columnStates) {
+            var orderOfColIds_1 = columnStates.map(function (stateItem) { return stateItem.colId; });
             this.gridColumns.sort(function (colA, colB) {
                 var indexA = orderOfColIds_1.indexOf(colA.getId());
                 var indexB = orderOfColIds_1.indexOf(colB.getId());
                 return indexA - indexB;
             });
         }
+        // this is already done in updateGridColumns, however we changed the order above (to match the order of the state
+        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
+        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
+        // is less sexy for the code here, but it keeps consistency.
+        this.putFixedColumnsFirst();
         this.updateDisplayedColumns(source);
         if (!suppressEverythingEvent) {
             var event_8 = {
@@ -1608,7 +1613,7 @@ var ColumnController = /** @class */ (function () {
         if (key == null) {
             return null;
         }
-        var column = this.getPrimaryColumn(key);
+        var column = this.getGridColumn(key);
         if (!column) {
             console.warn('ag-Grid: could not find column ' + key);
         }

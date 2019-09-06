@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -8,6 +8,8 @@ import { GridApi } from "./gridApi";
 import { ColumnApi } from "./columnController/columnApi";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { FilterRequestSource } from "./filter/filterManager";
+import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
+import { IFilterComp } from "./interfaces/iFilter";
 export { Events } from './eventKeys';
 export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
@@ -58,6 +60,8 @@ export interface SelectionChangedEvent extends AgGridEvent {
 export interface FilterChangedEvent extends AgGridEvent {
 }
 export interface FilterModifiedEvent extends AgGridEvent {
+    filterInstance: IFilterComp;
+    column: Column;
 }
 export interface FilterOpenedEvent extends AgGridEvent {
     column: Column;
@@ -123,6 +127,10 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
 }
 export interface ChartRangeSelectionChanged extends AgGridEvent {
 }
+export interface ChartOptionsChanged extends AgEvent {
+    chartType: ChartType;
+    chartOptions: ChartOptions;
+}
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
     columnGroup: OriginalColumnGroup;
 }
@@ -156,7 +164,7 @@ export interface ExpandCollapseAllEvent extends AgGridEvent {
 /**---------------*/
 /** COLUMN EVENTS */
 /**---------------*/
-export declare type ColumnEventType = "sizeColumnsToFit" | "autosizeColumns" | "alignedGridChanged" | "filterChanged" | "filterDestroyed" | "gridOptionsChanged" | "gridInitializing" | "toolPanelDragAndDrop" | "toolPanelUi" | "uiColumnMoved" | "uiColumnResized" | "uiColumnDragged" | "uiColumnExpanded" | "uiColumnSorted" | "contextMenu" | "columnMenu" | "rowModelUpdated" | "api";
+export declare type ColumnEventType = "sizeColumnsToFit" | "autosizeColumns" | "alignedGridChanged" | "filterChanged" | "filterDestroyed" | "gridOptionsChanged" | "gridInitializing" | "toolPanelDragAndDrop" | "toolPanelUi" | "uiColumnMoved" | "uiColumnResized" | "uiColumnDragged" | "uiColumnExpanded" | "uiColumnSorted" | "contextMenu" | "columnMenu" | "rowModelUpdated" | "api" | "pivotChart";
 export interface ColumnEvent extends AgGridEvent {
     column: Column | null;
     columns: Column[] | null;

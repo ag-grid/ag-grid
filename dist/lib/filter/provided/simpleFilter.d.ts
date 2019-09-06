@@ -1,9 +1,9 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ProvidedFilterModel, IDoesFilterPassParams, IFilterOptionDef } from "../../interfaces/iFilter";
+import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from "../../interfaces/iFilter";
 import { OptionsFactory } from "./optionsFactory";
-import { ProvidedFilter, IProvidedFilterParams } from "./providedFilter";
+import { IProvidedFilterParams, ProvidedFilter } from "./providedFilter";
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
@@ -59,7 +59,7 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     protected showValueTo(type: string): boolean;
     onFloatingFilterChanged(type: string, value: any): void;
     protected setTypeFromFloatingFilter(type: string): void;
-    protected getModelFromUi(): M | ICombinedSimpleModel<M>;
+    getModelFromUi(): M | ICombinedSimpleModel<M>;
     protected getCondition1Type(): string;
     protected getCondition2Type(): string;
     protected getJoinOperator(): string;

@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,6 +58,7 @@ var sortService_1 = require("./rowNodes/sortService");
 var filterService_1 = require("./rowNodes/filterService");
 var autoGroupColService_1 = require("./columnController/autoGroupColService");
 var paginationProxy_1 = require("./rowModels/paginationProxy");
+var paginationAutoPageSizeService_1 = require("./rowModels/paginationAutoPageSizeService");
 var immutableService_1 = require("./rowModels/clientSide/immutableService");
 var constants_1 = require("./constants");
 var valueCache_1 = require("./valueService/valueCache");
@@ -94,6 +95,8 @@ var agSelect_1 = require("./widgets/agSelect");
 var agAngleSelect_1 = require("./widgets/agAngleSelect");
 var agToggleButton_1 = require("./widgets/agToggleButton");
 var detailRowCompCache_1 = require("./rendering/detailRowCompCache");
+var rowPosition_1 = require("./entities/rowPosition");
+var cellPosition_1 = require("./entities/cellPosition");
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -164,7 +167,8 @@ var Grid = /** @class */ (function () {
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [
                 // this should only contain SERVICES, it should NEVER contain COMPONENTS
-                rowModelClass, beans_1.Beans, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, userComponentRegistry_1.UserComponentRegistry, agComponentUtils_1.AgComponentUtils,
+                rowModelClass, beans_1.Beans, rowPosition_1.RowPositionUtils, cellPosition_1.CellPositionUtils,
+                paginationAutoPageSizeService_1.PaginationAutoPageSizeService, gridApi_1.GridApi, userComponentRegistry_1.UserComponentRegistry, agComponentUtils_1.AgComponentUtils,
                 componentMetadataProvider_1.ComponentMetadataProvider, resizeObserverService_1.ResizeObserverService, userComponentRegistry_1.UserComponentRegistry, userComponentFactory_1.UserComponentFactory,
                 maxDivHeightScaler_1.MaxDivHeightScaler, autoHeightCalculator_1.AutoHeightCalculator, cellRendererFactory_1.CellRendererFactory, horizontalResizeService_1.HorizontalResizeService,
                 pinnedRowModel_1.PinnedRowModel, dragService_1.DragService, displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, popupService_1.PopupService,

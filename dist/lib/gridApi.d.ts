@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -54,7 +54,7 @@ export interface ChartRangeParams {
     chartType: ChartType;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
-    aggregate?: boolean;
+    aggFunc?: string | IAggFunc;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 export interface DetailGridInfo {
@@ -90,7 +90,7 @@ export declare class GridApi {
     private sideBarComp;
     private animationFrameService;
     private statusBarService;
-    private rangeChartService;
+    private chartService;
     private gridPanel;
     private gridCore;
     private headerRootComp;
@@ -168,6 +168,7 @@ export declare class GridApi {
     isColumnFilterPresent(): boolean;
     isQuickFilterPresent(): boolean;
     getModel(): IRowModel;
+    setRowNodeExpanded(rowNode: RowNode, expanded: boolean): void;
     onGroupExpandedOrCollapsed(deprecated_refreshFromIndex?: any): void;
     refreshInMemoryRowModel(step?: string): any;
     refreshClientSideRowModel(step?: string): any;

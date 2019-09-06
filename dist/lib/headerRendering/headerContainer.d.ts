@@ -1,7 +1,8 @@
-// Type definitions for ag-grid-community v21.1.1
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "../gridPanel/gridPanel";
+import { HeaderRowComp } from "./headerRowComp";
 import { Component } from "../widgets/component";
 export declare class HeaderContainer {
     private gridOptionsWrapper;
@@ -28,6 +29,7 @@ export declare class HeaderContainer {
     private onScrollVisibilityChanged;
     private setWidthOfPinnedContainer;
     destroy(): void;
+    getRowComps(): HeaderRowComp[];
     private onGridColumnsChanged;
     private removeAndCreateAllRowComps;
     refresh(): void;

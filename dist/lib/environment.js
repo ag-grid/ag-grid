@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.1.1
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,20 +37,57 @@ var HARD_CODED_SIZES = {
         rowHeight: BALHAM_GRID_SIZE * 7
     }
 };
+/**
+ * this object contains a list of Sass variables and an array
+ * of CSS styles required to get the correct value.
+ * eg. $virtual-item-height requires a structure, so we can get it's height.
+ * <div class="ag-theme-balham">
+ *     <div class="ag-virtual-list-container">
+ *         <div class="ag-virtual-list-item"></div>
+ *     </div>
+ */
+var SASS_PROPERTY_BUILDER = {
+    headerHeight: ['ag-header-row'],
+    virtualItemHeight: ['ag-virtual-list-container', 'ag-virtual-list-item'],
+    rowHeight: ['ag-row']
+};
+var CALCULATED_SIZES = {};
 var Environment = /** @class */ (function () {
     function Environment() {
     }
     Environment.prototype.getSassVariable = function (theme, key) {
-        if (theme == 'ag-theme-material') {
-            return HARD_CODED_SIZES['ag-theme-material'][key];
+        var useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : (theme.match('balham') ? 'balham' : 'classic'));
+        var defaultValue = HARD_CODED_SIZES[useTheme][key];
+        var calculatedValue = 0;
+        if (!CALCULATED_SIZES[theme]) {
+            CALCULATED_SIZES[theme] = {};
         }
-        else if (theme == 'ag-theme-balham' || theme == 'ag-theme-balham-dark') {
-            return HARD_CODED_SIZES['ag-theme-balham'][key];
+        if (CALCULATED_SIZES[theme][key]) {
+            return CALCULATED_SIZES[theme][key];
         }
-        return HARD_CODED_SIZES['ag-theme-classic'][key];
+        if (SASS_PROPERTY_BUILDER[key]) {
+            var classList = SASS_PROPERTY_BUILDER[key];
+            var div = document.createElement('div');
+            var el = classList.reduce(function (el, currentClass, idx) {
+                if (idx === 0) {
+                    utils_1._.addCssClass(el, theme);
+                }
+                var div = document.createElement('div');
+                utils_1._.addCssClass(div, currentClass);
+                el.appendChild(div);
+                return div;
+            }, div);
+            if (document.body) {
+                document.body.appendChild(div);
+                calculatedValue = parseInt(window.getComputedStyle(el).height, 10);
+                document.body.removeChild(div);
+            }
+        }
+        CALCULATED_SIZES[theme][key] = calculatedValue || defaultValue;
+        return CALCULATED_SIZES[theme][key];
     };
     Environment.prototype.isThemeDark = function () {
-        var theme = this.getTheme();
+        var theme = this.getTheme().theme;
         return !!theme && theme.indexOf('dark') >= 0;
     };
     Environment.prototype.getTheme = function () {
@@ -59,13 +96,15 @@ var Environment = /** @class */ (function () {
         var themeMatch;
         while (el) {
             themeMatch = reg.exec(el.className);
-            el = el.parentElement;
-            if (el == null || themeMatch) {
+            if (!themeMatch) {
+                el = el.parentElement;
+            }
+            else {
                 break;
             }
         }
         if (!themeMatch) {
-            return;
+            return {};
         }
         var theme = themeMatch[0];
         var usingOldTheme = themeMatch[2] === undefined;
@@ -73,7 +112,7 @@ var Environment = /** @class */ (function () {
             var newTheme_1 = theme.replace('ag-', 'ag-theme-');
             utils_1._.doOnce(function () { return console.warn("ag-Grid: As of v19 old theme are no longer provided. Please replace " + theme + " with " + newTheme_1 + "."); }, 'using-old-theme');
         }
-        return theme;
+        return { theme: theme, el: el };
     };
     __decorate([
         context_1.Autowired('eGridDiv'),
