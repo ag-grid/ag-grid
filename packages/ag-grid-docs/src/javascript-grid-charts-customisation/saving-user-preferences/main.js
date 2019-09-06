@@ -99,7 +99,7 @@ function createChartContainer(chartRef) {
 }
 
 function onFirstDataRendered(params) {
-    let createRangeChartParams = {
+    var createRangeChartParams = {
         cellRange: {
             columns: ['sugar', 'fat', 'weight']
         },
