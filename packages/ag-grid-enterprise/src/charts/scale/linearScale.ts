@@ -165,7 +165,7 @@ export function numberDeinterpolatorFactory(a: number, b: number): Deinterpolato
  */
 export default function scaleLinear() {
     // const scale = new LinearScale<number>(numberReinterpolatorFactory, numberDeinterpolatorFactory, ascending);
-    const scale = new LinearScale<number>();
+    const scale = new LinearScale();
     scale.range = [0, 1];
     return scale;
 }

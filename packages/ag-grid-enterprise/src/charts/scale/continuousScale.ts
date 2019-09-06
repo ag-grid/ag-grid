@@ -41,7 +41,7 @@ export interface InterpolatorFactory<T, U> {
     (a: T, b: T): ((t: number) => U);
 }
 
-export default abstract class ContinuousScale<R> implements Scale<number, R> {
+export default abstract class ContinuousScale implements Scale<any, any> {
     /**
      * The output value of the scale for `undefined` or `NaN` input values.
      */
@@ -55,40 +55,46 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
         return this._clamp !== identity;
     }
 
-    protected _domain: number[] = [0, 1];
-    set domain(values: number[]) {
+    protected _domain: any[] = [0, 1];
+    protected setDomain(values: any[]) {
         this._domain = Array.prototype.map.call(values, (v: any) => +v);
         if (this._clamp !== identity) {
             this._clamp = clamper(this.domain);
         }
         this.rescale();
     }
-    get domain(): number[] {
+    protected getDomain(): any[] {
         return this._domain.slice();
     }
+    set domain(values: any[]) {
+        this.setDomain(values);
+    }
+    get domain(): any[] {
+        return this.getDomain();
+    }
 
-    protected _range: R[] = [];
-    set range(values: R[]) {
+    protected _range: any[] = [];
+    set range(values: any[]) {
         this._range = Array.prototype.slice.call(values);
         this.rescale();
     }
-    get range(): R[] {
+    get range(): any[] {
         return this._range.slice();
     }
 
-    private input?: (t: R) => number; // D
-    private output?: (t: number) => R;
+    private input?: (y: any) => any;   // y -> x
+    private output?: (x: any) => any;  // x -> y
     private piecewise?: (domain: any[], range: any[], interpolate: (a: any, b: any) => (t: number) => any) => (x: any) => any;
 
-    protected transform: (x: number) => number = identity;   // returns t in [0, 1]
-    protected untransform: (x: number) => number = identity;
+    protected transform: (x: any) => any = identity;   // transforms domain value
+    protected untransform: (x: any) => any = identity; // untransforms domain value
 
     // constructor(transform: (x: number) => R, untransform: (x: R) => number) {
     //     this.transform = transform;
     //     this.untransform = untransform;
     // }
 
-    private _interpolate: InterpolatorFactory<any, any> = interpolateValue;
+    private _interpolate: (a: any, b: any) => (t: any) => any = interpolateValue;
     set interpolate(value: any) {
         this._interpolate = value;
         this.rescale();
@@ -118,14 +124,14 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
             : constant(isNaN(b) ? NaN : 0.5);
     }
 
-    private bimap(domain: any[], range: R[], interpolate: (a: any, b: any) => (t: number) => any): (x: any) => R {
+    private bimap(domain: any[], range: any[], interpolate: (a: any, b: any) => (t: number) => any): (x: any) => any {
         const x0 = domain[0];
         const x1 = domain[1];
         const y0 = range[0];
         const y1 = range[1];
 
         let xt: Deinterpolator<any>;
-        let ty: Reinterpolator<R>;
+        let ty: Reinterpolator<any>;
 
         if (x1 < x0) {
             xt = this.normalize(x1, x0);
@@ -138,7 +144,7 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
         return (x) => ty(xt(x)); // domain value x --> t in [0, 1] --> range value y
     }
 
-    private polymap(domain: any[], range: R[], interpolate: (a: any, b: any) => (t: number) => any): Reinterpolator<R> {
+    private polymap(domain: any[], range: any[], interpolate: (a: any, b: any) => (t: number) => any): Reinterpolator<any> {
         // number of segments in the polylinear scale
         const n = Math.min(domain.length, range.length) - 1;
 
@@ -159,7 +165,7 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
         };
     }
 
-    convert(x: number): R {
+    convert(x: any): any {
         x = +x;
         if (isNaN(x)) {
             return this.unknown;
@@ -171,7 +177,7 @@ export default abstract class ContinuousScale<R> implements Scale<number, R> {
         }
     }
 
-    invert(y: R): number {
+    invert(y: any): any {
         if (!this.input) {
             this.input = this.piecewise!(this.range, this.domain.map(this.transform), interpolateNumber);
         }
