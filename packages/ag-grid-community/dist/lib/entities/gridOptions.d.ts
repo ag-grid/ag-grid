@@ -321,10 +321,12 @@ export interface GridOptions {
         new (): ILoadingOverlayComp;
     } | string;
     loadingOverlayComponentFramework?: any;
+    loadingOverlayComponentParams?: any;
     noRowsOverlayComponent?: {
         new (): INoRowsOverlayComp;
     } | string;
     noRowsOverlayComponentFramework?: any;
+    noRowsOverlayComponentParams?: any;
     fullWidthCellRenderer?: {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
