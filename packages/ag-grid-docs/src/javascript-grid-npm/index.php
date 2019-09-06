@@ -8,7 +8,13 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Install ag-Grid with NPM</h1>
 
-    <p>Both ag-Grid Community and ag-Grid Enterprise are available as NPM packages, even if you don't intend to use them with a particular JavaScript framework. To install ag-Grid, run</p>
+    <p class="lead">
+        Both ag-Grid Community and ag-Grid Enterprise are available as NPM packages.
+    </p>
+
+    <p>
+        To install ag-Grid, run:
+    </p>
 
 <snippet language="sh">
 npm install --save ag-grid-community

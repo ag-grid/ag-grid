@@ -114,8 +114,8 @@ function onBtPreviousCell() {
 }
 
 function onBtWhich() {
-    let cellDefs = gridOptions.api.getEditingCells();
-    if (cellDefs.length>0) {
+    var cellDefs = gridOptions.api.getEditingCells();
+    if (cellDefs.length > 0) {
         var cellDef = cellDefs[0];
         console.log('editing cell is: row = ' + cellDef.rowIndex + ', col = ' + cellDef.column.getId()
             + ', floating = ' + cellDef.floating);

@@ -35,13 +35,9 @@
     }
 }
 
-header {
-    position: fixed;
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    width: 100%;
-    z-index: 999999;
+
+h2 {
+    -webkit-font-smoothing: antialiased;
 }
 
 .info-page {
@@ -110,18 +106,8 @@ header {
     }
 }
 
-.get-started-btn {
-    background-color: white;
-    border-radius: 5px;
-    padding: 15px;
-    font-size: 20px;
-    margin: 0 10px;
-    &:hover {
-        text-decoration: none;
-    }
-}
-
 #news-flash {
+    -webkit-font-smoothing: antialiased;
     & > div {
         @extend .text-center, .col, %card, .py-3, .display-5, .mb-5;
         color: $gray-700;
@@ -147,9 +133,36 @@ header {
     }
 }
 
+#stage-description {
+    @extend %stage;
+    font-weight: 400;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    section {
+        display: flex;
+        flex-direction: row;
+        line-height: 1.7;
+        h3 {
+            margin-bottom: 2rem;
+            color: #6d6d6d;
+            padding-top: 0;
+            font-weight: 300;
+        }
+        > div {
+            margin: 0px 20px;
+            flex: 0 1 30%;
+        }
+        p {
+            text-align: justify;
+            padding: 0 10px 0 0;
+        }
+    }
+}
+
 #stage-frameworks {
     @extend %stage;
     background-color: $offwhite;
+    -webkit-font-smoothing: antialiased;
 
     section#section-frameworks {
         @extend .align-items-center;
@@ -252,53 +265,10 @@ header {
     }
 }
 
-#stage-testimonials {
-    @extend %stage;
-
-    section {
-        & > div {
-            @extend .media;
-            @extend .col-sm-4;
-
-            img {
-                @extend .rounded-circle, .mt-4, .mr-4;
-                box-shadow: 0 1px 2px black;
-                width: 4rem;
-            }
-
-            & > div {
-                @extend .media-body;
-            }
-        }
-
-        blockquote {
-            @extend .blockquote;
-            font-size: 90%;
-        }
-
-        p {
-            margin-top: 1rem;
-            &:before {
-                content: "\201C";
-            }
-
-            &:after {
-                content: "\201D";
-            }
-        }
-
-        footer {
-            @extend .blockquote-footer;
-
-            .position {
-                display: block;
-            }
-        }
-    }
-}
 
 #stage-sponsorships {
     @extend %stage;
+    -webkit-font-smoothing: antialiased;
     background-color: $offwhite;
 
     #sponsorships {
@@ -334,8 +304,38 @@ header {
     }
 }
 
+.main-buttons {
+    -webkit-font-smoothing: antialiased;
+    background-color: #ebebeb;
+    display: flex;
+    justify-content: center;
+
+    .get-started-btn {
+        border-radius: 5px;
+        padding: 15px 25px;
+        font-size: 20px;
+        margin: 20px;
+        border: 1px solid #125082;
+        background-color: #125082;
+        color: darken(white, 10%);
+        &:hover {
+            color: white;
+            text-decoration: none;
+        }
+    }
+
+    .get-started-btn:not(:first-of-type) {
+        background-color: transparent;
+        color: #125082;
+        &:hover {
+            color: lighten(#125082, 10%);
+        }
+    }
+}
+
 .stage-scenarios {
     @extend %stage;
+    -webkit-font-smoothing: antialiased;
     background-color: $offwhite;
 
     @include media-breakpoint-down(sm) {
@@ -417,12 +417,13 @@ header {
             @extend .rounded;
             border: 1px solid $gray-400;
             width: 100%;
-            height: 600px;
+            height: 515px;
         }
     }
 }
 
 #stage-show-me-more {
+    -webkit-font-smoothing: antialiased;
     padding-top: 3rem;
     margin-bottom: 0;
     border-bottom: 0;
@@ -438,6 +439,7 @@ header {
 }
 
 #stage-feature-highlights {
+    -webkit-font-smoothing: antialiased;
     padding-top: 3rem;
     margin-bottom: 0;
     border-bottom: 0;

@@ -15,8 +15,8 @@ var gridOptions = {
     components: {
         myDetailCellRenderer: DetailCellRenderer
     },
-    onGridReady: function(params) {
-        params.api.forEachNode(function (node) {
+    onFirstDataRendered: function(params) {
+        params.api.forEachNode(function(node) {
             node.setExpanded(node.id === "1");
         });
     }

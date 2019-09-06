@@ -22,22 +22,17 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData: function (params) {
+        getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         }
     },
-    onGridReady: function (params) {
+    onFirstDataRendered: function(params) {
         // arbitrarily expand a row for presentational purposes
-        setTimeout(function () {
-            var rowCount = 0;
-            params.api.forEachNode(function (node) {
-                node.setExpanded(rowCount++ === 1);
-            });
-        }, 500);
+        setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);
     }
 };
 

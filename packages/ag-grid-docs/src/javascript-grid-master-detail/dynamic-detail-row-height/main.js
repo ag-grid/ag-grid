@@ -18,19 +18,19 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            onGridReady: function (params) {
+            onGridReady: function(params) {
                 // using auto height to fit the height of the the detail grid
                 params.api.setDomLayout('autoHeight');
             },
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData: function (params) {
+        getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         }
     },
-    getRowHeight: function (params) {
+    getRowHeight: function(params) {
         if (params.node && params.node.detail) {
             var offset = 80;
             var allDetailRowHeight = params.data.callRecords.length * 28;
@@ -40,17 +40,11 @@ var gridOptions = {
             return 60;
         }
     },
-    onGridReady: function (params) {
-        // arbitrarily expand a row for presentational purposes
-        setTimeout(function () {
-            var rowCount = 0;
-            params.api.forEachNode(function (node) {
-                node.setExpanded(rowCount++ === 1);
-            });
-        }, 500);
-    },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
+
+        // arbitrarily expand a row for presentational purposes
+        setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);
     }
 };
 

@@ -13,7 +13,7 @@ var columnDefs = [
     {field: "bronze"} // inferred as series by grid
 ];
 
-let gridOptions = {
+var gridOptions = {
     defaultColDef: {
         width: 100,
         resizable: true
@@ -22,16 +22,16 @@ let gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
-    processChartOptions: function (params) {
-        let opts = params.options;
+    processChartOptions: function(params) {
+        var opts = params.options;
 
         opts.title = {text: "Medals by Age"};
         opts.legendPosition = 'bottom';
 
         opts.seriesDefaults.tooltipRenderer = function (params) {
-            let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-            let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-            let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+            var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+            var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
             return title + '<div class="content" style="text-align: center">' + value + '</div>';
         };
 
@@ -41,11 +41,11 @@ let gridOptions = {
 
         return opts;
     },
-    onFirstDataRendered: onFirstDataRendered
+    onFirstDataRendered: onFirstDataRendered,
 };
 
 function onFirstDataRendered(params) {
-    let chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 79,
@@ -56,8 +56,9 @@ function onFirstDataRendered(params) {
         aggFunc: 'sum'
     };
 
-    params.api.chartRange(chartRangeParams);
+    params.api.createRangeChart(createRangeChartParams);
 }
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');

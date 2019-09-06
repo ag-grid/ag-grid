@@ -141,6 +141,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             background: {
                 fill: this.getBackgroundColor()
             },
+            width: 800,
+            height: 400,
             padding: {
                 top: 20,
                 right: 20,

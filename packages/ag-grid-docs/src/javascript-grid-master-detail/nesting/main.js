@@ -26,23 +26,23 @@ var gridOptions = {
                 // level 3 grid options
                 detailGridOptions: {
                     columnDefs: [{field: 'a3', cellRenderer: 'agGroupCellRenderer'}, {field: 'b3'}],
-                    onFirstDataRendered(params) {
+                    onFirstDataRendered: function(params) {
                         params.api.sizeColumnsToFit();
                     }
                 },
-                getDetailRowData: function (params) {
+                getDetailRowData: function(params) {
                     params.successCallback(params.data.children);
                 }
             },
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData: function (params) {
+        getDetailRowData: function(params) {
             params.successCallback(params.data.children);
         }
     },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
     }
 };

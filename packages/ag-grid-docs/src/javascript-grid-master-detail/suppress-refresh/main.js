@@ -26,26 +26,20 @@ var gridOptions = {
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
                 {field: 'switchCode'}
             ],
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
-        getDetailRowData: function (params) {
+        getDetailRowData: function(params) {
             // params.successCallback([]);
             params.successCallback(params.data.callRecords);
         }
     },
-    onGridReady: function (params) {
-        // arbitrarily expand a row for presentational purposes
-        setTimeout(function () {
-            var rowCount = 0;
-            params.api.forEachNode(function (node) {
-                node.setExpanded(rowCount++ === 0);
-            });
-        }, 500);
-    },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
+
+        // arbitrarily expand a row for presentational purposes
+        setTimeout(function() { params.api.getDisplayedRowAtIndex(0).setExpanded(true); }, 0);
     }
 };
 

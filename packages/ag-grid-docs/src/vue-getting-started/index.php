@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Get Started with Vue Grid: ag-Grid Reference";
+$pageTitle = "Vue Grid";
 $pageDescription = "ag-Grid is a feature-rich Vue grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Vue application.";
 $pageKeyboards = "Vue Grid";
 $pageGroup = "basics";
@@ -8,13 +8,19 @@ include '../documentation-main/documentation_header.php';
 <script src="../_assets/js/copy-code.js"></script>
 <style><?php include '../_assets//pages/get-started.css'; ?></style>
 
-<h1>Get Started with ag-Grid in Your Vue Project</h1>
+<h1>Vue Grid | Get Started with ag-Grid and Vue</h1>
 
-<p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with zero dependencies. 
-ag-Grid supports Vue through a <strong>wrapper component</strong>. The wrapper lets you use ag-Grid in your application like any other Vue component &ndash; you pass configuration through property bindings and handle events through event bindings. 
-You can even use Vue components to customize the grid UI and cell contents / behavior.</p> 
+<p class="lead">
+    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid
+    engine is implemented in TypeScript with zero dependencies.
+    The grid supports Vue by providing a Vue Component version of the grid.
+    This allows you to use the grid as a component in your application like any other Vue
+    component &ndash; you pass configuration through property bindings and handle events through event bindings.
+    You can even use Vue components to customize the grid UI and cell contents / behavior.
+</p>
 
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Vue project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features</a> of it. 
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Vue project,
+    and configure some of the essential features of it.
 We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 
 <h2>Add ag-Grid to Your Project</h2>
@@ -503,18 +509,5 @@ header background color and even the amount of spacing in the cells and columns.
 
 <p>With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
 While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p> 
-
-<p>That's just scratching the surface, though. The grid has a lot more <a href="https://www.ag-grid.com/features-overview/">features to offer</a>; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
-
-<h2>Next Steps</h2> 
-
-<p>You are hungry for more? Head over to the <a href="../best-vuejs-data-grid/">Vue guides section</a> for more in-depth information about the Vue flavor of ag-Grid.  To learn more about the features used in this tutorial, you can go through the following help articles:</p>
-
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-sorting/" role="button">Sorting</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-filtering/" role="button">Filtering</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
-<a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
-<br><br>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -1,21 +1,21 @@
 <?php
-$pageTitle = "VueJS Datagrid | Packed with features and performance";
+$pageTitle = "VueJS Datagrid";
 $pageDescription = "Worlds leading, feature rich Vue Grid. Designed to integrate seamlessly with Vue to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Version 19 is out now.";
 $pageKeyboards = "VueJS Grid, Vue Grid, Vue Table";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
     <h1 id="implementing-the-vuejs-datagrid">
     Vue Grid | ag-Grid
     </h1>
 
     <h2 class="overview">Overview</h2>
     <p class="lead">
-        ag-Grid is designed to integrate deeply into React.<br>
-        Use our grid as a React component to quickly add a react grid table to your application.<br>
-        Discover key benefits and resources available to quickly add a data grid or React datatable to your React application.</p>
+        ag-Grid is designed to integrate deeply into Vue.<br>
+        Use our grid as a Vue component to quickly add a Vue grid table to your application.<br>
+        Discover key benefits and resources available to quickly add a data grid or Vue datatable to your Vue application.</p>
 
     <p class="lead">
         This page details how to set up ag-Grid inside a Vue application.
@@ -306,7 +306,7 @@ binding is that any data changes will emit an <code>data-model-changed</code> ev
     can then access.</p>
 
 <snippet>
-// in the parent component - the component that hosts ag-grid-angular and specifies which angular components to use in the grid
+// in the parent component - the component that hosts ag-grid-vue and specifies which vue components to use in the grid
 beforeMount() {
     this.gridOptions = {
         context: {
@@ -380,15 +380,5 @@ resolve: {
     <li><a href="https://github.com/seanlandsman/ag-grid-vue-umd">UMD</a></li>
     <li><a href="https://github.com/seanlandsman/ag-grid-vue-playground">Playground</a>: Declarative, Auto Refresh and Model Driven Examples</li>
 </ul></p>
-
-<h2 id="next-steps">Next Steps</h2>
-
-<p>
-    Learn how to get started with ag-Grid in your Vue project <a href="https://www.ag-grid.com/vue-getting-started/">here</a>.
-    <br><br>
-    Ready to try ag-Grid in your project? Download ag-Grid Community edition or trial ag-Grid Enterprise for free.
-</p>
-
-
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

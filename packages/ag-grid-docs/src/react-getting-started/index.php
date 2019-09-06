@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "React Grid | Getting Started: ag-Grid Reference";
+$pageTitle = "React Grid";
 $pageDescription = "ag-Grid is a feature-rich React grid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple React Datagrid. We also cover basisc configuration.";
 $pageKeyboards = "React Datagrid";
 $pageGroup = "basics";
@@ -8,11 +8,17 @@ include '../documentation-main/documentation_header.php';
 <script src="../_assets/js/copy-code.js"></script>
 <style><?php include '../_assets//pages/get-started.css'; ?></style>
 <div>
-  <h1>React Grid | Get Started with ag-Grid</h1>
-  <p class="lead" id="react-grid-description">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies.
-  ag-Grid supports React through a <strong>wrapper component</strong>. The React wrapper lets you use ag-Grid in your application like any other React component &ndash; you pass configuration through properties and handle events through callbacks.
-You can even use React components to customize the grid UI and cell contents / behavior.</p>
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project, and configure some of the <a href="https://www.ag-grid.com/features-overview/">essential features of it</a>. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
+  <h1>React Grid | Get Started with ag-Grid and React</h1>
+  <p class="lead" id="react-grid-description">
+    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid
+    engine is implemented in TypeScript with zero dependencies.
+    The grid supports React by providing a React Component version of the grid.
+    This allows you to use the grid as a component in your application like any other React
+    component &ndash; you pass configuration through property bindings and handle events through event bindings.
+    You can even use React components to customize the grid UI and cell contents / behavior.
+  </p>
+<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project,
+  and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 <hr>
 <h2>
     Table of Contents
@@ -380,44 +386,26 @@ import { AgGridReact } from 'ag-grid-react';
 <snippet language="diff">
 +$odd-row-background-color: #CFD8DC;
 </snippet>
-</section>
+</section>s
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
   You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color,
   header background color and even the amount of spacing in the cells and columns. The <a href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables"> full Sass variable list</a> is available in the themes documentation section.</p>
+
   <h2 id="summary">Summary</h2>
+
   <p>With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping!
   While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p>
-  <p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
-  <h2 id="next-steps">Next Steps</h2>
-  <p>You are hungry for more? Learn more about the features used in this tutorial, by going through the following help articles:</p>
-  <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-sorting/" role="button">Sorting</a>
-  <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-filtering/" role="button">Filtering</a>
-  <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-grouping/" role="button">Grouping</a>
-  <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-selection/" role="button">Selection</a>
-  <a class="btn btn-outline-primary" href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables" role="button">Customize Themes with Sass</a>
-  <br><br>
-  <p>In addition to that, if you are using Redux, make sure to check out the <a href="../react-redux-integration-pt1/">Integrating ag-Grid with Redux guide</a>.</p>
 
 </div>
-<div class="card" style="background-color: aliceblue">
-  <div class="card-body">
-    <h2 id="react-grid-resources" style="margin-top: 10px">
-    React Grid Resources
-    </h2>
-    <br/>
-    <ul>
-      <li>
+
+<note>
+    <p>
+        Want to know more?
+    </p>
+
+    <p>
         Learn how to customize our React Grid in this <a href="https://blog.ag-grid.com/learn-to-customize-react-grid-in-less-than-10-minutes/" target="_blank">guide</a>.
-      </li>
-      <br/>
-      <li>
-        Browse our <strong><a href="../best-react-data-grid/" target="_blank">React Grid</a></strong> page to discover all major benefits in using ag-Grid React.
-      </li>
-      <br>
-      <li>
-        Visit our <strong><a href="https://blog.ag-grid.com/tag/react/">blog</a></strong> to discover all our React content.
-    </ul>
-  </div>
-</div>
-<br/>
+    </p>
+</note>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

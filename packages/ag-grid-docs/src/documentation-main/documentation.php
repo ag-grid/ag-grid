@@ -6,6 +6,24 @@ define('skipInPageNav', true);
 include 'documentation_header.php';
 ?>
 <link rel="stylesheet" href="../documentation-main/new_documentation.css">
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var containers = document.querySelectorAll('.docs-homepage-section-preview');
+
+        for (var i = 0; i < containers.length; i++) {
+            var ct = containers[i];
+            ct.addEventListener('click', toggleOpen.bind(this, ct));
+            ct.querySelector('.card').addEventListener('mouseleave', toggleOpen.bind(this, ct, false))
+        }
+    });
+
+    function toggleOpen(container, state) {
+        var wasOpen = container.classList.contains('open');
+        var card = container.querySelector('.card');
+
+        container.classList.toggle('open', typeof state === 'boolean' ? state : !wasOpen);
+    }
+</script>
 
 <?php
 
@@ -19,9 +37,11 @@ function doLevel1() {
 
         $lev1ItemName = $lev1Item['group'];
 
+        echo "<div class='group'>";
         echo "<h1>$lev1ItemName</h1>";
 
         doLevel2($lev1Item);
+        echo "</div>";
     }
 }
 
@@ -30,20 +50,25 @@ function doLevel1() {
 function doLevel2($parentItem) {
     $lev2Items = $parentItem['items'];
 
+    echo "<div class='group-items'>";
+
     foreach($lev2Items as $lev2Item) {
 
         $lev2ItemName = $lev2Item['title'];
         $lev2ItemIcon = $lev2Item['icon'];
 
         echo "<div class='docs-homepage-section-preview'>";
+        echo "<div class='card'>";
         echo "<div class='newIcon $lev2ItemIcon'></div>";
         echo "<h2>$lev2ItemName</h2>";
-
+        
         doLevel3($lev2Item);
 
         echo "</div>";
-
+        echo "</div>";
     }
+
+    echo "</div>";
 
 }
 
@@ -77,7 +102,7 @@ function doLevel3($parentItem) {
         if ($itemTitle <> 'See Also') {
             echo "<li style='$forcedStyle'>";
 
-            echo "<span class='docs-homepage-level2-item'>";
+            echo "<span class='docs-homepage-level2-item level'>";
             if (strlen($itemUrl) > 1) {
                 echo "<a href='../$itemUrl'>$itemTitle</a>";
             } else {
@@ -92,9 +117,9 @@ function doLevel3($parentItem) {
 
             echo "</span>";
 
-            $maxLevelShow = $item['max-box-show-level'];
-            if ($maxLevelShow > 2) {
-                doLevel4($item, $itemTextDecorator);
+            $maxLevelShow = $parentItem['max-box-show-level'];
+            if ($maxLevelShow > 2 || $maxLevelShow == null) {
+                doLevel4($item);
             }
 
 
@@ -109,14 +134,15 @@ function doLevel4($parentItem) {
     echo "<ul>";
 
     $items = $parentItem['items'];
+    $length = count($items) - 1;
 
-    foreach($items as $item) {
+    foreach($items as $index=>$item) {
         $itemTitle = $item['title'];
         $itemUrl = $item['url'];
 
         echo "<li>"; // start level 3
 
-        echo "<span class='docs-homepage-level3-item'>";
+        echo "<span class='docs-homepage-level3-item level'>";
         if (strlen($itemUrl) > 1) {
             echo "<a href='../$itemUrl'>$itemTitle</a>";
         } else {
@@ -124,12 +150,18 @@ function doLevel4($parentItem) {
         }
 
         if ($item['enterprise']) {
-            echo "<span class=\"enterprise-icon\"/>";
+            echo "<span class=\"enterprise-icon\"></span>";
+        }
+
+        if ($index <> $length) {
+            echo "<span class=\"level-3-split\">,&nbsp;</span>";
         }
 
         echo "</span>";
 
-        doLevel5($item);
+        if ($item['items'] != null) {
+            doLevel5($item);
+        }
 
         echo "</li>"; // end level 3
     }
@@ -139,16 +171,16 @@ function doLevel4($parentItem) {
 
 function doLevel5($parentItem) {
     echo "<ul>";
-
+    
     $items = $parentItem['items'];
-
+    
     foreach($items as $item) {
         $itemTitle = $item['title'];
         $itemUrl = $item['url'];
 
         echo "<li>"; // start level 3
 
-        echo "<span class='docs-homepage-level3-item'>";
+        echo "<span class='docs-homepage-level4-item level'>";
         if (strlen($itemUrl) > 1) {
             echo "<a href='../$itemUrl'>$itemTitle</a>";
         } else {
@@ -180,7 +212,7 @@ function doLevel6($parentItem) {
 
         echo "<li>"; // start level 3
 
-        echo "<span class='docs-homepage-level3-item'>";
+        echo "<span class='docs-homepage-level5-item level'>";
         if (strlen($itemUrl) > 1) {
             echo "<a href='../$itemUrl'>$itemTitle</a>";
         } else {

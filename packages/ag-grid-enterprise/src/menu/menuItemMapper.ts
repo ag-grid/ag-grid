@@ -197,14 +197,14 @@ export class MenuItemMapper {
         const pivotChartMenuItem = (localeKey: string, defaultText: string, chartType: ChartType) => {
             return {
                 name: localeTextFunc(localeKey, defaultText),
-                action: () => this.chartService.pivotChart(chartType)
+                action: () => this.chartService.createPivotChart({ chartType })
             };
         };
 
         const rangeChartMenuItem = (localeKey: string, defaultText: string, chartType: ChartType) => {
             return {
                 name: localeTextFunc(localeKey, defaultText),
-                action: () => this.chartService.chartCurrentRange(chartType)
+                action: () => this.chartService.createChartFromCurrentRange(chartType)
             };
         };
 

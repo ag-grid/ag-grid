@@ -395,23 +395,23 @@ var gridOptions = {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
     processChartOptions: function(params) {
-        let type = params.type;
-        let options = params.options;
+        var type = params.type;
+        var options = params.options;
 
         if (params.type === 'pie' || params.type === 'doughnut')  {
             options.seriesDefaults.tooltipRenderer = function (params) {
-                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                let value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return title + '<div class="content">' + '$' + value + '</div>';
             };
 
         } else {
-            let isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
+            var isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
             options.yAxis.labelFormatter = function(params) {
-                let n = params.value;
+                var n = params.value;
 
-                let res = '';
+                var res = '';
                 if (n < 1e3) res = n;
                 if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
                 if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
@@ -423,10 +423,10 @@ var gridOptions = {
 
             if (type === 'scatter' || type === 'bubble') {
                 options.xAxis.labelFormatter = function(params) {
-                    let n = params.value;
+                    var n = params.value;
                     if (isNaN(n)) return n;
 
-                    let res = '';
+                    var res = '';
                     if (n < 1e3) res = n;
                     if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
                     if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
@@ -437,12 +437,12 @@ var gridOptions = {
                 };
 
                 options.seriesDefaults.tooltipRenderer = function (params) {
-                    let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                    let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    const xValue = params.datum[params.xField];
-                    let xValueStr = params.xFieldName + ': ' + (typeof xValue !== 'number' ? xValue : '$' + String(xValue).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
-                    let yValueStr = params.yFieldName + ': $' + String(params.datum[params.yField]).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                    let radiusValueStr = '';
+                    var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    var xValue = params.datum[params.xField];
+                    var xValueStr = params.xFieldName + ': ' + (typeof xValue !== 'number' ? xValue : '$' + String(xValue).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
+                    var yValueStr = params.yFieldName + ': $' + String(params.datum[params.yField]).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    var radiusValueStr = '';
                     if (type === 'bubble' && params.radiusField) {
                         radiusValueStr = '<br>' + params.radiusFieldName + ': $' + params.datum[params.radiusField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                     }
@@ -450,17 +450,17 @@ var gridOptions = {
                 };
             } else {
                 options.seriesDefaults.tooltipRenderer = function (params) {
-                    let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                    let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                     return title + '<div class="content">' + '$' + value + '</div>';
                 };
             }
 
             options.seriesDefaults.labelFormatter = function (params) {
-                let n = params.value;
+                var n = params.value;
 
-                let res = '';
+                var res = '';
                 if (n < 1e3) res = n;
                 if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
                 if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';

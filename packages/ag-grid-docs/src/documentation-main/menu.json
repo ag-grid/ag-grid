@@ -5,9 +5,7 @@
       {
         "title": "Introduction",
         "icon": "icon-information",
-        "max-box-show-level": 2,
         "matrixExclude": true,
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Community & Enterprise",
@@ -45,8 +43,12 @@
                 "url": "angular-getting-started/",
                 "items": [
                   {
-                    "title": "Grid Interface",
+                    "title": "Components",
                     "url": "angular-more-details/"
+                  },
+                  {
+                    "title": "Markup",
+                    "url": "angular-markup/"
                   },
                   {
                     "title": "SystemJS",
@@ -65,7 +67,7 @@
                     "url": "ag-grid-angular-webpack/"
                   },
                   {
-                    "title": "Angular & Material Design",
+                    "title": "Material Components",
                     "url": "example-angular-material-design/"
                   },
                   {
@@ -79,8 +81,16 @@
                 "url": "react-getting-started/",
                 "items": [
                   {
-                    "title": "Grid Interface",
+                    "title": "Columns",
                     "url": "react-more-details/"
+                  },
+                  {
+                    "title": "React 16",
+                    "url": "react-16/"
+                  },
+                  {
+                    "title": "React 15",
+                    "url": "react-15/"
                   },
                   {
                     "title": "Redux Integration Part 1",
@@ -97,12 +107,20 @@
                 "url": "vue-getting-started/",
                 "items": [
                   {
-                    "title": "Grid Interface",
-                    "url": "best-vuejs-data-grid/"
+                    "title": "Components",
+                    "url": "vue-components/"
+                  },
+                  {
+                    "title": "Markup",
+                    "url": "vue-markup/"
                   },
                   {
                     "title": "Vue & Unidirectional Data Flow",
                     "url": "vuex-data-flow/"
+                  },
+                  {
+                    "title": "Misc",
+                    "url": "best-vuejs-data-grid/"
                   }
                 ]
               },              {
@@ -177,7 +195,7 @@
       {
         "title": "Columns",
         "icon": "icon-columns",
-        "level-2-text-decorator": ",&nbsp;",
+        "matrixExclude": true,
         "items": [
           {
             "title": "Column Headers",
@@ -214,7 +232,6 @@
       {
         "title": "Rows",
         "icon": "icon-rows",
-        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Row Sorting",
@@ -261,7 +278,6 @@
       {
         "title": "Layout & Styling",
         "icon": "icon-style",
-        "level-2-text-decorator": ",&nbsp;",
         "items": [
           {
             "title": "Styling Rows",
@@ -312,7 +328,6 @@
       {
         "title": "Data",
         "icon": "icon-data",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Client Side Data",
@@ -444,7 +459,6 @@
       {
         "title": "Selection",
         "icon": "icon-selection",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -475,7 +489,6 @@
       {
         "title": "Filtering",
         "icon": "icon-filter",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Overview",
@@ -541,7 +554,6 @@
       {
         "title": "Rendering Cells",
         "icon": "icon-render-cells",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Cell Content",
@@ -606,7 +618,6 @@
       {
         "title": "Editing Cells",
         "icon": "icon-edit-cells",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Cell Editing",
@@ -635,7 +646,6 @@
       {
         "title": "Group & Pivot",
         "icon": "icon-group",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Row Grouping",
@@ -667,7 +677,6 @@
       {
         "title": "Import & Export",
         "icon": "icon-import-export",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "CSV Export",
@@ -916,7 +925,6 @@
       {
         "title": "Scrolling",
         "icon": "icon-scrolling",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "DOM Virtualisation",
@@ -949,7 +957,6 @@
       {
         "title": "Interactivity",
         "icon": "icon-interactivity",
-        "level-2-display-style-forced": "block",
         "items": [
           {
             "title": "Keyboard Navigation",

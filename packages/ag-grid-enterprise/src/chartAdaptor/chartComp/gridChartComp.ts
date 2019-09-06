@@ -39,8 +39,6 @@ export interface GridChartParams {
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
-    height: number;
-    width: number;
 }
 
 export class GridChartComp extends Component {
@@ -105,6 +103,7 @@ export class GridChartComp extends Component {
         if (this.params.insideDialog) {
             this.addDialog();
         }
+
         this.addResizeListener();
 
         this.addMenu();
@@ -117,15 +116,18 @@ export class GridChartComp extends Component {
     }
 
     private createChart() {
-        let {width, height} = this.params;
+        let width, height;
 
         // destroy chart and remove it from DOM
         if (this.chartProxy) {
             const chart = this.chartProxy.getChart();
-            height = chart.height;
+            // preserve existing width/height
             width = chart.width;
+            height = chart.height;
             this.chartProxy.destroy();
+            
             const canvas = this.eChart.querySelector('canvas');
+
             if (canvas) {
                 this.eChart.removeChild(canvas);
             }
@@ -142,8 +144,8 @@ export class GridChartComp extends Component {
             getSelectedPalette: this.getSelectedPalette.bind(this),
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
-            width: width,
-            height: height,
+            width,
+            height,
             eventService: this.eventService,
             categorySelected: categorySelected,
             grouping: this.model.isGrouping(),
@@ -200,6 +202,7 @@ export class GridChartComp extends Component {
             centered: true,
             closable: true
         });
+
         this.getContext().wireBean(this.chartDialog);
 
         this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());

@@ -17,12 +17,12 @@ meta_and_links($title, $keywords, $description, false);
 
 </head><link rel="stylesheet" href="dist/homepage.css">
 
-<body>
-    <header id="nav" class="compact">
+<body style="padding-top: 65px;">
+    <header id="nav" class="compact" style="position: fixed; z-index: 99999; top: 0; width: 100%; opacity: 0.98;">
         <?php include 'includes/navbar.php' ?>
     </header>
     <div class="stage-scenarios" style="background-color: #125082;">
-        <h2 class="heading-scenarios" style="color: white;">The Best JavaScript Grid in the World</h2>
+        <h2 class="heading-scenarios" style="color: white; font-weight: 500 !important;">The Best JavaScript Grid in the World</h2>
 
         <section>
             <div class="demo" id="demo-1" data-load="home/demo-1.php">
@@ -32,10 +32,39 @@ meta_and_links($title, $keywords, $description, false);
                 </div>
             </div>
         </section>
+    </div>
 
-        <section style="display: flex; justify-content: center; margin-top: 2rem;">
-            <a class="get-started-btn" href="/javascript-grid-getting-started/" role="button">Get Started</a>
-            <a class="get-started-btn" href="/example.php" role="button">View Demo</a>
+    <section class="main-buttons">
+        <a class="get-started-btn" href="/javascript-grid-getting-started/" role="button">Get Started</a>
+        <a class="get-started-btn" href="/example.php" role="button">View Demo</a>
+    </section>
+
+    <div id="stage-description">
+        <section>
+            <div>
+                <h3>Feature Packed</h3>
+                <p>
+                    The performance, feature set and quality of ag-Grid has not been seen before in a 
+                    JavaScript datagrid. Many features in ag-Grid are unique to ag-Grid and simply putting 
+                    ag-Grid into a class of it’s own without compromising on quality or performance.
+                </p>
+            </div>
+            <div>
+                <h3>Industry Leading</h3>
+                <p>
+                    Over 600,000 monthly downloads of ag-Grid Community and over 50% of the Fortune 500 
+                    using ag-Grid Enterprise. ag-Grid has become the JavaScript datagrid of choice for Enterprise 
+                    JavaScript developers.
+                </p>
+            </div>
+            <div>
+                <h3>Community & Enterprise</h3>
+                <p>
+                    ag-Grid Community is free and open-sourced under MIT license. ag-Grid Enterprise comes with 
+                    dedicated support and more enterprise style features. ag-Grid gives for free what other grids 
+                    charge for, then provides in ag-Grid Enterprise where it goes above and beyond the competition.
+                </p>
+            </div>
         </section>
     </div>
 

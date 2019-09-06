@@ -9,11 +9,18 @@ include '../documentation-main/documentation_header.php';
 <div>
 <h1>Get Started with ag-Grid in Your Project</h1>
 
-<p class="lead">The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies. 
-If your project does not use one of the JavaScript frameworks that ag-Grid supports, or you are curious to understand how the grid works in its pure form, this guide is for you!
+<p class="lead">
+    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in plain
+    JavaScript<sup id="a1"><a href="#f1">[1]</a></sup> and has zero dependencies. If your project does not
+    use one of the JavaScript frameworks that ag-Grid supports, or you are curious to understand how the
+    grid works in its pure form, this guide is for you.
 </p> 
 
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing JavaScript project, and configure some of the <a href="../features-overview" target="_blank">essential features</a> of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc).</p>
+<p>
+    In this article, we will walk you through the necessary steps to add ag-Grid to an existing JavaScript
+    project, and configure some of the essential features of it.
+    We will show you some of the fundamentals of the grid (passing properties, using the API, etc).
+</p>
 
 <h2>The Project Setup</h2>
 
@@ -370,7 +377,6 @@ var gridOptions = {
 <p>With this Javascript datagrid tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
 While doing so, we learned how to configure the grid and how how to use its api object to call methods.</p> 
 
-<p>That's just scratching the surface, though. The grid has a lot more features to offer; the abilities to customize cells and headers with custom components allow for almost infinite possible configurations. </p>
 
 <h2>Next Steps</h2> 
 

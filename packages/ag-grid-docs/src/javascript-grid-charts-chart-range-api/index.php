@@ -6,21 +6,21 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Chart Range API</h1>
+    <h1 class="heading-enterprise">Chart API</h1>
 
     <p class="lead">
-        This section covers how to use the chart range API in your applications.
+        This section covers how to use the chart API in your applications.
     </p>
 
-    <h2>Chart Range API</h2>
+    <h2>Range Charts</h2>
 
     <p>
-        Charts can be created programmatically via the grid's <code>chartRange()</code> API. The interface is
+        Charts can be created programmatically from a range via the grid's <code>createRangeChart()</code> API. The interface is
         as follows:
     </p>
 
     <snippet>
-function chartRange(params: ChartRangeParams): ChartRef | undefined {
+function createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
     cellRange: CellRangeParams;
     chartType: string;
     chartContainer?: HTMLElement;
@@ -29,7 +29,7 @@ function chartRange(params: ChartRangeParams): ChartRef | undefined {
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 
-interface CellRangeParams {
+interface CreateRangeChartParams {
     // start row
     rowStartIndex?: number;
     rowStartPinned?: string;
@@ -142,6 +142,26 @@ interface ProcessChartOptionsParams {
     </ul>
 
     <?= example('Dashboard', 'dashboard', 'generated', array("enterprise" => true, "exampleHeight" => 700)) ?>
+
+    <h2>Pivot Charts</h2>
+    
+    <p>
+        You can also use the API to create a pivot chart. There are fewer parameters available as the pivot chart is always 
+        generated from all data in the grid:
+    </p>
+
+    <snippet>
+function createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
+    chartType: string;
+    chartContainer?: HTMLElement;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
+}</snippet>
+
+    <p>The attributes have the same behaviour as described earlier.</p>
+
+    <p>This is an example showing the pivot chart in action, using a specified chart container:</p>
+
+    <?= example('Pivot Chart API', 'pivot-chart-api', 'generated', array("enterprise" => true, "exampleHeight" => 900)) ?>
 
     <h2>Next Up</h2>
 

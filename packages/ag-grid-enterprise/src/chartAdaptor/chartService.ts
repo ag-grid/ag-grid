@@ -4,7 +4,8 @@ import {
     Autowired,
     PreDestroy,
     CellRange,
-    ChartRangeParams,
+    CreateRangeChartParams,
+    CreatePivotChartParams,
     ChartRef,
     ChartType,
     Context,
@@ -32,26 +33,30 @@ export class ChartService implements IChartService {
     // those in developer provided containers.
     private activeCharts: ChartRef[] = [];
 
-    public chartCurrentRange(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
+    public createChartFromCurrentRange(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
         const selectedRange: CellRange = this.getSelectedRange();
-        return this.chartRange(selectedRange, chartType);
+        return this.createChart(selectedRange, chartType);
     }
 
-    public chartCellRange(params: ChartRangeParams): ChartRef | undefined {
+    public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
         const cellRange = this.rangeController.createCellRangeFromCellRangeParams(params.cellRange);
 
         if (!cellRange) {
-            console.warn("ag-Grid - unable to chart as no range is selected");
+            console.warn("ag-Grid - unable to create chart as no range is selected");
             return;
         }
-        if (cellRange) {
-            const pivotChart = false;
-            return this.chartRange(cellRange, params.chartType, pivotChart, params.suppressChartRanges,
-                params.chartContainer, params.aggFunc, params.processChartOptions);
-        }
+
+        return this.createChart(
+            cellRange, 
+            params.chartType,
+            false, 
+            params.suppressChartRanges,
+            params.chartContainer, 
+            params.aggFunc, 
+            params.processChartOptions);
     }
 
-    public pivotChart(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
+    public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         // if required enter pivot mode
         if (!this.columnController.isPivotMode()) {
             this.columnController.setPivotMode(true, "pivotChart");
@@ -64,15 +69,15 @@ export class ChartService implements IChartService {
 
         const cellRange = this.rangeController.createCellRangeFromCellRangeParams(chartAllRangeParams);
         if (!cellRange) {
-            console.warn("ag-Grid - unable to chart as there are no columns in the grid.");
+            console.warn("ag-Grid - unable to create chart as there are no columns in the grid.");
             return;
         }
 
-        const pivotChart = true, suppressChartRanges = true;
-        return this.chartRange(cellRange, chartType, pivotChart, suppressChartRanges);
+        return this.createChart(
+            cellRange, params.chartType, true, true, params.chartContainer, undefined, params.processChartOptions);
     }
 
-    private chartRange(cellRange: CellRange,
+    private createChart(cellRange: CellRange,
                        chartType: ChartType,
                        pivotChart = false,
                        suppressChartRanges = false,
@@ -90,8 +95,6 @@ export class ChartService implements IChartService {
             suppressChartRanges,
             aggFunc,
             processChartOptions,
-            height: 400, //TODO
-            width: 800   //TODO
         };
 
         const chartComp = new GridChartComp(params);
@@ -112,7 +115,7 @@ export class ChartService implements IChartService {
             }
         } else if (createChartContainerFunc) {
             // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
-            // is using it's own dialog's rather than the grid provided dialogs)
+            // is using its own dialogs rather than the grid provided dialogs)
             createChartContainerFunc(chartRef);
         } else {
             // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog

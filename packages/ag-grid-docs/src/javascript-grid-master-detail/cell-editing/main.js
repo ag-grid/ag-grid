@@ -22,7 +22,7 @@ var gridOptions = {
                 editable: true,
                 resizable: true
             },
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 params.api.sizeColumnsToFit();
             }
         },
@@ -35,17 +35,11 @@ var gridOptions = {
         editable: true,
         resizable: true
     },
-    onGridReady: function (params) {
-        // arbitrarily expand a row for presentational purposes
-        setTimeout(function() {
-            var rowCount = 0;
-            params.api.forEachNode(function (node) {
-                node.setExpanded(rowCount++ === 1);
-            });
-        }, 500);
-    },
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
+
+        // arbitrarily expand a row for presentational purposes
+        setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);
     }
 };
 

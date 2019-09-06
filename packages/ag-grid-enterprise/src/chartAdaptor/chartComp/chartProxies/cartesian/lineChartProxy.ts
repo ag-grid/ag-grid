@@ -100,6 +100,8 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             background: {
                 fill: this.getBackgroundColor()
             },
+            width: 800,
+            height: 400,
             padding: {
                 top: 20,
                 right: 20,

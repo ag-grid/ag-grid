@@ -16,27 +16,32 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     createChartContainer: createChartContainer,
-    processChartOptions: customChartOptionHandler,
-    onChartOptionsChanged: customUserPreferenceHandler,
-    onFirstDataRendered: createChart,
+    processChartOptions: processChartOptions,
+    onChartOptionsChanged: onChartOptionsChanged,
+    onFirstDataRendered: onFirstDataRendered,
 };
 
 // used to keep track of chart options per chart type
 var savedUserPreferenceByChartType = {};
 
-// used to keep track of users legend preference
-var savedLegendUserPreference = '';
+// used to keep track of user's legend preferences
+var savedLegendUserPreference = undefined;
 
-function customUserPreferenceHandler(event) {
+function onChartOptionsChanged(event) {
+    var chartOptions = event.chartOptions;
+
     // changes made by users via the format panel are being saved locally here,
     // however applications can choose to persist them across user sessions.
-    savedLegendUserPreference = event.chartOptions.legend;
-    savedLegendUserPreference = event.chartOptions.legendPosition;
-    savedLegendUserPreference = event.chartOptions.legendPadding;
-    savedUserPreferenceByChartType[event.chartType] = event.chartOptions;
+    savedLegendUserPreference = {
+        legend: chartOptions.legend,
+        legendPosition: chartOptions.legendPosition,
+        legendPadding: chartOptions.legendPadding
+    };
+
+    savedUserPreferenceByChartType[event.chartType] = chartOptions;
 }
 
-function customChartOptionHandler(params) {
+function processChartOptions(params) {
     var overriddenChartOptions = params.options;
 
     // use saved chart options for specific chart type
@@ -46,7 +51,9 @@ function customChartOptionHandler(params) {
 
     // used shared legend user preference for all chart types
     if (savedLegendUserPreference) {
-        overriddenChartOptions.legend = savedLegendUserPreference;
+        overriddenChartOptions.legend = savedLegendUserPreference.legend;
+        overriddenChartOptions.legendPosition = savedLegendUserPreference.legendPosition;
+        overriddenChartOptions.legendPadding = savedLegendUserPreference.legendPadding;
     }
 
     // here we fix the chart and axis titles when a bubble chart is selected.
@@ -78,7 +85,7 @@ function customChartOptionHandler(params) {
     return overriddenChartOptions;
 }
 
-let currentChartRef;
+var currentChartRef;
 function createChartContainer(chartRef) {
     // destroy existing chart
     if (currentChartRef) {
@@ -91,8 +98,8 @@ function createChartContainer(chartRef) {
     currentChartRef = chartRef;
 }
 
-function createChart() {
-    let params = {
+function onFirstDataRendered(params) {
+    var createRangeChartParams = {
         cellRange: {
             columns: ['sugar', 'fat', 'weight']
         },
@@ -101,23 +108,22 @@ function createChart() {
         suppressChartRanges: true
     };
 
-    chartRef = gridOptions.api.chartRange(params);
+    currentChartRef = params.api.createRangeChart(createRangeChartParams);
 }
 
 function createRowData() {
-    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+    var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
-    let rowData = [];
-    countries.forEach( function(country) {
-        rowData.push({
+
+    return countries.map(function(country) {
+        return {
             country: country,
             sugar: Math.floor(Math.floor(Math.random()*50)),
             fat: Math.floor(Math.floor(Math.random()*100)),
             weight: Math.floor(Math.floor(Math.random()*200))
-        });
+        };
     });
-    return rowData;
 }
 
 // setup the grid after the page has finished loading

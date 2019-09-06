@@ -14,10 +14,11 @@ function createRowData() {
     var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
-    var rowData = [];
-    countries.forEach( function(country, index) {
+
+    return countries.map(function(country, index) {
         var group = index % 2 == 0 ? 'Group A' : 'Group B';
-        rowData.push({
+        
+        return {
             country: country,
             group: group,
             gold: Math.floor(((index+1 / 7) * 333)%100),
@@ -27,9 +28,8 @@ function createRowData() {
             b: Math.floor(Math.random()*1000),
             c: Math.floor(Math.random()*1000),
             d: Math.floor(Math.random()*1000)
-        });
+        };
     });
-    return rowData;
 }
 
 function numberValueParser(params) {
@@ -74,16 +74,17 @@ function onFirstDataRendered(event) {
         chartContainer: eContainer1,
         processChartOptions: function(params) {
             params.options.seriesDefaults.tooltipRenderer = function (params) {
-                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 
             return params.options;
         }
     };
-    event.api.chartRange(params1);
+
+    event.api.createRangeChart(params1);
 
     var eContainer2 = document.querySelector('#chart2');
     var params2 = {
@@ -98,16 +99,17 @@ function onFirstDataRendered(event) {
             params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
 
             params.options.seriesDefaults.tooltipRenderer = function (params) {
-                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                let value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 
             return params.options;
         }
     };
-    event.api.chartRange(params2);
+
+    event.api.createRangeChart(params2);
 
     var eContainer3 = document.querySelector('#chart3');
     var params3 = {
@@ -122,18 +124,18 @@ function onFirstDataRendered(event) {
             params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
 
             params.options.seriesDefaults.tooltipRenderer = function (params) {
-                let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                let value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 
             return params.options;
         }
     };
-    event.api.chartRange(params3);
-}
 
+    event.api.createRangeChart(params3);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

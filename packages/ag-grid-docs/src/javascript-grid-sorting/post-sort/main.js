@@ -17,7 +17,7 @@ var gridOptions = {
         sortable: true
     },
     columnDefs: columnDefs,
-    postSort(rowNodes) {
+    postSort: function(rowNodes) {
       // here we put Ireland rows on top while preserving the sort order
 
       function isIreland(node) {
