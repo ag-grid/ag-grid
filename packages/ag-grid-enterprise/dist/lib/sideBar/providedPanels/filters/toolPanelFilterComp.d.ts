@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { Column, Component } from "ag-grid-community";
 export declare class ToolPanelFilterComp extends Component {
     private gridApi;

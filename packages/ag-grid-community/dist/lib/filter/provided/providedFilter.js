@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.0
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -111,7 +111,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         // we set the model from the gui, rather than the provided model,
         // so the model is consistent. eg handling of null/undefined will be the same,
         // of if model is case insensitive, then casing is removed.
-        this.appliedModel = this.getModelFromUi();
+        this.applyModel();
     };
     ProvidedFilter.prototype.onBtClear = function () {
         this.resetUiToDefaults();

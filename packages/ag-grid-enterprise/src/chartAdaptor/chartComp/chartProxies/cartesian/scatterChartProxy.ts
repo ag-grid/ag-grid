@@ -52,7 +52,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                     scatterSeries.xFieldName = params.fields[0].displayName;
 
                     if (chartType === ChartType.Bubble) {
-                        const f = params.fields[index + 2];
+                        const f = params.fields[index * 2 + 2];
                         scatterSeries.radiusField = f.colId;
                         scatterSeries.radiusFieldName = f.displayName;
                     }

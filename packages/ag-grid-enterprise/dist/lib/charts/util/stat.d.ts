@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 /**
  * Returns `{slope, intercept}` for `y = slope * x + intercept` given two arrays of variables.
  * @param X Array of independent variables.

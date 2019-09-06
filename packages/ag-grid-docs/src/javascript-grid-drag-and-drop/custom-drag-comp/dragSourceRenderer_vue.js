@@ -14,7 +14,9 @@ export default Vue.extend({
     },
     methods: {
         onDragStart(event) {
-            event.dataTransfer.setData('text/plain', "Dragged item with ID: " + this.params.node.data.id);
+            var userAgent = window.navigator.userAgent;
+            var isIE = userAgent.indexOf('Trident/') >= 0;
+            event.dataTransfer.setData(isIE ? 'text' : 'text/plain', 'Dragged item with ID: ' + this.params.node.data.id);
         }
     }
 });

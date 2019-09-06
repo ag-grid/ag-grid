@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v21.2.0
+// Type definitions for ag-grid-community v21.2.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,

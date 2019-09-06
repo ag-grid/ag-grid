@@ -38,15 +38,23 @@ export class DndSourceComp extends Component {
     private onDragStart(dragEvent: DragEvent): void {
 
         const providedOnRowDrag = this.column.getColDef().dndSourceOnRowDrag;
+        const isIE = _.isBrowserIE();
 
-        dragEvent.dataTransfer.setDragImage(this.eCell, 0, 0);
+        if (!isIE) {
+            dragEvent.dataTransfer.setDragImage(this.eCell, 0, 0);
+        }
 
         // default behaviour is to convert data to json and set into drag component
         const defaultOnRowDrag = () => {
             try {
                 const jsonData = JSON.stringify(this.rowNode.data);
-                dragEvent.dataTransfer.setData('application/json', jsonData);
-                dragEvent.dataTransfer.setData('text/plain', jsonData);
+
+                if (isIE) {
+                    dragEvent.dataTransfer.setData('text', jsonData);
+                } else {
+                    dragEvent.dataTransfer.setData('application/json', jsonData);
+                    dragEvent.dataTransfer.setData('text/plain', jsonData);
+                }
 
             } catch (e) {
                 // if we cannot convert the data to json, then we do not set the type

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -236,7 +236,7 @@ var LicenseManager = /** @class */ (function () {
         this.watermarkMessage = "Incompatible License Version";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU2NzA2Nzc2NDY0MQ==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU2NzY4OTc5NDA1NQ==';
     __decorate([
         ag_grid_community_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)

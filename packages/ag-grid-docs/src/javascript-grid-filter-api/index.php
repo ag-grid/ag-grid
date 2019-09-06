@@ -26,12 +26,66 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 // Get a reference to the name filter instance
-var nameFilterInstance = api.getFilterInstance('name');</snippet>
+var filterInstance = gridApi.getFilterInstance('name');</snippet>
 
     <p>
         All of the methods of the filter are present. If using a custom filter then any other methods you have
         added will also be present, allowing bespoke behaviour to be added to your filter.
     </p>
+
+    <h3>Re-running Grid Filtering</h3>
+
+    <p>
+        When a filter has been changed via it's API, the method <code>gridOptions.api.onFilterChanged()</code> is
+        required to get the grid to filter the rows again. If <code>gridOptions.api.onFilterChanged()</code>
+        is not called the grid will still show the data relevant to the filter before it was updated through the API.
+    </p>
+
+<snippet>// Get a reference to the name filter instance
+var filterInstance = gridApi.getFilterInstance('name');
+
+// Set the model for the filter
+filterInstance.setModel({
+    type: 'endsWith',
+    filter: 'g'
+});
+
+// Get grid to run filter operation again
+gridApi.onFilterChanged();</snippet>
+
+    <h3>Applying the Model</h3>
+
+    <p>
+        If you call <code>filterInstance.setModel()</code> this will both set and apply the model. However if
+        using other methods provided by the filter instance (eg most of the
+        <a href="../javascript-grid-filter-set">Set Filter</a> API methods) then you must call
+        <code>filterInstance.applyModel()</code> to have the model applied. This step is necessary regardless
+        of the Apply Button active or not.
+    </p>
+    <p>
+        Applying the model is then typically followed by calling
+        <code>gridOptions.api.onFilterChanged()</code> to have the grid re-run the filtering.
+    </p>
+
+<snippet>// Get a reference to the name filter instance
+var filterInstance = gridApi.getFilterInstance('name');
+
+// Call some methods on Set Filter API that don't apply the filter
+filterInstance.selectNothing();
+filterInstance.selectValue('Ireland');
+
+// APPLY THE MODEL!!!!
+filterInstance.applyModel();
+
+// Get grid to run filter operation again
+gridApi.onFilterChanged();</snippet>
+
+    <p>
+        If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show the changes, but
+        it won't be reflected in the filter model. This will appear as if the user never hit the Apply button (regardless
+        of whether the Apply button is active or not).
+    </p>
+
 
     <h2>Example Filter API</h2>
 

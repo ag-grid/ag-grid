@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -63,21 +63,21 @@ var ChartDatasource = /** @class */ (function (_super) {
                     // when grouping we also need to build up multi category labels for charts
                     if (params.grouping) {
                         // traverse parents to extract group label path
-                        var labels = _this.getGroupLabels(rowNode, [String(value)]);
+                        var labels_1 = _this.getGroupLabels(rowNode, [String(value)]);
                         if (params.multiCategories) {
                             // add group labels to group column for multi category charts
-                            data[colId] = { labels: labels };
+                            data[colId] = { labels: labels_1, toString: function () { return labels_1[0]; } };
                         }
                         else {
                             // concat group keys from the top group key down (used when grouping Pie charts)
-                            data[colId] = labels.slice().reverse().join(' - ');
+                            data[colId] = labels_1.slice().reverse().join(' - ');
                         }
                         // keep track of group node indexes so they can be padded when other groups are expanded
                         if (rowNode.group) {
-                            groupNodeIndexes[labels.toString()] = i;
+                            groupNodeIndexes[labels_1.toString()] = i;
                         }
                         // if node (group or leaf) has parents then it is expanded and should be removed
-                        var groupKey = labels.slice(1, labels.length).toString();
+                        var groupKey = labels_1.slice(1, labels_1.length).toString();
                         if (groupKey) {
                             groupsToRemove[groupKey] = groupNodeIndexes[groupKey];
                         }

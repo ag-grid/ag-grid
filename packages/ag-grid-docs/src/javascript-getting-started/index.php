@@ -3,8 +3,9 @@ $pageTitle = "ag-Grid Reference: Getting Started with the JavaScript Datagrid";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple JavaScript Datagrid. We also cover basisc configuration.";
 $pageKeyboards = "Javascript Grid";
 $pageGroup = "basics";
-include '../getting-started/header.php';
+include '../documentation-main/documentation_header.php';
 ?>
+
 <div>
 <h1>Get Started with ag-Grid in Your Project</h1>
 
@@ -384,4 +385,4 @@ While doing so, we learned how to configure the grid and how how to use its api 
 <br>
 </div>
 
-<?php include '../getting-started/footer.php'; ?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

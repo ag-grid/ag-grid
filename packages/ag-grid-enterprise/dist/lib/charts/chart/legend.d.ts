@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { Group } from "../scene/group";
 export interface LegendDatum {
     id: string;

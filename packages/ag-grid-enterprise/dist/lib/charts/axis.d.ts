@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { BBox } from "./scene/bbox";

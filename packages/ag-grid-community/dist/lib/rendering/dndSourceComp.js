@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.0
+ * @version v21.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,13 +54,21 @@ var DndSourceComp = /** @class */ (function (_super) {
     DndSourceComp.prototype.onDragStart = function (dragEvent) {
         var _this = this;
         var providedOnRowDrag = this.column.getColDef().dndSourceOnRowDrag;
-        dragEvent.dataTransfer.setDragImage(this.eCell, 0, 0);
+        var isIE = utils_1._.isBrowserIE();
+        if (!isIE) {
+            dragEvent.dataTransfer.setDragImage(this.eCell, 0, 0);
+        }
         // default behaviour is to convert data to json and set into drag component
         var defaultOnRowDrag = function () {
             try {
                 var jsonData = JSON.stringify(_this.rowNode.data);
-                dragEvent.dataTransfer.setData('application/json', jsonData);
-                dragEvent.dataTransfer.setData('text/plain', jsonData);
+                if (isIE) {
+                    dragEvent.dataTransfer.setData('text', jsonData);
+                }
+                else {
+                    dragEvent.dataTransfer.setData('application/json', jsonData);
+                    dragEvent.dataTransfer.setData('text/plain', jsonData);
+                }
             }
             catch (e) {
                 // if we cannot convert the data to json, then we do not set the type

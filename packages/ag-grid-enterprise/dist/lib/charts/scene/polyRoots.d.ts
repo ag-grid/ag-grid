@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 /**
  * Finds the roots of a parametric linear equation in `t`,
  * where `t` lies in the interval of `[0,1]`.

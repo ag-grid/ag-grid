@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { DropShadow } from "../../scene/dropShadow";
 import { Series, SeriesNodeDatum } from "./series";
 import { LegendDatum } from "../legend";

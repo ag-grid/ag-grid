@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { ChartRangeParams, ChartRef, ChartType, IChartService } from "ag-grid-community";
 export declare class ChartService implements IChartService {
     private rangeController;

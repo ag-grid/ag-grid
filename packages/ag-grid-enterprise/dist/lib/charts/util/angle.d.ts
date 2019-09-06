@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 /**
  * Normalize the given angle to be in the [0, 2π) interval.
  * @param radians Angle in radians.

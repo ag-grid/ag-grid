@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { Component, IStatusPanelComp, CellPositionUtils, RowPositionUtils } from 'ag-grid-community';
 export declare class AggregationComp extends Component implements IStatusPanelComp {
     private static TEMPLATE;

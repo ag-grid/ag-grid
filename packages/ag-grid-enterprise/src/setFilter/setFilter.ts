@@ -41,6 +41,10 @@ export class SetFilter extends ProvidedFilter {
     private eUncheckedIcon: HTMLElement;
     private eIndeterminateCheckedIcon: HTMLElement;
 
+    // to make the filtering super fast, we store the values in a map.
+    // otherwise we would be searching a list of values for each row when checking doesFilterPass
+    private appliedModelValuesMapped: { [value: string]: any } | undefined;
+
     // unlike the simple filter's, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
     protected updateUiVisibility(): void {}
@@ -234,16 +238,25 @@ export class SetFilter extends ProvidedFilter {
         this.eMiniFilter.focus();
     }
 
+    public applyModel(): boolean {
+        const res = super.applyModel();
+
+        // keep the appliedModelValuesMapped in sync with the applied model
+        const appliedModel = this.getModel() as SetFilterModel;
+        if (appliedModel) {
+            this.appliedModelValuesMapped = {};
+            appliedModel.values.forEach( value => this.appliedModelValuesMapped![value] = true );
+        } else {
+            this.appliedModelValuesMapped = undefined;
+        }
+
+        return res;
+    }
+
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
 
-        // if no filter, always pass
-        if (this.valueModel.isEverythingSelected() && !this.setFilterParams.selectAllOnMiniFilter) {
-            return true;
-        }
-        // if nothing selected in filter, always fail
-        if (this.valueModel.isNothingSelected() && !this.setFilterParams.selectAllOnMiniFilter) {
-            return false;
-        }
+        // should never happen, if filter model not set, then this method should never be called
+        if (!this.appliedModelValuesMapped) { return true; }
 
         let value = this.setFilterParams.valueGetter(params.node);
         if (this.setFilterParams.colDef.keyCreator) {
@@ -254,13 +267,15 @@ export class SetFilter extends ProvidedFilter {
 
         if (Array.isArray(value)) {
             for (let i = 0; i < value.length; i++) {
-                if (this.valueModel.isValueSelected(value[i])) {
+                const valueExistsInMap = !!this.appliedModelValuesMapped![value[i]];
+                if (valueExistsInMap) {
                     return true;
                 }
             }
             return false;
         } else {
-            return this.valueModel.isValueSelected(value);
+            const valueExistsInMap = !!this.appliedModelValuesMapped![value];
+            return valueExistsInMap;
         }
     }
 

@@ -3,7 +3,7 @@ $pageTitle = "React Grid | Getting Started: ag-Grid Reference";
 $pageDescription = "ag-Grid is a feature-rich React grid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple React Datagrid. We also cover basisc configuration.";
 $pageKeyboards = "React Datagrid";
 $pageGroup = "basics";
-include '../getting-started/header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 <script src="../_assets/js/copy-code.js"></script>
 <style><?php include '../_assets//pages/get-started.css'; ?></style>
@@ -420,4 +420,4 @@ import { AgGridReact } from 'ag-grid-react';
   </div>
 </div>
 <br/>
-<?php include '../getting-started/footer.php'; ?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

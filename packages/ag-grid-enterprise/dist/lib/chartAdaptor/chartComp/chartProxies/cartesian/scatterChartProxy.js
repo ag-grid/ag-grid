@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -55,7 +55,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                     scatterSeries.xField = params.fields[0].colId;
                     scatterSeries.xFieldName = params.fields[0].displayName;
                     if (chartType === ag_grid_community_1.ChartType.Bubble) {
-                        var f_1 = params.fields[index + 2];
+                        var f_1 = params.fields[index * 2 + 2];
                         scatterSeries.radiusField = f_1.colId;
                         scatterSeries.radiusFieldName = f_1.displayName;
                     }

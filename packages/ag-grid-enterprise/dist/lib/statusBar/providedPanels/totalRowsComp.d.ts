@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.0
+// ag-grid-enterprise v21.2.1
 import { IStatusPanelComp } from 'ag-grid-community';
 import { NameValueComp } from "./nameValueComp";
 export declare class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
