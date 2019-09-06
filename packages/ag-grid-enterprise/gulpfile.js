@@ -1,5 +1,6 @@
 const gulpTypescript = require('gulp-typescript');
 const gulp = require('gulp');
+const {series, parallel} = gulp;
 const typescript = require('typescript');
 const header = require('gulp-header');
 const merge = require('merge2');
@@ -14,65 +15,26 @@ const tslint = require("gulp-tslint");
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
-gulp.task('default', ['webpack-all']);
-gulp.task('release', ['webpack-all']);
-
-gulp.task('webpack-all', ['webpack', 'webpack-minify', 'webpack-noStyle', 'webpack-minify-noStyle'], tscSrcTask);
-
-gulp.task('webpack-minify-noStyle', ['tsc'], webpackTask.bind(null, true, false));
-gulp.task('webpack-noStyle', ['tsc'], webpackTask.bind(null, false, false));
-gulp.task('webpack-minify', ['tsc'], webpackTask.bind(null, true, true));
-gulp.task('webpack', ['tsc'], webpackTask.bind(null, false, true));
-
-gulp.task('tsc', ['tsc-src', 'tsc-modules'], tscMainTask);
-gulp.task('tsc-modules', tscModulesTask);
-gulp.task('tsc-no-clean', tscSrcTask);
-gulp.task('tsc-src', ['cleanDist', 'tslint'], tscSrcTask);
-gulp.task('tsc-main', ['cleanMain'], tscMainTask);
-
-gulp.task('cleanDist', cleanDist);
-gulp.task('cleanMain', cleanMain);
-
-gulp.task('watch', ['tsc'], tscWatch);
-gulp.task('webpack-watch', ['webpack-noStyle'], webpackWatch);
-
-gulp.task("tslint", () =>
-    gulp.src("src/**/*.ts")
-        .pipe(tslint({
-            formatter: "verbose"
-        }))
-        .pipe(tslint.report())
-);
-
-function tscWatch() {
-    gulp.watch([
-        './node_modules/ag-grid-community/dist/lib/**/*',
-        './src/**/*'
-    ],
-    ['tsc']);
-}
-
-function webpackWatch() {
-    gulp.watch([
-        './node_modules/ag-grid-community/dist/lib/**/*',
-        './src/**/*'
-    ],
-    ['webpack-noStyle']);
-}
-
-function cleanDist() {
+// Start of typescript related tasks
+const cleanDist = () => {
     return gulp
-        .src('dist', {read: false})
+        .src('dist', {read: false, allowEmpty: true})
         .pipe(clean());
-}
+};
 
-function cleanMain() {
+const cleanMain = () => {
     return gulp
-        .src(['./main.d.ts', 'main.js'], {read: false})
+        .src(['./main.d.ts', 'main.js'], {read: false, allowEmpty: true})
         .pipe(clean());
-}
+};
 
-function tscSrcTask() {
+const cleanModules = () => {
+    return gulp
+        .src(['./*Module.d.ts', './*Module.js'], {read: false, allowEmpty: true})
+        .pipe(clean());
+};
+
+const tscSrcTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 
     const tsResult = gulp
@@ -87,9 +49,9 @@ function tscSrcTask() {
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib'))
     ]);
-}
+};
 
-function tscMainTask() {
+const tscMainTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
 
     const tsResult = gulp
@@ -108,9 +70,9 @@ function tscMainTask() {
             .pipe(rename("main.js"))
             .pipe(gulp.dest('./'))
     ]);
-}
+};
 
-function tscModulesTask() {
+const tscModulesTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
 
     const tsResult = gulp
@@ -125,9 +87,27 @@ function tscModulesTask() {
             .pipe(replace("require(\"../", "require(\"./dist/lib/"))
             .pipe(gulp.dest('./'))
     ]);
-}
+};
 
-function webpackTask(minify, styles) {
+const tscWatch = () => {
+    gulp.watch([
+            './node_modules/ag-grid-community/dist/lib/**/*',
+            './src/**/*'
+        ],
+        series('tsc'));
+};
+// End of typescript related tasks
+
+// Start of webpack related tasks
+const webpackWatch = () => {
+    gulp.watch([
+            './node_modules/ag-grid-community/dist/lib/**/*',
+            './src/**/*'
+        ],
+        series('webpack-noStyle'));
+};
+
+const webpackTask = (minify, styles) => {
 
     const mainFile = styles ? './webpack-with-styles.js' : './webpack.js';
 
@@ -136,12 +116,9 @@ function webpackTask(minify, styles) {
     fileName += styles ? '' : '.noStyle';
     fileName += '.js';
 
-    return gulp.src('src/entry.js')
+    return gulp.src(mainFile)
         .pipe(webpackStream({
             mode: minify ? 'production' : 'none',
-            entry: {
-                main: mainFile
-            },
             output: {
                 path: path.join(__dirname, "dist"),
                 filename: fileName,
@@ -151,17 +128,71 @@ function webpackTask(minify, styles) {
             module: {
                 rules: [
                     {
-                        test: /\.css$/, 
-                        use: ['style-loader', {
-                            loader:'css-loader',
-                            options: {
-                                minimize: !!minify
-                            }
-                        }]
+                        test: /\.css$/,
+                        use: [
+                            'style-loader',
+                            'css-loader'
+                        ].concat(
+                            !!minify ?
+                                {
+                                    loader: 'postcss-loader',
+                                    options: {
+                                        ident: 'postcss',
+                                        plugins: () => [
+                                            require('cssnano')({
+                                                preset: ['default', {
+                                                    discardComments: {
+                                                        removeAll: true,
+                                                    },
+                                                }]
+                                            })
+                                        ]
+                                    }
+                                } : []
+                        )
                     }
                 ]
             }
         }))
         .pipe(header(bundleTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
-}
+};
+// End of webpack related tasks
+
+// Typescript related tasks
+gulp.task('clean-dist', series(cleanDist));
+gulp.task('clean-main', cleanMain);
+gulp.task('clean-modules', cleanModules);
+gulp.task('clean', parallel('clean-dist', 'clean-main', 'clean-modules'));
+gulp.task('tsc-no-clean-src', series(tscSrcTask));
+gulp.task('tsc-no-clean-main', series(tscMainTask));
+gulp.task('tsc-no-clean-modules', series(tscModulesTask));
+gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-no-clean-modules'));
+gulp.task('tsc', series('clean', 'tsc-no-clean'));
+gulp.task('tsc-watch', series('tsc', tscWatch));
+
+// webpack related tasks
+gulp.task('webpack', series('clean', 'tsc-no-clean', webpackTask.bind(null, false, true)));
+gulp.task('webpack-no-clean', series(webpackTask.bind(null, false, true)));
+gulp.task('webpack-minify', series('clean', 'tsc-no-clean', webpackTask.bind(null, true, true)));
+gulp.task('webpack-minify-no-clean', series('tsc-no-clean', webpackTask.bind(null, true, true)));
+gulp.task('webpack-noStyle', series('clean', 'tsc-no-clean', webpackTask.bind(null, false, false)));
+gulp.task('webpack-noStyle-no-clean', series('tsc-no-clean', webpackTask.bind(null, false, false)));
+gulp.task('webpack-minify-noStyle', series('clean', 'tsc-no-clean', webpackTask.bind(null, true, false)));
+gulp.task('webpack-minify-noStyle-no-clean', series('tsc-no-clean', webpackTask.bind(null, true, false)));
+// for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
+gulp.task('webpack-all', series('clean', 'tsc-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
+gulp.task('webpack-watch', series('webpack-noStyle', webpackWatch));
+
+// default/release task
+gulp.task('default', series('webpack-all'));
+
+// lint tasks
+gulp.task("tslint", () =>
+    gulp.src("src/**/*.ts")
+        .pipe(tslint({
+            formatter: "verbose"
+        }))
+        .pipe(tslint.report())
+);
+

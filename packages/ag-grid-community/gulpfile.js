@@ -1,4 +1,6 @@
 const gulp = require('gulp');
+const {series, parallel} = gulp;
+
 const path = require('path');
 const clean = require('gulp-clean');
 const rename = require("gulp-rename");
@@ -29,56 +31,8 @@ const dtsHeaderTemplate =
     '// Project: <%= pkg.homepage %>\n' +
     '// Definitions by: Niall Crosby <https://github.com/ag-grid/>\n';
 
-gulp.task('default', ['webpack-all']);
-gulp.task('release', ['webpack-all']);
-
-gulp.task('webpack-all', ['webpack', 'webpack-minify', 'webpack-noStyle', 'webpack-minify-noStyle'], tscSrcTask);
-
-gulp.task('webpack-minify-noStyle', ['tsc', 'scss'], webpackTask.bind(null, true, false));
-gulp.task('webpack-noStyle', ['tsc', 'scss'], webpackTask.bind(null, false, false));
-gulp.task('webpack-minify', ['tsc', 'scss'], webpackTask.bind(null, true, true));
-gulp.task('webpack', ['tsc', 'scss'], webpackTask.bind(null, false, true));
-
-gulp.task('scss-watch', ['scss-no-clean'], scssWatch);
-gulp.task('scss-no-clean', scssTask);
-
-gulp.task('tsc-no-clean', tscSrcTask);
-gulp.task('tsc', ['tsc-src'], tscMainTask);
-gulp.task('tsc-src', ['cleanDist'], tscSrcTask);
-gulp.task('tsc-main', ['cleanMain'], tscMainTask);
-gulp.task('scss', ['cleanDist'], scssTask);
-
-gulp.task('cleanDist', cleanDist);
-gulp.task('cleanMain', cleanMain);
-
-gulp.task('tsc-watch', ['tsc-no-clean'], tscWatch);
-gulp.task('watch', ['webpack'], watch);
-
-function watch() {
-    gulp.watch('./src/ts/**/*', ['webpack']);
-}
-
-function scssWatch() {
-    gulp.watch('./src/styles/!**/!*', ['scss-no-clean']);
-}
-
-function tscWatch() {
-    gulp.watch('./src/ts/**/*', ['tsc-no-clean']);
-}
-
-function cleanDist() {
-    return gulp
-        .src('dist', {read: false})
-        .pipe(clean());
-}
-
-function cleanMain() {
-    return gulp
-        .src(['./main.d.ts', 'main.js'], {read: false})
-        .pipe(clean());
-}
-
-function tscSrcTask() {
+// Start of Typescript related tasks
+const tscSrcTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 
     const tsResult = gulp
@@ -93,9 +47,9 @@ function tscSrcTask() {
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib'))
     ]);
-}
+};
 
-function tscMainTask() {
+const tscMainTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
 
     const tsResult = gulp
@@ -114,49 +68,29 @@ function tscMainTask() {
             .pipe(rename("main.js"))
             .pipe(gulp.dest('./'))
     ]);
-}
+};
 
-function webpackTask(minify, styles) {
-    const mainFile = styles ? './main-with-styles.js' : './main.js';
+const cleanMain = () => {
+    return gulp
+        .src(['./main.d.ts', 'main.js'], {read: false, allowEmpty: true})
+        .pipe(clean());
+};
 
-    let fileName = 'ag-grid-community';
-    fileName += minify ? '.min' : '';
-    fileName += styles ? '' : '.noStyle';
-    fileName += '.js';
+const cleanDist = () => {
+    return gulp
+        .src('dist', {read: false, allowEmpty: true})
+        .pipe(clean());
+};
 
-    return gulp.src('src/entry.js')
-        .pipe(webpackStream({
-            mode: minify ? 'production' : 'none',
-            entry: {
-                main: mainFile
-            },
-            output: {
-                path: path.join(__dirname, "dist"),
-                filename: fileName,
-                library: ["agGrid"],
-                libraryTarget: "umd"
-            },
-            //devtool: 'inline-source-map',
-            module: {
-                rules: [
-                    {
-                        test: /\.css$/, 
-                        use: ['style-loader', {
-                            loader:'css-loader',
-                            options: {
-                                minimize: !!minify
-                            }
-                        }]
-                    }
-                ]
-            }
-        }))
-        .pipe(header(bundleTemplate, {pkg: pkg}))
-        .pipe(gulp.dest('./dist/'));
-}
+const tscWatch = () => {
+    gulp.watch('./src/ts/**/*', series('tsc-no-clean'));
+};
 
-function scssTask() {
-    var f = filter(["**/*.css", '!*Font*.css'], { restore: true });
+// End of Typescript related tasks
+
+// Start of scss/css related tasks
+const scssTask = () => {
+    var f = filter(["**/*.css", '!*Font*.css'], {restore: true});
 
     return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
         .pipe(named())
@@ -169,16 +103,13 @@ function scssTask() {
                         use: [
                             MiniCssExtractPlugin.loader,
                             {
-                                loader: "css-loader",
-                                options: {
-                                    minimize: false
-                                }
+                                loader: "css-loader"
                             },
                             "sass-loader",
                             {
                                 loader: 'postcss-loader',
                                 options: {
-                                    syntax: 'postcss-scss', 
+                                    syntax: 'postcss-scss',
                                     plugins: [autoprefixer({
                                         overrideBrowserslist: ["last 2 version"],
                                         flexbox: true
@@ -228,5 +159,102 @@ function scssTask() {
         .pipe(f.restore)
         .pipe(filter('*Font*.css'))
         .pipe(gulp.dest('dist/styles/webfont/'));
-}
+};
+
+const scssWatch = () => {
+    gulp.watch('./src/styles/!**/!*', series('scss-no-clean'));
+};
+// End of scss/css related tasks
+
+// Start of webpack related tasks
+const webpackTask = (minify, styles) => {
+    const mainFile = styles ? './main-with-styles.js' : './main.js';
+
+    let fileName = 'ag-grid-community';
+    fileName += minify ? '.min' : '';
+    fileName += styles ? '' : '.noStyle';
+    fileName += '.js';
+
+    return gulp.src(mainFile)
+        .pipe(webpackStream({
+            mode: minify ? 'production' : 'none',
+            output: {
+                path: path.join(__dirname, "dist"),
+                filename: fileName,
+                library: ["agGrid"],
+                libraryTarget: "umd"
+            },
+            module: {
+                rules: [
+                    {
+                        test: /\.css$/,
+                        use: [
+                            'style-loader',
+                            'css-loader'
+                        ].concat(
+                            !!minify ?
+                                {
+                                    loader: 'postcss-loader',
+                                    options: {
+                                        ident: 'postcss',
+                                        plugins: () => [
+                                            require('cssnano')({
+                                                preset: ['default', {
+                                                    discardComments: {
+                                                        removeAll: true,
+                                                    },
+                                                }]
+                                            })
+                                        ]
+                                    }
+                                } : []
+                        )
+                    }
+                ]
+            }
+        }))
+        .pipe(header(bundleTemplate, {pkg: pkg}))
+        .pipe(gulp.dest('./dist/'));
+};
+
+const watch = () => {
+    gulp.watch('./src/ts/**/*', series('webpack'));
+};
+// End of webpack related tasks
+
+
+// Typescript related tasks
+gulp.task('clean-dist', cleanDist);
+gulp.task('clean-main', cleanMain);
+gulp.task('clean', parallel('clean-dist', 'clean-main'));
+gulp.task('tsc-no-clean-src', tscSrcTask);
+gulp.task('tsc-no-clean-main', tscMainTask);
+gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main'));
+gulp.task('tsc', series('clean', 'tsc-no-clean'));
+gulp.task('tsc-watch', series('tsc-no-clean', tscWatch));
+
+// scss/css related tasks
+gulp.task('scss-no-clean', scssTask);
+gulp.task('scss', series('clean', 'scss-no-clean'));
+gulp.task('scss-watch', series('scss-no-clean', scssWatch));
+
+// tsc & scss/css related tasks
+gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', 'scss-no-clean'));
+
+// webpack related tasks
+gulp.task('webpack', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, false, true)));
+gulp.task('webpack-no-clean', series(webpackTask.bind(null, false, true)));
+gulp.task('webpack-minify', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, true, true)));
+gulp.task('webpack-minify-no-clean', series(webpackTask.bind(null, true, true)));
+gulp.task('webpack-noStyle', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, false, false)));
+gulp.task('webpack-noStyle-no-clean', series(webpackTask.bind(null, false, false)));
+gulp.task('webpack-minify-noStyle', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, true, false)));
+gulp.task('webpack-minify-noStyle-no-clean', series(webpackTask.bind(null, true, false)));
+// for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
+gulp.task('webpack-all', series('clean', 'tsc-scss-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
+gulp.task('watch', series('webpack', watch));
+
+// default/release task
+gulp.task('default', series('webpack-all'));
+
 
