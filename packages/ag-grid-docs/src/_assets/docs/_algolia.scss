@@ -1,4 +1,4 @@
-#search-wrapper {
+.search-wrapper {
     margin-bottom: 2rem;
 
     @include media-breakpoint-down(lg) {
@@ -6,7 +6,7 @@
     }
 }
 
-#search-input {
+.search-input {
     @extend .form-control;
 }
 

@@ -29,11 +29,30 @@ function enterprise_feature($name)
 <!DOCTYPE html>
 
 <html lang="en">
-<head lang="en">
+<head>
     <?php
     meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
     ?>
     <link rel="stylesheet" href="../dist/docs.css">
+    <link rel="stylesheet" href="../documentation-main/new_documentation.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var containers = document.querySelectorAll('.docs-homepage-section-preview');
+
+            for (var i = 0; i < containers.length; i++) {
+                var ct = containers[i];
+                ct.addEventListener('click', toggleOpen.bind(this, ct));
+                ct.querySelector('.card').addEventListener('mouseleave', toggleOpen.bind(this, ct, false))
+            }
+        });
+
+        function toggleOpen(container, state) {
+            var wasOpen = container.classList.contains('open');
+            var card = container.querySelector('.card');
+
+            container.classList.toggle('open', typeof state === 'boolean' ? state : !wasOpen);
+        }
+    </script>
 </head>
 
 <body ng-app="documentation">
@@ -45,19 +64,27 @@ function enterprise_feature($name)
 </header>
 
 <div id="documentation" class="new">
+    <?php if(defined('hideSideMenu')) { ?>
+            <div class="top-toolbar">
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" placeholder="Search Docs"/>
+                </div>
+        </div>
+    <?php } ?>
     <div>
-        <aside id="side-nav">
+        <aside id="side-nav" style="display: <?php echo defined('hideSideMenu') ? 'none' : 'block' ?>">
             <button id="side-nav-toggle" type="button" data-toggle="collapse" data-target="#side-nav-container"
                     aria-controls="side-nav-container" aria-expanded="false" aria-label="Toggle navigation">
                 <span>&nbsp;</span></button>
 
-            <div id="search-wrapper">
-                <input type="text" id="search-input" placeholder="Search Docs"/>
-            </div>
+            <?php if(!defined('hideSideMenu')) { ?>
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" placeholder="Search Docs"/>
+                </div>
+            <?php } ?>
 
             <div id="side-nav-container" class="collapse">
                 <?php include 'documentation_menu.php'; ?>
-                <?php include 'documentation_sidebar.php'; ?>
             </div>
         </aside>
 

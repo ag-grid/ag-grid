@@ -66,9 +66,6 @@
     background-color: #eee;
     text-decoration: none;
 }
-.select-label {
-}
-
 
 .todo-box {
     border: 1px solid lightgrey;
@@ -97,9 +94,6 @@
 
 .feature-summary-item {
     border: 1px solid transparent;
-}
-
-.feature-summary-item a {
 }
 
 .first-h1 {

@@ -26,8 +26,8 @@ $(function() {
         autoselect: true,
         keyboardShortcuts: ["s", "/"]
     };
-
-    autocomplete("#search-input", autocompleteConfig, [
+    
+    autocomplete("input.search-input", autocompleteConfig, [
         {
             source: autocomplete.sources.hits(index, searchConfig),
             displayKey: "title",
@@ -41,10 +41,10 @@ $(function() {
         location.href = "/" + suggestion.objectID;
     });
 
-    $('<span id="kbd-hint" title="press S to focus the search field"> <kbd>s</kbd> </span>').insertAfter("#search-input");
+    $('<span id="kbd-hint" title="press S to focus the search field"> <kbd>s</kbd> </span>').insertAfter("input.search-input");
 
     $("#kbd-hint").click(function() {
-        $("#search-input").focus();
+        $("input.search-input").focus();
     });
 });
 
