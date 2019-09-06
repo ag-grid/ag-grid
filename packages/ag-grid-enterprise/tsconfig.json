@@ -9,6 +9,7 @@
     "outDir": "dist/lib",
     "strictNullChecks": true,
     "strictFunctionTypes": true,
+    "skipLibCheck": true,
     "lib": [
       "es2015",
       "dom"
