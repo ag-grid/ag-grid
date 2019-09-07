@@ -5,7 +5,7 @@ gtm_data_layer('community-enterprise');
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head lang="en">
+<head>
     <?php
     meta_and_links("ag-Grid: License and Pricing", "ag-Grid Javascript Grid License and Pricing", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows adescribes the License and Pricing details for ag-Grid Enterprise.", true);
     ?>
@@ -434,7 +434,7 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
         </section>
 <!--        <div id="side-bar">-->
         <div id="side-bar" style="display: none">
-            <div style="margin: 1rem; position: fixed; top: 0">
+            <div style="margin: 1rem; position: fixed; top: 65px;">
                 <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center">
                     <div style="flex: 1; margin: 1rem">
                         <img src="./images/pricing/SA.svg" width="55px">

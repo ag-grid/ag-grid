@@ -17,8 +17,8 @@ meta_and_links($title, $keywords, $description, false);
 
 </head><link rel="stylesheet" href="dist/homepage.css">
 
-<body style="padding-top: 65px;">
-    <header id="nav" class="compact" style="position: fixed; z-index: 99999; top: 0; width: 100%; opacity: 0.98;">
+<body>
+    <header id="nav" class="compact">
         <?php include 'includes/navbar.php' ?>
     </header>
     <div class="stage-scenarios" style="background-color: #125082;">
