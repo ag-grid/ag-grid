@@ -358,11 +358,12 @@ export interface GridOptions {
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
+    /** Note: these events have been ordered to match order in eventKeys source file to aid reconciliation */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
-    onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
     onNewColumnsLoaded?(event: NewColumnsLoadedEvent): void;
     onColumnPivotModeChanged?(event: ColumnPivotModeChangedEvent): void;
     onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent): void;
+    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
     onColumnPivotChanged?(event: ColumnPivotChangedEvent): void;
     onGridColumnsChanged?(event: GridColumnsChangedEvent): void;
     onColumnValueChanged?(event: ColumnValueChangedEvent): void;
@@ -379,50 +380,55 @@ export interface GridOptions {
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
     onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
-    onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;
-    onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent): void;
-    onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent): void;
-    onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent): void;
+    //chartOptionsChanged
+    onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
     onModelUpdated?(event: ModelUpdatedEvent): void;
-    onCellKeyDown?(event: CellKeyDownEvent): void;
-    onCellKeyPress?(event: CellKeyPressEvent): void;
+    onPasteStart?(event: PasteStartEvent): void;
+    onPasteEnd?(event: PasteEndEvent): void;
     onCellClicked?(event: CellClickedEvent): void;
-    onCellMouseDown?(event: CellMouseDownEvent): void;
     onCellDoubleClicked?(event: CellDoubleClickedEvent): void;
+    onCellMouseDown?(event: CellMouseDownEvent): void;
     onCellContextMenu?(event: CellContextMenuEvent): void;
     onCellValueChanged?(event: CellValueChangedEvent): void;
-    onCellMouseOver?(event: CellMouseOverEvent): void;
-    onCellMouseOut?(event: CellMouseOutEvent): void;
     onRowValueChanged?(event: RowValueChangedEvent): void;
-    onRowEditingStarted?(event: RowEditingStartedEvent): void;
-    onRowEditingStopped?(event: RowEditingStoppedEvent): void;
-    onCellEditingStarted?(event: CellEditingStartedEvent): void;
-    onCellEditingStopped?(event: CellEditingStoppedEvent): void;
     onCellFocused?(event: CellFocusedEvent): void;
     onRowSelected?(event: RowSelectedEvent): void;
     onSelectionChanged?(event: SelectionChangedEvent): void;
+    onCellKeyDown?(event: CellKeyDownEvent): void;
+    onCellKeyPress?(event: CellKeyPressEvent): void;
+    onCellMouseOver?(event: CellMouseOverEvent): void;
+    onCellMouseOut?(event: CellMouseOutEvent): void;
     onFilterChanged?(event: FilterChangedEvent): void;
     onFilterModified?(event: FilterModifiedEvent): void;
+    //filterOpened
     onSortChanged?(event: SortChangedEvent): void;
     onVirtualRowRemoved?(event: VirtualRowRemovedEvent): void;
     onRowClicked?(event: RowClickedEvent): void;
     onRowDoubleClicked?(event: RowDoubleClickedEvent): void;
     onGridReady?(event: GridReadyEvent): void;
+    /** @deprecated */
+    onGridSizeChanged?(event: any): void;
     onViewportChanged?(event: ViewportChangedEvent): void;
+    onFirstDataRendered?(event: FirstDataRenderedEvent): void;
     onDragStarted?(event: DragStartedEvent): void;
     onDragStopped?(event: DragStoppedEvent): void;
+    onRowEditingStarted?(event: RowEditingStartedEvent): void;
+    onRowEditingStopped?(event: RowEditingStoppedEvent): void;
+    onCellEditingStarted?(event: CellEditingStartedEvent): void;
+    onCellEditingStopped?(event: CellEditingStoppedEvent): void;
+    onBodyScroll?(event: BodyScrollEvent): void;
+    //animationQueueEmpty
     onPaginationChanged?(event: PaginationChangedEvent): void;
+    //componentStateChanged
+
     onRowDragEnter?(event: RowDragEvent): void;
     onRowDragMove?(event: RowDragEvent): void;
     onRowDragLeave?(event: RowDragEvent): void;
     onRowDragEnd?(event: RowDragEvent): void;
-    onPasteStart?(event: PasteStartEvent): void;
-    onPasteEnd?(event: PasteEndEvent): void;
-    onBodyScroll?(event: BodyScrollEvent): void;
-    onFirstDataRendered?(event: FirstDataRenderedEvent): void;
-    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
-    /** @deprecated */
-    onGridSizeChanged?(event: any): void;
+    onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;
+    onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent): void;
+    onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent): void;
+    onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent): void;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
