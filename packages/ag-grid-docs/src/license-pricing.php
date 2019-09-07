@@ -33,7 +33,7 @@ gtm_data_layer('community-enterprise');
         fbq('init', '512303249109564'); // Insert your pixel ID here.
         fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+    <noscript><img style="display:none; width: 1px; height: 1px;"
                    src="https://www.facebook.com/tr?id=512303249109564&ev=PageView&noscript=1"
         /></noscript>
     <!-- DO NOT MODIFY -->
@@ -67,7 +67,7 @@ gtm_data_layer('community-enterprise');
 </script>
 
 <noscript>
-    <img height="1" width="1" style="display:none;" alt=""
+    <img style="display:none; width: 1px; height: 1px;" alt=""
          src="https://dc.ads.linkedin.com/collect/?pid=71830&fmt=gif"/>
 </noscript>
 
@@ -78,7 +78,7 @@ gtm_data_layer('community-enterprise');
     ?>
 </header>
 
-<div id="documentation" class="new">
+<div id="documentation" class="new" style="-webkit-font-smoothing: antialiased;">
         <section id="content">
             <div class="info-page">
                 <div class="row">
@@ -92,7 +92,7 @@ gtm_data_layer('community-enterprise');
                                 <div class="col-md-4">
                                     <div class="license">
                                         <div class="card-body">
-                                            <img src="./images/pricing/Community.svg" width="75px">
+                                            <img src="./images/pricing/Community.svg" style="max-width: 75px;" alt="MIT">
                                             <section style="margin-top: 25px">&nbsp;</section>
                                             <section style="">ag-Grid Community Developer License</section>
                                             <section>&nbsp;</section>
@@ -106,7 +106,7 @@ gtm_data_layer('community-enterprise');
                                 <div class="col-md-4">
                                     <div class="license">
                                         <div class="card-body">
-                                            <img src="./images/pricing/SA.svg" width="75px">
+                                            <img src="./images/pricing/SA.svg" style="max-width: 75px;" alt="Single Application">
                                             <section style="margin-top: 25px">ag-Grid Enterprise</section>
                                             <section style="font-size: larger;font-weight: bolder">Single Application
                                             </section>
@@ -124,7 +124,7 @@ gtm_data_layer('community-enterprise');
                                 <div class="col-md-4">
                                     <div class="license">
                                         <div class="card-body">
-                                            <img src="./images/pricing/MA.svg" width="75px">
+                                            <img src="./images/pricing/MA.svg" style="max-width: 75px;" alt="Multiple Applications">
                                             <section style="margin-top: 25px">ag-Grid Enterprise</section>
                                             <section style="font-size: larger;font-weight: bolder">Multiple
                                                 Applications
@@ -163,15 +163,14 @@ gtm_data_layer('community-enterprise');
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex"
                                  id="definitions">
                                 <div style="flex: 1">&nbsp;</div>
-                                <div style="flex: 11">
-                                    <h1 style="text-decoration: underline;text-decoration-color: orange">
+                                <div style="flex: 11; text-decoration: underline; color: orange;">
+                                    <h1 style="color: black">
                                         DEFINITIONS</h1>
                                 </div>
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="./images/pricing/Community.svg" width="40px"
-                                         style="display:block;margin-left: 1rem">
+                                    <img src="./images/pricing/Community.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -197,8 +196,7 @@ gtm_data_layer('community-enterprise');
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="./images/pricing/SA.svg" width="40px"
-                                         style="display:block;margin-left: 1rem">
+                                    <img src="./images/pricing/SA.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -216,8 +214,7 @@ gtm_data_layer('community-enterprise');
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="./images/pricing/MA.svg" width="40px"
-                                         style="display:block;margin-left: 1rem">
+                                    <img src="./images/pricing/MA.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -237,8 +234,7 @@ gtm_data_layer('community-enterprise');
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="./images/pricing/Deployment%20Add-on.svg" width="40px"
-                                         style="display:block;margin-left: 1rem">
+                                    <img src="./images/pricing/Deployment%20Add-on.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -265,13 +261,13 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
                             <div class="row" style="padding-top: 1rem;margin-bottom: 0.25rem;display: flex"
                                  id="deeper-dive">
                                 <div style="flex: 1">&nbsp;</div>
-                                <div style="flex: 11"><h1 style="text-decoration: underline;text-decoration-color: red">
-                                        DEEPER DIVE</h1></div>
+                                <div style="flex: 11; text-decoration: underline; color: red;">
+                                    <h1 style="color: black">DEEPER DIVE</h1>
+                                </div>
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="./images/pricing/Dependency.svg" width="40px"
-                                         style="display:block;margin-left: 1rem">
+                                    <img src="./images/pricing/Dependency.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -289,8 +285,7 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="./images/pricing/Indirect.svg" width="40px"
-                                         style="display:block;margin-left: 1rem">
+                                    <img src="./images/pricing/Indirect.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -312,7 +307,7 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="" width="40px" style="display:block;margin-left: 1rem">
+                                    <img src="" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -330,14 +325,13 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
                             <div class="row" style="padding-top: 1rem;margin-bottom: 0.25rem;display: flex"
                                  id="timeline">
                                 <div style="flex: 1">&nbsp;</div>
-                                <div style="flex: 11"><h1
-                                            style="text-decoration: underline;text-decoration-color: magenta">LICENSE
-                                        TIMELINE</h1></div>
+                                <div style="flex: 11; text-decoration: underline; color: magenta;">
+                                    <h1 style="color: black">LICENSE TIMELINE</h1>
+                                </div>
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="./images/pricing/Perpetual.svg" width="40px"
-                                         style="display:block;margin-left: 1rem">
+                                    <img src="./images/pricing/Perpetual.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -356,15 +350,13 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
                             </span>
                                     </div>
                                     <div style="padding: 2rem">
-                                        <img src="./images/pricing/Version%201.svg"
-                                             style="display:block;margin-left: 1rem">
+                                        <img src="./images/pricing/Version%201.svg" style="display:block; margin-left: 1rem;">
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
+                            <div class="row" style="padding-top: 0.25rem; margin-bottom: 0.25rem; display: flex;">
                                 <div style="flex: 1;">
-                                    <img src="./images/pricing/1-year.svg" width="40px"
-                                         style="display:block;margin-left: 1rem">
+                                    <img src="./images/pricing/1-year.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -376,15 +368,13 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
                                         <span style="color: grey">Please note that while use of the software is perpetual Support and Corrective Maintenance are not. We do not provide issue resolution to versions of ag-Grid Enterprise older than 12m. We roll bug fixes, performance enhancements and other improvements into new releases – we don’t patch, fix or in any way alter older versions.</span>
                                     </div>
                                     <div style="padding: 2rem">
-                                        <img src="./images/pricing/Versions%202.svg"
-                                             style="display:block;margin-left: 1rem">
+                                        <img src="./images/pricing/Versions%202.svg" style="display:block; margin-left: 1rem">
                                     </div>
                                 </div>
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="./images/pricing/Renewal%20icon.svg" width="40px"
-                                         style="display:block;margin-left: 1rem">
+                                    <img src="./images/pricing/Renewal%20icon.svg" style="display:block; max-width: 40px; margin-left: 1rem;">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -403,7 +393,7 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="" width="40px" style="display:block;margin-left: 1rem">
+                                    <img src="" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -416,7 +406,7 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
                             </div>
                             <div class="row" style="padding-top: 0.25rem;margin-bottom: 0.25rem;display: flex">
                                 <div style="flex: 1;">
-                                    <img src="" width="40px" style="display:block;margin-left: 1rem">
+                                    <img src="" style="display:block; max-width: 40px; margin-left: 1rem">
                                 </div>
                                 <div style="flex: 11">
                                     <div>
@@ -436,24 +426,24 @@ Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ 
         <div id="side-bar" style="display: none">
             <div style="margin: 1rem; position: fixed; top: 65px;">
                 <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center">
-                    <div style="flex: 1; margin: 1rem">
-                        <img src="./images/pricing/SA.svg" width="55px">
+                    <div style="flex: 1 1 auto; margin: 1rem">
+                        <img src="./images/pricing/SA.svg" style="min-width: 50px; max-width: 50px;">
                     </div>
-                    <div style="flex: 1; ">
+                    <div style="flex: 1 1 auto;">
                         &dollar;750
                     </div>
-                    <div style="flex: 1; margin: 1rem">
+                    <div style="flex: 1 1 auto; margin: 1rem">
                         <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
                     </div>
                 </div>
                 <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center; margin-top: 1rem">
-                    <div style="flex: 1; margin: 1rem">
-                        <img src="./images/pricing/MA.svg" width="55px">
+                    <div style="flex: 1 1 auto; margin: 1rem">
+                        <img src="./images/pricing/MA.svg" style="min-width: 55px; max-width: 55px;">
                     </div>
-                    <div style="flex: 1; ">
+                    <div style="flex: 1 1 auto;">
                         &dollar;1,200
                     </div>
-                    <div style="flex: 1; margin: 1rem">
+                    <div style="flex: 1 1 auto; margin: 1rem">
                         <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
                     </div>
                 </div>
