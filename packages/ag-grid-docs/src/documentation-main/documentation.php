@@ -40,7 +40,7 @@ function renderTitle($group) {
         echo "<div class='docs-homepage-section-preview'>";
         echo "<div class='card'>";
         echo "<div class='newIcon $icon'></div>";
-        echo "<h2>$title</h2>";
+        echo "<h2>$title<div class=\"uiIcon icon-arrowBottom\">Open</div><div class=\"uiIcon icon-arrowTop\">Close</div></h2>";
 
         if ($groupConfig['items'] <> null) {
             renderItems($groupConfig['items'], 0);

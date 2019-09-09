@@ -11,11 +11,32 @@
     margin-bottom: 1rem;
 }
 #documentation h1 section { position: absolute;}
-#documentation.new #content h2 { 
+#documentation #content h2 { 
 	font-size: 1.7rem;
     font-weight: 300;
     margin-top: 0;
 	margin-bottom: 1rem;
+}
+
+#documentation .docs-homepage-section-preview h2 .uiIcon {
+    position: absolute;
+    width: 100%;
+    right: 1rem;
+    padding: 0.5rem 0;
+    background-position: center right;
+    background-repeat: no-repeat;
+    height: 24px;
+    text-indent: -900rem;
+}
+
+#documentation .docs-homepage-section-preview.open h2 .uiIcon.icon-arrowTop,
+#documentation .docs-homepage-section-preview h2 .uiIcon.icon-arrowBottom {
+    display: inline-block;
+}
+
+#documentation .docs-homepage-section-preview.open h2 .uiIcon.icon-arrowBottom,
+#documentation .docs-homepage-section-preview h2 .uiIcon.icon-arrowTop {
+    display: none;
 }
 
 #documentation .top-toolbar { 
@@ -121,6 +142,9 @@
 	background-repeat: no-repeat;
 	background-position: center center;
 }
+
+.icon-arrowBottom { background-image: url('imgs/icon-arrow-bottom.svg');}
+.icon-arrowTop { background-image: url('imgs/icon-arrow-top.svg');}
 .icon-information { background-image: url('imgs/icon-information.svg');}
 .icon-accessories { background-image: url('imgs/icon-accessories.svg');}
 .icon-api { background-image: url('imgs/icon-api.svg');}
