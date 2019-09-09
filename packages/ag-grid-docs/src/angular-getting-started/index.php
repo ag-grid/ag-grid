@@ -11,28 +11,41 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Angular Grid | Get Started with ag-Grid and Angular</h1>
 
-<p class="lead" id="angular-grid-description">
-    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid
-    engine is implemented in TypeScript with zero dependencies.
-    The grid supports Angular by providing an Angular Component version of the grid.
-    This allows you to use the grid as a component in your application like any other Angular
-    component &ndash; you pass configuration through property bindings and handle events through event bindings.
-    You can even use Angular components to customize the grid UI and cell contents / behavior.
+<p class="lead" id="angular-grid">
+    ag-Grid is the industry standard for Angular Enterprise Applications. In short, ag-Grid is the best
+    Angular grid in the world!
+</p>
+
+<p>
+    Below are getting started instructions for using ag-Grid with Angular for both the
+    <a href="../javascript-grid-set-license/">Community and Enterprise</a>
+    versions of ag-Grid.
+</p>
+
+<note>
+    <p>
+        Everyone can use ag-Grid Community for free. It's MIT licensed and Open Source. No restrictions. No strings attached.
+    </p>
+    <p>
+        You can also get started with ag-Grid Enterprise immediately. You don't need to contact us to evaluate
+        ag-Grid Enterprise. A license is only required when you start developing for production.
+    </p>
+</note>
+
+<p>
+    Community and Enterprise
 </p>
 
 <?
 include './intro.php';
 ?>
 
-<h2>Tutorial Overview</h2>
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project,
-    and configure some of the essential features of it.
-We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
+<h2>Getting Started</h2>
+<p>
+    Below we walk through the necessary steps to add ag-Grid (both Community and Enterprise are covered) to an
+    Angular project and configure some grid features. In particular, we will go through the following steps:
+</p>
 
-<hr>
-<h2>
-    Table of Contents
-</h2>
 <div class="row">
   <div class="col">
     <ol style="columns: 2">
@@ -47,7 +60,6 @@ We will show you some of the fundamentals of the grid (passing properties, using
 </ol>
 </div>
 </div>
-<hr>
 
 <h2 id="add-ag-grid-to-your-project">Add ag-Grid to Your Project</h2>
 
