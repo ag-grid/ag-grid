@@ -41,8 +41,8 @@ function enterprise_feature($name)
 
             for (var i = 0; i < containers.length; i++) {
                 var ct = containers[i];
-                ct.addEventListener('click', toggleOpen.bind(this, ct));
-                ct.querySelector('.card').addEventListener('mouseleave', toggleOpen.bind(this, ct, false));
+                addContainerListeners(ct);
+
                 var subLevels = ct.querySelectorAll('.docs-homepage-level1-item');
 
                 for (var j = 0; j < subLevels.length; j++) {
@@ -57,7 +57,16 @@ function enterprise_feature($name)
             }
         });
 
-        function toggleOpen(container, state) {
+        function addContainerListeners(ct) {
+            var card = ct.querySelector('.card');
+            ct.addEventListener('click', function(e) { toggleOpen(e, ct) });
+            card.addEventListener('mouseleave', function(e) { toggleOpen(e, ct, false)});
+        }
+
+        function toggleOpen(e, container, state) {
+            if (e.target.tagName === 'A') {
+                return;
+            }
             var wasOpen = container.classList.contains('open');
             var card = container.querySelector('.card');
 
