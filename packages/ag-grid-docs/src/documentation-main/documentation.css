@@ -20,12 +20,12 @@
 
 #documentation .docs-homepage-section-preview h2 .uiIcon {
     position: absolute;
-    width: 100%;
+    width: 24px;
+    height: 24px;
     right: 1rem;
     padding: 0.5rem 0;
     background-position: center right;
     background-repeat: no-repeat;
-    height: 24px;
     text-indent: -900rem;
 }
 
@@ -70,6 +70,10 @@
 	border: 1px solid #dee2e6;
 }
 
+#documentation .docs-homepage-section-preview:not(.open) .card:hover {
+    border-color: #A7A7A7
+}
+
 #documentation .docs-homepage-section-preview.open .card {
     top: -1rem;
     left: -1rem;
@@ -106,7 +110,9 @@
 }
 
 #documentation .docs-homepage-section-preview span {
-    white-space: nowrap;
+    white-space: pre-wrap;
+    hyphens: auto;
+    -ms-hyphens: auto;
 }
 #documentation .docs-homepage-section-preview:not(.open) ul.docs-homepage-level0-item > li > span {
     display: block;
