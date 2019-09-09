@@ -100,11 +100,8 @@
             }
 
             ul {
-                padding-start: 0;
+                padding-left: 0;
                 padding-inline-start: 0;
-                a {
-                    // color: $gray-600;
-                }
             }
 
             ul ul ul {
@@ -420,47 +417,6 @@
 
     h1 .anchorjs-link {
         display: none;
-    }
-    // docs homepage
-    .docs-homepage-section-preview {
-        border: 1px solid $border-color;
-        border-top-width: 0;
-        padding: 1rem;
-
-        &:first-of-type {
-            @extend .mt-3;
-            // border-top: 1px solid $border-color;
-            border-top-width: 1px;
-        }
-
-        // this does not work for some reason
-        // &:last-of-type {
-        //     @extend .mb-4;
-        //     color: red;
-        // }
-
-        &:nth-of-type(2n-1) {
-            background-color: $offwhite;
-        }
-
-        &:first-child {
-            margin-top: 0 !important;
-        }
-
-        h2 {
-            @extend h4;
-            margin-top: 0 !important;
-            margin-bottom: 1rem !important;
-        }
-
-        p:last-child {
-            @extend .text-right;
-            margin-bottom: 0 !important;
-
-            a {
-                @extend .btn, .btn-primary;
-            }
-        }
     }
 
     #get-started-frameworks {

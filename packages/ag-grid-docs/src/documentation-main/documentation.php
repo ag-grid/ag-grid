@@ -76,7 +76,7 @@ function renderItems($items, $level) {
         echo "<span class=\"$spanClasses\">";
 
         if ($hasLink) {
-            echo "<a href=\"$url\">";
+            echo "<a href=\"../$url\">";
         }
 
         echo "$title";

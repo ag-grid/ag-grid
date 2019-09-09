@@ -1,11 +1,20 @@
 @charset "utf-8";
 /* CSS Document */
 
-#documentation h1 { clear: both;}
+#documentation {
+    -webkit-font-smoothing: antialiased;
+}
+
+#documentation h1 { 
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
 #documentation h1 section { position: absolute;}
-#documentation .card h2 { 
+#documentation.new #content h2 { 
 	font-size: 1.7rem;
-	font-weight: 300;
+    font-weight: 300;
+    margin-top: 0;
 	margin-bottom: 1rem;
 }
 
