@@ -34,7 +34,7 @@ function enterprise_feature($name)
     meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
     ?>
     <link rel="stylesheet" href="../dist/docs.css">
-    <link rel="stylesheet" href="../documentation-main/new_documentation.css">
+    <link rel="stylesheet" href="../documentation-main/documentation.css">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var containers = document.querySelectorAll('.docs-homepage-section-preview');
@@ -43,17 +43,18 @@ function enterprise_feature($name)
                 var ct = containers[i];
                 ct.addEventListener('click', toggleOpen.bind(this, ct));
                 ct.querySelector('.card').addEventListener('mouseleave', toggleOpen.bind(this, ct, false));
-                var displayedItems = ct.querySelectorAll('.docs-homepage-level2-item + ul > li:not(.hide-closed)');
-                
-                if (displayedItems.length) {
-                
-                    var lastComma = displayedItems[displayedItems.length - 1].querySelector('.level-3-split');
-                    if (lastComma) {
-                        lastComma.style.display = 'none';
+                var subLevels = ct.querySelectorAll('.docs-homepage-level1-item');
+
+                for (var j = 0; j < subLevels.length; j++) {
+                    var displayedItems = subLevels[j].querySelectorAll('li > span:not(.hide-collapsed)');
+                    if (displayedItems.length) {
+                        var lastComma = displayedItems[displayedItems.length - 1].querySelector('.item-split');
+                        if (lastComma) {
+                            lastComma.style.display = 'none';
+                        }
                     }
                 }
             }
-            
         });
 
         function toggleOpen(container, state) {
