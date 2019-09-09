@@ -1,4 +1,3 @@
-import { Deinterpolator, Reinterpolator } from "./scale";
 import ContinuousScale from "./continuousScale";
 import ticks, { tickIncrement } from "../util/ticks";
 
@@ -6,20 +5,6 @@ import ticks, { tickIncrement } from "../util/ticks";
  * Maps continuous domain to a continuous range.
  */
 export class LinearScale<R> extends ContinuousScale {
-    protected deinterpolatorOf(a: number, b: number): Deinterpolator<number> {
-        const d = b - a;
-        if (d === 0 || isNaN(d)) {
-            return () => d;
-        } else {
-            return x => (x - a) / d;
-        }
-    }
-
-    protected reinterpolatorOf(a: number, b: number): Reinterpolator<number> {
-        const d = b - a;
-        return t => a + d * t;
-    }
-
     ticks(count = 10) {
         const d = this._domain;
         return ticks(d[0], d[d.length - 1], count);
