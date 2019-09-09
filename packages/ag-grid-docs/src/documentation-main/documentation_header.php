@@ -67,10 +67,14 @@ function enterprise_feature($name)
             if (e.target.tagName === 'A') {
                 return;
             }
-            var wasOpen = container.classList.contains('open');
-            var card = container.querySelector('.card');
 
-            container.classList.toggle('open', typeof state === 'boolean' ? state : !wasOpen);
+            var card = container.querySelector('.card');
+            if (typeof state === 'boolean') {
+                container.classList[state ? 'add' : 'remove']('open');
+            } else {
+                container.classList.toggle('open');
+            }
+            
         }
     </script>
 </head>
