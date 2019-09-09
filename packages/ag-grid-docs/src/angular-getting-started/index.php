@@ -19,6 +19,11 @@ include '../documentation-main/documentation_header.php';
     component &ndash; you pass configuration through property bindings and handle events through event bindings.
     You can even use Angular components to customize the grid UI and cell contents / behavior.
 </p>
+
+<?
+include './intro.php';
+?>
+
 <h2>Tutorial Overview</h2>
 <p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Angular project,
     and configure some of the essential features of it.
