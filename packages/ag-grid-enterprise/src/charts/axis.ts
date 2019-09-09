@@ -118,13 +118,29 @@ export class Axis<S extends Scale<D, number>, D = any> {
      */
     tickColor?: string = 'rgba(195, 195, 195, 1)';
 
+    tickCount: number = 10;
+
+    private tickFormatter?: (x: any) => string;
+    private _tickFormat?: string;
+    set tickFormat(value: string | undefined) {
+        if (this._tickFormat !== value) {
+            this._tickFormat = value;
+            if (this.scale.tickFormat) {
+                this.tickFormatter = this.scale.tickFormat(10, value);
+            }
+        }
+    }
+    get tickFormat(): string | undefined {
+        return this._tickFormat;
+    }
+
     /**
      * In case {@param value} is a number, the {@param fractionDigits} parameter will
      * be provided as well. The `fractionDigits` corresponds to the number of fraction
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    labelFormatter?: (params: {value: any, index: number, fractionDigits?: number}) => string;
+    labelFormatter?: (params: {value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string}) => string;
 
     labelFontStyle: string = '';
     labelFontWeight: string = '';
@@ -266,7 +282,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         group.rotation = rotation;
 
         // Render ticks and labels.
-        const ticks = scale.ticks!(10);
+        const ticks = scale.ticks!(this.tickCount);
         let fractionDigits = 0;
         if (ticks instanceof NumericTicks) {
             fractionDigits = ticks.fractionDigits;
@@ -373,17 +389,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
+                const tickFormatter = this.tickFormatter;
                 label.text = labelFormatter
                     ? labelFormatter({
                         value: fractionDigits >= 0 ? datum : String(datum),
                         index,
-                        fractionDigits
+                        fractionDigits,
+                        formatter: tickFormatter
                     })
                     : fractionDigits
                         // the `datum` is a floating point number
                         ? (datum as any as number).toFixed(fractionDigits)
                         // the `datum` is an integer, a string or an object
-                        : String(datum);
+                        : tickFormatter
+                            ? tickFormatter(datum)
+                            : String(datum);
                 label.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
