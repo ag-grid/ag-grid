@@ -155,24 +155,29 @@
             "items": [
               {
                 "title": "Grid Properties",
-                "url": "javascript-grid-properties/"
+                "url": "javascript-grid-properties/",
+                "showInCollapsed": true
               },
               {
                 "title": "Grid API",
-                "url": "javascript-grid-api/"
+                "url": "javascript-grid-api/",
+                "showInCollapsed": true
               },
               {
                 "title": "Grid Events",
                 "box-title": "Events",
-                "url": "javascript-grid-events/"
+                "url": "javascript-grid-events/",
+                "showInCollapsed": true
               },
               {
                 "title": "Grid Callbacks",
-                "url": "javascript-grid-callbacks/"
+                "url": "javascript-grid-callbacks/",
+                "showInCollapsed": true
               },
               {
                 "title": "Row Object",
-                "url": "javascript-grid-row-node/"
+                "url": "javascript-grid-row-node/",
+                "showInCollapsed": true
               }
             ]
           },
@@ -182,15 +187,18 @@
             "items": [
               {
                 "title": "Column Properties",
-                "url": "javascript-grid-column-properties/"
+                "url": "javascript-grid-column-properties/",
+                "showInCollapsed": true
               },
               {
                 "title": "Column API",
-                "url": "javascript-grid-column-api/"
+                "url": "javascript-grid-column-api/",
+                "showInCollapsed": true
               },
               {
                 "title": "Column Object",
-                "url": "javascript-grid-column/"
+                "url": "javascript-grid-column/",
+                "showInCollapsed": true
               }
             ]
           }
@@ -344,6 +352,7 @@
               {
                 "title": "Server Side Row Model",
                 "url": "javascript-grid-server-side-model/",
+                "showInCollapsed": true,
                 "enterprise": true,
                 "matrixExcludeChildren": true,
                 "items": [
@@ -427,12 +436,14 @@
               },
               {
                 "title": "Infinite Row Model",
-                "url": "javascript-grid-infinite-scrolling/"
+                "url": "javascript-grid-infinite-scrolling/",
+                "showInCollapsed": true
               },
               {
                 "title": "Viewport Row Model",
                 "url": "javascript-grid-viewport/",
-                "enterprise": true
+                "enterprise": true,
+                "showInCollapsed": true
               }
             ]
           },
@@ -512,22 +523,26 @@
                     "items": [
                       {
                         "title": "Text Filter",
-                        "url": "javascript-grid-filter-text/"
+                        "url": "javascript-grid-filter-text/",
+                        "showInCollapsed": true
                       },
                       {
                         "title": "Number Filter",
-                        "url": "javascript-grid-filter-number/"
+                        "url": "javascript-grid-filter-number/",
+                        "showInCollapsed": true
                       },
                       {
                         "title": "Date Filter",
-                        "url": "javascript-grid-filter-date/"
+                        "url": "javascript-grid-filter-date/",
+                        "showInCollapsed": true
                       }
                     ]
                   },
                   {
                     "title": "Set Filter",
                     "url": "javascript-grid-filter-set/",
-                    "enterprise": true
+                    "enterprise": true,
+                    "showInCollapsed": true
                   }
                 ]
               },
@@ -565,19 +580,23 @@
             "items": [
               {
                 "title": "Value Getters",
-                "url": "javascript-grid-value-getters/"
+                "url": "javascript-grid-value-getters/",
+                "showInCollapsed": true
               },
               {
                 "title": "Value Formatters",
-                "url": "javascript-grid-value-formatters/"
+                "url": "javascript-grid-value-formatters/",
+                "showInCollapsed": true
               },
               {
                 "title": "Expressions",
-                "url": "javascript-grid-cell-expressions/"
+                "url": "javascript-grid-cell-expressions/",
+                "showInCollapsed": true
               },
               {
                 "title": "Reference Data",
-                "url": "javascript-grid-reference-data/"
+                "url": "javascript-grid-reference-data/",
+                "showInCollapsed": true
               }
             ]
           },
@@ -591,11 +610,13 @@
             "items": [
               {
                 "title": "Group Cell Renderer",
-                "url": "javascript-grid-provided-renderer-group/"
+                "url": "javascript-grid-provided-renderer-group/",
+                "showInCollapsed": true
               },
               {
                 "title": "Show Change Cell Renderers",
-                "url": "javascript-grid-provided-renderer-change/"
+                "url": "javascript-grid-provided-renderer-change/",
+                "showInCollapsed": true
               }
             ]
           },
@@ -633,11 +654,13 @@
             "items": [
               {
                 "title": "Value Setters",
-                "url": "javascript-grid-value-setters/"
+                "url": "javascript-grid-value-setters/",
+                "showInCollapsed": true
               },
               {
                 "title": "Value Parsers",
-                "url": "javascript-grid-value-parsers/"
+                "url": "javascript-grid-value-parsers/",
+                "showInCollapsed": true
               }
             ]
           },
@@ -730,16 +753,19 @@
               {
                 "title": "Side Bar",
                 "url": "javascript-grid-side-bar/",
-                "enterprise": true
+                "enterprise": true,
+                "showInCollapsed": true
               },
               {
                 "title": "Columns Tool Panel",
                 "url": "javascript-grid-tool-panel-columns/",
+                "showInCollapsed": true,
                 "enterprise": true
               },
               {
                 "title": "Filters Tool Panel",
                 "url": "javascript-grid-tool-panel-filters/",
+                "showInCollapsed": true,
                 "enterprise": true
               }
             ]
@@ -780,59 +806,70 @@
               {
                 "title": "Cell Renderer",
                 "box-title": "Cell",
-                "url": "javascript-grid-cell-rendering-components/"
+                "url": "javascript-grid-cell-rendering-components/",
+                "showInCollapsed": true
               },
               {
                 "title": "Cell Editor",
                 "box-title": "Editor",
-                "url": "javascript-grid-cell-editor/"
+                "url": "javascript-grid-cell-editor/",
+                "showInCollapsed": true
               },
               {
                 "title": "Date Component",
                 "box-title": "Date",
-                "url": "javascript-grid-date-component/"
+                "url": "javascript-grid-date-component/",
+                "showInCollapsed": true
               },
               {
                 "title": "Filter Component",
                 "box-title": "Filter",
-                "url": "javascript-grid-filter-component/"
+                "url": "javascript-grid-filter-component/",
+                "showInCollapsed": true
               },
               {
                 "title": "Floating Filter Component",
                 "box-title": "Floating Filter",
-                "url": "javascript-grid-floating-filter-component/"
+                "url": "javascript-grid-floating-filter-component/",
+                "showInCollapsed": true
               },
               {
                 "title": "Header Component",
                 "box-title": "Header",
-                "url": "javascript-grid-header-rendering/"
+                "url": "javascript-grid-header-rendering/",
+                "showInCollapsed": true
               },
               {
                 "title": "Loading Cell Renderer",
                 "box-title": "Loading",
-                "url": "javascript-grid-loading-cell-renderer/"
+                "url": "javascript-grid-loading-cell-renderer/",
+                "showInCollapsed": true
               },
               {
                 "title": "Overlay Component",
                 "box-title": "Overlays",
-                "url": "javascript-grid-overlay-component/"
+                "url": "javascript-grid-overlay-component/",
+                "showInCollapsed": true
               },
               {
                 "title": "Status Bar Component",
                 "box-title": "Status Bar",
                 "url": "javascript-grid-status-bar-component/",
-                "enterprise": true
+                "enterprise": true,
+                "showInCollapsed": true
               },
               {
                 "title": "Tool Panel Component",
                 "box-title": "Tool Panel",
                 "url": "javascript-grid-tool-panel-component/",
-                "enterprise": true
+                "enterprise": true,
+                "showInCollapsed": true
               },
               {
                 "title": "Tooltip Component",
                 "box-title": "Tooltip",
-                "url": "javascript-grid-tooltip-component/"
+                "url": "javascript-grid-tooltip-component/",
+                "showInCollapsed": true
               }
             ]
           }
