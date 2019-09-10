@@ -1,5 +1,4 @@
 const replace = require('replace-in-file');
-const typescript = require('typescript');
 const typescriptSimple = require('typescript-simple');
 const fs = require('fs');
 
@@ -141,8 +140,9 @@ const updateGridProperties = (resolve, getGridPropertiesAndEvents) => {
     };
 
     replace(optionsForGrid)
-        .then(changes => {
-            console.log('Modified files:', changes.join(', '));
+        .then(filesChecked => {
+            const changes = filesChecked.filter(change => change.hasChanged);
+            console.log(`Grid Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(changes => changes.file).join(', ')}`);
             resolve();
         })
         .catch(error => {
@@ -161,8 +161,9 @@ const updateColProperties = (resolve, getGridColumnProperties) => {
     };
 
     replace(optionsForGridColumn)
-        .then(changes => {
-            console.log('Modified files:', changes.join(', '));
+        .then(filesChecked => {
+            const changes = filesChecked.filter(change => change.hasChanged);
+            console.log(`Column Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(changes => changes.file).join(', ')}`);
             resolve();
         })
         .catch(error => {
@@ -203,4 +204,4 @@ module.exports = {
 };
 
 
-module.exports.updatePropertiesSrc();
+// module.exports.updatePropertiesSrc = updatePropertiesSrc;

@@ -9,14 +9,11 @@
     "verify-properties": "node agGridPropertiesCheck.js",
     "precheck": "tsc -p tsconfig-precheck.json",
     "build": "npm run precheck && npm run clean && npm run build-no-verify && npm run verify-properties",
-    "build-gulp": "npm run build-no-verify-gulp && npm run verify-properties",
-    "build-no-verify": "ngc -p tsconfig-src.json && npm run clean-src && gulp clean-build-main",
-    "build-no-verify-gulp": "ngc -p tsconfig-gulp.json",
+    "build-no-verify": "ngc -p tsconfig-src.json && npm run clean-src && gulp",
     "clean-src": "rimraf src/*.d.ts src/*.js*",
     "clean-main": "rimraf main.metadata.json && rimraf main.js* && rimraf main.d.ts && rimraf aot",
     "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main",
     "clean-build": "npm run clean && npm run build",
-    "clean-build-no-verify": "npm run clean && npm run build-no-verify",
     "release": "npm run update-properties && npm run clean-build"
   },
   "repository": {
@@ -36,31 +33,25 @@
   },
   "homepage": "https://angular-grid.ag-grid.com",
   "devDependencies": {
-    "@angular/compiler": "^4.4.7",
-    "@angular/compiler-cli": "^4.4.7",
-    "@angular/core": "^4.4.7",
+    "@angular/compiler": "^4.0.0",
+    "@angular/compiler-cli": "^4.0.0",
+    "@angular/core": "^4.0.0",
     "ag-grid-community": "^21.2.0",
-    "core-js": "^2.5.7",
-    "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-header": "^2.0.5",
+    "core-js": "^2.5.0",
+    "del": "^5.1.0",
+    "gulp": "^4.0.0",
     "gulp-ngc": "~0.3.3",
     "gulp-rename": "^1.4.0",
-    "gulp-typescript": "^5.0.0-alpha.3",
-    "merge2": "^1.2.2",
-    "replace-in-file": "^3.4.2",
-    "rimraf": "^2.6.2",
-    "run-sequence": "^2.2.1",
-    "rxjs": "^5.5.11",
-    "typescript": "^2.9.2",
-    "typescript-simple": "8.0.6",
-    "zone.js": "^0.8.26"
+    "gulp-typescript": "^5.0.0",
+    "replace-in-file": "^4.1.0",
+    "rimraf": "^3.0.0",
+    "rxjs": "^5.5.0",
+    "typescript": "^2.9.0",
+    "typescript-simple": "8.0.6"
   },
   "peerDependencies": {
     "@angular/compiler": ">=2.1.x",
     "@angular/core": ">=2.1.x",
-    "ag-grid-community": "^21.2.0",
-    "rxjs": ">=5.0.0-beta.12",
-    "zone.js": ">=0.6.x"
+    "ag-grid-community": "^21.2.0"
   }
 }
