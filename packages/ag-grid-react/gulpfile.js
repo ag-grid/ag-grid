@@ -1,16 +1,18 @@
 const gulp = require('gulp');
+const {series} = require('gulp');
 const gulpTypescript = require('gulp-typescript');
 const header = require('gulp-header');
 const merge = require('gulp-merge');
 const pkg = require('./package.json');
 const tsConfig = 'tsconfig.build.json';
+const typescript = require('rollup-plugin-typescript');
+const commonjs = require('rollup-plugin-commonjs');
+const uglify = require('rollup-plugin-uglify').uglify;
+const rollup = require('rollup-stream');
+const source = require('vinyl-source-stream');
 
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 const tsProject = gulpTypescript.createProject(tsConfig);
-
-gulp.task('default', ['commonjs', "umd"]);
-
-gulp.task('commonjs', tscTask);
 
 async function tscTask() {
     const tsResult = await gulp.src(
@@ -27,20 +29,8 @@ async function tscTask() {
     ]);
 }
 
-gulp.task('watch', ['commonjs'], () => {
-    gulp.watch([
-            './src/*',
-            './node_modules/ag-grid-community/dist/lib/**/*'],
-        ['commonjs']);
-});
-
-const typescript = require('rollup-plugin-typescript');
-const commonjs = require('rollup-plugin-commonjs');
-const uglify = require('rollup-plugin-uglify').uglify;
-const rollup = require('rollup-stream');
-const source = require('vinyl-source-stream');
-
-gulp.task('umd', () => rollup({
+const umd = () => {
+    return rollup({
         input: './src/main.ts',
         rollup: require('rollup'),
         output: {
@@ -60,4 +50,16 @@ gulp.task('umd', () => rollup({
     })
         .pipe(source('ag-grid-react.min.js'))
         .pipe(gulp.dest('./umd'))
-);
+};
+
+const watch = () => {
+    gulp.watch([
+            './src/*',
+            './node_modules/ag-grid-community/dist/lib/**/*'],
+        commonjs);
+};
+
+gulp.task('umd', umd);
+gulp.task('commonjs', tscTask);
+gulp.task('watch', series('commonjs', watch));
+gulp.task('default', series('commonjs', "umd"));
