@@ -87,6 +87,48 @@ gtm_data_layer('community-enterprise');
                             shortly.
                         </div>
 
+                        <h1 style="color: black">AG-GRID PRICING</h1>
+                        <p class="lead">ag-Grid comes in two versions – <strong>ag-Grid Community</strong> and <strong>ag-Grid Enterprise</strong>.
+                            You can <b>evaluate ag-Grid Enterprise without contacting us</b>. A license is only
+                            required when you start developing for production.</p>
+
+                        <div class="mb-5">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h2 class="card-title">
+                                                <img src="./images/pricing/Community.svg" style="max-width: 50px;" alt="MIT">
+                                                ag-Grid Community
+                                            </h2>
+                                            <h3 class="h5 card-subtitle mb-2 text-muted">Open Source MIT License (Free for Everyone)</h3>
+                                            <ul class="card-text">
+                                                <li>All essential datagrid features</li>
+                                                <li>Community support</li>
+                                            </ul>
+                                            <br />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h2 class="card-title">
+                                                <img src="./images/enterprise_50.png" style="width: 50px;" alt="MIT">
+                                                ag-Grid Enterprise
+                                            </h2>
+                                            <h3 class="h5 card-subtitle mb-2 text-muted">Commercial License</h3>
+                                            <ul class="card-text">
+                                                <li>All Community features + </li>
+                                                <li><strong>A premium set of enterprise oriented features</strong></li>
+                                                <li><strong>Dedicated support</strong></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="inline-container">
                             <div class="row" id="licenses" style="margin-bottom: 0.25rem">
                                 <div class="col-md-4">
