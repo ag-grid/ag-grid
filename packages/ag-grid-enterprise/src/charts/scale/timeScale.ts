@@ -112,7 +112,7 @@ export class TimeScale extends ContinuousScale {
         return new Date(super.invert(y));
     }
 
-    ticks(interval: number = 10, step?: number) {
+    ticks(interval: number | CountableTimeInterval = 10, step?: number) {
         const d = super.getDomain();
         let t0 = d[0];
         let t1 = d[d.length - 1];

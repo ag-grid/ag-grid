@@ -10,7 +10,6 @@ import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
 import { Caption } from "./caption";
-import { Rect } from "./scene/shape/rect";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -118,7 +117,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      */
     tickColor?: string = 'rgba(195, 195, 195, 1)';
 
-    tickCount: number = 10;
+    tickCount: any = 10; // number | TimeInterval | CountableTimeInterval
 
     private tickFormatter?: (x: any) => string;
     private _tickFormat?: string;

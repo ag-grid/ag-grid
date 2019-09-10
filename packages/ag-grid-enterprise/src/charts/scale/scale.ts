@@ -3,8 +3,8 @@ export default interface Scale<D, R> {
     range: R[];
     convert(value: D): R;
     invert?(value: R): D;
-    ticks?(count: number): D[];
-    tickFormat?(count?: number, specifier?: string): (x: any) => string;
+    ticks?(count: any): D[];
+    tickFormat?(count: any, specifier?: string): (x: any) => string;
     nice?(count: number): void;
     bandwidth?: number;
 }
