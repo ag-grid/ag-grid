@@ -818,8 +818,7 @@
               {
                 "title": "Date Component",
                 "box-title": "Date",
-                "url": "javascript-grid-date-component/",
-                "showInCollapsed": true
+                "url": "javascript-grid-date-component/"
               },
               {
                 "title": "Filter Component",
@@ -830,8 +829,7 @@
               {
                 "title": "Floating Filter Component",
                 "box-title": "Floating Filter",
-                "url": "javascript-grid-floating-filter-component/",
-                "showInCollapsed": true
+                "url": "javascript-grid-floating-filter-component/"
               },
               {
                 "title": "Header Component",
@@ -842,14 +840,12 @@
               {
                 "title": "Loading Cell Renderer",
                 "box-title": "Loading",
-                "url": "javascript-grid-loading-cell-renderer/",
-                "showInCollapsed": true
+                "url": "javascript-grid-loading-cell-renderer/"
               },
               {
                 "title": "Overlay Component",
                 "box-title": "Overlays",
-                "url": "javascript-grid-overlay-component/",
-                "showInCollapsed": true
+                "url": "javascript-grid-overlay-component/"
               },
               {
                 "title": "Status Bar Component",

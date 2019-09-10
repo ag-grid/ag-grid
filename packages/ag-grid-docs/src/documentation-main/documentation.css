@@ -51,11 +51,12 @@
 #documentation .docs-homepage-section-preview {
 	box-sizing: border-box;
 	background-color: #fff;
-	height: 420px;
+	height: 350px;
 	position: relative;
 	padding: 0;
 	border: none;
 	width: 22%;
+	min-width: 270px;
 	flex: none;
 	margin-bottom: 25px;
 	margin-right: 25px;
@@ -68,6 +69,7 @@
 	height: 100%;
 	width: 100%;
 	border: 1px solid #dee2e6;
+	overflow: hidden;
 }
 
 #documentation .docs-homepage-section-preview:not(.open) .card:hover {
@@ -109,11 +111,6 @@
 	display: none !important;
 }
 
-#documentation .docs-homepage-section-preview span {
-    white-space: pre-wrap;
-    hyphens: auto;
-    -ms-hyphens: auto;
-}
 #documentation .docs-homepage-section-preview:not(.open) ul.docs-homepage-level0-item > li > span {
     display: block;
 }
@@ -136,6 +133,19 @@
 
 #documentation .docs-homepage-section-preview.open ul.level {
 	padding-left: 5px;
+}
+
+@media (max-width: 715px) {
+	#documentation .group .group-items {
+		flex-direction: column;
+	}
+	#documentation .docs-homepage-section-preview:not(.open) .docs-homepage-level0-item {
+		display: none;
+	}
+	#documentation .docs-homepage-section-preview {
+		width: 100%;
+		height: auto;
+	}
 }
 
 /* ICONS */
