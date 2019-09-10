@@ -59,8 +59,9 @@
     #main-nav {
         height: 100%;
         ul {
-            @extend .navbar-nav, .ml-md-auto;
+            @extend .navbar-nav;
             height: 100%;
+            margin-left: auto;
             li {
                 @extend .nav-item, .ml-3;
                 height: calc(100% - 1px);
@@ -104,29 +105,6 @@
 
                 background-color: $offwhite;
                 color: $blue-2 !important;
-            }
-        }
-    }
-}
-
-@media (min-width: 576px) and (max-width: 1024px) {
-    #nav {
-        nav {
-            #navbar-toggle {
-                display: block;
-                margin-left: 10px;
-            }
-            #main-nav {
-                flex-grow: 0;
-                ul {
-                    margin-left: 0 !important;
-                }
-            }
-            &:not(.home) #main-nav ul li:nth-last-child(-n+6):not(:last-child) {
-                display: none;
-            }
-            &.home #main-nav ul li:nth-last-child(-n+4) {
-                display: none;
             }
         }
     }
