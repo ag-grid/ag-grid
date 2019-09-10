@@ -186,8 +186,8 @@ export class ScatterSeries extends Series<CartesianChart> {
         this.radiusScale.range = [minMarkerSize / 2, markerSize / 2];
 
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
-        const domainX = continuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
-        const domainY = numericExtent(this.yData) || [0, 1];
+        const domainX = continuousX ? (numericExtent(xData) || [0, 1]) : xData;
+        const domainY = numericExtent(yData) || [0, 1];
 
         if (continuousX) {
             const [min, max] = domainX as number[];

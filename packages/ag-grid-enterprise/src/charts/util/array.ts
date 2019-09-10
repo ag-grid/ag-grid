@@ -29,6 +29,7 @@ export function extent<T>(values: T[]): [T | undefined, T | undefined] {
     return [min, max];
 }
 
+// Custom `Array.find` implementation for legacy browsers.
 export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[]) => boolean): T | undefined {
     for (let i = 0, ln = arr.length; i < ln; i++) {
         const value = arr[i];
@@ -39,9 +40,12 @@ export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[])
 }
 
 // This method will only return `undefined`, if there's not a single valid finite number
-// in the given array of values.
+// in the given array of values. The method will try to coerce values to numbers, for cases
+// where Date objects are mixed with timestamps, effectively normalizing everything to numbers.
 export function numericExtent<T>(values: T[]): [number, number] | undefined {
-    const [min, max] = extent(values);
+    const [x0, x1] = extent(values);
+    const min = +(x0 as any);
+    const max = +(x1 as any);
     if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
         return [min, max];
     }
