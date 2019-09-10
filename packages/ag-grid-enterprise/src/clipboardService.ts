@@ -364,7 +364,7 @@ export class ClipboardService implements IClipboardService {
         }
 
         const processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
-        this.valueService.setValue(rowNode, column, processedValue, true);
+        this.valueService.setValue(rowNode, column, processedValue);
 
         const cellPosition: CellPosition = {
             rowIndex: currentRow.rowIndex,
