@@ -80,15 +80,31 @@ test('utcFormat', () => {
 });
 
 test('utcParse', () => {
-    const utcTimestamp = Date.UTC(2019, 8, 3, 14, 50, 17, 300);
+    const utcTimestamp = Date.UTC(2019, 8, 3, 14, 50, 17, 300); // 1567522217300
 
-    const parse0 = defaultLocale.utcParse('%A, %d %B, %Y - %H:%M:%S.%L');
-    const parse1 = defaultLocale.utcParse('%A, %0d %B, %Y - %H:%M:%S.%L');
-    const parse2 = defaultLocale.utcParse('%A, %_d %B, %Y - %H:%M:%S.%L');
-    const parse3 = defaultLocale.utcParse('%A, %-d %B, %Y - %H:%M:%S.%L');
+    {
+        const parse0 = defaultLocale.utcParse('%A, %d %B, %Y - %H:%M:%S.%L');
+        const parse1 = defaultLocale.utcParse('%A, %0d %B, %Y - %H:%M:%S.%L');
+        const parse2 = defaultLocale.utcParse('%A, %_d %B, %Y - %H:%M:%S.%L');
+        const parse3 = defaultLocale.utcParse('%A, %-d %B, %Y - %H:%M:%S.%L');
 
-    expect(parse0('Tuesday, 03 September, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
-    expect(parse1('Tuesday, 03 September, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
-    expect(parse2('Tuesday,  3 September, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
-    expect(parse3('Tuesday, 3 September, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
+        expect(parse0('Tuesday, 03 September, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
+        expect(parse1('Tuesday, 03 September, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
+        expect(parse2('Tuesday,  3 September, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
+        expect(parse3('Tuesday, 3 September, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
+    }
+
+    {
+        const parse0 = russianLocale.utcParse('%A, %d %B, %Y - %H:%M:%S.%L');
+        const parse1 = russianLocale.utcParse('%A, %0d %B, %Y - %H:%M:%S.%L');
+        const parse2 = russianLocale.utcParse('%A, %_d %B, %Y - %H:%M:%S.%L');
+        const parse3 = russianLocale.utcParse('%A, %-d %B, %Y - %H:%M:%S.%L');
+        const parse4 = russianLocale.utcParse('%c');
+
+        expect(parse0('Вторник, 03 Сентября, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
+        expect(parse1('Вторник, 03 Сентября, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
+        expect(parse2('Вторник,  3 Сентября, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
+        expect(parse3('Вторник, 3 Сентября, 2019 - 14:50:17.300')!.getTime()).toBe(utcTimestamp);
+        expect(parse4('03.09.2019 14:50:17')!.getTime()).toBe(1567522217000);
+    }
 });
