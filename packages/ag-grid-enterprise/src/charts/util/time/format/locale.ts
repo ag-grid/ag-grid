@@ -13,7 +13,14 @@ import utcDay from "../utcDay";
 import utcYear from "../utcYear";
 import utcSunday, { utcMonday, utcThursday } from "../utcWeek";
 
+type FormatKeys = 'a' | 'A' | 'b' | 'B' | 'c' | 'd' | 'e' | 'f' | 'H' | 'I' | 'j' | 'L' | 'm' | 'M' |
+                  'p' | 'Q' | 's' | 'S' | 'u' | 'U' | 'V' | 'w' | 'W' | 'x' | 'X' | 'y' | 'Y' | 'Z' | '%';
+// The keys in the DateMap are actually FormatKeys, not all will be defined though, so to prevent
+// many checks and to avoid creating a more complicated type we just use `key in string` here.
 type DateMap = { [key in string]: number };
+type StringFormat = (date: Date, fill: string) => string;
+type NumberFormat = (date: Date) => number;
+type FormatMap = { [key in FormatKeys]?: StringFormat | NumberFormat };
 
 /**
  * Specification of time locale to use when creating a new TimeLocaleObject.
@@ -118,7 +125,7 @@ export interface TimeLocaleObject {
      *
      * @param specifier A specifier string for the date format.
      */
-    format(specifier: string): (date: Date) => string;
+    format(specifier: string): (date: Date | number) => string;
     /**
      * Returns a new parser for the given string specifier.
      * The specifier string may contain the same directives as locale.format (TimeLocaleObject.format).
@@ -142,7 +149,7 @@ export interface TimeLocaleObject {
      *
      * @param specifier A specifier string for the date format.
      */
-    utcFormat(specifier: string): (date: Date) => string;
+    utcFormat(specifier: string): (date: Date | number) => string;
     /**
      * Equivalent to locale.parse (TimeLocaleObject.parse),
      * except all directives are interpreted as Coordinated Universal Time (UTC) rather than local time.
@@ -184,10 +191,6 @@ function formatLookup(names: string[]): typeof map {
     return map;
 }
 
-type StringFormat = (date: Date, fill: string) => string;
-type NumberFormat = (date: Date) => number;
-type FormatMap = { [key in string]: StringFormat | NumberFormat | undefined };
-
 function newYear(y: number): DateMap {
     return {
         y,
@@ -221,7 +224,7 @@ const pads: { [key in string]: string } = {
     '0': '0'
 };
 
-export function pad(value: number, fill: string, width: number) {
+export function pad(value: number, fill: string, width: number): string {
     const sign = value < 0 ? '-' : '';
     const string = String(sign ? -value : value);
     const length = string.length;
@@ -431,8 +434,8 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
      * @param specifier
      * @param formats
      */
-    function newFormat(specifier: string, formats: FormatMap) {
-        return function (date: Date | number): string {
+    function newFormat(specifier: string, formats: FormatMap): (date: Date | number) => string {
+        return date => {
             const string: (string | number)[] = [];
             const n = specifier.length;
             let i = -1;
@@ -452,7 +455,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
                     } else {
                         pad = c === 'e' ? ' ' : '0'; // use the default padding modifier
                     }
-                    const format = formats[c];
+                    const format = formats[c as FormatKeys];
                     if (format) { // if the directive has a corresponding formatting function
                         c = format(date, pad); // replace the directive with the formatted date
                     }
@@ -466,7 +469,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
         };
     }
 
-    function parseSpecifier(d: DateMap, specifier: string, string: string, j: number) {
+    function parseSpecifier(d: DateMap, specifier: string, string: string, j: number): number {
         let i = 0;
         const n = specifier.length;
         const m = string.length;
@@ -754,22 +757,22 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
     }
 
     return {
-        format: (specifier: string) => {
+        format: (specifier: string): ((date: number | Date) => string) => {
             const f = newFormat(specifier, formats);
             f.toString = () => specifier;
             return f;
         },
-        parse: (specifier: string) => {
+        parse: (specifier: string): ((dateString: string) => (Date | undefined)) => {
             const p = newParse(specifier, localDate);
             p.toString = () => specifier;
             return p;
         },
-        utcFormat: (specifier: string) => {
+        utcFormat: (specifier: string): ((date: number | Date) => string) => {
             const f = newFormat(specifier, utcFormats);
             f.toString = () => specifier;
             return f;
         },
-        utcParse: (specifier: string) => {
+        utcParse: (specifier: string): ((dateString: string) => (Date | undefined)) => {
             const p = newParse(specifier, utcDate);
             p.toString = () => specifier;
             return p;
