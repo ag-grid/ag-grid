@@ -85,7 +85,7 @@ const copyFromDistFolder = () => {
     );
 };
 
-const servePreview = (done) => {
+const serveDist = (done) => {
     const php = cp.spawn('php', ['-S', '127.0.0.1:9999', '-t', 'dist'], {
         stdio: 'inherit'
     });
@@ -137,10 +137,10 @@ gulp.task('populate-dev-folder', populateDevFolder);
 gulp.task('process-src', processSource);
 gulp.task('bundle-site', bundleSite);
 gulp.task('copy-from-dist', copyFromDistFolder);
-gulp.task('release-archive', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site', 'copy-from-dist', 'populate-dev-folder'));
-gulp.task('release', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site', 'copy-from-dist'));
-gulp.task('default', series('release'));
-gulp.task('serve-preview', servePreview);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
+gulp.task('release-archive', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site', 'copy-from-dist', 'populate-dev-folder'));
+gulp.task('release', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site', 'copy-from-dist', 'replace-references-with-cdn'));
+gulp.task('default', series('release'));
+gulp.task('serve-dist', serveDist);
 gulp.task('generate-examples', series('generate-examples-dev'));
 gulp.task('serve', require('./dev-server'));
