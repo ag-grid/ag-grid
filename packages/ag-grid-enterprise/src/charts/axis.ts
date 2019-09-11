@@ -117,11 +117,21 @@ export class Axis<S extends Scale<D, number>, D = any> {
      */
     tickColor?: string = 'rgba(195, 195, 195, 1)';
 
-    tickCount: any = 10; // number | TimeInterval | CountableTimeInterval
+    /**
+     * A hint of how many ticks to use (the exact number of ticks might differ),
+     * a `TimeInterval` or a `CountableTimeInterval`.
+     * For example:
+     *
+     *     axis.tickCount = 5;
+     *     axis.tickCount = year;
+     *     axis.tickCount = month.every(6);
+     */
+    tickCount: any = 10;
 
     private tickFormatter?: (x: any) => string;
     private _tickFormat?: string;
     set tickFormat(value: string | undefined) {
+        // See `TimeLocaleObject` docs for the list of supported format directives.
         if (this._tickFormat !== value) {
             this._tickFormat = value;
             if (this.scale.tickFormat) {
