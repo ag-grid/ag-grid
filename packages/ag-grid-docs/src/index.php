@@ -85,7 +85,7 @@ meta_and_links($title, $keywords, $description, false);
                     <li id="fw-javascript"><a href="./javascript-getting-started/">JavaScript</a></li>
                     <li id="fw-angular"><a href="./angular-getting-started/">Angular</a></li>
                     <li id="fw-react"><a href="./react-getting-started/">React</a></li>
-                    <li id="fw-vue"><a href="./vue-getting-started/">Vue.js</a></li>
+                    <li id="fw-vue"><a href="./best-vuejs-data-grid/">Vue.js</a></li>
                     <li id="fw-angularjs"><a href="./best-angularjs-data-grid/">AngularJS 1.x</a></li>
                     <li id="fw-polymer"><a href="./polymer-getting-started/">Polymer</a></li>
                     <li id="fw-webcomponents"><a href="./best-web-component-data-grid/">Web Components</a></li>

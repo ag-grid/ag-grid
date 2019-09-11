@@ -107,7 +107,7 @@
               },
               {
                 "title": "Vue",
-                "url": "vue-getting-started/",
+                "url": "best-vuejs-data-grid/",
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -124,7 +124,7 @@
                   },
                   {
                     "title": "Misc",
-                    "url": "best-vuejs-data-grid/"
+                    "url": "vuejs-misc/"
                   }
                 ]
               },              {
