@@ -327,6 +327,11 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
         '%': formatLiteralPercent
     };
 
+    /**
+     * Parses part of the `string` (for example, full year part) starting at `i` position
+     * and, if successful, poluates the corresponding field in `d` with a number,
+     * returning the next position after the parsed part. Returns `-1` if parsing failed.
+     */
     type Parse = (d: DateMap, string: string, i: number) => number;
 
     const parses: { [key in string]: Parse } = {
@@ -469,14 +474,19 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
         };
     }
 
+    // Simultaneously walks over the specifier and the parsed string, populating the `d` map with parsed values.
+    // The returned number is expected to equal the length of the parsed `string`, if parsing succeeded.
     function parseSpecifier(d: DateMap, specifier: string, string: string, j: number): number {
+        // i - `specifier` string index
+        // j - parsed `string` index
         let i = 0;
         const n = specifier.length;
         const m = string.length;
 
-
         while (i < n) {
-            if (j >= m) return -1;
+            if (j >= m) {
+                return -1;
+            }
             const code = specifier.charCodeAt(i++);
             if (code === percentCharCode) {
                 const char = specifier.charAt(i++);
