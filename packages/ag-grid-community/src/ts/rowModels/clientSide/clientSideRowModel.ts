@@ -69,7 +69,7 @@ export interface BatchTransactionItem {
 export interface RowNodeMap { [id: string]: RowNode; }
 
 @Bean('rowModel')
-export class ClientSideRowModel implements IRowModel {
+export class ClientSideRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
