@@ -109,7 +109,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         if (!this.chartOptions.seriesDefaults) {
             this.chartOptions.seriesDefaults = {};
         }
-        this.chartOptions.seriesDefaults[property] = value;
+        (this.chartOptions.seriesDefaults as any)[property] = value;
 
         this.raiseChartOptionsChangedEvent();
     }

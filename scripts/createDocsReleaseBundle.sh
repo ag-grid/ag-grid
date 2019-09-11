@@ -14,11 +14,11 @@ VERSION=""${RAW_VERSION//./}""
 
 cd packages/ag-grid-docs
 gulp release
-gulp replace-to-cdn
+gulp replace-references-with-cdn
 cd dist
 
 FILENAME=release_"$ZIP_PREFIX"_v"$VERSION".zip
-zip -r --exclude="dev*" ../../../$FILENAME *
+zip -r ../../../$FILENAME *
 
 cd ../../../
 

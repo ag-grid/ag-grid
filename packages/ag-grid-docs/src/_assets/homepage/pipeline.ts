@@ -1,5 +1,7 @@
 import {$} from '../common/vendor';
 
+declare var jQuery;
+
 $(function () {
     $('#page-pipeline').each(function () {
         function debounce(func, wait, immediate = false) {

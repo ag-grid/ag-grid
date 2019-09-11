@@ -136,7 +136,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
         if (!this.chartOptions.legend) {
             this.chartOptions.legend = {};
         }
-        this.chartOptions.legend[property] = value;
+        (this.chartOptions.legend as any)[property] = value;
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -178,7 +178,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
         if (!this.chartOptions.title) {
             this.chartOptions.title = {} as Caption;
         }
-        this.chartOptions.title[property] = value;
+        (this.chartOptions.title as any)[property] = value;
         this.raiseChartOptionsChangedEvent();
     }
 
@@ -215,7 +215,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
             chartOptions.seriesDefaults.shadow = {};
         }
 
-        chartOptions.seriesDefaults.shadow[property] = value;
+        (chartOptions.seriesDefaults.shadow as any)[property] = value;
 
         this.raiseChartOptionsChangedEvent();
     }

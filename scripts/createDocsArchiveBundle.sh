@@ -14,7 +14,7 @@ VERSION=""${RAW_VERSION//./}""
 
 echo "Building Docs Release"
 cd packages/ag-grid-docs
-gulp release
+gulp release-archive
 cd ../../
 
 OUTPUT=$(node scripts/createDocsArchiveBundle.js $RAW_VERSION | tee /dev/tty)

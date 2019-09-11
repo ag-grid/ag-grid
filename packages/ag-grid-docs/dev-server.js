@@ -145,7 +145,9 @@ function launchTSCCheck() {
             .trim()
             .split('\n')
             .filter(line => line.indexOf('Watching for') === -1 && line.indexOf('File change') === -1)
-            .forEach(line => console.log(line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/').red));
+            .filter(line => line.indexOf('__tests__') === -1 && line.indexOf('.test.') === -1 && line.indexOf('setupTests.ts') === -1)
+            .filter(line => line.indexOf('Experimental') === -1)
+            .forEach(line => console.log(line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/')));
     });
 }
 
@@ -231,7 +233,7 @@ if (process.argv.length >= 3) {
             console.log('regenerating examples...');
             generateExamples(() => console.log('generation done.'), exampleDir, true);
         }
-    } else if(execFunc === 'prebuild-examples') {
+    } else if (execFunc === 'prebuild-examples') {
         buildPackagedExamples(() => console.log("Packaged Examples Built"), exampleDir || undefined);
     }
 }

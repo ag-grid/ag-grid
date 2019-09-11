@@ -1,5 +1,7 @@
 import {$} from '../common/vendor';
 
+declare var jQuery;
+
 $(function () {
     $('#page-changelog').each(function () {
         // show/hide tabs

@@ -117,7 +117,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         if (!this.chartOptions.seriesDefaults) {
             this.chartOptions.seriesDefaults = {};
         }
-        this.chartOptions.seriesDefaults[property] = value;
+        (this.chartOptions.seriesDefaults as any)[property] = value;
 
         this.raiseChartOptionsChangedEvent();
     }

@@ -28,5 +28,5 @@ const watch = () => {
 
 
 gulp.task('compile-source', compileSource);
-gulp.task('watch', series('src', watch));
+gulp.task('watch', series('compile-source', watch));
 gulp.task('default', series('compile-source'));
