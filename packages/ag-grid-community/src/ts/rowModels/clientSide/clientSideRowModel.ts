@@ -19,7 +19,7 @@ import { ClientSideNodeManager } from "./clientSideNodeManager";
 import { ChangedPath } from "./changedPath";
 import { ValueService } from "../../valueService/valueService";
 import { ValueCache } from "../../valueService/valueCache";
-import { RowBounds } from "../../interfaces/iRowModel";
+import {IRowModel, RowBounds} from "../../interfaces/iRowModel";
 import { GridApi } from "../../gridApi";
 import { _ } from "../../utils";
 
@@ -69,7 +69,7 @@ export interface BatchTransactionItem {
 export interface RowNodeMap { [id: string]: RowNode; }
 
 @Bean('rowModel')
-export class ClientSideRowModel {
+export class ClientSideRowModel implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
