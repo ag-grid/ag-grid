@@ -229,7 +229,6 @@ components: {
         some of the grid settings before moving onto the advanced features of cellRendering
         and custom filtering.
     </p>
-</div>
 
 <h2 id="declarative_definition">Using Markup to Define Grid Definitions</h2>
 <p>You can also define your grid column definition decoratively if you would prefer.</p>
@@ -370,5 +369,7 @@ resolve: {
     <li><a href="https://github.com/seanlandsman/ag-grid-vue-umd">UMD</a></li>
     <li><a href="https://github.com/seanlandsman/ag-grid-vue-playground">Playground</a>: Declarative, Auto Refresh and Model Driven Examples</li>
 </ul></p>
+
+
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
