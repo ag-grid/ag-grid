@@ -17,7 +17,13 @@ type FormatKeys = 'a' | 'A' | 'b' | 'B' | 'c' | 'd' | 'e' | 'f' | 'H' | 'I' | 'j
                   'p' | 'Q' | 's' | 'S' | 'u' | 'U' | 'V' | 'w' | 'W' | 'x' | 'X' | 'y' | 'Y' | 'Z' | '%';
 // The keys in the DateMap are actually FormatKeys, not all will be defined though, so to prevent
 // many checks and to avoid creating a more complicated type we just use `key in string` here.
-type DateMap = { [key in string]: number };
+type ParsedDate = { [key in string]: number };
+/**
+ * Parses part of the `string` (for example, full year part) starting at `i` position
+ * and, if successful, poluates the corresponding field in `d` with a number,
+ * returning the next position after the parsed part. Returns `-1` if parsing failed.
+ */
+type Parse = (d: ParsedDate, string: string, i: number) => number;
 type StringFormat = (date: Date, fill: string) => string;
 type NumberFormat = (date: Date) => number;
 type FormatMap = { [key in FormatKeys]?: StringFormat | NumberFormat };
@@ -159,7 +165,7 @@ export interface TimeLocaleObject {
     utcParse(specifier: string): (dateString: string) => (Date | undefined);
 }
 
-function localDate(d: DateMap): Date {
+function localDate(d: ParsedDate): Date {
     // For JS Dates the [0, 100) interval is a time warp, a fast forward to the 20th century.
     // For example, -1 is -0001 BC, 0 is already 1900 AD.
     if (d.y >= 0 && d.y < 100) {
@@ -170,7 +176,7 @@ function localDate(d: DateMap): Date {
     return new Date(d.y, d.m, d.d, d.H, d.M, d.S, d.L);
 }
 
-function utcDate(d: DateMap): Date {
+function utcDate(d: ParsedDate): Date {
     if (d.y >= 0 && d.y < 100) {
         const date = new Date(Date.UTC(-1, d.m, d.d, d.H, d.M, d.S, d.L));
         date.setUTCFullYear(d.y);
@@ -191,7 +197,7 @@ function formatLookup(names: string[]): typeof map {
     return map;
 }
 
-function newYear(y: number): DateMap {
+function newYear(y: number): ParsedDate {
     return {
         y,
         m: 0,
@@ -218,6 +224,7 @@ export const requote = (s: string) => s.replace(requoteRe, '\\$&'); // $& - matc
  */
 export const formatRe = (names: string[]) => new RegExp('^(?:' + names.map(requote).join('|') + ')', 'i');
 
+// A map of padding modifiers to padding strings. Default is `0`.
 const pads: { [key in string]: string } = {
     '-': '',
     '_': ' ',
@@ -327,13 +334,6 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
         '%': formatLiteralPercent
     };
 
-    /**
-     * Parses part of the `string` (for example, full year part) starting at `i` position
-     * and, if successful, poluates the corresponding field in `d` with a number,
-     * returning the next position after the parsed part. Returns `-1` if parsing failed.
-     */
-    type Parse = (d: DateMap, string: string, i: number) => number;
-
     const parses: { [key in string]: Parse } = {
         'a': parseShortWeekday,
         'A': parseWeekday,
@@ -366,7 +366,15 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
         '%': parseLiteralPercent
     };
 
-    function newParse(specifier: string, newDate: (d: DateMap) => Date): (str: string) => Date | undefined {
+    // Recursive definitions.
+    formats.x = newFormat(lDate, formats);
+    formats.X = newFormat(lTime, formats);
+    formats.c = newFormat(lDateTime, formats);
+    utcFormats.x = newFormat(lDate, utcFormats);
+    utcFormats.X = newFormat(lTime, utcFormats);
+    utcFormats.c = newFormat(lDateTime, utcFormats);
+
+    function newParse(specifier: string, newDate: (d: ParsedDate) => Date): (str: string) => Date | undefined {
         return function(str: string) {
             const d = newYear(1900);
             const i = parseSpecifier(d, specifier, str += '', 0);
@@ -476,7 +484,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
 
     // Simultaneously walks over the specifier and the parsed string, populating the `d` map with parsed values.
     // The returned number is expected to equal the length of the parsed `string`, if parsing succeeded.
-    function parseSpecifier(d: DateMap, specifier: string, string: string, j: number): number {
+    function parseSpecifier(d: ParsedDate, specifier: string, string: string, j: number): number {
         // i - `specifier` string index
         // j - parsed `string` index
         let i = 0;
@@ -660,108 +668,108 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
 
     // ------------------------------- parsers ------------------------------------
 
-    function parseMicroseconds(d: DateMap, string: string, i: number): number {
+    function parseMicroseconds(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 6));
         return n ? (d.L = Math.floor(parseFloat(n[0]) / 1000), i + n[0].length) : -1;
     }
-    function parseMilliseconds(d: DateMap, string: string, i: number): number {
+    function parseMilliseconds(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 3));
         return n ? (d.L = +n[0], i + n[0].length) : -1;
     }
-    function parseSeconds(d: DateMap, string: string, i: number): number {
+    function parseSeconds(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
         return n ? (d.S = +n[0], i + n[0].length) : -1;
     }
-    function parseMinutes(d: DateMap, string: string, i: number): number {
+    function parseMinutes(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
         return n ? (d.M = +n[0], i + n[0].length) : -1;
     }
-    function parseHour24(d: DateMap, string: string, i: number): number {
+    function parseHour24(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
         return n ? (d.H = +n[0], i + n[0].length) : -1;
     }
-    function parsePeriod(d: DateMap, string: string, i: number): number {
+    function parsePeriod(d: ParsedDate, string: string, i: number): number {
         const n = periodRe.exec(string.slice(i));
         return n ? (d.p = periodLookup[n[0].toLowerCase()], i + n[0].length) : -1;
     }
-    function parseDayOfMonth(d: DateMap, string: string, i: number): number {
+    function parseDayOfMonth(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
         return n ? (d.d = +n[0], i + n[0].length) : -1;
     }
-    function parseDayOfYear(d: DateMap, string: string, i: number): number {
+    function parseDayOfYear(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 3));
         return n ? (d.m = 0, d.d = +n[0], i + n[0].length) : -1;
     }
-    function parseShortWeekday(d: DateMap, string: string, i: number): number {
+    function parseShortWeekday(d: ParsedDate, string: string, i: number): number {
         const n = shortWeekdayRe.exec(string.slice(i));
         return n ? (d.w = shortWeekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
     }
-    function parseWeekday(d: DateMap, string: string, i: number): number {
+    function parseWeekday(d: ParsedDate, string: string, i: number): number {
         const n = weekdayRe.exec(string.slice(i));
         return n ? (d.w = weekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
     }
-    function parseWeekdayNumberMonday(d: DateMap, string: string, i: number): number {
+    function parseWeekdayNumberMonday(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 1));
         return n ? (d.u = +n[0], i + n[0].length) : -1;
     }
-    function parseWeekNumberSunday(d: DateMap, string: string, i: number): number {
+    function parseWeekNumberSunday(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
         return n ? (d.U = +n[0], i + n[0].length) : -1;
     }
-    function parseWeekNumberISO(d: DateMap, string: string, i: number): number {
+    function parseWeekNumberISO(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
         return n ? (d.V = +n[0], i + n[0].length) : -1;
     }
-    function parseWeekNumberMonday(d: DateMap, string: string, i: number): number {
+    function parseWeekNumberMonday(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
         return n ? (d.W = +n[0], i + n[0].length) : -1;
     }
-    function parseWeekdayNumberSunday(d: DateMap, string: string, i: number): number {
+    function parseWeekdayNumberSunday(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 1));
         return n ? (d.w = +n[0], i + n[0].length) : -1;
     }
-    function parseShortMonth(d: DateMap, string: string, i: number): number {
+    function parseShortMonth(d: ParsedDate, string: string, i: number): number {
         const n = shortMonthRe.exec(string.slice(i));
         return n ? (d.m = shortMonthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
     }
-    function parseMonth(d: DateMap, string: string, i: number): number {
+    function parseMonth(d: ParsedDate, string: string, i: number): number {
         const n = monthRe.exec(string.slice(i));
         return n ? (d.m = monthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
     }
-    function parseMonthNumber(d: DateMap, string: string, i: number): number {
+    function parseMonthNumber(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
         return n ? (d.m = parseFloat(n[0]) - 1, i + n[0].length) : -1;
     }
-    function parseLocaleDateTime(d: DateMap, string: string, i: number): number {
+    function parseLocaleDateTime(d: ParsedDate, string: string, i: number): number {
         return parseSpecifier(d, lDateTime, string, i);
     }
-    function parseLocaleDate(d: DateMap, string: string, i: number): number {
+    function parseLocaleDate(d: ParsedDate, string: string, i: number): number {
         return parseSpecifier(d, lDate, string, i);
     }
-    function parseLocaleTime(d: DateMap, string: string, i: number): number {
+    function parseLocaleTime(d: ParsedDate, string: string, i: number): number {
         return parseSpecifier(d, lTime, string, i);
     }
-    function parseUnixTimestamp(d: DateMap, string: string, i: number): number {
+    function parseUnixTimestamp(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i));
         return n ? (d.Q = +n[0], i + n[0].length) : -1;
     }
-    function parseUnixTimestampSeconds(d: DateMap, string: string, i: number): number {
+    function parseUnixTimestampSeconds(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i));
         return n ? (d.Q = (+n[0]) * 1000, i + n[0].length) : -1;
     }
-    function parseYear(d: DateMap, string: string, i: number): number {
+    function parseYear(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 2));
         return n ? (d.y = +n[0] + (+n[0] > 68 ? 1900 : 2000), i + n[0].length) : -1;
     }
-    function parseFullYear(d: DateMap, string: string, i: number): number {
+    function parseFullYear(d: ParsedDate, string: string, i: number): number {
         const n = numberRe.exec(string.slice(i, i + 4));
         return n ? (d.y = +n[0], i + n[0].length) : -1;
     }
-    function parseZone(d: DateMap, string: string, i: number): number {
+    function parseZone(d: ParsedDate, string: string, i: number): number {
         const n = /^(Z)|([+-]\d\d)(?::?(\d\d))?/.exec(string.slice(i, i + 6));
         return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || '00')), i + n[0].length) : -1;
     }
-    function parseLiteralPercent(d: DateMap, string: string, i: number): number {
+    function parseLiteralPercent(d: ParsedDate, string: string, i: number): number {
         const n = percentRe.exec(string.slice(i, i + 1));
         return n ? i + n[0].length : -1;
     }
