@@ -86,6 +86,44 @@ const tscWatch = () => {
     gulp.watch('./src/ts/**/*', series('tsc-no-clean'));
 };
 
+
+const tscSrcEs2015Task = () => {
+    const tsProject = gulpTypescript.createProject('./tsconfig-es2015.json', {typescript: typescript});
+
+    const tsResult = gulp
+        .src('src/ts/**/*.ts')
+        .pipe(tsProject());
+
+    return merge([
+        tsResult.dts
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
+            .pipe(gulp.dest('dist/es2015')),
+        tsResult.js
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(gulp.dest('dist/es2015'))
+    ]);
+};
+
+const tscMainEs2015Task = () => {
+    const tsProject = gulpTypescript.createProject('./tsconfig-main-es2015.json', {typescript: typescript});
+
+    const tsResult = gulp
+        .src('./src/ts/main.ts')
+        .pipe(tsProject());
+
+    return merge([
+        tsResult.dts
+            .pipe(replace("\"./", "\"./dist/es2015/"))
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
+            .pipe(rename("main.d.ts"))
+            .pipe(gulp.dest('./')),
+        tsResult.js
+            .pipe(replace("require(\"./", "require(\"./dist/es2015/"))
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(rename("main.js"))
+            .pipe(gulp.dest('./dist/es2015/'))
+    ]);
+};
 // End of Typescript related tasks
 
 // Start of scss/css related tasks
@@ -222,7 +260,6 @@ const watch = () => {
 };
 // End of webpack related tasks
 
-
 // Typescript related tasks
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-main', cleanMain);
@@ -232,6 +269,9 @@ gulp.task('tsc-no-clean-main', tscMainTask);
 gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main'));
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 gulp.task('tsc-watch', series('tsc-no-clean', tscWatch));
+gulp.task('tsc-es2015-no-clean-src', tscSrcEs2015Task);
+gulp.task('tsc-es2015-no-clean-main', tscMainEs2015Task);
+gulp.task('tsc-es2015-no-clean', parallel('tsc-es2015-no-clean-src', 'tsc-es2015-no-clean-main'));
 
 // scss/css related tasks
 gulp.task('scss-no-clean', scssTask);

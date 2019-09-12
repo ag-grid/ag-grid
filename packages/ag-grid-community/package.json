@@ -9,6 +9,7 @@
     "watchWebpack": "webpack --watch",
     "precheck": "tsc -p tsconfig-precheck.json",
     "build": "npm run precheck && gulp",
+    "rollup": "node build/build.js",
     "test": "exit 0",
     "test:e2e": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
     "e2e": "protractor protractor.conf.js",
@@ -90,5 +91,10 @@
     "vinyl-named": "^1.1.0",
     "webpack": "^4.39.0",
     "webpack-stream": "5.0.0"
+  },
+  "dependencies": {
+    "rollup": "^1.21.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0"
   }
 }
