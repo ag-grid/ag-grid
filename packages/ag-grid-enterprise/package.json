@@ -10,7 +10,7 @@
     "testWithCoverage": "jest --coverage",
     "watchWebpack": "webpack --watch",
     "precheck": "tsc -p tsconfig-precheck.json",
-    "build": "npm run precheck && npm run lint && gulp",
+    "build": "npm run precheck && npm run lint && npx gulp",
     "lint": "tsc -p tsconfig-lint.json && tslint --project tsconfig.json",
     "test:e2e": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
     "e2e": "protractor protractor.conf.js",

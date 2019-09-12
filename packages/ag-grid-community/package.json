@@ -9,7 +9,7 @@
     "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "watchWebpack": "webpack --watch",
     "precheck": "tsc -p tsconfig-precheck.json",
-    "build": "npm run precheck && gulp && npm run rollup",
+    "build": "npm run precheck && npx gulp && npm run rollup",
     "rollup": "node rollup/build.js",
     "test": "npm run validate-es5",
     "test:e2e": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
