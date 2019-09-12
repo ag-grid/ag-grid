@@ -1,9 +1,14 @@
+/**
+ * These keys are used for validating properties supplied on a gridOptions object, and for code generation.
+ * If you change the properties on the gridOptions interface, you *must* update this file as well to be consistent.
+ */
 export class PropertyKeys {
     public static STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
         'overlayNoRowsTemplate', 'quickFilterText', 'rowModelType',
         'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow',
-        'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow'];
+        'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow'
+    ];
 
     public static OBJECT_PROPERTIES = [
         'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',
@@ -14,9 +19,7 @@ export class PropertyKeys {
     ];
 
     public static ARRAY_PROPERTIES = [
-        'slaveGrids', 'alignedGrids', 'rowData',
-        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
-        /** @deprecated */
+        'slaveGrids', 'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
     ];
 
     public static NUMBER_PROPERTIES = [
@@ -59,7 +62,9 @@ export class PropertyKeys {
         'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu'
     ];
 
-    public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
+    /** You do not need to include event callbacks in this list, as they are generated automatically. */
+    public static FUNCTION_PROPERTIES = [
+        'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
         'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getRowClassRules',
         'traverseNode', 'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
@@ -68,20 +73,26 @@ export class PropertyKeys {
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell', 'getDetailRowData',
         'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingCellRenderer',
         'loadingCellRendererFramework', 'loadingOverlayComponent', 'loadingOverlayComponentFramework', 'noRowsOverlayComponent',
-        'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'onGridReady',
+        'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework',
         'defaultGroupSortComparator', 'isRowMaster', 'isRowSelectable', 'postSort', 'processHeaderForClipboard',
         'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup',
-        'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'getChartToolbarItems', 'fillOperation'];
+        'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'getChartToolbarItems', 'fillOperation'
+    ];
 
-    public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
-        .concat(PropertyKeys.OBJECT_PROPERTIES)
-        .concat(PropertyKeys.STRING_PROPERTIES)
-        .concat(PropertyKeys.NUMBER_PROPERTIES)
-        .concat(PropertyKeys.FUNCTION_PROPERTIES)
-        .concat(PropertyKeys.BOOLEAN_PROPERTIES);
+    public static ALL_PROPERTIES = [
+        ...PropertyKeys.ARRAY_PROPERTIES,
+        ...PropertyKeys.OBJECT_PROPERTIES,
+        ...PropertyKeys.STRING_PROPERTIES,
+        ...PropertyKeys.NUMBER_PROPERTIES,
+        ...PropertyKeys.FUNCTION_PROPERTIES,
+        ...PropertyKeys.BOOLEAN_PROPERTIES
+    ];
 
-    // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
-    // properties to colDefs, gridOptions etc
-    public static FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',
-        'toColDef', 'createColDefFromGridColumn'];
+    /**
+     * Used when performing property checks. This avoids noise caused when using frameworks, which can add their own
+     * framework-specific properties to colDefs, gridOptions etc.
+     */
+    public static FRAMEWORK_PROPERTIES = [
+        '__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns', 'toColDef', 'createColDefFromGridColumn'
+    ];
 }

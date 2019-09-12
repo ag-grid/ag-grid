@@ -284,7 +284,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public noRowsOverlayComponentFramework : any = undefined;
     @Input() public detailCellRenderer : any = undefined;
     @Input() public detailCellRendererFramework : any = undefined;
-    @Input() public onGridReady : any = undefined;
     @Input() public defaultGroupSortComparator : any = undefined;
     @Input() public isRowMaster : any = undefined;
     @Input() public isRowSelectable : any = undefined;

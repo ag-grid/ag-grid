@@ -166,8 +166,8 @@ export class GridOptionsWrapper {
         if (this.gridOptions.columnDefs == null) { return; }
 
         this.gridOptions.columnDefs.forEach(colDef => {
-            const userProperties: string [] = Object.getOwnPropertyNames(colDef);
-            const validProperties: string [] = ColDefUtil.ALL_PROPERTIES.concat(ColDefUtil.FRAMEWORK_PROPERTIES);
+            const userProperties: string[] = Object.getOwnPropertyNames(colDef);
+            const validProperties: string[] = [ ...ColDefUtil.ALL_PROPERTIES, ...ColDefUtil.FRAMEWORK_PROPERTIES ];
 
             this.checkProperties(
                 userProperties,
@@ -180,10 +180,14 @@ export class GridOptionsWrapper {
     }
 
     private checkGridOptionsProperties() {
-        const userProperties: string [] = Object.getOwnPropertyNames(this.gridOptions);
-        const validProperties: string [] = PropertyKeys.ALL_PROPERTIES.concat(PropertyKeys.FRAMEWORK_PROPERTIES);
-        Object.keys(Events).forEach(it => validProperties.push(ComponentUtil.getCallbackForEvent((Events as any)[it])));
-        const validPropertiesAndExceptions: string [] = validProperties.concat('api', 'columnApi');
+        const userProperties: string[] = Object.getOwnPropertyNames(this.gridOptions);
+        const validProperties: string[] = [
+            ...PropertyKeys.ALL_PROPERTIES,
+            ...PropertyKeys.FRAMEWORK_PROPERTIES,
+            ..._.values<any>(Events).map(event => ComponentUtil.getCallbackForEvent(event))
+        ];
+
+        const validPropertiesAndExceptions: string[] = [ ...validProperties, 'api', 'columnApi' ];
 
         this.checkProperties(
             userProperties,
@@ -207,13 +211,11 @@ export class GridOptionsWrapper {
             validProperties
         );
 
-        const invalidPropertyKeys = Object.keys(invalidProperties);
-        invalidPropertyKeys.forEach(invalidPropertyKey => {
-            const fuzzySuggestions: string[] = invalidProperties [invalidPropertyKey];
-            console.warn(`ag-grid: invalid ${containerName} property '${invalidPropertyKey}' did you mean any of these: ${fuzzySuggestions.slice(0, 8).join(",")}`);
+        _.iterateObject<any>(invalidProperties, (key, value) => {
+            console.warn(`ag-grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
         });
 
-        if (invalidPropertyKeys.length > 0) {
+        if (Object.keys(invalidProperties).length > 0) {
             console.warn(`ag-grid: to see all the valid ${containerName} properties please check: ${docsUrl}`);
         }
     }

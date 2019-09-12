@@ -1,3 +1,6 @@
+/************************************************************************************************
+ * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
+ ************************************************************************************************/
 import { RowNode } from "./rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
@@ -81,14 +84,10 @@ import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartOptions, ChartType } from "../interfaces/iChartOptions";
 
-/****************************************************************
- * Don't forget to update ComponentUtil if changing this class. *
- ****************************************************************/
 export interface GridOptions {
-
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. PLEASE!*
-     ****************************************************************/
+    /*******************************************************************************************************
+     * If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
+     *******************************************************************************************************/
 
     // set once in init, can never change
     suppressBrowserResizeObserver?: boolean;
@@ -267,10 +266,6 @@ export interface GridOptions {
         statusPanels: StatusPanelDef[]
     };
 
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
-
     // just set once
     localeText?: any;
     localeTextFunc?: Function;
@@ -282,10 +277,6 @@ export interface GridOptions {
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
     defaultExportParams?: CsvExportParams;
-
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
 
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
@@ -305,10 +296,6 @@ export interface GridOptions {
     forPrint?: boolean;
     enableOldSetFilterModel?: boolean;
     enableCharts?: boolean;
-
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
 
     // changeable, but no immediate impact
     context?: any;
@@ -336,10 +323,6 @@ export interface GridOptions {
     detailCellRendererFramework?: any;
     detailCellRendererParams?: any;
 
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
-
     // changeable with impact
     rowData?: any[];
     pinnedTopRowData?: any[];
@@ -360,9 +343,9 @@ export interface GridOptions {
     pivotGroupHeaderHeight?: number;
     floatingFiltersHeight?: number;
 
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
+    /******************************************************************************************************
+     * If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
+     ******************************************************************************************************/
 
     // callbacks
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
@@ -446,9 +429,10 @@ export interface GridOptions {
 
     processChartOptions?(params: ProcessChartOptionsParams): ChartOptions;
 
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
+    /**********************************************************************************************************
+     * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
+     * as event callbacks are automatically generated.                                                        *
+     **********************************************************************************************************/
 
     // events
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
@@ -581,10 +565,6 @@ export interface GridOptions {
 
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
-
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
 
     // apis, set by the grid on init
     api?: GridApi | null; // change to typed

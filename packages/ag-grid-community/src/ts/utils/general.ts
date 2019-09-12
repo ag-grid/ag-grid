@@ -153,13 +153,7 @@ export class Utils {
         return (results && results.length > 1) ? results[1] : "";
     }
 
-    static values<T>(object: { [key: string]: T }): T[] {
-        const result: T[] = [];
-        this.iterateObject(object, (key: string, value: T) => {
-            result.push(value);
-        });
-        return result;
-    }
+    static values = <T>(object: { [key: string]: T }): T[] => Object.keys(object).map(key => object[key]);
 
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
         if (!field || !data) {
@@ -410,18 +404,10 @@ export class Utils {
         }
 
         if (Array.isArray(object)) {
-            object.forEach((value, index) => {
-                callback(index + '', value);
-            });
+            object.forEach((value, index) => callback(`${index}`, value));
         } else {
-            const keys = Object.keys(object);
-            for (let i = 0; i < keys.length; i++) {
-                const key = keys[i];
-                const value = object[key];
-                callback(key, value);
-            }
+            Object.keys(object).forEach(key => callback(key, object[key]));
         }
-
     }
 
     static cloneObject<T>(object: T): T {
@@ -1041,7 +1027,6 @@ export class Utils {
                 array.splice(index + 1, 1);
             }
         }
-
     }
 
     static removeFromArray<T>(array: T[], object: T) {

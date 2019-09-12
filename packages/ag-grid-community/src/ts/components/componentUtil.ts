@@ -13,81 +13,59 @@ export class ComponentUtil {
     // function below fills this with onXXX methods, based on the above events
     private static EVENT_CALLBACKS: string[];
 
-    // function below fills this with methods names, with no "on" prefix
-    private static EVENT_CALLBACKS_NO_PREFIX: string[];
-
     public static STRING_PROPERTIES = PropertyKeys.STRING_PROPERTIES;
-
     public static OBJECT_PROPERTIES = PropertyKeys.OBJECT_PROPERTIES;
-
     public static ARRAY_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES;
-
     public static NUMBER_PROPERTIES = PropertyKeys.NUMBER_PROPERTIES;
-
     public static BOOLEAN_PROPERTIES = PropertyKeys.BOOLEAN_PROPERTIES;
-
     public static FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
-
     public static ALL_PROPERTIES = PropertyKeys.ALL_PROPERTIES;
 
     public static getEventCallbacks(): string[] {
         if (!ComponentUtil.EVENT_CALLBACKS) {
-            ComponentUtil.EVENT_CALLBACKS = [];
-            ComponentUtil.EVENT_CALLBACKS_NO_PREFIX = [];
-
-            ComponentUtil.EVENTS.forEach((eventName: string) => {
-                ComponentUtil.EVENT_CALLBACKS.push(ComponentUtil.getCallbackForEvent(eventName));
-                ComponentUtil.EVENT_CALLBACKS_NO_PREFIX.push(eventName);
-            });
+            ComponentUtil.EVENT_CALLBACKS = ComponentUtil.EVENTS.map(event => ComponentUtil.getCallbackForEvent(event));
         }
+
         return ComponentUtil.EVENT_CALLBACKS;
     }
 
     public static copyAttributesToGridOptions(gridOptions: GridOptions, component: any, skipEventDeprecationCheck: boolean = false): GridOptions {
         checkForDeprecated(component);
+
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
             gridOptions = {} as GridOptions;
         }
+
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions as any;
+        const keyExists = (key: string) => typeof component[key] !== 'undefined';
+
         // add in all the simple properties
-        ComponentUtil.ARRAY_PROPERTIES
-            .concat(ComponentUtil.STRING_PROPERTIES)
-            .concat(ComponentUtil.OBJECT_PROPERTIES)
-            .concat(ComponentUtil.FUNCTION_PROPERTIES)
-            .forEach(key => {
-                if (typeof component[key] !== 'undefined') {
-                    pGridOptions[key] = component[key];
-                }
-            });
-        ComponentUtil.BOOLEAN_PROPERTIES.forEach(key => {
-            if (typeof component[key] !== 'undefined') {
-                pGridOptions[key] = ComponentUtil.toBoolean(component[key]);
-            }
-        });
-        ComponentUtil.NUMBER_PROPERTIES.forEach(key => {
-            if (typeof component[key] !== 'undefined') {
-                pGridOptions[key] = ComponentUtil.toNumber(component[key]);
-            }
-        });
-        ComponentUtil.getEventCallbacks().forEach(funcName => {
-            if (typeof component[funcName] !== 'undefined') {
-                pGridOptions[funcName] = component[funcName];
-            }
-        });
+        [
+            ...ComponentUtil.ARRAY_PROPERTIES,
+            ...ComponentUtil.STRING_PROPERTIES,
+            ...ComponentUtil.OBJECT_PROPERTIES,
+            ...ComponentUtil.FUNCTION_PROPERTIES,
+            ...ComponentUtil.getEventCallbacks(),
+        ]
+            .filter(keyExists)
+            .forEach(key => pGridOptions[key] = component[key]);
+
+        ComponentUtil.BOOLEAN_PROPERTIES
+            .filter(keyExists)
+            .forEach(key => pGridOptions[key] = ComponentUtil.toBoolean(component[key]));
+
+        ComponentUtil.NUMBER_PROPERTIES
+            .filter(keyExists)
+            .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(component[key]));
 
         // purely for event deprecation checks (for frameworks - wouldn't apply for non-fw versions)
         if (!skipEventDeprecationCheck) {
-            ComponentUtil.EVENT_CALLBACKS_NO_PREFIX.forEach(funcName => {
-                // react uses onXXX...not sure why this is diff to the other frameworks
-                const onMethodName = ComponentUtil.getCallbackForEvent(funcName);
-
-                if (typeof component[funcName] !== 'undefined' ||
-                    typeof component[onMethodName] !== 'undefined') {
-                    GridOptionsWrapper.checkEventDeprecation(funcName);
-                }
-            });
+            ComponentUtil.EVENTS
+                // React uses onXXX, not sure why this is different to the other frameworks
+                .filter(event => keyExists(event) || keyExists(ComponentUtil.getCallbackForEvent(event)))
+                .forEach(event => GridOptionsWrapper.checkEventDeprecation(event));
         }
 
         return gridOptions;
@@ -110,31 +88,25 @@ export class ComponentUtil {
 
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions as any;
+        const keyExists = (key: string) => changes[key];
 
         // check if any change for the simple types, and if so, then just copy in the new value
-        ComponentUtil.ARRAY_PROPERTIES
-            .concat(ComponentUtil.OBJECT_PROPERTIES)
-            .concat(ComponentUtil.STRING_PROPERTIES)
-            .forEach(key => {
-                if (changes[key]) {
-                    pGridOptions[key] = changes[key].currentValue;
-                }
-            });
-        ComponentUtil.BOOLEAN_PROPERTIES.forEach(key => {
-            if (changes[key]) {
-                pGridOptions[key] = ComponentUtil.toBoolean(changes[key].currentValue);
-            }
-        });
-        ComponentUtil.NUMBER_PROPERTIES.forEach(key => {
-            if (changes[key]) {
-                pGridOptions[key] = ComponentUtil.toNumber(changes[key].currentValue);
-            }
-        });
-        ComponentUtil.getEventCallbacks().forEach(funcName => {
-            if (changes[funcName]) {
-                pGridOptions[funcName] = changes[funcName].currentValue;
-            }
-        });
+        [
+            ...ComponentUtil.ARRAY_PROPERTIES,
+            ...ComponentUtil.OBJECT_PROPERTIES,
+            ...ComponentUtil.STRING_PROPERTIES,
+            ...ComponentUtil.getEventCallbacks(),
+        ]
+            .filter(keyExists)
+            .forEach(key => pGridOptions[key] = changes[key].currentValue);
+
+        ComponentUtil.BOOLEAN_PROPERTIES
+            .filter(keyExists)
+            .forEach(key => pGridOptions[key] = ComponentUtil.toBoolean(changes[key].currentValue));
+
+        ComponentUtil.NUMBER_PROPERTIES
+            .filter(keyExists)
+            .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(changes[key].currentValue));
 
         if (changes.enableCellTextSelection) {
             api.setEnableCellTextSelection(ComponentUtil.toBoolean(changes.enableCellTextSelection.currentValue));
@@ -200,16 +172,13 @@ export class ComponentUtil {
             api.setSideBar(changes.sideBar.currentValue);
         }
 
-        if (changes.datasource) {
-            api.setDatasource(changes.datasource.currentValue);
-        }
-
         // copy changes into an event for dispatch
         const event: ComponentStateChangedEvent = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED,
             api: gridOptions.api,
             columnApi: gridOptions.columnApi
         };
+
         _.iterateObject(changes, (key: string, value: any) => {
             (event as any)[key] = value;
         });
@@ -222,7 +191,7 @@ export class ComponentUtil {
             return value;
         } else if (typeof value === 'string') {
             // for boolean, compare to empty String to allow attributes appearing with
-            // not value to be treated as 'true'
+            // no value to be treated as 'true'
             return value.toUpperCase() === 'TRUE' || value == '';
         } else {
             return false;
@@ -240,9 +209,7 @@ export class ComponentUtil {
     }
 }
 
-_.iterateObject<any>(Events, function(key, value) {
-    ComponentUtil.EVENTS.push(value);
-});
+ComponentUtil.EVENTS = _.values<any>(Events);
 
 function checkForDeprecated(changes: any): void {
     if (changes.rowDeselected || changes.onRowDeselected) {
