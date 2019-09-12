@@ -12,7 +12,7 @@ beforeEach((done) => {
     component = mount((<GridWithStatefullComponent/>));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
-    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 10), () => fail("Grid API not set within expected time limits"));
+    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20), () => fail("Grid API not set within expected time limits"));
 
 });
 

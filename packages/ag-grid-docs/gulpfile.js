@@ -167,8 +167,8 @@ gulp.task('build-packaged-examples', (done) => buildPackagedExamples(() => {
 }));
 gulp.task('populate-dev-folder', populateDevFolder);
 gulp.task('process-src', processSource);
-gulp.task('bundle-site-archive', bundleSite.bind(false));
-gulp.task('bundle-site-release', bundleSite.bind(true));
+gulp.task('bundle-site-archive', bundleSite.bind(null, false));
+gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
 gulp.task('release-archive', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder'));

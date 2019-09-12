@@ -12,6 +12,8 @@ const merge = require('merge2');
 const pkg = require('./package.json');
 const webpackStream = require('webpack-stream');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const cssnano = require('gulp-cssnano');
+const TerserPlugin = require('terser-webpack-plugin');
 const filter = require('gulp-filter');
 const named = require('vinyl-named');
 const replace = require('gulp-replace');
@@ -199,6 +201,19 @@ const scssTask = () => {
         .pipe(gulp.dest('dist/styles/webfont/'));
 };
 
+const minifyCss = () => {
+    return gulp.src('./dist/styles/*.css')
+        .pipe(cssnano({
+            preset: ['default', {
+                discardComments: {
+                    removeAll: true,
+                },
+            }]
+        }))
+        .pipe(rename(path => path.basename = `${path.basename}.min`))
+        .pipe(gulp.dest('./dist/styles'));
+};
+
 const scssWatch = () => {
     gulp.watch('./src/styles/!**/!*', series('scss-no-clean'));
 };
@@ -216,6 +231,18 @@ const webpackTask = (minify, styles) => {
     return gulp.src(mainFile)
         .pipe(webpackStream({
             mode: minify ? 'production' : 'none',
+            optimization: {
+                minimizer: !!minify ? [
+                    new TerserPlugin({
+                        terserOptions: {
+                            output: {
+                                comments: false
+                            }
+                        },
+                        extractComments: false
+                    })
+                ] : [],
+            },
             output: {
                 path: path.join(__dirname, "dist"),
                 filename: fileName,
@@ -252,6 +279,7 @@ const webpackTask = (minify, styles) => {
             }
         }))
         .pipe(header(bundleTemplate, {pkg: pkg}))
+        .pipe(header(headerTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
 };
 
@@ -266,20 +294,21 @@ gulp.task('clean-main', cleanMain);
 gulp.task('clean', parallel('clean-dist', 'clean-main'));
 gulp.task('tsc-no-clean-src', tscSrcTask);
 gulp.task('tsc-no-clean-main', tscMainTask);
-gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main'));
-gulp.task('tsc', series('clean', 'tsc-no-clean'));
-gulp.task('tsc-watch', series('tsc-no-clean', tscWatch));
 gulp.task('tsc-es2015-no-clean-src', tscSrcEs2015Task);
 gulp.task('tsc-es2015-no-clean-main', tscMainEs2015Task);
 gulp.task('tsc-es2015-no-clean', parallel('tsc-es2015-no-clean-src', 'tsc-es2015-no-clean-main'));
+gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-es2015-no-clean'));
+gulp.task('tsc', series('clean', 'tsc-no-clean'));
+gulp.task('tsc-watch', series('tsc-no-clean', tscWatch));
 
 // scss/css related tasks
 gulp.task('scss-no-clean', scssTask);
+gulp.task('minify-css', minifyCss);
 gulp.task('scss', series('clean', 'scss-no-clean'));
 gulp.task('scss-watch', series('scss-no-clean', scssWatch));
 
 // tsc & scss/css related tasks
-gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', 'scss-no-clean'));
+gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));
 
 // webpack related tasks
 gulp.task('webpack', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, false, true)));
@@ -290,6 +319,7 @@ gulp.task('webpack-noStyle', series('clean', 'tsc-scss-no-clean', webpackTask.bi
 gulp.task('webpack-noStyle-no-clean', series(webpackTask.bind(null, false, false)));
 gulp.task('webpack-minify-noStyle', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, true, false)));
 gulp.task('webpack-minify-noStyle-no-clean', series(webpackTask.bind(null, true, false)));
+
 // for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
 gulp.task('webpack-all', series('clean', 'tsc-scss-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
 gulp.task('watch', series('webpack', watch));
