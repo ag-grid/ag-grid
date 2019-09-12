@@ -128,7 +128,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      */
     tickCount: any = 10;
 
-    private tickFormatter?: (x: any) => string;
+    private tickFormatter?: (datum: any) => string;
     private _tickFormat?: string;
     set tickFormat(value: string | undefined) {
         // See `TimeLocaleObject` docs for the list of supported format directives.
