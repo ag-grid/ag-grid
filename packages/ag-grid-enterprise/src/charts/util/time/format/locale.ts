@@ -334,7 +334,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
         '%': formatLiteralPercent
     };
 
-    const parses: { [key in string]: Parse } = {
+    const parses: { [key in FormatKeys]: Parse } = {
         'a': parseShortWeekday,
         'A': parseWeekday,
         'b': parseShortMonth,
@@ -498,7 +498,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
             const code = specifier.charCodeAt(i++);
             if (code === percentCharCode) {
                 const char = specifier.charAt(i++);
-                const parse = parses[char in pads ? specifier.charAt(i++) : char];
+                const parse = parses[(char in pads ? specifier.charAt(i++) : char) as FormatKeys];
                 if (!parse || ((j = parse(d, string, j)) < 0)) {
                     return -1;
                 }
