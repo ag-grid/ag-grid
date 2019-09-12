@@ -40,6 +40,14 @@ h2 {
     -webkit-font-smoothing: antialiased;
 }
 
+.media a {
+    color: darken($blue-2, 5%);
+    &:hover {
+        text-decoration: none;
+        color: $blue-1;
+    }
+}
+
 .info-page {
     @extend .container-fluid;
     background-color: $white;
@@ -327,8 +335,8 @@ h2 {
         }
     }
 
-    .get-started-btn:not(:first-of-type) {
-        background-color: transparent;
+    .get-started-btn:not(:first-of-type) {background-color: transparent;
+        
         color: #125082;
         &:hover {
             color: lighten(#125082, 10%);
