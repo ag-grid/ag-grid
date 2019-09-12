@@ -302,11 +302,6 @@
             "url": "javascript-grid-cell-styles/"
           },
           {
-            "title": "Highlighting Rows & Columns",
-            "box-title": "Highlighting",
-            "url": "javascript-grid-highlighting-rows-and-columns/"
-          },
-          {
             "title": "Themes",
             "url": "javascript-grid-styling/",
             "matrixExcludeChildren": true,
@@ -320,11 +315,6 @@
           {
             "title": "Grid Size",
             "url": "javascript-grid-width-and-height/"
-          },
-          {
-            "title": "Resize with Parent Container",
-            "box-title": "Responsiveness",
-            "url": "javascript-grid-responsiveness/"
           },
           {
             "title": "Custom Icons",
@@ -610,13 +600,11 @@
             "items": [
               {
                 "title": "Group Cell Renderer",
-                "url": "javascript-grid-provided-renderer-group/",
-                "showInCollapsed": true
+                "url": "javascript-grid-provided-renderer-group/"
               },
               {
                 "title": "Show Change Cell Renderers",
-                "url": "javascript-grid-provided-renderer-change/",
-                "showInCollapsed": true
+                "url": "javascript-grid-provided-renderer-change/"
               }
             ]
           },
