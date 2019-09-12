@@ -1,16 +1,13 @@
-import {ChartType, LineChartOptions, LineSeriesOptions} from "ag-grid-community";
-import {ChartBuilder} from "../../../builder/chartBuilder";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
-import {LineSeries} from "../../../../charts/chart/series/lineSeries";
-import {CartesianChartProxy, LineMarkerProperty, LineSeriesProperty} from "./cartesianChartProxy";
+import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
+import { ChartBuilder } from "../../../builder/chartBuilder";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { LineSeries } from "../../../../charts/chart/series/lineSeries";
+import { CartesianChartProxy, LineMarkerProperty, LineSeriesProperty } from "./cartesianChartProxy";
 
 export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
-
     public constructor(params: ChartProxyParams) {
         super(params);
-
-        this.initChartOptions(ChartType.Line, this.defaultOptions());
 
         if (params.grouping) {
             this.chart = ChartBuilder.createGroupedLineChart(this.chartOptions);
@@ -82,18 +79,24 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
     }
 
     public getSeriesProperty(property: LineSeriesProperty | LineMarkerProperty): string {
-        return this.chartOptions.seriesDefaults ? `${this.chartOptions.seriesDefaults[property]}` : '';
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? `${seriesDefaults[property]}` : "";
     }
 
     public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.tooltipEnabled : false;
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? !!seriesDefaults.tooltipEnabled : false;
     }
 
     public getMarkersEnabled(): boolean {
-        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.marker : false;
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? !!seriesDefaults.marker : false;
     }
 
-    private defaultOptions(): LineChartOptions {
+    protected getDefaultOptions(): LineChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {

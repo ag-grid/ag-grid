@@ -1,7 +1,7 @@
-import {ChartProxy, ChartProxyParams} from "../chartProxy";
-import {CartesianChartOptions} from "ag-grid-community";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
-import {ChartModel} from "../../chartModel";
+import { ChartProxy, ChartProxyParams } from "../chartProxy";
+import { CartesianChartOptions } from "ag-grid-community";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { ChartModel } from "../../chartModel";
 
 export type CommonAxisProperty = 'lineColor' | 'lineWidth' | 'tickColor' | 'tickWidth' | 'tickSize' | 'tickPadding';
 export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
@@ -32,34 +32,30 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
     }
 
     public getCommonAxisProperty(property: CommonAxisProperty | LegendFontProperty): string {
-        return this.chartOptions.xAxis ? `${this.chartOptions.xAxis[property]}` : '';
+        const { xAxis } = this.chartOptions;
+
+        return xAxis ? `${xAxis[property]}` : "";
     }
 
-    public getXRotation(): number {
-       const cartesianChart = this.chart as CartesianChart;
-       return cartesianChart.xAxis.labelRotation;
-    }
+    public getXRotation = (): number => this.getCartesianChart().xAxis.labelRotation;
 
     public setXRotation(rotation: number): void {
-        const cartesianChart = this.chart as CartesianChart;
-        cartesianChart.xAxis.labelRotation = rotation;
+        this.getCartesianChart().xAxis.labelRotation = rotation;
         this.chartOptions.xAxis.labelRotation = rotation;
         this.chart.performLayout();
 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getYRotation(): number {
-        const cartesianChart = this.chart as CartesianChart;
-        return cartesianChart.yAxis.labelRotation;
-    }
+    public getYRotation = (): number => this.getCartesianChart().yAxis.labelRotation;
 
     public setYRotation(rotation: number): void {
-        const cartesianChart = this.chart as CartesianChart;
-        cartesianChart.yAxis.labelRotation = rotation;
+        this.getCartesianChart().yAxis.labelRotation = rotation;
         this.chartOptions.yAxis.labelRotation = rotation;
         this.chart.performLayout();
 
         this.raiseChartOptionsChangedEvent();
     }
+
+    private getCartesianChart = (): CartesianChart => this.chart as CartesianChart;
 }

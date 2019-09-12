@@ -1,23 +1,16 @@
-import {AreaChartOptions, AreaSeriesOptions, ChartType} from "ag-grid-community";
-import {ChartBuilder} from "../../../builder/chartBuilder";
-import {AreaSeries} from "../../../../charts/chart/series/areaSeries";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
-import {CategoryAxis} from "../../../../charts/chart/axis/categoryAxis";
-import {CartesianChartProxy, LineMarkerProperty} from "./cartesianChartProxy";
+import { AreaChartOptions, AreaSeriesOptions, ChartType } from "ag-grid-community";
+import { ChartBuilder } from "../../../builder/chartBuilder";
+import { AreaSeries } from "../../../../charts/chart/series/areaSeries";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
+import { CartesianChartProxy, LineMarkerProperty } from "./cartesianChartProxy";
 
 export type AreaSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 
 export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
-
-    private readonly chartType: ChartType;
-
     public constructor(params: ChartProxyParams) {
         super(params);
-
-        this.chartType = params.chartType;
-
-        this.initChartOptions(params.chartType, this.defaultOptions());
 
         if (params.grouping) {
             this.chart = ChartBuilder.createGroupedAreaChart(this.chartOptions);
@@ -28,6 +21,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         this.setAxisPadding(this.chart as CartesianChart);
 
         const areaSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as AreaSeriesOptions);
+        
         if (areaSeries) { this.chart.addSeries(areaSeries); }
     }
 
@@ -134,7 +128,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.marker : false;
     }
 
-    private defaultOptions(): AreaChartOptions {
+    protected getDefaultOptions(): AreaChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {
@@ -208,8 +202,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
                 strokes: palette.strokes,
                 strokeWidth: 3,
                 strokeOpacity: 1,
-                fillOpacity: this.chartProxyParams.chartType === ChartType.Area ? 0.7 : 1,
-                normalizedTo: this.chartProxyParams.chartType === ChartType.NormalizedArea ? 100 : undefined,
+                fillOpacity: this.chartType === ChartType.Area ? 0.7 : 1,
+                normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
                 marker: true,
                 markerSize: 6,
                 markerStrokeWidth: 1,

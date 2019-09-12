@@ -1,16 +1,15 @@
-import {ChartBuilder} from "../../../builder/chartBuilder";
-import {ChartType, PieChartOptions, PieSeriesOptions} from "ag-grid-community";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {PolarChart} from "../../../../charts/chart/polarChart";
-import {PieSeries} from "../../../../charts/chart/series/pieSeries";
-import {CaptionOptions, LegendPosition} from "ag-grid-community/src/ts/interfaces/iChartOptions";
-import {PolarChartProxy} from "./polarChartProxy";
+import { ChartBuilder } from "../../../builder/chartBuilder";
+import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { PolarChart } from "../../../../charts/chart/polarChart";
+import { PieSeries } from "../../../../charts/chart/series/pieSeries";
+import { CaptionOptions, LegendPosition } from "ag-grid-community/src/ts/interfaces/iChartOptions";
+import { PolarChartProxy } from "./polarChartProxy";
 
 export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.initChartOptions(ChartType.Pie, this.defaultOptions());
         this.chart = ChartBuilder.createPolarChart(this.chartOptions);
     }
 
@@ -30,6 +29,7 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
 
         let pieSeries = existingSeries;
         let calloutColors: string[] | undefined = undefined;
+        
         if (existingSeriesId !== pieSeriesId) {
             pieChart.removeSeries(existingSeries);
 
@@ -62,7 +62,7 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
         }
     }
 
-    private defaultOptions() {
+    protected getDefaultOptions() {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {

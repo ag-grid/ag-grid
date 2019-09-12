@@ -1,17 +1,14 @@
-import {ChartType, ScatterChartOptions, ScatterSeriesOptions} from "ag-grid-community";
-import {ChartBuilder} from "../../../builder/chartBuilder";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
-import {ScatterSeries} from "../../../../charts/chart/series/scatterSeries";
-import {ChartModel} from "../../chartModel";
-import {CartesianChartProxy, LineMarkerProperty, ScatterSeriesProperty} from "./cartesianChartProxy";
+import { ChartType, ScatterChartOptions, ScatterSeriesOptions } from "ag-grid-community";
+import { ChartBuilder } from "../../../builder/chartBuilder";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";
+import { ChartModel } from "../../chartModel";
+import { CartesianChartProxy, LineMarkerProperty, ScatterSeriesProperty } from "./cartesianChartProxy";
 
 export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> {
-
     public constructor(params: ChartProxyParams) {
         super(params);
-
-        this.initChartOptions(params.chartType, this.defaultOptions());
 
         this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
@@ -23,10 +20,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         }
 
         const chart = this.chart as CartesianChart;
-        const chartType = this.chartProxyParams.chartType;
         const fieldIds = params.fields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: ScatterSeries } = {};
         const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
+        const isBubbleChart = this.chartType === ChartType.Bubble;
 
         const updateSeries = (scatterSeries: ScatterSeries) => {
             const id = scatterSeries.yField as string;
@@ -38,12 +35,11 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             .map(series => series as ScatterSeries)
             .forEach(updateSeries);
 
-
         const updateFunc = (f: { colId: string, displayName: string }, index: number) => {
             const seriesOptions = this.chartOptions.seriesDefaults as ScatterSeriesOptions;
 
             const existingSeries = existingSeriesMap[f.colId];
-            const scatterSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
+            const scatterSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
 
             if (scatterSeries) {
                 if (defaultCategorySelected) {
@@ -51,7 +47,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                     scatterSeries.xField = params.fields[0].colId;
                     scatterSeries.xFieldName = params.fields[0].displayName;
 
-                    if (chartType === ChartType.Bubble) {
+                    if (isBubbleChart) {
                         const f = params.fields[index * 2 + 2];
                         scatterSeries.radiusField = f.colId;
                         scatterSeries.radiusFieldName = f.displayName;
@@ -66,7 +62,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 scatterSeries.yField = f.colId;
                 scatterSeries.yFieldName = f.displayName;
 
-                const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+                const palette = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
 
                 const fills = palette.fills;
                 scatterSeries.fill = fills[index % fills.length];
@@ -81,7 +77,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         };
 
         if (defaultCategorySelected) {
-            if (chartType === ChartType.Bubble) {
+            if (isBubbleChart) {
                 // only update bubble chart if the correct number of fields are present
                 const len = params.fields.length;
                 const offset = len % 2 === 0 ? 1 : 0;
@@ -115,22 +111,23 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     }
 
     public getSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty): string {
-        return this.chartOptions.seriesDefaults ? `${this.chartOptions.seriesDefaults[property]}` : '';
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? `${seriesDefaults[property]}` : "";
     }
 
     public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.tooltipEnabled : false;
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? !!seriesDefaults.tooltipEnabled : false;
     }
 
-    public getMarkersEnabled(): boolean {
-        // markers are always enabled on scatter charts
-        return true;
-    }
+    public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts
 
-    private defaultOptions(): ScatterChartOptions {
+    protected getDefaultOptions(): ScatterChartOptions {
         const xAxisType = this.chartProxyParams.categorySelected ? 'category' : 'number';
         const palette = this.chartProxyParams.getSelectedPalette();
-        const isBubble = this.chartProxyParams.chartType === ChartType.Bubble;
+        const isBubble = this.chartType === ChartType.Bubble;
 
         return {
             background: {

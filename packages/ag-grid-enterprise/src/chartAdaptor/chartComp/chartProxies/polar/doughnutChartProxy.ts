@@ -1,17 +1,15 @@
-import {ChartBuilder} from "../../../builder/chartBuilder";
-import {ChartType, DoughnutChartOptions, PieSeriesOptions} from "ag-grid-community";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {PolarChart} from "../../../../charts/chart/polarChart";
-import {PieSeries} from "../../../../charts/chart/series/pieSeries";
-import {CaptionOptions, LegendPosition} from "ag-grid-community/src/ts/interfaces/iChartOptions";
-import {PolarChartProxy} from "./polarChartProxy";
+import { ChartBuilder } from "../../../builder/chartBuilder";
+import { DoughnutChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { PolarChart } from "../../../../charts/chart/polarChart";
+import { PieSeries } from "../../../../charts/chart/series/pieSeries";
+import { CaptionOptions, LegendPosition } from "ag-grid-community/src/ts/interfaces/iChartOptions";
+import { PolarChartProxy } from "./polarChartProxy";
 
 export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
-
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.initChartOptions(ChartType.Doughnut, this.defaultOptions());
         this.chart = ChartBuilder.createDoughnutChart(this.chartOptions);
     }
 
@@ -75,7 +73,7 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
             pieSeries.innerRadiusOffset = offset;
             offset -= 20;
 
-            const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+            const palette = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
 
             pieSeries.fills = palette.fills;
             pieSeries.strokes = palette.strokes;
@@ -97,7 +95,7 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
         doughnutChart.series = existingSeries;
     }
 
-    private defaultOptions() {
+    protected getDefaultOptions() {
         const palette = this.chartProxyParams.getSelectedPalette();
 
         return {

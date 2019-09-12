@@ -1,6 +1,6 @@
-import {ChartProxy, ChartProxyParams} from "../chartProxy";
-import {DoughnutChartOptions, PieChartOptions} from "ag-grid-community";
-import {PieSeries} from "../../../../charts/chart/series/pieSeries";
+import { ChartProxy, ChartProxyParams } from "../chartProxy";
+import { DoughnutChartOptions, PieChartOptions } from "ag-grid-community";
+import { PieSeries } from "../../../../charts/chart/series/pieSeries";
 
 export type PolarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 export type PolarSeriesFontProperty = 'labelEnabled' | 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
@@ -24,14 +24,20 @@ export abstract class PolarChartProxy<T extends PieChartOptions | DoughnutChartO
     }
 
     public getSeriesProperty(property: PolarSeriesProperty | PolarSeriesFontProperty | CalloutProperty): string {
-        return this.chartOptions.seriesDefaults ? `${this.chartOptions.seriesDefaults[property]}` : '';
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? `${seriesDefaults[property]}` : "";
     }
 
     public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.tooltipEnabled : false;
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? !!seriesDefaults.tooltipEnabled : false;
     }
 
     public getLabelEnabled(): boolean {
-        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.labelEnabled : false;
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? !!seriesDefaults.labelEnabled : false;
     }
 }

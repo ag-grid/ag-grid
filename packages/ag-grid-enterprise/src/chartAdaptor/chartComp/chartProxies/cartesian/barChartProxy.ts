@@ -1,29 +1,25 @@
-import {BarChartOptions, BarSeriesOptions, ChartType} from "ag-grid-community";
-import {ChartBuilder} from "../../../builder/chartBuilder";
-import {BarSeries} from "../../../../charts/chart/series/barSeries";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChart} from "../../../../charts/chart/cartesianChart";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
+import { ChartBuilder } from "../../../builder/chartBuilder";
+import { BarSeries } from "../../../../charts/chart/series/barSeries";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export type BarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 export type BarSeriesFontProperty = 'labelEnabled' | 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
 
 export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
-
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        this.initChartOptions(params.chartType, this.defaultOptions());
-
-        if (params.grouping) {
-            this.chart = BarChartProxy.isBarChart(params.chartType) ?
-                ChartBuilder.createGroupedBarChart(this.chartOptions) : ChartBuilder.createGroupedColumnChart(this.chartOptions);
+        if (this.isBarChart()) {
+            this.chart = params.grouping ? ChartBuilder.createGroupedBarChart(this.chartOptions) : ChartBuilder.createBarChart(this.chartOptions);
         } else {
-            this.chart = BarChartProxy.isBarChart(params.chartType) ?
-                ChartBuilder.createBarChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
+            this.chart = params.grouping ? ChartBuilder.createGroupedColumnChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
         }
 
         const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as BarSeriesOptions);
+
         if (barSeries) { this.chart.addSeries(barSeries); }
     }
 
@@ -35,13 +31,15 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
 
-        if (BarChartProxy.isBarChart(this.chartProxyParams.chartType)) {
-            chart.yAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.yAxis.labelRotation as number;
+        const shouldOverrideLabelRotation = this.overrideLabelRotation(params.category.id);
+
+        if (this.isBarChart()) {
+            chart.yAxis.labelRotation = shouldOverrideLabelRotation ? 0 : this.chartOptions.yAxis.labelRotation as number;
         } else {
-            chart.xAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.xAxis.labelRotation as number;
+            chart.xAxis.labelRotation = shouldOverrideLabelRotation ? 0 : this.chartOptions.xAxis.labelRotation as number;
         }
 
-        const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
+        const palette = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
         barSeries.fills = palette.fills;
         barSeries.strokes = palette.strokes;
     }
@@ -59,24 +57,30 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     }
 
     public getSeriesProperty(property: BarSeriesProperty | BarSeriesFontProperty): string {
-        return this.chartOptions.seriesDefaults ? `${this.chartOptions.seriesDefaults[property]}` : '';
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? `${seriesDefaults[property]}` : "";
     }
 
     public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.tooltipEnabled : false;
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? !!seriesDefaults.tooltipEnabled : false;
     }
 
     public getLabelEnabled(): boolean {
-        return this.chartOptions.seriesDefaults ? !!this.chartOptions.seriesDefaults.labelEnabled : false;
+        const { seriesDefaults } = this.chartOptions;
+
+        return seriesDefaults ? !!seriesDefaults.labelEnabled : false;
     }
 
-    private static isBarChart(type: ChartType) {
-        return type === ChartType.GroupedBar || type === ChartType.StackedBar || type === ChartType.NormalizedBar;
-    }
+    private isBarChart = () => [ChartType.GroupedBar, ChartType.StackedBar, ChartType.NormalizedBar].indexOf(this.chartType) > -1;
 
-    private defaultOptions(): BarChartOptions {
+    protected getDefaultOptions(): BarChartOptions {
         const palette = this.chartProxyParams.getSelectedPalette();
-        const chartType = this.chartProxyParams.chartType;
+        const chartType = this.chartType;
+        const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
+        const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
 
         return {
             parent: this.chartProxyParams.parentElement,
@@ -148,8 +152,8 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 type: 'bar',
                 fills: palette.fills,
                 strokes: palette.strokes,
-                grouped: chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar,
-                normalizedTo: (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar) ? 100 : undefined,
+                grouped: isGrouped,
+                normalizedTo: isNormalized ? 100 : undefined,
                 strokeWidth: 1,
                 tooltipEnabled: true,
                 labelEnabled: false,
