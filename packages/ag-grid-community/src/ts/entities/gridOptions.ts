@@ -24,6 +24,7 @@ import {
     CellMouseOutEvent,
     CellMouseOverEvent,
     CellValueChangedEvent,
+    ChartOptionsChanged,
     ColumnAggFuncChangeRequestEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
@@ -575,6 +576,8 @@ export interface GridOptions {
     onFirstDataRendered?(event: FirstDataRenderedEvent): void;
 
     onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
+
+    onChartOptionsChanged?(event: ChartOptionsChanged): void;
 
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
