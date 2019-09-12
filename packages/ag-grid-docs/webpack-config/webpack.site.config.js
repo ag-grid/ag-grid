@@ -4,12 +4,12 @@ const autoprefixer = require('autoprefixer');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-let homepage = './src/_assets/homepage/main.ts';
-let docs = './src/_assets/docs/main.ts';
+let homepage = './src/_assets/homepage/homepage.ts';
+let docs = './src/_assets/docs/docs.ts';
 
 if (require('minimist')(process.argv.slice(2)).hmr) {
-    homepage = ['./src/_assets/homepage/main.ts', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'];
-    docs = ['./src/_assets/docs/main.ts', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'];
+    homepage = ['./src/_assets/homepage/homepage.ts', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'];
+    docs = ['./src/_assets/docs/docs.ts', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'];
 }
 
 module.exports = {
@@ -102,7 +102,6 @@ module.exports = {
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new MiniCssExtractPlugin({filename: '[name].css'}),
-
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',

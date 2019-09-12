@@ -1,4 +1,4 @@
-import "./main.scss";
+import "./docs.scss";
 import "../../example-runner/example-runner.ts";
 import { $, lazyload, AnchorJS, Prism, initCookieDisclaimer } from "../common/vendor";
 

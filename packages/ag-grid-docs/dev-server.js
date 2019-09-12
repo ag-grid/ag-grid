@@ -25,8 +25,8 @@ const rewrite = require('express-urlrewrite');
 var argv = require('minimist')(process.argv.slice(2));
 const useHmr = argv.hmr;
 
-function addWebpackMiddleware(app, configPath, prefix) {
-    const webpackConfig = require(path.resolve('./webpack-config/', configPath + '.js'));
+function addWebpackMiddleware(app, configFile, prefix) {
+    const webpackConfig = require(path.resolve(`./webpack-config/${configFile}`));
 
     webpackConfig.plugins.push(new realWebpack.DefinePlugin({HMR: useHmr}));
 
@@ -184,11 +184,11 @@ module.exports = () => {
     });
 
     // serve ag-grid, enterprise and react
-    addWebpackMiddleware(app, 'standard', '/dev/ag-grid-community');
-    addWebpackMiddleware(app, 'site', '/dist');
-    addWebpackMiddleware(app, 'enterprise', '/dev/ag-grid-enterprise');
-    addWebpackMiddleware(app, 'enterprise-bundle', '/dev/ag-grid-enterprise-bundle');
-    addWebpackMiddleware(app, 'react', '/dev/ag-grid-react');
+    addWebpackMiddleware(app, 'webpack.community.config.js', '/dev/ag-grid-community');
+    addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
+    addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
+    addWebpackMiddleware(app, 'webpack.enterprise-bundle.config.js', '/dev/ag-grid-enterprise-bundle'); // mostly used by landing pages
+    addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
 
     // angular & vue are separate processes
     serveAndWatchAngular(app);

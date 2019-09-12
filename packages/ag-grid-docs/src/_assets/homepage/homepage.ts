@@ -1,4 +1,4 @@
-import "./main.scss";
+import "./homepage.scss";
 import { $, lazyload, AnchorJS, Prism, initCookieDisclaimer } from "../common/vendor";
 import "./pipeline.ts";
 import "./changelog.ts";
