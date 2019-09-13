@@ -1,9 +1,9 @@
 /**
  * Returns the minimum and maximum value in the given iterable using natural order.
- * If the iterable contains no comparable values, returns `[undefined, undefined]`.
+ * If the iterable contains no comparable values, returns `undefined`.
  * @param values
  */
-export function extent<T>(values: T[]): [T | undefined, T | undefined] {
+export function extent<T>(values: T[]): [T, T] | undefined {
     const n = values.length;
     let i = -1;
     let value;
@@ -26,7 +26,7 @@ export function extent<T>(values: T[]): [T | undefined, T | undefined] {
         }
     }
 
-    return [min, max];
+    return typeof min === "undefined" || typeof max === "undefined" ? undefined : [ min, max ];
 }
 
 // Custom `Array.find` implementation for legacy browsers.
@@ -39,14 +39,23 @@ export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[])
     }
 }
 
-// This method will only return `undefined`, if there's not a single valid finite number
-// in the given array of values. The method will try to coerce values to numbers, for cases
-// where Date objects are mixed with timestamps, effectively normalizing everything to numbers.
+/**
+ * This method will only return `undefined` if there's not a single valid finite number present
+ * in the given array of values. Date values will be converted to timestamps.
+ * @param values 
+ */
 export function numericExtent<T>(values: T[]): [number, number] | undefined {
-    const [x0, x1] = extent(values);
-    const min = +(x0 as any);
-    const max = +(x1 as any);
-    if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
-        return [min, max];
+    const calculatedExtent = extent(values);
+
+    if (typeof calculatedExtent === "undefined") {
+        return undefined;
+    }
+
+    const [ a, b ] = calculatedExtent;
+    const min = a instanceof Date ? a.getTime() : a;
+    const max = b instanceof Date ? b.getTime() : b;
+
+    if (typeof min === "number" && isFinite(min) && typeof max === "number" && isFinite(max)) {
+        return [ min, max ];
     }
 }
