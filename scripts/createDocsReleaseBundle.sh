@@ -13,7 +13,7 @@ RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
 cd packages/ag-grid-docs
-gulp release
+npx gulp release
 cd dist
 
 FILENAME=release_"$ZIP_PREFIX"_v"$VERSION".zip
