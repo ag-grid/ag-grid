@@ -1,4 +1,4 @@
-import { Autowired, Component, GridOptionsWrapper, Listener, PostConstruct, RefSelector } from "ag-grid-community";
+import { Autowired, Component, GridOptionsWrapper, Listener, PostConstruct, RefSelector, ColDef, ColGroupDef } from "ag-grid-community";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
@@ -88,8 +88,11 @@ export class PrimaryColsPanel extends Component {
         this.primaryColsListPanel.doSetExpandedAll(false);
     }
 
+    public setColumnLayout(colDefs: (ColDef | ColGroupDef)[]) {
+        this.primaryColsListPanel.setColumnLayout(colDefs);
+    }
+
     private onGroupExpanded(event: any) {
         this.primaryColsHeaderPanel.setExpandState(event.state);
     }
-
 }

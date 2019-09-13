@@ -1,4 +1,5 @@
 import {
+    _,
     Autowired,
     Component,
     EventService,
@@ -6,7 +7,8 @@ import {
     GridOptionsWrapper,
     IToolPanelParams,
     IToolPanelComp,
-    _
+    ColDef,
+    ColGroupDef
 } from "ag-grid-community";
 import { PivotModePanel } from "./panels/pivotModePanel";
 import { RowGroupDropZonePanel } from "./panels/rowGroupDropZonePanel";
@@ -101,6 +103,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public collapseColumnGroups() {
         this.primaryColsPanel.onCollapseAll();
+    }
+    public setColumnLayout(colDefs: (ColDef | ColGroupDef)[]) {
+        this.primaryColsPanel.setColumnLayout(colDefs);
     }
 
     private addComponent(component: Component): void {
