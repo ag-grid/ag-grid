@@ -118,7 +118,7 @@ const tscMainEs2015Task = () => {
             .pipe(replace("\"./", "\"./dist/es2015/"))
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(rename("main.d.ts"))
-            .pipe(gulp.dest('./')),
+            .pipe(gulp.dest('./dist/es2015/')),
         tsResult.js
             .pipe(replace("require(\"./", "require(\"./dist/es2015/"))
             .pipe(header(headerTemplate, {pkg: pkg}))

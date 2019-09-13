@@ -7,8 +7,6 @@
     "target": "es5",
     "noImplicitAny": true,
     "outDir": "dist/es2015",
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
     "moduleResolution": "node",
     "lib": [
       "es2015",
