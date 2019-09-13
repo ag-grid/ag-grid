@@ -12,7 +12,7 @@ beforeEach((done) => {
     component = mount((<GridWithNoComponentContainerSpecified/>));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
-    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 10));
+    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20));
 
 });
 

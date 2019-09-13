@@ -17,7 +17,7 @@ beforeEach((done) => {
 
     // don't start our tests until the grid is ready
     // it doesn't take long for the grid to initialise, but it is some finite amount of time after the component is ready
-    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 10));
+    ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20));
 });
 
 afterEach(() => {
