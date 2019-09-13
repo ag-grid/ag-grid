@@ -48,6 +48,7 @@ export interface UpdateChartParams {
 export type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
 export type LegendProperty = 'enabled' | 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
 export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
+export type TitleProperty = 'text';
 export type TitleFontProperty = 'fontFamily' | 'fontStyle' | 'fontWeight' | 'fontSize' | 'color';
 export type ShadowProperty = 'enabled' | 'blur' | 'xOffset' | 'yOffset' | 'color';
 
@@ -162,7 +163,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
 
     public getLegendPosition = (): string => `${this.chartOptions.legendPosition}`;
 
-    public setTitleProperty(property: TitleFontProperty, value: any) {
+    public setTitleProperty(property: TitleProperty | TitleFontProperty, value: any) {
         if (!this.chart.title) {
             this.chart.title = {} as Caption;
         }

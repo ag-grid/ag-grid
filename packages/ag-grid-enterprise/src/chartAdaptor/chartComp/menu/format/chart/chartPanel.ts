@@ -7,13 +7,13 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {Chart} from "../../../../../charts/chart/chart";
-import {PaddingPanel} from "./paddingPanel";
-import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
-import {Caption} from "../../../../../charts/caption";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ChartProxy} from "../../../chartProxies/chartProxy";
+import { ChartController } from "../../../chartController";
+import { Chart } from "../../../../../charts/chart/chart";
+import { PaddingPanel } from "./paddingPanel";
+import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
+import { Caption } from "../../../../../charts/caption";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ChartProxy } from "../../../chartProxies/chartProxy";
 
 export class ChartPanel extends Component {
 
@@ -58,14 +58,15 @@ export class ChartPanel extends Component {
     }
 
     private initTitles(): void {
-        const title = this.chart.title ? this.chart.title.text : '';
+        const { title } = this.chart;
+        const text = title ? title.text : '';
 
         const initialFont = {
-            family: this.chart.title ? this.chartProxy.getTitleProperty('fontFamily') : 'Verdana, sans-serif',
-            style: this.chart.title ? this.chartProxy.getTitleProperty('fontStyle') : '',
-            weight: this.chart.title ? this.chartProxy.getTitleProperty('fontWeight') : 'Normal',
-            size: this.chart.title ? parseInt(this.chartProxy.getTitleProperty('fontSize')) : 22,
-            color: this.chart.title ? this.chartProxy.getTitleProperty('color') : 'black'
+            family: title ? this.chartProxy.getTitleProperty('fontFamily') : 'Verdana, sans-serif',
+            style: title ? this.chartProxy.getTitleProperty('fontStyle') : '',
+            weight: title ? this.chartProxy.getTitleProperty('fontWeight') : 'Normal',
+            size: title ? parseInt(this.chartProxy.getTitleProperty('fontSize')) : 22,
+            color: title ? this.chartProxy.getTitleProperty('color') : 'black'
         };
 
         // note we don't set the font style via chart title panel
@@ -80,27 +81,25 @@ export class ChartPanel extends Component {
             .setLabel(this.chartTranslator.translate('title'))
             .setLabelAlignment('top')
             .setLabelWidth('flex')
-            .setValue(title)
-            .onValueChange(newValue => {
+            .setValue(text)
+            .onValueChange(value => {
                 if (!this.chart.title) {
-                    this.chart.title = Caption.create({text: title});
+                    this.chart.title = Caption.create({ text });
                     setFont(initialFont);
                 }
 
-                const currentCaption = this.chart.title as Caption;
-                currentCaption.text = newValue;
-                this.chart.title = currentCaption;
+                this.chartProxy.setTitleProperty('text', value);
 
                 // only show font panel when title exists
-                labelPanelComp.setEnabled(_.exists(this.chart.title.text));
+                labelPanelComp.setEnabled(_.exists(value));
             });
 
         const params: LabelPanelParams = {
             name: this.chartTranslator.translate('font'),
             enabled: true,
             suppressEnabledCheckbox: true,
-            initialFont: initialFont,
-            setFont: setFont
+            initialFont,
+            setFont,
         };
 
         const labelPanelComp = new LabelPanel(params);
@@ -108,7 +107,7 @@ export class ChartPanel extends Component {
         this.chartGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
-        labelPanelComp.setEnabled(_.exists(title));
+        labelPanelComp.setEnabled(_.exists(text));
     }
 
     private initPaddingPanel(): void {
