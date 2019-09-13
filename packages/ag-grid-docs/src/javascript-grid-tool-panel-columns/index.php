@@ -282,10 +282,18 @@ columnToolPanel.collapseColumnGroups();
 
     <?= example('Expand / Collapse Column Groups', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
+    <h2>Custom Column Layout</h2>
+
+    <p style="color: red">
+        TODO: Finalise Docs and Example after review
+    </p>
+
+    <?= example('Custom Column Layout', 'custom-layout', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
     <h2>Next Up</h2>
 
     <p>
-        Now that we covered the Columns Tool Panel, continue to the next section to learn about the <a href="../javascript-grid-tool-panel-filters/">Filters Tool Bar</a>.
+        Now that we covered the Columns Tool Panel, continue to the next section to learn about the <a href="../javascript-grid-tool-panel-filters/">Filters Tool Panel</a>.
     </p>
 
 
