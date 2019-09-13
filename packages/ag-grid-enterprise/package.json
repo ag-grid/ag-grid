@@ -4,13 +4,15 @@
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "types": "main.d.ts",
+  "module": "./dist/es2015/main.js",
   "scripts": {
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --no-cache -runInBand",
     "testWithCoverage": "jest --coverage",
     "watchWebpack": "webpack --watch",
     "precheck": "tsc -p tsconfig-precheck.json",
-    "build": "npm run precheck && npm run lint && npx gulp",
+    "build": "npm run precheck && npm run lint && npx gulp && npm run rollup",
+    "rollup": "node rollup/build.js",
     "lint": "tsc -p tsconfig-lint.json && tslint --project tsconfig.json",
     "test:e2e": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
     "e2e": "protractor protractor.conf.js",
@@ -20,7 +22,8 @@
     "webdriver-kill": "kill $(ps -ef | grep webdriver | grep -v grep | awk '{ print $2 }')",
     "update-webdriver": "webdriver-manager update --gecko false",
     "start-server": "http-server .",
-    "ci": "start-server-and-test start-server http://localhost:8080 e2e"
+    "ci": "start-server-and-test start-server http://localhost:8080 e2e",
+    "validate-es5": "eslint dist/lib"
   },
   "repository": {
     "type": "git",
@@ -37,6 +40,13 @@
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid/issues"
   },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10",
+    "not ie_mob <= 11",
+    "not blackberry > 0"
+  ],
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
     "@types/jest": "^24.0.0",
@@ -61,7 +71,15 @@
     "tslint": "^5.19.0",
     "typescript": "~3.6.0",
     "webpack": "^4.39.0",
-    "webpack-stream": "5.0.0"
+    "webpack-stream": "5.0.0",
+    "eslint": "^6.3.0",
+    "eslint-plugin-compat": "^3.3.0",
+    "eslint-plugin-ie11": "^1.0.0",
+    "gulp-cssnano": "^2.1.3",
+    "rollup": "^1.21.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "terser-webpack-plugin": "^2.0.1"
   },
   "peerDependencies": {
     "ag-grid-community": "^21.2.0"

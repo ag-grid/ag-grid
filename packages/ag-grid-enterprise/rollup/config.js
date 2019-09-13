@@ -11,46 +11,46 @@ const banner = ['/**',
     ''].join('\n');
 
 const builds = {
-    'community-es-dev': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid-community.esm.js'),
+    'enterprise-es-dev': {
+        entry: path.resolve(__dirname, './main.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-enterprise.esm.js'),
         format: 'es',
         env: 'development',
         banner
     },
-    'community-es-prod': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid-community.esm.min.js'),
+    'enterprise-es-prod': {
+        entry: path.resolve(__dirname, './main.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-enterprise.esm.min.js'),
         format: 'es',
         env: 'production',
         banner
     },
-    'community-cjs-dev': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid-community.cjs.js'),
+    'enterprise-cjs-dev': {
+        entry: path.resolve(__dirname, './main.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-enterprise.cjs.js'),
         format: 'cjs',
         env: 'development',
         banner
     },
-    'community-cjs-prod': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid-community.cjs.min.js'),
+    'enterprise-cjs-prod': {
+        entry: path.resolve(__dirname, './main.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-enterprise.cjs.min.js'),
         format: 'cjs',
         env: 'production',
         banner
     },
 /*
-    'community-umd-noStyle-dev': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid-community.noStyle.js'),
+    'enterprise-umd-noStyle-dev': {
+        entry: path.resolve(__dirname, './main.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-enterprise.noStyle.js'),
         format: 'umd',
         env: 'development',
         moduleName: 'agGrid',
         banner
     },
-    'community-umd-noStyle-prod': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid-community.min.noStyle.js'),
+    'enterprise-umd-noStyle-prod': {
+        entry: path.resolve(__dirname, './main.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-enterprise.min.noStyle.js'),
         format: 'umd',
         env: 'production',
         moduleName: 'agGrid',

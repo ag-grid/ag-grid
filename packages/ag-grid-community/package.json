@@ -52,7 +52,7 @@
     "last 2 versions",
     "not ie <= 10",
     "not ie_mob <= 11",
-    "not Blackberry >= 1"
+    "not blackberry > 0"
   ],
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
@@ -99,9 +99,7 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-named": "^1.1.0",
     "webpack": "^4.39.0",
-    "webpack-stream": "5.0.0"
-  },
-  "dependencies": {
+    "webpack-stream": "5.0.0",
     "eslint": "^6.3.0",
     "eslint-plugin-compat": "^3.3.0",
     "eslint-plugin-ie11": "^1.0.0",

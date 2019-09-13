@@ -8,7 +8,7 @@ import {
     Autowired,
     PostConstruct,
     Context
-} from "ag-grid-community/main";
+} from "ag-grid-community";
 import { RowGroupDropZonePanel } from "./panels/rowGroupDropZonePanel";
 import { PivotDropZonePanel } from "./panels/pivotDropZonePanel";
 

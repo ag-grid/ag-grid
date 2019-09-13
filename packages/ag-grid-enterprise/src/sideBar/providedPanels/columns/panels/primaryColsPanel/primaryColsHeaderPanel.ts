@@ -10,7 +10,7 @@ import {
     PreConstruct,
     RefSelector,
     _
-} from "ag-grid-community/main";
+} from "ag-grid-community";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";
 
 export enum SELECTED_STATE { CHECKED, UNCHECKED, INDETERMINATE }

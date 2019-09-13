@@ -16,7 +16,7 @@ import {
     RefSelector,
     TouchListener,
     _
-} from "ag-grid-community/main";
+} from "ag-grid-community";
 import { BaseColumnItem } from "./primaryColsPanel";
 
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {

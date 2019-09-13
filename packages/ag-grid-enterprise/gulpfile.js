@@ -6,6 +6,7 @@ const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
 const clean = require('gulp-clean');
+const TerserPlugin = require('terser-webpack-plugin');
 const webpackStream = require('webpack-stream');
 const path = require('path');
 const rename = require("gulp-rename");
@@ -96,6 +97,44 @@ const tscWatch = () => {
         ],
         series('tsc'));
 };
+
+const tscSrcEs2015Task = () => {
+    const tsProject = gulpTypescript.createProject('./tsconfig-es2015.json', {typescript: typescript});
+
+    const tsResult = gulp
+        .src('src/**/*.ts')
+        .pipe(tsProject());
+
+    return merge([
+        tsResult.dts
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(gulp.dest('dist/es2015')),
+        tsResult.js
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(gulp.dest('dist/es2015'))
+    ]);
+};
+
+const tscMainEs2015Task = () => {
+    const tsProject = gulpTypescript.createProject('./tsconfig-main-es2015.json', {typescript: typescript});
+
+    const tsResult = gulp
+        .src('./src/main.ts')
+        .pipe(tsProject());
+
+    return merge([
+        tsResult.dts
+            .pipe(replace("\"./", "\"./dist/es2015/"))
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(rename("main.d.ts"))
+            .pipe(gulp.dest('./')),
+        tsResult.js
+            .pipe(replace("require(\"./", "require(\"./dist/es2015/"))
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(rename("main.js"))
+            .pipe(gulp.dest('./dist/es2015/'))
+    ]);
+};
 // End of typescript related tasks
 
 // Start of webpack related tasks
@@ -119,6 +158,18 @@ const webpackTask = (minify, styles) => {
     return gulp.src(mainFile)
         .pipe(webpackStream({
             mode: minify ? 'production' : 'none',
+            optimization: {
+                minimizer: !!minify ? [
+                    new TerserPlugin({
+                        terserOptions: {
+                            output: {
+                                comments: false
+                            }
+                        },
+                        extractComments: false
+                    })
+                ] : [],
+            },
             output: {
                 path: path.join(__dirname, "dist"),
                 filename: fileName,
@@ -167,7 +218,10 @@ gulp.task('clean', parallel('clean-dist', 'clean-main', 'clean-modules'));
 gulp.task('tsc-no-clean-src', series(tscSrcTask));
 gulp.task('tsc-no-clean-main', series(tscMainTask));
 gulp.task('tsc-no-clean-modules', series(tscModulesTask));
-gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-no-clean-modules'));
+gulp.task('tsc-es2015-no-clean-src', tscSrcEs2015Task);
+gulp.task('tsc-es2015-no-clean-main', tscMainEs2015Task);
+gulp.task('tsc-es2015-no-clean', parallel('tsc-es2015-no-clean-src', 'tsc-es2015-no-clean-main'));
+gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-no-clean-modules', 'tsc-es2015-no-clean'));
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 gulp.task('tsc-watch', series('tsc', tscWatch));
 

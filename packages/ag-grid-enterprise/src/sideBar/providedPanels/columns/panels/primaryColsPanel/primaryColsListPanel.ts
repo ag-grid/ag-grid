@@ -10,7 +10,7 @@ import {
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     _
-} from "ag-grid-community/main";
+} from "ag-grid-community";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { BaseColumnItem } from "./primaryColsPanel";
