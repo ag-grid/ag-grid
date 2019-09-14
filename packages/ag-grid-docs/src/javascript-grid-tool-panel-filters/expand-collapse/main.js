@@ -44,12 +44,20 @@ var gridOptions = {
     }
 };
 
-function collapseFilters() {
+function collapseAllFilters() {
     gridOptions.api.getToolPanelInstance('filters').collapseFilters();
 }
 
-function expandFilters() {
+function expandAllFilters() {
     gridOptions.api.getToolPanelInstance('filters').expandFilters();
+}
+
+function collapseAgeFilter() {
+    gridOptions.api.getToolPanelInstance('filters').collapseFilters(['age']);
+}
+
+function expandAgeFilter() {
+    gridOptions.api.getToolPanelInstance('filters').expandFilters(['age']);
 }
 
 // setup the grid after the page has finished loading

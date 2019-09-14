@@ -33,37 +33,6 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Filter Tool Panel', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h2>Expand / Collapse Filters</h2>
-
-    <p>
-        It is possible to expand / collapse the filters in the Filters Tool Panel by directly invoking methods
-        on the Filters Tool Panel instance. This is shown in the code snippet below:
-    </p>
-
-    <snippet>
-        // lookup Filters Tool Panel instance by id
-        var filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
-
-        // expand filters in the Filters Tool Panel
-        filtersToolPanel.expandFilters();
-
-        // collapse filters in the Filters Tool Panel
-        filtersToolPanel.collapseFilters();
-    </snippet>
-
-    <p>
-        The example below shows how to programmatically expand / collapse filters. Note the following:
-    </p>
-
-    <ul class="content">
-        <li>When the grid is initialised <code>collapseFilters()</code> is invoked using the
-            <code>onGridReady</code> event to initially collapse all filters in the Filters Tool Panel.</li>
-        <li>Clicking <b>Expand Filters</b> expands filters using <code>expandFilters()</code>.</li>
-        <li>Clicking <b>Collapse Filters</b> collapses filters using <code>collapseFilters()</code>.</li>
-    </ul>
-
-    <?= example('Expand / Collapse Filters', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
-
     <h2>Filter Instances</h2>
 
     <p>
@@ -85,6 +54,63 @@ include '../documentation-main/documentation_header.php';
             it will only appear at one location at any given time.
         </li>
     </ul>
+
+
+    <h2>Expand / Collapse Filters</h2>
+
+    <p>
+        It is possible to expand and collapse the filters in the Filters Tool Panel by invoking methods
+        on the Filters Tool Panel Instance. These methods shown below:
+    </p>
+
+<snippet>
+interface IFiltersToolPanel {
+    expandFilters(colIds?: string[]): void;
+    collapseFilters(colIds?: string[]): void;
+    ... // other methods
+}
+</snippet>
+
+<p>
+    The code snippet below shows how to expand and collapse filters using the Filters Tool Panel instance:
+</p>
+
+    <snippet>
+        // lookup Filters Tool Panel instance by id
+        var filterToolPanelId = 'filters'; // default filter instance id
+        var filtersToolPanel = gridOptions.api.getToolPanelInstance(filterToolPanelId);
+
+        // expands all filters in the Filters Tool Panel
+        filtersToolPanel.expandFilters();
+
+        // collapses all filters in the Filters Tool Panel
+        filtersToolPanel.collapseFilters();
+
+        // expands the 'age' filters in the Filters Tool Panel
+        filtersToolPanel.expandFilters(['age']);
+
+        // collapses 'age' and 'sport' filters in the Filters Tool Panel
+        filtersToolPanel.collapseFilters(['age', 'sport']);
+    </snippet>
+
+    <p>
+        Notice in the snippet above that it's possible to target individual filters by supplying <code>colId's</code>.
+    </p>
+
+    <p>
+        The following example demonstrates these methods in action. Note the following:
+    </p>
+
+    <ul class="content">
+        <li>When the grid is initialised, <code>expandFilters()</code> is invoked using the
+            <code>onGridReady</code> callback to expand all filters in the tool panel.</li>
+        <li>Clicking <b>Collapse All</b> collapses all filters using <code>collapseFilters()</code>.</li>
+        <li>Clicking <b>Expand All</b> expands all filters using <code>expandFilters()</code>.</li>
+        <li>Clicking <b>Collapse Age</b> just collapses the 'age' filter using <code>collapseFilters(['age'])</code>.</li>
+        <li>Clicking <b>Expand Age</b> just expands the 'age' filter using <code>expandFilters(['age'])</code>.</li>
+    </ul>
+
+    <?= example('Expand / Collapse Filters', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <h2>Next Up</h2>

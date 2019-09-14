@@ -25,7 +25,6 @@ export class ToolPanelFilterComp extends Component {
 
     private column: Column;
     private expanded: boolean = false;
-    // private filter: IFilterComp;
 
     @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
     @RefSelector('eFilterName') private eFilterName: HTMLElement;
@@ -60,8 +59,7 @@ export class ToolPanelFilterComp extends Component {
 
     public setColumn(column: Column): void {
         this.column = column;
-        const displayName: any = this.columnController.getDisplayNameForColumn(this.column, 'header', false);
-        this.eFilterName.innerText = displayName;
+        this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
         this.addDestroyableEventListener(this.eFilterToolPanelHeader, 'click', this.doExpandOrCollapse.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
 
@@ -69,6 +67,10 @@ export class ToolPanelFilterComp extends Component {
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
         _.addCssClass(this.eExpandChecked, 'ag-hidden');
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+    }
+
+    public getColumn(): Column {
+        return this.column;
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
