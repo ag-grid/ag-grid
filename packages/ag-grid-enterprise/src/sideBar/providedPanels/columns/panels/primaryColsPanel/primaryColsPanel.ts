@@ -1,22 +1,23 @@
-import { Autowired, Component, GridOptionsWrapper, Listener, PostConstruct, RefSelector, ColDef, ColGroupDef } from "ag-grid-community";
-import { PrimaryColsListPanel } from "./primaryColsListPanel";
-import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
-import { ToolPanelColumnCompParams } from "../../columnToolPanel";
+import {
+    Autowired,
+    ColDef,
+    ColGroupDef,
+    Component,
+    GridOptionsWrapper,
+    PostConstruct,
+    RefSelector
+} from "ag-grid-community";
+import {PrimaryColsListPanel} from "./primaryColsListPanel";
+import {PrimaryColsHeaderPanel} from "./primaryColsHeaderPanel";
+import {ToolPanelColumnCompParams} from "../../columnToolPanel";
 
 export interface BaseColumnItem {
-
     getDisplayName(): string | null;
-
     onSelectAllChanged(value: boolean): void;
-
     isSelected(): boolean;
-
     isSelectable(): boolean;
-
     isExpandable(): boolean;
-
     setExpanded(value: boolean): void;
-
 }
 
 export class PrimaryColsPanel extends Component {
@@ -47,7 +48,6 @@ export class PrimaryColsPanel extends Component {
 
     @PostConstruct
     public init(): void {
-
         this.primaryColsHeaderPanel.init(this.params);
         this.primaryColsListPanel.init(this.params, this.allowDragging);
 
@@ -68,31 +68,39 @@ export class PrimaryColsPanel extends Component {
         this.addDestroyableEventListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
     }
 
-    private onFilterChanged(event: any) {
-        this.primaryColsListPanel.setFilterText(event.filterText);
-    }
-
-    private onSelectAll() {
-        this.primaryColsListPanel.doSetSelectedAll(true);
-    }
-
-    private onUnselectAll() {
-        this.primaryColsListPanel.doSetSelectedAll(false);
-    }
-
-    public onExpandAll() {
+    public onExpandAll(): void {
         this.primaryColsListPanel.doSetExpandedAll(true);
     }
 
-    public onCollapseAll() {
+    public onCollapseAll(): void {
         this.primaryColsListPanel.doSetExpandedAll(false);
     }
 
-    public setColumnLayout(colDefs: (ColDef | ColGroupDef)[]) {
+    public expandGroups(groupIds?: string[]): void {
+        this.primaryColsListPanel.setGroupsExpanded(true, groupIds);
+    }
+
+    public collapseGroups(groupIds?: string[]): void {
+        this.primaryColsListPanel.setGroupsExpanded(false, groupIds);
+    }
+
+    public setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void {
         this.primaryColsListPanel.setColumnLayout(colDefs);
     }
 
-    private onGroupExpanded(event: any) {
+    private onFilterChanged(event: any): void {
+        this.primaryColsListPanel.setFilterText(event.filterText);
+    }
+
+    private onSelectAll(): void {
+        this.primaryColsListPanel.doSetSelectedAll(true);
+    }
+
+    private onUnselectAll(): void {
+        this.primaryColsListPanel.doSetSelectedAll(false);
+    }
+
+    private onGroupExpanded(event: any): void {
         this.primaryColsHeaderPanel.setExpandState(event.state);
     }
 }

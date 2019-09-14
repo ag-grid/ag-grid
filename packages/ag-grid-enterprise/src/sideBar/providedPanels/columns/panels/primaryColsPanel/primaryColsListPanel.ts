@@ -229,6 +229,29 @@ export class PrimaryColsListPanel extends Component {
         });
     }
 
+    public setGroupsExpanded(expand: boolean, groupIds?: string[]): void {
+        const expandedGroupIds: string[] = [];
+
+        if (!groupIds) {
+            this.doSetExpandedAll(expand);
+        } else {
+            _.iterateObject(this.columnComps, (key, renderedItem) => {
+                const shouldSetGroupExpanded = renderedItem.isExpandable() && groupIds.indexOf(key) > -1;
+                if (shouldSetGroupExpanded) {
+                    renderedItem.setExpanded(expand);
+                    expandedGroupIds.push(key);
+                }
+            });
+        }
+
+        if (groupIds) {
+            const unrecognisedGroupIds = groupIds.filter(groupId => expandedGroupIds.indexOf(groupId) < 0);
+            if (unrecognisedGroupIds.length > 0) {
+                console.warn('ag-Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
+            }
+        }
+    }
+
     public doSetSelectedAll(checked: boolean): void {
         if (this.columnApi.isPivotMode()) {
             // if pivot mode is on, then selecting columns has special meaning (eg group, aggregate, pivot etc),

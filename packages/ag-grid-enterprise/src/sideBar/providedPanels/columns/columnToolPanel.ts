@@ -29,8 +29,9 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
 }
 
 export interface IColumnToolPanel {
-    expandColumnGroups(): void;
-    collapseColumnGroups(): void;
+    expandColumnGroups(groupIds?: string[]): void;
+    collapseColumnGroups(groupIds?: string[]): void;
+    setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void;
 }
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
@@ -97,14 +98,15 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.initialised = true;
     }
 
-    public expandColumnGroups() {
-        this.primaryColsPanel.onExpandAll();
+    public expandColumnGroups(groupIds?: string[]): void {
+        this.primaryColsPanel.expandGroups(groupIds);
     }
 
-    public collapseColumnGroups() {
-        this.primaryColsPanel.onCollapseAll();
+    public collapseColumnGroups(groupIds?: string[]): void {
+        this.primaryColsPanel.collapseGroups(groupIds);
     }
-    public setColumnLayout(colDefs: (ColDef | ColGroupDef)[]) {
+
+    public setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void {
         this.primaryColsPanel.setColumnLayout(colDefs);
     }
 

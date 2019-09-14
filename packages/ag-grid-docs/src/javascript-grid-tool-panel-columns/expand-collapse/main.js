@@ -1,21 +1,21 @@
 var columnDefs = [
     {
+        groupId: 'athleteGroupId',
         headerName: 'Athlete',
         children: [
             { field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-            { field: "age", width: 90},
-            { field: "country", width: 120}
+            {
+                groupId: 'competitionGroupId',
+                headerName: 'Competition',
+                children: [
+                    { field: "year", width: 90 },
+                    { field: "date", width: 110 },
+                ]
+            },
         ]
     },
     {
-        headerName: 'Competition',
-        children: [
-            { field: "year", width: 90 },
-            { field: "date", width: 110 },
-        ]
-    },
-    { field: "sport", width: 110 },
-    {
+        groupId: 'medalsGroupId',
         headerName: 'Medals',
         children: [
             { field: "gold", width: 100 },
@@ -44,12 +44,22 @@ var gridOptions = {
     }
 };
 
-function expandColumnGroups() {
+function expandAllGroups() {
     gridOptions.api.getToolPanelInstance('columns').expandColumnGroups();
 }
 
-function collapseColumnGroups() {
+function collapseAllGroups() {
     gridOptions.api.getToolPanelInstance('columns').collapseColumnGroups();
+}
+
+function expandAthleteAndCompetitionGroups() {
+    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
+    columnToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
+}
+
+function collapseCompetitionGroups() {
+    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
+    columnToolPanel.collapseColumnGroups(['competitionGroupId']);
 }
 
 // setup the grid after the page has finished loading

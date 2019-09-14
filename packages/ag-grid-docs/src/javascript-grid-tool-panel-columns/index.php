@@ -250,34 +250,65 @@ colDefs = {
 
     <?= example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h2>Expand / Collapse Column Groups</h2>
-
     <p>
         It is possible to expand / collapse the column groups on the Column Tool Panel by directly invoking methods
         on the Column Tool Panel instance. This is shown in the code snippet below:
     </p>
 
+<h2>Expand / Collapse Column Groups</h2>
+
+<p>
+    It is possible to expand and collapse the column groups in the Columns Tool Panel by invoking methods
+    on the Columns Tool Panel Instance. These methods are shown below:
+</p>
+
 <snippet>
-// lookup Column Tool Panel instance by id
-var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
+interface IColumnToolPanel {
+    expandColumnGroups(groupIds?: string[]): void;
+    collapseColumnGroups(groupIds?: string[]): void;
+    ... // other methods
+}
+</snippet>
 
-// expand column groups in the Column Tool Panel
-columnToolPanel.expandColumnGroups();
+<p>
+    The code snippet below shows how to expand and collapse column groups using the Columns Tool Panel instance:
+</p>
 
-// collapse column groups in the Column Tool Panel
-columnToolPanel.collapseColumnGroups();
+<snippet>
+    // lookup Columns Tool Panel instance by id
+    var columnsToolPanelId = 'columns'; // default columns instance id
+    var columnsToolPanel = gridOptions.api.getToolPanelInstance(columnsToolPanelId);
+
+    // expands all column groups in the Columns Tool Panel
+    columnsToolPanel.expandColumnGroups();
+
+    // collapses all column groups in the Columns Tool Panel
+    columnsToolPanel.collapseColumnGroups();
+
+    // expands the 'Athlete' and 'Competition' column groups in the Columns Tool Panel
+    columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
+
+    // collapses the 'Competition' column group in the Columns Tool Panel
+    columnsToolPanel.collapseFilters(['age', 'sport']);
 </snippet>
 
     <p>
-        The example below shows how to programmatically expand / collapse column groups. Note the following:
+        Notice in the snippet above that it's possible to target individual column groups by supplying <code>groupId's</code>.
+    </p>
+
+    <p>
+        The example below demonstrates these methods in action. Note the following:
     </p>
 
     <ul class="content">
-        <li>When the grid is initialised <code>collapseColumnGroups()</code> is invoked using the
-            <code>onGridReady</code> event to initially collapse all column groups in the column tool panel.</li>
-        <li>Clicking <b>Expand Column Groups</b> expands column groups using <code>expandColumnGroups()</code>.</li>
-        <li>Clicking <b>Collapse Column Groups</b> collapses column groups using <code>collapseColumnGroups()</code>.</li>
-
+        <li>When the grid is initialised, <code>collapseColumnGroups()</code> is invoked using the
+            <code>onGridReady</code> callback to collapse all column groups in the tool panel.</li>
+        <li>Clicking <b>Expand All</b> expands all column groups using: <code>expandColumnGroups()</code>.</li>
+        <li>Clicking <b>Collapse All</b> collapses all column groups using: <code>collapseColumnGroups()</code>.</li>
+        <li>Clicking <b>Expand Athlete & Competition</b> just expands 'Athlete' & 'Competition' column groups
+            using: <code>expandColumnGroups(['athleteGroupId', 'competitionGroupId'])</code>.</li>
+        <li>Clicking <b>Collapse Competition</b> just collapses the 'Competition' column group
+            using: <code>collapseColumnGroups(['competitionGroupId'])</code>.</li>
     </ul>
 
     <?= example('Expand / Collapse Column Groups', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>

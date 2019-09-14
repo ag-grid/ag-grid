@@ -60,7 +60,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         It is possible to expand and collapse the filters in the Filters Tool Panel by invoking methods
-        on the Filters Tool Panel Instance. These methods shown below:
+        on the Filters Tool Panel Instance. These methods are shown below:
     </p>
 
 <snippet>
@@ -98,20 +98,19 @@ interface IFiltersToolPanel {
     </p>
 
     <p>
-        The following example demonstrates these methods in action. Note the following:
+        The example below demonstrates these methods in action. Note the following:
     </p>
 
     <ul class="content">
         <li>When the grid is initialised, <code>expandFilters()</code> is invoked using the
             <code>onGridReady</code> callback to expand all filters in the tool panel.</li>
-        <li>Clicking <b>Collapse All</b> collapses all filters using <code>collapseFilters()</code>.</li>
-        <li>Clicking <b>Expand All</b> expands all filters using <code>expandFilters()</code>.</li>
-        <li>Clicking <b>Collapse Age</b> just collapses the 'age' filter using <code>collapseFilters(['age'])</code>.</li>
-        <li>Clicking <b>Expand Age</b> just expands the 'age' filter using <code>expandFilters(['age'])</code>.</li>
+        <li>Clicking <b>Collapse All</b> collapses all filters using: <code>collapseFilters()</code>.</li>
+        <li>Clicking <b>Expand All</b> expands all filters using: <code>expandFilters()</code>.</li>
+        <li>Clicking <b>Collapse Age</b> just collapses the 'age' filter using: <code>collapseFilters(['age'])</code>.</li>
+        <li>Clicking <b>Expand Age</b> just expands the 'age' filter using: <code>expandFilters(['age'])</code>.</li>
     </ul>
 
     <?= example('Expand / Collapse Filters', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
-
 
     <h2>Next Up</h2>
 
