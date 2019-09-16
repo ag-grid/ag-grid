@@ -1,136 +1,60 @@
-#nav {
-    @extend .bg-light;
+header#nav {
+    @extend .bg-primary, .fixed-top;
     -webkit-font-smoothing: antialiased;
-
     background-image: linear-gradient(to top left, $blue-2, $blue-1);
-    box-shadow: inset 0 -8px 121px -50px $blue-1;
-    padding-bottom: 2rem;
+    box-shadow: inset 0 -0.5rem 7.5rem -3rem $blue-1;
+    min-height: 4rem;
 
-    nav {
-        @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
-        padding: 0 10px;
-        height: 65px;
+    ~ div:first-of-type {
+        margin-top: 4rem;
     }
 
-    &.compact {
-        margin-bottom: 0;
-        padding-bottom: 0;
-        position: fixed; 
-        z-index: 2;
-        top: 0; 
-        width: 100%; 
-        opacity: 0.97;
-        ~ div:first-of-type {
-            margin-top: 65px;
+    nav.nav {
+        @extend .navbar, .navbar-dark, .navbar-expand-sm, .full-width-row, .mt-1, .align-middle;
+
+        #logo {
+            @extend .navbar-brand, .text-hide;
+            background-image: url('../svg/logo-white.svg');
+            background-repeat: no-repeat;
+            background-size: contain;;
+            min-height: 2.5rem;
+            min-width: 5.5rem;
         }
-    }
 
-    .navbar-collapse {
-        overflow: hidden;
-    }
-
-    $logo-scale: 6;
-
-    #logo {
-        font: 0/0 a;
-        color: transparent;
-        text-shadow: none;
-        background-color: transparent;
-        border: 0;
-
-        background-image: url("../svg/logo-white.svg");
-        background-repeat: no-repeat;
-        background-size: 100%;
-        display: inline-block;
-        height: 248px / $logo-scale;
-        margin-top: 6px;
-        min-width: 40px;
-        width: 500px / $logo-scale;
-    }
-
-    #navbar-toggle {
-        @extend .navbar-toggler;
-
-        span {
-            @extend .navbar-toggler-icon;
-        }
-    }
-
-    #main-nav {
-        height: 100%;
         ul {
-            @extend .navbar-nav;
-            height: 100%;
-            margin-left: auto;
+            @extend .navbar-nav, .ml-auto;
+
             li {
                 @extend .nav-item, .ml-3;
-                height: calc(100% - 1px);
-                line-height: 65px;
-                a {
-                    white-space: nowrap;
-                    color: lighten($blue-3, 10);
-                    padding: 0.5rem 1rem;
-                }
-
-                a:hover {
-                    color: $white;
-                    text-decoration: none;
-                }
-
+                position: relative;
                 &.active {
-                    border-bottom: 3px solid white;
-                    a {
-                        color: $white;
+                    @extend .active;
+
+                    @include media-breakpoint-up(sm) {
+                        &:after {
+                            content: '';
+                            height: 0.2rem;
+                            width: 100%;
+                            background-color: white;
+                            position: absolute;
+                            bottom: -0.7rem;
+                        }
+                    }
+                }
+                a {
+                    @extend .nav-link, .px-4;
+                    color: #b3d4ed;
+                    &:hover {
+                        color: white;
                     }
                 }
             }
-
-            .get-started a {
-                padding: 8px;
-                border-radius: 6px;
-                border: 1px solid currentColor;
-            }
-
-            .medium {
-                background-image: url("../svg/medium.svg");
-                background-position-x: right;
-                background-position-y: 8px;
-                background-repeat: no-repeat;
-
-                padding-right: 20px;
-            }
-
-            #trial a {
-                @extend .rounded;
-
-                background-color: $offwhite;
-                color: $blue-2 !important;
-            }
         }
-    }
-}
 
-.ag-main-floatingMenu {
-    position: absolute;
-    top: 60px;
-    right: 10px;
-    position: absolute;
-    top: 60px;
-    right: 10px;
-    background-color: #eaeaea;
-    border: 1px solid lightgray;
-    border-radius: 5px;
-    -webkit-font-smoothing: antialiased;
-    ul {
-        padding: 10px;
-        li {
-            list-style-type: none;
-            a {
-                color: #2a2b2b;
-            }
-            a:hover {
-                text-decoration: none;
-                color: #0084e7;
+        #navbar-toggle {
+            @extend .navbar-toggler;
+            span {
+                @extend .navbar-toggler-icon;
             }
         }
     }

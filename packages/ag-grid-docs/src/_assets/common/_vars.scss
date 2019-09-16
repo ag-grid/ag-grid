@@ -21,11 +21,17 @@ $offwhite: rgb(249, 252, 255);
 $white: #ffffff;
 $yellow: #FFFBD9;
 $teal: #00E7B1;
-
 $max-width: 1400px;
+$enable-gradients: true;
+$enable-shadows: true;
 
 $primary: $blue-2;
 $secondary: #A3A4A5;
+
+$theme-colors: (
+    "primary": $primary,
+    "secondary": $secondary
+);
 
 $border-color: #dee2e6;
 $code-background-color: #212529;
