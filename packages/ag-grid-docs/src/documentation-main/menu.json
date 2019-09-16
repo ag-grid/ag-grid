@@ -22,7 +22,7 @@
             "items": [
               {
                 "title": "Vanilla JavaScript",
-                "url": "javascript-getting-started/",
+                "url": "javascript-grid/",
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -41,7 +41,7 @@
               },
               {
                 "title": "Angular",
-                "url": "angular-getting-started/",
+                "url": "angular-grid/",
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -80,7 +80,7 @@
               },
               {
                 "title": "React",
-                "url": "react-getting-started/",
+                "url": "react-grid/",
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -107,7 +107,7 @@
               },
               {
                 "title": "Vue",
-                "url": "best-vuejs-data-grid/",
+                "url": "vuejs-grid/",
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -129,7 +129,7 @@
                 ]
               },              {
                 "title": "AngularJS",
-                "url": "best-angularjs-data-grid/"
+                "url": "angular-grid/"
               },
               {
                 "title": "Polymer",

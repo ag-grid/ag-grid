@@ -82,11 +82,11 @@ meta_and_links($title, $keywords, $description, false);
 
             <div>
                 <ul id="frameworks">
-                    <li id="fw-javascript"><a href="./javascript-getting-started/">JavaScript</a></li>
-                    <li id="fw-angular"><a href="./angular-getting-started/">Angular</a></li>
-                    <li id="fw-react"><a href="./react-getting-started/">React</a></li>
-                    <li id="fw-vue"><a href="./best-vuejs-data-grid/">Vue.js</a></li>
-                    <li id="fw-angularjs"><a href="./best-angularjs-data-grid/">AngularJS 1.x</a></li>
+                    <li id="fw-javascript"><a href="./javascript-grid/">JavaScript</a></li>
+                    <li id="fw-angular"><a href="./angular-grid/">Angular</a></li>
+                    <li id="fw-react"><a href="./react-grid/">React</a></li>
+                    <li id="fw-vue"><a href="./vuejs-grid/">Vue.js</a></li>
+                    <li id="fw-angularjs"><a href="./angular-grid/">AngularJS 1.x</a></li>
                     <li id="fw-polymer"><a href="./polymer-getting-started/">Polymer</a></li>
                     <li id="fw-webcomponents"><a href="./best-web-component-data-grid/">Web Components</a></li>
                 </ul>

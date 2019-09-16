@@ -453,11 +453,11 @@ cp ./node_modules/ag-grid-community/dist/styles/ag-theme-balham.css aot/</snippe
 <br/>
 <ul>
     <li>
-        Get started with Angular Grid in 5 minutes in our <a href="../angular-getting-started/" target="_blank">guide</a>.
+        Get started with Angular Grid in 5 minutes in our <a href="../angular-grid/" target="_blank">guide</a>.
     </li>
     <br/>
     <li>
-        Browse our <a href="../best-angular-2-data-grid/" target="_blank">Angular Grid</a> page to discover all major benefits in using ag-Grid Angular. 
+        Browse our <a href="../angular-grid/" target="_blank">Angular Grid</a> page to discover all major benefits in using ag-Grid Angular. 
     </li>
     <br/>
     <li>

@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid/issues"
   },
-  "homepage": "https://www.ag-grid.com/best-react-data-grid/",
+  "homepage": "https://www.ag-grid.com/react-grid/",
   "dependencies": {
     "prop-types": "^15.6.2"
   },

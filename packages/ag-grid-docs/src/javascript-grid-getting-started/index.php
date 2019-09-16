@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
 <p class="lead">
     Select a framework to see getting started instructions for that framework. If you do not want to
     use ag-Grid with any framework, follow the instructions for
-    <a href="../javascript-getting-started">Plain JavaScript</a>.
+    <a href="../javascript-grid">Plain JavaScript</a>.
 </p>
 
 <div id="get-started-frameworks">
@@ -19,31 +19,31 @@ include '../documentation-main/documentation_header.php';
 <div class="row no-gutters">
 
 <div><div class="get-started-framework card-javascript">
-    <a href="../javascript-getting-started/">JavaScript</a>
+    <a href="../javascript-grid/">JavaScript</a>
     <div>
-        <p><a href="../javascript-getting-started/">Get Started</a></p>
+        <p><a href="../javascript-grid/">Get Started</a></p>
     </div>
 </div></div>
 
 
 <div><div class="get-started-framework card-angular">
-    <a href="../angular-getting-started/">Angular</a>
+    <a href="../angular-grid/">Angular</a>
     <div>
-        <p><a href="../angular-getting-started/">Get Started</a></p>
+        <p><a href="../angular-grid/">Get Started</a></p>
     </div>
 </div></div>
 
 <div><div class="get-started-framework card-react">
-    <a href="../react-getting-started/">React</a>
+    <a href="../react-grid/">React</a>
     <div>
-        <p><a href="../react-getting-started/">Get Started</a></p>
+        <p><a href="../react-grid/">Get Started</a></p>
     </div>
 </div></div>
 
 <div><div class="get-started-framework card-vue-inverted">
-    <a href="../best-vuejs-data-grid/">Vue.js</a>
+    <a href="../vuejs-grid/">Vue.js</a>
     <div>
-        <p><a href="../best-vuejs-data-grid/">Get Started</a></p>
+        <p><a href="../vuejs-grid/">Get Started</a></p>
     </div>
 </div></div>
 
@@ -52,7 +52,7 @@ include '../documentation-main/documentation_header.php';
 <p>Or maybe your are doing something a little less common...</p>
 
 <ul>
-    <li><a href="../best-angularjs-data-grid/">Start with AngularJS</a></li>
+    <li><a href="../angular-grid/">Start with AngularJS</a></li>
     <li><a href="../polymer-getting-started/">Start with Polymer</a></li>
     <li><a href="../best-web-component-data-grid/">Start with Web Components</a></li>
 </ul>

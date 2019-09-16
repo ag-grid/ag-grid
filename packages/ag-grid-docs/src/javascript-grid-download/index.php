@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         After downloading the bundles, you can refer to the files in the same way as you would from CDN.
-        Refer <a href="../javascript-getting-started/">the getting started section</a> for step-by-step guide on that.
+        Refer <a href="../javascript-grid/">the getting started section</a> for step-by-step guide on that.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

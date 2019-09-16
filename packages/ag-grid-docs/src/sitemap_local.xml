@@ -205,7 +205,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/javascript-getting-started/</loc>
+    <loc>http://localhost:8080/javascript-grid/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -469,7 +469,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/best-angularjs-data-grid/</loc>
+    <loc>http://localhost:8080/angular-grid/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -493,7 +493,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/best-javascript-data-grid/</loc>
+    <loc>http://localhost:8080/javascript-grid/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -859,7 +859,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/best-angular-2-data-grid/</loc>
+    <loc>http://localhost:8080/angular-grid/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -895,7 +895,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/angular-getting-started/</loc>
+    <loc>http://localhost:8080/angular-grid/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -931,7 +931,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/react-getting-started/</loc>
+    <loc>http://localhost:8080/react-grid/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -997,7 +997,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/best-react-data-grid/</loc>
+    <loc>http://localhost:8080/react-grid/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

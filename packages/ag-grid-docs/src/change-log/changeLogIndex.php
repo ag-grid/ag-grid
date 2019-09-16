@@ -1395,7 +1395,7 @@ include('../includes/mediaHeader.php');
 
     <b>Enhancements:</b>
     <ul>
-        <li>Enhancement: <a href="../best-vuejs-data-grid/">VueJS</a> Framework Support! Big welcome to the VueJS
+        <li>Enhancement: <a href="../vuejs-grid/">VueJS</a> Framework Support! Big welcome to the VueJS
             community.
         </li>
         <li>Enhancement: <a href="../javascript-grid-header-rendering/#headerComponent">Header Component</a> and <a
@@ -1564,7 +1564,7 @@ include('../includes/mediaHeader.php');
     <h4>Enhancements</h4>
     <ul>
         <li>Enhancement: <a href="../best-aurelia-data-grid/">Aurelia Support</a>.</li>
-        <li>Enhancement: <a href="../best-angular-2-data-grid/#aotCompilation">Full Angular 2 AOT Support</a>.</li>
+        <li>Enhancement: <a href="../angular-grid/#aotCompilation">Full Angular 2 AOT Support</a>.</li>
         <li>Enhancement: New option for grouping <a href="../javascript-grid-grouping/#removeSingleChildren">
                 Remove Single Children</a>, so groups will only one child are removed.
         </li>
@@ -1732,7 +1732,7 @@ include('../includes/mediaHeader.php');
     <li>New Feature - <a href="../javascript-grid-column-definitions/#defaultProperties">Default column and column group
             definitions</a>. So instead of declaring common properties in each column, define them once in the default.
     </li>
-    <li>New Feature - <a href="../best-angular-2-data-grid/#ng2markup">Angular 2 Grid Creation via Markup</a>. Option to
+    <li>New Feature - <a href="../angular-grid/#ng2markup">Angular 2 Grid Creation via Markup</a>. Option to
         create Grids with Markup (declaratively).
     </li>
     <li>Enhancement - When using checkbox selection in groups, the property cellRendererParams.checkbox can be
@@ -1773,7 +1773,7 @@ include('../includes/mediaHeader.php');
 
     <h4>ag-grid-angular 6.1.1</h4>
 
-    <li><a href="../best-angular-2-data-grid/#aot">AOT support</a> - AOT is now an option when using ag-grid-angular.
+    <li><a href="../angular-grid/#aot">AOT support</a> - AOT is now an option when using ag-grid-angular.
     </li>
 
     <h2>Version 6.1.x</h2>
@@ -1989,7 +1989,7 @@ params = {
 
     <h4>Bug Fixes and Angular 2 Cell Rendering</h4>
 
-    <li>Enhancement: Now you can create cellRenderers using Angular 2. See <a href="../best-angular-2-data-grid/">Getting
+    <li>Enhancement: Now you can create cellRenderers using Angular 2. See <a href="../angular-grid/">Getting
             Started Angular 2</a></li>
     <li>Enhancement: Now context menu appears when you click outside of the rows, including when no rows present.</li>
     <li>Enhancement: Added columnApi.autoSizeAllColumns().</li>

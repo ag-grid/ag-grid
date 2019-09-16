@@ -53,7 +53,7 @@ Check out [developers documentation](https://www.ag-grid.com/documentation-main/
 Usage Overview
 --------------
 
-Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/react-getting-started?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github).
+Use the setup instructions below or go through [a 5-minute-quickstart guide](https://www.ag-grid.com/react-grid?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github).
 
 #### Install dependencies
 

@@ -1,12 +1,9 @@
  - [x] javascript-grid-getting-started/
- - [x] best-javascript-data-grid/
- - [x] javascript-getting-started/
+ - [x] javascript-grid/
  - [ ] src/javascript-more-details/index.php
- - [ ] best-react-data-grid/
- - [ ] react-getting-started/
+ - [ ] react-grid/
  - [ ] react-more-details/
- - [ ] best-angular-2-data-grid/
- - [ ] angular-getting-started/
+ - [ ] angular-grid/
  - [ ] angular-more-details/
  - [ ] angular-building/
  - [ ] ag-grid-angular-angularcli/
@@ -16,8 +13,8 @@
  - [ ] best-polymer-data-grid/
  - [ ] polymer-getting-started/
  - [ ] polymer-more-details/
- - [ ] best-angularjs-data-grid/
- - [ ] best-vuejs-data-grid/
+ - [ ] angular-grid/
+ - [ ] vuejs-grid/
  - [ ] best-web-component-data-grid/
  - [ ] ag-grid-typescript-webpack-2/
  - [ ] javascript-grid-reference-overview/
@@ -110,7 +107,7 @@
  - [ ] javascript-grid-date-component/
  - [ ] javascript-grid-examples/
  - [ ] example-react/
- - [ ] react-getting-started/#react-rich-grid-example
+ - [ ] react-grid/#react-rich-grid-example
  - [ ] example-react-dynamic/
  - [ ] javascript-grid-cell-editor/#example-cell-editing-using-react-components
  - [ ] javascript-grid-filter-component/#example-filtering-using-react-components
@@ -120,7 +117,7 @@
  - [ ] example-react-grouped-row/
  - [ ] example-react-redux/
  - [ ] example-angular/
- - [ ] angular-getting-started/#angular-rich-grid-example
+ - [ ] angular-grid/#angular-rich-grid-example
  - [ ] angular-more-details/#example-rich-grid-using-markup
  - [ ] javascript-grid-cell-editor/#example-cell-editing-using-angular-components
  - [ ] javascript-grid-filter-component/#example-filtering-using-angular-components

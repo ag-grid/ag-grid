@@ -197,7 +197,7 @@ module.exports = () => {
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples
     // commented out by default - add if you want to test as part of the dev build (or run separately - see at the end of the file)
-    // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg best-react-data-grid
+    // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
 
     // regenerate examples
     watchAndGenerateExamples();

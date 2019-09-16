@@ -211,7 +211,7 @@
         </li>
         <li>
             <code>ag-grid-vue</code>Event bindings are now bound with <code>@</code> instead of <code>:</code>. Please
-            refer to <a href="https://www.ag-grid.com/best-vuejs-data-grid/">Configuring ag-Grid and Vue.js</a>.
+            refer to <a href="https://www.ag-grid.com/vuejs-grid/">Configuring ag-Grid and Vue.js</a>.
         </li>
     </ul>
 
@@ -224,11 +224,11 @@
         </li>
         <li>
             AG-2448 Add declarative support to vue component (column defs)
-            <a href="https://www.ag-grid.com/best-vuejs-data-grid/#declarative_definition">Using Markup to Define Grid Definitions</a>.
+            <a href="https://www.ag-grid.com/vuejs-grid/#declarative_definition">Using Markup to Define Grid Definitions</a>.
         </li>
         <li>
             AG-2280 Allow event handler in Vue too support more idiomatic conventions
-            <a href="https://www.ag-grid.com/best-vuejs-data-grid/#configuring-ag-grid-in-vuejs">Configuring ag-Grid in Vue</a>.
+            <a href="https://www.ag-grid.com/vuejs-grid/#configuring-ag-grid-in-vuejs">Configuring ag-Grid in Vue</a>.
         </li>
         <li>
             AG-939 Improve horizontal and vertical scrolling in other browsers.

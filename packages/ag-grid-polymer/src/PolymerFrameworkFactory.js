@@ -6,7 +6,7 @@ export default class PolymerFrameworkFactory {
 
     colDefCellEditor(colDef) {
         if (colDef.cellEditorFramework && colDef.cellEditorFramework.component) {
-            console.warn("colDef.cellEditorFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            console.warn("colDef.cellEditorFramework.component is deprecated - please refer to https://ag-grid.com/angular-grid/");
             colDef.cellEditorFramework = colDef.cellEditorFramework.component;
         }
 
@@ -19,7 +19,7 @@ export default class PolymerFrameworkFactory {
 
     colDefFilter(colDef) {
         if (colDef.filterFramework && colDef.filterFramework.component) {
-            console.warn("colDef.filterFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            console.warn("colDef.filterFramework.component is deprecated - please refer to https://ag-grid.com/angular-grid/");
             colDef.filterFramework = colDef.filterFramework.component;
         }
 
