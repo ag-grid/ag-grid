@@ -420,6 +420,9 @@ export class ChartBuilder {
         if (options.labelFormatter !== undefined) {
             series.labelFormatter = options.labelFormatter;
         }
+        if (options.labelColor !== undefined) {
+            series.labelColor = options.labelColor;
+        }
         if (options.tooltipRenderer !== undefined) {
             series.tooltipRenderer = options.tooltipRenderer;
         }

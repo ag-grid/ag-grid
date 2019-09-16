@@ -115,12 +115,10 @@ export class Utils {
     }
 
     static jsonEquals(val1: any, val2: any): boolean {
-
         const val1Json = val1 ? JSON.stringify(val1) : null;
         const val2Json = val2 ? JSON.stringify(val2) : null;
-        const res = val1Json === val2Json;
 
-        return res;
+        return val1Json === val2Json;
     }
 
     static shallowCompare(arr1: any[], arr2: any[]): boolean {
@@ -128,7 +126,8 @@ export class Utils {
         if (this.missing(arr1) && this.missing(arr2)) {
             return true;
         }
-        // if one is present, but other is missing, then then are different
+
+        // if one is present, but other is missing, then they are different
         if (this.missing(arr1) || this.missing(arr2)) {
             return false;
         }
@@ -146,19 +145,23 @@ export class Utils {
         return true;
     }
 
-    static getNameOfClass(TheClass: any) {
+    static getNameOfClass(theClass: any) {
         const funcNameRegex = /function (.{1,})\(/;
-        const funcAsString = TheClass.toString();
-        const results = (funcNameRegex).exec(funcAsString);
-        return (results && results.length > 1) ? results[1] : "";
+        const funcAsString = theClass.toString();
+        const results = funcNameRegex.exec(funcAsString);
+
+        return results && results.length > 1 ? results[1] : "";
     }
 
     static values = <T>(object: { [key: string]: T }): T[] => Object.keys(object).map(key => object[key]);
+
+    static includes = <T>(array: T[], value: T): boolean => array.indexOf(value) > -1;
 
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
         if (!field || !data) {
             return;
         }
+
         // if no '.', then it's not a deep value
         if (!fieldContainsDots) {
             return data[field];
@@ -166,12 +169,15 @@ export class Utils {
             // otherwise it is a deep value, so need to dig for it
             const fields = field.split('.');
             let currentObject = data;
+
             for (let i = 0; i < fields.length; i++) {
                 currentObject = currentObject[fields[i]];
+
                 if (this.missing(currentObject)) {
                     return null;
                 }
             }
+
             return currentObject;
         }
     }

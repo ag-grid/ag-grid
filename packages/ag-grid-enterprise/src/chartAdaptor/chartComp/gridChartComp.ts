@@ -15,21 +15,21 @@ import {
     RefSelector,
     ResizeObserverService
 } from "ag-grid-community";
-import {ChartMenu} from "./menu/chartMenu";
-import {ChartController} from "./chartController";
-import {ChartModel, ChartModelParams} from "./chartModel";
-import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
-import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxies/chartProxy";
-import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
-import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
-import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
-import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
-import {Palette, palettes} from "../../charts/chart/palettes";
-import {ChartTranslator} from "./chartTranslator";
-import {CartesianChart} from "../../charts/chart/cartesianChart";
-import {CategoryAxis} from "../../charts/chart/axis/categoryAxis";
-import {NumberAxis} from "../../charts/chart/axis/numberAxis";
+import { ChartMenu } from "./menu/chartMenu";
+import { ChartController } from "./chartController";
+import { ChartModel, ChartModelParams } from "./chartModel";
+import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
+import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
+import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
+import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
+import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
+import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
+import { Palette, palettes } from "../../charts/chart/palettes";
+import { ChartTranslator } from "./chartTranslator";
+import { CartesianChart } from "../../charts/chart/cartesianChart";
+import { CategoryAxis } from "../../charts/chart/axis/categoryAxis";
+import { NumberAxis } from "../../charts/chart/axis/numberAxis";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -105,7 +105,6 @@ export class GridChartComp extends Component {
         }
 
         this.addResizeListener();
-
         this.addMenu();
 
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
@@ -118,7 +117,7 @@ export class GridChartComp extends Component {
     private createChart() {
         let width, height;
 
-        // destroy chart and remove it from DOM
+        // if chart already exists, destroy it and remove it from DOM
         if (this.chartProxy) {
             const chart = this.chartProxy.getChart();
             // preserve existing width/height
@@ -147,7 +146,7 @@ export class GridChartComp extends Component {
             width,
             height,
             eventService: this.eventService,
-            categorySelected: categorySelected,
+            categorySelected,
             grouping: this.model.isGrouping(),
             document: this.gridOptionsWrapper.getDocument()
         };
@@ -161,9 +160,7 @@ export class GridChartComp extends Component {
         this.model.setChartProxy(this.chartProxy);
     }
 
-    private getSelectedPalette(): Palette {
-        return this.model.getPalettes()[this.model.getActivePalette()];
-    }
+    private getSelectedPalette = (): Palette => this.model.getPalettes()[this.model.getActivePalette()];
 
     private createChartProxy(chartOptions: ChartProxyParams): ChartProxy<any> {
         switch (chartOptions.chartType) {
@@ -227,13 +224,12 @@ export class GridChartComp extends Component {
     private shouldRecreateChart(): boolean {
         const chartTypeChanged = this.model.getChartType() !== this.currentChartType;
         const groupingChanged = this.currentChartGroupingActive !== this.model.isGrouping();
+
         if (chartTypeChanged || groupingChanged) { return true; }
 
         // we also need to recreate XY charts when xAxis changes
-
         if (this.isXYChart()) {
             const categorySelected = !this.chartController.isDefaultCategorySelected();
-
             const chart = this.chartProxy.getChart() as CartesianChart;
             const switchingToCategoryAxis = categorySelected && chart.xAxis instanceof NumberAxis;
             const switchingToNumberAxis = !categorySelected && chart.xAxis instanceof CategoryAxis;
@@ -244,37 +240,28 @@ export class GridChartComp extends Component {
         return false;
     }
 
-    public getChartComponentsWrapper(): HTMLElement {
-        return this.eChartComponentsWrapper;
-    }
+    public getChartComponentsWrapper = (): HTMLElement => this.eChartComponentsWrapper;
 
-    public getDockedContainer(): HTMLElement {
-        return this.eDockedContainer;
-    }
+    public getDockedContainer = (): HTMLElement => this.eDockedContainer;
 
     public slideDockedOut(width: number) {
-        this.eDockedContainer.style.minWidth = width + 'px';
+        this.eDockedContainer.style.minWidth = `${width}px`;
     }
 
     public slideDockedIn() {
         this.eDockedContainer.style.minWidth = '0';
     }
 
-    public getCurrentChartType(): ChartType {
-        return this.currentChartType;
-    }
+    public getCurrentChartType = (): ChartType => this.currentChartType;
 
     public updateChart() {
         const { model, chartProxy } = this;
 
         const selectedCols = model.getSelectedValueColState();
-        const fields = selectedCols.map(c => {
-            return {colId: c.colId, displayName: c.displayName};
-        });
-
+        const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
         const data = model.getData();
-
         const chartEmpty = this.handleEmptyChart(data, fields);
+
         if (chartEmpty) { return; }
 
         const selectedDimension = model.getSelectedDimension();
@@ -284,16 +271,15 @@ export class GridChartComp extends Component {
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName
             },
-            fields: fields
+            fields
         };
+
         chartProxy.update(chartUpdateParams);
     }
 
     private handleEmptyChart(data: any[], fields: any[]) {
         const parent = this.chartProxy.getChart().parent;
-
         const pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
-
         let minFieldsRequired = 1;
 
         if (this.chartController.isActiveXYChart()) {
@@ -309,10 +295,12 @@ export class GridChartComp extends Component {
         if (parent) {
             _.addOrRemoveCssClass(parent, 'ag-chart-empty', pivotModeDisabled || isEmptyChart);
         }
+
         if (pivotModeDisabled) {
             this.eEmpty.innerText = this.chartTranslator.translate('pivotChartRequiresPivotMode');
             return true;
         }
+
         if (isEmptyChart) {
             this.eEmpty.innerText = this.chartTranslator.translate('noDataToChart');
             return true;
@@ -343,6 +331,7 @@ export class GridChartComp extends Component {
                 observeResizeFunc();
                 return;
             }
+
             this.refreshCanvasSize();
         };
 
@@ -353,12 +342,11 @@ export class GridChartComp extends Component {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) {
             return;
         }
+
         this.chartController.setChartRange();
     }
 
-    private isXYChart(): boolean {
-        return [ChartType.Scatter, ChartType.Bubble].indexOf(this.model.getChartType()) > -1;
-    }
+    private isXYChart = (): boolean => _.includes([ ChartType.Scatter, ChartType.Bubble ], this.model.getChartType());
 
     public destroy(): void {
         super.destroy();

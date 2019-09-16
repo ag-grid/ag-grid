@@ -1,7 +1,7 @@
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
-import { Rect, RectSizing } from "../../scene/shape/rect";
+import { Rect } from "../../scene/shape/rect";
 import { Text } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
@@ -39,6 +39,7 @@ interface SelectionDatum extends SeriesNodeDatum {
 export interface BarLabelFormatterParams {
     value: number;
 }
+
 export type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
 
 enum BarSeriesNodeTag {
@@ -119,7 +120,6 @@ export class BarSeries extends Series<CartesianChart> {
 
     private xData: string[] = [];
     private yData: number[][] = [];
-    private ySums: number[] = [];
     private domainY: number[] = [];
 
     /**
@@ -358,13 +358,15 @@ export class BarSeries extends Series<CartesianChart> {
         //   yField3: 20
         // }]
         //
+        this.xData = data.map(datum => datum[xField]);
+
         const enabled = this.enabled;
         const normalizedTo = this.normalizedTo;
-        const xData: string[] = this.xData = data.map(datum => datum[xField]);
-        const ySums: number[] = this.ySums = []; // used for normalization of stacked bars
+        const ySums: number[] = []; // used for normalization of stacked bars
         const yData: number[][] = this.yData = data.map((datum, xIndex) => {
             const values: number[] = [];
             let ySum = 0;
+
             yFields.forEach(field => {
                 let value = datum[field];
                 if (!isFinite(value) || !enabled.get(field)) {
@@ -375,6 +377,7 @@ export class BarSeries extends Series<CartesianChart> {
                 }
                 values.push(value);
             });
+
             ySums[xIndex] = ySum;
             return values;
         });
@@ -438,6 +441,7 @@ export class BarSeries extends Series<CartesianChart> {
         this.domainY = [yMin, yMax];
 
         const chart = this.chart;
+
         if (chart) {
             chart.updateAxes();
         }
@@ -445,13 +449,8 @@ export class BarSeries extends Series<CartesianChart> {
         return true;
     }
 
-    getDomainX(): string[] {
-        return this.xData;
-    }
-
-    getDomainY(): number[] {
-        return this.domainY;
-    }
+    getDomainX = (): string[] => this.xData;
+    getDomainY = (): number[] => this.domainY;
 
     update(): void {
         const chart = this.chart;
