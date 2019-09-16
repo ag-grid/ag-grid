@@ -56,7 +56,7 @@ const watch = () => {
     gulp.watch([
             './src/*',
             './node_modules/ag-grid-community/dist/lib/**/*'],
-        commonjs);
+        tscTask);
 };
 
 gulp.task('umd', umd);
