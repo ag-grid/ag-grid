@@ -723,7 +723,7 @@ export class RowRenderer extends BeanStub {
         indexesToDraw.forEach(index => (indexesToDrawMap[index] = true));
 
         const existingIndexes = Object.keys(this.rowCompsByIndex);
-        const indexesNotToDraw: string[] = _.filter(existingIndexes, index => !indexesToDrawMap[index]);
+        const indexesNotToDraw: string[] = existingIndexes.filter(index => !indexesToDrawMap[index]);
 
         this.removeRowComps(indexesNotToDraw);
     }

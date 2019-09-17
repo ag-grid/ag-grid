@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelRow, ExcelCell, _ } from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelRow, ExcelCell } from 'ag-grid-community';
 import { getExcelColumnName } from './worksheet';
 import cellFactory from './cell';
 
@@ -40,7 +40,7 @@ const rowFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelRow, idx: number) {
         const {index, collapsed, hidden, height, s, cells = []} = config;
         addEmptyCells(cells, idx);
-        const children = _.map(cells, cellFactory.getTemplate);
+        const children = cells.map(cellFactory.getTemplate);
 
         return {
             name: "row",

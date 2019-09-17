@@ -52,26 +52,25 @@ export class StatusBar extends Component {
     private createAndRenderComponents(statusBarComponents: any[], ePanelComponent: HTMLElement) {
         const componentDetails: { key: string; promise: Promise<any> }[] = [];
 
-        _.forEach(statusBarComponents, (componentConfig) => {
-                const params = {
-                    api: this.gridOptionsWrapper.getApi(),
-                    columnApi: this.gridOptionsWrapper.getColumnApi(),
-                    context: this.gridOptionsWrapper.getContext()
-                };
+        statusBarComponents.forEach(componentConfig => {
+            const params = {
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext()
+            };
 
-                const promise = this.userComponentFactory.newStatusPanelComponent(componentConfig, params);
+            const promise = this.userComponentFactory.newStatusPanelComponent(componentConfig, params);
 
-                componentDetails.push({
-                    // default to the component name if no key supplied
-                    key: componentConfig.key || componentConfig.statusPanel,
-                    promise
-                });
-            }
-        );
+            componentDetails.push({
+                // default to the component name if no key supplied
+                key: componentConfig.key || componentConfig.statusPanel,
+                promise
+            });
+        });
 
         Promise.all(componentDetails.map((details) => details.promise))
             .then(() => {
-                _.forEach(componentDetails, (componentDetail) => {
+                componentDetails.forEach(componentDetail => {
                     componentDetail.promise.then((component: Component) => {
                         const destroyFunc = () => {
                             if (component.destroy) {

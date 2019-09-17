@@ -2401,18 +2401,18 @@ export class ColumnController {
         if (this.pivotMode && !this.secondaryColumnsPresent) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
-            columnsForDisplay = _.filter(this.gridColumns, column => {
-                const isAutoGroupCol = this.groupAutoColumns && this.groupAutoColumns.indexOf(column) >= 0;
-                const isValueCol = this.valueColumns && this.valueColumns.indexOf(column) >= 0;
+            columnsForDisplay = this.gridColumns.filter(column => {
+                const isAutoGroupCol = this.groupAutoColumns && _.includes(this.groupAutoColumns, column);
+                const isValueCol = this.valueColumns && _.includes(this.valueColumns, column);
                 return isAutoGroupCol || isValueCol;
             });
 
         } else {
             // otherwise continue as normal. this can be working on the primary
             // or secondary columns, whatever the gridColumns are set to
-            columnsForDisplay = _.filter(this.gridColumns, column => {
+            columnsForDisplay = this.gridColumns.filter(column => {
                 // keep col if a) it's auto-group or b) it's visible
-                const isAutoGroupCol = this.groupAutoColumns && this.groupAutoColumns.indexOf(column) >= 0;
+                const isAutoGroupCol = this.groupAutoColumns && _.includes(this.groupAutoColumns, column);
                 return isAutoGroupCol || column.isVisible();
             });
         }
@@ -2880,7 +2880,7 @@ export class ColumnController {
     }
 
     private filterOutColumnsWithinViewport(): Column[] {
-        return _.filter(this.displayedCenterColumns, this.isColumnInViewport.bind(this));
+        return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     }
 
     // called from api
@@ -2892,11 +2892,15 @@ export class ColumnController {
             return;
         }
 
-        const colsToNotSpread = _.filter(allDisplayedColumns, (column: Column): boolean => {
-            return column.getColDef().suppressSizeToFit === true;
-        });
-        const colsToSpread = _.filter(allDisplayedColumns, (column: Column): boolean => {
-            return column.getColDef().suppressSizeToFit !== true;
+        const colsToSpread: Column[] = [];
+        const colsToNotSpread: Column[] = [];
+
+        allDisplayedColumns.forEach(column => {
+            if (column.getColDef().suppressSizeToFit === true) {
+                colsToNotSpread.push(column);
+            } else {
+                colsToSpread.push(column);
+            }
         });
 
         // make a copy of the cols that are going to be resized
@@ -2964,16 +2968,22 @@ export class ColumnController {
     }
 
     private buildDisplayedTrees(visibleColumns: Column[]) {
-        const leftVisibleColumns = _.filter(visibleColumns, (column) => {
-            return column.getPinned() === 'left';
-        });
+        const leftVisibleColumns: Column[] = [];
+        const rightVisibleColumns: Column[] = [];
+        const centerVisibleColumns: Column[] = [];
 
-        const rightVisibleColumns = _.filter(visibleColumns, (column) => {
-            return column.getPinned() === 'right';
-        });
-
-        const centerVisibleColumns = _.filter(visibleColumns, (column) => {
-            return column.getPinned() !== 'left' && column.getPinned() !== 'right';
+        visibleColumns.forEach(column => {
+            switch (column.getPinned()) {
+                case "left":
+                    leftVisibleColumns.push(column);
+                    break;
+                case "right":
+                    rightVisibleColumns.push(column);
+                    break;
+                default:
+                    centerVisibleColumns.push(column);
+                    break;
+            }
         });
 
         const groupInstanceIdCreator = new GroupInstanceIdCreator();

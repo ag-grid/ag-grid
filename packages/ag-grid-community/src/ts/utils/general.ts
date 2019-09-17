@@ -452,45 +452,6 @@ export class Utils {
         }
     }
 
-    static map<TItem, TResult>(array: TItem[], callback: (item: TItem, idx?: number) => TResult) {
-        const result: TResult[] = [];
-        for (let i = 0; i < array.length; i++) {
-            const item = array[i];
-            const mappedItem = callback(item, i);
-            result.push(mappedItem);
-        }
-        return result;
-    }
-
-    static mapObject<TResult>(object: any, callback: (item: any) => TResult) {
-        const result: TResult[] = [];
-        Utils.iterateObject(object, (key: string, value: any) => {
-            result.push(callback(value));
-        });
-        return result;
-    }
-
-    static forEach<T>(array: T[], callback: (item: T, index: number) => void) {
-        if (!array) {
-            return;
-        }
-
-        for (let i = 0; i < array.length; i++) {
-            const value = array[i];
-            callback(value, i);
-        }
-    }
-
-    static filter<T>(array: T[], callback: (item: T) => boolean): T[] {
-        const result: T[] = [];
-        array.forEach(function(item: T) {
-            if (callback(item)) {
-                result.push(item);
-            }
-        });
-        return result;
-    }
-
     static getAllKeysInObjects(objects: any[]): string[] {
         const allValues: any = {};
         objects.forEach(obj => {
@@ -560,10 +521,10 @@ export class Utils {
         if (!date) {
             return null;
         }
-        return date.getFullYear() + separator + Utils.pad(date.getMonth() + 1, 2) + separator + Utils.pad(date.getDate(), 2);
+        return date.getFullYear() + separator + this.padStart(date.getMonth() + 1, 2) + separator + this.padStart(date.getDate(), 2);
     }
 
-    static pad(num: number, totalStringSize: number): string {
+    static padStart(num: number, totalStringSize: number): string {
         let asString: string = num + "";
         while (asString.length < totalStringSize) {
             asString = "0" + asString;
@@ -628,20 +589,13 @@ export class Utils {
     }
 
     static toStrings<T>(array: T[]): (string | null)[] {
-        return this.map(array, function(item) {
+        return array.map(item => {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             } else {
                 return item.toString();
             }
         });
-    }
-
-    static iterateArray<T>(array: T[], callback: (item: T, index: number) => void) {
-        for (let index = 0; index < array.length; index++) {
-            const value = array[index];
-            callback(value, index);
-        }
     }
 
     static findIndex<T>(collection: T[], predicate: (item: T, idx: number, collection: T[]) => boolean): number {
@@ -1179,7 +1133,6 @@ export class Utils {
     }
 
     static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
-
         // if already in right order, do nothing
         if (eChildBefore && eChildBefore.nextSibling === eChild) {
             return;
@@ -2213,7 +2166,6 @@ export class Utils {
         eElement: HTMLElement,
         event: string, listener: (event?: any) => void
     ) {
-
         const isPassive = Utils.PASSIVE_EVENTS.indexOf(event) >= 0;
         const isOutsideAngular = Utils.OUTSIDE_ANGULAR_EVENTS.indexOf(event) >= 0;
 
@@ -2224,7 +2176,6 @@ export class Utils {
         } else {
             eElement.addEventListener(event, listener, options);
         }
-
     }
 
     /**
@@ -2263,7 +2214,6 @@ export class Utils {
             }
         }
         eBox.insertBefore(eMessage, eBox.children[0]);
-        // eBox.appendChild(eMessage);
     }
 
     /**
@@ -2280,7 +2230,6 @@ export class Utils {
         }
 
         const comparator = (nodeA: RowNode, nodeB: RowNode) => {
-
             const positionA = rowNodeOrder[nodeA.id];
             const positionB = rowNodeOrder[nodeB.id];
 
@@ -2312,8 +2261,6 @@ export class Utils {
             return -1;
         };
 
-        // const a = new Date().getTime();
-
         // check if the list first needs sorting
         let rowNodeA: RowNode;
         let rowNodeB: RowNode;
@@ -2327,15 +2274,9 @@ export class Utils {
             }
         }
 
-        // const b = new Date().getTime();
-
         if (atLeastOneOutOfOrder) {
             rowNodes.sort(comparator);
         }
-
-        // const c = new Date().getTime();
-
-        // console.log(`${this.count}: ${rowNodes.length} items, ${b-a}ms ${atLeastOneOutOfOrder} ${c-b}ms`);
     }
 
     public static fuzzyCheckStrings(inputValues: string[],
@@ -2377,9 +2318,7 @@ export class Utils {
             relevance: search(inputValue.toLowerCase(), text.toLocaleLowerCase())
         }));
 
-        thisSuggestions.sort((a, b) => {
-            return b.relevance - a.relevance;
-        });
+        thisSuggestions.sort((a, b) => b.relevance - a.relevance);
 
         if (hideIrrelevant) {
             thisSuggestions = thisSuggestions.filter(suggestion => suggestion.relevance !== 0);
@@ -2405,6 +2344,7 @@ export class Utils {
             v[i] = s.slice(i, i + 2);
 
         }
+
         return v;
     }
 

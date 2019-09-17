@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, _ } from 'ag-grid-community';
+import { ExcelOOXMLTemplate } from 'ag-grid-community';
 import cellStyleFactory, { CellStyle } from './cellStyle';
 
 const cellStylesFactory: ExcelOOXMLTemplate = {
@@ -10,7 +10,7 @@ const cellStylesFactory: ExcelOOXMLTemplate = {
                     count: cellStyles.length
                 }
             },
-            children: _.map(cellStyles, cellStyleFactory.getTemplate)
+            children: cellStyles.map(cellStyleFactory.getTemplate)
         };
     }
 };

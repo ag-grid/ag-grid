@@ -165,7 +165,7 @@ export class UserComponentRegistry {
     private init(): void {
         const enterpriseDefaultComponents = this.context.getEnterpriseDefaultComponents();
         if (enterpriseDefaultComponents) {
-            _.forEach(enterpriseDefaultComponents, (config) => {
+            enterpriseDefaultComponents.forEach(config => {
                 this.registerDefaultComponent(config.componentName, config.theClass);
             });
         }

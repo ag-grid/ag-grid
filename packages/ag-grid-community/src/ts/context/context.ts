@@ -69,7 +69,7 @@ export class Context {
     }
 
     private getBeanInstances(): any[] {
-        return _.mapObject(this.beanWrappers, beanEntry => beanEntry.beanInstance);
+        return _.values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
     }
 
     private setupComponents(): void {

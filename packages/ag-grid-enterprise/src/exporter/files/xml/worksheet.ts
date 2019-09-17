@@ -5,21 +5,21 @@ import row from './row';
 
 const worksheet: ExcelXMLTemplate = {
     getTemplate(ws: ExcelWorksheet): XmlElement {
-        const {table, name} = ws;
-        const {columns, rows} = table;
+        const { table, name } = ws;
+        const { columns, rows } = table;
 
-        const c = _.map(columns, (it):XmlElement => column.getTemplate(it));
-        const r = _.map(rows, (it):XmlElement => row.getTemplate(it));
+        const c = columns.map(it => column.getTemplate(it));
+        const r = rows.map(it => row.getTemplate(it));
 
         return {
             name: "Worksheet",
             children:[{
-                name:"Table",
+                name: "Table",
                 children: c.concat(r)
             }],
             properties:{
                 prefixedAttributes: [{
-                    prefix:"ss:",
+                    prefix: "ss:",
                     map: {
                         Name: name
                     }

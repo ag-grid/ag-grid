@@ -92,7 +92,7 @@ export class FilterManager {
                 allPromises.push(filterWrapper.filterPromise);
             });
             // at this point, processedFields contains data for which we don't have a filter working yet
-            _.iterateArray(modelKeys, (colId) => {
+            modelKeys.forEach(colId => {
                 const column = this.columnController.getPrimaryColumn(colId);
                 if (!column) {
                     console.warn('Warning ag-grid setFilterModel - no column found for colId ' + colId);

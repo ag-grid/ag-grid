@@ -19,7 +19,7 @@ const sharedStrings: ExcelOOXMLTemplate = {
                     uniqueCount: strings.length
                 }
             },
-            children: _.map(strings, buildSharedString)
+            children: strings.map(buildSharedString)
         };
     }
 };

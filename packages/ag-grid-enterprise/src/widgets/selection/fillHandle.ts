@@ -165,9 +165,8 @@ export class FillHandle extends AbstractSelectionHandle {
                 } else if (columns) {
                     withinInitialRange = true;
                     resetValues();
-                    _.forEach(columns, (col => fillValues(values, col, rowNode, () => {
-                        return this.isLeft ? col !== initialRange.columns[0] : col !== _.last(initialRange.columns);
-                    })));
+                    columns.forEach(col => fillValues(
+                        values, col, rowNode, () => col !== (this.isLeft ? initialRange.columns[0] : _.last(initialRange.columns))));
                 }
 
                 finished = this.rowPositionUtils.sameRow(currentRow, this.isUp ? finalRangeStartRow : finalRangeEndRow);

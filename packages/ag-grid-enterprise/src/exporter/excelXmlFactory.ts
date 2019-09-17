@@ -32,32 +32,30 @@ export class ExcelXmlFactory {
         return `${header}${this.xmlFactory.createXml(wb, boolean => boolean ? '1' : '0')}`;
     }
 
-    private workbook(docProperties: XmlElement, eWorkbook: XmlElement, styles: ExcelStyle[], worksheets: ExcelWorksheet[]) : XmlElement {
-        const children : XmlElement [] = [
+    private workbook(docProperties: XmlElement, eWorkbook: XmlElement, styles: ExcelStyle[], worksheets: ExcelWorksheet[]): XmlElement {
+        const children: XmlElement[] = [
             docProperties,
             eWorkbook,
             this.stylesXmlElement(styles)
-        ].concat(_.map(worksheets, (it):XmlElement => worksheet.getTemplate(it)));
+        ].concat(worksheets.map(it => worksheet.getTemplate(it)));
 
         return _.assign({}, workbook.getTemplate(), {children});
     }
 
-    private excelXmlHeader() : string {
+    private excelXmlHeader(): string {
         return `<?xml version="1.0" ?>
         <?mso-application progid="Excel.Sheet" ?>
         `;
     }
 
-    private stylesXmlElement(styles:ExcelStyle[]):XmlElement {
+    private stylesXmlElement(styles:ExcelStyle[]): XmlElement {
         return {
-            name:'Styles',
-            children:styles ? _.map(styles, (it) => {
-                return this.styleXmlElement (it);
-            }) : []
+            name: 'Styles',
+            children:styles ? styles.map(it => this.styleXmlElement(it)) : []
         };
     }
 
-    private styleXmlElement(styleProperties:ExcelStyle):XmlElement {
+    private styleXmlElement(styleProperties: ExcelStyle): XmlElement {
         const children = _.compose(
             this.addProperty('alignment', styleProperties),
             this.addProperty('borders', styleProperties),

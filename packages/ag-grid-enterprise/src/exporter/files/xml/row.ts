@@ -1,16 +1,14 @@
-import { XmlElement, _ } from 'ag-grid-community';
-import { ExcelCell, ExcelRow, ExcelXMLTemplate } from 'ag-grid-community';
+import { XmlElement } from 'ag-grid-community';
+import { ExcelRow, ExcelXMLTemplate } from 'ag-grid-community';
 import cell from './cell';
 
 const row: ExcelXMLTemplate = {
     getTemplate(r: ExcelRow): XmlElement {
-        const {cells} = r;
+        const { cells } = r;
 
         return {
             name: "Row",
-            children: _.map(cells, (it:ExcelCell):XmlElement => {
-                return cell.getTemplate(it);
-            })
+            children: cells.map(it => cell.getTemplate(it))
         };
     }
 };

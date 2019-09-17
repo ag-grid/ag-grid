@@ -77,14 +77,14 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         if (columns.length) {
             children.push({
                 name: 'cols',
-                children: _.map(columns, columnFactory.getTemplate)
+                children: columns.map(columnFactory.getTemplate)
             });
         }
 
         if (rows.length) {
             children.push({
                 name: 'sheetData',
-                children: _.map(rows, rowFactory.getTemplate)
+                children: rows.map(rowFactory.getTemplate)
             });
         }
 
@@ -96,7 +96,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
                         count: mergedCells.length
                     }
                 },
-                children: _.map(mergedCells, mergeCell.getTemplate)
+                children: mergedCells.map(mergeCell.getTemplate)
             });
         }
 

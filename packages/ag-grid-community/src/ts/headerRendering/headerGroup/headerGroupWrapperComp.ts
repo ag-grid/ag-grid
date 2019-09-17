@@ -334,7 +334,7 @@ export class HeaderGroupWrapperComp extends Component {
     public onResizeStart(shiftKey: boolean): void {
 
         const leafCols = this.columnGroup.getDisplayedLeafColumns();
-        this.resizeCols = _.filter(leafCols, col => col.isResizable());
+        this.resizeCols = leafCols.filter(col => col.isResizable());
         this.resizeStartWidth = 0;
         this.resizeCols.forEach(col => this.resizeStartWidth += col.getActualWidth());
         this.resizeRatios = [];
@@ -348,7 +348,7 @@ export class HeaderGroupWrapperComp extends Component {
         if (takeFromGroup) {
             const takeFromLeafCols = takeFromGroup.getDisplayedLeafColumns();
 
-            this.resizeTakeFromCols = _.filter(takeFromLeafCols, col => col.isResizable());
+            this.resizeTakeFromCols = takeFromLeafCols.filter(col => col.isResizable());
 
             this.resizeTakeFromStartWidth = 0;
             this.resizeTakeFromCols.forEach(col => this.resizeTakeFromStartWidth += col.getActualWidth());

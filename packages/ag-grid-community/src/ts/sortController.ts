@@ -6,7 +6,6 @@ import { ColumnController } from "./columnController/columnController";
 import { EventService } from "./eventService";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
-import { _ } from './utils';
 
 @Bean('sortController')
 export class SortController {
@@ -114,15 +113,11 @@ export class SortController {
     }
 
     // used by the public api, for saving the sort model
-    public getSortModel() {
-        const columnsWithSorting = this.getColumnsWithSortingOrdered();
-
-        return _.map(columnsWithSorting, (column: Column) => {
-            return {
-                colId: column.getColId(),
-                sort: column.getSort()
-            };
-        });
+    public getSortModel = () => {
+        return this.getColumnsWithSortingOrdered().map(column => ({
+            colId: column.getColId(),
+            sort: column.getSort()
+        }));
     }
 
     public setSortModel(sortModel: any, source: ColumnEventType = "api") {
@@ -164,7 +159,7 @@ export class SortController {
     public getColumnsWithSortingOrdered(): Column[] {
         // pull out all the columns that have sorting set
         const allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
-        const columnsWithSorting = _.filter(allColumnsIncludingAuto, (column: Column) => !!column.getSort()) as Column[];
+        const columnsWithSorting = allColumnsIncludingAuto.filter(column => !!column.getSort());
 
         // put the columns in order of which one got sorted first
         columnsWithSorting.sort((a: any, b: any) => a.sortedAt - b.sortedAt);
@@ -174,13 +169,12 @@ export class SortController {
 
     // used by row controller, when doing the sorting
     public getSortForRowController(): any[] {
-        const columnsWithSorting = this.getColumnsWithSortingOrdered();
+        return this.getColumnsWithSortingOrdered().map(column => {
+            const isAscending = column.getSort() === Column.SORT_ASC;
 
-        return _.map(columnsWithSorting, (column: Column) => {
-            const ascending = column.getSort() === Column.SORT_ASC;
             return {
-                inverter: ascending ? 1 : -1,
-                column: column
+                inverter: isAscending ? 1 : -1,
+                column
             };
         });
     }

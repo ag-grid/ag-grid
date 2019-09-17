@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, _ } from 'ag-grid-community';
+import { ExcelOOXMLTemplate } from 'ag-grid-community';
 import numberFormatFactory, { NumberFormat } from './numberFormat';
 
 const numberFormatsFactory: ExcelOOXMLTemplate = {
@@ -10,7 +10,7 @@ const numberFormatsFactory: ExcelOOXMLTemplate = {
                     count: numberFormats.length
                 }
             },
-            children: _.map(numberFormats, numberFormatFactory.getTemplate)
+            children: numberFormats.map(numberFormatFactory.getTemplate)
         };
     }
 };

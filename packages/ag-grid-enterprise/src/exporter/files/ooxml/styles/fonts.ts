@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, _ } from 'ag-grid-community';
+import { ExcelOOXMLTemplate } from 'ag-grid-community';
 import fontFactory, { Font } from './font';
 
 const fontsFactory: ExcelOOXMLTemplate = {
@@ -10,7 +10,7 @@ const fontsFactory: ExcelOOXMLTemplate = {
                     count: fonts.length
                 }
             },
-            children: _.map(fonts, fontFactory.getTemplate)
+            children: fonts.map(fontFactory.getTemplate)
         };
     }
 };

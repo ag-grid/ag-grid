@@ -630,7 +630,7 @@ export class RowComp extends Component {
 
         // we never remove editing cells, as this would cause the cells to loose their values while editing
         // as the grid is scrolling horizontally.
-        const eligibleToBeRemoved = _.filter(colIdsToRemove, this.isCellEligibleToBeRemoved.bind(this));
+        const eligibleToBeRemoved = colIdsToRemove.filter(this.isCellEligibleToBeRemoved.bind(this));
 
         // remove old cells from gui, but we don't destroy them, we might use them again
         this.removeRenderedCells(eligibleToBeRemoved);

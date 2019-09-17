@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, _ } from 'ag-grid-community';
+import { ExcelOOXMLTemplate } from 'ag-grid-community';
 import fillFactory, { Fill } from './fill';
 
 const fillsFactory: ExcelOOXMLTemplate = {
@@ -10,7 +10,7 @@ const fillsFactory: ExcelOOXMLTemplate = {
                     count: fills.length
                 }
             },
-            children: _.map(fills, fillFactory.getTemplate)
+            children: fills.map(fillFactory.getTemplate)
         };
     }
 };

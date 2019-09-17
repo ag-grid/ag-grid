@@ -240,7 +240,7 @@ export abstract class BaseDropZonePanel extends Component {
         this.state = BaseDropZonePanel.STATE_NEW_COLUMNS_IN;
 
         // take out columns that are not groupable
-        const goodDragColumns = _.filter(dragColumns, this.isColumnDroppable.bind(this));
+        const goodDragColumns = dragColumns.filter(this.isColumnDroppable.bind(this));
 
         const weHaveColumnsToDrag = goodDragColumns.length > 0;
         if (weHaveColumnsToDrag) {
@@ -349,7 +349,7 @@ export abstract class BaseDropZonePanel extends Component {
         const existingColumns = this.getExistingColumns();
         let nonGhostColumns: Column[];
         if (this.isPotentialDndColumns()) {
-            nonGhostColumns = _.filter(existingColumns, column => this.potentialDndColumns.indexOf(column) < 0);
+            nonGhostColumns = existingColumns.filter(column => !_.includes(this.potentialDndColumns, column));
         } else {
             nonGhostColumns = existingColumns;
         }
