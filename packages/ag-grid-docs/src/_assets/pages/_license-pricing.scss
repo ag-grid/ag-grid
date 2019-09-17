@@ -7,18 +7,19 @@
     }
 
     #content {
-        @extend .mx-3;
-        > section {
-            @extend .row;
-        }
-
+        @extend .mx-5;
         .page-info {
+            h1 {
+                font-weight: 400;
+                font-size: 2.5rem;
+            }
             p {
-                @extend .lead;
+                @extend .lead, .mx-4;
             }
         }
 
         .packages {
+            @extend .row, .px-5;
             > div {
                 @extend .card, .col-md, .py-5, .px-3, .mx-md-4, .mb-3, .mb-md-0;
                 &:first-child {
@@ -41,8 +42,9 @@
     }
     
     #licenses {
+        @extend .row, .px-5;
         .license {
-            @extend .card, .col-md, .text-center, .pt-5, .m-3;
+            @extend .card, .col-md, .text-center, .pt-2, .pt-md-5, .mb-3, .m-md-3;
 
             .card-body {
                 @extend .card-body;
@@ -55,13 +57,14 @@
             }
 
             > div:last-of-type {
-                @extend .card-footer, .mt-md-auto;
+                @extend .card-footer;
             }
             
             background-color: $gray-100;
 
             img {
                 max-width: 4.5rem;
+                @extend .mb-2, .mb-md-5;
             }
     
             .btn {
@@ -89,6 +92,48 @@
                     @extend .mt-0;
                 }
             }
+        }
+    }
+
+    #definitions, #deeper-dive, #timeline {
+        > div {
+            @extend .row, .mb-4;
+            > div {
+                @extend .d-inline-block;
+                &:first-child {
+                    @extend .ml-md-3;
+                    min-width: 2.5rem;
+                    max-width: 2.5rem;
+                    
+                    img {
+                        min-width: 2.5rem;
+                        max-width: 2.5rem;
+                    }
+                }
+                &:last-of-type {
+                    @extend .col;
+                    span {
+                        @extend .font-weight-bold;
+                    }
+                }
+                > p:nth-of-type(2) {
+                    font-weight: 400;
+                    color: $grey-1;
+                }
+                .example {
+                    @extend .mb-3, .my-md-3;
+                    color: $grey-1;
+                    .card-header {
+                        @extend .font-weight-bold;
+                    }
+                }
+            }
+        }
+    }
+
+    #side-bar {
+        @media (max-width:1646px) {
+            display: none !important;
         }
     }
 }
