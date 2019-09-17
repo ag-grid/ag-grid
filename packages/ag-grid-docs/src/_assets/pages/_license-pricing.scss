@@ -7,7 +7,7 @@
     }
 
     #content {
-        @extend .mx-5;
+        @extend .mx-2, .mx-md-5;
         .page-info {
             h1 {
                 font-weight: 400;
@@ -19,7 +19,7 @@
         }
 
         .packages {
-            @extend .row, .px-5;
+            @extend .row, .px-md-5;
             > div {
                 @extend .card, .col-md, .py-5, .px-3, .mx-md-4, .mb-3, .mb-md-0;
                 &:first-child {
@@ -42,7 +42,7 @@
     }
     
     #licenses {
-        @extend .row, .px-5;
+        @extend .row, .px-md-5;
         .license {
             @extend .card, .col-md, .text-center, .pt-2, .pt-md-5, .mb-3, .m-md-3;
 
@@ -97,7 +97,7 @@
 
     #definitions, #deeper-dive, #timeline {
         > div {
-            @extend .row, .mb-4;
+            @extend .row, .mb-4, .justify-content-end;
             > div {
                 @extend .d-inline-block;
                 &:first-child {
@@ -111,7 +111,7 @@
                     }
                 }
                 &:last-of-type {
-                    @extend .col;
+                    @extend .col-md;
                     span {
                         @extend .font-weight-bold;
                     }
@@ -129,6 +129,10 @@
                 }
             }
         }
+    }
+
+    #timeline > div {
+        @extend .justify-content-center;
     }
 
     #side-bar {
