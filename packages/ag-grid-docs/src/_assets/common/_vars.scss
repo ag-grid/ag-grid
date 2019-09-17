@@ -13,15 +13,27 @@
 
 $red: #e11f22;
 $red-highlight: #EB1C17;
+
 $blue-1: #00407f;
 $blue-2: #0084e7;
 $blue-3: #8abde3;
 $blue-4: #f1f7ff;
-$offwhite: rgb(249, 252, 255);
+$blue-5: #f9fcff;
+
+$grey-1: #6d6d6d;
+$grey-2: #a3a4a5;
+$grey-3: #c2c2c2;
+$grey-4: #ebebeb;
+
+
+$offwhite: $blue-5;
 $white: #ffffff;
+
 $yellow: #FFFBD9;
 $teal: #00E7B1;
+
 $max-width: 1400px;
+
 $enable-gradients: true;
 $enable-shadows: true;
 

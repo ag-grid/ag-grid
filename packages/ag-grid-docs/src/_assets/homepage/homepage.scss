@@ -63,50 +63,40 @@ body {
     @extend %stage;
     font-weight: 400;
     font-style: normal;
-    -webkit-font-smoothing: antialiased;
+
     section {
-        display: flex;
-        flex-direction: row;
+        @extend .justify-content-center;
+        > div {
+            @extend .col-lg, .m-2;
+        }
         line-height: 1.7;
         h3 {
-            margin-bottom: 2rem;
-            color: #6d6d6d;
-            padding-top: 0;
+            @extend .mb-2, .pt-0;
+            color: $grey-1;
             font-weight: 300;
         }
-        > div {
-            margin: 0px 20px;
-            flex: 0 1 28%;
-            overflow: hidden;
-        }
-        p {
-            text-align: justify;
-            padding: 0 10px 0 0;
-        }
 
-        @include media-breakpoint-down(md) {
-            flex-direction: column;
-            > div {
-                flex: 0 0 auto;
-            }
+        p {
+            @extend .pr-4;
+            text-align: justify;
         }
+    
     }
 }
 
 #stage-frameworks {
     @extend %stage;
     background-color: $offwhite;
-    -webkit-font-smoothing: antialiased;
 
     section#section-frameworks {
         @extend .align-items-center;
 
         & > div:nth-child(1) {
-            @extend .col-sm-5;
+            @extend .col-md-5;
         }
 
         & > div:nth-child(2) {
-            @extend .col-sm-6, .ml-auto;
+            @extend .col-md-6, .ml-auto;
         }
 
         h2 {
@@ -122,7 +112,7 @@ body {
         @extend .row, .no-gutters, .list-unstyled;
 
         li {
-            @extend .col-sm-3, .text-center, .px-0;
+            @extend .col-md-3, .text-center, .px-0;
             min-width: 9em;
 
             a {
@@ -161,11 +151,11 @@ body {
             #fw-#{$framework} a {
                 background-image: url("../fw-logos/#{$framework}.svg");
 
-                @media (max-width: 729px) {
+                @media (max-width: 767px) {
                     border-bottom: 1px solid $gray-300;
                 }
 
-                @media (min-width: 729px) and (max-width: 1024px) {
+                @media (min-width: 768px) and (max-width: 968px) {
                     @if $i < 7 {
                         border-bottom: 1px solid $gray-300;
                     }
@@ -175,7 +165,7 @@ body {
                     }
                 }
 
-                @media (min-width: 1025px) and (max-width: 1300px) {
+                @media (min-width: 969px) and (max-width: 1256px) {
                     @if $i < 7 {
                         border-bottom: 1px solid $gray-300;
                     }
@@ -185,7 +175,7 @@ body {
                     }
                 }
 
-                @media (min-width: 1301px) {
+                @media (min-width: 1257px) {
                     @if $i < 5 {
                         border-bottom: 1px solid $gray-300;
                     }
@@ -202,7 +192,6 @@ body {
 
 #stage-sponsorships {
     @extend %stage;
-    -webkit-font-smoothing: antialiased;
     background-color: $offwhite;
 
     #sponsorships {
@@ -239,7 +228,7 @@ body {
 }
 
 .main-buttons {
-    background-color: #ebebeb;
+    background-color: $grey-4;
     display: flex;
     justify-content: center;
 
@@ -249,28 +238,44 @@ body {
         padding: 15px 25px;
         font-size: 20px;
         margin: 20px;
-        border: 1px solid #125082;
-        background-color: #125082;
-        color: darken(white, 10%);
+        border: 1px solid $blue-1;
+        background-color: $blue-1;
+        color: $grey-4;
         &:hover {
-            color: white;
+            color: $white;
             text-decoration: none;
         }
     }
 
-    .get-started-btn:not(:first-of-type) {background-color: transparent;
-        
-        color: #125082;
+    .get-started-btn:not(:first-of-type) {
+        background-color: transparent;
+        color: $blue-1;
+
         &:hover {
-            color: lighten(#125082, 10%);
+            color: $blue-2;
+            border-color: $blue-2;
         }
     }
 }
 
 .stage-scenarios {
     @extend %stage;
-    -webkit-font-smoothing: antialiased;
     background-color: $offwhite;
+
+    &.main {
+        background-color: $blue-1;
+        h2 {
+            font-weight: 500 !important;
+            color: $white;
+        }
+        section {
+            @extend .justify-content-center;
+            position: relative;
+        }
+        .loading {
+            color: $white;
+        }
+    }
 
     &:not(.main) {
         @include media-breakpoint-down(sm) {
@@ -364,7 +369,6 @@ body {
 }
 
 #stage-show-me-more {
-    -webkit-font-smoothing: antialiased;
     padding-top: 3rem;
     margin-bottom: 0;
     border-bottom: 0;
@@ -380,7 +384,6 @@ body {
 }
 
 #stage-feature-highlights {
-    -webkit-font-smoothing: antialiased;
     padding-top: 3rem;
     margin-bottom: 0;
     border-bottom: 0;
