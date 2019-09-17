@@ -1,90 +1,95 @@
 #license-pricing {
     @extend %stage, .full-width-row, .justify-content-center;
+
+    .card-footer {
+        background-color: transparent;
+        border-top: 0;
+    }
+
     #content {
         @extend .mx-3;
-    }
-    .license-question {
-        font-size: 1rem;
-        font-weight: 500;
+        > section {
+            @extend .row;
+        }
+
+        .page-info {
+            p {
+                @extend .lead;
+            }
+        }
+
+        .packages {
+            > div {
+                @extend .card, .col-md, .py-5, .px-3, .mx-md-4, .mb-3, .mb-md-0;
+                &:first-child {
+                    @extend .ml-0;
+                }
+                &:last-child {
+                    @extend .mr-0;
+                }
+                h2 {
+                    @extend .card-title;
+                }
+                h3 {
+                    @extend .card-subtitle, .mb-2, .text-muted;
+                }
+                ul {
+                    @extend .card-text;
+                }
+            }
+        }
     }
     
     #licenses {
-        .col-md-4 {
-            @extend .align-self-center;
-        }
-    
-        .col-md-4:first-child .license {
-            margin-left: 0;
-        }
-    
-        .col-md-4:last-child .license {
-            margin-right: 0;
-        }
-    
-        .license.recommended {
-            padding-top: 0rem;
-    
-            .card-header {
-                background-color: $blue-2;
-                color: $white;
-            }
-    
-            border-color: $blue-2;
-    
-            .btn {
-                @extend .btn-primary;
-            }
-        }
-    
         .license {
-            padding-top: 49px;
-    
-            margin: 1rem;
-            @extend .card, .text-center;
+            @extend .card, .col-md, .text-center, .pt-5, .m-3;
+
+            .card-body {
+                @extend .card-body;
+            }
+            &:first-child {
+                @extend .ml-md-0;
+            }
+            &:last-child {
+                @extend .mr-md-0;
+            }
+
+            > div:last-of-type {
+                @extend .card-footer, .mt-md-auto;
+            }
+            
             background-color: $gray-100;
+
+            img {
+                max-width: 4.5rem;
+            }
     
             .btn {
-                @extend .btn-outline-secondary, .btn-lg;
+                @extend .d-block, .btn-outline-secondary, .btn-lg;
                 background-color: $white;
-                display: block;
             }
     
             p {
                 @extend .mt-5;
                 font-size: 0.9rem;
             }
-        }
-    
-        h3 {
-            font-size: 1rem;
-        }
-    
-        h4 {
-            font-size: 2rem;
-            margin-top: 2rem;
-            span {
-                font-size: 0.7rem;
-                display: block;
-                font-weight: 300;
+
+            h3 {
+                font-size: 1rem;
+            }
+        
+            h4 {
+                font-size: 2rem;
+                margin-top: 2rem;
+                span {
+                    font-size: 0.7rem;
+                    font-weight: 300;
+                }
+                p {
+                    @extend .mt-0;
+                }
             }
         }
-    
-        .card-footer {
-            background-color: transparent;
-            border-top: 0;
-        }
     }
-    
-    #faq {
-        margin-top: 1rem;
-        dt {
-            margin-bottom: 1rem;
-        }
-    
-        dd {
-            margin-bottom: 2rem;
-        }
-    }
-    
 }
 

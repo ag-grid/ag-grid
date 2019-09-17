@@ -79,113 +79,94 @@ gtm_data_layer('community-enterprise');
 
 <div id="license-pricing">
     <div id="content">
-        <section class="row">
+        <section>
             <div id="thankyou" style="display: none"> Thank you for contacting ag-Grid. We'll be in contact
                 shortly.
             </div>
         </section>
-        <section>
+        <section class="page-info">
             <h1>AG-GRID PRICING</h1>
-            <p class="lead">ag-Grid comes in two versions – <strong>ag-Grid Community</strong> and <strong>ag-Grid Enterprise</strong>.
+            <p>ag-Grid comes in two versions – <strong>ag-Grid Community</strong> and <strong>ag-Grid Enterprise</strong>.
                 You can <b>evaluate ag-Grid Enterprise without contacting us</b>. A license is only
                 required when you start developing for production.
             </p>
         </section>
-        <section class="mb-4 row">
-            <div class="col-lg mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h2 class="card-title">
-                            <img src="./images/pricing/Community.svg" style="max-width: 50px;" alt="MIT">
-                            ag-Grid Community
-                        </h2>
-                        <h3 class="h5 card-subtitle mb-2 text-muted">Open Source MIT License (Free for Everyone)</h3>
-                        <ul class="card-text">
-                            <li>All essential datagrid features</li>
-                            <li>Community support</li>
-                        </ul>
-                        <br />
-                    </div>
-                </div>
+        <section class="packages">
+            <div>
+                <h2>
+                    <img src="./images/pricing/Community.svg" style="max-width: 50px;" alt="MIT">
+                    ag-Grid Community
+                </h2>
+                <h3>Open Source MIT License (Free for Everyone)</h3>
+                <ul>
+                    <li>All essential datagrid features</li>
+                    <li>Community support</li>
+                </ul>
             </div>
-            <div class="col-lg mb-3">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h2 class="card-title">
-                            <img src="./images/enterprise_50.png" style="width: 50px;" alt="MIT">
-                            ag-Grid Enterprise
-                        </h2>
-                        <h3 class="h5 card-subtitle mb-2 text-muted">Commercial License</h3>
-                        <ul class="card-text">
-                            <li>All Community features + </li>
-                            <li><strong>A premium set of enterprise oriented features</strong></li>
-                            <li><strong>Dedicated support</strong></li>
-                        </ul>
-                    </div>
-                </div>
+            <div>
+                <h2>
+                    <img src="./images/enterprise_50.png" style="width: 50px;" alt="MIT">
+                    ag-Grid Enterprise
+                </h2>
+                <h3>Commercial License</h3>
+                <ul>
+                    <li>All Community features + </li>
+                    <li><strong>A premium set of enterprise oriented features</strong></li>
+                    <li><strong>Dedicated support</strong></li>
+                </ul>
             </div>
         </section>
-        <section id="licenses" class="row inline-container">
-            <div class="col-md">
-                <div class="license ml-0">
-                    <div class="card-body">
-                        <img src="./images/pricing/Community.svg" style="max-width: 75px;" alt="MIT">
-                        <section style="margin-top: 25px">&nbsp;</section>
-                        <section style="">ag-Grid Community Developer License</section>
-                        <section>&nbsp;</section>
-                        <h4>FREE<span>&nbsp;</span></h4>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn" href="../javascript-grid-getting-started/">Get Started</a>
-                    </div>
+        <section id="licenses">
+            <div class="license">
+                <div>
+                    <img src="./images/pricing/Community.svg" alt="MIT">
+                    <h3>ag-Grid Community Developer License</h3>
+                </div>
+                <h4>FREE</h4>
+                <div>
+                    <a class="btn" href="../javascript-grid-getting-started/">Get Started</a>
                 </div>
             </div>
-            <div class="col-md">
-                <div class="license">
-                    <div class="card-body">
-                        <img src="./images/pricing/SA.svg" style="max-width: 75px;" alt="Single Application">
-                        <section style="margin-top: 25px">ag-Grid Enterprise</section>
-                        <section style="font-size: larger;font-weight: bolder">Single Application
-                        </section>
-                        <section>Developer License</section>
-                        <h4>&dollar;750.<span
-                                    style="display:inline-block;font-size: small">00</span>
-                            <span>per app/per Developer</span>
-                        </h4>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
-                    </div>
+            <div class="license">
+                <div>
+                    <img src="./images/pricing/SA.svg" alt="Single Application">
+                    <h3>ag-Grid Enterprise</h3>
+                    <h2>Single Application</h2>
+                    <h3>Developer License</h3>
+                    
+                </div>
+                <h4>
+                    &dollar;750.<span style="font-size: small">00</span>
+                    <p>per app/per Developer</p>
+                </h4>
+                <div>
+                    <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
                 </div>
             </div>
-            <div class="col-md">
-                <div class="license mr-0">
-                    <div class="card-body">
-                        <img src="./images/pricing/MA.svg" style="max-width: 75px;" alt="Multiple Applications">
-                        <section style="margin-top: 25px">ag-Grid Enterprise</section>
-                        <section style="font-size: larger;font-weight: bolder">Multiple
-                            Applications
-                        </section>
-                        <section>Developer License</section>
-                        <h4>&dollar;1,200.<span
-                                    style="display:inline-block;font-size: small">00</span>
-                            <span>per Developer</span>
-                        </h4>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
-                    </div>
+            <div class="license">
+                <div>
+                    <img src="./images/pricing/MA.svg" alt="Multiple Applications">
+                    <h3>ag-Grid Enterprise</h3>
+                    <h2>Multiple Applications</h2>
+                    <h3>Developer License</h3>
+                </div>
+                <h4>
+                    &dollar;1,200.<span style="font-size: small">00</span>
+                    <p>per Developer</p>
+                </h4>
+                <div>
+                    <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
                 </div>
             </div>
         </section>
         <section>
-            <div class="row">
+            <div>
                 <div>&nbsp;</div>
                 <div style="text-decoration: underline; color: orange;">
                     <h1 style="color: black">DEFINITIONS</h1>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     <img src="./images/pricing/Community.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                 </div>
@@ -201,7 +182,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     &nbsp;
                 </div>
@@ -218,7 +199,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     <img src="./images/pricing/SA.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                 </div>
@@ -236,7 +217,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     <img src="./images/pricing/MA.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                 </div>
@@ -257,7 +238,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     <img src="./images/pricing/Deployment%20Add-on.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                 </div>
@@ -306,13 +287,13 @@ gtm_data_layer('community-enterprise');
             </div>
         </section>
         <section>
-            <div class="row" id="deeper-dive">
+            <div id="deeper-dive">
                 <div>&nbsp;</div>
                 <div style="text-decoration: underline; color: red;">
                     <h1 style="color: black">DEEPER DIVE</h1>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     <img src="./images/pricing/Dependency.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                 </div>
@@ -339,7 +320,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     <img src="./images/pricing/Indirect.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                 </div>
@@ -369,7 +350,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div >
                     <img src="" style="display:block; max-width: 40px; margin-left: 1rem">
                 </div>
@@ -387,13 +368,13 @@ gtm_data_layer('community-enterprise');
             </div>
         </section>
         <section>
-            <div class="row" id="timeline">
+            <div id="timeline">
                 <div>&nbsp;</div>
                 <div style="text-decoration: underline; color: magenta;">
                     <h1 style="color: black">LICENSE TIMELINE</h1>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     <img src="./images/pricing/Perpetual.svg" style="display:block; max-width: 40px; margin-left: 1rem">
                 </div>
@@ -429,7 +410,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     <img src="./images/pricing/1-year.svg">
                 </div>
@@ -455,7 +436,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     <img src="./images/pricing/Renewal%20icon.svg">
                 </div>
@@ -482,7 +463,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     &nbsp;
                 </div>
@@ -499,7 +480,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div>
                 <div>
                     &nbsp;
                 </div>
