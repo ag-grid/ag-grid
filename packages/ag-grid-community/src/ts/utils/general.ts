@@ -427,8 +427,29 @@ export class Utils {
         return copy;
     }
 
-    static deepCloneObject<T>(object: T): T {
-        return JSON.parse(JSON.stringify(object));
+    static deepCloneObject = <T>(object: T): T => JSON.parse(JSON.stringify(object));
+
+    static getProperty = <T, K extends keyof T>(object: T, key: K): any => object[key];
+    static setProperty = <T, K extends keyof T>(object: T, key: K, value: any): void => object[key] = value;
+
+    /**
+     * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
+     * a value of `undefined`.
+     */
+    static copyPropertiesIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, ...properties: K[]) {
+        properties.forEach(p => this.copyPropertyIfPresent(source, target, p));
+    }
+
+    /**
+     * Will copy the specified property from `source` into the equivalent property on `target`, unless the property has a
+     * value of `undefined`. If a transformation is provided, it will be applied to the value before being set on `target`.
+     */
+    static copyPropertyIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, property: K, transform?: (value: S[K]) => any) {
+        const value = this.getProperty(source, property);
+
+        if (value !== undefined) {
+            this.setProperty(target, property, transform ? transform(value) : value);
+        }
     }
 
     static map<TItem, TResult>(array: TItem[], callback: (item: TItem, idx?: number) => TResult) {

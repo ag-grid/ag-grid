@@ -466,29 +466,32 @@ export class BarSeries extends Series<CartesianChart> {
         const yAxis = flipXY ? chart.xAxis : chart.yAxis;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
-        const groupScale = this.groupScale;
-        const yFields = this.yFields;
-        const fills = this.fills;
-        const strokes = this.strokes;
-        const fillOpacity = this.fillOpacity;
-        const strokeOpacity = this.strokeOpacity;
-        const grouped = this.grouped;
-        const strokeWidth = this.strokeWidth;
-        const enabled = this.enabled;
-        const labelEnabled = this.labelEnabled;
-        const labelFontStyle = this.labelFontStyle;
-        const labelFontWeight = this.labelFontWeight;
-        const labelFontSize = this.labelFontSize;
-        const labelFontFamily = this.labelFontFamily;
-        const labelColor = this.labelColor;
-        const labelFormatter = this.labelFormatter;
-        const data = this.data;
-        const xData = this.xData;
-        const yData = this.yData;
+
+        const {
+            groupScale,
+            yFields,
+            fills,
+            strokes,
+            fillOpacity,
+            strokeOpacity,
+            grouped,
+            strokeWidth,
+            enabled,
+            labelEnabled,
+            labelFontStyle,
+            labelFontWeight,
+            labelFontSize,
+            labelFontFamily,
+            labelColor,
+            labelFormatter,
+            data,
+            xData,
+            yData,
+        } = this;
 
         groupScale.range = [0, xScale.bandwidth!];
-        const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
 
+        const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
         const selectionData: SelectionDatum[] = [];
 
         for (let i = 0; i < categoryCount; i++) {
@@ -572,39 +575,40 @@ export class BarSeries extends Series<CartesianChart> {
         const textSelection = updateTexts.merge(enterTexts);
 
         rectSelection.each((rect, datum) => {
-                rect.x = datum.x;
-                rect.y = datum.y;
-                rect.width = datum.width;
-                rect.height = datum.height;
-                rect.fill = rect === highlightedNode && this.highlightStyle.fill !== undefined
-                    ? this.highlightStyle.fill
-                    : datum.fill;
-                rect.stroke = rect === highlightedNode && this.highlightStyle.stroke !== undefined
-                    ? this.highlightStyle.stroke
-                    : datum.stroke;
-                rect.fillOpacity = fillOpacity;
-                rect.strokeOpacity = strokeOpacity;
-                rect.strokeWidth = datum.strokeWidth;
-                rect.fillShadow = this.shadow;
-                rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
-            });
+            rect.x = datum.x;
+            rect.y = datum.y;
+            rect.width = datum.width;
+            rect.height = datum.height;
+            rect.fill = rect === highlightedNode && this.highlightStyle.fill !== undefined
+                ? this.highlightStyle.fill
+                : datum.fill;
+            rect.stroke = rect === highlightedNode && this.highlightStyle.stroke !== undefined
+                ? this.highlightStyle.stroke
+                : datum.stroke;
+            rect.fillOpacity = fillOpacity;
+            rect.strokeOpacity = strokeOpacity;
+            rect.strokeWidth = datum.strokeWidth;
+            rect.fillShadow = this.shadow;
+            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
+        });
 
         textSelection.each((text, datum) => {
-                const label = datum.label;
-                if (label && labelEnabled) {
-                    text.fontStyle = label.fontStyle;
-                    text.fontWeight = label.fontWeight;
-                    text.fontSize = label.fontSize;
-                    text.fontFamily = label.fontFamily;
-                    text.text = label.text;
-                    text.x = label.x;
-                    text.y = label.y;
-                    text.fill = label.fill;
-                    text.visible = true;
-                } else {
-                    text.visible = false;
-                }
-            });
+            const label = datum.label;
+            
+            if (label && labelEnabled) {
+                text.fontStyle = label.fontStyle;
+                text.fontWeight = label.fontWeight;
+                text.fontSize = label.fontSize;
+                text.fontFamily = label.fontFamily;
+                text.text = label.text;
+                text.x = label.x;
+                text.y = label.y;
+                text.fill = label.fill;
+                text.visible = true;
+            } else {
+                text.visible = false;
+            }
+        });
 
         this.rectSelection = rectSelection;
         this.textSelection = textSelection;

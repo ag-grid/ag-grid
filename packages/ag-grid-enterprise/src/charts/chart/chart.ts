@@ -27,7 +27,6 @@ export abstract class Chart {
     protected captionAutoPadding = 0; // top padding only
 
     private tooltipElement: HTMLDivElement;
-    private tooltipRect?: ClientRect;
 
     tooltipOffset = [20, 20];
 
@@ -584,16 +583,18 @@ export abstract class Chart {
         if (html) {
             this.toggleTooltip(true);
         }
-        const tooltipRect = this.tooltipRect = el.getBoundingClientRect();
 
-        let left = event.pageX + offset[0];
+        const tooltipRect = el.getBoundingClientRect();
         const top = event.pageY + offset[1];
+        let left = event.pageX + offset[0];
 
-        if (tooltipRect && parent && parent.parentElement) {
-            if (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth) {
-                left -= tooltipRect.width + offset[0];
-            }
+        if (tooltipRect && 
+            parent && 
+            parent.parentElement && 
+            (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth)) {
+            left -= tooltipRect.width + offset[0];
         }
+
         el.style.left = `${left}px`;
         el.style.top = `${top}px`;
     }

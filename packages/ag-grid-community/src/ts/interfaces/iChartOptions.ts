@@ -85,7 +85,15 @@ interface IPadding {
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-export interface AxisOptions {
+export interface ILabelFormattingOptions {
+    labelFontStyle?: string;
+    labelFontWeight?: string;
+    labelFontSize?: number;
+    labelFontFamily?: string;
+    labelColor?: string;
+}
+
+export interface AxisOptions extends ILabelFormattingOptions {
     type?: 'category' | 'number' | 'groupedCategory';
 
     title?: CaptionOptions;
@@ -98,11 +106,6 @@ export interface AxisOptions {
     tickPadding?: number;
     tickColor?: string;
 
-    labelFontStyle?: string;
-    labelFontWeight?: string;
-    labelFontSize?: number;
-    labelFontFamily?: string;
-    labelColor?: string;
     labelRotation?: number;
     mirrorLabels?: boolean;
     parallelLabels?: boolean;
@@ -111,8 +114,8 @@ export interface AxisOptions {
 }
 
 export interface IGridStyle {
-    stroke: string | null;
-    lineDash: number[] | null;
+    stroke?: string;
+    lineDash?: number[];
 }
 
 export interface DropShadowOptions {
@@ -161,6 +164,12 @@ export interface ScatterTooltipRendererParams {
     datum: any;
     xField: string;
     yField: string;
+    radiusField: string;
+    xFieldName: string;
+    yFieldName: string;
+    radiusFieldName: string;
+    title?: string;
+    color?: string;
 }
 
 export interface ScatterSeriesOptions extends SeriesOptions {
@@ -219,7 +228,7 @@ export interface BarLabelFormatterParams {
 }
 export type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
 
-export interface BarSeriesOptions extends SeriesOptions {
+export interface BarSeriesOptions extends SeriesOptions, ILabelFormattingOptions {
     xField?: string;
     yFields?: string[];
     yFieldNames?: string[];
@@ -237,11 +246,6 @@ export interface BarSeriesOptions extends SeriesOptions {
     shadow?: DropShadowOptions;
 
     labelEnabled?: boolean;
-    labelFontStyle?: string;
-    labelFontWeight?: string;
-    labelFontSize?: number;
-    labelFontFamily?: string;
-    labelColor?: string;
     labelFormatter?: BarLabelFormatter;
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
@@ -278,7 +282,7 @@ export interface PieTooltipRendererParams {
     labelField?: string;
 }
 
-export interface PieSeriesOptions extends SeriesOptions {
+export interface PieSeriesOptions extends SeriesOptions, ILabelFormattingOptions {
     title?: CaptionOptions;
 
     fills?: string[];
@@ -293,11 +297,6 @@ export interface PieSeriesOptions extends SeriesOptions {
 
     labelEnabled?: boolean;
     labelField?: string;
-    labelFontStyle?: string;
-    labelFontWeight?: string;
-    labelFontSize?: number;
-    labelFontFamily?: string;
-    labelColor?: string;
     labelMinAngle?: number;
     labelOffset?: number;
 
@@ -315,7 +314,7 @@ export interface PieSeriesOptions extends SeriesOptions {
     tooltipRenderer?: (params: PieTooltipRendererParams) => string;
 }
 
-export interface LegendOptions {
+export interface LegendOptions extends ILabelFormattingOptions {
     enabled?: boolean;
     markerSize?: number;
     markerPadding?: number;
@@ -323,12 +322,6 @@ export interface LegendOptions {
 
     itemPaddingX?: number;
     itemPaddingY?: number;
-
-    labelFontStyle?: string;
-    labelFontWeight?: string;
-    labelFontSize?: number;
-    labelFontFamily?: string;
-    labelColor?: string;
 }
 
 export interface BackgroundOptions {

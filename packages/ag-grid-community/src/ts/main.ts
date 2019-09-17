@@ -339,6 +339,7 @@ export {
     PieChartOptions,
     DoughnutChartOptions,
     CaptionOptions,
+    ILabelFormattingOptions,
     AxisOptions,
     BarSeriesOptions,
     AreaSeriesOptions,
