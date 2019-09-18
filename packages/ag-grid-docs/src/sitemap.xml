@@ -67,12 +67,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-angular-third-party/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-grid-graphing/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
@@ -102,12 +96,6 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-<!--   <url>
-    <loc>https://www.ag-grid.com/ag-grid-changelog/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url> -->
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-export/</loc>
     <lastmod>2018-03-07</lastmod>
@@ -170,12 +158,6 @@
   </url>
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-floating-filter-component/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.ag-grid.com/example-angular-ngx-bootstrap/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -859,7 +841,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/javascript-grid-in-memory/</loc>
+    <loc>https://www.ag-grid.com/javascript-grid-client-side-model/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

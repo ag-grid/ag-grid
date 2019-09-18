@@ -88,7 +88,7 @@
  - [ ] javascript-grid-context/
  - [ ] javascript-grid-row-models/
  - [ ] javascript-grid-row-node/
- - [ ] javascript-grid-in-memory/
+ - [ ] javascript-grid-client-side-model/
  - [ ] javascript-grid-infinite-scrolling/
  - [ ] javascript-grid-viewport/
  - [ ] javascript-grid-enterprise-model/
@@ -126,7 +126,6 @@
  - [ ] example-angular-full-width-rows/
  - [ ] example-angular-grouped-row/
  - [ ] example-angular-rxjs/
- - [ ] example-angular-third-party/
  - [ ] example-polymer/
  - [ ] polymer-getting-started/#polymer-rich-grid-example
  - [ ] example-polymer-dynamic/
