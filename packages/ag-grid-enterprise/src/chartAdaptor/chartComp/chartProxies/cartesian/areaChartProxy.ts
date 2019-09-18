@@ -12,6 +12,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.initChartOptions();
         this.chart = ChartBuilder[params.grouping ? "createGroupedAreaChart" : "createAreaChart"](this.chartOptions);
         this.setAxisPadding(this.chart as CartesianChart);
 
@@ -154,7 +155,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
                 markerStrokeWidth: 1
             },
             xAxis: {
-                type: 'category',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
@@ -173,7 +173,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
                 }]
             },
             yAxis: {
-                type: 'number',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,

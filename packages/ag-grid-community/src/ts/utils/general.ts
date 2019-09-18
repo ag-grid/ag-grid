@@ -27,10 +27,8 @@ const HTML_ESCAPES: { [id: string]: string } = {
 const reUnescapedHtml = /[&<>"']/g;
 
 export class Utils {
-
-    private static PASSIVE_EVENTS: string[] = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
-
-    private static OUTSIDE_ANGULAR_EVENTS: string[] = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
+    private static PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
+    private static OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
 
     /**
      * These variables are lazy loaded, as otherwise they try and get initialised when we are loading

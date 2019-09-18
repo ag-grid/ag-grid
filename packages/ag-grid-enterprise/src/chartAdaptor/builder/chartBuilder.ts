@@ -48,7 +48,7 @@ export class ChartBuilder {
         const chart = new CartesianChart({
             document: options.document,
             xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            yAxis: ChartBuilder.createAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options);
@@ -58,7 +58,7 @@ export class ChartBuilder {
         const chart = new GroupedCategoryChart({
             document: options.document,
             xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initGroupedCategoryChart(chart, options, "bar");
@@ -67,8 +67,8 @@ export class ChartBuilder {
     static createGroupedBarChart(options: BarChartOptions): GroupedCategoryChart {
         const chart = new GroupedCategoryChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.yAxis),
-            yAxis: ChartBuilder.createGroupedAxis(options.xAxis)
+            xAxis: ChartBuilder.createNumberAxis(options.xAxis),
+            yAxis: ChartBuilder.createGroupedAxis(options.yAxis),
         });
 
         chart.layout = CartesianChartLayout.Horizontal;
@@ -80,7 +80,7 @@ export class ChartBuilder {
         const chart = new GroupedCategoryChart({
             document: options.document,
             xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initGroupedCategoryChart(chart, options, "line");
@@ -90,7 +90,7 @@ export class ChartBuilder {
         const chart = new GroupedCategoryChart({
             document: options.document,
             xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initGroupedCategoryChart(chart, options, "area");
@@ -99,8 +99,8 @@ export class ChartBuilder {
     static createBarChart(options: BarChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.yAxis),
-            yAxis: ChartBuilder.createAxis(options.xAxis)
+            xAxis: ChartBuilder.createNumberAxis(options.xAxis), 
+            yAxis: ChartBuilder.createCategoryAxis(options.yAxis),
         });
 
         chart.layout = CartesianChartLayout.Horizontal;
@@ -111,8 +111,8 @@ export class ChartBuilder {
     static createColumnChart(options: BarChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            xAxis: ChartBuilder.createCategoryAxis(options.xAxis),
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options, "bar");
@@ -121,8 +121,8 @@ export class ChartBuilder {
     static createLineChart(options: LineChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            xAxis: ChartBuilder.createCategoryAxis(options.xAxis),
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options, "line");
@@ -132,7 +132,7 @@ export class ChartBuilder {
         const chart = new CartesianChart({
             document: options.document,
             xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options, "scatter");
@@ -141,8 +141,8 @@ export class ChartBuilder {
     static createAreaChart(options: AreaChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            xAxis: ChartBuilder.createCategoryAxis(options.xAxis),
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options, "area");
@@ -467,6 +467,22 @@ export class ChartBuilder {
         if (!axis) {
             throw new Error("Unknown axis type.");
         }
+
+        this.populateAxisProperties(axis, options);
+
+        return axis;
+    }
+
+    static createNumberAxis(options: AxisOptions): NumberAxis {
+        const axis = new NumberAxis();
+
+        this.populateAxisProperties(axis, options);
+
+        return axis;
+    }
+
+    static createCategoryAxis(options: AxisOptions): CategoryAxis {
+        const axis = new CategoryAxis();
 
         this.populateAxisProperties(axis, options);
 

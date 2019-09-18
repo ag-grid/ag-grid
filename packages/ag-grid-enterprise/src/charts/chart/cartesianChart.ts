@@ -2,7 +2,6 @@ import { Chart, ChartOptions } from "./chart";
 import { Axis } from "../axis";
 import Scale from "../scale/scale";
 import { Series } from "./series/series";
-import { ClipRect } from "../scene/clipRect";
 import { numericExtent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
@@ -18,7 +17,6 @@ export interface CartesianChartOptions extends ChartOptions {
 }
 
 export class CartesianChart extends Chart {
-
     private axisAutoPadding = new Padding();
 
     constructor(options: CartesianChartOptions) {
@@ -30,12 +28,11 @@ export class CartesianChart extends Chart {
         this._xAxis = xAxis;
         this._yAxis = yAxis;
 
-        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
+        this.scene.root!.append([ xAxis.group, yAxis.group, this.seriesClipRect ]);
         this.scene.root!.append(this.legend.group);
     }
 
     private seriesClipRect = new Group();
-
     get seriesRoot(): Group {
         return this.seriesClipRect;
     }
@@ -52,9 +49,7 @@ export class CartesianChart extends Chart {
 
     set series(values: Series<CartesianChart>[]) {
         this.removeAllSeries();
-        values.forEach(series => {
-            this.addSeries(series);
-        });
+        values.forEach(series => this.addSeries(series));
     }
     get series(): Series<CartesianChart>[] {
         return this._series as Series<CartesianChart>[];
@@ -65,25 +60,23 @@ export class CartesianChart extends Chart {
             return;
         }
 
+        const { width, height, legend } = this;
+
         const shrinkRect = {
             x: 0,
             y: 0,
-            width: this.width,
-            height: this.height
+            width,
+            height
         };
 
-        const captionAutoPadding = this.captionAutoPadding;
-        shrinkRect.y += captionAutoPadding;
-        shrinkRect.height -= captionAutoPadding;
+        if (legend.enabled && legend.data.length) {
+            const { legendAutoPadding, legendPadding } = this;
 
-        if (this.legend.enabled && this.legend.data.length) {
-            const legendAutoPadding = this.legendAutoPadding;
             shrinkRect.x += legendAutoPadding.left;
             shrinkRect.y += legendAutoPadding.top;
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
             shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
 
-            const legendPadding = this.legendPadding;
             switch (this.legendPosition) {
                 case 'right':
                     shrinkRect.width -= legendPadding;
@@ -102,35 +95,21 @@ export class CartesianChart extends Chart {
             }
         }
 
-        const padding = this.padding;
-        shrinkRect.x += padding.left;
-        shrinkRect.y += padding.top;
-        shrinkRect.width -= padding.left + padding.right;
-        shrinkRect.height -= padding.top + padding.bottom;
+        const { captionAutoPadding, padding, axisAutoPadding, xAxis, yAxis } = this;
 
-        const axisAutoPadding = this.axisAutoPadding;
-        shrinkRect.x += axisAutoPadding.left;
-        shrinkRect.y += axisAutoPadding.top;
-        shrinkRect.width -= axisAutoPadding.left + axisAutoPadding.right;
-        shrinkRect.height -= axisAutoPadding.top + axisAutoPadding.bottom;
+        shrinkRect.x += padding.left + axisAutoPadding.left;
+        shrinkRect.y += padding.top + axisAutoPadding.top + captionAutoPadding;
+        shrinkRect.width -= padding.left + padding.right + axisAutoPadding.left + axisAutoPadding.right;
+        shrinkRect.height -= padding.top + padding.bottom + axisAutoPadding.top + axisAutoPadding.bottom + captionAutoPadding;
 
-        // const seriesClipRect = this.seriesClipRect;
-        // seriesClipRect.x = shrinkRect.x;
-        // seriesClipRect.y = shrinkRect.y;
-        // seriesClipRect.width = shrinkRect.width;
-        // seriesClipRect.height = shrinkRect.height;
-
-        const xAxis = this.xAxis;
-        const yAxis = this.yAxis;
-
-        xAxis.scale.range = [0, shrinkRect.width];
+        xAxis.scale.range = [ 0, shrinkRect.width ];
         xAxis.rotation = -90;
         xAxis.translationX = Math.floor(shrinkRect.x);
         xAxis.translationY = Math.floor(shrinkRect.y + shrinkRect.height + 1);
         xAxis.parallelLabels = true;
         xAxis.gridLength = shrinkRect.height;
 
-        yAxis.scale.range = [shrinkRect.height, 0];
+        yAxis.scale.range = [ shrinkRect.height, 0 ];
         yAxis.translationX = Math.floor(shrinkRect.x);
         yAxis.translationY = Math.floor(shrinkRect.y);
         yAxis.gridLength = shrinkRect.width;
@@ -140,7 +119,7 @@ export class CartesianChart extends Chart {
         this.series.forEach(series => {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);
-            series.update(); // this has to happen after the `updateAxis` call
+            series.update(); // this has to happen after the `updateAxes` call
         });
 
         this.positionCaptions();
@@ -170,14 +149,9 @@ export class CartesianChart extends Chart {
         const xDomains: any[][] = [];
         const yDomains: any[][] = [];
 
-        this.series.forEach(series => {
-            if (series.visible) {
-                const xDomain = series.getDomainX();
-                const yDomain = series.getDomainY();
-
-                xDomains.push(xDomain);
-                yDomains.push(yDomain);
-            }
+        this.series.filter(s => s.visible).forEach(series => {
+            xDomains.push(series.getDomainX());
+            yDomains.push(series.getDomainY());
         });
 
         const xDomain = new Array<any>().concat(...xDomains);
@@ -195,6 +169,7 @@ export class CartesianChart extends Chart {
 
         {
             const axisThickness = Math.floor(yAxisBBox.width);
+
             if (this.axisAutoPadding.left !== axisThickness) {
                 this.axisAutoPadding.left = axisThickness;
                 this.layoutPending = true;
@@ -202,6 +177,7 @@ export class CartesianChart extends Chart {
         }
         {
             const axisThickness = Math.floor(xAxisBBox.width);
+
             if (this.axisAutoPadding.bottom !== axisThickness) {
                 this.axisAutoPadding.bottom = axisThickness;
                 this.layoutPending = true;

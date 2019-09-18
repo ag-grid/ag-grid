@@ -12,12 +12,14 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.initChartOptions();
+
         let builderFunction: keyof typeof ChartBuilder;
 
-        if (this.isBarChart()) {
-            builderFunction = params.grouping ? "createGroupedBarChart" : "createBarChart";
-        } else {
+        if (this.isColumnChart()) {
             builderFunction = params.grouping ? "createGroupedColumnChart" : "createColumnChart";
+        } else {
+            builderFunction = params.grouping ? "createGroupedBarChart" : "createBarChart";
         }
 
         this.chart = ChartBuilder[builderFunction](this.chartOptions);
@@ -41,10 +43,10 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
         const shouldOverrideLabelRotation = this.overrideLabelRotation(params.category.id);
 
-        if (this.isBarChart()) {
-            chart.yAxis.labelRotation = shouldOverrideLabelRotation ? 0 : this.chartOptions.yAxis.labelRotation!;
-        } else {
+        if (this.isColumnChart()) {
             chart.xAxis.labelRotation = shouldOverrideLabelRotation ? 0 : this.chartOptions.xAxis.labelRotation!;
+        } else {
+            chart.yAxis.labelRotation = shouldOverrideLabelRotation ? 0 : this.chartOptions.yAxis.labelRotation!;
         }
     }
 
@@ -78,13 +80,14 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         return seriesDefaults ? !!seriesDefaults.labelEnabled : false;
     }
 
-    private isBarChart = () => _.includes([ ChartType.GroupedBar, ChartType.StackedBar, ChartType.NormalizedBar ], this.chartType);
+    private isColumnChart = () => _.includes([ ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn ], this.chartType);
 
     protected getDefaultOptions(): BarChartOptions {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const labelColor = this.getLabelColor();
         const stroke = this.getAxisGridColor();
         const chartType = this.chartType;
+        const isColumnChart = this.isColumnChart();
         const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
         const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
 
@@ -117,13 +120,12 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 markerStrokeWidth: 1
             },
             xAxis: {
-                type: 'category',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor,
-                labelRotation: 335,
+                labelRotation: isColumnChart ? 335 : 0,
                 tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,
@@ -136,13 +138,12 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 }]
             },
             yAxis: {
-                type: 'number',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
                 labelColor,
-                labelRotation: 0,
+                labelRotation: isColumnChart ? 0 : 335,
                 tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
                 tickWidth: 1,

@@ -9,6 +9,7 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.initChartOptions();
         this.chart = ChartBuilder.createPolarChart(this.chartOptions);
     }
 

@@ -10,6 +10,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.initChartOptions();
         this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
 
@@ -170,7 +171,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 }]
             },
             yAxis: {
-                type: 'number',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,

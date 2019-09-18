@@ -62,8 +62,6 @@ export abstract class ChartProxy<T extends ChartOptions> {
     protected constructor(chartProxyParams: ChartProxyParams) {
         this.chartProxyParams = chartProxyParams;
         this.chartType = chartProxyParams.chartType;
-
-        this.initChartOptions();
     }
 
     public abstract update(params: UpdateChartParams): void;
@@ -77,7 +75,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
 
     protected abstract getDefaultOptions(): T;
 
-    private initChartOptions(): void {
+    protected initChartOptions(): void {
         const options = this.getDefaultOptions();
         const { processChartOptions } = this.chartProxyParams;
 

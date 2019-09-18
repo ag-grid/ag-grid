@@ -405,35 +405,33 @@ var gridOptions = {
                 var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return title + '<div class="content">' + '$' + value + '</div>';
             };
-
         } else {
             var isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
-            options.yAxis.labelFormatter = function(params) {
-                var n = params.value;
+            var isBar = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
 
-                var res = '';
-                if (n < 1e3) res = n;
-                if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
-                if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
-                if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
-                if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
+            var standardiseNumber = function(value) {
+                if (isNaN(value)) { return value; }
+                if (isNormalized) { return value + '%'; }
 
-                return isNormalized ? res + '%' : res;
+                var absolute = Math.abs(value);
+                var standardised = '';
+
+                if (absolute < 1e3) { standardised = absolute; }
+                if (absolute >= 1e3 && absolute < 1e6) { standardised = '$' + +(absolute / 1e3).toFixed(1) + 'K'; }
+                if (absolute >= 1e6 && absolute < 1e9) { standardised = '$' + +(absolute / 1e6).toFixed(1) + 'M'; }
+                if (absolute >= 1e9 && absolute < 1e12) { standardised = '$' + +(absolute / 1e9).toFixed(1) + 'B'; }
+                if (absolute >= 1e12) standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
+
+                return value < 0 ? '-' + standardised : standardised;
+            }
+
+            options[isBar ? "xAxis" : "yAxis"].labelFormatter = function(params) {
+                return standardiseNumber(params.value);
             };
 
             if (type === 'scatter' || type === 'bubble') {
                 options.xAxis.labelFormatter = function(params) {
-                    var n = params.value;
-                    if (isNaN(n)) return n;
-
-                    var res = '';
-                    if (n < 1e3) res = n;
-                    if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
-                    if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
-                    if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
-                    if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
-
-                    return res;
+                    return standardiseNumber(params.value);
                 };
 
                 options.seriesDefaults.tooltipRenderer = function (params) {
@@ -458,16 +456,7 @@ var gridOptions = {
             }
 
             options.seriesDefaults.labelFormatter = function (params) {
-                var n = params.value;
-
-                var res = '';
-                if (n < 1e3) res = n;
-                if (n >= 1e3 && n < 1e6) res = '$' + +(n / 1e3).toFixed(1) + 'K';
-                if (n >= 1e6 && n < 1e9) res = '$' + +(n / 1e6).toFixed(1) + 'M';
-                if (n >= 1e9 && n < 1e12) res = '$' + +(n / 1e9).toFixed(1) + 'B';
-                if (n >= 1e12) res = '$' + +(n / 1e12).toFixed(1) + 'T';
-
-                return res;
+                return standardiseNumber(params.value);
             };
         }
 

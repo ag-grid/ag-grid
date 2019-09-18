@@ -1,4 +1,4 @@
-import { LineChartOptions, LineSeriesOptions, _ } from "ag-grid-community";
+import { LineChartOptions, _ } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
@@ -9,6 +9,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.initChartOptions();
         this.chart = ChartBuilder[params.grouping ? "createGroupedLineChart" : "createLineChart"](this.chartOptions);
     }
 
@@ -118,7 +119,6 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
                 markerStrokeWidth: 1
             },
             xAxis: {
-                type: 'category',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
@@ -137,7 +137,6 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
                 }]
             },
             yAxis: {
-                type: 'number',
                 labelFontStyle: undefined,
                 labelFontWeight: 'normal',
                 labelFontSize: 12,

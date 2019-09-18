@@ -367,8 +367,6 @@ export abstract class Chart {
         }
     }
 
-    private legendBBox?: BBox;
-
     protected positionLegend() {
         if (!this.legend.enabled || !this.legend.data.length) {
             return;
@@ -443,8 +441,6 @@ export abstract class Chart {
         // Round off for pixel grid alignment to work properly.
         legendGroup.translationX = Math.floor(legendGroup.translationX);
         legendGroup.translationY = Math.floor(legendGroup.translationY);
-
-        this.legendBBox = legendBBox;
     }
 
     private setupListeners(chartElement: HTMLCanvasElement) {

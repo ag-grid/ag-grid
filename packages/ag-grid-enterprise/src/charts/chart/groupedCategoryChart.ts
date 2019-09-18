@@ -16,7 +16,6 @@ export type GroupedCategoryChartOptions = {
 };
 
 export class GroupedCategoryChart extends Chart {
-
     private axisAutoPadding = new Padding();
 
     constructor(options: GroupedCategoryChartOptions) {
