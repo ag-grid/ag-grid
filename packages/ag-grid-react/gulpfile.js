@@ -12,16 +12,16 @@ const rollup = require('rollup-stream');
 const source = require('vinyl-source-stream');
 
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
-const tsProject = gulpTypescript.createProject(tsConfig);
 
 async function tscTask() {
+    const tscProject = gulpTypescript.createProject(tsConfig);
     const tsResult = await gulp.src(
         [
             'src/**/*.ts',
             '!src/**/__tests__/**/*',
             '!src/**/setupTests.ts'
         ]
-    ).pipe(tsProject());
+    ).pipe(tscProject());
 
     return merge([
         tsResult.dts.pipe(header(headerTemplate, {pkg: pkg})).pipe(gulp.dest('lib')),

@@ -23,7 +23,6 @@ afterEach(() => {
 
 it('reactNext with no wrapping element set renders as expected', () => {
     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><div>Blerp</div></div>`);
-    // expect(component.render().find('.ag-cell-value').html()).toEqual(`<div>Blerp</div>`);
 });
 
 class CellRenderer extends Component {

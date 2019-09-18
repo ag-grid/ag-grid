@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {ReactPortal} from 'react';
 import * as ReactDOM from 'react-dom';
-import * as AgGrid from 'ag-grid-community';
-import {Promise} from 'ag-grid-community';
+import {Promise, Utils} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
 import {assignProperties} from "./utils";
@@ -17,17 +16,12 @@ export class ReactComponent extends BaseReactComponent {
     private portal: ReactPortal | null = null;
     private componentWrappingElement: string = 'div';
     private statelessComponent: boolean;
-    private orphans: any[];
-    private unwrapComponent: boolean = true;
 
     constructor(reactComponent: any, parentComponent: AgGridReact) {
         super();
 
         this.reactComponent = reactComponent;
         this.parentComponent = parentComponent;
-
-        this.orphans = [];
-
         this.statelessComponent = ReactComponent.isStateless(this.reactComponent);
     }
 
@@ -45,39 +39,16 @@ export class ReactComponent extends BaseReactComponent {
 
     public init(params: any): Promise<void> {
         return new Promise<void>(resolve => {
-            this.unwrapComponent = false;
             this.eParentElement = this.createParentElement(params);
             this.createReactComponent(params, resolve);
         });
     }
 
     public getGui(): HTMLElement {
-        if (this.unwrapComponent) {
-            const fragment = document.createDocumentFragment();
-
-            if (this.orphans.length > 0) {
-                for (const orphan of this.orphans) {
-                    fragment.appendChild(orphan)
-                }
-            } else {
-                while (this.eParentElement.firstChild) {
-                    this.orphans.push(this.eParentElement.firstChild);
-                    fragment.appendChild(this.eParentElement.firstChild)
-                }
-            }
-            return fragment as any;
-        } else {
-            return this.eParentElement;
-        }
+        return this.eParentElement;
     }
 
     public destroy(): void {
-        if (this.unwrapComponent) {
-            for (const orphan of this.orphans) {
-                this.eParentElement.appendChild(orphan);
-            }
-        }
-
         return this.parentComponent.destroyPortal(this.portal as ReactPortal);
     }
 
@@ -92,9 +63,9 @@ export class ReactComponent extends BaseReactComponent {
             };
         }
 
-        const ReactComponent = React.createElement(this.reactComponent, params);
+        const  reactComponent = React.createElement(this.reactComponent, params);
         const portal: ReactPortal = ReactDOM.createPortal(
-            ReactComponent,
+            reactComponent,
             this.eParentElement as any
         );
         this.portal = portal;
@@ -102,7 +73,7 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     private addParentContainerStyleAndClasses() {
-        if(!this.componentInstance) {
+        if (!this.componentInstance) {
             return;
         }
 
@@ -111,24 +82,24 @@ export class ReactComponent extends BaseReactComponent {
         }
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
             const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
-            parentContainerClasses.forEach(className => AgGrid.Utils.addCssClass(this.eParentElement as HTMLElement, className));
+            parentContainerClasses.forEach(className => Utils.addCssClass(this.eParentElement as HTMLElement, className));
         }
     }
 
     private createParentElement(params: any) {
-        let eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
+        const eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
 
-        if (!this.unwrapComponent) {
-            AgGrid.Utils.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
+        Utils.addCssClass(eParentElement as any, 'ag-react-container');
 
-            // so user can have access to the react container, to add css class or style
-            params.reactContainer = eParentElement;
-        }
+        // DEPRECATED - use componentInstance.getReactContainerStyle or componentInstance.getReactContainerClasses instead
+        // so user can have access to the react container, to add css class or style
+        params.reactContainer = eParentElement;
+
         return eParentElement;
     }
 
     public statelessComponentRendered(): boolean {
-        return this.eParentElement.childElementCount > 0;
+        return this.eParentElement.childElementCount > 0 || this.eParentElement.childNodes.length > 0;
     }
 
     private static isStateless(Component: any) {

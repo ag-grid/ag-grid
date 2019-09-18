@@ -1,14 +1,15 @@
 import * as React from "react";
-import {ReactPortal} from "react";
+import {Component, ReactPortal} from "react";
 import * as ReactDOM from "react-dom";
 import * as PropTypes from "prop-types";
-import * as AgGrid from "ag-grid-community";
 import {
     Autowired,
     BaseComponentWrapper,
     Bean,
     ColumnApi,
+    ComponentUtil,
     FrameworkComponentWrapper,
+    Grid,
     GridApi,
     GridOptions,
     WrapableInterface
@@ -24,10 +25,10 @@ export interface AgGridReactProps extends GridOptions {
     componentWrappingElement?: string;
 }
 
-export class AgGridReact extends React.Component<AgGridReactProps, {}> {
+export class AgGridReact extends Component<AgGridReactProps, {}> {
     static propTypes: any;
 
-    gridOptions!: AgGrid.GridOptions;
+    gridOptions!: GridOptions;
 
     changeDetectionService = new ChangeDetectionService();
 
@@ -77,10 +78,10 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
             gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.props);
         }
 
-        this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
+        this.gridOptions = ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
 
         // don't need the return value
-        new AgGrid.Grid(this.eGridDiv, this.gridOptions, gridParams);
+        new Grid(this.eGridDiv, this.gridOptions, gridParams);
 
         this.api = this.gridOptions.api!;
         this.columnApi = this.gridOptions.columnApi!;
@@ -95,7 +96,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
         // if the grid has been destroyed in the meantime just resolve
-        if(!this.api) {
+        if (!this.api) {
             resolve(null);
             return;
         }
@@ -166,7 +167,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
         this.extractGridPropertyChanges(nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
 
-        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
+        ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
     }
 
     private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
@@ -196,7 +197,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
 
         const changedKeys = Object.keys(nextProps);
         changedKeys.forEach((propKey) => {
-            if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
+            if (ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
                 const changeDetectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
                 if (!changeDetectionStrategy.areEqual(this.props[propKey], nextProps[propKey])) {
                     if (debugLogging) {
@@ -210,7 +211,7 @@ export class AgGridReact extends React.Component<AgGridReactProps, {}> {
                 }
             }
         });
-        AgGrid.ComponentUtil.getEventCallbacks().forEach((funcName: string) => {
+        ComponentUtil.getEventCallbacks().forEach((funcName: string) => {
             if (this.props[funcName] !== nextProps[funcName]) {
                 if (debugLogging) {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
@@ -235,13 +236,13 @@ AgGridReact.propTypes = {
     gridOptions: PropTypes.object
 };
 
-addProperties(AgGrid.ComponentUtil.getEventCallbacks(), PropTypes.func);
-addProperties(AgGrid.ComponentUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
-addProperties(AgGrid.ComponentUtil.STRING_PROPERTIES, PropTypes.string);
-addProperties(AgGrid.ComponentUtil.OBJECT_PROPERTIES, PropTypes.object);
-addProperties(AgGrid.ComponentUtil.ARRAY_PROPERTIES, PropTypes.array);
-addProperties(AgGrid.ComponentUtil.NUMBER_PROPERTIES, PropTypes.number);
-addProperties(AgGrid.ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
+addProperties(ComponentUtil.getEventCallbacks(), PropTypes.func);
+addProperties(ComponentUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
+addProperties(ComponentUtil.STRING_PROPERTIES, PropTypes.string);
+addProperties(ComponentUtil.OBJECT_PROPERTIES, PropTypes.object);
+addProperties(ComponentUtil.ARRAY_PROPERTIES, PropTypes.array);
+addProperties(ComponentUtil.NUMBER_PROPERTIES, PropTypes.number);
+addProperties(ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
 
 function addProperties(listOfProps: string[], propType: any) {
     listOfProps.forEach((propKey: string) => {
@@ -270,4 +271,4 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
     }
 }
 
-AgGrid.Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);
+Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);
