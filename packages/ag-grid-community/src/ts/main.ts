@@ -331,6 +331,9 @@ export { TooltipManager } from "./widgets/tooltipManager";
 export {
     ChartOptions,
     ChartType,
+    CartesianSeriesType,
+    PolarSeriesType,
+    SeriesType,
     ChartMenuOptions,
     BarChartOptions,
     AreaChartOptions,

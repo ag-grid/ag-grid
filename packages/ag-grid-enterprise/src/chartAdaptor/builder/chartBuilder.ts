@@ -20,6 +20,9 @@ import {
     PieChartOptions,
     SeriesOptions,
     CaptionOptions,
+    CartesianSeriesType,
+    PolarSeriesType,
+    SeriesType,
 } from "ag-grid-community";
 
 import { CartesianChart, CartesianChartLayout } from "../../charts/chart/cartesianChart";
@@ -39,10 +42,6 @@ import { Legend } from "../../charts/chart/legend";
 import { Caption } from "../../charts/caption";
 import { GroupedCategoryAxis } from "../../charts/chart/axis/groupedCategoryAxis";
 import { GroupedCategoryChart } from "../../charts/chart/groupedCategoryChart";
-
-type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
-type PolarSeriesType = 'pie';
-type SeriesType = CartesianSeriesType | PolarSeriesType;
 
 export class ChartBuilder {
     static createCartesianChart(options: CartesianChartOptions): CartesianChart {
@@ -159,7 +158,7 @@ export class ChartBuilder {
 
     static createScatterSeries = (options: ScatterSeriesOptions): ScatterSeries => new ScatterSeries();
 
-    static createSeries(options: any, type?: string) {
+    static createSeries(options: { type?: SeriesType }, type?: SeriesType) {
         switch (type || options && options.type) {
             case "line":
                 return ChartBuilder.initLineSeries(new LineSeries(), options);

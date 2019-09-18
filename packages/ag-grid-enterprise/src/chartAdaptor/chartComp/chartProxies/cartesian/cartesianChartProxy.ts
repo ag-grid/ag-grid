@@ -23,6 +23,7 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
         const cartesianChart = this.chart as CartesianChart;
         (cartesianChart.xAxis[property] as any) = value;
         (cartesianChart.yAxis[property] as any) = value;
+        
         cartesianChart.performLayout();
 
         (this.chartOptions.xAxis as any)[property] = value;

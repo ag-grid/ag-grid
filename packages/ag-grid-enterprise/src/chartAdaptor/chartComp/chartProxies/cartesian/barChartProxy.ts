@@ -1,4 +1,4 @@
-import { BarChartOptions, BarSeriesOptions, ChartType } from "ag-grid-community";
+import { BarChartOptions, ChartType, _ } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { BarSeries } from "../../../../charts/chart/series/barSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -12,13 +12,17 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        let builderFunction: keyof typeof ChartBuilder;
+
         if (this.isBarChart()) {
-            this.chart = params.grouping ? ChartBuilder.createGroupedBarChart(this.chartOptions) : ChartBuilder.createBarChart(this.chartOptions);
+            builderFunction = params.grouping ? "createGroupedBarChart" : "createBarChart";
         } else {
-            this.chart = params.grouping ? ChartBuilder.createGroupedColumnChart(this.chartOptions) : ChartBuilder.createColumnChart(this.chartOptions);
+            builderFunction = params.grouping ? "createGroupedColumnChart" : "createColumnChart";
         }
 
-        const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults as BarSeriesOptions);
+        this.chart = ChartBuilder[builderFunction](this.chartOptions);
+
+        const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults!);
 
         if (barSeries) { this.chart.addSeries(barSeries); }
     }
@@ -26,22 +30,22 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     public update(params: UpdateChartParams): void {
         const chart = this.chart as CartesianChart;
         const barSeries = chart.series[0] as BarSeries;
+        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+
         barSeries.data = params.data;
         barSeries.xField = params.category.id;
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
+        barSeries.fills = fills;
+        barSeries.strokes = strokes;
 
         const shouldOverrideLabelRotation = this.overrideLabelRotation(params.category.id);
 
         if (this.isBarChart()) {
-            chart.yAxis.labelRotation = shouldOverrideLabelRotation ? 0 : this.chartOptions.yAxis.labelRotation as number;
+            chart.yAxis.labelRotation = shouldOverrideLabelRotation ? 0 : this.chartOptions.yAxis.labelRotation!;
         } else {
-            chart.xAxis.labelRotation = shouldOverrideLabelRotation ? 0 : this.chartOptions.xAxis.labelRotation as number;
+            chart.xAxis.labelRotation = shouldOverrideLabelRotation ? 0 : this.chartOptions.xAxis.labelRotation!;
         }
-
-        const palette = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
-        barSeries.fills = palette.fills;
-        barSeries.strokes = palette.strokes;
     }
 
     public setSeriesProperty(property: BarSeriesProperty | BarSeriesFontProperty, value: any): void {
@@ -74,10 +78,12 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         return seriesDefaults ? !!seriesDefaults.labelEnabled : false;
     }
 
-    private isBarChart = () => [ChartType.GroupedBar, ChartType.StackedBar, ChartType.NormalizedBar].indexOf(this.chartType) > -1;
+    private isBarChart = () => _.includes([ ChartType.GroupedBar, ChartType.StackedBar, ChartType.NormalizedBar ], this.chartType);
 
     protected getDefaultOptions(): BarChartOptions {
-        const palette = this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
+        const labelColor = this.getLabelColor();
+        const stroke = this.getAxisGridColor();
         const chartType = this.chartType;
         const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
         const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
@@ -103,7 +109,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                labelColor,
                 itemPaddingX: 16,
                 itemPaddingY: 8,
                 markerPadding: 4,
@@ -116,7 +122,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                labelColor,
                 labelRotation: 335,
                 tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
@@ -125,7 +131,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 lineColor: 'rgba(195, 195, 195, 1)',
                 lineWidth: 1,
                 gridStyle: [{
-                    stroke: this.getAxisGridColor(),
+                    stroke,
                     lineDash: [4, 2]
                 }]
             },
@@ -135,7 +141,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                labelColor,
                 labelRotation: 0,
                 tickColor: 'rgba(195, 195, 195, 1)',
                 tickSize: 6,
@@ -144,14 +150,14 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 lineColor: 'rgba(195, 195, 195, 1)',
                 lineWidth: 1,
                 gridStyle: [{
-                    stroke: this.getAxisGridColor(),
+                    stroke,
                     lineDash: [4, 2]
                 }]
             },
             seriesDefaults: {
                 type: 'bar',
-                fills: palette.fills,
-                strokes: palette.strokes,
+                fills,
+                strokes,
                 grouped: isGrouped,
                 normalizedTo: isNormalized ? 100 : undefined,
                 strokeWidth: 1,
@@ -161,7 +167,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 labelFontWeight: 'normal',
                 labelFontSize: 12,
                 labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                labelColor,
                 tooltipRenderer: undefined,
                 showInLegend: true,
                 shadow: {

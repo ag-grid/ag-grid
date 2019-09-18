@@ -34,6 +34,10 @@ export enum ChartType {
     NormalizedArea = 'normalizedArea'
 }
 
+export type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
+export type PolarSeriesType = 'pie';
+export type SeriesType = CartesianSeriesType | PolarSeriesType;
+
 export interface HighlightStyle {
     fill?: string;
     stroke?: string;
@@ -127,7 +131,7 @@ export interface DropShadowOptions {
 }
 
 export interface SeriesOptions {
-    type?: string;
+    type?: SeriesType;
     data?: any[];
     visible?: boolean;
     showInLegend?: boolean;

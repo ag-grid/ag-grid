@@ -31,7 +31,7 @@ export interface ChartProxyParams {
     isDarkTheme: () => boolean;
 }
 
-interface FieldDefinition { 
+export interface FieldDefinition { 
     colId: string;
     displayName: string;
 }
