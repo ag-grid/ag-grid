@@ -18,8 +18,11 @@ include '../documentation-main/documentation_header.php';
     You can even use React components to customize the grid UI and cell contents / behavior.
   </p>
 <p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project,
-  and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
-<hr>
+  and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.
+</p>
+<?
+include './intro.php';
+?>
 <h2>
     Table of Contents
 </h2>

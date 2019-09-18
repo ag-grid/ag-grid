@@ -23,6 +23,10 @@ include '../documentation-main/documentation_header.php';
     and configure some of the essential features of it.
 We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 
+<?
+include './intro.php';
+?>
+
 <h2>Add ag-Grid to Your Project</h2>
 
 <p>For the purposes of this tutorial, we are going to scaffold an Vue app with <a href="https://cli.vuejs.org/">Vue CLI</a>.

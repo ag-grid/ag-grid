@@ -22,6 +22,10 @@ include '../documentation-main/documentation_header.php';
     We will show you some of the fundamentals of the grid (passing properties, using the API, etc).
 </p>
 
+<?
+include './intro.php';
+?>
+
 <h2>The Project Setup</h2>
 
 <p>During the last couple of years, we are witnessing a Cambrian Explosion of JavaScript project stacks. It seems like everyday there is a new, better way for JavaScript developers to build and distribute their apps. 
