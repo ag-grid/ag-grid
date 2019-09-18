@@ -3,6 +3,7 @@
 @import "../common/syntax-highlight.scss";
 @import "../common/grid.scss";
 @import "../common/nav.scss";
+@import "../common/fontawesome";
 @import "../common/footer.scss";
 @import "../common/content.scss";
 @import "../common/note.scss";
@@ -19,6 +20,7 @@
 @import "../pages/blog.scss";
 @import "../pages/features-overview.scss";
 @import "../docs/example-runner.scss";
+
 
 body {
     -webkit-font-smoothing: antialiased;

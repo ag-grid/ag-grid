@@ -1,7 +1,42 @@
-
-<div>
-
-Component.ts
+<style>
+    #angular-demo .target-img {
+        position: relative;
+    }
+    #angular-demo .target-img a:hover::before {
+        content: '\f0a9';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        font-size: 5em;
+        opacity: 1;
+        position: absolute;
+        z-index: 1;
+        cursor: pointer;
+        left: calc(50% - 0.8em);
+        color: lightslategray;
+    }
+    #angular-demo .target-img a:hover img {
+        opacity: 0.5;
+    }
+</style> 
+<section id="angular-demo" class="mb-3">
+    <div class="card">
+        <div class="card-header">Basic Angular Example</div>
+        <div class="card-body">
+            <div class="target-img d-block mb-2 text-center bg-light">
+                <a href="https://stackblitz.com/edit/ag-grid-angular-hello-world" target="_blank">
+                    <img src="../images/helloWorldGrid.png" style="max-width: 505px;" alt="Angular Example" />
+                </a>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">Component.ts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">Template.html</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
 @Component({
     selector: 'my-app',
@@ -21,75 +56,21 @@ export class AppComponent  {
     ];
 }
 </snippet>
-
-Template.html
+                </div>
+                <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 <snippet>
 &lt;ag-grid-angular
     [rowData]="rowData"
     [columnDefs]="columnDefs">
 &lt;/ag-grid-angular>
-</snippet>
-
-<img src="../images/helloWorldGrid.png"/>
-
-    <style>
-        .stackblitz-button {
-            border-radius: 5px;
-            padding: 10px 10px;
-            font-size: 20px;
-            border: 1px solid #125082;
-            background-color: #125082;
-            color: #e6e6e6;
-        }
-    </style>
-
-    <p>
-        <a class="stackblitz-button" href="https://stackblitz.com/edit/ag-grid-angular-hello-world" target="_blank">
-            Open in <img src="../images/stackBlitzIcon.svg"/> StackBlitz
-        </a>
-    </p>
-
-</div>
-
-<!--
-
-This is how you embed, if we want it.
-
-<iframe
-        src="https://stackblitz.com/edit/ag-grid-angular-hello-world?embed=1&file=src/app/app.component.ts"
-        style="width: 100%; height: 400px;">
-</iframe>
-
-<iframe
-        src="https://stackblitz.com/edit/ag-grid-angular-hello-world?ctl=1&embed=1&file=src/app/app.component.ts"
-        style="width: 100%; height: 400px;">
-</iframe>
--->
-
-<div style="margin: 100px 10px 100px 10px; padding: 20px; border: 1px solid grey; background-color: #8abde3;">
-    Niall Notes:
-    <ul>
-        <li>
-            Ideas for code:
-            <ul>
-                <li>Have code side by side, ie .ts to left, .html to right??</li>
-                <li>Have code tabbed???</li>
-            </ul>
-        </li>
-        <li>
-            Have grid lazy load, so first show image, then if user tries to interact says 'loading...'
-            and then shows.
-        </li>
-        <li>
-            Code for the grid should be plain js. That way it's a) easier to download the .js files
-            and b) can reuse the example for all the getting started pages.
-        </li>
-    </ul>
-</div>
-
-
-<!--
-
-https://stackblitz.com/edit/ag-grid-angular-hello-world
-
--->
+</snippet>  
+                </div>
+            </div>
+            <div class="text-right" style="margin-top: -1.5rem;">
+                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-grid-angular-hello-world" target="_blank">
+                    Open in <img src="../images/stackBlitzIcon.svg"/> StackBlitz
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
