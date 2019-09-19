@@ -26,7 +26,7 @@ var TooltipManager = /** @class */ (function () {
     function TooltipManager() {
         this.DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
         this.MOUSEOUT_HIDE_TOOLTIP_TIMEOUT = 1000;
-        this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = 2000;
+        this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = 0;
         this.HIDE_SHOW_ONLY = true;
         this.showTimeoutId = 0;
         this.hideTimeoutId = 0;

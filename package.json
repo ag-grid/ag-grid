@@ -1,12 +1,12 @@
 {
-  "name": "ag-grid-community",
+  "name": "@havietduc91/ag-grid-community",
   "version": "21.2.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "typings": "./main.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ag-grid/ag-grid.git"
+    "url": "git+https://github.com/ag-grid/ag-grid.git"
   },
   "scripts": {
     "initSubModules": "sh ./scripts/initialiseSubModules.sh",
@@ -41,5 +41,11 @@
     "lerna": "^2.11.0",
     "walk": "^2.3.14"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "homepage": "https://github.com/ag-grid/ag-grid#readme",
+  "author": "ag-grid",
+  "license": "ISC"
 }
