@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         ag-Grid Enterprise. A license is only required when you start developing for production.
     </p>
 </note>
-<?
+<?php
 include './intro.php';
 ?>
 
