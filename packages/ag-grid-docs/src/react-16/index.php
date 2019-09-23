@@ -10,14 +10,9 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="react-16">ag-Grid with React 16+</h1>
 
-    <note>
-        All of the documentation in this section apply to React 16+. For documentation for React 15+ please see
-        <a href="../react-15/">here.</a>
-    </note>
-
     <p>With React 16 <a href="https://reactjs.org/docs/portals.html">Portals</a> were introduced and these are the official way to create React components dynamically within React so
         this is what we use internally for component creation within the grid.</p>
-    <p>If you use React 16+ you'll need to enable <code>reatNext </code> as follows:</p>
+    <p>If you use React 16+ you'll need to enable <code>reactNext </code> as follows:</p>
 
     <snippet>
         // Grid Definition
@@ -154,7 +149,28 @@ class StyledRenderer extends Component {
     <p>React Hooks are fully supported as cell renderers - please refer to our working example in <a
                 href="https://github.com/ag-grid/ag-grid-react-example/">GitHub</a>.</p>
 
-    <note>You can currently use Hooks for renderers only - support for React Hooks in Editors/Filter etc is not currently supported.</note>
+    <note>You can currently use Hooks for renderers and editors only - support for React Hooks in Filters is not currently supported.</note>
+    
+    <h4>Hook Cell Editor</h4>
+    
+    <p>In order to use a hook as a Cell Editor you'll need to wrap your hook with <code>forwardRef</code> and then expose Grid related lifecycle methods
+    with <code>useImperativeHandle</code>, for example:</p>
+    
+<snippet>
+import React, <span ng-non-bindable>{</span>useEffect, forwardRef, useImperativeHandle, useRef} from "react";
+
+export default forwardRef((props, ref) => {
+    const inputRef = useRef();
+    useImperativeHandle(ref, () => {
+        return {
+            getValue: () => {
+                return inputRef.current.value;
+            }
+        };
+    });
+    return &lt;input type="text" ref={inputRef} defaultValue={props.value}/&gt;;
+})
+</snippet>
 
     <h2 id="react-row-data-control">Row Data Control</h2>
     <p>By default the ag-Grid React component will check props passed in to deteremine if data has changed and will only re-render based on actual changes.</p>
