@@ -252,6 +252,9 @@ var gridOptions = {
                 labelKey: 'columns',
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    syncColumnsSectionWithGrid: true
+                }
             },
             {
                 id: 'filters',
@@ -764,14 +767,16 @@ var desktopDefaultCols = [
                 }
             },
             {
-                headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
+                colId: 'extraInfo1',
+                headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false, filter: false,
                 sortable: false, suppressMenu: true, cellStyle: {"text-align": "right"},
                 cellRenderer: function () {
                     return 'Abra...';
                 }
             },
             {
-                headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
+                colId: 'extraInfo2',
+                headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false, filter: false,
                 sortable: false, suppressMenu: true, cellStyle: {"text-align": "left"},
                 cellRenderer: function () {
                     return '...cadabra!';
