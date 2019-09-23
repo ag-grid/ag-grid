@@ -98,12 +98,12 @@ function processChartOptions(params) {
     xAxis.lineColor = 'gray';
     xAxis.tickWidth = 2;
     xAxis.tickSize = 10;
-    xAxis.tickPadding = 10;
     xAxis.tickColor = 'gray';
     xAxis.labelFontStyle = 'italic';
     xAxis.labelFontWeight = 'bold';
     xAxis.labelFontSize = 15;
     xAxis.labelFontFamily = 'Arial, sans-serif';
+    xAxis.labelPadding = 10;
     xAxis.labelColor = '#de7b73';
     xAxis.labelRotation = 20;
     xAxis.labelFormatter = function(params) {
@@ -121,12 +121,12 @@ function processChartOptions(params) {
     yAxis.lineColor = 'gray';
     yAxis.tickWidth = 2;
     yAxis.tickSize = 10;
-    yAxis.tickPadding = 10;
     yAxis.tickColor = 'gray';
     yAxis.labelFontStyle = 'italic';
     yAxis.labelFontWeight = 'bold';
     yAxis.labelFontSize = 15;
     yAxis.labelFontFamily = 'Arial, sans-serif';
+    yAxis.labelPadding = 10;
     yAxis.labelColor = '#de7b73';
     yAxis.labelRotation = 20;
     yAxis.labelFormatter = function(params) {

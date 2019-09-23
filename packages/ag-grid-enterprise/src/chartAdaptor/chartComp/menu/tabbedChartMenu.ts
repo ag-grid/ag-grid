@@ -9,11 +9,11 @@ import {
     TabbedItem,
     TabbedLayout
 } from "ag-grid-community";
-import {ChartController} from "../chartController";
-import {ChartDataPanel} from "./data/chartDataPanel";
-import {ChartFormattingPanel} from "./format/chartFormatingPanel";
-import {ChartSettingsPanel} from "./settings/chartSettingsPanel";
-import {ChartTranslator} from "../chartTranslator";
+import { ChartController } from "../chartController";
+import { ChartDataPanel } from "./data/chartDataPanel";
+import { ChartFormattingPanel } from "./format/chartFormattingPanel";
+import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
+import { ChartTranslator } from "../chartTranslator";
 
 export class TabbedChartMenu extends Component {
 

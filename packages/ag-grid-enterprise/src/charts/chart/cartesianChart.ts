@@ -1,19 +1,23 @@
 import { Chart, ChartOptions } from "./chart";
 import { Axis } from "../axis";
+import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import Scale from "../scale/scale";
 import { Series } from "./series/series";
 import { numericExtent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
 
+/** Defines the orientation used when rendering data series */
 export enum CartesianChartLayout {
     Vertical,
     Horizontal
 }
 
+type CartesianAxis = Axis<Scale<any, number>> | GroupedCategoryAxis;
+
 export interface CartesianChartOptions extends ChartOptions {
-    xAxis: Axis<Scale<any, number>>;
-    yAxis: Axis<Scale<any, number>>;
+    xAxis: CartesianAxis;
+    yAxis: CartesianAxis;
 }
 
 export class CartesianChart extends Chart {
@@ -37,13 +41,13 @@ export class CartesianChart extends Chart {
         return this.seriesClipRect;
     }
 
-    private readonly _xAxis: Axis<Scale<any, number>>;
-    get xAxis(): Axis<Scale<any, number>> {
+    private readonly _xAxis: CartesianAxis;
+    get xAxis(): CartesianAxis {
         return this._xAxis;
     }
 
-    private readonly _yAxis: Axis<Scale<any, number>>;
-    get yAxis(): Axis<Scale<any, number>> {
+    private readonly _yAxis: CartesianAxis;
+    get yAxis(): CartesianAxis {
         return this._yAxis;
     }
 
@@ -149,8 +153,20 @@ export class CartesianChart extends Chart {
         const xDomains: any[][] = [];
         const yDomains: any[][] = [];
 
+        let isNumericXAxis: boolean | undefined = undefined;
+
         this.series.filter(s => s.visible).forEach(series => {
-            xDomains.push(series.getDomainX());
+            const xDomain = series.getDomainX();
+
+            if (isNumericXAxis === undefined) {
+                // always add first X domain
+                xDomains.push(xDomain);
+                isNumericXAxis = typeof xDomain[0] === 'number';
+            } else if (isNumericXAxis) {
+                // only add further X domains if the axis is numeric
+                xDomains.push(xDomain);
+            }
+
             yDomains.push(series.getDomainY());
         });
 
@@ -163,23 +179,22 @@ export class CartesianChart extends Chart {
         xAxis.update();
         yAxis.update();
 
-        // The `xAxis` and `yAxis` have `.this` prefix on purpose here.
-        const xAxisBBox = this.xAxis.getBBox();
-        const yAxisBBox = this.yAxis.getBBox();
-
+        // The `xAxis` and `yAxis` have `.this` prefix on purpose here to get the latest values.
         {
-            const axisThickness = Math.floor(yAxisBBox.width);
-
-            if (this.axisAutoPadding.left !== axisThickness) {
-                this.axisAutoPadding.left = axisThickness;
-                this.layoutPending = true;
-            }
-        }
-        {
-            const axisThickness = Math.floor(xAxisBBox.width);
+            const xAxisBBox = this.xAxis.getBBox();
+            const axisThickness = Math.floor(this.xAxis instanceof GroupedCategoryAxis && !isHorizontal ? xAxisBBox.height : xAxisBBox.width);
 
             if (this.axisAutoPadding.bottom !== axisThickness) {
                 this.axisAutoPadding.bottom = axisThickness;
+                this.layoutPending = true;
+            }
+        }
+
+        {
+            const axisThickness = Math.floor(this.yAxis.getBBox().width);
+
+            if (this.axisAutoPadding.left !== axisThickness) {
+                this.axisAutoPadding.left = axisThickness;
                 this.layoutPending = true;
             }
         }

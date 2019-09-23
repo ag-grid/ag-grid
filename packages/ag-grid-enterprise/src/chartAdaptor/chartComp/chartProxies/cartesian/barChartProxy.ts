@@ -14,15 +14,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
         this.initChartOptions();
 
-        let builderFunction: keyof typeof ChartBuilder;
-
-        if (this.isColumnChart()) {
-            builderFunction = params.grouping ? "createGroupedColumnChart" : "createColumnChart";
-        } else {
-            builderFunction = params.grouping ? "createGroupedBarChart" : "createBarChart";
-        }
-
-        this.chart = ChartBuilder[builderFunction](this.chartOptions);
+        this.chart = ChartBuilder[this.isColumnChart() ? "createColumnChart" : "createBarChart"](this.chartOptions);
 
         const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults!);
 
@@ -90,6 +82,26 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         const isColumnChart = this.isColumnChart();
         const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
         const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
+        const labelFontWeight = 'normal';
+        const labelFontSize = 12;
+        const labelFontFamily = 'Verdana, sans-serif';
+        const axisColor = 'rgba(195, 195, 195, 1)';
+        const axisOptions = {
+            labelFontWeight,
+            labelFontSize,
+            labelFontFamily,
+            labelColor,
+            labelPadding: 5,
+            tickColor: axisColor,
+            tickSize: 6,
+            tickWidth: 1,
+            lineColor: axisColor,
+            lineWidth: 1,
+            gridStyle: [{
+                stroke,
+                lineDash: [4, 2]
+            }]
+        };
 
         return {
             parent: this.chartProxyParams.parentElement,
@@ -108,10 +120,9 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
             legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
                 labelColor,
                 itemPaddingX: 16,
                 itemPaddingY: 8,
@@ -120,40 +131,12 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 markerStrokeWidth: 1
             },
             xAxis: {
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor,
+                ...axisOptions,
                 labelRotation: isColumnChart ? 335 : 0,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke,
-                    lineDash: [4, 2]
-                }]
             },
             yAxis: {
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor,
+                ...axisOptions,
                 labelRotation: isColumnChart ? 0 : 335,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke,
-                    lineDash: [4, 2]
-                }]
             },
             seriesDefaults: {
                 type: 'bar',
@@ -164,10 +147,9 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                 strokeWidth: 1,
                 tooltipEnabled: true,
                 labelEnabled: false,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
                 labelColor,
                 tooltipRenderer: undefined,
                 showInLegend: true,
@@ -176,7 +158,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
                     blur: 5,
                     xOffset: 3,
                     yOffset: 3,
-                    color: 'rgba(0,0,0,0.5)'
+                    color: 'rgba(0, 0, 0, 0.5)'
                 },
                 strokeOpacity: 1,
                 fillOpacity: 1

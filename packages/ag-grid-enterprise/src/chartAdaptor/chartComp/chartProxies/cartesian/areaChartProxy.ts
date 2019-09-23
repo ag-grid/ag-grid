@@ -13,7 +13,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder[params.grouping ? "createGroupedAreaChart" : "createAreaChart"](this.chartOptions);
+        this.chart = ChartBuilder.createAreaChart(this.chartOptions);
         this.setAxisPadding(this.chart as CartesianChart);
 
         const areaSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults!);
@@ -126,6 +126,26 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const labelColor = this.getLabelColor();
         const stroke = this.getAxisGridColor();
+        const labelFontWeight ='normal';
+        const labelFontSize = 12;
+        const labelFontFamily = 'Verdana, sans-serif';
+        const axisColor = 'rgba(195, 195, 195, 1)';
+        const axisOptions = {
+            labelFontWeight,
+            labelFontSize,
+            labelFontFamily,
+            labelColor,
+            labelPadding: 5,
+            tickColor: axisColor,
+            tickSize: 6,
+            tickWidth: 1,
+            lineColor: axisColor,
+            lineWidth: 1,
+            gridStyle: [{
+                stroke,
+                lineDash: [4, 2]
+            }]
+        };
 
         return {
             background: {
@@ -143,10 +163,9 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
                 labelColor,
                 itemPaddingX: 16,
                 itemPaddingY: 8,
@@ -155,40 +174,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
                 markerStrokeWidth: 1
             },
             xAxis: {
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor,
+                ...axisOptions,
                 labelRotation: 335,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke,
-                    lineDash: [4, 2]
-                }]
             },
             yAxis: {
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor,
+                ...axisOptions,
                 labelRotation: 0,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke,
-                    lineDash: [4, 2]
-                }]
             },
             seriesDefaults: {
                 type: 'area',
@@ -209,7 +200,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
                     blur: 5,
                     xOffset: 3,
                     yOffset: 3,
-                    color: 'rgba(0,0,0,0.5)'
+                    color: 'rgba(0, 0, 0, 0.5)'
                 }
             }
         };

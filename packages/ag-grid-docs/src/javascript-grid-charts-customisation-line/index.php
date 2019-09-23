@@ -144,13 +144,13 @@ interface AxisOptions {
     tickWidth?: number;
     // The length of the ticks. Defaults to `6`.
     tickSize?: number;
-    // The padding between the ticks and the labels. Defaults to `5`.
-    tickPadding?: number;
     // The colour of the axis ticks. Depends on whether the light or dark mode is used.
     tickColor?: string;
 
     // The font to be used by axis labels. Defaults to `12px Verdana, sans-serif`.
     labelFont?: string;
+    // The padding between the labels and the ticks. Defaults to `5`.
+    labelPadding?: number;
     // The colour of the axis labels. Depends on whether the light or dark mode is used.
     labelColor?: string;
     // The rotation of the axis labels. Defaults to `45` (degrees), however when no category

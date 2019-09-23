@@ -1,3 +1,4 @@
+import { IGridStyle } from "ag-grid-community";
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
@@ -17,9 +18,21 @@ enum Tags {
     GridLine
 }
 
-export interface GridStyle {
-    stroke?: string;
-    lineDash?: number[];
+export interface ILabelFormatting {
+    labelFontFamily: string;
+    labelFontStyle: string;
+    labelFontWeight: string;
+    labelFontSize: number;
+    labelPadding: number;
+    labelColor?: string;
+}
+
+export interface IAxisFormatting {
+    lineColor?: string;
+    lineWidth: number;
+    tickColor?: string;
+    tickWidth: number;
+    tickSize: number;
 }
 
 /**
@@ -31,7 +44,7 @@ export interface GridStyle {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<S extends Scale<D, number>, D = any> {
+export class Axis<S extends Scale<D, number>, D = any> implements IAxisFormatting, ILabelFormatting {
 
     // debug (bbox)
     // private bboxRect = (() => {
@@ -107,11 +120,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
     tickSize: number = 6;
 
     /**
-     * The padding between the ticks and the labels.
-     */
-    tickPadding: number = 5;
-
-    /**
      * The color of the axis ticks.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
@@ -177,6 +185,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     /**
+     * The padding between the labels and the ticks.
+     */
+    labelPadding: number = 5;
+
+    /**
      * The color of the labels.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
@@ -206,16 +219,16 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * Contains only one {@link GridStyle} object by default, meaning all grid lines
      * have the same style.
      */
-    private _gridStyle: GridStyle[] = [{
+    private _gridStyle: IGridStyle[] = [{
         stroke: 'rgba(219, 219, 219, 1)',
         lineDash: [4, 2]
     }];
-    set gridStyle(value: GridStyle[]) {
+    set gridStyle(value: IGridStyle[]) {
         if (value.length) {
             this._gridStyle = value;
         }
     }
-    get gridStyle(): GridStyle[] {
+    get gridStyle(): IGridStyle[] {
         return this._gridStyle;
     }
 
@@ -415,7 +428,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
             });
 
-        const labelX = sideFlag * (this.tickSize + this.tickPadding);
+        const labelX = sideFlag * (this.tickSize + this.labelPadding);
         const autoRotation = parallelLabels
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);

@@ -95,7 +95,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
         this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
         
         // this cannot be overridden via the processChartOptions callback
-        this.chartOptions.parent = this.chartProxyParams.parentElement; 
+        this.chartOptions.parent = this.chartProxyParams.parentElement;
     }
 
     private overridePalette(chartOptions: any) {

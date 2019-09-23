@@ -9,11 +9,11 @@ import {
     PostConstruct,
     RefSelector,
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {AxisTicksPanel} from "./axisTicksPanel";
-import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
+import { ChartController } from "../../../chartController";
+import { AxisTicksPanel } from "./axisTicksPanel";
+import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisPanel extends Component {
 
@@ -100,8 +100,8 @@ export class AxisPanel extends Component {
         const params: LabelPanelParams = {
             enabled: true,
             suppressEnabledCheckbox: true,
-            initialFont: initialFont,
-            setFont: setFont
+            initialFont,
+            setFont
         };
 
         const labelPanelComp = new LabelPanel(params);
@@ -113,13 +113,12 @@ export class AxisPanel extends Component {
     }
 
     private addAdditionalLabelComps(labelPanelComp: LabelPanel) {
-
         const createAngleComp = (label: string, initialValue: number, updateFunc: (value: number) => void) => {
             const rotationInput = new AgAngleSelect()
-            .setLabel(label)
-            .setLabelWidth("flex")
-            .setValue(initialValue)
-            .onValueChange(updateFunc);
+                .setLabel(label)
+                .setLabelWidth("flex")
+                .setValue(initialValue)
+                .onValueChange(updateFunc);
 
             this.getContext().wireBean(rotationInput);
             labelPanelComp.addCompToPanel(rotationInput);
@@ -134,6 +133,18 @@ export class AxisPanel extends Component {
         const yRotationLabel = `${this.chartTranslator.translate('yRotation')} ${degreesSymbol}`;
         const yUpdateFunc = (newValue: number) => this.chartProxy.setYRotation(newValue);
         createAngleComp(yRotationLabel, this.chartProxy.getYRotation(), yUpdateFunc);
+
+        const labelPaddingSlider = new AgSlider();
+
+        this.getContext().wireBean(labelPaddingSlider);
+
+        labelPaddingSlider.setLabel(this.chartTranslator.translate('padding'))
+            .setValue(this.chartProxy.getCommonAxisProperty('labelPadding'))
+            .setMaxValue(30)
+            .setTextFieldWidth(45)
+            .onValueChange(newValue => this.chartProxy.setCommonAxisProperty('labelPadding', newValue));
+
+        labelPanelComp.addCompToPanel(labelPaddingSlider);
     }
 
     private destroyActivePanels(): void {

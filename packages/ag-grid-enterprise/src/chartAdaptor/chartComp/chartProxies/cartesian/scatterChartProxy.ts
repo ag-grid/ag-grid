@@ -123,6 +123,26 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         const labelColor = this.getLabelColor();
         const stroke = this.getAxisGridColor();
         const isBubble = this.chartType === ChartType.Bubble;
+        const labelFontWeight = 'normal';
+        const labelFontSize = 12;
+        const labelFontFamily = 'Verdana, sans-serif';
+        const axisColor = 'rgba(195, 195, 195, 1)';
+        const axisOptions = {
+            labelFontWeight,
+            labelFontSize,
+            labelFontFamily,
+            labelColor,
+            labelPadding: 5,
+            tickColor: axisColor,
+            tickSize: 6,
+            tickWidth: 1,
+            lineColor: axisColor,
+            lineWidth: 1,
+            gridStyle: [{
+                stroke,
+                lineDash: [4, 2]
+            }]
+        };
 
         return {
             background: {
@@ -140,10 +160,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
                 labelColor,
                 itemPaddingX: 16,
                 itemPaddingY: 8,
@@ -152,41 +171,13 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 markerStrokeWidth: 1
             },
             xAxis: {
+                ...axisOptions,
                 type: xAxisType,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor,
                 labelRotation: 335,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke,
-                    lineDash: [4, 2]
-                }]
             },
             yAxis: {
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor,
+                ...axisOptions,
                 labelRotation: 0,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke,
-                    lineDash: [4, 2]
-                }]
             },
             seriesDefaults: {
                 type: 'scatter',
@@ -198,7 +189,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 minMarkerSize: 3,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,
-                tooltipRenderer: undefined,
                 showInLegend: true,
                 title: ''
             }

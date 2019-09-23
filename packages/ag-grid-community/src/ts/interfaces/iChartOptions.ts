@@ -46,6 +46,7 @@ export interface HighlightStyle {
 export interface CartesianChartOptions extends ChartOptions {
     xAxis: AxisOptions;
     yAxis: AxisOptions;
+    isGroupingEnabled?: boolean;
 }
 
 export interface BarChartOptions extends CartesianChartOptions {
@@ -99,7 +100,6 @@ export interface ILabelFormattingOptions {
 
 export interface AxisOptions extends ILabelFormattingOptions {
     type?: 'category' | 'number' | 'groupedCategory';
-
     title?: CaptionOptions;
 
     lineWidth?: number;
@@ -107,9 +107,9 @@ export interface AxisOptions extends ILabelFormattingOptions {
 
     tickWidth?: number;
     tickSize?: number;
-    tickPadding?: number;
     tickColor?: string;
 
+    labelPadding?: number;
     labelRotation?: number;
     mirrorLabels?: boolean;
     parallelLabels?: boolean;

@@ -10,7 +10,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder[params.grouping ? "createGroupedLineChart" : "createLineChart"](this.chartOptions);
+        this.chart = ChartBuilder.createLineChart(this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
@@ -90,6 +90,26 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const labelColor = this.getLabelColor();
         const stroke = this.getAxisGridColor();
+        const labelFontWeight = 'normal';
+        const labelFontSize = 12;
+        const labelFontFamily = 'Verdana, sans-serif';
+        const axisColor = 'rgba(195, 195, 195, 1)';
+        const axisOptions = {
+            labelFontWeight,
+            labelFontSize,
+            labelFontFamily,
+            labelColor,
+            labelPadding: 5,
+            tickColor: axisColor,
+            tickSize: 6,
+            tickWidth: 1,
+            lineColor: axisColor,
+            lineWidth: 1,
+            gridStyle: [{
+                stroke,
+                lineDash: [4, 2]
+            }]
+        };
 
         return {
             background: {
@@ -107,10 +127,9 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
                 labelColor,
                 itemPaddingX: 16,
                 itemPaddingY: 8,
@@ -119,40 +138,12 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
                 markerStrokeWidth: 1
             },
             xAxis: {
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor,
+                ...axisOptions,
                 labelRotation: 335,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke,
-                    lineDash: [4, 2]
-                }]
             },
             yAxis: {
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor,
+                ...axisOptions,
                 labelRotation: 0,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke,
-                    lineDash: [4, 2]
-                }]
             },
             seriesDefaults: {
                 type: 'line',
@@ -163,7 +154,6 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
                 markerSize: 6,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,
-                tooltipRenderer: undefined,
                 showInLegend: true,
                 title: ''
             }

@@ -343,6 +343,7 @@ export {
     DoughnutChartOptions,
     CaptionOptions,
     ILabelFormattingOptions,
+    IGridStyle,
     AxisOptions,
     BarSeriesOptions,
     AreaSeriesOptions,
