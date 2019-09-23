@@ -61,7 +61,7 @@ export class LineSeries extends Series<CartesianChart> {
         }
     }
     get chart(): CartesianChart | undefined {
-        return this._chart as CartesianChart;
+        return this._chart;
     }
 
     protected _title: string = '';
@@ -239,22 +239,24 @@ export class LineSeries extends Series<CartesianChart> {
             return;
         }
 
-        const xAxis = chart.xAxis;
-        const yAxis = chart.yAxis;
+        const { xAxis, yAxis } = chart;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const data = this.data;
-        const xData = this.xData;
-        const yData = this.yData;
-        const n = xData.length;
-        const fill = this.fill;
-        const stroke = this.stroke;
-        const marker = this.marker;
-        const markerSize = this.markerSize;
-        const markerStrokeWidth = this.markerStrokeWidth;
 
+        const {
+            data,
+            xData,
+            yData,
+            fill,
+            stroke,
+            marker,
+            markerSize,
+            markerStrokeWidth,
+         } = this;
+
+        const n = xData.length;
         const lineNode: Path = this.lineNode;
         const linePath: Path2D = lineNode.path;
         const groupSelectionData: GroupSelectionDatum[] = [];
@@ -285,7 +287,7 @@ export class LineSeries extends Series<CartesianChart> {
             }
         }
 
-        lineNode.stroke = fill;
+        lineNode.stroke = fill; // use fill colour for the line
         lineNode.strokeWidth = this.strokeWidth;
 
         // ------------------------------------------
@@ -298,6 +300,7 @@ export class LineSeries extends Series<CartesianChart> {
 
         const highlightedNode = this.highlightedNode;
         const groupSelection = updateGroups.merge(enterGroups);
+        const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
 
         groupSelection.selectByClass(Arc)
             .each((arc, datum) => {
@@ -305,12 +308,8 @@ export class LineSeries extends Series<CartesianChart> {
                 arc.centerY = datum.y;
                 arc.radiusX = datum.radius;
                 arc.radiusY = datum.radius;
-                arc.fill = arc === highlightedNode && this.highlightStyle.fill !== undefined
-                    ? this.highlightStyle.fill
-                    : datum.fill;
-                arc.stroke = arc === highlightedNode && this.highlightStyle.stroke !== undefined
-                    ? this.highlightStyle.stroke
-                    : datum.stroke;
+                arc.fill = arc === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
+                arc.stroke = arc === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
                 arc.strokeWidth = datum.strokeWidth;
                 arc.visible = datum.radius > 0;
             });

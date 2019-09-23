@@ -20,7 +20,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             return;
         }
 
-        const chart = this.chart as CartesianChart;
+        const chart = this.chart;
         const fieldIds = params.fields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: ScatterSeries } = {};
         const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;

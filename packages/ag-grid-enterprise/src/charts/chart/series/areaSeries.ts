@@ -15,7 +15,7 @@ import { numericExtent } from "../../util/array";
 
 interface AreaSelectionDatum {
     yField: string;
-    points: {x: number, y: number}[];
+    points: { x: number, y: number }[];
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
@@ -38,7 +38,6 @@ export interface AreaTooltipRendererParams {
 }
 
 export class AreaSeries extends Series<CartesianChart> {
-
     static className = 'AreaSeries';
 
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
@@ -99,8 +98,6 @@ export class AreaSeries extends Series<CartesianChart> {
 
     private xData: string[] = [];
     private yData: number[][] = [];
-    private ySums: number[] = [];
-    private domainX: any[] = [];
     private domainY: any[] = [];
 
     set chart(chart: CartesianChart | undefined) {
@@ -110,7 +107,7 @@ export class AreaSeries extends Series<CartesianChart> {
         }
     }
     get chart(): CartesianChart | undefined {
-        return this._chart as CartesianChart;
+        return this._chart;
     }
 
     protected _xField: string = '';
@@ -275,7 +272,7 @@ export class AreaSeries extends Series<CartesianChart> {
         const normalizedTo = this.normalizedTo;
         const continuousX = chart.xAxis.scale instanceof ContinuousScale;
         const xData: string[] = this.xData = data.map(datum => datum[xField]);
-        const ySums: number[] = this.ySums = []; // used for normalization
+        const ySums: number[] = []; // used for normalization
         const yData: number[][] = this.yData = data.map((datum, xIndex) => {
             const values: number[] = [];
             let ySum = 0;
@@ -350,8 +347,8 @@ export class AreaSeries extends Series<CartesianChart> {
                 domainX[1] = max + 1;
             }
         }
-        this.domainX = domainX;
-        this.domainY = [yMin, yMax];
+
+        this.domainY = [ yMin, yMax ];
 
         if (chart) {
             chart.updateAxes();
@@ -376,31 +373,33 @@ export class AreaSeries extends Series<CartesianChart> {
             return;
         }
 
-        const xCount = this.data.length;
-        const xAxis = chart.xAxis;
-        const yAxis = chart.yAxis;
+        const { xAxis, yAxis } = chart;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const yFields = this.yFields;
-        const enabled = this.enabled;
-        const fills = this.fills;
-        const strokes = this.strokes;
-        const fillOpacity = this.fillOpacity;
-        const strokeOpacity = this.strokeOpacity;
-        const strokeWidth = this.strokeWidth;
-        const data = this.data;
-        const xData = this.xData;
-        const yData = this.yData;
-        const marker = this.marker;
-        const markerSize = this.markerSize;
-        const markerStrokeWidth = this.markerStrokeWidth;
 
+        const { 
+            yFields,
+            enabled,
+            fills,
+            strokes,
+            fillOpacity,
+            strokeOpacity,
+            strokeWidth,
+            data,
+            xData,
+            yData,
+            marker,
+            markerSize,
+            markerStrokeWidth,
+        } = this;
+
+        const xCount = data.length;
         const areaSelectionData: AreaSelectionDatum[] = [];
         const markerSelectionData: MarkerSelectionDatum[] = [];
-
         const last = xCount * 2 - 1;
+
         for (let i = 0; i < xCount; i++) {
             const xDatum = xData[i];
             const yDatum = yData[i];
@@ -522,17 +521,15 @@ export class AreaSeries extends Series<CartesianChart> {
             }
         });
 
+        const { fill, stroke } = this.highlightStyle;
+
         markerSelection.each((arc, datum) => {
             arc.centerX = datum.x;
             arc.centerY = datum.y;
             arc.radiusX = datum.radius;
             arc.radiusY = datum.radius;
-            arc.fill = arc === highlightedNode && this.highlightStyle.fill !== undefined
-                ? this.highlightStyle.fill
-                : datum.fill;
-            arc.stroke = arc === highlightedNode && this.highlightStyle.stroke !== undefined
-                ? this.highlightStyle.stroke
-                : datum.stroke;
+            arc.fill = arc === highlightedNode && fill !== undefined ? fill : datum.fill;
+            arc.stroke = arc === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
             arc.strokeWidth = markerStrokeWidth;
             arc.visible = datum.radius > 0 && !!enabled.get(datum.yField);
         });

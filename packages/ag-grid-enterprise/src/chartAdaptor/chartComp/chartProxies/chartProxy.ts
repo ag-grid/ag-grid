@@ -52,12 +52,12 @@ export type TitleProperty = 'text';
 export type TitleFontProperty = 'fontFamily' | 'fontStyle' | 'fontWeight' | 'fontSize' | 'color';
 export type ShadowProperty = 'enabled' | 'blur' | 'xOffset' | 'yOffset' | 'color';
 
-export abstract class ChartProxy<T extends ChartOptions> {
-    protected chart: Chart;
+export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions> {
+    protected chart: TChart;
     protected chartProxyParams: ChartProxyParams;
     protected overriddenPalette: Palette;
     protected chartType: ChartType;
-    protected chartOptions: T;
+    protected chartOptions: TOptions;
 
     protected constructor(chartProxyParams: ChartProxyParams) {
         this.chartProxyParams = chartProxyParams;
@@ -73,7 +73,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
     protected getAxisGridColor = (): string => this.isDarkTheme() ? "rgb(100, 100, 100)" : "rgb(219, 219, 219)";
     protected getBackgroundColor = (): string => this.isDarkTheme() ? "#2d3436" : "white";
 
-    protected abstract getDefaultOptions(): T;
+    protected abstract getDefaultOptions(): TOptions;
 
     protected initChartOptions(): void {
         const options = this.getDefaultOptions();
@@ -82,7 +82,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
         // allow users to override options before they are applied
         if (processChartOptions) {
             const params: ProcessChartOptionsParams = { type: this.chartType, options };
-            const overriddenOptions = processChartOptions(params) as T;
+            const overriddenOptions = processChartOptions(params) as TOptions;
             this.overridePalette(overriddenOptions);
             this.chartOptions = overriddenOptions;
         } else {

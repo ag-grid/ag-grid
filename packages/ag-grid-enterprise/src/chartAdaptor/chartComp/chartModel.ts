@@ -14,10 +14,10 @@ import {
     RowNode,
     RowRenderer
 } from "ag-grid-community";
-import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
-import {RangeController} from "../../rangeController";
-import {Palette} from "../../charts/chart/palettes";
-import {ChartProxy} from "./chartProxies/chartProxy";
+import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
+import { RangeController } from "../../rangeController";
+import { Palette } from "../../charts/chart/palettes";
+import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ColState {
     column?: Column;
@@ -65,7 +65,7 @@ export class ChartModel extends BeanStub {
     private datasource: ChartDatasource;
 
     private readonly chartId: string;
-    private chartProxy: ChartProxy<any>;
+    private chartProxy: ChartProxy<any, any>;
     private detached: boolean = false;
     private grouping: boolean;
     private columnNames: { [p: string]: string[] } = {};
@@ -269,91 +269,51 @@ export class ChartModel extends BeanStub {
         return groupActive && groupDimensionSelected;
     }
 
-    public isPivotActive(): boolean {
-        return this.columnController.isPivotActive();
-    }
+    public isPivotActive = (): boolean => this.columnController.isPivotActive();
 
-    public isPivotMode(): boolean {
-        return this.columnController.isPivotMode();
-    }
+    public isPivotMode = (): boolean => this.columnController.isPivotMode();
 
-    public isPivotChart(): boolean {
-        return this.pivotChart;
-    }
+    public isPivotChart = (): boolean => this.pivotChart;
 
-    public setChartProxy(chartProxy: ChartProxy<any>): void {
+    public setChartProxy(chartProxy: ChartProxy<any, any>): void {
         this.chartProxy = chartProxy;
     }
 
-    public getChartProxy(): ChartProxy<any> {
-        return this.chartProxy;
-    }
+    public getChartProxy = (): ChartProxy<any, any> => this.chartProxy;
 
-    public getChartId(): string {
-        return this.chartId;
-    }
+    public getChartId = (): string => this.chartId;
 
-    public getValueColState(): ColState[] {
-        return this.valueColState.map(this.displayNameMapper.bind(this));
-    }
+    public getValueColState = (): ColState[] => this.valueColState.map(this.displayNameMapper.bind(this));
 
-    public getDimensionColState(): ColState[] {
-        return this.dimensionColState;
-    }
+    public getDimensionColState = (): ColState[] => this.dimensionColState;
 
-    public getCellRanges(): CellRange[] {
-        return this.cellRanges;
-    }
+    public getCellRanges = (): CellRange[] => this.cellRanges;
 
-    public getChartType(): ChartType {
-        return this.chartType;
-    }
+    public getChartType = (): ChartType => this.chartType;
 
     public setActivePalette(palette: number) {
         this.activePalette = palette;
     }
 
-    public getActivePalette(): number {
-        return this.activePalette;
-    }
+    public getActivePalette = (): number => this.activePalette;
 
-    public getPalettes(): Palette[] {
-        return this.palettes;
-    }
+    public getPalettes = (): Palette[] => this.palettes;
 
-    public isSuppressChartRanges(): boolean {
-        return this.suppressChartRanges;
-    }
+    public isSuppressChartRanges = (): boolean => this.suppressChartRanges;
 
-    public isDetached(): boolean {
-        return this.detached;
-    }
+    public isDetached = (): boolean => this.detached;
 
     public toggleDetached(): void {
         this.detached = !this.detached;
     }
 
-    public getSelectedValueColState(): {colId: string, displayName: string}[] {
-        return this.getValueColState().filter(cs => cs.selected);
-    }
+    public getSelectedValueColState = (): {colId: string, displayName: string}[] => this.getValueColState().filter(cs => cs.selected);
 
-    public getSelectedValueCols(): Column[] {
-        return this.valueColState.filter(cs => cs.selected).map(cs => cs.column) as Column[];
-    }
+    public getSelectedValueCols = (): Column[] => this.valueColState.filter(cs => cs.selected).map(cs => cs.column!);
 
-    public getSelectedDimension(): ColState {
-        return this.dimensionColState.filter(cs => cs.selected)[0];
-    }
+    public getSelectedDimension = (): ColState => this.dimensionColState.filter(cs => cs.selected)[0];
 
-    private getColumnInDisplayOrder(allDisplayedColumns: Column[], listToSort: Column[]) {
-        const sortedList: Column[] = [];
-        allDisplayedColumns.forEach(col => {
-            if (listToSort.indexOf(col) > -1) {
-                sortedList.push(col);
-            }
-        });
-        return sortedList;
-    }
+    private getColumnInDisplayOrder = (allDisplayedColumns: Column[], listToSort: Column[]) => allDisplayedColumns.filter(col => _.includes(listToSort, col));
 
     private addRange(cellRangeType: CellRangeType, columns: Column[]) {
         const newRange = {
@@ -368,13 +328,9 @@ export class ChartModel extends BeanStub {
         cellRangeType === CellRangeType.DIMENSION ? this.cellRanges.unshift(newRange) : this.cellRanges.push(newRange);
     }
 
-    private getAllColumnsFromRanges(): Column[] {
-        return _.flatten(this.cellRanges.map(range => range.columns));
-    }
+    private getAllColumnsFromRanges = (): Column[] => _.flatten(this.cellRanges.map(range => range.columns));
 
-    private getColDisplayName(col: Column): string {
-        return this.columnController.getDisplayNameForColumn(col, 'chart') as string;
-    }
+    private getColDisplayName = (col: Column): string => this.columnController.getDisplayNameForColumn(col, 'chart')!;
 
     private getRowIndexes(): { startRow: number, endRow: number } {
         let startRow = 0, endRow = 0;
@@ -468,18 +424,9 @@ export class ChartModel extends BeanStub {
         return col;
     }
 
-    private isMultiCategoryChart(): boolean {
-        return [
-            ChartType.Pie,
-            ChartType.Doughnut,
-            ChartType.Scatter,
-            ChartType.Bubble
-        ].indexOf(this.chartType) < 0;
-    }
+    private isMultiCategoryChart = (): boolean => !_.includes([ ChartType.Pie, ChartType.Doughnut, ChartType.Scatter, ChartType.Bubble ], this.chartType);
 
-    private generateId(): string {
-        return 'id-' + Math.random().toString(36).substr(2, 16);
-    }
+    private generateId = (): string => 'id-' + Math.random().toString(36).substr(2, 16);
 
     public destroy() {
         super.destroy();

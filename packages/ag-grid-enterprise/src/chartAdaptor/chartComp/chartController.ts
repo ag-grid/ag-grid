@@ -1,8 +1,8 @@
-import {AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct,} from "ag-grid-community";
-import {RangeController} from "../../rangeController";
-import {ChartModel, ColState} from "./chartModel";
-import {Palette} from "../../charts/chart/palettes";
-import {ChartProxy} from "./chartProxies/chartProxy";
+import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct, _ } from "ag-grid-community";
+import { RangeController } from "../../rangeController";
+import { ChartModel, ColState } from "./chartModel";
+import { Palette } from "../../charts/chart/palettes";
+import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -68,21 +68,10 @@ export class ChartController extends BeanStub {
         this.raiseChartUpdatedEvent();
     }
 
-    public getChartType(): ChartType {
-        return this.model.getChartType();
-    }
-
-    public isPivotChart() {
-        return this.model.isPivotChart();
-    }
-
-    public getActivePalette(): number {
-        return this.model.getActivePalette();
-    }
-
-    public getPalettes(): Palette[] {
-        return this.model.getPalettes();
-    }
+    public getChartType = (): ChartType => this.model.getChartType();
+    public isPivotChart = () => this.model.isPivotChart();
+    public getActivePalette = (): number => this.model.getActivePalette();
+    public getPalettes = (): Palette[] => this.model.getPalettes();
 
     public setChartType(chartType: ChartType): void {
         this.model.setChartType(chartType);
@@ -96,7 +85,7 @@ export class ChartController extends BeanStub {
     }
 
     public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
-        return {dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState()};
+        return { dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState() };
     }
 
     public isDefaultCategorySelected() {
@@ -126,12 +115,10 @@ export class ChartController extends BeanStub {
         }
     }
 
-    public getChartProxy(): ChartProxy<any> {
-        return this.model.getChartProxy();
-    }
+    public getChartProxy = (): ChartProxy<any, any> => this.model.getChartProxy();
 
     public isActiveXYChart() {
-        const xyChartSelected = [ChartType.Scatter, ChartType.Bubble].indexOf(this.getChartType()) > -1;
+        const xyChartSelected = _.includes([ ChartType.Scatter, ChartType.Bubble ], this.getChartType());
         // x y charts behave like regular cartesian charts if the default category is not selected, i.e. (None)
         return xyChartSelected && this.isDefaultCategorySelected();
     }

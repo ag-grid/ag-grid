@@ -2,7 +2,6 @@ import { BarChartOptions, ChartType, _ } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { BarSeries } from "../../../../charts/chart/series/barSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export type BarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
@@ -22,7 +21,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-        const chart = this.chart as CartesianChart;
+        const chart = this.chart;
         const barSeries = chart.series[0] as BarSeries;
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
 

@@ -1,7 +1,6 @@
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { PieChartOptions, CaptionOptions } from "ag-grid-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { PolarChart } from "../../../../charts/chart/polarChart";
 import { PieSeries } from "../../../../charts/chart/series/pieSeries";
 import { PolarChartProxy } from "./polarChartProxy";
 
@@ -19,7 +18,7 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
             return;
         }
 
-        const pieChart = this.chart as PolarChart;
+        const pieChart = this.chart;
         const existingSeries = pieChart.series[0] as PieSeries;
         const existingSeriesId = existingSeries && existingSeries.angleField;
         const pieSeriesId = params.fields[0].colId;
@@ -62,6 +61,9 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
     protected getDefaultOptions(): PieChartOptions {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const labelColor = this.getLabelColor();
+        const labelFontWeight = 'normal';
+        const labelFontSize = 12;
+        const labelFontFamily = 'Verdana, sans-serif';
 
         return {
             background: {
@@ -79,10 +81,9 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
             legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
                 labelColor,
                 itemPaddingX: 16,
                 itemPaddingY: 8,
@@ -102,21 +103,19 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
                 calloutStrokeWidth: 1,
                 labelOffset: 3,
                 labelEnabled: false,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
                 labelColor,
                 labelMinAngle: 0,
                 tooltipEnabled: true,
-                tooltipRenderer: undefined,
                 showInLegend: true,
                 shadow: {
                     enabled: false,
                     blur: 5,
                     xOffset: 3,
                     yOffset: 3,
-                    color: 'rgba(0,0,0,0.5)'
+                    color: 'rgba(0, 0, 0, 0.5)'
                 }
             }
         };

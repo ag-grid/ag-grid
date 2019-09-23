@@ -1,7 +1,6 @@
 import { LineChartOptions, _ } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { LineSeries } from "../../../../charts/chart/series/lineSeries";
 import { CartesianChartProxy, LineMarkerProperty, LineSeriesProperty } from "./cartesianChartProxy";
 
@@ -14,14 +13,14 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-        const chart = this.chart as CartesianChart;
+        const chart = this.chart;
 
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
         }
 
-        const lineChart = this.chart as CartesianChart;
+        const lineChart = this.chart;
         const fieldIds = params.fields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: LineSeries } = {};
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();

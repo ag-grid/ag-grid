@@ -71,7 +71,7 @@ export class GridChartComp extends Component {
 
     private currentChartType: ChartType;
     private currentChartGroupingActive: boolean;
-    private chartProxy: ChartProxy<any>;
+    private chartProxy: ChartProxy<any, any>;
 
     private readonly params: GridChartParams;
 
@@ -162,7 +162,7 @@ export class GridChartComp extends Component {
 
     private getSelectedPalette = (): Palette => this.model.getPalettes()[this.model.getActivePalette()];
 
-    private createChartProxy(chartOptions: ChartProxyParams): ChartProxy<any> {
+    private createChartProxy(chartOptions: ChartProxyParams): ChartProxy<any, any> {
         switch (chartOptions.chartType) {
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:

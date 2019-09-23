@@ -14,7 +14,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
 
         this.initChartOptions();
         this.chart = ChartBuilder.createAreaChart(this.chartOptions);
-        this.setAxisPadding(this.chart as CartesianChart);
+        this.setAxisPadding(this.chart);
 
         const areaSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults!);
         
@@ -31,7 +31,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-        const chart = this.chart as CartesianChart;
+        const chart = this.chart;
 
         if (this.chartType === ChartType.Area) {
             // area charts have multiple series
@@ -58,7 +58,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             return;
         }
 
-        const lineChart = this.chart as CartesianChart;
+        const lineChart = this.chart;
         const fieldIds = params.fields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: AreaSeries } = {};
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();

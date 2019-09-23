@@ -134,7 +134,7 @@ export class BarSeries extends Series<CartesianChart> {
         }
     }
     get chart(): CartesianChart | undefined {
-        return this._chart as CartesianChart;
+        return this._chart;
     }
 
     protected _xField: string = '';

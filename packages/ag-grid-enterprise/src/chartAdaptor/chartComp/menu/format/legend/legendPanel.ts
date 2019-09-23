@@ -42,7 +42,7 @@ export class LegendPanel extends Component {
 
     private activePanels: Component[] = [];
 
-    private chartProxy: ChartProxy<any>;
+    private chartProxy: ChartProxy<any, any>;
     private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
