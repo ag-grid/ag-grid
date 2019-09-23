@@ -26,7 +26,9 @@ function getInitialColumnDefs() {
 function onDisplayedColumnsChanged(params) {
     //get current column order
     var gridCols = params.columnApi.getAllGridColumns();
-    var orderedGridColDefs = gridCols.map(col => col.getColDef());
+    var orderedGridColDefs = gridCols.map(function(col) {
+      return col.getColDef();
+    });
 
     // update filters tool panel with new column order
     var filtersToolPanel = params.api.getToolPanelInstance('filters');
