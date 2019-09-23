@@ -49,8 +49,8 @@ export class PrimaryColsListPanel extends Component {
         this.params = params;
         this.allowDragging = allowDragging;
 
-        if (this.params.syncColumnsSectionWithGrid) {
-            this.addDestroyableEventListener(this.globalEventService, Events.EVENT_COLUMN_MOVED, this.syncColumnsSectionWithGrid.bind(this));
+        if (this.params.syncLayoutWithGrid) {
+            this.addDestroyableEventListener(this.globalEventService, Events.EVENT_COLUMN_MOVED, this.syncLayoutWithGrid.bind(this));
         }
 
         this.addDestroyableEventListener(this.globalEventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
@@ -77,7 +77,7 @@ export class PrimaryColsListPanel extends Component {
         this.updateVisibilityOfRows();
     }
 
-    private syncColumnsSectionWithGrid(): void {
+    public syncLayoutWithGrid(): void {
         const inPivotMode = this.columnController.isPivotMode();
         const pivotActive = this.columnController.isPivotActive();
 
@@ -195,7 +195,6 @@ export class PrimaryColsListPanel extends Component {
             const lastChildIsDifferent = lastChild && getId(lastChild) !== getId(groupToAdd);
             return childGroupAlreadyExists && lastChildIsDifferent;
         };
-
 
         const addChildrenToGroup = (tree: AbstractColDef, groupId: string, colDef: AbstractColDef): boolean => {
             if (!this.isColGroupDef(tree)) return true;

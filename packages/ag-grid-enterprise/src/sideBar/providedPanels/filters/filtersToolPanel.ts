@@ -6,15 +6,20 @@ import {
     Component,
     EventService,
     IToolPanelComp,
-    ColDef, Events
+    ColDef, Events, IToolPanelParams, GridApi
 } from "ag-grid-community";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
+
+export interface ToolPanelFiltersCompParams extends IToolPanelParams {
+    syncLayoutWithGrid: boolean;
+}
 
 export interface IFiltersToolPanel {
     setFilterLayout(colDefs: ColDef[]): void;
     expandFilters(colIds?: string[]): void;
     collapseFilters(colIds?: string[]): void;
+    syncLayoutWithGrid(): void;
 }
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
@@ -22,20 +27,33 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private static TEMPLATE =
         `<div class="ag-filter-panel" ref="ePanelContainer" />`;
 
+    @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("eventService") private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
 
     private initialised = false;
     private filterComps: ToolPanelFilterComp[] = [];
 
+    private params: ToolPanelFiltersCompParams;
+
     constructor() {
         super(FiltersToolPanel.TEMPLATE);
     }
 
-    public init(): void {
+    public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.onColumnsMoved());
+        const defaultParams: ToolPanelFiltersCompParams = {
+            syncLayoutWithGrid: false,
+            api: this.gridApi
+        };
+        _.mergeDeep(defaultParams, params);
+        this.params = defaultParams;
+
+        if (this.params.syncLayoutWithGrid) {
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.syncLayoutWithGrid());
+        }
+
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
 
         if (this.columnController.isReady()) {
@@ -51,7 +69,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         primaryColsWithFilter.forEach(col => this.addFilterComps(col));
     }
 
-    public onColumnsMoved(): void {
+    public syncLayoutWithGrid(): void {
         const orderedGridColumns = this.columnController.getAllGridColumns();
 
         const orderedColumnsWithFilters = orderedGridColumns.filter(col => col.isFilterAllowed());
@@ -69,7 +87,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     public setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
-            this.init();
+            this.init(this.params);
         }
     }
 

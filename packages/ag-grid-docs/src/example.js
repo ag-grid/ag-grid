@@ -253,7 +253,7 @@ var gridOptions = {
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
                 toolPanelParams: {
-                    syncColumnsSectionWithGrid: true
+                    syncLayoutWithGrid: true
                 }
             },
             {
@@ -262,6 +262,9 @@ var gridOptions = {
                 labelKey: 'filters',
                 iconKey: 'filter',
                 toolPanel: 'agFiltersToolPanel',
+                toolPanelParams: {
+                    syncLayoutWithGrid: true
+                }
             }
         ],
         defaultToolPanel: 'columns',
