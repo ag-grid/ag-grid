@@ -34,7 +34,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     public setOriginalParent(originalParent: OriginalColumnGroup | null): void {
-        this.originalParent = this.originalParent;
+        this.originalParent = originalParent;
     }
 
     public getOriginalParent(): OriginalColumnGroup | null {

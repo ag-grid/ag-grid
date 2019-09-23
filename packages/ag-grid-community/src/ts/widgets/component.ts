@@ -1,4 +1,4 @@
-import { Autowired, Context, PreConstruct } from "../context/context";
+import { Context, PreConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { IComponent } from "../interfaces/iComponent";
 import { AgEvent } from "../events";
@@ -42,10 +42,6 @@ export class Component extends BeanStub {
 
     public getCompId(): number {
         return this.compId;
-    }
-
-    protected getChildComponents(): IComponent<any>[] {
-        return this.childComponents;
     }
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag

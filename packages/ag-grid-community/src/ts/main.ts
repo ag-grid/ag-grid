@@ -261,10 +261,9 @@ export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService } from "./interfaces/iClipboardService";
 export { IExcelCreator } from "./interfaces/iExcelCreator";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
-export { IAggFunc, ColGroupDef } from "./entities/colDef";
+export { IAggFunc, ColGroupDef, ColDef, AbstractColDef } from "./entities/colDef";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
-export { ColDef } from "./entities/colDef";
 export {
     ValueSetterParams,
     ValueParserParams,
@@ -300,6 +299,7 @@ export {
 } from "./entities/gridOptions";
 
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
+export { ColumnGroupChild } from "./entities/columnGroupChild";
 export { IViewportDatasource , IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
