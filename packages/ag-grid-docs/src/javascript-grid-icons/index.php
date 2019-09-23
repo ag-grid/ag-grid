@@ -289,71 +289,43 @@ unlinked
 </note>
 
 <style>
-    .tabpanel .content > div {
-        border-left-width: 1px;
+    .nav.nav-tabs .nav-link {
+        color: #fff;
     }
-    .tabpanel .content > div.download {
-        overflow-y: hidden;
-        order: 1;
-        flex: none;
-        border: none;
-        background-color: #0070c4;
-        color: white;
-        padding-left: 5px;
-        margin-top: 0;
+    .nav.nav-tabs .nav-link.active {
+        color: #000;
     }
-    .tile {
-        display: inline-flex;
+    .tab-pane.active {
+        display: flex;
         flex-direction: column;
-        margin: 5px;
-        width: 175px;
+    }
+    .col {
+        border: 1px solid transparent;
+        border-right-color: lightgrey;
+        border-bottom-color: lightgray;
+        font-size: 0.8rem;
     }
 
+    .tile {
+        height: 5rem;
+    }
     .tile img {
         height: 32px;
     }
-    
     .tile p {
-        white-space: nowrap;
-        text-align: center;
+        margin: 0;
     }
 
     .download a {
-        color: #b3d4ed;
+        color: #ebebeb;
     }
     .download a:hover {
-        color: white;
+        color: #fff;
         text-decoration: none;
     }
-    
 </style>
 
 <script>
-    var tabs;
-    function changeActiveTab(e) {
-        var tab, selectedIdx, currentIdx, i, cts;
-
-        if (e.target.classList.contains('selected')) { return; }
-        for (i = 0; i < tabs.length; i++) {
-            tab = tabs[i];
-            if (tab.classList.contains('selected')) {
-                selectedIdx = i;
-            }
-            if (tab === e.target) {
-                currentIdx = i;
-            }
-            if (currentIdx != null && selectedIdx != null) { break; }
-        }
-
-        tabs[selectedIdx].classList.toggle('selected');
-        tabs[currentIdx].classList.toggle('selected');
-
-        cts = document.querySelectorAll('.tabpanel .content');
-
-        cts[selectedIdx].classList.toggle('hidden');
-        cts[currentIdx].classList.toggle('hidden');
-    }
-
     function addIconsToContainer(theme) {
         var icons = [
             'aggregation', 'arrows', 'asc', 'cancel', 'chart',
@@ -369,19 +341,27 @@ unlinked
             'tick', 'tree-closed', 'tree-indeterminate', 'tree-open', 'unlinked'
         ];
 
-        var container = document.querySelector('.content.' + theme);
+        var container = document.querySelector('#' + theme);
 
         if (!container) {
             return;
         }
         var wrapper = document.createElement('div');
-        container.appendChild(wrapper);
+        wrapper.classList.add('row');
+        wrapper.style.overflowY = 'auto';
+        container.insertAdjacentElement('afterbegin', wrapper);
 
         icons.forEach(function(icon) {
             var tile = document.createElement('div');
             var img = document.createElement('img');
             var name = document.createElement('p');
             tile.classList.add('tile');
+            tile.classList.add('col');
+            tile.classList.add('col-3');
+            tile.classList.add('d-flex');
+            tile.classList.add('flex-column')
+            tile.classList.add('align-items-center');
+            tile.classList.add('justify-content-center');
 
             tile.appendChild(img);
             tile.appendChild(name);
@@ -397,13 +377,6 @@ unlinked
     }
 
     window.addEventListener("load", function() {
-        tabs = document.querySelectorAll('.tabpanel .tab');
-
-        for (var i = 0; i < tabs.length; i++) {
-            var tab = tabs[i];
-            tab.addEventListener('click', changeActiveTab);
-        }
-
         var themes = ['balham', 'material', 'base'];
 
         themes.forEach(function(theme) {
@@ -411,20 +384,26 @@ unlinked
         });
     });
 </script>
-    <div class="tabpanel">
-        <div class="tabheader">
-            <div class="tab selected">Balham Icons</div>
-            <div class="tab">Material Icons</div>
-            <div class="tab">Base Icons</div>
+    <ul class="nav nav-tabs bg-primary pl-2 pt-2" id="icon-tabpanel" role="tablist">
+        <li class="nav-item mr-2">
+            <a class="nav-link active" id="balham-tab" data-toggle="tab" href="#balham" role="tab" aria-controls="balham" aria-selected="true">Balham Icons</a>
+        </li>
+        <li class="nav-item mr-2">
+            <a class="nav-link" id="material-tab" data-toggle="tab" href="#material" role="tab" aria-controls="material" aria-selected="false">Material Icons</a>
+        </li>
+        <li class="nav-item mr-2">
+            <a class="nav-link" id="base-tab" data-toggle="tab" href="#base" role="tab" aria-controls="base" aria-selected="false">Base Icons</a>
+        </li>
+    </ul>
+    <div class="tab-content border border-top-0" id="icon-content" style="max-height: 34rem; overflow: hidden;">
+        <div class="tab-pane show active container pl-0" id="balham" role="tabpanel" aria-labelledby="balham-tab" style="max-height: 34rem;position: relative;">
+            <div class="download bg-primary p-2" style="bottom: 0; left: 0;"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
         </div>
-        <div class="content balham">
-        <div class="download"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
+        <div class="tab-pane container pl-0" id="material" role="tabpanel" aria-labelledby="material-tab" style="max-height: 34rem;">
+            <div class="download bg-primary p-2"><a href="./resources/material/material-icons.zip">Download All</a></div>
         </div>
-        <div class="content material hidden">
-            <div class="download"><a href="./resources/material/material-icons.zip">Download All</a></div>
-        </div>
-        <div class="content base hidden">
-            <div class="download"><a href="./resources/base/base-icons.zip">Download All</a></div>
+        <div class="tab-pane container pl-0" id="base" role="tabpanel" aria-labelledby="base-tab" style="max-height: 34rem;">
+            <div class="download bg-primary p-2"><a href="./resources/base/base-icons.zip">Download All</a></div>
         </div>
     </div>
 
