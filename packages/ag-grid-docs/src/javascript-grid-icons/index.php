@@ -348,6 +348,7 @@ unlinked
         }
         var wrapper = document.createElement('div');
         wrapper.classList.add('row');
+        wrapper.classList.add('mx-0');
         wrapper.style.overflowY = 'auto';
         container.insertAdjacentElement('afterbegin', wrapper);
 
@@ -358,6 +359,7 @@ unlinked
             tile.classList.add('tile');
             tile.classList.add('col');
             tile.classList.add('col-3');
+            tile.classList.add('p-0');
             tile.classList.add('d-flex');
             tile.classList.add('flex-column')
             tile.classList.add('align-items-center');
@@ -396,13 +398,13 @@ unlinked
         </li>
     </ul>
     <div class="tab-content border border-top-0" id="icon-content" style="max-height: 34rem; overflow: hidden;">
-        <div class="tab-pane show active container pl-0" id="balham" role="tabpanel" aria-labelledby="balham-tab" style="max-height: 34rem;position: relative;">
+        <div class="tab-pane show active container px-0" id="balham" role="tabpanel" aria-labelledby="balham-tab" style="max-height: 34rem;position: relative;">
             <div class="download bg-primary p-2" style="bottom: 0; left: 0;"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
         </div>
-        <div class="tab-pane container pl-0" id="material" role="tabpanel" aria-labelledby="material-tab" style="max-height: 34rem;">
+        <div class="tab-pane container px-0" id="material" role="tabpanel" aria-labelledby="material-tab" style="max-height: 34rem;">
             <div class="download bg-primary p-2"><a href="./resources/material/material-icons.zip">Download All</a></div>
         </div>
-        <div class="tab-pane container pl-0" id="base" role="tabpanel" aria-labelledby="base-tab" style="max-height: 34rem;">
+        <div class="tab-pane container px-0" id="base" role="tabpanel" aria-labelledby="base-tab" style="max-height: 34rem;">
             <div class="download bg-primary p-2"><a href="./resources/base/base-icons.zip">Download All</a></div>
         </div>
     </div>
