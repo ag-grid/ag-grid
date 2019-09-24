@@ -725,14 +725,24 @@
                 padding: $grid-size 0;
             }
 
-            .ag-group-component.ag-has-filter {
-                > .ag-group-component-title-bar {
-                    .ag-group-component-title:after {
-                        content: $ag-icon-filter;
-                        font-family: $icon-font-family;
+            .ag-group-component{
+                &.ag-has-filter {
+                    > .ag-group-component-title-bar {
+                        .ag-group-component-title:after {
+                            content: $ag-icon-filter;
+                            font-family: $icon-font-family;
+                        }
                     }
                 }
+
+                .ag-group-component-container {
+                    margin-left: 0;
+                    margin-right: 0;
+                    padding: 0;
+                }
             }
+
+
         }
 
         .ag-pivot-mode-panel {
