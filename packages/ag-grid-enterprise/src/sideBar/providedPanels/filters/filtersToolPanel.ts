@@ -84,19 +84,25 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private recursivelyAddGroupComps(columnGroup: OriginalColumnGroup, groupComp?: AgGroupComponent): void {
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) return;
 
+        let newGroupComp;
+
         if (columnGroup.isPadding()) {
             // skip padding groups
         } else {
             if (!groupComp) {
                 const groupName = this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
-                groupComp = this.createGroupComp(groupName as string); //TODO handle destroy
+                newGroupComp = this.createGroupComp(groupName as string); //TODO handle destroy
             } else {
                 const groupName = this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
-                groupComp.addItem(this.createGroupComp(groupName as string)); //TODO handle destroy
+
+                const subComp = this.createGroupComp(groupName as string);
+
+                groupComp.addItem(subComp); //TODO handle destroy
+                newGroupComp = subComp;
             }
         }
 
-        this.recursivelyAddComps(columnGroup.getChildren(), groupComp);
+        this.recursivelyAddComps(columnGroup.getChildren(), newGroupComp);
     }
 
     private addColumnComps(column: Column, groupComp?: AgGroupComponent): void {
