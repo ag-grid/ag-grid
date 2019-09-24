@@ -206,14 +206,23 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     private addFilterComp(column: Column, container: AgGroupComponent | null): void {
         const toolPanelFilterComp = new ToolPanelFilterComp();
+
         this.getContext().wireBean(toolPanelFilterComp);
         toolPanelFilterComp.setColumn(column);
         this.filterComps.push(toolPanelFilterComp);
+
         if (container) {
             container.addItem(toolPanelFilterComp);
+            this.addDestroyableEventListener(toolPanelFilterComp, Column.EVENT_FILTER_CHANGED, () => this.refreshFilter(container));
         } else {
             this.appendChild(toolPanelFilterComp);
         }
+    }
+
+    private refreshFilter(container: AgGroupComponent) {
+        const hasFilters = this.filterComps.some(comp => comp.isFilterActive());
+
+        _.addOrRemoveCssClass(container.getGui(), 'ag-has-filter', hasFilters);
     }
 
     private destroyFilters() {

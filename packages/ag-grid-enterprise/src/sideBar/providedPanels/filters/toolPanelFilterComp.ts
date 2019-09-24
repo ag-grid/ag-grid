@@ -81,12 +81,13 @@ export class ToolPanelFilterComp extends Component {
         eParent.appendChild(eIcon);
     }
 
-    private isFilterActive(): boolean {
+    public isFilterActive(): boolean {
         return this.filterManager.isFilterActive(this.column);
     }
 
     private onFilterChanged(): void {
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
+        this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 
     private doExpandOrCollapse(): void {
