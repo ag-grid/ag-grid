@@ -900,7 +900,12 @@
             "enterprise": true,
             "items": [
               {
-                "title": "Bar",
+                "title": "General",
+                "url": "javascript-grid-charts-customisation-general/",
+                "enterprise": true
+              },
+              {
+                "title": "Bar/Column",
                 "url": "javascript-grid-charts-customisation-bar/",
                 "enterprise": true
               },
@@ -910,7 +915,7 @@
                 "enterprise": true
               },
               {
-                "title": "Scatter",
+                "title": "Scatter/Bubble",
                 "url": "javascript-grid-charts-customisation-scatter/",
                 "enterprise": true
               },
@@ -920,13 +925,8 @@
                 "enterprise": true
               },
               {
-                "title": "Pie",
+                "title": "Pie/Doughnut",
                 "url": "javascript-grid-charts-customisation-pie/",
-                "enterprise": true
-              },
-              {
-                "title": "Doughnut",
-                "url": "javascript-grid-charts-customisation-doughnut/",
                 "enterprise": true
               }
             ]

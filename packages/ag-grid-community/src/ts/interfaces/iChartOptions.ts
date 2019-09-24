@@ -190,12 +190,11 @@ export interface ScatterSeriesOptions extends SeriesOptions {
     radiusFieldName?: string;
 
     fill?: string;
-    stroke?: string;
     fillOpacity?: number;
+    stroke?: string;
     strokeOpacity?: number;
     highlightStyle?: HighlightStyle;
 
-    marker?: boolean;
     markerSize?: number;
     minMarkerSize?: number;
     markerStrokeWidth?: number;

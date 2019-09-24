@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Charts - BETA</h1>
 
     <p class="lead">
-       This section introduces the grid's integrated charting functionality that allows users to chart directly inside
+       This section introduces the grid's integrated charting functionality, which allows users to chart directly inside
         the grid and supports applications that want to create pre-defined charts.
     </p>
 
@@ -30,7 +30,8 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>
             <a href="../javascript-grid-charts-overview/#user-created-charts">User Created Charts</a>: A user creates a
-            chart using the grid's UI by selecting a range of cells and then selecting to chart via the context menu.
+            chart using the grid's UI by selecting a range of cells or entering pivot mode and then selecting to chart
+            via the context menu.
         </li>
         <li>
             <a href="../javascript-grid-charts-overview/#application-created-charts">Application Created Charts</a>:
@@ -40,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        We are very excited to be introducing ag-Grid's new charting capability, however please be advised that there
+        We are very excited to be introducing ag-Grid's new charting capability, but please be advised that there
         could be some breaking changes around the API while it is still in beta. Please give us your feedback via
         <a href="https://ag-grid.zendesk.com/">Zendesk</a>, for existing customers, or alternatively
         <a href="https://github.com/ag-grid/ag-grid/">GitHub</a> can also be used.
@@ -64,7 +65,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        If you are not using ES6 Modules and instead using the bundled version of ag-Grid Enterprise, note that
+        If you are not using ES6 Modules and are instead using the bundled version of ag-Grid Enterprise, note that
         <code>ag-grid-enterprise.js</code> already contains the charting module.
     </note>
 
@@ -134,13 +135,13 @@ gridOptions = {
             <ul>
                 <p>
                 <li><a href="../javascript-grid-charts-range-chart/#creating-chart-ranges">Chart Ranges</a>: When a chart is created, corresponding
-                    chart ranges appear in the grid and are adjusted via the chart range handle.
+                    chart ranges appear in the grid and can be adjusted via the chart range handle.
                 </li>
                 </p>
                 <p>
                 <li><a href="../javascript-grid-charts-chart-ranges/#category-and-series-ranges/">Categories and Series</a>:
                     Columns can be configured as either categories or series for charting. If not configured then the
-                    grid will infer whether a column is category or series data.
+                    grid will infer whether a column contains category or series data.
                 </li>
                 </p>
             </ul>
@@ -159,14 +160,15 @@ gridOptions = {
                 <p>
                     <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
                     The chart toolbar is located in the top right area of the chart and allows
-                    the user to perform the following:
+                    a user to:
                 </p>
                     <p>
                     <ul>
                         <li style="padding-bottom: 5px">Change the chart type</li>
                         <li style="padding-bottom: 5px">Change the colour palette</li>
-                        <li style="padding-bottom: 5px">Select categories and series columns</li>
-                        <li style="padding-bottom: 5px">Format the chart</li>
+                        <li style="padding-bottom: 5px">Change which columns are used as categories and series</li>
+                        <li style="padding-bottom: 5px">Format different aspects of the chart</li>
+                        <li style="padding-bottom: 5px">Unlink the chart from the grid</li>
                         <li>Download the chart</li>
                     </ul>
                     </p>
@@ -215,7 +217,7 @@ gridOptions = {
         </li>
         <li>
             <b>High Performance</b>: 100 rows are randomly updated 10 times a second (1,000 updates per second).
-            Try updating the example via plunker with higher update frequencies and more data.
+            Try updating the example via Plunker with higher update frequencies and more data.
         </li>
     </ul>
 

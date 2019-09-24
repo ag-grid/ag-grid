@@ -96,7 +96,7 @@ function onFirstDataRendered(event) {
         aggFunc: 'sum',
         processChartOptions: function(params) {
             params.options.legendPosition = 'bottom';
-            params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
+            params.options.padding = { top: 20, left: 10, bottom: 30, right: 10 };
 
             params.options.seriesDefaults.tooltipRenderer = function (params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
@@ -121,7 +121,7 @@ function onFirstDataRendered(event) {
         aggFunc: 'sum',
         processChartOptions: function(params) {
             params.options.legendPosition = 'bottom';
-            params.options.padding = {top: 10, left: 10, bottom: 30, right: 10};
+            params.options.padding = { top: 20, left: 10, bottom: 30, right: 10 };
 
             params.options.seriesDefaults.tooltipRenderer = function (params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
