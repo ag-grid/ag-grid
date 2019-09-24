@@ -44,9 +44,11 @@ export class ToolPanelFilterComp extends Component {
     
     private eExpandChecked: HTMLElement;
     private eExpandUnchecked: HTMLElement;
+    private hideHeader: boolean;
 
-    constructor() {
+    constructor(hideHeader = false) {
         super(ToolPanelFilterComp.TEMPLATE);
+        this.hideHeader = hideHeader;
     }
 
     @PostConstruct
@@ -66,6 +68,12 @@ export class ToolPanelFilterComp extends Component {
         this.addInIcon('filter', this.eFilterIcon, this.column);
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
         _.addCssClass(this.eExpandChecked, 'ag-hidden');
+
+        if (this.hideHeader) {
+            _.addOrRemoveCssClass(this.eFilterToolPanelHeader, 'ag-hidden', true);
+            this.doExpand();
+        }
+
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     }
 

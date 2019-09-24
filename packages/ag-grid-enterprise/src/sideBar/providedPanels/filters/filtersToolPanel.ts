@@ -101,12 +101,16 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private addColumnComps(column: Column, groupComp?: AgGroupComponent): void {
         if (!column.isFilterAllowed()) return;
         if (column.getColDef() && column.getColDef().suppressToolPanel) return;
+
+        let hideHeader = false;
+
         if (!groupComp) {
             const groupName = this.columnController.getDisplayNameForColumn(column, 'header', false) as string;
             groupComp = this.createGroupComp(groupName); //TODO handle destroy
+            hideHeader = true;
         }
 
-        this.addFilterComp(column, groupComp);
+        this.addFilterComp(column, groupComp, hideHeader);
     }
 
     private createGroupComp(title: string): AgGroupComponent {
@@ -115,7 +119,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
-            alignItems: 'stretch'
+            alignItems: 'stretch',
+
         });
         this.getContext().wireBean(groupComp);
         this.appendChild(groupComp);
@@ -204,15 +209,17 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         }
     }
 
-    private addFilterComp(column: Column, container: AgGroupComponent | null): void {
-        const toolPanelFilterComp = new ToolPanelFilterComp();
-
+    private addFilterComp(column: Column, container: AgGroupComponent | null, hideHeader = false): void {
+        const toolPanelFilterComp = new ToolPanelFilterComp(hideHeader);
         this.getContext().wireBean(toolPanelFilterComp);
         toolPanelFilterComp.setColumn(column);
         this.filterComps.push(toolPanelFilterComp);
 
         if (container) {
             container.addItem(toolPanelFilterComp);
+            if (hideHeader) {
+                container.toggleGroupExpand();
+            }
             this.addDestroyableEventListener(toolPanelFilterComp, Column.EVENT_FILTER_CHANGED, () => this.refreshFilter(container));
         } else {
             this.appendChild(toolPanelFilterComp);
