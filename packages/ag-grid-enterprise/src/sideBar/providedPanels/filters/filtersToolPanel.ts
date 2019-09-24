@@ -225,16 +225,12 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             if (hideHeader) {
                 container.toggleGroupExpand();
             }
-            this.addDestroyableEventListener(toolPanelFilterComp, Column.EVENT_FILTER_CHANGED, () => this.refreshFilter(container));
+            this.addDestroyableEventListener(toolPanelFilterComp, Column.EVENT_FILTER_CHANGED, () => {
+                _.addOrRemoveCssClass(container.getGui(), 'ag-has-filter', toolPanelFilterComp.isFilterActive());
+            });
         } else {
             this.appendChild(toolPanelFilterComp);
         }
-    }
-
-    private refreshFilter(container: AgGroupComponent) {
-        const hasFilters = this.filterComps.some(comp => comp.isFilterActive());
-
-        _.addOrRemoveCssClass(container.getGui(), 'ag-has-filter', hasFilters);
     }
 
     private destroyFilters() {
