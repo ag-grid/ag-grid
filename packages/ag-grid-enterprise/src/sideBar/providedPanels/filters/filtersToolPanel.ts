@@ -84,7 +84,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private recursivelyAddGroupComps(columnGroup: OriginalColumnGroup, groupComp?: AgGroupComponent): void {
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) return;
 
-        let newGroupComp;
+        let newGroupComp = groupComp;
 
         if (columnGroup.isPadding()) {
             // skip padding groups
@@ -94,9 +94,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
                 newGroupComp = this.createGroupComp(groupName as string); //TODO handle destroy
             } else {
                 const groupName = this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
-
                 const subComp = this.createGroupComp(groupName as string);
-
                 groupComp.addItem(subComp); //TODO handle destroy
                 newGroupComp = subComp;
             }
