@@ -1,15 +1,22 @@
 import {
     _,
+    AgGroupComponent,
     Autowired,
+    ColDef,
     Column,
     ColumnController,
     Component,
+    Events,
     EventService,
+    GridApi,
     IToolPanelComp,
-    ColDef, Events, IToolPanelParams, GridApi
+    IToolPanelParams, OriginalColumnGroup, OriginalColumnGroupChild
 } from "ag-grid-community";
 
-import { ToolPanelFilterComp } from "./toolPanelFilterComp";
+import {ToolPanelFilterComp} from "./toolPanelFilterComp";
+import {ToolPanelColumnComp} from "../columns/panels/primaryColsPanel/toolPanelColumnComp";
+import {ColumnItem} from "../columns/panels/primaryColsPanel/primaryColsListPanel";
+import {ToolPanelColumnGroupComp} from "../columns/panels/primaryColsPanel/toolPanelColumnGroupComp";
 
 export interface ToolPanelFiltersCompParams extends IToolPanelParams {
     syncLayoutWithGrid: boolean;
@@ -35,6 +42,9 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private filterComps: ToolPanelFilterComp[] = [];
 
     private params: ToolPanelFiltersCompParams;
+
+    private columnTree: OriginalColumnGroupChild[];
+    private columnComps: { [key: string]: ColumnItem };
 
     constructor() {
         super(FiltersToolPanel.TEMPLATE);
@@ -63,10 +73,57 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     public onColumnsChanged(): void {
         this.destroyFilters();
-        const primaryCols: Column[] | null = this.columnController.getAllPrimaryColumns();
-        if (!primaryCols) { return; }
-        const primaryColsWithFilter = primaryCols.filter(col => col.isFilterAllowed());
-        primaryColsWithFilter.forEach(col => this.addFilterComps(col));
+
+        this.columnTree = this.columnController.getPrimaryColumnTree();
+
+        this.recursivelyAddComps(this.columnTree);
+    }
+
+    private recursivelyAddComps(tree: OriginalColumnGroupChild[], groupComp?: AgGroupComponent): void {
+        tree.forEach(child => {
+            if (child instanceof OriginalColumnGroup) {
+                this.recursivelyAddGroupComps(child as OriginalColumnGroup, groupComp);
+            } else {
+                this.addColumnComps(child as Column, groupComp);
+            }
+        });
+    }
+
+    private recursivelyAddGroupComps(columnGroup: OriginalColumnGroup, groupComp?: AgGroupComponent): void {
+        if (columnGroup.isPadding()) return; // skip padding groups
+        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) return;
+
+        if (!groupComp) {
+            groupComp = this.createGroupComp(columnGroup.getColGroupDef().headerName as string); //TODO handle name and destroy
+        } else {
+            //TODO add nested group comp
+            //this.addFilterComp(primaryColsWithFilter[6], groupComp);
+        }
+
+        this.recursivelyAddComps(columnGroup.getChildren(), groupComp);
+    }
+
+    private addColumnComps(column: Column, groupComp?: AgGroupComponent): void {
+        if (!column.isFilterAllowed()) return;
+
+        if (column.getColDef() && column.getColDef().suppressToolPanel) return;
+
+        if (groupComp) {
+            this.addFilterComp(column, groupComp);
+        }
+    }
+
+    private createGroupComp(title: string): AgGroupComponent {
+        const groupComp = new AgGroupComponent({
+            title,
+            enabled: true,
+            suppressEnabledCheckbox: true,
+            suppressOpenCloseIcons: false,
+            alignItems: 'stretch'
+        });
+        this.getContext().wireBean(groupComp);
+        this.appendChild(groupComp);
+        return groupComp;
     }
 
     public syncLayoutWithGrid(): void {
@@ -96,11 +153,18 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.destroyFilters();
 
+        const groupComp = new AgGroupComponent({
+            title: 'Fred',
+            enabled: true,
+            suppressEnabledCheckbox: true,
+            suppressOpenCloseIcons: false
+        });
+
         colDefs.forEach(colDef => {
             const key = colDef.colId ? colDef.colId : colDef.field as string;
             const column = this.columnController.getPrimaryColumn(key);
             if (column) {
-                this.addFilterComps(column);
+                this.addFilterComp(column, groupComp);
             } else {
                 console.warn('ag-Grid: unable to find column for the Filters Tool Panel using ' +
                     'supplied colDef:', colDef);
@@ -144,12 +208,16 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         }
     }
 
-    private addFilterComps(column: Column): void {
+    private addFilterComp(column: Column, container: AgGroupComponent | null): void {
         const toolPanelFilterComp = new ToolPanelFilterComp();
         this.getContext().wireBean(toolPanelFilterComp);
         toolPanelFilterComp.setColumn(column);
-        this.appendChild(toolPanelFilterComp);
         this.filterComps.push(toolPanelFilterComp);
+        if (container) {
+            container.addItem(toolPanelFilterComp);
+        } else {
+            this.appendChild(toolPanelFilterComp);
+        }
     }
 
     private destroyFilters() {
