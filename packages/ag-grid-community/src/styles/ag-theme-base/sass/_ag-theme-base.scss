@@ -725,7 +725,7 @@
                 padding: $grid-size 0;
             }
 
-            .ag-group-component{
+            .ag-group-component {
                 &.ag-has-filter {
                     > .ag-group-component-title-bar {
                         .ag-group-component-title:after {
@@ -739,6 +739,14 @@
                     margin-left: 0;
                     margin-right: 0;
                     padding: 0;
+                }
+                
+                // for nested panels
+                &.ag-group-item {
+                    flex-direction: column;
+                    margin: $grid-size;
+                    border-top-width: 0;
+                    background-color: darken($group-component-background-color, 2%);
                 }
             }
 
