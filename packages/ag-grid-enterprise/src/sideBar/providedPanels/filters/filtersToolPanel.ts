@@ -91,7 +91,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
                 const groupName = this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
                 groupComp = this.createGroupComp(groupName as string); //TODO handle destroy
             } else {
-                //TODO add nested group comp
+                const groupName = this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
+                groupComp.addItem(this.createGroupComp(groupName as string)); //TODO handle destroy
             }
         }
 
