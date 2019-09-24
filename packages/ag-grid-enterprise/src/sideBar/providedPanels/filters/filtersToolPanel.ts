@@ -10,7 +10,9 @@ import {
     EventService,
     GridApi,
     IToolPanelComp,
-    IToolPanelParams, OriginalColumnGroup, OriginalColumnGroupChild
+    IToolPanelParams,
+    OriginalColumnGroup,
+    OriginalColumnGroupChild
 } from "ag-grid-community";
 
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
@@ -36,7 +38,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     @Autowired('columnController') private columnController: ColumnController;
 
     private initialised = false;
-    private filterComps: ToolPanelFilterComp[] = [];
+    private allFilterComps: (ToolPanelFilterComp | AgGroupComponent)[] = [];
 
     private params: ToolPanelFiltersCompParams;
 
@@ -74,77 +76,78 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], groupComp?: AgGroupComponent): void {
         tree.forEach(child => {
             if (child instanceof OriginalColumnGroup) {
-                this.recursivelyAddGroupComps(child as OriginalColumnGroup, groupComp);
+                this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, groupComp);
             } else {
-                this.addColumnComps(child as Column, groupComp);
+                this.addFilterComp(child as Column, groupComp);
             }
         });
     }
 
-    private recursivelyAddGroupComps(columnGroup: OriginalColumnGroup, groupComp?: AgGroupComponent): void {
+    private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, groupComp?: AgGroupComponent): void {
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) return;
 
-        let newGroupComp = groupComp;
+        let currentGroupComp = groupComp;
 
-        if (columnGroup.isPadding()) {
-            // skip padding groups
-        } else {
-            if (!groupComp) {
-                const groupName = this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
-                newGroupComp = this.createGroupComp(groupName as string); //TODO handle destroy
-            } else {
-                const groupName = this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel');
+        if (!columnGroup.isPadding()) {
+            const groupName = this.getGroupDisplayName(columnGroup);
+            if (groupComp) {
                 const subComp = this.createGroupComp(groupName as string);
-                groupComp.addItem(subComp); //TODO handle destroy
-                newGroupComp = subComp;
+                groupComp.addItem(subComp);
+                currentGroupComp = subComp;
+            } else {
+                currentGroupComp = this.createGroupComp(groupName as string);
             }
         }
 
-        this.recursivelyAddComps(columnGroup.getChildren(), newGroupComp);
+        this.recursivelyAddComps(columnGroup.getChildren(), currentGroupComp);
     }
 
-    private addColumnComps(column: Column, groupComp?: AgGroupComponent): void {
-        if (!column.isFilterAllowed()) return;
-        if (column.getColDef() && column.getColDef().suppressToolPanel) return;
-
-        let hideHeader = false;
-
-        if (!groupComp) {
-            const groupName = this.columnController.getDisplayNameForColumn(column, 'header', false) as string;
-            groupComp = this.createGroupComp(groupName); //TODO handle destroy
-            hideHeader = true;
-        }
-
-        this.addFilterComp(column, groupComp, hideHeader);
-    }
-
-    private createGroupComp(title: string): AgGroupComponent {
+    private createGroupComp(groupName: string): AgGroupComponent {
         const groupComp = new AgGroupComponent({
-            title,
+            title: groupName,
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
             alignItems: 'stretch',
-
         });
+
         this.getContext().wireBean(groupComp);
         this.appendChild(groupComp);
+        this.allFilterComps.push(groupComp);
         return groupComp;
     }
 
-    public syncLayoutWithGrid(): void {
-        const orderedGridColumns = this.columnController.getAllGridColumns();
+    private addFilterComp(column: Column, groupComp?: AgGroupComponent): void {
+        if (!column.isFilterAllowed()) return;
 
-        const orderedColumnsWithFilters = orderedGridColumns.filter(col => col.isFilterAllowed());
-        const newFilterLayout = orderedColumnsWithFilters.map(col => col.getColDef());
+        //TODO: this would be breaking change???
+        //if (column.getColDef() && column.getColDef().suppressToolPanel) return;
 
-        // update filters tool panel with new column order
-        this.setFilterLayout(newFilterLayout);
+        const createFilterComp = (container: AgGroupComponent, hideHeader = false) => {
+            const toolPanelFilterComp = new ToolPanelFilterComp(hideHeader);
+            this.getContext().wireBean(toolPanelFilterComp);
+
+            toolPanelFilterComp.setColumn(column);
+            this.allFilterComps.push(toolPanelFilterComp);
+
+            container.addItem(toolPanelFilterComp);
+            if (hideHeader) container.toggleGroupExpand();
+        };
+
+        if (groupComp) {
+            // create filter comp and add it to existing group comp
+            createFilterComp(groupComp);
+        } else {
+            // create a new group comp and add filter comp to it without a header
+            const hideHeader = true;
+            const groupName = this.getColumnDisplayName(column);
+            const newGroupComp = this.createGroupComp(groupName);
+            createFilterComp(newGroupComp, hideHeader);
+        }
     }
 
     // we don't support refreshing, but must implement because it's on the tool panel interface
-    public refresh(): void {
-    }
+    public refresh(): void {}
 
     // lazy initialise the panel
     public setVisible(visible: boolean): void {
@@ -152,30 +155,6 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         if (visible && !this.initialised) {
             this.init(this.params);
         }
-    }
-
-    public setFilterLayout(colDefs: ColDef[]): void {
-        if (!colDefs) return;
-
-        this.destroyFilters();
-
-        const groupComp = new AgGroupComponent({
-            title: 'Fred',
-            enabled: true,
-            suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false
-        });
-
-        colDefs.forEach(colDef => {
-            const key = colDef.colId ? colDef.colId : colDef.field as string;
-            const column = this.columnController.getPrimaryColumn(key);
-            if (column) {
-                this.addFilterComp(column, groupComp);
-            } else {
-                console.warn('ag-Grid: unable to find column for the Filters Tool Panel using ' +
-                    'supplied colDef:', colDef);
-            }
-        });
     }
 
     public expandFilters(colIds?: string[]): void {
@@ -190,8 +169,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         const executedColIds: string[] = [];
 
         // done in reverse order to ensure top scroll position
-        for (let i = this.filterComps.length - 1; i >= 0; i--) {
-            const filterComp = this.filterComps[i] as ToolPanelFilterComp;
+        for (let i = this.allFilterComps.length - 1; i >= 0; i--) {
+            const filterComp = this.allFilterComps[i] as ToolPanelFilterComp;
 
             if (!colIds) {
                 // execute for all comps when no colIds are supplied
@@ -214,28 +193,20 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         }
     }
 
-    private addFilterComp(column: Column, container: AgGroupComponent | null, hideHeader = false): void {
-        const toolPanelFilterComp = new ToolPanelFilterComp(hideHeader);
-        this.getContext().wireBean(toolPanelFilterComp);
-        toolPanelFilterComp.setColumn(column);
-        this.filterComps.push(toolPanelFilterComp);
+    public syncLayoutWithGrid(): void {}
+    public setFilterLayout(colDefs: ColDef[]): void {}
 
-        if (container) {
-            container.addItem(toolPanelFilterComp);
-            if (hideHeader) {
-                container.toggleGroupExpand();
-            }
-            this.addDestroyableEventListener(toolPanelFilterComp, Column.EVENT_FILTER_CHANGED, () => {
-                _.addOrRemoveCssClass(container.getGui(), 'ag-has-filter', toolPanelFilterComp.isFilterActive());
-            });
-        } else {
-            this.appendChild(toolPanelFilterComp);
-        }
+    private getGroupDisplayName(columnGroup: OriginalColumnGroup): string {
+        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel') as string;
+    }
+
+    private getColumnDisplayName(column: Column): string {
+        return this.columnController.getDisplayNameForColumn(column, 'header', false) as string;
     }
 
     private destroyFilters() {
-        this.filterComps.forEach(filterComp => filterComp.destroy());
-        this.filterComps.length = 0;
+        this.allFilterComps.forEach(filterComp => filterComp.destroy());
+        this.allFilterComps.length = 0;
         _.clearElement(this.getGui());
     }
 
