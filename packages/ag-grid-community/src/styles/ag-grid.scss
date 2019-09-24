@@ -1390,6 +1390,18 @@ $handleSize: 5px;
         align-items: center;
     }
 
+    &.ag-alignment-stretch .ag-group-item {
+        align-items: stretch;
+    }
+
+    &.ag-alignment-start .ag-group-item {
+        align-items: flex-start;
+    }
+
+    &.ag-alignment-end .ag-group-item {
+        align-items: flex-end;
+    }
+
     &.ag-disabled {
         .ag-group-component-container {
             pointer-events: none;
