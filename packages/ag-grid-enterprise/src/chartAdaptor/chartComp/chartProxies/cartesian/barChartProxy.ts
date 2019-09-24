@@ -1,4 +1,4 @@
-import { BarChartOptions, ChartType, _ } from "ag-grid-community";
+import { BarChartOptions, ChartType, _, FontWeight } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { BarSeries } from "../../../../charts/chart/series/barSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -81,7 +81,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         const isColumnChart = this.isColumnChart();
         const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
         const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
-        const labelFontWeight = 'normal';
+        const labelFontWeight: FontWeight = 'normal';
         const labelFontSize = 12;
         const labelFontFamily = 'Verdana, sans-serif';
         const axisColor = 'rgba(195, 195, 195, 1)';

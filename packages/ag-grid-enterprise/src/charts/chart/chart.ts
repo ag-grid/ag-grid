@@ -1,3 +1,4 @@
+import { LegendPosition } from "ag-grid-community";
 import { Scene } from "../scene/scene";
 import { Group } from "../scene/group";
 import { Series, SeriesNodeDatum } from "./series/series";
@@ -9,8 +10,6 @@ import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { Caption } from "../caption";
-
-export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface ChartOptions {
     document?: Document;

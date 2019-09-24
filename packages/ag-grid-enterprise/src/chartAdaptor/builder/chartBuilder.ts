@@ -23,6 +23,7 @@ import {
     CartesianSeriesType,
     PolarSeriesType,
     SeriesType,
+    FontWeight,
 } from "ag-grid-community";
 
 import { CartesianChart, CartesianChartLayout } from "../../charts/chart/cartesianChart";
@@ -134,8 +135,8 @@ export class ChartBuilder {
 
     static initChart<C extends Chart>(chart: C, options: ChartOptions, seriesType?: SeriesType) {
         _.copyPropertiesIfPresent(options, chart, "parent", "width", "height", "legendPosition", "legendPadding", "data", "tooltipClass");
-        _.copyPropertyIfPresent(options, chart, "title", t => ChartBuilder.createChartTitle(t!));
-        _.copyPropertyIfPresent(options, chart, "subtitle", t => ChartBuilder.createChartSubtitle(t!));
+        _.copyPropertyIfPresent(options, chart, "title", t => ChartBuilder.createTitle(t!));
+        _.copyPropertyIfPresent(options, chart, "subtitle", t => ChartBuilder.createSubtitle(t!));
         _.copyPropertyIfPresent(options, chart, "series", s => s!.map(series => ChartBuilder.createSeries(series, seriesType)).filter(x => x));
         _.copyPropertyIfPresent(options, chart, "padding", p => new Padding(p!.top, p!.right, p!.bottom, p!.left));
 
@@ -319,7 +320,7 @@ export class ChartBuilder {
             "itemPaddingY");
     }
 
-    static setDefaultFontOptions(options: CaptionOptions, fontSize = 16, fontWeight = "bold", fontFamily = "Verdana, sans-serif") {
+    static setDefaultFontOptions(options: CaptionOptions, fontSize = 16, fontWeight: FontWeight = "bold", fontFamily = "Verdana, sans-serif") {
         if (options.fontSize === undefined) {
             options.fontSize = fontSize;
         }
@@ -333,7 +334,7 @@ export class ChartBuilder {
         }
     }
 
-    static createAxisTitle(options: CaptionOptions) {
+    static createTitle(options: CaptionOptions) {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -345,19 +346,8 @@ export class ChartBuilder {
         return ChartBuilder.createCaption(options);
     }
 
-    static createChartTitle(options: CaptionOptions) {
-        options = Object.create(options);
 
-        if (options.text === undefined) {
-            options.text = 'Title';
-        }
-
-        this.setDefaultFontOptions(options);
-
-        return ChartBuilder.createCaption(options);
-    }
-
-    static createChartSubtitle(options: CaptionOptions) {
+    static createSubtitle(options: CaptionOptions) {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -395,7 +385,7 @@ export class ChartBuilder {
             }
             
             if (name === 'title' && options.title) {
-                axis.title = ChartBuilder.createAxisTitle(options.title);
+                axis.title = ChartBuilder.createTitle(options.title);
                 continue;
             }
 

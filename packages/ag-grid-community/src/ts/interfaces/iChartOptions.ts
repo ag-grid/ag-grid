@@ -1,18 +1,20 @@
 export interface ChartOptions {
     document?: Document;
     parent?: HTMLElement;
-    width?: number;
-    height?: number;
-    background?: BackgroundOptions;
     series?: any[];
     data?: any;
+
+    // can be customised through API:
+    width?: number;
+    height?: number;
     padding?: IPadding;
+    background?: BackgroundOptions;
+    title?: CaptionOptions;
+    subtitle?: CaptionOptions;
+    legend?: LegendOptions;
     legendPosition?: LegendPosition;
     legendPadding?: number;
     tooltipClass?: string;
-    legend?: LegendOptions;
-    title?: CaptionOptions;
-    subtitle?: CaptionOptions;
 }
 
 export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUnlink' | 'chartDownload';
@@ -91,8 +93,8 @@ interface IPadding {
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface ILabelFormattingOptions {
-    labelFontStyle?: string;
-    labelFontWeight?: string;
+    labelFontStyle?: FontStyle;
+    labelFontWeight?: FontWeight;
     labelFontSize?: number;
     labelFontFamily?: string;
     labelColor?: string;
@@ -335,10 +337,13 @@ export interface BackgroundOptions {
 
 export interface CaptionOptions {
     text?: string;
-    fontStyle?: string;
-    fontWeight?: string;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
     fontSize?: number;
     fontFamily?: string;
     color?: string;
     enabled?: boolean;
 }
+
+export type FontStyle = "normal" | "italic" | "oblique";
+export type FontWeight = "normal" | "bold" | "bolder" | "lighter" | number;

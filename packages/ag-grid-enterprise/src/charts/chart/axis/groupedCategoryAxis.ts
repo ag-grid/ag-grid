@@ -1,4 +1,4 @@
-import { IGridStyle } from "ag-grid-community";
+import { IGridStyle, FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { Line } from "../../scene/shape/line";
@@ -160,8 +160,8 @@ export class GroupedCategoryAxis implements IAxisFormatting, ILabelFormatting {
 
     labelFormatter?: (params: {value: any, index: number}) => string;
 
-    labelFontStyle: string = '';
-    labelFontWeight: string = '';
+    labelFontStyle: FontStyle | undefined = undefined;
+    labelFontWeight: FontWeight | undefined = undefined;
     labelFontSize: number = 12;
     labelFontFamily: string = 'Verdana, sans-serif';
 

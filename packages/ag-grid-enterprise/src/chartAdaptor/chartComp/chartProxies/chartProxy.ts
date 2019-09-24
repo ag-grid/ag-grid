@@ -7,9 +7,10 @@ import {
     Events,
     EventService,
     PieChartOptions,
-    ProcessChartOptionsParams
+    ProcessChartOptionsParams,
+    LegendPosition,
 } from "ag-grid-community";
-import { Chart, LegendPosition } from "../../../charts/chart/chart";
+import { Chart } from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
 import { Caption } from "../../../charts/caption";
 import { BarSeries } from "../../../charts/chart/series/barSeries";

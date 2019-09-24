@@ -1,3 +1,4 @@
+import { Color, FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../../scene/group";
 import { Line } from "../../scene/shape/line";
 import { Text } from "../../scene/shape/text";
@@ -14,7 +15,6 @@ import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
 import { Caption } from "../../caption";
 import { Shape } from "../../scene/shape/shape";
-import { Color } from "ag-grid-community";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     index: number;
@@ -153,25 +153,25 @@ export class PieSeries extends Series<PolarChart> {
         return this._labelOffset;
     }
 
-    private _labelFontStyle: string | undefined = undefined;
-    set labelFontStyle(value: string | undefined) {
+    private _labelFontStyle: FontStyle | undefined = undefined;
+    set labelFontStyle(value: FontStyle | undefined) {
         if (this._labelFontStyle !== value) {
             this._labelFontStyle = value;
             this.scheduleLayout();
         }
     }
-    get labelFontStyle(): string | undefined {
+    get labelFontStyle(): FontStyle | undefined {
         return this._labelFontStyle;
     }
 
-    private _labelFontWeight: string | undefined = undefined;
-    set labelFontWeight(value: string | undefined) {
+    private _labelFontWeight: FontWeight | undefined = undefined;
+    set labelFontWeight(value: FontWeight | undefined) {
         if (this._labelFontWeight !== value) {
             this._labelFontWeight = value;
             this.scheduleLayout();
         }
     }
-    get labelFontWeight(): string | undefined {
+    get labelFontWeight(): FontWeight | undefined {
         return this._labelFontWeight;
     }
 

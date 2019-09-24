@@ -1,3 +1,4 @@
+import { FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../scene/group";
 import { Rect } from "../scene/shape/rect";
 import { Text } from "../scene/shape/text";
@@ -45,17 +46,17 @@ export class MarkerLabel extends Group {
         return this.label.text;
     }
 
-    set labelFontStyle(value: string | undefined) {
+    set labelFontStyle(value: FontStyle | undefined) {
         this.label.fontStyle = value;
     }
-    get labelFontStyle(): string | undefined {
+    get labelFontStyle(): FontStyle | undefined {
         return this.label.fontStyle;
     }
 
-    set labelFontWeight(value: string | undefined) {
+    set labelFontWeight(value: FontWeight | undefined) {
         this.label.fontWeight = value;
     }
-    get labelFontWeight(): string | undefined {
+    get labelFontWeight(): FontWeight | undefined {
         return this.label.fontWeight;
     }
 

@@ -1,7 +1,6 @@
-import { ChartType, ScatterChartOptions, _ } from "ag-grid-community";
+import { ChartType, ScatterChartOptions, _, FontWeight } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { ChartProxyParams, UpdateChartParams, FieldDefinition } from "../chartProxy";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";
 import { ChartModel } from "../../chartModel";
 import { CartesianChartProxy, LineMarkerProperty, ScatterSeriesProperty } from "./cartesianChartProxy";
@@ -123,7 +122,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         const labelColor = this.getLabelColor();
         const stroke = this.getAxisGridColor();
         const isBubble = this.chartType === ChartType.Bubble;
-        const labelFontWeight = 'normal';
+        const labelFontWeight: FontWeight = 'normal';
         const labelFontSize = 12;
         const labelFontFamily = 'Verdana, sans-serif';
         const axisColor = 'rgba(195, 195, 195, 1)';

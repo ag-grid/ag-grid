@@ -355,7 +355,10 @@ export {
     PolarChartOptions,
     LegendOptions,
     SeriesOptions,
-    LineTooltipRendererParams
+    LineTooltipRendererParams,
+    FontStyle,
+    FontWeight,
+    LegendPosition
 } from "./interfaces/iChartOptions";
 
 // modules

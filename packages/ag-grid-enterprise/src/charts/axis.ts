@@ -1,4 +1,4 @@
-import { IGridStyle } from "ag-grid-community";
+import { IGridStyle, FontStyle, FontWeight } from "ag-grid-community";
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
@@ -20,8 +20,8 @@ enum Tags {
 
 export interface ILabelFormatting {
     labelFontFamily: string;
-    labelFontStyle: string;
-    labelFontWeight: string;
+    labelFontStyle?: FontStyle;
+    labelFontWeight?: FontWeight;
     labelFontSize: number;
     labelPadding: number;
     labelColor?: string;
@@ -159,8 +159,8 @@ export class Axis<S extends Scale<D, number>, D = any> implements IAxisFormattin
      */
     labelFormatter?: (params: {value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string}) => string;
 
-    labelFontStyle: string = '';
-    labelFontWeight: string = '';
+    labelFontStyle: FontStyle | undefined = undefined;
+    labelFontWeight: FontWeight | undefined = undefined;
     labelFontSize: number = 12;
     labelFontFamily: string = 'Verdana, sans-serif';
 

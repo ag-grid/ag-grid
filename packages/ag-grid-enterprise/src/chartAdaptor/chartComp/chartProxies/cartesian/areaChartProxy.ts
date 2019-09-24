@@ -1,4 +1,4 @@
-import { AreaChartOptions, ChartType, _ } from "ag-grid-community";
+import { AreaChartOptions, ChartType, _, FontWeight } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { AreaSeries } from "../../../../charts/chart/series/areaSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -126,7 +126,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const labelColor = this.getLabelColor();
         const stroke = this.getAxisGridColor();
-        const labelFontWeight ='normal';
+        const labelFontWeight: FontWeight = 'normal';
         const labelFontSize = 12;
         const labelFontFamily = 'Verdana, sans-serif';
         const axisColor = 'rgba(195, 195, 195, 1)';

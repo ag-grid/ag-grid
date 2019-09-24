@@ -1,3 +1,4 @@
+import { Color, FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
@@ -11,7 +12,6 @@ import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
-import { Color } from "ag-grid-community";
 import { NumberAxis } from "../axis/numberAxis";
 
 interface SelectionDatum extends SeriesNodeDatum {
@@ -26,8 +26,8 @@ interface SelectionDatum extends SeriesNodeDatum {
     strokeWidth: number;
     label?: {
         text: string,
-        fontStyle?: string,
-        fontWeight?: string,
+        fontStyle?: FontStyle,
+        fontWeight?: FontWeight,
         fontSize: number,
         fontFamily: string,
         fill: string,
@@ -249,25 +249,25 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelEnabled;
     }
 
-    private _labelFontStyle: string | undefined = undefined;
-    set labelFontStyle(value: string | undefined) {
+    private _labelFontStyle: FontStyle | undefined = undefined;
+    set labelFontStyle(value: FontStyle | undefined) {
         if (this._labelFontStyle !== value) {
             this._labelFontStyle = value;
             this.update();
         }
     }
-    get labelFontStyle(): string | undefined {
+    get labelFontStyle(): FontStyle | undefined {
         return this._labelFontStyle;
     }
 
-    private _labelFontWeight: string | undefined = undefined;
-    set labelFontWeight(value: string | undefined) {
+    private _labelFontWeight: FontWeight | undefined = undefined;
+    set labelFontWeight(value: FontWeight | undefined) {
         if (this._labelFontWeight !== value) {
             this._labelFontWeight = value;
             this.update();
         }
     }
-    get labelFontWeight(): string | undefined {
+    get labelFontWeight(): FontWeight | undefined {
         return this._labelFontWeight;
     }
 

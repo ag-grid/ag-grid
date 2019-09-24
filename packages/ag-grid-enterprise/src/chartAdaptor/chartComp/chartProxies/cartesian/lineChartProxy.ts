@@ -1,4 +1,4 @@
-import { LineChartOptions, _ } from "ag-grid-community";
+import { LineChartOptions, _, FontWeight } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { LineSeries } from "../../../../charts/chart/series/lineSeries";
@@ -89,7 +89,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const labelColor = this.getLabelColor();
         const stroke = this.getAxisGridColor();
-        const labelFontWeight = 'normal';
+        const labelFontWeight: FontWeight = 'normal';
         const labelFontSize = 12;
         const labelFontFamily = 'Verdana, sans-serif';
         const axisColor = 'rgba(195, 195, 195, 1)';
