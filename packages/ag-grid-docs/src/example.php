@@ -75,15 +75,5 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 
 <script src="example.js"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-<script src="dist/homepage.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue"></script>
-<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
-<script src="tutorial.js"></script>
-
-
-
 </body>
 </html>
