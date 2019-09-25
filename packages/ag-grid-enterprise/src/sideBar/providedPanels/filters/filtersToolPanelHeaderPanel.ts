@@ -79,10 +79,8 @@ export class FiltersToolPanelHeaderPanel extends Component {
         const showFilter = true;
         const showExpand = true;
 
-        const groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
-
         _.setDisplayed(this.eFilterWrapper, showFilter);
-        _.setDisplayed(this.eExpand, showExpand && groupsPresent);
+        _.setDisplayed(this.eExpand, showExpand);
     }
 
     private addEventListeners(): void {
