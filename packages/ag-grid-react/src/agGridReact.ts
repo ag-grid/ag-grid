@@ -87,13 +87,6 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.columnApi = this.gridOptions.columnApi!;
     }
 
-    shouldComponentUpdate() {
-        // we want full control of the dom, as ag-Grid doesn't use React internally,
-        // so for performance reasons we tell React we don't need render called after
-        // property changes.
-        return false;
-    }
-
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
         // if the grid has been destroyed in the meantime just resolve
         if (!this.api) {
@@ -161,13 +154,28 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         return ChangeDetectionStrategyType.DeepValueCheck;
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    shouldComponentUpdate(nextProps: any) {
+        this.processPropsChanges(this.props, nextProps);
+
+        // we want full control of the dom, as ag-Grid doesn't use React internally,
+        // so for performance reasons we tell React we don't need render called after
+        // property changes.
+        return false;
+    }
+
+    componentDidUpdate(prevProps: any) {
+        this.processPropsChanges(prevProps, this.props);
+    }
+
+    processPropsChanges(prevProps: any, nextProps: any) {
         const changes = <any>{};
 
-        this.extractGridPropertyChanges(nextProps, changes);
+        this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
 
-        ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
+        if (Object.keys(changes).length > 0) {
+            ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
+        }
     }
 
     private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
@@ -192,20 +200,20 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         }
     }
 
-    private extractGridPropertyChanges(nextProps: any, changes: any) {
+    private extractGridPropertyChanges(prevProps: any, nextProps: any, changes: any) {
         let debugLogging = !!nextProps.debug;
 
         const changedKeys = Object.keys(nextProps);
         changedKeys.forEach((propKey) => {
             if (ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
                 const changeDetectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
-                if (!changeDetectionStrategy.areEqual(this.props[propKey], nextProps[propKey])) {
+                if (!changeDetectionStrategy.areEqual(prevProps[propKey], nextProps[propKey])) {
                     if (debugLogging) {
                         console.log(`agGridReact: [${propKey}] property changed`);
                     }
 
                     changes[propKey] = {
-                        previousValue: this.props[propKey],
+                        previousValue: prevProps[propKey],
                         currentValue: nextProps[propKey]
                     };
                 }
@@ -217,7 +225,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
                 }
                 changes[funcName] = {
-                    previousValue: this.props[funcName],
+                    previousValue: prevProps[funcName],
                     currentValue: nextProps[funcName]
                 };
             }
