@@ -50,6 +50,9 @@ class NameFilter extends React.Component {
     same so put them directly onto your React Component.
 </p>
 
+<h3>React Hooks</h3>
+<p>Please see <a href="../react-16/#react-hooks">here</a> for information on using Hooks as Filter Components.</p>
+
 <h3 id="accessing-the-react-component-instance"> Accessing
     the React Component Instance</h3>
 

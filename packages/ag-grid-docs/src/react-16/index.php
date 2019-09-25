@@ -133,16 +133,16 @@ class StyledRenderer extends Component {
     </snippet>
 
     <h3 id="react-hooks">React Hooks</h3>
-    <p>React Hooks are fully supported as cell renderers - please refer to our working example in <a
+    <p>React Hooks are fully supported within ag-Grid - please refer to our working example in <a
                 href="https://github.com/ag-grid/ag-grid-react-example/">GitHub</a>.</p>
 
-    <note>You can currently use Hooks for renderers and editors only - support for React Hooks in Filters is not currently supported.</note>
-    
-    <h4>Hook Cell Editor</h4>
-    
-    <p>In order to use a hook as a Cell Editor you'll need to wrap your hook with <code>forwardRef</code> and then expose Grid related lifecycle methods
+    <p>Hooks as Cell Renderers, Header Components and so on will work as expected out of the box, but in order to use a
+    hooks as a grid component that has mandatory lifecycle methods (such as a Cell Editor) you'll need to wrap your hook
+    with <code>forwardRef</code> and then expose Grid related lifecycle methods
     with <code>useImperativeHandle</code>, for example:</p>
-    
+
+    <h4 id="hook-cell-editor">Hook Cell Editor</h4>
+
 <snippet>
 import React, <span ng-non-bindable>{</span>useEffect, forwardRef, useImperativeHandle, useRef} from "react";
 
@@ -158,6 +158,31 @@ export default forwardRef((props, ref) => {
     return &lt;input type="text" ref={inputRef} defaultValue={props.value}/&gt;;
 })
 </snippet>
+
+    <h4 id="hook-cell-filter">Hook Filter</h4>
+
+<snippet>
+import React, <span ng-non-bindable>{</span>forwardRef, useImperativeHandle, useRef} from "react";
+
+export default forwardRef((props, ref) => {
+    const inputRef = useRef();
+    useImperativeHandle(ref, () => {
+        return {
+            isFilterActive() {
+                return inputRef.current.value !== '';
+            },
+
+            doesFilterPass: (params) => {
+                return params.data.price.toString() === inputRef.current.value;
+            }
+        };
+    });
+
+    return &lt;input type="text" ref={inputRef} onChange={() => props.filterChangedCallback()}/>;
+})
+</snippet>
+
+<p>The same applies to any other component to be used within the grid that requires lifecycle methods to be present.</p>
 
     <h2 id="react-row-data-control">Row Data Control</h2>
     <p>By default the ag-Grid React component will check props passed in to deteremine if data has changed and will only re-render based on actual changes.</p>
