@@ -195,6 +195,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
     strokeOpacity?: number;
     highlightStyle?: HighlightStyle;
 
+    marker?: boolean;
     markerSize?: number;
     minMarkerSize?: number;
     markerStrokeWidth?: number;
