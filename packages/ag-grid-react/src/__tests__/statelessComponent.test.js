@@ -60,7 +60,6 @@ class GridWithStatelessFunction extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
-                    reactNext={true}
                 />
             </div>
         );

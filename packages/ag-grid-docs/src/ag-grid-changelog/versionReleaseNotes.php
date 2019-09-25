@@ -1,8 +1,27 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_22_0_0">
+    <p>Release 22.0.0 (TBH 2019)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+        </li>
+    </ul>
+
+    <p>Breaking Changes:</p>
+    <ul>
+        <li>
+            AG-3316 - agGridReact needs to be updated to use the updated react lifecycle hooks.
+            React 16.3 is now the minimum version supported by AgGridReact.
+        </li>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_21_2_0">
     <p>Release 21.2.0 (30th Aug 2019)</p>
 
     <p>Feature Highlights:</p>
 
+    <span style="font-weight: bold"></span>
     <ul>
         <li>
             AG-3215 - Add Pivot Chart

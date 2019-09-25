@@ -9,6 +9,9 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="react-15">ag-Grid with React 15+</h1>
 
+    <note>Version 21.2.0 of <code>AgGridReact</code> is the last version that supports React 15+.</note>
+
+
     <h3>Control React Components Container</h3>
 
     <p>By default user supplied React components will be rendered with a <code>div</code> container but it is possible to have your specify

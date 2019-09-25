@@ -20,8 +20,6 @@ var gridOptions = {
         sortable: true,
     },
 
-    reactNext: true,
-
     // set rowData to null or undefined to show loading panel by default
     rowData: null,
     columnDefs: columnDefs,

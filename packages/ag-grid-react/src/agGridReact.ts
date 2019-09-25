@@ -1,6 +1,5 @@
 import * as React from "react";
 import {Component, ReactPortal} from "react";
-import * as ReactDOM from "react-dom";
 import * as PropTypes from "prop-types";
 import {
     Autowired,
@@ -17,7 +16,6 @@ import {
 import {AgGridColumn} from "./agGridColumn";
 import {ReactComponent} from "./reactComponent";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
-import {LegacyReactComponent} from "./legacyReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
@@ -263,19 +261,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
     @Autowired("agGridReact") private agGridReact!: AgGridReact;
 
     createWrapper(UserReactComponent: { new(): any }): WrapableInterface {
-        // at some point soon unstable_renderSubtreeIntoContainer is going to be dropped (and in a minor release at that)
-        // this uses the existing mechanism as long as possible, but switches over to using Portals when
-        // unstable_renderSubtreeIntoContainer is no longer an option
-        return this.useLegacyReact() ?
-            new LegacyReactComponent(UserReactComponent, this.agGridReact) :
-            new ReactComponent(UserReactComponent, this.agGridReact);
-    }
-
-    private useLegacyReact() {
-        // force use of react next (ie portals) if unstable_renderSubtreeIntoContainer is no longer present
-        // or if the user elects to try it
-        return (typeof ReactDOM.unstable_renderSubtreeIntoContainer !== "function")
-            || (this.agGridReact && this.agGridReact.gridOptions && !this.agGridReact.gridOptions.reactNext);
+        return new ReactComponent(UserReactComponent, this.agGridReact);
     }
 }
 

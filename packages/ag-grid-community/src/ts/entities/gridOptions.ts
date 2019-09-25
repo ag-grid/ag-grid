@@ -259,9 +259,6 @@ export interface GridOptions {
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
 
-    // in effect whether or not to use React Portals for processing React Components within the grid
-    reactNext?: boolean;
-
     statusBar?: {
         statusPanels: StatusPanelDef[]
     };

@@ -10,19 +10,6 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="react-16">ag-Grid with React 16+</h1>
 
-    <p>With React 16 <a href="https://reactjs.org/docs/portals.html">Portals</a> were introduced and these are the official way to create React components dynamically within React so
-        this is what we use internally for component creation within the grid.</p>
-    <p>If you use React 16+ you'll need to enable <code>reactNext </code> as follows:</p>
-
-    <snippet>
-        // Grid Definition
-        &lt;AgGridReact
-            reactNext={true}
-            ...other bindings
-    </snippet>
-
-    <p>In a future release we'll switch to make <code>reactNext</code> the default, but for now this needs to be made explicit.</p>
-
     <h3>Control React Components Container</h3>
     <p>By default user supplied React components will be wrapped in a <code>div</code> but it is possible to have your component
         wrapped in a container of your choice (i.e. a <code>span</code> etc), perhaps to override/control a third party component.</p>
@@ -108,7 +95,7 @@ export default connect(
     },
     null,
     null,
-    { forwardRef: true } // must be supplied for react/redux when using GridOptions.reactNext
+    { forwardRef: true } // must be supplied for react/redux when using AgGridReact
 )(PriceRenderer);
     </snippet>
 

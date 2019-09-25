@@ -21,7 +21,7 @@ afterEach(() => {
     agGridReact = null;
 });
 
-it('reactNext with wrapping element set to div renders as expected', () => {
+it('wrapping element set to div renders as expected', () => {
     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class=\"ag-react-container\"><div>Blerp</div></div>`);
 });
 
@@ -58,7 +58,6 @@ class GridWithNoComponentContainerSpecified extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
-                    reactNext={true}
                     componentWrappingElement="div"
                 />
             </div>

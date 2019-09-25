@@ -44,7 +44,6 @@ class FileBrowser extends Component {
           getRowNodeId={data => data.id}
           onRowDragEnd={this.onRowDragEnd}
           frameworkComponents={this.frameworkComponents}
-          reactNext={true}
         >
         </AgGridReact>
       </div>
@@ -79,7 +78,7 @@ class FileBrowser extends Component {
 }
 
 FileBrowser.contextTypes = {
-    store: PropTypes.object                         // must be supplied when using redux with reactNext
+    store: PropTypes.object                         // must be supplied when using redux with AgGridReact
 };
 
 const mapStateToProps = (state) => ({files: state.files});
