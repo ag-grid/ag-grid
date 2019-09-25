@@ -43,8 +43,6 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     @Autowired('columnController') private columnController: ColumnController;
 
     private initialised = false;
-    private childDestroyFuncs: Function[] = [];
-
     private params: ToolPanelFiltersCompParams;
 
     constructor() {
@@ -61,7 +59,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
 
-        this.filtersToolPanelHeaderPanel.init();
+        this.filtersToolPanelHeaderPanel.init(); //TODO add suppress header panel option
+
         this.filtersToolPanelListPanel.init(this.params);
     }
 
@@ -71,47 +70,26 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         if (visible && !this.initialised) {
             this.init(this.params);
         }
-
-        // this.addComponent(new FiltersToolPanelHeaderPanel());
-        // this.addComponent(new FiltersToolPanelListPanel());
-
     }
 
-    public expandFilters(colIds?: string[]): void {}
-    public collapseFilters(colIds?: string[]): void {}
-    public syncLayoutWithGrid(): void {}
-    public setFilterLayout(colDefs: ColDef[]): void {}
-
-    private addComponent(component: Component): void {
-        this.getContext().wireBean(component);
-        this.getGui().appendChild(component.getGui());
-        this.childDestroyFuncs.push(component.destroy.bind(component));
+    public expandFilters(colIds?: string[]): void {
+        //TODO
     }
-
-    public destroyChildren(): void {
-        this.childDestroyFuncs.forEach(func => func());
-        this.childDestroyFuncs.length = 0;
-        _.clearElement(this.getGui());
+    public collapseFilters(colIds?: string[]): void {
+        //TODO
+    }
+    public syncLayoutWithGrid(): void {
+        //TODO
+    }
+    public setFilterLayout(colDefs: ColDef[]): void {
+        //TODO
     }
 
     public refresh(): void {
-        this.destroyChildren();
         this.init(this.params);
     }
 
     public destroy(): void {
-        this.destroyChildren();
         super.destroy();
     }
-
-    // private destroyFilters() {
-    //     this.allFilterComps.forEach(filterComp => filterComp.destroy());
-    //     this.allFilterComps.length = 0;
-    //     // _.clearElement(this.getGui()); //TODO
-    // }
-    //
-    // public destroy() {
-    //     this.destroyFilters();
-    //     super.destroy();
-    // }
 }

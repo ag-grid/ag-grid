@@ -9,33 +9,16 @@ import {
     Events,
     EventService,
     GridApi,
-    IToolPanelComp,
-    IToolPanelParams,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
-    RefSelector
 } from "ag-grid-community";
 
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
+import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
 
-export interface ToolPanelFiltersCompParams extends IToolPanelParams {
-    syncLayoutWithGrid: boolean;
-}
+export class FiltersToolPanelListPanel extends Component {
 
-export interface IFiltersToolPanel {
-    setFilterLayout(colDefs: ColDef[]): void;
-    expandFilters(colIds?: string[]): void;
-    collapseFilters(colIds?: string[]): void;
-    syncLayoutWithGrid(): void;
-}
-
-export class FiltersToolPanelListPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
-
-    private static TEMPLATE =
-        `<div class="ag-filter-list-panel"></div>`;
-
-    @RefSelector('ePanelContainer')
-    private ePanelContainer: HTMLElement;
+    private static TEMPLATE = `<div class="ag-filter-list-panel"></div>`;
 
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("eventService") private eventService: EventService;
@@ -199,8 +182,12 @@ export class FiltersToolPanelListPanel extends Component implements IFiltersTool
         }
     }
 
-    public syncLayoutWithGrid(): void {}
-    public setFilterLayout(colDefs: ColDef[]): void {}
+    public syncLayoutWithGrid(): void {
+        //TODO
+    }
+    public setFilterLayout(colDefs: ColDef[]): void {
+        //TODO
+    }
 
     private getGroupDisplayName(columnGroup: OriginalColumnGroup): string {
         return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel') as string;
@@ -213,7 +200,7 @@ export class FiltersToolPanelListPanel extends Component implements IFiltersTool
     private destroyFilters() {
         this.allFilterComps.forEach(filterComp => filterComp.destroy());
         this.allFilterComps.length = 0;
-        // _.clearElement(this.getGui()); //TODO
+        _.clearElement(this.getGui());
     }
 
     public destroy() {
