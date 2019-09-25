@@ -1,6 +1,5 @@
 import {
     _,
-    AgGroupComponent,
     Autowired,
     ColDef,
     Column,
@@ -15,6 +14,7 @@ import {
 
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
+import {ToolPanelFilterGroupComp} from "./toolPanelFilterGroupComp";
 
 export class FiltersToolPanelListPanel extends Component {
 
@@ -25,7 +25,6 @@ export class FiltersToolPanelListPanel extends Component {
     @Autowired('columnController') private columnController: ColumnController;
 
     private initialised = false;
-    private allFilterComps: (ToolPanelFilterComp | AgGroupComponent)[] = [];
 
     private params: ToolPanelFiltersCompParams;
 
@@ -57,87 +56,47 @@ export class FiltersToolPanelListPanel extends Component {
     public onColumnsChanged(): void {
         this.destroyFilters();
         const columnTree = this.columnController.getPrimaryColumnTree();
-        this.recursivelyAddComps(columnTree, undefined, 0);
+
+        const comps = this.recursivelyAddComps(columnTree, 0);
+        comps.forEach(comp => {
+            if (comp) this.appendChild(comp);
+        });
     }
 
-    private recursivelyAddComps(tree: OriginalColumnGroupChild[], groupComp?: AgGroupComponent, counter?: number): void {
-        tree.forEach(child => {
+    private recursivelyAddComps(tree: OriginalColumnGroupChild[], depth: number): (ToolPanelFilterGroupComp | null)[] {
+        return _.flatten(tree.map(child => {
             if (child instanceof OriginalColumnGroup) {
-                this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, groupComp, counter || 0);
+                return _.flatten(this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, depth));
             } else {
-                this.addFilterComp(child as Column, groupComp);
+                const hideFilterCompHeader = depth === 0;
+                const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
+                this.getContext().wireBean(filterComp);
+                filterComp.setColumn(child as Column);
+
+                if (depth > 0) {
+                    return filterComp;
+                } else {
+                    const filterGroupComp = new ToolPanelFilterGroupComp(child, [filterComp], depth);
+                    this.getContext().wireBean(filterGroupComp);
+                    filterGroupComp.collapse();
+                    return filterGroupComp;
+                }
             }
-        });
+        }));
     }
 
-    private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, groupComp?: AgGroupComponent, counter?: number): void {
-        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) return;
+    private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, depth: number): ToolPanelFilterGroupComp[] {
+        // if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) //TODO
 
-        let currentGroupComp = groupComp;
+        const newDepth = columnGroup.isPadding() ? depth : depth + 1;
+        const childFilterComps = _.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));
 
-        if (counter == null) {
-            counter = 0;
-        }
+        if (columnGroup.isPadding()) return childFilterComps;
 
-        if (!columnGroup.isPadding()) {
-            const groupName = this.getGroupDisplayName(columnGroup);
-            if (groupComp) {
-                const subComp = this.createGroupComp(groupName as string);
-                groupComp.addItem(subComp);
-                currentGroupComp = subComp;
-            } else {
-                currentGroupComp = this.createGroupComp(groupName as string);
-            }
-            _.addCssClass(currentGroupComp.getGui(), `ag-level-${counter}`);
-        }
+        const filterGroupComp = new ToolPanelFilterGroupComp(columnGroup, childFilterComps, depth);
+        this.getContext().wireBean(filterGroupComp);
 
-        this.recursivelyAddComps(columnGroup.getChildren(), currentGroupComp, counter + 1);
-    }
-
-    private createGroupComp(groupName: string): AgGroupComponent {
-        const groupComp = new AgGroupComponent({
-            title: groupName,
-            enabled: true,
-            suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false,
-            alignItems: 'stretch'
-        });
-
-        this.getContext().wireBean(groupComp);
-        this.appendChild(groupComp);
-        this.allFilterComps.push(groupComp);
-        return groupComp;
-    }
-
-    private addFilterComp(column: Column, groupComp?: AgGroupComponent): void {
-        if (!column.isFilterAllowed()) return;
-
-        //TODO: this would be breaking change???
-        //if (column.getColDef() && column.getColDef().suppressToolPanel) return;
-
-        const createFilterComp = (container: AgGroupComponent, hideHeader = false): ToolPanelFilterComp => {
-            const toolPanelFilterComp = new ToolPanelFilterComp(hideHeader);
-            this.getContext().wireBean(toolPanelFilterComp);
-
-            toolPanelFilterComp.setColumn(column);
-            this.allFilterComps.push(toolPanelFilterComp);
-            container.addItem(toolPanelFilterComp);
-            return toolPanelFilterComp;
-        };
-
-        if (groupComp) {
-            // create filter comp and add it to existing group comp
-            createFilterComp(groupComp);
-        } else {
-            // create a new group comp and add filter comp to it without a header
-            const groupName = this.getColumnDisplayName(column);
-            const columnGroupComp = this.createGroupComp(groupName);
-            const columnFilterGroup: ToolPanelFilterComp = createFilterComp(columnGroupComp, true);
-            columnGroupComp.toggleGroupExpand(false);
-
-            this.addDestroyableEventListener(columnGroupComp, 'expanded', () => columnFilterGroup.doExpand());
-            this.addDestroyableEventListener(columnGroupComp, 'collapsed', () => columnFilterGroup.doCollapse());
-        }
+        return [filterGroupComp];
     }
 
     // we don't support refreshing, but must implement because it's on the tool panel interface
@@ -160,31 +119,7 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private executeOnFilterComps(callbackFunc: (filterComp: ToolPanelFilterComp) => void, colIds?: string[]): void {
-        const executedColIds: string[] = [];
-
-        // done in reverse order to ensure top scroll position
-        for (let i = this.allFilterComps.length - 1; i >= 0; i--) {
-            const filterComp = this.allFilterComps[i] as ToolPanelFilterComp;
-
-            if (!colIds) {
-                // execute for all comps when no colIds are supplied
-                callbackFunc(filterComp);
-            } else {
-                const colId = filterComp.getColumn().getColId();
-                const shouldExecute = colIds.indexOf(colId) > -1;
-                if (shouldExecute) {
-                    callbackFunc(filterComp);
-                    executedColIds.push(colId);
-                }
-            }
-        }
-
-        if (colIds) {
-            const unrecognisedColIds = colIds.filter(colId => executedColIds.indexOf(colId) < 0);
-            if (unrecognisedColIds.length > 0) {
-                console.warn('ag-Grid: unable to find filters for colIds:', unrecognisedColIds);
-            }
-        }
+        //TODO
     }
 
     public syncLayoutWithGrid(): void {
@@ -194,17 +129,9 @@ export class FiltersToolPanelListPanel extends Component {
         //TODO
     }
 
-    private getGroupDisplayName(columnGroup: OriginalColumnGroup): string {
-        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel') as string;
-    }
-
-    private getColumnDisplayName(column: Column): string {
-        return this.columnController.getDisplayNameForColumn(column, 'header', false) as string;
-    }
-
     private destroyFilters() {
-        this.allFilterComps.forEach(filterComp => filterComp.destroy());
-        this.allFilterComps.length = 0;
+        // this.allFilterComps.forEach(filterComp => filterComp.destroy());
+        // this.allFilterComps.length = 0;
         _.clearElement(this.getGui());
     }
 
