@@ -697,6 +697,10 @@
         border-right: 0;
 
         .ag-filter-panel {
+            color: $header-foreground-color;
+            font-weight: $secondary-font-weight;
+            font-size: $secondary-font-size;
+            font-family: $secondary-font-family;
             .ag-filter-toolpanel-header {
                 &.ag-filter-header {
                     min-height: $header-height;
@@ -717,6 +721,13 @@
 
             .ag-group-component-title-bar {
                 min-height: $header-height;
+
+                &:after {
+                    content: $ag-icon-filter;
+                    font-family: $icon-font-family;
+                    font-size: 1rem;
+                    margin-left: $grid-size;
+                }
                 .ag-column-group-icons {
                     margin: 0 $grid-size;
                 }
@@ -727,11 +738,46 @@
                 padding: 0;
                 .ag-group-item {
                     margin: $grid-size $grid-size / 2;
+                    .ag-group-component-title-bar {
+                        background-color: $group-component-background-color;
+                    }
+                    .ag-filter-toolpanel-header {
+                        padding: $grid-size / 2 0;
+                    }
                     .ag-filter-toolpanel-body {
-                        margin: $grid-size 0;
+                        &:not(:empty) {
+                            margin: $grid-size 0;
+                        }
                         .ag-filter-air {
                             border: 1px solid $border-color;
                             padding-top: $grid-size;
+                            color: $foreground-color;
+                            font-weight: $font-weight;
+                            font-size: $font-size;
+                            font-family: $font-family;
+                        }
+                    }
+                }
+
+                .ag-group-component.ag-group-item {
+                    border-top: none;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                    .ag-group-component-title-bar {
+                        min-height: unset;
+                        height: unset;
+                        margin: $grid-size 0;
+                    }
+                    @for $i from 1 through 5 {
+                        &.ag-level-#{$i} {
+                            @if $i > 1 {
+                                .ag-group-component-title-bar {
+                                    padding-left: 1rem * ($i - 1);
+                                }
+                            }
+                            .ag-filter-toolpanel-header {
+                                padding-left: 1rem * $i;
+                            }
                         }
                     }
                 }

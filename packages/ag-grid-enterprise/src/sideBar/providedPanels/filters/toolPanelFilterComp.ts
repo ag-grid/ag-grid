@@ -23,8 +23,7 @@ export class ToolPanelFilterComp extends Component {
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
                 <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>
             </div>
-            <div class="ag-filter-toolpanel-body ag-filter" ref="agFilterToolPanelBody"/>
-        </div>`;
+            <div class="ag-filter-toolpanel-body ag-filter" ref="agFilterToolPanelBody"/></div>`;
 
     @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
     @RefSelector('eFilterName') private eFilterName: HTMLElement;

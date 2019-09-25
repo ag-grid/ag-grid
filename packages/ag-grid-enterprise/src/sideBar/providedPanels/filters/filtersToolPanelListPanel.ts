@@ -57,23 +57,27 @@ export class FiltersToolPanelListPanel extends Component {
     public onColumnsChanged(): void {
         this.destroyFilters();
         const columnTree = this.columnController.getPrimaryColumnTree();
-        this.recursivelyAddComps(columnTree);
+        this.recursivelyAddComps(columnTree, undefined, 0);
     }
 
-    private recursivelyAddComps(tree: OriginalColumnGroupChild[], groupComp?: AgGroupComponent): void {
+    private recursivelyAddComps(tree: OriginalColumnGroupChild[], groupComp?: AgGroupComponent, counter?: number): void {
         tree.forEach(child => {
             if (child instanceof OriginalColumnGroup) {
-                this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, groupComp);
+                this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, groupComp, counter || 0);
             } else {
                 this.addFilterComp(child as Column, groupComp);
             }
         });
     }
 
-    private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, groupComp?: AgGroupComponent): void {
+    private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, groupComp?: AgGroupComponent, counter?: number): void {
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) return;
 
         let currentGroupComp = groupComp;
+
+        if (counter == null) {
+            counter = 0;
+        }
 
         if (!columnGroup.isPadding()) {
             const groupName = this.getGroupDisplayName(columnGroup);
@@ -84,9 +88,10 @@ export class FiltersToolPanelListPanel extends Component {
             } else {
                 currentGroupComp = this.createGroupComp(groupName as string);
             }
+            _.addCssClass(currentGroupComp.getGui(), `ag-level-${counter}`);
         }
 
-        this.recursivelyAddComps(columnGroup.getChildren(), currentGroupComp);
+        this.recursivelyAddComps(columnGroup.getChildren(), currentGroupComp, counter + 1);
     }
 
     private createGroupComp(groupName: string): AgGroupComponent {
