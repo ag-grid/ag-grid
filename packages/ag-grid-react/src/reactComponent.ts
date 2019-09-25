@@ -5,6 +5,7 @@ import {Promise, Utils} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
 import {assignProperties} from "./utils";
+import generateNewKey from "./keyGenerator";
 
 export class ReactComponent extends BaseReactComponent {
 
@@ -64,7 +65,8 @@ export class ReactComponent extends BaseReactComponent {
         const reactComponent = React.createElement(this.reactComponent, params);
         const portal: ReactPortal = ReactDOM.createPortal(
             reactComponent,
-            this.eParentElement as any
+            this.eParentElement as any,
+            generateNewKey()
         );
         this.portal = portal;
         this.parentComponent.mountReactPortal(portal!, this, resolve);
