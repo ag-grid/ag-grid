@@ -610,7 +610,6 @@
             padding-left: $grid-size;
         }
 
-
         .ag-set-filter-list {
             height: $virtual-item-height * 6;
         }
@@ -699,6 +698,19 @@
 
         .ag-filter-panel {
             width: 100%;
+
+            .ag-filters-tool-panel-header-panel {
+                height: $header-height;
+                display: flex;
+                flex: none;
+
+                .ag-filters-tool-panel-filter-wrapper {
+                    flex: 30 1 auto;
+                    input {
+                        width: 100%;
+                    }
+                }
+            }
 
             .ag-filter-toolpanel-instance {
                 color: $secondary-foreground-color;

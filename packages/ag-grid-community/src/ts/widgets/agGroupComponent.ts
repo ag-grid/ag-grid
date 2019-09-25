@@ -163,6 +163,11 @@ export class AgGroupComponent extends Component {
                 type: 'expanded',
             };
             this.dispatchEvent(event);
+        } else {
+            const event = {
+                type: 'collapsed',
+            };
+            this.dispatchEvent(event);
         }
 
         return this;

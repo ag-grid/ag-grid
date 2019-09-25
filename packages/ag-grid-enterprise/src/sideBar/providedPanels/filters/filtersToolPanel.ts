@@ -12,10 +12,12 @@ import {
     IToolPanelComp,
     IToolPanelParams,
     OriginalColumnGroup,
-    OriginalColumnGroupChild
+    OriginalColumnGroupChild,
+    RefSelector
 } from "ag-grid-community";
 
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
+import {FiltersToolPanelHeaderPanel} from "./filtersToolPanelHeaderPanel";
 
 export interface ToolPanelFiltersCompParams extends IToolPanelParams {
     syncLayoutWithGrid: boolean;
@@ -31,7 +33,15 @@ export interface IFiltersToolPanel {
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
 
     private static TEMPLATE =
-        `<div class="ag-filter-panel" ref="ePanelContainer" />`;
+        `<div class="ag-filter-panel">           
+            <ag-filters-tool-panel-header ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>           
+        </div>`;
+
+    @RefSelector('filtersToolPanelHeaderPanel')
+    private filtersToolPanelHeaderPanel: FiltersToolPanelHeaderPanel;
+
+    @RefSelector('ePanelContainer')
+    private ePanelContainer: HTMLElement;
 
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("eventService") private eventService: EventService;
@@ -108,7 +118,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
-            alignItems: 'stretch',
+            alignItems: 'stretch'
         });
 
         this.getContext().wireBean(groupComp);
@@ -123,15 +133,14 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         //TODO: this would be breaking change???
         //if (column.getColDef() && column.getColDef().suppressToolPanel) return;
 
-        const createFilterComp = (container: AgGroupComponent, hideHeader = false) => {
+        const createFilterComp = (container: AgGroupComponent, hideHeader = false): ToolPanelFilterComp => {
             const toolPanelFilterComp = new ToolPanelFilterComp(hideHeader);
             this.getContext().wireBean(toolPanelFilterComp);
 
             toolPanelFilterComp.setColumn(column);
             this.allFilterComps.push(toolPanelFilterComp);
-
             container.addItem(toolPanelFilterComp);
-            if (hideHeader) container.toggleGroupExpand();
+            return toolPanelFilterComp;
         };
 
         if (groupComp) {
@@ -139,10 +148,13 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             createFilterComp(groupComp);
         } else {
             // create a new group comp and add filter comp to it without a header
-            const hideHeader = true;
             const groupName = this.getColumnDisplayName(column);
-            const newGroupComp = this.createGroupComp(groupName);
-            createFilterComp(newGroupComp, hideHeader);
+            const columnGroupComp = this.createGroupComp(groupName);
+            const columnFilterGroup: ToolPanelFilterComp = createFilterComp(columnGroupComp, true);
+            columnGroupComp.toggleGroupExpand(false);
+
+            this.addDestroyableEventListener(columnGroupComp, 'expanded', () => columnFilterGroup.doExpand());
+            this.addDestroyableEventListener(columnGroupComp, 'collapsed', () => columnFilterGroup.doCollapse());
         }
     }
 
@@ -207,7 +219,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private destroyFilters() {
         this.allFilterComps.forEach(filterComp => filterComp.destroy());
         this.allFilterComps.length = 0;
-        _.clearElement(this.getGui());
+        // _.clearElement(this.getGui()); //TODO
     }
 
     public destroy() {
