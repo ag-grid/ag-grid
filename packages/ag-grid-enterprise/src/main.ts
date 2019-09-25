@@ -30,6 +30,7 @@ import { WatermarkComp } from "./license/watermark";
 import { FillHandle } from "./widgets/selection/fillHandle";
 import { RangeHandle } from "./widgets/selection/rangeHandle";
 import { FiltersToolPanelHeaderPanel } from "./sideBar/providedPanels/filters/filtersToolPanelHeaderPanel";
+import {FiltersToolPanelListPanel} from "./sideBar/providedPanels/filters/filtersToolPanelListPanel";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -79,6 +80,7 @@ Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, E
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgFiltersToolPanelHeader', theClass: FiltersToolPanelHeaderPanel},
+    {componentName: 'AgFiltersToolPanelList', theClass: FiltersToolPanelListPanel},
     {componentName: 'AgPrimaryColsHeader', theClass: PrimaryColsHeaderPanel},
     {componentName: 'AgPrimaryColsList', theClass: PrimaryColsListPanel},
     {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},

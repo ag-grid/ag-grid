@@ -47,6 +47,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
         </div>`);
     }
 
+
     @PostConstruct
     public postConstruct(): void {
         this.addEventListeners();
