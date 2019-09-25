@@ -721,6 +721,9 @@
 
             .ag-group-component-title-bar {
                 min-height: $header-height;
+                .ag-group-component-title {
+                    white-space: nowrap;
+                }
 
                 &:after {
                     content: $ag-icon-filter;
