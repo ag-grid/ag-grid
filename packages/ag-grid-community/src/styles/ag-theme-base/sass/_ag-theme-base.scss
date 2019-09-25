@@ -725,8 +725,10 @@
                 &:after {
                     content: $ag-icon-filter;
                     font-family: $icon-font-family;
-                    font-size: 1rem;
+                    font-size: $icon-size;
                     margin-left: $grid-size;
+                    color: $icon-color;
+                    font-weight: normal;
                 }
                 .ag-column-group-icons {
                     margin: 0 $grid-size;
