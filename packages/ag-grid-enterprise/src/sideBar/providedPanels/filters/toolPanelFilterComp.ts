@@ -68,7 +68,6 @@ export class ToolPanelFilterComp extends Component {
 
         if (this.hideHeader) {
             _.addOrRemoveCssClass(this.eFilterToolPanelHeader, 'ag-hidden', true);
-            this.doExpand();
         }
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));

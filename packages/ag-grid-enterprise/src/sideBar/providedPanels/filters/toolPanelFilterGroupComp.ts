@@ -55,6 +55,17 @@ export class ToolPanelFilterGroupComp extends Component {
         this.filterGroupComp.setAlignItems('stretch');
         _.addCssClass(this.filterGroupComp.getGui(), `ag-level-${this.depth}`);
         this.childFilterComps.forEach(filterComp => this.filterGroupComp.addItem(filterComp));
+
+        // TODO temp workaround for top level column groups with set filters as list is loaded asynchronously
+        if (this.depth === 0 && this.childFilterComps.length === 1) {
+            this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
+               this.childFilterComps.forEach(filterComp => {
+                   if (filterComp instanceof ToolPanelFilterComp) {
+                       filterComp.doExpand();
+                   }
+               });
+            });
+        }
     }
 
     public collapse() {
