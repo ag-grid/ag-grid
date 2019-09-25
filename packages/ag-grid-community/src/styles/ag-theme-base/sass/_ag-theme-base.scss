@@ -697,72 +697,45 @@
         border-right: 0;
 
         .ag-filter-panel {
-            width: 100%;
-
-            .ag-filters-tool-panel-header-panel {
-                height: $header-height;
-                display: flex;
-                flex: none;
-
-                .ag-filters-tool-panel-filter-wrapper {
-                    flex: 30 1 auto;
-                    input {
-                        width: 100%;
-                    }
+            .ag-filter-toolpanel-header {
+                &.ag-filter-header {
+                    min-height: $header-height;
+                    height: $header-height;
                 }
-            }
 
-            .ag-filter-toolpanel-instance {
-                color: $secondary-foreground-color;
-                font-weight: 600;
-                flex: auto;
-                flex-direction: column;
-                flex-wrap: nowrap;
-                display: flex;
-                flex-flow: column nowrap;
-
-                .ag-filter-toolpanel-header {
-                    padding: 0 5px;
-                    > div {
-                        margin: auto 0;
+                > div {
+                    &:not(.ag-input-wrapper) {
+                        margin: 0 $grid-size;
                     }
-                }
-            }
-            .ag-filter-body-wrapper {
-                padding-top: 5px;
-            }
-
-            .ag-filter-air {
-                border: 1px solid $border-color;
-                padding: $grid-size 0;
-            }
-
-            .ag-group-component {
-                &.ag-has-filter {
-                    > .ag-group-component-title-bar {
-                        .ag-group-component-title:after {
-                            content: $ag-icon-filter;
-                            font-family: $icon-font-family;
+                    &.ag-input-wrapper {
+                        input {
+                            width: 100%;
                         }
                     }
                 }
+            }
 
-                .ag-group-component-container {
-                    margin-left: 0;
-                    margin-right: 0;
-                    padding: 0;
-                }
-                
-                // for nested panels
-                &.ag-group-item {
-                    flex-direction: column;
-                    margin: $grid-size;
-                    border-top-width: 0;
-                    background-color: darken($group-component-background-color, 2%);
+            .ag-group-component-title-bar {
+                min-height: $header-height;
+                .ag-column-group-icons {
+                    margin: 0 $grid-size;
                 }
             }
 
-
+            .ag-group-component-container {
+                margin-left: 0;
+                padding: 0;
+                .ag-group-item {
+                    margin: $grid-size $grid-size / 2;
+                    .ag-filter-toolpanel-body {
+                        margin: $grid-size 0;
+                        .ag-filter-air {
+                            border: 1px solid $border-color;
+                            padding-top: $grid-size;
+                        }
+                    }
+                }
+            }
         }
 
         .ag-pivot-mode-panel {

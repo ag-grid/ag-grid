@@ -506,6 +506,23 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: hidden;
 }
 
+.ag-filter-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    .ag-filter-toolpanel-header {
+        display: flex;
+        div:not(.ag-input-wrapper) {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .ag-group-item {
+        flex-direction: column;
+    }
+}
+
 /**
  ****************************
  * Rows
@@ -1198,10 +1215,6 @@ $handleSize: 5px;
     cursor: default;
     user-select: none;
     width: 200px;
-    .ag-filter-toolpanel-header {
-        line-height: 1.5;
-        cursor: pointer;
-    }
 }
 
 .ag-column-tool-panel-column,
