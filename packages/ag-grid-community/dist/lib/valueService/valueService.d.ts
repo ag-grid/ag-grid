@@ -13,7 +13,7 @@ export declare class ValueService {
     private initialised;
     init(): void;
     getValue(column: Column, rowNode?: RowNode | null, forFilter?: boolean, ignoreAggData?: boolean): any;
-    setValue(rowNode: RowNode, colKey: string | Column, newValue: any, suppressCellValueChangedEvent?: boolean): void;
+    setValue(rowNode: RowNode, colKey: string | Column, newValue: any): void;
     private setValueUsingField;
     private executeFilterValueGetter;
     private executeValueGetter;
