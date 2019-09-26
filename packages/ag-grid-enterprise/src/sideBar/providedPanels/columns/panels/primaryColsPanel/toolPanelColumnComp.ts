@@ -43,7 +43,6 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private column: Column;
     private columnDept: number;
-    private selectionCallback: (selected: boolean) => void;
 
     private allowDragging: boolean;
     private displayName: string | null;
@@ -132,10 +131,6 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
             }
         } else {
             this.columnController.setColumnVisible(this.column, nextState, "columnMenu");
-        }
-
-        if (this.selectionCallback) {
-            this.selectionCallback(this.isSelected());
         }
     }
 
@@ -281,15 +276,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
             // if reducing, checkbox means column is one of pivot, value or group
             const anyFunctionActive = this.column.isAnyFunctionActive();
             this.cbSelect.setValue(anyFunctionActive);
-            if (this.selectionCallback) {
-                this.selectionCallback(this.isSelected());
-            }
         } else {
             // if not reducing, the checkbox tells us if column is visible or not
             this.cbSelect.setValue(this.column.isVisible());
-            if (this.selectionCallback) {
-                this.selectionCallback(this.isSelected());
-            }
         }
 
         let checkboxReadOnly: boolean;

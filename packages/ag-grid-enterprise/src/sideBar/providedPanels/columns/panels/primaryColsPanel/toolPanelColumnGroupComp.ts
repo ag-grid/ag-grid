@@ -1,4 +1,5 @@
 import {
+    _,
     AgCheckbox,
     Autowired,
     Column,
@@ -14,10 +15,9 @@ import {
     OriginalColumnGroup,
     PostConstruct,
     RefSelector,
-    TouchListener,
-    _
+    TouchListener
 } from "ag-grid-community";
-import { BaseColumnItem } from "./primaryColsPanel";
+import {BaseColumnItem} from "./primaryColsPanel";
 
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 
@@ -55,7 +55,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     private displayName: string | null;
 
     private processingColumnStateChange = false;
-    private selectionCallback: (selected: boolean) => void;
 
     constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: () => void, allowDragging: boolean, expandByDefault: boolean) {
         super();
@@ -178,10 +177,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             const allowedColumns = childColumns.filter(isAllowedColumn);
             this.columnController.setColumnsVisible(allowedColumns, nextState, "toolPanelUi");
         }
-
-        if (this.selectionCallback) {
-            this.selectionCallback(this.isSelected());
-        }
     }
 
     private actionUnCheckedReduce(columns: Column[]): void {
@@ -252,9 +247,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         const readOnlyValue = this.workOutReadOnlyValue();
         this.processingColumnStateChange = true;
         this.cbSelect.setValue(selectedValue);
-        if (this.selectionCallback) {
-            this.selectionCallback(this.isSelected());
-        }
         this.cbSelect.setReadOnly(readOnlyValue);
         this.processingColumnStateChange = false;
     }

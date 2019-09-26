@@ -53,17 +53,37 @@ export class ToolPanelFilterGroupComp extends Component {
     public init(): void {
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
+
         _.addCssClass(this.filterGroupComp.getGui(), `ag-level-${this.depth}`);
+
         this.childFilterComps.forEach(filterComp => this.filterGroupComp.addItem(filterComp));
 
         // TODO temp workaround for top level column groups with set filters as list is loaded asynchronously
         if (this.depth === 0 && this.childFilterComps.length === 1) {
-            this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
-               this.childFilterComps.forEach(filterComp => {
-                   if (filterComp instanceof ToolPanelFilterComp) {
-                       filterComp.doExpand();
-                   }
-               });
+            this.addTopLevelColumnGroupExpandListener();
+        }
+
+        this.addFilterChangedListeners();
+    }
+
+    private addTopLevelColumnGroupExpandListener() {
+        this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
+            this.childFilterComps.forEach(filterComp => {
+                if (filterComp instanceof ToolPanelFilterComp) {
+                    filterComp.doExpand();
+                }
+            });
+        });
+    }
+
+    private addFilterChangedListeners() {
+        if (this.columnGroup instanceof OriginalColumnGroup) {
+            const group = this.columnGroup as OriginalColumnGroup;
+            const anyChildFiltersActive = () => group.getLeafColumns().some(col => col.isFilterActive());
+            group.getLeafColumns().forEach(column => {
+                this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
+                    _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', anyChildFiltersActive());
+                });
             });
         }
     }
@@ -75,7 +95,6 @@ export class ToolPanelFilterGroupComp extends Component {
     private setGroupTitle() {
         if (this.columnGroup instanceof OriginalColumnGroup) {
             const groupName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
-            console.log(groupName, this.depth);
             this.filterGroupComp.setTitle(groupName as string);
         } else {
             const columnName = this.columnController.getDisplayNameForColumn(this.columnGroup as Column, 'header', false);
