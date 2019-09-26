@@ -39,7 +39,7 @@
     "@types/react-dom": "16.9.0",
     "ag-grid-community": "^21.2.0",
     "babel-preset-react-app": "^9.0.1",
-    "cypress": "^3.4.1",
+    "cypress": "3.0.1",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "gulp": "^4.0.0",
