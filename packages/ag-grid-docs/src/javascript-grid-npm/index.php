@@ -12,6 +12,10 @@ include '../documentation-main/documentation_header.php';
         Both ag-Grid Community and ag-Grid Enterprise are available as NPM packages.
     </p>
 
+    <?php
+        include './intro.php';
+    ?>
+
     <p>
         To install ag-Grid, run:
     </p>

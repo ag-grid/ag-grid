@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Charting: Charting Grid Data";
+$pageTitle = "Charts: Chart Toolbar";
 $pageDescription = "ag-Grid is a feature-rich data grid that can also chart data out of the box. Learn how to chart data directly from inside ag-Grid.";
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
         The chart settings panel allows users to change the chart type as well as the colour palette used in the
         chart as demonstrated below:
     </p>
-        <img alt="Chart Settings" src="chart-settings.gif" style="max-width: 100%; border: grey solid 1px">
+        <img alt="Chart Settings" src="chart-settings.gif" style="max-width: 100%">
     <p>
        <br>
        Notice that charts are organised into different groups and the current chart can be changed by selecting the icon
@@ -65,7 +65,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The chart data panel is used to dynamically change the data being charted as shown below:
     </p>
-    <img alt="Chart Data" src="chart-data.gif" style="max-width: 100%; border: grey solid 1px">
+    <img alt="Chart Data" src="chart-data.gif" style="max-width: 100%">
 
     <p>
         <br>
@@ -88,7 +88,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The chart format panel allows users to change the appearance of the chart as shown below:
     </p>
-    <img alt="Chart Format" src="chart-format.gif" style="max-width: 100%; border: grey solid 1px">
+    <img alt="Chart Format" src="chart-format.gif" style="max-width: 100%">
 
     <p>
         <br>
@@ -108,7 +108,7 @@ include '../documentation-main/documentation_header.php';
         Unlinking a chart is achieved through the 'Unlink Chart' toolbar item as shown below:
     </p>
 
-    <img alt="Unlinking Charts" src="chart-unlinking.gif" style="max-width: 100%; border: grey solid 1px">
+    <img alt="Unlinking Charts" src="chart-unlinking.gif" style="max-width: 100%">
 
     <p>
         <br>

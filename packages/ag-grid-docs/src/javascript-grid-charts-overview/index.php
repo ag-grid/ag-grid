@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Charting: Charting Grid Data";
+$pageTitle = "Charts: Overview";
 $pageDescription = "ag-Grid is a feature-rich data grid that can also chart data out of the box. Learn how to chart data directly from inside ag-Grid.";
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
@@ -121,7 +121,7 @@ gridOptions = {
     </ul>
 
     <p>
-        <img alt="User Created Charts" src="userChartingShowcase.gif" style="margin-bottom: 0px; width: 100%; border: lightgray solid 1px">
+        <img alt="User Created Charts" src="chart-showcase.gif" style="margin-bottom: 0px; width: 100%; border: lightgray solid 1px">
     </p>
 
     <p>

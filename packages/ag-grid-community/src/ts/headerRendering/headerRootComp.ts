@@ -118,7 +118,9 @@ export class HeaderRootComp extends Component {
     }
 
     public setHeight(height: number): void {
-        const px = `${height}px`;
+        // one extra pixel is needed here to account for the
+        // height of the border
+        const px = `${height + 1}px`;
         this.getGui().style.height = px;
         this.getGui().style.minHeight = px;
     }

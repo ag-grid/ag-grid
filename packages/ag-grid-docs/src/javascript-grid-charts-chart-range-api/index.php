@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Charting: Charting Grid Data";
+$pageTitle = "Charts: Chart API";
 $pageDescription = "ag-Grid is a feature-rich data grid that can also chart data out of the box. Learn how to chart data directly from inside ag-Grid.";
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
