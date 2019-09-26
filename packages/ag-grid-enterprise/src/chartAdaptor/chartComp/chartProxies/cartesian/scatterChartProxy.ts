@@ -1,7 +1,6 @@
-import { ChartType, ScatterChartOptions, ScatterSeriesOptions } from "ag-grid-community";
+import { ChartType, ScatterChartOptions, _, FontWeight } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { ChartProxyParams, UpdateChartParams, FieldDefinition } from "../chartProxy";
 import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";
 import { ChartModel } from "../../chartModel";
 import { CartesianChartProxy, LineMarkerProperty, ScatterSeriesProperty } from "./cartesianChartProxy";
@@ -10,6 +9,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.initChartOptions();
         this.chart = ChartBuilder.createScatterChart(this.chartOptions);
     }
 
@@ -19,25 +19,23 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             return;
         }
 
-        const chart = this.chart as CartesianChart;
+        const chart = this.chart;
         const fieldIds = params.fields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: ScatterSeries } = {};
         const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
         const isBubbleChart = this.chartType === ChartType.Bubble;
-
-        const updateSeries = (scatterSeries: ScatterSeries) => {
-            const id = scatterSeries.yField as string;
-            const seriesExists = fieldIds.indexOf(id) > -1;
-            seriesExists ? existingSeriesMap[id] = scatterSeries : chart.removeSeries(scatterSeries);
-        };
+        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const seriesOptions = this.chartOptions.seriesDefaults!;
 
         chart.series
             .map(series => series as ScatterSeries)
-            .forEach(updateSeries);
+            .forEach(scatterSeries => {
+                const id = scatterSeries.yField;
 
-        const updateFunc = (f: { colId: string, displayName: string }, index: number) => {
-            const seriesOptions = this.chartOptions.seriesDefaults as ScatterSeriesOptions;
+                _.includes(fieldIds, id) ? existingSeriesMap[id] = scatterSeries : chart.removeSeries(scatterSeries);
+            });
 
+        const updateFunc = (f: FieldDefinition, index: number): void => {
             const existingSeries = existingSeriesMap[f.colId];
             const scatterSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
 
@@ -48,9 +46,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                     scatterSeries.xFieldName = params.fields[0].displayName;
 
                     if (isBubbleChart) {
-                        const f = params.fields[index * 2 + 2];
-                        scatterSeries.radiusField = f.colId;
-                        scatterSeries.radiusFieldName = f.displayName;
+                        const radiusFieldDefinition = params.fields[index * 2 + 2];
+                        scatterSeries.radiusField = radiusFieldDefinition.colId;
+                        scatterSeries.radiusFieldName = radiusFieldDefinition.displayName;
                     }
                 } else {
                     scatterSeries.title = f.displayName;
@@ -61,13 +59,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 scatterSeries.data = params.data;
                 scatterSeries.yField = f.colId;
                 scatterSeries.yFieldName = f.displayName;
-
-                const palette = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
-
-                const fills = palette.fills;
                 scatterSeries.fill = fills[index % fills.length];
-
-                const strokes = palette.strokes;
                 scatterSeries.stroke = strokes[index % strokes.length];
 
                 if (!existingSeries) {
@@ -95,7 +87,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             params.fields.forEach(updateFunc);
         }
 
-        chart.xAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.xAxis.labelRotation as number;
+        chart.xAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.xAxis.labelRotation!;
     }
 
     public setSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty, value: any): void {
@@ -126,8 +118,30 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
 
     protected getDefaultOptions(): ScatterChartOptions {
         const xAxisType = this.chartProxyParams.categorySelected ? 'category' : 'number';
-        const palette = this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
+        const labelColor = this.getLabelColor();
+        const stroke = this.getAxisGridColor();
         const isBubble = this.chartType === ChartType.Bubble;
+        const labelFontWeight: FontWeight = 'normal';
+        const labelFontSize = 12;
+        const labelFontFamily = 'Verdana, sans-serif';
+        const axisColor = 'rgba(195, 195, 195, 1)';
+        const axisOptions = {
+            labelFontWeight,
+            labelFontSize,
+            labelFontFamily,
+            labelColor,
+            labelPadding: 5,
+            tickColor: axisColor,
+            tickSize: 6,
+            tickWidth: 1,
+            lineColor: axisColor,
+            lineWidth: 1,
+            gridStyle: [{
+                stroke,
+                lineDash: [4, 2]
+            }]
+        };
 
         return {
             background: {
@@ -145,11 +159,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
+                labelColor,
                 itemPaddingX: 16,
                 itemPaddingY: 8,
                 markerPadding: 4,
@@ -157,54 +170,24 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 markerStrokeWidth: 1
             },
             xAxis: {
+                ...axisOptions,
                 type: xAxisType,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
                 labelRotation: 335,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke: this.getAxisGridColor(),
-                    lineDash: [4, 2]
-                }]
             },
             yAxis: {
-                type: 'number',
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                ...axisOptions,
                 labelRotation: 0,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke: this.getAxisGridColor(),
-                    lineDash: [4, 2]
-                }]
             },
             seriesDefaults: {
                 type: 'scatter',
-                fills: palette.fills,
+                fills,
                 fillOpacity: isBubble ? 0.7 : 1,
-                strokes: palette.strokes,
+                strokes,
                 marker: true,
                 markerSize: isBubble ? 30 : 6,
                 minMarkerSize: 3,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,
-                tooltipRenderer: undefined,
                 showInLegend: true,
                 title: ''
             }

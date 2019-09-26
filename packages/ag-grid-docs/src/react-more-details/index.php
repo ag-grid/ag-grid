@@ -155,8 +155,7 @@ somePointLater() {
 
 
     <h3>Working Examples</h3>
-    <p>You can find fully working examples at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.
-        The example demonstrates a legacy setup (without <code>reactNext</code>, as well as a simple Redux and Hooks examples.</p>
+    <p>You can find fully working examples at our <a href="https://github.com/ag-grid/ag-grid-react-example/">ag Grid React Example</a>.</p>
 
 </div>
 <?php include '../documentation-main/documentation_footer.php'; ?>

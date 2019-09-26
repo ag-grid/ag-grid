@@ -1,6 +1,5 @@
 import * as React from "react";
 import {Component, ReactPortal} from "react";
-import * as ReactDOM from "react-dom";
 import * as PropTypes from "prop-types";
 import {
     Autowired,
@@ -17,7 +16,6 @@ import {
 import {AgGridColumn} from "./agGridColumn";
 import {ReactComponent} from "./reactComponent";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
-import {LegacyReactComponent} from "./legacyReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
@@ -87,13 +85,6 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.columnApi = this.gridOptions.columnApi!;
     }
 
-    shouldComponentUpdate() {
-        // we want full control of the dom, as ag-Grid doesn't use React internally,
-        // so for performance reasons we tell React we don't need render called after
-        // property changes.
-        return false;
-    }
-
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
         // if the grid has been destroyed in the meantime just resolve
         if (!this.api) {
@@ -161,13 +152,28 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         return ChangeDetectionStrategyType.DeepValueCheck;
     }
 
-    componentWillReceiveProps(nextProps: any) {
+    shouldComponentUpdate(nextProps: any) {
+        this.processPropsChanges(this.props, nextProps);
+
+        // we want full control of the dom, as ag-Grid doesn't use React internally,
+        // so for performance reasons we tell React we don't need render called after
+        // property changes.
+        return false;
+    }
+
+    componentDidUpdate(prevProps: any) {
+        this.processPropsChanges(prevProps, this.props);
+    }
+
+    processPropsChanges(prevProps: any, nextProps: any) {
         const changes = <any>{};
 
-        this.extractGridPropertyChanges(nextProps, changes);
+        this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
 
-        ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
+        if (Object.keys(changes).length > 0) {
+            ComponentUtil.processOnChange(changes, this.gridOptions, this.api!, this.columnApi);
+        }
     }
 
     private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
@@ -192,20 +198,20 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         }
     }
 
-    private extractGridPropertyChanges(nextProps: any, changes: any) {
+    private extractGridPropertyChanges(prevProps: any, nextProps: any, changes: any) {
         let debugLogging = !!nextProps.debug;
 
         const changedKeys = Object.keys(nextProps);
         changedKeys.forEach((propKey) => {
             if (ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
                 const changeDetectionStrategy = this.changeDetectionService.getStrategy(this.getStrategyTypeForProp(propKey));
-                if (!changeDetectionStrategy.areEqual(this.props[propKey], nextProps[propKey])) {
+                if (!changeDetectionStrategy.areEqual(prevProps[propKey], nextProps[propKey])) {
                     if (debugLogging) {
                         console.log(`agGridReact: [${propKey}] property changed`);
                     }
 
                     changes[propKey] = {
-                        previousValue: this.props[propKey],
+                        previousValue: prevProps[propKey],
                         currentValue: nextProps[propKey]
                     };
                 }
@@ -217,7 +223,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
                 }
                 changes[funcName] = {
-                    previousValue: this.props[funcName],
+                    previousValue: prevProps[funcName],
                     currentValue: nextProps[funcName]
                 };
             }
@@ -255,19 +261,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
     @Autowired("agGridReact") private agGridReact!: AgGridReact;
 
     createWrapper(UserReactComponent: { new(): any }): WrapableInterface {
-        // at some point soon unstable_renderSubtreeIntoContainer is going to be dropped (and in a minor release at that)
-        // this uses the existing mechanism as long as possible, but switches over to using Portals when
-        // unstable_renderSubtreeIntoContainer is no longer an option
-        return this.useLegacyReact() ?
-            new LegacyReactComponent(UserReactComponent, this.agGridReact) :
-            new ReactComponent(UserReactComponent, this.agGridReact);
-    }
-
-    private useLegacyReact() {
-        // force use of react next (ie portals) if unstable_renderSubtreeIntoContainer is no longer present
-        // or if the user elects to try it
-        return (typeof ReactDOM.unstable_renderSubtreeIntoContainer !== "function")
-            || (this.agGridReact && this.agGridReact.gridOptions && !this.agGridReact.gridOptions.reactNext);
+        return new ReactComponent(UserReactComponent, this.agGridReact);
     }
 }
 

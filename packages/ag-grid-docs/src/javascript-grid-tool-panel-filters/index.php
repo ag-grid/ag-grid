@@ -105,12 +105,21 @@ interface IFiltersToolPanel {
         <li>When the grid is initialised, <code>expandFilters()</code> is invoked using the
             <code>onGridReady</code> callback to expand all filters in the tool panel.</li>
         <li>Clicking <b>Collapse All</b> collapses all filters using: <code>collapseFilters()</code>.</li>
-        <li>Clicking <b>Expand All</b> expands all filters using: <code>expandFilters()</code>.</li>
-        <li>Clicking <b>Collapse Age</b> just collapses the 'age' filter using: <code>collapseFilters(['age'])</code>.</li>
         <li>Clicking <b>Expand Age</b> just expands the 'age' filter using: <code>expandFilters(['age'])</code>.</li>
+        <li>Clicking <b>Collapse Age</b> just collapses the 'age' filter using: <code>collapseFilters(['age'])</code>.</li>
+        <li>Clicking <b>Expand All</b> expands all filters using: <code>expandFilters()</code>.</li>
     </ul>
 
     <?= example('Expand / Collapse Filters', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+    <h2>Custom Filters Layout</h2>
+
+    <p style="color: red">
+        TODO: Finalise Docs and Example after review
+    </p>
+
+    <?= example('Custom Filters Layout', 'custom-layout', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
 
     <h2>Next Up</h2>
 

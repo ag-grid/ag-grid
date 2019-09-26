@@ -1,3 +1,4 @@
+import { Color, FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
@@ -11,7 +12,6 @@ import { PointerEvents } from "../../scene/node";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
-import { Color } from "ag-grid-community";
 import { NumberAxis } from "../axis/numberAxis";
 
 interface SelectionDatum extends SeriesNodeDatum {
@@ -26,8 +26,8 @@ interface SelectionDatum extends SeriesNodeDatum {
     strokeWidth: number;
     label?: {
         text: string,
-        fontStyle?: string,
-        fontWeight?: string,
+        fontStyle?: FontStyle,
+        fontWeight?: FontWeight,
         fontSize: number,
         fontFamily: string,
         fill: string,
@@ -134,7 +134,7 @@ export class BarSeries extends Series<CartesianChart> {
         }
     }
     get chart(): CartesianChart | undefined {
-        return this._chart as CartesianChart;
+        return this._chart;
     }
 
     protected _xField: string = '';
@@ -249,25 +249,25 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelEnabled;
     }
 
-    private _labelFontStyle: string | undefined = undefined;
-    set labelFontStyle(value: string | undefined) {
+    private _labelFontStyle: FontStyle | undefined = undefined;
+    set labelFontStyle(value: FontStyle | undefined) {
         if (this._labelFontStyle !== value) {
             this._labelFontStyle = value;
             this.update();
         }
     }
-    get labelFontStyle(): string | undefined {
+    get labelFontStyle(): FontStyle | undefined {
         return this._labelFontStyle;
     }
 
-    private _labelFontWeight: string | undefined = undefined;
-    set labelFontWeight(value: string | undefined) {
+    private _labelFontWeight: FontWeight | undefined = undefined;
+    set labelFontWeight(value: FontWeight | undefined) {
         if (this._labelFontWeight !== value) {
             this._labelFontWeight = value;
             this.update();
         }
     }
-    get labelFontWeight(): string | undefined {
+    get labelFontWeight(): FontWeight | undefined {
         return this._labelFontWeight;
     }
 
@@ -461,7 +461,7 @@ export class BarSeries extends Series<CartesianChart> {
         }
 
         const categoryCount = this.data.length;
-        const flipXY = !(chart.yAxis instanceof NumberAxis);
+        const flipXY = chart.xAxis instanceof NumberAxis;
         const xAxis = flipXY ? chart.yAxis : chart.xAxis;
         const yAxis = flipXY ? chart.xAxis : chart.yAxis;
         const xScale = xAxis.scale;
@@ -489,7 +489,7 @@ export class BarSeries extends Series<CartesianChart> {
             yData,
         } = this;
 
-        groupScale.range = [0, xScale.bandwidth!];
+        groupScale.range = [ 0, xScale.bandwidth! ];
 
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
         const selectionData: SelectionDatum[] = [];
@@ -502,6 +502,7 @@ export class BarSeries extends Series<CartesianChart> {
 
             let prev = 0;
             let curr: number;
+
             for (let j = 0; j < valueCount; j++) {
                 curr = values[j];
 
@@ -512,8 +513,10 @@ export class BarSeries extends Series<CartesianChart> {
                 const bottomY = yScale.convert((grouped ? 0 : prev));
                 const seriesDatum = data[i];
                 const yValue = seriesDatum[yField]; // unprocessed y-value
+
                 const yValueIsNumber = typeof yValue === 'number';
                 let labelText: string;
+
                 if (labelFormatter) {
                     labelText = labelFormatter({
                         value: yValueIsNumber ? yValue : NaN
@@ -560,9 +563,9 @@ export class BarSeries extends Series<CartesianChart> {
 
         const enterRects = updateRects.enter.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
-            // rect.sizing = RectSizing.Border;
             rect.crisp = true;
         });
+
         const enterTexts = updateTexts.enter.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
@@ -573,18 +576,15 @@ export class BarSeries extends Series<CartesianChart> {
         const highlightedNode = this.highlightedNode;
         const rectSelection = updateRects.merge(enterRects);
         const textSelection = updateTexts.merge(enterTexts);
+        const { fill, stroke } = this.highlightStyle;
 
         rectSelection.each((rect, datum) => {
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = rect === highlightedNode && this.highlightStyle.fill !== undefined
-                ? this.highlightStyle.fill
-                : datum.fill;
-            rect.stroke = rect === highlightedNode && this.highlightStyle.stroke !== undefined
-                ? this.highlightStyle.stroke
-                : datum.stroke;
+            rect.fill = rect === highlightedNode && fill !== undefined ? fill : datum.fill;
+            rect.stroke = rect === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;

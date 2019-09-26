@@ -5,6 +5,7 @@ import {Promise, Utils} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
 import {assignProperties} from "./utils";
+import generateNewKey from "./keyGenerator";
 
 export class ReactComponent extends BaseReactComponent {
 
@@ -38,7 +39,7 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     public init(params: any): Promise<void> {
-        return new Promise<void>(resolve => {
+        return new Promise<void>((resolve: any) => {
             this.eParentElement = this.createParentElement(params);
             this.createReactComponent(params, resolve);
         });
@@ -54,19 +55,18 @@ export class ReactComponent extends BaseReactComponent {
 
     private createReactComponent(params: any, resolve: (value: any) => void) {
         if (!this.statelessComponent) {
-            // grab hold of the actual instance created - we use a react ref for this as there is no other mechanism to
-            // retrieve the created instance from either createPortal or render
+            // grab hold of the actual instance created
             params.ref = (element: any) => {
                 this.componentInstance = element;
-
                 this.addParentContainerStyleAndClasses();
             };
         }
 
-        const  reactComponent = React.createElement(this.reactComponent, params);
+        const reactComponent = React.createElement(this.reactComponent, params);
         const portal: ReactPortal = ReactDOM.createPortal(
             reactComponent,
-            this.eParentElement as any
+            this.eParentElement as any,
+            generateNewKey()
         );
         this.portal = portal;
         this.parentComponent.mountReactPortal(portal!, this, resolve);

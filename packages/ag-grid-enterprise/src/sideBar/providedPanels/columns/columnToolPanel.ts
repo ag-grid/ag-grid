@@ -26,12 +26,14 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressColumnSelectAll: boolean;
     suppressColumnExpandAll: boolean;
     contractColumnSelection: boolean;
+    syncLayoutWithGrid: boolean;
 }
 
 export interface IColumnToolPanel {
     expandColumnGroups(groupIds?: string[]): void;
     collapseColumnGroups(groupIds?: string[]): void;
     setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void;
+    syncLayoutWithGrid(): void;
 }
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
@@ -71,6 +73,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             suppressRowGroups: false,
             suppressValues: false,
             suppressPivots: false,
+            syncLayoutWithGrid: false,
             api: this.gridApi
         };
         _.mergeDeep(defaultParams, params);
@@ -108,6 +111,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void {
         this.primaryColsPanel.setColumnLayout(colDefs);
+    }
+
+    public syncLayoutWithGrid(): void {
+        this.primaryColsPanel.syncLayoutWithGrid();
     }
 
     private addComponent(component: Component): void {

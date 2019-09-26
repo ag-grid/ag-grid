@@ -1,7 +1,6 @@
-import { LineChartOptions, LineSeriesOptions } from "ag-grid-community";
+import { LineChartOptions, _, FontWeight } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { LineSeries } from "../../../../charts/chart/series/lineSeries";
 import { CartesianChartProxy, LineMarkerProperty, LineSeriesProperty } from "./cartesianChartProxy";
 
@@ -9,52 +8,42 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
-        if (params.grouping) {
-            this.chart = ChartBuilder.createGroupedLineChart(this.chartOptions);
-        } else {
-            this.chart = ChartBuilder.createLineChart(this.chartOptions);
-        }
+        this.initChartOptions();
+        this.chart = ChartBuilder.createLineChart(this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
-        const chart = this.chart as CartesianChart;
+        const chart = this.chart;
 
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
         }
 
-        const lineChart = this.chart as CartesianChart;
+        const lineChart = this.chart;
         const fieldIds = params.fields.map(f => f.colId);
-
         const existingSeriesMap: { [id: string]: LineSeries } = {};
+        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const seriesOptions = this.chartOptions.seriesDefaults!;
 
-        const updateSeries = (lineSeries: LineSeries) => {
-            const id = lineSeries.yField as string;
-            const seriesExists = fieldIds.indexOf(id) > -1;
-            seriesExists ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
-        };
+        lineChart.series
+            .map(series => series as LineSeries)
+            .forEach(lineSeries => {
+                const id = lineSeries.yField;
+                
+                _.includes(fieldIds, id) ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
+            });
 
-        lineChart.series.map(series => series as LineSeries).forEach(updateSeries);
-
-        params.fields.forEach((f: { colId: string, displayName: string }, index: number) => {
-            const seriesOptions = this.chartOptions.seriesDefaults as LineSeriesOptions;
-
+        params.fields.forEach((f, index) => {
             const existingSeries = existingSeriesMap[f.colId];
-            const lineSeries = existingSeries ? existingSeries : ChartBuilder.createSeries(seriesOptions) as LineSeries;
+            const lineSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as LineSeries;
 
             if (lineSeries) {
                 lineSeries.title = f.displayName;
                 lineSeries.data = params.data;
                 lineSeries.xField = params.category.id;
                 lineSeries.yField = f.colId;
-
-                const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
-
-                const fills = palette.fills;
                 lineSeries.fill = fills[index % fills.length];
-
-                const strokes = palette.strokes;
                 lineSeries.stroke = strokes[index % strokes.length];
 
                 if (!existingSeries) {
@@ -63,7 +52,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             }
         });
 
-        chart.xAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.xAxis.labelRotation as number;
+        chart.xAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.xAxis.labelRotation!;
     }
 
     public setSeriesProperty(property: LineSeriesProperty | LineMarkerProperty, value: any): void {
@@ -97,7 +86,29 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
     }
 
     protected getDefaultOptions(): LineChartOptions {
-        const palette = this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
+        const labelColor = this.getLabelColor();
+        const stroke = this.getAxisGridColor();
+        const labelFontWeight: FontWeight = 'normal';
+        const labelFontSize = 12;
+        const labelFontFamily = 'Verdana, sans-serif';
+        const axisColor = 'rgba(195, 195, 195, 1)';
+        const axisOptions = {
+            labelFontWeight,
+            labelFontSize,
+            labelFontFamily,
+            labelColor,
+            labelPadding: 5,
+            tickColor: axisColor,
+            tickSize: 6,
+            tickWidth: 1,
+            lineColor: axisColor,
+            lineWidth: 1,
+            gridStyle: [{
+                stroke,
+                lineDash: [4, 2]
+            }]
+        };
 
         return {
             background: {
@@ -115,11 +126,10 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
+                labelColor,
                 itemPaddingX: 16,
                 itemPaddingY: 8,
                 markerPadding: 4,
@@ -127,53 +137,22 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
                 markerStrokeWidth: 1
             },
             xAxis: {
-                type: 'category',
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                ...axisOptions,
                 labelRotation: 335,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke: this.getAxisGridColor(),
-                    lineDash: [4, 2]
-                }]
             },
             yAxis: {
-                type: 'number',
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                ...axisOptions,
                 labelRotation: 0,
-                tickColor: 'rgba(195, 195, 195, 1)',
-                tickSize: 6,
-                tickWidth: 1,
-                tickPadding: 5,
-                lineColor: 'rgba(195, 195, 195, 1)',
-                lineWidth: 1,
-                gridStyle: [{
-                    stroke: this.getAxisGridColor(),
-                    lineDash: [4, 2]
-                }]
             },
             seriesDefaults: {
                 type: 'line',
-                fills: palette.fills,
-                strokes: palette.strokes,
+                fills,
+                strokes,
                 strokeWidth: 3,
                 marker: true,
                 markerSize: 6,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,
-                tooltipRenderer: undefined,
                 showInLegend: true,
                 title: ''
             }

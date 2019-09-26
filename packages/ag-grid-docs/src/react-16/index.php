@@ -10,24 +10,6 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="react-16">ag-Grid with React 16+</h1>
 
-    <note>
-        All of the documentation in this section apply to React 16+. For documentation for React 15+ please see
-        <a href="../react-15/">here.</a>
-    </note>
-
-    <p>With React 16 <a href="https://reactjs.org/docs/portals.html">Portals</a> were introduced and these are the official way to create React components dynamically within React so
-        this is what we use internally for component creation within the grid.</p>
-    <p>If you use React 16+ you'll need to enable <code>reatNext </code> as follows:</p>
-
-    <snippet>
-        // Grid Definition
-        &lt;AgGridReact
-            reactNext={true}
-            ...other bindings
-    </snippet>
-
-    <p>In a future release we'll switch to make <code>reactNext</code> the default, but for now this needs to be made explicit.</p>
-
     <h3>Control React Components Container</h3>
     <p>By default user supplied React components will be wrapped in a <code>div</code> but it is possible to have your component
         wrapped in a container of your choice (i.e. a <code>span</code> etc), perhaps to override/control a third party component.</p>
@@ -113,7 +95,7 @@ export default connect(
     },
     null,
     null,
-    { forwardRef: true } // must be supplied for react/redux when using GridOptions.reactNext
+    { forwardRef: true } // must be supplied for react/redux when using AgGridReact
 )(PriceRenderer);
     </snippet>
 
@@ -151,10 +133,56 @@ class StyledRenderer extends Component {
     </snippet>
 
     <h3 id="react-hooks">React Hooks</h3>
-    <p>React Hooks are fully supported as cell renderers - please refer to our working example in <a
+    <p>React Hooks are fully supported within ag-Grid - please refer to our working example in <a
                 href="https://github.com/ag-grid/ag-grid-react-example/">GitHub</a>.</p>
 
-    <note>You can currently use Hooks for renderers only - support for React Hooks in Editors/Filter etc is not currently supported.</note>
+    <p>Hooks as Cell Renderers, Header Components and so on will work as expected out of the box, but in order to use a
+    hooks as a grid component that has mandatory lifecycle methods (such as a Cell Editor) you'll need to wrap your hook
+    with <code>forwardRef</code> and then expose Grid related lifecycle methods
+    with <code>useImperativeHandle</code>, for example:</p>
+
+    <h4 id="hook-cell-editor">Hook Cell Editor</h4>
+
+<snippet>
+import React, <span ng-non-bindable>{</span>useEffect, forwardRef, useImperativeHandle, useRef} from "react";
+
+export default forwardRef((props, ref) => {
+    const inputRef = useRef();
+    useImperativeHandle(ref, () => {
+        return {
+            getValue: () => {
+                return inputRef.current.value;
+            }
+        };
+    });
+    return &lt;input type="text" ref={inputRef} defaultValue={props.value}/&gt;;
+})
+</snippet>
+
+    <h4 id="hook-cell-filter">Hook Filter</h4>
+
+<snippet>
+import React, <span ng-non-bindable>{</span>forwardRef, useImperativeHandle, useRef} from "react";
+
+export default forwardRef((props, ref) => {
+    const inputRef = useRef();
+    useImperativeHandle(ref, () => {
+        return {
+            isFilterActive() {
+                return inputRef.current.value !== '';
+            },
+
+            doesFilterPass: (params) => {
+                return params.data.price.toString() === inputRef.current.value;
+            }
+        };
+    });
+
+    return &lt;input type="text" ref={inputRef} onChange={() => props.filterChangedCallback()}/>;
+})
+</snippet>
+
+<p>The same applies to any other component to be used within the grid that requires lifecycle methods to be present.</p>
 
     <h2 id="react-row-data-control">Row Data Control</h2>
     <p>By default the ag-Grid React component will check props passed in to deteremine if data has changed and will only re-render based on actual changes.</p>

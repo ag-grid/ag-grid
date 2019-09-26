@@ -35,6 +35,9 @@
     should be put onto your React component and will work as normal.
 </p>
 
+<h3>React Hooks</h3>
+<p>Please see <a href="../react-16/#react-hooks">here</a> for information on using Hooks as Cell Editors.</p>
+
 <h3>Example: Cell Editing using React Components</h3>
 <p> Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.  </p>
 

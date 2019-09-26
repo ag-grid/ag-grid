@@ -8,7 +8,7 @@ import {
     PostConstruct,
     RefSelector
 } from "ag-grid-community";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export type LabelFont = {
     family?: string;
@@ -77,7 +77,7 @@ export class LabelPanel extends Component {
 
     private initGroup() {
         this.labelsGroup
-            .setTitle(this.params.name ? this.params.name : this.chartTranslator.translate('labels'))
+            .setTitle(this.params.name || this.chartTranslator.translate('labels'))
             .setEnabled(this.params.enabled)
             .hideEnabledCheckbox(!!this.params.suppressEnabledCheckbox)
             .hideOpenCloseIcons(true)
@@ -92,10 +92,9 @@ export class LabelPanel extends Component {
         type FontOptions = 'family' | 'weight' | 'size';
 
         const initSelect = (property: FontOptions, input: AgSelect, values: string[], sortedValues: boolean) => {
-
             const fontValue = this.params.initialFont[property];
-
             let initialValue = values[0];
+
             if (fontValue) {
                 const fontValueAsStr = `${fontValue}`;
                 const lowerCaseFontValue = _.exists(fontValueAsStr) ? fontValueAsStr.toLowerCase() : '';
@@ -119,9 +118,7 @@ export class LabelPanel extends Component {
                 }
             }
 
-            const options = values.map(value => {
-                return {value: value, text: value};
-            });
+            const options = values.map(value => ({ value, text: value }));
 
             input.addOptions(options)
                 .setValue(`${initialValue}`)
@@ -154,7 +151,7 @@ export class LabelPanel extends Component {
         initSelect('family', this.labelFontFamilySelect, fonts, true);
 
         const weightKeys: string[] = ['normal', 'bold', 'italic', 'boldItalic'];
-        initSelect('weight', this.labelFontWeightSelect, this.getWeigthNames(weightKeys), false);
+        initSelect('weight', this.labelFontWeightSelect, weightKeys.map(k => this.chartTranslator.translate(k)), false);
 
         const sizes = ['8', '10', '12', '14', '16', '18', '20', '22', '24', '26', '28', '30', '32', '34', '36'];
         this.labelFontSizeSelect.setLabel(this.chartTranslator.translate('size'));
@@ -167,10 +164,6 @@ export class LabelPanel extends Component {
             .setInputWidth(45)
             .setValue(`${this.params.initialFont.color}`)
             .onValueChange(newColor => this.params.setFont({color: newColor}));
-    }
-
-    private getWeigthNames(keys: string[]) {
-        return keys.map(key => this.chartTranslator.translate(key));
     }
 
     private destroyActiveComps(): void {

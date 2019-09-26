@@ -44,8 +44,6 @@ function indexTemplate(bindings, componentFilenames, isDev) {
     componentAttributes.push('onGridReady={this.onGridReady}');
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
-    const additional = [];
-
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
     }
@@ -174,7 +172,7 @@ class GridExample extends Component {
         ${additionalInReady.join('\n')}
     }
 
-${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
+${[].concat(eventHandlers, externalEventHandlers).join('\n    ')}
     render() {
         return (
             <div ${style}>

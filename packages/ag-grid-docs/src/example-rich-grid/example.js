@@ -111,7 +111,7 @@
         onBtBringGridBack();
     };
 
-    if (document.readyState == "complete") {
+    if (document.readyState === "complete") {
         loadGrid();
     } else {
         document.addEventListener("DOMContentLoaded", loadGrid());

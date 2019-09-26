@@ -23,7 +23,7 @@ export class PaddingPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: ChartProxy<any>;
+    private chartProxy: ChartProxy<any, any>;
 
     constructor(chartController: ChartController) {
         super();

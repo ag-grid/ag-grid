@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
     and configure some of the essential features of it.
 We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 
-<?
+<?php
 include './intro.php';
 ?>
 

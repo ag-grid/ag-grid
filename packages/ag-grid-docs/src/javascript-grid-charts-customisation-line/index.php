@@ -6,102 +6,91 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Customising Line Charts</h1>
+<h1 class="heading-enterprise">Line Chart Customisations</h1>
 
-    <p class="lead">
-        This sections details how to customise line charts in your applications.
-    </p>
-
-<h3>Line Chart Option Interfaces</h3>
-
-<p>
-    The interfaces for line chart options are shown below:
+<p class="lead">
+    In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a>, you can also 
+    use these customisations for line charts.
 </p>
+
+<h2>Option Interfaces</h2>
 
 <snippet>
 interface LineChartOptions {
-    // The chart title to render at the top of the chart.
-    title?: CaptionOptions;
-    // The subtitle to render under the chart's title.
-    // If the title is not specified or is disabled, the subtitle won't be visible either.
-    subtitle?: CaptionOptions;
-    // The width of the chart.
-    width?: number,
-    // The height of the chart.
-    height?: number;
-
-    // The padding of contents from the edges of the chart.
-    padding?: {
-        top: number;
-        right: number;
-        bottom: number;
-        left: number;
-    };
-
-    // Additional CSS class to be added to tooltip element.
-    tooltipClass?: string;
-
-    // The side of the chart to dock the legend to.
-    legendPosition?: 'top' | 'right' | 'bottom' | 'left';
-    // The padding amount between the legend and the series.
-    legendPadding?: number;
-
-    legend?: {
-        // Whether to show the legend or not.
-        enabled?: boolean;
-        // The stroke width of a legend marker. Defaults to `1`.
-        markerStrokeWidth?: number;
-        // The size of a legend marker. Defaults to `14`.
-        markerSize?: number;
-        // The padding between a legend marker and its label. Defaults to `4`.
-        markerPadding?: number;
-        // The amount of horizontal padding between legend items. Defaults to `16`.
-        itemPaddingX?: number;
-        // The amount of vertical padding between legend items. Defaults to `8`.
-        itemPaddingY?: number;
-        // The font style to be used by legend's labels. For example, 'italic'.
-        // Not used by default.
-        labelFontStyle?: string;
-        // The font weight to be used by legend's labels. For example, 'bold'.
-        // Not used by default.
-        labelFontWeight?: string;
-        // The font size to be used by legend's labels. Defaults to `12`.
-        labelFontSize?: number;
-        // The font family to be used by legend's labels. Defaults to `Verdana, sans-serif`.
-        labelFontFamily?: string;
-        // The colour to be used by the legend's labels. Default depends on ag-Grid theme used
-        labelColor?: string;
-    };
-
-    // The horizontal chart axis.
     xAxis: AxisOptions;
-    // The vertical chart axis.
     yAxis: AxisOptions;
 
     seriesDefaults?: {
-        // The fill colours to be used by the series' markers.
+        // The fill colours used by the series' markers and the line itself
         fills?: string[];
-        // The stroke colours to be used by the series' markers and the line itself.
+        // The stroke colours to be used by the series' markers
         strokes?: string[];
-        // The stroke width. Defaults to `1`.
-        strokeWidth?: number;
-        // The style to apply to a series item when it is hovered or tapped.
+        strokeWidth?: number; // defaults to `1`
+        // The style to apply to a marker when it is hovered or tapped
         highlightStyle?: HighlightStyle;
 
-        // Whether to show line series markers at each data point or not. Defaults to `true`.
+        // Whether to show line series markers at each data point or not.
         // Note: tooltips won't show without markers.
-        marker?: boolean;
-        // The size of the marker. Defaults to `6`.
-        markerSize?: number;
-        // The stroke width of the marker. Defaults to `1`.
-        markerStrokeWidth?: number;
+        marker?: boolean; // defaults to `true`
+        markerSize?: number; // defaults to `6`
+        markerStrokeWidth?: number; // defaults to `1`
 
-        // Whether to show the tooltip for bars when they are hovered/tapped.
-        // Defaults to `true`.
-        tooltipEnabled?: boolean;
-        // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
+        // Whether to show the tooltip for markers when they are hovered/tapped
+        tooltipEnabled?: boolean; // defaults to `true`
+        // A custom tooltip render function. Should return a valid HTML string.
         tooltipRenderer?: (params: LineTooltipRendererParams) => string;
     };
+}
+
+interface AxisOptions {
+    title?: CaptionOptions;
+    lineWidth?: number; // defaults to `1`
+    lineColor?: string; // depends on whether the light or dark mode is used
+
+    tickWidth?: number; // defaults to `1`
+    tickSize?: number; // defaults to `6`
+    tickColor?: string; // depends on whether the light or dark mode is used
+
+    labelFontStyle?: FontStyle;
+    labelFontWeight?: FontWeight;
+    labelFontSize?: number; // defaults to `12`
+    labelFontFamily?: string; // defaults to `Verdana, sans-serif`
+    labelColor?: string; // depends on whether the light or dark mode is used
+    labelPadding?: number; // defaults to `5`
+
+    // The rotation in degrees of the axis labels. Defaults to `45`, unless the default 
+    // category (none) is selected, in which case `0` is used.
+    labelRotation?: number;
+    // The custom formatter function for the axis labels.
+    // The value is either a category name or a number. If it's the latter, the number
+    // of fractional digits used by the axis step will be provided as well.
+    labelFormatter?: (value: any, fractionDigits?: number) => string;
+
+    // The styles of the grid lines. These are repeated. If only a single style is provided,
+    // it will be used for all grid lines, if two styles are provided, every style will be
+    // used by every other line, and so on.
+    gridStyle?: IGridStyle[];
+}
+
+interface CaptionOptions {
+    enabled?: boolean; // defaults to `true`
+    text?: string;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight; // defaults to `bold`
+    fontSize?: number; // defaults to `16`
+    fontFamily?: string; // defaults to `Verdana, sans-serif`
+    color?: string; // defaults to `black`
+}
+
+export type FontStyle = 'normal' | 'italic' | 'oblique';
+
+export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | number;
+
+interface IGridStyle {
+    stroke?: string; // depends on whether the light or dark mode is used
+    // The line dash array. Every number in the array specifies the length of alternating
+    // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
+    lineDash?: number[]; // defaults to `[4, 2]`
 }
 
 interface HighlightStyle {
@@ -109,82 +98,27 @@ interface HighlightStyle {
     stroke?: string;
 }
 
-interface CaptionOptions {
-    // The text to use for the chart's title/subtitle.
-    text?: string;
-    // The font to be used by the title/subtitle.
-    // Defaults to `bold 16px Verdana, sans-serif` for the title
-    // and '12px Verdana, sans-serif' for the subtitle.
-    font?: string;
-    // The colour of the title/subtitle's text. Defaults to `black`.
-    color?: string;
-    // Whether to show the title/subtitle or not. Defaults to `true`.
-    enabled?: boolean;
-}
-
 interface LineTooltipRendererParams {
-    // The datum object (an element in the `data` array used by the chart/series).
+    // The datum object the tooltip is being rendered for
     datum: any;
-    // The field of the datum object that contains the category name
-    // of the highlighted data point.
+    // The field of the datum object that contains the category name of the highlighted data point
     xField: string;
-    // The field of the datum object that contains the series value of the highlighted data point.
+    // The field of the datum object that contains the series value of the highlighted data point
     yField: string;
-}
-
-interface AxisOptions {
-    // The title of the axis.
-    title?: CaptionOptions;
-    // The thickness of the axis line. Defaults to `1`.
-    lineWidth?: number;
-    // The colour of the axis line. Depends on whether the light or dark mode is used.
-    lineColor?: string;
-
-    // The thickness of the ticks. Defaults to `1`.
-    tickWidth?: number;
-    // The length of the ticks. Defaults to `6`.
-    tickSize?: number;
-    // The padding between the ticks and the labels. Defaults to `5`.
-    tickPadding?: number;
-    // The colour of the axis ticks. Depends on whether the light or dark mode is used.
-    tickColor?: string;
-
-    // The font to be used by axis labels. Defaults to `12px Verdana, sans-serif`.
-    labelFont?: string;
-    // The colour of the axis labels. Depends on whether the light or dark mode is used.
-    labelColor?: string;
-    // The rotation of the axis labels. Defaults to `45` (degrees), however when no category
-    // is present the default category, i.e. (none), is used with the value  `0`.
-    labelRotation?: number;
-    // The custom formatter function for the axis labels.
-    // The value is either a category name or a number. If it's the latter, the number
-    // of fractional digits used by the axis step will be provided as well.
-    // The returned string will be used as a label.
-    labelFormatter?: (value: any, fractionDigits?: number) => string;
-    // The styles of the grid lines. These are repeated. If only a single style is provided,
-    // it will be used for all grid lines, if two styles are provided, every style will be
-    // used by every other line, and so on.
-    gridStyle?: IGridStyle[];
-}
-
-interface IGridStyle {
-    // The stroke colour of a grid line. Depends on whether the light or dark mode is used.
-    stroke?: string;
-    // The line dash array. Every number in the array specifies the length of alternating
-    // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
-    // Defaults to `[4, 2]`.
-    lineDash?: number[];
+    // The title of the series the datum is in
+    title?: string;
+    // The fill colour of the series the datum is in
+    color?: string;
 }
 </snippet>
 
-The example below changes all available styling options. The styling options are exaggerated to demonstrate the option rather than produce a chart that looks nice.
+<h3>Example: Line Chart Customisations</h3>
 
-    <h3>Default Line Options</h3>
+<p>
+    The example below changes all available styling options. The styling options are exaggerated
+    to demonstrate each option rather than to produce a chart that looks nice!
+</p>
 
-    <p>
-        The default values for the bar chart options are shown below:
-    </p>
-
-<?= example('Custom Line Chart', 'custom-line-chart', 'generated', array("enterprise" => true)) ?>
+<?= example('Line Chart Customisations', 'custom-line-chart', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

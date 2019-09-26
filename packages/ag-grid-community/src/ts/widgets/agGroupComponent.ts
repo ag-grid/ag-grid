@@ -13,6 +13,7 @@ interface GroupParams {
     suppressEnabledCheckbox: boolean;
     suppressOpenCloseIcons: boolean;
     items?: GroupItem[];
+    alignItems?: 'start' | 'end' | 'center' | 'stretch'; // center by default
 }
 
 export class AgGroupComponent extends Component {
@@ -37,6 +38,7 @@ export class AgGroupComponent extends Component {
     private expanded: boolean;
     private suppressEnabledCheckbox: boolean = true;
     private suppressOpenCloseIcons: boolean = false;
+    private alignItems: GroupParams['alignItems'];
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -61,6 +63,8 @@ export class AgGroupComponent extends Component {
         this.title = title;
         this.enabled = enabled != null ? enabled : true;
         this.items = items || [];
+
+        this.alignItems = params.alignItems || 'center';
 
         if (suppressEnabledCheckbox != null) {
             this.suppressEnabledCheckbox = suppressEnabledCheckbox;
@@ -91,6 +95,8 @@ export class AgGroupComponent extends Component {
             this.setEnabled(this.enabled);
         }
 
+        this.setAlignItems(this.alignItems);
+
         this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
         this.hideOpenCloseIcons(this.suppressOpenCloseIcons);
 
@@ -116,6 +122,23 @@ export class AgGroupComponent extends Component {
         return this.expanded;
     }
 
+    public setAlignItems(alignment: GroupParams['alignItems']): this {
+        const eGui = this.getGui();
+
+        if (this.alignItems !== alignment) {
+            _.removeCssClass(eGui, `ag-alignment-${this.alignItems}`);
+        }
+
+        this.alignItems = alignment;
+        const newCls = `ag-alignment-${this.alignItems}`;
+
+        if (alignment !== 'center' && !_.containsClass(eGui, newCls)) {
+            _.addCssClass(eGui, newCls);
+        }
+
+        return this;
+    }
+
     public toggleGroupExpand(expanded?: boolean): this {
         const eGui = this.getGui();
 
@@ -138,6 +161,11 @@ export class AgGroupComponent extends Component {
         if (this.expanded) {
             const event = {
                 type: 'expanded',
+            };
+            this.dispatchEvent(event);
+        } else {
+            const event = {
+                type: 'collapsed',
             };
             this.dispatchEvent(event);
         }

@@ -1,18 +1,20 @@
 var columnDefs = [
-    {field: "country", width: 150, chartDataType: 'category'},
-    {field: "gold", chartDataType: 'series'},
-    {field: "silver", chartDataType: 'series'},
-    {field: "bronze", chartDataType: 'series'},
-    {headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'}
+    { field: "country", width: 150, chartDataType: 'category' },
+    { field: "gold", chartDataType: 'series' },
+    { field: "silver", chartDataType: 'series' },
+    { field: "bronze", chartDataType: 'series' },
+    { headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' }
 ];
 
 function createRowData() {
-    var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+    var countries = [
+        "Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
-        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
+        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"
+    ];
 
     return countries.map(function(country, index) {
         return {
@@ -39,7 +41,6 @@ var gridOptions = {
 };
 
 function processChartOptions(params) {
-
     var options = params.options;
     console.log('chart options:', options);
 
@@ -51,62 +52,31 @@ function processChartOptions(params) {
         return params.options;
     }
 
-    options.height = 500;
-    options.width = 1000;
-
-    options.title = {
-        text: 'Precious Metals Production',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 18,
-        fontFamily: 'Arial, sans-serif',
-        color: '#414182'
-    };
-    options.subtitle = {
-        text: 'by country',
+    var xAxis = options.xAxis;
+    xAxis.title = { 
+        enabled: true,
+        text: 'Country',
         fontStyle: 'italic',
         fontWeight: 'bold',
         fontSize: 14,
         fontFamily: 'Arial, sans-serif',
-        color: 'rgb(100, 100, 100)'
+        color: 'gray'
     };
-
-    options.padding = {top: 20, right: 10, bottom: 10, left: 20};
-
-    options.tooltipClass = 'my-tool-tip-class';
-
-    options.legendPosition = 'bottom';
-    options.legendPadding = 20;
-
-    var legend = options.legend;
-    legend.enabled = true;
-    legend.markerStrokeWidth = 2;
-    legend.markerSize = 25;
-    legend.markerPadding = 10;
-    legend.itemPaddingX = 120;
-    legend.itemPaddingY = 20;
-    legend.labelFontStyle = 'italic';
-    legend.labelFontWeight = 'bold';
-    legend.labelFontSize = 18;
-    legend.labelFontFamily = 'Arial, sans-serif';
-    legend.labelColor = '#555';
-
-    // changes to the xAxis
-    var xAxis = options.xAxis;
     xAxis.lineWidth = 2;
     xAxis.lineColor = 'gray';
     xAxis.tickWidth = 2;
     xAxis.tickSize = 10;
-    xAxis.tickPadding = 10;
     xAxis.tickColor = 'gray';
     xAxis.labelFontStyle = 'italic';
     xAxis.labelFontWeight = 'bold';
     xAxis.labelFontSize = 15;
     xAxis.labelFontFamily = 'Arial, sans-serif';
+    xAxis.labelPadding = 10;
     xAxis.labelColor = '#de7b73';
     xAxis.labelRotation = 20;
     xAxis.labelFormatter = function (params) {
-        return params.value === 'United Kingdom' ? 'UK' : '(' + String(params.value) + ')';
+        var value = String(params.value);
+        return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
     };
     xAxis.gridStyle = [
         {
@@ -114,20 +84,19 @@ function processChartOptions(params) {
         }
     ];
 
-    // changes to the yAxis
     var yAxis = options.yAxis;
     yAxis.lineWidth = 2;
-    yAxis.lineColor = 'gray';
+    yAxis.lineColor = 'blue';
     yAxis.tickWidth = 2;
     yAxis.tickSize = 10;
-    yAxis.tickPadding = 10;
-    yAxis.tickColor = 'gray';
+    yAxis.tickColor = 'blue';
     yAxis.labelFontStyle = 'italic';
     yAxis.labelFontWeight = 'bold';
     yAxis.labelFontSize = 15;
     yAxis.labelFontFamily = 'Arial, sans-serif';
+    yAxis.labelPadding = 10;
     yAxis.labelColor = '#de7b73';
-    yAxis.labelRotation = 20;
+    yAxis.labelRotation = -20;
     yAxis.labelFormatter = function (params) {
         return params.value.toString().toUpperCase();
     };
@@ -144,24 +113,24 @@ function processChartOptions(params) {
 
     var seriesDefaults = options.seriesDefaults;
 
-    seriesDefaults.fills = ['#e1ba00', 'silver', 'peru'];
-    seriesDefaults.strokes = ['red', 'green', 'blue'];
+    seriesDefaults.fills = [ '#e1ba00', 'silver', 'peru' ];
+    seriesDefaults.strokes = [ 'black', '#ff0000' ];
     seriesDefaults.strokeWidth = 2;
     seriesDefaults.highlightStyle = {
         fill: 'red',
-        stroke: 'maroon'
+        stroke: 'yellow'
     };
 
     seriesDefaults.marker = true;
     seriesDefaults.markerSize = 12;
     seriesDefaults.markerStrokeWidth = 4;
-
-    seriesDefaults.tooltipRenderer = function (params) {
+    
+    seriesDefaults.tooltipRenderer = function(params) {
         var xField = params.xField;
         var yField = params.yField;
         var x = params.datum[xField];
         var y = params.datum[yField];
-        return '<b>' + xField.toUpperCase() + ':</b> ' + x + '<br/><b>' + yField.toUpperCase() + ':</b> ' + y;
+        return '<u style="color: ' + params.color + '">' + params.title + '</u><br><br><b>' + xField.toUpperCase() + ':</b> ' + x + '<br/><b>' + yField.toUpperCase() + ':</b> ' + y;
     };
 
     return options;

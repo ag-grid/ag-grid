@@ -506,6 +506,23 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: hidden;
 }
 
+.ag-filter-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    .ag-filter-toolpanel-header {
+        display: flex;
+        div:not(.ag-input-wrapper) {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .ag-group-item {
+        flex-direction: column;
+    }
+}
+
 /**
  ****************************
  * Rows
@@ -1198,10 +1215,6 @@ $handleSize: 5px;
     cursor: default;
     user-select: none;
     width: 200px;
-    .ag-filter-toolpanel-header {
-        line-height: 1.5;
-        cursor: pointer;
-    }
 }
 
 .ag-column-tool-panel-column,
@@ -1365,7 +1378,8 @@ $handleSize: 5px;
     position: relative;
     flex: 1 1 100%;
 
-    .ag-group-component-title-bar {
+    .ag-group-component-title-bar,
+    .ag-group-component-title {
         display: flex;
         align-items: center;
     }
@@ -1388,6 +1402,18 @@ $handleSize: 5px;
         display: flex;
         flex: 1 1 auto;
         align-items: center;
+    }
+
+    &.ag-alignment-stretch .ag-group-item {
+        align-items: stretch;
+    }
+
+    &.ag-alignment-start .ag-group-item {
+        align-items: flex-start;
+    }
+
+    &.ag-alignment-end .ag-group-item {
+        align-items: flex-end;
     }
 
     &.ag-disabled {

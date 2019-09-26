@@ -1,3 +1,4 @@
+import { FontStyle, FontWeight } from "ag-grid-community";
 import { Padding } from "./util/padding";
 import { Text } from "./scene/shape/text";
 import { PointerEvents } from "./scene/node";
@@ -6,8 +7,8 @@ export class Caption {
 
     static create(params: {
         text?: string,
-        fontStyle?: string,
-        fontWeight?: string,
+        fontStyle?: FontStyle,
+        fontWeight?: FontWeight,
         fontSize?: number,
         fontFamily?: string,
         color?: string
@@ -47,23 +48,23 @@ export class Caption {
         return this.node.text;
     }
 
-    set fontStyle(value: string | undefined) {
+    set fontStyle(value: FontStyle | undefined) {
         if (this.node.fontStyle !== value) {
             this.node.fontStyle = value;
             this.requestLayout();
         }
     }
-    get fontStyle(): string | undefined {
+    get fontStyle(): FontStyle | undefined {
         return this.node.fontStyle;
     }
 
-    set fontWeight(value: string | undefined) {
+    set fontWeight(value: FontWeight | undefined) {
         if (this.node.fontWeight !== value) {
             this.node.fontWeight = value;
             this.requestLayout();
         }
     }
-    get fontWeight(): string | undefined {
+    get fontWeight(): FontWeight | undefined {
         return this.node.fontWeight;
     }
 

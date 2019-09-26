@@ -1,3 +1,4 @@
+import { LegendPosition } from "ag-grid-community";
 import { Scene } from "../scene/scene";
 import { Group } from "../scene/group";
 import { Series, SeriesNodeDatum } from "./series/series";
@@ -9,8 +10,6 @@ import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { Caption } from "../caption";
-
-export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface ChartOptions {
     document?: Document;
@@ -367,8 +366,6 @@ export abstract class Chart {
         }
     }
 
-    private legendBBox?: BBox;
-
     protected positionLegend() {
         if (!this.legend.enabled || !this.legend.data.length) {
             return;
@@ -443,8 +440,6 @@ export abstract class Chart {
         // Round off for pixel grid alignment to work properly.
         legendGroup.translationX = Math.floor(legendGroup.translationX);
         legendGroup.translationY = Math.floor(legendGroup.translationY);
-
-        this.legendBBox = legendBBox;
     }
 
     private setupListeners(chartElement: HTMLCanvasElement) {

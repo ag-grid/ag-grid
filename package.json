@@ -42,8 +42,8 @@
   "devDependencies": {
     "archiver": "^3.0.0",
     "lerna": "^2.11.0",
-    "walk": "^2.3.14",
-    "lighthouse": "^5.2.0"
+    "lighthouse": "^5.4.0",
+    "walk": "^2.3.14"
   },
   "dependencies": {}
 }

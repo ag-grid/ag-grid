@@ -44,14 +44,13 @@ var customToolPanelColumnDefs = [
     {
         headerName: 'Medals',
         children: [
-            { field: "total", width: 100 },
-            { field: "bronze", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "gold", width: 100 }
+            { field: "total" },
+            { field: "bronze" },
+            { field: "silver" },
+            { field: "gold" }
         ]
     }
 ];
-
 
 var gridOptions = {
     defaultColDef: {

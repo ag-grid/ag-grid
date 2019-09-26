@@ -1,18 +1,20 @@
 export interface ChartOptions {
     document?: Document;
     parent?: HTMLElement;
-    width?: number;
-    height?: number;
-    background?: BackgroundOptions;
     series?: any[];
     data?: any;
+
+    // can be customised through API:
+    width?: number;
+    height?: number;
     padding?: IPadding;
+    background?: BackgroundOptions;
+    title?: CaptionOptions;
+    subtitle?: CaptionOptions;
+    legend?: LegendOptions;
     legendPosition?: LegendPosition;
     legendPadding?: number;
     tooltipClass?: string;
-    legend?: LegendOptions;
-    title?: CaptionOptions;
-    subtitle?: CaptionOptions;
 }
 
 export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUnlink' | 'chartDownload';
@@ -34,6 +36,10 @@ export enum ChartType {
     NormalizedArea = 'normalizedArea'
 }
 
+export type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
+export type PolarSeriesType = 'pie';
+export type SeriesType = CartesianSeriesType | PolarSeriesType;
+
 export interface HighlightStyle {
     fill?: string;
     stroke?: string;
@@ -42,6 +48,7 @@ export interface HighlightStyle {
 export interface CartesianChartOptions extends ChartOptions {
     xAxis: AxisOptions;
     yAxis: AxisOptions;
+    isGroupingEnabled?: boolean;
 }
 
 export interface BarChartOptions extends CartesianChartOptions {
@@ -86,8 +93,8 @@ interface IPadding {
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface ILabelFormattingOptions {
-    labelFontStyle?: string;
-    labelFontWeight?: string;
+    labelFontStyle?: FontStyle;
+    labelFontWeight?: FontWeight;
     labelFontSize?: number;
     labelFontFamily?: string;
     labelColor?: string;
@@ -95,7 +102,6 @@ export interface ILabelFormattingOptions {
 
 export interface AxisOptions extends ILabelFormattingOptions {
     type?: 'category' | 'number' | 'groupedCategory';
-
     title?: CaptionOptions;
 
     lineWidth?: number;
@@ -103,9 +109,9 @@ export interface AxisOptions extends ILabelFormattingOptions {
 
     tickWidth?: number;
     tickSize?: number;
-    tickPadding?: number;
     tickColor?: string;
 
+    labelPadding?: number;
     labelRotation?: number;
     mirrorLabels?: boolean;
     parallelLabels?: boolean;
@@ -127,7 +133,7 @@ export interface DropShadowOptions {
 }
 
 export interface SeriesOptions {
-    type?: string;
+    type?: SeriesType;
     data?: any[];
     visible?: boolean;
     showInLegend?: boolean;
@@ -184,8 +190,8 @@ export interface ScatterSeriesOptions extends SeriesOptions {
     radiusFieldName?: string;
 
     fill?: string;
-    stroke?: string;
     fillOpacity?: number;
+    stroke?: string;
     strokeOpacity?: number;
     highlightStyle?: HighlightStyle;
 
@@ -331,10 +337,13 @@ export interface BackgroundOptions {
 
 export interface CaptionOptions {
     text?: string;
-    fontStyle?: string;
-    fontWeight?: string;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
     fontSize?: number;
     fontFamily?: string;
     color?: string;
     enabled?: boolean;
 }
+
+export type FontStyle = "normal" | "italic" | "oblique";
+export type FontWeight = "normal" | "bold" | "bolder" | "lighter" | number;

@@ -1,4 +1,4 @@
-<?php 
+<?php
 require "example-runner/utils.php";
 require "includes/html-helpers.php";
 define('HOMEPAGE', true);
@@ -14,8 +14,11 @@ $title = 'ag-Grid: Datagrid packed with features that your users need with the p
 $description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 19 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
+<?= globalAgGridScript(true, false) ?>
 
-</head><link rel="stylesheet" href="dist/homepage.css">
+</head>
+
+<link rel="stylesheet" href="dist/homepage.css" >
 
 <body>
     <header id="nav" class="compact">
@@ -23,12 +26,9 @@ meta_and_links($title, $keywords, $description, false);
     </header>
     <div class="stage-scenarios main">
         <h2 class="heading-scenarios">The Best JavaScript Grid in the World</h2>
-
         <section>
-            <div class="demo" id="demo-1" data-load="home/demo-1.php">
-                <div class="loading">
-                    <p>Loading Demo...</p>
-                </div>
+            <div class="demo" >
+                <div id="bestHtml5Grid"  class="ag-theme-material"></div>
             </div>
         </section>
     </div>
@@ -43,24 +43,24 @@ meta_and_links($title, $keywords, $description, false);
             <div>
                 <h3>Feature Packed</h3>
                 <p>
-                    The performance, feature set and quality of ag-Grid has not been seen before in a 
-                    JavaScript datagrid. Many features in ag-Grid are unique to ag-Grid and simply putting 
+                    The performance, feature set and quality of ag-Grid has not been seen before in a
+                    JavaScript datagrid. Many features in ag-Grid are unique to ag-Grid and simply putting
                     ag-Grid into a class of it’s own without compromising on quality or performance.
                 </p>
             </div>
             <div>
                 <h3>Industry Leading</h3>
                 <p>
-                    Over 600,000 monthly downloads of ag-Grid Community and over 50% of the Fortune 500 
-                    using ag-Grid Enterprise. ag-Grid has become the JavaScript datagrid of choice for Enterprise 
+                    Over 600,000 monthly downloads of ag-Grid Community and over 50% of the Fortune 500
+                    using ag-Grid Enterprise. ag-Grid has become the JavaScript datagrid of choice for Enterprise
                     JavaScript developers.
                 </p>
             </div>
             <div>
                 <h3>Community & Enterprise</h3>
                 <p>
-                    ag-Grid Community is free and open-sourced under MIT license. ag-Grid Enterprise comes with 
-                    dedicated support and more enterprise style features. ag-Grid gives for free what other grids 
+                    ag-Grid Community is free and open-sourced under MIT license. ag-Grid Enterprise comes with
+                    dedicated support and more enterprise style features. ag-Grid gives for free what other grids
                     charge for, then provides in ag-Grid Enterprise where it goes above and beyond the competition.
                 </p>
             </div>
@@ -120,11 +120,9 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
-    <?= globalAgGridScript(true, true) ?>
     <script src="dist/homepage.js"></script>
-    <!-- Used by the dashboard demo -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+    <script src="example-rich-grid/data.js"></script>
+    <script src="example-rich-grid/example.js"></script>
     <?php include 'includes/footer.php' ?>
 </body>
 </html>

@@ -1,8 +1,7 @@
+import { FontWeight, FontStyle } from "ag-grid-community";
 import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
-import { HdpiCanvas } from "../../canvas/hdpiCanvas";
 import { BBox } from "../bbox";
-import { Scene } from "../scene";
 
 export class Text extends Shape {
 
@@ -39,11 +38,11 @@ export class Text extends Shape {
         return this._y;
     }
 
-    private lineBreakRe = /\r?\n/g;
+    private lineBreakRegex = /\r?\n/g;
     private lines: string[] = [];
 
     private splitText() {
-        this.lines = this._text.split(this.lineBreakRe);
+        this.lines = this._text.split(this.lineBreakRegex);
     }
 
     private _text: string = '';
@@ -86,25 +85,25 @@ export class Text extends Shape {
         return this._dirtyFont;
     }
 
-    private _fontStyle: string | undefined = undefined;
-    set fontStyle(value: string | undefined) {
+    private _fontStyle: FontStyle | undefined = undefined;
+    set fontStyle(value: FontStyle | undefined) {
         if (this._fontStyle !== value) {
             this._fontStyle = value;
             this.dirtyFont = true;
         }
     }
-    get fontStyle(): string | undefined {
+    get fontStyle(): FontStyle | undefined {
         return this._fontStyle;
     }
 
-    private _fontWeight: string | undefined = undefined;
-    set fontWeight(value: string | undefined) {
+    private _fontWeight: FontWeight | undefined = undefined;
+    set fontWeight(value: FontWeight | undefined) {
         if (this._fontWeight !== value) {
             this._fontWeight = value;
             this.dirtyFont = true;
         }
     }
-    get fontWeight(): string | undefined {
+    get fontWeight(): FontWeight | undefined {
         return this._fontWeight;
     }
 
@@ -196,8 +195,7 @@ export class Text extends Shape {
 
     private getApproximateBBox(): BBox {
         const size = this.scene!.canvas.getTextSize(this.text, this.font);
-        let x = this.x;
-        let y = this.y;
+        let { x, y } = this;
 
         switch (this.textAlign) {
             case 'end':
@@ -251,55 +249,63 @@ export class Text extends Shape {
         // this.matrix.transformBBox(this.getBBox!()).render(ctx); // debug
         this.matrix.toContext(ctx);
 
-        if (this.opacity < 1) {
-            ctx.globalAlpha = this.opacity;
+        const { opacity, fill, stroke, strokeWidth } = this;
+
+        if (opacity < 1) {
+            ctx.globalAlpha = opacity;
         }
+
         ctx.font = this.font;
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
 
         const pixelRatio = this.scene.canvas.pixelRatio || 1;
 
-        if (this.fill) {
-            ctx.fillStyle = this.fill;
+        if (fill) {
+            ctx.fillStyle = fill;
 
-            const fillShadow = this.fillShadow;
+            const { fillShadow, text, x, y } = this;
+
             if (fillShadow && fillShadow.enabled) {
                 ctx.shadowColor = fillShadow.color;
                 ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
                 ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = fillShadow.blur * pixelRatio;
             }
-            ctx.fillText(this.text, this.x, this.y);
-            // this.lines.forEach((text, index) => {
-            //     ctx.fillText(text, this.x, this.y + index * this.lineHeight);
-            // });
+
+            ctx.fillText(text, x, y);
         }
 
-        if (this.stroke && this.strokeWidth) {
-            ctx.strokeStyle = this.stroke;
-            ctx.lineWidth = this.strokeWidth;
-            if (this.lineDash) {
-                ctx.setLineDash(this.lineDash);
-            }
-            if (this.lineDashOffset) {
-                ctx.lineDashOffset = this.lineDashOffset;
-            }
-            if (this.lineCap) {
-                ctx.lineCap = this.lineCap;
-            }
-            if (this.lineJoin) {
-                ctx.lineJoin = this.lineJoin;
+        if (stroke && strokeWidth) {
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = strokeWidth;
+
+            const { lineDash, lineDashOffset, lineCap, lineJoin, strokeShadow, text, x, y } = this;
+
+            if (lineDash) {
+                ctx.setLineDash(lineDash);
             }
 
-            const strokeShadow = this.strokeShadow;
+            if (lineDashOffset) {
+                ctx.lineDashOffset = lineDashOffset;
+            }
+
+            if (lineCap) {
+                ctx.lineCap = lineCap;
+            }
+
+            if (lineJoin) {
+                ctx.lineJoin = lineJoin;
+            }
+
             if (strokeShadow && strokeShadow.enabled) {
                 ctx.shadowColor = strokeShadow.color;
                 ctx.shadowOffsetX = strokeShadow.xOffset * pixelRatio;
                 ctx.shadowOffsetY = strokeShadow.yOffset * pixelRatio;
                 ctx.shadowBlur = strokeShadow.blur * pixelRatio;
             }
-            ctx.strokeText(this.text, this.x, this.y);
+
+            ctx.strokeText(text, x, y);
         }
 
         this.dirty = false;

@@ -1,9 +1,10 @@
+import { IGridStyle, FontStyle, FontWeight } from "ag-grid-community";
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
 import { Line } from "./scene/shape/line";
 import { NumericTicks } from "./util/ticks";
-import { normalizeAngle360, normalizeAngle360Inclusive, toDegrees, toRadians } from "./util/angle";
+import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { Text } from "./scene/shape/text";
 import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
@@ -17,9 +18,21 @@ enum Tags {
     GridLine
 }
 
-export interface GridStyle {
-    stroke?: string;
-    lineDash?: number[];
+export interface ILabelFormatting {
+    labelFontFamily: string;
+    labelFontStyle?: FontStyle;
+    labelFontWeight?: FontWeight;
+    labelFontSize: number;
+    labelPadding: number;
+    labelColor?: string;
+}
+
+export interface IAxisFormatting {
+    lineColor?: string;
+    lineWidth: number;
+    tickColor?: string;
+    tickWidth: number;
+    tickSize: number;
 }
 
 /**
@@ -31,7 +44,7 @@ export interface GridStyle {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<S extends Scale<D, number>, D = any> {
+export class Axis<S extends Scale<D, number>, D = any> implements IAxisFormatting, ILabelFormatting {
 
     // debug (bbox)
     // private bboxRect = (() => {
@@ -107,11 +120,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
     tickSize: number = 6;
 
     /**
-     * The padding between the ticks and the labels.
-     */
-    tickPadding: number = 5;
-
-    /**
      * The color of the axis ticks.
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
@@ -151,8 +159,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
      */
     labelFormatter?: (params: {value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string}) => string;
 
-    labelFontStyle: string = '';
-    labelFontWeight: string = '';
+    labelFontStyle: FontStyle | undefined = undefined;
+    labelFontWeight: FontWeight | undefined = undefined;
     labelFontSize: number = 12;
     labelFontFamily: string = 'Verdana, sans-serif';
 
@@ -161,21 +169,25 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const oldTitle = this._title;
         if (oldTitle !== value) {
             if (oldTitle) {
-                // oldTitle.onLayoutChange = undefined;
                 this.group.removeChild(oldTitle.node);
             }
+
             if (value) {
                 value.node.rotation = -Math.PI / 2;
-                // value.onLayoutChange = this.onLayoutChange;
                 this.group.appendChild(value.node);
             }
+
             this._title = value;
-            // this.requestLayout();
         }
     }
     get title(): Caption | undefined {
         return this._title;
     }
+
+    /**
+     * The padding between the labels and the ticks.
+     */
+    labelPadding: number = 5;
 
     /**
      * The color of the labels.
@@ -194,6 +206,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         if (this._gridLength && !value || !this._gridLength && value) {
             this.groupSelection = this.groupSelection.remove().setData([]);
         }
+
         this._gridLength = value;
     }
     get gridLength(): number {
@@ -206,16 +219,16 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * Contains only one {@link GridStyle} object by default, meaning all grid lines
      * have the same style.
      */
-    private _gridStyle: GridStyle[] = [{
+    private _gridStyle: IGridStyle[] = [{
         stroke: 'rgba(219, 219, 219, 1)',
         lineDash: [4, 2]
     }];
-    set gridStyle(value: GridStyle[]) {
+    set gridStyle(value: IGridStyle[]) {
         if (value.length) {
             this._gridStyle = value;
         }
     }
-    get gridStyle(): GridStyle[] {
+    get gridStyle(): IGridStyle[] {
         return this._gridStyle;
     }
 
@@ -280,9 +293,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * it will also make it harder to reason about the program.
      */
     update() {
-        const group = this.group;
-        const scale = this.scale;
-
+        const { group, scale, parallelLabels } = this;
         const rotation = toRadians(this.rotation);
         const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
 
@@ -290,13 +301,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         group.translationY = this.translationY;
         group.rotation = rotation;
 
-        // Render ticks and labels.
-        const ticks = scale.ticks!(this.tickCount);
-        let fractionDigits = 0;
-        if (ticks instanceof NumericTicks) {
-            fractionDigits = ticks.fractionDigits;
-        }
         const bandwidth = (scale.bandwidth || 0) / 2;
+
         // The side of the axis line to position the labels on.
         // -1 = left (default)
         //  1 = right
@@ -311,21 +317,22 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // -1 = flip
         //  1 = don't flip (default)
         const parallelFlipRotation = normalizeAngle360(rotation);
-        const parallelFlipFlag = (!labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI) ? -1 : 1;
+        const parallelFlipFlag = !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
 
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
         // Flip if the axis rotation angle is in the top hemisphere.
-        const regularFlipFlag = (!labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI) ? -1 : 1;
+        const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
-        const alignFlag = (labelRotation >= 0 && labelRotation <= Math.PI) ? -1 : 1;
-        const parallelLabels = this.parallelLabels;
+        const alignFlag = labelRotation >= 0 && labelRotation <= Math.PI ? -1 : 1;
 
+        const ticks = scale.ticks!(this.tickCount);
         const update = this.groupSelection.setData(ticks);
         update.exit.remove();
 
         const enter = update.enter.append(Group);
         // Line auto-snaps to pixel grid if vertical or horizontal.
         enter.append(Line).each(node => node.tag = Tags.Tick);
+        
         if (this.gridLength) {
             if (this.radialGrid) {
                 enter.append(Arc).each(node => node.tag = Tags.GridLine);
@@ -338,9 +345,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const groupSelection = update.merge(enter);
 
         groupSelection
-            .attrFn('translationY', (_, datum) => {
-                return Math.round(scale.convert(datum) + bandwidth);
-            });
+            .attrFn('translationY', (_, datum) => Math.round(scale.convert(datum) + bandwidth));
 
         groupSelection.selectByTag<Line>(Tags.Tick)
             .each(line => {
@@ -359,9 +364,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             if (this.radialGrid) {
                 const angularGridLength = normalizeAngle360Inclusive(toRadians(this.gridLength));
+
                 gridLines = groupSelection.selectByTag<Arc>(Tags.GridLine)
                     .each((arc, datum) => {
                         const radius = Math.round(scale.convert(datum) + bandwidth);
+
                         arc.centerX = 0;
                         arc.centerY = this.scale.range[0] - radius;
                         arc.endAngle = angularGridLength;
@@ -378,8 +385,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
                         line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
                     });
             }
-            gridLines.each((gridLine, datum, index) => {
+
+            gridLines.each((gridLine, _, index) => {
                 const style = styles[index % styleCount];
+
                 gridLine.stroke = style.stroke;
                 gridLine.strokeWidth = this.tickWidth;
                 gridLine.lineDash = style.lineDash;
@@ -387,7 +396,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
             });
         }
 
-        const labelFormatter = this.labelFormatter;
+        const { labelFormatter, tickFormatter } = this;
+        const fractionDigits = ticks instanceof NumericTicks ? ticks.fractionDigits : 0;
+
         const labels = groupSelection.selectByClass(Text)
             .each((label, datum, index) => {
                 label.fontStyle = this.labelFontStyle;
@@ -398,7 +409,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 label.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
-                const tickFormatter = this.tickFormatter;
                 label.text = labelFormatter
                     ? labelFormatter({
                         value: fractionDigits >= 0 ? datum : String(datum),
@@ -418,7 +428,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
             });
 
-        const labelX = sideFlag * (this.tickSize + this.tickPadding);
+        const labelX = sideFlag * (this.tickSize + this.labelPadding);
         const autoRotation = parallelLabels
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
@@ -442,6 +452,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         line.visible = ticks.length > 0;
 
         const title = this.title;
+
         if (title) {
             const padding = title.padding.bottom;
             const node = title.node;
@@ -450,6 +461,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             node.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
             node.x = titleRotationFlag * sideFlag * (line.y1 + line.y2) / 2;
+
             if (sideFlag === -1) {
                 node.y = titleRotationFlag * (-padding - bbox.width + Math.max(bbox.x + bbox.width, 0));
             } else {
@@ -493,8 +505,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
             group.computeTransformMatrix();
             matrix.preMultiplySelf(group.matrix);
             const labelBBox = label.getBBox();
+
             if (labelBBox) {
                 const bbox = matrix.transformBBox(labelBBox);
+
                 left = Math.min(left, bbox.x);
                 right = Math.max(right, bbox.x + bbox.width);
                 top = Math.min(top, bbox.y);
@@ -507,8 +521,10 @@ export class Axis<S extends Scale<D, number>, D = any> {
             label.computeTransformMatrix();
             const matrix = Matrix.flyweight(label.matrix);
             const labelBBox = label.getBBox();
+
             if (labelBBox) {
                 const bbox = matrix.transformBBox(labelBBox);
+
                 left = Math.min(left, bbox.x);
                 right = Math.max(right, bbox.x + bbox.width);
                 top = Math.min(top, bbox.y);
@@ -528,10 +544,4 @@ export class Axis<S extends Scale<D, number>, D = any> {
             bottom - top
         );
     }
-
-    // private requestLayout() {
-    //     if (this.onLayoutChange) {
-    //         this.onLayoutChange();
-    //     }
-    // }
 }

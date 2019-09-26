@@ -16,22 +16,6 @@ import {
 } from "ag-grid-community";
 
 export class ToolPanelFilterComp extends Component {
-
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnController') private columnController: ColumnController;
-
-    private column: Column;
-    private expanded: boolean = false;
-
-    @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
-    @RefSelector('eFilterName') private eFilterName: HTMLElement;
-    @RefSelector('agFilterToolPanelBody') private agFilterToolPanelBody: HTMLElement;
-    @RefSelector('eFilterIcon') private eFilterIcon: HTMLElement;
-    @RefSelector('eExpand') private eExpand: HTMLElement;
-    
     private static TEMPLATE =
         `<div class="ag-filter-toolpanel-instance" >
             <div class="ag-filter-toolpanel-header ag-header-cell-label" ref="eFilterToolPanelHeader">
@@ -39,14 +23,29 @@ export class ToolPanelFilterComp extends Component {
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
                 <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>
             </div>
-            <div class="ag-filter-toolpanel-body ag-filter" ref="agFilterToolPanelBody"/>
-        </div>`;
-    
+            <div class="ag-filter-toolpanel-body ag-filter" ref="agFilterToolPanelBody"/></div>`;
+
+    @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
+    @RefSelector('eFilterName') private eFilterName: HTMLElement;
+    @RefSelector('agFilterToolPanelBody') private agFilterToolPanelBody: HTMLElement;
+    @RefSelector('eFilterIcon') private eFilterIcon: HTMLElement;
+    @RefSelector('eExpand') private eExpand: HTMLElement;
+
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
+
     private eExpandChecked: HTMLElement;
     private eExpandUnchecked: HTMLElement;
+    private hideHeader: boolean;
+    private column: Column;
+    private expanded: boolean = false;
 
-    constructor() {
+    constructor(hideHeader = false) {
         super(ToolPanelFilterComp.TEMPLATE);
+        this.hideHeader = hideHeader;
     }
 
     @PostConstruct
@@ -66,6 +65,11 @@ export class ToolPanelFilterComp extends Component {
         this.addInIcon('filter', this.eFilterIcon, this.column);
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
         _.addCssClass(this.eExpandChecked, 'ag-hidden');
+
+        if (this.hideHeader) {
+            _.addOrRemoveCssClass(this.eFilterToolPanelHeader, 'ag-hidden', true);
+        }
+
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     }
 
@@ -81,15 +85,16 @@ export class ToolPanelFilterComp extends Component {
         eParent.appendChild(eIcon);
     }
 
-    private isFilterActive(): boolean {
+    public isFilterActive(): boolean {
         return this.filterManager.isFilterActive(this.column);
     }
 
     private onFilterChanged(): void {
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
+        this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 
-    private doExpandOrCollapse(): void {
+    public doExpandOrCollapse(): void {
         this.expanded ? this.doCollapse() : this.doExpand();
     }
 

@@ -1,3 +1,4 @@
+import { FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../scene/group";
 import { Selection } from "../scene/selection";
 import { MarkerLabel } from "./markerLabel";
@@ -116,25 +117,25 @@ export class Legend {
         return this._labelColor;
     }
 
-    private _labelFontStyle: string | undefined = MarkerLabel.defaults.labelFontStyle;
-    set labelFontStyle(value: string | undefined) {
+    private _labelFontStyle: FontStyle | undefined = MarkerLabel.defaults.labelFontStyle;
+    set labelFontStyle(value: FontStyle | undefined) {
         if (this._labelFontStyle !== value) {
             this._labelFontStyle = value;
             this.requestLayout();
         }
     }
-    get labelFontStyle(): string | undefined {
+    get labelFontStyle(): FontStyle | undefined {
         return this._labelFontStyle;
     }
 
-    private _labelFontWeight: string | undefined = MarkerLabel.defaults.labelFontWeight;
-    set labelFontWeight(value: string | undefined) {
+    private _labelFontWeight: FontWeight | undefined = MarkerLabel.defaults.labelFontWeight;
+    set labelFontWeight(value: FontWeight | undefined) {
         if (this._labelFontWeight !== value) {
             this._labelFontWeight = value;
             this.requestLayout();
         }
     }
-    get labelFontWeight(): string | undefined {
+    get labelFontWeight(): FontWeight | undefined {
         return this._labelFontWeight;
     }
 

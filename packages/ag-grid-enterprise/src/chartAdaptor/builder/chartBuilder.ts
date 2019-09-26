@@ -20,6 +20,10 @@ import {
     PieChartOptions,
     SeriesOptions,
     CaptionOptions,
+    CartesianSeriesType,
+    PolarSeriesType,
+    SeriesType,
+    FontWeight,
 } from "ag-grid-community";
 
 import { CartesianChart, CartesianChartLayout } from "../../charts/chart/cartesianChart";
@@ -38,70 +42,23 @@ import { Padding } from "../../charts/util/padding";
 import { Legend } from "../../charts/chart/legend";
 import { Caption } from "../../charts/caption";
 import { GroupedCategoryAxis } from "../../charts/chart/axis/groupedCategoryAxis";
-import { GroupedCategoryChart } from "../../charts/chart/groupedCategoryChart";
-
-type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
-type PolarSeriesType = 'pie';
-type SeriesType = CartesianSeriesType | PolarSeriesType;
 
 export class ChartBuilder {
     static createCartesianChart(options: CartesianChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
             xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            yAxis: ChartBuilder.createAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options);
     }
 
-    static createGroupedColumnChart(options: BarChartOptions): GroupedCategoryChart {
-        const chart = new GroupedCategoryChart({
-            document: options.document,
-            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
-        });
-
-        return ChartBuilder.initGroupedCategoryChart(chart, options, "bar");
-    }
-
-    static createGroupedBarChart(options: BarChartOptions): GroupedCategoryChart {
-        const chart = new GroupedCategoryChart({
-            document: options.document,
-            xAxis: ChartBuilder.createAxis(options.yAxis),
-            yAxis: ChartBuilder.createGroupedAxis(options.xAxis)
-        });
-
-        chart.layout = CartesianChartLayout.Horizontal;
-
-        return ChartBuilder.initGroupedCategoryChart(chart, options, "bar");
-    }
-
-    static createGroupedLineChart(options: BarChartOptions): GroupedCategoryChart {
-        const chart = new GroupedCategoryChart({
-            document: options.document,
-            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
-        });
-
-        return ChartBuilder.initGroupedCategoryChart(chart, options, "line");
-    }
-
-    static createGroupedAreaChart(options: AreaChartOptions): GroupedCategoryChart {
-        const chart = new GroupedCategoryChart({
-            document: options.document,
-            xAxis: ChartBuilder.createGroupedAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
-        });
-
-        return ChartBuilder.initGroupedCategoryChart(chart, options, "area");
-    }
-
     static createBarChart(options: BarChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.yAxis),
-            yAxis: ChartBuilder.createAxis(options.xAxis)
+            xAxis: ChartBuilder.createNumberAxis(options.xAxis), 
+            yAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.yAxis),
         });
 
         chart.layout = CartesianChartLayout.Horizontal;
@@ -112,8 +69,8 @@ export class ChartBuilder {
     static createColumnChart(options: BarChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            xAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options, "bar");
@@ -122,8 +79,8 @@ export class ChartBuilder {
     static createLineChart(options: LineChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            xAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options, "line");
@@ -133,7 +90,7 @@ export class ChartBuilder {
         const chart = new CartesianChart({
             document: options.document,
             xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options, "scatter");
@@ -142,8 +99,8 @@ export class ChartBuilder {
     static createAreaChart(options: AreaChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis)
+            xAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
+            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
         return ChartBuilder.initCartesianChart(chart, options, "area");
@@ -159,7 +116,7 @@ export class ChartBuilder {
 
     static createScatterSeries = (options: ScatterSeriesOptions): ScatterSeries => new ScatterSeries();
 
-    static createSeries(options: any, type?: string) {
+    static createSeries(options: { type?: SeriesType }, type?: SeriesType) {
         switch (type || options && options.type) {
             case "line":
                 return ChartBuilder.initLineSeries(new LineSeries(), options);
@@ -178,8 +135,8 @@ export class ChartBuilder {
 
     static initChart<C extends Chart>(chart: C, options: ChartOptions, seriesType?: SeriesType) {
         _.copyPropertiesIfPresent(options, chart, "parent", "width", "height", "legendPosition", "legendPadding", "data", "tooltipClass");
-        _.copyPropertyIfPresent(options, chart, "title", t => ChartBuilder.createChartTitle(t!));
-        _.copyPropertyIfPresent(options, chart, "subtitle", t => ChartBuilder.createChartSubtitle(t!));
+        _.copyPropertyIfPresent(options, chart, "title", t => ChartBuilder.createTitle(t!));
+        _.copyPropertyIfPresent(options, chart, "subtitle", t => ChartBuilder.createSubtitle(t!));
         _.copyPropertyIfPresent(options, chart, "series", s => s!.map(series => ChartBuilder.createSeries(series, seriesType)).filter(x => x));
         _.copyPropertyIfPresent(options, chart, "padding", p => new Padding(p!.top, p!.right, p!.bottom, p!.left));
 
@@ -195,12 +152,6 @@ export class ChartBuilder {
     }
 
     static initCartesianChart(chart: CartesianChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType) {
-        ChartBuilder.initChart(chart, options, seriesType);
-
-        return chart;
-    }
-
-    static initGroupedCategoryChart(chart: GroupedCategoryChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType) {
         ChartBuilder.initChart(chart, options, seriesType);
 
         return chart;
@@ -369,7 +320,7 @@ export class ChartBuilder {
             "itemPaddingY");
     }
 
-    static setDefaultFontOptions(options: CaptionOptions, fontSize = 16, fontWeight = "bold", fontFamily = "Verdana, sans-serif") {
+    static setDefaultFontOptions(options: CaptionOptions, fontSize = 16, fontWeight: FontWeight = "bold", fontFamily = "Verdana, sans-serif") {
         if (options.fontSize === undefined) {
             options.fontSize = fontSize;
         }
@@ -383,7 +334,7 @@ export class ChartBuilder {
         }
     }
 
-    static createAxisTitle(options: CaptionOptions) {
+    static createTitle(options: CaptionOptions) {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -395,19 +346,8 @@ export class ChartBuilder {
         return ChartBuilder.createCaption(options);
     }
 
-    static createChartTitle(options: CaptionOptions) {
-        options = Object.create(options);
 
-        if (options.text === undefined) {
-            options.text = 'Title';
-        }
-
-        this.setDefaultFontOptions(options);
-
-        return ChartBuilder.createCaption(options);
-    }
-
-    static createChartSubtitle(options: CaptionOptions) {
+    static createSubtitle(options: CaptionOptions) {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -445,7 +385,7 @@ export class ChartBuilder {
             }
             
             if (name === 'title' && options.title) {
-                axis.title = ChartBuilder.createAxisTitle(options.title);
+                axis.title = ChartBuilder.createTitle(options.title);
                 continue;
             }
 
@@ -468,6 +408,22 @@ export class ChartBuilder {
         if (!axis) {
             throw new Error("Unknown axis type.");
         }
+
+        this.populateAxisProperties(axis, options);
+
+        return axis;
+    }
+
+    static createNumberAxis(options: AxisOptions): NumberAxis {
+        const axis = new NumberAxis();
+
+        this.populateAxisProperties(axis, options);
+
+        return axis;
+    }
+
+    static createCategoryAxis(options: AxisOptions): CategoryAxis {
+        const axis = new CategoryAxis();
 
         this.populateAxisProperties(axis, options);
 

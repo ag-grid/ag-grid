@@ -30,7 +30,7 @@ export class ChartPanel extends Component {
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private chart: Chart;
-    private chartProxy: ChartProxy<any>;
+    private chartProxy: ChartProxy<any, any>;
     private activePanels: Component[] = [];
     private readonly chartController: ChartController;
 

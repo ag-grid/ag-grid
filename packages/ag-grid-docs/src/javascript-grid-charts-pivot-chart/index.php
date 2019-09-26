@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Pivot Chart allow users to chart all grouped and pivoted data from inside the grid. When pivot mode is active
-        in the grid, the pivot chart menu item will appear in the grids context menu.
+        in the grid, the pivot chart menu item will appear in the grid's context menu.
     </p>
 
     <h2>Using Pivot Chart</h2>

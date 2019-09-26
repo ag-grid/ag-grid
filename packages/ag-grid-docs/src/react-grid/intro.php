@@ -69,7 +69,7 @@ render(&lt;App /&gt;, document.getElementById('root'));
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
-                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-grid-javascript-hello-world" target="_blank">
+                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-grid-react-hello-world" target="_blank">
                     Open in <img src="../images/stackBlitzIcon.svg"/> StackBlitz
                 </a>
             </div>

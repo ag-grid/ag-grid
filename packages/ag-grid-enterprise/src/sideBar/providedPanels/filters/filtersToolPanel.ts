@@ -1,103 +1,95 @@
 import {
     _,
     Autowired,
-    Column,
+    ColDef,
     ColumnController,
     Component,
     EventService,
+    GridApi,
     IToolPanelComp,
+    IToolPanelParams,
+    RefSelector
 } from "ag-grid-community";
+import {FiltersToolPanelHeaderPanel} from "./filtersToolPanelHeaderPanel";
+import {FiltersToolPanelListPanel} from "./filtersToolPanelListPanel";
 
-import { ToolPanelFilterComp } from "./toolPanelFilterComp";
+export interface ToolPanelFiltersCompParams extends IToolPanelParams {
+    syncLayoutWithGrid: boolean;
+}
 
 export interface IFiltersToolPanel {
+    setFilterLayout(colDefs: ColDef[]): void;
     expandFilters(colIds?: string[]): void;
     collapseFilters(colIds?: string[]): void;
+    syncLayoutWithGrid(): void;
 }
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
 
     private static TEMPLATE =
-        `<div class="ag-filter-panel" ref="ePanelContainer" />`;
+        `<div class="ag-filter-panel">
+            <ag-filters-tool-panel-header ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
+            <ag-filters-tool-panel-list ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list> 
+         </div>`;
 
+    @RefSelector('filtersToolPanelHeaderPanel')
+    private filtersToolPanelHeaderPanel: FiltersToolPanelHeaderPanel;
+
+    @RefSelector('filtersToolPanelListPanel')
+    private filtersToolPanelListPanel: FiltersToolPanelListPanel;
+
+    @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("eventService") private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
 
     private initialised = false;
+    private params: ToolPanelFiltersCompParams;
 
     constructor() {
         super(FiltersToolPanel.TEMPLATE);
     }
 
-    public init(): void {
+    public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
-        this.eventService.addEventListener('newColumnsLoaded', () => this.onColumnsChanged());
-        if (this.columnController.isReady()) {
-            this.onColumnsChanged();
-        }
-    }
 
-    public onColumnsChanged(): void {
-        _.clearElement(this.getGui());
-        const primaryCols = this.columnController.getAllPrimaryColumns();
-        if (!primaryCols) { return; }
-        const primaryColsWithFilter = primaryCols.filter(col => col.isFilterAllowed());
-        primaryColsWithFilter.forEach(col => this.addColumnComps(col));
-    }
+        const defaultParams: ToolPanelFiltersCompParams = {
+            syncLayoutWithGrid: false,
+            api: this.gridApi
+        };
+        _.mergeDeep(defaultParams, params);
+        this.params = defaultParams;
 
-    // we don't support refreshing, but must implement because it's on the tool panel interface
-    public refresh(): void {
+        this.filtersToolPanelHeaderPanel.init(); //TODO add suppress header panel option
+
+        this.filtersToolPanelListPanel.init(this.params);
     }
 
     // lazy initialise the panel
     public setVisible(visible: boolean): void {
         super.setDisplayed(visible);
         if (visible && !this.initialised) {
-            this.init();
+            this.init(this.params);
         }
     }
 
     public expandFilters(colIds?: string[]): void {
-        this.executeOnFilterComps(filterComp => filterComp.doExpand(), colIds);
+        //TODO
     }
-
     public collapseFilters(colIds?: string[]): void {
-        this.executeOnFilterComps(filterComp => filterComp.doCollapse(), colIds);
+        //TODO
+    }
+    public syncLayoutWithGrid(): void {
+        //TODO
+    }
+    public setFilterLayout(colDefs: ColDef[]): void {
+        //TODO
     }
 
-    private executeOnFilterComps(callbackFunc: (filterComp: ToolPanelFilterComp) => void, colIds?: string[]): void {
-        const executedColIds: string[] = [];
-
-        // done in reverse order to ensure top scroll position
-        const filterComps = this.getChildComponents();
-        for (let i = filterComps.length - 1; i >= 0; i--) {
-            const filterComp = filterComps[i] as ToolPanelFilterComp;
-
-            if (!colIds) {
-                // execute for all comps when no colIds are supplied
-                callbackFunc(filterComp);
-            } else {
-                const colId = filterComp.getColumn().getColId();
-                const shouldExecute = colIds.indexOf(colId) > -1;
-                if (shouldExecute) {
-                    callbackFunc(filterComp);
-                    executedColIds.push(colId);
-                }
-            }
-        }
-
-        if (colIds) {
-            const unrecognisedColIds = colIds.filter(colId => executedColIds.indexOf(colId) < 0);
-            if (unrecognisedColIds.length > 0) {
-                console.warn('ag-Grid: unable to find filters for colIds:', unrecognisedColIds);
-            }
-        }
+    public refresh(): void {
+        this.init(this.params);
     }
 
-    private addColumnComps(column: Column): void {
-        const toolPanelFilterComp = new ToolPanelFilterComp();
-        this.getContext().wireBean(toolPanelFilterComp);
-        toolPanelFilterComp.setColumn(column);
-        this.appendChild(toolPanelFilterComp);
+    public destroy(): void {
+        super.destroy();
     }
 }

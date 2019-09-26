@@ -1,43 +1,22 @@
 var columnDefs = [
-    {
-        headerName: 'Athlete',
-        children: [
-            { field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-            { field: "age", width: 90},
-            { field: "country", width: 120}
-        ]
-    },
-    {
-        headerName: 'Competition',
-        children: [
-            { field: "year", width: 90 },
-            { field: "date", width: 110 },
-        ]
-    },
-    { field: "sport", width: 110 },
-    {
-        headerName: 'Medals',
-        children: [
-            { field: "gold", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "bronze", width: 100 },
-            { field: "total", width: 100 }
-        ]
-    }
+    { field: "athlete", filter: 'agTextColumnFilter' },
+    { field: "age" },
+    { field: "country" },
+    { field: "year" },
+    { field: "date" },
+    { field: "sport" },
+    { field: "gold" },
+    { field: "silver" },
+    { field: "bronze" },
+    { field: "total" }
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
-        // allow every column to be aggregated
-        enableValue: true,
-        // allow every column to be grouped
-        enableRowGroup: true,
-        // allow every column to be pivoted
-        enablePivot: true,
-        sortable: true,
+        width: 110,
         filter: true
     },
-    columnDefs: columnDefs,
     sideBar: 'filters',
     onGridReady: function(params) {
         params.api.getToolPanelInstance('filters').expandFilters();

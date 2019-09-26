@@ -1,7 +1,8 @@
+import { IGridStyle, FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { Line } from "../../scene/shape/line";
-import { normalizeAngle360, normalizeAngle360Inclusive, toDegrees, toRadians } from "../../util/angle";
+import { normalizeAngle360, toRadians } from "../../util/angle";
 import { Text } from "../../scene/shape/text";
 import { BBox } from "../../scene/bbox";
 import { Matrix } from "../../scene/matrix";
@@ -9,16 +10,7 @@ import { Caption } from "../../caption";
 import { Rect } from "../../scene/shape/rect"; // debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-
-enum Tags {
-    Tick,
-    GridLine
-}
-
-export interface GridStyle {
-    stroke?: string;
-    lineDash?: number[];
-}
+import { IAxisFormatting, ILabelFormatting } from "../../axis";
 
 /**
  * A general purpose linear axis with no notion of orientation.
@@ -29,7 +21,7 @@ export interface GridStyle {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class GroupedCategoryAxis {
+export class GroupedCategoryAxis implements IAxisFormatting, ILabelFormatting {
 
     // debug (bbox)
     // private bboxRect = (() => {
@@ -43,15 +35,14 @@ export class GroupedCategoryAxis {
 
     static className = 'GroupedCategoryAxis';
     readonly id: string = this.createId();
-    readonly scale = new BandScale<string>();
-    readonly tickScale = new BandScale<string>();
+    readonly scale = new BandScale<string | number>();
+    readonly tickScale = new BandScale<string | number>();
     readonly group = new Group();
     private gridLineSelection: Selection<Line, Group, any, any>;
     private axisLineSelection: Selection<Line, Group, any, any>;
     private separatorSelection: Selection<Line, Group, any, any>;
     private labelSelection: Selection<Text, Group, any, any>;
     private tickTreeLayout?: TreeLayout;
-    // onLayoutChange?: () => void;
 
     constructor() {
         const scale = this.scale;
@@ -169,8 +160,8 @@ export class GroupedCategoryAxis {
 
     labelFormatter?: (params: {value: any, index: number}) => string;
 
-    labelFontStyle: string = '';
-    labelFontWeight: string = '';
+    labelFontStyle: FontStyle | undefined = undefined;
+    labelFontWeight: FontWeight | undefined = undefined;
     labelFontSize: number = 12;
     labelFontFamily: string = 'Verdana, sans-serif';
 
@@ -208,16 +199,16 @@ export class GroupedCategoryAxis {
      * Contains only one {@link GridStyle} object by default, meaning all grid lines
      * have the same style.
      */
-    private _gridStyle: GridStyle[] = [{
+    private _gridStyle: IGridStyle[] = [{
         stroke: 'rgba(219, 219, 219, 1)',
         lineDash: [4, 2]
     }];
-    set gridStyle(value: GridStyle[]) {
+    set gridStyle(value: IGridStyle[]) {
         if (value.length) {
             this._gridStyle = value;
         }
     }
-    get gridStyle(): GridStyle[] {
+    get gridStyle(): IGridStyle[] {
         return this._gridStyle;
     }
 
@@ -422,7 +413,7 @@ export class GroupedCategoryAxis {
         const separatorSelection = updateSeparators.merge(enterSeparators);
         this.separatorSelection = separatorSelection;
 
-        separatorSelection.each((line, datum, index) => {
+        separatorSelection.each((line, datum) => {
             line.x1 = datum.x1;
             line.x2 = datum.x2;
             line.y1 = datum.y;
@@ -448,7 +439,7 @@ export class GroupedCategoryAxis {
         const axisLineSelection = updateAxisLines.merge(enterAxisLines);
         this.axisLineSelection = axisLineSelection;
 
-        axisLineSelection.each((line, datum, index) => {
+        axisLineSelection.each((line, _, index) => {
             const x = index > 0 ? -maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;
             line.x2 = x;
@@ -495,7 +486,7 @@ export class GroupedCategoryAxis {
         let top = Infinity;
         let bottom = -Infinity;
 
-        this.labelSelection.each((label, datum, index) => {
+        this.labelSelection.each((label, _, index) => {
             // The label itself is rotated, but not translated, the group that
             // contains it is. So to capture the group transform in the label bbox
             // calculation we combine the transform matrices of the label and the group.

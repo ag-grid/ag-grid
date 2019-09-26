@@ -92,6 +92,10 @@ export class PrimaryColsPanel extends Component {
         this.primaryColsListPanel.setFilterText(event.filterText);
     }
 
+    public syncLayoutWithGrid(): void {
+        this.primaryColsListPanel.syncLayoutWithGrid();
+    }
+
     private onSelectAll(): void {
         this.primaryColsListPanel.doSetSelectedAll(true);
     }

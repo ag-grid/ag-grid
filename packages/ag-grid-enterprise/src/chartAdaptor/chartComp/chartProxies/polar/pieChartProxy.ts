@@ -1,15 +1,14 @@
 import { ChartBuilder } from "../../../builder/chartBuilder";
-import { PieChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { PieChartOptions, CaptionOptions } from "ag-grid-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { PolarChart } from "../../../../charts/chart/polarChart";
 import { PieSeries } from "../../../../charts/chart/series/pieSeries";
-import { CaptionOptions, LegendPosition } from "ag-grid-community/src/ts/interfaces/iChartOptions";
 import { PolarChartProxy } from "./polarChartProxy";
 
 export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.initChartOptions();
         this.chart = ChartBuilder.createPolarChart(this.chartOptions);
     }
 
@@ -19,13 +18,12 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
             return;
         }
 
-        const pieChart = this.chart as PolarChart;
-
+        const pieChart = this.chart;
         const existingSeries = pieChart.series[0] as PieSeries;
-        const existingSeriesId = existingSeries && existingSeries.angleField as string;
-
+        const existingSeriesId = existingSeries && existingSeries.angleField;
         const pieSeriesId = params.fields[0].colId;
         const pieSeriesName = params.fields[0].displayName;
+        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
 
         let pieSeries = existingSeries;
         let calloutColors: string[] | undefined = undefined;
@@ -33,7 +31,7 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
         if (existingSeriesId !== pieSeriesId) {
             pieChart.removeSeries(existingSeries);
 
-            const seriesOptions = this.chartOptions.seriesDefaults as PieSeriesOptions;
+            const seriesOptions = this.chartOptions.seriesDefaults!;
 
             // Use `Object.create` to prevent mutating the original user config that is possibly reused.
             const title = (seriesOptions.title ? Object.create(seriesOptions.title) : {}) as CaptionOptions;
@@ -48,11 +46,9 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
 
         pieSeries.labelField = params.category.id;
         pieSeries.data = params.data;
+        pieSeries.fills = fills;
+        pieSeries.strokes = strokes;
 
-        const palette = this.overriddenPalette ? this.overriddenPalette : this.chartProxyParams.getSelectedPalette();
-
-        pieSeries.fills = palette.fills;
-        pieSeries.strokes = palette.strokes;
         if (calloutColors) {
             pieSeries.calloutColors = calloutColors;
         }
@@ -62,8 +58,12 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
         }
     }
 
-    protected getDefaultOptions() {
-        const palette = this.chartProxyParams.getSelectedPalette();
+    protected getDefaultOptions(): PieChartOptions {
+        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
+        const labelColor = this.getLabelColor();
+        const labelFontWeight = 'normal';
+        const labelFontSize = 12;
+        const labelFontFamily = 'Verdana, sans-serif';
 
         return {
             background: {
@@ -77,15 +77,14 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
                 bottom: 50,
                 left: 50
             },
-            legendPosition: 'right' as LegendPosition,
+            legendPosition: 'right',
             legendPadding: 20,
             legend: {
                 enabled: true,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
+                labelColor,
                 itemPaddingX: 16,
                 itemPaddingY: 8,
                 markerPadding: 4,
@@ -94,36 +93,29 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
             },
             seriesDefaults: {
                 type: 'pie',
-                fills: palette.fills,
-                strokes: palette.strokes,
+                fills,
+                strokes,
                 strokeWidth: 1,
                 strokeOpacity: 1,
                 fillOpacity: 1,
-                calloutColors: palette.strokes,
+                calloutColors: strokes,
                 calloutLength: 10,
                 calloutStrokeWidth: 1,
                 labelOffset: 3,
                 labelEnabled: false,
-                labelFontStyle: undefined,
-                labelFontWeight: 'normal',
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif',
-                labelColor: this.getLabelColor(),
+                labelFontWeight,
+                labelFontSize,
+                labelFontFamily,
+                labelColor,
                 labelMinAngle: 0,
                 tooltipEnabled: true,
-                tooltipRenderer: undefined,
                 showInLegend: true,
                 shadow: {
                     enabled: false,
                     blur: 5,
                     xOffset: 3,
                     yOffset: 3,
-                    color: 'rgba(0,0,0,0.5)'
-                },
-                title: {
-                    enabled: false,
-                    font: 'bold 12px Verdana, sans-serif',
-                    color: 'black'
+                    color: 'rgba(0, 0, 0, 0.5)'
                 }
             }
         };

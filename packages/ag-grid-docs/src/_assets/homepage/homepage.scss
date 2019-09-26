@@ -230,32 +230,15 @@ body {
 }
 
 .main-buttons {
-    background-color: $grey-4;
-    display: flex;
-    justify-content: center;
+    @extend .p-4, .bg-lightgrey, .text-center;
 
     .get-started-btn {
-        white-space: nowrap;
-        border-radius: 5px;
-        padding: 15px 25px;
-        font-size: 20px;
-        margin: 20px;
-        border: 1px solid $blue-1;
-        background-color: $blue-1;
-        color: $grey-4;
-        &:hover {
-            color: $white;
-            text-decoration: none;
+        @extend .btn, .btn-lg, .py-3, .px-4;
+        &:first-child {
+            @extend .btn-darkblue, .mr-3;
         }
-    }
-
-    .get-started-btn:not(:first-of-type) {
-        background-color: transparent;
-        color: $blue-1;
-
-        &:hover {
-            color: $blue-2;
-            border-color: $blue-2;
+        &:last-child {
+            @extend .btn-outline-darkblue, .ml-3;
         }
     }
 }

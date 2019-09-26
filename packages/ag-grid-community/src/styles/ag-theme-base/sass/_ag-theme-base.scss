@@ -610,7 +610,6 @@
             padding-left: $grid-size;
         }
 
-
         .ag-set-filter-list {
             height: $virtual-item-height * 6;
         }
@@ -698,33 +697,96 @@
         border-right: 0;
 
         .ag-filter-panel {
-            width: 100%;
+            color: $header-foreground-color;
+            font-weight: $secondary-font-weight;
+            font-size: $secondary-font-size;
+            font-family: $secondary-font-family;
+            .ag-filter-toolpanel-header {
+                &.ag-filter-header {
+                    min-height: $header-height;
+                    height: $header-height;
+                }
 
-            .ag-filter-toolpanel-instance {
-                color: $secondary-foreground-color;
-                font-weight: 600;
-                flex: auto;
-                flex-direction: column;
-                flex-wrap: nowrap;
-                display: flex;
-                flex-flow: column nowrap;
-
-                .ag-filter-toolpanel-header {
-                    padding: 0 5px;
-                    > div {
-                        margin: auto 0;
+                > div {
+                    &:not(.ag-input-wrapper) {
+                        margin: 0 $grid-size;
+                    }
+                    &.ag-input-wrapper {
+                        input {
+                            width: 100%;
+                        }
                     }
                 }
             }
-            .ag-filter-body-wrapper {
-                padding-top: 5px;
+
+            .ag-group-component-title-bar {
+                min-height: $header-height;
+                .ag-group-component-title {
+                    white-space: nowrap;
+                }
+
+                &:after {
+                    content: $ag-icon-filter;
+                    font-family: $icon-font-family;
+                    font-size: $icon-size;
+                    margin-left: $grid-size;
+                    color: $icon-color;
+                    font-weight: normal;
+                }
+                .ag-column-group-icons {
+                    margin: 0 $grid-size;
+                }
             }
 
-            .ag-filter-air {
-                border: 1px solid $border-color;
-                border-left: 0;
-                border-right: 0;
-                padding: $grid-size 0;
+            .ag-group-component-container {
+                margin-left: 0;
+                padding: 0;
+                .ag-group-item {
+                    margin: $grid-size $grid-size / 2;
+                    .ag-group-component-title-bar {
+                        background-color: $group-component-background-color;
+                    }
+                    .ag-filter-toolpanel-header {
+                        padding: $grid-size / 2 0;
+                    }
+                    .ag-filter-toolpanel-body {
+                        &:not(:empty) {
+                            margin: $grid-size 0;
+                        }
+                        .ag-filter-air {
+                            border: 1px solid $border-color;
+                            padding-top: $grid-size;
+                            color: $foreground-color;
+                            font-weight: $font-weight;
+                            font-size: $font-size;
+                            font-family: $font-family;
+                        }
+                    }
+                }
+                
+                .ag-group-item:not(.ag-filter-toolpanel-instance),
+                .ag-group-item > .ag-group-component {
+                    border-top: none;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                    .ag-group-component-title-bar {
+                        min-height: unset;
+                        height: unset;
+                        margin: $grid-size 0;
+                    }
+                    @for $i from 1 through 5 {
+                        &.ag-level-#{$i} {
+                            @if $i > 1 {
+                                .ag-group-component-title-bar {
+                                    padding-left: 1rem * ($i - 1);
+                                }
+                            }
+                            .ag-filter-toolpanel-header {
+                                padding-left: 1rem * $i;
+                            }
+                        }
+                    }
+                }
             }
         }
 

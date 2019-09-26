@@ -6,99 +6,91 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Customising Scatter Charts</h1>
+<h1 class="heading-enterprise">Scatter/Bubble Chart Customisations</h1>
 
-    <p class="lead">
-        This sections details how to customise scatter charts in your applications.
-    </p>
-
-<h3>Scatter Chart Option Interfaces</h3>
-
-<p>
-    The interfaces for scatter chart options are shown below:
+<p class="lead">
+    In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a>, you can also 
+    use these customisations for scatter/bubble charts.
 </p>
+
+<h2>Option Interfaces</h2>
 
 <snippet>
 interface ScatterChartOptions {
-    // The chart title to render at the top of the chart.
-    title?: CaptionOptions;
-    // The subtitle to render under the chart's title.
-    // If the title is not specified or is disabled, the subtitle won't be visible either.
-    subtitle?: CaptionOptions;
-    // The width of the chart.
-    width?: number,
-    // The height of the chart.
-    height?: number;
-
-    // The padding of contents from the edges of the chart.
-    padding?: {
-        top: number;
-        right: number;
-        bottom: number;
-        left: number;
-    };
-
-    // Additional CSS class to be added to tooltip element.
-    tooltipClass?: string;
-
-    // The side of the chart to dock the legend to.
-    legendPosition?: 'top' | 'right' | 'bottom' | 'left';
-    // The padding amount between the legend and the series.
-    legendPadding?: number;
-
-    legend?: {
-        // Whether to show the legend or not.
-        enabled?: boolean;
-        // The stroke width of a legend marker. Defaults to `1`.
-        markerStrokeWidth?: number;
-        // The size of a legend marker. Defaults to `14`.
-        markerSize?: number;
-        // The padding between a legend marker and its label. Defaults to `4`.
-        markerPadding?: number;
-        // The amount of horizontal padding between legend items. Defaults to `16`.
-        itemPaddingX?: number;
-        // The amount of vertical padding between legend items. Defaults to `8`.
-        itemPaddingY?: number;
-        // The font style to be used by legend's labels. For example, 'italic'.
-        // Not used by default.
-        labelFontStyle?: string;
-        // The font weight to be used by legend's labels. For example, 'bold'.
-        // Not used by default.
-        labelFontWeight?: string;
-        // The font size to be used by legend's labels. Defaults to `12`.
-        labelFontSize?: number;
-        // The font family to be used by legend's labels. Defaults to `Verdana, sans-serif`.
-        labelFontFamily?: string;
-        // The colour to be used by the legend's labels. Default depends on ag-Grid theme used
-        labelColor?: string;
-    };
-
-    // The horizontal chart axis.
     xAxis: AxisOptions;
-    // The vertical chart axis.
     yAxis: AxisOptions;
 
     seriesDefaults?: {
-        // The fill colours to be used by the series' markers.
+        // The fill colours to be used by the series' markers
         fills?: string[];
-        // The stroke colours to be used by the series' markers.
+        fillOpacity?: number; // defaults to `1` for scatter, `0.7` for bubble
+        // The stroke colours to be used by the series' markers
         strokes?: string[];
-        // The stroke width. Defaults to `1`.
-        strokeWidth?: number;
-        // The style to apply to a series item when it is hovered or tapped.
+        // The style to apply to a marker when it is hovered or tapped
         highlightStyle?: HighlightStyle;
 
-        // The size of the marker. Defaults to `8`.
-        markerSize?: number;
-        // The stroke width of the marker. Defaults to `2`.
-        markerStrokeWidth?: number;
+        markerSize?: number; // defaults to `6` for scatter, `30` for bubble
+        // In bubble charts the marker diameter can be determined by data.
+        // This specifies the minimum size a marker can be regardless of the data.
+        minMarkerSize: number, // defaults to `3`
+        markerStrokeWidth?: number; // defaults to `1`
 
-        // Whether to show the tooltip for bars when they are hovered/tapped.
-        // Defaults to `true`.
-        tooltipEnabled?: boolean;
-        // A custom tooltip render to use for bar tooltips. Should return a valid HTML string.
+        // Whether to show the tooltip for markers when they are hovered/tapped
+        tooltipEnabled?: boolean; // defaults to `true`
+        // A custom tooltip render function. Should return a valid HTML string.
         tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
     };
+}
+
+interface AxisOptions {
+    title?: CaptionOptions;
+    lineWidth?: number; // defaults to `1`
+    lineColor?: string; // depends on whether the light or dark mode is used
+
+    tickWidth?: number; // defaults to `1`
+    tickSize?: number; // defaults to `6`
+    tickColor?: string; // depends on whether the light or dark mode is used
+
+    labelFontStyle?: FontStyle;
+    labelFontWeight?: FontWeight;
+    labelFontSize?: number; // defaults to `12`
+    labelFontFamily?: string; // defaults to `Verdana, sans-serif`
+    labelColor?: string; // depends on whether the light or dark mode is used
+    labelPadding?: number; // defaults to `5`
+
+    // The rotation in degrees of the axis labels. Defaults to `45`, unless the default 
+    // category (none) is selected, in which case `0` is used.
+    labelRotation?: number;
+    // The custom formatter function for the axis labels.
+    // The value is either a category name or a number. If it's the latter, the number
+    // of fractional digits used by the axis step will be provided as well.
+    labelFormatter?: (value: any, fractionDigits?: number) => string;
+
+    // The styles of the grid lines. These are repeated. If only a single style is provided,
+    // it will be used for all grid lines, if two styles are provided, every style will be
+    // used by every other line, and so on.
+    gridStyle?: IGridStyle[];
+}
+
+interface CaptionOptions {
+    enabled?: boolean; // defaults to `true`
+    text?: string;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight; // defaults to `bold`
+    fontSize?: number; // defaults to `16`
+    fontFamily?: string; // defaults to `Verdana, sans-serif`
+    color?: string; // defaults to `black`
+}
+
+export type FontStyle = 'normal' | 'italic' | 'oblique';
+
+export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | number;
+
+interface IGridStyle {
+    stroke?: string; // depends on whether the light or dark mode is used
+    // The line dash array. Every number in the array specifies the length of alternating
+    // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
+    lineDash?: number[]; // defaults to `[4, 2]`
 }
 
 interface HighlightStyle {
@@ -106,100 +98,27 @@ interface HighlightStyle {
     stroke?: string;
 }
 
-interface CaptionOptions {
-    // The text to use for the chart's title/subtitle.
-    text?: string;
-    // The font style to be used by the title/subtitle. Not used by default.
-    fontStyle?: string;
-    // The font weight to be used by the title/subtitle.
-    // Defaults to `bold` for the title, and `undefined` for the subtitle.
-    fontWeight?: string;
-    // The font size to be used by the title/subtitle.
-    // Defaults to `16` for the title and `12` for the subtitle.
-    fontSize?: number;
-    // The font family to be used by the title/subtitle.
-    // Defaults to `Verdana, sans-serif` for both.
-    fontFamily?: string;
-    // The colour of the title/subtitle's text. Defaults to `black`.
-    color?: string;
-    // Whether to show the title/subtitle or not. Defaults to `true`.
-    enabled?: boolean;
-}
-
 interface ScatterTooltipRendererParams {
-    // The datum object (an element in the `data` array used by the chart/series).
+    // The datum object the tooltip is being rendered for
     datum: any;
-    // The field of the datum object that contains the category name
-    // of the highlighted data point.
+    // The field of the datum object that contains the category name of the highlighted data point
     xField: string;
-    // The field of the datum object that contains the series value of the highlighted data point.
+    // The field of the datum object that contains the series value of the highlighted data point
     yField: string;
-    // The title (if set) of the series the highlighted data point belongs to.
+    // The title of the series the datum is in
     title?: string;
-    // The colour of the series the highlighted data point belongs to.
-    // Used by the title in the default tooltip.
+    // The fill colour of the series the datum is in
     color?: string;
-}
-
-interface AxisOptions {
-    // The title of the axis.
-    title?: CaptionOptions;
-    // The thickness of the axis line. Defaults to `1`.
-    lineWidth?: number;
-    // The colour of the axis line. Depends on whether the light or dark mode is used.
-    lineColor?: string;
-
-    // The thickness of the ticks. Defaults to `1`.
-    tickWidth?: number;
-    // The length of the ticks. Defaults to `6`.
-    tickSize?: number;
-    // The padding between the ticks and the labels. Defaults to `5`.
-    tickPadding?: number;
-    // The colour of the axis ticks. Depends on whether the light or dark mode is used.
-    tickColor?: string;
-
-    // The font style to be used by axis labels. For example, 'italic'. Not used by default.
-    labelFontStyle?: string;
-    // The font weight to be used by axis labels. For example, 'bold'. Not used by default.
-    labelFontWeight?: string;
-    // The font size to be used by axis labels. Defaults to `12`.
-    labelFontSize?: number;
-    // The font family to be used by axis labels. Defaults to `Verdana, sans-serif`.
-    labelFontFamily?: string;
-    // The colour of the axis labels. Depends on whether the light or dark mode is used.
-    labelColor?: string;
-    // The rotation of the axis labels. Defaults to `45` (degrees), however when no category
-    // is present the default category, i.e. (none), is used with the value  `0`.
-    labelRotation?: number;
-    // The custom formatter function for the axis labels.
-    // The value is either a category name or a number. If it's the latter, the number
-    // of fractional digits used by the axis step will be provided as well.
-    // The returned string will be used as a label.
-    labelFormatter?: (value: any, fractionDigits?: number) => string;
-    // The styles of the grid lines. These are repeated. If only a single style is provided,
-    // it will be used for all grid lines, if two styles are provided, every style will be
-    // used by every other line, and so on.
-    gridStyle?: IGridStyle[];
-}
-
-interface IGridStyle {
-    // The stroke colour of a grid line. Depends on whether the light or dark mode is used.
-    stroke?: string;
-    // The line dash array. Every number in the array specifies the length of alternating
-    // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
-    // Defaults to `[4, 2]`.
-    lineDash?: number[];
 }
 </snippet>
 
-The example below changes all available styling options. The styling options are exaggerated to demonstrate the option rather than produce a chart that looks nice.
+<h3>Example: Scatter/Bubble Chart Customisations</h3>
 
-    <h3>Default Scatter Options</h3>
+<p>
+    The example below changes all available styling options. The styling options are exaggerated
+    to demonstrate each option rather than to produce a chart that looks nice!
+</p>
 
-    <p>
-        The default values for the bar chart options are shown below:
-    </p>
-
-<?= example('Custom Scatter Chart', 'custom-scatter-chart', 'generated', array("enterprise" => true)) ?>
+<?= example('Scatter/Bubble Chart Customisations', 'custom-scatter-chart', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

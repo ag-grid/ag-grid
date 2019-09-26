@@ -7,7 +7,7 @@
                     <a class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">app.js</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">index.js.</a>
+                    <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">index.js</a>
                 </li>
             </ul>
             <div class="tab-content">

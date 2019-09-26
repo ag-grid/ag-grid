@@ -7,9 +7,10 @@ import {
     Events,
     EventService,
     PieChartOptions,
-    ProcessChartOptionsParams
+    ProcessChartOptionsParams,
+    LegendPosition,
 } from "ag-grid-community";
-import { Chart, LegendPosition } from "../../../charts/chart/chart";
+import { Chart } from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
 import { Caption } from "../../../charts/caption";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
@@ -31,7 +32,7 @@ export interface ChartProxyParams {
     isDarkTheme: () => boolean;
 }
 
-interface FieldDefinition { 
+export interface FieldDefinition { 
     colId: string;
     displayName: string;
 }
@@ -52,18 +53,16 @@ export type TitleProperty = 'text';
 export type TitleFontProperty = 'fontFamily' | 'fontStyle' | 'fontWeight' | 'fontSize' | 'color';
 export type ShadowProperty = 'enabled' | 'blur' | 'xOffset' | 'yOffset' | 'color';
 
-export abstract class ChartProxy<T extends ChartOptions> {
-    protected chart: Chart;
+export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions> {
+    protected chart: TChart;
     protected chartProxyParams: ChartProxyParams;
     protected overriddenPalette: Palette;
     protected chartType: ChartType;
-    protected chartOptions: T;
+    protected chartOptions: TOptions;
 
     protected constructor(chartProxyParams: ChartProxyParams) {
         this.chartProxyParams = chartProxyParams;
         this.chartType = chartProxyParams.chartType;
-
-        this.initChartOptions();
     }
 
     public abstract update(params: UpdateChartParams): void;
@@ -75,16 +74,16 @@ export abstract class ChartProxy<T extends ChartOptions> {
     protected getAxisGridColor = (): string => this.isDarkTheme() ? "rgb(100, 100, 100)" : "rgb(219, 219, 219)";
     protected getBackgroundColor = (): string => this.isDarkTheme() ? "#2d3436" : "white";
 
-    protected abstract getDefaultOptions(): T;
+    protected abstract getDefaultOptions(): TOptions;
 
-    private initChartOptions(): void {
+    protected initChartOptions(): void {
         const options = this.getDefaultOptions();
         const { processChartOptions } = this.chartProxyParams;
 
         // allow users to override options before they are applied
         if (processChartOptions) {
             const params: ProcessChartOptionsParams = { type: this.chartType, options };
-            const overriddenOptions = processChartOptions(params) as T;
+            const overriddenOptions = processChartOptions(params) as TOptions;
             this.overridePalette(overriddenOptions);
             this.chartOptions = overriddenOptions;
         } else {
@@ -97,7 +96,7 @@ export abstract class ChartProxy<T extends ChartOptions> {
         this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
         
         // this cannot be overridden via the processChartOptions callback
-        this.chartOptions.parent = this.chartProxyParams.parentElement; 
+        this.chartOptions.parent = this.chartProxyParams.parentElement;
     }
 
     private overridePalette(chartOptions: any) {

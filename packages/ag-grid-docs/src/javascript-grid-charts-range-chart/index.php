@@ -121,7 +121,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-        ColDef.chartDataType = 'category' | 'series' | 'excluded' | undefined
+        ColDef.chartDataType = "category" | "series" | "excluded" | undefined
     </snippet>
 
     <p>
@@ -133,17 +133,17 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-        // 'category' columns
-        {field: "athlete", chartDataType: 'category'},
-        {field: "age", chartDataType: 'category'}, // despite containing numbers
-        {field: "country"}, // contains strings
+        // "category" columns
+        { field: "athlete", chartDataType: "category" },
+        { field: "age", chartDataType: "category" }, // despite containing numbers
+        { field: "country" }, // contains strings
 
-        // 'excluded' from charts
-        {field: "date", chartDataType: 'excluded'},
+        // "excluded" from charts
+        { field: "date", chartDataType: "excluded" },
 
-        // 'series' columns
-        {field: "gold", chartDataType: 'series'},
-        {field: "silver", width: 100} // contains numbers
+        // "series" columns
+        { field: "gold", chartDataType: "series" },
+        { field: "silver", width: 100 } // contains numbers
     </snippet>
 
     <h3>Inferred by the Grid</h3>
@@ -154,18 +154,18 @@ include '../documentation-main/documentation_header.php';
         will map to 'categories' and columns containing <code>number</code> values will map to 'series' charting columns.
     </p>
 
-    <h2>Example - Defining categories and series</h2>
+    <h3>Example: Defining categories and series</h3>
 
     <p>
         The example below demonstrates the different ways columns can be defined for charting:
     </p>
     <ul class="content">
-        <li><b>Athlete</b>: defined as a 'category' as <code>chartType='category'</code>.</li>
-        <li><b>Age</b>: defined as a 'category' as <code>chartType='category'</code>.</li>
+        <li><b>Athlete</b>: defined as a 'category' as <code>chartType="category"</code>.</li>
+        <li><b>Age</b>: defined as a 'category' as <code>chartType="category"</code>.</li>
         <li><b>Sport</b>: considered a 'category' as data is a <code>string</code>.</li>
-        <li><b>Year</b>: defined 'excluded' from charting as data is of type <code>chartType='excluded'</code>.</li>
-        <li><b>Gold</b>: defined as 'series' as <code>chartType='series'</code>.</li>
-        <li><b>Silver</b>: defined as 'series' as <code>chartType='series'</code>.</li>
+        <li><b>Year</b>: defined 'excluded' from charting as data is of type <code>chartType="excluded"</code>.</li>
+        <li><b>Gold</b>: defined as 'series' as <code>chartType="series"</code>.</li>
+        <li><b>Silver</b>: defined as 'series' as <code>chartType="series"</code>.</li>
         <li><b>Bronze</b>: considered a 'series' as data is a <code>number</code>.</li>
     </ul>
 
