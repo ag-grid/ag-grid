@@ -54,6 +54,15 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         if (this.gridOptionsWrapper.isSuppressChangeDetection()) {
             return;
         }
+        // clipboard service manages it's own change detection, so no need to do it here.
+        // the clipboard manages it own, as otherwise this would happen once for every cell
+        // that got updated as part of a paste operation. so eg if 100 cells in a paste operation,
+        // this doChangeDetection would get called 100 times (once for each cell), instead clipboard
+        // service executes the logic we have here once (in essence batching up all cell changes
+        // into one change detection).
+        if (this.clipboardService && this.clipboardService.isPasteOperationActive()) {
+            return;
+        }
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {
             var onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
@@ -80,6 +89,10 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
     ], ChangeDetectionService.prototype, "eventService", void 0);
+    __decorate([
+        context_1.Optional('clipboardService'),
+        __metadata("design:type", Object)
+    ], ChangeDetectionService.prototype, "clipboardService", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

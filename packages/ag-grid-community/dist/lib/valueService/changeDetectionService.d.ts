@@ -7,6 +7,7 @@ export declare class ChangeDetectionService extends BeanStub {
     private rowModel;
     private rowRenderer;
     private eventService;
+    private clipboardService;
     private clientSideRowModel;
     private init;
     private onCellValueChanged;
