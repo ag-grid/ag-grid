@@ -26,7 +26,7 @@ export { RowNode } from "./dist/lib/entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./dist/lib/entities/sideBar";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./dist/lib/filter/filterManager";
 export { ProvidedFilter, IProvidedFilterParams } from "./dist/lib/filter/provided/providedFilter";
-export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel } from "./dist/lib/filter/provided/simpleFilter";
+export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel } from "./dist/lib/filter/provided/simpleFilter";
 export { ScalerFilter, IScalarFilterParams } from "./dist/lib/filter/provided/scalerFilter";
 export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./dist/lib/filter/provided/number/numberFilter";
 export { TextFilter, ITextFilterParams, TextFilterModel } from "./dist/lib/filter/provided/text/textFilter";
