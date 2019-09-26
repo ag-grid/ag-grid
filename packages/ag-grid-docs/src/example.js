@@ -365,7 +365,9 @@ var gridOptions = {
         console.log("Callback onColumnResized:", event);
     },
     onCellValueChanged: function (params) {
-        console.log("Callback onCellValueChanged:", params);
+        // taking this out, as clipboard paste operation can result in this getting called
+        // lots and lots of times (especially if user does ctrl+a to copy everything, then paste)
+        // console.log("Callback onCellValueChanged:", params);
     },
     onRowDataChanged: function (params) {
         console.log('Callback onRowDataChanged: ');

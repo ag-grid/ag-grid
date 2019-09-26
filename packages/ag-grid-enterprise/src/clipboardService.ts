@@ -75,6 +75,12 @@ export class ClipboardService implements IClipboardService {
 
     private gridCore: GridCore;
 
+    private pasteOperationActive = false;
+
+    public isPasteOperationActive(): boolean {
+        return this.pasteOperationActive;
+    }
+
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
     }
@@ -197,6 +203,18 @@ export class ClipboardService implements IClipboardService {
             return;
         }
 
+        // some parts of the grid logic shouldn't execute when paste operation
+        // in progress, so we flag when paste is in progress. used by changeDetectionService
+        // (as we don't want the grid refreshing for every cell, due to CellValueChanged event)
+        //
+        // NOTE - it is only pasteStartingFromFocusedCell where we want the ChangeDetectionService
+        // to stand down, as it is only this method which does clientSideRowModel.doAggregate()
+        // (the pasteIntoActiveRange or copyRangeDown do NOT do this). in the future this class needs
+        // to be refactored, so that all these methods do the same (hopefully with common logic)
+        // and then this flag is turned on / off at a higher level. i am not doing the refactor now
+        // as this is a critical code fix going into a patch release.
+        this.pasteOperationActive = true;
+
         // remove last row if empty, excel puts empty last row in
         const lastLine = _.last(parsedData);
         if (lastLine && lastLine.length === 1 && lastLine[0] === '') {
@@ -237,6 +255,9 @@ export class ClipboardService implements IClipboardService {
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
 
         this.fireRowChanged(updatedRowNodes);
+
+        // unset the paste active operation
+        this.pasteOperationActive = false;
     }
 
     public copyRangeDown(): void {
@@ -371,7 +392,7 @@ export class ClipboardService implements IClipboardService {
         if (column.isSuppressPaste(rowNode)) { return; }
 
         const processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
-        this.valueService.setValue(rowNode, column, processedValue, true);
+        this.valueService.setValue(rowNode, column, processedValue);
 
         const cellPosition: CellPosition = {
             rowIndex: currentRow.rowIndex,
