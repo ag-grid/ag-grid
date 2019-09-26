@@ -1378,7 +1378,8 @@ $handleSize: 5px;
     position: relative;
     flex: 1 1 100%;
 
-    .ag-group-component-title-bar {
+    .ag-group-component-title-bar,
+    .ag-group-component-title {
         display: flex;
         align-items: center;
     }

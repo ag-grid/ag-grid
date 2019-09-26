@@ -763,8 +763,9 @@
                         }
                     }
                 }
-
-                .ag-group-component.ag-group-item {
+                
+                .ag-group-item:not(.ag-filter-toolpanel-instance),
+                .ag-group-item > .ag-group-component {
                     border-top: none;
                     margin-top: 0;
                     margin-bottom: 0;
