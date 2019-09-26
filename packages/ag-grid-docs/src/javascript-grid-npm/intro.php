@@ -4,7 +4,7 @@
         <div class="card-body">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">main.js</a>
+                    <a class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">index.js</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">index.html</a>
@@ -13,6 +13,11 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
+import 'ag-grid-community/dist/styles/ag-grid.css'
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+
+import * as agGrid from 'ag-grid-community';
+
 var columnDefs = [
   {headerName: "Make", field: "make"},
   {headerName: "Model", field: "model"},
@@ -32,32 +37,27 @@ var gridOptions = {
   rowData: rowData
 };
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
-});
+var eGridDiv = document.querySelector('#myGrid');
+
+new agGrid.Grid(eGridDiv, gridOptions);
 </snippet>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 <snippet>
-&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
+&lt;html&gt;
 &lt;head&gt;
-    &lt;title>Ag-Grid Basic Example&lt;/title&gt;
-    &lt;script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"&gt;&lt;/script&gt;
-    &lt;script src="main.js"&gt;&lt;/script&gt;
-&lt;/head>
-&lt;body>
-    &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-balham"&gt;&lt;/div&gt;
+&lt;title&gt;Ag Grid Javascript Starter Example&lt;/title>
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-balham"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </snippet>  
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
-                <a class="btn btn-dark" href="https://plnkr.co/edit/EOHS8OVjpj9cCNX3POdn?p=preview" target="_blank">
-                    Open in <img src="../images/plunker_logo.png" style="height: 34px; width: 34px;"/> Plunker
+                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-grid-javascript-hello-world" target="_blank">
+                    Open in <img src="../images/stackBlitzIcon.svg"/> StackBlitz
                 </a>
             </div>
         </div>
