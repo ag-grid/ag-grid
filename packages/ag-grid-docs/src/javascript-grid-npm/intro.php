@@ -9,6 +9,9 @@
                 <li class="nav-item">
                     <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">index.html</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="template-tab" data-toggle="tab" href="#packages" role="tab" aria-controls="packages" aria-selected="false">packages.json</a>
+                </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
@@ -53,6 +56,18 @@ new agGrid.Grid(eGridDiv, gridOptions);
 &lt;/body&gt;
 &lt;/html&gt;
 </snippet>  
+                </div>
+                <div class="tab-pane" id="packages" role="tabpanel" aria-labelledby="packages-tab">
+<snippet>
+{
+  "name": "ag-grid-javascript-npm-example",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "ag-grid-community": "latest"
+  }
+}
+</snippet>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
