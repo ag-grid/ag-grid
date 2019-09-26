@@ -33,7 +33,10 @@ import {
     RowRenderer,
     RowValueChangedEvent,
     SelectionController,
-    ValueService
+    ValueService,
+    ChangedPath,
+    ClientSideRowModel,
+    IRowModel
 } from "ag-grid-community";
 import {RangeController} from "./rangeController";
 
@@ -52,6 +55,7 @@ export class ClipboardService implements IClipboardService {
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('rangeController') private rangeController: RangeController;
+    @Autowired('rowModel') private rowModel: IRowModel;
 
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
@@ -65,9 +69,17 @@ export class ClipboardService implements IClipboardService {
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
+    private clientSideRowModel: ClientSideRowModel;
+
     private logger: Logger;
 
     private gridCore: GridCore;
+
+    private pasteOperationActive = false;
+
+    public isPasteOperationActive(): boolean {
+        return this.pasteOperationActive;
+    }
 
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
@@ -76,6 +88,10 @@ export class ClipboardService implements IClipboardService {
     @PostConstruct
     private init(): void {
         this.logger = this.loggerFactory.create('ClipboardService');
+
+        if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideRowModel = this.rowModel as ClientSideRowModel;
+        }
     }
 
     public pasteFromClipboard(): void {
@@ -106,8 +122,9 @@ export class ClipboardService implements IClipboardService {
                 } as PasteStartEvent);
 
                 const singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
-                this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
-                    this.pasteToRange(parsedData) : this.pasteToSingleCell(parsedData);
+                const rangeActive = this.rangeController.isMoreThanOneCell();
+                rangeActive && !singleCellInClipboard ?
+                    this.pasteIntoActiveRange(parsedData) : this.pasteStartingFromFocusedCell(parsedData);
 
                 this.eventService.dispatchEvent({
                     type: Events.EVENT_PASTE_END,
@@ -119,7 +136,7 @@ export class ClipboardService implements IClipboardService {
         );
     }
 
-    private pasteToRange(clipboardData: string[][]) {
+    private pasteIntoActiveRange(clipboardData: string[][]) {
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
         const updatedColumnIds: string[] = [];
@@ -179,12 +196,24 @@ export class ClipboardService implements IClipboardService {
         this.fireRowChanged(updatedRowNodes);
     }
 
-    private pasteToSingleCell(parsedData: string[][]) {
+    private pasteStartingFromFocusedCell(parsedData: string[][]) {
 
         const focusedCell = this.focusedCellController.getFocusedCell();
         if (!focusedCell) {
             return;
         }
+
+        // some parts of the grid logic shouldn't execute when paste operation
+        // in progress, so we flag when paste is in progress. used by changeDetectionService
+        // (as we don't want the grid refreshing for every cell, due to CellValueChanged event)
+        //
+        // NOTE - it is only pasteStartingFromFocusedCell where we want the ChangeDetectionService
+        // to stand down, as it is only this method which does clientSideRowModel.doAggregate()
+        // (the pasteIntoActiveRange or copyRangeDown do NOT do this). in the future this class needs
+        // to be refactored, so that all these methods do the same (hopefully with common logic)
+        // and then this flag is turned on / off at a higher level. i am not doing the refactor now
+        // as this is a critical code fix going into a patch release.
+        this.pasteOperationActive = true;
 
         // remove last row if empty, excel puts empty last row in
         const lastLine = _.last(parsedData);
@@ -200,15 +229,25 @@ export class ClipboardService implements IClipboardService {
 
         const columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
 
-        const onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
+        const onlyOneValueToPaste = parsedData.length === 1 && parsedData[0].length === 1;
 
-        if (onlyOneCellInRange) {
-            this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
-        } else {
-            this.multipleCellRange(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD);
+        let changedPath: ChangedPath | undefined;
+        if (this.clientSideRowModel) {
+            const onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
+            changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
         }
 
-        // this is very heavy, should possibly just refresh the specific cells?
+        if (onlyOneValueToPaste) {
+            this.pasteSingleValue(parsedData, updatedRowNodes, cellsToFlash, updatedColumnIds, changedPath);
+        } else {
+            this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash,
+                updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+        }
+
+        if (changedPath) {
+            this.clientSideRowModel.doAggregate(changedPath);
+        }
+
         this.rowRenderer.refreshCells({rowNodes: updatedRowNodes, columns: updatedColumnIds});
 
         this.dispatchFlashCells(cellsToFlash);
@@ -216,6 +255,9 @@ export class ClipboardService implements IClipboardService {
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
 
         this.fireRowChanged(updatedRowNodes);
+
+        // unset the paste active operation
+        this.pasteOperationActive = false;
     }
 
     public copyRangeDown(): void {
@@ -310,7 +352,7 @@ export class ClipboardService implements IClipboardService {
         });
     }
 
-    private multipleCellRange(clipboardGridData: string[][], currentRow: RowPosition | null, updatedRowNodes: RowNode[], columnsToPasteInto: Column[], cellsToFlash: any, updatedColumnIds: string[], type: string) {
+    private pasteMultipleValues(clipboardGridData: string[][], currentRow: RowPosition | null, updatedRowNodes: RowNode[], columnsToPasteInto: Column[], cellsToFlash: any, updatedColumnIds: string[], type: string, changedPath: ChangedPath | undefined) {
         clipboardGridData.forEach((clipboardRowData: string[]) => {
             // if we have come to end of rows in grid, then skip
             if (!currentRow) {
@@ -324,15 +366,7 @@ export class ClipboardService implements IClipboardService {
 
                 clipboardRowData.forEach((value: any, index: number) => {
                     const column = columnsToPasteInto[index];
-
-                    if (_.missing(column)) {
-                        return;
-                    }
-                    if (rowNode && !column.isCellEditable(rowNode)) {
-                        return;
-                    }
-
-                    this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, type);
+                    this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, type, changedPath);
                 });
                 // move to next row down for next set of values
                 currentRow = this.cellNavigationService.getRowBelow({rowPinned: currentRow.rowPinned, rowIndex: currentRow.rowIndex});
@@ -341,30 +375,24 @@ export class ClipboardService implements IClipboardService {
         return currentRow;
     }
 
-    private singleCellRange(parsedData: string[][], updatedRowNodes: RowNode[], currentRow: RowPosition, cellsToFlash: any, updatedColumnIds: string[]) {
+    private pasteSingleValue(parsedData: string[][], updatedRowNodes: RowNode[], cellsToFlash: any, updatedColumnIds: string[], changedPath: ChangedPath | undefined) {
         const value = parsedData[0][0];
-        const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, index: number, isLastRow?: boolean) => {
+        const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null) => {
             updatedRowNodes.push(rowNode!);
             columns!.forEach((column) => {
-                if (column.isCellEditable(rowNode!)) {
-                    this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD);
-                }
+                this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
             });
         };
         this.iterateActiveRanges(false, rowCallback);
     }
 
-    private updateCellValue(rowNode: RowNode | null, column: Column, value: string, currentRow: RowPosition | null, cellsToFlash: any, updatedColumnIds: string[], type: string) {
-        if (!rowNode || !currentRow) {
-            return;
-        }
-
-        if (column.isSuppressPaste(rowNode)) {
-            return;
-        }
+    private updateCellValue(rowNode: RowNode | null, column: Column, value: string, currentRow: RowPosition | null, cellsToFlash: any, updatedColumnIds: string[], type: string, changedPath: ChangedPath | undefined) {
+        if (!rowNode || !currentRow) { return; }
+        if (!column.isCellEditable(rowNode)) { return; }
+        if (column.isSuppressPaste(rowNode)) { return; }
 
         const processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
-        this.valueService.setValue(rowNode, column, processedValue, true);
+        this.valueService.setValue(rowNode, column, processedValue);
 
         const cellPosition: CellPosition = {
             rowIndex: currentRow.rowIndex,
@@ -376,6 +404,10 @@ export class ClipboardService implements IClipboardService {
 
         if (updatedColumnIds.indexOf(column.getId()) < 0) {
             updatedColumnIds.push(column.getId());
+        }
+
+        if (changedPath && !rowNode.isRowPinned()) {
+            changedPath.addParentNode(rowNode.parent, [column]);
         }
     }
 

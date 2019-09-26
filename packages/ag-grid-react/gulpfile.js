@@ -1,3 +1,4 @@
+const fs = require('fs');
 const gulp = require('gulp');
 const {series} = require('gulp');
 const gulpTypescript = require('gulp-typescript');
@@ -10,6 +11,8 @@ const commonjs = require('rollup-plugin-commonjs');
 const uglify = require('rollup-plugin-uglify').uglify;
 const rollup = require('rollup-stream');
 const source = require('vinyl-source-stream');
+const clean = require('gulp-clean');
+const link = require('lnk').sync;
 
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
@@ -28,6 +31,11 @@ async function tscTask() {
         tsResult.js.pipe(header(headerTemplate, {pkg: pkg})).pipe(gulp.dest('lib'))
     ]);
 }
+
+const cleanUmd = () => {
+    return gulp.src('umd/*')
+        .pipe(clean({read: false, force: true}));
+};
 
 const umd = () => {
     return rollup({
@@ -59,7 +67,19 @@ const watch = () => {
         tscTask);
 };
 
+const linkUmdForE2E = (done) => {
+    if(!fs.existsSync('./cypress/integration/ag-grid-react.min.js')) {
+        link('./umd/ag-grid-react.min.js', './cypress/integration/',{
+            force: true,
+            type: 'symbolic'
+        })
+    }
+    done();
+};
+
+gulp.task('clean-umd', cleanUmd);
 gulp.task('umd', umd);
+gulp.task('link-umd-e2e', linkUmdForE2E);
 gulp.task('commonjs', tscTask);
 gulp.task('watch', series('commonjs', watch));
-gulp.task('default', series('commonjs', "umd"));
+gulp.task('default', series('commonjs', "clean-umd", "umd", "link-umd-e2e"));
