@@ -149,4 +149,37 @@ it('deep value check of different complex array values return false', async () =
 });
 
 
+it('deep value check equivalent of one NaN and another non-NaN returns false', async () => {
+    // given
+    const firstValue = [{
+        someVar: NaN,
+    }];
+    const secondValue = [{
+        someVar: true,
+    }];
+
+    let strategy = service.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
+
+    // when
+    const areEqual = strategy.areEqual(firstValue, secondValue);
+
+    expect(areEqual).toBe(false);
+});
+
+it('deep value check equivalent of one two NaN values false', async () => {
+    // given
+    const firstValue = [{
+        someVar: NaN,
+    }];
+    const secondValue = [{
+        someVar: NaN,
+    }];
+
+    let strategy = service.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
+
+    // when
+    const areEqual = strategy.areEqual(firstValue, secondValue);
+
+    expect(areEqual).toBe(true);
+});
 

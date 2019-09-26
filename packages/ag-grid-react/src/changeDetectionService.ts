@@ -86,6 +86,9 @@ class DeepValueStrategy implements ChangeDetectionStrategy {
         b = DeepValueStrategy.unwrapStringOrNumber(b);
         if (a === b) return true; //e.g. a and b both null
         if (a === null || b === null || typeof a !== typeof b) return false;
+        if(Number.isNaN(a) && Number.isNaN(b)) {
+            return true;
+        }
         if (a instanceof Date) {
             return b instanceof Date && a.valueOf() === b.valueOf();
         }
