@@ -344,30 +344,28 @@ export class ChartModel extends BeanStub {
 
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
         const displayedCols = this.columnController.getAllDisplayedColumns();
-
         const dimensionCols: Column[] = [];
         const valueCols: Column[] = [];
+
         displayedCols.forEach(col => {
-            const colDef = col.getColDef() as ColDef;
+            const colDef = col.getColDef();
 
-            // first check column for 'chartDataType'
             const chartDataType = colDef.chartDataType;
+
             if (chartDataType) {
-                let validChartType = true;
-
-                if (chartDataType === 'category') {
-                    dimensionCols.push(col);
-                } else if (chartDataType === 'series') {
-                    valueCols.push(col);
-                } else if (chartDataType === 'excluded') {
-                    // ignore
-                } else {
-                    console.warn(`ag-Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`);
-                    validChartType = false;
-                }
-
-                if (validChartType) {
-                    return;
+                // chart data type was specified explicitly
+                switch (chartDataType) {
+                    case 'category':
+                        dimensionCols.push(col);
+                        return;
+                    case 'series':
+                        valueCols.push(col);
+                        return;
+                    case 'excluded':
+                        return;
+                    default:
+                        console.warn(`ag-Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`);
+                        break;
                 }
             }
 
@@ -391,27 +389,41 @@ export class ChartModel extends BeanStub {
     private isNumberCol(colId: any) {
         if (colId === 'ag-Grid-AutoColumn') { return false; }
 
-        const row = this.rowRenderer.getRowNode({rowIndex: 0, rowPinned: undefined});
-        const rowData = row ? row.data : null;
+        const row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: undefined });
+
+        if (!row) { return false; }
 
         let cellData;
-        if (row && row.group) {
-            cellData = this.extractLeafData(row, colId);
+
+        if (row.group) {
+            cellData = this.extractAggregateValue(row, colId) || this.extractLeafData(row, colId);
         } else {
+            const rowData = row.data;
             cellData = rowData ? rowData[colId] : null;
         }
 
         return typeof cellData === 'number';
     }
 
+    private extractAggregateValue(row: RowNode, colId: any) {
+        if (!row.aggData) { return null; }
+
+        const aggDatum = row.aggData[colId];
+
+        if (!aggDatum) { return null; }
+
+        return typeof aggDatum.toNumber === 'function' ? aggDatum.toNumber() : aggDatum;
+    }
+
     private extractLeafData(row: RowNode, colId: any) {
-        const leafRowData = row.allLeafChildren.map(row => row.data);
-        const leafCellData = leafRowData.map(rowData => rowData[colId]);
-        for (let i = 0; i < leafCellData.length; i++) {
-            if (leafCellData[i] !== null) {
-                return leafCellData[i];
+        const cellData = row.allLeafChildren.map(child => child.data).map(data => data[colId]);
+
+        for (let i = 0; i < cellData.length; i++) {
+            if (cellData[i] !== null) {
+                return cellData[i];
             }
         }
+
         return null;
     }
 
