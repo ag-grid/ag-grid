@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 export declare class RangeHandle extends AbstractSelectionHandle {
     static TEMPLATE: string;

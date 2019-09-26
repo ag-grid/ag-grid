@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { Shape } from "./shape";
 import { Path2D } from "../path2D";
 export declare class Path extends Shape {

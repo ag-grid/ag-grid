@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
 import { DoughnutChartOptions, PieChartOptions } from "ag-grid-community";
 export declare type PolarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import Scale from "./scale/scale";
 export declare class CanvasAxis<D> {
     constructor(scale: Scale<D, number>);

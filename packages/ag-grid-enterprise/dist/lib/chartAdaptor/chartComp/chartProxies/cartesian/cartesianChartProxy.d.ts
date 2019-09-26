@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
 import { CartesianChartOptions } from "ag-grid-community";
 export declare type CommonAxisProperty = 'lineColor' | 'lineWidth' | 'tickColor' | 'tickWidth' | 'tickSize' | 'tickPadding';

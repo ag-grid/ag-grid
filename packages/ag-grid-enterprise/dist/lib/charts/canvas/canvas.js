@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // This is the property we set on an HTMLCanvasElement to let us know we've applied

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 /**
  * Returns the intersection point for the given pair of line segments, or null,
  * if the segments are parallel or don't intersect.

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { CellPositionUtils, Column, GridCore, IClipboardService, RowPositionUtils } from "ag-grid-community";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { Group } from "../../scene/group";
 import { Chart } from "../chart";
 import { LegendDatum } from "../legend";

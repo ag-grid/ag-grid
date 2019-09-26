@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { Chart } from "./chart";
 import { Padding } from "../util/padding";
 import { Node } from "../scene/node";

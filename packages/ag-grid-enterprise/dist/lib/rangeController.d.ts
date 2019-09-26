@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { CellPosition, CellPositionUtils, Column, GridOptionsWrapper, GridPanel, IRangeController, CellRangeParams, CellRange, RowPosition, RowPositionUtils } from "ag-grid-community";
 export declare class RangeController implements IRangeController {
     private loggerFactory;

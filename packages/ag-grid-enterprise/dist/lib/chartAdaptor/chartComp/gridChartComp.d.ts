@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { CellRange, ChartOptions, ChartType, Component, IAggFunc, ProcessChartOptionsParams } from "ag-grid-community";
 export interface GridChartParams {
     pivotChart: boolean;
