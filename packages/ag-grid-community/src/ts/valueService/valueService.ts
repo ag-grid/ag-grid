@@ -84,7 +84,7 @@ export class ValueService {
         return result;
     }
 
-    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, suppressCellValueChangedEvent?: boolean): void {
+    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any): void {
         const column = this.columnController.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
@@ -156,8 +156,6 @@ export class ValueService {
             // to make callback async, do in a timeout
             setTimeout(() => onCellValueChanged(params), 0);
         }
-
-        if (suppressCellValueChangedEvent) { return; }
 
         const event: CellValueChangedEvent = {
             type: Events.EVENT_CELL_VALUE_CHANGED,

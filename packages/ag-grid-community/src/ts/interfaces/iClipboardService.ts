@@ -8,4 +8,5 @@ export interface IClipboardService {
     copySelectedRowsToClipboard(includeHeader?: boolean, columnKeys?: (string | Column)[]): void;
     copySelectedRangeToClipboard(includeHeader?: boolean): void;
     copyRangeDown(): void;
+    isPasteOperationActive(): boolean;
 }
