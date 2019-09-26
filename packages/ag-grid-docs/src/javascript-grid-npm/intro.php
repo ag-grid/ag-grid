@@ -10,7 +10,7 @@
                     <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">index.html</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="template-tab" data-toggle="tab" href="#packages" role="tab" aria-controls="packages" aria-selected="false">packages.json</a>
+                    <a class="nav-link" id="template-tab" data-toggle="tab" href="#packages" role="tab" aria-controls="packages" aria-selected="false">package.json</a>
                 </li>
             </ul>
             <div class="tab-content">
