@@ -7,11 +7,11 @@
   "scripts": {
     "build": "gulp",
     "umd": "rollup -c",
-    "test": "jest",
+    "test": "jest && npm run cypress",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "cypress:open": "cypress open",
-    "cypress": "cypress run --browser chrome --spec 'cypress/integration/**/*spec.js'"
+    "cypress": "cypress run --spec 'cypress/integration/**/*spec.js'"
   },
   "repository": {
     "type": "git",
