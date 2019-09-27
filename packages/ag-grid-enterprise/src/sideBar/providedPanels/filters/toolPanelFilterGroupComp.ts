@@ -36,12 +36,15 @@ export class ToolPanelFilterGroupComp extends Component {
     private readonly depth: number;
     private readonly columnGroup: OriginalColumnGroupChild;
     private childFilterComps: ToolPanelFilterItem[];
+    private expandedCallback: () => void;
 
-    constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[], depth: number) {
+    constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[], depth: number,
+                expandedCallback: () => void) {
         super();
         this.columnGroup = columnGroup;
         this.childFilterComps = childFilterComps;
         this.depth = depth;
+        this.expandedCallback = expandedCallback;
     }
 
     @PreConstruct
@@ -61,9 +64,29 @@ export class ToolPanelFilterGroupComp extends Component {
         // TODO temp workaround for top level column groups with set filters as list is loaded asynchronously
         if (this.depth === 0 && this.childFilterComps.length === 1) {
             this.addTopLevelColumnGroupExpandListener();
+        } else {
+            this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
+                this.expandedCallback();
+            });
+
+            this.addDestroyableEventListener(this.filterGroupComp, 'collapsed', () => {
+                this.expandedCallback();
+            });
         }
 
         this.addFilterChangedListeners();
+    }
+
+    public isColumnGroup(): boolean {
+        return this.columnGroup instanceof OriginalColumnGroup;
+    }
+
+    public isExpanded(): boolean {
+        return this.filterGroupComp.isExpanded();
+    }
+
+    public getChildren(): ToolPanelFilterItem[] {
+        return this.childFilterComps;
     }
 
     private addTopLevelColumnGroupExpandListener() {
@@ -85,7 +108,16 @@ export class ToolPanelFilterGroupComp extends Component {
                     _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', anyChildFiltersActive());
                 });
             });
+        } else {
+            const column = this.columnGroup as Column;
+            this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
+                _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', column.isFilterActive());
+            });
         }
+    }
+
+    public expand() {
+        this.filterGroupComp.toggleGroupExpand(true);
     }
 
     public collapse() {
