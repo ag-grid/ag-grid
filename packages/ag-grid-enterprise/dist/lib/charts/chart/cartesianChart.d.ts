@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { Chart } from "./chart";
 import { Axis } from "../axis";
 import Scale from "../scale/scale";

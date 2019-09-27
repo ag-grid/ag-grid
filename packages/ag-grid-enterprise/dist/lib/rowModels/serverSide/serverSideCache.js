@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -283,7 +283,7 @@ var ServerSideCache = /** @class */ (function (_super) {
                 // eg if blocksize = 100, then:
                 //   last row of first block is 99 (100 * 1) -1;
                 //   last row of second block is 199 (100 * 2) -1;
-                var lastRowTopLevelIndex = (blockSize * (blockId + 1)) - 1;
+                var lastRowTopLevelIndex = (blockSize * (blockBefore_1.getBlockNumber() + 1)) - 1;
                 // this is the last loaded rownode in the cache that is before the row we are interested in.
                 // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
                 // same as the difference between the displayed index

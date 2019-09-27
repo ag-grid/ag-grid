@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 /**
  * Creates an HTMLCanvasElement element with HDPI overrides applied.
  * The `width` and `height` parameters are optional and default to

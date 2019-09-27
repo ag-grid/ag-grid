@@ -1,2 +1,2 @@
-// ag-grid-react v21.2.1
+// ag-grid-react v21.2.2
 export declare const assignProperties: (to: {}, from: {}) => void;

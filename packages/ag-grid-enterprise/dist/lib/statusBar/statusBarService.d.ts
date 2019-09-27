@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { IStatusPanelComp, IStatusBarService } from 'ag-grid-community';
 export declare class StatusBarService implements IStatusBarService {
     private allComponents;

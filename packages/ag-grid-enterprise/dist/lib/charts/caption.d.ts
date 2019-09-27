@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { Padding } from "./util/padding";
 import { Text } from "./scene/shape/text";
 export declare class Caption {

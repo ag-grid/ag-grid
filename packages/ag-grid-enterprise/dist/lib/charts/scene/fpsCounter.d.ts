@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 export declare class FpsCounter {
     constructor(parent?: HTMLElement, document?: Document);
     private fps;

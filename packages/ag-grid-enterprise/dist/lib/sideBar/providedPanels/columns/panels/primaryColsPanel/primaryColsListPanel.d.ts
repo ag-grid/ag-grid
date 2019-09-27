@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { Component } from "ag-grid-community/main";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ToolPanelColumnCompParams } from "../../columnToolPanel";

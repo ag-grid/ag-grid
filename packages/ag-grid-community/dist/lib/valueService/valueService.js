@@ -1,6 +1,6 @@
 /**
  * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.1
+ * @version v21.2.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -83,7 +83,7 @@ var ValueService = /** @class */ (function () {
         }
         return result;
     };
-    ValueService.prototype.setValue = function (rowNode, colKey, newValue, suppressCellValueChangedEvent) {
+    ValueService.prototype.setValue = function (rowNode, colKey, newValue) {
         var column = this.columnController.getPrimaryColumn(colKey);
         if (!rowNode || !column) {
             return;
@@ -144,9 +144,6 @@ var ValueService = /** @class */ (function () {
         if (typeof onCellValueChanged === 'function') {
             // to make callback async, do in a timeout
             setTimeout(function () { return onCellValueChanged(params); }, 0);
-        }
-        if (suppressCellValueChangedEvent) {
-            return;
         }
         var event = {
             type: events_1.Events.EVENT_CELL_VALUE_CHANGED,

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Node } from "./node";
 import { Path2D } from "./path2D";

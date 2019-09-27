@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { AgEvent, BeanStub, ChartType } from "ag-grid-community";
 import { RangeController } from "../../rangeController";
 import { ChartModel, ColState } from "./chartModel";

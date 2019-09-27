@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { CellComp, RowRenderer, DragService, Component, MouseEventService, ColumnController, CellNavigationService, CellRange, RowPosition, CellPosition, ISelectionHandle, RowPositionUtils } from "ag-grid-community";
 import { RangeController } from "../../rangeController";
 export declare abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {

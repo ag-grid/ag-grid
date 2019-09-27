@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 export interface DropShadowOptions {
     enabled?: boolean;
     color?: string;

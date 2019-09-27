@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -14,12 +14,19 @@ var ag_grid_community_1 = require("ag-grid-community");
 var rangeController_1 = require("./rangeController");
 var ClipboardService = /** @class */ (function () {
     function ClipboardService() {
+        this.pasteOperationActive = false;
     }
+    ClipboardService.prototype.isPasteOperationActive = function () {
+        return this.pasteOperationActive;
+    };
     ClipboardService.prototype.registerGridCore = function (gridCore) {
         this.gridCore = gridCore;
     };
     ClipboardService.prototype.init = function () {
         this.logger = this.loggerFactory.create('ClipboardService');
+        if (this.rowModel.getType() === ag_grid_community_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.clientSideRowModel = this.rowModel;
+        }
     };
     ClipboardService.prototype.pasteFromClipboard = function () {
         var _this = this;
@@ -46,8 +53,9 @@ var ClipboardService = /** @class */ (function () {
                 source: 'clipboard'
             });
             var singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
-            _this.rangeController.isMoreThanOneCell() && !singleCellInClipboard ?
-                _this.pasteToRange(parsedData) : _this.pasteToSingleCell(parsedData);
+            var rangeActive = _this.rangeController.isMoreThanOneCell();
+            rangeActive && !singleCellInClipboard ?
+                _this.pasteIntoActiveRange(parsedData) : _this.pasteStartingFromFocusedCell(parsedData);
             _this.eventService.dispatchEvent({
                 type: ag_grid_community_1.Events.EVENT_PASTE_END,
                 api: _this.gridOptionsWrapper.getApi(),
@@ -56,7 +64,7 @@ var ClipboardService = /** @class */ (function () {
             });
         });
     };
-    ClipboardService.prototype.pasteToRange = function (clipboardData) {
+    ClipboardService.prototype.pasteIntoActiveRange = function (clipboardData) {
         var _this = this;
         var cellsToFlash = {};
         var updatedRowNodes = [];
@@ -108,11 +116,22 @@ var ClipboardService = /** @class */ (function () {
         }
         this.fireRowChanged(updatedRowNodes);
     };
-    ClipboardService.prototype.pasteToSingleCell = function (parsedData) {
+    ClipboardService.prototype.pasteStartingFromFocusedCell = function (parsedData) {
         var focusedCell = this.focusedCellController.getFocusedCell();
         if (!focusedCell) {
             return;
         }
+        // some parts of the grid logic shouldn't execute when paste operation
+        // in progress, so we flag when paste is in progress. used by changeDetectionService
+        // (as we don't want the grid refreshing for every cell, due to CellValueChanged event)
+        //
+        // NOTE - it is only pasteStartingFromFocusedCell where we want the ChangeDetectionService
+        // to stand down, as it is only this method which does clientSideRowModel.doAggregate()
+        // (the pasteIntoActiveRange or copyRangeDown do NOT do this). in the future this class needs
+        // to be refactored, so that all these methods do the same (hopefully with common logic)
+        // and then this flag is turned on / off at a higher level. i am not doing the refactor now
+        // as this is a critical code fix going into a patch release.
+        this.pasteOperationActive = true;
         // remove last row if empty, excel puts empty last row in
         var lastLine = ag_grid_community_1._.last(parsedData);
         if (lastLine && lastLine.length === 1 && lastLine[0] === '') {
@@ -123,18 +142,27 @@ var ClipboardService = /** @class */ (function () {
         var updatedRowNodes = [];
         var updatedColumnIds = [];
         var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
-        var onlyOneCellInRange = parsedData.length === 1 && parsedData[0].length === 1;
-        if (onlyOneCellInRange) {
-            this.singleCellRange(parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds);
+        var onlyOneValueToPaste = parsedData.length === 1 && parsedData[0].length === 1;
+        var changedPath;
+        if (this.clientSideRowModel) {
+            var onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
+            changedPath = new ag_grid_community_1.ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
+        }
+        if (onlyOneValueToPaste) {
+            this.pasteSingleValue(parsedData, updatedRowNodes, cellsToFlash, updatedColumnIds, changedPath);
         }
         else {
-            this.multipleCellRange(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, ag_grid_community_1.Constants.EXPORT_TYPE_CLIPBOARD);
+            this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, ag_grid_community_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
         }
-        // this is very heavy, should possibly just refresh the specific cells?
+        if (changedPath) {
+            this.clientSideRowModel.doAggregate(changedPath);
+        }
         this.rowRenderer.refreshCells({ rowNodes: updatedRowNodes, columns: updatedColumnIds });
         this.dispatchFlashCells(cellsToFlash);
         this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         this.fireRowChanged(updatedRowNodes);
+        // unset the paste active operation
+        this.pasteOperationActive = false;
     };
     ClipboardService.prototype.copyRangeDown = function () {
         var _this = this;
@@ -217,7 +245,7 @@ var ClipboardService = /** @class */ (function () {
             _this.eventService.dispatchEvent(event);
         });
     };
-    ClipboardService.prototype.multipleCellRange = function (clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, type) {
+    ClipboardService.prototype.pasteMultipleValues = function (clipboardGridData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, updatedColumnIds, type, changedPath) {
         var _this = this;
         clipboardGridData.forEach(function (clipboardRowData) {
             // if we have come to end of rows in grid, then skip
@@ -229,13 +257,7 @@ var ClipboardService = /** @class */ (function () {
                 updatedRowNodes.push(rowNode);
                 clipboardRowData.forEach(function (value, index) {
                     var column = columnsToPasteInto[index];
-                    if (ag_grid_community_1._.missing(column)) {
-                        return;
-                    }
-                    if (rowNode && !column.isCellEditable(rowNode)) {
-                        return;
-                    }
-                    _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, type);
+                    _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, type, changedPath);
                 });
                 // move to next row down for next set of values
                 currentRow = _this.cellNavigationService.getRowBelow({ rowPinned: currentRow.rowPinned, rowIndex: currentRow.rowIndex });
@@ -243,28 +265,29 @@ var ClipboardService = /** @class */ (function () {
         });
         return currentRow;
     };
-    ClipboardService.prototype.singleCellRange = function (parsedData, updatedRowNodes, currentRow, cellsToFlash, updatedColumnIds) {
+    ClipboardService.prototype.pasteSingleValue = function (parsedData, updatedRowNodes, cellsToFlash, updatedColumnIds, changedPath) {
         var _this = this;
         var value = parsedData[0][0];
-        var rowCallback = function (currentRow, rowNode, columns, index, isLastRow) {
+        var rowCallback = function (currentRow, rowNode, columns) {
             updatedRowNodes.push(rowNode);
             columns.forEach(function (column) {
-                if (column.isCellEditable(rowNode)) {
-                    _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, ag_grid_community_1.Constants.EXPORT_TYPE_CLIPBOARD);
-                }
+                _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, ag_grid_community_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
             });
         };
         this.iterateActiveRanges(false, rowCallback);
     };
-    ClipboardService.prototype.updateCellValue = function (rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, type) {
+    ClipboardService.prototype.updateCellValue = function (rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, type, changedPath) {
         if (!rowNode || !currentRow) {
+            return;
+        }
+        if (!column.isCellEditable(rowNode)) {
             return;
         }
         if (column.isSuppressPaste(rowNode)) {
             return;
         }
         var processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
-        this.valueService.setValue(rowNode, column, processedValue, true);
+        this.valueService.setValue(rowNode, column, processedValue);
         var cellPosition = {
             rowIndex: currentRow.rowIndex,
             rowPinned: currentRow.rowPinned,
@@ -274,6 +297,9 @@ var ClipboardService = /** @class */ (function () {
         cellsToFlash[cellId] = true;
         if (updatedColumnIds.indexOf(column.getId()) < 0) {
             updatedColumnIds.push(column.getId());
+        }
+        if (changedPath && !rowNode.isRowPinned()) {
+            changedPath.addParentNode(rowNode.parent, [column]);
         }
     };
     ClipboardService.prototype.copyToClipboard = function (includeHeaders) {
@@ -617,6 +643,10 @@ var ClipboardService = /** @class */ (function () {
         ag_grid_community_1.Autowired('rangeController'),
         __metadata("design:type", rangeController_1.RangeController)
     ], ClipboardService.prototype, "rangeController", void 0);
+    __decorate([
+        ag_grid_community_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], ClipboardService.prototype, "rowModel", void 0);
     __decorate([
         ag_grid_community_1.Autowired('valueService'),
         __metadata("design:type", ag_grid_community_1.ValueService)

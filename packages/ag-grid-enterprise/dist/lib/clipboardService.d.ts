@@ -1,10 +1,11 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { CellPositionUtils, Column, GridCore, IClipboardService, RowPositionUtils } from "ag-grid-community";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
     private loggerFactory;
     private selectionController;
     private rangeController;
+    private rowModel;
     private valueService;
     private focusedCellController;
     private rowRenderer;
@@ -16,17 +17,20 @@ export declare class ClipboardService implements IClipboardService {
     private gridApi;
     cellPositionUtils: CellPositionUtils;
     rowPositionUtils: RowPositionUtils;
+    private clientSideRowModel;
     private logger;
     private gridCore;
+    private pasteOperationActive;
+    isPasteOperationActive(): boolean;
     registerGridCore(gridCore: GridCore): void;
     private init;
     pasteFromClipboard(): void;
-    private pasteToRange;
-    private pasteToSingleCell;
+    private pasteIntoActiveRange;
+    private pasteStartingFromFocusedCell;
     copyRangeDown(): void;
     private fireRowChanged;
-    private multipleCellRange;
-    private singleCellRange;
+    private pasteMultipleValues;
+    private pasteSingleValue;
     private updateCellValue;
     copyToClipboard(includeHeaders: boolean): void;
     private iterateActiveRanges;

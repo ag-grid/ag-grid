@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter } from "ag-grid-community";
 import { SetFilterModel } from "./setFilterModel";
 export declare class SetFilter extends ProvidedFilter {

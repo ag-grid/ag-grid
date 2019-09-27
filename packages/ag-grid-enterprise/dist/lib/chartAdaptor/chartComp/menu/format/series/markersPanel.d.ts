@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { Component } from "ag-grid-community";
 import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
 import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";

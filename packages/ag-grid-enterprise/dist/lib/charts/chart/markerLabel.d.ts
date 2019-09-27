@@ -1,4 +1,4 @@
-// ag-grid-enterprise v21.2.1
+// ag-grid-enterprise v21.2.2
 import { Group } from "../scene/group";
 export declare class MarkerLabel extends Group {
     static className: string;
