@@ -17,6 +17,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         width: 150
     },
+    paginateChildRows: true,
     columnDefs: columnDefs,
     rowModelType: 'serverSide',
     animateRows: true,
