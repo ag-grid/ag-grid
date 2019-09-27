@@ -58,6 +58,7 @@ export class ReactComponent extends BaseReactComponent {
             // grab hold of the actual instance created
             params.ref = (element: any) => {
                 this.componentInstance = element;
+
                 this.addParentContainerStyleAndClasses();
             };
         }
@@ -66,14 +67,14 @@ export class ReactComponent extends BaseReactComponent {
         const portal: ReactPortal = ReactDOM.createPortal(
             reactComponent,
             this.eParentElement as any,
-            generateNewKey()
+            generateNewKey() // fixed deltaRowModeRefreshCompRenderer
         );
         this.portal = portal;
         this.parentComponent.mountReactPortal(portal!, this, resolve);
     }
 
     private addParentContainerStyleAndClasses() {
-        if (!this.componentInstance) {
+        if(!this.componentInstance) {
             return;
         }
 
@@ -89,7 +90,7 @@ export class ReactComponent extends BaseReactComponent {
     private createParentElement(params: any) {
         const eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
 
-        Utils.addCssClass(eParentElement as any, 'ag-react-container');
+        Utils.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
 
         // DEPRECATED - use componentInstance.getReactContainerStyle or componentInstance.getReactContainerClasses instead
         // so user can have access to the react container, to add css class or style
@@ -99,6 +100,7 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     public statelessComponentRendered(): boolean {
+        // fixed fragmentsFuncRendererCreateDestroy funcRendererWithNan (changeDetectionService too for NaN)
         return this.eParentElement.childElementCount > 0 || this.eParentElement.childNodes.length > 0;
     }
 

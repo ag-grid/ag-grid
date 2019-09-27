@@ -16,7 +16,13 @@ const link = require('lnk').sync;
 
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
-async function tscTask() {
+const cleanLib = () => {
+    return gulp
+        .src('lib', {read: false, allowEmpty: true})
+        .pipe(clean());
+};
+
+tscTask = async () => {
     const tscProject = gulpTypescript.createProject(tsConfig);
     const tsResult = await gulp.src(
         [
@@ -30,7 +36,7 @@ async function tscTask() {
         tsResult.dts.pipe(header(headerTemplate, {pkg: pkg})).pipe(gulp.dest('lib')),
         tsResult.js.pipe(header(headerTemplate, {pkg: pkg})).pipe(gulp.dest('lib'))
     ]);
-}
+};
 
 const cleanUmd = () => {
     return gulp.src('umd/*')
@@ -80,6 +86,7 @@ const linkUmdForE2E = (done) => {
 gulp.task('clean-umd', cleanUmd);
 gulp.task('umd', umd);
 gulp.task('link-umd-e2e', linkUmdForE2E);
-gulp.task('commonjs', tscTask);
-gulp.task('watch', series('commonjs', watch));
-gulp.task('default', series('commonjs', "clean-umd", "umd", "link-umd-e2e"));
+gulp.task('clean-lib', cleanLib);
+gulp.task('tsc', tscTask);
+gulp.task('watch', series('tsc', watch));
+gulp.task('default', series('clean-lib', 'tsc', "clean-umd", "umd", "link-umd-e2e"));
