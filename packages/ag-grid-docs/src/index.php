@@ -66,7 +66,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                30th Aug 2019: <a href="./ag-grid-changelog/?fixVersion=21.2.0">Version 21.2.0</a> Pivot Chart, Pagination Enhancements, Scatter / Bubble Charts, Accessibility Enhancements ...
+                27th Sep 2019: <a href="./ag-grid-changelog/?fixVersion=21.2.2">Version 21.2.2</a> Patch release with bug fixes...
             </div>
         </section>
 
