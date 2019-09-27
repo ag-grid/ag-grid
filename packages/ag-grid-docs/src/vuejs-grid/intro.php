@@ -1,6 +1,6 @@
 <section id="angular-demo" class="mb-3">
     <div class="card">
-        <div class="card-header">Code Example</div>
+        <div class="card-header">Quick Look Code Example</div>
         <div class="card-body">
             <ul class="nav nav-tabs">
                 <li class="nav-item">

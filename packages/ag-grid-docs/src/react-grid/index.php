@@ -9,20 +9,23 @@ include '../documentation-main/documentation_header.php';
 <style><?php include '../_assets//pages/get-started.css'; ?></style>
 <div>
   <h1>React Grid | Get Started with ag-Grid and React</h1>
+
   <p class="lead" id="react-grid-description">
-    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid
-    engine is implemented in TypeScript with zero dependencies.
-    The grid supports React by providing a React Component version of the grid.
-    This allows you to use the grid as a component in your application like any other React
-    component &ndash; you pass configuration through property bindings and handle events through event bindings.
-    You can even use React components to customize the grid UI and cell contents / behavior.
+    ag-Grid is the industry standard for React Enterprise Applications. Developers using ag-Grid
+    are building applications that would not be possible if ag-Grid did not exist.
   </p>
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing React project,
-  and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.
-</p>
+
 <?php
 include './intro.php';
 ?>
+
+<h2>Getting Started</h2>
+<p>In this article, we will walk you through the necessary steps to add ag-Grid
+  (both <a href="../javascript-grid-set-license/">Community and Enterprise</a> are covered)
+  to an existing React project,
+  and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.
+</p>
+
 <h2>
     Table of Contents
 </h2>

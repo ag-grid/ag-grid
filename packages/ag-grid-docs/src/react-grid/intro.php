@@ -1,6 +1,6 @@
 <section id="angular-demo" class="mb-3">
     <div class="card">
-        <div class="card-header">Code Example</div>
+        <div class="card-header">Quick Look Code Example</div>
         <div class="card-body">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
@@ -22,39 +22,25 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      columnDefs: [{
-        headerName: "Make", field: "make"
-      }, {
-        headerName: "Model", field: "model"
-      }, {
-        headerName: "Price", field: "price"
-      }],
-      rowData: [{
-        make: "Toyota", model: "Celica", price: 35000
-      }, {
-        make: "Ford", model: "Mondeo", price: 32000
-      }, {
-        make: "Porsche", model: "Boxter", price: 72000
-      }]
+      columnDefs: [
+        { headerName: "Make", field: "make" },
+        { headerName: "Model", field: "model" },
+        { headerName: "Price", field: "price" }],
+      rowData: [
+        { make: "Toyota", model: "Celica", price: 35000 },
+        { make: "Ford", model: "Mondeo", price: 32000 },
+        { make: "Porsche", model: "Boxter", price: 72000 }]
     }
   }
 
   render() {
     return (
-      &lt;div
-        className="ag-theme-balham"
-        style={ {
-          height: '200px',
-          width: '600px'
-         } }
-      &gt;
-
-      &lt;AgGridReact
-          columnDefs={this.state.columnDefs}
-          rowData={this.state.rowData}&gt;
+      &lt;div className="ag-theme-balham" style={ {height: '200px', width: '600px'} }&gt;
+        &lt;AgGridReact
+            columnDefs={this.state.columnDefs}
+            rowData={this.state.rowData}&gt;
         &lt;/AgGridReact&gt;
       &lt;/div&gt;
-
     );
   }
 }

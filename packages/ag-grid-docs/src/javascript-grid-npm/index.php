@@ -9,7 +9,8 @@ include '../documentation-main/documentation_header.php';
 <h1>Install ag-Grid with NPM</h1>
 
     <p class="lead">
-        Both ag-Grid Community and ag-Grid Enterprise are available as NPM packages.
+        Both ag-Grid is available through NPM packages. Below is a code example of using ag-Grid with NPM
+        and ECMA 6 imports.
     </p>
 
     <?php
@@ -17,14 +18,16 @@ include '../documentation-main/documentation_header.php';
     ?>
 
     <p>
-        To install ag-Grid, run:
+        To install ag-Grid and update your <code>package.json</code> file run:
     </p>
 
 <snippet language="sh">
 npm install --save ag-grid-community
 </snippet>
 
-<p>To install ag-Grid Enterprise, run:</p>
+<p>
+    To install ag-Grid Enterprise and update your <code>package.json</code> file run:
+</p>
 
 <snippet language="sh">
 npm install --save ag-grid-enterprise

@@ -12,32 +12,18 @@ include '../documentation-main/documentation_header.php';
 <h1>Angular Grid | Get Started with ag-Grid and Angular</h1>
 
 <p class="lead" id="angular-grid">
-    ag-Grid is the industry standard for Angular Enterprise Applications. In short, ag-Grid is the best
-    Angular grid in the world!
+    ag-Grid is the industry standard for Angular Enterprise Applications. Developers using ag-Grid
+    are building applications that would not be possible if ag-Grid did not exist.
 </p>
 
-<p>
-    Below are getting started instructions for using ag-Grid with Angular for both the
-    <a href="../javascript-grid-set-license/">Community and Enterprise</a>
-    versions of ag-Grid.
-</p>
-
-<note>
-    <p>
-        Everyone can use ag-Grid Community for free. It's MIT licensed and Open Source. No restrictions. No strings attached.
-    </p>
-    <p>
-        You can also get started with ag-Grid Enterprise immediately. You don't need to contact us to evaluate
-        ag-Grid Enterprise. A license is only required when you start developing for production.
-    </p>
-</note>
 <?php
 include './intro.php';
 ?>
 
 <h2>Getting Started</h2>
 <p>
-    Below we walk through the necessary steps to add ag-Grid (both Community and Enterprise are covered) to an
+    Below we walk through the necessary steps to add ag-Grid
+    (both <a href="../javascript-grid-set-license/">Community and Enterprise</a> are covered) to an
     Angular project and configure some grid features. In particular, we will go through the following steps:
 </p>
 

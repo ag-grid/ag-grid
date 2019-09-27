@@ -10,22 +10,24 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Vue Grid | Get Started with ag-Grid and Vue</h1>
 
-<p class="lead">
-    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid
-    engine is implemented in TypeScript with zero dependencies.
-    The grid supports Vue by providing a Vue Component version of the grid.
-    This allows you to use the grid as a component in your application like any other Vue
-    component &ndash; you pass configuration through property bindings and handle events through event bindings.
-    You can even use Vue components to customize the grid UI and cell contents / behavior.
+<p class="lead" id="vue-grid-description">
+    ag-Grid is the industry standard for Vue Enterprise Applications. Developers using ag-Grid
+    are building applications that would not be possible if ag-Grid did not exist.
 </p>
-
-<p>In this article, we will walk you through the necessary steps to add ag-Grid to an existing Vue project,
-    and configure some of the essential features of it.
-We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.</p>
 
 <?php
 include './intro.php';
 ?>
+
+<h2>Getting Started</h2>
+
+<p>
+    In this article, we will walk you through the necessary steps to add ag-Grid
+    (both <a href="../javascript-grid-set-license/">Community and Enterprise</a> are covered)
+    to an existing Vue project, configure some of the essential features of it.
+    We will show you some of the fundamentals of the grid (passing properties, using the API, etc).
+    As a bonus, we will also tweak the grid's visual appearance using Sass variables.
+</p>
 
 <h2>Add ag-Grid to Your Project</h2>
 
