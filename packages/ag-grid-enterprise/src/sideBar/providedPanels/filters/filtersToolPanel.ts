@@ -14,6 +14,8 @@ import {FiltersToolPanelHeaderPanel} from "./filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./filtersToolPanelListPanel";
 
 export interface ToolPanelFiltersCompParams extends IToolPanelParams {
+    suppressExpandAll: boolean;
+    suppressFilter: boolean;
     syncLayoutWithGrid: boolean;
 }
 
@@ -52,16 +54,22 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
 
+        //TODO add suppress header panel option
         const defaultParams: ToolPanelFiltersCompParams = {
+            suppressExpandAll: false,
+            suppressFilter: false,
             syncLayoutWithGrid: false,
             api: this.gridApi
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
 
-        this.filtersToolPanelHeaderPanel.init(); //TODO add suppress header panel option
-
+        this.filtersToolPanelHeaderPanel.init(this.params);
         this.filtersToolPanelListPanel.init(this.params);
+
+        this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
+        this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
+        this.addDestroyableEventListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
     }
 
     // lazy initialise the panel
@@ -70,6 +78,18 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         if (visible && !this.initialised) {
             this.init(this.params);
         }
+    }
+
+    public onExpandAll(): void {
+        this.filtersToolPanelListPanel.expandFilterGroups(true);
+    }
+
+    public onCollapseAll(): void {
+        this.filtersToolPanelListPanel.expandFilterGroups(false);
+    }
+
+    private onGroupExpanded(event: any): void {
+        this.filtersToolPanelHeaderPanel.setExpandState(event.state);
     }
 
     public expandFilters(colIds?: string[]): void {

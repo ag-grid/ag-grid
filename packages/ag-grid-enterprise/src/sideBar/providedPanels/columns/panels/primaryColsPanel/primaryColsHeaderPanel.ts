@@ -21,9 +21,11 @@ export class PrimaryColsHeaderPanel extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
 
-    @RefSelector('eFilterTextField')
+    @RefSelector('eExpand') private eExpand: HTMLElement;
+    @RefSelector('eSelect') private eSelect: HTMLElement;
+    @RefSelector('eFilterWrapper') private eFilterWrapper: HTMLElement;
+    @RefSelector('eFilterTextField') private eFilterTextField: HTMLInputElement;
 
-    private eFilterTextField: HTMLInputElement;
     private eSelectChecked: HTMLElement;
     private eSelectUnchecked: HTMLElement;
     private eSelectIndeterminate: HTMLElement;
@@ -32,9 +34,6 @@ export class PrimaryColsHeaderPanel extends Component {
     private eExpandUnchecked: HTMLElement;
     private eExpandIndeterminate: HTMLElement;
 
-    @RefSelector('eExpand') private eExpand: HTMLElement;
-    @RefSelector('eSelect') private eSelect: HTMLElement;
-    @RefSelector('eFilterWrapper') private eFilterWrapper: HTMLElement;
 
     private onFilterTextChangedDebounced: () => void;
 

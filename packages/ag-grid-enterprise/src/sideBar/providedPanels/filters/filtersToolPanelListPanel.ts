@@ -15,6 +15,7 @@ import {
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
 import {ToolPanelFilterGroupComp} from "./toolPanelFilterGroupComp";
+import {EXPAND_STATE} from "./filtersToolPanelHeaderPanel";
 
 export class FiltersToolPanelListPanel extends Component {
 
@@ -27,6 +28,7 @@ export class FiltersToolPanelListPanel extends Component {
     private initialised = false;
 
     private params: ToolPanelFiltersCompParams;
+    private filterGroupComps: ToolPanelFilterGroupComp[] = [];
 
     constructor() {
         super(FiltersToolPanelListPanel.TEMPLATE);
@@ -36,6 +38,8 @@ export class FiltersToolPanelListPanel extends Component {
         this.initialised = true;
 
         const defaultParams: ToolPanelFiltersCompParams = {
+            suppressExpandAll: false,
+            suppressFilter: false,
             syncLayoutWithGrid: false,
             api: this.gridApi
         };
@@ -56,14 +60,11 @@ export class FiltersToolPanelListPanel extends Component {
     public onColumnsChanged(): void {
         this.destroyFilters();
         const columnTree = this.columnController.getPrimaryColumnTree();
-
-        const comps = this.recursivelyAddComps(columnTree, 0);
-        comps.forEach(comp => {
-            if (comp) this.appendChild(comp);
-        });
+        this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
+        this.filterGroupComps.forEach(comp => this.appendChild(comp));
     }
 
-    private recursivelyAddComps(tree: OriginalColumnGroupChild[], depth: number): (ToolPanelFilterGroupComp | null)[] {
+    private recursivelyAddComps(tree: OriginalColumnGroupChild[], depth: number): ToolPanelFilterGroupComp[] {
         return _.flatten(tree.map(child => {
             if (child instanceof OriginalColumnGroup) {
                 return _.flatten(this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, depth));
@@ -76,7 +77,9 @@ export class FiltersToolPanelListPanel extends Component {
                 if (depth > 0) {
                     return filterComp;
                 } else {
-                    const filterGroupComp = new ToolPanelFilterGroupComp(child, [filterComp], depth);
+                    const filterGroupComp =
+                        new ToolPanelFilterGroupComp(child, [filterComp], depth, this.onGroupExpanded.bind(this));
+
                     this.getContext().wireBean(filterGroupComp);
                     filterGroupComp.collapse();
                     return filterGroupComp;
@@ -93,7 +96,9 @@ export class FiltersToolPanelListPanel extends Component {
 
         if (columnGroup.isPadding()) return childFilterComps;
 
-        const filterGroupComp = new ToolPanelFilterGroupComp(columnGroup, childFilterComps, depth);
+        const filterGroupComp =
+            new ToolPanelFilterGroupComp(columnGroup, childFilterComps, depth, this.onGroupExpanded.bind(this));
+
         this.getContext().wireBean(filterGroupComp);
 
         return [filterGroupComp];
@@ -108,6 +113,58 @@ export class FiltersToolPanelListPanel extends Component {
         if (visible && !this.initialised) {
             this.init(this.params);
         }
+    }
+
+    public expandFilterGroups(expand: boolean): void {
+        const expandAllGroups = (filterGroup: ToolPanelFilterGroupComp) => {
+            if (expand && filterGroup.isColumnGroup()) {
+                filterGroup.expand();
+            } else {
+                filterGroup.collapse();
+            }
+
+            filterGroup.getChildren().forEach(child => {
+                if (child instanceof ToolPanelFilterGroupComp) {
+                    expandAllGroups(child);
+                }
+            });
+        };
+
+        this.filterGroupComps.forEach(expandAllGroups);
+        this.onGroupExpanded();
+    }
+
+    private onGroupExpanded(): void {
+        this.fireExpandedEvent();
+    }
+
+    private fireExpandedEvent(): void {
+        let expandedCount = 0;
+        let notExpandedCount = 0;
+
+        const updateCount = (filterGroup: ToolPanelFilterGroupComp) => {
+            if (!filterGroup.isColumnGroup()) return;
+            filterGroup.isExpanded() ? expandedCount++ : notExpandedCount++;
+
+            filterGroup.getChildren().forEach(child => {
+                if (child instanceof ToolPanelFilterGroupComp) {
+                    updateCount(child);
+                }
+            });
+        };
+
+        this.filterGroupComps.forEach(updateCount);
+
+        let state: EXPAND_STATE;
+        if (expandedCount > 0 && notExpandedCount > 0) {
+            state = EXPAND_STATE.INDETERMINATE;
+        } else if (notExpandedCount > 0) {
+            state = EXPAND_STATE.COLLAPSED;
+        } else {
+            state = EXPAND_STATE.EXPANDED;
+        }
+
+        this.dispatchEvent({type: 'groupExpanded', state: state});
     }
 
     public expandFilters(colIds?: string[]): void {
