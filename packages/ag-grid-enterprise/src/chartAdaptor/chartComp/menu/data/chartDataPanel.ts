@@ -29,12 +29,17 @@ export class ChartDataPanel extends Component {
     }
 
     @PostConstruct
-    private init() {
-        this.updateDataGroupElements();
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.updateDataGroupElements.bind(this));
+    public init() {
+        this.addPanels();
+        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.addPanels.bind(this));
     }
 
-    private updateDataGroupElements() {
+    public destroy(): void {
+        this.clearComponents();
+        super.destroy();
+    }
+
+    private addPanels() {
         const { dimensionCols, valueCols } = this.chartController.getColStateForMenu();
         const colIds = dimensionCols.map(c => c.colId).concat(valueCols.map(c => c.colId));
 
@@ -109,12 +114,6 @@ export class ChartDataPanel extends Component {
         });
 
         this.addComponent(this.getGui(), this.seriesGroupComp);
-    }
-
-    public destroy(): void {
-        super.destroy();
-
-        this.clearComponents();
     }
 
     private clearComponents() {
