@@ -271,11 +271,8 @@ export class Component extends BeanStub {
         }
     }
 
-    public addFeature(context: Context, feature: BeanStub): void {
-        context.wireBean(feature);
-        if (feature.destroy) {
-            this.addDestroyFunc(feature.destroy.bind(feature));
-        }
+    public addFeature(feature: BeanStub, context?: Context): void {
+        this.wireDependentBean(feature, context);
     }
 
     public isDisplayed(): boolean {
@@ -302,23 +299,6 @@ export class Component extends BeanStub {
             this.dispatchEvent(event);
         }
     }
-
-/*    public setVisible(visible: boolean, visibilityMode?: 'display' | 'visibility'): void {
-        const isDisplay = visibilityMode !== 'visibility';
-        if (visible !== this.visible) {
-            this.visible = visible;
-
-            // ag-hidden: display: none     -> setDisplayed();
-            // ag-invisible: visibility: hidden     => setVisible();
-
-            _.addOrRemoveCssClass(this.eGui, isDisplay ? 'ag-hidden' : 'ag-invisible', !visible);
-            const event: VisibleChangedEvent = {
-                type: Component.EVENT_VISIBLE_CHANGED,
-                visible: this.visible
-            };
-            this.dispatchEvent(event);
-        }
-    }*/
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
         _.addOrRemoveCssClass(this.eGui, className, addOrRemove);
@@ -357,5 +337,4 @@ export class Component extends BeanStub {
     public getRefElement(refName: string): HTMLElement {
         return this.queryForHtmlElement('[ref="' + refName + '"]');
     }
-
 }

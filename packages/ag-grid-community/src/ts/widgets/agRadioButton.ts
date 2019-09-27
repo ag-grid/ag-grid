@@ -1,8 +1,6 @@
 import { AgCheckbox } from "./agCheckbox";
-import { _ } from "../utils";
 
 export class AgRadioButton extends AgCheckbox {
-
     protected className = 'ag-radio-button';
     protected inputType = 'radio';
     protected iconMap = {
@@ -16,8 +14,7 @@ export class AgRadioButton extends AgCheckbox {
     }
 
     protected getIconName(): string {
-        const value = this.getValue();
-        const prop = value ? 'selected' : 'unselected';
+        const prop = this.getValue() ? 'selected' : 'unselected';
         const readOnlyStr = this.isReadOnly() ? 'ReadOnly' : '';
         return `${this.iconMap[prop]}${readOnlyStr}`;
     }

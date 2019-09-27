@@ -8,18 +8,18 @@ import {
     Component,
     PostConstruct
 } from "ag-grid-community";
-import {ChartController} from "../../chartController";
-import {ColState} from "../../chartModel";
-import {ChartTranslator} from "../../chartTranslator";
+import { ChartController } from "../../chartController";
+import { ColState } from "../../chartModel";
+import { ChartTranslator } from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
-
     public static TEMPLATE = `<div class="ag-chart-data-wrapper"></div>`;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private columnComps: { [key: string]: AgRadioButton | AgCheckbox } = {};
-    private dimensionComps: AgRadioButton[] = [];
+    private categoriesGroupComp?: AgGroupComponent;
+    private seriesGroupComp?: AgGroupComponent;
+    private columnComps: Map<string, AgRadioButton | AgCheckbox> = new Map<string, AgRadioButton | AgCheckbox>();
 
     private readonly chartController: ChartController;
 
@@ -30,74 +30,106 @@ export class ChartDataPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.createDataGroupElements();
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.createDataGroupElements.bind(this));
+        this.updateDataGroupElements();
+        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.updateDataGroupElements.bind(this));
     }
 
-    private createDataGroupElements() {
-        this.destroyColumnComps();
+    private updateDataGroupElements() {
+        const { dimensionCols, valueCols } = this.chartController.getColStateForMenu();
+        const colIds = dimensionCols.map(c => c.colId).concat(valueCols.map(c => c.colId));
 
-        const eGui = this.getGui();
-
-        const {dimensionCols, valueCols} = this.chartController.getColStateForMenu();
-
-        [dimensionCols, valueCols].forEach((group, idx) => {
-            const isCategory = idx === 0;
-
-            const dataGroupKey = isCategory ? 'categories' : this.chartController.isActiveXYChart() ? 'xyValues' : 'series';
-
-            const groupComp = new AgGroupComponent({
-                title: this.chartTranslator.translate(dataGroupKey),
-                enabled: true,
-                suppressEnabledCheckbox: true,
-                suppressOpenCloseIcons: false
+        if (_.areEqual(_.keys(this.columnComps), colIds)) {
+            // columns haven't changed, so just update values
+            [ ...dimensionCols, ...valueCols ].forEach(col => {
+                this.columnComps.get(col.colId)!.setValue(col.selected, true);
             });
-            this.getContext().wireBean(groupComp);
-            
-            group.forEach(this.getColumnStateMapper(isCategory, groupComp));
-            const eDiv = document.createElement('div');
-            eDiv.appendChild(groupComp.getGui());
-            eGui.appendChild(eDiv);
+        } else {
+            // re-render everything
+            this.clearComponents();
+            this.createCategoriesGroupComponent(dimensionCols);
+            this.createSeriesGroupComponent(valueCols);
+        }
+    }
+
+    private addComponent(parent: HTMLElement, component: AgGroupComponent): void {
+        const eDiv = document.createElement('div');
+        eDiv.appendChild(component.getGui());
+        parent.appendChild(eDiv);
+    }
+
+    private addChangeListener(component: AgRadioButton | AgCheckbox, columnState: ColState) {
+        this.addDestroyableEventListener(component, AgAbstractField.EVENT_CHANGED, () => {
+            columnState.selected = component.getValue();
+            this.chartController.updateForMenuChange(columnState);
         });
     }
 
-    private getColumnStateMapper(dimension: boolean, container: AgGroupComponent) {
+    private createCategoriesGroupComponent(columns: ColState[]): void {
+        this.categoriesGroupComp = this.wireBean(new AgGroupComponent({
+            title: this.chartTranslator.translate('categories'),
+            enabled: true,
+            suppressEnabledCheckbox: true,
+            suppressOpenCloseIcons: false
+        }));
 
-        return (colState: ColState) => {
-            const comp = dimension
-                ? new AgRadioButton()
-                : new AgCheckbox();
+        const inputName = `chartDimension${this.getCompId()}`;
+
+        columns.forEach(col => {
+            const comp = this.categoriesGroupComp!.wireDependentBean(new AgRadioButton());
             
-            this.getContext().wireBean(comp);
-            comp.setLabel(_.escape(colState.displayName) as string);
-            comp.setValue(colState.selected);
+            comp.setLabel(_.escape(col.displayName)!);
+            comp.setValue(col.selected);
+            comp.setInputName(inputName);
 
-            this.columnComps[colState.colId] = comp;
+            this.addChangeListener(comp, col);
+            this.categoriesGroupComp!.addItem(comp);
+            this.columnComps.set(col.colId, comp);
+        });
 
-            if (dimension) {
-                comp.setInputName('chartDimension' + this.getCompId());
-                this.dimensionComps.push(comp as AgRadioButton);
-            }
+        this.addComponent(this.getGui(), this.categoriesGroupComp);
+    }
 
-            this.addDestroyableEventListener(comp, AgAbstractField.EVENT_CHANGED, () => {
-                colState.selected = comp.getValue();
-                this.chartController.updateForMenuChange(colState);
-            });
+    private createSeriesGroupComponent(columns: ColState[]): void {
+        this.seriesGroupComp = this.wireDependentBean(new AgGroupComponent({
+            title: this.chartTranslator.translate(this.chartController.isActiveXYChart() ? 'xyValues' : 'series'),
+            enabled: true,
+            suppressEnabledCheckbox: true,
+            suppressOpenCloseIcons: false
+        }));
 
-            container.addItem(comp);
-        };
+        columns.forEach(col => {
+            const comp = this.seriesGroupComp!.wireDependentBean(new AgCheckbox());
+            
+            comp.setLabel(_.escape(col.displayName)!);
+            comp.setValue(col.selected);
+
+            this.addChangeListener(comp, col);
+            this.seriesGroupComp!.addItem(comp);
+            this.columnComps.set(col.colId, comp);
+        });
+
+        this.addComponent(this.getGui(), this.seriesGroupComp);
     }
 
     public destroy(): void {
         super.destroy();
-        this.destroyColumnComps();
+
+        this.clearComponents();
     }
 
-    private destroyColumnComps(): void {
+    private clearComponents() {
         _.clearElement(this.getGui());
-        if (this.columnComps) {
-            _.iterateObject(this.columnComps, (key: string, renderedItem: Component) => renderedItem.destroy());
+
+        this.columnComps.clear();
+
+        if (this.categoriesGroupComp) {
+            this.categoriesGroupComp.destroy();
+            this.categoriesGroupComp = undefined;
         }
-        this.columnComps = {};
+
+        if (this.seriesGroupComp) {
+            this.seriesGroupComp.destroy();
+            this.seriesGroupComp = undefined;
+        }
     }
 }

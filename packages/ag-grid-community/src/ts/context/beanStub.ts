@@ -13,7 +13,6 @@ export class BeanStub implements IEventEmitter {
     protected localEventService: EventService;
 
     private destroyFunctions: (() => void)[] = [];
-
     private destroyed = false;
 
     @Autowired('context') private context: Context;
@@ -39,9 +38,7 @@ export class BeanStub implements IEventEmitter {
         return this.frameworkOverrides;
     }
 
-    public getContext(): Context {
-        return this.context;
-    }
+    public getContext = (): Context => this.context;
 
     @PreDestroy
     public destroy(): void {
@@ -62,6 +59,7 @@ export class BeanStub implements IEventEmitter {
         if (!this.localEventService) {
             this.localEventService = new EventService();
         }
+
         this.localEventService.addEventListener(eventType, listener);
     }
 
@@ -116,9 +114,7 @@ export class BeanStub implements IEventEmitter {
         return destroyFunc;
     }
 
-    public isAlive(): boolean {
-        return !this.destroyed;
-    }
+    public isAlive = (): boolean => !this.destroyed;
 
     public addDestroyFunc(func: () => void): void {
         // if we are already destroyed, we execute the func now
@@ -129,4 +125,16 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
+    public wireDependentBean<T extends BeanStub>(bean: T, context?: Context): T {
+        if (bean.destroy) {
+            this.addDestroyFunc(bean.destroy.bind(bean));
+        }
+
+        return this.wireBean(bean, context);
+    }
+
+    protected wireBean<T extends BeanStub>(bean: T, context?: Context): T {
+        (context || this.getContext()).wireBean(bean);
+        return bean;
+    }
 }

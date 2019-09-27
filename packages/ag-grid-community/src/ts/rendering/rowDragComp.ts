@@ -33,11 +33,13 @@ export class RowDragComp extends Component {
         this.checkCompatibility();
 
         if (this.beans.gridOptionsWrapper.isRowDragManaged()) {
-            this.addFeature(this.beans.context,
-                new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column));
+            this.addFeature(
+                new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column),
+                this.beans.context);
         } else {
-            this.addFeature(this.beans.context,
-                new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column));
+            this.addFeature(
+                new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column),
+                this.beans.context);
         }
     }
 

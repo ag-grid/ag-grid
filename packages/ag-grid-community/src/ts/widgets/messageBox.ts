@@ -18,7 +18,7 @@ export class MessageBox extends AgDialog {
 
     postConstruct() {
         const messageBodyComp = new MessageBody();
-        this.addFeature(this.getContext(), messageBodyComp);
+        this.wireDependentBean(messageBodyComp);
 
         messageBodyComp.setMessage(this.message);
         this.setBodyComponent(messageBodyComp);
@@ -58,5 +58,4 @@ class MessageBody extends Component {
     private onBtOk() {
         this.dispatchEvent({type: 'onBtOk'});
     }
-
 }

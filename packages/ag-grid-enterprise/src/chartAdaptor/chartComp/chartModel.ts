@@ -5,7 +5,6 @@ import {
     CellRange,
     CellRangeType,
     ChartType,
-    ColDef,
     Column,
     ColumnController,
     GridOptionsWrapper,

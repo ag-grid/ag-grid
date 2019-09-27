@@ -1963,7 +1963,7 @@ export class CellComp extends Component {
         }
 
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
-        this.addFeature(this.beans.context, rowDraggingComp);
+        this.addFeature(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
@@ -1972,7 +1972,7 @@ export class CellComp extends Component {
     private addDndSource(): void {
 
         const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
-        this.addFeature(this.beans.context, dndSourceComp);
+        this.addFeature(dndSourceComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);

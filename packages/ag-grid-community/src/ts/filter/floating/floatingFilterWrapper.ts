@@ -76,7 +76,7 @@ export class FloatingFilterWrapper extends Component {
         this.setupWidth();
         this.setupLeftPositioning();
         this.setupColumnHover();
-        this.addFeature(this.getContext(), new HoverFeature([this.column], this.getGui()));
+        this.addFeature(new HoverFeature([this.column], this.getGui()));
 
         this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
     }

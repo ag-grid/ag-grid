@@ -93,12 +93,12 @@ export class HeaderWrapperComp extends Component {
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
 
-        this.addFeature(this.getContext(), new HoverFeature([this.column], this.getGui()));
+        this.addFeature(new HoverFeature([this.column], this.getGui()));
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
 
-        this.addFeature(this.getContext(), new SelectAllFeature(this.cbSelectAll, this.column));
+        this.addFeature(new SelectAllFeature(this.cbSelectAll, this.column));
 
         const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();

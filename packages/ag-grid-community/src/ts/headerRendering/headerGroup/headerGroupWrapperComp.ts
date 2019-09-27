@@ -79,7 +79,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupMovingCss();
         this.setupTooltip();
 
-        this.addFeature(this.getContext(), new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
+        this.addFeature(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
 
         const setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();

@@ -151,6 +151,18 @@ export class Utils {
         return results && results.length > 1 ? results[1] : "";
     }
 
+    static areEqual = <T>(a: T[], b: T[]): boolean => {
+        return a.length === b.length && a.every((value, index) => b[index] === value);
+    }
+
+    static keys = <T>(map: Map<T, any>): T[] => {
+        const keys: T[] = [];
+
+        map.forEach((_, key) => keys.push(key));
+
+        return keys;
+    }
+
     static values = <T>(object: { [key: string]: T }): T[] => Object.keys(object).map(key => object[key]);
 
     static includes = <T>(array: T[], value: T): boolean => array.indexOf(value) > -1;
