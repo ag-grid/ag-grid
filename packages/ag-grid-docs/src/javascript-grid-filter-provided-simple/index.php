@@ -490,7 +490,7 @@ var numberEquals18OrEquals20 = {
     condition2: {
         filterType: "number",
         type: "equals",
-        filter: 18
+        filter: 20
     }
 };</snippet>
 
@@ -567,7 +567,7 @@ export interface IFilterOptionDef {
 </p>
 <ul class="content">
     <li>The 'Athlete' column contains two custom filter options <code>Starts with "A"</code> and
-        <code>Starts with "B"</code>. Both these options take no text filter input.
+        <code>Starts with "N"</code>. Both these options take no text filter input.
     </li>
     <li>The 'Age' column contains two custom filter options <code>evenNumbers</code>, <code>oddNumbers</code> and
         <code>blanks</code>. It also has uses the build in 'empty' filter along with <code>suppressAndOrCondition=true</code>.

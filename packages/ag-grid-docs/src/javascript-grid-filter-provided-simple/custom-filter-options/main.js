@@ -14,7 +14,7 @@ var columnDefs = [
                     hideFilterInput: true
                 },
                 {
-                    displayKey: 'startsB',
+                    displayKey: 'startsN',
                     displayName: 'Starts With "N"',
                     test: function(filterValue, cellValue) {
                         return cellValue != null && cellValue.indexOf('n')==0;
