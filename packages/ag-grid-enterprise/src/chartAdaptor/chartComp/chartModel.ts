@@ -86,15 +86,14 @@ export class ChartModel extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.datasource = new ChartDatasource();
-        this.getContext().wireBean(this.datasource);
+        this.datasource = this.wireBean(new ChartDatasource());
 
         // use first range as a reference range to be used after removing all cols (via menu) so we can re-add later
         this.referenceCellRange = this.cellRanges[0];
     }
 
     public updateData(): void {
-        const {startRow, endRow} = this.getRowIndexes();
+        const { startRow, endRow } = this.getRowIndexes();
         const selectedDimension = this.getSelectedDimension();
         const selectedValueCols = this.getSelectedValueCols();
 
@@ -102,13 +101,13 @@ export class ChartModel extends BeanStub {
 
         const params: ChartDatasourceParams = {
             aggFunc: this.aggFunc,
-            dimensionCols: [selectedDimension],
+            dimensionCols: [ selectedDimension ],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             multiCategories: this.isMultiCategoryChart(),
             valueCols: selectedValueCols,
-            startRow: startRow,
-            endRow: endRow
+            startRow,
+            endRow
         };
 
         const result = this.datasource.getData(params);
@@ -118,8 +117,7 @@ export class ChartModel extends BeanStub {
     }
 
     public resetColumnState(): void {
-        const {dimensionCols, valueCols} = this.getAllChartColumns();
-
+        const { dimensionCols, valueCols } = this.getAllChartColumns();
         const allCols = this.pivotChart ? this.columnController.getAllDisplayedColumns() : this.getAllColumnsFromRanges();
 
         this.valueColState = valueCols.map(column => {
@@ -234,10 +232,14 @@ export class ChartModel extends BeanStub {
         }
 
         const colId = this.getSelectedDimension().colId;
+
         // replacing the selected dimension with a complex object to facilitate duplicated categories
         return this.chartData.map((d: any, index: number) => {
-            const dimensionValue = d[colId] ? d[colId].toString() : '';
-            d[colId] = {toString: () => dimensionValue, id: index};
+            const value = d[colId];
+            const valueString = value && value.toString ? value.toString() : '';
+            
+            d[colId] = { id: index, value: d[colId], toString: () => valueString };
+
             return d;
         });
     }
@@ -334,11 +336,13 @@ export class ChartModel extends BeanStub {
     private getRowIndexes(): { startRow: number, endRow: number } {
         let startRow = 0, endRow = 0;
         const range = _.last(this.cellRanges) as CellRange;
+
         if (range) {
             startRow = this.rangeController.getRangeStartRow(range).rowIndex;
             endRow = this.rangeController.getRangeEndRow(range).rowIndex;
         }
-        return {startRow, endRow};
+
+        return { startRow, endRow };
     }
 
     private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
@@ -382,7 +386,7 @@ export class ChartModel extends BeanStub {
             this.isNumberCol(col.getColId()) ? valueCols.push(col) : dimensionCols.push(col);
         });
 
-        return {dimensionCols, valueCols};
+        return { dimensionCols, valueCols };
     }
 
     private isNumberCol(colId: any) {
