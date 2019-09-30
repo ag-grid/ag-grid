@@ -26,24 +26,6 @@ include './intro.php';
   and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.
 </p>
 
-<h2>
-    Table of Contents
-</h2>
-<div class="row">
-  <div class="col">
-    <ol style="columns: 2">
-      <li><a href="#add-ag-grid-to-your-project">Add ag-Grid to Your Project</li></a>
-      <li><a href="#enable-sorting-and-filtering">Enable Sorting and Filtering</li></a>
-      <li><a href="#fetch-remote-data">Fetch Remote Data</li></a>
-      <li><a href="#enable-selection">Enable Selection</li></a>
-      <li><a href="#grouping(enterprise)">Grouping(Enterprise)</li></a>
-      <li><a href="#customize-the-theme-look">Customize the Theme Look</li></a>
-      <li><a href="#summary">Summary</li></a>
-      <li><a href="#next-steps">Next Steps</li></a>
-    </ol>
-  </div>
-</div>
-<hr>
 <h2 id="add-ag-grid-to-your-project">Add ag-Grid to Your Project</h2>
 <p>For the purposes of this tutorial, we are going to scaffold a react app with <a href="https://github.com/facebook/create-react-app">create-react-app</a>.
 Don't worry if your project has a different configuration. ag-Grid and the React wrapper are distributed as NPM packages, which should work with any common React project module bundler setup.
@@ -392,7 +374,7 @@ import { AgGridReact } from 'ag-grid-react';
 <snippet language="diff">
 +$odd-row-background-color: #CFD8DC;
 </snippet>
-</section>s
+</section>
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
   You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color,
   header background color and even the amount of spacing in the cells and columns. The <a href="https://www.ag-grid.com/javascript-grid-styling/#customizing-sass-variables"> full Sass variable list</a> is available in the themes documentation section.</p>
@@ -403,15 +385,5 @@ import { AgGridReact } from 'ag-grid-react';
   While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p>
 
 </div>
-
-<note>
-    <p>
-        Want to know more?
-    </p>
-
-    <p>
-        Learn how to customize our React Grid in this <a href="https://blog.ag-grid.com/learn-to-customize-react-grid-in-less-than-10-minutes/" target="_blank">guide</a>.
-    </p>
-</note>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

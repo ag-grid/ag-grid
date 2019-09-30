@@ -84,16 +84,24 @@
                 "showInCollapsed": true,
                 "items": [
                   {
-                    "title": "Columns",
-                    "url": "react-more-details/"
+                    "title": "Column Configuration",
+                    "url": "react-column-configuration/"
                   },
                   {
-                    "title": "React 16",
-                    "url": "react-16/"
+                    "title": "Components",
+                    "url": "react-components/"
                   },
                   {
-                    "title": "React 15",
-                    "url": "react-15/"
+                    "title": "React APIs",
+                    "url": "react-apis/"
+                  },
+                  {
+                    "title": "ag-Grid APIs",
+                    "url": "react-grid-apis/"
+                  },
+                  {
+                    "title": "React Hooks",
+                    "url": "react-hooks/"
                   },
                   {
                     "title": "Redux Integration Part 1",
@@ -102,6 +110,10 @@
                   {
                     "title": "Redux Integration Part 2",
                     "url": "react-redux-integration-pt2/"
+                  },
+                  {
+                    "title": "React 15.x",
+                    "url": "react-15/"
                   }
                 ]
               },
@@ -127,7 +139,8 @@
                     "url": "vuejs-misc/"
                   }
                 ]
-              },              {
+              },
+              {
                 "title": "AngularJS",
                 "url": "angular-grid/"
               },
@@ -139,7 +152,6 @@
                 "title": "Web Component",
                 "url": "best-web-component-data-grid/"
               }
-
             ]
           }
         ]
@@ -482,7 +494,8 @@
                 "title": "Range Handle",
                 "url": "javascript-grid-range-selection-handle/",
                 "enterprise": true
-              }, {
+              },
+              {
                 "title": "Fill Handle",
                 "url": "javascript-grid-range-selection-fill-handle/",
                 "enterprise": true
