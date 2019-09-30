@@ -1,0 +1,18 @@
+<div ng-app="basic">
+
+    <div ng-controller="basicController" style="width: 800px;">
+        <div style="padding: 4px">
+            <div style="float: right;">
+                <input type="text" ng-model="gridOptions.quickFilterText" placeholder="Type text to filter..."/>            </div>
+            <div style="padding: 4px;">
+                <b>Employees Skills and Contact Details</b> ({{rowCount}})
+            </div>
+            <div style="clear: both;"/>
+        </div>
+        <div style="width: 100%; height: 400px;"
+             ag-grid="gridOptions"
+             class="ag-theme-balham ag-basic">
+        </div>
+    </div>
+
+</div>

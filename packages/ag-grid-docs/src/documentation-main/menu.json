@@ -142,15 +142,11 @@
               },
               {
                 "title": "AngularJS",
-                "url": "angular-grid/"
+                "url": "best-angularjs-grid/"
               },
               {
                 "title": "Polymer",
                 "url": "polymer-getting-started/"
-              },
-              {
-                "title": "Web Component",
-                "url": "best-web-component-data-grid/"
               }
             ]
           }

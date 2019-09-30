@@ -115,7 +115,7 @@ body {
 
         li {
             @extend .col-md-3, .text-center, .px-0;
-            min-width: 9em;
+            min-width: 11em;
 
             a {
                 @extend .d-block;
