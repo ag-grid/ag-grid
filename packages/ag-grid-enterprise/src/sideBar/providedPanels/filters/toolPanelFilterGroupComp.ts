@@ -17,7 +17,7 @@ import {
 } from "ag-grid-community";
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 
-type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
+export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
     private static TEMPLATE =
@@ -37,9 +37,10 @@ export class ToolPanelFilterGroupComp extends Component {
     private readonly columnGroup: OriginalColumnGroupChild;
     private childFilterComps: ToolPanelFilterItem[];
     private expandedCallback: () => void;
+    private filterGroupName: string;
 
-    constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[], depth: number,
-                expandedCallback: () => void) {
+    constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[],
+                expandedCallback: () => void, depth: number) {
         super();
         this.columnGroup = columnGroup;
         this.childFilterComps = childFilterComps;
@@ -59,7 +60,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
         _.addCssClass(this.filterGroupComp.getGui(), `ag-level-${this.depth}`);
 
-        this.childFilterComps.forEach(filterComp => this.filterGroupComp.addItem(filterComp));
+        this.childFilterComps.forEach(filterComp => this.filterGroupComp.addItem(filterComp as Component));
 
         // TODO temp workaround for top level column groups with set filters as list is loaded asynchronously
         if (this.depth === 0 && this.childFilterComps.length === 1) {
@@ -87,6 +88,18 @@ export class ToolPanelFilterGroupComp extends Component {
 
     public getChildren(): ToolPanelFilterItem[] {
         return this.childFilterComps;
+    }
+
+    public getFilterGroupName(): string {
+        return this.filterGroupName ? this.filterGroupName : ''; //TODO
+    }
+
+    public hideGroupItem(hide: boolean, index: number) {
+        this.filterGroupComp.hideItem(hide, index);
+    }
+
+    public hideGroup(hide: boolean) {
+        _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-hidden', hide);
     }
 
     private addTopLevelColumnGroupExpandListener() {
@@ -125,12 +138,17 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private setGroupTitle() {
-        if (this.columnGroup instanceof OriginalColumnGroup) {
-            const groupName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
-            this.filterGroupComp.setTitle(groupName as string);
-        } else {
-            const columnName = this.columnController.getDisplayNameForColumn(this.columnGroup as Column, 'header', false);
-            this.filterGroupComp.setTitle(columnName as string);
-        }
+        this.filterGroupName = (this.columnGroup instanceof OriginalColumnGroup) ?
+            this.getColumnGroupName(this.columnGroup) : this.getColumnName(this.columnGroup as Column);
+
+        this.filterGroupComp.setTitle(this.filterGroupName);
+    }
+
+    private getColumnGroupName(columnGroup: OriginalColumnGroup): string {
+        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'toolPanel') as string;
+    }
+
+    private getColumnName(column: Column): string {
+        return this.columnController.getDisplayNameForColumn(column, 'header', false) as string;
     }
 }

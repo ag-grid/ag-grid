@@ -77,6 +77,10 @@ export class ToolPanelFilterComp extends Component {
         return this.column;
     }
 
+    public getColumnFilterName(): string {
+        return this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
+    }
+
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 

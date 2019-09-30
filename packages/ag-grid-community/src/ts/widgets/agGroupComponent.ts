@@ -186,6 +186,11 @@ export class AgGroupComponent extends Component {
         this.items.push(el);
     }
 
+    public hideItem(hide: boolean, index: number) {
+        const itemToHide = this.items[index] as HTMLElement;
+        _.addOrRemoveCssClass(itemToHide, 'ag-hidden', hide);
+    }
+
     public setTitle(title: string): this {
         this.lbGroupTitle.innerText = title;
         return this;

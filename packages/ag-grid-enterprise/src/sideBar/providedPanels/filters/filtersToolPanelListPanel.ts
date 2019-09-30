@@ -1,7 +1,7 @@
 import {
     _,
+    AbstractColDef,
     Autowired,
-    ColDef,
     Column,
     ColumnController,
     Component,
@@ -14,8 +14,9 @@ import {
 
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
-import {ToolPanelFilterGroupComp} from "./toolPanelFilterGroupComp";
+import {ToolPanelFilterGroupComp, ToolPanelFilterItem} from "./toolPanelFilterGroupComp";
 import {EXPAND_STATE} from "./filtersToolPanelHeaderPanel";
+import {ToolPanelColDefService} from "../toolPanelColDefService";
 
 export class FiltersToolPanelListPanel extends Component {
 
@@ -23,12 +24,16 @@ export class FiltersToolPanelListPanel extends Component {
 
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("eventService") private eventService: EventService;
+    @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
     @Autowired('columnController') private columnController: ColumnController;
 
     private initialised = false;
 
     private params: ToolPanelFiltersCompParams;
     private filterGroupComps: ToolPanelFilterGroupComp[] = [];
+
+    // null is used to check if we should search filters when new cols are loaded
+    private searchFilterText: string | null;
 
     constructor() {
         super(FiltersToolPanelListPanel.TEMPLATE);
@@ -40,14 +45,14 @@ export class FiltersToolPanelListPanel extends Component {
         const defaultParams: ToolPanelFiltersCompParams = {
             suppressExpandAll: false,
             suppressFilter: false,
-            syncLayoutWithGrid: false,
+            syncLayoutWithGrid: true,
             api: this.gridApi
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
 
         if (this.params.syncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.syncLayoutWithGrid());
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.syncFilterLayout());
         }
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
@@ -59,9 +64,30 @@ export class FiltersToolPanelListPanel extends Component {
 
     public onColumnsChanged(): void {
         this.destroyFilters();
-        const columnTree = this.columnController.getPrimaryColumnTree();
+        const columnTree: OriginalColumnGroupChild[] = this.columnController.getPrimaryColumnTree();
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
         this.filterGroupComps.forEach(comp => this.appendChild(comp));
+
+        // perform search if searchFilterText exists
+        if (_.exists(this.searchFilterText)) {
+            this.searchFilters(this.searchFilterText);
+        }
+    }
+
+    public syncFilterLayout(): void {
+        this.toolPanelColDefService.syncLayoutWithGrid(this.setFiltersLayout.bind(this));
+    }
+
+    public setFiltersLayout(colDefs: AbstractColDef[]): void {
+        this.destroyFilters();
+        const columnTree: OriginalColumnGroupChild[] = this.toolPanelColDefService.createColumnTree(colDefs);
+        this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
+        this.filterGroupComps.forEach(comp => this.appendChild(comp));
+
+        // perform search if searchFilterText exists
+        if (_.exists(this.searchFilterText)) {
+            this.searchFilters(this.searchFilterText);
+        }
     }
 
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], depth: number): ToolPanelFilterGroupComp[] {
@@ -78,7 +104,7 @@ export class FiltersToolPanelListPanel extends Component {
                     return filterComp;
                 } else {
                     const filterGroupComp =
-                        new ToolPanelFilterGroupComp(child, [filterComp], depth, this.onGroupExpanded.bind(this));
+                        new ToolPanelFilterGroupComp(child, [filterComp], this.onGroupExpanded.bind(this), depth);
 
                     this.getContext().wireBean(filterGroupComp);
                     filterGroupComp.collapse();
@@ -97,7 +123,7 @@ export class FiltersToolPanelListPanel extends Component {
         if (columnGroup.isPadding()) return childFilterComps;
 
         const filterGroupComp =
-            new ToolPanelFilterGroupComp(columnGroup, childFilterComps, depth, this.onGroupExpanded.bind(this));
+            new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
 
         this.getContext().wireBean(filterGroupComp);
 
@@ -142,18 +168,19 @@ export class FiltersToolPanelListPanel extends Component {
         let expandedCount = 0;
         let notExpandedCount = 0;
 
-        const updateCount = (filterGroup: ToolPanelFilterGroupComp) => {
+        const updateExpandCounts = (filterGroup: ToolPanelFilterGroupComp) => {
             if (!filterGroup.isColumnGroup()) return;
+
             filterGroup.isExpanded() ? expandedCount++ : notExpandedCount++;
 
             filterGroup.getChildren().forEach(child => {
                 if (child instanceof ToolPanelFilterGroupComp) {
-                    updateCount(child);
+                    updateExpandCounts(child);
                 }
             });
         };
 
-        this.filterGroupComps.forEach(updateCount);
+        this.filterGroupComps.forEach(updateExpandCounts);
 
         let state: EXPAND_STATE;
         if (expandedCount > 0 && notExpandedCount > 0) {
@@ -177,13 +204,81 @@ export class FiltersToolPanelListPanel extends Component {
 
     private executeOnFilterComps(callbackFunc: (filterComp: ToolPanelFilterComp) => void, colIds?: string[]): void {
         //TODO
+        // const executedColIds: string[] = [];
+        //
+        // // done in reverse order to ensure top scroll position
+        // for (let i = this.filterComps.length - 1; i >= 0; i--) {
+        //     const filterComp = this.filterComps[i] as ToolPanelFilterComp;
+        //
+        //     if (!colIds) {
+        //         // execute for all comps when no colIds are supplied
+        //         callbackFunc(filterComp);
+        //     } else {
+        //         const colId = filterComp.getColumn().getColId();
+        //         const shouldExecute = colIds.indexOf(colId) > -1;
+        //         if (shouldExecute) {
+        //             callbackFunc(filterComp);
+        //             executedColIds.push(colId);
+        //         }
+        //     }
+        // }
+        //
+        // if (colIds) {
+        //     const unrecognisedColIds = colIds.filter(colId => executedColIds.indexOf(colId) < 0);
+        //     if (unrecognisedColIds.length > 0) {
+        //         console.warn('ag-Grid: unable to find filters for colIds:', unrecognisedColIds);
+        //     }
+        // }
     }
 
-    public syncLayoutWithGrid(): void {
-        //TODO
+    public performFilterSearch(searchText: string) {
+        this.searchFilterText = searchText;
+        this.searchFilters(searchText);
     }
-    public setFilterLayout(colDefs: ColDef[]): void {
-        //TODO
+
+    private searchFilters(searchFilter: string | null) {
+        const passesFilter = (groupName: string) => {
+            return !_.exists(searchFilter) || groupName.toLowerCase().includes(searchFilter as string);
+        };
+
+        const recursivelySearch = (filterItem: ToolPanelFilterItem, parentPasses: boolean): boolean => {
+            if (filterItem instanceof ToolPanelFilterGroupComp) {
+                const children = filterItem.getChildren();
+
+                const groupNamePasses = passesFilter(filterItem.getFilterGroupName());
+
+                // if group or parent already passed - ensure this group and all children are visible
+                const alreadyPassed = parentPasses || groupNamePasses;
+                if (alreadyPassed) {
+                    // ensure group visible
+                    filterItem.hideGroup(false);
+
+                    // ensure all children are visible
+                    for (let i = 0; i < children.length; i++) {
+                        recursivelySearch(children[i], alreadyPassed);
+                        filterItem.hideGroupItem(false, i);
+                    }
+                    return true;
+                }
+
+                // hide group item filters
+                let anyChildPasses = false;
+                children.forEach((child: ToolPanelFilterItem, index: number) => {
+                    const childPasses = recursivelySearch(child, parentPasses);
+                    filterItem.hideGroupItem(!childPasses, index);
+                    if (childPasses) anyChildPasses = true;
+                });
+
+                // hide group if no children pass
+                filterItem.hideGroup(!anyChildPasses);
+
+                return anyChildPasses;
+            } else {
+                return passesFilter(filterItem.getColumnFilterName());
+            }
+        };
+
+        this.filterGroupComps.forEach(filterGroup => recursivelySearch(filterGroup, false));
     }
 
     private destroyFilters() {

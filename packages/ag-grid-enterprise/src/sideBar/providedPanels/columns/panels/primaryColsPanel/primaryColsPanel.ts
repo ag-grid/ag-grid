@@ -93,7 +93,7 @@ export class PrimaryColsPanel extends Component {
     }
 
     public syncLayoutWithGrid(): void {
-        this.primaryColsListPanel.syncLayoutWithGrid();
+        this.primaryColsListPanel.syncColumnLayout();
     }
 
     private onSelectAll(): void {

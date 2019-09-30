@@ -31,6 +31,7 @@ import { FillHandle } from "./widgets/selection/fillHandle";
 import { RangeHandle } from "./widgets/selection/rangeHandle";
 import { FiltersToolPanelHeaderPanel } from "./sideBar/providedPanels/filters/filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./sideBar/providedPanels/filters/filtersToolPanelListPanel";
+import {ToolPanelColDefService} from "./sideBar/providedPanels/toolPanelColDefService";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -74,7 +75,7 @@ export { IFiltersToolPanel } from "./sideBar/providedPanels/filters/filtersToolP
 const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,
-    RangeController, ClipboardService, PivotStage, PivotColDefService,
+    RangeController, ClipboardService, PivotStage, PivotColDefService, ToolPanelColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
     MenuItemMapper, StatusBarService], rowModelTypes);
 

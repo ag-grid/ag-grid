@@ -1,7 +1,7 @@
 import {
     _,
     Autowired,
-    ColDef,
+    ColDef, ColGroupDef,
     ColumnController,
     Component,
     EventService,
@@ -58,7 +58,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         const defaultParams: ToolPanelFiltersCompParams = {
             suppressExpandAll: false,
             suppressFilter: false,
-            syncLayoutWithGrid: false,
+            syncLayoutWithGrid: true,
             api: this.gridApi
         };
         _.mergeDeep(defaultParams, params);
@@ -69,6 +69,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
         this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
+        this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this));
+
         this.addDestroyableEventListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
     }
 
@@ -88,6 +90,14 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         this.filtersToolPanelListPanel.expandFilterGroups(false);
     }
 
+    private onSearchChanged(event: any): void {
+        this.filtersToolPanelListPanel.performFilterSearch(event.searchText);
+    }
+
+    public setFilterLayout(colDefs: (ColDef | ColGroupDef)[]): void {
+        this.filtersToolPanelListPanel.setFiltersLayout(colDefs);
+    }
+
     private onGroupExpanded(event: any): void {
         this.filtersToolPanelHeaderPanel.setExpandState(event.state);
     }
@@ -99,10 +109,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         //TODO
     }
     public syncLayoutWithGrid(): void {
-        //TODO
-    }
-    public setFilterLayout(colDefs: ColDef[]): void {
-        //TODO
+        this.filtersToolPanelListPanel.syncFilterLayout();
     }
 
     public refresh(): void {
