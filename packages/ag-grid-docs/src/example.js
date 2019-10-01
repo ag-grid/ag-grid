@@ -443,16 +443,20 @@ var gridOptions = {
                 };
 
                 options.seriesDefaults.tooltipRenderer = function (params) {
+                    var formatCurrency = function(value) {
+                        return '$' + String(value).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    }
+
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    var xValue = params.datum[params.xField];
-                    var xValueStr = params.xFieldName + ': ' + (typeof xValue !== 'number' ? xValue : '$' + String(xValue).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
-                    var yValueStr = params.yFieldName + ': $' + String(params.datum[params.yField]).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    var label = params.labelField ? params.datum[params.labelField] + '<br>' : '';
+                    var xValueStr = params.xFieldName + ': ' + formatCurrency(params.datum[params.xField]);
+                    var yValueStr = params.yFieldName + ': ' + formatCurrency(params.datum[params.yField]);
                     var radiusValueStr = '';
                     if (type === 'bubble' && params.radiusField) {
-                        radiusValueStr = '<br>' + params.radiusFieldName + ': $' + params.datum[params.radiusField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                        radiusValueStr = '<br>' + params.radiusFieldName + ': ' + formatCurrency(params.datum[params.radiusField]);
                     }
-                    return title + '<div class="content">' + xValueStr + '<br>' + yValueStr + radiusValueStr + '</div>';
+                    return title + '<div class="content">' + label + xValueStr + '<br>' + yValueStr + radiusValueStr + '</div>';
                 };
             } else {
                 options.seriesDefaults.tooltipRenderer = function (params) {

@@ -1,6 +1,6 @@
 import { ChartType, ScatterChartOptions, _, FontWeight } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
-import { ChartProxyParams, UpdateChartParams, FieldDefinition } from "../chartProxy";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";
 import { ChartModel } from "../../chartModel";
 import { CartesianChartProxy, LineMarkerProperty, ScatterSeriesProperty } from "./cartesianChartProxy";
@@ -20,25 +20,30 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         }
 
         const chart = this.chart;
-        const fieldIds = params.fields.map(f => f.colId);
+        const isBubbleChart = this.chartType === ChartType.Bubble;
+        const yFields = params.fields.slice(1, params.fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
+        const fieldIds = yFields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: ScatterSeries } = {};
         const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
-        const isBubbleChart = this.chartType === ChartType.Bubble;
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
         const seriesOptions = this.chartOptions.seriesDefaults!;
+        const xFieldDefinition = params.fields[0];
 
         chart.series
             .map(series => series as ScatterSeries)
             .forEach(scatterSeries => {
-                const id = scatterSeries.yField;
+                const yField = scatterSeries.yField;
 
-                _.includes(fieldIds, id) ? existingSeriesMap[id] = scatterSeries : chart.removeSeries(scatterSeries);
+                if (scatterSeries.xField === xFieldDefinition.colId && _.includes(fieldIds, yField)) {
+                     existingSeriesMap[yField] = scatterSeries;
+                } else {
+                    chart.removeSeries(scatterSeries);
+                }
             });
 
         const labelFieldDefinition = defaultCategorySelected ? undefined : params.category;
-        const xFieldDefinition = params.fields[0];
 
-        const updateFunc = (yFieldDefinition: FieldDefinition, index: number): void => {
+        yFields.forEach((yFieldDefinition, index) => {
             const existingSeries = existingSeriesMap[yFieldDefinition.colId];
             const series = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
 
@@ -81,11 +86,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             if (!existingSeries) {
                 chart.addSeries(series);
             }
-        };
-
-        const yFields = params.fields.slice(1, params.fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
-
-        yFields.forEach(updateFunc);
+        });
     }
 
     public setSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty, value: any): void {
