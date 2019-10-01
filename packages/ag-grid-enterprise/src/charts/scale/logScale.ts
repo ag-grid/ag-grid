@@ -69,7 +69,7 @@ export class LogScale extends ContinuousScale {
         domain[i0] = this.basePow(Math.floor(this.baseLog(x0)));
         domain[i1] = this.basePow(Math.ceil(this.baseLog(x1)));
 
-        return domain;
+        this.domain = domain;
     }
 
     private pow10(x: number): number {
@@ -104,7 +104,7 @@ export class LogScale extends ContinuousScale {
         return x => Math.log(x) / base;
     }
 
-    ticks(count: number = 10) {
+    ticks(count: number = 10): number[] {
         const base = this.base;
         const domain = this.domain;
         let d0 = domain[0];

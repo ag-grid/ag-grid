@@ -46,3 +46,36 @@ test('convert', () => {
         expect(scale.convert(-50)).toBe(0.6505149978319906);
     }
 });
+
+test('base', () => {
+    const expTicks = [
+        20.085536923187668,
+        54.598150033144236,
+        148.4131591025766,
+        403.4287934927351
+    ];
+    const scale = new LogScale();
+    scale.domain = [10, 1000];
+    expect(scale.ticks()).not.toEqual(expTicks);
+    scale.base = Math.E;
+    expect(scale.ticks()).toEqual(expTicks);
+});
+
+test('nice', () => {
+    {
+        const scale = new LogScale();
+        scale.domain = [57, 775];
+        scale.nice();
+        expect(scale.domain).toEqual([10, 1000]);
+    }
+
+    {
+        const scale = new LogScale();
+        scale.domain = [Math.E * 1.234, Math.E * 5.783];
+        scale.base = Math.E;
+        scale.nice();
+        const domain = scale.domain;
+        expect(Math.log(domain[0])).toEqual(1);
+        expect(Math.log(domain[1])).toEqual(3);
+    }
+});
