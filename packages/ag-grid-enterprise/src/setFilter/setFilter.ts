@@ -106,6 +106,8 @@ export class SetFilter extends ProvidedFilter {
     public setParams(params: ISetFilterParams): void {
         super.setParams(params);
 
+        this.checkSetFilterDeprecatedParams(params);
+
         this.setFilterParams = params;
 
         this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.setFilterParams.column);
@@ -114,13 +116,24 @@ export class SetFilter extends ProvidedFilter {
 
         this.initialiseFilterBodyUi();
 
-        const doSyncLikeExcel = params.syncValuesLikeExcel
-                                    // sync like excel only withs with CSRM
+        const syncValuesAfterDataChange = !params.suppressSyncValuesAfterDataChange
+                                    // sync values only with CSRM
                                     && this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE
                                     // sync only needed if user not providing values
                                     && !params.values;
-        if (doSyncLikeExcel) {
-            this.setupSyncValuesLikeExcel();
+
+        if (syncValuesAfterDataChange) {
+            this.setupSyncValuesAfterDataChange();
+        }
+    }
+
+    private checkSetFilterDeprecatedParams(params: ISetFilterParams): void {
+        const paramsNoType = params as any;
+        if (paramsNoType.syncValuesLikeExcel) {
+            const message = 'ag-Grid: since version 22.x, the Set Filter param syncValuesLikeExcel is no longer' +
+                ' used as this is the default behaviour. To turn this default behaviour off, use the' +
+                ' param suppressSyncValuesAfterDataChange';
+            _.doOnce(()=> console.warn(message), 'syncValuesLikeExcel deprecated');
         }
     }
 
@@ -132,7 +145,7 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    private setupSyncValuesLikeExcel(): void {
+    private setupSyncValuesAfterDataChange(): void {
         const col = this.setFilterParams.column;
 
         const rowDataUpdatedListener = () => {

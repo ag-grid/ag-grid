@@ -66,9 +66,9 @@ include '../documentation-main/documentation_header.php';
         </td>
     </tr>
     <tr>
-        <td class="parameter-key">syncValuesLikeExcel</td>
+        <td class="parameter-key">suppressSyncValuesAfterDataChange</td>
         <td>
-            Set to true to have the values inside the set filter refresh similar to Excel as values are changed inside
+            Set to true to have the values inside the set filter NOT refresh after values are changed inside
             the grid.
         </td>
     </tr>
@@ -251,17 +251,16 @@ filterParams: {
     <h2>Refresh After Edit or Transcation Update</h2>
 
     <p>
-        The set filter does not refresh by default after you
+        The set filter will refresh it's values after you
         a) <a href="../javascript-grid-cell-editing">edit the data</a> (eg through the grid UI) or 2) update
         the data using <a href="../javascript-grid-data-update/#transactions">Transaction Updates</a>.
-        If the data is changing and you want the filter values to also change, then you must either
-        a) set the <code>syncValuesLikeExcel=true</code> parameter or b) have your application get the
-        filter to change.
     </p>
 
     <p>
-        Syncing filter like Excel means the following:
+        The strategy for updating values after update mimics how similar filters in spreadsheets work.
+        The rules for the update are as follows:
     </p>
+
     <ul>
         <li>
             When no filter is active, everything in the filter is selected. Adding and removing values
@@ -271,27 +270,25 @@ filterParams: {
             When a filter is active, new items (either new data into the grid, or edits to current data
             with new values not previously seen) will get added to the filter but will not be selected.
             This will be somewhat strange as the row will not be filtered out even though the value in the
-            cell is not selected in the filter. This is how Excel works.
+            cell is not selected in the filter.
         </li>
     </ul>
 
     <p>
-        Different users will have different requirements
-        on how to handle new values or how to handle row refresh (eg if a filter is active, should the data
-        be filtered again after the value is added). For this reason we provide a best efforts at matching
-        Excel while also providing the set filter API to allow custom behaviour.
+        If you do not want the set filter to update it's list of values after the data changes,
+        then set <code>suppressSyncValuesAfterDataChange=true</code>. This will mean the filter
+        will be out of date (ie a new value created after edit will be missing from the filter)
+        and it is up to the application how it wishes for the filter to update. This is to handle
+        some users having different requirements to the default handling, some of which are
+        presented in the example below.
     </p>
-
-
-<note>
-    We like the <code>syncValuesLikeExcel</code> behaviour. It is probable we will change the default
-    behaviour of the set filter to do this.
-</note>
 
     <p>
         The example below shows different approaches on handling data changes for set filters.
-        The first columns has no special handling. The second column is configured to work like Excel.
-        All other columns have application specific logic.
+
+        The first columns has no special handling, thus values in the set filter stay in sync
+        automatically with the grids rows. All other rows have <code>suppressSyncValuesAfterDataChange=true</code>
+        and demonstrate different application strategies for keeping the filter in sync.
         To understand the example it's best test one column at a time - once finished with that column,
         refresh the example and try another column and notice the difference.
         From the example, the following can be noted:
@@ -303,30 +300,35 @@ filterParams: {
             <li>
                 All columns have their filters initialised when the grid is loaded
                 by calling <code>getFilterInstance()</code> when the <code>gridReady</code> event
-                is received. This means when you edit, the filter is already created.
+                is received. This means when you edit, the filter is already created and loaded with
+                values for the grid's row data.
             </li>
             <li>
-                Column 1 has no special handling of new values.
+                Column 1 has no special handling of new values. Updates to column 1 will
+                get reflected in the filter keeping the filter automatically in sync.
             </li>
             <li>
-                Column 2 has <code>syncValuesLikeExcel=true</code>, so updates to column 2 will
-                get reflected in the filter similar to Excel.
+                Column 2 has <code>suppressSyncValuesAfterDataChange=true</code> and no special handling,
+                so updates to column 2 will have no effect on the filter. The filter list will become stale.
             </li>
             <li>
-                Column 3 after an update: a) gets the filter to update.
+                Column 3 has <code>suppressSyncValuesAfterDataChange=true</code> and after an update:
+                a) gets the filter to update.
             </li>
             <li>
-                Column 4 after an update: a) gets the filter to update and b) makes sure the new value is selected.
+                Column 4 has <code>suppressSyncValuesAfterDataChange=true</code> and after an update:
+                a) gets the filter to update and b) makes sure the new value is selected.
             </li>
             <li>
-                Column 5 after an update: a) gets the filter to update and b) makes sure the new value is selected
+                Column 5 has <code>suppressSyncValuesAfterDataChange=true</code> and after an update:
+                a) gets the filter to update and b) makes sure the new value is selected
                 and c) refreshes the rows based on the new filter value. So for example if you first set the filter
                 on Col 4 to 'A' (notice that 'B' rows are removed), then change a value from 'A' to 'B', then
                 the other rows that were previously removed are added back in again.
             </li>
             <li>
-                Click 'Add C Row' to add a new row. Columns and 3 will not have their filters updated.
-                Column 2 will have it's filter updated by the grid.
+                Click 'Add C Row' to add a new row. Columns 2 and 3 will not have their filters updated.
+                Column 1 will have it's filter updated by the grid.
                 Columns 4 and 5 will have their filters updated by the application.
             </li>
         </ul>
