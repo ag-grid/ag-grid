@@ -59,7 +59,7 @@ export class ToolPanelFilterComp extends Component {
     public setColumn(column: Column): void {
         this.column = column;
         this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
-        this.addDestroyableEventListener(this.eFilterToolPanelHeader, 'click', this.doExpandOrCollapse.bind(this));
+        this.addDestroyableEventListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
 
         this.addInIcon('filter', this.eFilterIcon, this.column);
@@ -98,11 +98,11 @@ export class ToolPanelFilterComp extends Component {
         this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 
-    public doExpandOrCollapse(): void {
-        this.expanded ? this.doCollapse() : this.doExpand();
+    public toggleExpanded(): void {
+        this.expanded ? this.collapse() : this.expand();
     }
 
-    public doExpand(): void {
+    public expand(): void {
         if (this.expanded) return;
 
         this.expanded = true;
@@ -119,7 +119,7 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandUnchecked, false);
     }
 
-    public doCollapse(): void {
+    public collapse(): void {
         if (!this.expanded) return;
 
         this.expanded = false;
@@ -134,6 +134,6 @@ export class ToolPanelFilterComp extends Component {
         if (event.column !== this.column) { return; }
         if (!this.expanded) { return; }
 
-        this.doCollapse();
+        this.collapse();
     }
 }

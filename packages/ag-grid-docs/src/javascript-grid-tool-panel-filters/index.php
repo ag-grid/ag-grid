@@ -110,7 +110,9 @@ interface IFiltersToolPanel {
         <li>Clicking <b>Expand All</b> expands all filters using: <code>expandFilters()</code>.</li>
     </ul>
 
-    <?= example('Expand / Collapse Filters', 'expand-collapse', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= example('Expand / Collapse Groups', 'expand-collapse-groups', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+    <?= example('Expand / Collapse Filters', 'expand-collapse-filters', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Custom Filters Layout</h2>
 

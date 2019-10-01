@@ -141,23 +141,84 @@ export class FiltersToolPanelListPanel extends Component {
         }
     }
 
-    public expandFilterGroups(expand: boolean): void {
-        const expandAllGroups = (filterGroup: ToolPanelFilterGroupComp) => {
-            if (expand && filterGroup.isColumnGroup()) {
-                filterGroup.expand();
-            } else {
-                filterGroup.collapse();
+    public expandFilterGroups(expand: boolean, groupIds?: string[]): void {
+        const updatedGroupIds: string[] = [];
+
+        const updateGroupExpandState = (filterGroup: ToolPanelFilterGroupComp) => {
+            const groupId = filterGroup.getFilterGroupId();
+            const shouldExpandOrCollapse = !groupIds || _.includes(groupIds, groupId);
+            if (shouldExpandOrCollapse) {
+                // don't expand 'column groups', i.e. top level columns wrapped in a group
+                if (expand && filterGroup.isColumnGroup()) {
+                    filterGroup.expand();
+                } else {
+                    filterGroup.collapse();
+                }
+                updatedGroupIds.push(groupId);
             }
 
+            // recursively look for more groups to expand / collapse
             filterGroup.getChildren().forEach(child => {
                 if (child instanceof ToolPanelFilterGroupComp) {
-                    expandAllGroups(child);
+                    updateGroupExpandState(child);
                 }
             });
         };
 
-        this.filterGroupComps.forEach(expandAllGroups);
+        this.filterGroupComps.forEach(updateGroupExpandState);
+
+        // update header expand / collapse icon
         this.onGroupExpanded();
+
+        if (groupIds) {
+            const unrecognisedGroupIds = groupIds.filter(groupId => updatedGroupIds.indexOf(groupId) < 0);
+            if (unrecognisedGroupIds.length > 0) {
+                console.warn('ag-Grid: unable to find groups for these supplied groupIds:', unrecognisedGroupIds);
+            }
+        }
+    }
+
+    public expandFilters(expand: boolean, colIds?: string[]): void {
+        const updatedColIds: string[] = [];
+
+        const updateGroupExpandState = (filterComp: ToolPanelFilterGroupComp | ToolPanelFilterComp): boolean => {
+            if (filterComp instanceof ToolPanelFilterGroupComp) {
+                let anyChildrenChanged = false;
+                filterComp.getChildren().forEach(child => {
+                    const childUpdated = updateGroupExpandState(child);
+                    if (childUpdated) {
+                        if (expand) {
+                            filterComp.expand();
+                            anyChildrenChanged = true;
+                        } else if (!filterComp.isColumnGroup()) {
+                            // we only collapse columns wrapped in groups
+                            filterComp.collapse();
+                        }
+                    }
+                });
+                return anyChildrenChanged;
+            } else {
+                const colId = filterComp.getColumn().getColId();
+                const updateFilterExpandState = !colIds || _.includes(colIds, colId);
+                if (updateFilterExpandState) {
+                    expand ? filterComp.expand() : filterComp.collapse();
+                    updatedColIds.push(colId);
+                }
+                return updateFilterExpandState;
+            }
+        };
+
+        this.filterGroupComps.forEach(updateGroupExpandState);
+
+        // update header expand / collapse icon
+        this.onGroupExpanded();
+
+        if (colIds) {
+            const unrecognisedColIds = colIds.filter(colId => updatedColIds.indexOf(colId) < 0);
+            if (unrecognisedColIds.length > 0) {
+                console.warn('ag-Grid: unable to find columns for these supplied colIds:', unrecognisedColIds);
+            }
+        }
     }
 
     private onGroupExpanded(): void {
@@ -192,43 +253,6 @@ export class FiltersToolPanelListPanel extends Component {
         }
 
         this.dispatchEvent({type: 'groupExpanded', state: state});
-    }
-
-    public expandFilters(colIds?: string[]): void {
-        this.executeOnFilterComps(filterComp => filterComp.doExpand(), colIds);
-    }
-
-    public collapseFilters(colIds?: string[]): void {
-        this.executeOnFilterComps(filterComp => filterComp.doCollapse(), colIds);
-    }
-
-    private executeOnFilterComps(callbackFunc: (filterComp: ToolPanelFilterComp) => void, colIds?: string[]): void {
-        //TODO
-        // const executedColIds: string[] = [];
-        //
-        // // done in reverse order to ensure top scroll position
-        // for (let i = this.filterComps.length - 1; i >= 0; i--) {
-        //     const filterComp = this.filterComps[i] as ToolPanelFilterComp;
-        //
-        //     if (!colIds) {
-        //         // execute for all comps when no colIds are supplied
-        //         callbackFunc(filterComp);
-        //     } else {
-        //         const colId = filterComp.getColumn().getColId();
-        //         const shouldExecute = colIds.indexOf(colId) > -1;
-        //         if (shouldExecute) {
-        //             callbackFunc(filterComp);
-        //             executedColIds.push(colId);
-        //         }
-        //     }
-        // }
-        //
-        // if (colIds) {
-        //     const unrecognisedColIds = colIds.filter(colId => executedColIds.indexOf(colId) < 0);
-        //     if (unrecognisedColIds.length > 0) {
-        //         console.warn('ag-Grid: unable to find filters for colIds:', unrecognisedColIds);
-        //     }
-        // }
     }
 
     public performFilterSearch(searchText: string) {

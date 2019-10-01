@@ -17,6 +17,8 @@ export class ToolPanelColDefService {
     @Autowired('columnController') private columnController: ColumnController;
 
     public createColumnTree(colDefs: AbstractColDef[]): OriginalColumnGroupChild[] {
+        const invalidColIds: AbstractColDef[] = [];
+
         const createDummyColGroup = (abstractColDef: AbstractColDef, depth: number): OriginalColumnGroupChild => {
             if (this.isColGroupDef(abstractColDef)) {
 
@@ -38,11 +40,30 @@ export class ToolPanelColDefService {
             } else {
                 const colDef = abstractColDef as ColDef;
                 const key = colDef.colId ? colDef.colId : colDef.field as string;
-                return this.columnController.getPrimaryColumn(key) as OriginalColumnGroupChild;
+                const column = this.columnController.getPrimaryColumn(key) as OriginalColumnGroupChild;
+
+                if (!column) {
+                    invalidColIds.push(colDef);
+                }
+
+                return column;
             }
         };
 
-        return colDefs.map(colDef => createDummyColGroup(colDef, 0));
+        const mappedResults: OriginalColumnGroupChild[] = [];
+        colDefs.forEach(colDef => {
+            const result = createDummyColGroup(colDef, 0);
+            if (result) {
+                // only return correctly mapped colDef results
+                mappedResults.push(result);
+            }
+        });
+
+        if (invalidColIds.length > 0) {
+            console.warn('ag-Grid: unable to find grid columns for the supplied colDef(s):', invalidColIds);
+        }
+
+        return mappedResults;
     }
 
     public syncLayoutWithGrid(syncLayoutCallback: (colDefs: AbstractColDef[]) => void): void {

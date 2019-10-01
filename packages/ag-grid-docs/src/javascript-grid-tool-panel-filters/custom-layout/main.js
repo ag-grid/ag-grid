@@ -1,68 +1,94 @@
+var columnDefs = [
+    {
+        headerName: 'Athlete',
+        children: [
+            { field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+            { field: "age", width: 90},
+            { field: "country", width: 120}
+        ]
+    },
+    {
+        headerName: 'Competition',
+        children: [
+            { field: "year", width: 90 },
+            { field: "date", width: 110 },
+        ]
+    },
+    { colId: 'sport', field: "sport", width: 110 },
+    {
+        headerName: 'Medals',
+        children: [
+            { field: "gold", width: 100 },
+            { field: "silver", width: 100 },
+            { field: "bronze", width: 100 },
+            { field: "total", width: 100 }
+        ]
+    }
+];
+
+var customToolPanelColumnDefs = [
+    {
+        headerName: 'Dummy Group 1',
+        children: [
+            { field: "age" },
+            { field: "athlete" },
+            {
+                headerName: 'Dummy Group 2',
+                children: [
+                    { colId: "sport" },
+                    { field: "country" },
+                ]
+            }
+        ]
+    },
+    {
+        headerName: 'Medals',
+        children: [
+            { field: "total" },
+            { field: "bronze" },
+            { field: "silver" },
+            { field: "gold" }
+        ]
+    }
+];
+
 var gridOptions = {
-    columnDefs: getInitialColumnDefs(),
     defaultColDef: {
-        width: 110,
+        // allow every column to be aggregated
+        enableValue: true,
+        // allow every column to be grouped
+        enableRowGroup: true,
+        // allow every column to be pivoted
+        enablePivot: true,
+        sortable: true,
         filter: true
     },
-    sideBar: 'filters',
-    onDisplayedColumnsChanged: onDisplayedColumnsChanged
+    columnDefs: columnDefs,
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+                toolPanelParams: {
+                    syncLayoutWithGrid: false
+                }
+            }
+        ],
+        defaultToolPanel: 'filters'
+    }
+
 };
 
-function getInitialColumnDefs() {
-    return [
-        { field: "athlete", filter: 'agTextColumnFilter' },
-        { field: "age" },
-        { field: "country" },
-        { field: "year" },
-        { field: "date" },
-        { field: "sport" },
-        { field: "gold" },
-        { field: "silver" },
-        { field: "bronze" },
-        { field: "total" }
-    ];
-}
-
-function onDisplayedColumnsChanged(params) {
-    //get current column order
-    var gridCols = params.columnApi.getAllGridColumns();
-    var orderedGridColDefs = gridCols.map(function(col) {
-      return col.getColDef();
-    });
-
-    // update filters tool panel with new column order
-    var filtersToolPanel = params.api.getToolPanelInstance('filters');
-    filtersToolPanel.setFilterLayout(orderedGridColDefs);
-}
-
-function customFilters() {
-    var customFilterLayout = [
-        { field: "athlete" },
-        { field: "country" },
-        { field: "sport" },
-        { field: "age" }
-    ];
-
+function setCustomColumnLayout() {
     var filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
-    filtersToolPanel.setFilterLayout(customFilterLayout);
+    filtersToolPanel.setFilterLayout(customToolPanelColumnDefs);
 }
 
-function sortedLayout(asc) {
-    var copiedColDefs = getInitialColumnDefs().slice(); // don't mutate original
-
-    var sortedColDefs = copiedColDefs.sort(function(d1, d2) {
-        if (d1.field < d2.field) return asc ? -1 : 1;
-        if (d1.field > d2.field) return asc ? 1 : -1;
-        return 0;
-    });
-
-    var filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
-    filtersToolPanel.setFilterLayout(sortedColDefs);
-}
-
-function reset() {
-    var filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
-    filtersToolPanel.setFilterLayout(getInitialColumnDefs());
+function resetLayout() {
+    gridOptions.api.setColumnDefs(columnDefs);
 }
 
 // setup the grid after the page has finished loading

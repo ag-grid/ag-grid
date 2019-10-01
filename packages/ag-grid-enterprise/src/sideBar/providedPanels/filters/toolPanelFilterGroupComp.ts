@@ -94,6 +94,10 @@ export class ToolPanelFilterGroupComp extends Component {
         return this.filterGroupName ? this.filterGroupName : ''; //TODO
     }
 
+    public getFilterGroupId(): string {
+        return this.columnGroup.getId();
+    }
+
     public hideGroupItem(hide: boolean, index: number) {
         this.filterGroupComp.hideItem(hide, index);
     }
@@ -106,7 +110,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
             this.childFilterComps.forEach(filterComp => {
                 if (filterComp instanceof ToolPanelFilterComp) {
-                    filterComp.doExpand();
+                    filterComp.expand();
                 }
             });
         });

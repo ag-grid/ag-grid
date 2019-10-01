@@ -21,6 +21,8 @@ export interface ToolPanelFiltersCompParams extends IToolPanelParams {
 
 export interface IFiltersToolPanel {
     setFilterLayout(colDefs: ColDef[]): void;
+    expandFilterGroups(groupIds?: string[]): void;
+    collapseFilterGroups(groupIds?: string[]): void;
     expandFilters(colIds?: string[]): void;
     collapseFilters(colIds?: string[]): void;
     syncLayoutWithGrid(): void;
@@ -102,12 +104,22 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         this.filtersToolPanelHeaderPanel.setExpandState(event.state);
     }
 
+    public expandFilterGroups(groupIds?: string[]): void {
+        this.filtersToolPanelListPanel.expandFilterGroups(true, groupIds);
+    }
+
+    public collapseFilterGroups(groupIds?: string[]): void {
+        this.filtersToolPanelListPanel.expandFilterGroups(false, groupIds);
+    }
+
     public expandFilters(colIds?: string[]): void {
-        //TODO
+        this.filtersToolPanelListPanel.expandFilters(true, colIds);
     }
+
     public collapseFilters(colIds?: string[]): void {
-        //TODO
+        this.filtersToolPanelListPanel.expandFilters(false, colIds);
     }
+
     public syncLayoutWithGrid(): void {
         this.filtersToolPanelListPanel.syncFilterLayout();
     }
