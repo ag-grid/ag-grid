@@ -71,7 +71,7 @@ export class ChartDataPanel extends Component {
 
     private createCategoriesGroupComponent(columns: ColState[]): void {
         this.categoriesGroupComp = this.wireBean(new AgGroupComponent({
-            title: this.chartTranslator.translate('categories'),
+            title: this.chartTranslator.translate(this.chartController.isActiveXYChart() ? 'labels' : 'categories'),
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false

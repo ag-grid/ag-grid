@@ -14,7 +14,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     }
 
     public update(params: UpdateChartParams): void {
-        if (params.fields.length === 0) {
+        if (params.fields.length < 2) {
             this.chart.removeAllSeries();
             return;
         }
@@ -35,59 +35,57 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 _.includes(fieldIds, id) ? existingSeriesMap[id] = scatterSeries : chart.removeSeries(scatterSeries);
             });
 
-        const updateFunc = (f: FieldDefinition, index: number): void => {
-            const existingSeries = existingSeriesMap[f.colId];
-            const scatterSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
+        const labelFieldDefinition = defaultCategorySelected ? undefined : params.category;
+        const xFieldDefinition = params.fields[0];
 
-            if (scatterSeries) {
-                if (defaultCategorySelected) {
-                    scatterSeries.title = `${params.fields[0].displayName} vs ${f.displayName}`;
-                    scatterSeries.xField = params.fields[0].colId;
-                    scatterSeries.xFieldName = params.fields[0].displayName;
+        const updateFunc = (yFieldDefinition: FieldDefinition, index: number): void => {
+            const existingSeries = existingSeriesMap[yFieldDefinition.colId];
+            const series = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
 
-                    if (isBubbleChart) {
-                        const radiusFieldDefinition = params.fields[index * 2 + 2];
-                        scatterSeries.radiusField = radiusFieldDefinition.colId;
-                        scatterSeries.radiusFieldName = radiusFieldDefinition.displayName;
-                    }
+            if (!series) { return; }
+
+            series.title = `${xFieldDefinition.displayName} vs ${yFieldDefinition.displayName}`;
+            series.xField = xFieldDefinition.colId;
+            series.xFieldName = xFieldDefinition.displayName;
+            series.yField = yFieldDefinition.colId;
+            series.yFieldName = yFieldDefinition.displayName;
+            series.data = params.data;
+            series.fill = fills[index % fills.length];
+            series.stroke = strokes[index % strokes.length];
+
+            if (isBubbleChart) {
+                const radiusFieldDefinition = params.fields[index * 2 + 2];
+
+                if (radiusFieldDefinition) {
+                    series.radiusField = radiusFieldDefinition.colId;
+                    series.radiusFieldName = radiusFieldDefinition.displayName;
                 } else {
-                    scatterSeries.title = f.displayName;
-                    scatterSeries.xField = params.category.id;
-                    scatterSeries.xFieldName = params.category.name;
-                }
+                    // not enough information to render this series, so ensure it is removed
+                    if (existingSeries) {
+                        chart.removeSeries(series);
+                    }
 
-                scatterSeries.data = params.data;
-                scatterSeries.yField = f.colId;
-                scatterSeries.yFieldName = f.displayName;
-                scatterSeries.fill = fills[index % fills.length];
-                scatterSeries.stroke = strokes[index % strokes.length];
-
-                if (!existingSeries) {
-                    chart.addSeries(scatterSeries);
+                    return;
                 }
+            } else {
+                series.radiusField = series.radiusFieldName = undefined;
+            }
+
+            if (labelFieldDefinition) {
+                series.labelField = labelFieldDefinition.id;
+                series.labelFieldName = labelFieldDefinition.name;
+            } else {
+                series.labelField = series.labelFieldName = undefined;
+            }
+
+            if (!existingSeries) {
+                chart.addSeries(series);
             }
         };
 
-        if (defaultCategorySelected) {
-            if (isBubbleChart) {
-                // only update bubble chart if the correct number of fields are present
-                const len = params.fields.length;
-                const offset = len % 2 === 0 ? 1 : 0;
-                const fields: typeof params.fields = [];
+        const yFields = params.fields.slice(1, params.fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
 
-                for (let i = 1; i < len - offset; i += 2) {
-                    fields.push(params.fields[i]);
-                }
-
-                fields.forEach(updateFunc);
-            } else {
-                params.fields.slice(1, params.fields.length).forEach(updateFunc);
-            }
-        } else {
-            params.fields.forEach(updateFunc);
-        }
-
-        chart.xAxis.labelRotation = this.overrideLabelRotation(params.category.id) ? 0 : this.chartOptions.xAxis.labelRotation!;
+        yFields.forEach(updateFunc);
     }
 
     public setSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty, value: any): void {
@@ -117,7 +115,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts
 
     protected getDefaultOptions(): ScatterChartOptions {
-        const xAxisType = this.chartProxyParams.categorySelected ? 'category' : 'number';
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const labelColor = this.getLabelColor();
         const stroke = this.getAxisGridColor();
@@ -132,6 +129,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             labelFontFamily,
             labelColor,
             labelPadding: 5,
+            labelRotation: 0,
             tickColor: axisColor,
             tickSize: 6,
             tickWidth: 1,
@@ -171,12 +169,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
             },
             xAxis: {
                 ...axisOptions,
-                type: xAxisType,
-                labelRotation: 335,
             },
             yAxis: {
                 ...axisOptions,
-                labelRotation: 0,
             },
             seriesDefaults: {
                 type: 'scatter',
@@ -185,7 +180,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 strokes,
                 marker: true,
                 markerSize: isBubble ? 30 : 6,
-                minMarkerSize: 3,
+                minMarkerSize: 0,
                 markerStrokeWidth: 1,
                 tooltipEnabled: true,
                 showInLegend: true,

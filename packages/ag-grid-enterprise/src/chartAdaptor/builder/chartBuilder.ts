@@ -89,7 +89,7 @@ export class ChartBuilder {
     static createScatterChart(options: ScatterChartOptions): CartesianChart {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createAxis(options.xAxis),
+            xAxis: ChartBuilder.createNumberAxis(options.xAxis),
             yAxis: ChartBuilder.createNumberAxis(options.yAxis),
         });
 
@@ -200,9 +200,11 @@ export class ChartBuilder {
             "xField", 
             "yField", 
             "radiusField", 
+            "labelField",
             "xFieldName", 
             "yFieldName",
             "radiusFieldName",
+            "labelFieldName",
             "fill",
             "stroke",
             "fillOpacity",

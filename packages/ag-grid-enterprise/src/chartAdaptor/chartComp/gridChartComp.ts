@@ -225,19 +225,7 @@ export class GridChartComp extends Component {
         const chartTypeChanged = this.model.getChartType() !== this.currentChartType;
         const groupingChanged = this.currentChartGroupingActive !== this.model.isGrouping();
 
-        if (chartTypeChanged || groupingChanged) { return true; }
-
-        // we also need to recreate XY charts when xAxis changes
-        if (this.isXYChart()) {
-            const categorySelected = !this.chartController.isDefaultCategorySelected();
-            const chart = this.chartProxy.getChart() as CartesianChart;
-            const switchingToCategoryAxis = categorySelected && chart.xAxis instanceof NumberAxis;
-            const switchingToNumberAxis = !categorySelected && chart.xAxis instanceof CategoryAxis;
-
-            return switchingToCategoryAxis || switchingToNumberAxis;
-        }
-
-        return false;
+        return chartTypeChanged || groupingChanged;
     }
 
     public getChartComponentsWrapper = (): HTMLElement => this.eChartComponentsWrapper;
@@ -345,8 +333,6 @@ export class GridChartComp extends Component {
 
         this.chartController.setChartRange();
     }
-
-    private isXYChart = (): boolean => _.includes([ ChartType.Scatter, ChartType.Bubble ], this.model.getChartType());
 
     public destroy(): void {
         super.destroy();

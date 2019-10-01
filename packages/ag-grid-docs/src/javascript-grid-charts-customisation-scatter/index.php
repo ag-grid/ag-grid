@@ -30,9 +30,9 @@ interface ScatterChartOptions {
         highlightStyle?: HighlightStyle;
 
         markerSize?: number; // defaults to `6` for scatter, `30` for bubble
-        // In bubble charts the marker diameter can be determined by data.
-        // This specifies the minimum size a marker can be regardless of the data.
-        minMarkerSize: number, // defaults to `3`
+        // In bubble charts the marker diameter is determined by data.
+        // This specifies the minimum size a marker must be to be rendered.
+        minMarkerSize: number, // defaults to `0`
         markerStrokeWidth?: number; // defaults to `1`
 
         // Whether to show the tooltip for markers when they are hovered/tapped
@@ -99,12 +99,24 @@ interface HighlightStyle {
 }
 
 interface ScatterTooltipRendererParams {
-    // The datum object the tooltip is being rendered for
+    // The datum object for the highlighted data point that the tooltip is being rendered for
     datum: any;
-    // The field of the datum object that contains the category name of the highlighted data point
+    // The field of the datum object that contains the X value
     xField: string;
-    // The field of the datum object that contains the series value of the highlighted data point
+    // The field of the datum object that contains the Y value
     yField: string;
+    // The field of the datum object that contains the radius value
+    radiusField?: string;
+    // The field of the datum object that contains the label
+    labelField?: string;
+    // The name of the column that the X value is from
+    xFieldName: string;
+    // The name of the column that the Y value is from
+    yFieldName: string;
+    // The name of the column that the radius value is from
+    radiusFieldName?: string;
+    // The name of the column that the label is from
+    labelFieldName?: string;
     // The title of the series the datum is in
     title?: string;
     // The fill colour of the series the datum is in

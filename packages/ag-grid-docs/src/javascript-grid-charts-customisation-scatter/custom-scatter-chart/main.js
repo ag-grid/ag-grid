@@ -55,7 +55,7 @@ function processChartOptions(params) {
     var xAxis = options.xAxis;
     xAxis.title = { 
         enabled: true,
-        text: 'Country',
+        text: 'Gold medal count',
         fontStyle: 'italic',
         fontWeight: 'bold',
         fontSize: 14,
@@ -75,8 +75,9 @@ function processChartOptions(params) {
     xAxis.labelColor = '#de7b73';
     xAxis.labelRotation = 20;
     xAxis.labelFormatter = function (params) {
-        var value = String(params.value);
-        return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
+        var value = params.value;
+
+        return value % 10 === 0 ? value : '(' + value + ')';
     };
     xAxis.gridStyle = [
         {
@@ -127,11 +128,13 @@ function processChartOptions(params) {
     seriesDefaults.markerStrokeWidth = 4;
 
     seriesDefaults.tooltipRenderer = function(params) {
-        var xField = params.xField;
-        var yField = params.yField;
-        var x = params.datum[xField];
-        var y = params.datum[yField];
-        return '<u style="color: ' + params.color + '">' + params.title + '</u><br><br><b>' + xField.toUpperCase() + ':</b> ' + x + '<br/><b>' + yField.toUpperCase() + ':</b> ' + y;
+        var x = params.datum[params.xField];
+        var y = params.datum[params.yField];
+        var label = params.datum[params.labelField];
+        return '<u style="color: ' + params.color + '">' + params.title + '</u><br/><br/>' + 
+            '<b>' + params.labelFieldName.toUpperCase() + ':</b> ' + label + '<br/>' +
+            '<b>' + params.xFieldName.toUpperCase() + ':</b> ' + x + '<br/>' + 
+            '<b>' + params.yFieldName.toUpperCase() + ':</b> ' + y;
     };
 
     return options;

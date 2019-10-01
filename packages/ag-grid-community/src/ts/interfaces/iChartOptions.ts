@@ -170,10 +170,12 @@ export interface ScatterTooltipRendererParams {
     datum: any;
     xField: string;
     yField: string;
-    radiusField: string;
+    radiusField?: string;
+    labelField?: string;
     xFieldName: string;
     yFieldName: string;
-    radiusFieldName: string;
+    radiusFieldName?: string;
+    labelFieldName?: string;
     title?: string;
     color?: string;
 }

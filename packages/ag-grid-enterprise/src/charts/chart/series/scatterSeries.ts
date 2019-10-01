@@ -1,5 +1,4 @@
 import { CartesianChart } from "../cartesianChart";
-import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
@@ -25,10 +24,12 @@ export interface ScatterTooltipRendererParams {
     datum: any;
     xField: string;
     yField: string;
-    radiusField: string;
+    radiusField?: string;
+    labelField?: string;
     xFieldName: string;
     yFieldName: string;
-    radiusFieldName: string;
+    radiusFieldName?: string;
+    labelFieldName?: string;
     title?: string;
     color?: string;
 }
@@ -37,14 +38,12 @@ export class ScatterSeries extends Series<CartesianChart> {
 
     static className = 'ScatterSeries';
 
-    private domainX: any[] = [];
-    private domainY: any[] = [];
-    private xData: any[] = [];
-    private yData: any[] = [];
-    private radiusData: number[] = [];
+    private domainX: number[] = [];
+    private domainY: number[] = [];
     private radiusScale = linearScale();
+    private processedData: { x: number, y: number, radius?: number }[] = [];
 
-    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
     set chart(chart: CartesianChart | undefined) {
         if (this._chart !== chart) {
@@ -56,22 +55,21 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._chart;
     }
 
-    protected _title: string = '';
-    set title(value: string) {
+    protected _title?: string = undefined;
+    set title(value: string | undefined) {
         if (this._title !== value) {
             this._title = value;
             this.scheduleLayout();
         }
     }
-    get title(): string {
+    get title(): string | undefined {
         return this._title;
     }
 
-    protected _xField: string = '';
+    protected _xField: string;
     set xField(value: string) {
         if (this._xField !== value) {
             this._xField = value;
-            this.xData = [];
             this.scheduleData();
         }
     }
@@ -79,11 +77,10 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._xField;
     }
 
-    protected _yField: string = '';
+    protected _yField: string;
     set yField(value: string) {
         if (this._yField !== value) {
             this._yField = value;
-            this.yData = [];
             this.scheduleData();
         }
     }
@@ -91,20 +88,32 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._yField;
     }
 
-    private _radiusField: string = '';
-    set radiusField(value: string) {
+    private _radiusField?: string = undefined;
+    set radiusField(value: string | undefined) {
         if (this._radiusField !== value) {
             this._radiusField = value;
             this.scheduleData();
         }
     }
-    get radiusField(): string {
+    get radiusField(): string | undefined {
         return this._radiusField;
+    }
+
+    private _labelField?: string = undefined;
+    set labelField(value: string | undefined) {
+        if (this._labelField !== value) {
+            this._labelField = value;
+            this.scheduleData();
+        }
+    }
+    get labelField(): string | undefined {
+        return this._labelField;
     }
 
     xFieldName: string = 'X';
     yFieldName: string = 'Y';
-    radiusFieldName: string = 'Radius';
+    radiusFieldName?: string = 'Radius';
+    labelFieldName?: string = 'Label';
 
     private _marker: boolean = false;
     set marker(value: boolean) {
@@ -160,58 +169,38 @@ export class ScatterSeries extends Series<CartesianChart> {
             minMarkerSize,
          } = this;
 
-        let data = this.data as any[];
-
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
         }
 
         if (!(xField && yField)) {
-            this._data = data = [];
+            this._data = [];
         }
 
-        const xData = [] as any[];
-        const yData = [] as any[];
-        const radiusData = [] as number[];
+        this.processedData = this.data.map(d => ({
+            x: d[xField],
+            y: d[yField],
+            radius: radiusField ? d[radiusField] : undefined,
+        }));
 
-        data.forEach(datum => {
-            xData.push(datum[xField]);
-            yData.push(datum[yField]);
-            if (radiusField) {
-                radiusData.push(datum[radiusField]);
-            }
-        });
-
-        this.xData = xData;
-        this.yData = yData;
-        this.radiusData = radiusData;
-        this.radiusScale.domain = numericExtent(radiusData) || [1, 1];
-        this.radiusScale.range = [minMarkerSize / 2, markerSize / 2];
-
-        const continuousX = chart.xAxis.scale instanceof ContinuousScale;
-        const domainX = continuousX ? (numericExtent(xData) || [0, 1]) : xData;
-        const domainY = numericExtent(yData) || [0, 1];
-
-        if (continuousX) {
-            const [min, max] = domainX as number[];
-            if (min === max) {
-                domainX[0] = min - 1;
-                domainX[1] = max + 1;
-            }
-        }
-
-        {
-            const [min, max] = domainY as number[];
-            if (min === max) {
-                domainY[0] = min - 1;
-                domainY[1] = max + 1;
-            }
-        }
-
-        this.domainX = domainX;
-        this.domainY = domainY;
+        this.radiusScale.domain = numericExtent(radiusField ? this.processedData.map(d => d.radius) : []) || [ 1, 1 ];
+        this.radiusScale.range = [ minMarkerSize / 2, markerSize / 2 ];
+        this.domainX = this.calculateDomain(this.processedData.map(d => d.x));
+        this.domainY = this.calculateDomain(this.processedData.map(d => d.y));
 
         return true;
+    }
+
+    private calculateDomain(data: any[]): [number, number] {
+        const domain = numericExtent(data) || [0, 1];
+        const [ min, max ] = domain;
+        
+        if (min === max) {
+            domain[0] = min - 1;
+            domain[1] = max + 1;
+        }
+
+        return domain;
     }
 
     private _fill: string = palette.fills[0];
@@ -298,9 +287,7 @@ export class ScatterSeries extends Series<CartesianChart> {
 
         const {
             data,
-            xData,
-            yData,
-            radiusData,
+            processedData,
             fill,
             stroke,
             fillOpacity,
@@ -309,25 +296,20 @@ export class ScatterSeries extends Series<CartesianChart> {
             markerSize,
          } = this;
 
-        const n = xData.length;
-        const groupSelectionData: GroupSelectionDatum[] = [];
+        const groupSelectionData: GroupSelectionDatum[] = processedData.map((d, i) => {
+            const x = xScale.convert(d.x) + xOffset;
+            const y = yScale.convert(d.y) + yOffset;
 
-        for (let i = 0; i < n; i++) {
-            const xDatum = xData[i];
-            const yDatum = yData[i];
-            const x = xScale.convert(xDatum) + xOffset;
-            const y = yScale.convert(yDatum) + yOffset;
-
-            groupSelectionData.push({
+            return {
                 seriesDatum: data[i],
                 x,
                 y,
                 fill,
                 stroke,
                 strokeWidth: markerStrokeWidth,
-                radius: this.radiusField ? this.radiusScale.convert(radiusData[i]) : markerSize / 2
-            });
-        }
+                radius: d.radius ? this.radiusScale.convert(d.radius) : markerSize / 2,
+            };
+        });
 
         // ------------------------------------------
 
@@ -345,8 +327,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             .each((arc, datum) => {
                 arc.centerX = datum.x;
                 arc.centerY = datum.y;
-                arc.radiusX = datum.radius;
-                arc.radiusY = datum.radius;
+                arc.radiusX = arc.radiusY = datum.radius;
                 arc.fill = arc === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
                 arc.stroke = arc === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
                 arc.fillOpacity = fillOpacity;
@@ -371,9 +352,11 @@ export class ScatterSeries extends Series<CartesianChart> {
             xField,
             yField,
             radiusField,
+            labelField,
             xFieldName,
             yFieldName,
             radiusFieldName,
+            labelFieldName,
             fill: color
          } = this;
 
@@ -383,7 +366,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             return html;
         }
 
-        let title = this.title;
+        const title = this.title;
         
         if (this.tooltipRenderer && this.xField) {
             html = this.tooltipRenderer({
@@ -391,29 +374,33 @@ export class ScatterSeries extends Series<CartesianChart> {
                 xField,
                 yField,
                 radiusField,
+                labelField,
                 xFieldName,
                 yFieldName,
                 radiusFieldName,
+                labelFieldName,
                 title,
                 color
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
+            const titleHtml = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xField];
             const yValue = seriesDatum[yField];
-            const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
-            const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
-            let fieldString = `<b>${xFieldName}</b>: ${xString}<br><b>${yFieldName}</b>: ${yString}`;
+            let fieldString = `<b>${xFieldName}</b>: ${toFixed(xValue)}<br><b>${yFieldName}</b>: ${toFixed(yValue)}`;
 
             if (radiusField) {
                 fieldString += `<br><b>${radiusFieldName}</b>: ${seriesDatum[radiusField]}`;
             }
 
-            html = `${title}<div class="content">${fieldString}</div>`;
-            // html = `${title}<div class="content">${xField}: ${xString}<br>${yField}: ${yString}</div>`;
+            if (labelField) {
+                fieldString = `<b>${labelFieldName}</b>: ${seriesDatum[labelField]}<br>` + fieldString;
+            }
+
+            html = `${titleHtml}<div class="content">${fieldString}</div>`;
         }
+
         return html;
     }
 

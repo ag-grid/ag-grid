@@ -117,9 +117,7 @@ export class ChartController extends BeanStub {
     public getChartProxy = (): ChartProxy<any, any> => this.model.getChartProxy();
 
     public isActiveXYChart() {
-        const xyChartSelected = _.includes([ ChartType.Scatter, ChartType.Bubble ], this.getChartType());
-        // x y charts behave like regular cartesian charts if the default category is not selected, i.e. (None)
-        return xyChartSelected && this.isDefaultCategorySelected();
+        return _.includes([ ChartType.Scatter, ChartType.Bubble ], this.getChartType());
     }
 
     private raiseChartUpdatedEvent() {
