@@ -101,6 +101,7 @@ export class TimeScale extends ContinuousScale {
         return step == undefined ? interval : interval.every(step);
     }
 
+    protected _domain: Date[] = [new Date(2000, 0, 1), new Date(2000, 0, 2)];
     set domain(values: Date[]) {
         super.setDomain(Array.prototype.map.call(values, (t: any) => t instanceof Date ? +t : +new Date(+t)));
     }
@@ -161,8 +162,5 @@ export class TimeScale extends ContinuousScale {
 }
 
 export default function scaleTime() {
-    const scale = new TimeScale();
-    scale.domain = [new Date(2000, 0, 1), new Date(2000, 0, 2)];
-    scale.range = [0, 1];
-    return scale;
+    return new TimeScale();
 }

@@ -26,8 +26,7 @@ export class CartesianChart extends Chart {
     constructor(options: CartesianChartOptions) {
         super(options);
 
-        const xAxis = options.xAxis;
-        const yAxis = options.yAxis;
+        const { xAxis, yAxis } = options;
 
         this._xAxis = xAxis;
         this._yAxis = yAxis;

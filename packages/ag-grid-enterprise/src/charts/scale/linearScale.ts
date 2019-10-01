@@ -4,7 +4,7 @@ import ticks, { tickIncrement } from "../util/ticks";
 /**
  * Maps continuous domain to a continuous range.
  */
-export class LinearScale<R> extends ContinuousScale {
+export class LinearScale extends ContinuousScale {
     ticks(count = 10) {
         const d = this._domain;
         return ticks(d[0], d[d.length - 1], count);
@@ -60,7 +60,5 @@ export class LinearScale<R> extends ContinuousScale {
  * Creates a continuous scale with the default interpolator and no clamping.
  */
 export default function scaleLinear() {
-    const scale = new LinearScale<number>();
-    scale.range = [0, 1];
-    return scale;
+    return new LinearScale();
 }

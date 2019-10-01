@@ -43,6 +43,10 @@ export default abstract class ContinuousScale implements Scale<any, any> {
      */
     unknown: any = undefined;
 
+    constructor() {
+        this.rescale();
+    }
+
     private _clamp = identity;
     set clamp(value: boolean) {
         this._clamp = value ? clamper(this.domain) : identity;
@@ -69,7 +73,7 @@ export default abstract class ContinuousScale implements Scale<any, any> {
         return this.getDomain();
     }
 
-    protected _range: any[] = [];
+    protected _range: any[] = [0, 1];
     set range(values: any[]) {
         this._range = Array.prototype.slice.call(values);
         this.rescale();

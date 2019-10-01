@@ -1,4 +1,4 @@
-export default function(a: number, b: number, count: number): NumericTicks {
+export default function (a: number, b: number, count: number): NumericTicks {
     const step = tickStep(a, b, count);
     a = Math.ceil(a / step) * step;
     b = Math.floor(b / step) * step + step / 2;

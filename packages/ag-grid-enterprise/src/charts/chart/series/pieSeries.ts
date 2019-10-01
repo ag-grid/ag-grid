@@ -51,7 +51,7 @@ export class PieSeries extends Series<PolarChart> {
 
     static className = 'PieSeries';
 
-    private radiusScale: LinearScale<number> = scaleLinear();
+    private radiusScale: LinearScale = new LinearScale();
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
     /**
@@ -61,8 +61,8 @@ export class PieSeries extends Series<PolarChart> {
 
     readonly enabled: boolean[] = [];
 
-    private angleScale: LinearScale<number> = (() => {
-        const scale = scaleLinear();
+    private angleScale: LinearScale = (() => {
+        const scale = new LinearScale();
         // Each slice is a ratio of the whole, where all ratios add up to 1.
         scale.domain = [0, 1];
         // Add 90 deg to start the first pie at 12 o'clock.
