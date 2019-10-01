@@ -186,10 +186,12 @@ export interface ScatterSeriesOptions extends SeriesOptions {
     xField?: string;
     yField?: string;
     radiusField?: string;
+    labelField?: string;
 
     xFieldName?: string;
     yFieldName?: string;
     radiusFieldName?: string;
+    labelFieldName?: string;
 
     fill?: string;
     fillOpacity?: number;
