@@ -394,35 +394,6 @@ gridApi.onFilterChanged()</snippet>
         element to be selected from the set:
     </p>
 
-    <note>
-        <p>
-            In version 17.1.x of ag-Grid, the set filter model change. If you are using version 17.1.x or later,
-            you don't need to be concerned. The following outlines the old and new models side by side:
-            <snippet>
-                // OLD model was simple string array
-                var model = ['Value 1', 'Value 2'];
-
-                // NEW model is object with type and values
-                var model = {
-                type: 'set',
-                values: ['Value 1', 'Value 2']
-                };
-            </snippet>
-            The <code>setModel()</code> method will work with both model versions. The <code>getModel()</code>
-            will provide the new version.
-        </p>
-        <p>
-            To disable this change and have the grid exclusively work with the old model, set grid
-            property <code>enableOldSetFilterModel=true</code>.
-        </p>
-        <p>
-            <b>
-                Both models will be supported for releases for the next 6 months. After this one major ag-Grid
-                release will have the old model deprecated and then the following release will have it dropped.
-            </b>
-        </p>
-    </note>
-
     <h2>Set Filter API</h2>
     <p>
         The set filter has on top of the getModel and setModel methods common to all the filters the following API:

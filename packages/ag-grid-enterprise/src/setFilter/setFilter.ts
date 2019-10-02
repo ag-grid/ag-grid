@@ -75,6 +75,13 @@ export class SetFilter extends ProvidedFilter {
     protected setModelIntoUi(model: SetFilterModel): void {
         this.resetUiToDefaults();
         if (model) {
+            if (model instanceof Array) {
+                const message = 'ag-Grid: The Set Filter Model is no longer an array and models as arrays are ' +
+                    'deprecated. Please check the docs on what the set filter model looks like. Future versions of ' +
+                    'ag-Grid will have the array version of the model removed.';
+                _.doOnce( ()=> console.warn(message), 'setFilter.modelAsArray');
+            }
+
             // also supporting old filter model for backwards compatibility
             const newValues: string[] | null = (model instanceof Array) ? model : model.values;
 

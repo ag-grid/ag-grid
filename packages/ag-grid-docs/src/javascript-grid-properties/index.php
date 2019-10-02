@@ -132,12 +132,6 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>enableOldSetFilterModel</th>
-            <td>Set to true to return the old set filter model format. This is intended as a temporary measure to
-                facilitate migration.
-                <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
-        </tr>
-        <tr>
             <th>suppressMaintainUnsortedOrder</th>
             <td>
                 Set to true to suppress sorting of un-sorted data to match original row data.

@@ -1524,6 +1524,10 @@ export class GridOptionsWrapper {
         if (options.doesDataFlower) {
             console.warn('ag-Grid: since v21.1, doesDataFlower is deprecated. Master/Detail is the new way for showing child data for a row and was introduced over a year ago. Please migrate your code to use master/detail instead.');
         }
+
+        if (options.enableOldSetFilterModel) {
+            console.warn('ag-Grid: since v22.x, enableOldSetFilterModel is deprecated. Please move to the new Set Filter Model as the old one may not be supported in v23 onwards.');
+        }
     }
 
     private checkForViolations() {
