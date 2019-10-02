@@ -63,7 +63,6 @@ function genConfig(name) {
     const opts = builds[name];
     const config = {
         input: opts.entry,
-        external: opts.external,
         plugins: [
             node()      // for utils package - defaulting to use index.js
         ].concat(opts.plugins || []),
@@ -71,7 +70,7 @@ function genConfig(name) {
             file: opts.dest,
             format: opts.format,
             banner: opts.banner,
-            name: opts.moduleName || 'Vue'
+            name: opts.moduleName
         },
         onwarn: (msg, warn) => {
             if (msg.code === 'THIS_IS_UNDEFINED') return;
@@ -90,4 +89,4 @@ function genConfig(name) {
 }
 
 exports.getBuild = genConfig;
-exports.getAllBuilds = () => Object.keys(builds).map(genConfig)
+exports.getAllBuilds = () => Object.keys(builds).map(genConfig);

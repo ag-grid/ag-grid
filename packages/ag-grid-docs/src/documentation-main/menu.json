@@ -32,10 +32,6 @@
                   {
                     "title": "Download Bundles",
                     "url": "javascript-grid-download/"
-                  },
-                  {
-                    "title": "TypeScript",
-                    "url": "ag-grid-typescript-webpack-2/"
                   }
                 ]
               },
@@ -147,6 +143,21 @@
               {
                 "title": "Polymer",
                 "url": "polymer-getting-started/"
+              }
+            ]
+          },
+          {
+            "title": "Building",
+            "url": "ag-grid-building/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Rollup",
+                "url": "ag-grid-building-rollup/"
+              },
+              {
+                "title": "TypeScript & Webpack",
+                "url": "ag-grid-building-typescript/"
               }
             ]
           }
