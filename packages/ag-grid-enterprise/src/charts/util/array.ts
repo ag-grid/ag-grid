@@ -59,3 +59,7 @@ export function numericExtent<T>(values: T[]): [number, number] | undefined {
         return [ min, max ];
     }
 }
+
+export function sumPositiveValues(array: number[]): number {
+    return array.reduce((total, value) => value > 0 ? total + value : total, 0);
+}

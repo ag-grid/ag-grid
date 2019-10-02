@@ -4,7 +4,7 @@ import { Line } from "../../scene/shape/line";
 import { Text } from "../../scene/shape/text";
 import { Selection } from "../../scene/selection";
 import { DropShadow } from "../../scene/dropShadow";
-import scaleLinear, { LinearScale } from "../../scale/linearScale";
+import { LinearScale } from "../../scale/linearScale";
 import { normalizeAngle180, toRadians } from "../../util/angle";
 import palette from "../palettes";
 import { Sector } from "../../scene/shape/sector";
@@ -59,8 +59,6 @@ export class PieSeries extends Series<PolarChart> {
      */
     private groupSelectionData: GroupSelectionDatum[] = [];
 
-    readonly enabled: boolean[] = [];
-
     private angleScale: LinearScale = (() => {
         const scale = new LinearScale();
         // Each slice is a ratio of the whole, where all ratios add up to 1.
@@ -70,14 +68,11 @@ export class PieSeries extends Series<PolarChart> {
         return scale;
     })();
 
+    public dataEnabled: boolean[] = [];
+
     set data(data: any[]) {
         this._data = data;
-
-        const enabled = this.enabled;
-        enabled.length = data.length;
-        for (let i = 0, ln = data.length; i < ln; i++) {
-            enabled[i] = true;
-        }
+        this.dataEnabled = data.map(() => true);
 
         this.scheduleData();
     }
@@ -85,19 +80,22 @@ export class PieSeries extends Series<PolarChart> {
         return this._data;
     }
 
-    private _title: Caption | undefined = undefined;
+    private _title?: Caption;
     set title(value: Caption | undefined) {
         const oldTitle = this._title;
+
         if (oldTitle !== value) {
             if (oldTitle) {
                 oldTitle.onLayoutChange = undefined;
                 this.group.removeChild(oldTitle.node);
             }
+
             if (value) {
                 value.node.textBaseline = 'bottom';
                 value.onLayoutChange = () => this.scheduleLayout();
                 this.group.appendChild(value.node);
             }
+
             this._title = value;
             this.scheduleLayout();
         }
@@ -107,7 +105,7 @@ export class PieSeries extends Series<PolarChart> {
     }
 
     /**
-     * `undefined` means make the callout color the same as {@link strokeStyle}.
+     * Defaults to make the callout colors the same as {@link strokeStyle}.
      */
     private _calloutColors: string[] = palette.strokes;
     set calloutColors(value: string[]) {
@@ -153,7 +151,7 @@ export class PieSeries extends Series<PolarChart> {
         return this._labelOffset;
     }
 
-    private _labelFontStyle: FontStyle | undefined = undefined;
+    private _labelFontStyle?: FontStyle;
     set labelFontStyle(value: FontStyle | undefined) {
         if (this._labelFontStyle !== value) {
             this._labelFontStyle = value;
@@ -164,7 +162,7 @@ export class PieSeries extends Series<PolarChart> {
         return this._labelFontStyle;
     }
 
-    private _labelFontWeight: FontWeight | undefined = undefined;
+    private _labelFontWeight?: FontWeight;
     set labelFontWeight(value: FontWeight | undefined) {
         if (this._labelFontWeight !== value) {
             this._labelFontWeight = value;
@@ -250,14 +248,14 @@ export class PieSeries extends Series<PolarChart> {
      * proportionally smaller radii. To prevent confusing visuals, this config only works
      * if {@link innerRadiusOffset} is zero.
      */
-    private _radiusField: string = '';
-    set radiusField(value: string) {
+    private _radiusField?: string;
+    set radiusField(value: string | undefined) {
         if (this._radiusField !== value) {
             this._radiusField = value;
             this.scheduleData();
         }
     }
-    get radiusField(): string {
+    get radiusField(): string | undefined {
         return this._radiusField;
     }
 
@@ -265,14 +263,14 @@ export class PieSeries extends Series<PolarChart> {
      * The value of the label field is supposed to be a string.
      * If it isn't, it will be coerced to a string value.
      */
-    private _labelField: string = '';
-    set labelField(value: string) {
+    private _labelField?: string;
+    set labelField(value: string | undefined) {
         if (this._labelField !== value) {
             this._labelField = value;
             this.scheduleData();
         }
     }
-    get labelField(): string {
+    get labelField(): string | undefined {
         return this._labelField;
     }
 
@@ -376,7 +374,7 @@ export class PieSeries extends Series<PolarChart> {
         return this._strokeWidth;
     }
 
-    private _shadow: DropShadow | undefined = undefined;
+    private _shadow?: DropShadow;
     set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
@@ -411,20 +409,20 @@ export class PieSeries extends Series<PolarChart> {
         this.scheduleLayout();
     }
 
-    getDomainX(): [number, number] {
-        return this.angleScale.domain as [number, number];
+    getDomainX(): [ number, number ] {
+        return this.angleScale.domain as [ number, number ];
     }
 
-    getDomainY(): [number, number] {
-        return this.radiusScale.domain as [number, number];
+    getDomainY(): [ number, number ] {
+        return this.radiusScale.domain as [ number, number ];
     }
 
     processData(): boolean {
-        const data = this.data as any[];
-        const enabled = this.enabled;
+        const { data, dataEnabled } = this;
 
-        const angleData: number[] = data.map((datum, index) => enabled[index] && +datum[this.angleField] || 0);
+        const angleData: number[] = data.map((datum, index) => dataEnabled[index] && +datum[this.angleField] || 0);
         const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
+        
         // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie slice.
         // Each slice starts where the previous one ends, so we only keep the ratios for end angles.
         const angleDataRatios = (() => {
@@ -433,28 +431,27 @@ export class PieSeries extends Series<PolarChart> {
         })();
 
         const labelField = this.labelEnabled && this.labelField;
-        let labelData: string[] = [];
-        if (labelField) {
-            labelData = data.map(datum => String(datum[labelField]));
-        }
-
+        const labelData = labelField ? data.map(datum => String(datum[labelField])) : [];
         const radiusField = this.radiusField;
         const useRadiusField = !!radiusField && !this.innerRadiusOffset;
         let radiusData: number[] = [];
+        
         if (useRadiusField) {
-            radiusData = data.map(datum => Math.abs(datum[radiusField]));
-            const maxDatum = Math.max(...radiusData);
-            radiusData.forEach((value, index, array) => array[index] = value / maxDatum);
+            const radii = data.map(datum => Math.abs(datum[radiusField!]));
+            const maxDatum = Math.max(...radii);
+
+            radiusData = radii.map(value => value / maxDatum);
         }
 
-        const angleScale = this.angleScale;
-        const groupSelectionData = this.groupSelectionData;
+        const { angleScale, groupSelectionData } = this;
+
         groupSelectionData.length = 0;
 
         const rotation = toRadians(this.rotation);
         const halfPi = Math.PI / 2;
 
         let datumIndex = 0;
+
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
             const radius = useRadiusField ? radiusData[datumIndex] : 1;
@@ -468,8 +465,8 @@ export class PieSeries extends Series<PolarChart> {
 
             const labelMinAngle = toRadians(this.labelMinAngle);
             const labelVisible = labelField && span > labelMinAngle;
-
             const midAngle180 = normalizeAngle180(midAngle);
+
             // Split the circle into quadrants like so: ⊗
             let quadrantStart = -3 * Math.PI / 4; // same as `normalizeAngle180(toRadians(-135))`
             let textAlign: CanvasTextAlign;
@@ -498,7 +495,6 @@ export class PieSeries extends Series<PolarChart> {
                 midAngle,
                 midCos,
                 midSin,
-
                 label: labelVisible ? {
                     text: labelData[datumIndex],
                     textAlign,
@@ -515,28 +511,30 @@ export class PieSeries extends Series<PolarChart> {
     }
 
     update(): void {
-        const chart = this.chart;
-        const visible = this.group.visible = this.visible && this.enabled.indexOf(true) >= 0;
+        const { chart } = this;
+        const visible = this.group.visible = this.visible && this.dataEnabled.indexOf(true) >= 0;
 
         if (!chart || !visible || chart.dataPending || chart.layoutPending) {
             return;
         }
 
-        const fills = this.fills;
-        const strokes = this.strokes;
-        const fillOpacity = this.fillOpacity;
-        const strokeOpacity = this.strokeOpacity;
-        const calloutColors = this.calloutColors;
+        const { 
+            fills,
+            strokes, 
+            fillOpacity, 
+            strokeOpacity, 
+            calloutColors, 
+            outerRadiusOffset,
+            innerRadiusOffset,
+            radiusScale,
+            title,
+        } = this;
 
-        const outerRadiusOffset = this.outerRadiusOffset;
-        const innerRadiusOffset = this.innerRadiusOffset;
-        const radiusScale = this.radiusScale;
         radiusScale.range = [0, chart.radius];
 
         this.group.translationX = chart.centerX;
         this.group.translationY = chart.centerY;
 
-        const title = this.title;
         if (title) {
             title.node.translationY = -chart.radius - outerRadiusOffset - 2;
             title.node.visible = title.enabled;
@@ -546,11 +544,13 @@ export class PieSeries extends Series<PolarChart> {
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);
+
         enterGroups.append(Sector).each(node => node.tag = PieSeriesNodeTag.Sector);
         enterGroups.append(Line).each(node => {
             node.tag = PieSeriesNodeTag.Callout;
             node.pointerEvents = PointerEvents.None;
         });
+
         enterGroups.append(Text).each(node => {
             node.tag = PieSeriesNodeTag.Label;
             node.pointerEvents = PointerEvents.None;
@@ -561,82 +561,74 @@ export class PieSeries extends Series<PolarChart> {
         let minOuterRadius = Infinity;
         const outerRadii: number[] = [];
         const centerOffsets: number[] = [];
+        const { highlightedNode, highlightStyle: { fill, stroke, centerOffset }, shadow, strokeWidth } = this;
 
-        const highlightedNode = this.highlightedNode;
+        groupSelection.selectByTag<Sector>(PieSeriesNodeTag.Sector).each((sector, datum, index) => {
+            const radius = radiusScale.convert(datum.radius);
+            const outerRadius = Math.max(0, radius + outerRadiusOffset);
 
-        groupSelection.selectByTag<Sector>(PieSeriesNodeTag.Sector)
-            .each((sector, datum, index) => {
-                const radius = radiusScale.convert(datum.radius);
-                const outerRadius = Math.max(0, radius + outerRadiusOffset);
-                if (minOuterRadius > outerRadius) {
-                    minOuterRadius = outerRadius;
-                }
+            if (minOuterRadius > outerRadius) {
+                minOuterRadius = outerRadius;
+            }
 
-                sector.outerRadius = outerRadius;
-                sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
-                sector.startAngle = datum.startAngle;
-                sector.endAngle = datum.endAngle;
+            sector.outerRadius = outerRadius;
+            sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
+            sector.startAngle = datum.startAngle;
+            sector.endAngle = datum.endAngle;
 
-                sector.fill = sector === highlightedNode && this.highlightStyle.fill !== undefined
-                    ? this.highlightStyle.fill
-                    : fills[index % fills.length];
-                sector.stroke = sector === highlightedNode && this.highlightStyle.stroke !== undefined
-                    ? this.highlightStyle.stroke
-                    : strokes[index % strokes.length];
-                sector.fillOpacity = fillOpacity;
-                sector.strokeOpacity = strokeOpacity;
-                sector.centerOffset = sector === highlightedNode && this.highlightStyle.centerOffset !== undefined
-                    ? this.highlightStyle.centerOffset
-                    : 0;
+            sector.fill = sector === highlightedNode && fill !== undefined ? fill: fills[index % fills.length];
+            sector.stroke = sector === highlightedNode && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            sector.fillOpacity = fillOpacity;
+            sector.strokeOpacity = strokeOpacity;
+            sector.centerOffset = sector === highlightedNode && centerOffset !== undefined ? centerOffset : 0;
+            sector.fillShadow = shadow;
+            sector.strokeWidth = strokeWidth;
+            sector.lineJoin = 'round';
 
-                sector.fillShadow = this.shadow;
-                sector.strokeWidth = this.strokeWidth;
-                sector.lineJoin = 'round';
+            outerRadii.push(outerRadius);
+            centerOffsets.push(sector.centerOffset);
+        });
 
-                outerRadii.push(outerRadius);
-                centerOffsets.push(sector.centerOffset);
-            });
+        const { calloutLength } = this;
 
-        const calloutLength = this.calloutLength;
-        groupSelection.selectByTag<Line>(PieSeriesNodeTag.Callout)
-            .each((line, datum, index) => {
-                if (datum.label) {
-                    const outerRadius = centerOffsets[index] + outerRadii[index];
+        groupSelection.selectByTag<Line>(PieSeriesNodeTag.Callout).each((line, datum, index) => {
+            if (datum.label) {
+                const outerRadius = centerOffsets[index] + outerRadii[index];
 
-                    line.strokeWidth = this.calloutStrokeWidth;
-                    line.stroke = calloutColors[index % calloutColors.length];
-                    line.x1 = datum.midCos * outerRadius;
-                    line.y1 = datum.midSin * outerRadius;
-                    line.x2 = datum.midCos * (outerRadius + calloutLength);
-                    line.y2 = datum.midSin * (outerRadius + calloutLength);
-                } else {
-                    line.stroke = undefined;
-                }
-            });
+                line.strokeWidth = this.calloutStrokeWidth;
+                line.stroke = calloutColors[index % calloutColors.length];
+                line.x1 = datum.midCos * outerRadius;
+                line.y1 = datum.midSin * outerRadius;
+                line.x2 = datum.midCos * (outerRadius + calloutLength);
+                line.y2 = datum.midSin * (outerRadius + calloutLength);
+            } else {
+                line.stroke = undefined;
+            }
+        });
 
-        const labelOffset = this.labelOffset;
-        groupSelection.selectByTag<Text>(PieSeriesNodeTag.Label)
-            .each((text, datum, index) => {
-                const label = datum.label;
+        const { labelOffset, labelFontStyle, labelFontWeight, labelFontSize, labelFontFamily, labelColor } = this;
 
-                if (label) {
-                    const outerRadius = outerRadii[index];
-                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + labelOffset;
+        groupSelection.selectByTag<Text>(PieSeriesNodeTag.Label).each((text, datum, index) => {
+            const label = datum.label;
 
-                    text.fontStyle = this.labelFontStyle;
-                    text.fontWeight = this.labelFontWeight;
-                    text.fontSize = this.labelFontSize;
-                    text.fontFamily = this.labelFontFamily;
-                    text.text = label.text;
-                    text.x = datum.midCos * labelRadius;
-                    text.y = datum.midSin * labelRadius;
-                    text.fill = this.labelColor;
-                    text.textAlign = label.textAlign;
-                    text.textBaseline = label.textBaseline;
-                } else {
-                    text.fill = undefined;
-                }
-            });
+            if (label) {
+                const outerRadius = outerRadii[index];
+                const labelRadius = centerOffsets[index] + outerRadius + calloutLength + labelOffset;
+
+                text.fontStyle = labelFontStyle;
+                text.fontWeight = labelFontWeight;
+                text.fontSize = labelFontSize;
+                text.fontFamily = labelFontFamily;
+                text.text = label.text;
+                text.x = datum.midCos * labelRadius;
+                text.y = datum.midSin * labelRadius;
+                text.fill = labelColor;
+                text.textAlign = label.textAlign;
+                text.textBaseline = label.textBaseline;
+            } else {
+                text.fill = undefined;
+            }
+        });
 
         this.groupSelection = groupSelection;
     }
@@ -651,6 +643,7 @@ export class PieSeries extends Series<PolarChart> {
 
         let title = this.title ? this.title.text : undefined;
         const color = this.fills[nodeDatum.index % this.fills.length];
+
         if (this.tooltipRenderer) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
@@ -667,24 +660,24 @@ export class PieSeries extends Series<PolarChart> {
             const value = nodeDatum.seriesDatum[angleField];
             const formattedValue = typeof(value) === 'number' ? toFixed(value) : value.toString();
             html = `${title}<div class="content">${label}${formattedValue}</div>`;
-        }
+        }        
+        
         return html;
     }
 
     tooltipRenderer?: (params: PieTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
-        const labelField = this.labelField;
+        const { labelField } = this;
+
         if (this.data.length && labelField) {
-            const fills = this.fills;
-            const strokes = this.strokes;
-            const id = this.id;
+            const { fills, strokes, id } = this;
 
             this.data.forEach((datum, index) => {
                 data.push({
                     id,
                     itemId: index,
-                    enabled: this.enabled[index],
+                    enabled: this.dataEnabled[index],
                     label: {
                         text: String(datum[labelField])
                     },
@@ -698,7 +691,7 @@ export class PieSeries extends Series<PolarChart> {
     }
 
     toggleSeriesItem(itemId: number, enabled: boolean): void {
-        this.enabled[itemId] = enabled;
+        this.dataEnabled[itemId] = enabled;
         this.scheduleData();
     }
 }

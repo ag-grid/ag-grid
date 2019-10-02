@@ -9,6 +9,7 @@ import { DropShadow } from "../../scene/dropShadow";
 import palette from "../palettes";
 import { HighlightStyle, Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
+import { sumPositiveValues } from "../../util/array";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
@@ -75,7 +76,7 @@ export class BarSeries extends Series<CartesianChart> {
      * The assumption is that the values will be reset (to `true`)
      * in the {@link yFields} setter.
      */
-    protected readonly enabled = new Map<string, boolean>();
+    private readonly yFieldEnabled = new Map<string, boolean>();
 
     private _fills: string[] = palette.fills;
     set fills(values: string[]) {
@@ -158,17 +159,17 @@ export class BarSeries extends Series<CartesianChart> {
     protected _yFields: string[] = [];
     set yFields(values: string[]) {
         this._yFields = values;
+        this.yData = [];
 
-        const enabled = this.enabled;
-        enabled.clear();
-        values.forEach(field => enabled.set(field, true));
+        const { yFieldEnabled } = this;
+        yFieldEnabled.clear();
+        values.forEach(field => yFieldEnabled.set(field, true));
 
         const groupScale = this.groupScale;
         groupScale.domain = values;
         groupScale.padding = 0.1;
         groupScale.round = true;
 
-        this.yData = [];
 
         this.scheduleData();
     }
@@ -198,21 +199,19 @@ export class BarSeries extends Series<CartesianChart> {
 
     /**
      * The value to normalize the stacks to, when {@link grouped} is `false`.
-     * Should be a finite positive value or `NaN`.
-     * Defaults to `NaN` - stacks are not normalized.
+     * Should be a finite positive value or `undefined`.
+     * Defaults to `undefined` - stacks are not normalized.
      */
-    private _normalizedTo: number = NaN;
-    set normalizedTo(value: number) {
-        if (value === 0) {
-            value = NaN;
-        }
-        const absValue = Math.abs(value);
+    private _normalizedTo?: number;
+    set normalizedTo(value: number | undefined) {
+        const absValue = value ? Math.abs(value) : undefined;
+
         if (this._normalizedTo !== absValue) {
             this._normalizedTo = absValue;
             this.scheduleData();
         }
     }
-    get normalizedTo(): number {
+    get normalizedTo(): number | undefined {
         return this._normalizedTo;
     }
 
@@ -227,7 +226,7 @@ export class BarSeries extends Series<CartesianChart> {
         return this._strokeWidth;
     }
 
-    private _shadow: DropShadow | undefined = undefined;
+    private _shadow?: DropShadow;
     set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
@@ -249,7 +248,7 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelEnabled;
     }
 
-    private _labelFontStyle: FontStyle | undefined = undefined;
+    private _labelFontStyle?: FontStyle;
     set labelFontStyle(value: FontStyle | undefined) {
         if (this._labelFontStyle !== value) {
             this._labelFontStyle = value;
@@ -260,7 +259,7 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelFontStyle;
     }
 
-    private _labelFontWeight: FontWeight | undefined = undefined;
+    private _labelFontWeight?: FontWeight;
     set labelFontWeight(value: FontWeight | undefined) {
         if (this._labelFontWeight !== value) {
             this._labelFontWeight = value;
@@ -304,7 +303,7 @@ export class BarSeries extends Series<CartesianChart> {
         return this._labelColor;
     }
 
-    private _labelFormatter: BarLabelFormatter | undefined = undefined;
+    private _labelFormatter?: BarLabelFormatter;
     set labelFormatter(value: BarLabelFormatter | undefined) {
         if (this._labelFormatter !== value) {
             this._labelFormatter = value;
@@ -336,12 +335,10 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     processData(): boolean {
-        let data = this.data as any[];
-        const xField = this.xField;
-        const yFields = this.yFields;
+        const { xField, yFields } = this;
 
         if (!(xField && yFields.length)) {
-            this._data = data = [];
+            this._data = [];
         }
 
         // If the data is an array of rows like so:
@@ -358,29 +355,16 @@ export class BarSeries extends Series<CartesianChart> {
         //   yField3: 20
         // }]
         //
+
+        const { yFieldEnabled, data } = this;
+
         this.xData = data.map(datum => datum[xField]);
 
-        const enabled = this.enabled;
-        const normalizedTo = this.normalizedTo;
-        const ySums: number[] = []; // used for normalization of stacked bars
-        const yData: number[][] = this.yData = data.map((datum, xIndex) => {
-            const values: number[] = [];
-            let ySum = 0;
+        this.yData = data.map(datum => yFields.map(field => {
+            const value = datum[field];
 
-            yFields.forEach(field => {
-                let value = datum[field];
-                if (!isFinite(value) || !enabled.get(field)) {
-                    value = 0;
-                }
-                if (value > 0) {
-                    ySum += value;
-                }
-                values.push(value);
-            });
-
-            ySums[xIndex] = ySum;
-            return values;
-        });
+            return isFinite(value) && yFieldEnabled.get(field) ? value : 0;
+        }));
 
         // xData: ['Jan', 'Feb']
         //
@@ -388,6 +372,9 @@ export class BarSeries extends Series<CartesianChart> {
         //   [5, 7, -9],
         //   [10, -15, 20]
         // ]
+
+        const ySums = this.yData.map(values => sumPositiveValues(values)); // used for normalization of stacked bars
+        const { yData, normalizedTo } = this;
 
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
@@ -398,37 +385,18 @@ export class BarSeries extends Series<CartesianChart> {
             // The `yMin` should always be <= 0,
             // otherwise with the `yData` like [300, 200, 100] the last bar
             // will have zero height, because the y-axis range is [100, 300].
-            yMin = Math.min(...yData.map(groupValues => Math.min(0, ...groupValues)));
-            yMax = Math.max(...yData.map(groupValues => Math.max(...groupValues)));
+            yMin = Math.min(0, ...yData.map(values => Math.min(...values)));
+            yMax = Math.max(...yData.map(values => Math.max(...values)));
         } else { // stacked or regular
-            if (isFinite(normalizedTo)) {
+            if (normalizedTo && isFinite(normalizedTo)) {
                 yMin = 0;
                 yMax = normalizedTo;
-                yData.forEach((stackValues, i) => {
-                    const ySum = ySums[i];
-                    stackValues.forEach((y, j) => stackValues[j] = y / ySum * normalizedTo);
-                });
+                yData.forEach((stackValues, i) => stackValues.forEach((y, j) => stackValues[j] = y / ySums[i] * normalizedTo));
             } else {
                 // Find the height of each stack in the positive and negative directions,
                 // then find the tallest stacks in both directions.
-                yMin = Math.min(0, ...yData.map(stackValues => {
-                    let min = 0;
-                    stackValues.forEach(y => {
-                        if (y < 0) {
-                            min -= y;
-                        }
-                    });
-                    return min;
-                }));
-                yMax = Math.max(...yData.map(stackValues => {
-                    let max = 0;
-                    stackValues.forEach(y => {
-                        if (y > 0) {
-                            max += y;
-                        }
-                    });
-                    return max;
-                }));
+                yMin = Math.min(0, ...yData.map(values => values.reduce((min, value) => value < 0 ? min - value : min, 0)));
+                yMax = Math.max(...yData.map(values => values.reduce((max, value) => value > 0 ? max + value : max, 0)));
             }
         }
 
@@ -438,7 +406,7 @@ export class BarSeries extends Series<CartesianChart> {
             // console.warn('Zero or infinite y-range.');
         }
 
-        this.domainY = [yMin, yMax];
+        this.domainY = [ yMin, yMax ];
 
         const chart = this.chart;
 
@@ -449,8 +417,13 @@ export class BarSeries extends Series<CartesianChart> {
         return true;
     }
 
-    getDomainX = (): string[] => this.xData;
-    getDomainY = (): number[] => this.domainY;
+    getDomainX(): string[] {
+        return this.xData;
+    }
+
+    getDomainY(): number[] {
+        return this.domainY;
+    }
 
     update(): void {
         const chart = this.chart;
@@ -460,24 +433,26 @@ export class BarSeries extends Series<CartesianChart> {
             return;
         }
 
-        const categoryCount = this.data.length;
-        const flipXY = chart.xAxis instanceof NumberAxis;
-        const xAxis = flipXY ? chart.yAxis : chart.xAxis;
-        const yAxis = flipXY ? chart.xAxis : chart.yAxis;
-        const xScale = xAxis.scale;
-        const yScale = yAxis.scale;
+        const selectionData = this.generateSelectionData();
+
+        this.updateRectSelection(selectionData);
+        this.updateTextSelection(selectionData);
+    }
+
+    private generateSelectionData() {
+        const { xAxis, yAxis } = this.chart!;
+        const flipXY = xAxis instanceof NumberAxis;
+        const xScale = (flipXY ? yAxis : xAxis).scale;
+        const yScale = (flipXY ? xAxis : yAxis).scale;
 
         const {
             groupScale,
             yFields,
             fills,
             strokes,
-            fillOpacity,
-            strokeOpacity,
             grouped,
             strokeWidth,
-            enabled,
-            labelEnabled,
+            yFieldEnabled,
             labelFontStyle,
             labelFontWeight,
             labelFontSize,
@@ -494,33 +469,25 @@ export class BarSeries extends Series<CartesianChart> {
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
         const selectionData: SelectionDatum[] = [];
 
-        for (let i = 0; i < categoryCount; i++) {
-            const category = xData[i];
+        xData.forEach((category, i) => {
             const values = yData[i];
-            const valueCount = values.length;
+            const seriesDatum = data[i];
             const x = xScale.convert(category);
 
             let prev = 0;
-            let curr: number;
 
-            for (let j = 0; j < valueCount; j++) {
-                curr = values[j];
-
+            values.forEach((curr, j) => {
                 const yField = yFields[j];
-                const yFieldEnabled = enabled.get(yField);
                 const barX = grouped ? x + groupScale.convert(yField) : x;
-                const y = yScale.convert((grouped ? curr : prev + curr));
-                const bottomY = yScale.convert((grouped ? 0 : prev));
-                const seriesDatum = data[i];
+                const y = yScale.convert(grouped ? curr : prev + curr);
+                const bottomY = yScale.convert(grouped ? 0 : prev);
                 const yValue = seriesDatum[yField]; // unprocessed y-value
-
                 const yValueIsNumber = typeof yValue === 'number';
+
                 let labelText: string;
 
                 if (labelFormatter) {
-                    labelText = labelFormatter({
-                        value: yValueIsNumber ? yValue : NaN
-                    });
+                    labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
                 } else {
                     labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
                 }
@@ -536,7 +503,7 @@ export class BarSeries extends Series<CartesianChart> {
                     fill: fills[j % fills.length],
                     stroke: strokes[j % strokes.length],
                     strokeWidth,
-                    label: yFieldEnabled && labelText ? {
+                    label: yFieldEnabled.get(yField) && labelText ? {
                         text: labelText,
                         fontStyle: labelFontStyle,
                         fontWeight: labelFontWeight,
@@ -553,30 +520,24 @@ export class BarSeries extends Series<CartesianChart> {
                 } else {
                     prev += curr;
                 }
-            }
-        }
+            });
+        });
 
+        return selectionData;
+    }
+
+    private updateRectSelection(selectionData: SelectionDatum[]): void {
+        const { fillOpacity, strokeOpacity, shadow, highlightedNode, highlightStyle: { fill, stroke } } = this;
         const updateRects = this.rectSelection.setData(selectionData);
-        const updateTexts = this.textSelection.setData(selectionData);
+        
         updateRects.exit.remove();
-        updateTexts.exit.remove();
 
         const enterRects = updateRects.enter.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
             rect.crisp = true;
         });
 
-        const enterTexts = updateTexts.enter.append(Text).each(text => {
-            text.tag = BarSeriesNodeTag.Label;
-            text.pointerEvents = PointerEvents.None;
-            text.textAlign = 'center';
-            text.textBaseline = 'middle';
-        });
-
-        const highlightedNode = this.highlightedNode;
         const rectSelection = updateRects.merge(enterRects);
-        const textSelection = updateTexts.merge(enterTexts);
-        const { fill, stroke } = this.highlightStyle;
 
         rectSelection.each((rect, datum) => {
             rect.x = datum.x;
@@ -588,9 +549,27 @@ export class BarSeries extends Series<CartesianChart> {
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;
-            rect.fillShadow = this.shadow;
+            rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });
+
+        this.rectSelection = rectSelection;
+    }
+
+    private updateTextSelection(selectionData: SelectionDatum[]): void {
+        const { labelEnabled } = this;
+        const updateTexts = this.textSelection.setData(selectionData);
+
+        updateTexts.exit.remove();
+
+        const enterTexts = updateTexts.enter.append(Text).each(text => {
+            text.tag = BarSeriesNodeTag.Label;
+            text.pointerEvents = PointerEvents.None;
+            text.textAlign = 'center';
+            text.textBaseline = 'middle';
+        });
+
+        const textSelection = updateTexts.merge(enterTexts);
 
         textSelection.each((text, datum) => {
             const label = datum.label;
@@ -610,12 +589,12 @@ export class BarSeries extends Series<CartesianChart> {
             }
         });
 
-        this.rectSelection = rectSelection;
         this.textSelection = textSelection;
     }
 
     getTooltipHtml(nodeDatum: SelectionDatum): string {
         let html: string = '';
+
         if (this.tooltipEnabled) {
             const xField = this.xField;
             const yField = nodeDatum.yField;
@@ -644,6 +623,7 @@ export class BarSeries extends Series<CartesianChart> {
                 html = `${title}<div class="content">${xString}: ${yString}</div>`;
             }
         }
+
         return html;
     }
 
@@ -657,7 +637,7 @@ export class BarSeries extends Series<CartesianChart> {
                 data.push({
                     id,
                     itemId: yField,
-                    enabled: this.enabled.get(yField) || false,
+                    enabled: this.yFieldEnabled.get(yField) || false,
                     label: {
                         text: this.yFieldNames[index] || this.yFields[index]
                     },
@@ -671,9 +651,9 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
-        this.enabled.set(itemId, enabled);
+        this.yFieldEnabled.set(itemId, enabled);
         const enabledYFields: string[] = [];
-        this.enabled.forEach((enabled, yField) => {
+        this.yFieldEnabled.forEach((enabled, yField) => {
             if (enabled) {
                 enabledYFields.push(yField);
             }

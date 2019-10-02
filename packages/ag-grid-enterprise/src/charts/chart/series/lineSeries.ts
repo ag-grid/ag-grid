@@ -1,6 +1,5 @@
 import { CartesianChart } from "../cartesianChart";
 import { Path } from "../../scene/shape/path";
-import { Path2D } from "../../scene/path2D";
 import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
@@ -64,14 +63,14 @@ export class LineSeries extends Series<CartesianChart> {
         return this._chart;
     }
 
-    protected _title: string = '';
-    set title(value: string) {
+    protected _title?: string;
+    set title(value: string | undefined) {
         if (this._title !== value) {
             this._title = value;
             this.scheduleLayout();
         }
     }
-    get title(): string {
+    get title(): string | undefined {
         return this._title;
     }
 
@@ -133,35 +132,33 @@ export class LineSeries extends Series<CartesianChart> {
     }
 
     processData(): boolean {
-        const chart = this.chart;
-        const xField = this.xField;
-        const yField = this.yField;
-        let data = this.data as any[];
+        const { chart, xField, yField } = this;
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
         }
 
         if (!(xField && yField)) {
-            this._data = data = [];
+            this._data = [];
         }
 
-        this.xData = data.map(datum => datum[xField]);
-        this.yData = data.map(datum => datum[yField]);
+        this.xData = this.data.map(datum => datum[xField]);
+        this.yData = this.data.map(datum => datum[yField]);
 
-        const continuousX = chart.xAxis.scale instanceof ContinuousScale;
-        const domainX = continuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
+        const isContinuousX = chart.xAxis.scale instanceof ContinuousScale;
+        const domainX = isContinuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
         const domainY = numericExtent(this.yData) || [0, 1];
 
-        if (continuousX) {
-            const [min, max] = domainX as number[];
+        if (isContinuousX) {
+            const [ min, max ] = domainX as number[];
+
             if (min === max) {
                 domainX[0] = min - 1;
                 domainX[1] = max + 1;
             }
         }
 
-        const [min, max] = domainY as number[];
+        const [ min, max ] = domainY;
 
         if (min === max) {
             domainY[0] = min - 1;
@@ -239,9 +236,7 @@ export class LineSeries extends Series<CartesianChart> {
             return;
         }
 
-        const { xAxis, yAxis } = chart;
-        const xScale = xAxis.scale;
-        const yScale = yAxis.scale;
+        const { xAxis: { scale: xScale }, yAxis: { scale: yScale } } = chart;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
 
@@ -254,24 +249,24 @@ export class LineSeries extends Series<CartesianChart> {
             marker,
             markerSize,
             markerStrokeWidth,
+            lineNode
          } = this;
 
-        const n = xData.length;
-        const lineNode: Path = this.lineNode;
-        const linePath: Path2D = lineNode.path;
-        const groupSelectionData: GroupSelectionDatum[] = [];
+        const linePath = lineNode.path;
 
         linePath.clear();
-        for (let i = 0; i < n; i++) {
-            const xDatum = xData[i];
+
+        const groupSelectionData: GroupSelectionDatum[] = [];
+
+        xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
             const x = xScale.convert(xDatum) + xOffset;
             const y = yScale.convert(yDatum) + yOffset;
 
-            if (!i) {
-                linePath.moveTo(x, y);
-            } else {
+            if (i > 0) {
                 linePath.lineTo(x, y);
+            } else {
+                linePath.moveTo(x, y);
             }
 
             if (marker) {
@@ -285,12 +280,10 @@ export class LineSeries extends Series<CartesianChart> {
                     radius: markerSize / 2
                 });
             }
-        }
+        });
 
         lineNode.stroke = fill; // use fill colour for the line
         lineNode.strokeWidth = this.strokeWidth;
-
-        // ------------------------------------------
 
         const updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
@@ -306,8 +299,7 @@ export class LineSeries extends Series<CartesianChart> {
             .each((arc, datum) => {
                 arc.centerX = datum.x;
                 arc.centerY = datum.y;
-                arc.radiusX = datum.radius;
-                arc.radiusY = datum.radius;
+                arc.radiusX = arc.radiusY = datum.radius;
                 arc.fill = arc === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
                 arc.stroke = arc === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
                 arc.strokeWidth = datum.strokeWidth;
@@ -326,9 +318,7 @@ export class LineSeries extends Series<CartesianChart> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
-        const xField = this.xField;
-        const yField = this.yField;
-        const color = this.fill;
+        const { xField, yField, fill: color } = this;
         let html: string = '';
 
         if (!xField || !yField) {
@@ -336,6 +326,7 @@ export class LineSeries extends Series<CartesianChart> {
         }
 
         let title = this.title;
+
         if (this.tooltipRenderer && this.xField) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
@@ -355,6 +346,7 @@ export class LineSeries extends Series<CartesianChart> {
 
             html = `${title}<div class="content">${xString}: ${yString}</div>`;
         }
+
         return html;
     }
 

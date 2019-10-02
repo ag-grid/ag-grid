@@ -57,7 +57,7 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._chart;
     }
 
-    protected _title?: string = undefined;
+    protected _title?: string;
     set title(value: string | undefined) {
         if (this._title !== value) {
             this._title = value;
@@ -68,10 +68,11 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._title;
     }
 
-    protected _xField: string;
+    protected _xField: string = '';
     set xField(value: string) {
         if (this._xField !== value) {
             this._xField = value;
+            this.xData = [];
             this.scheduleData();
         }
     }
@@ -79,10 +80,11 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._xField;
     }
 
-    protected _yField: string;
+    protected _yField: string = '';
     set yField(value: string) {
         if (this._yField !== value) {
             this._yField = value;
+            this.yData = [];
             this.scheduleData();
         }
     }
@@ -90,10 +92,11 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._yField;
     }
 
-    private _radiusField?: string = undefined;
+    private _radiusField?: string;
     set radiusField(value: string | undefined) {
         if (this._radiusField !== value) {
             this._radiusField = value;
+            this.radiusData = [];
             this.scheduleData();
         }
     }
@@ -101,7 +104,7 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._radiusField;
     }
 
-    private _labelField?: string = undefined;
+    private _labelField?: string;
     set labelField(value: string | undefined) {
         if (this._labelField !== value) {
             this._labelField = value;

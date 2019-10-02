@@ -45,7 +45,7 @@ export abstract class Series<C extends Chart> {
         return this._data;
     }
 
-    protected _chart: C | undefined = undefined;
+    protected _chart?: C;
     abstract set chart(chart: C | undefined);
     abstract get chart(): C | undefined;
 
