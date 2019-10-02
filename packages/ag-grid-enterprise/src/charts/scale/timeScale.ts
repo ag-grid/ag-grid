@@ -33,6 +33,15 @@ export class TimeScale extends ContinuousScale {
     private millisecond: CountableTimeInterval = timeMillisecond;
     private format: (specifier: string) => (date: Date) => string = locale.format;
 
+    /**
+     * Array of default tick intervals in the following format:
+     *
+     *     [
+     *         interval (unit of time),
+     *         number of units (step),
+     *         the length of that number of units in milliseconds
+     *     ]
+     */
     private tickIntervals: [CountableTimeInterval, number, number][] = [
         [this.second,  1,      durationSecond],
         [this.second,  5,  5 * durationSecond],
@@ -63,7 +72,7 @@ export class TimeScale extends ContinuousScale {
     private formatMonth = this.format('%B');
     private formatYear = this.format('%Y');
 
-    private _tickFormat(date: Date) {
+    defaultTickFormat(date: Date) {
         return (this.second.floor(date) < date
             ? this.formatMillisecond
             : this.minute.floor(date) < date
@@ -79,16 +88,24 @@ export class TimeScale extends ContinuousScale {
                                 : this.formatYear)(date);
     }
 
+    /**
+     *
+     * @param interval If the `interval` is a number, it's interpreted as the desired tick count
+     * and the method tries to pick an appropriate interval automatically, based on the extent of the domain.
+     * If the `interval` is `undefined`, it defaults to `10`.
+     * If the `interval` is a time interval, simply use it.
+     * @param start The start time (timestamp).
+     * @param stop The end time (timestamp).
+     * @param step Number of intervals between ticks.
+     */
     tickInterval(interval: number | CountableTimeInterval = 10, start: number, stop: number, step?: number): CountableTimeInterval | TimeInterval | undefined {
-        // If a desired tick count is specified, pick a reasonable tick interval
-        // based on the extent of the domain and a rough estimate of tick size.
-        // Otherwise, assume interval is already a time interval and use it.
-        const tickIntervals = this.tickIntervals;
         if (typeof interval === 'number') {
-            const target = Math.abs(stop - start) / interval;
+            const tickCount = interval;
+            const tickIntervals = this.tickIntervals;
+            const target = Math.abs(stop - start) / tickCount;
             const i = complexBisectRight(tickIntervals, target, interval => interval[2]);
             if (i === tickIntervals.length) {
-                step = tickStep(start / durationYear, stop / durationYear, interval);
+                step = tickStep(start / durationYear, stop / durationYear, tickCount);
                 interval = this.year;
             } else if (i) {
                 [interval, step] = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i];
@@ -113,7 +130,12 @@ export class TimeScale extends ContinuousScale {
         return new Date(super.invert(y));
     }
 
-    ticks(interval: number | CountableTimeInterval = 10, step?: number) {
+    /**
+     * Returns uniformly-spaced dates that represent the scale's domain.
+     * @param interval
+     * @param step
+     */
+    ticks(interval: number | CountableTimeInterval = 10): Date[] {
         const d = super.getDomain();
         let t0 = d[0];
         let t1 = d[d.length - 1];
@@ -124,14 +146,21 @@ export class TimeScale extends ContinuousScale {
             t0 = t1;
             t1 = _;
         }
-        const t = this.tickInterval(interval, t0, t1, step);
+        const t = this.tickInterval(interval, t0, t1);
         const i = t ? t.range(t0, t1 + 1) : []; // inclusive stop
 
         return reverse ? i.reverse() : i;
     }
 
-    tickFormat(count: number, specifier?: string): (date: Date) => string {
-        return specifier == undefined ? this._tickFormat : this.format(specifier);
+    /**
+     * Returns a time format function suitable for displaying tick values.
+     * @param count Ignored. Used only to satisfy the {@link Scale} interface.
+     * @param specifier If the specifier string is provided, this method is equivalent to
+     * the {@link TimeLocaleObject.format} method.
+     * If no specifier is provided, this method returns the default time format function.
+     */
+    tickFormat(count: any, specifier?: string): (date: Date) => string {
+        return specifier == undefined ? this.defaultTickFormat : this.format(specifier);
     }
 
     nice(interval: number | CountableTimeInterval = 10, step?: number) {

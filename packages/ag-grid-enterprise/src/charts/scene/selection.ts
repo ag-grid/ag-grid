@@ -1,6 +1,5 @@
 import { Node } from "./node";
 import { Scene } from "./scene";
-import { Group } from "./group";
 
 type ValueFn<P, GDatum, PDatum> = (parent: P, data: PDatum, index: number, groups: (P | undefined)[]) => GDatum[];
 type KeyFn<N, G, GDatum> = (node: N, datum: GDatum, index: number, groups: (G | undefined)[]) => string;
