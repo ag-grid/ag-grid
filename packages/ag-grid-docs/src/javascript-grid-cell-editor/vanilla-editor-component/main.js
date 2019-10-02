@@ -69,6 +69,9 @@ var columnDefs = [
         width: 100,
         cellRenderer: 'countryCellRenderer',
         cellEditor: 'agRichSelectCellEditor',
+        keyCreator: function(country) {
+            return country.name;
+        },
         cellEditorParams: {
             cellRenderer: 'countryCellRenderer',
             values: [

@@ -115,7 +115,7 @@ export interface ColDef extends AbstractColDef {
 
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
-    keyCreator?: Function;
+    keyCreator?: (value: any) => string;
 
     /** Initial width, in pixels, of the cell */
     width?: number;

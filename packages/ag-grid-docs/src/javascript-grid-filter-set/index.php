@@ -130,11 +130,11 @@ include '../documentation-main/documentation_header.php';
     <h2>Complex Objects - keyCreator</h2>
 
     <p>
-        If you are providing complex objects as values, then you need to provide <code>colDef.keyCreator</code> method in your
-        object for the set filter to work, giving a unique value for the object. This is because the set filter needs
-        a string key to identify the value. The example below demonstrates keyCreator with the country column by replacing
-        the country name in the data with a complex object of country name and code. If the keyCreator was not provided
-        on the colDef, the set filter would not work.
+        If you are providing complex objects as values, then you need to provide a <code>colDef.keyCreator</code> function
+        to convert the objects to strings. This string is used to compare objects when filtering, and to render a label in
+        the filter UI, so it should return a human-readable value. The example below demonstrates keyCreator with the country
+        column by replacing the country name in the data with a complex object of country name and code. If the keyCreator
+        was not provided on the colDef, the set filter would not work.
     </p>
 
     <h2>Set Filter - Search Field</h2>

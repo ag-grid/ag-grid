@@ -231,8 +231,9 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>keyCreator(params)</th>
-            <td>Function to return the key for a value - use this if the value is an object (not a primitive type) and you
-                want to a) use set filter on this field or b) group by this field.</td>
+            <td>Function to return a string key for a value. This string is used for grouping, set filtering,
+                and searching within cell editor dropdowns. When filtering and searching the string is exposed
+                to the user, so return a human-readable value.</td>
         </tr>
         <tr>
             <th>getQuickFilterText</th>
