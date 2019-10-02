@@ -2,7 +2,7 @@ import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers
 import { ICellEditorParams } from "./iCellEditor";
 
 export interface IRichCellEditorParams extends ICellEditorParams {
-    values: unknown[];
+    values: string[];
     cellHeight: number;
     cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
 }
