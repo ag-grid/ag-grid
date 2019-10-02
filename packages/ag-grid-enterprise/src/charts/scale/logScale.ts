@@ -1,11 +1,11 @@
-import ContinuousScale from "./continuousScale";
+import ContinuousScale, { identity } from "./continuousScale";
 import ticks from "../util/ticks";
 
 export class LogScale extends ContinuousScale {
     protected _domain: any[] = [1, 10];
 
-    baseLog: (x: number) => number; // takes a log with base `base` of `x`
-    basePow: (x: number) => number; // raises `base` to the power of `x`
+    baseLog: (x: number) => number = identity; // takes a log with base `base` of `x`
+    basePow: (x: number) => number = identity; // raises `base` to the power of `x`
 
     private _base: number = 10;
     set base(value: number) {
