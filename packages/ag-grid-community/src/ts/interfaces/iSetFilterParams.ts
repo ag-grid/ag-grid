@@ -17,11 +17,13 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
     suppressMiniFilter: boolean;
     suppressSelectAll: boolean;
-    selectAllOnMiniFilter: boolean;
     suppressSyncValuesAfterDataChange: boolean;
     comparator?: (a: any, b: any) => number;
     miniFilterSearchByRefDataKey?: boolean;
     textFormatter?: (from: string) => string;
+
+    /** @deprecated */
+    selectAllOnMiniFilter: boolean;
 
     /** @deprecated */
     syncValuesLikeExcel?: boolean;

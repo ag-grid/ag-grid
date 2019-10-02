@@ -645,7 +645,6 @@ var desktopDefaultCols = [
                 // pinned: 'left',
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {
-                    selectAllOnMiniFilter: true,
                     newRowsAction: 'keep',
                     clearButton: true
                 }
@@ -698,7 +697,6 @@ var desktopDefaultCols = [
                     cellRenderer: 'countryCellRenderer',
                     // cellHeight: 20,
                     newRowsAction: 'keep',
-                    selectAllOnMiniFilter: true,
                     clearButton: true,
                     // suppressSelectAll: true
                 },
@@ -721,7 +719,6 @@ var desktopDefaultCols = [
                     return 'alphabet';
                 },
                 filterParams: {
-                    selectAllOnMiniFilter: true,
                     newRowsAction: 'keep',
                     clearButton: true
                 },
@@ -746,7 +743,6 @@ var desktopDefaultCols = [
                 floatCell: true,
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
-                    selectAllOnMiniFilter: true,
                     newRowsAction: 'keep',
                     clearButton: true
                 }

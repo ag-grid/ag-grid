@@ -341,10 +341,10 @@ export class SetValueModel {
     }
 
     public selectAllUsingMiniFilter() {
-        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
-            this.selectOn(this.allUniqueValues);
-        } else {
+        if (this.miniFilter) {
             this.selectOn(this.displayedValues);
+        } else {
+            this.selectOn(this.allUniqueValues);
         }
     }
 
@@ -379,10 +379,10 @@ export class SetValueModel {
     }
 
     public selectNothingUsingMiniFilter(): void {
-        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
-            this.selectNothing();
-        } else {
+        if (this.miniFilter) {
             this.displayedValues.forEach(it => this.unselectValue(it));
+        } else {
+            this.selectNothing();
         }
     }
 
@@ -426,18 +426,18 @@ export class SetValueModel {
     }
 
     public isEverythingSelected(): boolean {
-        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
-            return this.allUniqueValues.length === this.selectedValuesCount;
-        } else {
+        if (this.miniFilter) {
             return this.displayedValues.filter(it => this.isValueSelected(it)).length === this.displayedValues.length;
+        } else {
+            return this.allUniqueValues.length === this.selectedValuesCount;
         }
     }
 
     public isNothingSelected() {
-        if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter) {
-            return this.selectedValuesCount === 0;
-        } else {
+        if (this.miniFilter) {
             return this.displayedValues.filter(it => this.isValueSelected(it)).length === 0;
+        } else {
+            return this.selectedValuesCount === 0;
         }
     }
 

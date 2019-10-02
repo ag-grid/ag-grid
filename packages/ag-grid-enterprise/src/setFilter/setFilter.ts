@@ -141,6 +141,11 @@ export class SetFilter extends ProvidedFilter {
                 ' param suppressSyncValuesAfterDataChange';
             _.doOnce(()=> console.warn(message), 'syncValuesLikeExcel deprecated');
         }
+        if (params.selectAllOnMiniFilter) {
+            const message = 'ag-Grid: since version 22.x, the Set Filter param selectAllOnMiniFilter is no longer' +
+                ' used as this is the default behaviour.';
+            _.doOnce(()=> console.warn(message), 'selectAllOnMiniFilter deprecated');
+        }
     }
 
     private resetFilterValuesAndReapplyModel(): void {

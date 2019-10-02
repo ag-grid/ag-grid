@@ -118,13 +118,6 @@ include '../documentation-main/documentation_header.php';
         </td>
     </tr>
     <tr>
-        <td class="parameter-key">selectAllOnMiniFilter</td>
-        <td>
-            Set to true so that the checkbox "select all" applies to the mini filter results only.
-            Otherwise it will apply to the entire list.
-        </td>
-    </tr>
-    <tr>
         <td class="parameter-key">textFormatter</td>
         <td>
             If specified, formats the text before applying the mini filter compare logic, useful for
@@ -172,11 +165,6 @@ include '../documentation-main/documentation_header.php';
     <p>
         The column sport has also the property <code>suppressMiniFilter</code> set to true, hiding the text input box for the
         set filter in this column (compare this set filter with athlete which suppressMiniFilter is the default = false).
-    </p>
-
-    <p>
-        The column country has the property <code>selectAllOnMiniFilter</code> set to true, you can see how the select all only
-        applies to the items filtered by the mini filter search box.
     </p>
 
     <p>
