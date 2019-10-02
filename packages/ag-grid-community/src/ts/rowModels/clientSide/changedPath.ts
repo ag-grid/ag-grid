@@ -153,6 +153,8 @@ export class ChangedPath {
     // 2) groupStage if doing transaction update (doesn't provide cols)
     public addParentNode(rowNode: RowNode | null, columns?: Column[]): void {
 
+        if (!rowNode || rowNode.isRowPinned()) { return; }
+
         // we cannot do  both steps below in the same loop as
         // the second loop has a dependency on the first loop.
         // ie the hierarchy cannot be stitched up yet because

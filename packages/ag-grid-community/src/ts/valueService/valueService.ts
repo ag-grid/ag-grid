@@ -84,7 +84,7 @@ export class ValueService {
         return result;
     }
 
-    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any): void {
+    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, eventSource: string = undefined): void {
         const column = this.columnController.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
@@ -171,7 +171,8 @@ export class ValueService {
             node: rowNode,
             oldValue: params.oldValue,
             newValue: params.newValue,
-            value: params.newValue
+            value: params.newValue,
+            source: eventSource
         };
 
         this.eventService.dispatchEvent(event);

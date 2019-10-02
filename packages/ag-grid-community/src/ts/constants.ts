@@ -58,4 +58,6 @@ export class Constants {
     static DOM_LAYOUT_AUTO_HEIGHT = 'autoHeight';
 
     static GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
+
+    static SOURCE_PASTE = 'paste';
 }

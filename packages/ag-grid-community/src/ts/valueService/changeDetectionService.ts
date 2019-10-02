@@ -1,16 +1,15 @@
-import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
-import {Autowired, Bean, Optional, PostConstruct} from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ChangedPath } from "../rowModels/clientSide/changedPath";
-import { IRowModel } from "../interfaces/iRowModel";
-import { ClientSideRowModel } from "../rowModels/clientSide/clientSideRowModel";
-import { RowRenderer } from "../rendering/rowRenderer";
-import { EventService } from "../eventService";
-import { Constants } from "../constants";
-import { BeanStub } from "../context/beanStub";
-import { Events } from "../events";
-import {IClipboardService} from "../interfaces/iClipboardService";
+import {Column} from "../entities/column";
+import {RowNode} from "../entities/rowNode";
+import {Autowired, Bean, PostConstruct} from "../context/context";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {ChangedPath} from "../rowModels/clientSide/changedPath";
+import {IRowModel} from "../interfaces/iRowModel";
+import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
+import {RowRenderer} from "../rendering/rowRenderer";
+import {EventService} from "../eventService";
+import {Constants} from "../constants";
+import {BeanStub} from "../context/beanStub";
+import {CellValueChangedEvent, Events} from "../events";
 
 @Bean('changeDetectionService')
 export class ChangeDetectionService extends BeanStub {
@@ -19,7 +18,6 @@ export class ChangeDetectionService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('eventService') private eventService: EventService;
-    @Optional('clipboardService') private clipboardService: IClipboardService;
 
     private clientSideRowModel: ClientSideRowModel;
 
@@ -32,12 +30,7 @@ export class ChangeDetectionService extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
     }
 
-    private onCellValueChanged(event: any): void {
-        this.doChangeDetection(event.node, event.column);
-    }
-
-    private doChangeDetection(rowNode: RowNode, column: Column): void {
-        if (this.gridOptionsWrapper.isSuppressChangeDetection()) { return; }
+    private onCellValueChanged(event: CellValueChangedEvent): void {
 
         // clipboard service manages it's own change detection, so no need to do it here.
         // the clipboard manages it own, as otherwise this would happen once for every cell
@@ -45,7 +38,13 @@ export class ChangeDetectionService extends BeanStub {
         // this doChangeDetection would get called 100 times (once for each cell), instead clipboard
         // service executes the logic we have here once (in essence batching up all cell changes
         // into one change detection).
-        if (this.clipboardService && this.clipboardService.isPasteOperationActive()) { return; }
+        if (event.source===Constants.SOURCE_PASTE) { return; }
+
+        this.doChangeDetection(event.node, event.column);
+    }
+
+    private doChangeDetection(rowNode: RowNode, column: Column): void {
+        if (this.gridOptionsWrapper.isSuppressChangeDetection()) { return; }
 
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {

@@ -12,6 +12,10 @@ export class CellPositionUtils {
 
     public createId(cellPosition: CellPosition): string {
         const { rowIndex, rowPinned, column } = cellPosition;
+        return this.createIdFromValues(rowIndex, column, rowPinned);
+    }
+
+    public createIdFromValues(rowIndex: number, column: Column, rowPinned: string | undefined): string {
         return `${rowIndex}.${rowPinned == null ? 'null' : rowPinned}.${column.getId()}`;
     }
 

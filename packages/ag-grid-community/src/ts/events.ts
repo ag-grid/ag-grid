@@ -352,6 +352,7 @@ export interface CellEditingStoppedEvent extends CellEvent {
 export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;
     newValue: any;
+    source: string | undefined;
 }
 
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting
