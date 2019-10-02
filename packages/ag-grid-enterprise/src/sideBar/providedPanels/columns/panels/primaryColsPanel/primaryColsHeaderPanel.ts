@@ -51,7 +51,7 @@ export class PrimaryColsHeaderPanel extends Component {
             <div ref="eExpand"></div>
             <div ref="eSelect"></div>
             <div class="ag-input-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper" role="presentation">
-                <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate('filterOoo', 'Filter...')}">        
+                <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate('SearchOoo', 'Search...')}">        
             </div>
         </div>`);
     }

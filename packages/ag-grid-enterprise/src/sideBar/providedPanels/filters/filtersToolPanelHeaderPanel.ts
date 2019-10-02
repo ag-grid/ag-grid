@@ -1,6 +1,6 @@
 import {
     _,
-    Autowired,
+    Autowired, Column,
     ColumnController,
     Component,
     Events,
@@ -76,10 +76,11 @@ export class FiltersToolPanelHeaderPanel extends Component {
         const showFilter = !this.params.suppressFilter;
         const showExpand = !this.params.suppressExpandAll;
 
-        const filtersPresent = this.columnController.getAllGridColumns().some(col => col.isFilterAllowed());
+        const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
+        const filterGroupsPresent = this.columnController.getAllGridColumns().some(isFilterGroupPresent);
 
         _.setDisplayed(this.eFilterWrapper, showFilter);
-        _.setDisplayed(this.eExpand, showExpand && filtersPresent);
+        _.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
     }
 
     private onSearchTextChanged(): void {

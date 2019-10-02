@@ -709,9 +709,11 @@
 
                 > div {
                     &:not(.ag-input-wrapper) {
-                        margin: 0 $grid-size;
+                        padding-left: $grid-size / 2;
+                        margin: 0 $grid-size / 2;
                     }
                     &.ag-input-wrapper {
+                        padding-left: $grid-size;
                         padding-right: $grid-size;
                         input {
                             width: 100%;

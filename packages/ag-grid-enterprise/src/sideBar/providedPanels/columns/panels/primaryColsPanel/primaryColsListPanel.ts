@@ -244,31 +244,30 @@ export class PrimaryColsListPanel extends Component {
 
         // we recurse dept first - as the item should show if any of the children are showing
 
-        const recursivelyCheckFilter = (items: OriginalColumnGroupChild[]): boolean => {
+        const passesFilter = (item: OriginalColumnGroupChild) => {
+            const comp = this.columnComps[item.getId()];
+            if (comp && this.filterText) {
+                const displayName = comp.getDisplayName();
+                return displayName !== null ? displayName.toLowerCase().indexOf(this.filterText) >= 0 : true;
+            } else {
+                // if this is a dummy column group, we should return false here
+                return !!(item instanceof OriginalColumnGroup && item.getOriginalParent());
+            }
+        };
+
+        const recursivelyCheckFilter = (items: OriginalColumnGroupChild[], parentPasses: boolean): boolean => {
             let atLeastOneThisLevelPassed = false;
 
             items.forEach(item => {
                 let atLeastOneChildPassed = false;
 
                 if (item instanceof OriginalColumnGroup) {
+                    let groupPasses = passesFilter(item);
                     const groupChildren = item.getChildren();
-                    atLeastOneChildPassed = recursivelyCheckFilter(groupChildren);
+                    atLeastOneChildPassed = recursivelyCheckFilter(groupChildren, groupPasses || parentPasses);
                 }
 
-                let filterPasses: boolean;
-                if (atLeastOneChildPassed) {
-                    filterPasses = true;
-                } else {
-                    const comp = this.columnComps[item.getId()];
-                    if (comp && this.filterText) {
-                        const displayName = comp.getDisplayName();
-                        filterPasses = displayName !== null ? displayName.toLowerCase().indexOf(this.filterText) >= 0 : true;
-                    } else {
-                        // if this is a dummy column group, we should return false here
-                        filterPasses = !!(item instanceof OriginalColumnGroup && item.getOriginalParent());
-                    }
-                }
-
+                const filterPasses = (parentPasses || atLeastOneChildPassed) ? true : passesFilter(item);
                 filterResults[item.getId()] = filterPasses;
 
                 if (filterPasses) {
@@ -279,7 +278,7 @@ export class PrimaryColsListPanel extends Component {
             return atLeastOneThisLevelPassed;
         };
 
-        recursivelyCheckFilter(this.columnTree);
+        recursivelyCheckFilter(this.columnTree, false);
 
         return filterResults;
     }
