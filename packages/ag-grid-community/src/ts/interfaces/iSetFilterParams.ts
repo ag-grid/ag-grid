@@ -22,4 +22,7 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     comparator?: (a: any, b: any) => number;
     miniFilterSearchByRefDataKey?: boolean;
     textFormatter?: (from: string) => string;
+
+    /** @deprecated */
+    syncValuesLikeExcel?: boolean;
 }

@@ -135,8 +135,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private checkSetFilterDeprecatedParams(params: ISetFilterParams): void {
-        const paramsNoType = params as any;
-        if (paramsNoType.syncValuesLikeExcel) {
+        if (params.syncValuesLikeExcel) {
             const message = 'ag-Grid: since version 22.x, the Set Filter param syncValuesLikeExcel is no longer' +
                 ' used as this is the default behaviour. To turn this default behaviour off, use the' +
                 ' param suppressSyncValuesAfterDataChange';
