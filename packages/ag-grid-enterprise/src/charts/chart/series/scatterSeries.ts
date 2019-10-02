@@ -40,8 +40,10 @@ export class ScatterSeries extends Series<CartesianChart> {
 
     private domainX: number[] = [];
     private domainY: number[] = [];
+    private xData: any[] = [];
+    private yData: any[] = [];
+    private radiusData: number[] = [];
     private radiusScale = linearScale();
-    private processedData: { x: number, y: number, radius?: number }[] = [];
 
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
@@ -176,17 +178,21 @@ export class ScatterSeries extends Series<CartesianChart> {
         if (!(xField && yField)) {
             this._data = [];
         }
+        
+        this.xData = this.data.map(d => d[xField]);
+        this.yData = this.data.map(d => d[yField]);
 
-        this.processedData = this.data.map(d => ({
-            x: d[xField],
-            y: d[yField],
-            radius: radiusField ? d[radiusField] : undefined,
-        }));
+        if (radiusField) {
+            this.radiusData = this.data.map(d => d[radiusField]);
+        }
+        else {
+            this.radiusData = [];
+        }
 
-        this.radiusScale.domain = numericExtent(radiusField ? this.processedData.map(d => d.radius) : []) || [ 1, 1 ];
+        this.radiusScale.domain = numericExtent(this.radiusData) || [ 1, 1 ];
         this.radiusScale.range = [ minMarkerSize / 2, markerSize / 2 ];
-        this.domainX = this.calculateDomain(this.processedData.map(d => d.x));
-        this.domainY = this.calculateDomain(this.processedData.map(d => d.y));
+        this.domainX = this.calculateDomain(this.xData);
+        this.domainY = this.calculateDomain(this.yData);
 
         return true;
     }
@@ -287,31 +293,28 @@ export class ScatterSeries extends Series<CartesianChart> {
 
         const {
             data,
-            processedData,
+            xData,
+            yData,
+            radiusData,
+            radiusScale,
             fill,
             stroke,
             fillOpacity,
             strokeOpacity,
             markerStrokeWidth,
             markerSize,
-         } = this;
+            highlightedNode
+        } = this;
 
-        const groupSelectionData: GroupSelectionDatum[] = processedData.map((d, i) => {
-            const x = xScale.convert(d.x) + xOffset;
-            const y = yScale.convert(d.y) + yOffset;
-
-            return {
-                seriesDatum: data[i],
-                x,
-                y,
-                fill,
-                stroke,
-                strokeWidth: markerStrokeWidth,
-                radius: d.radius ? this.radiusScale.convert(d.radius) : markerSize / 2,
-            };
-        });
-
-        // ------------------------------------------
+        const groupSelectionData: GroupSelectionDatum[] = xData.map((xDatum, i) => ({
+            seriesDatum: data[i],
+            x: xScale.convert(xDatum) + xOffset,
+            y: yScale.convert(yData[i]) + yOffset,
+            fill,
+            stroke,
+            strokeWidth: markerStrokeWidth,
+            radius: radiusData.length ? radiusScale.convert(radiusData[i]) : markerSize / 2,
+        }));
 
         const updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
@@ -319,7 +322,6 @@ export class ScatterSeries extends Series<CartesianChart> {
         const enterGroups = updateGroups.enter.append(Group);
         enterGroups.append(Arc).each(arc => arc.type = ArcType.Chord);
 
-        const highlightedNode = this.highlightedNode;
         const groupSelection = updateGroups.merge(enterGroups);
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
 
