@@ -132,8 +132,7 @@ export class TimeScale extends ContinuousScale {
 
     /**
      * Returns uniformly-spaced dates that represent the scale's domain.
-     * @param interval
-     * @param step
+     * @param interval The desired tick count or a time interval object.
      */
     ticks(interval: number | CountableTimeInterval = 10): Date[] {
         const d = super.getDomain();
