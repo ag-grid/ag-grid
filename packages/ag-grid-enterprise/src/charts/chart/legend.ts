@@ -1,8 +1,8 @@
-import { FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../scene/group";
 import { Selection } from "../scene/selection";
 import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
+import { FontStyle, FontWeight } from "../scene/shape/text";
 
 export interface LegendDatum {
     id: string;       // component ID
@@ -21,6 +21,8 @@ export enum Orientation {
     Vertical,
     Horizontal
 }
+
+export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export class Legend {
 

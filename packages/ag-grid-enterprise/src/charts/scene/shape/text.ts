@@ -1,7 +1,9 @@
-import { FontWeight, FontStyle } from "ag-grid-community";
 import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { BBox } from "../bbox";
+
+export type FontStyle = "normal" | "italic" | "oblique";
+export type FontWeight = "normal" | "bold" | "bolder" | "lighter" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
 
 export class Text extends Shape {
 
@@ -48,6 +50,7 @@ export class Text extends Shape {
     private _text: string = '';
     set text(value: string) {
         const str = String(value); // `value` can be an object here
+
         if (this._text !== str) {
             this._text = str;
             this.splitText();
@@ -62,13 +65,15 @@ export class Text extends Shape {
     get font(): string {
         if (this.dirtyFont) {
             this.dirtyFont = false;
-            return this._font = [
+
+            this._font = [
                 this.fontStyle || '',
                 this.fontWeight || '',
                 this.fontSize + 'px',
                 this.fontFamily
             ].join(' ').trim();
         }
+
         return this._font!;
     }
 
@@ -85,7 +90,7 @@ export class Text extends Shape {
         return this._dirtyFont;
     }
 
-    private _fontStyle: FontStyle | undefined = undefined;
+    private _fontStyle?: FontStyle;
     set fontStyle(value: FontStyle | undefined) {
         if (this._fontStyle !== value) {
             this._fontStyle = value;
@@ -96,7 +101,7 @@ export class Text extends Shape {
         return this._fontStyle;
     }
 
-    private _fontWeight: FontWeight | undefined = undefined;
+    private _fontWeight?: FontWeight;
     set fontWeight(value: FontWeight | undefined) {
         if (this._fontWeight !== value) {
             this._fontWeight = value;

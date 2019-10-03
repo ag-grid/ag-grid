@@ -1,7 +1,6 @@
-import { FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../scene/group";
 import { Rect } from "../scene/shape/rect";
-import { Text } from "../scene/shape/text";
+import { Text, FontStyle, FontWeight } from "../scene/shape/text";
 
 export class MarkerLabel extends Group {
 

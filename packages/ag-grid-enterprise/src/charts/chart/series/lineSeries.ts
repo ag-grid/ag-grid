@@ -4,14 +4,14 @@ import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import { Arc, ArcType } from "../../scene/shape/arc";
-import { numericExtent } from "../../util/array";
 import palette from "../palettes";
 import { Series, SeriesNodeDatum } from "./series";
+import { numericExtent } from "../../util/array";
+import { Color } from "../../util/color";
 import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
-import { Color } from "ag-grid-community";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;

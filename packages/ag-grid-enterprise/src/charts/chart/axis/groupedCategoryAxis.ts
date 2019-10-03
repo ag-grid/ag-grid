@@ -1,16 +1,15 @@
-import { IGridStyle, FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { Line } from "../../scene/shape/line";
 import { normalizeAngle360, toRadians } from "../../util/angle";
-import { Text } from "../../scene/shape/text";
+import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
 import { BBox } from "../../scene/bbox";
 import { Matrix } from "../../scene/matrix";
 import { Caption } from "../../caption";
-import { Rect } from "../../scene/shape/rect"; // debug (bbox)
+// import { Rect } from "../../scene/shape/rect"; debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-import { IAxisFormatting, ILabelFormatting } from "../../axis";
+import { IAxisFormatting, ILabelFormatting, IGridStyle } from "../../axis";
 
 /**
  * A general purpose linear axis with no notion of orientation.

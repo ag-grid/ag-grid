@@ -1,11 +1,10 @@
-import { IGridStyle, FontStyle, FontWeight } from "ag-grid-community";
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
 import { Line } from "./scene/shape/line";
 import { NumericTicks } from "./util/ticks";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
-import { Text } from "./scene/shape/text";
+import { Text, FontStyle, FontWeight } from "./scene/shape/text";
 import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
@@ -33,6 +32,11 @@ export interface IAxisFormatting {
     tickColor?: string;
     tickWidth: number;
     tickSize: number;
+}
+
+export interface IGridStyle {
+    stroke?: string;
+    lineDash?: number[];
 }
 
 /**

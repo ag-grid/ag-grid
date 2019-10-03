@@ -1,15 +1,15 @@
-import { Color, FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
 import { Rect } from "../../scene/shape/rect";
-import { Text } from "../../scene/shape/text";
+import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
 import palette from "../palettes";
 import { HighlightStyle, Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { sumPositiveValues } from "../../util/array";
+import { Color } from "../../util/color";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";

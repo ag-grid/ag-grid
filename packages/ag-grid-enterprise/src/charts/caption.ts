@@ -1,7 +1,7 @@
-import { FontStyle, FontWeight } from "ag-grid-community";
 import { Padding } from "./util/padding";
 import { Text } from "./scene/shape/text";
 import { PointerEvents } from "./scene/node";
+import { FontStyle, FontWeight } from "./scene/shape/text";
 
 export class Caption {
 

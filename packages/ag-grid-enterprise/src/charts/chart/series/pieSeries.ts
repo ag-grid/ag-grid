@@ -1,15 +1,15 @@
-import { Color, FontStyle, FontWeight } from "ag-grid-community";
 import { Group } from "../../scene/group";
 import { Line } from "../../scene/shape/line";
-import { Text } from "../../scene/shape/text";
+import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
 import { Selection } from "../../scene/selection";
 import { DropShadow } from "../../scene/dropShadow";
 import { LinearScale } from "../../scale/linearScale";
-import { normalizeAngle180, toRadians } from "../../util/angle";
 import palette from "../palettes";
 import { Sector } from "../../scene/shape/sector";
 import { Series, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
+import { normalizeAngle180, toRadians } from "../../util/angle";
+import { Color } from "../../util/color";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
