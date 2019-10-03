@@ -82,7 +82,8 @@
         defaultColDef: {
             sortable: true,
             resizable: true,
-            filter: true
+            filter: true,
+            minWidth: 80
         },
         columnDefs: columnDefs,
         rowSelection: "multiple",
