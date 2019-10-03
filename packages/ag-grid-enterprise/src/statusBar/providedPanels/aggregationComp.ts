@@ -119,7 +119,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         let count = 0;
         let numberCount = 0;
         let min: number | null = null;
-        let max: number = 0;
+        let max: number | null = null;
 
         const cellsSoFar: any = {};
 
