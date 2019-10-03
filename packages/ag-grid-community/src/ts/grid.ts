@@ -127,16 +127,14 @@ export class Grid {
 
     // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
-    private static RowModelClasses: any = {
-        infinite: InfiniteRowModel,
-        clientSide: ClientSideRowModel
-    };
+    private static RowModelClasses: any = {};
 
-    public static setEnterpriseBeans(enterpriseBeans: any[], rowModelClasses: any): void {
+    public static addRowModelClass(name: string, rowModelClass: any): void {
+        this.RowModelClasses[name] = rowModelClass;
+    }
+
+    public static setEnterpriseBeans(enterpriseBeans: any[]): void {
         Grid.enterpriseBeans = enterpriseBeans;
-
-        // the enterprise can inject additional row models. this is how it injects the viewportRowModel
-        _.iterateObject(rowModelClasses, (key: string, value: any) => Grid.RowModelClasses[key] = value);
     }
 
     public static setEnterpriseComponents(components: any[]): void {
@@ -340,3 +338,6 @@ export class Grid {
     }
 
 }
+
+Grid.addRowModelClass('clientSide', ClientSideRowModel);
+Grid.addRowModelClass('infinite', InfiniteRowModel);

@@ -72,12 +72,13 @@ export { RangeHandle } from "./widgets/selection/rangeHandle";
 export { IColumnToolPanel } from "./sideBar/providedPanels/columns/columnToolPanel";
 export { IFiltersToolPanel } from "./sideBar/providedPanels/filters/filtersToolPanel";
 
-const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
-
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,
     RangeController, ClipboardService, PivotStage, PivotColDefService, ToolPanelColDefService,
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
-    MenuItemMapper, StatusBarService], rowModelTypes);
+    MenuItemMapper, StatusBarService]);
+
+Grid.addRowModelClass('viewport', ViewportRowModel);
+Grid.addRowModelClass('serverSide', ServerSideRowModel);
 
 Grid.setEnterpriseComponents([
     {componentName: 'AgFiltersToolPanelHeader', theClass: FiltersToolPanelHeaderPanel},
