@@ -6,7 +6,8 @@ import {
     AgRadioButton,
     Autowired,
     Component,
-    PostConstruct
+    PostConstruct,
+    ChartType
 } from "ag-grid-community";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartModel";
@@ -20,6 +21,7 @@ export class ChartDataPanel extends Component {
     private categoriesGroupComp?: AgGroupComponent;
     private seriesGroupComp?: AgGroupComponent;
     private columnComps: Map<string, AgRadioButton | AgCheckbox> = new Map<string, AgRadioButton | AgCheckbox>();
+    private chartType?: ChartType;
 
     private readonly chartController: ChartController;
 
@@ -40,10 +42,13 @@ export class ChartDataPanel extends Component {
     }
 
     private addPanels() {
+        const currentChartType = this.chartType;
         const { dimensionCols, valueCols } = this.chartController.getColStateForMenu();
         const colIds = dimensionCols.map(c => c.colId).concat(valueCols.map(c => c.colId));
 
-        if (_.areEqual(_.keys(this.columnComps), colIds)) {
+        this.chartType = this.chartController.getChartType();
+
+        if (_.areEqual(_.keys(this.columnComps), colIds) && this.chartType === currentChartType) {
             // columns haven't changed, so just update values
             [ ...dimensionCols, ...valueCols ].forEach(col => {
                 this.columnComps.get(col.colId)!.setValue(col.selected, true);
@@ -71,7 +76,7 @@ export class ChartDataPanel extends Component {
 
     private createCategoriesGroupComponent(columns: ColState[]): void {
         this.categoriesGroupComp = this.wireBean(new AgGroupComponent({
-            title: this.chartTranslator.translate(this.chartController.isActiveXYChart() ? 'labels' : 'categories'),
+            title: this.getCategoryGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false
@@ -96,7 +101,7 @@ export class ChartDataPanel extends Component {
 
     private createSeriesGroupComponent(columns: ColState[]): void {
         this.seriesGroupComp = this.wireDependentBean(new AgGroupComponent({
-            title: this.chartTranslator.translate(this.chartController.isActiveXYChart() ? 'xyValues' : 'series'),
+            title: this.getSeriesGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false
@@ -114,6 +119,14 @@ export class ChartDataPanel extends Component {
         });
 
         this.addComponent(this.getGui(), this.seriesGroupComp);
+    }
+
+    private getCategoryGroupTitle() {
+        return this.chartTranslator.translate(this.chartController.isActiveXYChart() ? 'labels' : 'categories');
+    }
+
+    private getSeriesGroupTitle() {
+        return this.chartTranslator.translate(this.chartController.isActiveXYChart() ? 'xyValues' : 'series');
     }
 
     private clearComponents() {
