@@ -69,6 +69,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-root-wrapper {
+    cursor: default;
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;
@@ -115,7 +116,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-root {
-    cursor: default;
     position: relative; // set to relative, so absolute popups appear relative to this
     display: flex;
     flex-direction: column;

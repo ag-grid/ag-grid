@@ -34,7 +34,7 @@ $secondary-font-size: 14px !default;
 $secondary-font-weight: 400 !default;
 
 // Tooltip
-$tooltip-background-color: #535353 !default;
+$tooltip-background-color: $background-color !default;
 $tooltip-foreground-color: $foreground-color !default;
 $tooltip-border-radius: 2px !default;
 $tooltip-padding: 5px !default;
