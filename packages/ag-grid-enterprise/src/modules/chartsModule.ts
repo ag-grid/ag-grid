@@ -5,10 +5,8 @@ import { ChartTranslator } from "../chartAdaptor/chartComp/chartTranslator";
 
 export const ChartsModule: Module = {
     moduleName: ModuleNames.ChartsModule,
-    enterpriseBeans: [
+    beans: [
         ChartService, ChartTranslator
-    ],
-    enterpriseComponents: [
     ]
 };
 

@@ -163,12 +163,6 @@ export class UserComponentRegistry {
 
     @PostConstruct
     private init(): void {
-        const enterpriseDefaultComponents = this.context.getEnterpriseDefaultComponents();
-        if (enterpriseDefaultComponents) {
-            enterpriseDefaultComponents.forEach(config => {
-                this.registerDefaultComponent(config.componentName, config.theClass);
-            });
-        }
         if (this.gridOptions.components != null) {
             Object.keys(this.gridOptions.components).forEach(it => {
                 this.registerComponent(it, this.gridOptions.components[it]);

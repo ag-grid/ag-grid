@@ -74,7 +74,7 @@ Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, E
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
     MenuItemMapper, StatusBarService]);
 
-Grid.setEnterpriseComponents([
+Grid.setEnterpriseAgStackComponents([
     {componentName: 'AgFiltersToolPanelHeader', theClass: FiltersToolPanelHeaderPanel},
     {componentName: 'AgFiltersToolPanelList', theClass: FiltersToolPanelListPanel},
     {componentName: 'AgPrimaryColsHeader', theClass: PrimaryColsHeaderPanel},

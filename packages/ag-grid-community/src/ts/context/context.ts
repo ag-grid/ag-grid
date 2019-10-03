@@ -13,11 +13,9 @@ import { ModuleNames } from "../modules/moduleNames";
 // each bean is responsible for initialising itself, taking items from the gridOptionsWrapper
 
 export interface ContextParams {
-    seed: any;
+    externalBeans: any;
     beans: any[];
     components: ComponentMeta[];
-    enterpriseDefaultComponents: any[];
-    overrideBeans: any[];
     registeredModules: string[];
     debug: boolean;
 }
@@ -126,9 +124,6 @@ export class Context {
         // register all normal beans
         this.contextParams.beans.forEach(this.createBeanWrapper.bind(this));
         // register override beans, these will overwrite beans above of same name
-        if (this.contextParams.overrideBeans) {
-            this.contextParams.overrideBeans.forEach(this.createBeanWrapper.bind(this));
-        }
 
         // instantiate all beans - overridden beans will be left out
         _.iterateObject(this.beanWrappers, (key: string, beanEntry: BeanWrapper) => {
@@ -247,8 +242,8 @@ export class Context {
     private lookupBeanInstance(wiringBean: string, beanName: string, optional = false): any {
         if (beanName === "context") {
             return this;
-        } else if (this.contextParams.seed && this.contextParams.seed.hasOwnProperty(beanName)) {
-            return this.contextParams.seed[beanName];
+        } else if (this.contextParams.externalBeans && this.contextParams.externalBeans.hasOwnProperty(beanName)) {
+            return this.contextParams.externalBeans[beanName];
         } else {
             const beanEntry = this.beanWrappers[beanName];
             if (beanEntry) {
@@ -275,10 +270,6 @@ export class Context {
         return this.lookupBeanInstance("getBean", name, true);
     }
 
-    public getEnterpriseDefaultComponents() : any[] {
-        return this.contextParams.enterpriseDefaultComponents;
-    }
-
     public destroy(): void {
         // should only be able to destroy once
         if (this.destroyed) {
@@ -289,7 +280,7 @@ export class Context {
         const beanInstances = this.getBeanInstances();
         this.callLifeCycleMethods(beanInstances, 'preDestroyMethods');
 
-        this.contextParams.seed = null;
+        this.contextParams.externalBeans = null;
 
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");

@@ -4,11 +4,7 @@ import {Grid} from "../grid";
 import {InfiniteRowModel} from "../rowModels/infinite/infiniteRowModel";
 
 export const InfiniteRowModelModule: Module = {
-    moduleName: ModuleNames.InfiniteRowModelModule,
-    enterpriseBeans: [
-    ],
-    enterpriseComponents: [
-    ]
+    moduleName: ModuleNames.InfiniteRowModelModule
 };
 
 Grid.addModule([InfiniteRowModelModule]);

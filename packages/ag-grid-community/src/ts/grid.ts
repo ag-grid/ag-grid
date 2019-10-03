@@ -19,7 +19,7 @@ import { Logger, LoggerFactory } from "./logger";
 import { ColumnUtils } from "./columnController/columnUtils";
 import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
-import { Context } from "./context/context";
+import {Context, ContextParams} from "./context/context";
 import { CsvCreator } from "./exporter/csvCreator";
 import { GridCore } from "./gridCore";
 import { StandardMenuFactory } from "./headerRendering/standardMenu";
@@ -115,8 +115,7 @@ export class Grid {
 
     private static enterpriseBeans: any[] = [];
     private static frameworkBeans: any[];
-    private static enterpriseComponents: any[] = [];
-    private static enterpriseDefaultComponents: any[] = [];
+    private static enterpriseAgStackComponents: any[] = [];
 
     private static modulesToInclude: Module[] = [];
 
@@ -142,16 +141,12 @@ export class Grid {
         Grid.enterpriseBeans = enterpriseBeans;
     }
 
-    public static setEnterpriseComponents(components: any[]): void {
-        Grid.enterpriseComponents = components;
+    public static setEnterpriseAgStackComponents(components: any[]): void {
+        Grid.enterpriseAgStackComponents = components;
     }
 
     public static setFrameworkBeans(frameworkBeans: any[]): void {
         Grid.frameworkBeans = frameworkBeans;
-    }
-
-    public static setEnterpriseDefaultComponents(enterpriseDefaultComponents: any[]): void {
-        Grid.enterpriseDefaultComponents = enterpriseDefaultComponents;
     }
 
     public static addModule(modulesToInclude: Module[]): void {
@@ -163,9 +158,11 @@ export class Grid {
 
         if (!eGridDiv) {
             console.error('ag-Grid: no div element provided to the grid');
+            return;
         }
         if (!gridOptions) {
             console.error('ag-Grid: no gridOptions provided to the grid');
+            return;
         }
 
         const debug = !!gridOptions.debug;
@@ -176,38 +173,43 @@ export class Grid {
 
         this.gridOptions = gridOptions;
 
-        const rowModelClass = this.getRowModelClass(gridOptions);
-
-        if (!rowModelClass) {
-            return;
-        }
-
         const enterprise = !_.missingOrEmpty(Grid.enterpriseBeans);
 
-        const moduleBeans = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.beans ? module.beans : []);
-        const moduleEnterpriseBeans = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.enterpriseBeans ? module.enterpriseBeans : []);
-        const moduleEnterpriseComponents = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.enterpriseComponents ? module.enterpriseComponents : []);
-        const modulesEnterpriseDefaultComponents = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.enterpriseDefaultComponents ? module.enterpriseDefaultComponents : []);
+        const beans = this.createBeansList();
+        const agStackComponents = this.createAgStackComponentsList();
+        const externalBeans = this.createExternalBeans(enterprise, eGridDiv, params);
 
+        if (!beans) { return; } // happens when no row model found
+
+        const contextParams: ContextParams = {
+            externalBeans: externalBeans,
+            beans: beans,
+            components: agStackComponents,
+            registeredModules: Grid.modulesToInclude.map(module => module.moduleName),
+            debug: debug
+        };
+
+        this.logger = new Logger('ag-Grid', () => gridOptions.debug);
+        const contextLogger = new Logger('Context', () => contextParams.debug);
+        this.context = new Context(contextParams, contextLogger);
+
+        const gridCore = new GridCore();
+        this.context.wireBean(gridCore);
+
+        this.setColumnsAndData();
+        this.dispatchGridReadyEvent(gridOptions);
+        this.logger.log(`initialised successfully, enterprise = ${enterprise}`);
+    }
+
+    private createExternalBeans(enterprise: boolean, eGridDiv: HTMLElement, params: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (_.missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
         }
 
-        let overrideBeans:any[] = [];
-
-        if (Grid.enterpriseBeans) {
-            overrideBeans = overrideBeans.concat(Grid.enterpriseBeans)
-                .concat(moduleEnterpriseBeans);
-        }
-
-        if (Grid.frameworkBeans) {
-            overrideBeans = overrideBeans.concat(Grid.frameworkBeans);
-        }
-
         const seed = {
             enterprise: enterprise,
-            gridOptions: gridOptions,
+            gridOptions: this.gridOptions,
             eGridDiv: eGridDiv,
             $scope: params ? params.$scope : null,
             $compile: params ? params.$compile : null,
@@ -219,6 +221,10 @@ export class Grid {
             _.assign(seed, params.seedBeanInstances);
         }
 
+        return seed;
+    }
+
+    private createAgStackComponentsList(): any[] {
         let components = [
             { componentName: 'AgCheckbox', theClass: AgCheckbox },
             { componentName: 'AgRadioButton', theClass: AgRadioButton },
@@ -240,49 +246,58 @@ export class Grid {
             { componentName: 'AgDialog', theClass: AgDialog }
         ];
 
-        if (Grid.enterpriseComponents) {
-            components = components.concat(Grid.enterpriseComponents)
-                .concat(moduleEnterpriseComponents);
+        if (Grid.enterpriseAgStackComponents) {
+            components = components.concat(Grid.enterpriseAgStackComponents);
         }
 
-        const contextParams = {
-            overrideBeans: overrideBeans,
-            seed: seed,
-            // Careful with the order of the beans here, there are dependencies between them that need to be kept
-            beans: [
-                // this should only contain SERVICES, it should NEVER contain COMPONENTS
-                rowModelClass, Beans, RowPositionUtils, CellPositionUtils,
-                PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
-                ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-                MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
-                PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
-                SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
-                ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,
-                NavigationService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
-                StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
-                CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
-                ValueFormatterService, StylingService, ScrollVisibleService, SortController,
-                ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
-                ImmutableService, ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer,
-                DetailRowCompCache,
-                ...moduleBeans
-            ],
-            components: components,
-            enterpriseDefaultComponents: Grid.enterpriseDefaultComponents.concat(modulesEnterpriseDefaultComponents),
-            registeredModules: Grid.modulesToInclude.map(module => module.moduleName),
-            debug: debug
-        };
+        return components;
+    }
 
-        this.logger = new Logger('ag-Grid', () => gridOptions.debug);
-        const contextLogger = new Logger('Context', () => contextParams.debug);
-        this.context = new Context(contextParams, contextLogger);
+    private createBeansList(): any[] {
 
-        const gridCore = new GridCore();
-        this.context.wireBean(gridCore);
+        const rowModelClass = this.getRowModelClass();
+        if (!rowModelClass) { return undefined; }
 
-        this.setColumnsAndData();
-        this.dispatchGridReadyEvent(gridOptions);
-        this.logger.log(`initialised successfully, enterprise = ${enterprise}`);
+        // beans should only contain SERVICES, it should NEVER contain COMPONENTS
+
+        const beans = [
+            rowModelClass, Beans, RowPositionUtils, CellPositionUtils,
+            PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
+            ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
+            MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
+            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
+            SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
+            ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,
+            NavigationService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
+            StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
+            CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
+            ValueFormatterService, StylingService, ScrollVisibleService, SortController,
+            ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
+            ImmutableService, ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer,
+            DetailRowCompCache
+        ];
+
+        if (Grid.enterpriseBeans) {
+            beans.push(...Grid.enterpriseBeans);
+        }
+
+        if (Grid.frameworkBeans) {
+            beans.push(...Grid.frameworkBeans);
+        }
+
+        const moduleBeans = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.beans ? module.beans : []);
+        beans.push(...moduleBeans);
+
+        // check for duplicates, as different modules could include the same beans that
+        // they depend on, eg ClientSideRowModel in enterprise, and ClientSideRowModel in community
+        const beansNoDuplicates: any[] = [];
+        beans.forEach( bean => {
+            if (beansNoDuplicates.indexOf(bean) <0 ) {
+                beansNoDuplicates.push(bean);
+            }
+        });
+
+        return beansNoDuplicates;
     }
 
     private extractModuleEntity(moduleEntities: any[], extractor: (module: any) => any) {
@@ -321,8 +336,8 @@ export class Grid {
         eventService.dispatchEvent(readyEvent);
     }
 
-    private getRowModelClass(gridOptions: GridOptions): any {
-        let rowModelType = gridOptions.rowModelType;
+    private getRowModelClass(): any {
+        let rowModelType = this.gridOptions.rowModelType;
 
         //TODO: temporary measure before 'enterprise' is completely removed (similar handling in gridOptionsWrapper is also required)
         rowModelType = rowModelType === 'enterprise' ? Constants.ROW_MODEL_TYPE_SERVER_SIDE : rowModelType;
@@ -364,7 +379,6 @@ export class Grid {
 
 }
 
-Grid.addRowModelClass('clientSide', ClientSideRowModel);
-
 // testing of modules
 import "./modules/infiniteRowModelModule";
+import "./modules/clientSideRowModel";
