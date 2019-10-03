@@ -44,7 +44,7 @@ meta_and_links($title, $keywords, $description, false);
                 <h3>Feature Packed</h3>
                 <p>
                     The performance, feature set and quality of ag-Grid has not been seen before in a
-                    JavaScript datagrid. Many features in ag-Grid are unique to ag-Grid and simply putting
+                    JavaScript datagrid. Many features in ag-Grid are unique to ag-Grid and simply put
                     ag-Grid into a class of it’s own without compromising on quality or performance.
                 </p>
             </div>
