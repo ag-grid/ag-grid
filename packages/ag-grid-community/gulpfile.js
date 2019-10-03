@@ -72,9 +72,32 @@ const tscMainTask = () => {
     ]);
 };
 
+const tscModulesTask = () => {
+    const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
+
+    const tsResult = gulp
+        .src('./src/ts/modules/**/*.ts')
+        .pipe(tsProject());
+
+    return merge([
+        tsResult.dts
+            .pipe(replace("\"./", "\"./dist/lib/"))
+            .pipe(replace("\"../", "\"./dist/lib/"))
+            .pipe(gulp.dest('./')),
+        tsResult.js
+            .pipe(replace("require(\"../", "require(\"./dist/lib/"))
+            .pipe(gulp.dest('./'))
+    ]);
+};
+
 const cleanMain = () => {
     return gulp
         .src(['./main.d.ts', 'main.js'], {read: false, allowEmpty: true})
+        .pipe(clean());
+};
+const cleanModules = () => {
+    return gulp
+        .src(['./*Module.d.ts', './*Module.js'], {read: false, allowEmpty: true})
         .pipe(clean());
 };
 
@@ -291,13 +314,15 @@ const watch = () => {
 // Typescript related tasks
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-main', cleanMain);
-gulp.task('clean', parallel('clean-dist', 'clean-main'));
+gulp.task('clean-modules', cleanModules);
+gulp.task('clean', parallel('clean-dist', 'clean-main', 'clean-modules'));
 gulp.task('tsc-no-clean-src', tscSrcTask);
 gulp.task('tsc-no-clean-main', tscMainTask);
+gulp.task('tsc-no-clean-modules', tscModulesTask);
 gulp.task('tsc-es2015-no-clean-src', tscSrcEs2015Task);
 gulp.task('tsc-es2015-no-clean-main', tscMainEs2015Task);
 gulp.task('tsc-es2015-no-clean', parallel('tsc-es2015-no-clean-src', 'tsc-es2015-no-clean-main'));
-gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-es2015-no-clean'));
+gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-no-clean-modules', 'tsc-es2015-no-clean'));
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 gulp.task('tsc-watch', series('tsc-no-clean', tscWatch));
 

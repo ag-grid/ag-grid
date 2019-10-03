@@ -17,6 +17,8 @@ dist
 packages/ag-grid-community/dist/**
 packages/ag-grid-community/main.d.ts
 packages/ag-grid-community/main.js
+packages/ag-grid-community/*Module.d.ts
+packages/ag-grid-community/*Module.js
 packages/ag-grid-community/dist/ag-grid.js
 packages/ag-grid-community/dist/ag-grid.min.js
 packages/ag-grid-community/dist/ag-grid.min.noStyle.js
@@ -25,8 +27,8 @@ packages/ag-grid-community/dist/styles/*.css
 
 packages/ag-grid-enterprise/main.d.ts
 packages/ag-grid-enterprise/main.js
-packages/ag-grid-enterprise/chartsModule.d.ts
-packages/ag-grid-enterprise/chartsModule.js
+packages/ag-grid-enterprise/*Module.d.ts
+packages/ag-grid-enterprise/*Module.js
 
 packages/ag-grid-angular/aot/**
 packages/ag-grid-angular/dist/**

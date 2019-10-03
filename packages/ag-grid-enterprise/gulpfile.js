@@ -83,6 +83,7 @@ const tscModulesTask = () => {
     return merge([
         tsResult.dts
             .pipe(replace("\"./", "\"./dist/lib/"))
+            .pipe(replace("\"../", "\"./dist/lib/"))
             .pipe(gulp.dest('./')),
         tsResult.js
             .pipe(replace("require(\"../", "require(\"./dist/lib/"))
@@ -214,9 +215,9 @@ gulp.task('clean-dist', series(cleanDist));
 gulp.task('clean-main', cleanMain);
 gulp.task('clean-modules', cleanModules);
 gulp.task('clean', parallel('clean-dist', 'clean-main', 'clean-modules'));
-gulp.task('tsc-no-clean-src', series(tscSrcTask));
-gulp.task('tsc-no-clean-main', series(tscMainTask));
-gulp.task('tsc-no-clean-modules', series(tscModulesTask));
+gulp.task('tsc-no-clean-src', tscSrcTask);
+gulp.task('tsc-no-clean-main', tscMainTask);
+gulp.task('tsc-no-clean-modules', tscModulesTask);
 gulp.task('tsc-es2015-no-clean-src', tscSrcEs2015Task);
 gulp.task('tsc-es2015-no-clean-main', tscMainEs2015Task);
 gulp.task('tsc-es2015-no-clean', parallel('tsc-es2015-no-clean-src', 'tsc-es2015-no-clean-main'));
