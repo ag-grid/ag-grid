@@ -247,13 +247,9 @@ export class AggregationStage implements IRowNodeStage {
     }
 
     public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc): any {
-        let aggFunction: IAggFunc;
-
-        if (typeof aggFuncOrString === 'string') {
-            aggFunction = this.aggFuncService.getAggFunc(aggFuncOrString as string);
-        } else {
-            aggFunction = aggFuncOrString as IAggFunc;
-        }
+        const aggFunction = typeof aggFuncOrString === 'string' ? 
+            this.aggFuncService.getAggFunc(aggFuncOrString) : 
+            aggFuncOrString;
 
         if (typeof aggFunction !== 'function') {
             console.error(`ag-Grid: unrecognised aggregation function ${aggFuncOrString}`);

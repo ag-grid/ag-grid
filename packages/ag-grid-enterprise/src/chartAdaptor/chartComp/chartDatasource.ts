@@ -185,14 +185,12 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        dataAggregated.forEach(groupItem => {
-            params.valueCols.forEach(col => {
-                const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
-                const aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
+        dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
+            const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
+            const aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
 
-                groupItem[col.getId()] = typeof(aggResult.value) !== 'undefined' ? aggResult.value : aggResult;
-            });
-        });
+            groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
+        }));
 
         return dataAggregated;
     }

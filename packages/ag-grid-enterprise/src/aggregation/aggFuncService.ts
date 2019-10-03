@@ -23,7 +23,6 @@ export class AggFuncService implements IAggFuncService {
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     private aggFuncsMap: { [key: string]: IAggFunc } = {};
-
     private initialised = false;
 
     @PostConstruct
@@ -31,7 +30,6 @@ export class AggFuncService implements IAggFuncService {
         if (this.initialised) {
             return;
         }
-        this.initialised = true;
 
         this.initialiseWithDefaultAggregations();
         this.addAggFuncs(this.gridOptionsWrapper.getAggFuncs());
@@ -45,31 +43,25 @@ export class AggFuncService implements IAggFuncService {
         this.aggFuncsMap[AggFuncService.AGG_MAX] = aggMax;
         this.aggFuncsMap[AggFuncService.AGG_COUNT] = aggCount;
         this.aggFuncsMap[AggFuncService.AGG_AVG] = aggAvg;
+        this.initialised = true;
     }
 
     public getDefaultAggFunc(column: Column): string | null {
-
         const allKeys = this.getFuncNames(column);
 
         // use 'sum' if it's a) allowed for the column and b) still registered
         // (ie not removed by user)
-        const sumInKeysList = allKeys.indexOf(AggFuncService.AGG_SUM) >= 0;
+        const sumInKeysList = _.includes(allKeys, AggFuncService.AGG_SUM);
         const sumInFuncs = _.exists(this.aggFuncsMap[AggFuncService.AGG_SUM]);
 
-        const useSum = sumInKeysList && sumInFuncs;
-
-        if (useSum) {
+        if (sumInKeysList && sumInFuncs) {
             return AggFuncService.AGG_SUM;
         } else {
-            if (_.existsAndNotEmpty(allKeys)) {
-                return allKeys[0];
-            } else {
-                return null;
-            }
+            return _.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
         }
     }
 
-    public addAggFuncs(aggFuncs: { [key: string]: IAggFunc } | undefined): void {
+    public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc }): void {
         _.iterateObject(aggFuncs, this.addAggFunc.bind(this));
     }
 
@@ -85,6 +77,7 @@ export class AggFuncService implements IAggFuncService {
 
     public getFuncNames(column: Column): string[] {
         const userAllowedFuncs = column.getColDef().allowedAggFuncs;
+
         if (_.exists(userAllowedFuncs) && userAllowedFuncs) {
             return userAllowedFuncs;
         } else {
@@ -98,69 +91,40 @@ export class AggFuncService implements IAggFuncService {
 }
 
 function aggSum(input: any[]): any {
-    let result: number | null = null;
-    const length = input.length;
-    for (let i = 0; i < length; i++) {
-        if (typeof input[i] === 'number') {
-            if (result === null) {
-                result = input[i];
-            } else {
-                result += input[i];
-            }
-        }
-    }
-    return result;
+    return input
+        .filter(value => typeof value === 'number')
+        .reduce((sum, value) => sum === null ? value : sum + value, null);
 }
 
 function aggFirst(input: any[]): any {
-    if (input.length >= 0) {
-        return input[0];
-    } else {
-        return null;
-    }
+    return input.length > 0 ? input[0] : null;
 }
 
 function aggLast(input: any[]): any {
-    if (input.length >= 0) {
-        return _.last(input);
-    } else {
-        return null;
-    }
+    return input.length > 0 ? _.last(input) : null;
 }
 
 function aggMin(input: any[]): any {
-    let result: number | null = null;
-    const length = input.length;
-    for (let i = 0; i < length; i++) {
-        if (typeof input[i] === 'number') {
-            if (result === null) {
-                result = input[i];
-            } else if (result > input[i]) {
-                result = input[i];
-            }
-        }
-    }
-    return result;
+    return input
+        .filter(value => typeof value === 'number')
+        .reduce((min, value) => min === null || value < min ? value : min, null);
 }
 
 function aggMax(input: any[]): any {
-    let result: number | null = null;
-    const length = input.length;
-    for (let i = 0; i < length; i++) {
-        if (typeof input[i] === 'number') {
-            if (result === null) {
-                result = input[i];
-            } else if (result < input[i]) {
-                result = input[i];
-            }
-        }
-    }
-    return result;
+    return input
+        .filter(value => typeof value === 'number')
+        .reduce((max, value) => max === null || value > max ? value : max, null);
 }
 
 function aggCount(input: any[]): any {
-    const result = {
-        value: 0,
+    const value = input.reduce((count, item) => {
+        const isGroupAgg = _.exists(item) && typeof item.value === 'number';
+
+        return count + (isGroupAgg ? item.value : 1);
+    }, 0);
+
+    return {
+        value,
         toString: function() {
             return this.value.toString();
         },
@@ -169,58 +133,42 @@ function aggCount(input: any[]): any {
             return this.value;
         }
     };
-    const length = input.length;
-    for (let i = 0; i < length; i++) {
-        const isGroupAgg = _.exists(input[i]) && typeof input[i].value === 'number';
-        if (isGroupAgg) {
-            result.value += input[i].value;
-        } else {
-            result.value++;
-        }
-    }
-    return result;
 }
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
 function aggAvg(input: any[]): any {
-
     // the average will be the sum / count
-    let sum = 0;
-    let count = 0;
+    const { sum, count } = input.reduce(({ sum, count }, item) => {
+        const itemIsGroupResult = _.exists(item) && 
+            typeof item.value === 'number' && 
+            typeof item.count === 'number';
 
-    const length = input.length;
-    for (let i = 0; i < length; i++) {
+        if (typeof item === 'number') {
+            return { sum: sum + item, count: count + 1 };
+        }
 
-        const currentItem = input[i];
-
-        const itemIsGroupResult = _.exists(currentItem) && typeof currentItem.value === 'number' && typeof currentItem.count === 'number';
-
-        // skip values that are not numbers (ie skip empty values)
-        if (typeof currentItem === 'number') {
-            sum += currentItem;
-            count++;
-            // check if it's a group (ie value is a wrapper object)
-        } else if (itemIsGroupResult) {
+        if (itemIsGroupResult) {
             // we are aggregating groups, so we take the
             // aggregated values to calculated a weighted average
-            sum += currentItem.value * currentItem.count;
-            count += currentItem.count;
+            return { 
+                sum: sum + item.value * item.count, 
+                count: count + item.count 
+            };
         }
-    }
+
+        return { sum, count };
+    }, { sum: 0, count: 0 });
 
     // avoid divide by zero error
-    let value: number | null = null;
-    if (count !== 0) {
-        value = sum / count;
-    }
+    const value = count > 0 ? sum / count : null;
 
     // the result will be an object. when this cell is rendered, only the avg is shown.
     // however when this cell is part of another aggregation, the count is also needed
     // to create a weighted average for the next level.
-    const result = {
-        count: count,
-        value: value,
+    return {
+        count,
+        value,
         // the grid by default uses toString to render values for an object, so this
         // is a trick to get the default cellRenderer to display the avg value
         toString: function() {
@@ -235,6 +183,4 @@ function aggAvg(input: any[]): any {
             return this.value;
         }
     };
-
-    return result;
 }
