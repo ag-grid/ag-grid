@@ -23,6 +23,7 @@
     }
 
     .ag-header-cell, .ag-header-group-cell {
+        background-color: $background-color;
         transition: background-color 0.5s;
     }
 
