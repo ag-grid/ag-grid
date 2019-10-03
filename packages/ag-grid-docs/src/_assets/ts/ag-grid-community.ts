@@ -4,6 +4,9 @@ if (!(<any>global).hot && HMR) {
     require("webpack-hot-middleware/client?path=/dev/ag-grid-community/__webpack_hmr&reload=true");
 }
 
+// spl todo - make generic
+import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
+
 import "../../../../ag-grid-community/src/styles/ag-grid.scss";
 
 import "../../../../ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material.scss";

@@ -19,4 +19,8 @@ export * from "../../../../ag-grid-community/src/ts/main";
 
 import "../../../../ag-grid-enterprise/src/modules/chartsModule.ts";
 
+// spl todo - make generic
+import "../../../../ag-grid-enterprise/src/modules/viewportRowModelModule.ts";
+
+
 import "../../../../ag-grid-enterprise/src/main.ts";

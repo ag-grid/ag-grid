@@ -20,6 +20,7 @@ module.exports = merge(common, {
     },
     resolve: {
         alias: {
+            'ag-grid-community/dist/lib': path.resolve(__dirname, '../_dev/ag-grid-community/dist/lib'),
             'ag-grid-community/main': path.resolve('./src/_assets/ts/ag-grid-community.ts'),
             'ag-grid-community': path.resolve('./src/_assets/ts/ag-grid-community.ts')
         },
