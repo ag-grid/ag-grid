@@ -49,12 +49,20 @@ export class ChartDataPanel extends Component {
         this.chartType = this.chartController.getChartType();
 
         if (_.areEqual(_.keys(this.columnComps), colIds) && this.chartType === currentChartType) {
-            // columns haven't changed, so just update values
+            // if possible, we just update existing components
             [ ...dimensionCols, ...valueCols ].forEach(col => {
                 this.columnComps.get(col.colId)!.setValue(col.selected, true);
             });
+
+            if (this.chartController.isActiveXYChart()) {
+                const getSeriesLabel = this.generateGetSeriesLabel();
+                
+                valueCols.forEach(col => {
+                    this.columnComps.get(col.colId)!.setLabel(getSeriesLabel(col));
+                });
+            }
         } else {
-            // re-render everything
+            // otherwise we re-create everything
             this.clearComponents();
             this.createCategoriesGroupComponent(dimensionCols);
             this.createSeriesGroupComponent(valueCols);
@@ -107,10 +115,12 @@ export class ChartDataPanel extends Component {
             suppressOpenCloseIcons: false
         }));
 
+        const getSeriesLabel = this.generateGetSeriesLabel();
+
         columns.forEach(col => {
             const comp = this.seriesGroupComp!.wireDependentBean(new AgCheckbox());
             
-            comp.setLabel(_.escape(col.displayName)!);
+            comp.setLabel(getSeriesLabel(col));
             comp.setValue(col.selected);
 
             this.addChangeListener(comp, col);
@@ -119,6 +129,37 @@ export class ChartDataPanel extends Component {
         });
 
         this.addComponent(this.getGui(), this.seriesGroupComp);
+    }
+
+    private generateGetSeriesLabel(): (col: ColState) => string {
+        if (!this.chartController.isActiveXYChart()) {
+            return col => _.escape(col.displayName)!;
+        }
+
+        const isBubble = this.chartType === ChartType.Bubble;
+        let activeSeriesCount = 0;
+
+        return (col: ColState): string => {
+            const escapedLabel = _.escape(col.displayName)!;
+
+            if (!col.selected) {
+                return escapedLabel;
+            }
+
+            activeSeriesCount++;
+            
+            let axisLabel;
+
+            if (activeSeriesCount === 1) {
+                axisLabel = "X";
+            } else if (isBubble) {
+                axisLabel = (activeSeriesCount - 1) % 2 === 1 ? "Y" : "size";
+            } else {
+                axisLabel = "Y";
+            }
+
+            return `${escapedLabel} (${axisLabel})`;
+        };
     }
 
     private getCategoryGroupTitle() {
