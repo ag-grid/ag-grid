@@ -2,7 +2,6 @@ import {
     _,
     Autowired,
     ColumnVO,
-    Context,
     EventService,
     GridOptionsWrapper,
     IServerSideCache,
@@ -13,10 +12,17 @@ import {
     Qualifier,
     RowBounds,
     RowNode,
-    RowNodeCache,
-    RowNodeCacheParams
+    Grid,
+    RowNodeCacheParams, RowNodeCache
 } from "ag-grid-community";
-import { ServerSideBlock } from "./serverSideBlock";
+
+import {ServerSideBlock} from "./serverSideBlock";
+
+// Imports belonging to modules
+// import {RowNodeCacheParams} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeCache";
+// import {RowNodeCache} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeCache";
+
+Grid.logModuleClass('ServerSideCache');
 
 export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
@@ -24,7 +30,6 @@ export interface ServerSideCacheParams extends RowNodeCacheParams {
     pivotCols: ColumnVO[];
     pivotMode: boolean;
     datasource?: IServerSideDatasource;
-    lastAccessedSequence: NumberSequence;
 }
 
 export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCacheParams> implements IServerSideCache {

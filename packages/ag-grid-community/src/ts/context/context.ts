@@ -139,9 +139,10 @@ export class Context {
             const constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
             const newInstance = applyToConstructor(beanEntry.bean, constructorParams);
             beanEntry.beanInstance = newInstance;
-
-            this.logger.log("bean " + this.getBeanName(newInstance) + " created");
         });
+
+        const createdBeanNames = Object.keys(this.beanWrappers).join(', ');
+        this.logger.log(`created beans: ${createdBeanNames}`);
     }
 
     // tslint:disable-next-line
@@ -164,6 +165,12 @@ export class Context {
             beanInstance: null as any,
             beanName: metaData.beanName
         };
+
+        if (this.beanWrappers[metaData.beanName]) {
+            this.logger.log(`overriding bean ${metaData.beanName}`);
+            console.log('old', this.beanWrappers[metaData.beanName]);
+            console.log('new', beanEntry);
+        }
 
         this.beanWrappers[metaData.beanName] = beanEntry;
     }

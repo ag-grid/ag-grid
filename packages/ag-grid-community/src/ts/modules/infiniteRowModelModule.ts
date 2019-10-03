@@ -12,3 +12,4 @@ export const InfiniteRowModelModule: Module = {
 };
 
 Grid.addModule([InfiniteRowModelModule]);
+Grid.addRowModelClass('infinite', InfiniteRowModel);

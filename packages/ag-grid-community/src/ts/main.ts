@@ -173,8 +173,6 @@ export { PinnedRowModel } from "./rowModels/pinnedRowModel";
 export { ClientSideRowModel , RowNodeTransaction } from "./rowModels/clientSide/clientSideRowModel";
 export { ChangedPath } from "./rowModels/clientSide/changedPath";
 export { ClientSideNodeManager } from "./rowModels/clientSide/clientSideNodeManager";
-export { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
-export { InfiniteCacheParams } from "./rowModels/infinite/infiniteCache";
 export { RowNodeBlock } from "./rowModels/cache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./rowModels/cache/rowNodeBlockLoader";
 export { PaginationProxy } from "./rowModels/paginationProxy";

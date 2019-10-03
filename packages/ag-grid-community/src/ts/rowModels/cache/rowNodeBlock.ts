@@ -5,6 +5,9 @@ import { BeanStub } from "../../context/beanStub";
 import { RowNodeCacheParams } from "./rowNodeCache";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { AgEvent } from "../../events";
+import {Grid} from "../../grid";
+
+Grid.logModuleClass('RowNodeBlock');
 
 export interface RowNodeBlockBeans {
     context: Context;

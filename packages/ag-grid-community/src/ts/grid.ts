@@ -33,7 +33,6 @@ import { FilterStage } from "./rowModels/clientSide/filterStage";
 import { SortStage } from "./rowModels/clientSide/sortStage";
 import { FlattenStage } from "./rowModels/clientSide/flattenStage";
 import { Events, GridReadyEvent } from "./events";
-import { InfiniteRowModel } from "./rowModels/infinite/infiniteRowModel";
 import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
 import { CellRendererFactory } from "./rendering/cellRendererFactory";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
@@ -121,16 +120,22 @@ export class Grid {
 
     private static modulesToInclude: Module[] = [];
 
+    private static loggedModuleClassNames: string[] = [];
+
     protected logger: Logger;
 
     private gridOptions: GridOptions;
 
     // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
-    private static RowModelClasses: any = {};
+    private static rowModelClasses: any = {};
+
+    public static logModuleClass(className: string): void {
+        this.loggedModuleClassNames.push(className);
+    }
 
     public static addRowModelClass(name: string, rowModelClass: any): void {
-        this.RowModelClasses[name] = rowModelClass;
+        this.rowModelClasses[name] = rowModelClass;
     }
 
     public static setEnterpriseBeans(enterpriseBeans: any[]): void {
@@ -163,9 +168,19 @@ export class Grid {
             console.error('ag-Grid: no gridOptions provided to the grid');
         }
 
+        const debug = !!gridOptions.debug;
+
+        if (debug) {
+            console.log('ag-Grid: loaded module classes: ' + Grid.loggedModuleClassNames.join(', '));
+        }
+
         this.gridOptions = gridOptions;
 
         const rowModelClass = this.getRowModelClass(gridOptions);
+
+        if (!rowModelClass) {
+            return;
+        }
 
         const enterprise = !_.missingOrEmpty(Grid.enterpriseBeans);
 
@@ -233,17 +248,17 @@ export class Grid {
         const contextParams = {
             overrideBeans: overrideBeans,
             seed: seed,
-            //Careful with the order of the beans here, there are dependencies between them that need to be kept
+            // Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [
                 // this should only contain SERVICES, it should NEVER contain COMPONENTS
                 rowModelClass, Beans, RowPositionUtils, CellPositionUtils,
                 PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
-                ComponentMetadataProvider, ResizeObserverService, UserComponentRegistry, UserComponentFactory,
+                ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
                 MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
                 PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
                 SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
                 ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,
-                NavigationService, PopupService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
+                NavigationService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
                 StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
                 ValueFormatterService, StylingService, ScrollVisibleService, SortController,
@@ -255,7 +270,7 @@ export class Grid {
             components: components,
             enterpriseDefaultComponents: Grid.enterpriseDefaultComponents.concat(modulesEnterpriseDefaultComponents),
             registeredModules: Grid.modulesToInclude.map(module => module.moduleName),
-            debug: !!gridOptions.debug
+            debug: debug
         };
 
         this.logger = new Logger('ag-Grid', () => gridOptions.debug);
@@ -313,20 +328,30 @@ export class Grid {
         rowModelType = rowModelType === 'enterprise' ? Constants.ROW_MODEL_TYPE_SERVER_SIDE : rowModelType;
 
         if (_.exists(rowModelType)) {
-            const rowModelClass = Grid.RowModelClasses[rowModelType];
+            const rowModelClass = Grid.rowModelClasses[rowModelType];
             if (_.exists(rowModelClass)) {
                 return rowModelClass;
             } else {
+                if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
+                    console.error(`ag-Grid: Row Model "Infinite" not found. Please ensure the `
+                        +`InfiniteRowModelModule is loaded using: import 'ag-grid-community/infiniteRowModelModule';`);
+                }
                 if (rowModelType === 'normal') {
                     console.warn(`ag-Grid: normal rowModel deprecated. Should now be called client side row model instead.`);
                     return ClientSideRowModel;
                 }
                 console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
                 if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
-                    console.error('ag-Grid: rowModelType viewport is only available in ag-Grid Enterprise');
+                    console.error(`ag-Grid: Row Model "Viewport" not found. For this row model to work you must ` +
+                                        `a) be using ag-Grid Enterprise and ` +
+                                        `b) ensure ViewportRowModelModule is ` +
+                                        `loaded using: import 'ag-grid-enterprise/viewportRowModelModule';`);
                 }
                 if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-                    console.error('ag-Grid: rowModelType server side is only available in ag-Grid Enterprise');
+                    console.error(`ag-Grid: Row Model "Server Side" not found. For this row model to work you must ` +
+                        `a) be using ag-Grid Enterprise and ` +
+                        `b) ensure ServerSideRowModelModule is ` +
+                        `loaded using: import 'ag-grid-enterprise/serverSideRowModelModule';`);
                 }
             }
         }
@@ -340,4 +365,6 @@ export class Grid {
 }
 
 Grid.addRowModelClass('clientSide', ClientSideRowModel);
-Grid.addRowModelClass('infinite', InfiniteRowModel);
+
+// testing of modules
+import "./modules/infiniteRowModelModule";

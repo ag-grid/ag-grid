@@ -6,7 +6,6 @@ import { GroupStage } from "./rowStages/groupStage";
 import { AggregationStage } from "./rowStages/aggregationStage";
 import { EnterpriseBoot } from "./enterpriseBoot";
 import { ContextMenuFactory } from "./menu/contextMenu";
-import { ViewportRowModel } from "./rowModels/viewport/viewportRowModel";
 import { SideBarComp } from "./sideBar/sideBarComp";
 import { LicenseManager } from "./licenseManager";
 import { MD5 } from "./license/md5";
@@ -17,7 +16,6 @@ import { MenuItemMapper } from "./menu/menuItemMapper";
 import { ExcelCreator } from "./exporter/excelCreator";
 import { ExcelXmlFactory } from "./exporter/excelXmlFactory";
 import { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
-import { ServerSideRowModel } from "./rowModels/serverSide/serverSideRowModel";
 import { HorizontalResizeComp } from "./sideBar/horizontalResizeComp";
 import { SideBarButtonsComp } from "./sideBar/sideBarButtonsComp";
 import { StatusBarService } from "./statusBar/statusBarService";
@@ -47,7 +45,6 @@ export { MenuList } from "./menu/menuList";
 export { RangeController } from "./rangeController";
 export { RowGroupDropZonePanel } from "./sideBar/providedPanels/columns/panels/rowGroupDropZonePanel";
 export { ContextMenuFactory } from "./menu/contextMenu";
-export { ViewportRowModel } from "./rowModels/viewport/viewportRowModel";
 export { RichSelectCellEditor } from "./rendering/richSelect/richSelectCellEditor";
 export { RichSelectRow } from "./rendering/richSelect/richSelectRow";
 export { VirtualList } from "./rendering/virtualList";
@@ -77,9 +74,6 @@ Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, E
     ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
     MenuItemMapper, StatusBarService]);
 
-Grid.addRowModelClass('viewport', ViewportRowModel);
-Grid.addRowModelClass('serverSide', ServerSideRowModel);
-
 Grid.setEnterpriseComponents([
     {componentName: 'AgFiltersToolPanelHeader', theClass: FiltersToolPanelHeaderPanel},
     {componentName: 'AgFiltersToolPanelList', theClass: FiltersToolPanelListPanel},
@@ -95,3 +89,7 @@ Grid.setEnterpriseComponents([
     {componentName: 'AgFillHandle', theClass: FillHandle},
     {componentName: 'AgRangeHandle', theClass: RangeHandle}
 ]);
+
+// include enterprise modules
+import "./modules/viewportRowModelModule";
+import "./modules/serverSideRowModelModule";

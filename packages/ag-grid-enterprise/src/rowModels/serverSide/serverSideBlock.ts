@@ -13,13 +13,18 @@ import {
     Qualifier,
     RowBounds,
     RowNode,
-    RowNodeBlock,
     RowRenderer,
     ValueService,
-    _
+    _, Grid,
+    RowNodeBlock
 } from "ag-grid-community";
 
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
+
+// Imports belonging to modules
+//  import {RowNodeBlock} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeBlock";
+
+Grid.logModuleClass('ServerSideBlock');
 
 export class ServerSideBlock extends RowNodeBlock {
 

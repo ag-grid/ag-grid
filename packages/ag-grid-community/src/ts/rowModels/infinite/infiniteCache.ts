@@ -1,13 +1,16 @@
-import { RowNode } from "../../entities/rowNode";
-import { Autowired, Context, PostConstruct, Qualifier } from "../../context/context";
-import { EventService } from "../../eventService";
-import { Events, RowDataUpdatedEvent } from "../../events";
-import { LoggerFactory } from "../../logger";
-import { IDatasource } from "../iDatasource";
-import { InfiniteBlock } from "./infiniteBlock";
-import { RowNodeCache, RowNodeCacheParams } from "../cache/rowNodeCache";
-import { GridApi } from "../../gridApi";
-import { ColumnApi } from "../../columnController/columnApi";
+import {RowNode} from "../../entities/rowNode";
+import {Autowired, PostConstruct, Qualifier} from "../../context/context";
+import {EventService} from "../../eventService";
+import {Events, RowDataUpdatedEvent} from "../../events";
+import {LoggerFactory} from "../../logger";
+import {IDatasource} from "../iDatasource";
+import {InfiniteBlock} from "./infiniteBlock";
+import {RowNodeCache, RowNodeCacheParams} from "../cache/rowNodeCache";
+import {GridApi} from "../../gridApi";
+import {ColumnApi} from "../../columnController/columnApi";
+import {Grid} from "../../grid";
+
+Grid.logModuleClass('InfiniteCache');
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;

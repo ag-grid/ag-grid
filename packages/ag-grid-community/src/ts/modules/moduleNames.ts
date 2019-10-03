@@ -5,9 +5,3 @@ export const enum ModuleNames {
     ClientSideRowModelModule = "clientSideRowModelModule",
     ServerSideRowModelModule = "serverSideRowModelModule",
 }
-
-export function logAboutModule(moduleName: string): void {
-    // console.log('###########################################################');
-    // console.log('########### model ' + moduleName + ' loaded');
-    // console.log('###########################################################');
-}

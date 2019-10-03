@@ -8,7 +8,6 @@ import {
     ColumnController,
     ColumnVO,
     Constants,
-    Context,
     Events,
     EventService,
     FilterManager,
@@ -26,13 +25,20 @@ import {
     RowBounds,
     RowDataChangedEvent,
     RowNode,
-    RowNodeBlockLoader,
-    RowNodeCache,
     SortController,
-    RowRenderer
+    RowRenderer,
+    Grid,
+    RowNodeBlockLoader,
+    RowNodeCache
 } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 import { ServerSideBlock } from "./serverSideBlock";
+
+// Imports belonging to modules
+// import {RowNodeBlockLoader} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeBlockLoader";
+// import {RowNodeCache} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeCache";
+
+Grid.logModuleClass('ServerSideRowModel');
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
