@@ -76,7 +76,7 @@ const tscModulesTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
 
     const tsResult = gulp
-        .src('./src/ts/modules/**/*.ts')
+        .src(['./src/ts/modules/**/*.ts', '!./src/ts/modules/**/moduleNames.ts'])
         .pipe(tsProject());
 
     return merge([
@@ -244,7 +244,7 @@ const scssWatch = () => {
 
 // Start of webpack related tasks
 const webpackTask = (minify, styles) => {
-    const mainFile = styles ? './main-with-styles.js' : './main.js';
+    const mainFile = styles ? './webpack-with-styles.js' : './webpack-no-styles.js';
 
     let fileName = 'ag-grid-community';
     fileName += minify ? '.min' : '';

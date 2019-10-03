@@ -111,6 +111,7 @@ const tscSrcEs2015Task = () => {
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/es2015')),
         tsResult.js
+            .pipe(replace("ag-grid-community/dist/lib", "ag-grid-community/dist/es2015"))
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/es2015'))
     ]);
@@ -148,7 +149,7 @@ const webpackWatch = () => {
 };
 
 const webpackTask = (minify, styles) => {
-    const mainFile = styles ? './webpack-with-styles.js' : './webpack.js';
+    const mainFile = styles ? './webpack-with-styles.js' : './webpack-no-styles.js';
 
     let fileName = 'ag-grid-enterprise';
     fileName += minify ? '.min' : '';

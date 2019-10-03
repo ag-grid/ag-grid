@@ -1,4 +1,3 @@
-require('./chartsModule');
 require('./dist/lib/main');
 
 // add in exports for ag-Grid-Enterprise
