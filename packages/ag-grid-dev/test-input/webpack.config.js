@@ -1,17 +1,13 @@
 const path = require('path');
 const autoprefixer = require('autoprefixer');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const ROOT = path.resolve(__dirname, 'bundle-src');
-const DESTINATION = path.resolve(__dirname, 'dist');
+const ROOT = path.resolve(__dirname, 'test-input');
+const DESTINATION = path.resolve(__dirname, '../bundles');
 
 module.exports = {
     mode: 'development',
 
-    context: ROOT,
-
     output: {
-        filename: '[name].bundle.js',
         path: DESTINATION
     },
 
@@ -62,13 +58,6 @@ module.exports = {
             }
         ]
     },
-
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: 'grid/index.html'
-
-        })
-    ],
 
     devtool: 'eval-source-map',
     devServer: {}

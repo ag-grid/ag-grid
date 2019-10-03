@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "./tests",
     "module": "commonjs",
     "target": "es5",
     "experimentalDecorators": true
-  }
+  },
+  "include": [
+    "moduleParser/*"
+  ]
 }

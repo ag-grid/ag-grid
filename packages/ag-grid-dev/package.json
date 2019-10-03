@@ -4,12 +4,11 @@
   "description": "ag-Grid Modularisation Tests",
   "main": "index.js",
   "scripts": {
-    "test": "cd test-src && ./runTests.sh",
-    "build": "npm run build:charts && npm run build:community && npm run build:enterprise",
-    "build:charts": "webpack --config webpack.charts.config.js",
-    "build:community": "webpack --config webpack.community.config.js",
-    "build:enterprise": "webpack --config webpack.enterprise.config.js",
-    "build:testSrc": "tsc -p tsconfig-test.json"
+    "test": "cd tests && ./runTests.sh",
+    "build:test-input": "cd test-config && node buildTests.js",
+    "build:bundles": "cd test-input && ./webpack.sh",
+    "build:moduleParser": "tsc -p tsconfig-moduleParser.json",
+    "build": "npm run build:moduleParser && npm run build:test-input && npm run build:bundles"
   },
   "repository": {
     "type": "git",

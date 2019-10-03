@@ -1,0 +1,14 @@
+{
+  "modules": [
+    {
+      "moduleSource": {
+        "exportedModuleName": "ChartsModule",
+        "moduleSource": "ag-grid-enterprise/src/modules/chartsModule"
+      },
+      "exposedModules": [
+        "ag-grid-enterprise/chartsModule"
+      ],
+      "enterprise": true
+    }
+  ]
+}
