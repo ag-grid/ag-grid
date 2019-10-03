@@ -1,10 +1,11 @@
 const fs = require('fs');
 const glob = require("glob");
 
-const communityModules = glob.sync("./node_modules/ag-grid-community/*Module.js")
-    .map(module => module.replace('.js', ''))
-    .map(module => module.replace('./node_modules/', ''))
-    .map(module => `require('${module}');`);
+const communityModules = [];
+// const communityModules = glob.sync("./node_modules/ag-grid-community/*Module.js")
+//     .map(module => module.replace('.js', ''))
+//     .map(module => module.replace('./node_modules/', ''))
+//     .map(module => `require('${module}');`);
 const modules = glob.sync("*Module.js")
     .map(module => module.replace('.js', ''))
     .map(module => `require('./${module}');`);

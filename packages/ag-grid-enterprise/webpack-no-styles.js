@@ -1,4 +1,4 @@
-require('ag-grid-community/infiniteRowModelModule');
+
 require('./chartsModule');
 require('./viewportRowModelModule');
 require('./dist/lib/main');
