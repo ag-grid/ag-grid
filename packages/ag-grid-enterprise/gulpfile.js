@@ -182,7 +182,11 @@ const webpackTask = (minify, styles) => {
                     // primarily for including community bundles into enterprise
                     // if we don't do this then the grid import will result in a huge increase (and duplicated code
                     // which webpack can't seem to detect)
+                    // spl todo - make this more generic and flexibe
+                    // how to do this resolution of ./dist/lib -> ./node_modules/ag-grid-community for community only?
                     './dist/lib/grid': path.resolve(__dirname, './node_modules/ag-grid-community'),
+                    './dist/lib/rowModels/clientSide/clientSideRowModel': path.resolve(__dirname, './node_modules/ag-grid-community'),
+                    './dist/lib/rowModels/infinite/infiniteRowModel': path.resolve(__dirname, './node_modules/ag-grid-community'),
                 }
             },
             module: {

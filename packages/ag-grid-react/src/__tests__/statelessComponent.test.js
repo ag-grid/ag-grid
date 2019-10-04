@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {AgGridReact} from '../agGridReact';
-
+import 'ag-grid-community/clientSideRowModelModule';
 import {ensureGridApiHasBeenSet} from "./utils"
 
 import {mount} from 'enzyme';
@@ -22,7 +22,7 @@ afterEach(() => {
 });
 
 it('stateless function renders as expected', () => {
-    // stateless compoenents _still_ require the wrapping div... :-(
+    // stateless components _still_ require the wrapping div... :-(
     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><span>Age: 24</span></div>`);
 });
 
