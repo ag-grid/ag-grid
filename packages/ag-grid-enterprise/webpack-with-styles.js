@@ -1,3 +1,4 @@
+require('ag-grid-community/clientSideRowModelModule');
 require('ag-grid-community/infiniteRowModelModule');
 require('./chartsModule');
 require('./serverSideRowModelModule');

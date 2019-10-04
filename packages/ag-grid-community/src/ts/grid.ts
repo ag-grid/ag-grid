@@ -381,4 +381,4 @@ export class Grid {
 
 // testing of modules
 import "./modules/infiniteRowModelModule";
-import "./modules/clientSideRowModel";
+import "./modules/clientSideRowModelModule";
