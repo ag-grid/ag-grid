@@ -162,15 +162,21 @@ export class TimeScale extends ContinuousScale {
         return specifier == undefined ? this.defaultTickFormat : this.format(specifier);
     }
 
-    nice(interval: number | CountableTimeInterval = 10, step?: number) {
+    /**
+     * Extends the domain so that it starts and ends on nice round values.
+     * This method typically modifies the scale’s domain, and may only extend the bounds to the nearest round value.
+     * @param interval
+     */
+    nice(interval: number | CountableTimeInterval = 10): void {
         const d = super.getDomain();
-        const i = this.tickInterval(interval, d[0], d[d.length - 1], step);
+        const i = this.tickInterval(interval, d[0], d[d.length - 1]);
+
         if (i) {
             this.domain = this._nice(d, i);
         }
     }
 
-    private _nice(domain: Date[], interval: TimeInterval) {
+    private _nice(domain: Date[], interval: TimeInterval): Date[] {
         domain = domain.slice();
         let i0 = 0;
         let i1 = domain.length - 1;

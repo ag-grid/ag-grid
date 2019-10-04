@@ -177,6 +177,14 @@ const webpackTask = (minify, styles) => {
                 library: ["agGrid"],
                 libraryTarget: "umd"
             },
+            resolve: {
+                alias: {
+                    // primarily for including community bundles into enterprise
+                    // if we don't do this then the grid import will result in a huge increase (and duplicated code
+                    // which webpack can't seem to detect)
+                    './dist/lib/grid': path.resolve(__dirname, './node_modules/ag-grid-community'),
+                }
+            },
             module: {
                 rules: [
                     {
