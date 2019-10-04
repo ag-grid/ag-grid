@@ -374,6 +374,6 @@ export class Grid {
 }
 
 // testing of modules
-import "./modules/infiniteRowModelModule";
-import "./modules/clientSideRowModelModule";
+// import "./modules/infiniteRowModelModule";
+// import "./modules/clientSideRowModelModule";
 import {ModuleLogger} from "./utils/moduleLogger";
