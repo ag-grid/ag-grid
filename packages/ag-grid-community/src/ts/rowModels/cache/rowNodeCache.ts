@@ -5,9 +5,9 @@ import { Logger } from "../../logger";
 import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
 import { NumberSequence,  _ } from "../../utils";
-import {Grid} from "../../grid";
+import {ModuleLogger} from "../../utils/moduleLogger";
 
-Grid.logModuleClass('RowNodeCache');
+ModuleLogger.logModuleClass('RowNodeCache');
 
 export interface RowNodeCacheParams {
     initialRowCount: number;

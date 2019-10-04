@@ -8,9 +8,9 @@ import {InfiniteBlock} from "./infiniteBlock";
 import {RowNodeCache, RowNodeCacheParams} from "../cache/rowNodeCache";
 import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnApi";
-import {Grid} from "../../grid";
+import {ModuleLogger} from "../../utils/moduleLogger";
 
-Grid.logModuleClass('InfiniteCache');
+ModuleLogger.logModuleClass('InfiniteCache');
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;

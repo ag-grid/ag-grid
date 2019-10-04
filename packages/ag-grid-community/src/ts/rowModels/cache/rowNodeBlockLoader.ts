@@ -2,9 +2,9 @@ import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger, LoggerFactory } from "../../logger";
 import { Qualifier } from "../../context/context";
 import { _ } from "../../utils";
-import {Grid} from "../../grid";
+import {ModuleLogger} from "../../utils/moduleLogger";
 
-Grid.logModuleClass('RowNodeBlockLoader');
+ModuleLogger.logModuleClass('RowNodeBlockLoader');
 
 export class RowNodeBlockLoader {
 

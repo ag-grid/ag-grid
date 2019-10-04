@@ -18,10 +18,10 @@ import {
     ModelUpdatedEvent,
     RowRenderer,
     _,
-    Grid
+    ModuleLogger
 } from "ag-grid-community";
 
-Grid.logModuleClass('ViewportRowModel');
+ModuleLogger.logModuleClass('ViewportRowModel');
 
 @Bean('rowModel')
 export class ViewportRowModel implements IRowModel {
