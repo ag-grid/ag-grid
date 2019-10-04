@@ -1,10 +1,11 @@
 import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { ClientSideRowModel, RowDataTransaction } from "./clientSideRowModel";
+import { ClientSideRowModel } from "./clientSideRowModel";
 import { IRowModel } from "../../interfaces/iRowModel";
 import { Constants } from "../../constants";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { RowNode } from "../../entities/rowNode";
 import { _ } from "../../utils";
+import {RowDataTransaction} from "./rowDataTransaction";
 
 @Bean('immutableService')
 export class ImmutableService {

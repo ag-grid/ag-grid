@@ -178,7 +178,7 @@ var gridOptions = {
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
     floatingFilter: !isSmall,
-    // debug: true,
+    debug: true,
     // editType: 'fullRow',
     // debug: true,
     // suppressMultiRangeSelection: true,

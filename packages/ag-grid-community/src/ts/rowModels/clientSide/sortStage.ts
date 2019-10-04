@@ -4,9 +4,9 @@ import { StageExecuteParams } from "../../interfaces/iRowNodeStage";
 import { SortOption, SortService } from "../../rowNodes/sortService";
 import { RowNode } from "../../entities/rowNode";
 import { SortController } from "../../sortController";
-import { RowNodeTransaction } from "./clientSideRowModel";
 import { ColumnController } from "../../columnController/columnController";
 import { _ } from "../../utils";
+import {RowNodeTransaction} from "./rowNodeTransaction";
 
 @Bean('sortStage')
 export class SortStage {

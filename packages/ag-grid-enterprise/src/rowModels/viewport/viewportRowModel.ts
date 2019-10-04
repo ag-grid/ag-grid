@@ -54,10 +54,10 @@ export class ViewportRowModel implements IRowModel {
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
         this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+    }
 
-        const viewportEnabled = this.gridOptionsWrapper.isRowModelViewport();
-
-        if (viewportEnabled && this.gridOptionsWrapper.getViewportDatasource()) {
+    public start(): void {
+        if (this.gridOptionsWrapper.getViewportDatasource()) {
             this.setViewportDatasource(this.gridOptionsWrapper.getViewportDatasource());
         }
     }

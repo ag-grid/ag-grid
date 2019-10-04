@@ -6,6 +6,7 @@ if (!(<any>global).hot && HMR) {
 
 // spl todo - make generic
 import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
+import "../../../../ag-grid-community/src/ts/modules/clientSideRowModelModule.ts";
 
 import "../../../../ag-grid-community/src/styles/ag-grid.scss";
 

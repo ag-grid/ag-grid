@@ -31,12 +31,7 @@ import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
 import {IDatasource} from "./rowModels/iDatasource";
 import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
-import {
-    ClientSideRowModel,
-    RefreshModelParams,
-    RowDataTransaction,
-    RowNodeTransaction
-} from "./rowModels/clientSide/clientSideRowModel";
+import {ClientSideRowModel} from "./rowModels/clientSide/clientSideRowModel";
 import {ImmutableService} from "./rowModels/clientSide/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
@@ -57,6 +52,10 @@ import {_} from "./utils";
 import {ChartRef, ProcessChartOptionsParams} from "./entities/gridOptions";
 import {ChartOptions, ChartType} from "./interfaces/iChartOptions";
 import {IToolPanel} from "./interfaces/iToolPanel";
+import {RowNodeTransaction} from "./rowModels/clientSide/rowNodeTransaction";
+import {IClientSideRowModel} from "./interfaces/iClientSideRowModel";
+import {RefreshModelParams} from "./rowModels/clientSide/refreshModelParams";
+import {RowDataTransaction} from "./rowModels/clientSide/rowDataTransaction";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -151,8 +150,8 @@ export class GridApi {
     private gridCore: GridCore;
 
     private headerRootComp: HeaderRootComp;
-    private clientSideRowModel: ClientSideRowModel;
-    private infinitePageRowModel: InfiniteRowModel;
+    private clientSideRowModel: IClientSideRowModel;
+    private infiniteRowModel: InfiniteRowModel;
 
     private serverSideRowModel: IServerSideRowModel;
 
@@ -176,7 +175,7 @@ export class GridApi {
                 this.clientSideRowModel = this.rowModel as ClientSideRowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:
-                this.infinitePageRowModel = this.rowModel as InfiniteRowModel;
+                this.infiniteRowModel = this.rowModel as InfiniteRowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_SERVER_SIDE:
                 this.serverSideRowModel = this.rowModel as IServerSideRowModel;
@@ -1118,8 +1117,8 @@ export class GridApi {
         let res: RowNodeTransaction = null;
         if (this.clientSideRowModel) {
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
-        } else if (this.infinitePageRowModel) {
-            this.infinitePageRowModel.updateRowData(rowDataTransaction);
+        } else if (this.infiniteRowModel) {
+            this.infiniteRowModel.updateRowData(rowDataTransaction);
         } else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
         }
@@ -1170,8 +1169,8 @@ export class GridApi {
     }
 
     public refreshInfiniteCache(): void {
-        if (this.infinitePageRowModel) {
-            this.infinitePageRowModel.refreshCache();
+        if (this.infiniteRowModel) {
+            this.infiniteRowModel.refreshCache();
         } else {
             console.warn(`ag-Grid: api.refreshInfiniteCache is only available when rowModelType='infinite'.`);
         }
@@ -1188,8 +1187,8 @@ export class GridApi {
     }
 
     public purgeInfiniteCache(): void {
-        if (this.infinitePageRowModel) {
-            this.infinitePageRowModel.purgeCache();
+        if (this.infiniteRowModel) {
+            this.infiniteRowModel.purgeCache();
         } else {
             console.warn(`ag-Grid: api.purgeInfiniteCache is only available when rowModelType='infinite'.`);
         }
@@ -1215,16 +1214,16 @@ export class GridApi {
     }
 
     public getInfiniteRowCount(): number {
-        if (this.infinitePageRowModel) {
-            return this.infinitePageRowModel.getVirtualRowCount();
+        if (this.infiniteRowModel) {
+            return this.infiniteRowModel.getVirtualRowCount();
         } else {
             console.warn(`ag-Grid: api.getVirtualRowCount is only available when rowModelType='virtual'.`);
         }
     }
 
     public isMaxRowFound(): boolean {
-        if (this.infinitePageRowModel) {
-            return this.infinitePageRowModel.isMaxRowFound();
+        if (this.infiniteRowModel) {
+            return this.infiniteRowModel.isMaxRowFound();
         } else {
             console.warn(`ag-Grid: api.isMaxRowFound is only available when rowModelType='virtual'.`);
         }
@@ -1236,8 +1235,8 @@ export class GridApi {
     }
 
     public setInfiniteRowCount(rowCount: number, maxRowFound?: boolean): void {
-        if (this.infinitePageRowModel) {
-            this.infinitePageRowModel.setVirtualRowCount(rowCount, maxRowFound);
+        if (this.infiniteRowModel) {
+            this.infiniteRowModel.setVirtualRowCount(rowCount, maxRowFound);
         } else {
             console.warn(`ag-Grid: api.setVirtualRowCount is only available when rowModelType='virtual'.`);
         }
@@ -1254,8 +1253,8 @@ export class GridApi {
     }
 
     public getCacheBlockState(): any {
-        if (this.infinitePageRowModel) {
-            return this.infinitePageRowModel.getBlockState();
+        if (this.infiniteRowModel) {
+            return this.infiniteRowModel.getBlockState();
         } else if (this.serverSideRowModel) {
             return this.serverSideRowModel.getBlockState();
         } else {

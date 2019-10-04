@@ -1,5 +1,5 @@
 import {
-    ClientSideRowModel,
+    IClientSideRowModel,
     ColDef,
     Column,
     Constants,
@@ -29,7 +29,7 @@ export class SetValueModel {
     private colDef: ColDef;
     private filterParams: ISetFilterParams;
 
-    private clientSideRowModel: ClientSideRowModel;
+    private clientSideRowModel: IClientSideRowModel;
     private valueGetter: any;
     private allUniqueValues: (string | null)[]; // all values in the table
     private availableUniqueValues: (string | null)[]; // all values not filtered by other rows
@@ -74,7 +74,7 @@ export class SetValueModel {
         this.column = column;
 
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = rowModel as ClientSideRowModel;
+            this.clientSideRowModel = rowModel as IClientSideRowModel;
         }
 
         this.filterParams = this.colDef.filterParams ? this.colDef.filterParams as ISetFilterParams : {} as ISetFilterParams;

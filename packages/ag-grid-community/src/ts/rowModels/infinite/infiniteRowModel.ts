@@ -13,12 +13,12 @@ import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeCache } from "../cache/rowNodeCache";
 import { RowNodeBlockLoader } from "../cache/rowNodeBlockLoader";
-import { RowDataTransaction } from "../clientSide/clientSideRowModel";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { NumberSequence, _ } from "../../utils";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import {ModuleLogger} from "../../utils/moduleLogger";
+import {RowDataTransaction} from "../clientSide/rowDataTransaction";
 
 ModuleLogger.logModuleClass('InfiniteRowModel');
 
@@ -62,9 +62,12 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
 
         this.addEventListeners();
-        this.setDatasource(this.gridOptionsWrapper.getDatasource());
 
         this.addDestroyFunc(() => this.destroyCache());
+    }
+
+    public start(): void {
+        this.setDatasource(this.gridOptionsWrapper.getDatasource());
     }
 
     @PreDestroy

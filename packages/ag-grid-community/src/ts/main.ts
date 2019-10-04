@@ -170,9 +170,9 @@ export { SortStage } from "./rowModels/clientSide/sortStage";
 
 // row models
 export { PinnedRowModel } from "./rowModels/pinnedRowModel";
-export { ClientSideRowModel , RowNodeTransaction } from "./rowModels/clientSide/clientSideRowModel";
+export { RowNodeTransaction } from "./rowModels/clientSide/rowNodeTransaction";
+export { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 export { ChangedPath } from "./rowModels/clientSide/changedPath";
-export { ClientSideNodeManager } from "./rowModels/clientSide/clientSideNodeManager";
 export { RowNodeBlock } from "./rowModels/cache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./rowModels/cache/rowNodeBlockLoader";
 export { PaginationProxy } from "./rowModels/paginationProxy";

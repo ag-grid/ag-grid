@@ -7,7 +7,7 @@ import {
     CellPositionUtils,
     CellRange,
     ChangedPath,
-    ClientSideRowModel,
+    IClientSideRowModel,
     Column,
     ColumnApi,
     ColumnController,
@@ -69,7 +69,7 @@ export class ClipboardService implements IClipboardService {
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
 
-    private clientSideRowModel: ClientSideRowModel;
+    private clientSideRowModel: IClientSideRowModel;
 
     private logger: Logger;
 
@@ -84,7 +84,7 @@ export class ClipboardService implements IClipboardService {
         this.logger = this.loggerFactory.create('ClipboardService');
 
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = this.rowModel as ClientSideRowModel;
+            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
     }
 

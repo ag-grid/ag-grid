@@ -7,3 +7,4 @@ export const ServerSideRowModelModule: Module = {
 
 Grid.addModule([ServerSideRowModelModule]);
 Grid.addRowModelClass('serverSide', ServerSideRowModel);
+

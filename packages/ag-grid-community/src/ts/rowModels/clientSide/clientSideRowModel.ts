@@ -23,46 +23,14 @@ import {IRowModel, RowBounds} from "../../interfaces/iRowModel";
 import { GridApi } from "../../gridApi";
 import { _ } from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";
+import {RowNodeTransaction} from "./rowNodeTransaction";
+import {IClientSideRowModel} from "../../interfaces/iClientSideRowModel";
+import {RowDataTransaction} from "./rowDataTransaction";
+import {RefreshModelParams} from "./refreshModelParams";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
 
 ModuleLogger.logModuleClass('ClientSideRowModel');
-
-export interface RefreshModelParams {
-    // how much of the pipeline to execute
-    step: number;
-    // what state to reset the groups back to after the refresh
-    groupState?: any;
-    // if NOT new data, then this flag tells grid to check if rows already
-    // exist for the nodes (matching by node id) and reuses the row if it does.
-    keepRenderedRows?: boolean;
-    // if true, rows that are kept are animated to the new position
-    animate?: boolean;
-    // if true, then rows we are editing will be kept
-    keepEditingRows?: boolean;
-    // if doing delta updates, this has the changes that were done
-    rowNodeTransactions?: (RowNodeTransaction | null)[];
-    // if doing delta updates, this has the order of the nodes
-    rowNodeOrder?: { [id: string]: number };
-    // true user called setRowData() (or a new page in pagination). the grid scrolls
-    // back to the top when this is true.
-    newData?: boolean;
-    // true if this update is due to columns changing, ie no rows were changed
-    afterColumnsChanged?: boolean;
-}
-
-export interface RowDataTransaction {
-    addIndex?: number;
-    add?: any[];
-    remove?: any[];
-    update?: any[];
-}
-
-export interface RowNodeTransaction {
-    add: RowNode[];
-    remove: RowNode[];
-    update: RowNode[];
-}
 
 export interface BatchTransactionItem {
     rowDataTransaction: RowDataTransaction;
@@ -72,7 +40,7 @@ export interface BatchTransactionItem {
 export interface RowNodeMap { [id: string]: RowNode; }
 
 @Bean('rowModel')
-export class ClientSideRowModel {
+export class ClientSideRowModel implements IClientSideRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -137,6 +105,13 @@ export class ClientSideRowModel {
             this.selectionController);
 
         this.context.wireBean(this.rootNode);
+    }
+
+    public start(): void {
+        const rowData = this.gridOptionsWrapper.getRowData();
+        if (rowData) {
+            this.setRowData(rowData);
+        }
     }
 
     public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
@@ -483,7 +458,7 @@ export class ClientSideRowModel {
         return this.rootNode ? this.rootNode.childrenAfterGroup : null;
     }
 
-    public getRootNode() {
+    public getRootNode(): RowNode {
         return this.rootNode;
     }
 
@@ -610,7 +585,7 @@ export class ClientSideRowModel {
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
-    public doAggregate(changedPath?: ChangedPath) {
+    public doAggregate(changedPath?: ChangedPath): void {
         if (this.aggregationStage) {
             this.aggregationStage.execute({rowNode: this.rootNode, changedPath: changedPath});
         }
@@ -744,7 +719,7 @@ export class ClientSideRowModel {
     }
 
     // rows: the rows to put into the model
-    public setRowData(rowData: any[]) {
+    public setRowData(rowData: any[]): void {
 
         // no need to invalidate cache, as the cache is stored on the rowNode,
         // so new rowNodes means the cache is wiped anyway.

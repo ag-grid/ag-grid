@@ -10,3 +10,4 @@ export const ClientSideRowModelModule: Module = {
 
 Grid.addModule([ClientSideRowModelModule]);
 Grid.addRowModelClass('clientSide', ClientSideRowModel);
+

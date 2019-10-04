@@ -3,13 +3,14 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Context } from "../../context/context";
 import { GetNodeChildDetails, IsRowMaster } from "../../entities/gridOptions";
 import { EventService } from "../../eventService";
-import { RowDataTransaction, RowNodeTransaction } from "./clientSideRowModel";
 import { ColumnController } from "../../columnController/columnController";
 import { Events, SelectionChangedEvent } from "../../events";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { SelectionController } from "../../selectionController";
 import { _ } from "../../utils";
+import {RowDataTransaction} from "./rowDataTransaction";
+import {RowNodeTransaction} from "./rowNodeTransaction";
 
 export class ClientSideNodeManager {
 
