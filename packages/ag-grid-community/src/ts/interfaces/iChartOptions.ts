@@ -1,6 +1,5 @@
 export interface ChartOptions {
     document?: Document;
-    series?: any[];
     data?: any;
     width?: number;
     height?: number;
@@ -49,34 +48,28 @@ export interface CartesianChartOptions extends ChartOptions {
 }
 
 export interface BarChartOptions extends CartesianChartOptions {
-    series?: BarSeriesOptions[];
     seriesDefaults?: BarSeriesOptions;
 }
 
 export interface LineChartOptions extends CartesianChartOptions {
-    series?: LineChartOptions[];
     seriesDefaults?: LineSeriesDefaultOptions;
 }
 
 export interface ScatterChartOptions extends CartesianChartOptions {
-    series?: ScatterChartOptions[];
     seriesDefaults?: ScatterSeriesDefaultOptions;
 }
 
 export interface PolarChartOptions extends ChartOptions { }
 
 export interface PieChartOptions extends PolarChartOptions {
-    series?: PieSeriesOptions[];
     seriesDefaults?: PieSeriesOptions;
 }
 
 export interface DoughnutChartOptions extends PolarChartOptions {
-    series?: PieSeriesOptions[];
     seriesDefaults?: PieSeriesOptions;
 }
 
 export interface AreaChartOptions extends CartesianChartOptions {
-    series?: AreaSeriesOptions[];
     seriesDefaults?: AreaSeriesOptions;
 }
 

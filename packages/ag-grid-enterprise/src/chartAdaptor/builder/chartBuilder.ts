@@ -4,7 +4,6 @@ import {
     AxisOptions,
     BarSeriesOptions,
     AreaSeriesOptions,
-    CartesianChartOptions,
     DropShadowOptions,
     LineSeriesOptions,
     ScatterSeriesOptions,
@@ -20,8 +19,6 @@ import {
     PieChartOptions,
     SeriesOptions,
     CaptionOptions,
-    CartesianSeriesType,
-    PolarSeriesType,
     SeriesType,
     FontWeight,
 } from "ag-grid-community";
@@ -62,7 +59,7 @@ export class ChartBuilder {
 
         chart.layout = CartesianChartLayout.Horizontal;
 
-        return ChartBuilder.initCartesianChart(chart, options, "bar");
+        return ChartBuilder.initChart(chart, options);
     }
 
     static createColumnChart(parent: HTMLElement, options: BarChartOptions): CartesianChart {
@@ -72,7 +69,7 @@ export class ChartBuilder {
             ChartBuilder.createNumberAxis(options.yAxis),
             options.document);
 
-        return ChartBuilder.initCartesianChart(chart, options, "bar");
+        return ChartBuilder.initChart(chart, options);
     }
 
     static createLineChart(parent: HTMLElement, options: LineChartOptions): CartesianChart {
@@ -82,7 +79,7 @@ export class ChartBuilder {
             ChartBuilder.createNumberAxis(options.yAxis),
             options.document);
 
-        return ChartBuilder.initCartesianChart(chart, options, "line");
+        return ChartBuilder.initChart(chart, options);
     }
 
     static createScatterChart(parent: HTMLElement, options: ScatterChartOptions): CartesianChart {
@@ -92,7 +89,7 @@ export class ChartBuilder {
             ChartBuilder.createNumberAxis(options.yAxis),
             options.document);
 
-        return ChartBuilder.initCartesianChart(chart, options, "scatter");
+        return ChartBuilder.initChart(chart, options);
     }
 
     static createAreaChart(parent: HTMLElement, options: AreaChartOptions): CartesianChart {
@@ -102,11 +99,11 @@ export class ChartBuilder {
             ChartBuilder.createNumberAxis(options.yAxis),
             options.document);
 
-        return ChartBuilder.initCartesianChart(chart, options, "area");
+        return ChartBuilder.initChart(chart, options);
     }
 
     private static createPolarChart(parent: HTMLElement, options: PolarChartOptions): PolarChart {
-        return ChartBuilder.initPolarChart(new PolarChart({ parent }), options);
+        return ChartBuilder.initChart(new PolarChart({ parent }), options);
     }
 
     static createDoughnutChart(parent: HTMLElement, options: DoughnutChartOptions): PolarChart {
@@ -121,8 +118,8 @@ export class ChartBuilder {
 
     static createScatterSeries = (options: ScatterSeriesOptions): ScatterSeries => new ScatterSeries();
 
-    static createSeries(options: { type?: SeriesType }, type?: SeriesType) {
-        switch (type || options && options.type) {
+    static createSeries(options: { type?: SeriesType }) {
+        switch (options && options.type) {
             case "line":
                 return ChartBuilder.initLineSeries(new LineSeries(), options);
             case "scatter":
@@ -138,11 +135,10 @@ export class ChartBuilder {
         }
     }
 
-    static initChart<C extends Chart>(chart: C, options: ChartOptions, seriesType?: SeriesType) {
+    static initChart<C extends Chart>(chart: C, options: ChartOptions) {
         _.copyPropertiesIfPresent(options, chart, "width", "height", "legendPosition", "legendPadding", "data", "tooltipClass");
         _.copyPropertyIfPresent(options, chart, "title", t => ChartBuilder.createTitle(t!));
         _.copyPropertyIfPresent(options, chart, "subtitle", t => ChartBuilder.createSubtitle(t!));
-        _.copyPropertyIfPresent(options, chart, "series", s => s!.map(series => ChartBuilder.createSeries(series, seriesType)).filter(x => x));
         _.copyPropertyIfPresent(options, chart, "padding", p => new Padding(p!.top, p!.right, p!.bottom, p!.left));
 
         if (options.background !== undefined) {
@@ -152,18 +148,6 @@ export class ChartBuilder {
         if (options.legend !== undefined) {
             ChartBuilder.initLegend(chart.legend, options.legend);
         }
-
-        return chart;
-    }
-
-    static initCartesianChart(chart: CartesianChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType) {
-        ChartBuilder.initChart(chart, options, seriesType);
-
-        return chart;
-    }
-
-    static initPolarChart(chart: PolarChart, options: PolarChartOptions, seriesType?: PolarSeriesType) {
-        ChartBuilder.initChart(chart, options, seriesType);
 
         return chart;
     }
