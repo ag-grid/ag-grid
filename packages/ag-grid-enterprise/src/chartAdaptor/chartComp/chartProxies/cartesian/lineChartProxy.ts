@@ -3,6 +3,7 @@ import { ChartBuilder } from "../../../builder/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { LineSeries } from "../../../../charts/chart/series/lineSeries";
 import { CartesianChartProxy, LineMarkerProperty, LineSeriesProperty } from "./cartesianChartProxy";
+import { CartesianAxis } from "../../../../charts/chart/cartesianChart";
 
 export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
     public constructor(params: ChartProxyParams) {
@@ -22,21 +23,21 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
 
         const lineChart = this.chart;
         const fieldIds = params.fields.map(f => f.colId);
-        const existingSeriesMap: { [id: string]: LineSeries } = {};
+        const existingSeriesMap: { [id: string]: LineSeries<CartesianAxis, CartesianAxis> } = {};
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
         const seriesOptions = this.chartOptions.seriesDefaults!;
 
         lineChart.series
-            .map(series => series as LineSeries)
+            .map(series => series as LineSeries<CartesianAxis, CartesianAxis>)
             .forEach(lineSeries => {
                 const id = lineSeries.yField;
-                
+
                 _.includes(fieldIds, id) ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
             });
 
         params.fields.forEach((f, index) => {
             const existingSeries = existingSeriesMap[f.colId];
-            const lineSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as LineSeries;
+            const lineSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as LineSeries<CartesianAxis, CartesianAxis>;
 
             if (lineSeries) {
                 lineSeries.title = f.displayName;
@@ -56,7 +57,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
     }
 
     public setSeriesProperty(property: LineSeriesProperty | LineMarkerProperty, value: any): void {
-        const series = this.getChart().series as LineSeries[];
+        const series = this.getChart().series as LineSeries<CartesianAxis, CartesianAxis>[];
         series.forEach(s => (s[property] as any) = value);
 
         if (!this.chartOptions.seriesDefaults) {

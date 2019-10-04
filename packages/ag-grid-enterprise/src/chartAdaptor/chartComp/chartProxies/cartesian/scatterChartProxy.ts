@@ -4,6 +4,7 @@ import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";
 import { ChartModel } from "../../chartModel";
 import { CartesianChartProxy, LineMarkerProperty, ScatterSeriesProperty } from "./cartesianChartProxy";
+import { CartesianAxis } from "../../../../charts/chart/cartesianChart";
 
 export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> {
     public constructor(params: ChartProxyParams) {
@@ -23,14 +24,14 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         const isBubbleChart = this.chartType === ChartType.Bubble;
         const yFields = params.fields.slice(1, params.fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
         const fieldIds = yFields.map(f => f.colId);
-        const existingSeriesMap: { [id: string]: ScatterSeries } = {};
+        const existingSeriesMap: { [id: string]: ScatterSeries<CartesianAxis, CartesianAxis> } = {};
         const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
         const seriesOptions = this.chartOptions.seriesDefaults!;
         const xFieldDefinition = params.fields[0];
 
         chart.series
-            .map(series => series as ScatterSeries)
+            .map(series => series as ScatterSeries<CartesianAxis, CartesianAxis>)
             .forEach(scatterSeries => {
                 const yField = scatterSeries.yField;
 
@@ -45,7 +46,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
 
         yFields.forEach((yFieldDefinition, index) => {
             const existingSeries = existingSeriesMap[yFieldDefinition.colId];
-            const series = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
+            const series = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries<CartesianAxis, CartesianAxis>;
 
             if (!series) { return; }
 
@@ -90,7 +91,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
     }
 
     public setSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty, value: any): void {
-        const series = this.getChart().series as ScatterSeries[];
+        const series = this.getChart().series as ScatterSeries<CartesianAxis, CartesianAxis>[];
         series.forEach(s => (s[property] as any) = value);
 
         if (!this.chartOptions.seriesDefaults) {

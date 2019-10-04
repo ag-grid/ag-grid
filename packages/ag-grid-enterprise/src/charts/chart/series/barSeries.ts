@@ -1,6 +1,6 @@
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
-import { CartesianChart } from "../cartesianChart";
+import { CartesianAxis, CartesianChart } from "../cartesianChart";
 import { Rect } from "../../scene/shape/rect";
 import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
@@ -56,7 +56,7 @@ export interface BarTooltipRendererParams {
     color?: string;
 }
 
-export class BarSeries extends Series<CartesianChart> {
+export class BarSeries<XAxis extends CartesianAxis, YAxis extends CartesianAxis> extends Series<CartesianChart<XAxis, YAxis>> {
 
     static className = 'BarSeries';
 
@@ -128,13 +128,13 @@ export class BarSeries extends Series<CartesianChart> {
      */
     private groupScale = new BandScale<string>();
 
-    set chart(chart: CartesianChart | undefined) {
+    set chart(chart: CartesianChart<XAxis, YAxis> | undefined) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.scheduleData();
         }
     }
-    get chart(): CartesianChart | undefined {
+    get chart(): CartesianChart<XAxis, YAxis> | undefined {
         return this._chart;
     }
 
@@ -529,7 +529,7 @@ export class BarSeries extends Series<CartesianChart> {
     private updateRectSelection(selectionData: SelectionDatum[]): void {
         const { fillOpacity, strokeOpacity, shadow, highlightedNode, highlightStyle: { fill, stroke } } = this;
         const updateRects = this.rectSelection.setData(selectionData);
-        
+
         updateRects.exit.remove();
 
         const enterRects = updateRects.enter.append(Rect).each(rect => {
@@ -573,7 +573,7 @@ export class BarSeries extends Series<CartesianChart> {
 
         textSelection.each((text, datum) => {
             const label = datum.label;
-            
+
             if (label && labelEnabled) {
                 text.fontStyle = label.fontStyle;
                 text.fontWeight = label.fontWeight;

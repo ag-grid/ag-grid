@@ -2,7 +2,7 @@ import { AreaChartOptions, ChartType, _, FontWeight } from "ag-grid-community";
 import { ChartBuilder } from "../../../builder/chartBuilder";
 import { AreaSeries } from "../../../../charts/chart/series/areaSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { CartesianAxis, CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
 import { CartesianChartProxy, LineMarkerProperty } from "./cartesianChartProxy";
 
@@ -17,11 +17,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         this.setAxisPadding(this.chart);
 
         const areaSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults!);
-        
+
         if (areaSeries) { this.chart.addSeries(areaSeries); }
     }
 
-    private setAxisPadding(chart: CartesianChart) {
+    private setAxisPadding(chart: CartesianChart<CartesianAxis, CartesianAxis>) {
         const xAxis = chart.xAxis;
 
         if (xAxis instanceof CategoryAxis) {
@@ -38,7 +38,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             this.updateAreaChart(params);
         } else {
             // stacked and normalized has a single series
-            const areaSeries = this.chart.series[0] as AreaSeries;
+            const areaSeries = this.chart.series[0] as AreaSeries<CartesianAxis, CartesianAxis>;
             const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
 
             areaSeries.data = params.data;
@@ -60,22 +60,22 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
 
         const lineChart = this.chart;
         const fieldIds = params.fields.map(f => f.colId);
-        const existingSeriesMap: { [id: string]: AreaSeries } = {};
+        const existingSeriesMap: { [id: string]: AreaSeries<CartesianAxis, CartesianAxis> } = {};
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
         const seriesOptions = this.chartOptions.seriesDefaults!;
 
         lineChart.series
-            .map(series => series as AreaSeries)
-            .forEach(areaSeries=> {
+            .map(series => series as AreaSeries<CartesianAxis, CartesianAxis>)
+            .forEach(areaSeries => {
                 const id = areaSeries.yFields[0];
-    
+
                 _.includes(fieldIds, id) ? existingSeriesMap[id] = areaSeries : lineChart.removeSeries(areaSeries);
             });
 
 
         params.fields.forEach((f, index) => {
             const existingSeries = existingSeriesMap[f.colId];
-            const areaSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as AreaSeries;
+            const areaSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as AreaSeries<CartesianAxis, CartesianAxis>;
 
             if (areaSeries) {
                 areaSeries.yFieldNames = [ f.displayName ];
@@ -93,7 +93,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
     }
 
     public setSeriesProperty(property: AreaSeriesProperty | LineMarkerProperty, value: any): void {
-        const series = this.getChart().series as AreaSeries[];
+        const series = this.getChart().series as AreaSeries<CartesianAxis, CartesianAxis>[];
         series.forEach(s => (s[property] as any) = value);
 
         if (!this.chartOptions.seriesDefaults) {

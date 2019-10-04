@@ -1,6 +1,6 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
 import { CartesianChartOptions, _ } from "ag-grid-community";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { CartesianAxis, CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { ChartModel } from "../../chartModel";
 import { IAxisFormatting, ILabelFormatting } from "../../../../charts/axis";
 
@@ -8,7 +8,7 @@ export type LineMarkerProperty = 'marker' | 'markerSize' | 'markerStrokeWidth';
 export type LineSeriesProperty = 'strokeWidth' | 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
 export type ScatterSeriesProperty = 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
 
-export abstract class CartesianChartProxy<T extends CartesianChartOptions> extends ChartProxy<CartesianChart, T> {
+export abstract class CartesianChartProxy<T extends CartesianChartOptions> extends ChartProxy<CartesianChart<CartesianAxis, CartesianAxis>, T> {
     protected constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -25,10 +25,10 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
 
     public setCommonAxisProperty(property: keyof IAxisFormatting | keyof ILabelFormatting, value: any) {
         const cartesianChart = this.chart;
-        
+
         _.setProperty(cartesianChart.xAxis, property, value);
         _.setProperty(cartesianChart.yAxis, property, value);
-        
+
         cartesianChart.performLayout();
 
         _.setProperty(this.chartOptions.xAxis, property, value);
@@ -63,5 +63,5 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
         this.raiseChartOptionsChangedEvent();
     }
 
-    private getCartesianChart = (): CartesianChart => this.chart;
+    private getCartesianChart = (): CartesianChart<CartesianAxis, CartesianAxis> => this.chart;
 }

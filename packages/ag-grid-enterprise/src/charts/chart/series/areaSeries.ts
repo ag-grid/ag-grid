@@ -1,6 +1,6 @@
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
-import { CartesianChart } from "../cartesianChart";
+import { CartesianAxis, CartesianChart } from "../cartesianChart";
 import { DropShadow } from "../../scene/dropShadow";
 import { Series, SeriesNodeDatum } from "./series";
 import ContinuousScale from "../../scale/continuousScale";
@@ -38,7 +38,7 @@ export interface AreaTooltipRendererParams {
     color?: string;
 }
 
-export class AreaSeries extends Series<CartesianChart> {
+export class AreaSeries<XAxis extends CartesianAxis, YAxis extends CartesianAxis> extends Series<CartesianChart<XAxis, YAxis>> {
     static className = 'AreaSeries';
 
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
@@ -101,13 +101,13 @@ export class AreaSeries extends Series<CartesianChart> {
     private yData: number[][] = [];
     private domainY: any[] = [];
 
-    set chart(chart: CartesianChart | undefined) {
+    set chart(chart: CartesianChart<XAxis, YAxis> | undefined) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.scheduleData();
         }
     }
-    get chart(): CartesianChart | undefined {
+    get chart(): CartesianChart<XAxis, YAxis> | undefined {
         return this._chart;
     }
 
@@ -287,13 +287,13 @@ export class AreaSeries extends Series<CartesianChart> {
 
         if (isContinuousX) {
             const [ min, max ] = domainX as number[];
-            
+
             if (min === max) {
                 domainX[0] = min - 1;
                 domainX[1] = max + 1;
             }
         }
-        
+
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
 
@@ -347,7 +347,7 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     private generateSelectionData(): { areaSelectionData: AreaSelectionDatum[], markerSelectionData: MarkerSelectionDatum[] } {
-        const { 
+        const {
             yFields,
             fills,
             strokes,
@@ -408,7 +408,7 @@ export class AreaSeries extends Series<CartesianChart> {
     private updateAreaSelection(areaSelectionData: AreaSelectionDatum[]): void {
         const { fills, fillOpacity, yFieldEnabled, shadow } = this;
         const updateAreas = this.areaSelection.setData(areaSelectionData);
-        
+
         updateAreas.exit.remove();
 
         const enterAreas = updateAreas.enter.append(Path)
@@ -438,7 +438,7 @@ export class AreaSeries extends Series<CartesianChart> {
                     path.moveTo(x, y);
                 }
             });
-            
+
             path.closePath();
         });
 

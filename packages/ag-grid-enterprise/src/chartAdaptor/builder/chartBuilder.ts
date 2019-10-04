@@ -26,7 +26,7 @@ import {
     FontWeight,
 } from "ag-grid-community";
 
-import { CartesianChart, CartesianChartLayout } from "../../charts/chart/cartesianChart";
+import { CartesianAxis, CartesianChart, CartesianChartLayout } from "../../charts/chart/cartesianChart";
 import { PolarChart } from "../../charts/chart/polarChart";
 import { LineSeries } from "../../charts/chart/series/lineSeries";
 import { ScatterSeries } from "../../charts/chart/series/scatterSeries";
@@ -44,7 +44,7 @@ import { Caption } from "../../charts/caption";
 import { GroupedCategoryAxis } from "../../charts/chart/axis/groupedCategoryAxis";
 
 export class ChartBuilder {
-    static createCartesianChart(options: CartesianChartOptions): CartesianChart {
+    static createCartesianChart(options: CartesianChartOptions): CartesianChart<CartesianAxis, CartesianAxis> {
         const chart = new CartesianChart({
             document: options.document,
             xAxis: ChartBuilder.createAxis(options.xAxis),
@@ -54,10 +54,10 @@ export class ChartBuilder {
         return ChartBuilder.initCartesianChart(chart, options);
     }
 
-    static createBarChart(options: BarChartOptions): CartesianChart {
+    static createBarChart(options: BarChartOptions): CartesianChart<CartesianAxis, CartesianAxis> {
         const chart = new CartesianChart({
             document: options.document,
-            xAxis: ChartBuilder.createNumberAxis(options.xAxis), 
+            xAxis: ChartBuilder.createNumberAxis(options.xAxis),
             yAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.yAxis),
         });
 
@@ -66,7 +66,7 @@ export class ChartBuilder {
         return ChartBuilder.initCartesianChart(chart, options, "bar");
     }
 
-    static createColumnChart(options: BarChartOptions): CartesianChart {
+    static createColumnChart(options: BarChartOptions): CartesianChart<CartesianAxis, CartesianAxis> {
         const chart = new CartesianChart({
             document: options.document,
             xAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
@@ -76,7 +76,7 @@ export class ChartBuilder {
         return ChartBuilder.initCartesianChart(chart, options, "bar");
     }
 
-    static createLineChart(options: LineChartOptions): CartesianChart {
+    static createLineChart(options: LineChartOptions): CartesianChart<CartesianAxis, CartesianAxis> {
         const chart = new CartesianChart({
             document: options.document,
             xAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
@@ -86,7 +86,7 @@ export class ChartBuilder {
         return ChartBuilder.initCartesianChart(chart, options, "line");
     }
 
-    static createScatterChart(options: ScatterChartOptions): CartesianChart {
+    static createScatterChart(options: ScatterChartOptions): CartesianChart<CartesianAxis, CartesianAxis> {
         const chart = new CartesianChart({
             document: options.document,
             xAxis: ChartBuilder.createNumberAxis(options.xAxis),
@@ -96,7 +96,7 @@ export class ChartBuilder {
         return ChartBuilder.initCartesianChart(chart, options, "scatter");
     }
 
-    static createAreaChart(options: AreaChartOptions): CartesianChart {
+    static createAreaChart(options: AreaChartOptions): CartesianChart<CartesianAxis, CartesianAxis> {
         const chart = new CartesianChart({
             document: options.document,
             xAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
@@ -112,9 +112,9 @@ export class ChartBuilder {
 
     static createPieChart = (options: PieChartOptions): PolarChart => ChartBuilder.initPolarChart(new PolarChart(), options, "pie");
 
-    static createLineSeries = (options: LineSeriesOptions): LineSeries => new LineSeries();
+    static createLineSeries = (options: LineSeriesOptions): LineSeries<CartesianAxis, CartesianAxis> => new LineSeries();
 
-    static createScatterSeries = (options: ScatterSeriesOptions): ScatterSeries => new ScatterSeries();
+    static createScatterSeries = (options: ScatterSeriesOptions): ScatterSeries<CartesianAxis, CartesianAxis> => new ScatterSeries();
 
     static createSeries(options: { type?: SeriesType }, type?: SeriesType) {
         switch (type || options && options.type) {
@@ -151,7 +151,7 @@ export class ChartBuilder {
         return chart;
     }
 
-    static initCartesianChart(chart: CartesianChart, options: CartesianChartOptions, seriesType?: CartesianSeriesType) {
+    static initCartesianChart(chart: CartesianChart<CartesianAxis, CartesianAxis>, options: CartesianChartOptions, seriesType?: CartesianSeriesType) {
         ChartBuilder.initChart(chart, options, seriesType);
 
         return chart;
@@ -159,7 +159,7 @@ export class ChartBuilder {
 
     static initPolarChart(chart: PolarChart, options: PolarChartOptions, seriesType?: PolarSeriesType) {
         ChartBuilder.initChart(chart, options, seriesType);
-        
+
         return chart;
     }
 
@@ -169,18 +169,18 @@ export class ChartBuilder {
         return series;
     }
 
-    static initLineSeries(series: LineSeries, options: LineSeriesOptions) {
+    static initLineSeries(series: LineSeries<CartesianAxis, CartesianAxis>, options: LineSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
         _.copyPropertiesIfPresent(
-            options, 
-            series, 
-            "title", 
-            "xField", 
-            "yField", 
-            "fill", 
-            "stroke", 
-            "strokeWidth", 
+            options,
+            series,
+            "title",
+            "xField",
+            "yField",
+            "fill",
+            "stroke",
+            "strokeWidth",
             "highlightStyle",
             "marker",
             "markerSize",
@@ -190,18 +190,18 @@ export class ChartBuilder {
         return series;
     }
 
-    static initScatterSeries(series: ScatterSeries, options: ScatterSeriesOptions) {
+    static initScatterSeries(series: ScatterSeries<CartesianAxis, CartesianAxis>, options: ScatterSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
         _.copyPropertiesIfPresent(
             options,
-            series, 
-            "title", 
-            "xField", 
-            "yField", 
-            "radiusField", 
+            series,
+            "title",
+            "xField",
+            "yField",
+            "radiusField",
             "labelField",
-            "xFieldName", 
+            "xFieldName",
             "yFieldName",
             "radiusFieldName",
             "labelFieldName",
@@ -222,19 +222,19 @@ export class ChartBuilder {
         _.copyPropertiesIfPresent(options, series, "labelFontStyle", "labelFontWeight", "labelFontSize", "labelFontFamily", "labelColor");
     }
 
-    static initBarSeries(series: BarSeries, options: BarSeriesOptions) {
+    static initBarSeries(series: BarSeries<CartesianAxis, CartesianAxis>, options: BarSeriesOptions) {
         ChartBuilder.initSeries(series, options);
         ChartBuilder.initLabelFormatting(series, options);
 
         _.copyPropertiesIfPresent(
-            options, 
-            series, 
-            "xField", 
-            "yFields", 
-            "yFieldNames", 
-            "grouped", 
+            options,
+            series,
+            "xField",
+            "yFields",
+            "yFieldNames",
+            "grouped",
             "normalizedTo",
-            "fills", 
+            "fills",
             "strokes",
             "fillOpacity",
             "strokeOpacity",
@@ -249,12 +249,12 @@ export class ChartBuilder {
         return series;
     }
 
-    static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions) {
+    static initAreaSeries(series: AreaSeries<CartesianAxis, CartesianAxis>, options: AreaSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
         _.copyPropertiesIfPresent(
-            options, 
-            series, 
+            options,
+            series,
             "xField",
             "yFields",
             "yFieldNames",
@@ -282,9 +282,9 @@ export class ChartBuilder {
         _.copyPropertyIfPresent(options, series, "title", t => ChartBuilder.createPieTitle(t!));
 
         _.copyPropertiesIfPresent(
-            options, 
-            series, 
-            "calloutColors", 
+            options,
+            series,
+            "calloutColors",
             "calloutStrokeWidth",
             "calloutLength",
             "labelMinAngle",
@@ -304,19 +304,19 @@ export class ChartBuilder {
             "tooltipRenderer");
 
         _.copyPropertyIfPresent(options, series, "shadow", s => ChartBuilder.createDropShadow(s));
-        
+
         return series;
     }
 
     static initLegend(legend: Legend, options: LegendOptions) {
         ChartBuilder.initLabelFormatting(legend, options);
-        
+
         _.copyPropertiesIfPresent(
-            options, 
-            legend, 
-            "enabled", 
-            "markerStrokeWidth", 
-            "markerSize", 
+            options,
+            legend,
+            "enabled",
+            "markerStrokeWidth",
+            "markerSize",
             "markerPadding",
             "itemPaddingX",
             "itemPaddingY");
@@ -385,7 +385,7 @@ export class ChartBuilder {
             if (name === 'type') {
                 continue;
             }
-            
+
             if (name === 'title' && options.title) {
                 axis.title = ChartBuilder.createTitle(options.title);
                 continue;

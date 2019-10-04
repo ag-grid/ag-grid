@@ -13,17 +13,17 @@ export enum CartesianChartLayout {
     Horizontal
 }
 
-type CartesianAxis = Axis<Scale<any, number>> | GroupedCategoryAxis;
+export type CartesianAxis = Axis<Scale<any, number>> | GroupedCategoryAxis;
 
-export interface CartesianChartOptions extends ChartOptions {
-    xAxis: CartesianAxis;
-    yAxis: CartesianAxis;
+export interface CartesianChartOptions<XAxis extends CartesianAxis, YAxis extends CartesianAxis> extends ChartOptions {
+    xAxis: XAxis;
+    yAxis: YAxis;
 }
 
-export class CartesianChart extends Chart {
+export class CartesianChart<XAxis extends CartesianAxis, YAxis extends CartesianAxis> extends Chart {
     private axisAutoPadding = new Padding();
 
-    constructor(options: CartesianChartOptions) {
+    constructor(options: CartesianChartOptions<XAxis, YAxis>) {
         super(options);
 
         const { xAxis, yAxis } = options;
@@ -40,22 +40,22 @@ export class CartesianChart extends Chart {
         return this.seriesClipRect;
     }
 
-    private readonly _xAxis: CartesianAxis;
-    get xAxis(): CartesianAxis {
+    private readonly _xAxis: XAxis;
+    get xAxis(): XAxis {
         return this._xAxis;
     }
 
-    private readonly _yAxis: CartesianAxis;
-    get yAxis(): CartesianAxis {
+    private readonly _yAxis: YAxis;
+    get yAxis(): YAxis {
         return this._yAxis;
     }
 
-    set series(values: Series<CartesianChart>[]) {
+    set series(values: Series<CartesianChart<XAxis, YAxis>>[]) {
         this.removeAllSeries();
         values.forEach(series => this.addSeries(series));
     }
-    get series(): Series<CartesianChart>[] {
-        return this._series as Series<CartesianChart>[];
+    get series(): Series<CartesianChart<XAxis, YAxis>>[] {
+        return this._series as Series<CartesianChart<XAxis, YAxis>>[];
     }
 
     performLayout(): void {

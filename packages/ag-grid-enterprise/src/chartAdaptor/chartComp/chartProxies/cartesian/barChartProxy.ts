@@ -3,6 +3,7 @@ import { ChartBuilder } from "../../../builder/chartBuilder";
 import { BarSeries } from "../../../../charts/chart/series/barSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
+import { CartesianAxis } from "../../../../charts/chart/cartesianChart";
 
 export type BarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 export type BarSeriesFontProperty = 'labelEnabled' | 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
@@ -22,7 +23,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
     public update(params: UpdateChartParams): void {
         const chart = this.chart;
-        const barSeries = chart.series[0] as BarSeries;
+        const barSeries = chart.series[0] as BarSeries<CartesianAxis, CartesianAxis>;
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
 
         barSeries.data = params.data;
@@ -42,7 +43,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
     }
 
     public setSeriesProperty(property: BarSeriesProperty | BarSeriesFontProperty, value: any): void {
-        const series = this.getChart().series as BarSeries[];
+        const series = this.getChart().series as BarSeries<CartesianAxis, CartesianAxis>[];
         series.forEach(s => (s[property] as any) = value);
 
         if (!this.chartOptions.seriesDefaults) {

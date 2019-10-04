@@ -17,6 +17,7 @@ import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
+import { CartesianAxis } from "../../../charts/chart/cartesianChart";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -32,7 +33,7 @@ export interface ChartProxyParams {
     isDarkTheme: () => boolean;
 }
 
-export interface FieldDefinition { 
+export interface FieldDefinition {
     colId: string;
     displayName: string;
 }
@@ -94,7 +95,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         // so this allows the chart defaults to be overridden
         this.chartOptions.width = this.chartProxyParams.width || this.chartOptions.width;
         this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
-        
+
         // this cannot be overridden via the processChartOptions callback
         this.chartOptions.parent = this.chartProxyParams.parentElement;
     }
@@ -188,9 +189,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public setShadowProperty(property: ShadowProperty, value: any): void {
-        const series = this.getChart().series as BarSeries[] | AreaSeries[] | PieSeries[];
+        const series = this.getChart().series as BarSeries<CartesianAxis, CartesianAxis>[] | AreaSeries<CartesianAxis, CartesianAxis>[] | PieSeries[];
 
-        series.forEach((s: BarSeries | AreaSeries | PieSeries) => {
+        series.forEach((s: BarSeries<CartesianAxis, CartesianAxis> | AreaSeries<CartesianAxis, CartesianAxis> | PieSeries) => {
             if (!s.shadow) {
                 s.shadow = new DropShadow({ enabled: false, blur: 0, xOffset: 0, yOffset: 0, color: "rgba(0,0,0,0.5)" });
             }
@@ -219,7 +220,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             chartType: this.chartType,
             chartOptions: this.chartOptions
         };
-        
+
         this.chartProxyParams.eventService.dispatchEvent(event);
     }
 

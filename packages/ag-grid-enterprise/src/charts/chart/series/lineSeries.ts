@@ -1,4 +1,4 @@
-import { CartesianChart } from "../cartesianChart";
+import { CartesianAxis, CartesianChart } from "../cartesianChart";
 import { Path } from "../../scene/shape/path";
 import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
@@ -30,7 +30,7 @@ export interface LineTooltipRendererParams {
     color?: string;
 }
 
-export class LineSeries extends Series<CartesianChart> {
+export class LineSeries<XAxis extends CartesianAxis, YAxis extends CartesianAxis> extends Series<CartesianChart<XAxis, YAxis>> {
 
     static className = 'LineSeries';
 
@@ -53,13 +53,13 @@ export class LineSeries extends Series<CartesianChart> {
         this.group.append(lineNode);
     }
 
-    set chart(chart: CartesianChart | undefined) {
+    set chart(chart: CartesianChart<XAxis, YAxis> | undefined) {
         if (this._chart !== chart) {
             this._chart = chart;
             this.scheduleData();
         }
     }
-    get chart(): CartesianChart | undefined {
+    get chart(): CartesianChart<XAxis, YAxis> | undefined {
         return this._chart;
     }
 
