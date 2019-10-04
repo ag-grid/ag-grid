@@ -4,6 +4,7 @@
   "description": "ag-Grid Modularisation Tests",
   "main": "index.js",
   "scripts": {
+    "postinstall": "build:bundle-size",
     "test": "npm run test:modules && npm run test:bundle-size",
     "test:modules": "cd tests && ./runTests.sh",
     "test:bundle-size": "cd bundle-size-tests && ./compareBundleSizes.sh",
@@ -11,7 +12,7 @@
     "build:test-input": "cd test-config && node buildTests.js",
     "build:bundles": "cd test-input && ./webpack.sh",
     "build:moduleParser": "tsc -p tsconfig-moduleParser.json",
-    "build": "npm run build:moduleParser && npm run build:test-input && npm run build:bundles && npm run build:bundle-size"
+    "build": "npm run build:moduleParser && npm run build:test-input && npm run build:bundles"
   },
   "repository": {
     "type": "git",
