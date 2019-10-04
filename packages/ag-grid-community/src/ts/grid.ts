@@ -119,8 +119,6 @@ export class Grid {
 
     private static modulesToInclude: Module[] = [];
 
-    private static loggedModuleClassNames: string[] = [];
-
     protected logger: Logger;
 
     private gridOptions: GridOptions;
@@ -128,10 +126,6 @@ export class Grid {
     // the default is ClientSideRowModel, which is also used for pagination.
     // the enterprise adds viewport to this list.
     private static rowModelClasses: any = {};
-
-    public static logModuleClass(className: string): void {
-        this.loggedModuleClassNames.push(className);
-    }
 
     public static addRowModelClass(name: string, rowModelClass: any): void {
         this.rowModelClasses[name] = rowModelClass;
@@ -168,7 +162,7 @@ export class Grid {
         const debug = !!gridOptions.debug;
 
         if (debug) {
-            console.log('ag-Grid: loaded module classes: ' + Grid.loggedModuleClassNames.join(', '));
+            console.log('ag-Grid: loaded module classes: ' + ModuleLogger.getLoggedModuleClassNames());
         }
 
         this.gridOptions = gridOptions;
@@ -382,3 +376,4 @@ export class Grid {
 // testing of modules
 import "./modules/infiniteRowModelModule";
 import "./modules/clientSideRowModelModule";
+import {ModuleLogger} from "./utils/moduleLogger";

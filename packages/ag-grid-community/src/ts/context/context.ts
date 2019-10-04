@@ -161,11 +161,13 @@ export class Context {
             beanName: metaData.beanName
         };
 
+/*
         if (this.beanWrappers[metaData.beanName]) {
             this.logger.log(`overriding bean ${metaData.beanName}`);
             console.log('old', this.beanWrappers[metaData.beanName]);
             console.log('new', beanEntry);
         }
+*/
 
         this.beanWrappers[metaData.beanName] = beanEntry;
     }

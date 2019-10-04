@@ -4,6 +4,7 @@
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
+    "start": "gulp serve",
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint src/",
     "test": "npm run validate-es5"

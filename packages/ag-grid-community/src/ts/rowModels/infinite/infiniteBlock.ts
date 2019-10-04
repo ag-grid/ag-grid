@@ -7,9 +7,9 @@ import {InfiniteCacheParams} from "./infiniteCache";
 import {RowNodeBlock} from "../cache/rowNodeBlock";
 import {RowRenderer} from "../../rendering/rowRenderer";
 import {_} from "../../utils";
-import {Grid} from "../../grid";
+import {ModuleLogger} from "../../utils/moduleLogger";
 
-Grid.logModuleClass('InfiniteBlock');
+ModuleLogger.logModuleClass('InfiniteBlock');
 
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 

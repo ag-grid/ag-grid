@@ -18,9 +18,9 @@ import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { NumberSequence, _ } from "../../utils";
 import { RowRenderer } from "../../rendering/rowRenderer";
-import {Grid} from "../../grid";
+import {ModuleLogger} from "../../utils/moduleLogger";
 
-Grid.logModuleClass('InfiniteRowModel');
+ModuleLogger.logModuleClass('InfiniteRowModel');
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {

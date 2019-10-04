@@ -22,8 +22,11 @@ import { ValueCache } from "../../valueService/valueCache";
 import {IRowModel, RowBounds} from "../../interfaces/iRowModel";
 import { GridApi } from "../../gridApi";
 import { _ } from "../../utils";
+import {ModuleLogger} from "../../utils/moduleLogger";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
+
+ModuleLogger.logModuleClass('ClientSideRowModel');
 
 export interface RefreshModelParams {
     // how much of the pipeline to execute
