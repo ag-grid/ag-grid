@@ -10,7 +10,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createScatterChart(this.chartOptions);
+        this.chart = ChartBuilder.createScatterChart(params.parentElement, this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
@@ -35,7 +35,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 const yField = scatterSeries.yField;
 
                 if (scatterSeries.xField === xFieldDefinition.colId && _.includes(fieldIds, yField)) {
-                     existingSeriesMap[yField] = scatterSeries;
+                    existingSeriesMap[yField] = scatterSeries;
                 } else {
                     chart.removeSeries(scatterSeries);
                 }

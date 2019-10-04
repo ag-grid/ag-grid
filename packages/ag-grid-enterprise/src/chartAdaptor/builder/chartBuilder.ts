@@ -26,7 +26,7 @@ import {
     FontWeight,
 } from "ag-grid-community";
 
-import { CartesianChart, CartesianChartLayout } from "../../charts/chart/cartesianChart";
+import { CartesianChart, CartesianChartLayout, CartesianAxis } from "../../charts/chart/cartesianChart";
 import { PolarChart } from "../../charts/chart/polarChart";
 import { LineSeries } from "../../charts/chart/series/lineSeries";
 import { ScatterSeries } from "../../charts/chart/series/scatterSeries";
@@ -44,73 +44,78 @@ import { Caption } from "../../charts/caption";
 import { GroupedCategoryAxis } from "../../charts/chart/axis/groupedCategoryAxis";
 
 export class ChartBuilder {
-    static createCartesianChart(options: CartesianChartOptions): CartesianChart {
-        const chart = new CartesianChart({
-            document: options.document,
-            xAxis: ChartBuilder.createAxis(options.xAxis),
-            yAxis: ChartBuilder.createAxis(options.yAxis),
+    private static createCartesianChart(parent: HTMLElement, xAxis: CartesianAxis, yAxis: CartesianAxis, document?: Document): CartesianChart {
+        return new CartesianChart({
+            parent,
+            xAxis,
+            yAxis,
+            document,
         });
-
-        return ChartBuilder.initCartesianChart(chart, options);
     }
 
-    static createBarChart(options: BarChartOptions): CartesianChart {
-        const chart = new CartesianChart({
-            document: options.document,
-            xAxis: ChartBuilder.createNumberAxis(options.xAxis), 
-            yAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.yAxis),
-        });
+    static createBarChart(parent: HTMLElement, options: BarChartOptions): CartesianChart {
+        const chart = this.createCartesianChart(
+            parent,
+            ChartBuilder.createNumberAxis(options.xAxis),
+            ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.yAxis),
+            options.document);
 
         chart.layout = CartesianChartLayout.Horizontal;
 
         return ChartBuilder.initCartesianChart(chart, options, "bar");
     }
 
-    static createColumnChart(options: BarChartOptions): CartesianChart {
-        const chart = new CartesianChart({
-            document: options.document,
-            xAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
-            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
-        });
+    static createColumnChart(parent: HTMLElement, options: BarChartOptions): CartesianChart {
+        const chart = this.createCartesianChart(
+            parent,
+            ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
+            ChartBuilder.createNumberAxis(options.yAxis),
+            options.document);
 
         return ChartBuilder.initCartesianChart(chart, options, "bar");
     }
 
-    static createLineChart(options: LineChartOptions): CartesianChart {
-        const chart = new CartesianChart({
-            document: options.document,
-            xAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
-            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
-        });
+    static createLineChart(parent: HTMLElement, options: LineChartOptions): CartesianChart {
+        const chart = this.createCartesianChart(
+            parent,
+            ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
+            ChartBuilder.createNumberAxis(options.yAxis),
+            options.document);
 
         return ChartBuilder.initCartesianChart(chart, options, "line");
     }
 
-    static createScatterChart(options: ScatterChartOptions): CartesianChart {
-        const chart = new CartesianChart({
-            document: options.document,
-            xAxis: ChartBuilder.createNumberAxis(options.xAxis),
-            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
-        });
+    static createScatterChart(parent: HTMLElement, options: ScatterChartOptions): CartesianChart {
+        const chart = this.createCartesianChart(
+            parent,
+            ChartBuilder.createNumberAxis(options.xAxis),
+            ChartBuilder.createNumberAxis(options.yAxis),
+            options.document);
 
         return ChartBuilder.initCartesianChart(chart, options, "scatter");
     }
 
-    static createAreaChart(options: AreaChartOptions): CartesianChart {
-        const chart = new CartesianChart({
-            document: options.document,
-            xAxis: ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
-            yAxis: ChartBuilder.createNumberAxis(options.yAxis),
-        });
+    static createAreaChart(parent: HTMLElement, options: AreaChartOptions): CartesianChart {
+        const chart = this.createCartesianChart(
+            parent,
+            ChartBuilder[options.isGroupingEnabled ? "createGroupedAxis" : "createCategoryAxis"](options.xAxis),
+            ChartBuilder.createNumberAxis(options.yAxis),
+            options.document);
 
         return ChartBuilder.initCartesianChart(chart, options, "area");
     }
 
-    static createPolarChart = (options: PolarChartOptions): PolarChart => ChartBuilder.initPolarChart(new PolarChart(), options);
+    private static createPolarChart(parent: HTMLElement, options: PolarChartOptions): PolarChart {
+        return ChartBuilder.initPolarChart(new PolarChart({ parent }), options);
+    }
 
-    static createDoughnutChart = (options: DoughnutChartOptions): PolarChart => ChartBuilder.initPolarChart(new PolarChart(), options);
+    static createDoughnutChart(parent: HTMLElement, options: DoughnutChartOptions): PolarChart {
+        return this.createPolarChart(parent, options);
+    }
 
-    static createPieChart = (options: PieChartOptions): PolarChart => ChartBuilder.initPolarChart(new PolarChart(), options, "pie");
+    static createPieChart(parent: HTMLElement, options: PieChartOptions): PolarChart {
+        return this.createPolarChart(parent, options);
+    }
 
     static createLineSeries = (options: LineSeriesOptions): LineSeries => new LineSeries();
 
@@ -134,7 +139,7 @@ export class ChartBuilder {
     }
 
     static initChart<C extends Chart>(chart: C, options: ChartOptions, seriesType?: SeriesType) {
-        _.copyPropertiesIfPresent(options, chart, "parent", "width", "height", "legendPosition", "legendPadding", "data", "tooltipClass");
+        _.copyPropertiesIfPresent(options, chart, "width", "height", "legendPosition", "legendPadding", "data", "tooltipClass");
         _.copyPropertyIfPresent(options, chart, "title", t => ChartBuilder.createTitle(t!));
         _.copyPropertyIfPresent(options, chart, "subtitle", t => ChartBuilder.createSubtitle(t!));
         _.copyPropertyIfPresent(options, chart, "series", s => s!.map(series => ChartBuilder.createSeries(series, seriesType)).filter(x => x));
@@ -159,7 +164,7 @@ export class ChartBuilder {
 
     static initPolarChart(chart: PolarChart, options: PolarChartOptions, seriesType?: PolarSeriesType) {
         ChartBuilder.initChart(chart, options, seriesType);
-        
+
         return chart;
     }
 
@@ -173,14 +178,14 @@ export class ChartBuilder {
         ChartBuilder.initSeries(series, options);
 
         _.copyPropertiesIfPresent(
-            options, 
-            series, 
-            "title", 
-            "xField", 
-            "yField", 
-            "fill", 
-            "stroke", 
-            "strokeWidth", 
+            options,
+            series,
+            "title",
+            "xField",
+            "yField",
+            "fill",
+            "stroke",
+            "strokeWidth",
             "highlightStyle",
             "marker",
             "markerSize",
@@ -195,13 +200,13 @@ export class ChartBuilder {
 
         _.copyPropertiesIfPresent(
             options,
-            series, 
-            "title", 
-            "xField", 
-            "yField", 
-            "radiusField", 
+            series,
+            "title",
+            "xField",
+            "yField",
+            "radiusField",
             "labelField",
-            "xFieldName", 
+            "xFieldName",
             "yFieldName",
             "radiusFieldName",
             "labelFieldName",
@@ -227,14 +232,14 @@ export class ChartBuilder {
         ChartBuilder.initLabelFormatting(series, options);
 
         _.copyPropertiesIfPresent(
-            options, 
-            series, 
-            "xField", 
-            "yFields", 
-            "yFieldNames", 
-            "grouped", 
+            options,
+            series,
+            "xField",
+            "yFields",
+            "yFieldNames",
+            "grouped",
             "normalizedTo",
-            "fills", 
+            "fills",
             "strokes",
             "fillOpacity",
             "strokeOpacity",
@@ -253,8 +258,8 @@ export class ChartBuilder {
         ChartBuilder.initSeries(series, options);
 
         _.copyPropertiesIfPresent(
-            options, 
-            series, 
+            options,
+            series,
             "xField",
             "yFields",
             "yFieldNames",
@@ -282,9 +287,9 @@ export class ChartBuilder {
         _.copyPropertyIfPresent(options, series, "title", t => ChartBuilder.createPieTitle(t!));
 
         _.copyPropertiesIfPresent(
-            options, 
-            series, 
-            "calloutColors", 
+            options,
+            series,
+            "calloutColors",
             "calloutStrokeWidth",
             "calloutLength",
             "labelMinAngle",
@@ -304,19 +309,19 @@ export class ChartBuilder {
             "tooltipRenderer");
 
         _.copyPropertyIfPresent(options, series, "shadow", s => ChartBuilder.createDropShadow(s));
-        
+
         return series;
     }
 
     static initLegend(legend: Legend, options: LegendOptions) {
         ChartBuilder.initLabelFormatting(legend, options);
-        
+
         _.copyPropertiesIfPresent(
-            options, 
-            legend, 
-            "enabled", 
-            "markerStrokeWidth", 
-            "markerSize", 
+            options,
+            legend,
+            "enabled",
+            "markerStrokeWidth",
+            "markerSize",
             "markerPadding",
             "itemPaddingX",
             "itemPaddingY");
@@ -385,7 +390,7 @@ export class ChartBuilder {
             if (name === 'type') {
                 continue;
             }
-            
+
             if (name === 'title' && options.title) {
                 axis.title = ChartBuilder.createTitle(options.title);
                 continue;

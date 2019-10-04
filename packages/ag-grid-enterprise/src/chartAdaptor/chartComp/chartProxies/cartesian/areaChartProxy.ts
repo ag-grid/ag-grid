@@ -13,11 +13,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createAreaChart(this.chartOptions);
+        this.chart = ChartBuilder.createAreaChart(params.parentElement, this.chartOptions);
         this.setAxisPadding(this.chart);
 
         const areaSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults!);
-        
+
         if (areaSeries) { this.chart.addSeries(areaSeries); }
     }
 
@@ -66,9 +66,9 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
 
         lineChart.series
             .map(series => series as AreaSeries)
-            .forEach(areaSeries=> {
+            .forEach(areaSeries => {
                 const id = areaSeries.yFields[0];
-    
+
                 _.includes(fieldIds, id) ? existingSeriesMap[id] = areaSeries : lineChart.removeSeries(areaSeries);
             });
 
@@ -78,12 +78,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
             const areaSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as AreaSeries;
 
             if (areaSeries) {
-                areaSeries.yFieldNames = [ f.displayName ];
+                areaSeries.yFieldNames = [f.displayName];
                 areaSeries.data = params.data;
                 areaSeries.xField = params.category.id;
-                areaSeries.yFields = [ f.colId ];
-                areaSeries.fills = [ fills[index % fills.length] ];
-                areaSeries.strokes = [ strokes[index % strokes.length] ];
+                areaSeries.yFields = [f.colId];
+                areaSeries.fills = [fills[index % fills.length]];
+                areaSeries.strokes = [strokes[index % strokes.length]];
 
                 if (!existingSeries) {
                     lineChart.addSeries(areaSeries);

@@ -13,7 +13,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
 
         this.initChartOptions();
 
-        this.chart = ChartBuilder[this.isColumnChart() ? "createColumnChart" : "createBarChart"](this.chartOptions);
+        this.chart = ChartBuilder[this.isColumnChart() ? "createColumnChart" : "createBarChart"](params.parentElement, this.chartOptions);
 
         const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults!);
 
@@ -71,7 +71,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         return seriesDefaults ? !!seriesDefaults.labelEnabled : false;
     }
 
-    private isColumnChart = () => _.includes([ ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn ], this.chartType);
+    private isColumnChart = () => _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
 
     protected getDefaultOptions(): BarChartOptions {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
@@ -103,7 +103,6 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         };
 
         return {
-            parent: this.chartProxyParams.parentElement,
             background: {
                 fill: this.getBackgroundColor()
             },

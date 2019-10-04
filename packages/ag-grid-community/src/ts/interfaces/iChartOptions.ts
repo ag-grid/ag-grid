@@ -1,10 +1,7 @@
 export interface ChartOptions {
     document?: Document;
-    parent?: HTMLElement;
     series?: any[];
     data?: any;
-
-    // can be customised through API:
     width?: number;
     height?: number;
     padding?: IPadding;
@@ -66,7 +63,7 @@ export interface ScatterChartOptions extends CartesianChartOptions {
     seriesDefaults?: ScatterSeriesDefaultOptions;
 }
 
-export interface PolarChartOptions extends ChartOptions {}
+export interface PolarChartOptions extends ChartOptions { }
 
 export interface PieChartOptions extends PolarChartOptions {
     series?: PieSeriesOptions[];

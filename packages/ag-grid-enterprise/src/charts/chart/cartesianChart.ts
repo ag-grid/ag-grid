@@ -13,7 +13,7 @@ export enum CartesianChartLayout {
     Horizontal
 }
 
-type CartesianAxis = Axis<Scale<any, number>> | GroupedCategoryAxis;
+export type CartesianAxis = Axis<Scale<any, number>> | GroupedCategoryAxis;
 
 export interface CartesianChartOptions extends ChartOptions {
     xAxis: CartesianAxis;
@@ -31,7 +31,7 @@ export class CartesianChart extends Chart {
         this._xAxis = xAxis;
         this._yAxis = yAxis;
 
-        this.scene.root!.append([ xAxis.group, yAxis.group, this.seriesClipRect ]);
+        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
         this.scene.root!.append(this.legend.group);
     }
 
@@ -105,14 +105,14 @@ export class CartesianChart extends Chart {
         shrinkRect.width -= padding.left + padding.right + axisAutoPadding.left + axisAutoPadding.right;
         shrinkRect.height -= padding.top + padding.bottom + axisAutoPadding.top + axisAutoPadding.bottom + captionAutoPadding;
 
-        xAxis.scale.range = [ 0, shrinkRect.width ];
+        xAxis.scale.range = [0, shrinkRect.width];
         xAxis.rotation = -90;
         xAxis.translationX = Math.floor(shrinkRect.x);
         xAxis.translationY = Math.floor(shrinkRect.y + shrinkRect.height + 1);
         xAxis.parallelLabels = true;
         xAxis.gridLength = shrinkRect.height;
 
-        yAxis.scale.range = [ shrinkRect.height, 0 ];
+        yAxis.scale.range = [shrinkRect.height, 0];
         yAxis.translationX = Math.floor(shrinkRect.x);
         yAxis.translationY = Math.floor(shrinkRect.y);
         yAxis.gridLength = shrinkRect.width;

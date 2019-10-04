@@ -124,7 +124,7 @@ export class GridChartComp extends Component {
             width = chart.width;
             height = chart.height;
             this.chartProxy.destroy();
-            
+
             const canvas = this.eChart.querySelector('canvas');
 
             if (canvas) {
@@ -162,28 +162,28 @@ export class GridChartComp extends Component {
 
     private getSelectedPalette = (): Palette => this.model.getPalettes()[this.model.getActivePalette()];
 
-    private createChartProxy(chartOptions: ChartProxyParams): ChartProxy<any, any> {
-        switch (chartOptions.chartType) {
+    private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
+        switch (chartProxyParams.chartType) {
             case ChartType.GroupedColumn:
             case ChartType.StackedColumn:
             case ChartType.NormalizedColumn:
             case ChartType.GroupedBar:
             case ChartType.StackedBar:
             case ChartType.NormalizedBar:
-                return new BarChartProxy(chartOptions);
+                return new BarChartProxy(chartProxyParams);
             case ChartType.Pie:
-                return new PieChartProxy(chartOptions);
+                return new PieChartProxy(chartProxyParams);
             case ChartType.Doughnut:
-                return new DoughnutChartProxy(chartOptions);
+                return new DoughnutChartProxy(chartProxyParams);
             case ChartType.Area:
             case ChartType.StackedArea:
             case ChartType.NormalizedArea:
-                return new AreaChartProxy(chartOptions);
+                return new AreaChartProxy(chartProxyParams);
             case ChartType.Line:
-                return new LineChartProxy(chartOptions);
+                return new LineChartProxy(chartProxyParams);
             case ChartType.Scatter:
             case ChartType.Bubble:
-                return new ScatterChartProxy(chartOptions);
+                return new ScatterChartProxy(chartProxyParams);
         }
     }
 

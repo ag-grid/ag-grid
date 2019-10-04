@@ -12,7 +12,7 @@ import { Caption } from "../caption";
 
 export interface ChartOptions {
     document?: Document;
-    parent?: HTMLElement;
+    parent: HTMLElement;
 }
 
 export abstract class Chart {
@@ -30,7 +30,7 @@ export abstract class Chart {
 
     private defaultTooltipClass = 'ag-chart-tooltip';
 
-    protected constructor(options: ChartOptions = {}) {
+    protected constructor(options: ChartOptions) {
         const root = new Group();
         const background = this.background;
         const document = options.document || window.document;
@@ -38,7 +38,7 @@ export abstract class Chart {
         background.fill = 'white';
         root.appendChild(background);
 
-        const scene = new Scene({document});
+        const scene = new Scene({ document });
         this.scene = scene;
         scene.parent = options.parent;
         scene.root = root;
@@ -514,7 +514,7 @@ export abstract class Chart {
 
         const datum = this.legend.datumForPoint(x, y);
         if (datum) {
-            const {id, itemId, enabled} = datum;
+            const { id, itemId, enabled } = datum;
             const series = find(this.series, series => series.id === id);
 
             if (series) {
@@ -582,9 +582,9 @@ export abstract class Chart {
         const top = event.pageY + offset[1];
         let left = event.pageX + offset[0];
 
-        if (tooltipRect && 
-            parent && 
-            parent.parentElement && 
+        if (tooltipRect &&
+            parent &&
+            parent.parentElement &&
             (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth)) {
             left -= tooltipRect.width + offset[0];
         }

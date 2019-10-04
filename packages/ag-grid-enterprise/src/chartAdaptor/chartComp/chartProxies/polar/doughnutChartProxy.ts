@@ -9,7 +9,7 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createDoughnutChart(this.chartOptions);
+        this.chart = ChartBuilder.createDoughnutChart(params.parentElement, this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {

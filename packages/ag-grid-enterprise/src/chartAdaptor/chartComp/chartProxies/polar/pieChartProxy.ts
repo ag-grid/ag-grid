@@ -9,7 +9,7 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createPolarChart(this.chartOptions);
+        this.chart = ChartBuilder.createPieChart(params.parentElement, this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
@@ -27,7 +27,7 @@ export class PieChartProxy extends PolarChartProxy<PieChartOptions> {
 
         let pieSeries = existingSeries;
         let calloutColors: string[] | undefined = undefined;
-        
+
         if (existingSeriesId !== pieSeriesId) {
             pieChart.removeSeries(existingSeries);
 

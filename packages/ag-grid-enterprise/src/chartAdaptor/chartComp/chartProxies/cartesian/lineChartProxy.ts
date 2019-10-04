@@ -9,7 +9,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createLineChart(this.chartOptions);
+        this.chart = ChartBuilder.createLineChart(params.parentElement, this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
@@ -30,7 +30,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
             .map(series => series as LineSeries)
             .forEach(lineSeries => {
                 const id = lineSeries.yField;
-                
+
                 _.includes(fieldIds, id) ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
             });
 

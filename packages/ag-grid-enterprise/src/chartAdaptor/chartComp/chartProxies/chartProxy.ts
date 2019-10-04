@@ -32,7 +32,7 @@ export interface ChartProxyParams {
     isDarkTheme: () => boolean;
 }
 
-export interface FieldDefinition { 
+export interface FieldDefinition {
     colId: string;
     displayName: string;
 }
@@ -94,9 +94,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         // so this allows the chart defaults to be overridden
         this.chartOptions.width = this.chartProxyParams.width || this.chartOptions.width;
         this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
-        
-        // this cannot be overridden via the processChartOptions callback
-        this.chartOptions.parent = this.chartProxyParams.parentElement;
     }
 
     private overridePalette(chartOptions: any) {
@@ -219,7 +216,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             chartType: this.chartType,
             chartOptions: this.chartOptions
         };
-        
+
         this.chartProxyParams.eventService.dispatchEvent(event);
     }
 
