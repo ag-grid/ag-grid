@@ -723,6 +723,8 @@
             }
 
             .ag-filter-list-panel {
+                flex: 1 1 auto;
+                overflow: auto;
                 > div {
                     &:last-of-type {
                         .ag-group-component.ag-collapsed {
