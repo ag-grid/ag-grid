@@ -85,6 +85,7 @@ const tscModulesTask = () => {
             .pipe(replace("\"../", "\"./dist/lib/"))
             .pipe(gulp.dest('./')),
         tsResult.js
+            .pipe(replace("require(\"./", "require(\"./dist/lib/modules/"))
             .pipe(replace("require(\"../", "require(\"./dist/lib/"))
             .pipe(gulp.dest('./'))
     ]);
