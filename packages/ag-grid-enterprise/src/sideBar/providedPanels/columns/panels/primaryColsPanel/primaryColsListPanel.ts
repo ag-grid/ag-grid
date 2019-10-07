@@ -298,12 +298,9 @@ export class PrimaryColsListPanel extends Component {
         this.recursivelySetVisibility(this.columnTree, true);
 
         // groups selection state may need to be updated when filter is present
-        _.iterateObject(this.filterResults, (key, passesFilter) => {
-            if (passesFilter) {
-                const columnComp = this.columnComps[key];
-                if (columnComp instanceof ToolPanelColumnGroupComp) {
-                    columnComp.onColumnStateChanged(this.filterResults);
-                }
+        _.iterateObject(this.columnComps, (key, columnComp) => {
+            if (columnComp instanceof ToolPanelColumnGroupComp) {
+                columnComp.onColumnStateChanged();
             }
         });
 

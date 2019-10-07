@@ -57,7 +57,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     private getFilterResultsCallback: () => ColumnFilterResults;
 
     constructor(columnGroup: OriginalColumnGroup, columnDept: number, allowDragging: boolean, expandByDefault: boolean,
-                expandedCallback: () => void, getFilterResults: () => ColumnFilterResults, ) {
+                expandedCallback: () => void, getFilterResults: () => ColumnFilterResults) {
         super();
         this.columnGroup = columnGroup;
         this.columnDept = columnDept;
@@ -183,9 +183,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
             // only columns that are 'allowed' and pass filter should be visible
             this.columnController.setColumnsVisible(visibleColumns, nextState, "toolPanelUi");
-
-            // update group state
-            this.onColumnStateChanged(filterResults);
         }
     }
 
@@ -251,8 +248,8 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         }
     }
 
-    public onColumnStateChanged(filterResults?: ColumnFilterResults): void {
-        const selectedValue = this.workOutSelectedValue(filterResults);
+    public onColumnStateChanged(): void {
+        const selectedValue = this.workOutSelectedValue();
         const readOnlyValue = this.workOutReadOnlyValue();
         this.processingColumnStateChange = true;
         this.cbSelect.setValue(selectedValue);
@@ -260,9 +257,11 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         this.processingColumnStateChange = false;
     }
 
-    private workOutSelectedValue(filterResults?: ColumnFilterResults): boolean | undefined {
+    private workOutSelectedValue(): boolean | undefined {
         const pivotMode = this.columnController.isPivotMode();
         const leafColumns = this.columnGroup.getLeafColumns();
+        const filterResults = this.getFilterResultsCallback();
+
         const len = leafColumns.length;
         const count = { visible: 0, hidden: 0 };
         const ignoredChildCount = { visible: 0, hidden: 0 };
