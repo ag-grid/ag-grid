@@ -5,10 +5,11 @@ import { Constants } from "../../constants";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { RowNode } from "../../entities/rowNode";
 import { _ } from "../../utils";
-import {RowDataTransaction} from "./rowDataTransaction";
+import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
+import {IImmutableService} from "../../interfaces/iImmutableService";
 
 @Bean('immutableService')
-export class ImmutableService {
+export class ImmutableService implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

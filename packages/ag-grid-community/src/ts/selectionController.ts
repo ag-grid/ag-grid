@@ -10,11 +10,11 @@ import { IRowModel } from "./interfaces/iRowModel";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { PostConstruct } from "./context/context";
 import { Constants } from "./constants";
-import { ClientSideRowModel } from "./modules/clientSideRowModel/clientSideRowModel";
 import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
 import { _ } from './utils';
 import { ChangedPath } from "./utils/changedPath";
+import {IClientSideRowModel} from "./interfaces/iClientSideRowModel";
 
 @Bean('selectionController')
 export class SelectionController {
@@ -97,7 +97,7 @@ export class SelectionController {
             return;
         }
 
-        const clientSideRowModel = this.rowModel as ClientSideRowModel;
+        const clientSideRowModel = this.rowModel as IClientSideRowModel;
         const rootNode = clientSideRowModel.getRootNode();
 
         if (!changedPath) {
@@ -211,9 +211,10 @@ export class SelectionController {
 
         if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             console.warn('getBestCostNodeSelection is only available when using normal row model');
+            return;
         }
 
-        const clientSideRowModel = this.rowModel as ClientSideRowModel;
+        const clientSideRowModel = this.rowModel as IClientSideRowModel;
 
         const topLevelNodes = clientSideRowModel.getTopLevelNodes();
 
@@ -269,7 +270,7 @@ export class SelectionController {
                 console.error('ag-Grid: selecting just filtered only works with In Memory Row Model');
                 return;
             }
-            const clientSideRowModel = this.rowModel as ClientSideRowModel;
+            const clientSideRowModel = this.rowModel as IClientSideRowModel;
             clientSideRowModel.forEachNodeAfterFilter(callback);
         } else {
             _.iterateObject(this.selectedNodes, (id: string, rowNode: RowNode) => {
@@ -301,7 +302,7 @@ export class SelectionController {
             throw new Error(`selectAll only available with normal row model, ie not ${this.rowModel.getType()}`);
         }
 
-        const clientSideRowModel = this.rowModel as ClientSideRowModel;
+        const clientSideRowModel = this.rowModel as IClientSideRowModel;
         const callback = (rowNode: RowNode) => rowNode.selectThisNode(true);
 
         if (justFiltered) {

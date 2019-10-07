@@ -9,8 +9,8 @@ import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { SelectionController } from "../../selectionController";
 import { _ } from "../../utils";
-import {RowDataTransaction} from "./rowDataTransaction";
-import {RowNodeTransaction} from "./rowNodeTransaction";
+import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
+import {RowNodeTransaction} from "../../interfaces/rowNodeTransaction";
 
 export class ClientSideNodeManager {
 

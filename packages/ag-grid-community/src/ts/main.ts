@@ -163,14 +163,9 @@ export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { TextFormatter } from "./filter/provided/text/textFilter";
 export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 
-// rowControllers/inMemory
-export { FilterStage } from "./modules/clientSideRowModel/filterStage";
-export { FlattenStage } from "./modules/clientSideRowModel/flattenStage";
-export { SortStage } from "./modules/clientSideRowModel/sortStage";
-
 // row models
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
-export { RowNodeTransaction } from "./modules/clientSideRowModel/rowNodeTransaction";
+export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 export { ChangedPath } from "./utils/changedPath";
 export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
@@ -186,7 +181,7 @@ export { IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
 export { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 export { IServerSideCache } from "./interfaces/iServerSideCache";
 
-export { ISideBar } from "./interfaces/ISideBar";
+export { ISideBar } from "./interfaces/iSideBar";
 export { RowNodeCache, RowNodeCacheParams } from "./modules/rowNodeCache/rowNodeCache";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 

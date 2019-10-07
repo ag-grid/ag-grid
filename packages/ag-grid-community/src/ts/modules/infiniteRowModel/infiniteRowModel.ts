@@ -18,7 +18,7 @@ import { ColumnApi } from "../../columnController/columnApi";
 import { NumberSequence, _ } from "../../utils";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import {ModuleLogger} from "../../utils/moduleLogger";
-import {RowDataTransaction} from "../clientSideRowModel/rowDataTransaction";
+import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
 
 ModuleLogger.logModuleClass('InfiniteRowModel');
 

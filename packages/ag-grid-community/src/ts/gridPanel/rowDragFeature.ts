@@ -3,7 +3,6 @@ import {
     VDirection
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
-import { ClientSideRowModel } from "../modules/clientSideRowModel/clientSideRowModel";
 import { FocusedCellController } from "../focusedCellController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { GridPanel } from "./gridPanel";
@@ -13,6 +12,7 @@ import { RowDragEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants";
+import {IClientSideRowModel} from "../interfaces/iClientSideRowModel";
 
 export class RowDragFeature implements DropTarget {
 
@@ -26,7 +26,7 @@ export class RowDragFeature implements DropTarget {
 
     private gridPanel: GridPanel;
 
-    private clientSideRowModel: ClientSideRowModel;
+    private clientSideRowModel: IClientSideRowModel;
 
     private eContainer: HTMLElement;
 
@@ -46,7 +46,7 @@ export class RowDragFeature implements DropTarget {
     @PostConstruct
     private postConstruct(): void {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.clientSideRowModel = this.rowModel as ClientSideRowModel;
+            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
     }
 

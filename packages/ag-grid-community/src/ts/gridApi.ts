@@ -31,8 +31,6 @@ import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
 import {IDatasource} from "./interfaces/iDatasource";
 import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
 import {PaginationProxy} from "./pagination/paginationProxy";
-import {ClientSideRowModel} from "./modules/clientSideRowModel/clientSideRowModel";
-import {ImmutableService} from "./modules/clientSideRowModel/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {AgEvent, ColumnEventType} from "./events";
@@ -51,11 +49,12 @@ import {_} from "./utils";
 import {ChartRef, ProcessChartOptionsParams} from "./entities/gridOptions";
 import {ChartOptions, ChartType} from "./interfaces/iChartOptions";
 import {IToolPanel} from "./interfaces/iToolPanel";
-import {RowNodeTransaction} from "./modules/clientSideRowModel/rowNodeTransaction";
+import {RowNodeTransaction} from "./interfaces/rowNodeTransaction";
 import {IClientSideRowModel} from "./interfaces/iClientSideRowModel";
-import {RefreshModelParams} from "./modules/clientSideRowModel/refreshModelParams";
-import {RowDataTransaction} from "./modules/clientSideRowModel/rowDataTransaction";
+import {RefreshModelParams} from "./interfaces/refreshModelParams";
+import {RowDataTransaction} from "./interfaces/rowDataTransaction";
 import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
+import {IImmutableService} from "./interfaces/iImmutableService";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -118,7 +117,7 @@ export interface DetailGridInfo {
 @Bean('gridApi')
 export class GridApi {
 
-    @Autowired('immutableService') private immutableService: ImmutableService;
+    @Autowired('immutableService') private immutableService: IImmutableService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -172,7 +171,7 @@ export class GridApi {
     private init(): void {
         switch (this.rowModel.getType()) {
             case Constants.ROW_MODEL_TYPE_CLIENT_SIDE:
-                this.clientSideRowModel = this.rowModel as ClientSideRowModel;
+                this.clientSideRowModel = this.rowModel as IClientSideRowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:
                 this.infiniteRowModel = this.rowModel as InfiniteRowModel;

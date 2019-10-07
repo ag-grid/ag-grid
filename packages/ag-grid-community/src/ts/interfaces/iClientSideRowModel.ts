@@ -1,7 +1,7 @@
 import {IRowModel} from "./iRowModel";
-import {RowNodeTransaction} from "../modules/clientSideRowModel/rowNodeTransaction";
-import {RowDataTransaction} from "../modules/clientSideRowModel/rowDataTransaction";
-import {RefreshModelParams} from "../modules/clientSideRowModel/refreshModelParams";
+import {RowNodeTransaction} from "./rowNodeTransaction";
+import {RowDataTransaction} from "./rowDataTransaction";
+import {RefreshModelParams} from "./refreshModelParams";
 import {RowNode} from "../entities/rowNode";
 import {ChangedPath} from "../utils/changedPath";
 
@@ -19,4 +19,7 @@ export interface IClientSideRowModel extends IRowModel {
     batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
     getRootNode(): RowNode;
     doAggregate(changedPath?: ChangedPath): void;
+    getTopLevelNodes(): RowNode[] | null;
+    forEachPivotNode(callback: Function): void;
+    ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean;
 }

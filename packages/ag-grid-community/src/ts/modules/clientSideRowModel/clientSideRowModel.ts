@@ -23,10 +23,10 @@ import {IRowModel, RowBounds} from "../../interfaces/iRowModel";
 import { GridApi } from "../../gridApi";
 import { _ } from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";
-import {RowNodeTransaction} from "./rowNodeTransaction";
+import {RowNodeTransaction} from "../../interfaces/rowNodeTransaction";
 import {IClientSideRowModel} from "../../interfaces/iClientSideRowModel";
-import {RowDataTransaction} from "./rowDataTransaction";
-import {RefreshModelParams} from "./refreshModelParams";
+import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
+import {RefreshModelParams} from "../../interfaces/refreshModelParams";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
 
@@ -454,7 +454,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
         console.error('ag-Grid: should never call setDatasource on clientSideRowController');
     }
 
-    public getTopLevelNodes() {
+    public getTopLevelNodes(): RowNode[] | null {
         return this.rootNode ? this.rootNode.childrenAfterGroup : null;
     }
 

@@ -6,7 +6,7 @@ import { RowNode } from "../../entities/rowNode";
 import { SortController } from "../../sortController";
 import { ColumnController } from "../../columnController/columnController";
 import { _ } from "../../utils";
-import {RowNodeTransaction} from "./rowNodeTransaction";
+import {RowNodeTransaction} from "../../interfaces/rowNodeTransaction";
 
 @Bean('sortStage')
 export class SortStage {

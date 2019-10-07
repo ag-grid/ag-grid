@@ -20,9 +20,9 @@ import { GroupInstanceIdCreator } from "../columnController/groupInstanceIdCreat
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { ColumnGroup } from "../entities/columnGroup";
 import { GridApi } from "../gridApi";
-import { ClientSideRowModel } from "../modules/clientSideRowModel/clientSideRowModel";
 import { _ } from "../utils";
 import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
+import {IClientSideRowModel} from "../interfaces/iClientSideRowModel";
 
 /**
  * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface
@@ -274,8 +274,8 @@ export class GridSerializer {
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
 
         if (isPivotMode) {
-            if ((this.rowModel as ClientSideRowModel).forEachPivotNode) {
-                (this.rowModel as ClientSideRowModel).forEachPivotNode(processRow);
+            if ((this.rowModel as IClientSideRowModel).forEachPivotNode) {
+                (this.rowModel as IClientSideRowModel).forEachPivotNode(processRow);
             } else {
                 //Must be enterprise, so we can just loop through all the nodes
                 this.rowModel.forEachNode(processRow);
@@ -296,7 +296,7 @@ export class GridSerializer {
                 // the selection model even when just using selected, so that the result is the order
                 // of the rows appearing on the screen.
                 if (rowModelNormal) {
-                    (this.rowModel as ClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
+                    (this.rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
                 } else {
                     this.rowModel.forEachNode(processRow);
                 }
