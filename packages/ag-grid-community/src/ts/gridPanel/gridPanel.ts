@@ -840,6 +840,10 @@ export class GridPanel extends Component {
         this.onHorizontalViewportChanged();
 
         this.setPinnedContainerSize();
+
+        // adding and removing the grid from the DOM both resets the scroll position and
+        // triggers a resize event, so notify listeners that the scroll position might have changed
+        this.onBodyHorizontalScroll(this.eCenterViewport);
     }
 
     private updateScrollVisibleService(): void {
