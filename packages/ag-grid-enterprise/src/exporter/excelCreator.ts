@@ -88,7 +88,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
     public createSerializingSession(params: ExcelExportParams): SerializingSession {
         const {columnController, valueService, gridOptionsWrapper} = this;
-        const {processCellCallback, processHeaderCallback, suppressTextAsCDATA, rowHeight, headerRowHeight} = params;
+        const {processCellCallback, processHeaderCallback, processGroupHeaderCallback, suppressTextAsCDATA, rowHeight, headerRowHeight} = params;
         const isXlsx = this.getExportMode() === 'xlsx';
         const excelFactory = isXlsx ? this.xlsxFactory : this.excelXmlFactory;
 
@@ -104,6 +104,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             gridOptionsWrapper,
             processCellCallback,
             processHeaderCallback,
+            processGroupHeaderCallback,
             rowHeight,
             headerRowHeight: headerRowHeight || rowHeight,
             sheetName,

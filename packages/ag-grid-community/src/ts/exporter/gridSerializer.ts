@@ -11,7 +11,8 @@ import {
     ExportParams,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
-    ShouldRowBeSkippedParams
+    ShouldRowBeSkippedParams,
+    ProcessGroupHeaderForExportParams
 } from "./exportParams";
 import { DisplayedGroupCreator } from "../columnController/displayedGroupCreator";
 import { ColumnFactory } from "../columnController/columnFactory";
@@ -87,6 +88,7 @@ export interface GridSerializingParams {
     gridOptionsWrapper: GridOptionsWrapper;
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
+    processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     cellAndHeaderEscaper?: (rawValue:string) => string;
 }
 
@@ -96,17 +98,19 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public gridOptionsWrapper:GridOptionsWrapper;
     public processCellCallback?:(params: ProcessCellForExportParams) => string;
     public processHeaderCallback?:(params: ProcessHeaderForExportParams) => string;
+    public processGroupHeaderCallback?:(params: ProcessGroupHeaderForExportParams) => string;
     public cellAndHeaderEscaper?:(rawValue:string) => string;
 
     constructor(config: GridSerializingParams) {
         const {columnController, valueService, gridOptionsWrapper, processCellCallback,
-            processHeaderCallback, cellAndHeaderEscaper} = config;
+            processHeaderCallback, processGroupHeaderCallback, cellAndHeaderEscaper} = config;
 
         this.columnController = columnController;
         this.valueService = valueService;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
+        this.processGroupHeaderCallback = processGroupHeaderCallback;
         this.cellAndHeaderEscaper = cellAndHeaderEscaper;
     }
 
@@ -214,6 +218,7 @@ export class GridSerializer {
         const onlySelected = params && params.onlySelected;
         const columnKeys = params && params.columnKeys;
         const onlySelectedAllPages = params && params.onlySelectedAllPages;
+        const processGroupHeaderCallback = params ? params.processGroupHeaderCallback : undefined;
         const rowSkipper:(params: ShouldRowBeSkippedParams) => boolean = (params && params.shouldRowBeSkipped) || dontSkipRows;
         const api:GridApi = this.gridOptionsWrapper.getApi() as GridApi;
         const skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
@@ -256,7 +261,7 @@ export class GridSerializer {
                 groupInstanceIdCreator,
                 null
             );
-            this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession);
+            this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, processGroupHeaderCallback);
         }
 
         if (!skipHeader) {
@@ -269,7 +274,7 @@ export class GridSerializer {
         this.pinnedRowModel.forEachPinnedTopRow(processRow);
 
         if (isPivotMode) {
-            if ((this.rowModel as any).forEachPivotNode) {
+            if ((this.rowModel as ClientSideRowModel).forEachPivotNode) {
                 (this.rowModel as ClientSideRowModel).forEachPivotNode(processRow);
             } else {
                 //Must be enterprise, so we can just loop through all the nodes
@@ -351,7 +356,7 @@ export class GridSerializer {
         return gridSerializingSession.parse();
     }
 
-    recursivelyAddHeaderGroups<T>(displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>):void {
+    recursivelyAddHeaderGroups<T>(displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>, processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined):void {
         const directChildrenHeaderGroups:ColumnGroupChild[] = [];
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
             const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
@@ -360,25 +365,39 @@ export class GridSerializer {
         });
 
         if (displayedGroups.length > 0 && displayedGroups[0] instanceof ColumnGroup) {
-            this.doAddHeaderHeader(gridSerializingSession, displayedGroups);
+            this.doAddHeaderHeader(gridSerializingSession, displayedGroups, processGroupHeaderCallback);
         }
 
         if (directChildrenHeaderGroups && directChildrenHeaderGroups.length > 0) {
-            this.recursivelyAddHeaderGroups(directChildrenHeaderGroups, gridSerializingSession);
+            this.recursivelyAddHeaderGroups(directChildrenHeaderGroups, gridSerializingSession, processGroupHeaderCallback);
         }
     }
 
-    private doAddHeaderHeader<T>(gridSerializingSession: GridSerializingSession<T>, displayedGroups: ColumnGroupChild[]) {
+    private doAddHeaderHeader<T>(gridSerializingSession: GridSerializingSession<T>, displayedGroups: ColumnGroupChild[], processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined) {
+
         const gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
         let columnIndex: number = 0;
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
             const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
 
-            const columnName = this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
-            gridRowIterator.onColumn(columnName || '', columnIndex++, columnGroup.getLeafColumns().length - 1);
+            let name: string;
+            if (processGroupHeaderCallback) {
+                name = processGroupHeaderCallback({
+                    columnGroup: columnGroup,
+                    api: this.gridOptionsWrapper.getApi(),
+                    columnApi: this.gridOptionsWrapper.getColumnApi(),
+                    context: this.gridOptionsWrapper.getContext()
+                });
+            } else {
+                name = this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
+            }
+
+            gridRowIterator.onColumn(name || '', columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
     }
 }
+
+type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) => string;
 
 export enum RowType {
     HEADER_GROUPING, HEADER, BODY

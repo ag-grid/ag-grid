@@ -2,6 +2,7 @@ import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
+import { ColumnGroup } from "../entities/columnGroup";
 
 export interface BaseExportParams {
     skipHeader?: boolean;
@@ -22,6 +23,8 @@ export interface BaseExportParams {
     processCellCallback?(params: ProcessCellForExportParams): string;
 
     processHeaderCallback?(params: ProcessHeaderForExportParams): string;
+
+    processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams): string;
 }
 
 export interface ExportParams<T> extends BaseExportParams {
@@ -51,6 +54,13 @@ export interface ProcessCellForExportParams {
 
 export interface ProcessHeaderForExportParams {
     column: Column;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
+    context: any;
+}
+
+export interface ProcessGroupHeaderForExportParams {
+    columnGroup: ColumnGroup;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
     context: any;

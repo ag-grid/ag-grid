@@ -111,6 +111,17 @@ include '../documentation-main/documentation_header.php';
             The callback params has the following attributes: column, api, columnApi, context.
         </p>
 
+        <h3><code>processGroupHeaderCallback()</code></h3>
+
+        <p>This function will be called for each column group in the grid. It should return a string that will be used
+            in place of the group name in the export. Not that column groups are not exported by default, you need to
+            pass <code>columnGroups: true</code> in the export params.
+        </p>
+
+        <p>
+            The callback params has the following attributes: columnGroup, api, columnApi, context.
+        </p>
+
         <p>
             You can assign default export parameters to your Excel export by setting the property <code>defaultExportParams</code>
             in your gridOptions. This is useful if you are planning the user to let export the data via the contextual menu.

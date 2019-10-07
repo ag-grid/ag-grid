@@ -56,6 +56,7 @@ include '../documentation-main/documentation_header.php';
         <li><code>shouldRowBeSkipped</code>: Allows you to skip entire rows from the export.</li>
         <li><code>processCellCallback</code>: Allows you to process (typically format) cells for the CSV.</li>
         <li><code>processHeaderCallback</code>: Allows you to create custom header values for the export.</li>
+        <li><code>processGroupHeaderCallback</code>: Allows you to create custom column group header values for the export.</li>
     </ul>
 
 
@@ -85,6 +86,16 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The callback params has the following attributes: column, api, columnApi, context.
+    </p>
+
+    <h2>processGroupHeaderCallback()</h2>
+
+    <p>This function will be called for each column group in the grid. It should return a string that will be used
+        in place of the group name in the export. Not that column groups are not exported by default, you need to
+        pass <code>columnGroups: true</code> in the export params.</p>
+
+    <p>
+        The callback params has the following attributes: columnGroup, api, columnApi, context.
     </p>
 
     <h2>
