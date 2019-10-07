@@ -19,9 +19,8 @@ import { CellPosition } from "../entities/cellPosition";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { BeanStub } from "../context/beanStub";
-import { PaginationProxy } from "../rowModels/paginationProxy";
+import { PaginationProxy } from "../pagination/paginationProxy";
 import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams } from "../gridApi";
-import { PinnedRowModel } from "../rowModels/pinnedRowModel";
 import { Beans } from "./beans";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { MaxDivHeightScaler } from "./maxDivHeightScaler";
@@ -30,6 +29,7 @@ import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { _ } from "../utils";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
+import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {

@@ -16,7 +16,7 @@ import { Autowired, Bean, Context, Optional, PostConstruct } from "../../context
 import { SelectionController } from "../../selectionController";
 import { IRowNodeStage } from "../../interfaces/iRowNodeStage";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
-import { ChangedPath } from "./changedPath";
+import { ChangedPath } from "../../utils/changedPath";
 import { ValueService } from "../../valueService/valueService";
 import { ValueCache } from "../../valueService/valueCache";
 import {IRowModel, RowBounds} from "../../interfaces/iRowModel";

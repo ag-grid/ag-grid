@@ -1,9 +1,9 @@
-import { Constants } from "../constants";
+import {Constants} from "../constants";
 import {Autowired, Bean} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
-import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {RowNode} from "./rowNode";
-import { _ } from "../utils";
+import {_} from "../utils";
+import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
 
 export interface RowPosition {
     rowIndex: number;

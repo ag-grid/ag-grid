@@ -2,7 +2,7 @@ import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
 import { Constants } from "../constants";
 import { MouseEventService } from "./mouseEventService";
-import { PaginationProxy } from "../rowModels/paginationProxy";
+import { PaginationProxy } from "../pagination/paginationProxy";
 import { Column } from "../entities/column";
 import { FocusedCellController } from "../focusedCellController";
 import { GridPanel } from "./gridPanel";

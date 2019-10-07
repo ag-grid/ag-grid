@@ -1,13 +1,13 @@
-import { RowNode } from "../entities/rowNode";
-import { Column } from "../entities/column";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { SortController } from "../sortController";
-import { ValueService } from "../valueService/valueService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ColumnController } from "../columnController/columnController";
-import { RowNodeMap } from "../rowModels/clientSide/clientSideRowModel";
-import { ChangedPath } from "../rowModels/clientSide/changedPath";
-import { _ } from "../utils";
+import { RowNode } from "../../entities/rowNode";
+import { Column } from "../../entities/column";
+import { Autowired, Bean, PostConstruct } from "../../context/context";
+import { SortController } from "../../sortController";
+import { ValueService } from "../../valueService/valueService";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { ColumnController } from "../../columnController/columnController";
+import { RowNodeMap } from "./clientSideRowModel";
+import { ChangedPath } from "../../utils/changedPath";
+import { _ } from "../../utils";
 
 export interface SortOption {
     inverter: number;

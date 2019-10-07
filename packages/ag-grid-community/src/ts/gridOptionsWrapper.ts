@@ -26,7 +26,7 @@ import { Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier } from "
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { IDatasource } from "./rowModels/iDatasource";
+import { IDatasource } from "./interfaces/iDatasource";
 import { CellPosition } from "./entities/cellPosition";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exporter/exportParams";

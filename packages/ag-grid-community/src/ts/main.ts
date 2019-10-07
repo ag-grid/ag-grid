@@ -164,18 +164,18 @@ export { TextFormatter } from "./filter/provided/text/textFilter";
 export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 
 // rowControllers/inMemory
-export { FilterStage } from "./rowModels/clientSide/filterStage";
-export { FlattenStage } from "./rowModels/clientSide/flattenStage";
-export { SortStage } from "./rowModels/clientSide/sortStage";
+export { FilterStage } from "./modules/clientSideRowModel/filterStage";
+export { FlattenStage } from "./modules/clientSideRowModel/flattenStage";
+export { SortStage } from "./modules/clientSideRowModel/sortStage";
 
 // row models
-export { PinnedRowModel } from "./rowModels/pinnedRowModel";
-export { RowNodeTransaction } from "./rowModels/clientSide/rowNodeTransaction";
+export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
+export { RowNodeTransaction } from "./modules/clientSideRowModel/rowNodeTransaction";
 export { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
-export { ChangedPath } from "./rowModels/clientSide/changedPath";
-export { RowNodeBlock } from "./rowModels/cache/rowNodeBlock";
-export { RowNodeBlockLoader } from "./rowModels/cache/rowNodeBlockLoader";
-export { PaginationProxy } from "./rowModels/paginationProxy";
+export { ChangedPath } from "./utils/changedPath";
+export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
+export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
+export { PaginationProxy } from "./pagination/paginationProxy";
 
 export { ColumnVO } from "./interfaces/iColumnVO";
 
@@ -187,8 +187,8 @@ export { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 export { IServerSideCache } from "./interfaces/iServerSideCache";
 
 export { ISideBar } from "./interfaces/ISideBar";
-export { RowNodeCache, RowNodeCacheParams } from "./rowModels/cache/rowNodeCache";
-export { IGetRowsParams, IDatasource } from "./rowModels/iDatasource";
+export { RowNodeCache, RowNodeCacheParams } from "./modules/rowNodeCache/rowNodeCache";
+export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 
 //styling
 export { StylingService } from "./styling/stylingService";

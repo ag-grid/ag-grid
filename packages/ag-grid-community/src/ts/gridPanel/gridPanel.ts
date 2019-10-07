@@ -16,11 +16,10 @@ import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleSe
 import { Column } from "../entities/column";
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
 import { RowNode } from "../entities/rowNode";
-import { PaginationProxy } from "../rowModels/paginationProxy";
-import { PaginationAutoPageSizeService } from "../rowModels/paginationAutoPageSizeService";
+import { PaginationProxy } from "../pagination/paginationProxy";
+import { PaginationAutoPageSizeService } from "../pagination/paginationAutoPageSizeService";
 import { PopupEditorWrapper } from "../rendering/cellEditors/popupEditorWrapper";
 import { AlignedGridsService } from "../alignedGridsService";
-import { PinnedRowModel } from "../rowModels/pinnedRowModel";
 import { GridApi } from "../gridApi";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { RowComp } from "../rendering/rowComp";
@@ -41,6 +40,7 @@ import { RefSelector } from "../widgets/componentAnnotations";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { _ } from "../utils";
+import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap

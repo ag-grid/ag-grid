@@ -1,6 +1,6 @@
 import { RowNode } from "../entities/rowNode";
-import { ChangedPath } from "../rowModels/clientSide/changedPath";
-import {RowNodeTransaction} from "../rowModels/clientSide/rowNodeTransaction";
+import { ChangedPath } from "../utils/changedPath";
+import {RowNodeTransaction} from "../modules/clientSideRowModel/rowNodeTransaction";
 
 export interface StageExecuteParams {
     rowNode: RowNode;

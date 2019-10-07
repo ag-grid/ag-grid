@@ -20,9 +20,9 @@ import { GroupInstanceIdCreator } from "../columnController/groupInstanceIdCreat
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { ColumnGroup } from "../entities/columnGroup";
 import { GridApi } from "../gridApi";
-import { ClientSideRowModel } from "../rowModels/clientSide/clientSideRowModel";
-import { PinnedRowModel } from "../rowModels/pinnedRowModel";
+import { ClientSideRowModel } from "../modules/clientSideRowModel/clientSideRowModel";
 import { _ } from "../utils";
+import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
 
 /**
  * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface

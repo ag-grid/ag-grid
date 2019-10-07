@@ -1,10 +1,10 @@
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {RowNode} from "../../entities/rowNode";
 import {Autowired, PostConstruct} from "../../context/context";
-import {IGetRowsParams} from "../iDatasource";
+import {IGetRowsParams} from "../../interfaces/iDatasource";
 import {IEventEmitter} from "../../interfaces/iEventEmitter";
 import {InfiniteCacheParams} from "./infiniteCache";
-import {RowNodeBlock} from "../cache/rowNodeBlock";
+import {RowNodeBlock} from "../rowNodeCache/rowNodeBlock";
 import {RowRenderer} from "../../rendering/rowRenderer";
 import {_} from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";

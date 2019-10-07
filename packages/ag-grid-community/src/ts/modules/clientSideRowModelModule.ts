@@ -1,7 +1,7 @@
 import {Module} from "../interfaces/iModule";
 import {ModuleNames} from "./moduleNames";
 import {Grid} from "../grid";
-import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
+import {ClientSideRowModel} from "./clientSideRowModel/clientSideRowModel";
 
 export const ClientSideRowModelModule: Module = {
     moduleName: ModuleNames.ClientSideRowModelModule,

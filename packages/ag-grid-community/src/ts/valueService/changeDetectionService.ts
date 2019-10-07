@@ -2,14 +2,14 @@ import {Column} from "../entities/column";
 import {RowNode} from "../entities/rowNode";
 import {Autowired, Bean, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ChangedPath} from "../rowModels/clientSide/changedPath";
+import {ChangedPath} from "../utils/changedPath";
 import {IRowModel} from "../interfaces/iRowModel";
-import {ClientSideRowModel} from "../rowModels/clientSide/clientSideRowModel";
 import {RowRenderer} from "../rendering/rowRenderer";
 import {EventService} from "../eventService";
 import {Constants} from "../constants";
 import {BeanStub} from "../context/beanStub";
 import {CellValueChangedEvent, Events} from "../events";
+import {IClientSideRowModel} from "../interfaces/iClientSideRowModel";
 
 @Bean('changeDetectionService')
 export class ChangeDetectionService extends BeanStub {
@@ -19,12 +19,12 @@ export class ChangeDetectionService extends BeanStub {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('eventService') private eventService: EventService;
 
-    private clientSideRowModel: ClientSideRowModel;
+    private clientSideRowModel: IClientSideRowModel;
 
     @PostConstruct
     private init(): void {
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = this.rowModel as ClientSideRowModel;
+            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));

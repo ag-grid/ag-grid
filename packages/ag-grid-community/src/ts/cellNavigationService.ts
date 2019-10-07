@@ -4,11 +4,11 @@ import { ColumnController } from "./columnController/columnController";
 import { IRowModel } from "./interfaces/iRowModel";
 import { CellPosition } from "./entities/cellPosition";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { PinnedRowModel } from "./rowModels/pinnedRowModel";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { _ } from "./utils";
 import { RowPosition } from "./entities/rowPosition";
+import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
 
 @Bean('cellNavigationService')
 export class CellNavigationService {

@@ -1,7 +1,7 @@
 import { Bean, Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { StageExecuteParams } from "../../interfaces/iRowNodeStage";
-import { SortOption, SortService } from "../../rowNodes/sortService";
+import { SortOption, SortService } from "./sortService";
 import { RowNode } from "../../entities/rowNode";
 import { SortController } from "../../sortController";
 import { ColumnController } from "../../columnController/columnController";

@@ -1,9 +1,9 @@
 import {IRowModel} from "./iRowModel";
-import {RowNodeTransaction} from "../rowModels/clientSide/rowNodeTransaction";
-import {RowDataTransaction} from "../rowModels/clientSide/rowDataTransaction";
-import {RefreshModelParams} from "../rowModels/clientSide/refreshModelParams";
+import {RowNodeTransaction} from "../modules/clientSideRowModel/rowNodeTransaction";
+import {RowDataTransaction} from "../modules/clientSideRowModel/rowDataTransaction";
+import {RefreshModelParams} from "../modules/clientSideRowModel/refreshModelParams";
 import {RowNode} from "../entities/rowNode";
-import {ChangedPath} from "../rowModels/clientSide/changedPath";
+import {ChangedPath} from "../utils/changedPath";
 
 export interface IClientSideRowModel extends IRowModel {
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number }): RowNodeTransaction | null;

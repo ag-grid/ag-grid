@@ -10,11 +10,11 @@ import { IRowModel } from "./interfaces/iRowModel";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { PostConstruct } from "./context/context";
 import { Constants } from "./constants";
-import { ClientSideRowModel } from "./rowModels/clientSide/clientSideRowModel";
+import { ClientSideRowModel } from "./modules/clientSideRowModel/clientSideRowModel";
 import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
 import { _ } from './utils';
-import { ChangedPath } from "./rowModels/clientSide/changedPath";
+import { ChangedPath } from "./utils/changedPath";
 
 @Bean('selectionController')
 export class SelectionController {

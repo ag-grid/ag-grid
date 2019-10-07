@@ -1,7 +1,7 @@
 import { Bean, Autowired } from "../../context/context";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { IRowNodeStage, StageExecuteParams } from "../../interfaces/iRowNodeStage";
-import { FilterService } from "../../rowNodes/filterService";
+import { FilterService } from "./filterService";
 import { SelectableService } from "../../rowNodes/selectableService";
 
 @Bean('filterStage')

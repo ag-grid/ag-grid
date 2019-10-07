@@ -1,7 +1,7 @@
 import {Module} from "../interfaces/iModule";
 import {ModuleNames} from "./moduleNames";
 import {Grid} from "../grid";
-import {InfiniteRowModel} from "../rowModels/infinite/infiniteRowModel";
+import {InfiniteRowModel} from "./infiniteRowModel/infiniteRowModel";
 
 export const InfiniteRowModelModule: Module = {
     moduleName: ModuleNames.InfiniteRowModelModule

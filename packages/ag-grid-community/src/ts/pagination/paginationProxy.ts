@@ -36,7 +36,6 @@ export class PaginationProxy extends BeanStub {
 
     private masterRowCount: number = 0;
 
-
     @PostConstruct
     private postConstruct() {
         this.active = this.gridOptionsWrapper.isPagination();

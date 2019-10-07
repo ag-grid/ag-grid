@@ -3,7 +3,7 @@ import {
     VDirection
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
-import { ClientSideRowModel } from "../rowModels/clientSide/clientSideRowModel";
+import { ClientSideRowModel } from "../modules/clientSideRowModel/clientSideRowModel";
 import { FocusedCellController } from "../focusedCellController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { GridPanel } from "./gridPanel";

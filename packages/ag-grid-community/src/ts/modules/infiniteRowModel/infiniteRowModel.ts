@@ -8,17 +8,17 @@ import { Events, ModelUpdatedEvent } from "../../events";
 import { SortController } from "../../sortController";
 import { FilterManager } from "../../filter/filterManager";
 import { Constants } from "../../constants";
-import { IDatasource } from "../iDatasource";
+import { IDatasource } from "../../interfaces/iDatasource";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 import { BeanStub } from "../../context/beanStub";
-import { RowNodeCache } from "../cache/rowNodeCache";
-import { RowNodeBlockLoader } from "../cache/rowNodeBlockLoader";
+import { RowNodeCache } from "../rowNodeCache/rowNodeCache";
+import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 import { GridApi } from "../../gridApi";
 import { ColumnApi } from "../../columnController/columnApi";
 import { NumberSequence, _ } from "../../utils";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import {ModuleLogger} from "../../utils/moduleLogger";
-import {RowDataTransaction} from "../clientSide/rowDataTransaction";
+import {RowDataTransaction} from "../clientSideRowModel/rowDataTransaction";
 
 ModuleLogger.logModuleClass('InfiniteRowModel');
 
