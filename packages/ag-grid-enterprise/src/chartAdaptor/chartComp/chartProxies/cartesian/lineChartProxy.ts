@@ -9,7 +9,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createLineChart(params.parentElement, this.chartOptions);
+        this.chart = ChartBuilder[params.grouping ? "createGroupedLineChart" : "createLineChart"](params.parentElement, this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
@@ -26,8 +26,7 @@ export class LineChartProxy extends CartesianChartProxy<LineChartOptions> {
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
         const seriesOptions = this.chartOptions.seriesDefaults!;
 
-        lineChart.series
-            .map(series => series as LineSeries)
+        (lineChart.series as LineSeries[])
             .forEach(lineSeries => {
                 const id = lineSeries.yField;
 

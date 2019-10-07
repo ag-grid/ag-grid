@@ -22,8 +22,6 @@ export enum Orientation {
     Horizontal
 }
 
-export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
-
 export class Legend {
 
     onLayoutChange?: () => void;

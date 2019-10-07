@@ -1,5 +1,6 @@
 export interface ChartOptions {
     document?: Document;
+    series?: any[];
     data?: any;
     width?: number;
     height?: number;

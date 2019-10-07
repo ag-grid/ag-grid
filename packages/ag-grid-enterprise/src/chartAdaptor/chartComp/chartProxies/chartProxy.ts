@@ -67,7 +67,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public abstract update(params: UpdateChartParams): void;
 
-    public getChart = (): Chart => this.chart;
+    public getChart = (): TChart => this.chart;
 
     private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
     protected getLabelColor = (): string => this.isDarkTheme() ? "rgb(221, 221, 221)" : "rgb(87, 87, 87)";
