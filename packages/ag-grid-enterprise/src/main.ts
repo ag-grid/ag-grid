@@ -28,8 +28,8 @@ import { WatermarkComp } from "./license/watermark";
 import { FillHandle } from "./widgets/selection/fillHandle";
 import { RangeHandle } from "./widgets/selection/rangeHandle";
 import { FiltersToolPanelHeaderPanel } from "./sideBar/providedPanels/filters/filtersToolPanelHeaderPanel";
-import {FiltersToolPanelListPanel} from "./sideBar/providedPanels/filters/filtersToolPanelListPanel";
-import {ToolPanelColDefService} from "./sideBar/providedPanels/toolPanelColDefService";
+import { FiltersToolPanelListPanel } from "./sideBar/providedPanels/filters/filtersToolPanelListPanel";
+import { ToolPanelColDefService } from "./sideBar/providedPanels/toolPanelColDefService";
 
 export { AggregationStage } from "./rowStages/aggregationStage";
 export { GroupStage } from "./rowStages/groupStage";
@@ -69,10 +69,10 @@ export { RangeHandle } from "./widgets/selection/rangeHandle";
 export { IColumnToolPanel } from "./sideBar/providedPanels/columns/columnToolPanel";
 export { IFiltersToolPanel } from "./sideBar/providedPanels/filters/filtersToolPanel";
 
-Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,
-    RangeController, ClipboardService, PivotStage, PivotColDefService, ToolPanelColDefService,
-    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
-    MenuItemMapper, StatusBarService]);
+Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory, RangeController,
+    ClipboardService, PivotStage, PivotColDefService, ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot,
+    AggFuncService, LicenseManager, MD5, MenuItemMapper, StatusBarService, ToolPanelColDefService
+]);
 
 Grid.setEnterpriseAgStackComponents([
     {componentName: 'AgFiltersToolPanelHeader', theClass: FiltersToolPanelHeaderPanel},

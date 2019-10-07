@@ -66,6 +66,7 @@ export class PrimaryColsPanel extends Component {
         this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
 
         this.addDestroyableEventListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
+        this.addDestroyableEventListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
     }
 
     public onExpandAll(): void {
@@ -106,5 +107,9 @@ export class PrimaryColsPanel extends Component {
 
     private onGroupExpanded(event: any): void {
         this.primaryColsHeaderPanel.setExpandState(event.state);
+    }
+
+    private onSelectionChange(event: any): void {
+        this.primaryColsHeaderPanel.setSelectionState(event.state);
     }
 }

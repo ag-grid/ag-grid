@@ -18,6 +18,7 @@ import {
     TouchListener
 } from "ag-grid-community";
 import {BaseColumnItem} from "./primaryColsPanel";
+import {ColumnFilterResults} from "./primaryColsListPanel";
 
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 
@@ -31,10 +32,10 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('eventService') private eventService: EventService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
     @RefSelector('eLabel') private eLabel: HTMLElement;
@@ -44,25 +45,26 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: HTMLElement;
     
     private eDragHandle: HTMLElement;
-    private columnGroup: OriginalColumnGroup;
+
+    private readonly columnGroup: OriginalColumnGroup;
+    private readonly columnDept: number;
+    private readonly expandedCallback: () => void;
+    private readonly allowDragging: boolean;
+
     private expanded: boolean;
-    private columnDept: number;
-
-    private expandedCallback: () => void;
-
-    private allowDragging: boolean;
-
     private displayName: string | null;
-
     private processingColumnStateChange = false;
+    private getFilterResultsCallback: () => ColumnFilterResults;
 
-    constructor(columnGroup: OriginalColumnGroup, columnDept: number, expandedCallback: () => void, allowDragging: boolean, expandByDefault: boolean) {
+    constructor(columnGroup: OriginalColumnGroup, columnDept: number, allowDragging: boolean, expandByDefault: boolean,
+                expandedCallback: () => void, getFilterResults: () => ColumnFilterResults, ) {
         super();
         this.columnGroup = columnGroup;
         this.columnDept = columnDept;
-        this.expandedCallback = expandedCallback;
         this.allowDragging = allowDragging;
         this.expanded = expandByDefault;
+        this.expandedCallback = expandedCallback;
+        this.getFilterResultsCallback = getFilterResults;
     }
 
     @PostConstruct
@@ -73,7 +75,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         _.addCssClass(this.eDragHandle, 'ag-column-drag');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
-        // this.displayName = this.columnGroup.getColGroupDef() ? this.columnGroup.getColGroupDef().headerName : null;
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
 
         if (_.missing(this.displayName)) {
@@ -175,7 +176,16 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         } else {
             const isAllowedColumn = (c: Column) => !c.getColDef().lockVisible && !c.getColDef().suppressToolPanel;
             const allowedColumns = childColumns.filter(isAllowedColumn);
-            this.columnController.setColumnsVisible(allowedColumns, nextState, "toolPanelUi");
+
+            const filterResults = this.getFilterResultsCallback();
+            const passesFilter = (c: Column) => !filterResults || filterResults[c.getColId()];
+            const visibleColumns = allowedColumns.filter(passesFilter);
+
+            // only columns that are 'allowed' and pass filter should be visible
+            this.columnController.setColumnsVisible(visibleColumns, nextState, "toolPanelUi");
+
+            // update group state
+            this.onColumnStateChanged(filterResults);
         }
     }
 
@@ -239,16 +249,61 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         if (columnsToPivot.length > 0) {
             this.columnController.addPivotColumns(columnsToPivot, "toolPanelUi");
         }
-
     }
 
-    private onColumnStateChanged(): void {
-        const selectedValue = this.workOutSelectedValue();
+    public onColumnStateChanged(filterResults?: ColumnFilterResults): void {
+        const selectedValue = this.workOutSelectedValue(filterResults);
         const readOnlyValue = this.workOutReadOnlyValue();
         this.processingColumnStateChange = true;
         this.cbSelect.setValue(selectedValue);
         this.cbSelect.setReadOnly(readOnlyValue);
         this.processingColumnStateChange = false;
+    }
+
+    private workOutSelectedValue(filterResults?: ColumnFilterResults): boolean | undefined {
+        const pivotMode = this.columnController.isPivotMode();
+        const leafColumns = this.columnGroup.getLeafColumns();
+        const len = leafColumns.length;
+        const count = { visible: 0, hidden: 0 };
+        const ignoredChildCount = { visible: 0, hidden: 0 };
+
+        for (let i = 0; i < len; i++) {
+            const column = leafColumns[i];
+
+            // ignore lock visible columns and columns set to 'suppressToolPanel'
+            let ignore = column.getColDef().lockVisible || column.getColDef().suppressToolPanel;
+            const type = this.isColumnVisible(column, pivotMode) ? 'visible' : 'hidden';
+
+            count[type]++;
+
+            // also ignore columns that have been removed by the filter
+            if (filterResults) {
+                const columnPassesFilter = filterResults[column.getColId()];
+                if (!columnPassesFilter) {
+                    ignore = true;
+                }
+            }
+
+            if (!ignore) { continue; }
+
+            ignoredChildCount[type]++;
+        }
+
+        // if all columns are ignored we use the regular count, if not
+        // we only consider the columns that were not ignored
+        if (ignoredChildCount.visible + ignoredChildCount.hidden !== len) {
+            count.visible -= ignoredChildCount.visible;
+            count.hidden -= ignoredChildCount.hidden;
+        }
+
+        let selectedValue: boolean | null;
+        if (count.visible > 0 && count.hidden > 0) {
+            selectedValue = null;
+        } else {
+            selectedValue = count.visible > 0;
+        }
+
+        return selectedValue == null ? undefined : selectedValue;
     }
 
     private workOutReadOnlyValue(): boolean {
@@ -269,46 +324,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         });
 
         return colsThatCanAction === 0;
-    }
-
-    private workOutSelectedValue(): boolean | undefined {
-        const pivotMode = this.columnController.isPivotMode();
-        const leafColumns = this.columnGroup.getLeafColumns();
-        const len = leafColumns.length;
-        const count = { visible: 0, hidden: 0 };
-        const ignoredChildCount = { visible: 0, hidden: 0 };
-        
-        for (let i = 0; i < len; i++) {
-            const column = leafColumns[i];
-
-            // ignore lock visible columns and columns set to 'suppressToolPanel'
-            const ignore = column.getColDef().lockVisible || column.getColDef().suppressToolPanel;
-            const type = this.isColumnVisible(column, pivotMode) ? 'visible' : 'hidden';
-
-            count[type]++;
-
-            if (!ignore) { continue; }
-
-            ignoredChildCount[type]++;
-        }
-
-        // if all columns are ignored we use the regular count, if not
-        // we only consider the columns that were not ignored
-        if (ignoredChildCount.visible + ignoredChildCount.hidden !== len) {
-            count.visible -= ignoredChildCount.visible;
-            count.hidden -= ignoredChildCount.hidden;
-        }
-
-        let selectedValue: boolean | null;
-        if (count.visible > 0 && count.hidden > 0) {
-            selectedValue = null;
-        } else if (count.visible > 0) {
-            selectedValue = true;
-        } else {
-            selectedValue = false;
-        }
-
-        return selectedValue == null ? undefined : selectedValue;
     }
 
     private isColumnVisible(column: Column, pivotMode: boolean): boolean {
@@ -369,5 +384,9 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         if (this.expanded !== value) {
             this.onExpandOrContractClicked();
         }
+    }
+
+    public setSelected(selected: boolean) {
+        this.cbSelect.setValue(selected, true);
     }
 }

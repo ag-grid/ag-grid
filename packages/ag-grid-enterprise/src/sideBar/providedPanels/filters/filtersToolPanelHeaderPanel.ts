@@ -87,7 +87,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
         if (!this.onSearchTextChangedDebounced) {
             this.onSearchTextChangedDebounced = _.debounce(() => {
                 this.dispatchEvent({type: 'searchChanged', searchText: this.eSearchTextField.value});
-            }, 100);
+            }, 300);
         }
 
         this.onSearchTextChangedDebounced();
