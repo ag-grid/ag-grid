@@ -27,7 +27,7 @@ export class GridHeaderDropZones extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        if (!this.getContext().isModuleRegistered(ModuleNames.AggregationModule)) {
+        if (!this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule)) {
             this.setTemplate('<div/>');
 
             const rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();

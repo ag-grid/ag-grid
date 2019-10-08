@@ -191,10 +191,10 @@ export class ChartDatasource extends BeanStub {
         dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
             const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
             let aggResult: any = 0;
-            if (this.getContext().isModuleRegistered(ModuleNames.AggregationModule)) {
+            if (this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule)) {
                 aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
             } else {
-                console.warn('ag-Grid: module ' + ModuleNames.AggregationModule + ' not loaded for charting');
+                console.warn('ag-Grid: module ' + ModuleNames.RowGroupingModule + ' not loaded for charting');
             }
 
             groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;

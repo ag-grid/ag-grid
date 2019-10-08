@@ -1,7 +1,7 @@
 require('ag-grid-community/clientSideRowModelModule');
 require('ag-grid-community/infiniteRowModelModule');
-require('./aggregationModule');
 require('./chartsModule');
+require('./rowGroupingModule');
 require('./serverSideRowModelModule');
 require('./viewportRowModelModule');
 require('./dist/lib/main');

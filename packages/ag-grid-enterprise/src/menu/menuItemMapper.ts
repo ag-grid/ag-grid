@@ -84,7 +84,7 @@ export class MenuItemMapper {
                     checked: !(column as Column).isPinned()
                 };
             case 'valueAggSubMenu':
-                if (!this.context.isModuleRegistered(ModuleNames.AggregationModule)) {
+                if (!this.context.isModuleRegistered(ModuleNames.RowGroupingModule)) {
                     console.warn('ag-Grid: aggregation module is not found');
                     return null;
                 }

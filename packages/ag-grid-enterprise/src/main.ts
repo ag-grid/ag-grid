@@ -83,4 +83,4 @@ Grid.setEnterpriseAgStackComponents([
 // include enterprise modules
 import "./modules/viewportRowModelModule";
 import "./modules/serverSideRowModelModule";
-import "./modules/aggregationModule";
+import "./modules/rowGroupingModule";

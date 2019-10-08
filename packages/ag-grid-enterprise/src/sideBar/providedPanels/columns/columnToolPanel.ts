@@ -80,7 +80,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
 
-        const aggregationModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.AggregationModule);
+        const aggregationModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule);
 
         if (aggregationModuleLoaded && !this.params.suppressPivotMode) {
             this.addComponent(new PivotModePanel());

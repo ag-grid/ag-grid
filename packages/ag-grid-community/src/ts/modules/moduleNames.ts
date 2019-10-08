@@ -4,5 +4,5 @@ export const enum ModuleNames {
     InfiniteRowModelModule = "infiniteRowModelModule",
     ClientSideRowModelModule = "clientSideRowModelModule",
     ServerSideRowModelModule = "serverSideRowModelModule",
-    AggregationModule = "aggregationModule"
+    RowGroupingModule = "rowGroupingModule"
 }
