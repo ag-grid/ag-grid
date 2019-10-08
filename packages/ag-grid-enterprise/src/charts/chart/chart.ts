@@ -5,15 +5,17 @@ import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
 import { Rect } from "../scene/shape/rect";
-import { Legend, LegendDatum, Orientation, LegendPosition } from "./legend";
+import { Legend, LegendDatum, Orientation } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { Caption } from "../caption";
 
 export interface ChartOptions {
     document?: Document;
-    parent: HTMLElement;
+    parent?: HTMLElement;
 }
+
+export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export abstract class Chart {
     readonly scene: Scene;

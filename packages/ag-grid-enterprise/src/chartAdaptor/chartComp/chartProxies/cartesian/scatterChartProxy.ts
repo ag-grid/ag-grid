@@ -29,8 +29,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         const seriesOptions = this.chartOptions.seriesDefaults!;
         const xFieldDefinition = params.fields[0];
 
-        chart.series
-            .map(series => series as ScatterSeries)
+        (chart.series as ScatterSeries[])
             .forEach(scatterSeries => {
                 const yField = scatterSeries.yField;
 

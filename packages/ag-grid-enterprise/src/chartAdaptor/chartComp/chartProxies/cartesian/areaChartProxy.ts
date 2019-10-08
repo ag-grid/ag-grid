@@ -5,6 +5,7 @@ import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
 import { CartesianChartProxy, LineMarkerProperty } from "./cartesianChartProxy";
+import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
 
 export type AreaSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
 
@@ -13,15 +14,17 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createAreaChart(params.parentElement, this.chartOptions);
+        this.chart = ChartBuilder[params.grouping ? "createGroupedAreaChart" : "createAreaChart"](params.parentElement, this.chartOptions);
         this.setAxisPadding(this.chart);
 
         const areaSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults!);
 
-        if (areaSeries) { this.chart.addSeries(areaSeries); }
+        if (areaSeries) {
+            this.chart.addSeries(areaSeries);
+        }
     }
 
-    private setAxisPadding(chart: CartesianChart) {
+    private setAxisPadding(chart: CartesianChart | GroupedCategoryChart) {
         const xAxis = chart.xAxis;
 
         if (xAxis instanceof CategoryAxis) {
@@ -64,8 +67,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaChartOptions> {
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
         const seriesOptions = this.chartOptions.seriesDefaults!;
 
-        lineChart.series
-            .map(series => series as AreaSeries)
+        (lineChart.series as AreaSeries[])
             .forEach(areaSeries => {
                 const id = areaSeries.yFields[0];
 

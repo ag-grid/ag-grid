@@ -3,12 +3,13 @@ import { CartesianChartOptions, _ } from "ag-grid-community";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { ChartModel } from "../../chartModel";
 import { IAxisFormatting, ILabelFormatting } from "../../../../charts/axis";
+import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
 
 export type LineMarkerProperty = 'marker' | 'markerSize' | 'markerStrokeWidth';
 export type LineSeriesProperty = 'strokeWidth' | 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
 export type ScatterSeriesProperty = 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
 
-export abstract class CartesianChartProxy<T extends CartesianChartOptions> extends ChartProxy<CartesianChart, T> {
+export abstract class CartesianChartProxy<T extends CartesianChartOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, T> {
     protected constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -25,10 +26,10 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
 
     public setCommonAxisProperty(property: keyof IAxisFormatting | keyof ILabelFormatting, value: any) {
         const cartesianChart = this.chart;
-        
+
         _.setProperty(cartesianChart.xAxis, property, value);
         _.setProperty(cartesianChart.yAxis, property, value);
-        
+
         cartesianChart.performLayout();
 
         _.setProperty(this.chartOptions.xAxis, property, value);
@@ -43,25 +44,23 @@ export abstract class CartesianChartProxy<T extends CartesianChartOptions> exten
         return xAxis ? `${xAxis[property]}` : "";
     }
 
-    public getXRotation = (): number => this.getCartesianChart().xAxis.labelRotation;
+    public getXRotation = (): number => this.getChart().xAxis.labelRotation;
 
     public setXRotation(rotation: number): void {
-        this.getCartesianChart().xAxis.labelRotation = rotation;
+        this.getChart().xAxis.labelRotation = rotation;
         this.chartOptions.xAxis.labelRotation = rotation;
         this.chart.performLayout();
 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getYRotation = (): number => this.getCartesianChart().yAxis.labelRotation;
+    public getYRotation = (): number => this.getChart().yAxis.labelRotation;
 
     public setYRotation(rotation: number): void {
-        this.getCartesianChart().yAxis.labelRotation = rotation;
+        this.getChart().yAxis.labelRotation = rotation;
         this.chartOptions.yAxis.labelRotation = rotation;
         this.chart.performLayout();
 
         this.raiseChartOptionsChangedEvent();
     }
-
-    private getCartesianChart = (): CartesianChart => this.chart;
 }
