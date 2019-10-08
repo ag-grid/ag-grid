@@ -6,7 +6,7 @@ import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
 import palette from "../palettes";
-import { HighlightStyle, Series, SeriesNodeDatum } from "./series";
+import { HighlightStyle, Series, SeriesLabel, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { sumPositiveValues } from "../../util/array";
 import { Color } from "../../util/color";
@@ -56,6 +56,19 @@ export interface BarTooltipRendererParams {
     color?: string;
 }
 
+class BarSeriesLabel extends SeriesLabel {
+    private _formatter?: BarLabelFormatter;
+    set formatter(value: BarLabelFormatter | undefined) {
+        if (this._formatter !== value) {
+            this._formatter = value;
+            this.update();
+        }
+    }
+    get formatter(): BarLabelFormatter | undefined {
+        return this._formatter;
+    }
+}
+
 export class BarSeries extends Series<CartesianChart> {
 
     static className = 'BarSeries';
@@ -71,6 +84,12 @@ export class BarSeries extends Series<CartesianChart> {
 
     private rectSelection: Selection<Rect, Group, any, any> = Selection.select(this.rectGroup).selectAll<Rect>();
     private textSelection: Selection<Text, Group, any, any> = Selection.select(this.textGroup).selectAll<Text>();
+
+    readonly label: BarSeriesLabel = (() => {
+        const label = new BarSeriesLabel();
+        label.onChange = this.update.bind(this);
+        return label;
+    })();
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -453,16 +472,18 @@ export class BarSeries extends Series<CartesianChart> {
             grouped,
             strokeWidth,
             yFieldEnabled,
-            labelFontStyle,
-            labelFontWeight,
-            labelFontSize,
-            labelFontFamily,
-            labelColor,
-            labelFormatter,
             data,
             xData,
             yData,
         } = this;
+
+        const label = this.label;
+        const labelFontStyle = label.fontStyle;
+        const labelFontWeight = label.fontWeight;
+        const labelFontSize = label.fontSize;
+        const labelFontFamily = label.fontFamily;
+        const labelColor = label.color;
+        const labelFormatter = label.formatter;
 
         groupScale.range = [ 0, xScale.bandwidth! ];
 
@@ -529,7 +550,7 @@ export class BarSeries extends Series<CartesianChart> {
     private updateRectSelection(selectionData: SelectionDatum[]): void {
         const { fillOpacity, strokeOpacity, shadow, highlightedNode, highlightStyle: { fill, stroke } } = this;
         const updateRects = this.rectSelection.setData(selectionData);
-        
+
         updateRects.exit.remove();
 
         const enterRects = updateRects.enter.append(Rect).each(rect => {
@@ -557,7 +578,7 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     private updateTextSelection(selectionData: SelectionDatum[]): void {
-        const { labelEnabled } = this;
+        const labelEnabled = this.label.enabled;
         const updateTexts = this.textSelection.setData(selectionData);
 
         updateTexts.exit.remove();
@@ -573,7 +594,7 @@ export class BarSeries extends Series<CartesianChart> {
 
         textSelection.each((text, datum) => {
             const label = datum.label;
-            
+
             if (label && labelEnabled) {
                 text.fontStyle = label.fontStyle;
                 text.fontWeight = label.fontWeight;

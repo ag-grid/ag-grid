@@ -91,6 +91,15 @@ export interface ILabelFormattingOptions {
     labelColor?: string;
 }
 
+export interface SeriesLabelOptions {
+    enabled?: boolean;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    fontSize?: number;
+    fontFamily?: string;
+    color?: string;
+}
+
 export interface AxisOptions extends ILabelFormattingOptions {
     type?: 'category' | 'number' | 'groupedCategory';
     title?: CaptionOptions;
@@ -229,6 +238,10 @@ export interface BarLabelFormatterParams {
 }
 export type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
 
+export interface BarSeriesLabelOptions extends SeriesLabelOptions {
+    labelFormatter?: BarLabelFormatter;
+}
+
 export interface BarSeriesOptions extends SeriesOptions, ILabelFormattingOptions {
     xField?: string;
     yFields?: string[];
@@ -245,6 +258,8 @@ export interface BarSeriesOptions extends SeriesOptions, ILabelFormattingOptions
     highlightStyle?: HighlightStyle;
 
     shadow?: DropShadowOptions;
+
+    label?: BarSeriesLabelOptions;
 
     labelEnabled?: boolean;
     labelFormatter?: BarLabelFormatter;
