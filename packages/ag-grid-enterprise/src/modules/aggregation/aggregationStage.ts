@@ -10,10 +10,13 @@ import {
     StageExecuteParams,
     IAggFunc,
     ChangedPath,
-    _
+    _,
+    ModuleLogger
 } from "ag-grid-community";
 import { PivotStage } from "./pivotStage";
-import { AggFuncService } from "../aggregation/aggFuncService";
+import { AggFuncService } from "./aggFuncService";
+
+ModuleLogger.logModuleClass('AggregationStage');
 
 interface AggregationDetails {
     changedPath: ChangedPath;

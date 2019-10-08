@@ -2,16 +2,11 @@ import { Grid } from "ag-grid-community";
 import { EnterpriseMenuFactory } from "./menu/enterpriseMenu";
 import { RangeController } from "./rangeController";
 import { ClipboardService } from "./clipboardService";
-import { GroupStage } from "./rowStages/groupStage";
-import { AggregationStage } from "./rowStages/aggregationStage";
 import { EnterpriseBoot } from "./enterpriseBoot";
 import { ContextMenuFactory } from "./menu/contextMenu";
 import { SideBarComp } from "./sideBar/sideBarComp";
 import { LicenseManager } from "./licenseManager";
 import { MD5 } from "./license/md5";
-import { PivotStage } from "./rowStages/pivotStage";
-import { PivotColDefService } from "./rowStages/pivotColDefService";
-import { AggFuncService } from "./aggregation/aggFuncService";
 import { MenuItemMapper } from "./menu/menuItemMapper";
 import { ExcelCreator } from "./exporter/excelCreator";
 import { ExcelXmlFactory } from "./exporter/excelXmlFactory";
@@ -31,8 +26,6 @@ import { FiltersToolPanelHeaderPanel } from "./sideBar/providedPanels/filters/fi
 import { FiltersToolPanelListPanel } from "./sideBar/providedPanels/filters/filtersToolPanelListPanel";
 import { ToolPanelColDefService } from "./sideBar/providedPanels/toolPanelColDefService";
 
-export { AggregationStage } from "./rowStages/aggregationStage";
-export { GroupStage } from "./rowStages/groupStage";
 export { SetFilter } from "./setFilter/setFilter";
 export { SetValueModel } from "./setFilter/setValueModel";
 export { StatusBar } from "./statusBar/statusBar";
@@ -52,10 +45,7 @@ export { BaseDropZonePanel } from "./sideBar/providedPanels/columns/dropZone/bas
 export { PivotDropZonePanel } from "./sideBar/providedPanels/columns/panels/pivotDropZonePanel";
 export { SideBarComp } from "./sideBar/sideBarComp";
 export { LicenseManager } from "./licenseManager";
-export { PivotStage } from "./rowStages/pivotStage";
-export { PivotColDefService } from "./rowStages/pivotColDefService";
 export { PivotModePanel } from "./sideBar/providedPanels/columns/panels/pivotModePanel";
-export { AggFuncService } from "./aggregation/aggFuncService";
 export { MD5 } from "./license/md5";
 export { SetFilterListItem } from "./setFilter/setFilterListItem";
 export { DropZoneColumnComp } from "./sideBar/providedPanels/columns/dropZone/dropZoneColumnComp";
@@ -70,8 +60,8 @@ export { IColumnToolPanel } from "./sideBar/providedPanels/columns/columnToolPan
 export { IFiltersToolPanel } from "./sideBar/providedPanels/filters/filtersToolPanel";
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory, RangeController,
-    ClipboardService, PivotStage, PivotColDefService, ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot,
-    AggFuncService, LicenseManager, MD5, MenuItemMapper, StatusBarService, ToolPanelColDefService
+    ClipboardService, ContextMenuFactory, EnterpriseBoot,
+    LicenseManager, MD5, MenuItemMapper, StatusBarService, ToolPanelColDefService
 ]);
 
 Grid.setEnterpriseAgStackComponents([
@@ -93,3 +83,4 @@ Grid.setEnterpriseAgStackComponents([
 // include enterprise modules
 import "./modules/viewportRowModelModule";
 import "./modules/serverSideRowModelModule";
+import "./modules/aggregationModule";

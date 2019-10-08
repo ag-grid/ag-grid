@@ -1,20 +1,21 @@
 import {
     _,
     Autowired,
+    ColDef,
+    ColGroupDef,
     Component,
     EventService,
     GridApi,
     GridOptionsWrapper,
-    IToolPanelParams,
     IToolPanelComp,
-    ColDef,
-    ColGroupDef
+    IToolPanelParams,
+    ModuleNames
 } from "ag-grid-community";
-import { PivotModePanel } from "./panels/pivotModePanel";
-import { RowGroupDropZonePanel } from "./panels/rowGroupDropZonePanel";
-import { ValuesDropZonePanel } from "./panels/valueDropZonePanel";
-import { PivotDropZonePanel } from "./panels/pivotDropZonePanel";
-import { PrimaryColsPanel } from "./panels/primaryColsPanel/primaryColsPanel";
+import {PivotModePanel} from "./panels/pivotModePanel";
+import {RowGroupDropZonePanel} from "./panels/rowGroupDropZonePanel";
+import {ValuesDropZonePanel} from "./panels/valueDropZonePanel";
+import {PivotDropZonePanel} from "./panels/pivotDropZonePanel";
+import {PrimaryColsPanel} from "./panels/primaryColsPanel/primaryColsPanel";
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;
@@ -79,23 +80,27 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
 
-        if (!this.params.suppressPivotMode) {
+        const aggregationModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.AggregationModule);
+
+        if (aggregationModuleLoaded && !this.params.suppressPivotMode) {
             this.addComponent(new PivotModePanel());
         }
 
         this.primaryColsPanel = new PrimaryColsPanel(true, this.params);
         this.addComponent(this.primaryColsPanel);
 
-        if (!this.params.suppressRowGroups) {
-            this.addComponent(new RowGroupDropZonePanel(false));
-        }
+        if (aggregationModuleLoaded) {
+            if (!this.params.suppressRowGroups) {
+                this.addComponent(new RowGroupDropZonePanel(false));
+            }
 
-        if (!this.params.suppressValues) {
-            this.addComponent(new ValuesDropZonePanel(false));
-        }
+            if (!this.params.suppressValues) {
+                this.addComponent(new ValuesDropZonePanel(false));
+            }
 
-        if (!this.params.suppressPivots) {
-            this.addComponent(new PivotDropZonePanel(false));
+            if (!this.params.suppressPivots) {
+                this.addComponent(new PivotDropZonePanel(false));
+            }
         }
 
         this.initialised = true;

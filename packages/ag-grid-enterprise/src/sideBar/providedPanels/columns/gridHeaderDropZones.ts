@@ -1,16 +1,16 @@
 import {
-    Events,
-    GridOptionsWrapper,
-    Constants,
+    Autowired,
     ColumnController,
     Component,
+    Constants,
+    Events,
     EventService,
-    Autowired,
-    PostConstruct,
-    Context
+    GridOptionsWrapper,
+    ModuleNames,
+    PostConstruct
 } from "ag-grid-community";
-import { RowGroupDropZonePanel } from "./panels/rowGroupDropZonePanel";
-import { PivotDropZonePanel } from "./panels/pivotDropZonePanel";
+import {RowGroupDropZonePanel} from "./panels/rowGroupDropZonePanel";
+import {PivotDropZonePanel} from "./panels/pivotDropZonePanel";
 
 export class GridHeaderDropZones extends Component {
 
@@ -27,6 +27,18 @@ export class GridHeaderDropZones extends Component {
 
     @PostConstruct
     private postConstruct(): void {
+        if (!this.getContext().isModuleRegistered(ModuleNames.AggregationModule)) {
+            this.setTemplate('<div/>');
+
+            const rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
+
+            if (rowGroupPanelShow === Constants.ALWAYS || rowGroupPanelShow === Constants.ONLY_WHEN_GROUPING) {
+                console.warn('ag-Grid: grid property rowGroupPanelShow only works when row grouping module is included');
+            }
+
+            return;
+        }
+
         this.setGui(this.createNorthPanel());
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));

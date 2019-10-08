@@ -6,4 +6,5 @@ export interface IAggFuncService {
     addAggFunc(key: string, aggFunc: IAggFunc): void;
     clear(): void;
     getDefaultAggFunc(column: Column): string | null;
+    getFuncNames(column: Column): string[];
 }

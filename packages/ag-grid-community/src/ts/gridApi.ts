@@ -117,7 +117,7 @@ export interface DetailGridInfo {
 @Bean('gridApi')
 export class GridApi {
 
-    @Autowired('immutableService') private immutableService: IImmutableService;
+    @Optional('immutableService') private immutableService: IImmutableService;
     @Autowired('csvCreator') private csvCreator: CsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;

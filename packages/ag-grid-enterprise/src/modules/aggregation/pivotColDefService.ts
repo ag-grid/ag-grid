@@ -7,8 +7,11 @@ import {
     ColumnController,
     GridOptionsWrapper,
     NumberSequence,
-    _
+    _,
+    ModuleLogger
 } from "ag-grid-community";
+
+ModuleLogger.logModuleClass('PivotColDefService');
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];

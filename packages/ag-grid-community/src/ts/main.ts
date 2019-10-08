@@ -320,6 +320,7 @@ export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
 export { TooltipManager } from "./widgets/tooltipManager";
+export { IAggregationStage } from "./interfaces/iAggregationStage";
 
 // charts
 export {

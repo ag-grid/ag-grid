@@ -5,12 +5,14 @@ import {
     Column,
     ColumnController,
     IAggFunc,
+    IAggregationStage,
     IRowModel,
+    ModuleNames,
+    Optional,
     RowNode,
     ValueService
 } from "ag-grid-community";
-import { AggregationStage } from "../../rowStages/aggregationStage";
-import { ChartModel, ColState } from "./chartModel";
+import {ChartModel, ColState} from "./chartModel";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -29,9 +31,10 @@ interface IData {
 }
 
 export class ChartDatasource extends BeanStub {
+
     @Autowired('rowModel') gridRowModel: IRowModel;
     @Autowired('valueService') valueService: ValueService;
-    @Autowired('aggregationStage') aggregationStage: AggregationStage;
+    @Optional('aggregationStage') aggregationStage: IAggregationStage;
     @Autowired('columnController') private columnController: ColumnController;
 
     public getData(params: ChartDatasourceParams): IData {
@@ -187,7 +190,12 @@ export class ChartDatasource extends BeanStub {
 
         dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
             const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
-            const aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
+            let aggResult: any = 0;
+            if (this.getContext().isModuleRegistered(ModuleNames.AggregationModule)) {
+                aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
+            } else {
+                console.warn('ag-Grid: module ' + ModuleNames.AggregationModule + ' not loaded for charting');
+            }
 
             groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
         }));

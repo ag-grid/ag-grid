@@ -19,9 +19,10 @@ import {
     AgEvent,
     TapEvent,
     RefSelector,
-    _
+    _,
+    Optional,
+    IAggFuncService
 } from "ag-grid-community";
-import { AggFuncService } from "../../../../aggregation/aggFuncService";
 import { VirtualList } from "../../../../rendering/virtualList";
 
 export interface ColumnRemoveEvent extends AgEvent {}
@@ -40,7 +41,7 @@ export class DropZoneColumnComp extends Component {
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
     @Autowired('columnController') columnController: ColumnController;
     @Autowired('popupService') popupService: PopupService;
-    @Autowired('aggFuncService') aggFuncService: AggFuncService;
+    @Optional('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;

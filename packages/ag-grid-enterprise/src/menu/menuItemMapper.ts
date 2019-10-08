@@ -1,18 +1,20 @@
 import {
+    _,
     Autowired,
-    Optional,
     Bean,
     ChartType,
     Column,
     ColumnController,
+    Context,
     GridApi,
     GridOptionsWrapper,
+    IAggFuncService,
     IChartService,
     MenuItemDef,
-    _
+    ModuleNames,
+    Optional
 } from 'ag-grid-community';
-import { ClipboardService } from "../clipboardService";
-import { AggFuncService } from "../aggregation/aggFuncService";
+import {ClipboardService} from "../clipboardService";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -21,8 +23,9 @@ export class MenuItemMapper {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
-    @Autowired('aggFuncService') private aggFuncService: AggFuncService;
+    @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Optional('chartService') private chartService: IChartService;
+    @Optional('context') private context: Context;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
         if (!originalList) {
@@ -81,6 +84,10 @@ export class MenuItemMapper {
                     checked: !(column as Column).isPinned()
                 };
             case 'valueAggSubMenu':
+                if (!this.context.isModuleRegistered(ModuleNames.AggregationModule)) {
+                    console.warn('ag-Grid: aggregation module is not found');
+                    return null;
+                }
                 return {
                     name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                     icon: _.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
@@ -386,6 +393,7 @@ export class MenuItemMapper {
     }
 
     private createAggregationSubMenu(column: Column): MenuItemDef[] {
+
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const columnIsAlreadyAggValue = column.isValueActive();
         const funcNames = this.aggFuncService.getFuncNames(column);

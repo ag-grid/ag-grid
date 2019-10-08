@@ -17,8 +17,11 @@ import {
     SelectionController,
     StageExecuteParams,
     ValueService,
-    _
+    _,
+    ModuleLogger
 } from "ag-grid-community";
+
+ModuleLogger.logModuleClass('GroupStage');
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
