@@ -314,7 +314,10 @@ export class MoveColumnController implements DropListener {
             const leftColumn = otherDisplayedCols[displayIndex - 1];
             firstValidMove = otherGridCols.indexOf(leftColumn) + 1;
         } else {
-            firstValidMove = 0;
+            firstValidMove = otherGridCols.indexOf(otherDisplayedCols[0]);
+            if (firstValidMove === -1) {
+                firstValidMove = 0;
+            }
         }
 
         const validMoves = [firstValidMove];
