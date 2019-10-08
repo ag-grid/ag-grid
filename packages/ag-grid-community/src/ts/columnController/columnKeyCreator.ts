@@ -6,10 +6,12 @@ import { _ } from "../utils";
 
 export class ColumnKeyCreator {
 
-    private existingKeys: string[] = [];
+    private existingKeys: {[key: string]: boolean} = {};
 
     public addExistingKeys(keys: string[]): void {
-        this.existingKeys = this.existingKeys.concat(keys);
+        for (let i = 0; i < keys.length; i++) {
+            this.existingKeys[keys[i]] = true;
+        }
     }
 
     public getUniqueKey(colId: string, colField: string): string {
@@ -35,8 +37,8 @@ export class ColumnKeyCreator {
                 idToTry = '' + count;
             }
 
-            if (this.existingKeys.indexOf(idToTry) < 0) {
-                this.existingKeys.push(idToTry);
+            if (!this.existingKeys[idToTry]) {
+                this.existingKeys[idToTry] = true;
                 return idToTry;
             }
 
