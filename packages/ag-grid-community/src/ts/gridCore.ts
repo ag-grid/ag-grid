@@ -14,7 +14,7 @@ import {FocusedCellController} from "./focusedCellController";
 import {Component} from "./widgets/component";
 import {IClipboardService} from "./interfaces/iClipboardService";
 import {GridApi} from "./gridApi";
-import {ISideBar} from "./interfaces/ISideBar";
+import {ISideBar} from "./interfaces/iSideBar";
 import {RefSelector} from "./widgets/componentAnnotations";
 import {Events, GridSizeChangedEvent} from "./events";
 import {ResizeObserverService} from "./misc/resizeObserverService";
