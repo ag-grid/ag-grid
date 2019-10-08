@@ -427,7 +427,7 @@ export class PrimaryColsListPanel extends Component {
         } else {
             return columnGroupChild.getId();
         }
-    };
+    }
 
     private fireGroupExpandedEvent(): void {
         const expandState = this.getExpandState();
