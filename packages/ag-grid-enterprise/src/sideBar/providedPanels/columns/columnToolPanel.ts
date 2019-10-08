@@ -80,16 +80,16 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
 
-        const aggregationModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule);
+        const rowGroupingModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule);
 
-        if (aggregationModuleLoaded && !this.params.suppressPivotMode) {
+        if (rowGroupingModuleLoaded && !this.params.suppressPivotMode) {
             this.addComponent(new PivotModePanel());
         }
 
         this.primaryColsPanel = new PrimaryColsPanel(true, this.params);
         this.addComponent(this.primaryColsPanel);
 
-        if (aggregationModuleLoaded) {
+        if (rowGroupingModuleLoaded) {
             if (!this.params.suppressRowGroups) {
                 this.addComponent(new RowGroupDropZonePanel(false));
             }
