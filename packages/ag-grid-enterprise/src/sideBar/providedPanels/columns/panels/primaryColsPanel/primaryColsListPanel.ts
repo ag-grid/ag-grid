@@ -85,23 +85,28 @@ export class PrimaryColsListPanel extends Component {
         this.columnTree = this.columnController.getPrimaryColumnTree();
         const groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
         this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-
-        // set visibility of column / group comps
         this.recursivelySetVisibility(this.columnTree, true);
+
+        // notify header of expand
+        this.fireGroupExpandedEvent();
     }
 
     public setColumnLayout(colDefs: AbstractColDef[]): void {
         this.destroyColumnComps();
 
-        // add column / group comps to tool panel
+        // create column tree using supplied colDef's
         this.columnTree = this.colDefService.createColumnTree(colDefs);
+
+        // using col defs to check if groups exist as it could be a custom layout
         const groupsExist = colDefs.some(colDef => {
             return colDef && typeof (colDef as ColGroupDef).children !== 'undefined';
         });
-        this.recursivelyAddComps(this.columnTree, 0, groupsExist);
 
-        // set visibility of column / group comps
+        this.recursivelyAddComps(this.columnTree, 0, groupsExist);
         this.recursivelySetVisibility(this.columnTree, true);
+
+        // notify header of expand
+        this.fireGroupExpandedEvent();
     }
 
     public syncColumnLayout(): void {
@@ -138,7 +143,7 @@ export class PrimaryColsListPanel extends Component {
 
             // group comps are stored using a custom key (groupId + child colIds concatenated) as we need
             // to distinguish individual column groups after they have been split by user
-            const key = PrimaryColsListPanel.getColumnCompId(columnGroup);
+            const key = this.getColumnCompId(columnGroup);
             this.columnComps[key] = renderedGroup;
         } else {
             // no children, so no indent
@@ -197,6 +202,45 @@ export class PrimaryColsListPanel extends Component {
         const unrecognisedGroupIds = groupIds.filter(groupId => !_.includes(expandedGroupIds, groupId));
         if (unrecognisedGroupIds.length > 0) {
             console.warn('ag-Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
+        }
+    }
+
+    private getExpandState(): EXPAND_STATE {
+        let expandedCount = 0;
+        let notExpandedCount = 0;
+
+        const recursiveFunc = (items: OriginalColumnGroupChild[]) => {
+            items.forEach(item => {
+
+                // only interested in groups
+                if (item instanceof OriginalColumnGroup) {
+                    const compId = this.getColumnCompId(item);
+                    const comp = this.columnComps[compId] as ToolPanelColumnGroupComp;
+
+                    if (comp) {
+                        if (comp.isExpanded()) {
+                            expandedCount++;
+                        } else {
+                            notExpandedCount++;
+                        }
+                    }
+
+                    const columnGroup = item as OriginalColumnGroup;
+                    const groupChildren = columnGroup.getChildren();
+
+                    recursiveFunc(groupChildren);
+                }
+            });
+        };
+
+        recursiveFunc(this.columnTree);
+
+        if (expandedCount > 0 && notExpandedCount > 0) {
+            return EXPAND_STATE.INDETERMINATE;
+        } else if (notExpandedCount > 0) {
+            return EXPAND_STATE.COLLAPSED;
+        } else {
+            return EXPAND_STATE.EXPANDED;
         }
     }
 
@@ -315,7 +359,7 @@ export class PrimaryColsListPanel extends Component {
         const passesFilter = (item: OriginalColumnGroupChild) => {
             if(!_.exists(this.filterText)) return true;
 
-            const columnCompId = PrimaryColsListPanel.getColumnCompId(item);
+            const columnCompId = this.getColumnCompId(item);
             const comp = this.columnComps[columnCompId];
             if (!comp) return false;
 
@@ -339,7 +383,7 @@ export class PrimaryColsListPanel extends Component {
             }
 
             const filterPasses = (parentPasses || atLeastOneChildPassed) ? true : passesFilter(item);
-            const columnCompId = PrimaryColsListPanel.getColumnCompId(item);
+            const columnCompId = this.getColumnCompId(item);
             filterResults[columnCompId] = filterPasses;
             return filterPasses;
         };
@@ -349,9 +393,8 @@ export class PrimaryColsListPanel extends Component {
     }
 
     private recursivelySetVisibility(columnTree: any[], parentGroupsOpen: boolean): void {
-
         columnTree.forEach(child => {
-            const compId = PrimaryColsListPanel.getColumnCompId(child);
+            const compId = this.getColumnCompId(child);
             let comp: ColumnItem = this.columnComps[compId];
             if (comp) {
                 const passesFilter = this.filterResults ? this.filterResults[compId] : true;
@@ -375,46 +418,7 @@ export class PrimaryColsListPanel extends Component {
         });
     }
 
-    private getExpandState(): EXPAND_STATE {
-        let expandedCount = 0;
-        let notExpandedCount = 0;
-
-        const recursiveFunc = (items: OriginalColumnGroupChild[]) => {
-            items.forEach(item => {
-
-                // only interested in groups
-                if (item instanceof OriginalColumnGroup) {
-                    const compId = PrimaryColsListPanel.getColumnCompId(item);
-                    const comp = this.columnComps[compId] as ToolPanelColumnGroupComp;
-
-                    if (comp) {
-                        if (comp.isExpanded()) {
-                            expandedCount++;
-                        } else {
-                            notExpandedCount++;
-                        }
-                    }
-
-                    const columnGroup = item as OriginalColumnGroup;
-                    const groupChildren = columnGroup.getChildren();
-
-                    recursiveFunc(groupChildren);
-                }
-            });
-        };
-
-        recursiveFunc(this.columnTree);
-
-        if (expandedCount > 0 && notExpandedCount > 0) {
-            return EXPAND_STATE.INDETERMINATE;
-        } else if (notExpandedCount > 0) {
-            return EXPAND_STATE.COLLAPSED;
-        } else {
-            return EXPAND_STATE.EXPANDED;
-        }
-    }
-
-    public static getColumnCompId(columnGroupChild: OriginalColumnGroupChild): string {
+    private getColumnCompId = (columnGroupChild: OriginalColumnGroupChild) => {
         if (columnGroupChild instanceof OriginalColumnGroup) {
             // group comps are stored using a custom key (groupId + child colIds concatenated) as we need
             // to distinguish individual column groups after they have been split by user
@@ -423,7 +427,7 @@ export class PrimaryColsListPanel extends Component {
         } else {
             return columnGroupChild.getId();
         }
-    }
+    };
 
     private fireGroupExpandedEvent(): void {
         const expandState = this.getExpandState();

@@ -72,6 +72,9 @@ export class FiltersToolPanelListPanel extends Component {
         if (_.exists(this.searchFilterText)) {
             this.searchFilters(this.searchFilterText);
         }
+
+        // notify header of expand
+        this.fireExpandedEvent();
     }
 
     public syncFilterLayout(): void {
@@ -88,6 +91,9 @@ export class FiltersToolPanelListPanel extends Component {
         if (_.exists(this.searchFilterText)) {
             this.searchFilters(this.searchFilterText);
         }
+
+        // notify header of expand
+        this.fireExpandedEvent();
     }
 
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], depth: number): ToolPanelFilterGroupComp[] {
