@@ -11,6 +11,9 @@ import { SelectionController } from "../../selectionController";
 import { _ } from "../../utils";
 import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
 import {RowNodeTransaction} from "../../interfaces/rowNodeTransaction";
+import {ModuleLogger} from "../../utils/moduleLogger";
+
+ModuleLogger.logModuleClass('ClientSideNodeManager');
 
 export class ClientSideNodeManager {
 

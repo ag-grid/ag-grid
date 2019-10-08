@@ -3,6 +3,9 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { IRowNodeStage, StageExecuteParams } from "../../interfaces/iRowNodeStage";
 import { FilterService } from "./filterService";
 import { SelectableService } from "../../rowNodes/selectableService";
+import {ModuleLogger} from "../../utils/moduleLogger";
+
+ModuleLogger.logModuleClass('FilterStage');
 
 @Bean('filterStage')
 export class FilterStage implements IRowNodeStage {

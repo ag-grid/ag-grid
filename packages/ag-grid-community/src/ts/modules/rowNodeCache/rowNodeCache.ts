@@ -6,6 +6,7 @@ import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
 import { NumberSequence,  _ } from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";
+import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
 
 ModuleLogger.logModuleClass('RowNodeCache');
 
@@ -27,7 +28,7 @@ export interface CacheUpdatedEvent extends AgEvent {
 
 }
 
-export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCacheParams> extends BeanStub {
+export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCacheParams> extends BeanStub {
 
     public static EVENT_CACHE_UPDATED = 'cacheUpdated';
 
@@ -296,7 +297,7 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
         let foundGapInSelection = false;
 
-        this.forEachBlockInOrder((block: RowNodeBlock, id: number) => {
+        this.forEachBlockInOrder((block: IRowNodeBlock, id: number) => {
             if (foundGapInSelection) { return; }
 
             if (inActiveRange && (lastBlockId + 1 !== id)) {

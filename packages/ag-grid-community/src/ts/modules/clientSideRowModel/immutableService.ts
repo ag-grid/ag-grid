@@ -7,6 +7,9 @@ import { RowNode } from "../../entities/rowNode";
 import { _ } from "../../utils";
 import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
 import {IImmutableService} from "../../interfaces/iImmutableService";
+import {ModuleLogger} from "../../utils/moduleLogger";
+
+ModuleLogger.logModuleClass('ImmutableService');
 
 @Bean('immutableService')
 export class ImmutableService implements IImmutableService {

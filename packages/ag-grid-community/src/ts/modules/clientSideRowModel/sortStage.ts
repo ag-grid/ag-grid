@@ -7,6 +7,9 @@ import { SortController } from "../../sortController";
 import { ColumnController } from "../../columnController/columnController";
 import { _ } from "../../utils";
 import {RowNodeTransaction} from "../../interfaces/rowNodeTransaction";
+import {ModuleLogger} from "../../utils/moduleLogger";
+
+ModuleLogger.logModuleClass('SortStage');
 
 @Bean('sortStage')
 export class SortStage {

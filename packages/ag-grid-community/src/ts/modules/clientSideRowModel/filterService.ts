@@ -3,6 +3,9 @@ import { RowNode } from "../../entities/rowNode";
 import { FilterManager } from "../../filter/filterManager";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ChangedPath } from "../../utils/changedPath";
+import {ModuleLogger} from "../../utils/moduleLogger";
+
+ModuleLogger.logModuleClass('FilterService');
 
 @Bean("filterService")
 export class FilterService {

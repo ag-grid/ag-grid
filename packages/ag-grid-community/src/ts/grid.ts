@@ -29,9 +29,6 @@ import { SortController } from "./sortController";
 import { FocusedCellController } from "./focusedCellController";
 import { MouseEventService } from "./gridPanel/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
-import { FilterStage } from "./modules/clientSideRowModel/filterStage";
-import { SortStage } from "./modules/clientSideRowModel/sortStage";
-import { FlattenStage } from "./modules/clientSideRowModel/flattenStage";
 import { Events, GridReadyEvent } from "./events";
 import { CellRendererFactory } from "./rendering/cellRendererFactory";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
@@ -46,12 +43,9 @@ import { GridSerializer } from "./exporter/gridSerializer";
 import { StylingService } from "./styling/stylingService";
 import { ColumnHoverService } from "./rendering/columnHoverService";
 import { ColumnAnimationService } from "./rendering/columnAnimationService";
-import { SortService } from "./modules/clientSideRowModel/sortService";
-import { FilterService } from "./modules/clientSideRowModel/filterService";
 import { AutoGroupColService } from "./columnController/autoGroupColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PaginationAutoPageSizeService } from "./pagination/paginationAutoPageSizeService";
-import { ImmutableService } from "./modules/clientSideRowModel/immutableService";
 import { IRowModel } from "./interfaces/iRowModel";
 import { Constants } from "./constants";
 import { ValueCache } from "./valueService/valueCache";
@@ -262,11 +256,9 @@ export class Grid {
             ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,
             NavigationService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
             StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
-            CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService,
-            ValueFormatterService, StylingService, ScrollVisibleService, SortController,
-            ColumnHoverService, ColumnAnimationService, SortService, SelectableService, AutoGroupColService,
-            ImmutableService, ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer,
-            DetailRowCompCache
+            CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
+            ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
+            ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer, DetailRowCompCache
         ];
 
         if (Grid.enterpriseBeans) {

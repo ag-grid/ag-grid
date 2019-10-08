@@ -10,11 +10,11 @@ import { Autowired, Context } from "../context/context";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants";
 import { RowNodeCache, RowNodeCacheParams } from "../modules/rowNodeCache/rowNodeCache";
-import { RowNodeBlock } from "../modules/rowNodeCache/rowNodeBlock";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
 import { _ } from "../utils";
+import {IRowNodeBlock} from "../interfaces/iRowNodeBlock";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -156,7 +156,7 @@ export class RowNode implements IEventEmitter {
     public childrenMapped: { [key: string]: any } | null = {};
 
     /** Server Side Row Model Only - the children are in an infinite cache */
-    public childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams> | null;
+    public childrenCache: RowNodeCache<IRowNodeBlock, RowNodeCacheParams> | null;
 
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;

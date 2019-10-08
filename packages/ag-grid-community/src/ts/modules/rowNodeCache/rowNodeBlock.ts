@@ -6,6 +6,7 @@ import { RowNodeCacheParams } from "./rowNodeCache";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { AgEvent } from "../../events";
 import {ModuleLogger} from "../../utils/moduleLogger";
+import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
 
 ModuleLogger.logModuleClass('RowNodeBlock');
 
@@ -20,7 +21,7 @@ export interface LoadCompleteEvent extends AgEvent {
     lastRow: number;
 }
 
-export abstract class RowNodeBlock extends BeanStub {
+export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
 
     public static EVENT_LOAD_COMPLETE = 'loadComplete';
 

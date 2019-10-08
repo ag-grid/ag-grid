@@ -19,11 +19,12 @@ import { NumberSequence, _ } from "../../utils";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import {ModuleLogger} from "../../utils/moduleLogger";
 import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
+import {IInfiniteRowModel} from "../../interfaces/iInfiniteRowModel";
 
 ModuleLogger.logModuleClass('InfiniteRowModel');
 
 @Bean('rowModel')
-export class InfiniteRowModel extends BeanStub implements IRowModel {
+export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('filterManager') private filterManager: FilterManager;

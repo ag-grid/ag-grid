@@ -22,7 +22,6 @@ import {CellPosition} from "./entities/cellPosition";
 import {IClipboardService} from "./interfaces/iClipboardService";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {IMenuFactory} from "./interfaces/iMenuFactory";
-import {InfiniteRowModel} from "./modules/infiniteRowModel/infiniteRowModel";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
 import {IFilterComp} from "./interfaces/iFilter";
@@ -55,6 +54,7 @@ import {RefreshModelParams} from "./interfaces/refreshModelParams";
 import {RowDataTransaction} from "./interfaces/rowDataTransaction";
 import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
 import {IImmutableService} from "./interfaces/iImmutableService";
+import {IInfiniteRowModel} from "./interfaces/iInfiniteRowModel";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -150,7 +150,7 @@ export class GridApi {
 
     private headerRootComp: HeaderRootComp;
     private clientSideRowModel: IClientSideRowModel;
-    private infiniteRowModel: InfiniteRowModel;
+    private infiniteRowModel: IInfiniteRowModel;
 
     private serverSideRowModel: IServerSideRowModel;
 
@@ -174,7 +174,7 @@ export class GridApi {
                 this.clientSideRowModel = this.rowModel as IClientSideRowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_INFINITE:
-                this.infiniteRowModel = this.rowModel as InfiniteRowModel;
+                this.infiniteRowModel = this.rowModel as IInfiniteRowModel;
                 break;
             case Constants.ROW_MODEL_TYPE_SERVER_SIDE:
                 this.serverSideRowModel = this.rowModel as IServerSideRowModel;
@@ -245,7 +245,7 @@ export class GridApi {
 
     public setDatasource(datasource: IDatasource) {
         if (this.gridOptionsWrapper.isRowModelInfinite()) {
-            (this.rowModel as InfiniteRowModel).setDatasource(datasource);
+            (this.rowModel as IInfiniteRowModel).setDatasource(datasource);
         } else {
             console.warn(`ag-Grid: you can only use a datasource when gridOptions.rowModelType is '${Constants.ROW_MODEL_TYPE_INFINITE}'`);
         }

@@ -8,6 +8,9 @@ import { ColumnController } from "../../columnController/columnController";
 import { RowNodeMap } from "./clientSideRowModel";
 import { ChangedPath } from "../../utils/changedPath";
 import { _ } from "../../utils";
+import {ModuleLogger} from "../../utils/moduleLogger";
+
+ModuleLogger.logModuleClass('SortService');
 
 export interface SortOption {
     inverter: number;

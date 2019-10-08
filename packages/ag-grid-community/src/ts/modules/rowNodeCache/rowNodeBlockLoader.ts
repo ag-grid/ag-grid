@@ -3,6 +3,7 @@ import { Logger, LoggerFactory } from "../../logger";
 import { Qualifier } from "../../context/context";
 import { _ } from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";
+import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
 
 ModuleLogger.logModuleClass('RowNodeBlockLoader');
 
@@ -14,7 +15,7 @@ export class RowNodeBlockLoader {
 
     private activeBlockLoadsCount = 0;
 
-    private blocks: RowNodeBlock[] = [];
+    private blocks: IRowNodeBlock[] = [];
 
     private logger: Logger;
 
@@ -32,11 +33,11 @@ export class RowNodeBlockLoader {
         this.logger = loggerFactory.create('RowNodeBlockLoader');
     }
 
-    public addBlock(block: RowNodeBlock): void {
+    public addBlock(block: IRowNodeBlock): void {
         this.blocks.push(block);
     }
 
-    public removeBlock(block: RowNodeBlock): void {
+    public removeBlock(block: IRowNodeBlock): void {
         _.removeFromArray(this.blocks, block);
     }
 
@@ -66,7 +67,7 @@ export class RowNodeBlockLoader {
             return;
         }
 
-        let blockToLoad: RowNodeBlock | null = null;
+        let blockToLoad: IRowNodeBlock | null = null;
         this.blocks.forEach(block => {
             if (block.getState() === RowNodeBlock.STATE_DIRTY) {
                 blockToLoad = block;

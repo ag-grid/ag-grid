@@ -6,6 +6,9 @@ import { EventService } from "../../eventService";
 import { IRowNodeStage, StageExecuteParams } from "../../interfaces/iRowNodeStage";
 import { ColumnController } from "../../columnController/columnController";
 import { _ } from "../../utils";
+import {ModuleLogger} from "../../utils/moduleLogger";
+
+ModuleLogger.logModuleClass('FlattenStage');
 
 @Bean('flattenStage')
 export class FlattenStage implements IRowNodeStage {
