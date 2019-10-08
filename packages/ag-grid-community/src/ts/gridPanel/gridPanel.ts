@@ -841,6 +841,10 @@ export class GridPanel extends Component {
 
         this.setPinnedContainerSize();
 
+        // this is to cater for AG-3274, where grid is removed from the dom and then inserted back in again.
+        // (which happens with some implementations of tabbing). this can result in horizontal scroll getting
+        // reset back to the left, however no scroll event is fired. so we need to get header to also scroll
+        // back to the left to be kept in sync.
         // adding and removing the grid from the DOM both resets the scroll position and
         // triggers a resize event, so notify listeners that the scroll position might have changed
         this.onBodyHorizontalScroll(this.eCenterViewport);
