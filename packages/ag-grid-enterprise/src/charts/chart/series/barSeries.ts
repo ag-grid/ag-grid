@@ -425,7 +425,7 @@ export class BarSeries extends Series<CartesianChart> {
             // console.warn('Zero or infinite y-range.');
         }
 
-        this.domainY = [ yMin, yMax ];
+        this.domainY = [yMin, yMax];
 
         const chart = this.chart;
 
@@ -638,8 +638,8 @@ export class BarSeries extends Series<CartesianChart> {
                 title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
                 const xValue = datum[xField];
                 const yValue = datum[yField];
-                const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
-                const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+                const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+                const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
 
                 html = `${title}<div class="content">${xString}: ${yString}</div>`;
             }

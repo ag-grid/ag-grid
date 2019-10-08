@@ -1,4 +1,4 @@
-import { ChartBuilder } from "../../../builder/chartBuilder";
+import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { DoughnutChartOptions, CaptionOptions, _ } from "ag-grid-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PieSeries } from "../../../../charts/chart/series/pieSeries";

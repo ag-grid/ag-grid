@@ -1,5 +1,5 @@
 import { LineChartOptions, _, FontWeight } from "ag-grid-community";
-import { ChartBuilder } from "../../../builder/chartBuilder";
+import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { LineSeries } from "../../../../charts/chart/series/lineSeries";
 import { CartesianChartProxy, LineMarkerProperty, LineSeriesProperty } from "./cartesianChartProxy";
