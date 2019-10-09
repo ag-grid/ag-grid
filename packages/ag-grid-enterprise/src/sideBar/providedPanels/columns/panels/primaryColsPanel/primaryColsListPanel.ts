@@ -51,7 +51,7 @@ export class PrimaryColsListPanel extends Component {
         this.params = params;
         this.allowDragging = allowDragging;
 
-        if (this.params.syncLayoutWithGrid) {
+        if (!this.params.suppressSyncLayoutWithGrid) {
             this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.syncColumnLayout.bind(this));
         }
 
@@ -79,7 +79,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public onColumnsChanged(): void {
-        if (this.params.syncLayoutWithGrid) {
+        if (!this.params.suppressSyncLayoutWithGrid) {
             this.syncColumnLayout();
         } else {
             this.destroyColumnComps();

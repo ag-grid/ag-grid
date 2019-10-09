@@ -103,7 +103,7 @@ var gridOptions = {
                 toolPanelParams: {
                     suppressExpandAll: false,
                     suppressFilterSearch: false,
-                    syncLayoutWithGrid: false
+                    suppressSyncLayoutWithGrid: true
                 }
             }
         ],
