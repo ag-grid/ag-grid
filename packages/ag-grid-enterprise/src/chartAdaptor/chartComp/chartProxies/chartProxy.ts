@@ -160,10 +160,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public getLegendPosition = (): string => `${this.chartOptions.legendPosition}`;
 
     public setTitleProperty(property: TitleProperty | TitleFontProperty, value: any) {
-        if (!this.chart.title) {
-            this.chart.title = {} as Caption;
-        }
-
         (this.chart.title[property] as any) = value;
 
         if (!this.chartOptions.title) {

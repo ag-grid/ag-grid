@@ -85,45 +85,26 @@ export abstract class Chart {
         return this.scene.parent;
     }
 
-    private _title: Caption | undefined = undefined;
-    set title(value: Caption | undefined) {
-        const oldTitle = this._title;
-        if (oldTitle !== value) {
-            if (oldTitle) {
-                oldTitle.onLayoutChange = undefined;
-                this.scene.root!.removeChild(oldTitle.node);
-            }
-            if (value) {
-                value.onLayoutChange = this.onLayoutChange;
-                this.scene.root!.appendChild(value.node);
-            }
-            this._title = value;
-            this.layoutPending = true;
-        }
-    }
-    get title(): Caption | undefined {
-        return this._title;
-    }
+    readonly title: Caption = (() => {
+        const title = new Caption();
+        title.enabled = false;
+        title.text = 'Title';
+        title.fontSize = 16;
+        title.fontWeight = 'bold';
+        title.onLayoutChange = this.onLayoutChange;
+        this.scene.root!.appendChild(title.node);
+        return title;
+    })();
 
-    private _subtitle: Caption | undefined = undefined;
-    set subtitle(value: Caption | undefined) {
-        const oldSubtitle = this._subtitle;
-        if (oldSubtitle !== value) {
-            if (oldSubtitle) {
-                oldSubtitle.onLayoutChange = undefined;
-                this.scene.root!.removeChild(oldSubtitle.node);
-            }
-            if (value) {
-                value.onLayoutChange = this.onLayoutChange;
-                this.scene.root!.appendChild(value.node);
-            }
-            this._subtitle = value;
-            this.layoutPending = true;
-        }
-    }
-    get subtitle(): Caption | undefined {
-        return this._subtitle;
-    }
+    readonly subtitle: Caption = (() => {
+        const subtitle = new Caption();
+        subtitle.enabled = false;
+        subtitle.text = 'Subtitle';
+        subtitle.fontSize = 12;
+        subtitle.onLayoutChange = this.onLayoutChange;
+        this.scene.root!.appendChild(subtitle.node);
+        return subtitle;
+    })();
 
     abstract get seriesRoot(): Node;
 
@@ -309,7 +290,7 @@ export abstract class Chart {
         const spacing = 5;
         let paddingTop = 0;
 
-        if (title && title.enabled) {
+        if (title.enabled) {
             paddingTop += 10;
             const bbox = title.node.getBBox();
             title.node.x = this.width / 2;
@@ -317,7 +298,7 @@ export abstract class Chart {
             titleVisible = true;
             paddingTop += bbox ? bbox.height : 0;
 
-            if (subtitle && subtitle.enabled) {
+            if (subtitle.enabled) {
                 const bbox = subtitle.node.getBBox();
                 subtitle.node.x = this.width / 2;
                 subtitle.node.y = paddingTop;
@@ -326,12 +307,8 @@ export abstract class Chart {
             }
         }
 
-        if (title) {
-            title.node.visible = titleVisible;
-        }
-        if (subtitle) {
-            subtitle.node.visible = subtitleVisible;
-        }
+        title.node.visible = titleVisible;
+        subtitle.node.visible = subtitleVisible;
 
         if (this.captionAutoPadding !== paddingTop) {
             this.captionAutoPadding = paddingTop;
