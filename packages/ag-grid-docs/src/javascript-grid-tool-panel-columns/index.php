@@ -317,6 +317,11 @@ interface IColumnToolPanel {
 
     <p style="color: red">
         TODO: Finalise Docs and Example after review
+
+    </p>
+
+    <p>
+        Note: <code>syncLayoutWithGrid=false</code>
     </p>
 
     <?= example('Custom Column Layout', 'custom-layout', 'generated', array("enterprise" => 1, "processVue" => true)) ?>

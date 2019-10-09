@@ -2,7 +2,7 @@ var columnDefs = [
     {
         headerName: 'Athlete',
         children: [
-            { field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+            { displayName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
             { field: "age", width: 90},
             { field: "country", width: 120}
         ]
@@ -14,7 +14,6 @@ var columnDefs = [
             { field: "date", width: 110 },
         ]
     },
-    { colId: 'sport', field: "sport", width: 110 },
     {
         headerName: 'Medals',
         children: [
@@ -26,12 +25,40 @@ var columnDefs = [
     }
 ];
 
+var sortedToolPanelColumnDefs = [
+    {
+        headerName: 'Athlete',
+        children: [
+            { field: "age" },
+            { field: "country" },
+            { displayName: 'Name', field: "athlete" },
+        ]
+    },
+    {
+        headerName: 'Competition',
+        children: [
+            { field: "date", width: 110 },
+            { field: "year", width: 90 },
+        ]
+    },
+    {
+        headerName: 'Medals',
+        children: [
+            { field: "bronze", width: 100 },
+            { field: "gold", width: 100 },
+            { field: "silver", width: 100 },
+            { field: "total", width: 100 }
+        ]
+    },
+    { colId: 'sport', field: "sport", width: 110 },
+];
+
 var customToolPanelColumnDefs = [
     {
         headerName: 'Dummy Group 1',
         children: [
             { field: "age" },
-            { field: "athlete" },
+            { displayName: 'Name', field: "athlete" },
             {
                 headerName: 'Dummy Group 2',
                 children: [
@@ -64,10 +91,29 @@ var gridOptions = {
         filter: true
     },
     columnDefs: columnDefs,
-    sideBar: 'columns'
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    syncLayoutWithGrid: false
+                }
+            },
+        ],
+        defaultToolPanel: 'columns'
+    }
 };
 
-function setCustomColumnLayout() {
+function setSortedLayout() {
+    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
+    columnToolPanel.setColumnLayout(sortedToolPanelColumnDefs);
+}
+
+function setCustomLayout() {
     var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
     columnToolPanel.setColumnLayout(customToolPanelColumnDefs);
 }
