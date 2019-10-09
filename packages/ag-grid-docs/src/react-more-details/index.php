@@ -244,7 +244,7 @@ class GridComponent extends Component {
                 href="#react-15">here.</a></note>
     <p>With React 16 <a href="https://reactjs.org/docs/portals.html">Portals</a> were introduced and these are the official way to create React components dynamically within React so
         this is what we use internally for component creation within the grid.</p>
-    <p>If you use React 16+ you'll need to enable <code>reatNext </code> as follows:</p>
+    <p>If you use React 16+ you'll need to enable <code>reactNext </code> as follows:</p>
 <snippet>
 // Grid Definition
 &lt;AgGridReact
