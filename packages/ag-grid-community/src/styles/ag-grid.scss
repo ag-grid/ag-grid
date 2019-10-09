@@ -147,22 +147,28 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-body-horizontal-scroll-viewport,
 .ag-virtual-list-viewport {
     position: relative;
+    height: 100%;
     min-width: 0px;
+    overflow: hidden;
     flex: 1 1 auto;
 }
 
-@media only screen {
-  .ag-header-viewport,
-  .ag-floating-top-viewport,
+@media only print {
+  .ag-root-wrapper,
+  .ag-root-wrapper-body,
+  .ag-root,
   .ag-body-viewport,
-  .ag-pinned-left-cols-viewport,
+  .ag-center-cols-container,
   .ag-center-cols-viewport,
-  .ag-pinned-right-cols-viewport,
-  .ag-floating-bottom-viewport,
+  .ag-center-cols-clipper,
   .ag-body-horizontal-scroll-viewport,
   .ag-virtual-list-viewport {
-    height: 100%;
-    overflow: hidden;
+    // 100% height elements with overflow hidden cause printing issues in IE and Edge
+    height: auto !important;
+    overflow: visible !important;
+    // flex elements cause printing issues in Firefox
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=939897
+    display: block !important;
   }
 }
 

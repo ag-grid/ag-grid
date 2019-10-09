@@ -45,13 +45,13 @@ export class FiltersToolPanelListPanel extends Component {
         const defaultParams: ToolPanelFiltersCompParams = {
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            syncLayoutWithGrid: true,
+            suppressSyncLayoutWithGrid: false,
             api: this.gridApi
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
 
-        if (this.params.syncLayoutWithGrid) {
+        if (!this.params.suppressSyncLayoutWithGrid) {
             this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.syncFilterLayout());
         }
 

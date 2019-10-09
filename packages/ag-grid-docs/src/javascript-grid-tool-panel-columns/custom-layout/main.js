@@ -101,7 +101,7 @@ var gridOptions = {
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
                 toolPanelParams: {
-                    syncLayoutWithGrid: false
+                    suppressSyncLayoutWithGrid: true
                 }
             },
         ],

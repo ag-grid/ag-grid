@@ -27,7 +27,7 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressColumnSelectAll: boolean;
     suppressColumnExpandAll: boolean;
     contractColumnSelection: boolean;
-    syncLayoutWithGrid: boolean;
+    suppressSyncLayoutWithGrid: boolean;
 }
 
 export interface IColumnToolPanel {
@@ -74,7 +74,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             suppressRowGroups: false,
             suppressValues: false,
             suppressPivots: false,
-            syncLayoutWithGrid: true,
+            suppressSyncLayoutWithGrid: false,
             api: this.gridApi
         };
         _.mergeDeep(defaultParams, params);

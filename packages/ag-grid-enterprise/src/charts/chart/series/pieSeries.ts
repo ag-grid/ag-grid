@@ -6,7 +6,7 @@ import { DropShadow } from "../../scene/dropShadow";
 import { LinearScale } from "../../scale/linearScale";
 import palette from "../palettes";
 import { Sector } from "../../scene/shape/sector";
-import { Series, SeriesNodeDatum } from "./series";
+import { Series, SeriesLabel, SeriesNodeDatum } from "./series";
 import { PointerEvents } from "../../scene/node";
 import { normalizeAngle180, toRadians } from "../../util/angle";
 import { Color } from "../../util/color";
@@ -45,6 +45,30 @@ export interface PieTooltipRendererParams {
     labelField?: string;
     title?: string;
     color?: string;
+}
+
+class PieSeriesLabel extends SeriesLabel {
+    private _offset: number = 3; // from the callout line
+    set offset(value: number) {
+        if (this._offset !== value) {
+            this._offset = value;
+            this.update();
+        }
+    }
+    get offset(): number {
+        return this._offset;
+    }
+
+    private _minAngle: number = 20; // in degrees
+    set minAngle(value: number) {
+        if (this._minAngle !== value) {
+            this._minAngle = value;
+            this.update();
+        }
+    }
+    get minAngle(): number {
+        return this._minAngle;
+    }
 }
 
 export class PieSeries extends Series<PolarChart> {
@@ -139,6 +163,12 @@ export class PieSeries extends Series<PolarChart> {
     get calloutLength(): number {
         return this._calloutLength;
     }
+
+    readonly label: PieSeriesLabel = (() => {
+        const label = new PieSeriesLabel();
+        label.onChange = this.scheduleLayout.bind(this);
+        return label;
+    })();
 
     private _labelOffset: number = 3; // from the callout line
     set labelOffset(value: number) {
@@ -422,7 +452,7 @@ export class PieSeries extends Series<PolarChart> {
 
         const angleData: number[] = data.map((datum, index) => dataEnabled[index] && +datum[this.angleField] || 0);
         const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
-        
+
         // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie slice.
         // Each slice starts where the previous one ends, so we only keep the ratios for end angles.
         const angleDataRatios = (() => {
@@ -430,12 +460,12 @@ export class PieSeries extends Series<PolarChart> {
             return angleData.map(datum => sum += datum / angleDataTotal);
         })();
 
-        const labelField = this.labelEnabled && this.labelField;
+        const labelField = this.label.enabled && this.labelField;
         const labelData = labelField ? data.map(datum => String(datum[labelField])) : [];
         const radiusField = this.radiusField;
         const useRadiusField = !!radiusField && !this.innerRadiusOffset;
         let radiusData: number[] = [];
-        
+
         if (useRadiusField) {
             const radii = data.map(datum => Math.abs(datum[radiusField!]));
             const maxDatum = Math.max(...radii);
@@ -463,7 +493,7 @@ export class PieSeries extends Series<PolarChart> {
             const midCos = Math.cos(midAngle);
             const midSin = Math.sin(midAngle);
 
-            const labelMinAngle = toRadians(this.labelMinAngle);
+            const labelMinAngle = toRadians(this.label.minAngle);
             const labelVisible = labelField && span > labelMinAngle;
             const midAngle180 = normalizeAngle180(midAngle);
 
@@ -518,12 +548,12 @@ export class PieSeries extends Series<PolarChart> {
             return;
         }
 
-        const { 
+        const {
             fills,
-            strokes, 
-            fillOpacity, 
-            strokeOpacity, 
-            calloutColors, 
+            strokes,
+            fillOpacity,
+            strokeOpacity,
+            calloutColors,
             outerRadiusOffset,
             innerRadiusOffset,
             radiusScale,
@@ -606,29 +636,31 @@ export class PieSeries extends Series<PolarChart> {
             }
         });
 
-        const { labelOffset, labelFontStyle, labelFontWeight, labelFontSize, labelFontFamily, labelColor } = this;
+        {
+            const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
 
-        groupSelection.selectByTag<Text>(PieSeriesNodeTag.Label).each((text, datum, index) => {
-            const label = datum.label;
+            groupSelection.selectByTag<Text>(PieSeriesNodeTag.Label).each((text, datum, index) => {
+                const label = datum.label;
 
-            if (label) {
-                const outerRadius = outerRadii[index];
-                const labelRadius = centerOffsets[index] + outerRadius + calloutLength + labelOffset;
+                if (label) {
+                    const outerRadius = outerRadii[index];
+                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset;
 
-                text.fontStyle = labelFontStyle;
-                text.fontWeight = labelFontWeight;
-                text.fontSize = labelFontSize;
-                text.fontFamily = labelFontFamily;
-                text.text = label.text;
-                text.x = datum.midCos * labelRadius;
-                text.y = datum.midSin * labelRadius;
-                text.fill = labelColor;
-                text.textAlign = label.textAlign;
-                text.textBaseline = label.textBaseline;
-            } else {
-                text.fill = undefined;
-            }
-        });
+                    text.fontStyle = fontStyle;
+                    text.fontWeight = fontWeight;
+                    text.fontSize = fontSize;
+                    text.fontFamily = fontFamily;
+                    text.text = label.text;
+                    text.x = datum.midCos * labelRadius;
+                    text.y = datum.midSin * labelRadius;
+                    text.fill = color;
+                    text.textAlign = label.textAlign;
+                    text.textBaseline = label.textBaseline;
+                } else {
+                    text.fill = undefined;
+                }
+            });
+        }
 
         this.groupSelection = groupSelection;
     }
@@ -660,8 +692,8 @@ export class PieSeries extends Series<PolarChart> {
             const value = nodeDatum.seriesDatum[angleField];
             const formattedValue = typeof(value) === 'number' ? toFixed(value) : value.toString();
             html = `${title}<div class="content">${label}${formattedValue}</div>`;
-        }        
-        
+        }
+
         return html;
     }
 
