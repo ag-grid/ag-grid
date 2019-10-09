@@ -1,5 +1,6 @@
 require('../../community-modules/client-side-row-model');
 require('./chartsModule');
+require('./clipboardModule');
 require('./excelExportModule');
 require('./rowGroupingModule');
 require('./serverSideRowModelModule');
