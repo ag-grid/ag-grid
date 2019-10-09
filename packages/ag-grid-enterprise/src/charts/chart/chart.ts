@@ -45,6 +45,7 @@ export abstract class Chart {
         scene.parent = options.parent;
         scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
+        this.legend.onPositionChange = this.onLegendPositionChange;
 
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
@@ -65,6 +66,11 @@ export abstract class Chart {
     }
 
     private readonly onLayoutChange = () => {
+        this.layoutPending = true;
+    }
+
+    private readonly onLegendPositionChange = () => {
+        this.legendAutoPadding.clear();
         this.layoutPending = true;
     }
 
@@ -171,40 +177,6 @@ export abstract class Chart {
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
         this.dataPending = true;
-    }
-
-    private _legendPosition: LegendPosition = 'right';
-    set legendPosition(value: LegendPosition) {
-        if (this._legendPosition !== value) {
-            this._legendPosition = value;
-            this.legendAutoPadding.clear();
-            switch (value) {
-                case 'right':
-                case 'left':
-                    this.legend.orientation = Orientation.Vertical;
-                    break;
-                case 'bottom':
-                case 'top':
-                    this.legend.orientation = Orientation.Horizontal;
-                    break;
-            }
-            this.layoutPending = true;
-        }
-    }
-    get legendPosition(): LegendPosition {
-        return this._legendPosition;
-    }
-
-    private _legendPadding: number = 20;
-    set legendPadding(value: number) {
-        value = isFinite(value) ? value : 20;
-        if (this._legendPadding !== value) {
-            this._legendPadding = value;
-            this.layoutPending = true;
-        }
-    }
-    get legendPadding(): number {
-        return this._legendPadding;
     }
 
     private _data: any[] = [];
@@ -377,14 +349,14 @@ export abstract class Chart {
         const height = this.height - captionAutoPadding;
         const legend = this.legend;
         const legendGroup = legend.group;
-        const legendPadding = this.legendPadding;
+        const legendPadding = this.legend.padding;
         const legendAutoPadding = this.legendAutoPadding;
 
         legendGroup.translationX = 0;
         legendGroup.translationY = 0;
 
         let legendBBox: BBox;
-        switch (this.legendPosition) {
+        switch (this.legend.position) {
             case 'bottom':
                 legend.performLayout(width - legendPadding * 2, 0);
                 legendBBox = legendGroup.getBBox();

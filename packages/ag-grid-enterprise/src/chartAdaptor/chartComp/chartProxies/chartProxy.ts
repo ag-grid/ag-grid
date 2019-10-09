@@ -142,7 +142,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public getLegendEnabled = (): boolean => this.chartOptions.legend ? !!this.chartOptions.legend.enabled : false;
 
     public setLegendPadding(padding: number) {
-        this.chart.legendPadding = padding;
+        this.chart.legend.padding = padding;
         this.chartOptions.legendPadding = padding;
 
         this.raiseChartOptionsChangedEvent();
@@ -151,7 +151,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public getLegendPadding = (): string => `${this.chartOptions.legendPadding}`;
 
     public setLegendPosition(position: LegendPosition) {
-        this.chart.legendPosition = position;
+        this.chart.legend.position = position;
         this.chartOptions.legendPosition = position;
 
         this.raiseChartOptionsChangedEvent();

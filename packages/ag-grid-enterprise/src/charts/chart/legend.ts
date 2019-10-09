@@ -3,6 +3,7 @@ import { Selection } from "../scene/selection";
 import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight } from "../scene/shape/text";
+import { LegendPosition } from "./chart";
 
 export interface LegendDatum {
     id: string;       // component ID
@@ -25,6 +26,8 @@ export enum Orientation {
 export class Legend {
 
     onLayoutChange?: () => void;
+    onPositionChange?: () => void; // The legend's parent component may want to do some special handling
+                                   // that shouldn't happen on every `onLayoutChange` callback.
 
     readonly group: Group = new Group();
 
@@ -47,6 +50,18 @@ export class Legend {
         return this._data;
     }
 
+    private _enabled: boolean = true;
+    set enabled(value: boolean) {
+        if (this._enabled !== value) {
+            this._enabled = value;
+            this.group.visible = value && this.data.length > 0;
+            this.requestLayout();
+        }
+    }
+    get enabled(): boolean {
+        return this._enabled;
+    }
+
     private _orientation: Orientation = Orientation.Vertical;
     set orientation(value: Orientation) {
         if (this._orientation !== value) {
@@ -58,16 +73,39 @@ export class Legend {
         return this._orientation;
     }
 
-    private _enabled: boolean = true;
-    set enabled(value: boolean) {
-        if (this._enabled !== value) {
-            this._enabled = value;
-            this.group.visible = value && this.data.length > 0;
+    private _position: LegendPosition = 'right';
+    set position(value: LegendPosition) {
+        if (this._position !== value) {
+            this._position = value;
+            switch (value) {
+                case 'right':
+                case 'left':
+                    this.orientation = Orientation.Vertical;
+                    break;
+                case 'bottom':
+                case 'top':
+                    this.orientation = Orientation.Horizontal;
+                    break;
+            }
+            if (this.onPositionChange) {
+                this.onPositionChange();
+            }
+        }
+    }
+    get position(): LegendPosition {
+        return this._position;
+    }
+
+    private _padding: number = 20;
+    set padding(value: number) {
+        value = isFinite(value) ? value : 20;
+        if (this._padding !== value) {
+            this._padding = value;
             this.requestLayout();
         }
     }
-    get enabled(): boolean {
-        return this._enabled;
+    get padding(): number {
+        return this._padding;
     }
 
     private _itemPaddingX: number = 16;

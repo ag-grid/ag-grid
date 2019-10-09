@@ -70,14 +70,15 @@ export class CartesianChart<TX extends ILinearAxis = Axis<Scale<any, number>>, T
         };
 
         if (legend.enabled && legend.data.length) {
-            const { legendAutoPadding, legendPadding } = this;
+            const { legendAutoPadding } = this;
+            const legendPadding = this.legend.padding;
 
             shrinkRect.x += legendAutoPadding.left;
             shrinkRect.y += legendAutoPadding.top;
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
             shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
 
-            switch (this.legendPosition) {
+            switch (this.legend.position) {
                 case 'right':
                     shrinkRect.width -= legendPadding;
                     break;
