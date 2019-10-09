@@ -9,7 +9,7 @@ import {RowRenderer} from "../../rendering/rowRenderer";
 import {_} from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";
 
-ModuleLogger.logModuleClass('InfiniteBlock');
+ModuleLogger.logModuleClass('IRM.InfiniteBlock');
 
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 

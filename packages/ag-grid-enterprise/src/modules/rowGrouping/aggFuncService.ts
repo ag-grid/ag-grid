@@ -9,7 +9,7 @@ import {
     _, ModuleLogger
 } from "ag-grid-community";
 
-ModuleLogger.logModuleClass('AggFuncService');
+ModuleLogger.logModuleClass('RowGroup.AggFuncService');
 
 @Bean('aggFuncService')
 export class AggFuncService implements IAggFuncService {

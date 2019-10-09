@@ -13,7 +13,7 @@ import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
 import {RowNodeTransaction} from "../../interfaces/rowNodeTransaction";
 import {ModuleLogger} from "../../utils/moduleLogger";
 
-ModuleLogger.logModuleClass('ClientSideNodeManager');
+ModuleLogger.logModuleClass('CSRM.ClientSideNodeManager');
 
 export class ClientSideNodeManager {
 

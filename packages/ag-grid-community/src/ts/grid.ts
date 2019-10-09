@@ -20,7 +20,6 @@ import { ColumnUtils } from "./columnController/columnUtils";
 import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
 import {Context, ContextParams} from "./context/context";
-import { CsvCreator } from "./exporter/csvCreator";
 import { GridCore } from "./gridCore";
 import { StandardMenuFactory } from "./headerRendering/standardMenu";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
@@ -37,9 +36,6 @@ import { AgRadioButton } from "./widgets/agRadioButton";
 import { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { ScrollVisibleService } from "./gridPanel/scrollVisibleService";
-import { Downloader } from "./exporter/downloader";
-import { XmlFactory } from "./exporter/xmlFactory";
-import { GridSerializer } from "./exporter/gridSerializer";
 import { StylingService } from "./styling/stylingService";
 import { ColumnHoverService } from "./rendering/columnHoverService";
 import { ColumnAnimationService } from "./rendering/columnAnimationService";
@@ -64,7 +60,6 @@ import { SelectableService } from "./rowNodes/selectableService";
 import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
 import { PaginationComp } from "./pagination/paginationComp";
 import { ResizeObserverService } from "./misc/resizeObserverService";
-import { ZipContainer } from "./exporter/files/zip/zipContainer";
 import { TooltipManager } from "./widgets/tooltipManager";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { Module } from "./interfaces/iModule";
@@ -253,12 +248,12 @@ export class Grid {
             MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
             SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
-            ColumnFactory, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService, AlignedGridsService,
+            ColumnFactory, TemplateService, AlignedGridsService,
             NavigationService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
             StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
             CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
             ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
-            ChangeDetectionService, AnimationFrameService, TooltipManager, ZipContainer, DetailRowCompCache
+            ChangeDetectionService, AnimationFrameService, TooltipManager, DetailRowCompCache
         ];
 
         if (Grid.enterpriseBeans) {
@@ -365,3 +360,5 @@ export class Grid {
     }
 
 }
+
+import "./modules/csvExportModule";

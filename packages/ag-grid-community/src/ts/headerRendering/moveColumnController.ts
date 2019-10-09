@@ -8,6 +8,7 @@ import {GridPanel} from "../gridPanel/gridPanel";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {DropListener} from "./bodyDropTarget";
 import {ColumnEventType} from "../events";
+import {Constants} from "../constants";
 
 export class MoveColumnController implements DropListener {
 
@@ -426,7 +427,7 @@ export class MoveColumnController implements DropListener {
             if (columnsThatCanPin.length > 0) {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
                 if (this.failedMoveAttempts > 7) {
-                    const pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
+                    const pinType = this.needToMoveLeft ? Constants.PINNED_LEFT : Constants.PINNED_RIGHT;
                     this.setColumnsPinned(columnsThatCanPin, pinType, "uiColumnDragged");
                     this.dragAndDropService.nudge();
                 }

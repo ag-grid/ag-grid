@@ -16,7 +16,7 @@ import {
 import { PivotStage } from "./pivotStage";
 import { AggFuncService } from "./aggFuncService";
 
-ModuleLogger.logModuleClass('AggregationStage');
+ModuleLogger.logModuleClass('RowGroup.AggregationStage');
 
 interface AggregationDetails {
     changedPath: ChangedPath;

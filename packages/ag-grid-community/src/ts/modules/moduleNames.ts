@@ -4,5 +4,7 @@ export const enum ModuleNames {
     InfiniteRowModelModule = "infiniteRowModelModule",
     ClientSideRowModelModule = "clientSideRowModelModule",
     ServerSideRowModelModule = "serverSideRowModelModule",
-    RowGroupingModule = "rowGroupingModule"
+    RowGroupingModule = "rowGroupingModule",
+    CsvExportModule = "csvExportModule",
+    ExcelExportModule = "excelExportModule"
 }

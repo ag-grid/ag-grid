@@ -1,10 +1,10 @@
 import {
     _,
-    Bean,
     Autowired,
-    PostConstruct,
+    Bean,
     BeanStub,
     Column,
+    ColumnController,
     Component,
     Context,
     EventService,
@@ -16,15 +16,15 @@ import {
     IContextMenuFactory,
     IRowModel,
     MenuItemDef,
-    PopupService,
-    RowNode,
     ModuleNames,
-    ColumnController
+    PopupService,
+    PostConstruct,
+    RowNode
 } from "ag-grid-community";
-import { MenuItemComponent } from "./menuItemComponent";
-import { MenuList } from "./menuList";
-import { MenuItemMapper } from "./menuItemMapper";
-import { RangeController } from "../rangeController";
+import {MenuItemComponent} from "./menuItemComponent";
+import {MenuList} from "./menuList";
+import {MenuItemMapper} from "./menuItemMapper";
+import {RangeController} from "../rangeController";
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory implements IContextMenuFactory {
@@ -79,8 +79,10 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
         if (_.exists(node)) {
             // if user clicks a cell
-            const suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
-            const suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
+            const csvModuleMissing = !this.context.isModuleRegistered(ModuleNames.CsvExportModule);
+            const excelModuleMissing = !this.context.isModuleRegistered(ModuleNames.ExcelExportModule);
+            const suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport() || excelModuleMissing;
+            const suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport() || csvModuleMissing;
             const onIPad = _.isUserAgentIPad();
             const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {

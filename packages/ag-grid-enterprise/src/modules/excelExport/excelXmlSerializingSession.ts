@@ -14,12 +14,15 @@ import {
     RowNode,
     RowSpanningAccumulator,
     RowType,
-    _
+    _,
+    ModuleLogger
 } from 'ag-grid-community';
 
 import { ExcelMixedStyle } from './excelCreator';
 import { ExcelXmlFactory } from './excelXmlFactory';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
+
+ModuleLogger.logModuleClass('Excel.ExcelXmlSerializingSession');
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;

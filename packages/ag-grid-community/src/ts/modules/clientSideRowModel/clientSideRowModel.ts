@@ -30,7 +30,7 @@ import {RefreshModelParams} from "../../interfaces/refreshModelParams";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
 
-ModuleLogger.logModuleClass('ClientSideRowModel');
+ModuleLogger.logModuleClass('CSRM.ClientSideRowModel');
 
 export interface BatchTransactionItem {
     rowDataTransaction: RowDataTransaction;

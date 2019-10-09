@@ -10,10 +10,13 @@ import {
     RowNode,
     RowSpanningAccumulator,
     RowType,
-    _
+    _,
+    ModuleLogger
 } from 'ag-grid-community';
 
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
+
+ModuleLogger.logModuleClass('Excel.ExcelXlsxSerializingSession');
 
 export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
 

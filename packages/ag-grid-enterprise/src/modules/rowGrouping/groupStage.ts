@@ -21,7 +21,7 @@ import {
     ModuleLogger
 } from "ag-grid-community";
 
-ModuleLogger.logModuleClass('GroupStage');
+ModuleLogger.logModuleClass('RowGroup.GroupStage');
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'

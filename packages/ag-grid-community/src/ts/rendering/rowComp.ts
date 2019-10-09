@@ -20,6 +20,7 @@ import { Beans } from "./beans";
 import { ProcessRowParams } from "../entities/gridOptions";
 import { _ } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import {Constants} from "../constants";
 
 interface CellTemplate {
     template: string;
@@ -364,7 +365,7 @@ export class RowComp extends Component {
 
             // printLayout doesn't put components into the pinned sections
             if (!this.printLayout) {
-                this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Column.PINNED_LEFT,
+                this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Constants.PINNED_LEFT,
                     'ag-cell-last-left-pinned', type, name,
                     (eRow: HTMLElement) => {
                         this.eFullWidthRowLeft = eRow;
@@ -372,7 +373,7 @@ export class RowComp extends Component {
                     (cellRenderer: ICellRendererComp) => {
                         this.fullWidthRowComponentLeft = cellRenderer;
                     });
-                this.createFullWidthRowContainer(this.pinnedRightContainerComp, Column.PINNED_RIGHT,
+                this.createFullWidthRowContainer(this.pinnedRightContainerComp, Constants.PINNED_RIGHT,
                     'ag-cell-first-right-pinned', type, name,
                     (eRow: HTMLElement) => {
                         this.eFullWidthRowRight = eRow;
@@ -442,8 +443,8 @@ export class RowComp extends Component {
 
         const normalSuccess = tryRefresh(this.eFullWidthRow, this.fullWidthRowComponent, null);
         const bodySuccess = tryRefresh(this.eFullWidthRowBody, this.fullWidthRowComponentBody, null);
-        const leftSuccess = tryRefresh(this.eFullWidthRowLeft, this.fullWidthRowComponentLeft, Column.PINNED_LEFT);
-        const rightSuccess = tryRefresh(this.eFullWidthRowRight, this.fullWidthRowComponentRight, Column.PINNED_RIGHT);
+        const leftSuccess = tryRefresh(this.eFullWidthRowLeft, this.fullWidthRowComponentLeft, Constants.PINNED_LEFT);
+        const rightSuccess = tryRefresh(this.eFullWidthRowRight, this.fullWidthRowComponentRight, Constants.PINNED_RIGHT);
 
         const allFullWidthRowsRefreshed = normalSuccess && bodySuccess && leftSuccess && rightSuccess;
 
@@ -555,19 +556,19 @@ export class RowComp extends Component {
             this.fullWidthRowComponent = null;
         }
         if (this.fullWidthRowComponentLeft) {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Column.PINNED_LEFT, this.fullWidthRowComponentLeft);
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Constants.PINNED_LEFT, this.fullWidthRowComponentLeft);
             this.fullWidthRowComponentLeft = null;
         }
         if (this.fullWidthRowComponentRight) {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Column.PINNED_RIGHT, this.fullWidthRowComponentRight);
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, Constants.PINNED_RIGHT, this.fullWidthRowComponentRight);
             this.fullWidthRowComponent = null;
         }
     }
 
     private getContainerForCell(pinnedType: string): HTMLElement {
         switch (pinnedType) {
-            case Column.PINNED_LEFT: return this.ePinnedLeftRow;
-            case Column.PINNED_RIGHT: return this.ePinnedRightRow;
+            case Constants.PINNED_LEFT: return this.ePinnedLeftRow;
+            case Constants.PINNED_RIGHT: return this.ePinnedRightRow;
             default: return this.eBodyRow;
         }
     }

@@ -8,7 +8,7 @@ import { ColumnController } from "../../columnController/columnController";
 import { _ } from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";
 
-ModuleLogger.logModuleClass('FlattenStage');
+ModuleLogger.logModuleClass('CSRM.FlattenStage');
 
 @Bean('flattenStage')
 export class FlattenStage implements IRowNodeStage {

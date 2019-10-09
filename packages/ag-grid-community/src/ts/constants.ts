@@ -60,4 +60,11 @@ export class Constants {
     static GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 
     static SOURCE_PASTE = 'paste';
+
+    static PINNED_RIGHT = 'right';
+    static PINNED_LEFT = 'left';
+
+    static SORT_ASC = 'asc';
+    static SORT_DESC = 'desc';
+
 }

@@ -119,8 +119,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private isEmbeddedRowMismatch(): boolean {
         if (this.params.fullWidth && this.gridOptionsWrapper.isEmbedFullWidthRows()) {
 
-            const pinnedLeftCell = this.params.pinned === Column.PINNED_LEFT;
-            const pinnedRightCell = this.params.pinned === Column.PINNED_RIGHT;
+            const pinnedLeftCell = this.params.pinned === Constants.PINNED_LEFT;
+            const pinnedRightCell = this.params.pinned === Constants.PINNED_RIGHT;
             const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
             if (this.gridOptionsWrapper.isEnableRtl()) {

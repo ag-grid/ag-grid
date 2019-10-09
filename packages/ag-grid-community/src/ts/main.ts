@@ -216,14 +216,14 @@ export { IRangeController, ISelectionHandle } from "./interfaces/iRangeControlle
 export { IChartService } from "./interfaces/IChartService";
 
 // exporter
-export { CsvCreator, BaseCreator } from "./exporter/csvCreator";
-export { Downloader } from "./exporter/downloader";
-export { XmlFactory } from "./exporter/xmlFactory";
-export { BaseGridSerializingSession, GridSerializer, GridSerializingSession, GridSerializingParams } from "./exporter/gridSerializer";
-export { RowType, RowAccumulator, RowSpanningAccumulator } from "./exporter/gridSerializer";
-export { CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exporter/exportParams";
-export { XmlElement } from "./exporter/xmlFactory";
-export { ZipContainer } from "./exporter/files/zip/zipContainer";
+export { CsvCreator, BaseCreator } from "./modules/csvExport/csvCreator";
+export { Downloader } from "./modules/csvExport/downloader";
+export { XmlFactory } from "./modules/csvExport/xmlFactory";
+export { BaseGridSerializingSession, GridSerializer, GridSerializingSession, GridSerializingParams } from "./modules/csvExport/gridSerializer";
+export { RowType, RowAccumulator, RowSpanningAccumulator } from "./modules/csvExport/gridSerializer";
+export { CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./interfaces/exportParams";
+export { XmlElement } from "./interfaces/iXmlFactory";
+export { ZipContainer } from "./modules/csvExport/zipContainer";
 
 // root
 export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";

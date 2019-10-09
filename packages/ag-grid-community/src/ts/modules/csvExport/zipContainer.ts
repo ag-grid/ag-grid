@@ -1,5 +1,5 @@
-import { Bean } from '../../../context/context';
-import { _ } from '../../../utils';
+import { Bean } from '../../context/context';
+import { _ } from '../../utils';
 
 export interface ZipFolder {
     path: string;

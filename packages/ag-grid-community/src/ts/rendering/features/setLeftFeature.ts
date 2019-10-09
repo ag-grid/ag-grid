@@ -88,9 +88,9 @@ export class SetLeftFeature extends BeanStub {
     private modifyLeftForPrintLayout(colOrGroup: ColumnGroupChild, leftPosition: number): number {
         if (!this.printLayout) { return leftPosition; }
 
-        if (colOrGroup.getPinned() === Column.PINNED_LEFT) {
+        if (colOrGroup.getPinned() === Constants.PINNED_LEFT) {
             return leftPosition;
-        } else if (colOrGroup.getPinned() === Column.PINNED_RIGHT) {
+        } else if (colOrGroup.getPinned() === Constants.PINNED_RIGHT) {
             const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
             const bodyWidth = this.beans.columnController.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;

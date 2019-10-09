@@ -9,7 +9,7 @@ import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
 import {IImmutableService} from "../../interfaces/iImmutableService";
 import {ModuleLogger} from "../../utils/moduleLogger";
 
-ModuleLogger.logModuleClass('ImmutableService');
+ModuleLogger.logModuleClass('CSRM.ImmutableService');
 
 @Bean('immutableService')
 export class ImmutableService implements IImmutableService {

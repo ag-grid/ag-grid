@@ -21,7 +21,7 @@ import {
     ModuleLogger
 } from "ag-grid-community";
 
-ModuleLogger.logModuleClass('ViewportRowModel');
+ModuleLogger.logModuleClass('VRM.ViewportRowModel');
 
 @Bean('rowModel')
 export class ViewportRowModel implements IRowModel {

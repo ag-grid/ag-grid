@@ -8,7 +8,7 @@ import { AgEvent } from "../../events";
 import {ModuleLogger} from "../../utils/moduleLogger";
 import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
 
-ModuleLogger.logModuleClass('RowNodeBlock');
+ModuleLogger.logModuleClass('Cache.RowNodeBlock');
 
 export interface RowNodeBlockBeans {
     context: Context;

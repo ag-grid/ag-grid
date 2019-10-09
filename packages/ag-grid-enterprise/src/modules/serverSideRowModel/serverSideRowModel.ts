@@ -38,7 +38,7 @@ import { ServerSideBlock } from "./serverSideBlock";
 // import {RowNodeBlockLoader} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeBlockLoader";
 // import {RowNodeCache} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeCache";
 
-ModuleLogger.logModuleClass('ServerSideRowModel');
+ModuleLogger.logModuleClass('SSRM.ServerSideRowModel');
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {

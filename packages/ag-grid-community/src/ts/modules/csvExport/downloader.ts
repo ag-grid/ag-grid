@@ -1,4 +1,7 @@
-import { Bean } from "../context/context";
+import { Bean } from "../../context/context";
+import {ModuleLogger} from "../../utils/moduleLogger";
+
+ModuleLogger.logModuleClass('Csv.Downloader');
 
 @Bean("downloader")
 export class Downloader {

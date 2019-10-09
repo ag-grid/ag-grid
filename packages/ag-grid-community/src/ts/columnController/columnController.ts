@@ -41,6 +41,7 @@ import { ValueCache } from "../valueService/valueCache";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "./columnApi";
 import { _ } from "../utils";
+import {Constants} from "../constants";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -501,9 +502,9 @@ export class ColumnController {
 
     public getDisplayedColumnGroups(type: string): ColumnGroupChild[] {
         switch (type) {
-            case Column.PINNED_LEFT:
+            case Constants.PINNED_LEFT:
                 return this.getLeftDisplayedColumnGroups();
-            case Column.PINNED_RIGHT:
+            case Constants.PINNED_RIGHT:
                 return this.getRightDisplayedColumnGroups();
             default:
                 return this.getCenterDisplayedColumnGroups();
@@ -1264,9 +1265,9 @@ export class ColumnController {
 
     public getContainerWidth(pinned: string): number {
         switch (pinned) {
-            case Column.PINNED_LEFT:
+            case Constants.PINNED_LEFT:
                 return this.leftWidth;
-            case Column.PINNED_RIGHT:
+            case Constants.PINNED_RIGHT:
                 return this.rightWidth;
             default:
                 return this.bodyWidth;
@@ -1336,9 +1337,9 @@ export class ColumnController {
 
     public getDisplayedColumns(type: string): Column[] {
         switch (type) {
-            case Column.PINNED_LEFT:
+            case Constants.PINNED_LEFT:
                 return this.getDisplayedLeftColumns();
-            case Column.PINNED_RIGHT:
+            case Constants.PINNED_RIGHT:
                 return this.getDisplayedRightColumns();
             default:
                 return this.getDisplayedCenterColumns();
@@ -1415,10 +1416,10 @@ export class ColumnController {
         this.columnAnimationService.start();
 
         let actualPinned: string | null;
-        if (pinned === true || pinned === Column.PINNED_LEFT) {
-            actualPinned = Column.PINNED_LEFT;
-        } else if (pinned === Column.PINNED_RIGHT) {
-            actualPinned = Column.PINNED_RIGHT;
+        if (pinned === true || pinned === Constants.PINNED_LEFT) {
+            actualPinned = Constants.PINNED_LEFT;
+        } else if (pinned === Constants.PINNED_RIGHT) {
+            actualPinned = Constants.PINNED_RIGHT;
         } else {
             actualPinned = null;
         }
@@ -2816,10 +2817,10 @@ export class ColumnController {
     public getVirtualHeaderGroupRow(type: string, dept: number): ColumnGroupChild[] {
         let result: ColumnGroupChild[];
         switch (type) {
-            case Column.PINNED_LEFT:
+            case Constants.PINNED_LEFT:
                 result = this.displayedLeftHeaderRows[dept];
                 break;
-            case Column.PINNED_RIGHT:
+            case Constants.PINNED_RIGHT:
                 result = this.displayedRightHeaderRows[dept];
                 break;
             default:
@@ -2989,9 +2990,9 @@ export class ColumnController {
         const groupInstanceIdCreator = new GroupInstanceIdCreator();
 
         this.displayedLeftColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Column.PINNED_LEFT, this.displayedLeftColumnTree);
+            leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_LEFT, this.displayedLeftColumnTree);
         this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(
-            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Column.PINNED_RIGHT, this.displayedRightColumnTree);
+            rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, Constants.PINNED_RIGHT, this.displayedRightColumnTree);
         this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(
             centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, null, this.displayedCentreColumnTree);
     }

@@ -22,7 +22,7 @@ import {ServerSideBlock} from "./serverSideBlock";
 // import {RowNodeCacheParams} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeCache";
 // import {RowNodeCache} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeCache";
 
-ModuleLogger.logModuleClass('ServerSideCache');
+ModuleLogger.logModuleClass('SSRM.ServerSideCache');
 
 export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];

@@ -136,8 +136,8 @@ export class HeaderRowComp extends Component {
         if (printLayout) {
             const centerRow = _.missing(this.pinned);
             if (centerRow) {
-                return this.columnController.getContainerWidth(Column.PINNED_RIGHT)
-                    + this.columnController.getContainerWidth(Column.PINNED_LEFT)
+                return this.columnController.getContainerWidth(Constants.PINNED_RIGHT)
+                    + this.columnController.getContainerWidth(Constants.PINNED_LEFT)
                     + this.columnController.getContainerWidth(null);
             } else {
                 return 0;
@@ -170,7 +170,7 @@ export class HeaderRowComp extends Component {
             const centerContainer = _.missing(this.pinned);
             if (centerContainer) {
                 let result: ColumnGroupChild[] = [];
-                [Column.PINNED_LEFT, null, Column.PINNED_RIGHT].forEach(pinned => {
+                [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
                     const items = this.columnController.getVirtualHeaderGroupRow(
                         pinned,
                         this.type == HeaderRowType.FLOATING_FILTER ?

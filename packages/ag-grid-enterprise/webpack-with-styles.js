@@ -1,6 +1,8 @@
 require('ag-grid-community/clientSideRowModelModule');
+require('ag-grid-community/csvExportModule');
 require('ag-grid-community/infiniteRowModelModule');
 require('./chartsModule');
+require('./excelExportModule');
 require('./rowGroupingModule');
 require('./serverSideRowModelModule');
 require('./viewportRowModelModule');

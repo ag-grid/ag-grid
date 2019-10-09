@@ -17,7 +17,7 @@ import {
 } from "ag-grid-community";
 import { PivotColDefService } from "./pivotColDefService";
 
-ModuleLogger.logModuleClass('PivotStage');
+ModuleLogger.logModuleClass('RowGroup.PivotStage');
 
 @Bean('pivotStage')
 export class PivotStage implements IRowNodeStage {

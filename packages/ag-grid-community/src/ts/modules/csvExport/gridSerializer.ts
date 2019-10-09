@@ -1,28 +1,31 @@
-import { Column } from "../entities/column";
-import { Autowired, Bean } from "../context/context";
-import { ColumnController } from "../columnController/columnController";
-import { Constants } from "../constants";
-import { IRowModel } from "../interfaces/iRowModel";
-import { RowNode } from "../entities/rowNode";
-import { SelectionController } from "../selectionController";
-import { ValueService } from "../valueService/valueService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Column } from "../../entities/column";
+import { Autowired, Bean } from "../../context/context";
+import { ColumnController } from "../../columnController/columnController";
+import { Constants } from "../../constants";
+import { IRowModel } from "../../interfaces/iRowModel";
+import { RowNode } from "../../entities/rowNode";
+import { SelectionController } from "../../selectionController";
+import { ValueService } from "../../valueService/valueService";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import {
     ExportParams,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
     ShouldRowBeSkippedParams,
     ProcessGroupHeaderForExportParams
-} from "./exportParams";
-import { DisplayedGroupCreator } from "../columnController/displayedGroupCreator";
-import { ColumnFactory } from "../columnController/columnFactory";
-import { GroupInstanceIdCreator } from "../columnController/groupInstanceIdCreator";
-import { ColumnGroupChild } from "../entities/columnGroupChild";
-import { ColumnGroup } from "../entities/columnGroup";
-import { GridApi } from "../gridApi";
-import { _ } from "../utils";
-import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
-import {IClientSideRowModel} from "../interfaces/iClientSideRowModel";
+} from "../../interfaces/exportParams";
+import { DisplayedGroupCreator } from "../../columnController/displayedGroupCreator";
+import { ColumnFactory } from "../../columnController/columnFactory";
+import { GroupInstanceIdCreator } from "../../columnController/groupInstanceIdCreator";
+import { ColumnGroupChild } from "../../entities/columnGroupChild";
+import { ColumnGroup } from "../../entities/columnGroup";
+import { GridApi } from "../../gridApi";
+import { _ } from "../../utils";
+import {PinnedRowModel} from "../../pinnedRowModel/pinnedRowModel";
+import {IClientSideRowModel} from "../../interfaces/iClientSideRowModel";
+import {ModuleLogger} from "../../utils/moduleLogger";
+
+ModuleLogger.logModuleClass('Csv.GridSerializer');
 
 /**
  * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface
@@ -194,6 +197,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
 @Bean("gridSerializer")
 export class GridSerializer {
+
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;

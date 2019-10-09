@@ -63,8 +63,8 @@ export class HeaderRootComp extends Component {
         this.autoWidthCalculator.registerHeaderRootComp(this);
 
         const centerContainer = new HeaderContainer(this.eHeaderContainer, this.eHeaderViewport, null);
-        const pinnedLeftContainer = new HeaderContainer(this.ePinnedLeftHeader, null, Column.PINNED_LEFT);
-        const pinnedRightContainer = new HeaderContainer(this.ePinnedRightHeader, null, Column.PINNED_RIGHT);
+        const pinnedLeftContainer = new HeaderContainer(this.ePinnedLeftHeader, null, Constants.PINNED_LEFT);
+        const pinnedRightContainer = new HeaderContainer(this.ePinnedRightHeader, null, Constants.PINNED_RIGHT);
 
         this.childContainers = [centerContainer, pinnedLeftContainer, pinnedRightContainer];
 

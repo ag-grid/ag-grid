@@ -1,4 +1,3 @@
-import {CsvCreator} from "./exporter/csvCreator";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {FilterManager} from "./filter/filterManager";
 import {ColumnController} from "./columnController/columnController";
@@ -25,7 +24,7 @@ import {IMenuFactory} from "./interfaces/iMenuFactory";
 import {CellRendererFactory} from "./rendering/cellRendererFactory";
 import {IAggFuncService} from "./interfaces/iAggFuncService";
 import {IFilterComp} from "./interfaces/iFilter";
-import {CsvExportParams} from "./exporter/exportParams";
+import {CsvExportParams} from "./interfaces/exportParams";
 import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
 import {IDatasource} from "./interfaces/iDatasource";
 import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
@@ -55,6 +54,7 @@ import {RowDataTransaction} from "./interfaces/rowDataTransaction";
 import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
 import {IImmutableService} from "./interfaces/iImmutableService";
 import {IInfiniteRowModel} from "./interfaces/iInfiniteRowModel";
+import {ICsvCreator} from "./interfaces/iCsvCreator";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -118,7 +118,7 @@ export interface DetailGridInfo {
 export class GridApi {
 
     @Optional('immutableService') private immutableService: IImmutableService;
-    @Autowired('csvCreator') private csvCreator: CsvCreator;
+    @Optional('csvCreator') private csvCreator: ICsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
@@ -211,15 +211,26 @@ export class GridApi {
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        return this.csvCreator.getDataAsCsv(params);
+        if (!this.context.isModuleRegistered(ModuleNames.CsvExportModule)) {
+            console.warn('ag-Grid: cannot call api.getDataAsCsv as csv module not loaded');
+        } else {
+            return this.csvCreator.getDataAsCsv(params);
+        }
     }
 
     public exportDataAsCsv(params?: CsvExportParams): void {
-        this.csvCreator.exportDataAsCsv(params);
+        if (!this.context.isModuleRegistered(ModuleNames.CsvExportModule)) {
+            console.warn('ag-Grid: cannot call api.exportDataAsCSv as csv module not loaded');
+        } else {
+            this.csvCreator.exportDataAsCsv(params);
+        }
     }
 
     public getDataAsExcel(params?: ExcelExportParams): string {
         if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
+        if (!this.context.isModuleRegistered(ModuleNames.ExcelExportModule)) {
+            console.warn('ag-Grid: excel export module not loaded');
+        }
         return this.excelCreator.getDataAsExcelXml(params);
     }
 

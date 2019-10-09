@@ -11,7 +11,7 @@ import {
     ModuleLogger
 } from "ag-grid-community";
 
-ModuleLogger.logModuleClass('PivotColDefService');
+ModuleLogger.logModuleClass('RowGroup.PivotColDefService');
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];

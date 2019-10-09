@@ -14,7 +14,10 @@ import protection from './files/xml/styles/protection';
 import numberFormat from './files/xml/styles/numberFormat';
 import style from './files/xml/styles/style';
 
-import { ExcelStyle, ExcelWorksheet, ExcelXMLTemplate } from 'ag-grid-community';
+import { ExcelStyle, ModuleLogger, ExcelWorksheet, ExcelXMLTemplate } from 'ag-grid-community';
+
+ModuleLogger.logModuleClass('Excel.ExcelXlsxSerializingSession');
+
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */

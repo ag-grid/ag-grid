@@ -1,5 +1,5 @@
-import { ExportParams } from "../exporter/exportParams";
-import { XmlElement } from '../exporter/xmlFactory';
+import { ExportParams } from "./exportParams";
+import {XmlElement} from "./iXmlFactory";
 
 // Common
 export interface ExcelWorksheet {

@@ -8,7 +8,7 @@ import { NumberSequence,  _ } from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";
 import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
 
-ModuleLogger.logModuleClass('RowNodeCache');
+ModuleLogger.logModuleClass('Cache.RowNodeCache');
 
 export interface RowNodeCacheParams {
     initialRowCount: number;

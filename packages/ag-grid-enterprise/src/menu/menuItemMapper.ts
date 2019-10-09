@@ -12,7 +12,8 @@ import {
     IChartService,
     MenuItemDef,
     ModuleNames,
-    Optional
+    Optional,
+    Constants
 } from 'ag-grid-community';
 import {ClipboardService} from "../clipboardService";
 
@@ -68,13 +69,13 @@ export class MenuItemMapper {
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: () => this.columnController.setColumnPinned(column, Column.PINNED_LEFT, "contextMenu"),
+                    action: () => this.columnController.setColumnPinned(column, Constants.PINNED_LEFT, "contextMenu"),
                     checked: (column as Column).isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: () => this.columnController.setColumnPinned(column, Column.PINNED_RIGHT, "contextMenu"),
+                    action: () => this.columnController.setColumnPinned(column, Constants.PINNED_RIGHT, "contextMenu"),
                     checked: (column as Column).isPinnedRight()
                 };
             case 'clearPinned':
@@ -154,10 +155,14 @@ export class MenuItemMapper {
                 };
             case 'export':
                 const exportSubMenuItems: string[] = [];
-                if (!this.gridOptionsWrapper.isSuppressCsvExport()) {
+
+                const csvModuleLoaded = this.context.isModuleRegistered(ModuleNames.CsvExportModule);
+                const excelModuleLoaded = this.context.isModuleRegistered(ModuleNames.ExcelExportModule);
+
+                if (!this.gridOptionsWrapper.isSuppressCsvExport() && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }
-                if (!this.gridOptionsWrapper.isSuppressExcelExport()) {
+                if (!this.gridOptionsWrapper.isSuppressExcelExport() && excelModuleLoaded) {
                     exportSubMenuItems.push('excelExport');
                     exportSubMenuItems.push('excelXmlExport');
                 }

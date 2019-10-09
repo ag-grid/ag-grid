@@ -29,7 +29,7 @@ import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IDatasource } from "./interfaces/iDatasource";
 import { CellPosition } from "./entities/cellPosition";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
-import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exporter/exportParams";
+import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./interfaces/exportParams";
 import { AgEvent } from "./events";
 import { Environment, SASS_PROPERTIES } from "./environment";
 import { PropertyKeys } from "./propertyKeys";

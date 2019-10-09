@@ -5,7 +5,7 @@ import { _ } from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";
 import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
 
-ModuleLogger.logModuleClass('RowNodeBlockLoader');
+ModuleLogger.logModuleClass('Cache.RowNodeBlockLoader');
 
 export class RowNodeBlockLoader {
 

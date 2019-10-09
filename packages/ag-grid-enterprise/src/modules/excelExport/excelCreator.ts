@@ -19,7 +19,7 @@ import {
     _
 } from 'ag-grid-community';
 
-import { ExcelCell, ExcelStyle } from 'ag-grid-community';
+import { ExcelCell, ExcelStyle, ModuleLogger } from 'ag-grid-community';
 import { ExcelGridSerializingParams, ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXmlFactory } from './excelXmlFactory';
@@ -32,6 +32,8 @@ export interface ExcelMixedStyle {
 }
 
 type SerializingSession = ExcelXmlSerializingSession | ExcelXlsxSerializingSession;
+
+ModuleLogger.logModuleClass('Excel.ExcelCreator');
 
 @Bean('excelCreator')
 export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams> implements IExcelCreator {

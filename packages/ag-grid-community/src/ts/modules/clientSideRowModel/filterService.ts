@@ -5,7 +5,7 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ChangedPath } from "../../utils/changedPath";
 import {ModuleLogger} from "../../utils/moduleLogger";
 
-ModuleLogger.logModuleClass('FilterService');
+ModuleLogger.logModuleClass('CSRM.FilterService');
 
 @Bean("filterService")
 export class FilterService {

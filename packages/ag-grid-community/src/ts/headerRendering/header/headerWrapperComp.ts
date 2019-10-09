@@ -27,6 +27,7 @@ import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
 import { TouchListener } from "../../widgets/touchListener";
 import { _ } from "../../utils";
+import {Constants} from "../../constants";
 
 export class HeaderWrapperComp extends Component {
 
@@ -305,12 +306,12 @@ export class HeaderWrapperComp extends Component {
         let result = dragChange;
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // for RTL, dragging left makes the col bigger, except when pinning left
-            if (this.pinned !== Column.PINNED_LEFT) {
+            if (this.pinned !== Constants.PINNED_LEFT) {
                 result *= -1;
             }
         } else {
             // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
-            if (this.pinned === Column.PINNED_RIGHT) {
+            if (this.pinned === Constants.PINNED_RIGHT) {
                 result *= -1;
             }
         }

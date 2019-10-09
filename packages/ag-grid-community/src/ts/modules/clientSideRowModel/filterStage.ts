@@ -5,7 +5,7 @@ import { FilterService } from "./filterService";
 import { SelectableService } from "../../rowNodes/selectableService";
 import {ModuleLogger} from "../../utils/moduleLogger";
 
-ModuleLogger.logModuleClass('FilterStage');
+ModuleLogger.logModuleClass('CSRM.FilterStage');
 
 @Bean('filterStage')
 export class FilterStage implements IRowNodeStage {

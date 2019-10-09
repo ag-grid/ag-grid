@@ -3,6 +3,7 @@ import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import {Constants} from "../constants";
 
 /**
  * For Master Detail, it is required to keep components between expanding & collapsing parents.
@@ -44,11 +45,11 @@ export class DetailRowCompCache {
         // cache twice, however we cater for it in case in future releases code
         // outside of this class is changed and this could happen.
         switch (pinned) {
-            case Column.PINNED_LEFT:
+            case Constants.PINNED_LEFT:
                 this.destroyFullWidthRow(item.left);
                 item.left = comp;
                 break;
-            case Column.PINNED_RIGHT:
+            case Constants.PINNED_RIGHT:
                 this.destroyFullWidthRow(item.right);
                 item.right = comp;
                 break;
@@ -121,13 +122,13 @@ export class DetailRowCompCache {
         let res: ICellRendererComp;
         if (item) {
             switch (pinned) {
-                case Column.PINNED_LEFT:
+                case Constants.PINNED_LEFT:
                     if (item.left) {
                         res = item.left;
                         item.left = undefined;
                     }
                     break;
-                case Column.PINNED_RIGHT:
+                case Constants.PINNED_RIGHT:
                     if (item.right) {
                         res = item.right;
                         item.right = undefined;

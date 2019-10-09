@@ -8,9 +8,6 @@ import { SideBarComp } from "./sideBar/sideBarComp";
 import { LicenseManager } from "./licenseManager";
 import { MD5 } from "./license/md5";
 import { MenuItemMapper } from "./menu/menuItemMapper";
-import { ExcelCreator } from "./exporter/excelCreator";
-import { ExcelXmlFactory } from "./exporter/excelXmlFactory";
-import { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
 import { HorizontalResizeComp } from "./sideBar/horizontalResizeComp";
 import { SideBarButtonsComp } from "./sideBar/sideBarButtonsComp";
 import { StatusBarService } from "./statusBar/statusBarService";
@@ -50,16 +47,13 @@ export { MD5 } from "./license/md5";
 export { SetFilterListItem } from "./setFilter/setFilterListItem";
 export { DropZoneColumnComp } from "./sideBar/providedPanels/columns/dropZone/dropZoneColumnComp";
 export { ValuesDropZonePanel } from "./sideBar/providedPanels/columns/panels/valueDropZonePanel";
-export { ExcelCreator } from "./exporter/excelCreator";
-export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
-export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
 export { WatermarkComp } from "./license/watermark";
 export { FillHandle } from "./widgets/selection/fillHandle";
 export { RangeHandle } from "./widgets/selection/rangeHandle";
 export { IColumnToolPanel } from "./sideBar/providedPanels/columns/columnToolPanel";
 export { IFiltersToolPanel } from "./sideBar/providedPanels/filters/filtersToolPanel";
 
-Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory, RangeController,
+Grid.setEnterpriseBeans([EnterpriseMenuFactory, RangeController,
     ClipboardService, ContextMenuFactory, EnterpriseBoot,
     LicenseManager, MD5, MenuItemMapper, StatusBarService, ToolPanelColDefService
 ]);
@@ -84,3 +78,4 @@ Grid.setEnterpriseAgStackComponents([
 import "./modules/viewportRowModelModule";
 import "./modules/serverSideRowModelModule";
 import "./modules/rowGroupingModule";
+import "./modules/excelExportModule";

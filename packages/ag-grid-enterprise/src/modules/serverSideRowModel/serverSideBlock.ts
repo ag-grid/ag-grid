@@ -24,7 +24,7 @@ import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 // Imports belonging to modules
 //  import {RowNodeBlock} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeBlock";
 
-ModuleLogger.logModuleClass('ServerSideBlock');
+ModuleLogger.logModuleClass('SSRM.ServerSideBlock');
 
 export class ServerSideBlock extends RowNodeBlock {
 

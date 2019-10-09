@@ -1,5 +1,9 @@
-import { Bean } from "../context/context";
+import { Bean } from "../../context/context";
+import {ModuleLogger} from "../../utils/moduleLogger";
+import {HeaderElement, PrefixedXmlAttributes, XmlElement} from "../../interfaces/iXmlFactory";
 const LINE_SEPARATOR = '\r\n';
+
+ModuleLogger.logModuleClass('Csv.XmlFactory');
 
 @Bean('xmlFactory')
 export class XmlFactory {
@@ -70,26 +74,3 @@ export class XmlFactory {
 
 }
 
-export interface XmlElement {
-    name: string;
-    properties?: XmlAttributes;
-    children?: XmlElement[];
-    textNode?: string | null;
-}
-
-export interface HeaderElement {
-    [key: string]: string | undefined;
-    version?: string;
-    standalone?: string;
-    encoding?: string;
-}
-
-export interface XmlAttributes {
-    prefixedAttributes?: PrefixedXmlAttributes[];
-    rawMap?: any;
-}
-
-export interface PrefixedXmlAttributes {
-    prefix: string;
-    map: any;
-}

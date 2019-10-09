@@ -1,4 +1,4 @@
-import { Autowired, Bean, XmlFactory, XmlElement } from 'ag-grid-community';
+import { Autowired, Bean, XmlFactory, XmlElement, ModuleLogger } from 'ag-grid-community';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -10,6 +10,8 @@ import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
 import { ExcelStyle, ExcelWorksheet } from 'ag-grid-community';
+
+ModuleLogger.logModuleClass('Excel.ExcelXlsxFactory');
 
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf

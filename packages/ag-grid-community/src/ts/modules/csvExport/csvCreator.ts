@@ -1,18 +1,22 @@
-import { Bean, Autowired, PostConstruct } from "../context/context";
+import { Bean, Autowired, PostConstruct } from "../../context/context";
 import {
     GridSerializer, RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator,
     GridSerializingSession, GridSerializingParams
 } from "./gridSerializer";
 import { Downloader } from "./downloader";
-import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
-import { ColumnController } from "../columnController/columnController";
-import { ValueService } from "../valueService/valueService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Column } from "../../entities/column";
+import { RowNode } from "../../entities/rowNode";
+import { ColumnController } from "../../columnController/columnController";
+import { ValueService } from "../../valueService/valueService";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import {
-    BaseExportParams, CsvExportParams, ExportParams } from "./exportParams";
-import { Constants } from "../constants";
-import { _ } from "../utils";
+    BaseExportParams, CsvExportParams, ExportParams } from "../../interfaces/exportParams";
+import { Constants } from "../../constants";
+import { _ } from "../../utils";
+import {ModuleLogger} from "../../utils/moduleLogger";
+import {ICsvCreator} from "../../interfaces/iCsvCreator";
+
+ModuleLogger.logModuleClass('Csv.CsvSerializingSession');
 
 const LINE_SEPARATOR = '\r\n';
 
@@ -203,7 +207,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 }
 
 @Bean('csvCreator')
-export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvExportParams> {
+export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;

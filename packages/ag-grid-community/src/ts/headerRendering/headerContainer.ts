@@ -11,6 +11,7 @@ import { Column } from "../entities/column";
 import { ScrollVisibleService } from "../gridPanel/scrollVisibleService";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
+import {Constants} from "../constants";
 
 export class HeaderContainer {
 
@@ -86,8 +87,8 @@ export class HeaderContainer {
     }
 
     private setWidthOfPinnedContainer(): void {
-        const pinningLeft = this.pinned === Column.PINNED_LEFT;
-        const pinningRight = this.pinned === Column.PINNED_RIGHT;
+        const pinningLeft = this.pinned === Constants.PINNED_LEFT;
+        const pinningRight = this.pinned === Constants.PINNED_RIGHT;
         const controller = this.columnController;
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
 

@@ -10,7 +10,7 @@ import { ChangedPath } from "../../utils/changedPath";
 import { _ } from "../../utils";
 import {ModuleLogger} from "../../utils/moduleLogger";
 
-ModuleLogger.logModuleClass('SortService');
+ModuleLogger.logModuleClass('CSRM.SortService');
 
 export interface SortOption {
     inverter: number;

@@ -1627,11 +1627,11 @@ export class CellComp extends Component {
             return leftPosition;
         }
 
-        if (this.column.getPinned() === Column.PINNED_LEFT) {
+        if (this.column.getPinned() === Constants.PINNED_LEFT) {
             return leftPosition;
         }
 
-        if (this.column.getPinned() === Column.PINNED_RIGHT) {
+        if (this.column.getPinned() === Constants.PINNED_RIGHT) {
             const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
             const bodyWidth = this.beans.columnController.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;

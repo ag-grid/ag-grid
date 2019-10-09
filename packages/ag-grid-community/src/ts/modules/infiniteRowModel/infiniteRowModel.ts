@@ -21,7 +21,7 @@ import {ModuleLogger} from "../../utils/moduleLogger";
 import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
 import {IInfiniteRowModel} from "../../interfaces/iInfiniteRowModel";
 
-ModuleLogger.logModuleClass('InfiniteRowModel');
+ModuleLogger.logModuleClass('IRM.InfiniteRowModel');
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {

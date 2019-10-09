@@ -10,7 +10,7 @@ import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnApi";
 import {ModuleLogger} from "../../utils/moduleLogger";
 
-ModuleLogger.logModuleClass('InfiniteCache');
+ModuleLogger.logModuleClass('IRM.InfiniteCache');
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;

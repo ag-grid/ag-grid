@@ -5,6 +5,7 @@ import { Column } from "../entities/column";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
+import {Constants} from "../constants";
 
 export interface DropListener {
     getIconName(): string;
@@ -49,8 +50,8 @@ export class BodyDropTarget implements DropTarget {
         this.moveColumnController.registerGridComp(gridPanel);
 
         switch (this.pinned) {
-            case Column.PINNED_LEFT: this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers(); break;
-            case Column.PINNED_RIGHT: this.eSecondaryContainers = this.gridPanel.getDropTargetRightContainers(); break;
+            case Constants.PINNED_LEFT: this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers(); break;
+            case Constants.PINNED_RIGHT: this.eSecondaryContainers = this.gridPanel.getDropTargetRightContainers(); break;
             default: this.eSecondaryContainers = this.gridPanel.getDropTargetBodyContainers(); break;
         }
     }

@@ -22,6 +22,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { ColumnGroup } from "./columnGroup";
 import { OriginalColumnGroup } from "./originalColumnGroup";
+import {Constants} from "../constants";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -57,12 +58,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public static EVENT_PIVOT_CHANGED = 'columnPivotChanged';
     // + toolpanel, for gui updates
     public static EVENT_VALUE_CHANGED = 'columnValueChanged';
-
-    public static PINNED_RIGHT = 'right';
-    public static PINNED_LEFT = 'left';
-
-    public static SORT_ASC = 'asc';
-    public static SORT_DESC = 'desc';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
@@ -436,11 +431,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isSortAscending(): boolean {
-        return this.sort === Column.SORT_ASC;
+        return this.sort === Constants.SORT_ASC;
     }
 
     public isSortDescending(): boolean {
-        return this.sort === Column.SORT_DESC;
+        return this.sort === Constants.SORT_DESC;
     }
 
     public isSortNone(): boolean {
@@ -505,10 +500,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public setPinned(pinned: string | boolean | null | undefined): void {
-        if (pinned === true || pinned === Column.PINNED_LEFT) {
-            this.pinned = Column.PINNED_LEFT;
-        } else if (pinned === Column.PINNED_RIGHT) {
-            this.pinned = Column.PINNED_RIGHT;
+        if (pinned === true || pinned === Constants.PINNED_LEFT) {
+            this.pinned = Constants.PINNED_LEFT;
+        } else if (pinned === Constants.PINNED_RIGHT) {
+            this.pinned = Constants.PINNED_RIGHT;
         } else {
             this.pinned = null;
         }
@@ -537,15 +532,15 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isPinned(): boolean {
-        return this.pinned === Column.PINNED_LEFT || this.pinned === Column.PINNED_RIGHT;
+        return this.pinned === Constants.PINNED_LEFT || this.pinned === Constants.PINNED_RIGHT;
     }
 
     public isPinnedLeft(): boolean {
-        return this.pinned === Column.PINNED_LEFT;
+        return this.pinned === Constants.PINNED_LEFT;
     }
 
     public isPinnedRight(): boolean {
-        return this.pinned === Column.PINNED_RIGHT;
+        return this.pinned === Constants.PINNED_RIGHT;
     }
 
     public getPinned(): string {
