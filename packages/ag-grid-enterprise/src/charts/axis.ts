@@ -52,6 +52,111 @@ export interface ILinearAxis<S extends Scale<D, number> = Scale<any, number>, D 
     update(): void;
 }
 
+class AxisTick {
+    /**
+     * The line width to be used by axis ticks.
+     */
+    width: number = 1;
+
+    /**
+     * The line length to be used by axis ticks.
+     */
+    size: number = 6;
+
+    /**
+     * The color of the axis ticks.
+     * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
+     */
+    color?: string = 'rgba(195, 195, 195, 1)';
+
+    /**
+     * A hint of how many ticks to use (the exact number of ticks might differ),
+     * a `TimeInterval` or a `CountableTimeInterval`.
+     * For example:
+     *
+     *     axis.tick.count = 5;
+     *     axis.tick.count = year;
+     *     axis.tick.count = month.every(6);
+     */
+    count: any = 10;
+
+    onFormatChange?: (format?: string) => void;
+
+    private _tickFormat?: string;
+    set tickFormat(value: string | undefined) {
+        // See `TimeLocaleObject` docs for the list of supported format directives.
+        if (this._tickFormat !== value) {
+            this._tickFormat = value;
+            if (this.onFormatChange) {
+                this.onFormatChange(value);
+            }
+        }
+    }
+    get tickFormat(): string | undefined {
+        return this._tickFormat;
+    }
+}
+
+class AxisLabel {
+    fontStyle?: FontStyle;
+
+    fontWeight?: FontWeight;
+
+    fontSize: number = 12;
+
+    fontFamily: string = 'Verdana, sans-serif';
+
+    /**
+     * The padding between the labels and the ticks.
+     */
+    padding: number = 5;
+
+    /**
+     * The color of the labels.
+     * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
+     */
+    color?: string = 'rgba(87, 87, 87, 1)';
+
+    /**
+     * Custom label rotation in degrees.
+     * Labels are rendered perpendicular to the axis line by default.
+     * Or parallel to the axis line, if the {@link parallelLabels} is set to `true`.
+     * The value of this config is used as the angular offset/deflection
+     * from the default rotation.
+     */
+    rotation: number = 0;
+
+    /**
+     * By default labels and ticks are positioned to the left of the axis line.
+     * `true` positions the labels to the right of the axis line.
+     * However, if the axis is rotated, its easier to think in terms
+     * of this side or the opposite side, rather than left and right.
+     * We use the term `mirror` for conciseness, although it's not
+     * true mirroring - for example, when a label is rotated, so that
+     * it is inclined at the 45 degree angle, text flowing from north-west
+     * to south-east, ending at the tick to the left of the axis line,
+     * and then we set this config to `true`, the text will still be flowing
+     * from north-west to south-east, _starting_ at the tick to the right
+     * of the axis line.
+     */
+    mirrored: boolean = false;
+
+    /**
+     * Labels are rendered perpendicular to the axis line by default.
+     * Setting this config to `true` makes labels render parallel to the axis line
+     * and center aligns labels' text at the ticks.
+     */
+    parallel: boolean = false;
+
+    /**
+     * In case {@param value} is a number, the {@param fractionDigits} parameter will
+     * be provided as well. The `fractionDigits` corresponds to the number of fraction
+     * digits used by the tick step. For example, if the tick step is `0.0005`,
+     * the `fractionDigits` is 4.
+     */
+    formatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
+}
+
 /**
  * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
@@ -76,13 +181,13 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
     readonly scale: S;
     readonly group = new Group();
     private groupSelection: Selection<Group, Group, D, D>;
-    private line = new Line();
+    private lineNode = new Line();
     // onLayoutChange?: () => void;
 
     constructor(scale: S) {
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
-        this.group.append(this.line);
+        this.group.append(this.lineNode);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
@@ -100,14 +205,22 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         return this.scale.domain;
     }
 
-    /**
-     * The horizontal translation of the axis group.
-     */
-    translationX: number = 0;
+    translation: {
+        /**
+         * The horizontal translation of the axis group.
+         */
+        x: number,
+        /**
+         * The vertical translation of the axis group.
+         */
+        y: number
+    } = {
+        x: 0,
+        y: 0
+    };
 
-    /**
-     * The vertical translation of the axis group.
-     */
+    // TODO: remove these
+    translationX: number = 0;
     translationY: number = 0;
 
     /**
@@ -115,45 +228,48 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
      */
     rotation: number = 0;
 
-    /**
-     * The line width to be used by the axis line.
-     */
-    lineWidth: number = 1;
+    line: {
+        /**
+         * The line width to be used by the axis line.
+         */
+        width: number,
+        /**
+         * The color of the axis line.
+         * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
+         */
+        color?: string
+    } = {
+        width: 1,
+        color: 'rgba(195, 195, 195, 1)'
+    };
 
-    /**
-     * The color of the axis line.
-     * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
-     */
+    // TODO: remove these
+    lineWidth: number = 1;
     lineColor?: string = 'rgba(195, 195, 195, 1)';
 
-    /**
-     * The line width to be used by axis ticks.
-     */
-    tickWidth: number = 1;
-
-    /**
-     * The line length to be used by axis ticks.
-     */
-    tickSize: number = 6;
-
-    /**
-     * The color of the axis ticks.
-     * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
-     */
-    tickColor?: string = 'rgba(195, 195, 195, 1)';
-
-    /**
-     * A hint of how many ticks to use (the exact number of ticks might differ),
-     * a `TimeInterval` or a `CountableTimeInterval`.
-     * For example:
-     *
-     *     axis.tickCount = 5;
-     *     axis.tickCount = year;
-     *     axis.tickCount = month.every(6);
-     */
-    tickCount: any = 10;
+    readonly tick: AxisTick = (() => {
+        const tick = new AxisTick();
+        tick.onFormatChange = this.onTickFormatChange;
+        return tick;
+    })();
 
     private tickFormatter?: (datum: any) => string;
+    private onTickFormatChange(format?: string) {
+        if (format) {
+            if (this.scale.tickFormat) {
+                this.tickFormatter = this.scale.tickFormat(10, format);
+            }
+        } else {
+            this.tickFormatter = undefined;
+        }
+    }
+
+    // TODO: remove these
+    tickWidth: number = 1;
+    tickSize: number = 6;
+    tickColor?: string = 'rgba(195, 195, 195, 1)';
+    tickCount: any = 10;
+
     private _tickFormat?: string;
     set tickFormat(value: string | undefined) {
         // See `TimeLocaleObject` docs for the list of supported format directives.
@@ -168,18 +284,19 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         return this._tickFormat;
     }
 
-    /**
-     * In case {@param value} is a number, the {@param fractionDigits} parameter will
-     * be provided as well. The `fractionDigits` corresponds to the number of fraction
-     * digits used by the tick step. For example, if the tick step is `0.0005`,
-     * the `fractionDigits` is 4.
-     */
-    labelFormatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
+    readonly label = new AxisLabel();
 
+    // TODO: remove these
+    labelFormatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
     labelFontStyle: FontStyle | undefined = undefined;
     labelFontWeight: FontWeight | undefined = undefined;
     labelFontSize: number = 12;
     labelFontFamily: string = 'Verdana, sans-serif';
+    labelPadding: number = 5;
+    labelColor?: string = 'rgba(87, 87, 87, 1)';
+    labelRotation: number = 0;
+    mirrorLabels: boolean = false;
+    parallelLabels: boolean = false;
 
     private _title: Caption | undefined = undefined;
     set title(value: Caption | undefined) {
@@ -200,17 +317,6 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
     get title(): Caption | undefined {
         return this._title;
     }
-
-    /**
-     * The padding between the labels and the ticks.
-     */
-    labelPadding: number = 5;
-
-    /**
-     * The color of the labels.
-     * Use `null` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
-     */
-    labelColor?: string = 'rgba(87, 87, 87, 1)';
 
     /**
      * The length of the grid. The grid is only visible in case of a non-zero value.
@@ -266,37 +372,6 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
     }
 
     /**
-     * Custom label rotation in degrees.
-     * Labels are rendered perpendicular to the axis line by default.
-     * Or parallel to the axis line, if the {@link parallelLabels} is set to `true`.
-     * The value of this config is used as the angular offset/deflection
-     * from the default rotation.
-     */
-    labelRotation: number = 0;
-
-    /**
-     * By default labels and ticks are positioned to the left of the axis line.
-     * `true` positions the labels to the right of the axis line.
-     * However, if the axis is rotated, its easier to think in terms
-     * of this side or the opposite side, rather than left and right.
-     * We use the term `mirror` for conciseness, although it's not
-     * true mirroring - for example, when a label is rotated, so that
-     * it is inclined at the 45 degree angle, text flowing from north-west
-     * to south-east, ending at the tick to the left of the axis line,
-     * and then we set this config to `true`, the text will still be flowing
-     * from north-west to south-east, _starting_ at the tick to the right
-     * of the axis line.
-     */
-    mirrorLabels: boolean = false;
-
-    /**
-     * Labels are rendered perpendicular to the axis line by default.
-     * Setting this config to `true` makes labels render parallel to the axis line
-     * and center aligns labels' text at the ticks.
-     */
-    parallelLabels: boolean = false;
-
-    /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      * Supposed to be called _manually_ after changing _any_ of the axis properties.
      * This allows to bulk set axis properties before updating the nodes.
@@ -310,12 +385,13 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { group, scale, parallelLabels } = this;
+        const { group, scale, tick, label } = this;
         const rotation = toRadians(this.rotation);
-        const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
+        const parallelLabels = label.parallel;
+        const labelRotation = normalizeAngle360(toRadians(label.rotation));
 
-        group.translationX = this.translationX;
-        group.translationY = this.translationY;
+        group.translationX = this.translation.x;
+        group.translationY = this.translation.y;
         group.rotation = rotation;
 
         const bandwidth = (scale.bandwidth || 0) / 2;
@@ -323,7 +399,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         // The side of the axis line to position the labels on.
         // -1 = left (default)
         //  1 = right
-        const sideFlag = this.mirrorLabels ? 1 : -1;
+        const sideFlag = label.mirrored ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -342,7 +418,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
 
         const alignFlag = labelRotation >= 0 && labelRotation <= Math.PI ? -1 : 1;
 
-        const ticks = scale.ticks!(this.tickCount);
+        const ticks = scale.ticks!(this.tick.count);
         const update = this.groupSelection.setData(ticks);
         update.exit.remove();
 
@@ -366,10 +442,10 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
 
         groupSelection.selectByTag<Line>(Tags.Tick)
             .each(line => {
-                line.strokeWidth = this.tickWidth;
-                line.stroke = this.tickColor;
+                line.strokeWidth = tick.width;
+                line.stroke = tick.color;
             })
-            .attr('x1', sideFlag * this.tickSize)
+            .attr('x1', sideFlag * tick.size)
             .attr('x2', 0)
             .attr('y1', 0)
             .attr('y2', 0);
@@ -387,7 +463,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
                         const radius = Math.round(scale.convert(datum) + bandwidth);
 
                         arc.centerX = 0;
-                        arc.centerY = this.scale.range[0] - radius;
+                        arc.centerY = scale.range[0] - radius;
                         arc.endAngle = angularGridLength;
                         arc.radiusX = radius;
                         arc.radiusY = radius;
@@ -407,27 +483,27 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
                 const style = styles[index % styleCount];
 
                 gridLine.stroke = style.stroke;
-                gridLine.strokeWidth = this.tickWidth;
+                gridLine.strokeWidth = tick.width;
                 gridLine.lineDash = style.lineDash;
                 gridLine.fill = undefined;
             });
         }
 
-        const { labelFormatter, tickFormatter } = this;
+        const { tickFormatter } = this;
         const fractionDigits = ticks instanceof NumericTicks ? ticks.fractionDigits : 0;
 
-        const labels = groupSelection.selectByClass(Text)
-            .each((label, datum, index) => {
-                label.fontStyle = this.labelFontStyle;
-                label.fontWeight = this.labelFontWeight;
-                label.fontSize = this.labelFontSize;
-                label.fontFamily = this.labelFontFamily;
-                label.fill = this.labelColor;
-                label.textBaseline = parallelLabels && !labelRotation
+        const labelSelection = groupSelection.selectByClass(Text)
+            .each((node, datum, index) => {
+                node.fontStyle = label.fontStyle;
+                node.fontWeight = label.fontWeight;
+                node.fontSize = label.fontSize;
+                node.fontFamily = label.fontFamily;
+                node.fill = label.color;
+                node.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
-                label.text = labelFormatter
-                    ? labelFormatter({
+                node.text = label.formatter
+                    ? label.formatter({
                         value: fractionDigits >= 0 ? datum : String(datum),
                         index,
                         fractionDigits,
@@ -440,17 +516,17 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
                         : tickFormatter
                             ? tickFormatter(datum)
                             : String(datum);
-                label.textAlign = parallelLabels
+                node.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
             });
 
-        const labelX = sideFlag * (this.tickSize + this.labelPadding);
+        const labelX = sideFlag * (tick.size + label.padding);
         const autoRotation = parallelLabels
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
-        labels.each(label => {
+        labelSelection.each(label => {
             label.x = labelX;
             label.rotationCenterX = labelX;
             label.rotation = autoRotation + labelRotation;
@@ -459,33 +535,33 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         this.groupSelection = groupSelection;
 
         // Render axis line.
-        const line = this.line;
-        line.x1 = 0;
-        line.x2 = 0;
-        line.y1 = scale.range[0];
-        line.y2 = scale.range[scale.range.length - 1];
-        line.strokeWidth = this.lineWidth;
-        line.stroke = this.lineColor;
-        line.visible = ticks.length > 0;
+        const lineNode = this.lineNode;
+        lineNode.x1 = 0;
+        lineNode.x2 = 0;
+        lineNode.y1 = scale.range[0];
+        lineNode.y2 = scale.range[scale.range.length - 1];
+        lineNode.strokeWidth = this.line.width;
+        lineNode.stroke = this.line.color;
+        lineNode.visible = ticks.length > 0;
 
         const title = this.title;
 
         if (title) {
             const padding = title.padding.bottom;
-            const node = title.node;
+            const titleNode = title.node;
             const bbox = this.getBBox(false);
             const titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
 
-            node.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
-            node.x = titleRotationFlag * sideFlag * (line.y1 + line.y2) / 2;
+            titleNode.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
+            titleNode.x = titleRotationFlag * sideFlag * (lineNode.y1 + lineNode.y2) / 2;
 
             if (sideFlag === -1) {
-                node.y = titleRotationFlag * (-padding - bbox.width + Math.max(bbox.x + bbox.width, 0));
+                titleNode.y = titleRotationFlag * (-padding - bbox.width + Math.max(bbox.x + bbox.width, 0));
             } else {
-                node.y = -padding - bbox.width - Math.min(bbox.x, 0);
+                titleNode.y = -padding - bbox.width - Math.min(bbox.x, 0);
             }
             // title.text = `Axis Title: ${sideFlag} ${toDegrees(parallelFlipRotation).toFixed(0)} ${titleRotationFlag}`;
-            node.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
+            titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
         }
 
         // debug (bbox)
@@ -498,7 +574,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
     }
 
     getBBox(includeTitle = true): BBox {
-        const line = this.line;
+        const lineNode = this.lineNode;
         const labels = this.groupSelection.selectByClass(Text);
 
         let left = Infinity;
@@ -551,8 +627,8 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
 
         left = Math.min(left, 0);
         right = Math.max(right, 0);
-        top = Math.min(top, line.y1, line.y2);
-        bottom = Math.max(bottom, line.y1, line.y2);
+        top = Math.min(top, lineNode.y1, lineNode.y2);
+        bottom = Math.max(bottom, lineNode.y1, lineNode.y2);
 
         return new BBox(
             left,
