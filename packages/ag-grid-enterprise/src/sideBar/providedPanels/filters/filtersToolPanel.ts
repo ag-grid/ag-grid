@@ -16,7 +16,7 @@ import {FiltersToolPanelListPanel} from "./filtersToolPanelListPanel";
 export interface ToolPanelFiltersCompParams extends IToolPanelParams {
     suppressExpandAll: boolean;
     suppressFilterSearch: boolean;
-    syncLayoutWithGrid: boolean;
+    suppressSyncLayoutWithGrid: boolean;
 }
 
 export interface IFiltersToolPanel {
@@ -59,7 +59,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         const defaultParams: ToolPanelFiltersCompParams = {
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            syncLayoutWithGrid: true,
+            suppressSyncLayoutWithGrid: false,
             api: this.gridApi
         };
         _.mergeDeep(defaultParams, params);

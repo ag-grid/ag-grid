@@ -8,7 +8,7 @@ $example = getExampleInfo('vue');
     <title>ag-Grid Vue Example</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
+    <style media="only screen">
         html, body {
         height: 100%;
         width: 100%;
