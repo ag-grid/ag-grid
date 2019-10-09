@@ -1,4 +1,4 @@
-export const enum ModuleNames {
+export enum ModuleNames {
     ChartsModule = "chartsModule",
     ViewportRowModelModule = "viewportRowModelModule",
     InfiniteRowModelModule = "infiniteRowModelModule",

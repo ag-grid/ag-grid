@@ -76,7 +76,7 @@ const tscModulesTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
 
     const tsResult = gulp
-        .src(['./src/ts/modules/**/*.ts', '!./src/ts/modules/**/moduleNames.ts'])
+        .src(['./src/ts/modules/**/*Module.ts'])
         .pipe(tsProject());
 
     return merge([
@@ -112,9 +112,8 @@ const tscWatch = () => {
     gulp.watch('./src/ts/**/*', series('tsc-no-clean'));
 };
 
-
-const tscSrcEs2015Task = () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig-es2015.json', {typescript: typescript});
+const tscSrcEs6Task = () => {
+    const tsProject = gulpTypescript.createProject('./tsconfig.es6.json', {typescript: typescript});
 
     const tsResult = gulp
         .src('src/ts/**/*.ts')
@@ -123,15 +122,15 @@ const tscSrcEs2015Task = () => {
     return merge([
         tsResult.dts
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
-            .pipe(gulp.dest('dist/es2015')),
+            .pipe(gulp.dest('dist/es6')),
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
-            .pipe(gulp.dest('dist/es2015'))
+            .pipe(gulp.dest('dist/es6'))
     ]);
 };
 
-const tscMainEs2015Task = () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig-main-es2015.json', {typescript: typescript});
+const tscMainEs6Task = () => {
+    const tsProject = gulpTypescript.createProject('./tsconfig-main.es6.json', {typescript: typescript});
 
     const tsResult = gulp
         .src('./src/ts/main.ts')
@@ -139,15 +138,15 @@ const tscMainEs2015Task = () => {
 
     return merge([
         tsResult.dts
-            .pipe(replace("\"./", "\"./dist/es2015/"))
+            .pipe(replace("\"./", "\"./dist/es6/"))
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(rename("main.d.ts"))
-            .pipe(gulp.dest('./dist/es2015/')),
+            .pipe(gulp.dest('./dist/es6/')),
         tsResult.js
-            .pipe(replace("require(\"./", "require(\"./dist/es2015/"))
+            .pipe(replace("require(\"./", "require(\"./dist/es6/"))
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(rename("main.js"))
-            .pipe(gulp.dest('./dist/es2015/'))
+            .pipe(gulp.dest('./dist/es6/'))
     ]);
 };
 // End of Typescript related tasks
@@ -320,10 +319,10 @@ gulp.task('clean', parallel('clean-dist', 'clean-main', 'clean-modules'));
 gulp.task('tsc-no-clean-src', tscSrcTask);
 gulp.task('tsc-no-clean-main', tscMainTask);
 gulp.task('tsc-no-clean-modules', tscModulesTask);
-gulp.task('tsc-es2015-no-clean-src', tscSrcEs2015Task);
-gulp.task('tsc-es2015-no-clean-main', tscMainEs2015Task);
-gulp.task('tsc-es2015-no-clean', parallel('tsc-es2015-no-clean-src', 'tsc-es2015-no-clean-main'));
-gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-no-clean-modules', 'tsc-es2015-no-clean'));
+gulp.task('tsc-es6-no-clean-src', tscSrcEs6Task);
+gulp.task('tsc-es6-no-clean-main', tscMainEs6Task);
+gulp.task('tsc-es6-no-clean', parallel('tsc-es6-no-clean-src', 'tsc-es6-no-clean-main'));
+gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-no-clean-modules', 'tsc-es6-no-clean'));
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 gulp.task('tsc-watch', series('tsc-no-clean', tscWatch));
 

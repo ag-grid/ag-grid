@@ -1,14 +1,19 @@
-import { RowNode } from "../../entities/rowNode";
-import { Column } from "../../entities/column";
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { SortController } from "../../sortController";
-import { ValueService } from "../../valueService/valueService";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { ColumnController } from "../../columnController/columnController";
-import { RowNodeMap } from "./clientSideRowModel";
-import { ChangedPath } from "../../utils/changedPath";
-import { _ } from "../../utils";
-import {ModuleLogger} from "../../utils/moduleLogger";
+import {
+    _,
+    Autowired,
+    Bean,
+    ChangedPath,
+    Column,
+    ColumnController,
+    GridOptionsWrapper,
+    PostConstruct,
+    RowNode,
+    SortController,
+    ValueService,
+    ModuleLogger
+} from "ag-grid-community";
+
+import {RowNodeMap} from "./clientSideRowModel";
 
 ModuleLogger.logModuleClass('CSRM.SortService');
 
@@ -40,7 +45,7 @@ export class SortService {
     public sort(sortOptions: SortOption[],
                 sortActive: boolean,
                 deltaSort: boolean,
-                dirtyLeafNodes: {[nodeId: string]: boolean},
+                dirtyLeafNodes: { [nodeId: string]: boolean },
                 changedPath: ChangedPath,
                 noAggregations: boolean): void {
 
@@ -86,7 +91,7 @@ export class SortService {
 
     private doDeltaSort(rowNode: RowNode,
                         sortOptions: SortOption[],
-                        dirtyLeafNodes: {[nodeId: string]: boolean},
+                        dirtyLeafNodes: { [nodeId: string]: boolean },
                         changedPath: ChangedPath,
                         noAggregations: boolean): SortedRowNode[] {
 
@@ -220,7 +225,9 @@ export class SortService {
     }
 
     private updateGroupDataForHiddenOpenParents(changedPath: ChangedPath) {
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { return; }
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            return;
+        }
 
         // recurse breadth first over group nodes after sort to 'pull down' group data to child groups
         const callback = (rowNode: RowNode) => {

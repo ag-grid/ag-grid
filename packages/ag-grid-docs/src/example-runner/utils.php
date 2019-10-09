@@ -27,6 +27,7 @@ if (USE_LOCAL) {
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/ag-grid-enterprise-bundle/ag-grid-enterprise.js");
 
     $systemJsMap = array(
+        "@ag-community/client-side-row-model" => "$prefix/@ag-community/client-side-row-model",
         "ag-grid-community" => "$prefix/ag-grid-community/dist/ag-grid-community.js",
         "ag-grid-community/main" => "$prefix/ag-grid-community/dist/ag-grid-community.js",
         "ag-grid-enterprise" => "$prefix/ag-grid-enterprise",

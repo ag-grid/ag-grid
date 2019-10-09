@@ -72,9 +72,3 @@ Grid.setEnterpriseAgStackComponents([
     {componentName: 'AgRangeHandle', theClass: RangeHandle}
 ]);
 
-// include enterprise modules
-import "./modules/viewportRowModelModule";
-import "./modules/serverSideRowModelModule";
-import "./modules/rowGroupingModule";
-import "./modules/excelExportModule";
-import "./modules/clipboardModule";

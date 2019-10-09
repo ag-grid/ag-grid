@@ -54,7 +54,7 @@ function isInstanceMethod(instance: any, property: any) {
     return instanceMethods.filter(methodName => methodName === property.name).length > 0;
 }
 
-function appComponentTemplate(bindings, componentFileNames, isDev) {
+function appComponentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules) {
     const diParams = [];
     const imports = [];
     const additional = [];
@@ -63,6 +63,8 @@ function appComponentTemplate(bindings, componentFileNames, isDev) {
         imports.push('import { HttpClient } from "@angular/common/http";');
         diParams.push('private http: HttpClient');
     }
+
+    imports.push('import "@ag-community/client-side-row-model";');
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
@@ -182,9 +184,9 @@ ${bindings.utils.join('\n')}
 `;
 }
 
-export function vanillaToAngular(js, html, exampleSettings, componentFileNames, isDev) {
+export function vanillaToAngular(js, html, exampleSettings, componentFileNames, isDev, communityModules, enterpriseModules) {
     const bindings = parser(js, html, exampleSettings);
-    return appComponentTemplate(bindings, componentFileNames, isDev);
+    return appComponentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules);
 }
 
 if (typeof window !== 'undefined') {

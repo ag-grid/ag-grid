@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "module": "es2015",
+    "module": "es6",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "declaration": true,
     "target": "es5",
     "noImplicitAny": true,
-    "outDir": "dist/es2015",
+    "outDir": "dist/es6",
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "moduleResolution": "node",

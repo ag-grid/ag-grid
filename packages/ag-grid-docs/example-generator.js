@@ -83,8 +83,18 @@ function forEachExampleToGenerate(cb, final, scope = '*') {
     });
 }
 
+const extractModules = project => {
+    const nodeDir = `./node_modules/ag-grid-${project}`;
+    glob.sync(`${nodeDir}/*Module.js`)
+        .map(module => module.replace('.js', ''))
+        .map(module => module.replace(`${nodeDir}`, ''));
+};
+
 module.exports = (cb, scope, isDev) => {
     require('ts-node').register();
+
+    const communityModules = extractModules('community');
+    const enterpriseModules = extractModules('enterprise');
 
     const {vanillaToVue} = require('./src/example-runner/vanilla-to-vue.ts');
     const {vanillaToReact} = require('./src/example-runner/vanilla-to-react.ts');
@@ -140,7 +150,7 @@ module.exports = (cb, scope, isDev) => {
 
             const reactScripts = glob.sync(path.join('./src', section, example, '*_react*'));
             try {
-                source = vanillaToReact(mainJs, indexHtml, options, extractComponentFileNames(reactScripts, '_react'), isDev);
+                source = vanillaToReact(mainJs, indexHtml, options, extractComponentFileNames(reactScripts, '_react'), isDev, communityModules, enterpriseModules);
                 indexJSX = prettier.format(source, {parser: 'babylon', printWidth: 120});
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
@@ -151,7 +161,7 @@ module.exports = (cb, scope, isDev) => {
             let angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
             let appComponentTS, appModuleTS;
             try {
-                source = vanillaToAngular(mainJs, indexHtml, options, angularComponentFileNames, isDev);
+                source = vanillaToAngular(mainJs, indexHtml, options, angularComponentFileNames, isDev, communityModules, enterpriseModules);
 
                 appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
                 appModuleTS = prettier.format(appModuleAngular(angularComponentFileNames), {
@@ -168,7 +178,7 @@ module.exports = (cb, scope, isDev) => {
                 // vue is still new - only process examples marked as tested and good to go
                 // when all examples have been tested this check can be removed
                 if(options.processVue || options.processVue === undefined) {
-                    source = vanillaToVue(mainJs, indexHtml, options, extractComponentFileNames(vueScripts, '_vue'), isDev);
+                    source = vanillaToVue(mainJs, indexHtml, options, extractComponentFileNames(vueScripts, '_vue'), isDev, communityModules, enterpriseModules);
                     mainApp = prettier.format(source, {parser: 'babylon', printWidth: 120});
                 }
             } catch (e) {

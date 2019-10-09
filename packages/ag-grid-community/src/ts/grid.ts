@@ -115,7 +115,7 @@ export class Grid {
     private static rowModelClasses: any = {};
 
     public static addRowModelClass(name: string, rowModelClass: any): void {
-        this.rowModelClasses[name] = rowModelClass;
+        Grid.rowModelClasses[name] = rowModelClass;
     }
 
     public static setEnterpriseBeans(enterpriseBeans: any[]): void {
@@ -361,4 +361,5 @@ export class Grid {
 
 }
 
-import "./modules/csvExportModule";
+// spl
+// import "./modules/csvExportModule";

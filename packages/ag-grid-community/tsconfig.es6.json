@@ -1,16 +1,19 @@
 {
   "compilerOptions": {
-    "module": "es2015",
+    "module": "es6",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "node",
     "declaration": true,
     "target": "es5",
     "noImplicitAny": true,
-    "outDir": "dist/es2015",
+    "outDir": "dist/es6",
+    "moduleResolution": "node",
     "lib": [
       "es2015",
       "dom"
     ]
-  }
+  },
+  "include": [
+    "src/ts/**/*"
+  ]
 }

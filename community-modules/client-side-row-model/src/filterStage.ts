@@ -1,9 +1,14 @@
-import { Bean, Autowired } from "../../context/context";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { IRowNodeStage, StageExecuteParams } from "../../interfaces/iRowNodeStage";
-import { FilterService } from "./filterService";
-import { SelectableService } from "../../rowNodes/selectableService";
-import {ModuleLogger} from "../../utils/moduleLogger";
+import {
+    Autowired,
+    Bean,
+    GridOptionsWrapper,
+    IRowNodeStage,
+    SelectableService,
+    StageExecuteParams,
+    ModuleLogger
+} from "ag-grid-community"
+
+import {FilterService} from "./filterService";
 
 ModuleLogger.logModuleClass('CSRM.FilterStage');
 

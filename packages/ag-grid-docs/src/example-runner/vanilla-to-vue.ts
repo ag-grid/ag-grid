@@ -81,6 +81,8 @@ const toAssignment = (property) => {
 function createComponentImports(bindings, componentFileNames: any, isDev) {
     const imports = [];
 
+    imports.push('import "@ag-community/client-side-row-model";');
+
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
     }
@@ -172,7 +174,7 @@ function parseAllMethods(bindings) {
     return [eventHandlers, externalEventHandlers, instanceFunctions, utilFunctions];
 }
 
-function componentTemplate(bindings, componentFileNames, isDev) {
+function componentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules) {
     const imports = createComponentImports(bindings, componentFileNames, isDev);
     const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
     const gridReadyTemplate = onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data);
@@ -240,9 +242,9 @@ new Vue({
 `;
 }
 
-export function vanillaToVue(js, html, exampleSettings, componentFileNames, isDev) {
+export function vanillaToVue(js, html, exampleSettings, componentFileNames, isDev, communityModules, enterpriseModules) {
     const bindings = parser(js, html, exampleSettings);
-    return componentTemplate(bindings, componentFileNames, isDev);
+    return componentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules);
 }
 
 if (typeof window !== 'undefined') {

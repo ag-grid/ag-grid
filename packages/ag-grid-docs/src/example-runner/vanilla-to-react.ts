@@ -11,7 +11,7 @@ function isInstanceMethod(instance: any, property: any) {
     return instanceMethods.filter(methodName => methodName === property.name).length > 0;
 }
 
-function indexTemplate(bindings, componentFilenames, isDev) {
+function indexTemplate(bindings, componentFilenames, isDev, communityModules, enterpriseModules) {
     const imports = [];
     const propertyAssignments = [];
     const componentAttributes = [];
@@ -43,6 +43,8 @@ function indexTemplate(bindings, componentFilenames, isDev) {
 
     componentAttributes.push('onGridReady={this.onGridReady}');
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
+
+    imports.push('import "@ag-community/client-side-row-model";');
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
@@ -193,9 +195,9 @@ render(
 `;
 }
 
-export function vanillaToReact(js, html, exampleSettings, componentFilenames, isDev) {
+export function vanillaToReact(js, html, exampleSettings, componentFilenames, isDev, communityModules, enterpriseModules) {
     const bindings = parser(js, html, exampleSettings);
-    return indexTemplate(bindings, componentFilenames, isDev);
+    return indexTemplate(bindings, componentFilenames, isDev, communityModules, enterpriseModules);
 }
 
 if (typeof window !== 'undefined') {

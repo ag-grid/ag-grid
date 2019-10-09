@@ -88,7 +88,7 @@ export class ClipboardService implements IClipboardService {
         this.logger = this.loggerFactory.create('ClipboardService');
 
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+            this.clientSideRowModel = (this.rowModel as unknown) as IClientSideRowModel;
         }
     }
 

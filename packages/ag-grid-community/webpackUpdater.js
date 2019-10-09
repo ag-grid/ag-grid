@@ -1,9 +1,9 @@
 const fs = require('fs');
 const glob = require("glob");
 
-const modules = glob.sync("*Module.js")
-    .map(module => module.replace('.js', ''))
-    .map(module => `require('./${module}');`);
+// ensure the common module is added first
+const modules = glob.sync("../../community-modules/*")
+    .map(module => `require('${module}');`);
 
 const css = glob.sync("./dist/styles/*.css")
     .filter(css => css.indexOf('.min.css') === -1)

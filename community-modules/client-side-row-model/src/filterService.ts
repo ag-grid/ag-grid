@@ -1,9 +1,13 @@
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { RowNode } from "../../entities/rowNode";
-import { FilterManager } from "../../filter/filterManager";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { ChangedPath } from "../../utils/changedPath";
-import {ModuleLogger} from "../../utils/moduleLogger";
+import {
+    Autowired,
+    Bean,
+    ChangedPath,
+    FilterManager,
+    GridOptionsWrapper,
+    PostConstruct,
+    RowNode,
+    ModuleLogger
+} from "ag-grid-community"
 
 ModuleLogger.logModuleClass('CSRM.FilterService');
 

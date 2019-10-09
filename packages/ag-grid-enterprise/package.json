@@ -4,7 +4,7 @@
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "types": "main.d.ts",
-  "module": "./dist/es2015/main.js",
+  "module": "./dist/es6/main.js",
   "scripts": {
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --no-cache -runInBand",

@@ -58,6 +58,10 @@
             app: {
                 defaultExtension: 'jsx'
             },
+            '@ag-community/client-side-row-model': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
             'ag-grid-react': {
                 main: './main.js',
                 defaultExtension: 'js'

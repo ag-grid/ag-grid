@@ -1,32 +1,37 @@
-import { Constants as constants, Constants } from "../../constants";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { ColumnApi } from "../../columnController/columnApi";
-import { ColumnController } from "../../columnController/columnController";
-import { FilterManager } from "../../filter/filterManager";
-import { RowNode } from "../../entities/rowNode";
-import { EventService } from "../../eventService";
 import {
+    _,
+    Autowired,
+    Bean,
+    ChangedPath,
+    ColumnApi,
+    ColumnController,
+    Constants as constants,
+    Constants,
+    Context,
     Events,
+    EventService,
     ExpandCollapseAllEvent,
+    FilterManager,
+    GridApi,
+    GridOptionsWrapper,
+    IRowNodeStage,
     ModelUpdatedEvent,
+    Optional,
+    PostConstruct,
+    RefreshModelParams,
+    RowBounds,
     RowDataChangedEvent,
-    RowDataUpdatedEvent
-} from "../../events";
-import { Autowired, Bean, Context, Optional, PostConstruct } from "../../context/context";
-import { SelectionController } from "../../selectionController";
-import { IRowNodeStage } from "../../interfaces/iRowNodeStage";
-import { ClientSideNodeManager } from "./clientSideNodeManager";
-import { ChangedPath } from "../../utils/changedPath";
-import { ValueService } from "../../valueService/valueService";
-import { ValueCache } from "../../valueService/valueCache";
-import {IRowModel, RowBounds} from "../../interfaces/iRowModel";
-import { GridApi } from "../../gridApi";
-import { _ } from "../../utils";
-import {ModuleLogger} from "../../utils/moduleLogger";
-import {RowNodeTransaction} from "../../interfaces/rowNodeTransaction";
-import {IClientSideRowModel} from "../../interfaces/iClientSideRowModel";
-import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
-import {RefreshModelParams} from "../../interfaces/refreshModelParams";
+    RowDataTransaction,
+    RowDataUpdatedEvent,
+    RowNode,
+    RowNodeTransaction,
+    SelectionController,
+    ValueCache,
+    ValueService,
+    IClientSideRowModel,
+    ModuleLogger
+} from "ag-grid-community"
+import {ClientSideNodeManager} from "./clientSideNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
 
@@ -37,7 +42,9 @@ export interface BatchTransactionItem {
     callback: ((res: RowNodeTransaction) => void) | undefined;
 }
 
-export interface RowNodeMap { [id: string]: RowNode; }
+export interface RowNodeMap {
+    [id: string]: RowNode;
+}
 
 @Bean('rowModel')
 export class ClientSideRowModel implements IClientSideRowModel {
@@ -232,7 +239,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     public getTopLevelRowCount(): number {
-        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0]===this.rootNode;
+        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
         if (showingRootNode) {
             return 1;
         } else {
@@ -241,14 +248,14 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
-        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0]===this.rootNode;
+        const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
         if (showingRootNode) {
             return topLevelIndex;
         } else {
             let rowNode = this.rootNode.childrenAfterSort[topLevelIndex];
             if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
                 // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
-                while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length>0) {
+                while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
                     rowNode = rowNode.childrenAfterSort[0];
                 }
             }

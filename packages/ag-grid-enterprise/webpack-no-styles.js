@@ -1,15 +1,13 @@
-require('ag-grid-community/clientSideRowModelModule');
-require('ag-grid-community/csvExportModule');
-require('ag-grid-community/infiniteRowModelModule');
+require('../../community-modules/client-side-row-model');
 require('./chartsModule');
 require('./excelExportModule');
 require('./rowGroupingModule');
 require('./serverSideRowModelModule');
 require('./viewportRowModelModule');
-require('./dist/lib/main');
+require('./dist/es6/main');
 
 // add in exports for ag-Grid-Enterprise
-var agGridEnterprise = require('./main');
+var agGridEnterprise = require('./dist/es6/main');
 Object.keys(agGridEnterprise).forEach(function(key) {
     exports[key] = agGridEnterprise[key];
 });

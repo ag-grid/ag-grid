@@ -58,6 +58,10 @@
             'ag-grid-enterprise': {
                 main: './main.js',
                 defaultExtension: 'js'
+            },
+            '@ag-community/client-side-row-model': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
             }
         },
         meta: {

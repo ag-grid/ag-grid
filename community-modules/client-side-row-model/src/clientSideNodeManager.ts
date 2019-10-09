@@ -1,17 +1,19 @@
-import { RowNode } from "../../entities/rowNode";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { Context } from "../../context/context";
-import { GetNodeChildDetails, IsRowMaster } from "../../entities/gridOptions";
-import { EventService } from "../../eventService";
-import { ColumnController } from "../../columnController/columnController";
-import { Events, SelectionChangedEvent } from "../../events";
-import { GridApi } from "../../gridApi";
-import { ColumnApi } from "../../columnController/columnApi";
-import { SelectionController } from "../../selectionController";
-import { _ } from "../../utils";
-import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
-import {RowNodeTransaction} from "../../interfaces/rowNodeTransaction";
-import {ModuleLogger} from "../../utils/moduleLogger";
+import {
+    RowNode,
+    GridOptionsWrapper,
+    Context,
+    GetNodeChildDetails, IsRowMaster,
+    EventService,
+    ColumnController,
+    Events, SelectionChangedEvent,
+    GridApi,
+    ColumnApi,
+    SelectionController,
+    _,
+    RowDataTransaction,
+    RowNodeTransaction,
+    ModuleLogger
+} from "ag-grid-community";
 
 ModuleLogger.logModuleClass('CSRM.ClientSideNodeManager');
 

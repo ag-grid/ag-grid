@@ -1,12 +1,18 @@
-import { Bean, Context, Autowired } from "../../context/context";
-import { RowNode } from "../../entities/rowNode";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { SelectionController } from "../../selectionController";
-import { EventService } from "../../eventService";
-import { IRowNodeStage, StageExecuteParams } from "../../interfaces/iRowNodeStage";
-import { ColumnController } from "../../columnController/columnController";
-import { _ } from "../../utils";
-import {ModuleLogger} from "../../utils/moduleLogger";
+import {
+    _,
+    Autowired,
+    Bean,
+    ColumnController,
+    Context,
+    EventService,
+    GridOptionsWrapper,
+    IRowNodeStage,
+    RowNode,
+    SelectionController,
+    StageExecuteParams,
+    ModuleLogger
+} from "ag-grid-community"
+
 
 ModuleLogger.logModuleClass('CSRM.FlattenStage');
 
@@ -50,7 +56,9 @@ export class FlattenStage implements IRowNodeStage {
 
     private recursivelyAddToRowsToDisplay(rowsToFlatten: RowNode[], result: RowNode[],
                                           nextRowTop: NumberWrapper, skipLeafNodes: boolean, uiLevel: number) {
-        if (_.missingOrEmpty(rowsToFlatten)) { return; }
+        if (_.missingOrEmpty(rowsToFlatten)) {
+            return;
+        }
 
         const groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         const hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
@@ -82,7 +90,9 @@ export class FlattenStage implements IRowNodeStage {
             }
 
             // if we are pivoting, we never map below the leaf group
-            if (skipLeafNodes && rowNode.leafGroup) { continue; }
+            if (skipLeafNodes && rowNode.leafGroup) {
+                continue;
+            }
 
             if (isParent) {
 
@@ -120,11 +130,13 @@ export class FlattenStage implements IRowNodeStage {
     private ensureFooterNodeExists(groupNode: RowNode): void {
         // only create footer node once, otherwise we have daemons and
         // the animate screws up with the daemons hanging around
-        if (_.exists(groupNode.sibling)) { return; }
+        if (_.exists(groupNode.sibling)) {
+            return;
+        }
 
         const footerNode = new RowNode();
         this.context.wireBean(footerNode);
-        Object.keys(groupNode).forEach(function(key) {
+        Object.keys(groupNode).forEach(function (key) {
             (footerNode as any)[key] = (groupNode as any)[key];
         });
         footerNode.footer = true;

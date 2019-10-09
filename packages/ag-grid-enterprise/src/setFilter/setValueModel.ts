@@ -74,7 +74,7 @@ export class SetValueModel {
         this.column = column;
 
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = rowModel as IClientSideRowModel;
+            this.clientSideRowModel = (rowModel as unknown) as IClientSideRowModel;
         }
 
         this.filterParams = this.colDef.filterParams ? this.colDef.filterParams as ISetFilterParams : {} as ISetFilterParams;

@@ -1,13 +1,17 @@
-import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { ClientSideRowModel } from "./clientSideRowModel";
-import { IRowModel } from "../../interfaces/iRowModel";
-import { Constants } from "../../constants";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { RowNode } from "../../entities/rowNode";
-import { _ } from "../../utils";
-import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
-import {IImmutableService} from "../../interfaces/iImmutableService";
-import {ModuleLogger} from "../../utils/moduleLogger";
+import {
+    _,
+    Autowired,
+    Bean,
+    Constants,
+    GridOptionsWrapper,
+    IImmutableService,
+    IRowModel,
+    PostConstruct,
+    RowDataTransaction,
+    RowNode,
+    ModuleLogger
+} from "ag-grid-community"
+import {ClientSideRowModel} from "./clientSideRowModel";
 
 ModuleLogger.logModuleClass('CSRM.ImmutableService');
 

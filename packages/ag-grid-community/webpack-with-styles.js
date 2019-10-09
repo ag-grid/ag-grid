@@ -1,7 +1,5 @@
-require('./clientSideRowModelModule');
-require('./csvExportModule');
-require('./infiniteRowModelModule');
-var agGrid = require('./main');
+require('../../community-modules/client-side-row-model');
+var agGrid = require('./dist/es6/main');
 Object.keys(agGrid).forEach(function(key) {
     exports[key] = agGrid[key];
 });

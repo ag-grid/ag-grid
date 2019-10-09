@@ -107,6 +107,7 @@ function launchTSCCheck() {
     if (!fs.existsSync('_dev')) {
         console.log('_dev not present, creating links...');
         mkdirp('_dev/ag-grid-community/dist');
+        mkdirp('_dev/@ag-community/');
 
         if (WINDOWS) {
             console.log('creating window links...');
@@ -132,6 +133,10 @@ function launchTSCCheck() {
             });
             lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
             lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
+
+            // spl modules
+            lnk('../../community-modules/common', '_dev/@ag-community', {force: true, type: linkType, rename: 'common'});
+            lnk('../../community-modules/client-side-row-model', '_dev/@ag-community', {force: true, type: linkType, rename: 'client-side-row-model'});
         }
     }
 
@@ -189,6 +194,8 @@ module.exports = () => {
     addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
     addWebpackMiddleware(app, 'webpack.enterprise-bundle.config.js', '/dev/ag-grid-enterprise-bundle'); // mostly used by landing pages
     addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
+
+    app.use('/dev/@ag-community/client-side-row-model', express.static('../../community-modules/client-side-row-model'));
 
     // angular & vue are separate processes
     serveAndWatchAngular(app);

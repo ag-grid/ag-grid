@@ -12,28 +12,28 @@ const banner = ['/**',
 
 const builds = {
     'community-es-dev': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
+        entry: path.resolve(__dirname, '../dist/es6/main.js'),
         dest: path.resolve(__dirname, '../dist/ag-grid-community.esm.js'),
         format: 'es',
         env: 'development',
         banner
     },
     'community-es-prod': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
+        entry: path.resolve(__dirname, '../dist/es6/main.js'),
         dest: path.resolve(__dirname, '../dist/ag-grid-community.esm.min.js'),
         format: 'es',
         env: 'production',
         banner
     },
     'community-cjs-dev': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
+        entry: path.resolve(__dirname, '../dist/es6/main.js'),
         dest: path.resolve(__dirname, '../dist/ag-grid-community.cjs.js'),
         format: 'cjs',
         env: 'development',
         banner
     },
     'community-cjs-prod': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
+        entry: path.resolve(__dirname, '../dist/es6/main.js'),
         dest: path.resolve(__dirname, '../dist/ag-grid-community.cjs.min.js'),
         format: 'cjs',
         env: 'production',
@@ -41,7 +41,7 @@ const builds = {
     },
 /*
     'community-umd-noStyle-dev': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
+        entry: path.resolve(__dirname, '../dist/es6/main.js'),
         dest: path.resolve(__dirname, '../dist/ag-grid-community.noStyle.js'),
         format: 'umd',
         env: 'development',
@@ -49,7 +49,7 @@ const builds = {
         banner
     },
     'community-umd-noStyle-prod': {
-        entry: path.resolve(__dirname, '../dist/es2015/main.js'),
+        entry: path.resolve(__dirname, '../dist/es6/main.js'),
         dest: path.resolve(__dirname, '../dist/ag-grid-community.min.noStyle.js'),
         format: 'umd',
         env: 'production',

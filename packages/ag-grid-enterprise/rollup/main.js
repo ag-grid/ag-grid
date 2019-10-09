@@ -1,2 +1,2 @@
-export * from '../dist/es2015/main.js';
+export * from '../dist/es6/main.js';
 export * from '../chartsModule.js';

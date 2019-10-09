@@ -1,7 +1,7 @@
-require('./dist/lib/main');
+require('./dist/es6/main');
 
 // add in exports for ag-Grid-Enterprise
-var agGridEnterprise = require('./main');
+var agGridEnterprise = require('./dist/es6/main');
 Object.keys(agGridEnterprise).forEach(function(key) {
     exports[key] = agGridEnterprise[key];
 });

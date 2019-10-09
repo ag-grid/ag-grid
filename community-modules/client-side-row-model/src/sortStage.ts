@@ -1,13 +1,17 @@
-import { Bean, Autowired } from "../../context/context";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { StageExecuteParams } from "../../interfaces/iRowNodeStage";
-import { SortOption, SortService } from "./sortService";
-import { RowNode } from "../../entities/rowNode";
-import { SortController } from "../../sortController";
-import { ColumnController } from "../../columnController/columnController";
-import { _ } from "../../utils";
-import {RowNodeTransaction} from "../../interfaces/rowNodeTransaction";
-import {ModuleLogger} from "../../utils/moduleLogger";
+import {
+    _,
+    Autowired,
+    Bean,
+    ColumnController,
+    GridOptionsWrapper,
+    RowNode,
+    RowNodeTransaction,
+    SortController,
+    StageExecuteParams,
+    ModuleLogger
+} from "ag-grid-community";
+
+import {SortOption, SortService} from "./sortService";
 
 ModuleLogger.logModuleClass('CSRM.SortStage');
 
@@ -40,9 +44,9 @@ export class SortStage {
         this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations);
     }
 
-    private calculateDirtyNodes(rowNodeTransactions: RowNodeTransaction[]): {[nodeId: string]: boolean} {
+    private calculateDirtyNodes(rowNodeTransactions: RowNodeTransaction[]): { [nodeId: string]: boolean } {
 
-        const dirtyNodes: {[nodeId: string]: boolean} = {};
+        const dirtyNodes: { [nodeId: string]: boolean } = {};
 
         const addNodesFunc = (rowNodes: RowNode[]) => {
             if (rowNodes) {

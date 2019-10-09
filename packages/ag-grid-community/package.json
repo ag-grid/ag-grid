@@ -3,7 +3,7 @@
   "version": "21.2.2",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
-  "module": "./dist/es2015/main.js",
+  "module": "./dist/es6/main.js",
   "scripts": {
     "lint": "tslint -p tsconfig.json src/ts/**/*.ts",
     "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
