@@ -3,7 +3,7 @@ var columnDefs = [
         groupId: 'athleteGroupId',
         headerName: 'Athlete',
         children: [
-            { displayName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+            { headerName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
             { field: "age", width: 90},
             {
                 groupId: 'competitionGroupId',

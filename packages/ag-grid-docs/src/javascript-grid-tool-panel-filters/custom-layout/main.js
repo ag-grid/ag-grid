@@ -2,7 +2,7 @@ var columnDefs = [
     {
         headerName: 'Athlete',
         children: [
-            { displayName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+            { headerName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
             { field: "age", width: 90},
             { field: "country", width: 120}
         ]
@@ -32,7 +32,7 @@ var sortedToolPanelColumnDefs = [
         children: [
             { field: "age" },
             { field: "country" },
-            { displayName: 'Name', field: "athlete" },
+            { headerName: 'Name', field: "athlete" },
         ]
     },
     {
@@ -59,7 +59,7 @@ var customToolPanelColumnDefs = [
         headerName: 'Dummy Group 1',
         children: [
             { field: "age" },
-            { displayName: 'Name', field: "athlete" },
+            { headerName: 'Name', field: "athlete" },
             {
                 headerName: 'Dummy Group 2',
                 children: [
@@ -118,10 +118,6 @@ function setSortedLayout() {
 function setCustomLayout() {
     var filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
     filtersToolPanel.setFilterLayout(customToolPanelColumnDefs);
-}
-
-function resetLayout() {
-    gridOptions.api.setColumnDefs(columnDefs);
 }
 
 // setup the grid after the page has finished loading
