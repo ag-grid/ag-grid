@@ -153,17 +153,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex: 1 1 auto;
 }
 
-@media print {
+@media only print {
   .ag-root-wrapper,
   .ag-root-wrapper-body,
   .ag-root,
-  .ag-header-viewport,
-  .ag-floating-top-viewport,
   .ag-body-viewport,
-  .ag-pinned-left-cols-viewport,
+  .ag-center-cols-container,
   .ag-center-cols-viewport,
-  .ag-pinned-right-cols-viewport,
-  .ag-floating-bottom-viewport,
+  .ag-center-cols-clipper,
   .ag-body-horizontal-scroll-viewport,
   .ag-virtual-list-viewport {
     // 100% height elements with overflow hidden cause printing issues in IE and Edge
