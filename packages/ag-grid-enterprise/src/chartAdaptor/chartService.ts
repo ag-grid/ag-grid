@@ -16,8 +16,9 @@ import {
     Environment,
     ColumnController,
     IChartService,
+    SeriesOptions,
     Optional,
-    IRangeController
+    IRangeController,
 } from "ag-grid-community";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
 
@@ -50,12 +51,12 @@ export class ChartService implements IChartService {
         }
 
         return this.createChart(
-            cellRange, 
+            cellRange,
             params.chartType,
-            false, 
+            false,
             params.suppressChartRanges,
-            params.chartContainer, 
-            params.aggFunc, 
+            params.chartContainer,
+            params.aggFunc,
             params.processChartOptions);
     }
 
@@ -84,12 +85,12 @@ export class ChartService implements IChartService {
     }
 
     private createChart(cellRange: CellRange,
-                       chartType: ChartType,
-                       pivotChart = false,
-                       suppressChartRanges = false,
-                       container?: HTMLElement,
-                       aggFunc?: string | IAggFunc,
-                       processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions): ChartRef | undefined {
+        chartType: ChartType,
+        pivotChart = false,
+        suppressChartRanges = false,
+        container?: HTMLElement,
+        aggFunc?: string | IAggFunc,
+        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 

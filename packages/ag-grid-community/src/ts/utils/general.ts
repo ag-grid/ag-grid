@@ -495,7 +495,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function(key: string, value: any) {
+                this.iterateObject(source, function (key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -1186,8 +1186,8 @@ export class Utils {
     }
 
     static insertTemplateWithDomOrder(eContainer: HTMLElement,
-                                      htmlTemplate: string,
-                                      eChildBefore: HTMLElement): HTMLElement {
+        htmlTemplate: string,
+        eChildBefore: HTMLElement): HTMLElement {
         let res: HTMLElement;
         if (eChildBefore) {
             // if previous element exists, just slot in after the previous element
@@ -1613,10 +1613,10 @@ export class Utils {
             const anyWindow = window as any;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function(p) {
+                || (function (p) {
                     return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
-                (!anyWindow.safari || anyWindow.safari.pushNotification);
+                    (!anyWindow.safari || anyWindow.safari.pushNotification);
         }
         return this.isSafari;
     }
@@ -1625,7 +1625,7 @@ export class Utils {
         if (this.isChrome === undefined) {
             const win = window as any;
             this.isChrome = (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
-                            (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
+                (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
         }
         return this.isChrome;
     }
@@ -2067,7 +2067,7 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function(...args: any[]) {
+        return function (...args: any[]) {
             // reference the context and args for the setTimeout function
             const context = this;
 
@@ -2082,7 +2082,7 @@ export class Utils {
             window.clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = window.setTimeout(function() {
+            timeout = window.setTimeout(function () {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
@@ -2171,6 +2171,21 @@ export class Utils {
         return nextValue != null ? nextValue : defaultValue;
     }
 
+    static set(target: any, key: string, value: any) {
+        const keys = key.split(".");
+        let objectToUpdate = target;
+
+        while (keys.length > 1) {
+            objectToUpdate = objectToUpdate[keys.shift()];
+
+            if (objectToUpdate == null) {
+                return;
+            }
+        }
+
+        objectToUpdate[keys[0]] = value;
+    }
+
     static addSafePassiveEventListener(
         frameworkOverrides: IFrameworkOverrides,
         eElement: HTMLElement,
@@ -2179,7 +2194,7 @@ export class Utils {
         const isPassive = Utils.PASSIVE_EVENTS.indexOf(event) >= 0;
         const isOutsideAngular = Utils.OUTSIDE_ANGULAR_EVENTS.indexOf(event) >= 0;
 
-        const options = isPassive ? {passive: true} : undefined;
+        const options = isPassive ? { passive: true } : undefined;
 
         if (isOutsideAngular) {
             frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
@@ -2290,10 +2305,10 @@ export class Utils {
     }
 
     public static fuzzyCheckStrings(inputValues: string[],
-                                    validValues: string[],
-                                    allSuggestions: string[]): { [p: string]: string[] } {
+        validValues: string[],
+        allSuggestions: string[]): { [p: string]: string[] } {
         const fuzzyMatches: { [p: string]: string[] } = {};
-        const invalidInputs: string [] = inputValues.filter(inputValue =>
+        const invalidInputs: string[] = inputValues.filter(inputValue =>
             !validValues.some(
                 (validValue) => validValue === inputValue
             )

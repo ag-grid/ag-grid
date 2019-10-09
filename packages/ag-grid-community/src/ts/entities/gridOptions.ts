@@ -424,7 +424,7 @@ export interface GridOptions {
 
     postSort?(nodes: RowNode[]): void;
 
-    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions;
+    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
 
     /**********************************************************************************************************
      * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
@@ -615,7 +615,7 @@ export interface NodeChildDetails {
 
 export interface ProcessChartOptionsParams {
     type: ChartType;
-    options: ChartOptions;
+    options: ChartOptions<any>;
 }
 
 export interface GetContextMenuItemsParams {

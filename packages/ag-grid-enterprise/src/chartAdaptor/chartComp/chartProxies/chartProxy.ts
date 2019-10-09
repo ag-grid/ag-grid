@@ -1,14 +1,20 @@
 import {
-    AreaChartOptions,
-    BarChartOptions,
     ChartOptions,
     ChartOptionsChanged,
     ChartType,
     Events,
     EventService,
-    PieChartOptions,
     ProcessChartOptionsParams,
     LegendPosition,
+    SeriesOptions,
+    LegendOptions,
+    IPadding,
+    CaptionOptions,
+    BarSeriesOptions,
+    AreaSeriesOptions,
+    PieSeriesOptions,
+    DropShadowOptions,
+    FontOptions,
 } from "ag-grid-community";
 import { Chart } from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
@@ -17,6 +23,7 @@ import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
+import { Padding } from "../../../charts/util/padding";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -27,7 +34,7 @@ export interface ChartProxyParams {
     categorySelected: boolean;
     grouping: boolean;
     document: Document;
-    processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions;
+    processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getSelectedPalette: () => Palette;
     isDarkTheme: () => boolean;
 }
@@ -46,14 +53,7 @@ export interface UpdateChartParams {
     fields: FieldDefinition[];
 }
 
-export type ChartPaddingProperty = 'top' | 'right' | 'bottom' | 'left';
-export type LegendProperty = 'enabled' | 'markerSize' | 'markerStrokeWidth' | 'markerPadding' | 'itemPaddingX' | 'itemPaddingY';
-export type LegendFontProperty = 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
-export type TitleProperty = 'text';
-export type TitleFontProperty = 'fontFamily' | 'fontStyle' | 'fontWeight' | 'fontSize' | 'color';
-export type ShadowProperty = 'enabled' | 'blur' | 'xOffset' | 'yOffset' | 'color';
-
-export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions> {
+export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<SeriesOptions>> {
     protected chart: TChart;
     protected chartProxyParams: ChartProxyParams;
     protected overriddenPalette: Palette;
@@ -113,80 +113,90 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
     }
 
-    public setChartPaddingProperty(property: ChartPaddingProperty, value: number): void {
-        const padding = this.chart.padding;
-        padding[property] = value;
+    public setChartPaddingProperty(property: keyof IPadding, value: number): void {
+        let { padding } = this.chartOptions;
 
-        this.chart.padding = padding;
-        this.chartOptions.padding = padding;
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getChartPadding = (property: ChartPaddingProperty): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : "";
-
-    public setLegendProperty(property: LegendProperty | LegendFontProperty, value: any) {
-        (this.chart.legend[property] as any) = value;
-
-        if (!this.chartOptions.legend) {
-            this.chartOptions.legend = {};
+        if (!padding) {
+            padding = this.chartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
+            this.chart.padding = new Padding(0);
         }
 
-        (this.chartOptions.legend as any)[property] = value;
+        padding[property] = value;
+
+        this.chart.padding[property] = value;
 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getLegendProperty = (property: LegendProperty | LegendFontProperty): string => this.chartOptions.legend ? `${this.chartOptions.legend[property]}` : "";
+    public getChartPadding = (property: keyof IPadding): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : "";
+
+    public setLegendProperty(property: keyof LegendOptions, value: any) {
+        this.chartOptions.legend[property] = value;
+
+        (this.chart.legend as any)[property] = value;
+
+        this.raiseChartOptionsChangedEvent();
+    }
+
+    public getLegendProperty = (property: keyof LegendOptions): string => `${this.chartOptions.legend[property]}`;
 
     public getLegendEnabled = (): boolean => this.chartOptions.legend ? !!this.chartOptions.legend.enabled : false;
 
     public setLegendPadding(padding: number) {
         this.chart.legend.padding = padding;
-        this.chartOptions.legendPadding = padding;
+        this.chartOptions.legend.padding = padding;
 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getLegendPadding = (): string => `${this.chartOptions.legendPadding}`;
+    public getLegendPadding = (): string => `${this.chartOptions.legend.padding}`;
 
     public setLegendPosition(position: LegendPosition) {
         this.chart.legend.position = position;
-        this.chartOptions.legendPosition = position;
+        this.chartOptions.legend.position = position;
 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getLegendPosition = (): string => `${this.chartOptions.legendPosition}`;
+    public getLegendPosition = (): string => `${this.chartOptions.legend.position}`;
 
-    public setTitleProperty(property: TitleProperty | TitleFontProperty, value: any) {
+    public setTitleProperty(property: keyof CaptionOptions, value: any) {
+        this.chartOptions.title[property] = value;
+
         if (!this.chart.title) {
             this.chart.title = {} as Caption;
         }
         (this.chart.title[property] as any) = value;
 
-        if (!this.chartOptions.title) {
-            this.chartOptions.title = {} as Caption;
-        }
-
-        (this.chartOptions.title as any)[property] = value;
-
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getTitleProperty = (property: TitleFontProperty): string => this.chart.title ? `${this.chart.title[property]}` : "";
+    public getTitleProperty = (property: keyof CaptionOptions): string => `${this.chartOptions.title[property]}`;
 
     public getShadowEnabled = (): boolean => !!this.getShadowProperty("enabled");
 
-    public getShadowProperty(property: ShadowProperty): any {
-        const { seriesDefaults } = this.chartOptions as BarChartOptions | AreaChartOptions | PieChartOptions;
+    private getChartOptionsWithShadow() {
+        return this.chartOptions as ChartOptions<BarSeriesOptions | AreaSeriesOptions | PieSeriesOptions>;
+    }
+
+    public getShadowProperty(property: keyof DropShadowOptions): any {
+        const { seriesDefaults } = this.getChartOptionsWithShadow();
+
         return seriesDefaults && seriesDefaults.shadow ? seriesDefaults.shadow[property] : "";
     }
 
-    public setShadowProperty(property: ShadowProperty, value: any): void {
-        const series = this.getChart().series as BarSeries[] | AreaSeries[] | PieSeries[];
+    public setShadowProperty(property: keyof DropShadowOptions, value: any): void {
+        const { seriesDefaults } = this.getChartOptionsWithShadow();
 
-        series.forEach((s: BarSeries | AreaSeries | PieSeries) => {
+        if (!seriesDefaults.shadow) {
+            seriesDefaults.shadow = {};
+        }
+
+        seriesDefaults.shadow[property] = value;
+
+        const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
+
+        series.forEach(s => {
             if (!s.shadow) {
                 const shadow = new DropShadow();
                 shadow.enabled = false;
@@ -197,20 +207,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 s.shadow = shadow;
             }
 
-            (s.shadow[property] as any) = value;
+            (s.shadow as any)[property] = value;
         });
-
-        const chartOptions = this.chartOptions as BarChartOptions | AreaChartOptions | PieChartOptions;
-
-        if (!chartOptions.seriesDefaults) {
-            chartOptions.seriesDefaults = {};
-        }
-
-        if (!chartOptions.seriesDefaults.shadow) {
-            chartOptions.seriesDefaults.shadow = {};
-        }
-
-        (chartOptions.seriesDefaults.shadow as any)[property] = value;
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -223,6 +221,61 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         };
 
         this.chartProxyParams.eventService.dispatchEvent(event);
+    }
+
+    protected getDefaultFontOptions(): FontOptions {
+        return {
+            fontWeight: "normal",
+            fontSize: 12,
+            fontFamily: "Verdana, sans-serif",
+            color: this.getLabelColor()
+        };
+    }
+
+    protected getDefaultDropShadowOptions(): DropShadowOptions {
+        return {
+            enabled: false,
+            blur: 5,
+            xOffset: 3,
+            yOffset: 3,
+            color: "rgba(0, 0, 0, 0.5)",
+        };
+    }
+
+    protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
+        return {
+            background: {
+                fill: this.getBackgroundColor(),
+            },
+            width: 800,
+            height: 400,
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20,
+            },
+            title: { enabled: false },
+            subtitle: { enabled: false },
+            legend: {
+                enabled: true,
+                padding: 20,
+                position: "right",
+                font: {
+                    ...this.getDefaultFontOptions(),
+                },
+                item: {
+                    paddingX: 16,
+                    paddingY: 8,
+                },
+                box: {
+                    padding: 4,
+                    size: 14,
+                    strokeWidth: 1,
+                },
+            },
+            seriesDefaults: {}
+        };
     }
 
     public destroy(): void {

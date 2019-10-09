@@ -1,45 +1,30 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { DoughnutChartOptions, PieChartOptions, _ } from "ag-grid-community";
-import { PieSeries } from "../../../../charts/chart/series/pieSeries";
+import { _, PolarChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { PolarChart } from "../../../../charts/chart/polarChart";
 
-export type PolarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
-export type PolarSeriesFontProperty = 'labelEnabled' | 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
-export type CalloutProperty = 'calloutLength' | 'calloutStrokeWidth' | 'labelOffset';
-
-export abstract class PolarChartProxy<T extends PieChartOptions | DoughnutChartOptions> extends ChartProxy<PolarChart, T> {
+export abstract class PolarChartProxy extends ChartProxy<PolarChart, PolarChartOptions<PieSeriesOptions>> {
     protected constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    public setSeriesProperty(property: PolarSeriesProperty | PolarSeriesFontProperty | CalloutProperty, value: any): void {
-        const series = this.getChart().series as PieSeries[];
-        series.forEach(s => _.setProperty(s, property, value));
+    public getSeriesProperty(property: keyof PieSeriesOptions): string {
+        return `${this.chartOptions.seriesDefaults[property]}`;
+    }
 
-        if (!this.chartOptions.seriesDefaults) {
-            this.chartOptions.seriesDefaults = {};
-        }
+    public setSeriesProperty(property: keyof PieSeriesOptions, value: any): void {
+        this.chartOptions.seriesDefaults[property] = value;
 
-        _.setProperty(this.chartOptions.seriesDefaults, property, value);
+        const series = this.chart.series;
+        series.forEach(s => _.set(s, property as string, value));
 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getSeriesProperty(property: PolarSeriesProperty | PolarSeriesFontProperty | CalloutProperty): string {
-        const { seriesDefaults } = this.chartOptions;
-
-        return seriesDefaults ? `${seriesDefaults[property]}` : "";
-    }
-
     public getTooltipsEnabled(): boolean {
-        const { seriesDefaults } = this.chartOptions;
-
-        return seriesDefaults ? !!seriesDefaults.tooltipEnabled : false;
+        return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
     }
 
     public getLabelEnabled(): boolean {
-        const { seriesDefaults } = this.chartOptions;
-
-        return seriesDefaults ? !!seriesDefaults.labelEnabled : false;
+        return this.chartOptions.seriesDefaults.label != null && !!this.chartOptions.seriesDefaults.label.enabled;
     }
 }

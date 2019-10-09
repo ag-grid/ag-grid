@@ -8,12 +8,12 @@ import {
     ScatterSeriesOptions,
     AreaSeriesOptions,
     PieSeriesOptions,
-    LabelFormattingOptions,
     LegendOptions,
     CaptionOptions,
     FontWeight,
     DropShadowOptions,
     AxisOptions,
+    SeriesLabelOptions,
 } from "./chartOptions";
 import { CartesianChart, CartesianChartLayout } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
@@ -256,6 +256,11 @@ export class ChartBuilder {
         this.copyPropertyIfPresent(options, chart, "title", t => ChartBuilder.createTitle(t));
         this.copyPropertyIfPresent(options, chart, "subtitle", t => ChartBuilder.createSubtitle(t));
         this.copyPropertyIfPresent(options, chart, "padding", p => new Padding(p.top, p.right, p.bottom, p.left));
+        this.copyPropertyIfPresent(options, chart, "series", s => this.createSeries(s));
+
+        if (options.series) {
+            chart.series = options.series.map(s => ChartBuilder.initAreaSeries(new AreaSeries(), s));
+        }
 
         if (options.background !== undefined) {
             this.copyPropertiesIfPresent(options.background, chart.background, "fill", "visible");
@@ -323,13 +328,16 @@ export class ChartBuilder {
         return series;
     }
 
-    static initLabelFormatting<T extends LabelFormattingOptions>(series: T, options: LabelFormattingOptions) {
+    static initLabelFormatting<T extends SeriesLabelOptions>(series: T, options: SeriesLabelOptions) {
         this.copyPropertiesIfPresent(options, series, "labelFontStyle", "labelFontWeight", "labelFontSize", "labelFontFamily", "labelColor");
     }
 
     static initBarSeries(series: BarSeries, options: BarSeriesOptions) {
         ChartBuilder.initSeries(series, options);
-        ChartBuilder.initLabelFormatting(series, options);
+
+        if (options.label) {
+            ChartBuilder.initLabelFormatting(series.label, options.label);
+        }
 
         this.copyPropertiesIfPresent(
             options,
@@ -382,7 +390,7 @@ export class ChartBuilder {
 
     static initPieSeries(series: PieSeries, options: PieSeriesOptions) {
         ChartBuilder.initSeries(series, options);
-        ChartBuilder.initLabelFormatting(series, options);
+        // ChartBuilder.initLabelFormatting(series, options);
 
         this.copyPropertyIfPresent(options, series, "title", t => ChartBuilder.createPieTitle(t!));
 

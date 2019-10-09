@@ -1,10 +1,11 @@
 import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { DoughnutChartOptions, CaptionOptions, _ } from "ag-grid-community";
+import { _, PolarChartOptions, PieSeriesOptions } from "ag-grid-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PieSeries } from "../../../../charts/chart/series/pieSeries";
 import { PolarChartProxy } from "./polarChartProxy";
+import { PieSeriesOptions as PieSeriesInternalOptions } from "../../../../charts/chartOptions";
 
-export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
+export class DoughnutChartProxy extends PolarChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
@@ -31,24 +32,26 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
             }
         });
 
-        const seriesOptions = this.chartOptions.seriesDefaults!;
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
-
-        // Use `Object.create` to prevent mutating the original user config that is possibly reused.
-        const title = (seriesOptions.title ? Object.create(seriesOptions.title) : {}) as CaptionOptions;
-        seriesOptions.title = title;
-
         let offset = 0;
 
         params.fields.forEach((f, index) => {
             const existingSeries = seriesMap[f.colId];
 
-            title.text = f.displayName;
+            const seriesOptions: PieSeriesInternalOptions = {
+                ...this.chartOptions.seriesDefaults,
+                type: "pie",
+                field: {
+                    angleKey: f.colId,
+                },
+                showInLegend: index === 0, // show legend items for the first series only
+                title: {
+                    ...this.chartOptions.seriesDefaults.title,
+                    text: f.displayName,
+                }
+            };
 
-            seriesOptions.angleField = f.colId;
-            seriesOptions.showInLegend = index === 0; // show legend items for the first series only
-
-            const calloutColors = seriesOptions.calloutColors;
+            const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
             const pieSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as PieSeries;
 
             pieSeries.labelField = params.category.id;
@@ -94,66 +97,35 @@ export class DoughnutChartProxy extends PolarChartProxy<DoughnutChartOptions> {
         doughnutChart.series = _.values(seriesMap);
     }
 
-    protected getDefaultOptions(): DoughnutChartOptions {
+    protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
-        const labelColor = this.getLabelColor();
-        const labelFontWeight = 'normal';
-        const labelFontSize = 12;
-        const labelFontFamily = 'Verdana, sans-serif';
+        const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
 
-        return {
-            background: {
-                fill: this.getBackgroundColor()
+        options.seriesDefaults = {
+            fill: {
+                colors: fills,
             },
-            width: 800,
-            height: 400,
-            padding: {
-                top: 50,
-                right: 50,
-                bottom: 50,
-                left: 50
+            stroke: {
+                colors: strokes,
+                width: 1,
             },
-            legendPosition: 'right',
-            legendPadding: 20,
-            legend: {
-                enabled: true,
-                labelFontWeight,
-                labelFontSize,
-                labelFontFamily,
-                labelColor,
-                itemPaddingX: 16,
-                itemPaddingY: 8,
-                markerPadding: 4,
-                markerSize: 14,
-                markerStrokeWidth: 1
-            },
-            seriesDefaults: {
-                type: 'pie',
-                fills,
-                strokes,
+            callout: {
+                colors: strokes,
+                length: 10,
                 strokeWidth: 1,
-                strokeOpacity: 1,
-                fillOpacity: 1,
-                calloutColors: strokes,
-                calloutLength: 10,
-                calloutStrokeWidth: 1,
-                labelOffset: 3,
-                labelEnabled: false,
-                labelFontWeight,
-                labelFontSize,
-                labelFontFamily,
-                labelColor,
-                labelMinAngle: 0,
-                tooltipEnabled: true,
-                showInLegend: true,
-                shadow: {
-                    enabled: false,
-                    blur: 5,
-                    xOffset: 3,
-                    yOffset: 3,
-                    color: 'rgba(0, 0, 0, 0.5)'
-                }
-            }
+            },
+            label: {
+                ...this.getDefaultFontOptions(),
+                enabled: false,
+                offset: 3,
+                minRequiredAngle: 0,
+            },
+            tooltip: {
+                enabled: true,
+            },
+            shadow: this.getDefaultDropShadowOptions(),
         };
+
+        return options;
     }
 }

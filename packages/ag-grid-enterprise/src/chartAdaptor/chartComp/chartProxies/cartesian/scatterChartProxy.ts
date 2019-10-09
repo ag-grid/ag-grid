@@ -1,11 +1,12 @@
-import { ChartType, ScatterChartOptions, _, FontWeight } from "ag-grid-community";
+import { ChartType, _, ScatterSeriesOptions, CartesianChartOptions } from "ag-grid-community";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";
 import { ChartModel } from "../../chartModel";
-import { CartesianChartProxy, LineMarkerProperty, ScatterSeriesProperty } from "./cartesianChartProxy";
+import { CartesianChartProxy } from "./cartesianChartProxy";
+import { SeriesOptions } from "../../../../charts/chartOptions";
 
-export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> {
+export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
@@ -26,7 +27,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         const existingSeriesMap: { [id: string]: ScatterSeries } = {};
         const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
-        const seriesOptions = this.chartOptions.seriesDefaults!;
+        const seriesOptions: SeriesOptions = { type: "scatter", ...this.chartOptions.seriesDefaults };
         const xFieldDefinition = params.fields[0];
 
         (chart.series as ScatterSeries[])
@@ -88,104 +89,37 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
         });
     }
 
-    public setSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty, value: any): void {
-        const series = this.getChart().series as ScatterSeries[];
-        series.forEach(s => (s[property] as any) = value);
-
-        if (!this.chartOptions.seriesDefaults) {
-            this.chartOptions.seriesDefaults = {};
-        }
-        (this.chartOptions.seriesDefaults as any)[property] = value;
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getSeriesProperty(property: ScatterSeriesProperty | LineMarkerProperty): string {
-        const { seriesDefaults } = this.chartOptions;
-
-        return seriesDefaults ? `${seriesDefaults[property]}` : "";
-    }
-
     public getTooltipsEnabled(): boolean {
-        const { seriesDefaults } = this.chartOptions;
-
-        return seriesDefaults ? !!seriesDefaults.tooltipEnabled : false;
+        return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
     }
 
     public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts
 
-    protected getDefaultOptions(): ScatterChartOptions {
+    protected getDefaultOptions(): CartesianChartOptions<ScatterSeriesOptions> {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
-        const labelColor = this.getLabelColor();
-        const stroke = this.getAxisGridColor();
         const isBubble = this.chartType === ChartType.Bubble;
-        const labelFontWeight: FontWeight = 'normal';
-        const labelFontSize = 12;
-        const labelFontFamily = 'Verdana, sans-serif';
-        const axisColor = 'rgba(195, 195, 195, 1)';
-        const axisOptions = {
-            labelFontWeight,
-            labelFontSize,
-            labelFontFamily,
-            labelColor,
-            labelPadding: 5,
-            labelRotation: 0,
-            tickColor: axisColor,
-            tickSize: 6,
-            tickWidth: 1,
-            lineColor: axisColor,
-            lineWidth: 1,
-            gridStyle: [{
-                stroke,
-                lineDash: [4, 2]
-            }]
+        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<ScatterSeriesOptions>;
+
+        options.seriesDefaults = {
+            fill: {
+                colors: fills,
+                opacity: isBubble ? 0.7 : 1,
+            },
+            stroke: {
+                colors: strokes,
+                width: 3,
+            },
+            marker: {
+                enabled: true,
+                size: isBubble ? 30 : 6,
+                minRequiredSize: 0,
+                strokeWidth: 1,
+            },
+            tooltip: {
+                enabled: true,
+            },
         };
 
-        return {
-            background: {
-                fill: this.getBackgroundColor()
-            },
-            width: 800,
-            height: 400,
-            padding: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20
-            },
-            legendPosition: 'right',
-            legendPadding: 20,
-            legend: {
-                enabled: true,
-                labelFontWeight,
-                labelFontSize,
-                labelFontFamily,
-                labelColor,
-                itemPaddingX: 16,
-                itemPaddingY: 8,
-                markerPadding: 4,
-                markerSize: 14,
-                markerStrokeWidth: 1
-            },
-            xAxis: {
-                ...axisOptions,
-            },
-            yAxis: {
-                ...axisOptions,
-            },
-            seriesDefaults: {
-                type: 'scatter',
-                fills,
-                fillOpacity: isBubble ? 0.7 : 1,
-                strokes,
-                marker: true,
-                markerSize: isBubble ? 30 : 6,
-                minMarkerSize: 0,
-                markerStrokeWidth: 1,
-                tooltipEnabled: true,
-                showInLegend: true,
-                title: ''
-            }
-        };
+        return options;
     }
 }
