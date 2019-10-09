@@ -101,6 +101,8 @@ var gridOptions = {
                 iconKey: 'filter',
                 toolPanel: 'agFiltersToolPanel',
                 toolPanelParams: {
+                    suppressExpandAll: false,
+                    suppressFilterSearch: false,
                     syncLayoutWithGrid: false
                 }
             }

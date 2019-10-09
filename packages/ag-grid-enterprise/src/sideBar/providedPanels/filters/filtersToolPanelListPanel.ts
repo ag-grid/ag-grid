@@ -44,7 +44,7 @@ export class FiltersToolPanelListPanel extends Component {
 
         const defaultParams: ToolPanelFiltersCompParams = {
             suppressExpandAll: false,
-            suppressFilter: false,
+            suppressFilterSearch: false,
             syncLayoutWithGrid: true,
             api: this.gridApi
         };

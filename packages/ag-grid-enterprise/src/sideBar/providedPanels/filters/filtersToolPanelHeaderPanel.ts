@@ -73,13 +73,13 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     // we only show expand / collapse if we are showing filters
     private showOrHideOptions(): void {
-        const showFilter = !this.params.suppressFilter;
+        const showFilterSearch = !this.params.suppressFilterSearch;
         const showExpand = !this.params.suppressExpandAll;
 
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
         const filterGroupsPresent = this.columnController.getAllGridColumns().some(isFilterGroupPresent);
 
-        _.setDisplayed(this.eFilterWrapper, showFilter);
+        _.setDisplayed(this.eFilterWrapper, showFilterSearch);
         _.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
     }
 

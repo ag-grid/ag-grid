@@ -15,7 +15,7 @@ import {FiltersToolPanelListPanel} from "./filtersToolPanelListPanel";
 
 export interface ToolPanelFiltersCompParams extends IToolPanelParams {
     suppressExpandAll: boolean;
-    suppressFilter: boolean;
+    suppressFilterSearch: boolean;
     syncLayoutWithGrid: boolean;
 }
 
@@ -56,10 +56,9 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
 
-        //TODO add suppress header panel option
         const defaultParams: ToolPanelFiltersCompParams = {
             suppressExpandAll: false,
-            suppressFilter: false,
+            suppressFilterSearch: false,
             syncLayoutWithGrid: true,
             api: this.gridApi
         };
@@ -68,6 +67,13 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.filtersToolPanelHeaderPanel.init(this.params);
         this.filtersToolPanelListPanel.init(this.params);
+
+        const hideExpand = this.params.suppressExpandAll;
+        const hideSearch = this.params.suppressFilterSearch;
+
+        if (hideExpand && hideSearch) {
+            this.filtersToolPanelHeaderPanel.setDisplayed(false);
+        }
 
         this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
         this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
