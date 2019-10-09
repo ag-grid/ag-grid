@@ -1,5 +1,5 @@
 import { ChartType, ScatterChartOptions, _, FontWeight } from "ag-grid-community";
-import { ChartBuilder } from "../../../builder/chartBuilder";
+import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";
 import { ChartModel } from "../../chartModel";

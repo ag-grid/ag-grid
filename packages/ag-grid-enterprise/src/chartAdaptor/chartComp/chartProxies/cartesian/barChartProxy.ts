@@ -1,5 +1,5 @@
 import { BarChartOptions, ChartType, _, FontWeight } from "ag-grid-community";
-import { ChartBuilder } from "../../../builder/chartBuilder";
+import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { BarSeries } from "../../../../charts/chart/series/barSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -19,6 +19,7 @@ export class BarChartProxy extends CartesianChartProxy<BarChartOptions> {
         } else {
             builderFunction = params.grouping ? "createGroupedBarChart" : "createBarChart";
         }
+
         this.chart = ChartBuilder[builderFunction](params.parentElement, this.chartOptions);
 
         const barSeries = ChartBuilder.createSeries(this.chartOptions.seriesDefaults!);

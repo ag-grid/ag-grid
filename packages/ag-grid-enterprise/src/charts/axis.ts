@@ -39,6 +39,19 @@ export interface IGridStyle {
     lineDash?: number[];
 }
 
+export interface ILinearAxis<S extends Scale<D, number> = Scale<any, number>, D = any> {
+    group: Group;
+    scale: S;
+    domain: D[];
+    rotation: number;
+    translationX: number;
+    translationY: number;
+    parallelLabels: boolean;
+    gridLength: number;
+    getBBox(includeTitle?: boolean): BBox;
+    update(): void;
+}
+
 /**
  * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
@@ -48,7 +61,7 @@ export interface IGridStyle {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<S extends Scale<D, number>, D = any> implements IAxisFormatting, ILabelFormatting {
+export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>, IAxisFormatting, ILabelFormatting {
 
     // debug (bbox)
     // private bboxRect = (() => {
@@ -161,7 +174,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements IAxisFormattin
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    labelFormatter?: (params: {value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string}) => string;
+    labelFormatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
 
     labelFontStyle: FontStyle | undefined = undefined;
     labelFontWeight: FontWeight | undefined = undefined;
@@ -336,7 +349,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements IAxisFormattin
         const enter = update.enter.append(Group);
         // Line auto-snaps to pixel grid if vertical or horizontal.
         enter.append(Line).each(node => node.tag = Tags.Tick);
-        
+
         if (this.gridLength) {
             if (this.radialGrid) {
                 enter.append(Arc).each(node => node.tag = Tags.GridLine);

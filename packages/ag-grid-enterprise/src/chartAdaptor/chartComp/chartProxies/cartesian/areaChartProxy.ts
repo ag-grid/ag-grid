@@ -1,5 +1,5 @@
 import { AreaChartOptions, ChartType, _, FontWeight } from "ag-grid-community";
-import { ChartBuilder } from "../../../builder/chartBuilder";
+import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { AreaSeries } from "../../../../charts/chart/series/areaSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";

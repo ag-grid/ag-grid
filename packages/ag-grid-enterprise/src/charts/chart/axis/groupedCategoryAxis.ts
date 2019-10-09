@@ -9,7 +9,7 @@ import { Caption } from "../../caption";
 // import { Rect } from "../../scene/shape/rect"; debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-import { IAxisFormatting, ILabelFormatting, IGridStyle } from "../../axis";
+import { IGridStyle, ILinearAxis, IAxisFormatting, ILabelFormatting } from "../../axis";
 
 /**
  * A general purpose linear axis with no notion of orientation.
@@ -20,7 +20,7 @@ import { IAxisFormatting, ILabelFormatting, IGridStyle } from "../../axis";
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class GroupedCategoryAxis implements IAxisFormatting, ILabelFormatting {
+export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | number>, string | number>, IAxisFormatting, ILabelFormatting {
 
     // debug (bbox)
     // private bboxRect = (() => {
@@ -157,7 +157,7 @@ export class GroupedCategoryAxis implements IAxisFormatting, ILabelFormatting {
      */
     tickColor?: string = 'rgba(195, 195, 195, 1)';
 
-    labelFormatter?: (params: {value: any, index: number}) => string;
+    labelFormatter?: (params: { value: any, index: number }) => string;
 
     labelFontStyle: FontStyle | undefined = undefined;
     labelFontWeight: FontWeight | undefined = undefined;
@@ -353,7 +353,7 @@ export class GroupedCategoryAxis implements IAxisFormatting, ILabelFormatting {
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
         const labelGrid = this.labelGrid;
-        const separatorData = [] as {y: number, x1: number, x2: number, toString: () => string}[];
+        const separatorData = [] as { y: number, x1: number, x2: number, toString: () => string }[];
         labelSelection.each((label, datum, index) => {
             label.x = labelX;
             label.rotationCenterX = labelX;

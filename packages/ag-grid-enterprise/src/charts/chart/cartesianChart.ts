@@ -1,5 +1,5 @@
 import { Chart, ChartOptions } from "./chart";
-import { Axis } from "../axis";
+import { Axis, ILinearAxis } from "../axis";
 import Scale from "../scale/scale";
 import { Series } from "./series/series";
 import { numericExtent } from "../util/array";
@@ -12,15 +12,15 @@ export enum CartesianChartLayout {
     Horizontal
 }
 
-export interface CartesianChartOptions extends ChartOptions {
-    xAxis: Axis<Scale<any, number>>;
-    yAxis: Axis<Scale<any, number>>;
+export interface CartesianChartOptions<TX extends ILinearAxis = Axis<Scale<any, number>>, TY extends ILinearAxis = Axis<Scale<any, number>>> extends ChartOptions {
+    xAxis: TX;
+    yAxis: TY;
 }
 
-export class CartesianChart extends Chart {
-    private axisAutoPadding = new Padding();
+export class CartesianChart<TX extends ILinearAxis = Axis<Scale<any, number>>, TY extends ILinearAxis = Axis<Scale<any, number>>> extends Chart {
+    protected axisAutoPadding = new Padding();
 
-    constructor(options: CartesianChartOptions) {
+    constructor(options: CartesianChartOptions<TX, TY>) {
         super(options);
 
         const { xAxis, yAxis } = options;
@@ -28,31 +28,31 @@ export class CartesianChart extends Chart {
         this._xAxis = xAxis;
         this._yAxis = yAxis;
 
-        this.scene.root!.append([xAxis.group, yAxis.group, this.seriesClipRect]);
+        this.scene.root!.append([xAxis.group, yAxis.group, this._seriesRoot]);
         this.scene.root!.append(this.legend.group);
     }
 
-    private seriesClipRect = new Group();
+    private _seriesRoot = new Group();
     get seriesRoot(): Group {
-        return this.seriesClipRect;
+        return this._seriesRoot;
     }
 
-    private readonly _xAxis: Axis<Scale<any, number>>;
-    get xAxis(): Axis<Scale<any, number>> {
+    private readonly _xAxis: TX;
+    get xAxis(): TX {
         return this._xAxis;
     }
 
-    private readonly _yAxis: Axis<Scale<any, number>>;
-    get yAxis(): Axis<Scale<any, number>> {
+    private readonly _yAxis: TY;
+    get yAxis(): TY {
         return this._yAxis;
     }
 
-    set series(values: Series<CartesianChart>[]) {
+    set series(values: Series<CartesianChart<TX, TY>>[]) {
         this.removeAllSeries();
         values.forEach(series => this.addSeries(series));
     }
-    get series(): Series<CartesianChart>[] {
-        return this._series as Series<CartesianChart>[];
+    get series(): Series<CartesianChart<TX, TY>>[] {
+        return this._series as Series<CartesianChart<TX, TY>>[];
     }
 
     performLayout(): void {
