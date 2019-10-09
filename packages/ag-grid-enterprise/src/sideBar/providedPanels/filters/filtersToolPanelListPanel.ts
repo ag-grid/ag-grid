@@ -258,7 +258,7 @@ export class FiltersToolPanelListPanel extends Component {
             state = EXPAND_STATE.EXPANDED;
         }
 
-        this.dispatchEvent({type: 'groupExpanded', state: state});
+       this.dispatchEvent({type: 'groupExpanded', state: state});
     }
 
     public performFilterSearch(searchText: string) {
@@ -312,8 +312,8 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private destroyFilters() {
-        // this.allFilterComps.forEach(filterComp => filterComp.destroy());
-        // this.allFilterComps.length = 0;
+        this.filterGroupComps.forEach(filterComp => filterComp.destroy());
+        this.filterGroupComps.length = 0;
         _.clearElement(this.getGui());
     }
 

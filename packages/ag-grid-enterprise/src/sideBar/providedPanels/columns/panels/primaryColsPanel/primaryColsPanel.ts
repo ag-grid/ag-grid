@@ -97,6 +97,10 @@ export class PrimaryColsPanel extends Component {
         this.primaryColsListPanel.syncColumnLayout();
     }
 
+    public notifyListeners(): void {
+        this.primaryColsListPanel.notifyListeners();
+    }
+
     private onSelectAll(): void {
         this.primaryColsListPanel.doSetSelectedAll(true);
     }

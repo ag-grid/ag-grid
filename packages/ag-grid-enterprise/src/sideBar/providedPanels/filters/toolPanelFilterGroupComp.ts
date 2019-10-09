@@ -62,10 +62,10 @@ export class ToolPanelFilterGroupComp extends Component {
 
         this.childFilterComps.forEach(filterComp => this.filterGroupComp.addItem(filterComp as Component));
 
-        // TODO temp workaround for top level column groups with set filters as list is loaded asynchronously
-        if (this.depth === 0 && this.childFilterComps.length === 1) {
+        if (!this.isColumnGroup()) {
             this.addTopLevelColumnGroupExpandListener();
-        } else {
+        }
+        else {
             this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
                 this.expandedCallback();
             });
@@ -91,7 +91,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public getFilterGroupName(): string {
-        return this.filterGroupName ? this.filterGroupName : ''; //TODO
+        return this.filterGroupName ? this.filterGroupName : '';
     }
 
     public getFilterGroupId(): string {
@@ -110,7 +110,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
             this.childFilterComps.forEach(filterComp => {
                 if (filterComp instanceof ToolPanelFilterComp) {
-                    filterComp.expand();
+                   filterComp.expand();
                 }
             });
         });
@@ -154,5 +154,16 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private getColumnName(column: Column): string {
         return this.columnController.getDisplayNameForColumn(column, 'header', false) as string;
+    }
+
+    private destroyFilters() {
+        this.childFilterComps.forEach(filterComp => filterComp.destroy());
+        this.childFilterComps.length = 0;
+        _.clearElement(this.getGui());
+    }
+
+    public destroy() {
+        this.destroyFilters();
+        super.destroy();
     }
 }

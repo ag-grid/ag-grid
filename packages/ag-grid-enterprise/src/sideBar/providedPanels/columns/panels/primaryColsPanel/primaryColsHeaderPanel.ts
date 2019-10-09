@@ -34,8 +34,8 @@ export class PrimaryColsHeaderPanel extends Component {
     private eExpandUnchecked: HTMLElement;
     private eExpandIndeterminate: HTMLElement;
 
-    private expandState: EXPAND_STATE = EXPAND_STATE.EXPANDED;
-    private selectState: SELECTED_STATE = SELECTED_STATE.CHECKED;
+    private expandState: EXPAND_STATE;
+    private selectState: SELECTED_STATE;
 
     private onFilterTextChangedDebounced: () => void;
 
@@ -59,7 +59,6 @@ export class PrimaryColsHeaderPanel extends Component {
     public postConstruct(): void {
         this.createExpandIcons();
         this.createCheckIcons();
-        this.setExpandState(EXPAND_STATE.EXPANDED);
 
         this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
         this.addDestroyableEventListener(this.eSelect, 'click', this.onSelectClicked.bind(this));

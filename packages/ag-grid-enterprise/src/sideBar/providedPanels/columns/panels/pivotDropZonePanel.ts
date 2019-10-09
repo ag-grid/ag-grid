@@ -2,7 +2,6 @@ import {
     Autowired,
     ColumnController,
     EventService,
-    Context,
     LoggerFactory,
     DragAndDropService,
     GridOptionsWrapper,

@@ -79,16 +79,29 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public onColumnsChanged(): void {
-        this.destroyColumnComps();
+        if (this.params.syncLayoutWithGrid) {
+            this.syncColumnLayout();
+        } else {
+            this.destroyColumnComps();
 
-        // add column / group comps to tool panel
-        this.columnTree = this.columnController.getPrimaryColumnTree();
-        const groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
-        this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-        this.recursivelySetVisibility(this.columnTree, true);
+            // add column / group comps to tool panel
+            this.columnTree = this.columnController.getPrimaryColumnTree();
+            const groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
+            this.recursivelyAddComps(this.columnTree, 0, groupsExist);
+            this.recursivelySetVisibility(this.columnTree, true);
 
-        // notify header of expand
+            // notify header
+            this.notifyListeners();
+        }
+    }
+
+    public notifyListeners(): void {
         this.fireGroupExpandedEvent();
+        this.fireSelectionChangedEvent();
+    }
+
+    public syncColumnLayout(): void {
+        this.colDefService.syncLayoutWithGrid(this.setColumnLayout.bind(this));
     }
 
     public setColumnLayout(colDefs: AbstractColDef[]): void {
@@ -105,12 +118,8 @@ export class PrimaryColsListPanel extends Component {
         this.recursivelyAddComps(this.columnTree, 0, groupsExist);
         this.recursivelySetVisibility(this.columnTree, true);
 
-        // notify header of expand
-        this.fireGroupExpandedEvent();
-    }
-
-    public syncColumnLayout(): void {
-        this.colDefService.syncLayoutWithGrid(this.setColumnLayout.bind(this));
+        // notify header
+        this.notifyListeners();
     }
 
     private recursivelyAddComps(tree: OriginalColumnGroupChild[], dept: number, groupsExist: boolean): void {
