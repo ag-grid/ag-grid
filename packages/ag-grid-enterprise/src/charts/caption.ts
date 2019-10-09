@@ -4,28 +4,6 @@ import { PointerEvents } from "./scene/node";
 import { FontStyle, FontWeight } from "./scene/shape/text";
 
 export class Caption {
-
-    static create(params: {
-        text?: string,
-        fontStyle?: FontStyle,
-        fontWeight?: FontWeight,
-        fontSize?: number,
-        fontFamily?: string,
-        color?: string
-    } = {}): Caption {
-        const caption = new Caption();
-
-        caption.text = params.text || '';
-        caption.fontStyle = params.fontStyle;
-        caption.fontWeight = params.fontWeight || 'bold';
-        caption.fontSize = params.fontSize || 14;
-        caption.fontFamily = params.fontFamily || 'Verdana, sans-serif';
-        caption.color = params.color || 'black';
-        caption.requestLayout();
-
-        return caption;
-    }
-
     onLayoutChange?: () => void;
 
     readonly node: Text = new Text();
