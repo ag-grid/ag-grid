@@ -11,7 +11,7 @@ if ($generated) {
     <title>ag-Grid React Example</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
+    <style media="only screen">
         html, body, #root {
         height: 100%;
         width: 100%;

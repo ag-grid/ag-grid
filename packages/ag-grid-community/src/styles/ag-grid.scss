@@ -147,10 +147,23 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-body-horizontal-scroll-viewport,
 .ag-virtual-list-viewport {
     position: relative;
-    height: 100%;
     min-width: 0px;
-    overflow: hidden;
     flex: 1 1 auto;
+}
+
+@media only screen {
+  .ag-header-viewport,
+  .ag-floating-top-viewport,
+  .ag-body-viewport,
+  .ag-pinned-left-cols-viewport,
+  .ag-center-cols-viewport,
+  .ag-pinned-right-cols-viewport,
+  .ag-floating-bottom-viewport,
+  .ag-body-horizontal-scroll-viewport,
+  .ag-virtual-list-viewport {
+    height: 100%;
+    overflow: hidden;
+  }
 }
 
 .ag-body-viewport {
