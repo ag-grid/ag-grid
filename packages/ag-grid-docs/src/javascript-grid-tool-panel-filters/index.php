@@ -120,6 +120,10 @@ interface IFiltersToolPanel {
         TODO: Finalise Docs and Example after review
     </p>
 
+    <p>
+        Note: <code>syncLayoutWithGrid=false</code>
+    </p>
+
     <?= example('Custom Filters Layout', 'custom-layout', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
