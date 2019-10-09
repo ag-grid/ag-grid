@@ -6,5 +6,6 @@ export const enum ModuleNames {
     ServerSideRowModelModule = "serverSideRowModelModule",
     RowGroupingModule = "rowGroupingModule",
     CsvExportModule = "csvExportModule",
-    ExcelExportModule = "excelExportModule"
+    ExcelExportModule = "excelExportModule",
+    ClipboardModule = "clipboardModule"
 }

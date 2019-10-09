@@ -1,7 +1,6 @@
 import { Grid } from "ag-grid-community";
 import { EnterpriseMenuFactory } from "./menu/enterpriseMenu";
 import { RangeController } from "./rangeController";
-import { ClipboardService } from "./clipboardService";
 import { EnterpriseBoot } from "./enterpriseBoot";
 import { ContextMenuFactory } from "./menu/contextMenu";
 import { SideBarComp } from "./sideBar/sideBarComp";
@@ -27,7 +26,6 @@ export { SetFilter } from "./setFilter/setFilter";
 export { SetValueModel } from "./setFilter/setValueModel";
 export { StatusBar } from "./statusBar/statusBar";
 export { StatusBarService } from "./statusBar/statusBarService";
-export { ClipboardService } from "./clipboardService";
 export { EnterpriseBoot } from "./enterpriseBoot";
 export { EnterpriseMenu } from "./menu/enterpriseMenu";
 export { MenuItemComponent } from "./menu/menuItemComponent";
@@ -54,7 +52,7 @@ export { IColumnToolPanel } from "./sideBar/providedPanels/columns/columnToolPan
 export { IFiltersToolPanel } from "./sideBar/providedPanels/filters/filtersToolPanel";
 
 Grid.setEnterpriseBeans([EnterpriseMenuFactory, RangeController,
-    ClipboardService, ContextMenuFactory, EnterpriseBoot,
+    ContextMenuFactory, EnterpriseBoot,
     LicenseManager, MD5, MenuItemMapper, StatusBarService, ToolPanelColDefService
 ]);
 
@@ -79,3 +77,4 @@ import "./modules/viewportRowModelModule";
 import "./modules/serverSideRowModelModule";
 import "./modules/rowGroupingModule";
 import "./modules/excelExportModule";
+import "./modules/clipboardModule";

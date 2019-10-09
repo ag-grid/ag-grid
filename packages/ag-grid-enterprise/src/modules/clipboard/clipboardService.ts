@@ -36,9 +36,13 @@ import {
     RowRenderer,
     RowValueChangedEvent,
     SelectionController,
-    ValueService
+    ValueService,
+    ModuleLogger
 } from "ag-grid-community";
-import {RangeController} from "./rangeController";
+
+import {RangeController} from "../../rangeController";
+
+ModuleLogger.logModuleClass('Clipboard.ClipboardService');
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, rangeIndex: number, isLastRow?: boolean): void;

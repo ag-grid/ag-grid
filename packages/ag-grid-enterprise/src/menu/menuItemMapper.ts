@@ -5,17 +5,17 @@ import {
     ChartType,
     Column,
     ColumnController,
+    Constants,
     Context,
     GridApi,
     GridOptionsWrapper,
     IAggFuncService,
     IChartService,
+    IClipboardService,
     MenuItemDef,
     ModuleNames,
-    Optional,
-    Constants
+    Optional
 } from 'ag-grid-community';
-import {ClipboardService} from "../clipboardService";
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -23,7 +23,7 @@ export class MenuItemMapper {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('clipboardService') private clipboardService: ClipboardService;
+    @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Optional('chartService') private chartService: IChartService;
     @Optional('context') private context: Context;
@@ -43,6 +43,9 @@ export class MenuItemMapper {
             } else {
                 result = menuItemOrString;
             }
+            // if no mapping, can happen when module is not loaded but user tries to use module anyway
+            if (!result) { return; }
+
             if ((result as MenuItemDef).subMenu) {
                 const resultDef = result as MenuItemDef;
                 resultDef.subMenu = this.mapWithStockItems(resultDef.subMenu!, column);
@@ -132,6 +135,7 @@ export class MenuItemMapper {
                     action: () => this.gridApi.collapseAll()
                 };
             case 'copy':
+                if (!this.context.isModuleRegistered(ModuleNames.ClipboardModule)) { return null; }
                 return {
                     name: localeTextFunc('copy', 'Copy'),
                     shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -139,6 +143,7 @@ export class MenuItemMapper {
                     action: () => this.clipboardService.copyToClipboard(false)
                 };
             case 'copyWithHeaders':
+                if (!this.context.isModuleRegistered(ModuleNames.ClipboardModule)) { return null; }
                 return {
                     name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                     // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -146,6 +151,7 @@ export class MenuItemMapper {
                     action: () => this.clipboardService.copyToClipboard(true)
                 };
             case 'paste':
+                if (!this.context.isModuleRegistered(ModuleNames.ClipboardModule)) { return null; }
                 return {
                     name: localeTextFunc('paste', 'Paste'),
                     shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),

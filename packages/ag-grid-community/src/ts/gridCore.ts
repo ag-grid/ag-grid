@@ -21,6 +21,7 @@ import {ResizeObserverService} from "./misc/resizeObserverService";
 import {SideBarDef, SideBarDefParser} from "./entities/sideBar";
 import {_} from "./utils";
 import {IToolPanel} from "./interfaces/iToolPanel";
+import {ModuleNames} from "./modules/moduleNames";
 
 export class GridCore extends Component {
 
@@ -91,7 +92,7 @@ export class GridCore extends Component {
             this.popupService
         ].forEach(service => service.registerGridCore(this));
 
-        if (this.enterprise) {
+        if (this.getContext().isModuleRegistered(ModuleNames.ClipboardModule)) {
             this.clipboardService.registerGridCore(this);
         }
 

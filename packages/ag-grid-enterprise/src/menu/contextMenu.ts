@@ -53,7 +53,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
-        if (_.exists(node)) {
+        if (_.exists(node) && this.context.isModuleRegistered(ModuleNames.ClipboardModule)) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'paste', 'separator');
