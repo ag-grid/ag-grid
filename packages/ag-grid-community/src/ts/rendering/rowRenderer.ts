@@ -997,7 +997,7 @@ export class RowRenderer extends BeanStub {
         }
 
         // only dispatch firstDataRendered if we have actually rendered some data
-        if (this.paginationProxy.isRowsToRender() && newLast !== -1) {
+        if (this.paginationProxy.isRowsToRender()) {
 
             const event: FirstDataRenderedEvent = {
                 type: Events.EVENT_FIRST_DATA_RENDERED,

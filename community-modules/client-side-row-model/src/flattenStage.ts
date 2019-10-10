@@ -44,8 +44,13 @@ export class FlattenStage implements IRowNodeStage {
 
         this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, skipLeafNodes, 0);
 
-        // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
-        const includeGroupTotalFooter = !showRootNode && this.gridOptionsWrapper.isGroupIncludeTotalFooter();
+        // we do not want the footer total if the gris is empty
+        const atLeastOneRowPresent = result.length > 0;
+        const includeGroupTotalFooter = !showRootNode
+            // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
+            && atLeastOneRowPresent
+            && this.gridOptionsWrapper.isGroupIncludeTotalFooter();
+
         if (includeGroupTotalFooter) {
             this.ensureFooterNodeExists(rootNode);
             this.addRowNodeToRowsToDisplay(rootNode.sibling, result, nextRowTop, 0);
