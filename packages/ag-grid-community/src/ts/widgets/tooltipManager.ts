@@ -161,6 +161,10 @@ export class TooltipManager {
     }
 
     private createTooltipComponent(params: ITooltipParams, cmp: RegisteredComponent, e: MouseEvent): void {
+        const mouseEvent = this.lastMouseEvent;
+        if (!mouseEvent) {
+            return;
+        }
         this.userComponentFactory.newTooltipComponent(params).then(tooltipComp => {
             // if the component was unregistered while creating
             // the tooltip (async) we should return undefined here.
@@ -184,7 +188,7 @@ export class TooltipManager {
 
             this.popupService.positionPopupUnderMouseEvent({
                 type: 'tooltip',
-                mouseEvent: this.lastMouseEvent,
+                mouseEvent: mouseEvent,
                 ePopup: eGui,
                 nudgeY: 18
             });
