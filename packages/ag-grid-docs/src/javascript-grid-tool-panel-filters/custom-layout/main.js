@@ -103,21 +103,21 @@ var gridOptions = {
                 toolPanelParams: {
                     suppressExpandAll: false,
                     suppressFilterSearch: false,
+                    // prevents custom layout changing when columns are reordered in the grid
                     suppressSyncLayoutWithGrid: true
                 }
             }
         ],
         defaultToolPanel: 'filters'
     }
-
 };
 
-function setSortedLayout() {
+function setCustomSortLayout() {
     var filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
     filtersToolPanel.setFilterLayout(sortedToolPanelColumnDefs);
 }
 
-function setCustomLayout() {
+function setCustomGroupLayout() {
     var filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
     filtersToolPanel.setFilterLayout(customToolPanelColumnDefs);
 }

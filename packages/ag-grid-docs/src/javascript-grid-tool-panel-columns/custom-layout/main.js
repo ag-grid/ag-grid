@@ -101,6 +101,7 @@ var gridOptions = {
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
                 toolPanelParams: {
+                    // prevents custom layout changing when columns are reordered in the grid
                     suppressSyncLayoutWithGrid: true
                 }
             },
@@ -109,12 +110,12 @@ var gridOptions = {
     }
 };
 
-function setSortedLayout() {
+function setCustomSortLayout() {
     var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
     columnToolPanel.setColumnLayout(sortedToolPanelColumnDefs);
 }
 
-function setCustomLayout() {
+function setCustomGroupLayout() {
     var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
     columnToolPanel.setColumnLayout(customToolPanelColumnDefs);
 }

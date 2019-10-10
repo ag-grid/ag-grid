@@ -34,11 +34,7 @@ var gridOptions = {
         width: 110,
         filter: true
     },
-    sideBar: 'filters',
-    onGridReady: function(params) {
-        // initially collapse all filter groups
-        params.api.getToolPanelInstance('filters').collapseFilters();
-    }
+    sideBar: 'filters'
 };
 
 function collapseAll() {
