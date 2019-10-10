@@ -158,7 +158,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <p>
-        To remove a particular column from the tool panel, set the column property <code>suppressToolPanel</code> to true.
+        To remove a particular column from the tool panel, set the column property <code>suppressColumnsToolPanel</code> to true.
         This is useful when you have a column working in the background, eg a column you want to group by,
         but not present to the user.
     </p>

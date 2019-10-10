@@ -136,7 +136,7 @@ export class PrimaryColsListPanel extends Component {
         // only render group if user provided the definition
         let newDept: number;
 
-        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) {
+        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressColumnsToolPanel) {
             return;
         }
 
@@ -163,7 +163,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     private addColumnComps(column: Column, dept: number, groupsExist: boolean): void {
-        if (column.getColDef() && column.getColDef().suppressToolPanel) {
+        if (column.getColDef() && column.getColDef().suppressColumnsToolPanel) {
             return;
         }
 
@@ -311,7 +311,7 @@ export class PrimaryColsListPanel extends Component {
 
             // not not count columns not in tool panel
             const colDef = col.getColDef();
-            if (colDef && colDef.suppressToolPanel) {
+            if (colDef && colDef.suppressColumnsToolPanel) {
                 return;
             }
 

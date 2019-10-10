@@ -29,8 +29,16 @@ export interface AbstractColDef {
     headerValueGetter?: string | Function;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];
-    /** Set to true to not include this column in the toolpanel */
+
+    /** @deprecated since v22 - use suppressColumnsToolPanel / suppressFiltersToolPanel instead */
     suppressToolPanel?: boolean;
+
+    /** Set to true to not include this column in the Columns Tool Panel */
+    suppressColumnsToolPanel?: boolean;
+
+    /** Set to true to not include this column / filter in the Filters Tool Panel */
+    suppressFiltersToolPanel?: boolean;
+
     /** Tooltip for the column header */
     headerTooltip?: string;
 

@@ -101,16 +101,21 @@ export class FiltersToolPanelListPanel extends Component {
             if (child instanceof OriginalColumnGroup) {
                 return _.flatten(this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, depth));
             } else {
+                const column = child as Column;
+                if (column.getColDef() && column.getColDef().suppressFiltersToolPanel) {
+                    return [];
+                }
+
                 const hideFilterCompHeader = depth === 0;
                 const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
                 this.getContext().wireBean(filterComp);
-                filterComp.setColumn(child as Column);
+                filterComp.setColumn(column);
 
                 if (depth > 0) {
                     return filterComp;
                 } else {
                     const filterGroupComp =
-                        new ToolPanelFilterGroupComp(child, [filterComp], this.onGroupExpanded.bind(this), depth);
+                        new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth);
 
                     this.getContext().wireBean(filterGroupComp);
                     filterGroupComp.collapse();
@@ -121,7 +126,9 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, depth: number): ToolPanelFilterGroupComp[] {
-        // if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) //TODO
+        if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressFiltersToolPanel) {
+            return [];
+        }
 
         const newDepth = columnGroup.isPadding() ? depth : depth + 1;
         const childFilterComps = _.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));

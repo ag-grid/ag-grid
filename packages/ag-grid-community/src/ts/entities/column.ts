@@ -304,6 +304,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.colDef.tooltipValueGetter = colDefAny.tooltip;
         }
 
+        if (colDefAny.suppressToolPanel) {
+            console.warn(`ag-Grid: since v22, colDef.suppressToolPanel is gone, instead use suppressColumnsToolPanel / suppressFiltersToolPanel.`, this.colDef);
+            this.colDef.suppressColumnsToolPanel = true;
+        }
     }
 
     public addEventListener(eventType: string, listener: Function): void {

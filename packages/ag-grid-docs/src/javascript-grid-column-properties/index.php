@@ -35,8 +35,12 @@ include '../documentation-main/documentation_header.php';
             <td>Class to use for the tool panel cell. Can be string, array of strings, or function.</td>
         </tr>
         <tr>
-            <th>suppressToolPanel</th>
-            <td>Set to true if you do not want this column or group to appear in the tool panel.</td>
+            <th>suppressColumnsToolPanel</th>
+            <td>Set to true if you do not want this column or group to appear in the Columns Tool Panel.</td>
+        </tr>
+        <tr>
+            <th>suppressFiltersToolPanel</th>
+            <td>Set to true if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel.</td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
