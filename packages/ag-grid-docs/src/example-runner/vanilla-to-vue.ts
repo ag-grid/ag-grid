@@ -78,10 +78,17 @@ const toAssignment = (property) => {
     return `this.${property.name} = ${value}`;
 };
 
-function createComponentImports(bindings, componentFileNames: any, isDev) {
+function createComponentImports(bindings, componentFileNames: any, isDev, communityModules, enterpriseModules) {
     const imports = [];
 
-    imports.push('import "@ag-community/client-side-row-model";');
+    // spl modules
+    // imports.push('import "@ag-community/ag-grid";');
+    communityModules.forEach(module => {
+        imports.push(`import "@ag-community/${module}";`);
+    });
+    enterpriseModules.forEach(module => {
+        imports.push(`import "@ag-enterprise/${module}";`);
+    });
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
@@ -175,7 +182,7 @@ function parseAllMethods(bindings) {
 }
 
 function componentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules) {
-    const imports = createComponentImports(bindings, componentFileNames, isDev);
+    const imports = createComponentImports(bindings, componentFileNames, isDev, communityModules, enterpriseModules);
     const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
     const gridReadyTemplate = onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);

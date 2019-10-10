@@ -27,7 +27,11 @@ if (USE_LOCAL) {
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/ag-grid-enterprise-bundle/ag-grid-enterprise.js");
 
     $systemJsMap = array(
+        // spl modules
+        // "ag-community/ag-grid" => "$prefix/@ag-community/ag-grid",
+        /* START OF MODULES DEV - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "$prefix/@ag-community/client-side-row-model",
+        /* END OF MODULES DEV - DO NOT DELETE */
         "ag-grid-community" => "$prefix/ag-grid-community/dist/ag-grid-community.js",
         "ag-grid-community/main" => "$prefix/ag-grid-community/dist/ag-grid-community.js",
         "ag-grid-enterprise" => "$prefix/ag-grid-enterprise",
@@ -41,6 +45,10 @@ if (USE_LOCAL) {
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.min.js");
 
     $systemJsMap = array(
+        // spl modules test prior to release!
+        /* START OF MODULES PROD - DO NOT DELETE */
+        "@ag-community/client-side-row-model" => "https://unpkg.com/@ag-community/client-side-row-model@" . AG_GRID_VERSION . "/",
+        /* END OF MODULES PROD - DO NOT DELETE */
         "ag-grid-community" => "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/dist/ag-grid-community.js",
         "ag-grid-community/main" => "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/dist/ag-grid-community.js",
         "ag-grid-enterprise" => "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/",

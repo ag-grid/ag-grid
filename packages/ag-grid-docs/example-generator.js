@@ -83,18 +83,8 @@ function forEachExampleToGenerate(cb, final, scope = '*') {
     });
 }
 
-const extractModules = project => {
-    const nodeDir = `./node_modules/ag-grid-${project}`;
-    glob.sync(`${nodeDir}/*Module.js`)
-        .map(module => module.replace('.js', ''))
-        .map(module => module.replace(`${nodeDir}`, ''));
-};
-
-module.exports = (cb, scope, isDev) => {
+module.exports = (cb, scope, isDev, communityModules, enterpriseModules) => {
     require('ts-node').register();
-
-    const communityModules = extractModules('community');
-    const enterpriseModules = extractModules('enterprise');
 
     const {vanillaToVue} = require('./src/example-runner/vanilla-to-vue.ts');
     const {vanillaToReact} = require('./src/example-runner/vanilla-to-react.ts');

@@ -44,7 +44,14 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
     componentAttributes.push('onGridReady={this.onGridReady}');
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
-    imports.push('import "@ag-community/client-side-row-model";');
+    // spl modules
+    // imports.push('import "@ag-community/ag-grid";');
+    communityModules.forEach(module => {
+        imports.push(`import "@ag-community/${module}";`);
+    });
+    enterpriseModules.forEach(module => {
+        imports.push(`import "@ag-enterprise/${module}";`);
+    });
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');

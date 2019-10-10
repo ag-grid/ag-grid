@@ -3,6 +3,7 @@ const fs = require('fs');
 const cp = require('child_process');
 const path = require('path');
 const rimraf = require('rimraf');
+const glob = require('glob');
 const express = require('express');
 const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
@@ -103,50 +104,58 @@ function serveAndWatchVue(app) {
     });
 }
 
-function launchTSCCheck() {
+function launchTSCCheck(communityModules, enterpriseModules) {
     // we delete the _dev folder each time we run now as we're constantly adding new modules etc
     // this saves us having to manually delete _dev each time
     if (fs.existsSync('_dev')) {
         rimraf.sync("_dev");
     }
 
-       mkdirp('_dev/ag-grid-community/dist');
-        mkdirp('_dev/@ag-community/');
+    mkdirp('_dev/ag-grid-community/dist');
+    mkdirp('_dev/@ag-community/');
 
-        let linkType = 'symbolic';
-        if (WINDOWS) {
-            console.log('creating window links...');
-            // run('create-windows-links.bat').exec();
-            linkType = 'junction';
-        }
+    let linkType = 'symbolic';
+    if (WINDOWS) {
+        console.log('creating window links...');
+        linkType = 'junction';
+    }
 
-        lnk('../ag-grid-community/src/main.ts', '_dev/ag-grid-community/', {
+    lnk('../ag-grid-community/src/main.ts', '_dev/ag-grid-community/', {
+        force: true,
+        type: linkType,
+        rename: 'main.ts'
+    });
+    lnk('../ag-grid-community/src/ts', '_dev/ag-grid-community/dist', {
+        force: true,
+        type: linkType,
+        rename: 'lib'
+    });
+    lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
+    lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
+    lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
+        force: true,
+        type: linkType,
+        rename: 'main.ts'
+    });
+    lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
+    lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
+
+    // spl modules
+    // lnk('../../community-modules/ag-grid', '_dev/@ag-community', {force: true, type: linkType, rename: 'ag-grid'});
+    communityModules.forEach(module => {
+        lnk(`../../community-modules/${module}`, '_dev/@ag-community', {
             force: true,
             type: linkType,
-            rename: 'main.ts'
+            rename: module
         });
-        lnk('../ag-grid-community/src/ts', '_dev/ag-grid-community/dist', {
+    });
+    enterpriseModules.forEach(module => {
+        lnk(`../../enterprise-modules/${module}`, '_dev/@ag-enterprise', {
             force: true,
             type: linkType,
-            rename: 'lib'
+            rename: module
         });
-        lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
-        lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
-        lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
-            force: true,
-            type: linkType,
-            rename: 'main.ts'
-        });
-        lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
-        lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
-
-        // spl modules
-        lnk('../../community-modules/client-side-row-model', '_dev/@ag-community', {
-            force: true,
-            type: linkType,
-            rename: 'client-side-row-model'
-        });
-
+    });
 
     const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
 
@@ -166,7 +175,7 @@ function launchTSCCheck() {
 
 const exampleDirMatch = new RegExp('src/([-\\w]+)/');
 
-function watchAndGenerateExamples() {
+function watchAndGenerateExamples(communityModules, enterpriseModules) {
     const callback = file => {
         let dir;
         if (file) {
@@ -178,13 +187,154 @@ function watchAndGenerateExamples() {
             }
         }
         console.log('regenerating examples...');
-        generateExamples(() => console.log('generation done.'), dir, true);
+        generateExamples(() => console.log('generation done.'), dir, true, communityModules, enterpriseModules);
     };
 
     callback();
 
     chokidar.watch('./src/*/*.php').on('change', callback);
     chokidar.watch('./src/*/*/*.{html,css,js}').on('change', callback);
+}
+
+function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules) {
+    // spl modules
+    const agGridCommunityModulesEntries = agGridCommunityModules
+        .map(module => `../../../../ag-grid-community/src/ts/modules/${module}.ts`)
+        .map(module => `import "${module}";`);
+
+    const agGridEnterpriseModulesEntries = agGridEnterpriseModules
+        .map(module => `../../../../ag-grid-enterprise/src/modules/${module}.ts`)
+        .map(module => `import "${module}";`);
+
+    const communityModulesEntries = communityModules
+        .map(module => glob.sync(`../../community-modules/${module}/src/*Module.ts`))
+        .map(module => `import "../../../${module}";`);
+
+    const enterpriseModulesEntries = enterpriseModules
+        .map(module => glob.sync(`${module}/src/*Module.ts`))
+        .map(module => `import "../../../${module}";`);
+
+    const communityEntries = agGridCommunityModulesEntries.concat(communityModulesEntries);
+    const enterpriseEntries = agGridEnterpriseModulesEntries.concat(enterpriseModulesEntries);
+
+    const enterpriseBundleFilename = './src/_assets/ts/ag-grid-enterprise-bundle.ts';
+    const communityFilename = 'src/_assets/ts/ag-grid-community.ts';
+
+    const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split('\n');
+    let modulesLineFound = false;
+    const newEnterpriseBundleLines = [];
+    existingEnterpriseBundleLines.forEach(line => {
+        if (!modulesLineFound) {
+            modulesLineFound = line === "/* MODULES - Don't delete this line */";
+            newEnterpriseBundleLines.push(line);
+        }
+    });
+    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseEntries).concat(['import "../../../../ag-grid-enterprise/src/main.ts";']);
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.join('\n'), 'UTF-8');
+
+    const existingCommunityLines = fs.readFileSync(communityFilename).toString().split('\n');
+    modulesLineFound = false;
+    const newCommunityLines = [];
+    existingCommunityLines.forEach(line => {
+        if (!modulesLineFound) {
+            modulesLineFound = line === "/* MODULES - Don't delete this line */";
+            newCommunityLines.push(line);
+        }
+    });
+    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityEntries).join('\n'), 'UTF-8');
+}
+
+function getAllModules() {
+    const agGridCommunityModules = glob.sync("../ag-grid-community/*Module.js")
+        .map(module => module.replace('../ag-grid-community/', ''))
+        .map(module => module.replace('.js', ''));
+
+    const agGridEnterpriseModules = glob.sync("../ag-grid-enterprise/*Module.js")
+        .map(module => module.replace('../ag-grid-enterprise/', ''))
+        .map(module => module.replace('.js', ''));
+
+    const communityModules = glob.sync("../../community-modules/*")
+        .filter(module => module.indexOf('ag-grid') === -1)
+        .map(module => module.replace('../../community-modules/', ''));
+
+    const enterpriseModules = glob.sync("../../enterprise-modules/*")
+        .map(module => glob.sync(`${module}/src/*Module.ts`))
+        .map(module => module.replace('../../enterprise-modules/', ''));
+
+    return {agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules};
+}
+
+function addCommunityAndEnterpriseModulesToExpress(app, communityModules, enterpriseModules) {
+    // app.use('/dev/@ag-community/ag-grid', express.static('../../community-modules/ag-grid'));
+
+    // spl modules
+    communityModules.forEach(module => {
+        app.use(`/dev/@ag-community/${module}`, express.static(`../../community-modules/${module}`));
+    });
+
+    enterpriseModules.forEach(module => {
+        app.use(`/dev/@ag-enterprise/${module}`, express.static(`../../enterprise-modules/${module}`));
+    });
+}
+
+function updateSystemJsMappings(utilFileLines,
+                                          startString,
+                                          endString,
+                                          communityModules,
+                                          enterpriseModules,
+                                          communityMappingFunc,
+                                          enterpriseMappingFunc) {
+    let foundStart = false;
+    let foundEnd = false;
+
+    const newUtilFileTop = [];
+    const newUtilFileBottom = [];
+    utilFileLines.forEach(line => {
+        if(!foundStart) {
+            newUtilFileTop.push(line);
+
+            if (line.indexOf(startString) !== -1) {
+                foundStart = true;
+            }
+        } else if (foundEnd) {
+            newUtilFileBottom.push(line);
+        } else if (foundStart && ! foundEnd) {
+            if (line.indexOf(endString) !== -1) {
+                foundEnd = true;
+                newUtilFileBottom.push(line);
+            }
+        }
+    });
+
+    const communityModuleEntries = communityModules.map(communityMappingFunc);
+    const enterpriseModuleEntries = enterpriseModules.map(enterpriseMappingFunc);
+
+    return newUtilFileTop.concat(communityModuleEntries).concat(enterpriseModuleEntries).concat(newUtilFileBottom);
+}
+
+function updateSystemJsMappingsForFrameworks(communityModules, enterpriseModules) {
+    // spl module
+    const utilityFilename = 'src/example-runner/utils.php';
+    const utilFileLines = fs.readFileSync(utilityFilename, 'UTF-8').split('\n');
+
+    let updatedUtilFileLines = updateSystemJsMappings(utilFileLines,
+        '/* START OF MODULES DEV - DO NOT DELETE */',
+        '/* END OF MODULES DEV - DO NOT DELETE */',
+        communityModules,
+        enterpriseModules,
+        module => `        "@ag-community/${module}" => "$prefix/@ag-community/${module}",`,
+        module => `        "@ag-enterprise/${module}" => "$prefix/@ag-enterprise/${module}",`);
+
+    updatedUtilFileLines = updateSystemJsMappings(utilFileLines,
+        '/* START OF MODULES PROD - DO NOT DELETE */',
+        '/* END OF MODULES PROD - DO NOT DELETE */',
+        communityModules,
+        enterpriseModules,
+        // spl module - to test prior to release!!!
+        module => `        "@ag-community/${module}" => "https://unpkg.com/@ag-community/${module}@" . AG_GRID_VERSION . "/",`,
+        module => `        "@ag-enterprise/${module}" => "https://unpkg.com/@ag-enterprise/${module}@" . AG_GRID_ENTERPRISE_VERSION . "/",`);
+
+    fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
 }
 
 module.exports = () => {
@@ -196,6 +346,10 @@ module.exports = () => {
         return next();
     });
 
+    const {agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules} = getAllModules();
+
+    updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules);
+
     // serve ag-grid, enterprise and react
     addWebpackMiddleware(app, 'webpack.community.config.js', '/dev/ag-grid-community');
     addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
@@ -203,7 +357,10 @@ module.exports = () => {
     addWebpackMiddleware(app, 'webpack.enterprise-bundle.config.js', '/dev/ag-grid-enterprise-bundle'); // mostly used by landing pages
     addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
 
-    app.use('/dev/@ag-community/client-side-row-model', express.static('../../community-modules/client-side-row-model'));
+    // spl modules
+    // add community & enterprise modules to express (for importing in the fw examples)
+    addCommunityAndEnterpriseModulesToExpress(app, communityModules, enterpriseModules);
+    updateSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
 
     // angular & vue are separate processes
     serveAndWatchAngular(app);
@@ -215,13 +372,13 @@ module.exports = () => {
     // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
 
     // regenerate examples
-    watchAndGenerateExamples();
+    watchAndGenerateExamples(communityModules, enterpriseModules);
 
     // PHP
     launchPhpCP(app);
 
     // Watch TS for errors. No actual transpiling happens here, just errors
-    launchTSCCheck();
+    launchTSCCheck(communityModules, enterpriseModules);
 
     app.listen(EXPRESS_PORT, function () {
         console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
@@ -233,7 +390,8 @@ module.exports = () => {
 const genExamples = (exampleDir) => {
     return () => {
         console.log('regenerating examples...');
-        generateExamples(() => console.log('generation done.'), exampleDir, true);
+        const {communityModules, enterpriseModules} = getAllModules();
+        generateExamples(() => console.log('generation done.'), exampleDir, true, communityModules, enterpriseModules);
     };
 };
 
@@ -246,7 +404,8 @@ if (process.argv.length >= 3) {
             chokidar.watch(`${examplePath}/**/*`, {ignored: ['**/_gen/**/*']}).on('change', genExamples(exampleDir));
         } else {
             console.log('regenerating examples...');
-            generateExamples(() => console.log('generation done.'), exampleDir, true);
+            const {communityModules, enterpriseModules} = getAllModules();
+            generateExamples(() => console.log('generation done.'), exampleDir, true, communityModules, enterpriseModules);
         }
     } else if (execFunc === 'prebuild-examples') {
         buildPackagedExamples(() => console.log("Packaged Examples Built"), exampleDir || undefined);

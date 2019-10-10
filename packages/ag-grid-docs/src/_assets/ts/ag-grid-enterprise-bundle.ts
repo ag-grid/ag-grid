@@ -19,10 +19,16 @@ if (HMR) {
 
 export * from "../../../../ag-grid-community/src/ts/main";
 
+// spl modules
+
+/* MODULES - Don't delete this line */
 import "../../../../ag-grid-enterprise/src/modules/chartsModule.ts";
-import "../../../../ag-grid-enterprise/src/modules/excelExportModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/clipboardModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/columnDropZonesModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/columnsToolPanelModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/excelExportModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/filtersToolPanelModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/rowGroupingModule.ts";
-import "../../../../ag-grid-enterprise/src/modules/viewportRowModelModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/serverSideRowModelModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/viewportRowModelModule.ts";
 import "../../../../ag-grid-enterprise/src/main.ts";

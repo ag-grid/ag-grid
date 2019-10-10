@@ -3,6 +3,7 @@ const glob = require("glob");
 
 // ensure the common module is added first
 const communityModules = glob.sync("../../community-modules/*")
+    .filter(module => module.indexOf('ag-grid') === -1)
     .map(module => `require('${module}');`);
 
 const modules = glob.sync("*Module.js")

@@ -58,6 +58,4 @@ Grid.setEnterpriseAgStackComponents([
     {componentName: 'AgRangeHandle', componentClass: RangeHandle}
 ]);
 
-import "./modules/columnDropZonesModule";
-import "./modules/columnsToolPanelModule";
 

@@ -64,7 +64,14 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
         diParams.push('private http: HttpClient');
     }
 
-    imports.push('import "@ag-community/client-side-row-model";');
+    // spl modules
+    // imports.push('import "@ag-community/ag-grid";');
+    communityModules.forEach(module => {
+        imports.push(`import "@ag-community/${module}";`);
+    });
+    enterpriseModules.forEach(module => {
+        imports.push(`import "@ag-enterprise/${module}";`);
+    });
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');

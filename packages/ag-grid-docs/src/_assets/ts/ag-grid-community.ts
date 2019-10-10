@@ -14,9 +14,10 @@ import "../../../../ag-grid-community/src/styles/ag-theme-bootstrap/sass/ag-them
 import "../../../../ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 import "../../../../ag-grid-community/src/styles/ag-theme-balham-dark/sass/ag-theme-balham-dark.scss";
 
+// spl modules
 export * from "../../../../ag-grid-community/src/ts/main";
 
-// spl todo - make generic
-import "../../../../ag-grid-community/src/ts/modules/csvExportModule.ts"
-import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts"
+/* MODULES - Don't delete this line */
+import "../../../../ag-grid-community/src/ts/modules/csvExportModule.ts";
+import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
 import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
