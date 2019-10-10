@@ -1190,7 +1190,9 @@ export class CellComp extends Component {
     private addPopupCellEditor(): void {
         const ePopupGui = this.cellEditor ? this.cellEditor.getGui() : null;
 
-        this.hideEditorPopup = this.beans.popupService.addAsModalPopup(
+        const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenGridLosesFocus();
+        this.hideEditorPopup = this.beans.popupService.addPopup(
+            useModelPopup,
             ePopupGui,
             true,
             // callback for when popup disappears
