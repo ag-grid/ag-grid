@@ -77,6 +77,7 @@ export class ChartPanel extends Component {
             if (font.color) { this.chartProxy.setTitleProperty('color', font.color); }
         };
 
+        setFont(initialFont);
         this.titleInput
             .setLabel(this.chartTranslator.translate('title'))
             .setLabelAlignment('top')
@@ -84,8 +85,6 @@ export class ChartPanel extends Component {
             .setValue(text)
             .onValueChange(value => {
                 this.chart.title.text = text;
-                setFont(initialFont);
-
                 this.chartProxy.setTitleProperty('text', value);
 
                 // only show font panel when title exists
