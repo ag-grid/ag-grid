@@ -2,7 +2,7 @@ const os = require('os');
 const fs = require('fs');
 const cp = require('child_process');
 const path = require('path');
-const run = require('gulp-run');
+const rimraf = require('rimraf');
 const express = require('express');
 const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
@@ -104,41 +104,49 @@ function serveAndWatchVue(app) {
 }
 
 function launchTSCCheck() {
-    if (!fs.existsSync('_dev')) {
-        console.log('_dev not present, creating links...');
-        mkdirp('_dev/ag-grid-community/dist');
+    // we delete the _dev folder each time we run now as we're constantly adding new modules etc
+    // this saves us having to manually delete _dev each time
+    if (fs.existsSync('_dev')) {
+        rimraf.sync("_dev");
+    }
+
+       mkdirp('_dev/ag-grid-community/dist');
         mkdirp('_dev/@ag-community/');
 
+        let linkType = 'symbolic';
         if (WINDOWS) {
             console.log('creating window links...');
-            run('create-windows-links.bat').exec();
-        } else {
-            const linkType = 'symbolic';
-            lnk('../ag-grid-community/src/main.ts', '_dev/ag-grid-community/', {
-                force: true,
-                type: linkType,
-                rename: 'main.ts'
-            });
-            lnk('../ag-grid-community/src/ts', '_dev/ag-grid-community/dist', {
-                force: true,
-                type: linkType,
-                rename: 'lib'
-            });
-            lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
-            lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
-            lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
-                force: true,
-                type: linkType,
-                rename: 'main.ts'
-            });
-            lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
-            lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
-
-            // spl modules
-            lnk('../../community-modules/common', '_dev/@ag-community', {force: true, type: linkType, rename: 'common'});
-            lnk('../../community-modules/client-side-row-model', '_dev/@ag-community', {force: true, type: linkType, rename: 'client-side-row-model'});
+            // run('create-windows-links.bat').exec();
+            linkType = 'junction';
         }
-    }
+
+        lnk('../ag-grid-community/src/main.ts', '_dev/ag-grid-community/', {
+            force: true,
+            type: linkType,
+            rename: 'main.ts'
+        });
+        lnk('../ag-grid-community/src/ts', '_dev/ag-grid-community/dist', {
+            force: true,
+            type: linkType,
+            rename: 'lib'
+        });
+        lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
+        lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
+        lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
+            force: true,
+            type: linkType,
+            rename: 'main.ts'
+        });
+        lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
+        lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
+
+        // spl modules
+        lnk('../../community-modules/client-side-row-model', '_dev/@ag-community', {
+            force: true,
+            type: linkType,
+            rename: 'client-side-row-model'
+        });
+
 
     const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
 
