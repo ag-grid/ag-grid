@@ -7,5 +7,8 @@ export enum ModuleNames {
     RowGroupingModule = "rowGroupingModule",
     CsvExportModule = "csvExportModule",
     ExcelExportModule = "excelExportModule",
-    ClipboardModule = "clipboardModule"
+    ClipboardModule = "clipboardModule",
+    ColumnToolPanelModule = "columnToolPanelModule",
+    FiltersToolPanelModule = "filtersToolPanelModule",
+    ColumnDropZonesModule = "columnDropZonesModule",
 }

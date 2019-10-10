@@ -5,11 +5,12 @@ import {
     Component,
     GridOptionsWrapper,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    ModuleLogger
 } from "ag-grid-community";
 import {PrimaryColsListPanel} from "./primaryColsListPanel";
 import {PrimaryColsHeaderPanel} from "./primaryColsHeaderPanel";
-import {ToolPanelColumnCompParams} from "../../columnToolPanel";
+import {ToolPanelColumnCompParams} from "./columnToolPanel";
 
 export interface BaseColumnItem {
     getDisplayName(): string | null;
@@ -19,6 +20,8 @@ export interface BaseColumnItem {
     isExpandable(): boolean;
     setExpanded(value: boolean): void;
 }
+
+ModuleLogger.logModuleClass('ColumnTP.PrimaryColsPanel');
 
 export class PrimaryColsPanel extends Component {
 

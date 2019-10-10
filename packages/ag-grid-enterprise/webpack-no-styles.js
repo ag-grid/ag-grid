@@ -1,7 +1,10 @@
 require('../../community-modules/client-side-row-model');
 require('./chartsModule');
 require('./clipboardModule');
+require('./columnDropZonesModule');
+require('./columnsToolPanelModule');
 require('./excelExportModule');
+require('./filtersToolPanelModule');
 require('./rowGroupingModule');
 require('./serverSideRowModelModule');
 require('./viewportRowModelModule');

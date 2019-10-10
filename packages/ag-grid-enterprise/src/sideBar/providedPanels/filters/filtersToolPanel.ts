@@ -8,7 +8,8 @@ import {
     GridApi,
     IToolPanelComp,
     IToolPanelParams,
-    RefSelector
+    RefSelector,
+    IFiltersToolPanel
 } from "ag-grid-community";
 import {FiltersToolPanelHeaderPanel} from "./filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./filtersToolPanelListPanel";
@@ -17,15 +18,6 @@ export interface ToolPanelFiltersCompParams extends IToolPanelParams {
     suppressExpandAll: boolean;
     suppressFilterSearch: boolean;
     suppressSyncLayoutWithGrid: boolean;
-}
-
-export interface IFiltersToolPanel {
-    setFilterLayout(colDefs: ColDef[]): void;
-    expandFilterGroups(groupIds?: string[]): void;
-    collapseFilterGroups(groupIds?: string[]): void;
-    expandFilters(colIds?: string[]): void;
-    collapseFilters(colIds?: string[]): void;
-    syncLayoutWithGrid(): void;
 }
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {

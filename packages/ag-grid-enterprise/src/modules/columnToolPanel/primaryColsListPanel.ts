@@ -12,16 +12,19 @@ import {
     GridOptionsWrapper,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
+    ModuleLogger
 } from "ag-grid-community";
 import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./primaryColsPanel";
-import {ToolPanelColumnCompParams} from "../../columnToolPanel";
-import {ToolPanelColDefService} from "../../../toolPanelColDefService";
+import {ToolPanelColumnCompParams} from "./columnToolPanel";
+import {ToolPanelColDefService} from "../../sideBar/providedPanels/toolPanelColDefService";
 import {EXPAND_STATE, SELECTED_STATE} from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
 export type ColumnFilterResults = { [id: string]: boolean };
+
+ModuleLogger.logModuleClass('ColumnTP.PrimaryColsListPanel');
 
 export class PrimaryColsListPanel extends Component {
 

@@ -25,7 +25,7 @@ import {
 import { MenuList } from "./menuList";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuItemMapper } from "./menuItemMapper";
-import { PrimaryColsPanel } from "../sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsPanel";
+import { PrimaryColsPanel } from "../modules/columnToolPanel/primaryColsPanel";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;

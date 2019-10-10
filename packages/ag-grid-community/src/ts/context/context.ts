@@ -21,7 +21,7 @@ export interface ContextParams {
 }
 
 export interface ComponentMeta {
-    theClass: new () => Object;
+    componentClass: new () => Object;
     componentName: string;
 }
 
@@ -85,11 +85,15 @@ export class Context {
         // put all to upper case
         const classUpperCase = classEscaped.toUpperCase();
         // finally store
-        this.componentsMappedByName[classUpperCase] = componentMeta.theClass;
+        this.componentsMappedByName[classUpperCase] = componentMeta.componentClass;
     }
 
     public createComponentFromElement(element: Element, afterPreCreateCallback?: (comp: Component) => void): Component {
         const key = element.nodeName;
+        return this.createComponentFromKey(key, afterPreCreateCallback);
+    }
+
+    public createComponentFromKey(key: string, afterPreCreateCallback?: (comp: Component) => void): Component {
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             const newComponent = new this.componentsMappedByName[key]() as Component;
             this.wireBean(newComponent, afterPreCreateCallback);

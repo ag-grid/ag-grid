@@ -19,7 +19,7 @@ import { Logger, LoggerFactory } from "./logger";
 import { ColumnUtils } from "./columnController/columnUtils";
 import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
-import {Context, ContextParams} from "./context/context";
+import {ComponentMeta, Context, ContextParams} from "./context/context";
 import { GridCore } from "./gridCore";
 import { StandardMenuFactory } from "./headerRendering/standardMenu";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
@@ -48,7 +48,7 @@ import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
 import { AlignedGridsService } from "./alignedGridsService";
 import { UserComponentFactory } from "./components/framework/userComponentFactory";
-import { UserComponentRegistry } from "./components/framework/userComponentRegistry";
+import {AgGridRegisteredComponentInput, UserComponentRegistry} from "./components/framework/userComponentRegistry";
 import { AgComponentUtils } from "./components/framework/agComponentUtils";
 import { ComponentMetadataProvider } from "./components/framework/componentMetadataProvider";
 import { Beans } from "./rendering/beans";
@@ -81,6 +81,7 @@ import {RowPositionUtils} from "./entities/rowPosition";
 import {CellPositionUtils} from "./entities/cellPosition";
 import {ModuleLogger} from "./utils/moduleLogger";
 import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
+import {IComponent} from "./interfaces/iComponent";
 
 export interface GridParams {
     // used by Web Components
@@ -174,12 +175,25 @@ export class Grid {
         const contextLogger = new Logger('Context', () => contextParams.debug);
         this.context = new Context(contextParams, contextLogger);
 
+        this.registerModuleUserComponents();
+
         const gridCore = new GridCore();
         this.context.wireBean(gridCore);
 
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);
         this.logger.log(`initialised successfully, enterprise = ${enterprise}`);
+    }
+
+    private registerModuleUserComponents(): void {
+        const userComponentRegistry: UserComponentRegistry = this.context.getBean('userComponentRegistry');
+
+        const moduleUserComps: {componentName: string, componentClass: AgGridRegisteredComponentInput<IComponent<any>>}[] = this.extractModuleEntity(Grid.modulesToInclude,
+            (module) => module.userComponents ? module.userComponents : []);
+
+        moduleUserComps.forEach( compMeta => {
+            userComponentRegistry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
+        } );
     }
 
     private createExternalBeans(enterprise: boolean, eGridDiv: HTMLElement, params: GridParams): any {
@@ -206,30 +220,35 @@ export class Grid {
     }
 
     private createAgStackComponentsList(): any[] {
-        let components = [
-            { componentName: 'AgCheckbox', theClass: AgCheckbox },
-            { componentName: 'AgRadioButton', theClass: AgRadioButton },
-            { componentName: 'AgToggleButton', theClass: AgToggleButton },
-            { componentName: 'AgInputTextField', theClass: AgInputTextField},
-            { componentName: 'AgInputTextArea', theClass: AgInputTextArea},
-            { componentName: 'AgInputNumberField', theClass: AgInputNumberField},
-            { componentName: 'AgInputRange', theClass: AgInputRange},
-            { componentName: 'AgSelect', theClass: AgSelect},
-            { componentName: 'AgSlider', theClass: AgSlider},
-            { componentName: 'AgAngleSelect', theClass: AgAngleSelect },
-            { componentName: 'AgColorPicker', theClass: AgColorPicker },
-            { componentName: 'AgGridComp', theClass: GridPanel },
-            { componentName: 'AgHeaderRoot', theClass: HeaderRootComp },
-            { componentName: 'AgPagination', theClass: PaginationComp },
-            { componentName: 'AgOverlayWrapper', theClass: OverlayWrapperComponent },
-            { componentName: 'AgGroupComponent', theClass: AgGroupComponent },
-            { componentName: 'AgPanel', theClass: AgPanel },
-            { componentName: 'AgDialog', theClass: AgDialog }
+        let components: ComponentMeta[] = [
+            { componentName: 'AgCheckbox', componentClass: AgCheckbox },
+            { componentName: 'AgRadioButton', componentClass: AgRadioButton },
+            { componentName: 'AgToggleButton', componentClass: AgToggleButton },
+            { componentName: 'AgInputTextField', componentClass: AgInputTextField},
+            { componentName: 'AgInputTextArea', componentClass: AgInputTextArea},
+            { componentName: 'AgInputNumberField', componentClass: AgInputNumberField},
+            { componentName: 'AgInputRange', componentClass: AgInputRange},
+            { componentName: 'AgSelect', componentClass: AgSelect},
+            { componentName: 'AgSlider', componentClass: AgSlider},
+            { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
+            { componentName: 'AgColorPicker', componentClass: AgColorPicker },
+            { componentName: 'AgGridComp', componentClass: GridPanel },
+            { componentName: 'AgHeaderRoot', componentClass: HeaderRootComp },
+            { componentName: 'AgPagination', componentClass: PaginationComp },
+            { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
+            { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
+            { componentName: 'AgPanel', componentClass: AgPanel },
+            { componentName: 'AgDialog', componentClass: AgDialog }
         ];
 
         if (Grid.enterpriseAgStackComponents) {
             components = components.concat(Grid.enterpriseAgStackComponents);
         }
+
+        const moduleAgStackComps = this.extractModuleEntity(Grid.modulesToInclude,
+            (module) => module.agStackComponents ? module.agStackComponents : []);
+
+        components = components.concat(moduleAgStackComps);
 
         return components;
     }

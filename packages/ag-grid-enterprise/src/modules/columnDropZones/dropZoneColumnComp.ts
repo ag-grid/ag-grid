@@ -21,11 +21,14 @@ import {
     RefSelector,
     _,
     Optional,
-    IAggFuncService
+    IAggFuncService,
+    ModuleLogger
 } from "ag-grid-community";
-import { VirtualList } from "../../../../rendering/virtualList";
+import { VirtualList } from "../../rendering/virtualList";
 
 export interface ColumnRemoveEvent extends AgEvent {}
+
+ModuleLogger.logModuleClass('DropZones.DropZoneColumnComp');
 
 export class DropZoneColumnComp extends Component {
 

@@ -9,13 +9,17 @@ import {
     GridOptionsWrapper,
     IToolPanelComp,
     IToolPanelParams,
-    ModuleNames
+    ModuleNames,
+    IColumnToolPanel,
+    ModuleLogger
 } from "ag-grid-community";
-import {PivotModePanel} from "./panels/pivotModePanel";
-import {RowGroupDropZonePanel} from "./panels/rowGroupDropZonePanel";
-import {ValuesDropZonePanel} from "./panels/valueDropZonePanel";
-import {PivotDropZonePanel} from "./panels/pivotDropZonePanel";
-import {PrimaryColsPanel} from "./panels/primaryColsPanel/primaryColsPanel";
+import {PivotModePanel} from "./pivotModePanel";
+import {RowGroupDropZonePanel} from "../columnDropZones/rowGroupDropZonePanel";
+import {ValuesDropZonePanel} from "../columnDropZones/valueDropZonePanel";
+import {PivotDropZonePanel} from "../columnDropZones/pivotDropZonePanel";
+import {PrimaryColsPanel} from "./primaryColsPanel";
+
+ModuleLogger.logModuleClass('ColumnTP.ColumnToolPanel');
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;
@@ -28,13 +32,6 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressColumnExpandAll: boolean;
     contractColumnSelection: boolean;
     suppressSyncLayoutWithGrid: boolean;
-}
-
-export interface IColumnToolPanel {
-    expandColumnGroups(groupIds?: string[]): void;
-    collapseColumnGroups(groupIds?: string[]): void;
-    setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void;
-    syncLayoutWithGrid(): void;
 }
 
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {

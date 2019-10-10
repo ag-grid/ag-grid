@@ -8,6 +8,7 @@ import {
     IComponent,
     ISideBar,
     IToolPanel,
+    ModuleNames,
     PostConstruct,
     RefSelector,
     SideBarDef,
@@ -86,6 +87,18 @@ export class SideBarComp extends Component implements ISideBar {
                 console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
                 return;
             }
+
+            // helpers, in case user doesn't have the right module loaded
+            const columnToolPanelModuleMissing = !this.getContext().isModuleRegistered(ModuleNames.ColumnToolPanelModule);
+            if (def.toolPanel==='agColumnsToolPanel' && columnToolPanelModuleMissing) {
+                console.warn('ag-Grid: tried to use Column Tool Panel, but column tool panel module is missing.');
+                return;
+            }
+            // const filtersToolPanelModuleMissing = !this.getContext().isModuleRegistered(ModuleNames.FiltersToolPanelModule);
+            // if (def.toolPanel==='agFiltersToolPanel' && filtersToolPanelModuleMissing) {
+            //     console.warn('ag-Grid: tried to use Filters Tool Panel, but filters tool panel module is missing.');
+            //     return;
+            // }
 
             const wrapper = new ToolPanelWrapper();
             this.getContext().wireBean(wrapper);

@@ -31,6 +31,7 @@ export {initialiseAgGridWithWebComponents} from "./components/agGridWebComponent
 export {BeanStub} from "./context/beanStub";
 export {
     Context,
+    ComponentMeta,
     Autowired,
     PostConstruct,
     PreConstruct,
@@ -145,6 +146,8 @@ export {IStatusBarService} from "./interfaces/iStatusBarService";
 
 // tool panel components
 export {IToolPanel, IToolPanelComp, IToolPanelParams} from "./interfaces/iToolPanel";
+export {IColumnToolPanel} from "./interfaces/iColumToolPanel";
+export {IFiltersToolPanel} from "./interfaces/iFiltersToolPanel";
 
 // overlays
 export {ILoadingOverlayComp, ILoadingOverlayParams} from "./rendering/overlays/loadingOverlayComponent";

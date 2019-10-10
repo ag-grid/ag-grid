@@ -8,12 +8,15 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     PreConstruct,
-    RefSelector
+    RefSelector,
+    ModuleLogger
 } from "ag-grid-community";
-import {ToolPanelColumnCompParams} from "../../columnToolPanel";
+import {ToolPanelColumnCompParams} from "./columnToolPanel";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 export enum SELECTED_STATE { CHECKED, UNCHECKED, INDETERMINATE }
+
+ModuleLogger.logModuleClass('ColumnTP.PrimaryColsHeaderPanel');
 
 export class PrimaryColsHeaderPanel extends Component {
 
