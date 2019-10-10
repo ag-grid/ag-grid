@@ -1,12 +1,12 @@
 @echo off
 
-# in windows, the linked folders inside the _dev folder don't work correctly.
-# to get the build working, delete the contents of the _dev folder and
-# run this script instead.
+rem in windows, the linked folders inside the _dev folder don't work correctly.
+rem to get the build working, delete the contents of the _dev folder and
+rem run this script instead.
 
 mkdir _dev\ag-grid
 mkdir _dev\ag-grid\dist
-mkdir _dev/@ag-community/
+mkdir "_dev\@ag-community"
 
 mklink /J _dev\ag-grid-angular ..\ag-grid-angular
 mklink /J _dev\ag-grid-enterprise ..\ag-grid-enterprise
