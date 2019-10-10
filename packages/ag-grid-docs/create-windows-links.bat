@@ -16,4 +16,4 @@ mklink /J _dev\ag-grid-vue ..\ag-grid-vue
 mklink _dev\ag-grid\main.ts ..\ag-grid\exports.ts
 mklink /J _dev\ag-grid\dist\lib ..\ag-grid\src\ts
 
-mklink /J "_dev/@ag-community/client-side-row-model" ..\..\community-modules\client-side-row-model
+mklink /J "_dev\@ag-community\client-side-row-model" ..\..\community-modules\client-side-row-model
