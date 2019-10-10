@@ -315,14 +315,85 @@ interface IColumnToolPanel {
 
     <h2>Custom Column Layout</h2>
 
-    <p style="color: red">
-        TODO: Finalise Docs and Example after review
+    <p>
+        The order of columns in the Columns Tool Panel is derived from the <code>columnDefs</code> supplied in the
+        grid options, and is kept in sync with the grid when columns are moved by default. However custom column layouts
+        can also be defined by invoking the following method on the Columns Tool Panel Instance:
+    </p>
 
+<snippet>
+interface IColumnToolPanel {
+    setColumnLayout(colDefs: ColDef[]): void;
+    ... // other methods
+}
+</snippet>
+
+    <p>
+        Notice that the same <a href="../javascript-grid-column-definitions/#column-definitions">Column Definitions</a>
+        that are supplied in the grid options are also passed to <code>setColumnLayout(colDefs)</code>.
     </p>
 
     <p>
-        Note: <code>syncLayoutWithGrid=false</code>
+        The code snippet below shows how to set custom column layouts using the Columns Tool Panel instance:
     </p>
+
+<snippet>
+
+// original column definitions supplied to the grid
+gridOptions.columnDefs = [
+    { field: "a" },
+    { field: "b" },
+    { field: "c" }
+];
+
+// custom tool panel column definitions
+var customToolPanelColumnDefs = [
+    {
+        headerName: 'Group 1', // group doesn't appear in grid
+        children: [
+            { field: "c" }, // custom column order with column "b" omitted
+            { field: "a" }
+        ]
+    }
+];
+
+// lookup Columns Tool Panel instance by id
+var columnsToolPanelId = 'columns'; // default columns instance id
+var columnsToolPanel = gridOptions.api.getToolPanelInstance(columnsToolPanelId);
+
+// set custom Columns Tool Panel layout
+columnsToolPanel.setColumnLayout(customToolPanelColumnDefs);
+
+</snippet>
+
+    <p>
+        Notice from the snippet above that it's possible to define column groups in the tool panel that don't exist
+        in the grid. Also note that columns can be omitted or positioned in a different order however note that all
+        referenced columns must already exist in the grid.
+    </p>
+
+    <note>
+        When providing a custom layout it is recommend to enable <code>suppressSyncLayoutWithGrid</code> in the
+        tool panel params to prevent users changing the layout when moving columns in the grid.
+    </note>
+
+    <p>
+        The example below shows two custom layouts for the Columns Tool Panel. Note the following:
+    </p>
+
+    <ul class="content">
+        <li>When the grid is initialised the column layout in the Columns Tool Panel matches what is supplied to the
+            grid in <code>gridOptions.columnDefs</code>.
+        </li>
+        <li>Clicking <b>Custom Sort Layout</b> invokes <code>setColumnLayout(colDefs)</code> with a list of column
+            definitions arranged in ascending order.
+        </li>
+        <li>Clicking <b>Custom Group Layout</b> invokes <code>setColumnLayout(colDefs)</code> with a list of column
+            definitions containing groups that don't appear in the grid.
+        </li>
+        <li>Moving columns in the grid won't affect the custom layouts as <code>suppressSyncLayoutWithGrid</code> is enabled.
+        </li>
+    </ul>
 
     <?= example('Custom Column Layout', 'custom-layout', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
