@@ -333,6 +333,7 @@ gulp.task('scss', series('clean', 'scss-no-clean'));
 gulp.task('scss-watch', series('scss-no-clean', scssWatch));
 
 // tsc & scss/css related tasks
+gulp.task('tsc-scss-clean', series('clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css'))));
 gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));
 
 // webpack related tasks
@@ -346,6 +347,7 @@ gulp.task('webpack-minify-noStyle', series('clean', 'tsc-scss-no-clean', webpack
 gulp.task('webpack-minify-noStyle-no-clean', series(webpackTask.bind(null, true, false)));
 
 // for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
+gulp.task('webpack-all-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean'));
 gulp.task('webpack-all', series('clean', 'tsc-scss-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
 gulp.task('watch', series('webpack', watch));
 
