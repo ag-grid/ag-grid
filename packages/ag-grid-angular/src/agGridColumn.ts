@@ -123,7 +123,8 @@ export class AgGridColumn {
     @Input() public cellRendererSelector: any;
     @Input() public cellEditorSelector: any;
     @Input() public suppressCellFlash: any;
-    @Input() public suppressToolPanel: any;
+    @Input() public suppressColumnsToolPanel: any;
+    @Input() public suppressFiltersToolPanel: any;
     @Input() public openByDefault: any;
     @Input() public marryChildren: any;
     @Input() public hide: any;

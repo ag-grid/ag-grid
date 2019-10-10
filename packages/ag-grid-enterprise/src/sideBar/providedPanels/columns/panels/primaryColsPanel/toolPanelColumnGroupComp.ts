@@ -174,7 +174,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
                 this.actionUnCheckedReduce(childColumns);
             }
         } else {
-            const isAllowedColumn = (c: Column) => !c.getColDef().lockVisible && !c.getColDef().suppressToolPanel;
+            const isAllowedColumn = (c: Column) => !c.getColDef().lockVisible && !c.getColDef().suppressColumnsToolPanel;
             const allowedColumns = childColumns.filter(isAllowedColumn);
 
             const filterResults = this.getFilterResultsCallback();
@@ -269,8 +269,8 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         for (let i = 0; i < len; i++) {
             const column = leafColumns[i];
 
-            // ignore lock visible columns and columns set to 'suppressToolPanel'
-            let ignore = column.getColDef().lockVisible || column.getColDef().suppressToolPanel;
+            // ignore lock visible columns and columns set to 'suppressColumnsToolPanel'
+            let ignore = column.getColDef().lockVisible || column.getColDef().suppressColumnsToolPanel;
             const type = this.isColumnVisible(column, pivotMode) ? 'visible' : 'hidden';
 
             count[type]++;

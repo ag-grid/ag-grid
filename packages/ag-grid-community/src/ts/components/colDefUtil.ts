@@ -69,7 +69,8 @@ export class ColDefUtil {
 
     public static BOOLEAN_PROPERTIES = [
         'suppressCellFlash',
-        'suppressToolPanel',
+        'suppressColumnsToolPanel',
+        'suppressFiltersToolPanel',
         'openByDefault',
         'marryChildren',
         'hide',
