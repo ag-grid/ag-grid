@@ -3,7 +3,6 @@ require('../../community-modules/csv-export');
 require('../../community-modules/infinite-row-model');
 require('./chartsModule');
 require('./clipboardModule');
-require('./columnDropZonesModule');
 require('./columnsToolPanelModule');
 require('./filtersToolPanelModule');
 require('./menuModule');

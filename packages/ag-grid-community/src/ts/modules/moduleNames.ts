@@ -10,7 +10,6 @@ export enum ModuleNames {
     ClipboardModule = "clipboardModule",
     ColumnToolPanelModule = "columnToolPanelModule",
     FiltersToolPanelModule = "filtersToolPanelModule",
-    ColumnDropZonesModule = "columnDropZonesModule",
     MenuModule = "menuModule",
     SetFilterModule = "setFilterModule",
     StatusBarModule = "statusBarModule",
