@@ -33,6 +33,40 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Filter Tool Panel', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
+    <h2>Suppress Options</h2>
+
+    <p>
+        It is possible to remove items from the Filters Tool Panel. Items are suppressed by setting one or more of
+        the following <code>componentParams</code> whenever you are using the agFiltersToolPanel component properties
+        to <code>true</code>:
+    </p>
+
+    <ul class="content">
+        <li><code>suppressExpandAll</code>: To suppress Expand / Collapse All.</li>
+        <li><code>suppressFilterSearch</code>: To suppress the Filter Search.</li>
+    </ul>
+
+    <p>
+        To remove a particular column / filter from the tool panel, set the column property
+        <code>suppressFiltersToolPanel</code> to <code>true</code>.
+    </p>
+
+    <p>
+        The example below demonstrates the suppress options described above. Note the following:
+        <ul>
+            <li>
+                <b>Expand / Collapse All</b> and <b>Filter Search</b> are hidden as <code>suppressExpandAll</code> and
+                <code>suppressFilterSearch</code> are both set to <code>true</code>.
+            </li>
+            <li>
+                The date column / filter is hidden from the tool panel using: <code>colDef.suppressFiltersToolPanel=true</code>.
+            </li>
+
+        </ul>
+    </p>
+
+    <?= example('Suppress Options', 'suppress-options', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
     <h2>Filter Instances</h2>
 
     <p>
