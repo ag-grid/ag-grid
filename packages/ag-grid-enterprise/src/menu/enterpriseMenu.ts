@@ -1,4 +1,5 @@
 import {
+    _,
     AgEvent,
     Autowired,
     Bean,
@@ -13,19 +14,19 @@ import {
     GridApi,
     GridOptionsWrapper,
     IMenuFactory,
+    IPrimaryColsPanel,
     IRowModel,
     MenuItemDef,
+    ModuleNames,
     PopupService,
     PostConstruct,
     Promise,
     TabbedItem,
-    TabbedLayout,
-    _
+    TabbedLayout
 } from "ag-grid-community";
-import { MenuList } from "./menuList";
-import { MenuItemComponent } from "./menuItemComponent";
-import { MenuItemMapper } from "./menuItemMapper";
-import { PrimaryColsPanel } from "../modules/columnToolPanel/primaryColsPanel";
+import {MenuList} from "./menuList";
+import {MenuItemComponent} from "./menuItemComponent";
+import {MenuItemMapper} from "./menuItemMapper";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -166,7 +167,7 @@ export class EnterpriseMenu extends BeanStub {
     private column: Column;
     private mainMenuList: MenuList;
 
-    private columnSelectPanel: PrimaryColsPanel;
+    private columnSelectPanel: IPrimaryColsPanel;
 
     private tabItemFilter: TabbedItem;
     private tabItemGeneral: TabbedItem;
@@ -213,7 +214,16 @@ export class EnterpriseMenu extends BeanStub {
 
         return this.column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT)
             .filter(tabName => this.isValidMenuTabItem(tabName))
-            .filter(tabName => this.isNotSuppressed(tabName));
+            .filter(tabName => this.isNotSuppressed(tabName))
+            .filter(tabName => this.isModuleLoaded(tabName));
+    }
+
+    private isModuleLoaded(menuTabName: string):boolean {
+        if (menuTabName===EnterpriseMenu.TAB_COLUMNS) {
+            return this.getContext().isModuleRegistered(ModuleNames.ColumnToolPanelModule);
+        } else {
+            return true;
+        }
     }
 
     private isValidMenuTabItem(menuTabName: string): boolean {
@@ -434,7 +444,9 @@ export class EnterpriseMenu extends BeanStub {
         const eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
-        this.columnSelectPanel = new PrimaryColsPanel(false, {
+        this.columnSelectPanel = this.getContext().createComponent('AG-PRIMARY-COLS') as any as IPrimaryColsPanel;
+
+        this.columnSelectPanel.init(false, {
             suppressValues: false,
             suppressPivots: false,
             suppressRowGroups: false,
@@ -447,7 +459,6 @@ export class EnterpriseMenu extends BeanStub {
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi
         });
-        this.getContext().wireBean(this.columnSelectPanel);
 
         // notify header comp with initial expand / selection state
         this.columnSelectPanel.notifyListeners();

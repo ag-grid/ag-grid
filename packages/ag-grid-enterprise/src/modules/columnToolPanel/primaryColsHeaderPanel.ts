@@ -9,9 +9,9 @@ import {
     PostConstruct,
     PreConstruct,
     RefSelector,
-    ModuleLogger
+    ModuleLogger,
+    ToolPanelColumnCompParams
 } from "ag-grid-community";
-import {ToolPanelColumnCompParams} from "./columnToolPanel";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 export enum SELECTED_STATE { CHECKED, UNCHECKED, INDETERMINATE }

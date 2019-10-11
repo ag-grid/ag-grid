@@ -87,7 +87,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.addComponent(this.pivotModePanel);
         }
 
-        this.primaryColsPanel = new PrimaryColsPanel(true, this.params);
+        this.primaryColsPanel = this.getContext().createComponent('AG-PRIMARY-COLS') as PrimaryColsPanel;
+        this.primaryColsPanel.init(true, this.params);
         this.addComponent(this.primaryColsPanel);
 
         if (this.isRowGroupingModuleLoaded()) {

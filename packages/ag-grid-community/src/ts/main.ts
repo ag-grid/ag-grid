@@ -145,7 +145,7 @@ export {StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams} from
 export {IStatusBarService} from "./interfaces/iStatusBarService";
 
 // tool panel components
-export {IToolPanel, IToolPanelComp, IToolPanelParams} from "./interfaces/iToolPanel";
+export {IToolPanel, IToolPanelComp, IToolPanelParams, IPrimaryColsPanel, ToolPanelColumnCompParams} from "./interfaces/iToolPanel";
 export {IColumnToolPanel} from "./interfaces/iColumToolPanel";
 export {IFiltersToolPanel} from "./interfaces/iFiltersToolPanel";
 

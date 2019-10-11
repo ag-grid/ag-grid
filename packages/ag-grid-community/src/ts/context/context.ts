@@ -90,10 +90,10 @@ export class Context {
 
     public createComponentFromElement(element: Element, afterPreCreateCallback?: (comp: Component) => void): Component {
         const key = element.nodeName;
-        return this.createComponentFromKey(key, afterPreCreateCallback);
+        return this.createComponent(key, afterPreCreateCallback);
     }
 
-    public createComponentFromKey(key: string, afterPreCreateCallback?: (comp: Component) => void): Component {
+    public createComponent(key: string, afterPreCreateCallback?: (comp: Component) => void): Component {
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             const newComponent = new this.componentsMappedByName[key]() as Component;
             this.wireBean(newComponent, afterPreCreateCallback);

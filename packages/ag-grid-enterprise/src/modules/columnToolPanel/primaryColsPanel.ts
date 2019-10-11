@@ -4,13 +4,13 @@ import {
     ColGroupDef,
     Component,
     GridOptionsWrapper,
-    PostConstruct,
+    ToolPanelColumnCompParams,
     RefSelector,
-    ModuleLogger
+    ModuleLogger,
+    IPrimaryColsPanel
 } from "ag-grid-community";
 import {PrimaryColsListPanel} from "./primaryColsListPanel";
 import {PrimaryColsHeaderPanel} from "./primaryColsHeaderPanel";
-import {ToolPanelColumnCompParams} from "./columnToolPanel";
 
 export interface BaseColumnItem {
     getDisplayName(): string | null;
@@ -23,7 +23,7 @@ export interface BaseColumnItem {
 
 ModuleLogger.logModuleClass('ColumnTP.PrimaryColsPanel');
 
-export class PrimaryColsPanel extends Component {
+export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
 
     private static TEMPLATE =
         `<div class="ag-column-select-panel">
@@ -39,18 +39,15 @@ export class PrimaryColsPanel extends Component {
     @RefSelector('primaryColsListPanel')
     private primaryColsListPanel: PrimaryColsListPanel;
 
-    private readonly allowDragging: boolean;
-    private readonly params: ToolPanelColumnCompParams;
+    private allowDragging: boolean;
+    private params: ToolPanelColumnCompParams;
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
-    constructor(allowDragging: boolean, params: ToolPanelColumnCompParams) {
-        super(PrimaryColsPanel.TEMPLATE);
+    public init(allowDragging: boolean, params: ToolPanelColumnCompParams): void {
+        this.setTemplate(PrimaryColsPanel.TEMPLATE);
         this.allowDragging = allowDragging;
         this.params = params;
-    }
 
-    @PostConstruct
-    public init(): void {
         this.primaryColsHeaderPanel.init(this.params);
         this.primaryColsListPanel.init(this.params, this.allowDragging);
 
