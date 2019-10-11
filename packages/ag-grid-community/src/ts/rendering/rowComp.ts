@@ -308,8 +308,7 @@ export class RowComp extends Component {
     }
 
     private setupRowContainers(): void {
-        const isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
-        const isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
+        const isFullWidthCell = this.rowNode.isFullWidthCell();
         const isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
         const pivotMode = this.beans.columnController.isPivotMode();
         // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking

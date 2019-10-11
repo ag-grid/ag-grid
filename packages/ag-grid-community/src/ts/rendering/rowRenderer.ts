@@ -1133,8 +1133,13 @@ export class RowRenderer extends BeanStub {
 
             const rowNode = this.rowPositionUtils.getRowNode(nextCell);
 
-            // we do not allow focusing on full width rows, this includes details rows
+            // we do not allow focusing on detail rows
             if (rowNode.detail) {
+                continue;
+            }
+
+            // we do not allow focusing on full width rows
+            if (rowNode.isFullWidthCell()) {
                 continue;
             }
 
