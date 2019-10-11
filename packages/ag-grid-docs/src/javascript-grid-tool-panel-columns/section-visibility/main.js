@@ -1,19 +1,20 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, suppressToolPanel: true},
-    {headerName: "Age", field: "age", width: 90, suppressToolPanel: true},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    {headerName: "Name", field: "athlete", width: 150},
+    {field: "age", width: 90, enableRowGroup: true},
+    {field: "country", width: 120},
+    {field: "year", width: 90},
+    {field: "date", width: 110, suppressColumnsToolPanel: true},
+    {field: "sport", width: 110},
+    {field: "gold", width: 100, aggFunc: 'sum'},
+    {field: "silver", width: 100, aggFunc: 'sum'},
+    {field: "bronze", width: 100, aggFunc: 'sum'},
+    {field: "total", width: 100, aggFunc: 'sum'}
 ];
 
 var gridOptions = {
     defaultColDef: {
-        sortable: true
+        sortable: true,
+        enablePivot: true
     },
     columnDefs: columnDefs,
     sideBar: {
@@ -35,9 +36,28 @@ var gridOptions = {
             }
         }],
         defaultToolPanel: 'columns'
-    },
-
+    }
 };
+
+function showPivotModeSection() {
+    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
+    columnToolPanel.setPivotModeSectionVisible(true);
+}
+
+function showRowGroupsSection() {
+    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
+    columnToolPanel.setRowGroupsSectionVisible(true);
+}
+
+function showValuesSection() {
+    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
+    columnToolPanel.setValuesSectionVisible(true);
+}
+
+function showPivotSection() {
+    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
+    columnToolPanel.setPivotSectionVisible(true);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

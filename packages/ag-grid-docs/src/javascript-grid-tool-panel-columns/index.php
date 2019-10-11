@@ -140,7 +140,7 @@ include '../documentation-main/documentation_header.php';
         <img src="./screenshot.png" alt="ag-Grid Tool Panel Section" />
     </p>
 
-    <h2>Suppress Sections</h2>
+    <h2>Section Visibility</h2>
 
     <p>
         It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the
@@ -164,27 +164,48 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The example below shows the tool panel demonstrating the suppress options above. The following can
-        be noted:
+        It is also possible to show and hide the sections of the Column Tool Panel using the following methods provided
+        in the <code>IColumnToolPanel</code> interface:
+    </p>
+
+<snippet>
+interface IColumnToolPanel {
+    setPivotModeSectionVisible(visible: boolean): void;
+    setRowGroupsSectionVisible(visible: boolean): void;
+    setValuesSectionVisible(visible: boolean): void;
+    setPivotSectionVisible(visible: boolean): void;
+    ... // other methods
+}
+</snippet>
+
+    <p>
+        The example below demonstrates the suppress options / methods described above. Note the following:
         <ul>
             <li>
                 The following sections are not present in the tool panel: Row Groups, Values, Column Labels,
                 Pivot Mode, Side Buttons, Column Filter, Select / Un-select All, Expand / Collapse All.
             </li>
             <li>
-                The columns Athlete and Age are also not present in the tool panel.
+                The date column hidden from the tool panel using: <code>colDef.suppressColumnsToolPanel=true</code>.
             </li>
+            <li>Clicking <b>Show Pivot Mode Section</b> invokes <code>setPivotModeSectionVisible(true)</code>
+                on the column tool panel instance.</li>
+            <li>Clicking <b>Show Row Groups Section</b> invokes <code>showRowGroupsSection(true)</code>
+                on the column tool panel instance.</li>
+            <li>Clicking <b>Show Values Section</b> invokes <code>showValuesSection(true)</code>
+                on the column tool panel instance.</li>
+            <li>Clicking <b>Show Pivot Section</b> invokes <code>showPivotSection(true)</code>
+                on the column tool panel instance.</li>
         </ul>
     </p>
 
-    <?= example('Suppress Panels', 'suppress', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
-
+    <?= example('Section Visibility', 'section-visibility', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Styling Columns</h2>
 
     <p>
         You can add a CSS class to the columns in the tool panel by specifying <code>toolPanelHeaderClass</code>
-        in the column definintion as follows:
+        in the column definition as follows:
         <snippet>
 colDefs = {
     // set as string
