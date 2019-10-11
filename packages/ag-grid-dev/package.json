@@ -6,10 +6,12 @@
   "scripts": {
     "postinstall": "npm run build:bundle-size",
     "test": "run-script-os",
+    "test:win32": "",
     "test:darwin:linux": "npm run test:modules && npm run test:bundle-size",
     "test:modules": "cd tests && sh ./runTests.sh",
     "test:bundle-size": "cd bundle-size-tests && sh ./compareBundleSizes.sh",
     "build": "run-script-os",
+    "build:win32": "",
     "build:darwin:linux": "npm run build:moduleParser && npm run build:test-input && npm run build:bundles",
     "build:bundle-size": "cd bundle-size-tests && sh ./downloadCurrentBundles.sh",
     "build:test-input": "cd test-config && node buildTests.js",
