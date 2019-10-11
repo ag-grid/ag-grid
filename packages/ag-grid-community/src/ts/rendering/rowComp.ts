@@ -883,7 +883,6 @@ export class RowComp extends Component {
                 if (this.isAlive()) {
                     const gui = cellRenderer.getGui();
                     eRow.appendChild(gui);
-                    this.elementOrderChanged = true;
                     cellRendererCallback(cellRenderer);
                 } else {
                     if (cellRenderer.destroy) {
