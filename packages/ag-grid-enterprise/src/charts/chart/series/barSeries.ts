@@ -87,6 +87,7 @@ export class BarSeries extends Series<CartesianChart> {
 
     readonly label: BarSeriesLabel = (() => {
         const label = new BarSeriesLabel();
+        label.enabled = false;
         label.onChange = this.update.bind(this);
         return label;
     })();
