@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "npm run build:bundle-size",
-    "test": "npm run test:modules && npm run test:bundle-size",
+    "test": "run-script-os",
+    "test:darwin:linux": "npm run test:modules && npm run test:bundle-size",
     "test:modules": "cd tests && sh ./runTests.sh",
     "test:bundle-size": "cd bundle-size-tests && sh ./compareBundleSizes.sh",
     "build:bundle-size": "cd bundle-size-tests && sh ./downloadCurrentBundles.sh",
@@ -25,6 +26,9 @@
   },
   "homepage": "https://github.com/seanlandsman/ag-grid-modules-test#readme",
   "devDependencies": {
+    "@ag-community/client-side-row-model": "^21.2.0",
+    "@ag-community/csv-export": "^21.2.0",
+    "@ag-community/infinite-row-model": "^21.2.0",
     "@types/node": "^11.12.2",
     "ag-grid-community": "^21.2.0",
     "ag-grid-enterprise": "^21.2.0",
@@ -37,6 +41,7 @@
     "node-sass": "^4.6.0",
     "postcss-loader": "3.0.0",
     "postcss-scss": "2.0.0",
+    "run-script-os": "^1.0.7",
     "sass-loader": "^6.0.6",
     "source-map-loader": "0.2.4",
     "style-loader": "0.23.1",
