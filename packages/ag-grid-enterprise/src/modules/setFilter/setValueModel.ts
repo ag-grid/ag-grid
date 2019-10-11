@@ -12,8 +12,11 @@ import {
     TextFilter,
     TextFormatter,
     ValueFormatterService,
-    _
+    _,
+    ModuleLogger
 } from "ag-grid-community";
+
+ModuleLogger.logModuleClass('SetFilter.SetValueModel');
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for

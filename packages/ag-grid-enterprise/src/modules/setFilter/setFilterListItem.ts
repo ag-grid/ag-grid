@@ -11,8 +11,11 @@ import {
     PostConstruct,
     Promise,
     UserComponentFactory,
-    ValueFormatterService
+    ValueFormatterService,
+    ModuleLogger
 } from "ag-grid-community";
+
+ModuleLogger.logModuleClass('SetFilter.SetFilterListItem');
 
 export interface SelectedEvent extends AgEvent {
 }

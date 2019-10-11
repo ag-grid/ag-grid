@@ -1,20 +1,21 @@
-import { ExternalPromise, Promise, _ } from "../utils";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { PopupService } from "../widgets/popupService";
-import { ValueService } from "../valueService/valueService";
-import { ColumnController } from "../columnController/columnController";
-import { ColumnApi } from "../columnController/columnApi";
-import { RowNode } from "../entities/rowNode";
-import { Column } from "../entities/column";
-import { Autowired, Bean, Context, PostConstruct, PreDestroy } from "../context/context";
-import { IRowModel } from "../interfaces/iRowModel";
-import { EventService } from "../eventService";
-import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent } from "../events";
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "../interfaces/iFilter";
-import { ColDef, GetQuickFilterTextParams } from "../entities/colDef";
-import { GridApi } from "../gridApi";
-import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { GridCore } from "../gridCore";
+import {_, ExternalPromise, Promise} from "../utils";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {PopupService} from "../widgets/popupService";
+import {ValueService} from "../valueService/valueService";
+import {ColumnController} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
+import {RowNode} from "../entities/rowNode";
+import {Column} from "../entities/column";
+import {Autowired, Bean, Context, PostConstruct, PreDestroy} from "../context/context";
+import {IRowModel} from "../interfaces/iRowModel";
+import {EventService} from "../eventService";
+import {ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent} from "../events";
+import {IDoesFilterPassParams, IFilterComp, IFilterParams} from "../interfaces/iFilter";
+import {ColDef, GetQuickFilterTextParams} from "../entities/colDef";
+import {GridApi} from "../gridApi";
+import {UserComponentFactory} from "../components/framework/userComponentFactory";
+import {GridCore} from "../gridCore";
+import {ModuleNames} from "../modules/moduleNames";
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -458,7 +459,7 @@ export class FilterManager {
     private createFilterInstance(column: Column, $scope: any): Promise<IFilterComp> {
         let defaultFilter: string = 'agTextColumnFilter';
 
-        if (this.gridOptionsWrapper.isEnterprise()) {
+        if (this.context.isModuleRegistered(ModuleNames.SetFilterModule)) {
             defaultFilter = 'agSetColumnFilter';
         }
 
@@ -487,7 +488,9 @@ export class FilterManager {
 
         const res = this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);
 
-        res.then(r => filterInstance = r );
+        if (res) {
+            res.then(r => filterInstance = r );
+        }
 
         return res;
     }
@@ -526,7 +529,9 @@ export class FilterManager {
 
         filterWrapper.filterPromise = this.createFilterInstance(column, filterWrapper.scope);
 
-        this.putIntoGui(filterWrapper, source);
+        if (filterWrapper.filterPromise) {
+            this.putIntoGui(filterWrapper, source);
+        }
 
         return filterWrapper;
     }

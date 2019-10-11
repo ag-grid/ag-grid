@@ -7,8 +7,11 @@ import {
     PostConstruct,
     TooltipManager,
     _,
-    RefSelector
+    RefSelector,
+    ModuleLogger
 } from "ag-grid-community";
+
+ModuleLogger.logModuleClass('Menu.MenuItemSelectedEvent');
 
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;

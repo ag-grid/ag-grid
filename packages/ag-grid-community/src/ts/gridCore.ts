@@ -25,26 +25,6 @@ import {ModuleNames} from "./modules/moduleNames";
 
 export class GridCore extends Component {
 
-    private static TEMPLATE_NORMAL =
-        `<div class="ag-root-wrapper">
-            <div class="ag-root-wrapper-body" ref="rootWrapperBody">
-                <ag-grid-comp ref="gridPanel"></ag-grid-comp>
-            </div>
-            <ag-pagination></ag-pagination>
-        </div>`;
-
-    private static TEMPLATE_ENTERPRISE =
-        `<div class="ag-root-wrapper">
-            <ag-grid-header-drop-zones></ag-grid-header-drop-zones>
-            <div ref="rootWrapperBody" class="ag-root-wrapper-body">
-                <ag-grid-comp ref="gridPanel"></ag-grid-comp>
-                <ag-side-bar ref="sideBar"></ag-side-bar>
-            </div>
-            <ag-status-bar ref="statusBar"></ag-status-bar>
-            <ag-pagination></ag-pagination>
-            <ag-watermark></ag-watermark>
-        </div>`;
-
     @Autowired('enterprise') private enterprise: boolean;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -81,7 +61,7 @@ export class GridCore extends Component {
 
         this.logger = this.loggerFactory.create('GridCore');
 
-        const template = this.enterprise ? GridCore.TEMPLATE_ENTERPRISE : GridCore.TEMPLATE_NORMAL;
+        const template = this.createTemplate();
         this.setTemplate(template);
 
         // register with services that need grid core
@@ -134,6 +114,49 @@ export class GridCore extends Component {
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
+    }
+
+    private createTemplate(): string {
+
+        const dropZones = this.enterprise ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
+        const sideBar = this.enterprise ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
+        const statusBar = this.enterprise ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
+        const watermark = this.enterprise ? '<ag-watermark></ag-watermark>' : '';
+
+        const template =
+            `<div class="ag-root-wrapper">
+                ${dropZones}
+                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
+                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>
+                    ${sideBar}
+                </div>
+                ${statusBar}
+                <ag-pagination></ag-pagination>
+                ${watermark}
+            </div>`;
+
+        /*
+        let TEMPLATE_NORMAL =
+                `<div class="ag-root-wrapper">
+                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
+                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>
+                </div>
+                <ag-pagination></ag-pagination>
+            </div>`;
+
+        let TEMPLATE_ENTERPRISE =
+            `<div class="ag-root-wrapper">
+            <ag-grid-header-drop-zones></ag-grid-header-drop-zones>
+            <div ref="rootWrapperBody" class="ag-root-wrapper-body">
+                <ag-grid-comp ref="gridPanel"></ag-grid-comp>
+                <ag-side-bar ref="sideBar"></ag-side-bar>
+            </div>
+            <ag-status-bar ref="statusBar"></ag-status-bar>
+            <ag-pagination></ag-pagination>
+            <ag-watermark></ag-watermark>
+        </div>`;*/
+
+        return template;
     }
 
     private onGridSizeChanged(): void {

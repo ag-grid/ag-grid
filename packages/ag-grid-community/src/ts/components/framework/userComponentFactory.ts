@@ -399,6 +399,8 @@ export class UserComponentFactory {
 
         const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, componentNameToUse) as ComponentClassDef<A, B>;
 
+        if (!registeredCompClassDef) { return null; }
+
         return {
             componentFromFramework: registeredCompClassDef.componentFromFramework,
             component: registeredCompClassDef.component,
@@ -487,7 +489,10 @@ export class UserComponentFactory {
 
         const missing = !componentToUse || !componentToUse.component;
         if (missing) {
-            if (!optional) { console.error(`Error creating component ${propertyName}=>${defaultComponentName}`); }
+            // to help the user, we print out the name they are looking for, rather than the default name.
+            // i don't know why the default name was originally printed out (that doesn't help the user)
+            const compName = holder ? (holder as any)[propertyName] : defaultComponentName;
+            if (!optional) { console.error(`Error creating component ${propertyName}=>${compName}`); }
             return null;
         }
 

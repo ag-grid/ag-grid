@@ -14,8 +14,11 @@ import {
     IClipboardService,
     MenuItemDef,
     ModuleNames,
-    Optional
+    Optional,
+    ModuleLogger
 } from 'ag-grid-community';
+
+ModuleLogger.logModuleClass('Menu.MenuItemMapper');
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {

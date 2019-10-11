@@ -22,11 +22,14 @@ import {
     PostConstruct,
     Promise,
     TabbedItem,
-    TabbedLayout
+    TabbedLayout,
+    ModuleLogger
 } from "ag-grid-community";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
+
+ModuleLogger.logModuleClass('Menu.EnterpriseMenuFactory');
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -423,11 +426,13 @@ export class EnterpriseMenu extends BeanStub {
         // async (_unless_ in react or similar, but if so why not encountered before now?).
         // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
         // async and is confusing if you don't have this context
-        filterWrapper.filterPromise.then(filter => {
-            if (filter.afterGuiAttached) {
-                afterFilterAttachedCallback = filter.afterGuiAttached.bind(filter);
-            }
-        });
+        if (filterWrapper.filterPromise) {
+            filterWrapper.filterPromise.then(filter => {
+                if (filter.afterGuiAttached) {
+                    afterFilterAttachedCallback = filter.afterGuiAttached.bind(filter);
+                }
+            });
+        }
 
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),

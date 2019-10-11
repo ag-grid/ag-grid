@@ -10,12 +10,15 @@ import {
     ISetFilterParams,
     ProvidedFilter,
     RefSelector,
-    ValueFormatterService
+    ValueFormatterService,
+    ModuleLogger
 } from "ag-grid-community";
 import {SetFilterModelValuesType, SetValueModel} from "./setValueModel";
 import {SetFilterListItem} from "./setFilterListItem";
-import {VirtualList, VirtualListModel} from "../rendering/virtualList";
+import {VirtualList, VirtualListModel} from "../../rendering/virtualList";
 import {SetFilterModel} from "./setFilterModel";
+
+ModuleLogger.logModuleClass('SetFilter.SetFilter');
 
 enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 
