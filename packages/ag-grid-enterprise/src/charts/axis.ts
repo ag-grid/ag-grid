@@ -1,3 +1,4 @@
+
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
@@ -97,7 +98,7 @@ class AxisTick {
     }
 }
 
-class AxisLabel {
+export class AxisLabel {
     fontStyle?: FontStyle;
 
     fontWeight?: FontWeight;
@@ -205,7 +206,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         return this.scale.domain;
     }
 
-    translation: {
+    readonly translation: {
         /**
          * The horizontal translation of the axis group.
          */
@@ -228,7 +229,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
      */
     rotation: number = 0;
 
-    line: {
+    readonly line: {
         /**
          * The line width to be used by the axis line.
          */

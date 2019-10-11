@@ -32,7 +32,7 @@ export abstract class Chart {
 
     private defaultTooltipClass = 'ag-chart-tooltip';
 
-    protected constructor(options: ChartOptions) {
+    protected constructor(options: ChartOptions = {}) {
         const root = new Group();
         const background = this.background;
         const document = options.document || window.document;
@@ -46,6 +46,9 @@ export abstract class Chart {
         scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
         this.legend.onPositionChange = this.onLegendPositionChange;
+
+        root.appendChild(this.title.node);
+        root.appendChild(this.subtitle.node);
 
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
@@ -92,7 +95,6 @@ export abstract class Chart {
         title.fontSize = 16;
         title.fontWeight = 'bold';
         title.onLayoutChange = this.onLayoutChange;
-        this.scene.root!.appendChild(title.node);
         return title;
     })();
 
@@ -102,7 +104,6 @@ export abstract class Chart {
         subtitle.text = 'Subtitle';
         subtitle.fontSize = 12;
         subtitle.onLayoutChange = this.onLayoutChange;
-        this.scene.root!.appendChild(subtitle.node);
         return subtitle;
     })();
 

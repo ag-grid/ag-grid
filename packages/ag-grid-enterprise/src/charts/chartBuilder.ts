@@ -483,7 +483,15 @@ export class ChartBuilder {
         return caption;
     }
 
-    static createDropShadow = (options: DropShadowOptions = {}): DropShadow => new DropShadow(options);
+    static createDropShadow = (options: DropShadowOptions = {}): DropShadow => {
+        const shadow = new DropShadow();
+        shadow.enabled = options.enabled || true;
+        shadow.xOffset = options.xOffset || 0;
+        shadow.yOffset = options.yOffset || 0;
+        shadow.blur = options.blur || 5;
+        shadow.color = options.color || 'rgba(0, 0, 0, 0.5)';
+        return shadow;
+    }
 
     static populateAxisProperties<T extends { title?: Caption }>(axis: T, options: AxisOptions) {
         for (const name in options) {

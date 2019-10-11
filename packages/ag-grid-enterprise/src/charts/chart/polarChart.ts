@@ -22,7 +22,7 @@ export class PolarChart extends Chart {
 
     protected _padding = new Padding(50);
 
-    constructor(options: ChartOptions) {
+    constructor(options: ChartOptions = {}) {
         super(options);
 
         this.scene.root!.append(this.legend.group);

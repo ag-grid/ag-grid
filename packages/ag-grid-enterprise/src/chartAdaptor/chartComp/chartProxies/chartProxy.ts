@@ -185,7 +185,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         series.forEach((s: BarSeries | AreaSeries | PieSeries) => {
             if (!s.shadow) {
-                s.shadow = new DropShadow({ enabled: false, blur: 0, xOffset: 0, yOffset: 0, color: "rgba(0,0,0,0.5)" });
+                const shadow = new DropShadow();
+                shadow.enabled = false;
+                shadow.blur = 0;
+                shadow.xOffset = 0;
+                shadow.yOffset = 0;
+                shadow.color = 'rgba(0,0,0,0.5)';
+                s.shadow = shadow;
             }
 
             (s.shadow[property] as any) = value;

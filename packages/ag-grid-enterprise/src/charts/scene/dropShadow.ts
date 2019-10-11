@@ -1,20 +1,4 @@
-export interface DropShadowOptions {
-    enabled?: boolean;
-    color?: string;
-    xOffset?: number;
-    yOffset?: number;
-    blur?: number;
-}
-
 export class DropShadow {
-    constructor(options: DropShadowOptions) {
-        this._enabled = options.enabled !== undefined ? options.enabled : true;
-        this._color = options.color !== undefined ? options.color : 'black';
-        this._xOffset = options.xOffset !== undefined ? options.xOffset : 0;
-        this._yOffset = options.yOffset !== undefined ? options.yOffset : 0;
-        this._blur = options.blur !== undefined ? options.blur : 0;
-    }
-
     private _enabled: boolean = true;
     set enabled(value: boolean) {
         if (this._enabled !== value) {
@@ -26,7 +10,7 @@ export class DropShadow {
         return this._enabled;
     }
 
-    private _color: string;
+    private _color: string = 'rgba(0, 0, 0, 0.5)';
     set color(value: string) {
         if (this._color !== value) {
             this._color = value;
@@ -37,7 +21,7 @@ export class DropShadow {
         return this._color;
     }
 
-    private _xOffset: number;
+    private _xOffset: number = 0;
     set xOffset(value: number) {
         if (this._xOffset !== value) {
             this._xOffset = value;
@@ -48,7 +32,7 @@ export class DropShadow {
         return this._xOffset;
     }
 
-    private _yOffset: number;
+    private _yOffset: number = 0;
     set yOffset(value: number) {
         if (this._yOffset !== value) {
             this._yOffset = value;
@@ -59,7 +43,7 @@ export class DropShadow {
         return this._yOffset;
     }
 
-    private _blur: number;
+    private _blur: number = 5;
     set blur(value: number) {
         if (this._blur !== value) {
             this._blur = value;

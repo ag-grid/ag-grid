@@ -1,3 +1,8 @@
+
+
+
+
+
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { Line } from "../../scene/shape/line";
@@ -9,7 +14,29 @@ import { Caption } from "../../caption";
 // import { Rect } from "../../scene/shape/rect"; debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-import { IGridStyle, ILinearAxis, IAxisFormatting, ILabelFormatting } from "../../axis";
+import { IGridStyle, ILinearAxis, IAxisFormatting, ILabelFormatting, AxisLabel } from "../../axis";
+
+class CategoryAxisTick {
+    /**
+     * The line width to be used by axis ticks.
+     */
+    width: number = 1;
+
+    /**
+     * The line length to be used by axis ticks.
+     */
+    size: number = 6;
+
+    /**
+     * The color of the axis ticks.
+     * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
+     */
+    color?: string = 'rgba(195, 195, 195, 1)';
+}
+
+class GroupedCategoryAxisLabel extends AxisLabel {
+    grid: boolean = false;
+}
 
 /**
  * A general purpose linear axis with no notion of orientation.
@@ -108,14 +135,22 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
         }
     }
 
-    /**
-     * The horizontal translation of the axis group.
-     */
-    translationX: number = 0;
+    readonly translation: {
+        /**
+         * The horizontal translation of the axis group.
+         */
+        x: number,
+        /**
+         * The vertical translation of the axis group.
+         */
+        y: number
+    } = {
+        x: 0,
+        y: 0
+    };
 
-    /**
-     * The vertical translation of the axis group.
-     */
+    // TODO: remove
+    translationX: number = 0;
     translationY: number = 0;
 
     /**
@@ -123,49 +158,48 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
      */
     rotation: number = 0;
 
-    /**
-     * The line width to be used by the axis line.
-     */
-    lineWidth: number = 1;
+    readonly line: {
+        /**
+         * The line width to be used by the axis line.
+         */
+        width: number,
+        /**
+         * The color of the axis line.
+         * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
+         */
+        color?: string
+    } = {
+        width: 1,
+        color: 'rgba(195, 195, 195, 1)'
+    };
 
-    /**
-     * The color of the axis line.
-     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
-     */
+    // TODO: remove
+    lineWidth: number = 1;
     lineColor?: string = 'rgba(195, 195, 195, 1)';
 
-    /**
-     * The line width to be used by axis ticks.
-     */
+    readonly tick = new CategoryAxisTick();
+
+    // TODO: remove
     tickWidth: number = 1;
-
-    /**
-     * The line length to be used by axis ticks.
-     */
     tickSize: number = 6;
-
-    /**
-     * The padding between the labels and the axis line.
-     */
-    labelPadding: number = 5;
-
-    labelGrid: boolean = false;
-
-    /**
-     * The color of the axis ticks.
-     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
-     */
     tickColor?: string = 'rgba(195, 195, 195, 1)';
 
-    labelFormatter?: (params: { value: any, index: number }) => string;
+    readonly label = new GroupedCategoryAxisLabel();
 
+    // TODO: remove
+    labelPadding: number = 5;
+    labelGrid: boolean = false;
+    labelFormatter?: (params: { value: any, index: number }) => string;
     labelFontStyle: FontStyle | undefined = undefined;
     labelFontWeight: FontWeight | undefined = undefined;
     labelFontSize: number = 12;
     labelFontFamily: string = 'Verdana, sans-serif';
+    labelRotation: number = 0;
+    mirrorLabels: boolean = false;
+    parallelLabels: boolean = false;
 
     private get lineHeight() {
-        return this.labelFontSize * 1.5;
+        return this.label.fontSize * 1.5;
     }
 
     title: Caption | undefined = undefined;
@@ -212,37 +246,6 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
     }
 
     /**
-     * Custom label rotation in degrees.
-     * Labels are rendered perpendicular to the axis line by default.
-     * Or parallel to the axis line, if the {@link parallelLabels} is set to `true`.
-     * The value of this config is used as the angular offset/deflection
-     * from the default rotation.
-     */
-    labelRotation: number = 0;
-
-    /**
-     * By default labels and ticks are positioned to the left of the axis line.
-     * `true` positions the labels to the right of the axis line.
-     * However, if the axis is rotated, its easier to think in terms
-     * of this side or the opposite side, rather than left and right.
-     * We use the term `mirror` for conciseness, although it's not
-     * true mirroring - for example, when a label is rotated, so that
-     * it is inclined at the 45 degree angle, text flowing from north-west
-     * to south-east, ending at the tick to the left of the axis line,
-     * and then we set this config to `true`, the text will still be flowing
-     * from north-west to south-east, _starting_ at the tick to the right
-     * of the axis line.
-     */
-    mirrorLabels: boolean = false;
-
-    /**
-     * Labels are rendered perpendicular to the axis line by default.
-     * Setting this config to `true` makes labels render parallel to the axis line
-     * and center aligns labels' text at the ticks.
-     */
-    parallelLabels: boolean = false;
-
-    /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      * Supposed to be called _manually_ after changing _any_ of the axis properties.
      * This allows to bulk set axis properties before updating the nodes.
@@ -256,18 +259,15 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
      * it will also make it harder to reason about the program.
      */
     update() {
-        const group = this.group;
-        const scale = this.scale;
-        const tickScale = this.tickScale;
+        const { group, scale, label, tick, tickScale } = this;
         const bandwidth = Math.abs(scale.range[1] - scale.range[0]) / scale.domain.length || 0;
-
-        const parallelLabels = this.parallelLabels;
+        const parallelLabels = label.parallel;
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
-        const labelRotation = normalizeAngle360(toRadians(this.labelRotation));
+        const labelRotation = normalizeAngle360(toRadians(this.label.rotation));
 
-        group.translationX = this.translationX;
-        group.translationY = this.translationY;
+        group.translationX = this.translation.x;
+        group.translationY = this.translation.y;
         group.rotation = rotation;
 
         const title = this.title;
@@ -282,7 +282,7 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
         // The side of the axis line to position the labels on.
         // -1 = left (default)
         //  1 = right
-        const sideFlag = this.mirrorLabels ? 1 : -1;
+        const sideFlag = label.mirrored ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -310,49 +310,49 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
         const enterLabels = updateLabels.enter.append(Text);
         const labelSelection = updateLabels.merge(enterLabels);
 
-        const labelFormatter = this.labelFormatter;
+        const labelFormatter = label.formatter;
         let maxLeafLabelWidth = 0;
         labelSelection
-            .each((label, datum, index) => {
-                label.fontStyle = this.labelFontStyle;
-                label.fontWeight = this.labelFontWeight;
-                label.fontSize = this.labelFontSize;
-                label.fontFamily = this.labelFontFamily;
-                label.fill = this.labelColor;
-                label.textBaseline = parallelFlipFlag === -1 ? 'bottom' : 'hanging';
+            .each((node, datum, index) => {
+                node.fontStyle = label.fontStyle;
+                node.fontWeight = label.fontWeight;
+                node.fontSize = label.fontSize;
+                node.fontFamily = label.fontFamily;
+                node.fill = label.color;
+                node.textBaseline = parallelFlipFlag === -1 ? 'bottom' : 'hanging';
                 // label.textBaseline = parallelLabels && !labelRotation
                 //     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                 //     : 'middle';
                 if (title && index === 0) { // use the phantom root as the axis title
-                    label.text = title.text;
-                    label.fontSize = title.fontSize;
-                    label.fontStyle = title.fontStyle;
-                    label.fontWeight = title.fontWeight;
-                    label.fontFamily = title.fontFamily;
-                    label.textBaseline = 'hanging';
+                    node.text = title.text;
+                    node.fontSize = title.fontSize;
+                    node.fontStyle = title.fontStyle;
+                    node.fontWeight = title.fontWeight;
+                    node.fontFamily = title.fontFamily;
+                    node.textBaseline = 'hanging';
                 } else {
-                    label.text = labelFormatter
+                    node.text = labelFormatter
                         ? labelFormatter({
                             value: String(datum.label),
                             index
                         })
                         : String(datum.label);
                 }
-                label.textAlign = 'center';
-                label.translationX = datum.screenY - this.labelFontSize * 0.25;
-                label.translationY = datum.screenX;
-                const bbox = label.getBBox();
+                node.textAlign = 'center';
+                node.translationX = datum.screenY - label.fontSize * 0.25;
+                node.translationY = datum.screenX;
+                const bbox = node.getBBox();
                 if (bbox && bbox.width > maxLeafLabelWidth) {
                     maxLeafLabelWidth = bbox.width;
                 }
             });
 
-        const labelX = sideFlag * this.labelPadding; // label padding from the axis line
+        const labelX = sideFlag * label.padding; // label padding from the axis line
         const autoRotation = parallelLabels
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
 
-        const labelGrid = this.labelGrid;
+        const labelGrid = this.label.grid;
         const separatorData = [] as { y: number, x1: number, x2: number, toString: () => string }[];
         labelSelection.each((label, datum, index) => {
             label.x = labelX;
@@ -362,7 +362,7 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
                 label.textAlign = 'end';
                 label.textBaseline = 'middle';
             } else {
-                label.translationX -= maxLeafLabelWidth - lineHeight + this.labelPadding;
+                label.translationX -= maxLeafLabelWidth - lineHeight + this.label.padding;
                 if (isHorizontal) {
                     label.rotation = autoRotation;
                 } else {
@@ -381,7 +381,7 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
                         separatorData.push({
                             y,
                             x1: 0,
-                            x2: -maxLeafLabelWidth - this.labelPadding * 2,
+                            x2: -maxLeafLabelWidth - this.label.padding * 2,
                             toString: () => String(index)
                         });
                     }
@@ -417,7 +417,7 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
             line.x2 = datum.x2;
             line.y1 = datum.y;
             line.y2 = datum.y;
-            line.stroke = this.tickColor;
+            line.stroke = this.tick.color;
             line.fill = undefined;
             line.strokeWidth = 1;
         });
@@ -439,13 +439,13 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
         this.axisLineSelection = axisLineSelection;
 
         axisLineSelection.each((line, _, index) => {
-            const x = index > 0 ? -maxLeafLabelWidth - this.labelPadding * 2 - (index - 1) * lineHeight : 0;
+            const x = index > 0 ? -maxLeafLabelWidth - this.label.padding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;
             line.x2 = x;
             line.y1 = scale.range[0];
             line.y2 = scale.range[1];
-            line.strokeWidth = this.lineWidth;
-            line.stroke = this.lineColor;
+            line.strokeWidth = this.line.width;
+            line.stroke = this.line.color;
             line.visible = labels.length > 0 && (index === 0 || (labelGrid && isLabelTree));
         });
 
@@ -464,7 +464,7 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
 
                     const style = styles[index % styleCount];
                     line.stroke = style.stroke;
-                    line.strokeWidth = this.tickWidth;
+                    line.strokeWidth = this.tick.width;
                     line.lineDash = style.lineDash;
                     line.fill = undefined;
                 });
