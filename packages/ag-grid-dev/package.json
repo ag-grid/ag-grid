@@ -4,7 +4,9 @@
   "description": "ag-Grid Modularisation Tests",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npm run build:bundle-size",
+    "postinstall": "run-script-os",
+    "postinstall:win32": "",
+    "postinstall:darwin:linux": "npm run build:bundle-size",
     "test": "run-script-os",
     "test:win32": "",
     "test:darwin:linux": "npm run test:modules && npm run test:bundle-size",
