@@ -6,13 +6,13 @@ import {
     Component,
     PostConstruct,
     RefSelector,
+    DropShadowOptions,
 } from "ag-grid-community";
-import {ChartTranslator} from "../../../chartTranslator";
-import {BarChartProxy} from "../../../chartProxies/cartesian/barChartProxy";
-import {PieChartProxy} from "../../../chartProxies/polar/pieChartProxy";
-import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy";
-import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
-import {ShadowProperty} from "../../../chartProxies/chartProxy";
+import { ChartTranslator } from "../../../chartTranslator";
+import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
+import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
+import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
+import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
 
 type ShadowProxy = BarChartProxy | AreaChartProxy | PieChartProxy | DoughnutChartProxy;
 
@@ -56,28 +56,28 @@ export class ShadowPanel extends Component {
 
     private initSeriesShadow() {
         this.shadowGroup
-            .setTitle(this.chartTranslator.translate('shadow'))
+            .setTitle(this.chartTranslator.translate("shadow"))
             .setEnabled(this.chartProxy.getShadowEnabled())
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(newValue => this.chartProxy.setShadowProperty('enabled', newValue));
+            .onEnableChange(newValue => this.chartProxy.setShadowProperty("enabled", newValue));
 
         this.shadowColorPicker
-            .setLabel(this.chartTranslator.translate('color'))
-            .setLabelWidth('flex')
+            .setLabel(this.chartTranslator.translate("color"))
+            .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue('rgba(0,0,0,0.5)')
-            .onValueChange(newValue => this.chartProxy.setShadowProperty('color', newValue));
+            .setValue("rgba(0,0,0,0.5)")
+            .onValueChange(newValue => this.chartProxy.setShadowProperty("color", newValue));
 
-        const initInput = (input: AgSlider, property: ShadowProperty, maxValue: number) => {
+        const initInput = (input: AgSlider, property: keyof DropShadowOptions, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(property))
                 .setValue(this.chartProxy.getShadowProperty(property))
                 .setMaxValue(maxValue)
                 .onValueChange(newValue => this.chartProxy.setShadowProperty(property, newValue));
         };
 
-        initInput(this.shadowBlurSlider, 'blur', 20);
-        initInput(this.shadowXOffsetSlider, 'xOffset', 20);
-        initInput(this.shadowYOffsetSlider, 'yOffset', 20);
+        initInput(this.shadowBlurSlider, "blur", 20);
+        initInput(this.shadowXOffsetSlider, "xOffset", 20);
+        initInput(this.shadowYOffsetSlider, "yOffset", 20);
     }
 }

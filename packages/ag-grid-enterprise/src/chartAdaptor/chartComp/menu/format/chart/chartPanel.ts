@@ -11,7 +11,6 @@ import { ChartController } from "../../../chartController";
 import { Chart } from "../../../../../charts/chart/chart";
 import { PaddingPanel } from "./paddingPanel";
 import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
-import { Caption } from "../../../../../charts/caption";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartProxy } from "../../../chartProxies/chartProxy";
 
@@ -52,60 +51,56 @@ export class ChartPanel extends Component {
 
     private initGroup(): void {
         this.chartGroup
-            .setTitle(this.chartTranslator.translate('chart'))
+            .setTitle(this.chartTranslator.translate("chart"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
     }
 
     private initTitles(): void {
         const { title } = this.chart;
-        const text = title ? title.text : '';
+        const text = title ? title.text : "";
 
         const initialFont = {
-            family: title ? this.chartProxy.getTitleProperty('fontFamily') : 'Verdana, sans-serif',
-            style: title ? this.chartProxy.getTitleProperty('fontStyle') : '',
-            weight: title ? this.chartProxy.getTitleProperty('fontWeight') : 'Normal',
-            size: title ? parseInt(this.chartProxy.getTitleProperty('fontSize')) : 22,
-            color: title ? this.chartProxy.getTitleProperty('color') : 'black'
+            family: title ? this.chartProxy.getChartOption("title.fontFamily") : "Verdana, sans-serif",
+            style: title ? this.chartProxy.getChartOption("title.fontStyle") : "",
+            weight: title ? this.chartProxy.getChartOption("title.fontWeight") : "Normal",
+            size: title ? this.chartProxy.getChartOption<number>("title.fontSize") : 22,
+            color: title ? this.chartProxy.getChartOption("title.color") : "black"
         };
 
         // note we don't set the font style via chart title panel
         const setFont = (font: LabelFont) => {
-            if (font.family) { this.chartProxy.setTitleProperty('fontFamily', font.family); }
-            if (font.weight) { this.chartProxy.setTitleProperty('fontWeight', font.weight); }
-            if (font.size) { this.chartProxy.setTitleProperty('fontSize', font.size); }
-            if (font.color) { this.chartProxy.setTitleProperty('color', font.color); }
+            if (font.family) { this.chartProxy.setChartOption("title.fontFamily", font.family); }
+            if (font.weight) { this.chartProxy.setChartOption("title.fontWeight", font.weight); }
+            if (font.size) { this.chartProxy.setChartOption("title.fontSize", font.size); }
+            if (font.color) { this.chartProxy.setChartOption("title.color", font.color); }
         };
 
         setFont(initialFont);
         this.titleInput
-            .setLabel(this.chartTranslator.translate('title'))
-            .setLabelAlignment('top')
-            .setLabelWidth('flex')
+            .setLabel(this.chartTranslator.translate("title"))
+            .setLabelAlignment("top")
+            .setLabelWidth("flex")
             .setValue(text)
             .onValueChange(value => {
-                if (!this.chart.title) {
-                    const title = new Caption();
-                    title.text = text;
-                    this.chart.title = title;
-                    setFont(initialFont);
-                }
-                this.chartProxy.setTitleProperty('text', value);
+                const exists = _.exists(value);
+
+                this.chartProxy.setChartOption("title.text", value);
+                this.chartProxy.setChartOption("title.enabled", exists);
 
                 // only show font panel when title exists
                 labelPanelComp.setEnabled(_.exists(value));
             });
 
         const params: LabelPanelParams = {
-            name: this.chartTranslator.translate('font'),
+            name: this.chartTranslator.translate("font"),
             enabled: true,
             suppressEnabledCheckbox: true,
             initialFont,
             setFont,
         };
 
-        const labelPanelComp = new LabelPanel(params);
-        this.getContext().wireBean(labelPanelComp);
+        const labelPanelComp = this.wireBean(new LabelPanel(params));
         this.chartGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
@@ -113,8 +108,7 @@ export class ChartPanel extends Component {
     }
 
     private initPaddingPanel(): void {
-        const paddingPanelComp = new PaddingPanel(this.chartController);
-        this.getContext().wireBean(paddingPanelComp);
+        const paddingPanelComp = this.wireBean(new PaddingPanel(this.chartController));
         this.chartGroup.addItem(paddingPanelComp);
         this.activePanels.push(paddingPanelComp);
     }

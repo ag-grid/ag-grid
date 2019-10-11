@@ -1,15 +1,13 @@
 import {
+    _,
     ChartOptions,
     ChartOptionsChanged,
     ChartType,
     Events,
     EventService,
     ProcessChartOptionsParams,
-    LegendPosition,
     SeriesOptions,
-    LegendOptions,
     IPadding,
-    CaptionOptions,
     BarSeriesOptions,
     AreaSeriesOptions,
     PieSeriesOptions,
@@ -18,7 +16,6 @@ import {
 } from "ag-grid-community";
 import { Chart } from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
-import { Caption } from "../../../charts/caption";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
@@ -96,7 +93,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
     }
 
-    private overridePalette(chartOptions: any) {
+    private overridePalette(chartOptions: any): void {
         const palette = this.chartProxyParams.getSelectedPalette();
         const defaultFills = palette.fills;
         const defaultStrokes = palette.strokes;
@@ -111,6 +108,35 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 strokes: strokesOverridden && strokes ? strokes : defaultStrokes
             };
         }
+    }
+
+    public getChartOption<T = string>(expression: string): T {
+        return _.get(this.chartOptions, expression, undefined) as T;
+    }
+
+    public setChartOption(expression: string, value: any): void {
+        _.set(this.chartOptions, expression, value);
+
+        const mappings: any = {
+            "legend.box.color": "legend.marker.color"
+        };
+
+        _.set(this.chart, mappings[expression] || expression, value);
+
+        this.raiseChartOptionsChangedEvent();
+    }
+
+    public getSeriesOption<T = string>(expression: string): T {
+        return _.get(this.chartOptions.seriesDefaults, expression, undefined) as T;
+    }
+
+    public setSeriesOption(expression: string, value: any): void {
+        _.set(this.chartOptions.seriesDefaults, expression, value);
+
+        const series = this.chart.series;
+        series.forEach(s => _.set(s, expression, value));
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public setChartPaddingProperty(property: keyof IPadding, value: number): void {
@@ -130,49 +156,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public getChartPadding = (property: keyof IPadding): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : "";
 
-    public setLegendProperty(property: keyof LegendOptions, value: any) {
-        this.chartOptions.legend[property] = value;
-
-        (this.chart.legend as any)[property] = value;
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getLegendProperty = (property: keyof LegendOptions): string => `${this.chartOptions.legend[property]}`;
-
-    public getLegendEnabled = (): boolean => this.chartOptions.legend ? !!this.chartOptions.legend.enabled : false;
-
-    public setLegendPadding(padding: number) {
-        this.chart.legend.padding = padding;
-        this.chartOptions.legend.padding = padding;
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getLegendPadding = (): string => `${this.chartOptions.legend.padding}`;
-
-    public setLegendPosition(position: LegendPosition) {
-        this.chart.legend.position = position;
-        this.chartOptions.legend.position = position;
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getLegendPosition = (): string => `${this.chartOptions.legend.position}`;
-
-    public setTitleProperty(property: keyof CaptionOptions, value: any) {
-        this.chartOptions.title[property] = value;
-
-        if (!this.chart.title) {
-            this.chart.title = {} as Caption;
-        }
-        (this.chart.title[property] as any) = value;
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getTitleProperty = (property: keyof CaptionOptions): string => `${this.chartOptions.title[property]}`;
-
     public getShadowEnabled = (): boolean => !!this.getShadowProperty("enabled");
 
     private getChartOptionsWithShadow() {
@@ -182,7 +165,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public getShadowProperty(property: keyof DropShadowOptions): any {
         const { seriesDefaults } = this.getChartOptionsWithShadow();
 
-        return seriesDefaults && seriesDefaults.shadow ? seriesDefaults.shadow[property] : "";
+        return seriesDefaults.shadow ? seriesDefaults.shadow[property] : "";
     }
 
     public setShadowProperty(property: keyof DropShadowOptions, value: any): void {
@@ -192,7 +175,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             seriesDefaults.shadow = {};
         }
 
-        seriesDefaults.shadow[property] = value;
+        (seriesDefaults.shadow as any)[property] = value; // TODO: why is this cast to any needed?
 
         const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
 

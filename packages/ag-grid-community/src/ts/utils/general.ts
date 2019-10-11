@@ -2150,29 +2150,33 @@ export class Utils {
         return left === right;
     }
 
-    static get(source: { [p: string]: any }, expression: string, defaultValue: any): any {
+    static get(source: any, expression: string, defaultValue: any): any {
         if (source == null) {
             return defaultValue;
         }
 
-        if (expression.indexOf('.') > -1) {
-            const fields: string[] = expression.split('.');
-            const thisKey: string = fields[0];
-            const nextValue: any = source[thisKey];
+        const keys = expression.split(".");
+        let objectToRead = source;
 
-            if (nextValue != null) {
-                return Utils.get(nextValue, fields.slice(1, fields.length).join('.'), defaultValue);
+        while (keys.length > 1) {
+            objectToRead = objectToRead[keys.shift()];
+
+            if (objectToRead == null) {
+                return defaultValue;
             }
-
-            return defaultValue;
         }
 
-        const nextValue: any = source[expression];
-        return nextValue != null ? nextValue : defaultValue;
+        const value = source[keys[0]];
+
+        return value != null ? value : defaultValue;
     }
 
-    static set(target: any, key: string, value: any) {
-        const keys = key.split(".");
+    static set(target: any, expression: string, value: any) {
+        if (target == null) {
+            return;
+        }
+
+        const keys = expression.split(".");
         let objectToUpdate = target;
 
         while (keys.length > 1) {

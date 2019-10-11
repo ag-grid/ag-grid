@@ -10,7 +10,6 @@ import {
 import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
 import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
-import { IAxisFormatting } from "../../../../../charts/axis";
 
 export class AxisTicksPanel extends Component {
 
@@ -45,26 +44,26 @@ export class AxisTicksPanel extends Component {
 
     private initAxisTicks() {
         this.axisTicksGroup
-            .setTitle(this.chartTranslator.translate('ticks'))
+            .setTitle(this.chartTranslator.translate("ticks"))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
         this.axisTicksColorPicker
-            .setLabel(this.chartTranslator.translate('color'))
-            .setLabelWidth('flex')
+            .setLabel(this.chartTranslator.translate("color"))
+            .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.chartProxy.getCommonAxisProperty('tickColor'))
-            .onValueChange(newColor => this.chartProxy.setCommonAxisProperty('tickColor', newColor));
+            .setValue(this.chartProxy.getAxisProperty("tick.color"))
+            .onValueChange(newColor => this.chartProxy.setAxisProperty("tick.color", newColor));
 
-        const initInput = (property: keyof IAxisFormatting, input: AgSlider, label: string, maxValue: number) => {
+        const initInput = (expression: string, input: AgSlider, label: string, maxValue: number) => {
             input.setLabel(label)
-                .setValue(this.chartProxy.getCommonAxisProperty(property))
+                .setValue(this.chartProxy.getAxisProperty(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartProxy.setCommonAxisProperty(property, newValue));
+                .onValueChange(newValue => this.chartProxy.setAxisProperty(expression, newValue));
         };
 
-        initInput('tickWidth', this.axisTicksWidthSlider, this.chartTranslator.translate('width'), 10);
-        initInput('tickSize', this.axisTicksSizeSlider, this.chartTranslator.translate('length'), 30);
+        initInput("tick.width", this.axisTicksWidthSlider, this.chartTranslator.translate("width"), 10);
+        initInput("tick.size", this.axisTicksSizeSlider, this.chartTranslator.translate("length"), 30);
     }
 }

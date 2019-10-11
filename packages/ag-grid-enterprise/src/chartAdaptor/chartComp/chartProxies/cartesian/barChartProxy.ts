@@ -44,14 +44,6 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     }
 
-    public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
-    }
-
-    public getLabelEnabled(): boolean {
-        return this.chartOptions.seriesDefaults.label != null && !!this.chartOptions.seriesDefaults.label.enabled;
-    }
-
     private isColumnChart = () => _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
 
     protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {

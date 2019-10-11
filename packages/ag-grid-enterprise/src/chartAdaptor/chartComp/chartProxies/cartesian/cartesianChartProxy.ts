@@ -1,5 +1,5 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { CartesianChartOptions, _, SeriesOptions, AxisOptions, FontOptions, DropShadowOptions } from "ag-grid-community";
+import { CartesianChartOptions, _, SeriesOptions, AxisOptions } from "ag-grid-community";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { ChartModel } from "../../chartModel";
 import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
@@ -9,55 +9,20 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         super(params);
     }
 
-    public getSeriesProperty(property: keyof T): string {
-        return `${this.chartOptions.seriesDefaults[property]}`;
+    public getAxisProperty<T = string>(expression: string): T {
+        return _.get(this.chartOptions.xAxis, expression, undefined) as T;
     }
 
-    public setSeriesProperty(property: keyof T, value: any): void {
-        this.chartOptions.seriesDefaults[property] = value;
-
-        const series = this.chart.series;
-        series.forEach(s => _.set(s, property as string, value));
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getCommonAxisProperty(property: keyof AxisOptions): string {
-        return `${this.chartOptions.xAxis[property]}`;
-    }
-
-    public setCommonAxisProperty(property: keyof AxisOptions, value: any) {
-        this.chartOptions.xAxis[property] = value;
-        this.chartOptions.yAxis[property] = value;
+    public setAxisProperty(expression: string, value: any) {
+        _.set(this.chartOptions.xAxis, expression, value);
+        _.set(this.chartOptions.yAxis, expression, value);
 
         const chart = this.chart;
 
-        (chart.xAxis as any)[property] = value;
-        (chart.yAxis as any)[property] = value;
+        _.set(this.chart.xAxis, expression, value);
+        _.set(this.chart.yAxis, expression, value);
 
         chart.performLayout();
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getXRotation = (): number => this.chartOptions.xAxis.label.rotation || 0;
-
-    public setXRotation(rotation: number): void {
-        this.chartOptions.xAxis.label.rotation = rotation;
-
-        this.chart.xAxis.labelRotation = rotation;
-        this.chart.performLayout();
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getYRotation = (): number => this.chartOptions.yAxis.label.rotation || 0;
-
-    public setYRotation(rotation: number): void {
-        this.chartOptions.yAxis.label.rotation = rotation;
-
-        this.chart.yAxis.labelRotation = rotation;
-        this.chart.performLayout();
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -74,7 +39,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             }
         }
 
-        this.chart[axisKey].labelRotation = labelRotation;
+        (this.chart[axisKey] as any).label.rotation = labelRotation; // TODO: use better type than any
     }
 
     protected getDefaultAxisOptions(): AxisOptions {

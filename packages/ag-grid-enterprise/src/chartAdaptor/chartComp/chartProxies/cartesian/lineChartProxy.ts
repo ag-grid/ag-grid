@@ -53,14 +53,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.updateLabelRotation(params.category.id);
     }
 
-    public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
-    }
-
-    public getMarkersEnabled(): boolean {
-        return this.chartOptions.seriesDefaults.marker != null && !!this.chartOptions.seriesDefaults.marker.enabled;
-    }
-
     protected getDefaultOptions(): CartesianChartOptions<LineSeriesOptions> {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<LineSeriesOptions>;

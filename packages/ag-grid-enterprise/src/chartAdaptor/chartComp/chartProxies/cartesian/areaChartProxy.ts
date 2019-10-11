@@ -91,14 +91,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         });
     }
 
-    public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
-    }
-
-    public getMarkersEnabled(): boolean {
-        return this.chartOptions.seriesDefaults.marker != null && !!this.chartOptions.seriesDefaults.marker.enabled;
-    }
-
     protected getDefaultOptions(): CartesianChartOptions<AreaSeriesOptions> {
         const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<AreaSeriesOptions>;
