@@ -48,6 +48,8 @@ export interface PieTooltipRendererParams {
 }
 
 class PieSeriesLabel extends SeriesLabel {
+    onDataChange?: () => void;
+
     private _offset: number = 3; // from the callout line
     set offset(value: number) {
         if (this._offset !== value) {
@@ -63,7 +65,9 @@ class PieSeriesLabel extends SeriesLabel {
     set minAngle(value: number) {
         if (this._minAngle !== value) {
             this._minAngle = value;
-            this.update();
+            if (this.onDataChange) {
+                this.onDataChange();
+            }
         }
     }
     get minAngle(): number {
@@ -167,6 +171,7 @@ export class PieSeries extends Series<PolarChart> {
     readonly label: PieSeriesLabel = (() => {
         const label = new PieSeriesLabel();
         label.onChange = this.scheduleLayout.bind(this);
+        label.onDataChange = this.scheduleData.bind(this);
         return label;
     })();
 
