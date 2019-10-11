@@ -104,6 +104,32 @@ function serveAndWatchVue(app) {
     });
 }
 
+function serveAndWatchModules(app, communityModules, enterpriseModules) {
+    // spl modules
+    const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
+
+    const watchModule = (type, module) => {
+        const moduleDirName = `../../${type}-modules/${module}`;
+        const moduleWatch = cp.spawn(gulpPath, ['watch'], {
+            stdio: 'inherit',
+            cwd: `${moduleDirName}`
+        });
+
+        app.use(`/dev/@ag-${type}/${module}`, express.static(`${moduleDirName}`));
+
+        process.on('exit', () => {
+            moduleWatch.kill();
+        });
+    };
+
+    communityModules.forEach(module => {
+        watchModule('community', module);
+    });
+    enterpriseModules.forEach(module => {
+        watchModule('enterprise', module);
+    });
+}
+
 function launchTSCCheck(communityModules, enterpriseModules) {
     // we delete the _dev folder each time we run now as we're constantly adding new modules etc
     // this saves us having to manually delete _dev each time
@@ -264,33 +290,20 @@ function getAllModules() {
     return {agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules};
 }
 
-function addCommunityAndEnterpriseModulesToExpress(app, communityModules, enterpriseModules) {
-    // app.use('/dev/@ag-community/ag-grid', express.static('../../community-modules/ag-grid'));
-
-    // spl modules
-    communityModules.forEach(module => {
-        app.use(`/dev/@ag-community/${module}`, express.static(`../../community-modules/${module}`));
-    });
-
-    enterpriseModules.forEach(module => {
-        app.use(`/dev/@ag-enterprise/${module}`, express.static(`../../enterprise-modules/${module}`));
-    });
-}
-
 function updateSystemJsMappings(utilFileLines,
-                                          startString,
-                                          endString,
-                                          communityModules,
-                                          enterpriseModules,
-                                          communityMappingFunc,
-                                          enterpriseMappingFunc) {
+                                startString,
+                                endString,
+                                communityModules,
+                                enterpriseModules,
+                                communityMappingFunc,
+                                enterpriseMappingFunc) {
     let foundStart = false;
     let foundEnd = false;
 
     const newUtilFileTop = [];
     const newUtilFileBottom = [];
     utilFileLines.forEach(line => {
-        if(!foundStart) {
+        if (!foundStart) {
             newUtilFileTop.push(line);
 
             if (line.indexOf(startString) !== -1) {
@@ -298,7 +311,7 @@ function updateSystemJsMappings(utilFileLines,
             }
         } else if (foundEnd) {
             newUtilFileBottom.push(line);
-        } else if (foundStart && ! foundEnd) {
+        } else if (foundStart && !foundEnd) {
             if (line.indexOf(endString) !== -1) {
                 foundEnd = true;
                 newUtilFileBottom.push(line);
@@ -359,12 +372,13 @@ module.exports = () => {
 
     // spl modules
     // add community & enterprise modules to express (for importing in the fw examples)
-    addCommunityAndEnterpriseModulesToExpress(app, communityModules, enterpriseModules);
     updateSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
+    serveAndWatchModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
     serveAndWatchAngular(app);
     serveAndWatchVue(app);
+
 
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples
