@@ -9,7 +9,7 @@
     "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "watchWebpack": "webpack --watch",
     "precheck": "tsc -p tsconfig-precheck.json",
-    "build": "npm run webpack-updater && npm run precheck && npx gulp tsc-scss-clean",
+    "build": "npm run precheck && npx gulp tsc-scss-clean && npm run webpack-updater",
     "package": "npx gulp webpack-all-no-clean && npm run rollup",
     "webpack-updater": "node webpackUpdater.js",
     "rollup": "node rollup/build.js",
