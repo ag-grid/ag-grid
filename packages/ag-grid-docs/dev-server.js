@@ -109,6 +109,8 @@ function serveAndWatchModules(app, communityModules, enterpriseModules) {
     const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
 
     const watchModule = (type, module) => {
+        console.log(`watching module ${module}`);
+
         const moduleDirName = `../../${type}-modules/${module}`;
         const moduleWatch = cp.spawn(gulpPath, ['watch'], {
             stdio: 'inherit',
@@ -223,6 +225,8 @@ function watchAndGenerateExamples(communityModules, enterpriseModules) {
 }
 
 function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules) {
+    console.log("updating webpack config with modules...");
+
     // spl modules
     const agGridCommunityModulesEntries = agGridCommunityModules
         .map(module => `../../../../ag-grid-community/src/ts/modules/${module}.ts`)
@@ -252,7 +256,7 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
     const newEnterpriseBundleLines = [];
     existingEnterpriseBundleLines.forEach(line => {
         if (!modulesLineFound) {
-            modulesLineFound = line === "/* MODULES - Don't delete this line */";
+            modulesLineFound = line.indexOf("/* MODULES - Don't delete this line */") !== -1;
             newEnterpriseBundleLines.push(line);
         }
     });
@@ -264,7 +268,7 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
     const newEnterpriseMainLines = [];
     existingEnterpriseMainLines.forEach(line => {
         if (!modulesLineFound) {
-            modulesLineFound = line === "/* MODULES - Don't delete this line */";
+            modulesLineFound = line.indexOf("/* MODULES - Don't delete this line */") !== -1;
             newEnterpriseMainLines.push(line);
         }
     });
@@ -338,6 +342,8 @@ function updateSystemJsMappings(utilFileLines,
 }
 
 function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules) {
+    console.log("updating util.php -> systemjs mapping with modules...");
+
     // spl module
     const utilityFilename = 'src/example-runner/utils.php';
     const utilFileLines = fs.readFileSync(utilityFilename, 'UTF-8').split('\n');
@@ -363,6 +369,8 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
 }
 
 function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules) {
+    console.log("updating fw systemjs boilerplate config with modules...");
+
     // spl module
     const systemJsFiles = [
         './src/example-runner/angular-boilerplate/systemjs.config.js',

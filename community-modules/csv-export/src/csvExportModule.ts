@@ -1,6 +1,4 @@
-import {Module} from "../interfaces/iModule";
-import {ModuleNames} from "./moduleNames";
-import {Grid} from "../grid";
+import {Grid, Module, ModuleNames} from "ag-grid-community";
 import {CsvCreator} from "./csvExport/csvCreator";
 import {Downloader} from "./csvExport/downloader";
 import {XmlFactory} from "./csvExport/xmlFactory";
@@ -9,7 +7,7 @@ import {ZipContainer} from "./csvExport/zipContainer";
 
 export const CsvExportModule: Module = {
     moduleName: ModuleNames.CsvExportModule,
-    beans: [CsvCreator, Downloader, XmlFactory, GridSerializer, ZipContainer ]
+    beans: [CsvCreator, Downloader, XmlFactory, GridSerializer, ZipContainer]
 };
 
 Grid.addModule([CsvExportModule]);

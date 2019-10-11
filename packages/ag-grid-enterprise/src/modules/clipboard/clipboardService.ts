@@ -12,7 +12,6 @@ import {
     ColumnApi,
     ColumnController,
     Constants,
-    CsvCreator,
     CsvExportParams,
     Events,
     EventService,
@@ -37,7 +36,8 @@ import {
     RowValueChangedEvent,
     SelectionController,
     ValueService,
-    ModuleLogger
+    ModuleLogger,
+    ICsvCreator
 } from "ag-grid-community";
 
 import {RangeController} from "../../rangeController";
@@ -55,7 +55,7 @@ interface ColumnCallback {
 @Bean('clipboardService')
 export class ClipboardService implements IClipboardService {
 
-    @Autowired('csvCreator') private csvCreator: CsvCreator;
+    @Autowired('csvCreator') private csvCreator: ICsvCreator;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('rangeController') private rangeController: RangeController;

@@ -1,14 +1,20 @@
-import {RowNode} from "../../entities/rowNode";
-import {Autowired, PostConstruct, Qualifier} from "../../context/context";
-import {EventService} from "../../eventService";
-import {Events, RowDataUpdatedEvent} from "../../events";
-import {LoggerFactory} from "../../logger";
-import {IDatasource} from "../../interfaces/iDatasource";
+import {
+    Autowired,
+    ColumnApi,
+    Events,
+    EventService,
+    GridApi,
+    IDatasource,
+    LoggerFactory,
+    ModuleLogger,
+    PostConstruct,
+    Qualifier,
+    RowDataUpdatedEvent,
+    RowNode,
+    RowNodeCache,
+    RowNodeCacheParams,
+} from "ag-grid-community";
 import {InfiniteBlock} from "./infiniteBlock";
-import {RowNodeCache, RowNodeCacheParams} from "../rowNodeCache/rowNodeCache";
-import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnApi";
-import {ModuleLogger} from "../../utils/moduleLogger";
 
 ModuleLogger.logModuleClass('IRM.InfiniteCache');
 

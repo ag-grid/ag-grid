@@ -1,5 +1,4 @@
-import { Bean } from "../../context/context";
-import {ModuleLogger} from "../../utils/moduleLogger";
+import {Bean, ModuleLogger} from "ag-grid-community";
 
 ModuleLogger.logModuleClass('Csv.Downloader');
 

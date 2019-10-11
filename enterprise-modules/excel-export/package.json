@@ -40,6 +40,7 @@
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
     "ag-grid-community": "^21.2.0",
+    "@ag-community/csv-export": "^21.2.0",
     "gulp-typescript": "^5.0.1"
   },
   "devDependencies": {

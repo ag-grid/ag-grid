@@ -177,6 +177,7 @@ export {RowNodeBlockLoader} from "./modules/rowNodeCache/rowNodeBlockLoader";
 export {PaginationProxy} from "./pagination/paginationProxy";
 export {RefreshModelParams} from "./interfaces/refreshModelParams";
 export {IClientSideRowModel} from "./interfaces/iClientSideRowModel";
+export {IInfiniteRowModel} from "./interfaces/iInfiniteRowModel";
 
 export {ColumnVO} from "./interfaces/iColumnVO";
 
@@ -224,18 +225,12 @@ export {IRangeController, ISelectionHandle} from "./interfaces/iRangeController"
 export {IChartService} from "./interfaces/IChartService";
 
 // exporter
-export {CsvCreator, BaseCreator} from "./modules/csvExport/csvCreator";
-export {Downloader} from "./modules/csvExport/downloader";
-export {XmlFactory} from "./modules/csvExport/xmlFactory";
 export {
-    BaseGridSerializingSession, GridSerializer, GridSerializingSession, GridSerializingParams
-}from "./modules/csvExport/gridSerializer";
-export {RowType, RowAccumulator, RowSpanningAccumulator} from "./modules/csvExport/gridSerializer";
-export {
-    CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams
+    CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams,
+    ProcessGroupHeaderForExportParams, ShouldRowBeSkippedParams, BaseExportParams
 }from "./interfaces/exportParams";
-export {XmlElement} from "./interfaces/iXmlFactory";
-export {ZipContainer} from "./modules/csvExport/zipContainer";
+export {HeaderElement, PrefixedXmlAttributes, XmlElement} from "./interfaces/iXmlFactory"
+export {ICsvCreator} from "./interfaces/iCsvCreator";
 
 // root
 export {VanillaFrameworkOverrides} from "./vanillaFrameworkOverrides";

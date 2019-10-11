@@ -1,7 +1,8 @@
-import {Grid, Module, ModuleNames, Downloader, GridSerializer, ZipContainer, XmlFactory, CsvCreator} from "ag-grid-community";
+import {Grid, Module, ModuleNames} from "ag-grid-community";
 import {ExcelXlsxFactory} from "./excelExport/excelXlsxFactory";
 import {ExcelXmlFactory} from "./excelExport/excelXmlFactory";
 import {ExcelCreator} from "./excelExport/excelCreator";
+import {GridSerializer, ZipContainer, XmlFactory, Downloader, CsvCreator} from "@ag-community/csv-export";
 
 export const ExcelExportModule: Module = {
     moduleName: ModuleNames.ExcelExportModule,

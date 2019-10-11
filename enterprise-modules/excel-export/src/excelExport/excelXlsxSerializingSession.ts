@@ -8,13 +8,12 @@ import {
     ExcelStyle,
     ExcelWorksheet,
     RowNode,
-    RowSpanningAccumulator,
-    RowType,
     _,
     ModuleLogger
 } from 'ag-grid-community';
 
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
+import {RowSpanningAccumulator, RowType} from "@ag-community/csv-export";
 
 ModuleLogger.logModuleClass('Excel.ExcelXlsxSerializingSession');
 

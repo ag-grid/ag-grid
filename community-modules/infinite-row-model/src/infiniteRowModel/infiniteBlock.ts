@@ -1,13 +1,16 @@
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {RowNode} from "../../entities/rowNode";
-import {Autowired, PostConstruct} from "../../context/context";
-import {IGetRowsParams} from "../../interfaces/iDatasource";
-import {IEventEmitter} from "../../interfaces/iEventEmitter";
+import {
+    GridOptionsWrapper,
+    RowNode,
+    Autowired,
+    PostConstruct,
+    IGetRowsParams,
+    IEventEmitter,
+    RowNodeBlock,
+    RowRenderer,
+    _,
+    ModuleLogger
+} from "ag-grid-community";
 import {InfiniteCacheParams} from "./infiniteCache";
-import {RowNodeBlock} from "../rowNodeCache/rowNodeBlock";
-import {RowRenderer} from "../../rendering/rowRenderer";
-import {_} from "../../utils";
-import {ModuleLogger} from "../../utils/moduleLogger";
 
 ModuleLogger.logModuleClass('IRM.InfiniteBlock');
 

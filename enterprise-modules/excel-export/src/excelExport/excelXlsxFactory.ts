@@ -1,4 +1,4 @@
-import { Autowired, Bean, XmlFactory, XmlElement, ModuleLogger } from 'ag-grid-community';
+import { Autowired, Bean, XmlElement, ModuleLogger } from 'ag-grid-community';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -10,6 +10,7 @@ import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
 import { ExcelStyle, ExcelWorksheet } from 'ag-grid-community';
+import {XmlFactory} from "@ag-community/csv-export";
 
 ModuleLogger.logModuleClass('Excel.ExcelXlsxFactory');
 

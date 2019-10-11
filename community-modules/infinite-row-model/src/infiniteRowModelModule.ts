@@ -1,6 +1,4 @@
-import {Module} from "../interfaces/iModule";
-import {ModuleNames} from "./moduleNames";
-import {Grid} from "../grid";
+import {Module, ModuleNames, Grid} from "ag-grid-community";
 import {InfiniteRowModel} from "./infiniteRowModel/infiniteRowModel";
 
 export const InfiniteRowModelModule: Module = {

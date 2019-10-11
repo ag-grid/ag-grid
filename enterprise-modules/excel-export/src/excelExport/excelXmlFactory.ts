@@ -1,4 +1,4 @@
-import { XmlElement, XmlFactory, _ } from 'ag-grid-community';
+import { XmlElement,  _ } from 'ag-grid-community';
 import { Bean, Autowired } from 'ag-grid-community';
 
 import workbook from './files/xml/workbook';
@@ -15,6 +15,7 @@ import numberFormat from './files/xml/styles/numberFormat';
 import style from './files/xml/styles/style';
 
 import { ExcelStyle, ModuleLogger, ExcelWorksheet, ExcelXMLTemplate } from 'ag-grid-community';
+import {XmlFactory} from "@ag-community/csv-export";
 
 ModuleLogger.logModuleClass('Excel.ExcelXlsxSerializingSession');
 

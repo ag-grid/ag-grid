@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TOLERANCE_PCT=10
+TOLERANCE_PCT=12
 
 command='stat'
 arguments=' -f%z ' # osx

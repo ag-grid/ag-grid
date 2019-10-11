@@ -21,7 +21,7 @@
     "cleanBuildCoreDependencies": "npm run cleanCoreDependencies && npm run updateCoreDependencies && npm run buildCore",
     "resetNonDocs": "git checkout packages/ag-grid-community && git checkout packages/ag-grid-community && git checkout packages/ag-grid-angular && git checkout packages/ag-grid-react && git checkout packages/ag-grid-vue ",
     "test": "npx lerna run test",
-    "build-modules": "npx lerna run build --scope @ag-community/client-side-row-model --scope @ag-enterprise/excel-export",
+    "build-modules": "npx lerna run build --scope @ag-community/client-side-row-model --scope @ag-community/csv-export --scope @ag-community/infinite-row-model --scope @ag-enterprise/excel-export",
     "build": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example && npx lerna run package --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
     "buildAndTest": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example && npx lerna run package && npx lerna run test",
     "buildCI": "npx lerna run build --ignore ag-grid-charts-example && npx lerna run package",

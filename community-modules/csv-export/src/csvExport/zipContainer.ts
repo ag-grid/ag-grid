@@ -1,5 +1,4 @@
-import { Bean } from '../../context/context';
-import { _ } from '../../utils';
+import { Bean, _ } from 'ag-grid-community';
 
 export interface ZipFolder {
     path: string;

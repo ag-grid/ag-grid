@@ -18,18 +18,6 @@ import "../../../../ag-grid-community/src/styles/ag-theme-balham-dark/sass/ag-th
 export * from "../../../../ag-grid-community/src/ts/main";
 
 /* MODULES - Don't delete this line */
-import "../../../../ag-grid-community/src/ts/modules/csvExportModule.ts";
-import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
 import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
-import "../../../../ag-grid-community/src/ts/modules/csvExportModule.ts";
-import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
-import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
-import "../../../../ag-grid-community/src/ts/modules/csvExportModule.ts";
-import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
-import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
-import "../../../../ag-grid-community/src/ts/modules/csvExportModule.ts";
-import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
-import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
-import "../../../../ag-grid-community/src/ts/modules/csvExportModule.ts";
-import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
-import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
+import "../../../../../community-modules/csv-export/src/csvExportModule.ts";
+import "../../../../../community-modules/infinite-row-model/src/infiniteRowModelModule.ts";

@@ -64,6 +64,14 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
+           '@ag-community/csv-export': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-community/infinite-row-model': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
            '@ag-enterprise/excel-export': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'

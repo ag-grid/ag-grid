@@ -1,29 +1,30 @@
-import { Column } from "../../entities/column";
-import { Autowired, Bean } from "../../context/context";
-import { ColumnController } from "../../columnController/columnController";
-import { Constants } from "../../constants";
-import { IRowModel } from "../../interfaces/iRowModel";
-import { RowNode } from "../../entities/rowNode";
-import { SelectionController } from "../../selectionController";
-import { ValueService } from "../../valueService/valueService";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import {
+    _,
+    Autowired,
+    Bean,
+    Column,
+    ColumnController,
+    ColumnFactory,
+    ColumnGroup,
+    ColumnGroupChild,
+    Constants,
+    DisplayedGroupCreator,
     ExportParams,
+    GridApi,
+    GridOptionsWrapper,
+    GroupInstanceIdCreator,
+    IClientSideRowModel,
+    IRowModel,
+    ModuleLogger,
+    PinnedRowModel,
     ProcessCellForExportParams,
+    ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
+    RowNode,
+    SelectionController,
     ShouldRowBeSkippedParams,
-    ProcessGroupHeaderForExportParams
-} from "../../interfaces/exportParams";
-import { DisplayedGroupCreator } from "../../columnController/displayedGroupCreator";
-import { ColumnFactory } from "../../columnController/columnFactory";
-import { GroupInstanceIdCreator } from "../../columnController/groupInstanceIdCreator";
-import { ColumnGroupChild } from "../../entities/columnGroupChild";
-import { ColumnGroup } from "../../entities/columnGroup";
-import { GridApi } from "../../gridApi";
-import { _ } from "../../utils";
-import {PinnedRowModel} from "../../pinnedRowModel/pinnedRowModel";
-import {IClientSideRowModel} from "../../interfaces/iClientSideRowModel";
-import {ModuleLogger} from "../../utils/moduleLogger";
+    ValueService
+} from "ag-grid-community";
 
 ModuleLogger.logModuleClass('Csv.GridSerializer');
 
@@ -56,14 +57,14 @@ export interface GridSerializingSession<T> {
     /**
      * INITIAL METHOD
      */
-    prepare(columnsToExport: Column[]) : void;
+    prepare(columnsToExport: Column[]): void;
 
     /**
      * ROW METHODS
      */
     addCustomHeader(customHeader: T): void;
 
-    onNewHeaderGroupingRow():RowSpanningAccumulator;
+    onNewHeaderGroupingRow(): RowSpanningAccumulator;
 
     onNewHeaderRow(): RowAccumulator;
 
@@ -78,11 +79,11 @@ export interface GridSerializingSession<T> {
 }
 
 export interface RowAccumulator {
-    onColumn(column: Column, index: number, node?:RowNode):void;
+    onColumn(column: Column, index: number, node?: RowNode): void;
 }
 
 export interface RowSpanningAccumulator {
-    onColumn(header: string, index: number, span:number):void;
+    onColumn(header: string, index: number, span: number): void;
 }
 
 export interface GridSerializingParams {
@@ -92,21 +93,23 @@ export interface GridSerializingParams {
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
-    cellAndHeaderEscaper?: (rawValue:string) => string;
+    cellAndHeaderEscaper?: (rawValue: string) => string;
 }
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnController: ColumnController;
-    public valueService:ValueService;
-    public gridOptionsWrapper:GridOptionsWrapper;
-    public processCellCallback?:(params: ProcessCellForExportParams) => string;
-    public processHeaderCallback?:(params: ProcessHeaderForExportParams) => string;
-    public processGroupHeaderCallback?:(params: ProcessGroupHeaderForExportParams) => string;
-    public cellAndHeaderEscaper?:(rawValue:string) => string;
+    public valueService: ValueService;
+    public gridOptionsWrapper: GridOptionsWrapper;
+    public processCellCallback?: (params: ProcessCellForExportParams) => string;
+    public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
+    public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
+    public cellAndHeaderEscaper?: (rawValue: string) => string;
 
     constructor(config: GridSerializingParams) {
-        const {columnController, valueService, gridOptionsWrapper, processCellCallback,
-            processHeaderCallback, processGroupHeaderCallback, cellAndHeaderEscaper} = config;
+        const {
+            columnController, valueService, gridOptionsWrapper, processCellCallback,
+            processHeaderCallback, processGroupHeaderCallback, cellAndHeaderEscaper
+        } = config;
 
         this.columnController = columnController;
         this.valueService = valueService;
@@ -117,7 +120,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.cellAndHeaderEscaper = cellAndHeaderEscaper;
     }
 
-    abstract prepare(columnsToExport: Column[]) : void;
+    abstract prepare(columnsToExport: Column[]): void;
 
     abstract addCustomHeader(customHeader: T): void;
 
@@ -133,9 +136,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     public extractHeaderValue(column: Column): string {
         let nameForCol = this.getHeaderName(this.processHeaderCallback, column);
-            if (nameForCol === null || nameForCol === undefined) {
-                nameForCol = '';
-            }
+        if (nameForCol === null || nameForCol === undefined) {
+            nameForCol = '';
+        }
         return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
     }
 
@@ -144,9 +147,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
         let valueForCell: any;
         if (node && node.group && isRowGrouping && index === 0) {
-            valueForCell =  this.createValueForGroupNode(node);
+            valueForCell = this.createValueForGroupNode(node);
         } else {
-            valueForCell =  this.valueService.getValue(column, node);
+            valueForCell = this.valueService.getValue(column, node);
         }
         valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback, type);
         if (valueForCell === null || valueForCell === undefined) {
@@ -223,11 +226,11 @@ export class GridSerializer {
         const columnKeys = params && params.columnKeys;
         const onlySelectedAllPages = params && params.onlySelectedAllPages;
         const processGroupHeaderCallback = params ? params.processGroupHeaderCallback : undefined;
-        const rowSkipper:(params: ShouldRowBeSkippedParams) => boolean = (params && params.shouldRowBeSkipped) || dontSkipRows;
-        const api:GridApi = this.gridOptionsWrapper.getApi() as GridApi;
+        const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = (params && params.shouldRowBeSkipped) || dontSkipRows;
+        const api: GridApi = this.gridOptionsWrapper.getApi() as GridApi;
         const skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
         const skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
-        const context:any = this.gridOptionsWrapper.getContext();
+        const context: any = this.gridOptionsWrapper.getContext();
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
         const isPivotMode = this.columnController.isPivotMode();
@@ -292,7 +295,7 @@ export class GridSerializer {
             // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
             if (onlySelectedAllPages || onlySelectedNonStandardModel) {
                 const selectedNodes = this.selectionController.getSelectedNodes();
-                selectedNodes.forEach((node:RowNode) => {
+                selectedNodes.forEach((node: RowNode) => {
                     processRow(node);
                 });
             } else {
@@ -343,13 +346,15 @@ export class GridSerializer {
                 return;
             }
 
-            const shouldRowBeSkipped:boolean = rowSkipper({
+            const shouldRowBeSkipped: boolean = rowSkipper({
                 node: node,
                 api: api,
                 context: context
             });
 
-            if (shouldRowBeSkipped) { return; }
+            if (shouldRowBeSkipped) {
+                return;
+            }
 
             const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow();
             columnsToExport.forEach((column: Column, index: number) => {
@@ -360,11 +365,13 @@ export class GridSerializer {
         return gridSerializingSession.parse();
     }
 
-    recursivelyAddHeaderGroups<T>(displayedGroups:ColumnGroupChild[], gridSerializingSession:GridSerializingSession<T>, processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined):void {
-        const directChildrenHeaderGroups:ColumnGroupChild[] = [];
+    recursivelyAddHeaderGroups<T>(displayedGroups: ColumnGroupChild[], gridSerializingSession: GridSerializingSession<T>, processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined): void {
+        const directChildrenHeaderGroups: ColumnGroupChild[] = [];
         displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
             const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
-            if (!columnGroup.getChildren) { return; }
+            if (!columnGroup.getChildren) {
+                return;
+            }
             columnGroup.getChildren().forEach(it => directChildrenHeaderGroups.push(it));
         });
 

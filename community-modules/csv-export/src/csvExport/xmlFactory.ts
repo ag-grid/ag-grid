@@ -1,6 +1,5 @@
-import { Bean } from "../../context/context";
-import {ModuleLogger} from "../../utils/moduleLogger";
-import {HeaderElement, PrefixedXmlAttributes, XmlElement} from "../../interfaces/iXmlFactory";
+import {Bean, ModuleLogger, HeaderElement, PrefixedXmlAttributes, XmlElement} from "ag-grid-community";
+
 const LINE_SEPARATOR = '\r\n';
 
 ModuleLogger.logModuleClass('Csv.XmlFactory');

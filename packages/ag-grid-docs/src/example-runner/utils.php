@@ -31,6 +31,8 @@ if (USE_LOCAL) {
         // "ag-community/ag-grid" => "$prefix/@ag-community/ag-grid",
         /* START OF MODULES DEV - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "$prefix/@ag-community/client-side-row-model",
+        "@ag-community/csv-export" => "$prefix/@ag-community/csv-export",
+        "@ag-community/infinite-row-model" => "$prefix/@ag-community/infinite-row-model",
         "@ag-enterprise/excel-export" => "$prefix/@ag-enterprise/excel-export",
         /* END OF MODULES DEV - DO NOT DELETE */
         "ag-grid-community" => "$prefix/ag-grid-community/dist/ag-grid-community.js",
@@ -49,6 +51,8 @@ if (USE_LOCAL) {
         // spl modules test prior to release!
         /* START OF MODULES PROD - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "https://unpkg.com/@ag-community/client-side-row-model@" . AG_GRID_VERSION . "/",
+        "@ag-community/csv-export" => "https://unpkg.com/@ag-community/csv-export@" . AG_GRID_VERSION . "/",
+        "@ag-community/infinite-row-model" => "https://unpkg.com/@ag-community/infinite-row-model@" . AG_GRID_VERSION . "/",
         "@ag-enterprise/excel-export" => "https://unpkg.com/@ag-enterprise/excel-export@" . AG_GRID_ENTERPRISE_VERSION . "/",
         /* END OF MODULES PROD - DO NOT DELETE */
         "ag-grid-community" => "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/dist/ag-grid-community.js",

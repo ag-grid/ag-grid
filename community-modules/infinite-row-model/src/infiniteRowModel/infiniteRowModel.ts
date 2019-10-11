@@ -1,25 +1,32 @@
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { RowNode } from "../../entities/rowNode";
-import { Autowired, Bean, Context, PostConstruct, PreDestroy } from "../../context/context";
-import { EventService } from "../../eventService";
-import { SelectionController } from "../../selectionController";
-import { IRowModel, RowBounds } from "../../interfaces/iRowModel";
-import { Events, ModelUpdatedEvent } from "../../events";
-import { SortController } from "../../sortController";
-import { FilterManager } from "../../filter/filterManager";
-import { Constants } from "../../constants";
-import { IDatasource } from "../../interfaces/iDatasource";
-import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
-import { BeanStub } from "../../context/beanStub";
-import { RowNodeCache } from "../rowNodeCache/rowNodeCache";
-import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
-import { GridApi } from "../../gridApi";
-import { ColumnApi } from "../../columnController/columnApi";
-import { NumberSequence, _ } from "../../utils";
-import { RowRenderer } from "../../rendering/rowRenderer";
-import {ModuleLogger} from "../../utils/moduleLogger";
-import {RowDataTransaction} from "../../interfaces/rowDataTransaction";
-import {IInfiniteRowModel} from "../../interfaces/iInfiniteRowModel";
+import {
+    _,
+    Autowired,
+    Bean,
+    BeanStub,
+    ColumnApi,
+    Constants,
+    Events,
+    EventService,
+    FilterManager,
+    GridApi,
+    GridOptionsWrapper,
+    IDatasource,
+    ModelUpdatedEvent,
+    ModuleLogger,
+    NumberSequence,
+    PostConstruct,
+    PreDestroy,
+    RowBounds,
+    RowDataTransaction,
+    RowNode,
+    RowNodeBlockLoader,
+    RowNodeCache,
+    RowRenderer,
+    SelectionController,
+    SortController,
+    IInfiniteRowModel
+} from "ag-grid-community";
+import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
 
 ModuleLogger.logModuleClass('IRM.InfiniteRowModel');
 
@@ -52,7 +59,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     // we don't implement as lazy row heights is not supported in this row model
-    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
+    public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
+        return false;
+    }
 
     @PostConstruct
     public init(): void {

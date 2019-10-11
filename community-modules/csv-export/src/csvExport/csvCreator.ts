@@ -1,20 +1,30 @@
-import { Bean, Autowired, PostConstruct } from "../../context/context";
 import {
-    GridSerializer, RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator,
-    GridSerializingSession, GridSerializingParams
+    _,
+    Autowired,
+    BaseExportParams,
+    Bean,
+    Column,
+    ColumnController,
+    Constants,
+    CsvExportParams,
+    ExportParams,
+    GridOptionsWrapper,
+    ICsvCreator,
+    ModuleLogger,
+    PostConstruct,
+    RowNode,
+    ValueService
+} from "ag-grid-community"
+
+import {
+    BaseGridSerializingSession,
+    GridSerializer,
+    GridSerializingParams,
+    GridSerializingSession,
+    RowAccumulator,
+    RowSpanningAccumulator
 } from "./gridSerializer";
-import { Downloader } from "./downloader";
-import { Column } from "../../entities/column";
-import { RowNode } from "../../entities/rowNode";
-import { ColumnController } from "../../columnController/columnController";
-import { ValueService } from "../../valueService/valueService";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import {
-    BaseExportParams, CsvExportParams, ExportParams } from "../../interfaces/exportParams";
-import { Constants } from "../../constants";
-import { _ } from "../../utils";
-import {ModuleLogger} from "../../utils/moduleLogger";
-import {ICsvCreator} from "../../interfaces/iCsvCreator";
+import {Downloader} from "./downloader";
 
 ModuleLogger.logModuleClass('Csv.CsvSerializingSession');
 
@@ -26,8 +36,8 @@ export interface CsvSerializingParams extends GridSerializingParams {
 }
 
 export class CsvSerializingSession extends BaseGridSerializingSession<string> {
-    private result:string = '';
-    private lineOpened:boolean = false;
+    private result: string = '';
+    private lineOpened: boolean = false;
     private suppressQuotes: boolean;
     private columnSeparator: string;
 
@@ -50,24 +60,30 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     }
 
     public addCustomHeader(customHeader: string): void {
-        if (!customHeader) { return; }
+        if (!customHeader) {
+            return;
+        }
         this.result += customHeader + LINE_SEPARATOR;
     }
 
     public addCustomFooter(customFooter: string): void {
-        if (!customFooter) { return; }
+        if (!customFooter) {
+            return;
+        }
         this.result += customFooter + LINE_SEPARATOR;
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        if (this.lineOpened) { this.result += LINE_SEPARATOR; }
+        if (this.lineOpened) {
+            this.result += LINE_SEPARATOR;
+        }
 
         return {
             onColumn: this.onNewHeaderGroupingRowColumn.bind(this)
         };
     }
 
-    private onNewHeaderGroupingRowColumn(header: string, index: number, span:number) {
+    private onNewHeaderGroupingRowColumn(header: string, index: number, span: number) {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
@@ -81,30 +97,34 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     }
 
     public onNewHeaderRow(): RowAccumulator {
-        if (this.lineOpened) { this.result += LINE_SEPARATOR; }
+        if (this.lineOpened) {
+            this.result += LINE_SEPARATOR;
+        }
 
         return {
-            onColumn:this.onNewHeaderRowColumn.bind(this)
+            onColumn: this.onNewHeaderRowColumn.bind(this)
         };
     }
 
-    private onNewHeaderRowColumn(column: Column, index: number, node?:RowNode):void {
-            if (index != 0) {
-                this.result += this.columnSeparator;
-            }
-            this.result += this.putInQuotes(this.extractHeaderValue(column), this.suppressQuotes);
-            this.lineOpened = true;
+    private onNewHeaderRowColumn(column: Column, index: number, node?: RowNode): void {
+        if (index != 0) {
+            this.result += this.columnSeparator;
+        }
+        this.result += this.putInQuotes(this.extractHeaderValue(column), this.suppressQuotes);
+        this.lineOpened = true;
     }
 
     public onNewBodyRow(): RowAccumulator {
-        if (this.lineOpened) { this.result += LINE_SEPARATOR; }
+        if (this.lineOpened) {
+            this.result += LINE_SEPARATOR;
+        }
 
         return {
             onColumn: this.onNewBodyRowColumn.bind(this)
         };
     }
 
-    private onNewBodyRowColumn(column: Column, index: number, node: RowNode):void {
+    private onNewBodyRowColumn(column: Column, index: number, node: RowNode): void {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
@@ -113,7 +133,9 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     }
 
     private putInQuotes(value: any, suppressQuotes: boolean): string {
-        if (suppressQuotes) { return value; }
+        if (suppressQuotes) {
+            return value;
+        }
 
         if (value === null || value === undefined) {
             return '""';
@@ -174,18 +196,18 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         return data;
     }
 
-    public getData(params?:P): string {
+    public getData(params?: P): string {
         return this.getMergedParamsAndData(params).data;
     }
 
-    private getMergedParamsAndData(userParams?: P):{mergedParams: P, data: string} {
+    private getMergedParamsAndData(userParams?: P): { mergedParams: P, data: string } {
         const mergedParams = this.mergeDefaultParams(userParams);
         const data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
 
         return {mergedParams, data};
     }
 
-    private mergeDefaultParams(userParams?: P):P {
+    private mergeDefaultParams(userParams?: P): P {
         const baseParams: BaseExportParams | undefined = this.beans.gridOptionsWrapper.getDefaultExportParams();
         const params: P = {} as any;
         _.assign(params, baseParams);
@@ -200,9 +222,13 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     }
 
     public abstract createSerializingSession(params?: P): S;
+
     public abstract getMimeType(): string;
+
     public abstract getDefaultFileName(): string;
+
     public abstract getDefaultFileExtension(): string;
+
     public abstract isExportSuppressed(): boolean;
 }
 
@@ -250,14 +276,14 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
         const {processCellCallback, processHeaderCallback, processGroupHeaderCallback, suppressQuotes, columnSeparator} = params;
 
         return new CsvSerializingSession({
-                columnController,
-                valueService,
-                gridOptionsWrapper,
-                processCellCallback: processCellCallback || undefined,
-                processHeaderCallback: processHeaderCallback || undefined,
-                processGroupHeaderCallback: processGroupHeaderCallback || undefined,
-                suppressQuotes: suppressQuotes || false,
-                columnSeparator: columnSeparator || ','
+            columnController,
+            valueService,
+            gridOptionsWrapper,
+            processCellCallback: processCellCallback || undefined,
+            processHeaderCallback: processHeaderCallback || undefined,
+            processGroupHeaderCallback: processGroupHeaderCallback || undefined,
+            suppressQuotes: suppressQuotes || false,
+            columnSeparator: columnSeparator || ','
         });
     }
 
