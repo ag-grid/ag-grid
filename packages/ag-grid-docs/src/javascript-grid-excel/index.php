@@ -256,7 +256,7 @@ include '../documentation-main/documentation_header.php';
 
         <ul class="content">
             <li><code>id</code> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a></li>
-            <li><code>alignment</code> (optional): Vertical and horizontal alignmen:
+            <li><code>alignment</code> (optional): Vertical and horizontal alignment:
                 <ul class="content">
                     <li>horizontal: String one of Automatic, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed, and JustifyDistributed</li>
                     <li>indent: Number of indents</li>
