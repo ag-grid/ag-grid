@@ -9,11 +9,12 @@
     "test:darwin:linux": "npm run test:modules && npm run test:bundle-size",
     "test:modules": "cd tests && sh ./runTests.sh",
     "test:bundle-size": "cd bundle-size-tests && sh ./compareBundleSizes.sh",
+    "build": "run-script-os",
+    "build:darwin:linux": "npm run build:moduleParser && npm run build:test-input && npm run build:bundles",
     "build:bundle-size": "cd bundle-size-tests && sh ./downloadCurrentBundles.sh",
     "build:test-input": "cd test-config && node buildTests.js",
     "build:bundles": "cd test-input && sh ./webpack.sh",
     "build:moduleParser": "tsc -p tsconfig-moduleParser.json",
-    "build": "npm run build:moduleParser && npm run build:test-input && npm run build:bundles"
   },
   "repository": {
     "type": "git",
