@@ -46,7 +46,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private params: ToolPanelColumnCompParams;
 
     private childDestroyFuncs: Function[] = [];
+
+    private pivotModePanel: PivotModePanel;
     private primaryColsPanel: PrimaryColsPanel;
+    private rowGroupDropZonePanel: RowGroupDropZonePanel;
+    private valuesDropZonePanel: ValuesDropZonePanel;
+    private pivotDropZonePanel: PivotDropZonePanel;
 
     constructor() {
         super(ColumnToolPanel.TEMPLATE);
@@ -77,30 +82,90 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
 
-        const rowGroupingModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule);
-
-        if (rowGroupingModuleLoaded && !this.params.suppressPivotMode) {
-            this.addComponent(new PivotModePanel());
+        if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
+            this.pivotModePanel = new PivotModePanel();
+            this.addComponent(this.pivotModePanel);
         }
 
         this.primaryColsPanel = new PrimaryColsPanel(true, this.params);
         this.addComponent(this.primaryColsPanel);
 
-        if (rowGroupingModuleLoaded) {
+        if (this.isRowGroupingModuleLoaded()) {
             if (!this.params.suppressRowGroups) {
-                this.addComponent(new RowGroupDropZonePanel(false));
+                this.rowGroupDropZonePanel = new RowGroupDropZonePanel(false);
+                this.addComponent(this.rowGroupDropZonePanel);
             }
 
             if (!this.params.suppressValues) {
-                this.addComponent(new ValuesDropZonePanel(false));
+                this.valuesDropZonePanel = new ValuesDropZonePanel(false);
+                this.addComponent(this.valuesDropZonePanel);
             }
 
             if (!this.params.suppressPivots) {
-                this.addComponent(new PivotDropZonePanel(false));
+                this.pivotDropZonePanel = new PivotDropZonePanel(false);
+                this.addComponent(this.pivotDropZonePanel);
             }
         }
 
         this.initialised = true;
+    }
+
+    public setPivotModeSectionVisible(visible: boolean): void {
+        if (!this.isRowGroupingModuleLoaded()) return;
+
+        if (this.pivotModePanel) {
+            this.pivotModePanel.setDisplayed(visible);
+        } else if (visible) {
+            this.pivotModePanel = new PivotModePanel();
+            this.getContext().wireBean(this.pivotModePanel);
+
+            // ensure pivot mode panel is positioned at the top of the columns tool panel
+            this.getGui().insertBefore(this.pivotModePanel.getGui(), this.getGui().firstChild);
+            this.childDestroyFuncs.push(this.pivotModePanel.destroy.bind(this.pivotModePanel));
+        }
+    }
+
+    public setRowGroupsSectionVisible(visible: boolean): void {
+        if (!this.isRowGroupingModuleLoaded()) return;
+
+        if (this.rowGroupDropZonePanel) {
+            this.rowGroupDropZonePanel.setDisplayed(visible);
+        } else if (visible) {
+            this.rowGroupDropZonePanel = new RowGroupDropZonePanel(false);
+            this.addComponent(new RowGroupDropZonePanel(false));
+        }
+    }
+
+    public setValuesSectionVisible(visible: boolean): void {
+        if (!this.isRowGroupingModuleLoaded()) return;
+
+        if (this.valuesDropZonePanel) {
+            this.valuesDropZonePanel.setDisplayed(visible);
+        } else if (visible) {
+            this.valuesDropZonePanel = new ValuesDropZonePanel(false);
+            this.addComponent(this.valuesDropZonePanel);
+        }
+    }
+
+    public setPivotSectionVisible(visible: boolean): void {
+        if (!this.isRowGroupingModuleLoaded()) return;
+
+        if (this.pivotDropZonePanel) {
+            this.pivotDropZonePanel.setDisplayed(visible);
+        } else if (visible) {
+            this.pivotDropZonePanel = new PivotDropZonePanel(false);
+            this.addComponent(this.pivotDropZonePanel);
+            this.pivotDropZonePanel.setDisplayed(visible);
+        }
+    }
+
+    private isRowGroupingModuleLoaded(): boolean {
+        // TODO improve
+        const rowGroupingModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule);
+        if (!rowGroupingModuleLoaded) {
+            console.warn('ag-Grid: tried to use Row Grouping Module, but Row Grouping Module is missing.');
+        }
+        return rowGroupingModuleLoaded;
     }
 
     public expandColumnGroups(groupIds?: string[]): void {
