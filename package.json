@@ -21,13 +21,13 @@
     "cleanBuildCoreDependencies": "npm run cleanCoreDependencies && npm run updateCoreDependencies && npm run buildCore",
     "resetNonDocs": "git checkout packages/ag-grid-community && git checkout packages/ag-grid-community && git checkout packages/ag-grid-angular && git checkout packages/ag-grid-react && git checkout packages/ag-grid-vue ",
     "test": "npx lerna run test",
-    "build-modules": "npx lerna run build --scope @ag-community/client-side-row-model",
+    "build-modules": "npx lerna run build --scope @ag-community/client-side-row-model --scope @ag-enterprise/excel-export",
     "build": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example && npx lerna run package --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
     "buildAndTest": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example && npx lerna run package && npx lerna run test",
     "buildCI": "npx lerna run build --ignore ag-grid-charts-example && npx lerna run package",
     "buildRelease": "npx lerna run build && npx lerna run package",
-    "buildCore": "npx lerna run build --scope ag-grid-community --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue && npx lerna run package --scope ag-grid-community --scope ag-grid-enterprise",
-    "buildVanilla": "npx lerna run build --scope ag-grid-community --scope ag-grid-enterprise && npx lerna run package --scope ag-grid-community --scope ag-grid-enterprise ",
+    "buildCore": "npx lerna run build --scope ag-grid-community --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue && npm run build-modules && npx lerna run package --scope ag-grid-community --scope ag-grid-enterprise",
+    "buildVanilla": "npx lerna run build --scope ag-grid-community --scope ag-grid-enterprise && npm run build-modules && npx lerna run package --scope ag-grid-community --scope ag-grid-enterprise",
     "buildCommunity": "npx lerna run build --scope ag-grid-community --scope @ag-community/client-side-row-model && npx lerna run package --scope ag-grid-community ",
     "buildAngular": "npx lerna run build --scope ag-grid-community --scope ag-grid-angular",
     "buildVue": "npx lerna run build --scope ag-grid-community --scope ag-grid-vue",
@@ -42,9 +42,12 @@
   },
   "devDependencies": {
     "archiver": "^3.0.0",
+    "inquirer": "^7.0.0",
     "lerna": "^2.11.0",
     "lighthouse": "^5.4.0",
     "walk": "^2.3.14"
   },
-  "dependencies": {}
+  "dependencies": {
+    "fs-extra": "^8.1.0"
+  }
 }
