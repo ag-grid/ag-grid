@@ -12,7 +12,7 @@ const getRequiredInputs = async () => {
             },
             {
                 name: 'packageName',
-                message: 'What is the module name?',
+                message: 'What is the module name (will become @ag-community/[packageName] / @ag-enterprise/[packageName]) ?',
             },
         ]);
 
@@ -34,7 +34,7 @@ const getRequiredInputs = async () => {
 const main = async () => {
     const answers = await getRequiredInputs();
 
-    const moduleName = `${answers.enterprise ? '@ag-enterprise' : 'ag-community'}/${answers.packageName}`;
+    const moduleName = `${answers.enterprise ? '@ag-enterprise' : '@ag-community'}/${answers.packageName}`;
     const moduleDirName = `${answers.enterprise ? 'enterprise-modules' : 'community-modules'}/${answers.packageName}`;
     if(fs.existsSync(`./${moduleDirName}`)) {
         console.error(`!! ${moduleDirName} already exists - exiting.`);
