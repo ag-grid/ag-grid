@@ -67,7 +67,7 @@ export class TabbedChartMenu extends Component {
         name: ChartMenuOptions,
         title: string,
         ChildClass: new (controller: ChartController) => Component
-    ): {comp: Component, tab: TabbedItem} {
+    ): { comp: Component, tab: TabbedItem } {
         const eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, `ag-chart-${title}`);
 
@@ -89,7 +89,7 @@ export class TabbedChartMenu extends Component {
         };
     }
 
-    public getMinDimensions(): {width: number, height: number} {
+    public getMinDimensions(): { width: number, height: number } {
         return this.tabbedLayout.getMinDimensions();
     }
 
@@ -116,8 +116,13 @@ export class TabbedChartMenu extends Component {
     }
 
     private getPanelClass(panelType: string) {
-        const isDataPanel = panelType === TabbedChartMenu.TAB_DATA;
-        const isFormatPanel = panelType === TabbedChartMenu.TAB_FORMAT;
-        return isDataPanel ? ChartDataPanel : (isFormatPanel ? ChartFormattingPanel : ChartSettingsPanel);
+        switch (panelType) {
+            case TabbedChartMenu.TAB_DATA:
+                return ChartDataPanel;
+            case TabbedChartMenu.TAB_FORMAT:
+                return ChartFormattingPanel;
+            default:
+                return ChartSettingsPanel;
+        }
     }
 }

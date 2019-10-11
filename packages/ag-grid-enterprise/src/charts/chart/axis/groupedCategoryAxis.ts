@@ -1,8 +1,3 @@
-
-
-
-
-
 import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { Line } from "../../scene/shape/line";
@@ -145,9 +140,9 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
          */
         y: number
     } = {
-        x: 0,
-        y: 0
-    };
+            x: 0,
+            y: 0
+        };
 
     // TODO: remove
     translationX: number = 0;
@@ -169,9 +164,9 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
          */
         color?: string
     } = {
-        width: 1,
-        color: 'rgba(195, 195, 195, 1)'
-    };
+            width: 1,
+            color: 'rgba(195, 195, 195, 1)'
+        };
 
     // TODO: remove
     lineWidth: number = 1;
@@ -259,7 +254,7 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { group, scale, label, tick, tickScale } = this;
+        const { group, scale, label, tickScale } = this;
         const bandwidth = Math.abs(scale.range[1] - scale.range[0]) / scale.domain.length || 0;
         const parallelLabels = label.parallel;
         const rotation = toRadians(this.rotation);

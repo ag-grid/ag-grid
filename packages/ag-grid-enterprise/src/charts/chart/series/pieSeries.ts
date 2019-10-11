@@ -50,6 +50,19 @@ export interface PieTooltipRendererParams {
 class PieSeriesLabel extends SeriesLabel {
     onDataChange?: () => void;
 
+    set enabled(value: boolean) {
+        if (this._enabled !== value) {
+            this._enabled = value;
+            this.update();
+            if (this.onDataChange) {
+                this.onDataChange();
+            }
+        }
+    }
+    get enabled(): boolean {
+        return this._enabled;
+    }
+
     private _offset: number = 3; // from the callout line
     set offset(value: number) {
         if (this._offset !== value) {

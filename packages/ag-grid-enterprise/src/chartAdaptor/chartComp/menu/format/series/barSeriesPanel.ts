@@ -17,7 +17,7 @@ import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
 export class BarSeriesPanel extends Component {
 
     public static TEMPLATE =
-        `<div>   
+        `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>
@@ -85,7 +85,7 @@ export class BarSeriesPanel extends Component {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.opacity"))
+            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
             .onValueChange(newValue => this.chartProxy.setSeriesOption("stroke.opacity", newValue));
 
         this.seriesFillOpacitySlider
@@ -93,7 +93,7 @@ export class BarSeriesPanel extends Component {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("fill.opacity"))
+            .setValue(this.chartProxy.getSeriesOption("fill.opacity") || "1")
             .onValueChange(newValue => this.chartProxy.setSeriesOption("fill.opacity", newValue));
     }
 

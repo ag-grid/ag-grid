@@ -1,8 +1,9 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector } from "ag-grid-community";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, ChartType } from "ag-grid-community";
 import { ChartTranslator } from "../../../chartTranslator";
 import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
 import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
 import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
+import { ChartController } from "../../../chartController";
 
 export class MarkersPanel extends Component {
 
@@ -11,7 +12,7 @@ export class MarkersPanel extends Component {
             <ag-group-component ref="seriesMarkersGroup">
                 <ag-slider ref="seriesMarkerSizeSlider"></ag-slider>
                 <ag-slider ref="seriesMarkerStrokeWidthSlider"></ag-slider>
-            </ag-group-component>  
+            </ag-group-component>
         </div>`;
 
     @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
@@ -20,11 +21,13 @@ export class MarkersPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
+    private readonly chartController: ChartController;
     private readonly chartProxy: LineChartProxy | ScatterChartProxy | AreaChartProxy;
 
-    constructor(chartProxy: LineChartProxy | AreaChartProxy | ScatterChartProxy) {
+    constructor(chartController: ChartController) {
         super();
-        this.chartProxy = chartProxy;
+        this.chartController = chartController;
+        this.chartProxy = chartController.getChartProxy() as LineChartProxy | AreaChartProxy | ScatterChartProxy;
     }
 
     @PostConstruct
@@ -34,7 +37,6 @@ export class MarkersPanel extends Component {
     }
 
     private initMarkers() {
-
         // scatter charts should always show markers
         const shouldHideEnabledCheckbox = this.chartProxy instanceof ScatterChartProxy;
 
@@ -53,7 +55,12 @@ export class MarkersPanel extends Component {
                 .onValueChange(newValue => this.chartProxy.setSeriesOption(expression, newValue));
         };
 
-        initInput("marker.size", this.seriesMarkerSizeSlider, "size", 30);
-        initInput("marker.stroke.width", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
+        if (this.chartController.getChartType() !== ChartType.Bubble) {
+            initInput("marker.size", this.seriesMarkerSizeSlider, "size", 30);
+        } else {
+            this.seriesMarkerSizeSlider.setDisplayed(false);
+        }
+
+        initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
     }
 }

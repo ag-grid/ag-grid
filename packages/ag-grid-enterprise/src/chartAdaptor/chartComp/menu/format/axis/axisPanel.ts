@@ -124,11 +124,19 @@ export class AxisPanel extends Component {
         const degreesSymbol = String.fromCharCode(176);
 
         const xRotationLabel = `${this.chartTranslator.translate("xRotation")} ${degreesSymbol}`;
-        const xUpdateFunc = (newValue: number) => this.chartProxy.setChartOption("xAxis.label.rotation", newValue);
+        const xUpdateFunc = (newValue: number) => {
+            this.chartProxy.setChartOption("xAxis.label.rotation", newValue);
+            this.chartProxy.getChart().performLayout();
+        };
+
         createAngleComp(xRotationLabel, this.chartProxy.getChartOption("xAxis.label.rotation"), xUpdateFunc);
 
         const yRotationLabel = `${this.chartTranslator.translate("yRotation")} ${degreesSymbol}`;
-        const yUpdateFunc = (newValue: number) => this.chartProxy.setChartOption("yAxis.label.rotation", newValue);
+        const yUpdateFunc = (newValue: number) => {
+            this.chartProxy.setChartOption("yAxis.label.rotation", newValue);
+            this.chartProxy.getChart().performLayout();
+        };
+
         createAngleComp(yRotationLabel, this.chartProxy.getChartOption("yAxis.label.rotation"), yUpdateFunc);
 
         const labelPaddingSlider = this.wireBean(new AgSlider());

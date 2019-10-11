@@ -21,7 +21,7 @@ export interface HighlightStyle {
 export class SeriesLabel {
     onChange?: () => void;
 
-    private _enabled: boolean = true;
+    protected _enabled: boolean = true;
     set enabled(value: boolean) {
         if (this._enabled !== value) {
             this._enabled = value;

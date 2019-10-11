@@ -13,6 +13,7 @@ import {
     PieSeriesOptions,
     DropShadowOptions,
     FontOptions,
+    CaptionOptions,
 } from "ag-grid-community";
 import { Chart } from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
@@ -21,6 +22,7 @@ import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
 import { Padding } from "../../../charts/util/padding";
+import { Caption } from "../../../charts/caption";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -118,7 +120,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         _.set(this.chartOptions, expression, value);
 
         const mappings: any = {
-            "legend.box.color": "legend.marker.color"
+            "legend.box.strokeWidth": "legend.markerStrokeWidth",
+            "legend.box.size": "legend.markerSize",
+            "legend.box.padding": "legend.markerPadding",
+            "legend.item.paddingX": "legend.itemPaddingX",
+            "legend.item.paddingY": "legend.itemPaddingY",
         };
 
         _.set(this.chart, mappings[expression] || expression, value);
@@ -133,13 +139,45 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public setSeriesOption(expression: string, value: any): void {
         _.set(this.chartOptions.seriesDefaults, expression, value);
 
+        const mappings: { [key: string]: string } = {
+            "stroke.width": "strokeWidth",
+            "stroke.opacity": "strokeOpacity",
+            "fill.opacity": "fillOpacity",
+            "marker.enabled": "marker",
+            "marker.size": "markerSize",
+            "marker.minRequiredSize": "minMarkerSize",
+            "marker.strokeWidth": "markerStrokeWidth",
+            "tooltip.enabled": "tooltipEnabled",
+            "callout.colors": "calloutColors",
+            "callout.strokeWidth": "calloutStrokeWidth",
+            "callout.length": "calloutLength",
+        };
+
         const series = this.chart.series;
-        series.forEach(s => _.set(s, expression, value));
+        series.forEach(s => _.set(s, mappings[expression] || expression, value));
 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartPaddingProperty(property: keyof IPadding, value: number): void {
+    public setTitleOption(property: keyof CaptionOptions, value: any) {
+        (this.chartOptions.title as any)[property] = value;
+
+        if (!this.chart.title) {
+            this.chart.title = {} as Caption;
+        }
+
+        (this.chart.title[property] as any) = value;
+
+        if (property === "text") {
+            this.setTitleOption("enabled", _.exists(value));
+        }
+
+        this.raiseChartOptionsChangedEvent();
+    }
+
+    public getChartPaddingOption = (property: keyof IPadding): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : "";
+
+    public setChartPaddingOption(property: keyof IPadding, value: number): void {
         let { padding } = this.chartOptions;
 
         if (!padding) {
@@ -151,10 +189,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         this.chart.padding[property] = value;
 
+        this.chart.performLayout();
         this.raiseChartOptionsChangedEvent();
     }
-
-    public getChartPadding = (property: keyof IPadding): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : "";
 
     public getShadowEnabled = (): boolean => !!this.getShadowProperty("enabled");
 
@@ -242,13 +279,15 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 enabled: false,
                 fontFamily: "Verdana, sans-serif",
                 fontWeight: "bold",
-                fontSize: 16
+                fontSize: 16,
+                color: "black",
             },
             subtitle: {
                 enabled: false,
                 fontFamily: "Verdana, sans-serif",
                 fontWeight: "bold",
-                fontSize: 12
+                fontSize: 12,
+                color: "black",
             },
             legend: {
                 enabled: true,

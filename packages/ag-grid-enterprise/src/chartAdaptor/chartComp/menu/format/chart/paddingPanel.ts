@@ -48,10 +48,10 @@ export class PaddingPanel extends Component {
     private initChartPaddingItems(): void {
         const initInput = (property: keyof IPadding, input: AgSlider, labelKey: string) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartProxy.getChartPadding(property))
+                .setValue(this.chartProxy.getChartPaddingOption(property))
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartProxy.setChartPaddingProperty(property, newValue));
+                .onValueChange(newValue => this.chartProxy.setChartPaddingOption(property, newValue));
         };
 
         initInput("top", this.paddingTopSlider, "top");

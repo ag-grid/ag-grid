@@ -17,7 +17,7 @@ import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
 export class AreaSeriesPanel extends Component {
 
     public static TEMPLATE =
-        `<div>   
+        `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesLineWidthSlider"></ag-slider>
@@ -34,11 +34,13 @@ export class AreaSeriesPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
+    private readonly chartController: ChartController;
     private readonly chartProxy: AreaChartProxy;
     private activePanels: Component[] = [];
 
     constructor(chartController: ChartController) {
         super();
+        this.chartController = chartController;
         this.chartProxy = chartController.getChartProxy() as AreaChartProxy;
     }
 
@@ -86,7 +88,7 @@ export class AreaSeriesPanel extends Component {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.opacity"))
+            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
             .onValueChange(newValue => this.chartProxy.setSeriesOption("stroke.opacity", newValue));
 
         this.seriesFillOpacitySlider
@@ -94,12 +96,12 @@ export class AreaSeriesPanel extends Component {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("fill.opacity"))
+            .setValue(this.chartProxy.getSeriesOption("fill.opacity") || "1")
             .onValueChange(newValue => this.chartProxy.setSeriesOption("fill.opacity", newValue));
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = this.wireBean(new MarkersPanel(this.chartProxy));
+        const markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     }

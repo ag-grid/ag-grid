@@ -382,8 +382,8 @@ export class ChartBuilder {
         if (label) {
             ChartBuilder.initLabelOptions(series.label, label);
 
-            this.setValueIfExists(series, "labelEnabled", label.enabled);
-            this.setValueIfExists(series, "labelFormatter", label.formatter);
+            this.setValueIfExists(series.label, "enabled", label.enabled);
+            this.setValueIfExists(series.label, "formatter", label.formatter);
         }
 
         if (tooltip) {
@@ -552,7 +552,7 @@ export class ChartBuilder {
     static createDropShadow = (options: DropShadowOptions = {}): DropShadow => {
         const shadow = new DropShadow();
 
-        shadow.enabled = options.enabled || true;
+        shadow.enabled = options.enabled == null ? true : options.enabled;
         shadow.xOffset = options.xOffset || 0;
         shadow.yOffset = options.yOffset || 0;
         shadow.blur = options.blur || 5;
@@ -586,8 +586,6 @@ export class ChartBuilder {
             this.setValueIfExists(axis.label, "color", label.color);
             this.setValueIfExists(axis.label, "padding", label.padding);
             this.setValueIfExists(axis.label, "rotation", label.rotation);
-            this.setValueIfExists(axis.label, "mirrored", label.mirror);
-            this.setValueIfExists(axis.label, "parallel", label.parallel);
             this.setValueIfExists(axis.label, "formatter", label.formatter);
         }
     }

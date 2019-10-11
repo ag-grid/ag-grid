@@ -69,6 +69,7 @@ export class GridChartComp extends Component {
 
     private currentChartType: ChartType;
     private currentChartGroupingActive: boolean;
+    private currentPalette: number;
     private chartProxy: ChartProxy<any, any>;
 
     private readonly params: GridChartParams;
@@ -149,6 +150,7 @@ export class GridChartComp extends Component {
         // local state used to detect when chart type changes
         this.currentChartType = this.model.getChartType();
         this.currentChartGroupingActive = this.model.isGrouping();
+        this.currentPalette = this.model.getActivePalette();
         this.chartProxy = this.createChartProxy(chartProxyParams);
 
         // update chart proxy ref (used by format panel)
@@ -217,10 +219,11 @@ export class GridChartComp extends Component {
     }
 
     private shouldRecreateChart(): boolean {
-        const chartTypeChanged = this.model.getChartType() !== this.currentChartType;
+        const chartTypeChanged = this.currentChartType !== this.model.getChartType();
         const groupingChanged = this.currentChartGroupingActive !== this.model.isGrouping();
+        const paletteChanged = this.currentPalette !== this.model.getActivePalette();
 
-        return chartTypeChanged || groupingChanged;
+        return chartTypeChanged || groupingChanged || paletteChanged;
     }
 
     public getChartComponentsWrapper = (): HTMLElement => this.eChartComponentsWrapper;

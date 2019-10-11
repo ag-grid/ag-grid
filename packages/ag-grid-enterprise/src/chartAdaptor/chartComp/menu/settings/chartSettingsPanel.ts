@@ -1,7 +1,7 @@
-import {_, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector} from "ag-grid-community";
-import {MiniChartsContainer} from "./miniChartsContainer";
-import {ChartController} from "../../chartController";
-import {Palette} from "../../../../charts/chart/palettes";
+import { _, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector } from "ag-grid-community";
+import { MiniChartsContainer } from "./miniChartsContainer";
+import { ChartController } from "../../chartController";
+import { Palette } from "../../../../charts/chart/palettes";
 
 export class ChartSettingsPanel extends Component {
 
@@ -46,13 +46,13 @@ export class ChartSettingsPanel extends Component {
     @PostConstruct
     private postConstruct() {
         this.palettes.forEach((palette, idx) => {
-            const miniChartsContainer = new MiniChartsContainer(idx, this.chartController);
-            this.getContext().wireBean(miniChartsContainer);
+            const miniChartsContainer = this.wireBean(new MiniChartsContainer(idx, this.chartController));
 
             this.miniCharts.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
             this.addCardLink(idx);
         });
+
         this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
         this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallRight', this.gridOptionsWrapper));
 

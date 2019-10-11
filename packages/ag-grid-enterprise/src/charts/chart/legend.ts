@@ -27,7 +27,7 @@ export class Legend {
 
     onLayoutChange?: () => void;
     onPositionChange?: () => void; // The legend's parent component may want to do some special handling
-                                   // that shouldn't happen on every `onLayoutChange` callback.
+    // that shouldn't happen on every `onLayoutChange` callback.
 
     readonly group: Group = new Group();
 
@@ -412,7 +412,7 @@ export class Legend {
             markerLabel.markerStrokeWidth = this.markerStrokeWidth;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
 
-            markerLabel.labelColor =  this.labelColor;
+            markerLabel.labelColor = this.labelColor;
         });
     }
 

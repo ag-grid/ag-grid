@@ -8,7 +8,6 @@ import {
     RefSelector
 } from "ag-grid-community";
 import { ChartController } from "../../../chartController";
-import { Chart } from "../../../../../charts/chart/chart";
 import { PaddingPanel } from "./paddingPanel";
 import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
 import { ChartTranslator } from "../../../chartTranslator";
@@ -28,7 +27,6 @@ export class ChartPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chart: Chart;
     private chartProxy: ChartProxy<any, any>;
     private activePanels: Component[] = [];
     private readonly chartController: ChartController;
@@ -37,7 +35,6 @@ export class ChartPanel extends Component {
         super();
         this.chartController = chartController;
         this.chartProxy = this.chartController.getChartProxy();
-        this.chart = this.chartProxy.getChart();
     }
 
     @PostConstruct
@@ -57,8 +54,16 @@ export class ChartPanel extends Component {
     }
 
     private initTitles(): void {
-        const { title } = this.chart;
+        const { title } = this.chartProxy.getChartOption("title");
         const text = title ? title.text : "";
+
+        // note we don't set the font style via chart title panel
+        const setFont = (font: LabelFont) => {
+            if (font.family) { this.chartProxy.setTitleOption("fontFamily", font.family); }
+            if (font.weight) { this.chartProxy.setTitleOption("fontWeight", font.weight); }
+            if (font.size) { this.chartProxy.setTitleOption("fontSize", font.size); }
+            if (font.color) { this.chartProxy.setTitleOption("color", font.color); }
+        };
 
         const initialFont = {
             family: title ? this.chartProxy.getChartOption("title.fontFamily") : "Verdana, sans-serif",
@@ -68,25 +73,17 @@ export class ChartPanel extends Component {
             color: title ? this.chartProxy.getChartOption("title.color") : "black"
         };
 
-        // note we don't set the font style via chart title panel
-        const setFont = (font: LabelFont) => {
-            if (font.family) { this.chartProxy.setChartOption("title.fontFamily", font.family); }
-            if (font.weight) { this.chartProxy.setChartOption("title.fontWeight", font.weight); }
-            if (font.size) { this.chartProxy.setChartOption("title.fontSize", font.size); }
-            if (font.color) { this.chartProxy.setChartOption("title.color", font.color); }
-        };
+        if (!title) {
+            setFont(initialFont);
+        }
 
-        setFont(initialFont);
         this.titleInput
             .setLabel(this.chartTranslator.translate("title"))
             .setLabelAlignment("top")
             .setLabelWidth("flex")
             .setValue(text)
             .onValueChange(value => {
-                const exists = _.exists(value);
-
-                this.chartProxy.setChartOption("title.text", value);
-                this.chartProxy.setChartOption("title.enabled", exists);
+                this.chartProxy.setTitleOption("text", value);
 
                 // only show font panel when title exists
                 labelPanelComp.setEnabled(_.exists(value));

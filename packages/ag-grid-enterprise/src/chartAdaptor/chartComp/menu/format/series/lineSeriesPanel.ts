@@ -16,7 +16,7 @@ import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
 export class LineSeriesPanel extends Component {
 
     public static TEMPLATE =
-        `<div>   
+        `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesLineWidthSlider"></ag-slider>
@@ -30,10 +30,13 @@ export class LineSeriesPanel extends Component {
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private activePanels: Component[] = [];
+
+    private readonly chartController: ChartController;
     private readonly chartProxy: LineChartProxy;
 
     constructor(chartController: ChartController) {
         super();
+        this.chartController = chartController;
         this.chartProxy = chartController.getChartProxy() as LineChartProxy;
     }
 
@@ -74,7 +77,7 @@ export class LineSeriesPanel extends Component {
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = this.wireBean(new MarkersPanel(this.chartProxy));
+        const markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     }
