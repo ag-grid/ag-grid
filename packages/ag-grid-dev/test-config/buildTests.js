@@ -21,6 +21,13 @@ fi
 
 const runTestScriptCommands = [];
 
+const baseModuleFilenames = moduleConfig.modules.map(module => {
+    const moduleSource = module.moduleSource.moduleSource;
+    const lastSlash = moduleSource.lastIndexOf('/') + 1;
+    return moduleSource.substr(lastSlash)
+}).join(',');
+console.log(baseModuleFilenames);
+
 // generate the entry files that will be used to generate umd bundle files
 moduleConfig.modules.forEach(module => {
     const testBundleLines = [];
@@ -47,9 +54,9 @@ moduleConfig.modules.forEach(module => {
     fs.writeFileSync(`../tests/${exportedModuleName}.ts`, moduleSourceImport);
 
     // the contents of the final run tests script that will check for the contents of a module in each bundle
-    runTestScriptCommands.push(`node moduleParser.js ${exportedModuleName}.ts ../bundles/enterprise.bundle.js false`);
-    runTestScriptCommands.push(`node moduleParser.js ${exportedModuleName}.ts ../bundles/community.bundle.js false`);
-    runTestScriptCommands.push(`node moduleParser.js ${exportedModuleName}.ts ../bundles/${exportedModuleName}.bundle.js true`);
+    runTestScriptCommands.push(`node moduleParser.js ${exportedModuleName}.ts ../bundles/enterprise.bundle.js false ${baseModuleFilenames}`);
+    runTestScriptCommands.push(`node moduleParser.js ${exportedModuleName}.ts ../bundles/community.bundle.js false ${baseModuleFilenames}`);
+    runTestScriptCommands.push(`node moduleParser.js ${exportedModuleName}.ts ../bundles/${exportedModuleName}.bundle.js true ${baseModuleFilenames}`);
 });
 
 // output webpack file that will be used to generate the various module bundles

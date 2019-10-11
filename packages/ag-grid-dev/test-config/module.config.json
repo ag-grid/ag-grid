@@ -2,6 +2,36 @@
   "modules": [
     {
       "moduleSource": {
+        "exportedModuleName": "InfiniteRowModelModule",
+        "moduleSource": "@ag-community/infinite-row-model/src/infiniteRowModelModule"
+      },
+      "exposedModules": [
+        "@ag-community/infinite-row-model"
+      ],
+      "enterprise": false
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "CsvExportModule",
+        "moduleSource": "@ag-community/csv-export/src/csvExportModule"
+      },
+      "exposedModules": [
+        "@ag-community/csv-export"
+      ],
+      "enterprise": false
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "ExcelExportModule",
+        "moduleSource": "@ag-enterprise/excel-export/src/excelExportModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/excel-export"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
         "exportedModuleName": "ChartsModule",
         "moduleSource": "ag-grid-enterprise/src/modules/chartsModule"
       },

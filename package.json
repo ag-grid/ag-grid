@@ -28,7 +28,7 @@
     "buildRelease": "npx lerna run build && npx lerna run package",
     "buildCore": "npx lerna run build --scope ag-grid-community --scope ag-grid-enterprise --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue && npm run build-modules && npx lerna run package --scope ag-grid-community --scope ag-grid-enterprise",
     "buildVanilla": "npx lerna run build --scope ag-grid-community --scope ag-grid-enterprise && npm run build-modules && npx lerna run package --scope ag-grid-community --scope ag-grid-enterprise",
-    "buildCommunity": "npx lerna run build --scope ag-grid-community --scope @ag-community/client-side-row-model && npx lerna run package --scope ag-grid-community ",
+    "buildCommunity": "npx lerna run build --scope ag-grid-community --scope @ag-community/client-side-row-model --scope @ag-community/infinite-row-model --scope @ag-community/csv-export  && npx lerna run package --scope ag-grid-community",
     "buildAngular": "npx lerna run build --scope ag-grid-community --scope ag-grid-angular",
     "buildVue": "npx lerna run build --scope ag-grid-community --scope ag-grid-vue",
     "buildReact": "npx lerna run build --scope ag-grid-community --scope ag-grid-react",

@@ -17,8 +17,19 @@ function getReferencedImports(source) {
     }, {});
     var module = lines.filter(function (line) { return line.indexOf('__esModule') === -1; }).filter(function (line) { return line.indexOf('exports.') !== -1; })[0];
     var referencedImports = Object.keys(nameToImports).filter(function (dependency) { return module.indexOf(dependency) !== -1; });
+    var rowModelClasses = lines.filter(function (line) {
+        return line.indexOf('addRowModelClass') !== -1;
+    })[0];
+    if (rowModelClasses) {
+        referencedImports = referencedImports.concat(Object.keys(nameToImports).filter(function (dependency) {
+            return rowModelClasses.indexOf(dependency) !== -1;
+        }));
+    }
     return referencedImports.map(function (referencedImport) { return nameToImports[referencedImport]; })
-        .filter(function (referencedImport) { return referencedImport !== 'ag-grid-community'; });
+        .filter(function (referencedImport) { return referencedImport !== 'ag-grid-community' &&
+        referencedImport !== 'ag-grid-enterprise' &&
+        referencedImport.indexOf('@ag-community') === -1 &&
+        referencedImport.indexOf('@ag-enterprise') === -1; });
 }
 /** Generate documention for all classes in a set of .ts files */
 function generateDocumentation(fileName, options) {
@@ -33,7 +44,7 @@ function generateDocumentation(fileName, options) {
     }
     /** visit nodes finding exported classes */
     function visit(node) {
-        if (node.kind === ts.SyntaxKind.VariableStatement && node.parent.fileName.indexOf('chartsModule') !== -1) {
+        if (node.kind === ts.SyntaxKind.VariableStatement && modules.split(',').some(function (module) { return node.parent.fileName.indexOf(module) !== -1; })) {
             var identifierToResolvedFilename_1 = {};
             node.parent.identifiers.forEach(function (identifier) {
                 var resolutions = ts.resolveModuleName(identifier, node.parent.resolvedPath, options, ts.createCompilerHost(options));
@@ -46,7 +57,7 @@ function generateDocumentation(fileName, options) {
         }
     }
 }
-var _a = process.argv, a = _a[0], b = _a[1], input = _a[2], bundle = _a[3], include = _a[4];
+var _a = process.argv, a = _a[0], b = _a[1], input = _a[2], bundle = _a[3], include = _a[4], modules = _a[5];
 generateDocumentation(input, {
     target: ts.ScriptTarget.ES5, module: ts.ModuleKind.CommonJS
 });
