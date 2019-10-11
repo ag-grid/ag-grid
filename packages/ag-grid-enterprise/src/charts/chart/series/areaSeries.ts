@@ -32,8 +32,8 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
 
 export interface AreaTooltipRendererParams {
     datum: any;
-    xField: string;
-    yField: string;
+    xKey: string;
+    yKey: string;
     title?: string;
     color?: string;
 }
@@ -66,7 +66,7 @@ export class AreaSeries extends Series<CartesianChart> {
         return this._fills;
     }
 
-    private _strokes: string[] = [ 'white' ];
+    private _strokes: string[] = ['white'];
     set strokes(values: string[]) {
         this._strokes = values;
         this.scheduleData();
@@ -219,8 +219,8 @@ export class AreaSeries extends Series<CartesianChart> {
         fill?: string,
         stroke?: string
     } = {
-        fill: 'yellow'
-    };
+            fill: 'yellow'
+        };
 
     private highlightedNode?: Arc;
 
@@ -286,14 +286,14 @@ export class AreaSeries extends Series<CartesianChart> {
         const domainX = isContinuousX ? (numericExtent(xData) || [0, 1]) : xData;
 
         if (isContinuousX) {
-            const [ min, max ] = domainX as number[];
-            
+            const [min, max] = domainX as number[];
+
             if (min === max) {
                 domainX[0] = min - 1;
                 domainX[1] = max + 1;
             }
         }
-        
+
         let yMin: number = Infinity;
         let yMax: number = -Infinity;
 
@@ -314,7 +314,7 @@ export class AreaSeries extends Series<CartesianChart> {
             // console.warn('Zero or infinite y-range.');
         }
 
-        this.domainY = [ yMin, yMax ];
+        this.domainY = [yMin, yMax];
 
         if (chart) {
             chart.updateAxes();
@@ -347,7 +347,7 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     private generateSelectionData(): { areaSelectionData: AreaSelectionDatum[], markerSelectionData: MarkerSelectionDatum[] } {
-        const { 
+        const {
             yFields,
             fills,
             strokes,
@@ -408,7 +408,7 @@ export class AreaSeries extends Series<CartesianChart> {
     private updateAreaSelection(areaSelectionData: AreaSelectionDatum[]): void {
         const { fills, fillOpacity, yFieldEnabled, shadow } = this;
         const updateAreas = this.areaSelection.setData(areaSelectionData);
-        
+
         updateAreas.exit.remove();
 
         const enterAreas = updateAreas.enter.append(Path)
@@ -438,7 +438,7 @@ export class AreaSeries extends Series<CartesianChart> {
                     path.moveTo(x, y);
                 }
             });
-            
+
             path.closePath();
         });
 
@@ -523,8 +523,8 @@ export class AreaSeries extends Series<CartesianChart> {
             if (this.tooltipRenderer && xField) {
                 html = this.tooltipRenderer({
                     datum: nodeDatum.seriesDatum,
-                    xField,
-                    yField,
+                    xKey: xField,
+                    yKey: yField,
                     title,
                     color
                 });
@@ -534,8 +534,8 @@ export class AreaSeries extends Series<CartesianChart> {
                 const seriesDatum = nodeDatum.seriesDatum;
                 const xValue = seriesDatum[xField];
                 const yValue = seriesDatum[yField];
-                const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
-                const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+                const xString = typeof (xValue) === 'number' ? toFixed(xValue) : String(xValue);
+                const yString = typeof (yValue) === 'number' ? toFixed(yValue) : String(yValue);
 
                 html = `${title}<div class="content">${xString}: ${yString}</div>`;
             }

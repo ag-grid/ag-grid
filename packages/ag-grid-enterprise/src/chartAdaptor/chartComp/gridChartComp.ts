@@ -90,11 +90,8 @@ export class GridChartComp extends Component {
             activePalette: 0
         };
 
-        this.model = new ChartModel(modelParams);
-        this.getContext().wireBean(this.model);
-
-        this.chartController = new ChartController(this.model);
-        this.getContext().wireBean(this.chartController);
+        this.model = this.wireBean(new ChartModel(modelParams));
+        this.chartController = this.wireBean(new ChartController(this.model));
 
         this.createChart();
 

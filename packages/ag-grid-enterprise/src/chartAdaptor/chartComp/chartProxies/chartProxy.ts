@@ -238,8 +238,18 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 bottom: 20,
                 left: 20,
             },
-            title: { enabled: false },
-            subtitle: { enabled: false },
+            title: {
+                enabled: false,
+                fontFamily: "Verdana, sans-serif",
+                fontWeight: "bold",
+                fontSize: 16
+            },
+            subtitle: {
+                enabled: false,
+                fontFamily: "Verdana, sans-serif",
+                fontWeight: "bold",
+                fontSize: 12
+            },
             legend: {
                 enabled: true,
                 padding: 20,

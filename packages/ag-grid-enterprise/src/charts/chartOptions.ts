@@ -174,8 +174,8 @@ export interface BarSeriesOptions extends SeriesOptions {
     field?: BarSeriesFieldOptions;
     grouped?: boolean;
     normalizedTo?: number;
-    fill?: FillOptions;
-    stroke?: StrokeOptions;
+    fill?: MultiFillOptions;
+    stroke?: MultiStrokeOptions;
     highlightStyle?: HighlightStyle;
     shadow?: DropShadowOptions;
     label?: BarSeriesLabelOptions;
@@ -253,8 +253,8 @@ export interface ScatterSeriesFieldOptions {
 }
 
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
-    radiusKey?: string;
-    radiusName?: string;
+    sizeKey?: string;
+    sizeName?: string;
 
     labelKey?: string;
     labelName?: string;

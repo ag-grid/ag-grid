@@ -22,14 +22,14 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
 
 export interface ScatterTooltipRendererParams {
     datum: any;
-    xField: string;
-    yField: string;
+    xKey: string;
+    yKey: string;
     sizeKey?: string;
-    labelField?: string;
-    xFieldName: string;
-    yFieldName: string;
-    sizeKeyName?: string;
-    labelFieldName?: string;
+    labelKey?: string;
+    xName: string;
+    yName: string;
+    sizeName?: string;
+    labelName?: string;
     title?: string;
     color?: string;
 }
@@ -172,7 +172,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             sizeKey,
             markerSize,
             minMarkerSize,
-         } = this;
+        } = this;
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
@@ -192,8 +192,8 @@ export class ScatterSeries extends Series<CartesianChart> {
             this.sizeData = [];
         }
 
-        this.sizeScale.domain = numericExtent(this.sizeData) || [ 1, 1 ];
-        this.sizeScale.range = [ minMarkerSize / 2, markerSize / 2 ];
+        this.sizeScale.domain = numericExtent(this.sizeData) || [1, 1];
+        this.sizeScale.range = [minMarkerSize / 2, markerSize / 2];
         this.domainX = this.calculateDomain(this.xData);
         this.domainY = this.calculateDomain(this.yData);
 
@@ -202,7 +202,7 @@ export class ScatterSeries extends Series<CartesianChart> {
 
     private calculateDomain(data: any[]): [number, number] {
         const domain = numericExtent(data) || [0, 1];
-        const [ min, max ] = domain;
+        const [min, max] = domain;
 
         if (min === max) {
             domain[0] = min - 1;
@@ -261,8 +261,8 @@ export class ScatterSeries extends Series<CartesianChart> {
         fill?: string,
         stroke?: string
     } = {
-        fill: 'yellow'
-    };
+            fill: 'yellow'
+        };
 
     private highlightedNode?: Arc;
 
@@ -363,7 +363,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             sizeKeyName,
             labelFieldName,
             fill: color
-         } = this;
+        } = this;
 
         let html: string = '';
 
@@ -376,14 +376,14 @@ export class ScatterSeries extends Series<CartesianChart> {
         if (this.tooltipRenderer && this.xField) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
-                xField,
-                yField,
+                xKey: xField,
+                yKey: yField,
                 sizeKey,
-                labelField,
-                xFieldName,
-                yFieldName,
-                sizeKeyName,
-                labelFieldName,
+                labelKey: labelField,
+                xName: xFieldName,
+                yName: yFieldName,
+                sizeName: sizeKeyName,
+                labelName: labelFieldName,
                 title,
                 color
             });

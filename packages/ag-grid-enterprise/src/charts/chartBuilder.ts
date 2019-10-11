@@ -252,18 +252,16 @@ export class ChartBuilder {
     }
 
     static initChart<C extends Chart, T extends SeriesOptions>(chart: C, options: ChartOptions<T>) {
-        this.copyPropertiesIfPresent(options, chart, "width", "height", "legendPosition", "legendPadding", "data", "tooltipClass");
-        this.copyPropertyIfPresent(options, chart, "title", t => ChartBuilder.createTitle(t));
-        this.copyPropertyIfPresent(options, chart, "subtitle", t => ChartBuilder.createSubtitle(t));
-        this.copyPropertyIfPresent(options, chart, "padding", p => new Padding(p.top, p.right, p.bottom, p.left));
-        this.copyPropertyIfPresent(options, chart, "series", s => this.createSeries(s));
+        this.setValueIfExists(chart, "width", options.width);
+        this.setValueIfExists(chart, "height", options.height);
+        this.setValueIfExists(chart, "tooltipClass", options.tooltipClass);
+        this.setTransformedValueIfExists(chart, "title", t => ChartBuilder.createTitle(t), options.title);
+        this.setTransformedValueIfExists(chart, "subtitle", t => ChartBuilder.createSubtitle(t), options.subtitle);
+        this.setTransformedValueIfExists(chart, "padding", p => new Padding(p.top, p.right, p.bottom, p.left), options.padding);
 
-        if (options.series) {
-            chart.series = options.series.map(s => ChartBuilder.initAreaSeries(new AreaSeries(), s));
-        }
-
-        if (options.background !== undefined) {
-            this.copyPropertiesIfPresent(options.background, chart.background, "fill", "visible");
+        if (options.background) {
+            this.setValueIfExists(chart.background, "fill", options.background.fill);
+            this.setValueIfExists(chart.background, "visible", options.background.visible);
         }
 
         if (options.legend !== undefined) {
@@ -274,7 +272,9 @@ export class ChartBuilder {
     }
 
     static initSeries<S extends Series<any>>(series: S, options: SeriesOptions) {
-        this.copyPropertiesIfPresent(options, series, "visible", "showInLegend", "tooltipEnabled", "data");
+        this.setValueIfExists(series, "visible", options.visible);
+        this.setValueIfExists(series, "showInLegend", options.showInLegend);
+        this.setValueIfExists(series, "data", options.data);
 
         return series;
     }
@@ -282,20 +282,30 @@ export class ChartBuilder {
     static initLineSeries(series: LineSeries, options: LineSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        this.copyPropertiesIfPresent(
-            options,
-            series,
-            "title",
-            "xField",
-            "yField",
-            "fill",
-            "stroke",
-            "strokeWidth",
-            "highlightStyle",
-            "marker",
-            "markerSize",
-            "markerStrokeWidth",
-            "tooltipRenderer");
+        this.setValueIfExists(series, "title", options.title);
+        this.setValueIfExists(series, "xField", options.field && options.field.xKey);
+        this.setValueIfExists(series, "yField", options.field && options.field.yKey);
+        this.setValueIfExists(series, "fill", options.fill && options.fill.color);
+        this.setValueIfExists(series, "stroke", options.stroke && options.stroke.color);
+        this.setValueIfExists(series, "strokeWidth", options.stroke && options.stroke.width);
+
+        const { highlightStyle, marker, tooltip } = options;
+
+        if (highlightStyle) {
+            this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
+            this.setValueIfExists(series.highlightStyle, "stroke", highlightStyle.stroke && highlightStyle.stroke.color);
+        }
+
+        if (marker) {
+            this.setValueIfExists(series, "marker", marker.enabled);
+            this.setValueIfExists(series, "markerSize", marker.size);
+            this.setValueIfExists(series, "markerStrokeWidth", marker.strokeWidth);
+        }
+
+        if (tooltip) {
+            this.setValueIfExists(series, "tooltipEnabled", tooltip.enabled);
+            this.setValueIfExists(series, "tooltipRenderer", tooltip.renderer);
+        }
 
         return series;
     }
@@ -303,61 +313,85 @@ export class ChartBuilder {
     static initScatterSeries(series: ScatterSeries, options: ScatterSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        this.copyPropertiesIfPresent(
-            options,
-            series,
-            "title",
-            "xField",
-            "yField",
-            "radiusField",
-            "labelField",
-            "xFieldName",
-            "yFieldName",
-            "radiusFieldName",
-            "labelFieldName",
-            "fill",
-            "stroke",
-            "fillOpacity",
-            "strokeOpacity",
-            "highlightStyle",
-            "markerSize",
-            "minMarkerSize",
-            "markerStrokeWidth",
-            "tooltipRenderer");
+        this.setValueIfExists(series, "title", options.title);
+        this.setValueIfExists(series, "xField", options.field && options.field.xKey);
+        this.setValueIfExists(series, "xFieldName", options.field && options.field.xName);
+        this.setValueIfExists(series, "yField", options.field && options.field.yKey);
+        this.setValueIfExists(series, "yFieldName", options.field && options.field.yName);
+        this.setValueIfExists(series, "sizeKey", options.field && options.field.sizeKey);
+        this.setValueIfExists(series, "sizeKeyName", options.field && options.field.sizeName);
+        this.setValueIfExists(series, "labelField", options.field && options.field.labelKey);
+        this.setValueIfExists(series, "labelFieldName", options.field && options.field.labelName);
+        this.setValueIfExists(series, "fill", options.fill && options.fill.color);
+        this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
+        this.setValueIfExists(series, "stroke", options.stroke && options.stroke.color);
+        this.setValueIfExists(series, "strokeOpacity", options.stroke && options.stroke.opacity);
+
+        const { highlightStyle, marker, tooltip } = options;
+
+        if (highlightStyle) {
+            this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
+            this.setValueIfExists(series.highlightStyle, "stroke", highlightStyle.stroke && highlightStyle.stroke.color);
+        }
+
+        if (marker) {
+            this.setValueIfExists(series, "marker", marker.enabled);
+            this.setValueIfExists(series, "markerSize", marker.size);
+            this.setValueIfExists(series, "minMarkerSize", marker.minRequiredSize);
+            this.setValueIfExists(series, "markerStrokeWidth", marker.strokeWidth);
+        }
+
+        if (tooltip) {
+            this.setValueIfExists(series, "tooltipEnabled", tooltip.enabled);
+            this.setValueIfExists(series, "tooltipRenderer", tooltip.renderer);
+        }
 
         return series;
     }
 
-    static initLabelFormatting<T extends SeriesLabelOptions>(series: T, options: SeriesLabelOptions) {
-        this.copyPropertiesIfPresent(options, series, "labelFontStyle", "labelFontWeight", "labelFontSize", "labelFontFamily", "labelColor");
+    static initLabelOptions(series: SeriesLabelOptions, options: SeriesLabelOptions) {
+        this.setValueIfExists(series, "enabled", options.enabled);
+        this.setValueIfExists(series, "fontStyle", options.fontStyle);
+        this.setValueIfExists(series, "fontWeight", options.fontWeight);
+        this.setValueIfExists(series, "fontSize", options.fontSize);
+        this.setValueIfExists(series, "fontFamily", options.fontFamily);
+        this.setValueIfExists(series, "color", options.color);
     }
 
     static initBarSeries(series: BarSeries, options: BarSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        if (options.label) {
-            ChartBuilder.initLabelFormatting(series.label, options.label);
+        this.setValueIfExists(series, "xField", options.field && options.field.xKey);
+        this.setValueIfExists(series, "yFields", options.field && options.field.yKeys);
+        this.setValueIfExists(series, "yFieldNames", options.field && options.field.yNames);
+        this.setValueIfExists(series, "grouped", options.grouped);
+        this.setValueIfExists(series, "normalizedTo", options.normalizedTo);
+        this.setValueIfExists(series, "fills", options.fill && options.fill.colors);
+        this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
+        this.setValueIfExists(series, "strokes", options.stroke && options.stroke.colors);
+        this.setValueIfExists(series, "strokeOpacity", options.stroke && options.stroke.opacity);
+        this.setValueIfExists(series, "strokeWidth", options.stroke && options.stroke.width);
+
+        const { highlightStyle, label, tooltip } = options;
+
+        if (highlightStyle) {
+            this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
+            this.setValueIfExists(series.highlightStyle, "stroke", highlightStyle.stroke && highlightStyle.stroke.color);
         }
 
-        this.copyPropertiesIfPresent(
-            options,
-            series,
-            "xField",
-            "yFields",
-            "yFieldNames",
-            "grouped",
-            "normalizedTo",
-            "fills",
-            "strokes",
-            "fillOpacity",
-            "strokeOpacity",
-            "strokeWidth",
-            "highlightStyle",
-            "labelEnabled",
-            "labelFormatter",
-            "tooltipRenderer");
+        if (label) {
+            ChartBuilder.initLabelOptions(series.label, label);
 
-        this.copyPropertyIfPresent(options, series, "shadow", s => ChartBuilder.createDropShadow(s));
+            this.setValueIfExists(series, "labelEnabled", label.enabled);
+            this.setValueIfExists(series, "labelFormatter", label.formatter);
+        }
+
+        if (tooltip) {
+            this.setValueIfExists(series, "tooltipEnabled", tooltip.enabled);
+            this.setValueIfExists(series, "tooltipRenderer", tooltip.renderer);
+        }
+
+        this.setTransformedValueIfExists(series, "shadow", s => ChartBuilder.createDropShadow(s), options.shadow);
 
         return series;
     }
@@ -365,74 +399,93 @@ export class ChartBuilder {
     static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        this.copyPropertiesIfPresent(
-            options,
-            series,
-            "xField",
-            "yFields",
-            "yFieldNames",
-            "normalizedTo",
-            "fills",
-            "strokes",
-            "fillOpacity",
-            "strokeOpacity",
-            "strokeWidth",
-            "highlightStyle",
-            "marker",
-            "markerSize",
-            "markerStrokeWidth",
-            "tooltipRenderer");
+        this.setValueIfExists(series, "xField", options.field && options.field.xKey);
+        this.setValueIfExists(series, "yFields", options.field && options.field.yKeys);
+        this.setValueIfExists(series, "yFieldNames", options.field && options.field.yNames);
+        this.setValueIfExists(series, "normalizedTo", options.normalizedTo);
+        this.setValueIfExists(series, "fills", options.fill && options.fill.colors);
+        this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
+        this.setValueIfExists(series, "strokes", options.stroke && options.stroke.colors);
+        this.setValueIfExists(series, "strokeOpacity", options.stroke && options.stroke.opacity);
+        this.setValueIfExists(series, "strokeWidth", options.stroke && options.stroke.width);
 
-        this.copyPropertyIfPresent(options, series, "shadow", s => ChartBuilder.createDropShadow(s));
+        const { highlightStyle, marker, tooltip } = options;
+
+        if (highlightStyle) {
+            this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
+            this.setValueIfExists(series.highlightStyle, "stroke", highlightStyle.stroke && highlightStyle.stroke.color);
+        }
+
+        if (marker) {
+            this.setValueIfExists(series, "marker", marker.enabled);
+            this.setValueIfExists(series, "markerSize", marker.size);
+            this.setValueIfExists(series, "markerStrokeWidth", marker.strokeWidth);
+        }
+
+        if (tooltip) {
+            this.setValueIfExists(series, "tooltipEnabled", tooltip.enabled);
+            this.setValueIfExists(series, "tooltipRenderer", tooltip.renderer);
+        }
+
+        this.setTransformedValueIfExists(series, "shadow", s => ChartBuilder.createDropShadow(s), options.shadow);
 
         return series;
     }
 
     static initPieSeries(series: PieSeries, options: PieSeriesOptions) {
         ChartBuilder.initSeries(series, options);
-        // ChartBuilder.initLabelFormatting(series, options);
 
-        this.copyPropertyIfPresent(options, series, "title", t => ChartBuilder.createPieTitle(t!));
+        this.setTransformedValueIfExists(series, "title", t => ChartBuilder.createPieTitle(t), options.title);
+        this.setValueIfExists(series, "angleField", options.field && options.field.angleKey);
+        this.setValueIfExists(series, "radiusField", options.field && options.field.radiusKey);
+        this.setValueIfExists(series, "labelField", options.field && options.field.labelKey);
+        this.setValueIfExists(series, "fills", options.fill && options.fill.colors);
+        this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
+        this.setValueIfExists(series, "strokes", options.stroke && options.stroke.colors);
+        this.setValueIfExists(series, "strokeOpacity", options.stroke && options.stroke.opacity);
+        this.setValueIfExists(series, "strokeWidth", options.stroke && options.stroke.width);
+        this.setValueIfExists(series, "rotation", options.rotation);
+        this.setValueIfExists(series, "outerRadiusOffset", options.outerRadiusOffset);
+        this.setValueIfExists(series, "innerRadiusOffset", options.innerRadiusOffset);
 
-        this.copyPropertiesIfPresent(
-            options,
-            series,
-            "calloutColors",
-            "calloutStrokeWidth",
-            "calloutLength",
-            "labelMinAngle",
-            "angleField",
-            "radiusField",
-            "labelField",
-            "labelEnabled",
-            "fills",
-            "strokes",
-            "fillOpacity",
-            "strokeOpacity",
-            "highlightStyle",
-            "rotation",
-            "outerRadiusOffset",
-            "innerRadiusOffset",
-            "strokeWidth",
-            "tooltipRenderer");
+        const { highlightStyle, callout, label, tooltip } = options;
 
-        this.copyPropertyIfPresent(options, series, "shadow", s => ChartBuilder.createDropShadow(s));
+        if (highlightStyle) {
+            this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
+            this.setValueIfExists(series.highlightStyle, "stroke", highlightStyle.stroke && highlightStyle.stroke.color);
+        }
+
+        if (callout) {
+            this.setValueIfExists(series, "calloutColors", options.callout && options.callout.colors);
+            this.setValueIfExists(series, "calloutStrokeWidth", options.callout && options.callout.strokeWidth);
+            this.setValueIfExists(series, "calloutLength", options.callout && options.callout.length);
+        }
+
+        if (label) {
+            ChartBuilder.initLabelOptions(series.label, label);
+
+            this.setValueIfExists(series, "labelEnabled", label.enabled);
+            this.setValueIfExists(series, "labelMinAngle", label.minRequiredAngle);
+        }
+
+        if (tooltip) {
+            this.setValueIfExists(series, "tooltipEnabled", tooltip.enabled);
+            this.setValueIfExists(series, "tooltipRenderer", tooltip.renderer);
+        }
+
+        this.setTransformedValueIfExists(series, "shadow", s => ChartBuilder.createDropShadow(s), options.shadow);
 
         return series;
     }
 
     static initLegend(legend: Legend, options: LegendOptions) {
-        ChartBuilder.initLabelFormatting(legend, options);
+        ChartBuilder.initLabelOptions(legend, options);
 
-        this.copyPropertiesIfPresent(
-            options,
-            legend,
-            "enabled",
-            "markerStrokeWidth",
-            "markerSize",
-            "markerPadding",
-            "itemPaddingX",
-            "itemPaddingY");
+        this.setValueIfExists(legend, "enabled", options.enabled);
+        this.setValueIfExists(legend, "markerStrokeWidth", options.box && options.box.strokeWidth);
+        this.setValueIfExists(legend, "markerSize", options.box && options.box.size);
+        this.setValueIfExists(legend, "itemPaddingX", options.item && options.item.paddingX);
+        this.setValueIfExists(legend, "itemPaddingY", options.item && options.item.paddingY);
     }
 
     static setDefaultFontOptions(options: CaptionOptions, fontSize = 16, fontWeight: FontWeight = "bold", fontFamily = "Verdana, sans-serif") {
@@ -453,7 +506,7 @@ export class ChartBuilder {
         options = Object.create(options);
 
         if (options.text === undefined) {
-            options.text = "Title";
+            options.text = "";
         }
 
         this.setDefaultFontOptions(options);
@@ -466,7 +519,7 @@ export class ChartBuilder {
         options = Object.create(options);
 
         if (options.text === undefined) {
-            options.text = 'Subtitle';
+            options.text = "";
         }
 
         this.setDefaultFontOptions(options, 12);
@@ -485,30 +538,57 @@ export class ChartBuilder {
     static createCaption(options: CaptionOptions) {
         const caption = new Caption();
 
-        this.copyPropertiesIfPresent(
-            options, caption, "text", "fontStyle", "fontWeight", "fontSize", "fontFamily", "color", "enabled");
+        this.setValueIfExists(caption, "enabled", options.enabled);
+        this.setValueIfExists(caption, "text", options.text);
+        this.setValueIfExists(caption, "fontStyle", options.fontStyle);
+        this.setValueIfExists(caption, "fontWeight", options.fontWeight);
+        this.setValueIfExists(caption, "fontSize", options.fontSize);
+        this.setValueIfExists(caption, "fontFamily", options.fontFamily);
+        this.setValueIfExists(caption, "color", options.color);
 
         return caption;
     }
 
     static createDropShadow = (options: DropShadowOptions = {}): DropShadow => {
         const shadow = new DropShadow();
+
         shadow.enabled = options.enabled || true;
         shadow.xOffset = options.xOffset || 0;
         shadow.yOffset = options.yOffset || 0;
         shadow.blur = options.blur || 5;
         shadow.color = options.color || 'rgba(0, 0, 0, 0.5)';
+
         return shadow;
     }
 
-    static populateAxisProperties<T extends { title?: Caption }>(axis: T, options: AxisOptions) {
-        for (const name in options) {
-            if (name === 'title' && options.title) {
-                axis.title = ChartBuilder.createTitle(options.title);
-                continue;
-            }
+    static populateAxisProperties<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions) {
+        this.setTransformedValueIfExists(axis, "title", t => ChartBuilder.createTitle(t), options.title);
+        this.setValueIfExists(axis, "gridStyle", options.gridStyle);
 
-            this.copyPropertyIfPresent(options, axis, name);
+        const { line, tick, label } = options;
+
+        if (line) {
+            this.setValueIfExists(axis.line, "width", line.width);
+            this.setValueIfExists(axis.line, "color", line.color);
+        }
+
+        if (tick) {
+            this.setValueIfExists(axis.tick, "width", tick.width);
+            this.setValueIfExists(axis.tick, "size", tick.size);
+            this.setValueIfExists(axis.line, "color", tick.color);
+        }
+
+        if (label) {
+            this.setValueIfExists(axis.label, "fontStyle", label.fontStyle);
+            this.setValueIfExists(axis.label, "fontWeight", label.fontWeight);
+            this.setValueIfExists(axis.label, "fontSize", label.fontSize);
+            this.setValueIfExists(axis.label, "fontFamily", label.fontFamily);
+            this.setValueIfExists(axis.label, "color", label.color);
+            this.setValueIfExists(axis.label, "padding", label.padding);
+            this.setValueIfExists(axis.label, "rotation", label.rotation);
+            this.setValueIfExists(axis.label, "mirrored", label.mirror);
+            this.setValueIfExists(axis.label, "parallel", label.parallel);
+            this.setValueIfExists(axis.label, "formatter", label.formatter);
         }
     }
 
@@ -536,15 +616,19 @@ export class ChartBuilder {
         return axis;
     }
 
-    private static copyPropertiesIfPresent(source: any, target: any, ...properties: any[]) {
-        properties.forEach(p => this.copyPropertyIfPresent(source, target, p));
+    private static setValueIfExists<T, K extends keyof T>(target: T, property: K, value?: T[K], transform?: (value: any) => T[K]) {
+        if (value === undefined) {
+            return;
+        }
+
+        target[property] = transform ? transform(value) : value;
     }
 
-    private static copyPropertyIfPresent(source: any, target: any, property: any, transform?: (value: any) => any) {
-        const value = source[property];
-
-        if (value !== undefined) {
-            target[property] = transform ? transform(value) : value;
+    private static setTransformedValueIfExists<T, K extends keyof T, V>(target: T, property: K, transform: (value: V) => T[K], value?: V) {
+        if (value === undefined) {
+            return;
         }
+
+        target[property] = transform(value);
     }
 }

@@ -50,8 +50,8 @@ enum BarSeriesNodeTag {
 
 export interface BarTooltipRendererParams {
     datum: any;
-    xField: string;
-    yField: string;
+    xKey: string;
+    yKey: string;
     title?: string;
     color?: string;
 }
@@ -486,7 +486,7 @@ export class BarSeries extends Series<CartesianChart> {
         const labelColor = label.color;
         const labelFormatter = label.formatter;
 
-        groupScale.range = [ 0, xScale.bandwidth! ];
+        groupScale.range = [0, xScale.bandwidth!];
 
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
         const selectionData: SelectionDatum[] = [];
@@ -629,8 +629,8 @@ export class BarSeries extends Series<CartesianChart> {
             if (this.tooltipRenderer && xField) {
                 html = this.tooltipRenderer({
                     datum,
-                    xField,
-                    yField,
+                    xKey: xField,
+                    yKey: yField,
                     title,
                     color
                 });

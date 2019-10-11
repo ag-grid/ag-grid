@@ -300,8 +300,7 @@ export abstract class Chart {
     abstract performLayout(): void;
 
     protected positionCaptions() {
-        const title = this.title;
-        const subtitle = this.subtitle;
+        const { title, subtitle } = this;
 
         let titleVisible = false;
         let subtitleVisible = false;

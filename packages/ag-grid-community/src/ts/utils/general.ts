@@ -2166,7 +2166,7 @@ export class Utils {
             }
         }
 
-        const value = source[keys[0]];
+        const value = objectToRead[keys[0]];
 
         return value != null ? value : defaultValue;
     }
