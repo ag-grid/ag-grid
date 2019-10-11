@@ -109,6 +109,8 @@ export class RowComp extends Component {
 
     private initialised = false;
 
+    private elementOrderChanged = false;
+
     private readonly printLayout: boolean;
     private readonly embedFullWidth: boolean;
 
@@ -470,6 +472,7 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
 
         this.addListenersForCellComps();
     }
@@ -635,6 +638,35 @@ export class RowComp extends Component {
 
         // remove old cells from gui, but we don't destroy them, we might use them again
         this.removeRenderedCells(eligibleToBeRemoved);
+
+        if (this.elementOrderChanged) {
+            this.elementOrderChanged = false;
+            if (this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
+                this.sortCells(this.ePinnedLeftRow, leftCols);
+                this.sortCells(this.eBodyRow, centerCols);
+                this.sortCells(this.ePinnedRightRow, rightCols);
+            }
+        }
+    }
+
+    private sortCells(eRow: HTMLElement, cols: Column[]) {
+        const sortedCols = cols.slice().sort((a, b) => {
+            const leftA = a.getLeft();
+            const leftB = b.getLeft();
+            return leftA === leftB ? 0 : (leftA < leftB ? -1 : 1);
+        });
+
+        for (let i = 0; i < sortedCols.length; i++) {
+            const correctCellAtIndex = this.getCellForCol(sortedCols[i]);
+            const actualCellAtIndex = eRow.children[i];
+            if (actualCellAtIndex !== correctCellAtIndex) {
+                eRow.insertBefore(correctCellAtIndex, actualCellAtIndex);
+            }
+        }
+    }
+
+    private onColumnMoved() {
+        this.elementOrderChanged = true;
     }
 
     private removeRenderedCells(colIds: string[]): void {
@@ -697,6 +729,7 @@ export class RowComp extends Component {
 
             eContainer.appendChild(element);
             cellComp.setParentRow(eContainer);
+            this.elementOrderChanged = true;
         }
     }
 
@@ -748,6 +781,7 @@ export class RowComp extends Component {
         newCellComps.push(newCellComp);
         this.cellComps[col.getId()] = newCellComp;
         newCellComp.setParentRow(eContainer);
+        this.elementOrderChanged = true;
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -855,6 +889,7 @@ export class RowComp extends Component {
                 if (this.isAlive()) {
                     const gui = cellRenderer.getGui();
                     eRow.appendChild(gui);
+                    this.elementOrderChanged = true;
                     cellRendererCallback(cellRenderer);
                 } else {
                     if (cellRenderer.destroy) {
