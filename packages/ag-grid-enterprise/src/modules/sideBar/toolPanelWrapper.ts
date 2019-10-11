@@ -6,9 +6,12 @@ import {
     Promise,
     ToolPanelDef,
     PostConstruct,
-    GridOptionsWrapper
+    GridOptionsWrapper,
+    ModuleLogger
 } from "ag-grid-community";
 import { HorizontalResizeComp } from "./horizontalResizeComp";
+
+ModuleLogger.logModuleClass('SideBar.ToolPanelWrapper');
 
 export class ToolPanelWrapper extends Component {
 

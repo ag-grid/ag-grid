@@ -4,8 +4,11 @@ import {
     EventService,
     GridOptionsWrapper,
     HorizontalResizeService,
-    PostConstruct
+    PostConstruct,
+    ModuleLogger
 } from "ag-grid-community";
+
+ModuleLogger.logModuleClass('SideBar.HorizontalResizeComp');
 
 export class HorizontalResizeComp extends Component {
 

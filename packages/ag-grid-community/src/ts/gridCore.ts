@@ -118,8 +118,10 @@ export class GridCore extends Component {
 
     private createTemplate(): string {
 
+        const sideBarModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.SideBarModule);
+
         const dropZones = this.enterprise ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
-        const sideBar = this.enterprise ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
+        const sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
         const statusBar = this.enterprise ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         const watermark = this.enterprise ? '<ag-watermark></ag-watermark>' : '';
 
@@ -190,7 +192,7 @@ export class GridCore extends Component {
     public setSideBarVisible(show:boolean) {
         if (!this.sideBarComp) {
             if (show) {
-                console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
+                console.warn('ag-Grid: sideBar is not loaded');
             }
             return;
         }
@@ -226,6 +228,7 @@ export class GridCore extends Component {
     }
 
     public setSideBar(def: SideBarDef | string | boolean): void {
+        if (!this.sideBarComp) { return; }
         this.eRootWrapperBody.removeChild(this.sideBarComp.getGui());
         this.gridOptions.sideBar = SideBarDefParser.parse(def);
         this.sideBarComp.reset ();

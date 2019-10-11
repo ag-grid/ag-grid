@@ -24,3 +24,6 @@ import "../../../../../community-modules/client-side-row-model/src/clientSideRow
 import "../../../../ag-grid-community/src/ts/modules/csvExportModule.ts";
 import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
 import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
+import "../../../../ag-grid-community/src/ts/modules/csvExportModule.ts";
+import "../../../../ag-grid-community/src/ts/modules/infiniteRowModelModule.ts";
+import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
