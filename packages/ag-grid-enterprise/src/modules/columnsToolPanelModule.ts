@@ -1,4 +1,3 @@
-/*
 import {Grid, Module, ModuleNames} from "ag-grid-community";
 import {PrimaryColsHeaderPanel} from "./columnToolPanel/primaryColsHeaderPanel";
 import {PrimaryColsListPanel} from "./columnToolPanel/primaryColsListPanel";
@@ -17,4 +16,3 @@ export const ColumnToolPanelModule: Module = {
 };
 
 Grid.addModule([ColumnToolPanelModule]);
-*/
