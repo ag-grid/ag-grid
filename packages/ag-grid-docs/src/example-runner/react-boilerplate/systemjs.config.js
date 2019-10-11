@@ -58,10 +58,6 @@
             app: {
                 defaultExtension: 'jsx'
             },
-            '@ag-community/client-side-row-model': {
-                main: './dist/cjs/main.js',
-                defaultExtension: 'js'
-            },
             'ag-grid-react': {
                 main: './main.js',
                 defaultExtension: 'js'
@@ -69,7 +65,17 @@
             'ag-grid-enterprise': {
                 main: './main.js',
                 defaultExtension: 'js'
-            }
+            },
+            /* START OF MODULES - DO NOT DELETE */
+           '@ag-community/client-side-row-model': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-enterprise/excel-export': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            /* END OF MODULES - DO NOT DELETE */
         },
         meta: {
             '*.jsx': {

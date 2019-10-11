@@ -3,11 +3,11 @@ require('./chartsModule');
 require('./clipboardModule');
 require('./columnDropZonesModule');
 require('./columnsToolPanelModule');
-require('./excelExportModule');
 require('./filtersToolPanelModule');
 require('./rowGroupingModule');
 require('./serverSideRowModelModule');
 require('./viewportRowModelModule');
+require('../../enterprise-modules/excel-export');
 require('./dist/es6/main');
 
 // add in exports for ag-Grid-Enterprise

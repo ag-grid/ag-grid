@@ -2,7 +2,8 @@
   "lerna": "2.11.0",
   "packages": [
     "packages/*",
-    "community-modules/*"
+    "community-modules/*",
+    "enterprise-modules/*"
   ],
   "command": {
     "bootstrap": {

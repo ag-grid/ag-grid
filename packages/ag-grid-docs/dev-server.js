@@ -237,13 +237,14 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
         .map(module => `import "../../../${module}";`);
 
     const enterpriseModulesEntries = enterpriseModules
-        .map(module => glob.sync(`${module}/src/*Module.ts`))
+        .map(module => glob.sync(`../../enterprise-modules/${module}/src/*Module.ts`))
         .map(module => `import "../../../${module}";`);
 
     const communityEntries = agGridCommunityModulesEntries.concat(communityModulesEntries);
     const enterpriseEntries = agGridEnterpriseModulesEntries.concat(enterpriseModulesEntries);
 
     const enterpriseBundleFilename = './src/_assets/ts/ag-grid-enterprise-bundle.ts';
+    const enterpriseMainFilename = './src/_assets/ts/ag-grid-enterprise-main.ts';
     const communityFilename = 'src/_assets/ts/ag-grid-community.ts';
 
     const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split('\n');
@@ -257,6 +258,18 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
     });
     const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseEntries).concat(['import "../../../../ag-grid-enterprise/src/main.ts";']);
     fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.join('\n'), 'UTF-8');
+
+    const existingEnterpriseMainLines = fs.readFileSync(enterpriseMainFilename, 'UTF-8').split('\n');
+    modulesLineFound = false;
+    const newEnterpriseMainLines = [];
+    existingEnterpriseMainLines.forEach(line => {
+        if (!modulesLineFound) {
+            modulesLineFound = line === "/* MODULES - Don't delete this line */";
+            newEnterpriseMainLines.push(line);
+        }
+    });
+    const newEnterpriseMainContent = newEnterpriseMainLines.concat(enterpriseEntries).concat(['import "../../../../ag-grid-enterprise/src/main.ts";']);
+    fs.writeFileSync(enterpriseMainFilename, newEnterpriseMainContent.join('\n'), 'UTF-8');
 
     const existingCommunityLines = fs.readFileSync(communityFilename).toString().split('\n');
     modulesLineFound = false;
@@ -284,7 +297,6 @@ function getAllModules() {
         .map(module => module.replace('../../community-modules/', ''));
 
     const enterpriseModules = glob.sync("../../enterprise-modules/*")
-        .map(module => glob.sync(`${module}/src/*Module.ts`))
         .map(module => module.replace('../../enterprise-modules/', ''));
 
     return {agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules};
@@ -325,7 +337,7 @@ function updateSystemJsMappings(utilFileLines,
     return newUtilFileTop.concat(communityModuleEntries).concat(enterpriseModuleEntries).concat(newUtilFileBottom);
 }
 
-function updateSystemJsMappingsForFrameworks(communityModules, enterpriseModules) {
+function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules) {
     // spl module
     const utilityFilename = 'src/example-runner/utils.php';
     const utilFileLines = fs.readFileSync(utilityFilename, 'UTF-8').split('\n');
@@ -338,7 +350,7 @@ function updateSystemJsMappingsForFrameworks(communityModules, enterpriseModules
         module => `        "@ag-community/${module}" => "$prefix/@ag-community/${module}",`,
         module => `        "@ag-enterprise/${module}" => "$prefix/@ag-enterprise/${module}",`);
 
-    updatedUtilFileLines = updateSystemJsMappings(utilFileLines,
+    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
         '/* START OF MODULES PROD - DO NOT DELETE */',
         '/* END OF MODULES PROD - DO NOT DELETE */',
         communityModules,
@@ -350,10 +362,39 @@ function updateSystemJsMappingsForFrameworks(communityModules, enterpriseModules
     fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
 }
 
+function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules) {
+    // spl module
+    const systemJsFiles = [
+        './src/example-runner/angular-boilerplate/systemjs.config.js',
+        './src/example-runner/react-boilerplate/systemjs.config.js',
+        './src/example-runner/vue-boilerplate/systemjs.config.js'];
+
+    systemJsFiles.forEach(systemJsFile => {
+        const fileLines = fs.readFileSync(systemJsFile, 'UTF-8').split('\n');
+
+        let updateFileLines = updateSystemJsMappings(fileLines,
+            '/* START OF MODULES - DO NOT DELETE */',
+            '/* END OF MODULES - DO NOT DELETE */',
+            communityModules,
+            enterpriseModules,
+            module => `           '@ag-community/${module}': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },`,
+            module => `           '@ag-enterprise/${module}': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },`);
+
+        fs.writeFileSync(systemJsFile, updateFileLines.join('\n'), 'UTF-8');
+    })
+}
+
 module.exports = () => {
     const app = express();
 
     // necessary for plunkers
+
     app.use(function (req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         return next();
@@ -372,13 +413,13 @@ module.exports = () => {
 
     // spl modules
     // add community & enterprise modules to express (for importing in the fw examples)
-    updateSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
+    updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
+    updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
     serveAndWatchModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
     serveAndWatchAngular(app);
     serveAndWatchVue(app);
-
 
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples

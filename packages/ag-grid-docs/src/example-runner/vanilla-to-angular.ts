@@ -69,11 +69,12 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
     communityModules.forEach(module => {
         imports.push(`import "@ag-community/${module}";`);
     });
-    enterpriseModules.forEach(module => {
-        imports.push(`import "@ag-enterprise/${module}";`);
-    });
 
     if (bindings.gridSettings.enterprise) {
+        enterpriseModules.forEach(module => {
+            imports.push(`import "@ag-enterprise/${module}";`);
+        });
+
         imports.push('import "ag-grid-enterprise";');
     }
 

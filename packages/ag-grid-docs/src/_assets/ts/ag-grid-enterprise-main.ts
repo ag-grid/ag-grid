@@ -1,9 +1,14 @@
-// spl todo - make generic
-import "../../../../ag-grid-enterprise/src/modules/chartsModule.ts";
-import "../../../../ag-grid-enterprise/src/modules/excelExportModule.ts";
-import "../../../../ag-grid-enterprise/src/modules/clipboardModule.ts";
-import "../../../../ag-grid-enterprise/src/modules/rowGroupingModule.ts";
-import "../../../../ag-grid-enterprise/src/modules/viewportRowModelModule.ts";
-import "../../../../ag-grid-enterprise/src/modules/serverSideRowModelModule.ts";
+/* used by fw examples */
 
+// spl modules
+/* MODULES - Don't delete this line */
+import "../../../../ag-grid-enterprise/src/modules/chartsModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/clipboardModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/columnDropZonesModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/columnsToolPanelModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/filtersToolPanelModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/rowGroupingModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/serverSideRowModelModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/viewportRowModelModule.ts";
+import "../../../../../enterprise-modules/excel-export/src/excelExportModule.ts";
 import "../../../../ag-grid-enterprise/src/main.ts";

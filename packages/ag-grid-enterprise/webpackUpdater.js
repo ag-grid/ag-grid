@@ -1,7 +1,6 @@
 const fs = require('fs');
 const glob = require("glob");
 
-// ensure the common module is added first
 const communityModules = glob.sync("../../community-modules/*")
     .filter(module => module.indexOf('ag-grid') === -1)
     .map(module => `require('${module}');`);
@@ -9,6 +8,10 @@ const communityModules = glob.sync("../../community-modules/*")
 const modules = glob.sync("*Module.js")
     .map(module => module.replace('.js', ''))
     .map(module => `require('./${module}');`);
+
+const enterpriseModules = glob.sync("../../enterprise-modules/*")
+    .map(module => `require('${module}');`);
+
 
 const css = glob.sync("./node_modules/ag-grid-community/dist/styles/*.css")
     .filter(css => css.indexOf('.min.css') === -1)
@@ -18,7 +21,8 @@ const css = glob.sync("./node_modules/ag-grid-community/dist/styles/*.css")
 const webpackBase = fs.readFileSync('./webpack-base.config.js', 'UTF-8').toString();
 
 const allModules = communityModules.join('\n').concat('\n')
-    .concat(modules.join('\n').concat('\n'));
+    .concat(modules.join('\n').concat('\n'))
+    .concat(enterpriseModules.join('\n').concat('\n'));
 
 const webpackNoStyles = allModules.concat(webpackBase);
 fs.writeFileSync('./webpack-no-styles.js', webpackNoStyles);

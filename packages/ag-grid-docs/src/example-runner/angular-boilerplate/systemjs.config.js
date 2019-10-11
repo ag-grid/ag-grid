@@ -125,13 +125,20 @@
                 main: "./main.js",
                 defaultExtension: "js"
             },
-            '@ag-community/client-side-row-model': {
+            /* START OF MODULES - DO NOT DELETE */
+           '@ag-community/client-side-row-model': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
+           '@ag-enterprise/excel-export': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+            /* END OF MODULES - DO NOT DELETE */
             rxjs: {
                 defaultExtension: false
             }
         }
     });
 })(this);
+
