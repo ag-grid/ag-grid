@@ -105,14 +105,14 @@ export class CartesianChart<TX extends ILinearAxis = Axis<Scale<any, number>>, T
 
         xAxis.scale.range = [0, shrinkRect.width];
         xAxis.rotation = -90;
-        xAxis.translationX = Math.floor(shrinkRect.x);
-        xAxis.translationY = Math.floor(shrinkRect.y + shrinkRect.height + 1);
+        (xAxis as any).translation.x = Math.floor(shrinkRect.x); // TODO: remove the CartesianChart generic (possibly get rid of xAxis, yAxis too)
+        (xAxis as any).translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
         xAxis.parallelLabels = true;
         xAxis.gridLength = shrinkRect.height;
 
         yAxis.scale.range = [shrinkRect.height, 0];
-        yAxis.translationX = Math.floor(shrinkRect.x);
-        yAxis.translationY = Math.floor(shrinkRect.y);
+        (yAxis as any).translation.x = Math.floor(shrinkRect.x); // TODO: remove the CartesianChart generic (possibly get rid of xAxis, yAxis too)
+        (yAxis as any).translation.y = Math.floor(shrinkRect.y);
         yAxis.gridLength = shrinkRect.width;
 
         this.updateAxes();
