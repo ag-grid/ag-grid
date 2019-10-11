@@ -91,7 +91,7 @@ include '../documentation-main/documentation_header.php';
     <h2>processGroupHeaderCallback()</h2>
 
     <p>This function will be called for each column group in the grid. It should return a string that will be used
-        in place of the group name in the export. Not that column groups are not exported by default, you need to
+        in place of the group name in the export. Notes that column groups are not exported by default, you need to
         pass <code>columnGroups: true</code> in the export params.</p>
 
     <p>
