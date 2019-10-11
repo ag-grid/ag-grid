@@ -15,8 +15,6 @@ import { NameValueComp } from "./statusBar/providedPanels/nameValueComp";
 import { WatermarkComp } from "./license/watermark";
 import { FillHandle } from "./widgets/selection/fillHandle";
 import { RangeHandle } from "./widgets/selection/rangeHandle";
-import { FiltersToolPanelHeaderPanel } from "./sideBar/providedPanels/filters/filtersToolPanelHeaderPanel";
-import { FiltersToolPanelListPanel } from "./sideBar/providedPanels/filters/filtersToolPanelListPanel";
 import { ToolPanelColDefService } from "./sideBar/providedPanels/toolPanelColDefService";
 
 export { SetFilter } from "./setFilter/setFilter";
@@ -46,8 +44,6 @@ Grid.setEnterpriseBeans([EnterpriseMenuFactory, RangeController,
 ]);
 
 Grid.setEnterpriseAgStackComponents([
-    {componentName: 'AgFiltersToolPanelHeader', componentClass: FiltersToolPanelHeaderPanel},
-    {componentName: 'AgFiltersToolPanelList', componentClass: FiltersToolPanelListPanel},
     {componentName: 'AgHorizontalResize', componentClass: HorizontalResizeComp},
     {componentName: 'AgSideBar', componentClass: SideBarComp},
     {componentName: 'AgStatusBar', componentClass: StatusBar},

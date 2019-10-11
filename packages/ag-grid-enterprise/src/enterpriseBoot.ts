@@ -7,7 +7,6 @@ import {TotalAndFilteredRowsComp} from "./statusBar/providedPanels/totalAndFilte
 import {AggregationComp} from "./statusBar/providedPanels/aggregationComp";
 import {SelectedRowsComp} from "./statusBar/providedPanels/selectedRowsComp";
 import {FilteredRowsComp} from "./statusBar/providedPanels/filteredRowsComp";
-import {FiltersToolPanel} from "./sideBar/providedPanels/filters/filtersToolPanel";
 import {SetFloatingFilterComp} from "./setFilter/setFloatingFilter";
 
 @Bean('enterpriseBoot')
@@ -23,7 +22,6 @@ export class EnterpriseBoot {
         this.userComponentRegistry.registerDefaultComponent('agSetColumnFloatingFilter', SetFloatingFilterComp);
         this.userComponentRegistry.registerDefaultComponent('agDetailCellRenderer', DetailCellRenderer);
         this.userComponentRegistry.registerDefaultComponent('agAggregationComponent', AggregationComp);
-        this.userComponentRegistry.registerDefaultComponent('agFiltersToolPanel', FiltersToolPanel);
         this.userComponentRegistry.registerDefaultComponent('agSelectedRowCountComponent', SelectedRowsComp);
         this.userComponentRegistry.registerDefaultComponent('agTotalRowCountComponent', TotalRowsComp);
         this.userComponentRegistry.registerDefaultComponent('agFilteredRowCountComponent', FilteredRowsComp);

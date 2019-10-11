@@ -8,9 +8,12 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     PreConstruct,
-    RefSelector
+    RefSelector,
+    ModuleLogger
 } from "ag-grid-community";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
+
+ModuleLogger.logModuleClass('FiltersTP.FiltersToolPanelHeaderPanel');
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 

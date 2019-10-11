@@ -13,9 +13,12 @@ import {
     OriginalColumnGroupChild,
     PostConstruct,
     PreConstruct,
-    RefSelector
+    RefSelector,
+    ModuleLogger
 } from "ag-grid-community";
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
+
+ModuleLogger.logModuleClass('FiltersTP.ToolPanelFilterGroupComp');
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 

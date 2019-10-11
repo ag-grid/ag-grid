@@ -10,13 +10,16 @@ import {
     GridApi,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
+    ModuleLogger
 } from "ag-grid-community";
 
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
 import {ToolPanelFilterGroupComp, ToolPanelFilterItem} from "./toolPanelFilterGroupComp";
 import {EXPAND_STATE} from "./filtersToolPanelHeaderPanel";
-import {ToolPanelColDefService} from "../toolPanelColDefService";
+import {ToolPanelColDefService} from "../../sideBar/providedPanels/toolPanelColDefService";
+
+ModuleLogger.logModuleClass('FiltersTP.FiltersToolPanelListPanel');
 
 export class FiltersToolPanelListPanel extends Component {
 

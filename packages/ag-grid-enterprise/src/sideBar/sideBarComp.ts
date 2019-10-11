@@ -94,11 +94,11 @@ export class SideBarComp extends Component implements ISideBar {
                 console.warn('ag-Grid: tried to use Column Tool Panel, but column tool panel module is missing.');
                 return;
             }
-            // const filtersToolPanelModuleMissing = !this.getContext().isModuleRegistered(ModuleNames.FiltersToolPanelModule);
-            // if (def.toolPanel==='agFiltersToolPanel' && filtersToolPanelModuleMissing) {
-            //     console.warn('ag-Grid: tried to use Filters Tool Panel, but filters tool panel module is missing.');
-            //     return;
-            // }
+            const filtersToolPanelModuleMissing = !this.getContext().isModuleRegistered(ModuleNames.FiltersToolPanelModule);
+            if (def.toolPanel==='agFiltersToolPanel' && filtersToolPanelModuleMissing) {
+                console.warn('ag-Grid: tried to use Filters Tool Panel, but filters tool panel module is missing.');
+                return;
+            }
 
             const wrapper = new ToolPanelWrapper();
             this.getContext().wireBean(wrapper);

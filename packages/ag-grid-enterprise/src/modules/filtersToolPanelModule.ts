@@ -1,8 +1,18 @@
 import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {FiltersToolPanelHeaderPanel} from "./filterToolPanel/filtersToolPanelHeaderPanel";
+import {FiltersToolPanelListPanel} from "./filterToolPanel/filtersToolPanelListPanel";
+import {FiltersToolPanel} from "./filterToolPanel/filtersToolPanel";
 
 export const FiltersToolPanelModule: Module = {
     moduleName: ModuleNames.FiltersToolPanelModule,
-    beans: []
+    beans: [],
+    agStackComponents: [
+        {componentName: 'AgFiltersToolPanelHeader', componentClass: FiltersToolPanelHeaderPanel},
+        {componentName: 'AgFiltersToolPanelList', componentClass: FiltersToolPanelListPanel}
+    ],
+    userComponents: [
+        {componentName: 'agFiltersToolPanel', componentClass: FiltersToolPanel},
+    ]
 };
 
 Grid.addModule([FiltersToolPanelModule]);

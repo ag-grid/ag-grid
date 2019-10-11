@@ -9,10 +9,13 @@ import {
     IToolPanelComp,
     IToolPanelParams,
     RefSelector,
-    IFiltersToolPanel
+    IFiltersToolPanel,
+    ModuleLogger
 } from "ag-grid-community";
 import {FiltersToolPanelHeaderPanel} from "./filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./filtersToolPanelListPanel";
+
+ModuleLogger.logModuleClass('FiltersTP.FiltersToolPanel');
 
 export interface ToolPanelFiltersCompParams extends IToolPanelParams {
     suppressExpandAll: boolean;
