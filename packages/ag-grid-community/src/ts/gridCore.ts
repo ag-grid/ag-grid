@@ -119,10 +119,11 @@ export class GridCore extends Component {
     private createTemplate(): string {
 
         const sideBarModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.SideBarModule);
+        const statusBarModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.StatusBarModule);
 
         const dropZones = this.enterprise ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
         const sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
-        const statusBar = this.enterprise ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
+        const statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         const watermark = this.enterprise ? '<ag-watermark></ag-watermark>' : '';
 
         const template =

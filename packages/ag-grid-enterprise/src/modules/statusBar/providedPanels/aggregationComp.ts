@@ -16,7 +16,7 @@ import {
     RowPositionUtils,
     RowRenderer
 } from 'ag-grid-community';
-import { RangeController } from "../../rangeController";
+import { RangeController } from "../../../rangeController";
 import { NameValueComp } from "./nameValueComp";
 
 export class AggregationComp extends Component implements IStatusPanelComp {
