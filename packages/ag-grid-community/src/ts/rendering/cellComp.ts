@@ -116,12 +116,12 @@ export class CellComp extends Component {
 
         this.createGridCellVo();
 
-        this.rangeSelectionEnabled = beans.gridOptionsWrapper.isEnableRangeSelection();
+        this.rangeSelectionEnabled = this.beans.rangeController && beans.gridOptionsWrapper.isEnableRangeSelection();
         this.cellFocused = this.beans.focusedCellController.isCellFocused(this.cellPosition);
         this.firstRightPinned = this.column.isFirstRightPinned();
         this.lastLeftPinned = this.column.isLastLeftPinned();
 
-        if (this.rangeSelectionEnabled) {
+        if (this.rangeSelectionEnabled && this.beans.rangeController) {
             const { rangeController } = this.beans;
             this.rangeCount = rangeController.getCellRangeCount(this.cellPosition);
 
@@ -1377,6 +1377,8 @@ export class CellComp extends Component {
     }
 
     private onShiftRangeSelect(key: number): void {
+        if (!this.beans.rangeController) { return; }
+
         const endCell = this.beans.rangeController.extendLatestRangeInDirection(key);
 
         if (endCell) {
@@ -1765,7 +1767,7 @@ export class CellComp extends Component {
     }
 
     public onRangeSelectionChanged(): void {
-        if (!this.beans.enterprise) {
+        if (!this.beans.rangeController) {
             return;
         }
 

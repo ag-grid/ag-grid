@@ -14,7 +14,7 @@ import {
     RowRenderer
 } from "ag-grid-community";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { RangeController } from "../../rangeController";
+import { RangeController } from "../../modules/rangeSelection/rangeController";
 import { Palette } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";
 

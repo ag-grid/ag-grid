@@ -4,10 +4,10 @@
 /* MODULES - Don't delete this line */
 import "../../../../ag-grid-enterprise/src/modules/chartsModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/clipboardModule.ts";
-import "../../../../ag-grid-enterprise/src/modules/columnDropZonesModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/columnsToolPanelModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/filtersToolPanelModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/menuModule.ts";
+import "../../../../ag-grid-enterprise/src/modules/rangeSelectionModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/rowGroupingModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/serverSideRowModelModule.ts";
 import "../../../../ag-grid-enterprise/src/modules/setFilterModule.ts";

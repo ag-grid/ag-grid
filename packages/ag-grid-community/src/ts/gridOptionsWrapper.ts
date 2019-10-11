@@ -1,6 +1,8 @@
-import { RowNode } from "./entities/rowNode";
+import {RowNode} from "./entities/rowNode";
 import {
-    ChartRef, GetChartToolbarItems,
+    ChartRef,
+    FillOperationParams,
+    GetChartToolbarItems,
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
@@ -13,32 +15,31 @@ import {
     PostProcessPopupParams,
     ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
-    TabToNextCellParams,
-    FillOperationParams
+    TabToNextCellParams
 } from "./entities/gridOptions";
-import { _ } from "./utils";
-import { EventService } from "./eventService";
-import { Constants } from "./constants";
-import { ComponentUtil } from "./components/componentUtil";
-import { GridApi } from "./gridApi";
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./entities/colDef";
-import { Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier } from "./context/context";
-import { ColumnApi } from "./columnController/columnApi";
-import { ColumnController } from "./columnController/columnController";
-import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { IDatasource } from "./interfaces/iDatasource";
-import { CellPosition } from "./entities/cellPosition";
-import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
-import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./interfaces/exportParams";
-import { AgEvent } from "./events";
-import { Environment, SASS_PROPERTIES } from "./environment";
-import { PropertyKeys } from "./propertyKeys";
-import { ColDefUtil } from "./components/colDefUtil";
-import { Events } from "./eventKeys";
-import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
-import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
-import { ModuleNames } from "./modules/moduleNames";
-import { ChartOptions } from "./interfaces/iChartOptions";
+import {_} from "./utils";
+import {EventService} from "./eventService";
+import {Constants} from "./constants";
+import {ComponentUtil} from "./components/componentUtil";
+import {GridApi} from "./gridApi";
+import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./entities/colDef";
+import {Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier} from "./context/context";
+import {ColumnApi} from "./columnController/columnApi";
+import {ColumnController} from "./columnController/columnController";
+import {IViewportDatasource} from "./interfaces/iViewportDatasource";
+import {IDatasource} from "./interfaces/iDatasource";
+import {CellPosition} from "./entities/cellPosition";
+import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
+import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./interfaces/exportParams";
+import {AgEvent} from "./events";
+import {Environment, SASS_PROPERTIES} from "./environment";
+import {PropertyKeys} from "./propertyKeys";
+import {ColDefUtil} from "./components/colDefUtil";
+import {Events} from "./eventKeys";
+import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
+import {SideBarDef, SideBarDefParser, ToolPanelDef} from "./entities/sideBar";
+import {ModuleNames} from "./modules/moduleNames";
+import {ChartOptions} from "./interfaces/iChartOptions";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -153,6 +154,10 @@ export class GridOptionsWrapper {
 
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
+        }
+
+        if (this.isEnableRangeSelection() && !this.context.isModuleRegistered(ModuleNames.RangeSelectionModule)) {
+            console.warn('ag-Grid: enableRangeSelection will only work if range module is loaded');
         }
 
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {

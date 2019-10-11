@@ -11,12 +11,12 @@ import {
     IStatusPanelComp,
     PostConstruct,
     RefSelector,
+    IRangeController,
     ValueService,
     _, CellPositionUtils,
     RowPositionUtils,
-    RowRenderer
+    RowRenderer, Optional
 } from 'ag-grid-community';
-import { RangeController } from "../../../rangeController";
 import { NameValueComp } from "./nameValueComp";
 
 export class AggregationComp extends Component implements IStatusPanelComp {
@@ -31,7 +31,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             </div>`;
 
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('rangeController') private rangeController: RangeController;
+    @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -113,7 +113,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     private onRangeSelectionChanged(): void {
-        const cellRanges = this.rangeController.getCellRanges();
+        const cellRanges = this.rangeController ? this.rangeController.getCellRanges() : undefined;
 
         let sum = 0;
         let count = 0;

@@ -120,8 +120,9 @@ export class GridCore extends Component {
 
         const sideBarModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.SideBarModule);
         const statusBarModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.StatusBarModule);
+        const rowGroupingLoaded = this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule);
 
-        const dropZones = this.enterprise ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
+        const dropZones = rowGroupingLoaded ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
         const sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
         const statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         const watermark = this.enterprise ? '<ag-watermark></ag-watermark>' : '';
@@ -137,27 +138,6 @@ export class GridCore extends Component {
                 <ag-pagination></ag-pagination>
                 ${watermark}
             </div>`;
-
-        /*
-        let TEMPLATE_NORMAL =
-                `<div class="ag-root-wrapper">
-                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
-                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>
-                </div>
-                <ag-pagination></ag-pagination>
-            </div>`;
-
-        let TEMPLATE_ENTERPRISE =
-            `<div class="ag-root-wrapper">
-            <ag-grid-header-drop-zones></ag-grid-header-drop-zones>
-            <div ref="rootWrapperBody" class="ag-root-wrapper-body">
-                <ag-grid-comp ref="gridPanel"></ag-grid-comp>
-                <ag-side-bar ref="sideBar"></ag-side-bar>
-            </div>
-            <ag-status-bar ref="statusBar"></ag-status-bar>
-            <ag-pagination></ag-pagination>
-            <ag-watermark></ag-watermark>
-        </div>`;*/
 
         return template;
     }

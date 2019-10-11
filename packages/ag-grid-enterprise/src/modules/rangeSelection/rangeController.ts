@@ -25,8 +25,11 @@ import {
     RowPosition,
     RowPositionUtils,
     PinnedRowModel,
-    _
+    _,
+    ModuleLogger
 } from "ag-grid-community";
+
+ModuleLogger.logModuleClass('Range.RangeController');
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {

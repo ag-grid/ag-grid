@@ -1,10 +1,13 @@
 import { 
     CellRange,
-    RowPositionUtils,
     CellPosition,
-    _
+    _,
+    ModuleLogger
 } from "ag-grid-community";
+
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
+
+ModuleLogger.logModuleClass('Range.RangeHandle');
 
 export class RangeHandle extends AbstractSelectionHandle {
 

@@ -16,14 +16,15 @@ import {
     Environment,
     ColumnController,
     IChartService,
+    Optional,
+    IRangeController
 } from "ag-grid-community";
-import { RangeController } from "../rangeController";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
 
 @Bean('chartService')
 export class ChartService implements IChartService {
 
-    @Autowired('rangeController') private rangeController: RangeController;
+    @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('environment') private environment: Environment;
     @Autowired('context') private context: Context;
@@ -39,7 +40,9 @@ export class ChartService implements IChartService {
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        const cellRange = this.rangeController.createCellRangeFromCellRangeParams(params.cellRange);
+        const cellRange = this.rangeController
+            ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
+            : undefined;
 
         if (!cellRange) {
             console.warn("ag-Grid - unable to create chart as no range is selected");
@@ -67,7 +70,10 @@ export class ChartService implements IChartService {
             columns: this.columnController.getAllDisplayedColumns().map(col => col.getColId())
         };
 
-        const cellRange = this.rangeController.createCellRangeFromCellRangeParams(chartAllRangeParams);
+        const cellRange = this.rangeController
+            ? this.rangeController.createCellRangeFromCellRangeParams(chartAllRangeParams)
+            : undefined;
+
         if (!cellRange) {
             console.warn("ag-Grid - unable to create chart as there are no columns in the grid.");
             return;

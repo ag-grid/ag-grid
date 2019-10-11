@@ -6,6 +6,7 @@ require('./clipboardModule');
 require('./columnsToolPanelModule');
 require('./filtersToolPanelModule');
 require('./menuModule');
+require('./rangeSelectionModule');
 require('./rowGroupingModule');
 require('./serverSideRowModelModule');
 require('./setFilterModule');

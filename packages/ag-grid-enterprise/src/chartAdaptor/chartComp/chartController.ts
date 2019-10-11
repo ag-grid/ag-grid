@@ -1,5 +1,5 @@
 import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct, _ } from "ag-grid-community";
-import { RangeController } from "../../rangeController";
+import { RangeController } from "../../modules/rangeSelection/rangeController";
 import { ChartModel, ColState } from "./chartModel";
 import { Palette } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";

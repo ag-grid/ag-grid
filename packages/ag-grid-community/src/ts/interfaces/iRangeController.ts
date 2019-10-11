@@ -5,6 +5,7 @@ import { RowPosition } from "../entities/rowPosition";
 import { CellComp } from "../rendering/cellComp";
 
 export interface IRangeController {
+    isEmpty(): boolean;
     removeAllCellRanges(): void;
     getCellRangeCount(cell: CellPosition): number;
     isCellInAnyRange(cell: CellPosition): boolean;
@@ -14,7 +15,7 @@ export interface IRangeController {
     onDragStart(mouseEvent: MouseEvent): void;
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;
-    getCellRanges(): CellRange[] | null;
+    getCellRanges(): CellRange[];
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
     setCellRange(params: CellRangeParams): void;
     addCellRange(params: CellRangeParams): void;
@@ -23,6 +24,7 @@ export interface IRangeController {
     registerGridComp(gridPanel: GridPanel): void;
     getRangeStartRow(cellRange: CellRange): RowPosition;
     getRangeEndRow(cellRange: CellRange): RowPosition;
+    createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
 }
 
 export interface ISelectionHandle {

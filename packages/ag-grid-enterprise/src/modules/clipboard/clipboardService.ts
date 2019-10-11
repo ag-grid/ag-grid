@@ -37,10 +37,10 @@ import {
     SelectionController,
     ValueService,
     ModuleLogger,
-    ICsvCreator
+    ICsvCreator,
+    IRangeController,
+    Optional
 } from "ag-grid-community";
-
-import {RangeController} from "../../rangeController";
 
 ModuleLogger.logModuleClass('Clipboard.ClipboardService');
 
@@ -58,7 +58,7 @@ export class ClipboardService implements IClipboardService {
     @Autowired('csvCreator') private csvCreator: ICsvCreator;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('rangeController') private rangeController: RangeController;
+    @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('rowModel') private rowModel: IRowModel;
 
     @Autowired('valueService') private valueService: ValueService;
@@ -118,7 +118,7 @@ export class ClipboardService implements IClipboardService {
                                         focusedCell: CellPosition, changedPath: ChangedPath|undefined) => {
 
                     const singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
-                    const rangeActive = this.rangeController.isMoreThanOneCell();
+                    const rangeActive = this.rangeController && this.rangeController.isMoreThanOneCell();
                     const pasteIntoRange = rangeActive && !singleCellInClipboard;
                     if (pasteIntoRange) {
                         this.pasteIntoActiveRange(parsedData, cellsToFlash, updatedRowNodes, changedPath);
@@ -253,7 +253,7 @@ export class ClipboardService implements IClipboardService {
     }
 
     public copyRangeDown(): void {
-        if (this.rangeController.isEmpty()) {
+        if (!this.rangeController || this.rangeController.isEmpty()) {
             return;
         }
 
@@ -386,7 +386,7 @@ export class ClipboardService implements IClipboardService {
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
 
         // default is copy range if exists, otherwise rows
-        if (this.rangeController.isMoreThanOneCell()) {
+        if (this.rangeController && this.rangeController.isMoreThanOneCell()) {
             this.copySelectedRangeToClipboard(includeHeaders);
         } else if (selectedRowsToCopy) {
             // otherwise copy selected rows if they exist
@@ -405,7 +405,7 @@ export class ClipboardService implements IClipboardService {
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
-        if (this.rangeController.isEmpty()) {
+        if (!this.rangeController || this.rangeController.isEmpty()) {
             return;
         }
 
@@ -420,6 +420,8 @@ export class ClipboardService implements IClipboardService {
     }
 
     private iterateActiveRange(range: CellRange, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
+
+        if (!this.rangeController) { return; }
 
         let currentRow : RowPosition | null = this.rangeController.getRangeStartRow(range);
         const lastRow = this.rangeController.getRangeEndRow(range);
@@ -443,7 +445,7 @@ export class ClipboardService implements IClipboardService {
     }
 
     public copySelectedRangeToClipboard(includeHeaders = false): void {
-        if (this.rangeController.isEmpty()) {
+        if (!this.rangeController || this.rangeController.isEmpty()) {
             return;
         }
 
