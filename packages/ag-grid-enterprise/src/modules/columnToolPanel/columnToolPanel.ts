@@ -14,9 +14,9 @@ import {
     ModuleLogger
 } from "ag-grid-community";
 import {PivotModePanel} from "./pivotModePanel";
-import {RowGroupDropZonePanel} from "../columnDropZones/rowGroupDropZonePanel";
-import {ValuesDropZonePanel} from "../columnDropZones/valueDropZonePanel";
-import {PivotDropZonePanel} from "../columnDropZones/pivotDropZonePanel";
+import {RowGroupDropZonePanel} from "../rowGrouping/columnDropZones/rowGroupDropZonePanel";
+import {ValuesDropZonePanel} from "../rowGrouping/columnDropZones/valueDropZonePanel";
+import {PivotDropZonePanel} from "../rowGrouping/columnDropZones/pivotDropZonePanel";
 import {PrimaryColsPanel} from "./primaryColsPanel";
 
 ModuleLogger.logModuleClass('ColumnTP.ColumnToolPanel');
