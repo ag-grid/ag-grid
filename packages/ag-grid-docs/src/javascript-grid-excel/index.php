@@ -303,7 +303,9 @@ include '../documentation-main/documentation_header.php';
                 <ul class="content">
                     <li><code>protected</code>: Boolean. This attribute indicates whether or not this cell is protected.
                         When the worksheet is unprotected, cell-level protection has no effect. When a cell is protected,
-                        it will not allow the user to enter information into it.
+                        it will not allow the user to enter information into it. Note that in Excel, the default for cells
+                        with no protection style is to be protected, so you must explicitly disable protection if it is
+                        not desired.
                     </li>
                     <li><code>hideFormula</code>: Boolean. This attribute indicates whether or not this cell's formula should be hidden
                     when worksheet protection is enabled.
