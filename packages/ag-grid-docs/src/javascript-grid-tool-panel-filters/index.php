@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
                 <code>suppressFilterSearch</code> are both set to <code>true</code>.
             </li>
             <li>
-                The date column / filter is hidden from the tool panel using: <code>colDef.suppressColumnsToolPanel=true</code>.
+                The date column / filter is hidden from the tool panel using: <code>colDef.suppressFiltersToolPanel=true</code>.
             </li>
 
         </ul>
