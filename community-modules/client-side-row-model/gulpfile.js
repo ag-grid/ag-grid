@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const {parallel} = gulp;
+const {series, parallel} = gulp;
 const ts = require('gulp-typescript');
 
 const tsEs6Project = ts.createProject('tsconfig.es6.json');
@@ -30,4 +30,4 @@ const watch = () => {
 gulp.task('buildEs5', buildEs5);
 gulp.task('buildEs6', buildEs6);
 gulp.task('watch', watch);
-gulp.task('default', 'watch');
+gulp.task('default', series('watch'));
