@@ -18,7 +18,7 @@ import {
 import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./primaryColsPanel";
-import {ToolPanelColDefService} from "../../common/toolPanelColDefService";
+import {ToolPanelColDefService} from "../sideBar/common/toolPanelColDefService";
 import {EXPAND_STATE, SELECTED_STATE} from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;

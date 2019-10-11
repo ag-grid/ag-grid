@@ -9,7 +9,6 @@ import { NameValueComp } from "./statusBar/providedPanels/nameValueComp";
 import { WatermarkComp } from "./license/watermark";
 import { FillHandle } from "./widgets/selection/fillHandle";
 import { RangeHandle } from "./widgets/selection/rangeHandle";
-import { ToolPanelColDefService } from "./common/toolPanelColDefService";
 
 export { StatusBar } from "./statusBar/statusBar";
 export { StatusBarService } from "./statusBar/statusBarService";
@@ -25,7 +24,7 @@ export { FillHandle } from "./widgets/selection/fillHandle";
 export { RangeHandle } from "./widgets/selection/rangeHandle";
 
 Grid.setEnterpriseBeans([RangeController, EnterpriseBoot,
-    LicenseManager, MD5, StatusBarService, ToolPanelColDefService
+    LicenseManager, MD5, StatusBarService
 ]);
 
 Grid.setEnterpriseAgStackComponents([

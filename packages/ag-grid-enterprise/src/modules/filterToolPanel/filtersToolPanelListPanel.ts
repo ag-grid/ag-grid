@@ -17,7 +17,7 @@ import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
 import {ToolPanelFilterGroupComp, ToolPanelFilterItem} from "./toolPanelFilterGroupComp";
 import {EXPAND_STATE} from "./filtersToolPanelHeaderPanel";
-import {ToolPanelColDefService} from "../../common/toolPanelColDefService";
+import {ToolPanelColDefService} from "../sideBar/common/toolPanelColDefService";
 
 ModuleLogger.logModuleClass('FiltersTP.FiltersToolPanelListPanel');
 
