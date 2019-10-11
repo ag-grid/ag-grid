@@ -649,13 +649,7 @@ export class RowComp extends Component {
         }
     }
 
-    private sortCells(eRow: HTMLElement, cols: Column[]) {
-        const sortedCols = cols.slice().sort((a, b) => {
-            const leftA = a.getLeft();
-            const leftB = b.getLeft();
-            return leftA === leftB ? 0 : (leftA < leftB ? -1 : 1);
-        });
-
+    private sortCells(eRow: HTMLElement, sortedCols: Column[]) {
         for (let i = 0; i < sortedCols.length; i++) {
             const correctCellAtIndex = this.getCellForCol(sortedCols[i]);
             const actualCellAtIndex = eRow.children[i];
