@@ -13,3 +13,7 @@
 ../node_modules/.bin/webpack --config webpack.config.js --entry ./SetFilterModule.ts -o ../bundles/SetFilterModule.bundle.js
 ../node_modules/.bin/webpack --config webpack.config.js --entry ./SideBarModule.ts -o ../bundles/SideBarModule.bundle.js
 ../node_modules/.bin/webpack --config webpack.config.js --entry ./StatusBarModule.ts -o ../bundles/StatusBarModule.bundle.js
+../node_modules/.bin/webpack --config webpack.config.js --entry ./MasterDetailModule.ts -o ../bundles/MasterDetailModule.bundle.js
+../node_modules/.bin/webpack --config webpack.config.js --entry ./RangeSelectionModule.ts -o ../bundles/RangeSelectionModule.bundle.js
+../node_modules/.bin/webpack --config webpack.config.js --entry ./ServerSideRowModelModule.ts -o ../bundles/ServerSideRowModelModule.bundle.js
+../node_modules/.bin/webpack --config webpack.config.js --entry ./ViewportRowModelModule.ts -o ../bundles/ViewportRowModelModule.bundle.js

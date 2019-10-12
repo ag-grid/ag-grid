@@ -12,11 +12,15 @@
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/column-tool-panel/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/excel-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/filter-tool-panel/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/master-detail/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/menu/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/range-selection/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/rich-select/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/row-grouping/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/server-side-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/set-filter/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/status-bar/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/viewport-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />

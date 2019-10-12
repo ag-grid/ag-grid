@@ -129,6 +129,46 @@
         "@ag-enterprise/status-bar"
       ],
       "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "MasterDetailModule",
+        "moduleSource": "@ag-enterprise/master-detail/src/masterDetailModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/master-detail"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "RangeSelectionModule",
+        "moduleSource": "@ag-enterprise/range-selection/src/rangeSelectionModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/range-selection"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "ServerSideRowModelModule",
+        "moduleSource": "@ag-enterprise/server-side-row-model/src/serverSideRowModelModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/server-side-row-model"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "ViewportRowModelModule",
+        "moduleSource": "@ag-enterprise/viewport-row-model/src/viewportRowModelModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/viewport-row-model"
+      ],
+      "enterprise": true
     }
   ]
 }
