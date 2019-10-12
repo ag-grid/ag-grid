@@ -14,5 +14,8 @@ export enum ModuleNames {
     SetFilterModule = "setFilterModule",
     StatusBarModule = "statusBarModule",
     SideBarModule = "sideBarModule",
-    RangeSelectionModule = "rangeSelectionModule"
+    RangeSelectionModule = "rangeSelectionModule",
+    MasterDetailModule = "masterDetailModule",
+    RichSelectModule = "richSelectModule",
+    EnterpriseCoreModule = "enterpriseCoreModule"
 }

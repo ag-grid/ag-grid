@@ -491,8 +491,9 @@ export class UserComponentFactory {
         if (missing) {
             // to help the user, we print out the name they are looking for, rather than the default name.
             // i don't know why the default name was originally printed out (that doesn't help the user)
-            const compName = holder ? (holder as any)[propertyName] : defaultComponentName;
-            if (!optional) { console.error(`Error creating component ${propertyName}=>${compName}`); }
+            const overrideName = holder ? (holder as any)[propertyName] : defaultComponentName;
+            const nameToReport = overrideName ? overrideName : defaultComponentName;
+            if (!optional) { console.error(`Could not find component ${nameToReport}, did you forget to configure this component?`); }
             return null;
         }
 

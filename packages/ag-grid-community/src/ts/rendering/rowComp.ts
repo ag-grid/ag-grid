@@ -1,6 +1,6 @@
-import { CellComp } from "./cellComp";
-import { CellChangedEvent, DataChangedEvent, RowNode } from "../entities/rowNode";
-import { Column } from "../entities/column";
+import {CellComp} from "./cellComp";
+import {CellChangedEvent, DataChangedEvent, RowNode} from "../entities/rowNode";
+import {Column} from "../entities/column";
 import {
     Events,
     RowClickedEvent,
@@ -12,15 +12,16 @@ import {
     VirtualRowRemovedEvent
 } from "../events";
 
-import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
-import { RowContainerComponent } from "./rowContainerComponent";
-import { Component } from "../widgets/component";
+import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
+import {RowContainerComponent} from "./rowContainerComponent";
+import {Component} from "../widgets/component";
 
-import { Beans } from "./beans";
-import { ProcessRowParams } from "../entities/gridOptions";
-import { _ } from "../utils";
-import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import {Beans} from "./beans";
+import {ProcessRowParams} from "../entities/gridOptions";
+import {_} from "../utils";
+import {IFrameworkOverrides} from "../interfaces/iFrameworkOverrides";
 import {Constants} from "../constants";
+import {ModuleNames} from "../modules/moduleNames";
 
 interface CellTemplate {
     template: string;
@@ -897,7 +898,12 @@ export class RowComp extends Component {
             } else {
                 const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
                 if (!res) {
-                    console.error('ag-Grid: fullWidthCellRenderer not defined');
+                    const masterDetailModuleLoaded = this.beans.context.isModuleRegistered(ModuleNames.MasterDetailModule);
+                    if (cellRendererName==='agDetailCellRenderer' && !masterDetailModuleLoaded) {
+                        console.warn(`ag-Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
+                    } else {
+                        console.error(`ag-Grid: fullWidthCellRenderer ${cellRendererName} not found`);
+                    }
                     return;
                 }
                 res.then(callback);

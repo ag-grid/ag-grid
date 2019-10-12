@@ -1,5 +1,4 @@
-import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct, _ } from "ag-grid-community";
-import { RangeController } from "../../modules/rangeSelection/rangeController";
+import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct, _, IRangeController } from "ag-grid-community";
 import { ChartModel, ColState } from "./chartModel";
 import { Palette } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";
@@ -11,7 +10,7 @@ export class ChartController extends BeanStub {
     public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
 
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('rangeController') rangeController: RangeController;
+    @Autowired('rangeController') rangeController: IRangeController;
 
     private model: ChartModel;
 
@@ -93,7 +92,7 @@ export class ChartController extends BeanStub {
     }
 
     public setChartRange() {
-        if (!this.model.isSuppressChartRanges() && !this.model.isDetached()) {
+        if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
     }
@@ -104,7 +103,9 @@ export class ChartController extends BeanStub {
 
         if (this.model.isDetached()) {
             // remove range from grid
-            this.rangeController.setCellRanges([]);
+            if (this.rangeController) {
+                this.rangeController.setCellRanges([]);
+            }
         } else {
             // update grid with chart range
             this.setChartRange();

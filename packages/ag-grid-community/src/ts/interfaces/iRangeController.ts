@@ -25,6 +25,7 @@ export interface IRangeController {
     getRangeStartRow(cellRange: CellRange): RowPosition;
     getRangeEndRow(cellRange: CellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
+    setCellRanges(cellRanges: CellRange[]): void;
 }
 
 export interface ISelectionHandle {

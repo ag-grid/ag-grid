@@ -82,6 +82,7 @@ import {CellPositionUtils} from "./entities/cellPosition";
 import {ModuleLogger} from "./utils/moduleLogger";
 import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
 import {IComponent} from "./interfaces/iComponent";
+import {ModuleNames} from "./modules/moduleNames";
 
 export interface GridParams {
     // used by Web Components
@@ -136,6 +137,10 @@ export class Grid {
         Grid.modulesToInclude.push(...modulesToInclude);
     }
 
+    private static isEnterprise(): boolean {
+        return !!_.find(this.modulesToInclude, module => module.moduleName === ModuleNames.EnterpriseCoreModule);
+    }
+
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
 
         if (!eGridDiv) {
@@ -155,7 +160,7 @@ export class Grid {
 
         this.gridOptions = gridOptions;
 
-        const enterprise = !_.missingOrEmpty(Grid.enterpriseBeans);
+        const enterprise = Grid.isEnterprise();
 
         const beans = this.createBeansList();
         const agStackComponents = this.createAgStackComponentsList();

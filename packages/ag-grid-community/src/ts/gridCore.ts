@@ -25,7 +25,6 @@ import {ModuleNames} from "./modules/moduleNames";
 
 export class GridCore extends Component {
 
-    @Autowired('enterprise') private enterprise: boolean;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -121,11 +120,12 @@ export class GridCore extends Component {
         const sideBarModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.SideBarModule);
         const statusBarModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.StatusBarModule);
         const rowGroupingLoaded = this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule);
+        const enterpriseCoreLoaded = this.getContext().isModuleRegistered(ModuleNames.EnterpriseCoreModule);
 
         const dropZones = rowGroupingLoaded ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
         const sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
         const statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
-        const watermark = this.enterprise ? '<ag-watermark></ag-watermark>' : '';
+        const watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
 
         const template =
             `<div class="ag-root-wrapper">

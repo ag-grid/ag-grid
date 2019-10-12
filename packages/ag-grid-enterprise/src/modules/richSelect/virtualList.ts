@@ -1,4 +1,6 @@
-import { Autowired, Component, Environment, GridOptionsWrapper, PostConstruct, _ } from "ag-grid-community";
+import { Autowired, Component, Environment, GridOptionsWrapper, PostConstruct, _, ModuleLogger } from "ag-grid-community";
+
+ModuleLogger.logModuleClass('RichSelect.VirtualListModel');
 
 export interface VirtualListModel {
     getRowCount(): number;

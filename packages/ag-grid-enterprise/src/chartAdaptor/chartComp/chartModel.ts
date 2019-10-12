@@ -11,10 +11,10 @@ import {
     IAggFunc,
     PostConstruct,
     RowNode,
-    RowRenderer
+    RowRenderer,
+    IRangeController
 } from "ag-grid-community";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { RangeController } from "../../modules/rangeSelection/rangeController";
 import { Palette } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
@@ -41,7 +41,7 @@ export class ChartModel extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('rangeController') rangeController: RangeController;
+    @Autowired('rangeController') rangeController: IRangeController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     // model state
@@ -337,7 +337,7 @@ export class ChartModel extends BeanStub {
         let startRow = 0, endRow = 0;
         const range = _.last(this.cellRanges) as CellRange;
 
-        if (range) {
+        if (this.rangeController && range) {
             startRow = this.rangeController.getRangeStartRow(range).rowIndex;
             endRow = this.rangeController.getRangeEndRow(range).rowIndex;
         }

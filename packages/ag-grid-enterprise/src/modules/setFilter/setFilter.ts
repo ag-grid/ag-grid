@@ -15,7 +15,7 @@ import {
 } from "ag-grid-community";
 import {SetFilterModelValuesType, SetValueModel} from "./setValueModel";
 import {SetFilterListItem} from "./setFilterListItem";
-import {VirtualList, VirtualListModel} from "../../rendering/virtualList";
+import {VirtualList, VirtualListModel} from "../richSelect/virtualList";
 import {SetFilterModel} from "./setFilterModel";
 
 ModuleLogger.logModuleClass('SetFilter.SetFilter');

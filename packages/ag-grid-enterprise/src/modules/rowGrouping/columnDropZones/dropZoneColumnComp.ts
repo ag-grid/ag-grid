@@ -24,7 +24,7 @@ import {
     IAggFuncService,
     ModuleLogger
 } from "ag-grid-community";
-import { VirtualList } from "../../../rendering/virtualList";
+import { VirtualList } from "../../richSelect/virtualList";
 
 export interface ColumnRemoveEvent extends AgEvent {}
 

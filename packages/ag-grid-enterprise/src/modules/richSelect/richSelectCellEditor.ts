@@ -11,10 +11,13 @@ import {
     UserComponentFactory,
     GridOptionsWrapper,
     RefSelector,
-    _
+    _,
+    ModuleLogger
 } from "ag-grid-community";
 import { RichSelectRow } from "./richSelectRow";
-import { VirtualList } from "../virtualList";
+import { VirtualList } from "./virtualList";
+
+ModuleLogger.logModuleClass('RichSelect.RichSelectCellEditor');
 
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 

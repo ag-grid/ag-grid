@@ -11,8 +11,11 @@ import {
     ICellRenderer,
     RefSelector,
     RowNode,
-    _
+    _,
+    ModuleLogger
 } from "ag-grid-community";
+
+ModuleLogger.logModuleClass('MasterDetail.DetailCellRenderer');
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
 
