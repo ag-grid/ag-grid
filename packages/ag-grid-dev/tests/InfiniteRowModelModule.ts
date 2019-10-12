@@ -1,0 +1,1 @@
+import  {InfiniteRowModelModule} from "@ag-community/infinite-row-model/src/infiniteRowModelModule"

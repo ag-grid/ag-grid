@@ -39,6 +39,96 @@
         "ag-grid-enterprise/chartsModule"
       ],
       "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "ClipboardModule",
+        "moduleSource": "@ag-enterprise/clipboard/src/clipboardModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/clipboard"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "ColumnToolPanelModule",
+        "moduleSource": "@ag-enterprise/column-tool-panel/src/columnsToolPanelModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/column-tool-panel"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "FiltersToolPanelModule",
+        "moduleSource": "@ag-enterprise/filter-tool-panel/src/filtersToolPanelModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/filter-tool-panel"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "MenuModule",
+        "moduleSource": "@ag-enterprise/menu/src/menuModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/menu"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "RichSelectModule",
+        "moduleSource": "@ag-enterprise/rich-select/src/richSelectModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/rich-select"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "RowGroupingModule",
+        "moduleSource": "@ag-enterprise/row-grouping/src/rowGroupingModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/row-grouping"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "SetFilterModule",
+        "moduleSource": "@ag-enterprise/set-filter/src/setFilterModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/set-filter"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "SideBarModule",
+        "moduleSource": "@ag-enterprise/side-bar/src/sideBarModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/side-bar"
+      ],
+      "enterprise": true
+    },
+    {
+      "moduleSource": {
+        "exportedModuleName": "StatusBarModule",
+        "moduleSource": "@ag-enterprise/status-bar/src/statusBarModule"
+      },
+      "exposedModules": [
+        "@ag-enterprise/status-bar"
+      ],
+      "enterprise": true
     }
   ]
 }

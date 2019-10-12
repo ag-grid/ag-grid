@@ -1,0 +1,1 @@
+import  {SideBarModule} from "@ag-enterprise/side-bar/src/sideBarModule"
