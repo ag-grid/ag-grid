@@ -10,7 +10,7 @@ import {
     PreConstruct,
     RefSelector,
     ModuleLogger,
-    ToolPanelColumnCompParams
+    ToolPanelColumnCompParams, Constants
 } from "ag-grid-community";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
@@ -66,6 +66,7 @@ export class PrimaryColsHeaderPanel extends Component {
         this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
         this.addDestroyableEventListener(this.eSelect, 'click', this.onSelectClicked.bind(this));
         this.addDestroyableEventListener(this.eFilterTextField, 'input', this.onFilterTextChanged.bind(this));
+        this.addDestroyableEventListener(this.eFilterTextField, 'keypress', this.onMiniFilterKeyPress.bind(this));
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     }
@@ -112,6 +113,12 @@ export class PrimaryColsHeaderPanel extends Component {
         }
 
         this.onFilterTextChangedDebounced();
+    }
+
+    private onMiniFilterKeyPress(e: KeyboardEvent): void {
+        if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
+            this.dispatchEvent({type: 'selectAll'});
+        }
     }
 
     private onSelectClicked(): void {
