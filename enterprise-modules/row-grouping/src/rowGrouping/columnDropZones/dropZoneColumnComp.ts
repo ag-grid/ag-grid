@@ -22,9 +22,9 @@ import {
     _,
     Optional,
     IAggFuncService,
-    ModuleLogger
+    ModuleLogger,
+    VirtualList
 } from "ag-grid-community";
-import { VirtualList } from "@ag-enterprise/rich-select";
 
 export interface ColumnRemoveEvent extends AgEvent {}
 

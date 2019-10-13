@@ -216,6 +216,7 @@ export {Component, VisibleChangedEvent} from "./widgets/component";
 export {PopupComponent} from "./widgets/popupComponent";
 export {PopupService} from "./widgets/popupService";
 export {TouchListener, TapEvent, LongTapEvent} from "./widgets/touchListener";
+export {VirtualList, VirtualListModel} from "./widgets/virtualList";
 
 // range
 export {

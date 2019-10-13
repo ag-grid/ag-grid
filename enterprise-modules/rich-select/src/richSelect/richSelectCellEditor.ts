@@ -12,10 +12,10 @@ import {
     GridOptionsWrapper,
     RefSelector,
     _,
-    ModuleLogger
+    ModuleLogger,
+    VirtualList
 } from "ag-grid-community";
 import { RichSelectRow } from "./richSelectRow";
-import { VirtualList } from "./virtualList";
 
 ModuleLogger.logModuleClass('RichSelect.RichSelectCellEditor');
 
