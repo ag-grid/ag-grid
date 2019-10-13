@@ -77,9 +77,6 @@ export class GridCore extends Component {
 
         this.gridOptionsWrapper.addLayoutElement(this.getGui());
 
-        // see what the grid options are for default of toolbar
-        this.setSideBarVisible(this.gridOptionsWrapper.isShowToolPanel());
-
         this.eGridDiv.appendChild(this.getGui());
         this.addDestroyFunc(() => {
             this.eGridDiv.removeChild(this.getGui());
@@ -131,7 +128,7 @@ export class GridCore extends Component {
             `<div class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
-                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>
+                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>                    
                     ${sideBar}
                 </div>
                 ${statusBar}

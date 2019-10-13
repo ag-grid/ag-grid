@@ -71,6 +71,9 @@ export class SideBarComp extends Component implements ISideBar {
         const sideBarExists = !!sideBar && !!sideBar.toolPanels;
 
         if (sideBarExists) {
+            const shouldDisplaySideBar = sideBarExists && !sideBar.hiddenByDefault;
+            this.setDisplayed(shouldDisplaySideBar);
+
             const toolPanelDefs = sideBar.toolPanels as ToolPanelDef[];
             this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
             this.setupToolPanels(toolPanelDefs);
@@ -79,9 +82,6 @@ export class SideBarComp extends Component implements ISideBar {
                 this.openToolPanel(sideBar.defaultToolPanel);
             }
         }
-
-        const sideBarVisible = sideBarExists && !sideBar.hiddenByDefault;
-        setTimeout(() => this.setDisplayed(sideBarVisible), 0);
     }
 
     private setupToolPanels(defs: ToolPanelDef[]): void {
