@@ -67,12 +67,6 @@ export class ToolPanelColDefService {
     }
 
     public syncLayoutWithGrid(syncLayoutCallback: (colDefs: AbstractColDef[]) => void): void {
-        const inPivotMode = this.columnController.isPivotMode();
-        const pivotActive = this.columnController.isPivotActive();
-
-        // don't update columns when grid is just showing secondary columns
-        if (inPivotMode && pivotActive) return;
-
         // extract ordered list of leaf path trees (column group hierarchy for each individual leaf column)
         const leafPathTrees: AbstractColDef[] = this.getLeafPathTrees();
 
