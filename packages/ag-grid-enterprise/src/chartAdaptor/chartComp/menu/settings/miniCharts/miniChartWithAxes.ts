@@ -16,12 +16,20 @@ export abstract class MiniChartWithAxes extends MiniChart {
         const size = this.size;
         const padding = this.padding;
 
-        const leftAxis = Line.create(padding, padding, padding, size - padding + this.axisOvershoot);
+        const leftAxis = new Line();
+        leftAxis.x1 = padding;
+        leftAxis.y1 = padding;
+        leftAxis.x2 = padding;
+        leftAxis.y2 = size - padding + this.axisOvershoot;
         leftAxis.stroke = this.stroke;
 
-        const bottomAxis = Line.create(padding - this.axisOvershoot + 1, size - padding, size - padding + 1, size - padding);
+        const bottomAxis = new Line();
+        bottomAxis.x1 = padding - this.axisOvershoot + 1;
+        bottomAxis.y1 = size - padding;
+        bottomAxis.x2 = size - padding + 1;
+        bottomAxis.y2 = size - padding;
         bottomAxis.stroke = this.stroke;
-        
+
         const root = this.root;
 
         root.append(leftAxis);

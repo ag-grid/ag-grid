@@ -10,20 +10,6 @@ export class Sector extends Shape {
 
     protected path = new Path2D();
 
-    static create(centerX: number, centerY: number, innerRadius: number, outerRadius: number,
-                  startAngle: number = 0, endAngle: number = Math.PI * 2): Sector {
-        const sector = new Sector();
-
-        sector.centerX = centerX;
-        sector.centerY = centerY;
-        sector.innerRadius = innerRadius;
-        sector.outerRadius = outerRadius;
-        sector.startAngle = startAngle;
-        sector.endAngle = endAngle;
-
-        return sector;
-    }
-
     private _dirtyPath = true;
     set dirtyPath(value: boolean) {
         if (this._dirtyPath !== value) {

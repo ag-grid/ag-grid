@@ -30,7 +30,11 @@ export  class MiniBar extends MiniChartWithAxes {
         const height = yScale.bandwidth;
 
         this.bars = data.map((datum, i) => {
-            const rect = Rect.create(padding, yScale.convert(i), bottom - xScale.convert(datum), height);
+            const rect = new Rect();
+            rect.x = padding;
+            rect.y = yScale.convert(i);
+            rect.width = bottom - xScale.convert(datum);
+            rect.height = height;
             rect.strokeWidth = 1;
             rect.crisp = true;
 

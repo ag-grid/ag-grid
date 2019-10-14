@@ -32,21 +32,6 @@ export class Arc extends Shape {
         this.restoreOwnStyles();
     }
 
-    static create(centerX: number, centerY: number, radiusX: number, radiusY: number = radiusX,
-                  startAngle: number = 0, endAngle: number = Math.PI * 2, counterClockwise = false): Arc {
-        const arc = new Arc();
-
-        arc.centerX = centerX;
-        arc.centerY = centerY;
-        arc.radiusX = radiusX;
-        arc.radiusY = radiusY;
-        arc.startAngle = startAngle;
-        arc.endAngle = endAngle;
-        arc.counterClockwise = counterClockwise;
-
-        return arc;
-    }
-
     /**
      * It's not always that the path has to be updated.
      * For example, if transform attributes (such as `translationX`)

@@ -16,17 +16,6 @@ export class Line extends Shape {
         this.restoreOwnStyles();
     }
 
-    static create(x1: number, y1: number, x2: number, y2: number): Line {
-        const line = new Line();
-
-        line.x1 = x1;
-        line.y1 = y1;
-        line.x2 = x2;
-        line.y2 = y2;
-
-        return line;
-    }
-
     private _x1: number = 0;
     set x1(value: number) {
         if (this._x1 !== value) {

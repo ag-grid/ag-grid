@@ -32,7 +32,11 @@ export class MiniColumn extends MiniChartWithAxes {
 
         this.bars = data.map((datum, i) => {
             const top = yScale.convert(datum);
-            const rect = Rect.create(xScale.convert(i), top, width, bottom - top);
+            const rect = new Rect();
+            rect.x = xScale.convert(i);
+            rect.y = top;
+            rect.width = width;
+            rect.height = bottom - top;
             rect.strokeWidth = 1;
             rect.crisp = true;
 

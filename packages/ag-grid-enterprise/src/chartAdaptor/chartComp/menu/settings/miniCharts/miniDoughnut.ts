@@ -24,7 +24,13 @@ export class MiniDoughnut extends MiniChart {
         ];
 
         this.sectors = angles.map(([startAngle, endAngle]) => {
-            const sector = Sector.create(center, center, radius * centerRadiusScaler, radius, startAngle, endAngle);
+            const sector = new Sector();
+            sector.centerX = center;
+            sector.centerY = center;
+            sector.innerRadius = radius * centerRadiusScaler;
+            sector.outerRadius = radius;
+            sector.startAngle = startAngle;
+            sector.endAngle = endAngle;
             sector.stroke = undefined;
             return sector;
         });

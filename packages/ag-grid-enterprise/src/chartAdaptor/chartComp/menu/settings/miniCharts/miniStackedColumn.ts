@@ -16,14 +16,14 @@ export class MiniStackedColumn extends MiniChartWithAxes {
     private readonly bars: Rect[][];
 
     constructor(
-        parent: HTMLElement, 
-        fills: string[], 
-        strokes: string[], 
+        parent: HTMLElement,
+        fills: string[],
+        strokes: string[],
         data = MiniStackedColumn.data,
-        yScaleDomain = [0, 16], 
+        yScaleDomain = [0, 16],
         tooltipName = "stackedColumnTooltip") {
         super(parent, tooltipName);
-        
+
         const padding = this.padding;
         const size = this.size;
 
@@ -39,11 +39,15 @@ export class MiniStackedColumn extends MiniChartWithAxes {
 
         const bottom = yScale.convert(0);
         const width = xScale.bandwidth;
-        
-        this.bars = data.map(series => 
+
+        this.bars = data.map(series =>
              series.map((datum, i) => {
                 const top = yScale.convert(datum);
-                const rect = Rect.create(xScale.convert(i), top, width, bottom - top);
+                const rect = new Rect();
+                rect.x = xScale.convert(i);
+                rect.y = top;
+                rect.width = width;
+                rect.height = bottom - top;
                 rect.strokeWidth = 1;
                 rect.crisp = true;
 
@@ -56,7 +60,7 @@ export class MiniStackedColumn extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.bars.forEach((series, i) => 
+        this.bars.forEach((series, i) =>
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];

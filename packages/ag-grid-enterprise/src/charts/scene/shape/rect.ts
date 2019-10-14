@@ -11,18 +11,6 @@ export class Rect extends Shape {
 
     static className = 'Rect';
 
-    static create(x: number, y: number, width: number, height: number, radius = 0): Rect {
-        const rect = new Rect();
-
-        rect.x = x;
-        rect.y = y;
-        rect.width = width;
-        rect.height = height;
-        rect.radius = radius;
-
-        return rect;
-    }
-
     protected path = new Path2D();
 
     private _dirtyPath = true;

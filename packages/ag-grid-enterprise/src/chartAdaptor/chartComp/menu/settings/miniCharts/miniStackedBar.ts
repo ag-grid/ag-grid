@@ -16,11 +16,11 @@ export class MiniStackedBar extends MiniChartWithAxes {
     private readonly bars: Rect[][];
 
     constructor(
-        parent: HTMLElement, 
-        fills: string[], 
+        parent: HTMLElement,
+        fills: string[],
         strokes: string[],
         data = MiniStackedBar.data,
-        xScaleDomain = [0, 16], 
+        xScaleDomain = [0, 16],
         tooltipName = "stackedBarTooltip") {
         super(parent, tooltipName);
 
@@ -40,12 +40,16 @@ export class MiniStackedBar extends MiniChartWithAxes {
         const bottom = xScale.convert(0);
         const height = yScale.bandwidth;
 
-        this.bars = data.map(series => 
+        this.bars = data.map(series =>
             series.map((datum, i) => {
-                const rect = Rect.create(padding, yScale.convert(i), bottom - xScale.convert(datum), height);
+                const rect = new Rect();
+                rect.x = padding;
+                rect.y = yScale.convert(i);
+                rect.width = bottom - xScale.convert(datum);
+                rect.height = height;
                 rect.strokeWidth = 1;
                 rect.crisp = true;
-                
+
                 return rect;
             })
         );
@@ -55,7 +59,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.bars.forEach((series, i) => 
+        this.bars.forEach((series, i) =>
             series.forEach(bar => {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
