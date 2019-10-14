@@ -2,32 +2,14 @@ import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { Line } from "../../scene/shape/line";
 import { normalizeAngle360, toRadians } from "../../util/angle";
-import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
+import { Text } from "../../scene/shape/text";
 import { BBox } from "../../scene/bbox";
 import { Matrix } from "../../scene/matrix";
 import { Caption } from "../../caption";
 // import { Rect } from "../../scene/shape/rect"; debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-import { IGridStyle, ILinearAxis, IAxisFormatting, ILabelFormatting, AxisLabel } from "../../axis";
-
-class CategoryAxisTick {
-    /**
-     * The line width to be used by axis ticks.
-     */
-    width: number = 1;
-
-    /**
-     * The line length to be used by axis ticks.
-     */
-    size: number = 6;
-
-    /**
-     * The color of the axis ticks.
-     * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
-     */
-    color?: string = 'rgba(195, 195, 195, 1)';
-}
+import { IGridStyle, ILinearAxis, AxisLabel, AxisTick } from "../../axis";
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     grid: boolean = false;
@@ -42,7 +24,7 @@ class GroupedCategoryAxisLabel extends AxisLabel {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | number>, string | number>, IAxisFormatting, ILabelFormatting {
+export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | number>, string | number> {
 
     // debug (bbox)
     // private bboxRect = (() => {
@@ -144,10 +126,6 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
             y: 0
         };
 
-    // TODO: remove
-    translationX: number = 0;
-    translationY: number = 0;
-
     /**
      * Axis rotation angle in degrees.
      */
@@ -168,30 +146,9 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
             color: 'rgba(195, 195, 195, 1)'
         };
 
-    // TODO: remove
-    lineWidth: number = 1;
-    lineColor?: string = 'rgba(195, 195, 195, 1)';
-
-    readonly tick = new CategoryAxisTick();
-
-    // TODO: remove
-    tickWidth: number = 1;
-    tickSize: number = 6;
-    tickColor?: string = 'rgba(195, 195, 195, 1)';
+    readonly tick = new AxisTick();
 
     readonly label = new GroupedCategoryAxisLabel();
-
-    // TODO: remove
-    labelPadding: number = 5;
-    labelGrid: boolean = false;
-    labelFormatter?: (params: { value: any, index: number }) => string;
-    labelFontStyle: FontStyle | undefined = undefined;
-    labelFontWeight: FontWeight | undefined = undefined;
-    labelFontSize: number = 12;
-    labelFontFamily: string = 'Verdana, sans-serif';
-    labelRotation: number = 0;
-    mirrorLabels: boolean = false;
-    parallelLabels: boolean = false;
 
     private get lineHeight() {
         return this.label.fontSize * 1.5;

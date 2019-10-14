@@ -1,4 +1,3 @@
-
 import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
@@ -18,23 +17,6 @@ enum Tags {
     GridLine
 }
 
-export interface ILabelFormatting {
-    labelFontFamily: string;
-    labelFontStyle?: FontStyle;
-    labelFontWeight?: FontWeight;
-    labelFontSize: number;
-    labelPadding: number;
-    labelColor?: string;
-}
-
-export interface IAxisFormatting {
-    lineColor?: string;
-    lineWidth: number;
-    tickColor?: string;
-    tickWidth: number;
-    tickSize: number;
-}
-
 export interface IGridStyle {
     stroke?: string;
     lineDash?: number[];
@@ -45,15 +27,14 @@ export interface ILinearAxis<S extends Scale<D, number> = Scale<any, number>, D 
     scale: S;
     domain: D[];
     rotation: number;
-    translationX: number;
-    translationY: number;
-    parallelLabels: boolean;
+    label: AxisLabel;
+    tick: AxisTick;
     gridLength: number;
     getBBox(includeTitle?: boolean): BBox;
     update(): void;
 }
 
-class AxisTick {
+export class AxisTick {
     /**
      * The line width to be used by axis ticks.
      */
@@ -69,7 +50,9 @@ class AxisTick {
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
     color?: string = 'rgba(195, 195, 195, 1)';
+}
 
+class FormattableAxisTick extends AxisTick {
     /**
      * A hint of how many ticks to use (the exact number of ticks might differ),
      * a `TimeInterval` or a `CountableTimeInterval`.
@@ -83,18 +66,18 @@ class AxisTick {
 
     onFormatChange?: (format?: string) => void;
 
-    private _tickFormat?: string;
-    set tickFormat(value: string | undefined) {
+    private _format?: string;
+    set format(value: string | undefined) {
         // See `TimeLocaleObject` docs for the list of supported format directives.
-        if (this._tickFormat !== value) {
-            this._tickFormat = value;
+        if (this._format !== value) {
+            this._format = value;
             if (this.onFormatChange) {
                 this.onFormatChange(value);
             }
         }
     }
-    get tickFormat(): string | undefined {
-        return this._tickFormat;
+    get format(): string | undefined {
+        return this._format;
     }
 }
 
@@ -167,7 +150,7 @@ export class AxisLabel {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>, IAxisFormatting, ILabelFormatting {
+export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S> {
 
     // debug (bbox)
     // private bboxRect = (() => {
@@ -216,13 +199,9 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
          */
         y: number
     } = {
-        x: 0,
-        y: 0
-    };
-
-    // TODO: remove these
-    translationX: number = 0;
-    translationY: number = 0;
+            x: 0,
+            y: 0
+        };
 
     /**
      * Axis rotation angle in degrees.
@@ -240,16 +219,12 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
          */
         color?: string
     } = {
-        width: 1,
-        color: 'rgba(195, 195, 195, 1)'
-    };
+            width: 1,
+            color: 'rgba(195, 195, 195, 1)'
+        };
 
-    // TODO: remove these
-    lineWidth: number = 1;
-    lineColor?: string = 'rgba(195, 195, 195, 1)';
-
-    readonly tick: AxisTick = (() => {
-        const tick = new AxisTick();
+    readonly tick: FormattableAxisTick = (() => {
+        const tick = new FormattableAxisTick();
         tick.onFormatChange = this.onTickFormatChange;
         return tick;
     })();
@@ -265,39 +240,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         }
     }
 
-    // TODO: remove these
-    tickWidth: number = 1;
-    tickSize: number = 6;
-    tickColor?: string = 'rgba(195, 195, 195, 1)';
-    tickCount: any = 10;
-
-    private _tickFormat?: string;
-    set tickFormat(value: string | undefined) {
-        // See `TimeLocaleObject` docs for the list of supported format directives.
-        if (this._tickFormat !== value) {
-            this._tickFormat = value;
-            if (this.scale.tickFormat) {
-                this.tickFormatter = this.scale.tickFormat(10, value);
-            }
-        }
-    }
-    get tickFormat(): string | undefined {
-        return this._tickFormat;
-    }
-
     readonly label = new AxisLabel();
-
-    // TODO: remove these
-    labelFormatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
-    labelFontStyle: FontStyle | undefined = undefined;
-    labelFontWeight: FontWeight | undefined = undefined;
-    labelFontSize: number = 12;
-    labelFontFamily: string = 'Verdana, sans-serif';
-    labelPadding: number = 5;
-    labelColor?: string = 'rgba(87, 87, 87, 1)';
-    labelRotation: number = 0;
-    mirrorLabels: boolean = false;
-    parallelLabels: boolean = false;
 
     private _title: Caption | undefined = undefined;
     set title(value: Caption | undefined) {
