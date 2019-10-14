@@ -143,10 +143,10 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     public extractRowCellValue(column: Column, index: number, type: string, node: RowNode) {
-        const isRowGrouping = this.columnController.getRowGroupColumns().length > 0;
+        const isGroupCell = node && node.group && !!column.getColDef().showRowGroup;
 
         let valueForCell: any;
-        if (node && node.group && isRowGrouping && index === 0) {
+        if (isGroupCell) {
             valueForCell = this.createValueForGroupNode(node);
         } else {
             valueForCell = this.valueService.getValue(column, node);
