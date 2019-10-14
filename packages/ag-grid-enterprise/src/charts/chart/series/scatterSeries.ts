@@ -165,7 +165,7 @@ export class ScatterSeries extends Series<CartesianChart> {
     }
 
     processData(): boolean {
-        const { 
+        const {
             chart,
             xField,
             yField,
@@ -181,7 +181,7 @@ export class ScatterSeries extends Series<CartesianChart> {
         if (!(xField && yField)) {
             this._data = [];
         }
-        
+
         this.xData = this.data.map(d => d[xField]);
         this.yData = this.data.map(d => d[yField]);
 
@@ -203,7 +203,7 @@ export class ScatterSeries extends Series<CartesianChart> {
     private calculateDomain(data: any[]): [number, number] {
         const domain = numericExtent(data) || [0, 1];
         const [ min, max ] = domain;
-        
+
         if (min === max) {
             domain[0] = min - 1;
             domain[1] = max + 1;
@@ -372,7 +372,7 @@ export class ScatterSeries extends Series<CartesianChart> {
         }
 
         const title = this.title;
-        
+
         if (this.tooltipRenderer && this.xField) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,

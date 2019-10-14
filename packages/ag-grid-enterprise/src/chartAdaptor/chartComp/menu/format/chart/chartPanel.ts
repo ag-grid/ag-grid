@@ -84,7 +84,12 @@ export class ChartPanel extends Component {
             .setLabelWidth('flex')
             .setValue(text)
             .onValueChange(value => {
-                this.chart.title.text = text;
+                if (!this.chart.title) {
+                    const title = new Caption();
+                    title.text = text;
+                    this.chart.title = title;
+                    setFont(initialFont);
+                }
                 this.chartProxy.setTitleProperty('text', value);
 
                 // only show font panel when title exists

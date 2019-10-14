@@ -47,9 +47,6 @@ export abstract class Chart {
         this.legend.onLayoutChange = this.onLayoutChange;
         this.legend.onPositionChange = this.onLegendPositionChange;
 
-        root.appendChild(this.title.node);
-        root.appendChild(this.subtitle.node);
-
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
@@ -88,24 +85,45 @@ export abstract class Chart {
         return this.scene.parent;
     }
 
-    readonly title: Caption = (() => {
-        const title = new Caption();
-        title.enabled = false;
-        title.text = 'Title';
-        title.fontSize = 16;
-        title.fontWeight = 'bold';
-        title.onLayoutChange = this.onLayoutChange;
-        return title;
-    })();
+    private _title?: Caption | undefined = undefined;
+    set title(value: Caption | undefined) {
+        const oldTitle = this._title;
+        if (oldTitle !== value) {
+            if (oldTitle) {
+                oldTitle.onChange = undefined;
+                this.scene.root!.removeChild(oldTitle.node);
+            }
+            if (value) {
+                value.onChange = this.onLayoutChange;
+                this.scene.root!.appendChild(value.node);
+            }
+            this._title = value;
+            this.layoutPending = true;
+        }
+    }
+    get title(): Caption | undefined {
+        return this._title;
+    }
 
-    readonly subtitle: Caption = (() => {
-        const subtitle = new Caption();
-        subtitle.enabled = false;
-        subtitle.text = 'Subtitle';
-        subtitle.fontSize = 12;
-        subtitle.onLayoutChange = this.onLayoutChange;
-        return subtitle;
-    })();
+    private _subtitle: Caption | undefined = undefined;
+    set subtitle(value: Caption | undefined) {
+        const oldSubtitle = this._subtitle;
+        if (oldSubtitle !== value) {
+            if (oldSubtitle) {
+                oldSubtitle.onChange = undefined;
+                this.scene.root!.removeChild(oldSubtitle.node);
+            }
+            if (value) {
+                value.onChange = this.onLayoutChange;
+                this.scene.root!.appendChild(value.node);
+            }
+            this._subtitle = value;
+            this.layoutPending = true;
+        }
+    }
+    get subtitle(): Caption | undefined {
+        return this._subtitle;
+    }
 
     abstract get seriesRoot(): Node;
 
@@ -291,7 +309,7 @@ export abstract class Chart {
         const spacing = 5;
         let paddingTop = 0;
 
-        if (title.enabled) {
+        if (title && title.enabled) {
             paddingTop += 10;
             const bbox = title.node.getBBox();
             title.node.x = this.width / 2;
@@ -299,7 +317,7 @@ export abstract class Chart {
             titleVisible = true;
             paddingTop += bbox ? bbox.height : 0;
 
-            if (subtitle.enabled) {
+            if (subtitle && subtitle.enabled) {
                 const bbox = subtitle.node.getBBox();
                 subtitle.node.x = this.width / 2;
                 subtitle.node.y = paddingTop;
@@ -308,8 +326,12 @@ export abstract class Chart {
             }
         }
 
-        title.node.visible = titleVisible;
-        subtitle.node.visible = subtitleVisible;
+        if (title) {
+            title.node.visible = titleVisible;
+        }
+        if (subtitle) {
+            subtitle.node.visible = subtitleVisible;
+        }
 
         if (this.captionAutoPadding !== paddingTop) {
             this.captionAutoPadding = paddingTop;

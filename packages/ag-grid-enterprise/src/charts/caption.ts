@@ -4,7 +4,7 @@ import { PointerEvents } from "./scene/node";
 import { FontStyle, FontWeight } from "./scene/shape/text";
 
 export class Caption {
-    onLayoutChange?: () => void;
+    onChange?: () => void;
 
     readonly node: Text = new Text();
 
@@ -19,7 +19,7 @@ export class Caption {
     set text(value: string) {
         if (this.node.text !== value) {
             this.node.text = value;
-            this.requestLayout();
+            this.update();
         }
     }
     get text(): string {
@@ -29,7 +29,7 @@ export class Caption {
     set fontStyle(value: FontStyle | undefined) {
         if (this.node.fontStyle !== value) {
             this.node.fontStyle = value;
-            this.requestLayout();
+            this.update();
         }
     }
     get fontStyle(): FontStyle | undefined {
@@ -39,7 +39,7 @@ export class Caption {
     set fontWeight(value: FontWeight | undefined) {
         if (this.node.fontWeight !== value) {
             this.node.fontWeight = value;
-            this.requestLayout();
+            this.update();
         }
     }
     get fontWeight(): FontWeight | undefined {
@@ -49,7 +49,7 @@ export class Caption {
     set fontSize(value: number) {
         if (this.node.fontSize !== value) {
             this.node.fontSize = value;
-            this.requestLayout();
+            this.update();
         }
     }
     get fontSize(): number {
@@ -59,7 +59,7 @@ export class Caption {
     set fontFamily(value: string) {
         if (this.node.fontFamily !== value) {
             this.node.fontFamily = value;
-            this.requestLayout();
+            this.update();
         }
     }
     get fontFamily(): string {
@@ -69,7 +69,7 @@ export class Caption {
     set color(value: string) {
         if (this.node.fill !== value) {
             this.node.fill = value;
-            this.requestLayout();
+            this.update();
         }
     }
     get color(): string {
@@ -80,7 +80,7 @@ export class Caption {
     set enabled(value: boolean) {
         if (this._enabled !== value) {
             this._enabled = value;
-            this.requestLayout();
+            this.update();
         }
     }
     get enabled(): boolean {
@@ -91,16 +91,16 @@ export class Caption {
     set padding(value: Padding) {
         if (this._padding !== value) {
             this._padding = value;
-            this.requestLayout();
+            this.update();
         }
     }
     get padding(): Padding {
         return this._padding;
     }
 
-    private requestLayout() {
-        if (this.onLayoutChange) {
-            this.onLayoutChange();
+    private update() {
+        if (this.onChange) {
+            this.onChange();
         }
     }
 }
