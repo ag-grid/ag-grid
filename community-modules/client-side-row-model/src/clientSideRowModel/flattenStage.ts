@@ -9,12 +9,8 @@ import {
     IRowNodeStage,
     RowNode,
     SelectionController,
-    StageExecuteParams,
-    ModuleLogger
+    StageExecuteParams
 } from "ag-grid-community"
-
-
-ModuleLogger.logModuleClass('CSRM.FlattenStage');
 
 @Bean('flattenStage')
 export class FlattenStage implements IRowNodeStage {

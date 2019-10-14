@@ -12,7 +12,6 @@ import {
     GridOptionsWrapper,
     IDatasource,
     ModelUpdatedEvent,
-    ModuleLogger,
     NumberSequence,
     PostConstruct,
     PreDestroy,
@@ -27,8 +26,6 @@ import {
     IInfiniteRowModel
 } from "ag-grid-community";
 import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
-
-ModuleLogger.logModuleClass('IRM.InfiniteRowModel');
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {

@@ -9,8 +9,7 @@ import {
     EventService,
     GridApi,
     OriginalColumnGroup,
-    OriginalColumnGroupChild,
-    ModuleLogger
+    OriginalColumnGroupChild
 } from "ag-grid-community";
 
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
@@ -18,8 +17,6 @@ import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
 import {ToolPanelFilterGroupComp, ToolPanelFilterItem} from "./toolPanelFilterGroupComp";
 import {EXPAND_STATE} from "./filtersToolPanelHeaderPanel";
 import {ToolPanelColDefService} from "@ag-enterprise/side-bar";
-
-ModuleLogger.logModuleClass('FiltersTP.FiltersToolPanelListPanel');
 
 export class FiltersToolPanelListPanel extends Component {
 

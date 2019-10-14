@@ -6,10 +6,8 @@ import {
     IAggFunc,
     IAggFuncService,
     PostConstruct,
-    _, ModuleLogger
+    _
 } from "ag-grid-community";
-
-ModuleLogger.logModuleClass('RowGroup.AggFuncService');
 
 @Bean('aggFuncService')
 export class AggFuncService implements IAggFuncService {

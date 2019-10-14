@@ -12,17 +12,10 @@ import {
     Qualifier,
     RowBounds,
     RowNode,
-    ModuleLogger,
     RowNodeCacheParams, RowNodeCache
 } from "ag-grid-community";
 
 import {ServerSideBlock} from "./serverSideBlock";
-
-// Imports belonging to modules
-// import {RowNodeCacheParams} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeCache";
-// import {RowNodeCache} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeCache";
-
-ModuleLogger.logModuleClass('SSRM.ServerSideCache');
 
 export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];

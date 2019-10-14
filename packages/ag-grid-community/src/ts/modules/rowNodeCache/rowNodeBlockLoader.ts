@@ -2,10 +2,7 @@ import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger, LoggerFactory } from "../../logger";
 import { Qualifier } from "../../context/context";
 import { _ } from "../../utils";
-import {ModuleLogger} from "../../utils/moduleLogger";
 import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
-
-ModuleLogger.logModuleClass('Cache.RowNodeBlockLoader');
 
 export class RowNodeBlockLoader {
 

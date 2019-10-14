@@ -1,6 +1,4 @@
-import {Bean, ModuleLogger} from "ag-grid-community";
-
-ModuleLogger.logModuleClass('Csv.Downloader');
+import {Bean} from "ag-grid-community";
 
 @Bean("downloader")
 export class Downloader {

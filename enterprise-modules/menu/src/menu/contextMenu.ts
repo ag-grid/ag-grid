@@ -20,15 +20,12 @@ import {
     PopupService,
     PostConstruct,
     RowNode,
-    ModuleLogger,
     Optional,
     IRangeController
 } from "ag-grid-community";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuList} from "./menuList";
 import {MenuItemMapper} from "./menuItemMapper";
-
-ModuleLogger.logModuleClass('Menu.ContextMenuFactory');
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory implements IContextMenuFactory {

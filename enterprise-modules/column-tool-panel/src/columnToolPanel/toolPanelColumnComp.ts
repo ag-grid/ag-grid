@@ -18,12 +18,9 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     RefSelector,
-    _,
-    ModuleLogger
+    _
 } from "ag-grid-community";
 import { BaseColumnItem } from "./primaryColsPanel";
-
-ModuleLogger.logModuleClass('ColumnTP.ToolPanelColumnComp');
 
 export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 

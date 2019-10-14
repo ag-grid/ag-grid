@@ -12,11 +12,8 @@ import {
     IFilterComp,
     RefSelector,
     PostConstruct,
-    _,
-    ModuleLogger
+    _
 } from "ag-grid-community";
-
-ModuleLogger.logModuleClass('FiltersTP.ToolPanelFilterComp');
 
 export class ToolPanelFilterComp extends Component {
     private static TEMPLATE =

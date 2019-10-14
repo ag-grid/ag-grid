@@ -6,11 +6,8 @@ import {
     PostConstruct,
     ToolPanelDef,
     RefSelector,
-    _,
-    ModuleLogger
+    _
 } from "ag-grid-community";
-
-ModuleLogger.logModuleClass('SideBar.SideBarButtonClickedEvent');
 
 export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;

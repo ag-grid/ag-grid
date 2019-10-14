@@ -13,12 +13,9 @@ import {
     PostConstruct,
     ISelectionHandle,
     RowPositionUtils,
-    _,
-    ModuleLogger
+    _
 } from "ag-grid-community";
 import { RangeController } from "./rangeController";
-
-ModuleLogger.logModuleClass('Range.AbstractSelectionHandle');
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
 

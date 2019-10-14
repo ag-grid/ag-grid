@@ -7,13 +7,10 @@ import {
     RowNode,
     RowNodeTransaction,
     SortController,
-    StageExecuteParams,
-    ModuleLogger
+    StageExecuteParams
 } from "ag-grid-community";
 
 import {SortOption, SortService} from "./sortService";
-
-ModuleLogger.logModuleClass('CSRM.SortStage');
 
 @Bean('sortStage')
 export class SortStage {

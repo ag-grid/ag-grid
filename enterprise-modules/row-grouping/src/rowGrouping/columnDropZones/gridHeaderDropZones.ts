@@ -7,13 +7,10 @@ import {
     EventService,
     GridOptionsWrapper,
     ModuleNames,
-    PostConstruct,
-    ModuleLogger
+    PostConstruct
 } from "ag-grid-community";
 import {RowGroupDropZonePanel} from "./rowGroupDropZonePanel";
 import {PivotDropZonePanel} from "./pivotDropZonePanel";
-
-ModuleLogger.logModuleClass('DropZones.GridHeaderDropZones');
 
 export class GridHeaderDropZones extends Component {
 

@@ -10,7 +10,6 @@ import {
     ExportParams,
     GridOptionsWrapper,
     ICsvCreator,
-    ModuleLogger,
     PostConstruct,
     RowNode,
     ValueService
@@ -25,8 +24,6 @@ import {
     RowSpanningAccumulator
 } from "./gridSerializer";
 import {Downloader} from "./downloader";
-
-ModuleLogger.logModuleClass('Csv.CsvSerializingSession');
 
 const LINE_SEPARATOR = '\r\n';
 

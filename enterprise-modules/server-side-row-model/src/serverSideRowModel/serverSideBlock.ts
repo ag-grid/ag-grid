@@ -15,16 +15,11 @@ import {
     RowNode,
     RowRenderer,
     ValueService,
-    _, ModuleLogger,
+    _,
     RowNodeBlock
 } from "ag-grid-community";
 
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
-
-// Imports belonging to modules
-//  import {RowNodeBlock} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeBlock";
-
-ModuleLogger.logModuleClass('SSRM.ServerSideBlock');
 
 export class ServerSideBlock extends RowNodeBlock {
 

@@ -12,12 +12,9 @@ import {
     GridOptionsWrapper,
     RefSelector,
     _,
-    ModuleLogger,
     VirtualList
 } from "ag-grid-community";
 import { RichSelectRow } from "./richSelectRow";
-
-ModuleLogger.logModuleClass('RichSelect.RichSelectCellEditor');
 
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 

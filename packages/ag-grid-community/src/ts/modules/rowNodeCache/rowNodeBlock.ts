@@ -5,10 +5,7 @@ import { BeanStub } from "../../context/beanStub";
 import { RowNodeCacheParams } from "./rowNodeCache";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { AgEvent } from "../../events";
-import {ModuleLogger} from "../../utils/moduleLogger";
 import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
-
-ModuleLogger.logModuleClass('Cache.RowNodeBlock');
 
 export interface RowNodeBlockBeans {
     context: Context;

@@ -9,13 +9,10 @@ import {
     PostConstruct,
     RowNode,
     SortController,
-    ValueService,
-    ModuleLogger
+    ValueService
 } from "ag-grid-community";
 
 import {RowNodeMap} from "./clientSideRowModel";
-
-ModuleLogger.logModuleClass('CSRM.SortService');
 
 export interface SortOption {
     inverter: number;

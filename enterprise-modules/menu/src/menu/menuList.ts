@@ -1,7 +1,5 @@
-import { Autowired, Component, MenuItemDef, PopupService, _, ModuleLogger } from "ag-grid-community";
+import { Autowired, Component, MenuItemDef, PopupService, _ } from "ag-grid-community";
 import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
-
-ModuleLogger.logModuleClass('Menu.MenuList');
 
 export class MenuList extends Component {
 

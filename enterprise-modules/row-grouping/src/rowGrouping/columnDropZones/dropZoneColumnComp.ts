@@ -22,13 +22,10 @@ import {
     _,
     Optional,
     IAggFuncService,
-    ModuleLogger,
     VirtualList
 } from "ag-grid-community";
 
 export interface ColumnRemoveEvent extends AgEvent {}
-
-ModuleLogger.logModuleClass('DropZones.DropZoneColumnComp');
 
 export class DropZoneColumnComp extends Component {
 

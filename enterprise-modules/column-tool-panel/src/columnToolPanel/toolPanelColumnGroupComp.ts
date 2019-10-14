@@ -15,13 +15,10 @@ import {
     OriginalColumnGroup,
     PostConstruct,
     RefSelector,
-    TouchListener,
-    ModuleLogger
+    TouchListener
 } from "ag-grid-community";
 import {BaseColumnItem} from "./primaryColsPanel";
 import {ColumnFilterResults} from "./primaryColsListPanel";
-
-ModuleLogger.logModuleClass('ColumnTP.ToolPanelColumnGroupComp');
 
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 

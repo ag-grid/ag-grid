@@ -1,11 +1,8 @@
-import {ModuleLogger} from "../utils/moduleLogger";
 import {Component} from "./component";
 import {Autowired, PostConstruct} from "../context/context";
 import {Environment} from "../environment";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
-
-ModuleLogger.logModuleClass('RichSelect.VirtualListModel');
 
 export interface VirtualListModel {
     getRowCount(): number;

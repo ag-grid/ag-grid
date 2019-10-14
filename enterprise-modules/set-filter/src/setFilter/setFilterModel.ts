@@ -1,6 +1,4 @@
-import { ProvidedFilterModel, ModuleLogger } from "ag-grid-community";
-
-ModuleLogger.logModuleClass('SetFilter.SetFilterModel');
+import { ProvidedFilterModel } from "ag-grid-community";
 
 export interface SetFilterModel extends ProvidedFilterModel {
     values: string[];

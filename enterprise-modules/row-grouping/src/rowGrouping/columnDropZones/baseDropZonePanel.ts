@@ -13,8 +13,7 @@ import {
     Logger,
     LoggerFactory,
     VDirection,
-    _,
-    ModuleLogger
+    _
 } from "ag-grid-community";
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
 
@@ -32,8 +31,6 @@ export interface BaseDropZonePanelBeans {
     loggerFactory: LoggerFactory;
     dragAndDropService: DragAndDropService;
 }
-
-ModuleLogger.logModuleClass('DropZones.BaseDropZonePanel');
 
 export abstract class BaseDropZonePanel extends Component {
 

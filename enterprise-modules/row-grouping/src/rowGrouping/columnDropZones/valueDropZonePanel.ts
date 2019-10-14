@@ -12,12 +12,9 @@ import {
     ColumnValueChangeRequestEvent,
     ColumnApi,
     GridApi,
-    _,
-    ModuleLogger
+    _
 } from "ag-grid-community";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
-
-ModuleLogger.logModuleClass('DropZones.ValuesDropZonePanel');
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
 

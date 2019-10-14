@@ -4,13 +4,10 @@ import {
     GridOptionsWrapper,
     IRowNodeStage,
     SelectableService,
-    StageExecuteParams,
-    ModuleLogger
+    StageExecuteParams
 } from "ag-grid-community"
 
 import {FilterService} from "./filterService";
-
-ModuleLogger.logModuleClass('CSRM.FilterStage');
 
 @Bean('filterStage')
 export class FilterStage implements IRowNodeStage {

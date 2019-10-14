@@ -10,14 +10,11 @@ import {
     IToolPanelComp,
     IToolPanelParams,
     ModuleNames,
-    IColumnToolPanel,
-    ModuleLogger
+    IColumnToolPanel
 } from "ag-grid-community";
 import {PivotModePanel} from "./pivotModePanel";
 import {RowGroupDropZonePanel, ValuesDropZonePanel, PivotDropZonePanel } from "@ag-enterprise/row-grouping"
 import {PrimaryColsPanel} from "./primaryColsPanel";
-
-ModuleLogger.logModuleClass('ColumnTP.ColumnToolPanel');
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;

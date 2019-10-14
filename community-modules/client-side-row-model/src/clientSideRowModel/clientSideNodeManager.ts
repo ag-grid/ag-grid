@@ -11,11 +11,8 @@ import {
     SelectionController,
     _,
     RowDataTransaction,
-    RowNodeTransaction,
-    ModuleLogger
+    RowNodeTransaction
 } from "ag-grid-community";
-
-ModuleLogger.logModuleClass('CSRM.ClientSideNodeManager');
 
 export class ClientSideNodeManager {
 

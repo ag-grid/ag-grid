@@ -79,7 +79,6 @@ import { AgToggleButton } from "./widgets/agToggleButton";
 import { DetailRowCompCache } from "./rendering/detailRowCompCache";
 import {RowPositionUtils} from "./entities/rowPosition";
 import {CellPositionUtils} from "./entities/cellPosition";
-import {ModuleLogger} from "./utils/moduleLogger";
 import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
 import {IComponent} from "./interfaces/iComponent";
 import {ModuleNames} from "./modules/moduleNames";
@@ -139,10 +138,6 @@ export class Grid {
         }
 
         const debug = !!gridOptions.debug;
-
-        if (debug) {
-            console.log('ag-Grid: loaded module classes: ' + ModuleLogger.getLoggedModuleClassNames());
-        }
 
         this.gridOptions = gridOptions;
 

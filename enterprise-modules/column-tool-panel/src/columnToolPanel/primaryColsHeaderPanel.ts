@@ -9,14 +9,11 @@ import {
     PostConstruct,
     PreConstruct,
     RefSelector,
-    ModuleLogger,
     ToolPanelColumnCompParams, Constants
 } from "ag-grid-community";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 export enum SELECTED_STATE { CHECKED, UNCHECKED, INDETERMINATE }
-
-ModuleLogger.logModuleClass('ColumnTP.PrimaryColsHeaderPanel');
 
 export class PrimaryColsHeaderPanel extends Component {
 

@@ -8,13 +8,10 @@ import {
     IRowModel,
     PostConstruct,
     RowDataTransaction,
-    RowNode,
-    ModuleLogger
+    RowNode
 } from "ag-grid-community"
 
 import {ClientSideRowModel} from "./clientSideRowModel";
-
-ModuleLogger.logModuleClass('CSRM.ImmutableService');
 
 @Bean('immutableService')
 export class ImmutableService implements IImmutableService {

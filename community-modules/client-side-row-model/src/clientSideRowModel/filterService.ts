@@ -5,11 +5,8 @@ import {
     FilterManager,
     GridOptionsWrapper,
     PostConstruct,
-    RowNode,
-    ModuleLogger
+    RowNode
 } from "ag-grid-community"
-
-ModuleLogger.logModuleClass('CSRM.FilterService');
 
 @Bean("filterService")
 export class FilterService {

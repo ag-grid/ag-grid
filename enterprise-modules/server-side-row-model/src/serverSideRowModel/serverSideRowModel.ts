@@ -27,18 +27,11 @@ import {
     RowNode,
     SortController,
     RowRenderer,
-    ModuleLogger,
     RowNodeBlockLoader,
     RowNodeCache
 } from "ag-grid-community";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 import { ServerSideBlock } from "./serverSideBlock";
-
-// Imports belonging to modules
-// import {RowNodeBlockLoader} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeBlockLoader";
-// import {RowNodeCache} from "ag-grid-community/dist/lib/rowModels/cache/rowNodeCache";
-
-ModuleLogger.logModuleClass('SSRM.ServerSideRowModel');
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {

@@ -28,14 +28,11 @@ import {
     SelectionController,
     ValueCache,
     ValueService,
-    IClientSideRowModel,
-    ModuleLogger
+    IClientSideRowModel
 } from "ag-grid-community"
 import {ClientSideNodeManager} from "./clientSideNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
-
-ModuleLogger.logModuleClass('CSRM.ClientSideRowModel');
 
 export interface BatchTransactionItem {
     rowDataTransaction: RowDataTransaction;

@@ -7,11 +7,8 @@ import {
     IRichCellEditorParams,
     Promise,
     UserComponentFactory,
-    GridOptionsWrapper,
-    ModuleLogger
+    GridOptionsWrapper
 } from "ag-grid-community";
-
-ModuleLogger.logModuleClass('RichSelect.RichSelectRow');
 
 export class RichSelectRow extends Component {
 

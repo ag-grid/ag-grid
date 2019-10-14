@@ -7,11 +7,8 @@ import {
     EventService,
     GridOptionsWrapper,
     PreConstruct,
-    RefSelector,
-    ModuleLogger
+    RefSelector
 } from "ag-grid-community";
-
-ModuleLogger.logModuleClass('ColumnTP.PivotModePanel');
 
 export class PivotModePanel extends Component {
 

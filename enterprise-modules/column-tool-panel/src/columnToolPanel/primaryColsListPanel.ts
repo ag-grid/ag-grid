@@ -12,7 +12,6 @@ import {
     GridOptionsWrapper,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
-    ModuleLogger,
     ToolPanelColumnCompParams
 } from "ag-grid-community";
 import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
@@ -23,8 +22,6 @@ import {EXPAND_STATE, SELECTED_STATE} from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
 export type ColumnFilterResults = { [id: string]: boolean };
-
-ModuleLogger.logModuleClass('ColumnTP.PrimaryColsListPanel');
 
 export class PrimaryColsListPanel extends Component {
 

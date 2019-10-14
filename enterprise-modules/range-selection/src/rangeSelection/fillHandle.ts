@@ -8,12 +8,9 @@ import {
     RowNode,
     RowPosition,
     ValueService,
-    _,
-    ModuleLogger
+    _
 } from 'ag-grid-community';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
-
-ModuleLogger.logModuleClass('Range.FillHandle');
 
 interface FillValues {
     position: CellPosition;

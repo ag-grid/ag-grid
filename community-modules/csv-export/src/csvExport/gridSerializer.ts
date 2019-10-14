@@ -15,7 +15,6 @@ import {
     GroupInstanceIdCreator,
     IClientSideRowModel,
     IRowModel,
-    ModuleLogger,
     PinnedRowModel,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -25,8 +24,6 @@ import {
     ShouldRowBeSkippedParams,
     ValueService
 } from "ag-grid-community";
-
-ModuleLogger.logModuleClass('Csv.GridSerializer');
 
 /**
  * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface

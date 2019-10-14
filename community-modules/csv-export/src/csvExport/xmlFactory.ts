@@ -1,8 +1,6 @@
-import {Bean, ModuleLogger, HeaderElement, PrefixedXmlAttributes, XmlElement} from "ag-grid-community";
+import {Bean, HeaderElement, PrefixedXmlAttributes, XmlElement} from "ag-grid-community";
 
 const LINE_SEPARATOR = '\r\n';
-
-ModuleLogger.logModuleClass('Csv.XmlFactory');
 
 @Bean('xmlFactory')
 export class XmlFactory {

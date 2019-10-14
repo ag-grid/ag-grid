@@ -377,7 +377,6 @@ export {
 // modules
 export {Module} from "./interfaces/iModule";
 export {ModuleNames} from "./modules/moduleNames";
-export {ModuleLogger} from "./utils/moduleLogger";
 
 //  events
 export {

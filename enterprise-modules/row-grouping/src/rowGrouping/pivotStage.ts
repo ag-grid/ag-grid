@@ -12,12 +12,9 @@ import {
     RowNode,
     StageExecuteParams,
     ValueService,
-    _,
-    ModuleLogger
+    _
 } from "ag-grid-community";
 import { PivotColDefService } from "./pivotColDefService";
-
-ModuleLogger.logModuleClass('RowGroup.PivotStage');
 
 @Bean('pivotStage')
 export class PivotStage implements IRowNodeStage {

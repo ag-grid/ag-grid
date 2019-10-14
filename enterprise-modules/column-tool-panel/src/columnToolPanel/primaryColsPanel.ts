@@ -6,7 +6,6 @@ import {
     GridOptionsWrapper,
     ToolPanelColumnCompParams,
     RefSelector,
-    ModuleLogger,
     IPrimaryColsPanel
 } from "ag-grid-community";
 import {PrimaryColsListPanel} from "./primaryColsListPanel";
@@ -20,8 +19,6 @@ export interface BaseColumnItem {
     isExpandable(): boolean;
     setExpanded(value: boolean): void;
 }
-
-ModuleLogger.logModuleClass('ColumnTP.PrimaryColsPanel');
 
 export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
 

@@ -13,13 +13,10 @@ import {
     RefSelector,
     SideBarDef,
     ToolPanelDef,
-    ToolPanelVisibleChangedEvent,
-    ModuleLogger
+    ToolPanelVisibleChangedEvent
 } from "ag-grid-community";
 import {SideBarButtonClickedEvent, SideBarButtonsComp} from "./sideBarButtonsComp";
 import {ToolPanelWrapper} from "./toolPanelWrapper";
-
-ModuleLogger.logModuleClass('SideBar.SideBarComp');
 
 export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void;

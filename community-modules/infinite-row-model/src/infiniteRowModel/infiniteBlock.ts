@@ -7,12 +7,9 @@ import {
     IEventEmitter,
     RowNodeBlock,
     RowRenderer,
-    _,
-    ModuleLogger
+    _
 } from "ag-grid-community";
 import {InfiniteCacheParams} from "./infiniteCache";
-
-ModuleLogger.logModuleClass('IRM.InfiniteBlock');
 
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 

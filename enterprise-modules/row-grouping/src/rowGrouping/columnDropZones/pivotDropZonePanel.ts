@@ -11,12 +11,9 @@ import {
     ColumnPivotChangeRequestEvent,
     ColumnApi,
     GridApi,
-    _,
-    ModuleLogger
+    _
 } from "ag-grid-community";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
-
-ModuleLogger.logModuleClass('DropZones.PivotDropZonePanel');
 
 export class PivotDropZonePanel extends BaseDropZonePanel {
 

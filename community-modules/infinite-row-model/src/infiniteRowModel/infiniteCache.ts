@@ -6,7 +6,6 @@ import {
     GridApi,
     IDatasource,
     LoggerFactory,
-    ModuleLogger,
     PostConstruct,
     Qualifier,
     RowDataUpdatedEvent,
@@ -15,8 +14,6 @@ import {
     RowNodeCacheParams,
 } from "ag-grid-community";
 import {InfiniteBlock} from "./infiniteBlock";
-
-ModuleLogger.logModuleClass('IRM.InfiniteCache');
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;

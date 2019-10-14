@@ -22,14 +22,11 @@ import {
     PostConstruct,
     Promise,
     TabbedItem,
-    TabbedLayout,
-    ModuleLogger
+    TabbedLayout
 } from "ag-grid-community";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
-
-ModuleLogger.logModuleClass('Menu.EnterpriseMenuFactory');
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;

@@ -9,16 +9,13 @@ import {
     ExcelStyle,
     ExcelWorksheet,
     RowNode,
-    _,
-    ModuleLogger
+    _
 } from 'ag-grid-community';
 
 import { ExcelMixedStyle } from './excelCreator';
 import { ExcelXmlFactory } from './excelXmlFactory';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import {GridSerializingParams, RowType, BaseGridSerializingSession, RowAccumulator, RowSpanningAccumulator} from "@ag-community/csv-export";
-
-ModuleLogger.logModuleClass('Excel.ExcelXmlSerializingSession');
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;

@@ -36,13 +36,10 @@ import {
     RowValueChangedEvent,
     SelectionController,
     ValueService,
-    ModuleLogger,
     ICsvCreator,
     IRangeController,
     Optional
 } from "ag-grid-community";
-
-ModuleLogger.logModuleClass('Clipboard.ClipboardService');
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, rangeIndex: number, isLastRow?: boolean): void;
