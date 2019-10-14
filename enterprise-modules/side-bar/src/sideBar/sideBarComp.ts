@@ -64,9 +64,11 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     private setSideBarDef(): void {
+        // initially hide side bar
+        this.setDisplayed(false);
+
         const sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
         const sideBarExists = !!sideBar && !!sideBar.toolPanels;
-
         if (sideBarExists) {
             const shouldDisplaySideBar = sideBarExists && !sideBar.hiddenByDefault;
             this.setDisplayed(shouldDisplaySideBar);
