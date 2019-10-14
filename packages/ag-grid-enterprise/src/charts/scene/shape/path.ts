@@ -10,6 +10,19 @@ export class Path extends Shape {
      */
     readonly path = new Path2D();
 
+    private _dirtyPath = true;
+    set dirtyPath(value: boolean) {
+        if (this._dirtyPath !== value) {
+            this._dirtyPath = value;
+            if (value) {
+                this.dirty = true;
+            }
+        }
+    }
+    get dirtyPath(): boolean {
+        return this._dirtyPath;
+    }
+
     /**
      * Path definition in SVG path syntax:
      * https://www.w3.org/TR/SVG11/paths.html#DAttribute
@@ -36,12 +49,18 @@ export class Path extends Shape {
         return false;
     }
 
+    protected updatePath() {}
+
     render(ctx: CanvasRenderingContext2D): void {
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
         this.matrix.toContext(ctx);
 
+        if (this.dirtyPath) {
+            this.updatePath();
+            this.dirtyPath = false;
+        }
         this.scene!.appendPath(this.path);
 
         this.fillStroke(ctx);

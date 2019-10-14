@@ -1,5 +1,5 @@
+import { Path } from "./path";
 import { Shape } from "./shape";
-import { Path2D } from "../path2D";
 import { BBox } from "../bbox";
 
 export enum RectSizing {
@@ -7,24 +7,9 @@ export enum RectSizing {
     Border
 }
 
-export class Rect extends Shape {
+export class Rect extends Path {
 
     static className = 'Rect';
-
-    protected path = new Path2D();
-
-    private _dirtyPath = true;
-    set dirtyPath(value: boolean) {
-        if (this._dirtyPath !== value) {
-            this._dirtyPath = value;
-            if (value) {
-                this.dirty = true;
-            }
-        }
-    }
-    get dirtyPath(): boolean {
-        return this._dirtyPath;
-    }
 
     private _x: number = 0;
     set x(value: number) {
@@ -118,6 +103,9 @@ export class Rect extends Shape {
         return this._strokeWidth;
     }
 
+    /**
+     * Similar to https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing
+     */
     private _sizing: RectSizing = RectSizing.Content;
     set sizing(value: RectSizing) {
         if (this._sizing !== value) {
@@ -129,11 +117,7 @@ export class Rect extends Shape {
         return this._sizing;
     }
 
-    updatePath() {
-        if (!this.dirtyPath) {
-            return;
-        }
-
+    protected updatePath() {
         const borderSizing = this.sizing === RectSizing.Border;
 
         const path = this.path;
@@ -171,8 +155,6 @@ export class Rect extends Shape {
         } else {
             path.rect(x, y, width, height);
         }
-
-        this.dirtyPath = false;
     }
 
     readonly getBBox = () => {
@@ -193,20 +175,6 @@ export class Rect extends Shape {
 
     isPointInStroke(x: number, y: number): boolean {
         return false;
-    }
-
-    render(ctx: CanvasRenderingContext2D): void {
-        if (this.dirtyTransform) {
-            this.computeTransformMatrix();
-        }
-        this.matrix.toContext(ctx);
-
-        this.updatePath();
-        this.scene!.appendPath(this.path);
-
-        this.fillStroke(ctx);
-
-        this.dirty = false;
     }
 
     protected fillStroke(ctx: CanvasRenderingContext2D) {
