@@ -103,19 +103,11 @@ export class Grid {
 
     private context: Context;
 
-    private static enterpriseBeans: any[] = [];
-    private static frameworkBeans: any[];
-    private static enterpriseAgStackComponents: any[] = [];
-
     private static modulesToInclude: Module[] = [];
 
     protected logger: Logger;
 
     private readonly gridOptions: GridOptions;
-
-    public static setFrameworkBeans(frameworkBeans: any[]): void {
-        Grid.frameworkBeans = frameworkBeans;
-    }
 
     public static addModule(modulesToInclude: Module[]): void {
         // de-duping would need to be done here (while ensuring order etc)
@@ -227,10 +219,6 @@ export class Grid {
             { componentName: 'AgDialog', componentClass: AgDialog }
         ];
 
-        if (Grid.enterpriseAgStackComponents) {
-            components = components.concat(Grid.enterpriseAgStackComponents);
-        }
-
         const moduleAgStackComps = this.extractModuleEntity(Grid.modulesToInclude,
             (module) => module.agStackComponents ? module.agStackComponents : []);
 
@@ -260,14 +248,6 @@ export class Grid {
             ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
             ChangeDetectionService, AnimationFrameService, TooltipManager, DetailRowCompCache
         ];
-
-        if (Grid.enterpriseBeans) {
-            beans.push(...Grid.enterpriseBeans);
-        }
-
-        if (Grid.frameworkBeans) {
-            beans.push(...Grid.frameworkBeans);
-        }
 
         const moduleBeans = this.extractModuleEntity(Grid.modulesToInclude, (module) => module.beans ? module.beans : []);
         beans.push(...moduleBeans);

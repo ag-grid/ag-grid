@@ -11,7 +11,9 @@ import {
     Grid,
     GridApi,
     GridOptions,
-    WrapableInterface
+    WrapableInterface,
+    Module,
+    ModuleNames,
 } from "ag-grid-community";
 import {AgGridColumn} from "./agGridColumn";
 import {ReactComponent} from "./reactComponent";
@@ -265,4 +267,9 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
     }
 }
 
-Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);
+const reactModule: Module = {
+    moduleName: ModuleNames.ReactSupport,
+    beans: [ReactFrameworkComponentWrapper]
+};
+
+Grid.addModule([reactModule]);
