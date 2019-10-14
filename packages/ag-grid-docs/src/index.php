@@ -92,6 +92,36 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
+    <div class="stage-scenarios">
+        <h2 class="heading-scenarios">Live Streaming Updates</h2>
+
+        <section>
+            <div class="demo" id="demo-2" data-load="home/demo-2.php">
+                <div class="loading">
+                    <p>Loading Demo...</p>
+                </div>
+                <div class="view-code">
+                    &nbsp;
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="stage-scenarios">
+        <h2 class="heading-scenarios">Integrated Charting</h2>
+
+        <section>
+            <div class="demo" id="demo-2" data-load="home/demo-3.php">
+                <div class="loading">
+                    <p>Loading Demo...</p>
+                </div>
+                <div class="view-code">
+                    &nbsp;
+                </div>
+            </div>
+        </section>
+    </div>
+
     <div id="stage-sponsorships">
         <section id="sponsorships">
             <div>
