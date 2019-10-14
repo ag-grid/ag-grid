@@ -8,16 +8,16 @@ import {
     PostConstruct,
     RefSelector,
 } from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {ShadowPanel} from "./shadowPanel";
-import {LabelFont, LabelPanel, LabelPanelParams} from "../label/labelPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {BarChartProxy} from "../../../chartProxies/cartesian/barChartProxy";
+import { ChartController } from "../../../chartController";
+import { ShadowPanel } from "./shadowPanel";
+import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
 
 export class BarSeriesPanel extends Component {
 
     public static TEMPLATE =
-        `<div>   
+        `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>
@@ -49,7 +49,7 @@ export class BarSeriesPanel extends Component {
         this.setTemplate(BarSeriesPanel.TEMPLATE);
 
         this.seriesGroup
-            .setTitle(this.chartTranslator.translate('series'))
+            .setTitle(this.chartTranslator.translate("series"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
@@ -62,76 +62,74 @@ export class BarSeriesPanel extends Component {
 
     private initSeriesTooltips() {
         this.seriesTooltipsToggle
-            .setLabel(this.chartTranslator.translate('tooltips'))
-            .setLabelAlignment('left')
-            .setLabelWidth('flex')
+            .setLabel(this.chartTranslator.translate("tooltips"))
+            .setLabelAlignment("left")
+            .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getTooltipsEnabled())
-            .onValueChange(newValue => this.chartProxy.setSeriesProperty('tooltipEnabled', newValue));
+            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.chartProxy.setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initSeriesStrokeWidth() {
         this.seriesStrokeWidthSlider
-            .setLabel(this.chartTranslator.translate('strokeWidth'))
+            .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesProperty('strokeWidth'))
-            .onValueChange(newValue => this.chartProxy.setSeriesProperty('strokeWidth', newValue));
+            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
+            .onValueChange(newValue => this.chartProxy.setSeriesOption("stroke.width", newValue));
     }
 
     private initOpacity() {
         this.seriesLineOpacitySlider
-            .setLabel(this.chartTranslator.translate('strokeOpacity'))
+            .setLabel(this.chartTranslator.translate("strokeOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesProperty('strokeOpacity'))
-            .onValueChange(newValue => this.chartProxy.setSeriesProperty('strokeOpacity', newValue));
+            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(newValue => this.chartProxy.setSeriesOption("stroke.opacity", newValue));
 
         this.seriesFillOpacitySlider
-            .setLabel(this.chartTranslator.translate('fillOpacity'))
+            .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesProperty('fillOpacity'))
-            .onValueChange(newValue => this.chartProxy.setSeriesProperty('fillOpacity', newValue));
+            .setValue(this.chartProxy.getSeriesOption("fill.opacity") || "1")
+            .onValueChange(newValue => this.chartProxy.setSeriesOption("fill.opacity", newValue));
     }
 
     private initLabelPanel() {
         const initialFont = {
-            family: this.chartProxy.getSeriesProperty('labelFontFamily'),
-            style: this.chartProxy.getSeriesProperty('labelFontStyle'),
-            weight: this.chartProxy.getSeriesProperty('labelFontWeight'),
-            size: parseInt(this.chartProxy.getSeriesProperty('labelFontSize')),
-            color: this.chartProxy.getSeriesProperty('labelColor')
+            family: this.chartProxy.getSeriesOption("label.fontFamily"),
+            style: this.chartProxy.getSeriesOption("label.fontStyle"),
+            weight: this.chartProxy.getSeriesOption("label.fontWeight"),
+            size: this.chartProxy.getSeriesOption<number>("label.fontSize"),
+            color: this.chartProxy.getSeriesOption("label.color")
         };
 
         // note we don't set the font style via series panel
         const setFont = (font: LabelFont) => {
-            if (font.family) { this.chartProxy.setSeriesProperty('labelFontFamily', font.family); }
-            if (font.weight) { this.chartProxy.setSeriesProperty('labelFontWeight', font.weight); }
-            if (font.size) { this.chartProxy.setSeriesProperty('labelFontSize', font.size); }
-            if (font.color) { this.chartProxy.setSeriesProperty('labelColor', font.color); }
+            if (font.family) { this.chartProxy.setSeriesOption("label.fontFamily", font.family); }
+            if (font.weight) { this.chartProxy.setSeriesOption("label.fontWeight", font.weight); }
+            if (font.size) { this.chartProxy.setSeriesOption("label.fontSize", font.size); }
+            if (font.color) { this.chartProxy.setSeriesOption("label.color", font.color); }
         };
 
         const params: LabelPanelParams = {
-            enabled: this.chartProxy.getLabelEnabled(),
-            setEnabled: (enabled: boolean) => this.chartProxy.setSeriesProperty('labelEnabled', enabled),
+            enabled: this.chartProxy.getSeriesOption("label.enabled") || false,
+            setEnabled: (enabled: boolean) => this.chartProxy.setSeriesOption("label.enabled", enabled),
             suppressEnabledCheckbox: false,
             initialFont: initialFont,
             setFont: setFont
         };
 
-        const labelPanelComp = new LabelPanel(params);
-        this.getContext().wireBean(labelPanelComp);
+        const labelPanelComp = this.wireBean(new LabelPanel(params));
         this.activePanels.push(labelPanelComp);
 
         this.seriesGroup.addItem(labelPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = new ShadowPanel(this.chartProxy);
-        this.getContext().wireBean(shadowPanelComp);
+        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartProxy));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }

@@ -50,8 +50,8 @@ enum BarSeriesNodeTag {
 
 export interface BarTooltipRendererParams {
     datum: any;
-    xField: string;
-    yField: string;
+    xKey: string;
+    yKey: string;
     title?: string;
     color?: string;
 }
@@ -257,83 +257,6 @@ export class BarSeries extends Series<CartesianChart> {
         return this._shadow;
     }
 
-    private _labelEnabled: boolean = true;
-    set labelEnabled(value: boolean) {
-        if (this._labelEnabled !== value) {
-            this._labelEnabled = value;
-            this.update();
-        }
-    }
-    get labelEnabled(): boolean {
-        return this._labelEnabled;
-    }
-
-    private _labelFontStyle?: FontStyle;
-    set labelFontStyle(value: FontStyle | undefined) {
-        if (this._labelFontStyle !== value) {
-            this._labelFontStyle = value;
-            this.update();
-        }
-    }
-    get labelFontStyle(): FontStyle | undefined {
-        return this._labelFontStyle;
-    }
-
-    private _labelFontWeight?: FontWeight;
-    set labelFontWeight(value: FontWeight | undefined) {
-        if (this._labelFontWeight !== value) {
-            this._labelFontWeight = value;
-            this.update();
-        }
-    }
-    get labelFontWeight(): FontWeight | undefined {
-        return this._labelFontWeight;
-    }
-
-    private _labelFontSize: number = 12;
-    set labelFontSize(value: number) {
-        if (this._labelFontSize !== value) {
-            this._labelFontSize = value;
-            this.update();
-        }
-    }
-    get labelFontSize(): number {
-        return this._labelFontSize;
-    }
-
-    private _labelFontFamily: string = 'Verdana, sans-serif';
-    set labelFontFamily(value: string) {
-        if (this._labelFontFamily !== value) {
-            this._labelFontFamily = value;
-            this.update();
-        }
-    }
-    get labelFontFamily(): string {
-        return this._labelFontFamily;
-    }
-
-    private _labelColor: string = 'black';
-    set labelColor(value: string) {
-        if (this._labelColor !== value) {
-            this._labelColor = value;
-            this.update();
-        }
-    }
-    get labelColor(): string {
-        return this._labelColor;
-    }
-
-    private _labelFormatter?: BarLabelFormatter;
-    set labelFormatter(value: BarLabelFormatter | undefined) {
-        if (this._labelFormatter !== value) {
-            this._labelFormatter = value;
-            this.update();
-        }
-    }
-    get labelFormatter(): BarLabelFormatter | undefined {
-        return this._labelFormatter;
-    }
-
     highlightStyle: HighlightStyle = {
         fill: 'yellow'
     };
@@ -486,7 +409,7 @@ export class BarSeries extends Series<CartesianChart> {
         const labelColor = label.color;
         const labelFormatter = label.formatter;
 
-        groupScale.range = [ 0, xScale.bandwidth! ];
+        groupScale.range = [0, xScale.bandwidth!];
 
         const barWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
         const selectionData: SelectionDatum[] = [];
@@ -629,8 +552,8 @@ export class BarSeries extends Series<CartesianChart> {
             if (this.tooltipRenderer && xField) {
                 html = this.tooltipRenderer({
                     datum,
-                    xField,
-                    yField,
+                    xKey: xField,
+                    yKey: yField,
                     title,
                     color
                 });

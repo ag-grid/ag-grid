@@ -5,8 +5,8 @@ import { GridApi } from "./gridApi";
 import { ColumnApi } from "./columnController/columnApi";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { FilterRequestSource } from "./filter/filterManager";
-import {ChartOptions, ChartType} from "./interfaces/iChartOptions";
-import {IFilterComp} from "./interfaces/iFilter";
+import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
+import { IFilterComp } from "./interfaces/iFilter";
 
 export { Events } from './eventKeys';
 
@@ -169,7 +169,7 @@ export interface ChartRangeSelectionChanged extends AgGridEvent {
 
 export interface ChartOptionsChanged extends AgEvent {
     chartType: ChartType;
-    chartOptions: ChartOptions;
+    chartOptions: ChartOptions<any>;
 }
 
 export interface ColumnGroupOpenedEvent extends AgGridEvent {

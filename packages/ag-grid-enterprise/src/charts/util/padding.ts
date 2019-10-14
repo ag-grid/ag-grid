@@ -12,9 +12,6 @@ export class Padding {
     }
 
     clear() {
-        this.top = 0;
-        this.right = 0;
-        this.bottom = 0;
-        this.left = 0;
+        this.top = this.right = this.bottom = this.left = 0;
     }
 }

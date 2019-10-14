@@ -24,8 +24,8 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
 
 export interface LineTooltipRendererParams {
     datum: any;
-    xField: string;
-    yField: string;
+    xKey: string;
+    yKey: string;
     title?: string;
     color?: string;
 }
@@ -150,7 +150,7 @@ export class LineSeries extends Series<CartesianChart> {
         const domainY = numericExtent(this.yData) || [0, 1];
 
         if (isContinuousX) {
-            const [ min, max ] = domainX as number[];
+            const [min, max] = domainX as number[];
 
             if (min === max) {
                 domainX[0] = min - 1;
@@ -158,7 +158,7 @@ export class LineSeries extends Series<CartesianChart> {
             }
         }
 
-        const [ min, max ] = domainY;
+        const [min, max] = domainY;
 
         if (min === max) {
             domainY[0] = min - 1;
@@ -209,8 +209,8 @@ export class LineSeries extends Series<CartesianChart> {
         fill?: string,
         stroke?: string
     } = {
-        fill: 'yellow'
-    };
+            fill: 'yellow'
+        };
 
     private highlightedNode?: Arc;
 
@@ -250,7 +250,7 @@ export class LineSeries extends Series<CartesianChart> {
             markerSize,
             markerStrokeWidth,
             lineNode
-         } = this;
+        } = this;
 
         const linePath = lineNode.path;
 
@@ -330,8 +330,8 @@ export class LineSeries extends Series<CartesianChart> {
         if (this.tooltipRenderer && this.xField) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
-                xField,
-                yField,
+                xKey: xField,
+                yKey: yField,
                 title,
                 color
             });
@@ -341,8 +341,8 @@ export class LineSeries extends Series<CartesianChart> {
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xField];
             const yValue = seriesDatum[yField];
-            const xString = typeof(xValue) === 'number' ? toFixed(xValue) : String(xValue);
-            const yString = typeof(yValue) === 'number' ? toFixed(yValue) : String(yValue);
+            const xString = typeof (xValue) === 'number' ? toFixed(xValue) : String(xValue);
+            const yString = typeof (yValue) === 'number' ? toFixed(yValue) : String(yValue);
 
             html = `${title}<div class="content">${xString}: ${yString}</div>`;
         }

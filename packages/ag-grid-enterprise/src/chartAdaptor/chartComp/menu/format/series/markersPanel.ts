@@ -1,9 +1,9 @@
-import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
-import {ChartTranslator} from "../../../chartTranslator";
-import {LineChartProxy} from "../../../chartProxies/cartesian/lineChartProxy";
-import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
-import {LineMarkerProperty} from "../../../chartProxies/cartesian/cartesianChartProxy";
-import {ScatterChartProxy} from "../../../chartProxies/cartesian/scatterChartProxy";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, ChartType } from "ag-grid-community";
+import { ChartTranslator } from "../../../chartTranslator";
+import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
+import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
+import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
+import { ChartController } from "../../../chartController";
 
 export class MarkersPanel extends Component {
 
@@ -12,7 +12,7 @@ export class MarkersPanel extends Component {
             <ag-group-component ref="seriesMarkersGroup">
                 <ag-slider ref="seriesMarkerSizeSlider"></ag-slider>
                 <ag-slider ref="seriesMarkerStrokeWidthSlider"></ag-slider>
-            </ag-group-component>  
+            </ag-group-component>
         </div>`;
 
     @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
@@ -21,11 +21,13 @@ export class MarkersPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
+    private readonly chartController: ChartController;
     private readonly chartProxy: LineChartProxy | ScatterChartProxy | AreaChartProxy;
 
-    constructor(chartProxy: LineChartProxy | AreaChartProxy | ScatterChartProxy) {
+    constructor(chartController: ChartController) {
         super();
-        this.chartProxy = chartProxy;
+        this.chartController = chartController;
+        this.chartProxy = chartController.getChartProxy() as LineChartProxy | AreaChartProxy | ScatterChartProxy;
     }
 
     @PostConstruct
@@ -35,26 +37,30 @@ export class MarkersPanel extends Component {
     }
 
     private initMarkers() {
-
         // scatter charts should always show markers
         const shouldHideEnabledCheckbox = this.chartProxy instanceof ScatterChartProxy;
 
         this.seriesMarkersGroup
-            .setTitle(this.chartTranslator.translate('markers'))
+            .setTitle(this.chartTranslator.translate("markers"))
             .hideEnabledCheckbox(shouldHideEnabledCheckbox)
-            .setEnabled(this.chartProxy.getMarkersEnabled())
+            .setEnabled(this.chartProxy.getSeriesOption("marker.enabled") || false)
             .hideOpenCloseIcons(true)
-            .onEnableChange(newValue => this.chartProxy.setSeriesProperty('marker', newValue));
+            .onEnableChange(newValue => this.chartProxy.setSeriesOption("marker.enabled", newValue));
 
-        const initInput = (property: LineMarkerProperty, input: AgSlider, labelKey: string, maxValue: number) => {
+        const initInput = (expression: string, input: AgSlider, labelKey: string, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartProxy.getSeriesProperty(property))
+                .setValue(this.chartProxy.getSeriesOption(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartProxy.setSeriesProperty(property, newValue));
+                .onValueChange(newValue => this.chartProxy.setSeriesOption(expression, newValue));
         };
 
-        initInput('markerSize', this.seriesMarkerSizeSlider, 'size', 30);
-        initInput('markerStrokeWidth', this.seriesMarkerStrokeWidthSlider, 'strokeWidth', 10);
+        if (this.chartController.getChartType() !== ChartType.Bubble) {
+            initInput("marker.size", this.seriesMarkerSizeSlider, "size", 30);
+        } else {
+            this.seriesMarkerSizeSlider.setDisplayed(false);
+        }
+
+        initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
     }
 }

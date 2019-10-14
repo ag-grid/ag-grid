@@ -85,7 +85,7 @@ export abstract class Chart {
         return this.scene.parent;
     }
 
-    private _title?: Caption | undefined = undefined;
+    private _title?: Caption = undefined;
     set title(value: Caption | undefined) {
         const oldTitle = this._title;
         if (oldTitle !== value) {
@@ -105,7 +105,7 @@ export abstract class Chart {
         return this._title;
     }
 
-    private _subtitle: Caption | undefined = undefined;
+    private _subtitle?: Caption = undefined;
     set subtitle(value: Caption | undefined) {
         const oldSubtitle = this._subtitle;
         if (oldSubtitle !== value) {
@@ -300,8 +300,7 @@ export abstract class Chart {
     abstract performLayout(): void;
 
     protected positionCaptions() {
-        const title = this.title;
-        const subtitle = this.subtitle;
+        const { title, subtitle } = this;
 
         let titleVisible = false;
         let subtitleVisible = false;

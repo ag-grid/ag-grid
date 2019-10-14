@@ -40,15 +40,28 @@ enum PieSeriesNodeTag {
 
 export interface PieTooltipRendererParams {
     datum: any;
-    angleField: string;
-    radiusField?: string;
-    labelField?: string;
+    angleKey: string;
+    radiusKey?: string;
+    labelKey?: string;
     title?: string;
     color?: string;
 }
 
 class PieSeriesLabel extends SeriesLabel {
     onDataChange?: () => void;
+
+    set enabled(value: boolean) {
+        if (this._enabled !== value) {
+            this._enabled = value;
+            this.update();
+            if (this.onDataChange) {
+                this.onDataChange();
+            }
+        }
+    }
+    get enabled(): boolean {
+        return this._enabled;
+    }
 
     private _offset: number = 3; // from the callout line
     set offset(value: number) {
@@ -425,8 +438,8 @@ export class PieSeries extends Series<PolarChart> {
         stroke?: string,
         centerOffset?: number
     } = {
-        fill: 'yellow'
-    };
+            fill: 'yellow'
+        };
 
     private highlightedNode?: Sector;
 
@@ -444,12 +457,12 @@ export class PieSeries extends Series<PolarChart> {
         this.scheduleLayout();
     }
 
-    getDomainX(): [ number, number ] {
-        return this.angleScale.domain as [ number, number ];
+    getDomainX(): [number, number] {
+        return this.angleScale.domain as [number, number];
     }
 
-    getDomainY(): [ number, number ] {
-        return this.radiusScale.domain as [ number, number ];
+    getDomainY(): [number, number] {
+        return this.radiusScale.domain as [number, number];
     }
 
     processData(): boolean {
@@ -611,7 +624,7 @@ export class PieSeries extends Series<PolarChart> {
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
 
-            sector.fill = sector === highlightedNode && fill !== undefined ? fill: fills[index % fills.length];
+            sector.fill = sector === highlightedNode && fill !== undefined ? fill : fills[index % fills.length];
             sector.stroke = sector === highlightedNode && stroke !== undefined ? stroke : strokes[index % strokes.length];
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
@@ -684,9 +697,9 @@ export class PieSeries extends Series<PolarChart> {
         if (this.tooltipRenderer) {
             html = this.tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
-                angleField,
-                radiusField: this.radiusField,
-                labelField: this.labelField,
+                angleKey: angleField,
+                radiusKey: this.radiusField,
+                labelKey: this.labelField,
                 title,
                 color
             });
@@ -695,7 +708,7 @@ export class PieSeries extends Series<PolarChart> {
             title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
             const label = this.labelField ? `${nodeDatum.seriesDatum[this.labelField]}: ` : '';
             const value = nodeDatum.seriesDatum[angleField];
-            const formattedValue = typeof(value) === 'number' ? toFixed(value) : value.toString();
+            const formattedValue = typeof (value) === 'number' ? toFixed(value) : value.toString();
             html = `${title}<div class="content">${label}${formattedValue}</div>`;
         }
 

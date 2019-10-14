@@ -1,60 +1,60 @@
-import {RowRenderer} from "./rendering/rowRenderer";
-import {FilterManager} from "./filter/filterManager";
-import {ColumnController} from "./columnController/columnController";
-import {ColumnApi} from "./columnController/columnApi";
-import {SelectionController} from "./selectionController";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {GridPanel} from "./gridPanel/gridPanel";
-import {ValueService} from "./valueService/valueService";
-import {EventService} from "./eventService";
-import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
-import {RowNode} from "./entities/rowNode";
-import {Constants} from "./constants";
-import {Column} from "./entities/column";
-import {Autowired, Bean, Context, Optional, PostConstruct} from "./context/context";
-import {GridCore} from "./gridCore";
-import {IRowModel} from "./interfaces/iRowModel";
-import {SortController} from "./sortController";
-import {FocusedCellController} from "./focusedCellController";
-import {CellRange, CellRangeParams, IRangeController} from "./interfaces/iRangeController";
-import {CellPosition} from "./entities/cellPosition";
-import {IClipboardService} from "./interfaces/iClipboardService";
-import {IViewportDatasource} from "./interfaces/iViewportDatasource";
-import {IMenuFactory} from "./interfaces/iMenuFactory";
-import {CellRendererFactory} from "./rendering/cellRendererFactory";
-import {IAggFuncService} from "./interfaces/iAggFuncService";
-import {IFilterComp} from "./interfaces/iFilter";
-import {CsvExportParams} from "./interfaces/exportParams";
-import {ExcelExportParams, IExcelCreator} from "./interfaces/iExcelCreator";
-import {IDatasource} from "./interfaces/iDatasource";
-import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
-import {PaginationProxy} from "./pagination/paginationProxy";
-import {ValueCache} from "./valueService/valueCache";
-import {AlignedGridsService} from "./alignedGridsService";
-import {AgEvent, ColumnEventType} from "./events";
-import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
-import {ICellRendererComp} from "./rendering/cellRenderers/iCellRenderer";
-import {ICellEditorComp} from "./interfaces/iCellEditor";
-import {HeaderRootComp} from "./headerRendering/headerRootComp";
-import {AnimationFrameService} from "./misc/animationFrameService";
-import {IServerSideRowModel} from "./interfaces/iServerSideRowModel";
-import {IStatusBarService} from "./interfaces/iStatusBarService";
-import {IStatusPanelComp} from "./interfaces/iStatusPanel";
-import {SideBarDef} from "./entities/sideBar";
-import {IChartService} from "./interfaces/IChartService";
-import {ModuleNames} from "./modules/moduleNames";
-import {_} from "./utils";
-import {ChartRef, ProcessChartOptionsParams} from "./entities/gridOptions";
-import {ChartOptions, ChartType} from "./interfaces/iChartOptions";
-import {IToolPanel} from "./interfaces/iToolPanel";
-import {RowNodeTransaction} from "./interfaces/rowNodeTransaction";
-import {IClientSideRowModel} from "./interfaces/iClientSideRowModel";
-import {RefreshModelParams} from "./interfaces/refreshModelParams";
-import {RowDataTransaction} from "./interfaces/rowDataTransaction";
-import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
-import {IImmutableService} from "./interfaces/iImmutableService";
-import {IInfiniteRowModel} from "./interfaces/iInfiniteRowModel";
-import {ICsvCreator} from "./interfaces/iCsvCreator";
+import { RowRenderer } from "./rendering/rowRenderer";
+import { FilterManager } from "./filter/filterManager";
+import { ColumnController } from "./columnController/columnController";
+import { ColumnApi } from "./columnController/columnApi";
+import { SelectionController } from "./selectionController";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { GridPanel } from "./gridPanel/gridPanel";
+import { ValueService } from "./valueService/valueService";
+import { EventService } from "./eventService";
+import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
+import { RowNode } from "./entities/rowNode";
+import { Constants } from "./constants";
+import { Column } from "./entities/column";
+import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
+import { GridCore } from "./gridCore";
+import { IRowModel } from "./interfaces/iRowModel";
+import { SortController } from "./sortController";
+import { FocusedCellController } from "./focusedCellController";
+import { CellRange, CellRangeParams, IRangeController } from "./interfaces/iRangeController";
+import { CellPosition } from "./entities/cellPosition";
+import { IClipboardService } from "./interfaces/iClipboardService";
+import { IViewportDatasource } from "./interfaces/iViewportDatasource";
+import { IMenuFactory } from "./interfaces/iMenuFactory";
+import { CellRendererFactory } from "./rendering/cellRendererFactory";
+import { IAggFuncService } from "./interfaces/iAggFuncService";
+import { IFilterComp } from "./interfaces/iFilter";
+import { CsvExportParams } from "./interfaces/exportParams";
+import { ExcelExportParams, IExcelCreator } from "./interfaces/iExcelCreator";
+import { IDatasource } from "./interfaces/iDatasource";
+import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
+import { PaginationProxy } from "./pagination/paginationProxy";
+import { ValueCache } from "./valueService/valueCache";
+import { AlignedGridsService } from "./alignedGridsService";
+import { AgEvent, ColumnEventType } from "./events";
+import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
+import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
+import { ICellEditorComp } from "./interfaces/iCellEditor";
+import { HeaderRootComp } from "./headerRendering/headerRootComp";
+import { AnimationFrameService } from "./misc/animationFrameService";
+import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
+import { IStatusBarService } from "./interfaces/iStatusBarService";
+import { IStatusPanelComp } from "./interfaces/iStatusPanel";
+import { SideBarDef } from "./entities/sideBar";
+import { IChartService } from "./interfaces/IChartService";
+import { ModuleNames } from "./modules/moduleNames";
+import { _ } from "./utils";
+import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
+import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
+import { IToolPanel } from "./interfaces/iToolPanel";
+import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
+import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
+import { RefreshModelParams } from "./interfaces/refreshModelParams";
+import { RowDataTransaction } from "./interfaces/rowDataTransaction";
+import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
+import { IImmutableService } from "./interfaces/iImmutableService";
+import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
+import { ICsvCreator } from "./interfaces/iCsvCreator";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -73,24 +73,14 @@ export interface RefreshCellsParams extends GetCellsParams {
     force?: boolean;
 }
 
-export interface FlashCellsParams extends GetCellsParams {}
+export interface FlashCellsParams extends GetCellsParams { }
 
-export interface GetCellRendererInstancesParams extends GetCellsParams {}
+export interface GetCellRendererInstancesParams extends GetCellsParams { }
 
-export interface GetCellEditorInstancesParams extends GetCellsParams {}
+export interface GetCellEditorInstancesParams extends GetCellsParams { }
 
 export interface RedrawRowsParams {
     rowNodes?: RowNode[];
-}
-
-/** @deprecated use CreateRangeChartParams instead */
-export interface ChartRangeParams {
-    cellRange: CellRangeParams;
-    chartType: ChartType;
-    chartContainer?: HTMLElement;
-    suppressChartRanges?: boolean;
-    aggFunc?: string | IAggFunc;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }
 
 export interface CreateRangeChartParams {
@@ -99,13 +89,13 @@ export interface CreateRangeChartParams {
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
 export interface CreatePivotChartParams {
     chartType: ChartType;
     chartContainer?: HTMLElement;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
 export interface DetailGridInfo {
@@ -154,7 +144,7 @@ export class GridApi {
 
     private serverSideRowModel: IServerSideRowModel;
 
-    private detailGridInfoMap: {[id: string]: DetailGridInfo} = {};
+    private detailGridInfoMap: { [id: string]: DetailGridInfo } = {};
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
@@ -358,7 +348,7 @@ export class GridApi {
         this.valueCache.expire();
     }
 
-    public getVerticalPixelRange(): {top: number, bottom: number} {
+    public getVerticalPixelRange(): { top: number, bottom: number } {
         return this.gridPanel.getVScrollPosition();
     }
 
@@ -449,11 +439,11 @@ export class GridApi {
     //** @deprecated */
     public refreshRows(rowNodes: RowNode[]): void {
         console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
-        this.refreshCells({rowNodes: rowNodes});
+        this.refreshCells({ rowNodes: rowNodes });
     }
 
     /** @deprecated */
-    public rowDataChanged(rows:any) {
+    public rowDataChanged(rows: any) {
         console.warn('ag-Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node');
         this.redrawRows();
     }
@@ -514,7 +504,7 @@ export class GridApi {
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        this.clientSideRowModel.refreshModel({step: Constants.STEP_MAP});
+        this.clientSideRowModel.refreshModel({ step: Constants.STEP_MAP });
     }
 
     public refreshInMemoryRowModel(step?: string): any {
@@ -596,11 +586,11 @@ export class GridApi {
         this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
     }
 
-    public setQuickFilter(newFilter:any): void {
+    public setQuickFilter(newFilter: any): void {
         this.filterManager.setQuickFilter(newFilter);
     }
 
-    public selectIndex(index:any, tryMulti:any, suppressEvents:any) {
+    public selectIndex(index: any, tryMulti: any, suppressEvents: any) {
         console.warn('ag-Grid: do not use api for selection, call node.setSelected(value) instead');
         if (suppressEvents) {
             console.warn('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
@@ -621,7 +611,7 @@ export class GridApi {
         if (suppressEvents) {
             console.warn('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
-        node.setSelectedParams({newValue: true, clearSelection: !tryMulti});
+        node.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
     }
 
     public deselectNode(node: RowNode, suppressEvents: boolean = false) {
@@ -629,7 +619,7 @@ export class GridApi {
         if (suppressEvents) {
             console.warn('ag-Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
-        node.setSelectedParams({newValue: false});
+        node.setSelectedParams({ newValue: false });
     }
 
     public selectAll() {
@@ -651,7 +641,7 @@ export class GridApi {
     public recomputeAggregates(): void {
         if (_.missing(this.clientSideRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model'); }
         console.warn(`recomputeAggregates is deprecated, please call api.refreshClientSideRowModel('aggregate') instead`);
-        this.clientSideRowModel.refreshModel({step: Constants.STEP_AGGREGATE});
+        this.clientSideRowModel.refreshModel({ step: Constants.STEP_AGGREGATE });
     }
 
     public sizeColumnsToFit() {
@@ -670,12 +660,12 @@ export class GridApi {
         this.gridPanel.hideOverlay();
     }
 
-    public isNodeSelected(node:any) {
+    public isNodeSelected(node: any) {
         console.warn('ag-Grid: no need to call api.isNodeSelected(), just call node.isSelected() instead');
         return node.isSelected();
     }
 
-    public getSelectedNodesById(): {[nodeId: number]: RowNode; } {
+    public getSelectedNodesById(): { [nodeId: number]: RowNode; } {
         console.error('ag-Grid: since version 3.4, getSelectedNodesById no longer exists, use getSelectedNodes() instead');
         return null;
     }
@@ -696,7 +686,7 @@ export class GridApi {
         return this.rowRenderer.getRenderedNodes();
     }
 
-    public ensureColIndexVisible(index:any) {
+    public ensureColIndexVisible(index: any) {
         console.warn('ag-Grid: ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead.');
     }
 
@@ -705,12 +695,12 @@ export class GridApi {
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureIndexVisible(index:any, position?:string) {
+    public ensureIndexVisible(index: any, position?: string) {
         this.gridPanel.ensureIndexVisible(index, position);
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator:any, position?:string) {
+    public ensureNodeVisible(comparator: any, position?: string) {
         this.gridCore.ensureNodeVisible(comparator, position);
     }
 
@@ -757,7 +747,7 @@ export class GridApi {
         }
     }
 
-    public getStatusPanel(key: string) : IStatusPanelComp {
+    public getStatusPanel(key: string): IStatusPanelComp {
         if (this.statusBarService) {
             return this.statusBarService.getStatusPanel(key);
         }
@@ -780,7 +770,7 @@ export class GridApi {
         this.sortController.onSortChanged();
     }
 
-    public setSortModel(sortModel:any, source: ColumnEventType = "api") {
+    public setSortModel(sortModel: any, source: ColumnEventType = "api") {
         this.sortController.setSortModel(sortModel, source);
     }
 
@@ -788,7 +778,7 @@ export class GridApi {
         return this.sortController.getSortModel();
     }
 
-    public setFilterModel(model:any) {
+    public setFilterModel(model: any) {
         this.filterManager.setFilterModel(model);
     }
 
@@ -854,11 +844,11 @@ export class GridApi {
         return this.gridCore.isSideBarVisible();
     }
 
-    public setSideBarVisible(show:boolean) {
+    public setSideBarVisible(show: boolean) {
         this.gridCore.setSideBarVisible(show);
     }
 
-    public showToolPanel(show:boolean) {
+    public showToolPanel(show: boolean) {
         console.warn(`ag-grid: from v19 api.showToolPanel has been deprecated in favour of api.setSideBarVisible`);
         this.setSideBarVisible(show);
     }
@@ -978,7 +968,7 @@ export class GridApi {
         }
     }
 
-    public camelCaseToHumanReadable(camelCase:string):string {
+    public camelCaseToHumanReadable(camelCase: string): string {
         return _.camelCaseToHumanText(camelCase);
     }
 
@@ -994,11 +984,6 @@ export class GridApi {
     public clearRangeSelection(): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
         this.rangeController.removeAllCellRanges();
-    }
-
-    /** @deprecated use createRangeChart instead */
-    public chartRange(params: ChartRangeParams): ChartRef | undefined {
-        return this.createRangeChart({ ...params });
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
@@ -1111,7 +1096,7 @@ export class GridApi {
         }
     }
 
-    public addAggFuncs(aggFuncs: {[key: string]: IAggFunc}): void {
+    public addAggFuncs(aggFuncs: { [key: string]: IAggFunc }): void {
         if (this.aggFuncService) {
             this.aggFuncService.addAggFuncs(aggFuncs);
         }
@@ -1154,18 +1139,18 @@ export class GridApi {
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
         console.warn('ag-Grid: insertItemsAtIndex() is deprecated, use updateRowData(transaction) instead.');
-        this.updateRowData({add: items, addIndex: index, update: null, remove: null});
+        this.updateRowData({ add: items, addIndex: index, update: null, remove: null });
     }
 
     public removeItems(rowNodes: RowNode[], skipRefresh = false): void {
         console.warn('ag-Grid: removeItems() is deprecated, use updateRowData(transaction) instead.');
         const dataToRemove: any[] = rowNodes.map(rowNode => rowNode.data);
-        this.updateRowData({add: null, addIndex: null, update: null, remove: dataToRemove});
+        this.updateRowData({ add: null, addIndex: null, update: null, remove: dataToRemove });
     }
 
     public addItems(items: any[], skipRefresh = false): void {
         console.warn('ag-Grid: addItems() is deprecated, use updateRowData(transaction) instead.');
-        this.updateRowData({add: items, addIndex: null, update: null, remove: null});
+        this.updateRowData({ add: items, addIndex: null, update: null, remove: null });
     }
 
     public refreshVirtualPageCache(): void {

@@ -172,7 +172,7 @@ export class GridOptionsWrapper {
 
         this.gridOptions.columnDefs.forEach(colDef => {
             const userProperties: string[] = Object.getOwnPropertyNames(colDef);
-            const validProperties: string[] = [ ...ColDefUtil.ALL_PROPERTIES, ...ColDefUtil.FRAMEWORK_PROPERTIES ];
+            const validProperties: string[] = [...ColDefUtil.ALL_PROPERTIES, ...ColDefUtil.FRAMEWORK_PROPERTIES];
 
             this.checkProperties(
                 userProperties,
@@ -192,7 +192,7 @@ export class GridOptionsWrapper {
             ..._.values<any>(Events).map(event => ComponentUtil.getCallbackForEvent(event))
         ];
 
-        const validPropertiesAndExceptions: string[] = [ ...validProperties, 'api', 'columnApi' ];
+        const validPropertiesAndExceptions: string[] = [...validProperties, 'api', 'columnApi'];
 
         this.checkProperties(
             userProperties,
@@ -225,7 +225,7 @@ export class GridOptionsWrapper {
         }
     }
 
-// returns the dom data, or undefined if not found
+    // returns the dom data, or undefined if not found
     public getDomData(element: Node, key: string): any {
         const domData = (element as any)[this.domDataKey];
 
@@ -442,7 +442,7 @@ export class GridOptionsWrapper {
 
         if (validLayouts.indexOf(domLayout) === -1) {
             _.doOnce(() => console.warn(`ag-Grid: ${domLayout} is not valid for DOM Layout, valid values are ${Constants.DOM_LAYOUT_NORMAL}, ${Constants.DOM_LAYOUT_AUTO_HEIGHT} and ${Constants.DOM_LAYOUT_PRINT}`),
-            'warn about dom layout values');
+                'warn about dom layout values');
             return Constants.DOM_LAYOUT_NORMAL;
         }
 
@@ -650,7 +650,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.groupDefaultExpanded;
     }
 
-    public getMaxConcurrentDatasourceRequests(): number  {
+    public getMaxConcurrentDatasourceRequests(): number {
         return this.gridOptions.maxConcurrentDatasourceRequests;
     }
 
@@ -1112,7 +1112,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.postSort;
     }
 
-    public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions {
+    public getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any> {
         return this.gridOptions.processChartOptions;
     }
 
@@ -1454,7 +1454,7 @@ export class GridOptionsWrapper {
                 }
 
                 console.warn(`ag-grid: since v19.0 gridOptions.${key} is deprecated, please use gridOptions.sideBar.toolPanel[columnsIndex].componentParams.${translation}`);
-                toolPanelColumnsCompProps [translation] = value;
+                toolPanelColumnsCompProps[translation] = value;
             }
         });
 
@@ -1481,7 +1481,7 @@ export class GridOptionsWrapper {
             console.warn(`ag-grid: since version 19.x, enableStatusBar is gone, please specify statusBar components`);
             options.statusBar = options.statusBar ||
                 {
-                    components: [{component: 'agAggregationComponent'}]
+                    components: [{ component: 'agAggregationComponent' }]
                 };
         }
         if (options.alwaysShowStatusBar) {
@@ -1563,7 +1563,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.localeTextFunc;
         }
         const that = this;
-        return function(key: any, defaultValue: any) {
+        return function (key: any, defaultValue: any) {
             const localeText = that.gridOptions.localeText;
             if (localeText && localeText[key]) {
                 return localeText[key];
@@ -1593,14 +1593,14 @@ export class GridOptionsWrapper {
         return this.getDefaultRowHeight();
     }
 
-    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): {height: number, estimated: boolean} {
+    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number, estimated: boolean } {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
 
         if (typeof this.gridOptions.getRowHeight === 'function') {
             if (allowEstimate) {
-                return {height: this.getDefaultRowHeight(), estimated: true};
+                return { height: this.getDefaultRowHeight(), estimated: true };
             }
             const params = {
                 node: rowNode,
@@ -1659,7 +1659,7 @@ export class GridOptionsWrapper {
         return defaultValue;
     }
 
-    private getDefaultRowHeight() : number {
+    private getDefaultRowHeight(): number {
         return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 }

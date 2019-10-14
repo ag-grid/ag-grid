@@ -1,7 +1,7 @@
-import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "ag-grid-community";
-import {ChartController} from "../../../chartController";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ChartPaddingProperty, ChartProxy} from "../../../chartProxies/chartProxy";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, IPadding } from "ag-grid-community";
+import { ChartController } from "../../../chartController";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ChartProxy } from "../../../chartProxies/chartProxy";
 
 export class PaddingPanel extends Component {
 
@@ -40,23 +40,23 @@ export class PaddingPanel extends Component {
 
     private initGroup(): void {
         this.chartPaddingGroup
-            .setTitle(this.chartTranslator.translate('padding'))
+            .setTitle(this.chartTranslator.translate("padding"))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
     }
 
     private initChartPaddingItems(): void {
-        const initInput = (property: ChartPaddingProperty, input: AgSlider, labelKey: string) => {
+        const initInput = (property: keyof IPadding, input: AgSlider, labelKey: string) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartProxy.getChartPadding(property))
+                .setValue(this.chartProxy.getChartPaddingOption(property))
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartProxy.setChartPaddingProperty(property, newValue));
+                .onValueChange(newValue => this.chartProxy.setChartPaddingOption(property, newValue));
         };
 
-        initInput('top', this.paddingTopSlider, 'top');
-        initInput('right', this.paddingRightSlider, 'right');
-        initInput('bottom', this.paddingBottomSlider, 'bottom');
-        initInput('left', this.paddingLeftSlider, 'left');
+        initInput("top", this.paddingTopSlider, "top");
+        initInput("right", this.paddingRightSlider, "right");
+        initInput("bottom", this.paddingBottomSlider, "bottom");
+        initInput("left", this.paddingLeftSlider, "left");
     }
 }

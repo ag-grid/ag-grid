@@ -1,66 +1,79 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { CartesianChartOptions, _ } from "ag-grid-community";
+import { CartesianChartOptions, _, SeriesOptions, AxisOptions } from "ag-grid-community";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { ChartModel } from "../../chartModel";
-import { IAxisFormatting, ILabelFormatting } from "../../../../charts/axis";
 import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
 
-export type LineMarkerProperty = 'marker' | 'markerSize' | 'markerStrokeWidth';
-export type LineSeriesProperty = 'strokeWidth' | 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
-export type ScatterSeriesProperty = 'tooltipEnabled' | 'markerSize' | 'markerStrokeWidth';
-
-export abstract class CartesianChartProxy<T extends CartesianChartOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, T> {
+export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
     protected constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    protected initChartOptions(): void {
-        super.initChartOptions();
-
-        this.chartOptions.isGroupingEnabled = this.chartProxyParams.grouping;
+    public getAxisProperty<T = string>(expression: string): T {
+        return _.get(this.chartOptions.xAxis, expression, undefined) as T;
     }
 
-    protected overrideLabelRotation(categoryId: string): boolean {
-        return categoryId === ChartModel.DEFAULT_CATEGORY || this.chartProxyParams.grouping;
-    }
+    public setAxisProperty(expression: string, value: any) {
+        _.set(this.chartOptions.xAxis, expression, value);
+        _.set(this.chartOptions.yAxis, expression, value);
 
-    public setCommonAxisProperty(property: keyof IAxisFormatting | keyof ILabelFormatting, value: any) {
-        const cartesianChart = this.chart;
+        const chart = this.chart;
 
-        _.setProperty(cartesianChart.xAxis, property, value);
-        _.setProperty(cartesianChart.yAxis, property, value);
+        _.set(this.chart.xAxis, expression, value);
+        _.set(this.chart.yAxis, expression, value);
 
-        cartesianChart.performLayout();
-
-        _.setProperty(this.chartOptions.xAxis, property, value);
-        _.setProperty(this.chartOptions.yAxis, property, value);
+        chart.performLayout();
 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getCommonAxisProperty(property: keyof IAxisFormatting | keyof ILabelFormatting): string {
-        const { xAxis } = this.chartOptions;
+    protected updateLabelRotation(categoryId: string, isHorizontalChart = false) {
+        let labelRotation = 0;
+        const axisKey = isHorizontalChart ? "yAxis" : "xAxis";
 
-        return xAxis ? `${xAxis[property]}` : "";
+        if (categoryId !== ChartModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {
+            const { label } = this.chartOptions[axisKey];
+
+            if (label && label.rotation) {
+                labelRotation = label.rotation;
+            }
+        }
+
+        (this.chart[axisKey] as any).label.rotation = labelRotation; // TODO: use better type than any
     }
 
-    public getXRotation = (): number => this.getChart().xAxis.labelRotation;
+    protected getDefaultAxisOptions(): AxisOptions {
+        const fontOptions = this.getDefaultFontOptions();
+        const stroke = this.getAxisGridColor();
+        const axisColor = "rgba(195, 195, 195, 1)";
 
-    public setXRotation(rotation: number): void {
-        this.getChart().xAxis.labelRotation = rotation;
-        this.chartOptions.xAxis.labelRotation = rotation;
-        this.chart.performLayout();
-
-        this.raiseChartOptionsChangedEvent();
+        return {
+            label: {
+                ...fontOptions,
+                padding: 5,
+            },
+            tick: {
+                color: axisColor,
+                size: 6,
+                width: 1,
+            },
+            line: {
+                color: axisColor,
+                width: 1,
+            },
+            gridStyle: [{
+                stroke,
+                lineDash: [4, 2]
+            }]
+        };
     }
 
-    public getYRotation = (): number => this.getChart().yAxis.labelRotation;
+    protected getDefaultCartesianChartOptions(): CartesianChartOptions<SeriesOptions> {
+        const options = this.getDefaultChartOptions() as CartesianChartOptions<SeriesOptions>;
 
-    public setYRotation(rotation: number): void {
-        this.getChart().yAxis.labelRotation = rotation;
-        this.chartOptions.yAxis.labelRotation = rotation;
-        this.chart.performLayout();
+        options.xAxis = this.getDefaultAxisOptions();
+        options.yAxis = this.getDefaultAxisOptions();
 
-        this.raiseChartOptionsChangedEvent();
+        return options;
     }
 }

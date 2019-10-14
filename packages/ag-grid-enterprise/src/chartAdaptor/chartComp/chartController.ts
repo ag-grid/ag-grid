@@ -21,7 +21,6 @@ export class ChartController extends BeanStub {
 
     @PostConstruct
     private init(): void {
-
         this.updateForGridChange();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, (event) => {
@@ -118,7 +117,7 @@ export class ChartController extends BeanStub {
     public getChartProxy = (): ChartProxy<any, any> => this.model.getChartProxy();
 
     public isActiveXYChart() {
-        return _.includes([ ChartType.Scatter, ChartType.Bubble ], this.getChartType());
+        return _.includes([ChartType.Scatter, ChartType.Bubble], this.getChartType());
     }
 
     private raiseChartUpdatedEvent() {

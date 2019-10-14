@@ -12,7 +12,7 @@ import {
 import { ChartController } from "../../../chartController";
 import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartProxy, LegendProperty } from "../../../chartProxies/chartProxy";
+import { ChartProxy } from "../../../chartProxies/chartProxy";
 
 export class LegendPanel extends Component {
 
@@ -64,12 +64,12 @@ export class LegendPanel extends Component {
 
     private initLegendGroup() {
         this.legendGroup
-            .setTitle(this.chartTranslator.translate('legend'))
+            .setTitle(this.chartTranslator.translate("legend"))
             .hideEnabledCheckbox(false)
-            .setEnabled(this.chartProxy.getLegendEnabled())
+            .setEnabled(this.chartProxy.getChartOption<boolean>("legend.enabled") || false)
             .toggleGroupExpand(false)
             .onEnableChange(enabled => {
-                this.chartProxy.setLegendProperty('enabled', enabled);
+                this.chartProxy.setChartOption("legend.enabled", enabled);
                 this.legendGroup.toggleGroupExpand(true);
             });
     }
@@ -77,60 +77,60 @@ export class LegendPanel extends Component {
     private initLegendPosition() {
         const chartProxy = this.chartController.getChartProxy();
 
-        const positions: LegendPosition[] = ['top', 'right', 'bottom', 'left'];
+        const positions: LegendPosition[] = ["top", "right", "bottom", "left"];
 
         this.legendPositionSelect
-            .setLabel(this.chartTranslator.translate('position'))
-            .setLabelWidth('flex')
+            .setLabel(this.chartTranslator.translate("position"))
+            .setLabelWidth("flex")
             .setInputWidth(80)
             .addOptions(positions.map(position => ({
                 value: position,
                 text: this.chartTranslator.translate(position)
             })))
-            .setValue(chartProxy.getLegendPosition())
-            .onValueChange(newValue => chartProxy.setLegendPosition(newValue as LegendPosition));
+            .setValue(chartProxy.getChartOption("legend.position"))
+            .onValueChange(newValue => chartProxy.setChartOption("legend.position", newValue));
     }
 
     private initLegendPadding() {
         this.legendPaddingSlider
-            .setLabel(this.chartTranslator.translate('padding'))
-            .setValue(this.chartProxy.getLegendPadding())
+            .setLabel(this.chartTranslator.translate("padding"))
+            .setValue(this.chartProxy.getChartOption("legend.padding"))
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(newValue => this.chartProxy.setLegendPadding(newValue));
+            .onValueChange(newValue => this.chartProxy.setChartOption("legend.padding", newValue));
     }
 
     private initLegendItems() {
-        const initSlider = (property: LegendProperty, labelKey: string, input: AgSlider, maxValue: number) => {
+        const initSlider = (expression: string, labelKey: string, input: AgSlider, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                 .setValue(this.chartProxy.getLegendProperty(property))
-                 .setMaxValue(maxValue)
-                 .setTextFieldWidth(45)
-                 .onValueChange(newValue => this.chartProxy.setLegendProperty(property, newValue));
+                .setValue(this.chartProxy.getChartOption(`legend.${expression}`))
+                .setMaxValue(maxValue)
+                .setTextFieldWidth(45)
+                .onValueChange(newValue => this.chartProxy.setChartOption(`legend.${expression}`, newValue));
         };
 
-        initSlider('markerSize', 'markerSize', this.markerSizeSlider, 40);
-        initSlider('markerStrokeWidth', 'markerStroke', this.markerStrokeSlider, 10);
-        initSlider('markerPadding',  'markerPadding', this.markerPaddingSlider, 200);
-        initSlider('itemPaddingX', 'itemPaddingX', this.itemPaddingXSlider, 50);
-        initSlider('itemPaddingY', 'itemPaddingY', this.itemPaddingYSlider, 50);
+        initSlider("box.size", "markerSize", this.markerSizeSlider, 40);
+        initSlider("box.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
+        initSlider("box.padding", "markerPadding", this.markerPaddingSlider, 200);
+        initSlider("item.paddingX", "itemPaddingX", this.itemPaddingXSlider, 50);
+        initSlider("item.paddingY", "itemPaddingY", this.itemPaddingYSlider, 50);
     }
 
     private initLabelPanel() {
         const initialFont = {
-            family: this.chartProxy.getLegendProperty('labelFontFamily'),
-            style: this.chartProxy.getLegendProperty('labelFontStyle'),
-            weight: this.chartProxy.getLegendProperty('labelFontWeight'),
-            size: parseInt(this.chartProxy.getLegendProperty('labelFontSize')),
-            color: this.chartProxy.getLegendProperty('labelColor')
+            family: this.chartProxy.getChartOption("label.fontFamily"),
+            style: this.chartProxy.getChartOption("label.fontStyle"),
+            weight: this.chartProxy.getChartOption("label.fontWeight"),
+            size: this.chartProxy.getChartOption<number>("label.fontSize"),
+            color: this.chartProxy.getChartOption("label.color")
         };
 
         // note we don't set the font style via legend panel
         const setFont = (font: LabelFont) => {
-            if (font.family) { this.chartProxy.setLegendProperty('labelFontFamily', font.family); }
-            if (font.weight) { this.chartProxy.setLegendProperty('labelFontWeight', font.weight); }
-            if (font.size) { this.chartProxy.setLegendProperty('labelFontSize', font.size); }
-            if (font.color) { this.chartProxy.setLegendProperty('labelColor', font.color); }
+            if (font.family) { this.chartProxy.setChartOption("label.fontFamily", font.family); }
+            if (font.weight) { this.chartProxy.setChartOption("label.fontWeight", font.weight); }
+            if (font.size) { this.chartProxy.setChartOption("label.fontSize", font.size); }
+            if (font.color) { this.chartProxy.setChartOption("label.color", font.color); }
         };
 
         const params: LabelPanelParams = {
@@ -140,8 +140,7 @@ export class LegendPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = new LabelPanel(params);
-        this.getContext().wireBean(labelPanelComp);
+        const labelPanelComp = this.wireBean(new LabelPanel(params));
         this.legendGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
     }

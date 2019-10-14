@@ -1,13 +1,13 @@
-import {_, AgGroupComponent, Autowired, Component, PostConstruct} from "ag-grid-community";
+import { _, AgGroupComponent, Autowired, Component, PostConstruct } from "ag-grid-community";
 
-import {ChartController} from "../../chartController";
-import {ChartTranslator} from "../../chartTranslator";
+import { ChartController } from "../../chartController";
+import { ChartTranslator } from "../../chartTranslator";
 import {
-    MiniColumn, 
+    MiniColumn,
     MiniStackedColumn,
-    MiniNormalizedColumn, 
-    MiniBar, 
-    MiniStackedBar, 
+    MiniNormalizedColumn,
+    MiniBar,
+    MiniStackedBar,
     MiniNormalizedBar,
     MiniPie,
     MiniDoughnut,
@@ -30,7 +30,7 @@ export class MiniChartsContainer extends Component {
 
     private readonly fills: string[];
     private readonly strokes: string[];
-    private wrappers: { [key: string ]: HTMLElement } = {};
+    private wrappers: { [key: string]: HTMLElement } = {};
     private chartController: ChartController;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
@@ -77,16 +77,15 @@ export class MiniChartsContainer extends Component {
         };
 
         const eGui = this.getGui();
-        
+
         Object.keys(chartGroups).forEach(group => {
             const chartGroup = chartGroups[group as ChartGroupsType];
-            const groupComponent = new AgGroupComponent({
+            const groupComponent = this.wireBean(new AgGroupComponent({
                 title: this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
                 suppressOpenCloseIcons: true
-            });
-            this.getContext().wireBean(groupComponent);
+            }));
 
             chartGroup.forEach(MiniClass => {
                 const miniWrapper = document.createElement('div');
@@ -99,8 +98,7 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers[MiniClass.chartType] = miniWrapper;
 
-                const miniChart = new MiniClass(miniWrapper, this.fills, this.strokes);
-                this.getContext().wireBean(miniChart);
+                this.wireBean(new MiniClass(miniWrapper, this.fills, this.strokes));
                 groupComponent.addItem(miniWrapper);
             });
 
