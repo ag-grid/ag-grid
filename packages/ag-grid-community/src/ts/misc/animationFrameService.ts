@@ -76,10 +76,15 @@ export class AnimationFrameService {
     private executeFrame(millis: number): void {
         this.verifyAnimationFrameOn('executeFrame');
 
+        // create a copy of p1Tasks, so that when a task calls addP1Task
+        // the new task is held until next frame so that it can be
+        // sorted and executed in the right order
+        const tasksToExecute = this.p1Tasks;
+        this.p1Tasks = [];
         if (this.scrollGoingDown) {
-            this.p1Tasks.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
+            tasksToExecute.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
         } else {
-            this.p1Tasks.sort((a: TaskItem, b: TaskItem) => a.index - b.index);
+            tasksToExecute.sort((a: TaskItem, b: TaskItem) => a.index - b.index);
         }
 
         const frameStart = new Date().getTime();
@@ -93,8 +98,8 @@ export class AnimationFrameService {
             const gridPanelUpdated = this.gridPanel.executeFrame();
 
             if (!gridPanelUpdated) {
-                if (this.p1Tasks.length > 0) {
-                    const taskItem = this.p1Tasks.pop();
+                if (tasksToExecute.length > 0) {
+                    const taskItem = tasksToExecute.pop();
                     taskItem.task();
                 } else if (this.p2Tasks.length > 0) {
                     const task = this.p2Tasks.pop();
@@ -106,6 +111,8 @@ export class AnimationFrameService {
 
             duration = (new Date().getTime()) - frameStart;
         }
+
+        this.p1Tasks = tasksToExecute.concat(this.p1Tasks);
 
         if (this.p1Tasks.length > 0 || this.p2Tasks.length > 0) {
             this.requestFrame();
