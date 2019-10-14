@@ -80,6 +80,12 @@ const linkUmdForE2E = (done) => {
             type: 'symbolic'
         })
     }
+    if(!fs.existsSync('./cypress/integration/ag-grid-community.min.js')) {
+        link('../ag-grid-community/dist/ag-grid-community.min.js', './cypress/integration/',{
+            force: true,
+            type: 'symbolic'
+        })
+    }
     done();
 };
 
