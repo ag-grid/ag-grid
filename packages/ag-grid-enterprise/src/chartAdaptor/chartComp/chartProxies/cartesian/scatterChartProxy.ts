@@ -61,8 +61,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                 const radiusFieldDefinition = params.fields[index * 2 + 2];
 
                 if (radiusFieldDefinition) {
-                    series.radiusField = radiusFieldDefinition.colId;
-                    series.radiusFieldName = radiusFieldDefinition.displayName;
+                    series.sizeKey = radiusFieldDefinition.colId;
+                    series.sizeKeyName = radiusFieldDefinition.displayName;
                 } else {
                     // not enough information to render this series, so ensure it is removed
                     if (existingSeries) {
@@ -72,7 +72,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterChartOptions> 
                     return;
                 }
             } else {
-                series.radiusField = series.radiusFieldName = undefined;
+                series.sizeKey = series.sizeKeyName = undefined;
             }
 
             if (labelFieldDefinition) {
