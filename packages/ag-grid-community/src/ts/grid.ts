@@ -114,20 +114,6 @@ export class Grid {
 
     private readonly gridOptions: GridOptions;
 
-    private static rowModelClasses: any = {};
-
-    public static addRowModelClass(name: string, rowModelClass: any): void {
-        Grid.rowModelClasses[name] = rowModelClass;
-    }
-
-    public static setEnterpriseBeans(enterpriseBeans: any[]): void {
-        Grid.enterpriseBeans = enterpriseBeans;
-    }
-
-    public static setEnterpriseAgStackComponents(components: any[]): void {
-        Grid.enterpriseAgStackComponents = components;
-    }
-
     public static setFrameworkBeans(frameworkBeans: any[]): void {
         Grid.frameworkBeans = frameworkBeans;
     }
@@ -350,7 +336,14 @@ export class Grid {
             rowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         }
 
-        const rowModelClass = Grid.rowModelClasses[rowModelType];
+        const rowModelClasses: {[name: string]: { new(): IRowModel }} = {};
+        Grid.modulesToInclude.forEach( module => {
+            _.iterateObject(module.rowModels, (key: string, value: { new(): IRowModel }) => {
+                rowModelClasses[key] = value;
+            });
+        });
+
+        const rowModelClass = rowModelClasses[rowModelType];
         if (_.exists(rowModelClass)) {
             return rowModelClass;
         } else {

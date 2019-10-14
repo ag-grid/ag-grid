@@ -88,7 +88,15 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
+           '@ag-enterprise/master-detail': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
            '@ag-enterprise/menu': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-enterprise/range-selection': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
@@ -97,6 +105,10 @@
                 defaultExtension: 'js'
             },
            '@ag-enterprise/row-grouping': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-enterprise/server-side-row-model': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
@@ -109,6 +121,10 @@
                 defaultExtension: 'js'
             },
            '@ag-enterprise/status-bar': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-enterprise/viewport-row-model': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },

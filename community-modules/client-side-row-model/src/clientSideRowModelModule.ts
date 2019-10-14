@@ -1,16 +1,16 @@
 import {Module, ModuleNames, Grid} from "ag-grid-community";
-import {ClientSideRowModel} from "./clientSideRowModel";
-import {FilterStage} from "./filterStage";
-import {SortStage} from "./sortStage";
-import {FlattenStage} from "./flattenStage";
-import {SortService} from "./sortService";
-import {FilterService} from "./filterService";
-import {ImmutableService} from "./immutableService";
+import {ClientSideRowModel} from "./clientSideRowModel/clientSideRowModel";
+import {FilterStage} from "./clientSideRowModel/filterStage";
+import {SortStage} from "./clientSideRowModel/sortStage";
+import {FlattenStage} from "./clientSideRowModel/flattenStage";
+import {SortService} from "./clientSideRowModel/sortService";
+import {FilterService} from "./clientSideRowModel/filterService";
+import {ImmutableService} from "./clientSideRowModel/immutableService";
 
 export const ClientSideRowModelModule: Module = {
     moduleName: ModuleNames.ClientSideRowModelModule,
-    beans: [FilterStage, SortStage, FlattenStage, SortService, FilterService, ImmutableService]
+    beans: [FilterStage, SortStage, FlattenStage, SortService, FilterService, ImmutableService],
+    rowModels: { clientSide: ClientSideRowModel }
 };
 
 Grid.addModule([ClientSideRowModelModule]);
-Grid.addRowModelClass('clientSide', ClientSideRowModel);

@@ -11,6 +11,7 @@ import {
     RowNode,
     ModuleLogger
 } from "ag-grid-community"
+
 import {ClientSideRowModel} from "./clientSideRowModel";
 
 ModuleLogger.logModuleClass('CSRM.ImmutableService');

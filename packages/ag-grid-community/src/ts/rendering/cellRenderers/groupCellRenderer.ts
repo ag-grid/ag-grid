@@ -4,7 +4,7 @@ import { EventService } from "../../eventService";
 import { Constants } from "../../constants";
 import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
-import { ICellRenderer, ICellRendererComp, ICellRendererParams } from "./iCellRenderer";
+import { ICellRendererComp, ICellRendererParams } from "./iCellRenderer";
 import { RowNode } from "../../entities/rowNode";
 import { ValueFormatterService } from "../valueFormatterService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";

@@ -117,7 +117,6 @@ export {StandardMenuFactory} from "./headerRendering/standardMenu";
 
 // layout
 export {TabbedLayout} from "./layout/tabbedLayout";
-export {VerticalStack} from "./layout/verticalStack";
 export {TabbedItem} from "./layout/tabbedLayout";
 
 // misc
