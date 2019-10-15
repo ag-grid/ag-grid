@@ -24,3 +24,6 @@ import "../../../../../community-modules/infinite-row-model/src/infiniteRowModel
 import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
 import "../../../../../community-modules/csv-export/src/csvExportModule.ts";
 import "../../../../../community-modules/infinite-row-model/src/infiniteRowModelModule.ts";
+import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
+import "../../../../../community-modules/csv-export/src/csvExportModule.ts";
+import "../../../../../community-modules/infinite-row-model/src/infiniteRowModelModule.ts";

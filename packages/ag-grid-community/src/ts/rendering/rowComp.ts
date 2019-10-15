@@ -22,6 +22,7 @@ import {_} from "../utils";
 import {IFrameworkOverrides} from "../interfaces/iFrameworkOverrides";
 import {Constants} from "../constants";
 import {ModuleNames} from "../modules/moduleNames";
+import {ModuleRegistry} from "../modules/moduleRegistry";
 
 interface CellTemplate {
     template: string;
@@ -898,7 +899,7 @@ export class RowComp extends Component {
             } else {
                 const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
                 if (!res) {
-                    const masterDetailModuleLoaded = this.beans.context.isModuleRegistered(ModuleNames.MasterDetailModule);
+                    const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
                     if (cellRendererName==='agDetailCellRenderer' && !masterDetailModuleLoaded) {
                         console.warn(`ag-Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
                     } else {

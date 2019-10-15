@@ -17,7 +17,7 @@ import {
     IPrimaryColsPanel,
     IRowModel,
     MenuItemDef,
-    ModuleNames,
+    ModuleNames, ModuleRegistry,
     PopupService,
     PostConstruct,
     Promise,
@@ -220,7 +220,7 @@ export class EnterpriseMenu extends BeanStub {
 
     private isModuleLoaded(menuTabName: string):boolean {
         if (menuTabName===EnterpriseMenu.TAB_COLUMNS) {
-            return this.getContext().isModuleRegistered(ModuleNames.ColumnToolPanelModule);
+            return ModuleRegistry.isRegistered(ModuleNames.ColumnToolPanelModule);
         } else {
             return true;
         }

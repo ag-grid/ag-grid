@@ -27,18 +27,6 @@ export class GridHeaderDropZones extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        if (!this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule)) {
-            this.setTemplate('<div/>');
-
-            const rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
-
-            if (rowGroupPanelShow === Constants.ALWAYS || rowGroupPanelShow === Constants.ONLY_WHEN_GROUPING) {
-                console.warn('ag-Grid: grid property rowGroupPanelShow only works when row grouping module is included');
-            }
-
-            return;
-        }
-
         this.setGui(this.createNorthPanel());
 
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));

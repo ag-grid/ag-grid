@@ -16,6 +16,7 @@ import {GridApi} from "../gridApi";
 import {UserComponentFactory} from "../components/framework/userComponentFactory";
 import {GridCore} from "../gridCore";
 import {ModuleNames} from "../modules/moduleNames";
+import {ModuleRegistry} from "../modules/moduleRegistry";
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -459,7 +460,7 @@ export class FilterManager {
     private createFilterInstance(column: Column, $scope: any): Promise<IFilterComp> {
         let defaultFilter: string = 'agTextColumnFilter';
 
-        if (this.context.isModuleRegistered(ModuleNames.SetFilterModule)) {
+        if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule)) {
             defaultFilter = 'agSetColumnFilter';
         }
 

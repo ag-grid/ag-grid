@@ -20,6 +20,7 @@ import {ColumnApi} from "../../columnController/columnApi";
 import {FilterManager} from "./../filterManager";
 import {ReadOnlyFloatingFilter} from "./provided/readOnlyFloatingFilter";
 import {ModuleNames} from "../../modules/moduleNames";
+import {ModuleRegistry} from "../../modules/moduleRegistry";
 
 export class FloatingFilterWrapper extends Component {
 
@@ -192,7 +193,7 @@ export class FloatingFilterWrapper extends Component {
             // will be undefined if not in the map
             defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
         } else if (colDef.filter === true) {
-            const setFilterModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.SetFilterModule);
+            const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
             defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         }
 

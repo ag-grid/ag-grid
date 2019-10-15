@@ -37,8 +37,6 @@ export class Context {
     private contextParams: ContextParams;
     private logger: ILogger;
 
-    private registeredModules: string[] = [];
-
     private componentsMappedByName: { [key: string]: any } = {};
 
     private destroyed = false;
@@ -49,8 +47,6 @@ export class Context {
         }
 
         this.contextParams = params;
-
-        this.registeredModules = params.registeredModules;
 
         this.logger = logger;
         this.logger.log(">> creating ag-Application Context");
@@ -290,10 +286,6 @@ export class Context {
 
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
-    }
-
-    public isModuleRegistered(moduleName: ModuleNames): boolean {
-        return this.registeredModules.indexOf(moduleName) !== -1;
     }
 }
 

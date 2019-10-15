@@ -55,6 +55,7 @@ import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { IImmutableService } from "./interfaces/iImmutableService";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
+import {ModuleRegistry} from "./modules/moduleRegistry";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -201,32 +202,27 @@ export class GridApi {
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        if (!this.context.isModuleRegistered(ModuleNames.CsvExportModule)) {
-            console.warn('ag-Grid: cannot call api.getDataAsCsv as csv module not loaded');
-        } else {
+        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv')) {
             return this.csvCreator.getDataAsCsv(params);
         }
     }
 
     public exportDataAsCsv(params?: CsvExportParams): void {
-        if (!this.context.isModuleRegistered(ModuleNames.CsvExportModule)) {
-            console.warn('ag-Grid: cannot call api.exportDataAsCSv as csv module not loaded');
-        } else {
+        if (ModuleRegistry.assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv')) {
             this.csvCreator.exportDataAsCsv(params);
         }
     }
 
     public getDataAsExcel(params?: ExcelExportParams): string {
-        if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
-        if (!this.context.isModuleRegistered(ModuleNames.ExcelExportModule)) {
-            console.warn('ag-Grid: excel export module not loaded');
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) {
+            return this.excelCreator.getDataAsExcelXml(params);
         }
-        return this.excelCreator.getDataAsExcelXml(params);
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {
-        if (!this.excelCreator) { console.warn('ag-Grid: Excel export is only available in ag-Grid Enterprise'); }
-        this.excelCreator.exportDataAsExcel(params);
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportDataAsExcel')) {
+            this.excelCreator.exportDataAsExcel(params);
+        }
     }
 
     /** @deprecated */
@@ -987,25 +983,15 @@ export class GridApi {
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
-            _.doOnce(() => {
-                console.warn('ag-grid: Cannot create range chart - the Charts Module has not been included.');
-            }, 'ChartsModuleCheck');
-            return;
+        if (ModuleRegistry.assertRegistered(ModuleNames.ChartsModule, 'api.createRangeChart')) {
+            return this.chartService.createRangeChart(params);
         }
-
-        return this.chartService.createRangeChart(params);
     }
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
-            _.doOnce(() => {
-                console.warn('ag-grid: Cannot create pivot chart - the Charts Module has not been included.');
-            }, 'ChartsModuleCheck');
-            return;
+        if (ModuleRegistry.assertRegistered(ModuleNames.ChartsModule, 'api.createPivotChart')) {
+            return this.chartService.createPivotChart(params);
         }
-
-        return this.chartService.createPivotChart(params);
     }
 
     public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {

@@ -21,7 +21,7 @@ import {
     PostConstruct,
     RowNode,
     Optional,
-    IRangeController
+    IRangeController, ModuleRegistry
 } from "ag-grid-community";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuList} from "./menuList";
@@ -54,7 +54,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
-        if (_.exists(node) && this.context.isModuleRegistered(ModuleNames.ClipboardModule)) {
+        if (_.exists(node) && ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'paste', 'separator');
@@ -64,7 +64,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
             // nothing to show, perhaps tool panels???
         }
 
-        if (this.gridOptionsWrapper.isEnableCharts() && this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
+        if (this.gridOptionsWrapper.isEnableCharts() && ModuleRegistry.isRegistered(ModuleNames.ChartsModule)) {
 
             if (this.columnController.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
@@ -80,8 +80,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
         if (_.exists(node)) {
             // if user clicks a cell
-            const csvModuleMissing = !this.context.isModuleRegistered(ModuleNames.CsvExportModule);
-            const excelModuleMissing = !this.context.isModuleRegistered(ModuleNames.ExcelExportModule);
+            const csvModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.CsvExportModule);
+            const excelModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule);
             const suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport() || excelModuleMissing;
             const suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport() || csvModuleMissing;
             const onIPad = _.isUserAgentIPad();
