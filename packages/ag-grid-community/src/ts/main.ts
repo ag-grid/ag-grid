@@ -335,6 +335,7 @@ export * from "./interfaces/iChartOptions";
 // modules
 export {Module} from "./interfaces/iModule";
 export {ModuleNames} from "./modules/moduleNames";
+export {ModuleRegistry} from "./modules/moduleRegistry";
 
 //  events
 export {

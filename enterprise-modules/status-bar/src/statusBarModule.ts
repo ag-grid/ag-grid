@@ -1,4 +1,4 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {StatusBarService} from "./statusBar/statusBarService";
 import {StatusBar} from "./statusBar/statusBar";
 import {NameValueComp} from "./statusBar/providedPanels/nameValueComp";
@@ -24,4 +24,4 @@ export const StatusBarModule: Module = {
     ]
 };
 
-Grid.addModule([StatusBarModule]);
+ModuleRegistry.register(StatusBarModule);

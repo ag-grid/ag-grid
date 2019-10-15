@@ -1,4 +1,4 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {SetFilter} from "./setFilter/setFilter";
 import {SetFloatingFilterComp} from "./setFilter/setFloatingFilter";
 
@@ -11,4 +11,4 @@ export const SetFilterModule: Module = {
     ]
 };
 
-Grid.addModule([SetFilterModule]);
+ModuleRegistry.register(SetFilterModule);

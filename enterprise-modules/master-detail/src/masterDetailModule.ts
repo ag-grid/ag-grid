@@ -1,4 +1,4 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {DetailCellRenderer} from "./masterDetail/detailCellRenderer";
 
 export const MasterDetailModule: Module = {
@@ -9,4 +9,4 @@ export const MasterDetailModule: Module = {
     ]
 };
 
-Grid.addModule([MasterDetailModule]);
+ModuleRegistry.register(MasterDetailModule);

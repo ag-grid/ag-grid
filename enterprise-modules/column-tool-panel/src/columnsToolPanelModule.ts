@@ -1,4 +1,4 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {PrimaryColsHeaderPanel} from "./columnToolPanel/primaryColsHeaderPanel";
 import {PrimaryColsListPanel} from "./columnToolPanel/primaryColsListPanel";
 import {ColumnToolPanel} from "./columnToolPanel/columnToolPanel";
@@ -17,4 +17,4 @@ export const ColumnToolPanelModule: Module = {
     ]
 };
 
-Grid.addModule([ColumnToolPanelModule]);
+ModuleRegistry.register(ColumnToolPanelModule);

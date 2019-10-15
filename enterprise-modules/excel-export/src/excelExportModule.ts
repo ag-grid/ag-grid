@@ -1,8 +1,8 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {ExcelXlsxFactory} from "./excelExport/excelXlsxFactory";
 import {ExcelXmlFactory} from "./excelExport/excelXmlFactory";
 import {ExcelCreator} from "./excelExport/excelCreator";
-import {GridSerializer, ZipContainer, XmlFactory, Downloader, CsvCreator} from "@ag-community/csv-export";
+import {CsvCreator, Downloader, GridSerializer, XmlFactory, ZipContainer} from "@ag-community/csv-export";
 
 export const ExcelExportModule: Module = {
     moduleName: ModuleNames.ExcelExportModule,
@@ -14,4 +14,4 @@ export const ExcelExportModule: Module = {
         GridSerializer, ZipContainer, XmlFactory, Downloader, CsvCreator]
 };
 
-Grid.addModule([ExcelExportModule]);
+ModuleRegistry.register(ExcelExportModule);

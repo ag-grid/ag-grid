@@ -1,4 +1,4 @@
-import {Module, ModuleNames, Grid} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {ClientSideRowModel} from "./clientSideRowModel/clientSideRowModel";
 import {FilterStage} from "./clientSideRowModel/filterStage";
 import {SortStage} from "./clientSideRowModel/sortStage";
@@ -13,4 +13,4 @@ export const ClientSideRowModelModule: Module = {
     rowModels: { clientSide: ClientSideRowModel }
 };
 
-Grid.addModule([ClientSideRowModelModule]);
+ModuleRegistry.register(ClientSideRowModelModule);

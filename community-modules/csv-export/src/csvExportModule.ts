@@ -1,4 +1,4 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {CsvCreator} from "./csvExport/csvCreator";
 import {Downloader} from "./csvExport/downloader";
 import {XmlFactory} from "./csvExport/xmlFactory";
@@ -10,4 +10,4 @@ export const CsvExportModule: Module = {
     beans: [CsvCreator, Downloader, XmlFactory, GridSerializer, ZipContainer]
 };
 
-Grid.addModule([CsvExportModule]);
+ModuleRegistry.register(CsvExportModule);

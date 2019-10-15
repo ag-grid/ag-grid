@@ -1,4 +1,4 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {RichSelectCellEditor} from "./richSelect/richSelectCellEditor";
 
 export const RichSelectModule: Module = {
@@ -10,4 +10,4 @@ export const RichSelectModule: Module = {
     ]
 };
 
-Grid.addModule([RichSelectModule]);
+ModuleRegistry.register(RichSelectModule);

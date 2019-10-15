@@ -1,4 +1,4 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {FiltersToolPanelHeaderPanel} from "./filterToolPanel/filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./filterToolPanel/filtersToolPanelListPanel";
 import {FiltersToolPanel} from "./filterToolPanel/filtersToolPanel";
@@ -15,4 +15,4 @@ export const FiltersToolPanelModule: Module = {
     ]
 };
 
-Grid.addModule([FiltersToolPanelModule]);
+ModuleRegistry.register(FiltersToolPanelModule);

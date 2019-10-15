@@ -1,4 +1,4 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {ServerSideRowModel} from "./serverSideRowModel/serverSideRowModel";
 
 export const ServerSideRowModelModule: Module = {
@@ -6,4 +6,4 @@ export const ServerSideRowModelModule: Module = {
     rowModels: {'serverSide': ServerSideRowModel}
 };
 
-Grid.addModule([ServerSideRowModelModule]);
+ModuleRegistry.register(ServerSideRowModelModule);

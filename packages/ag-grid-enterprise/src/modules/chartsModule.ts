@@ -1,7 +1,6 @@
-import { Grid, Module } from "ag-grid-community";
-import { ChartService } from "../chartAdaptor/chartService";
-import { ModuleNames } from "ag-grid-community";
-import { ChartTranslator } from "../chartAdaptor/chartComp/chartTranslator";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
+import {ChartService} from "../chartAdaptor/chartService";
+import {ChartTranslator} from "../chartAdaptor/chartComp/chartTranslator";
 
 export const ChartsModule: Module = {
     moduleName: ModuleNames.ChartsModule,
@@ -10,4 +9,4 @@ export const ChartsModule: Module = {
     ]
 };
 
-Grid.addModule([ChartsModule]);
+ModuleRegistry.register(ChartsModule);

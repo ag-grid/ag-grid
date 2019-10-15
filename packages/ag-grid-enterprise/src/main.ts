@@ -1,4 +1,4 @@
-import {Grid, Module, ModuleNames} from "ag-grid-community";
+import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
 import {LicenseManager} from "./licenseManager";
 import {MD5} from "./license/md5";
 import {WatermarkComp} from "./license/watermark";
@@ -15,12 +15,4 @@ export const EnterpriseCoreModule: Module = {
     ]
 };
 
-Grid.addModule([EnterpriseCoreModule]);
-
-/*
-Grid.setEnterpriseBeans([LicenseManager, MD5]);
-
-Grid.setEnterpriseAgStackComponents([
-    {componentName: 'AgWatermark', componentClass: WatermarkComp}
-]);
-*/
+ModuleRegistry.register(EnterpriseCoreModule);

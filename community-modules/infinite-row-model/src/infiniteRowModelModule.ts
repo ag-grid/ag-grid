@@ -1,4 +1,4 @@
-import {Module, ModuleNames, Grid} from "ag-grid-community";
+import {Module, ModuleNames, Grid, ModuleRegistry} from "ag-grid-community";
 import {InfiniteRowModel} from "./infiniteRowModel/infiniteRowModel";
 
 export const InfiniteRowModelModule: Module = {
@@ -6,4 +6,4 @@ export const InfiniteRowModelModule: Module = {
     rowModels: { 'infinite': InfiniteRowModel }
 };
 
-Grid.addModule([InfiniteRowModelModule]);
+ModuleRegistry.register(InfiniteRowModelModule);
