@@ -202,9 +202,8 @@ function printFeatureRecursive($parentItem, $indent) {
     <p>
         When you do not have a license key installed then ag-Grid Enterprise will display a
         invalid key watermark. If you would like to remove this watermark
-        so it's not in the way, then please contact us to get a trial license key. You can either
-        fill out the <a href="../start-trial.php">Request Trial Key Form</a> or email
-        <a href="mailto: info@ag-grid.com">info@ag-grid.com</a>.
+        so it's not in the way, please send us an e-mail <a href="mailto: info@ag-grid.com">info@ag-grid.com</a>
+        and get a trial license key.
     </p>
 
     <h2>Support While Trialing</h2>
