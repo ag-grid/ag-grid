@@ -86,30 +86,30 @@ function enterprise_feature($name)
     include '../includes/navbar.php';
     ?>
 </header>
-
-<div id="documentation" class="new">
-    <?php if(defined('hideSideMenu')) { ?>
-            <div class="top-toolbar">
-                <div class="search-wrapper">
-                    <input type="text" class="search-input" placeholder="Search Docs"/>
-                </div>
-        </div>
-    <?php } ?>
-    <div>
-        <aside id="side-nav" style="display: <?php echo defined('hideSideMenu') ? 'none' : 'block' ?>">
-            <button id="side-nav-toggle" type="button" data-toggle="collapse" data-target="#side-nav-container"
-                    aria-controls="side-nav-container" aria-expanded="false" aria-label="Toggle navigation">
-                <span>&nbsp;</span></button>
-
-            <?php if(!defined('hideSideMenu')) { ?>
-                <div class="search-wrapper">
-                    <input type="text" class="search-input" placeholder="Search Docs"/>
-                </div>
-            <?php } ?>
-
-            <div id="side-nav-container" class="collapse">
-                <?php include 'documentation_menu.php'; ?>
+<div class="page-content">
+    <div id="documentation" class="new">
+        <?php if(defined('hideSideMenu')) { ?>
+                <div class="top-toolbar">
+                    <div class="search-wrapper">
+                        <input type="text" class="search-input" placeholder="Search Docs"/>
+                    </div>
             </div>
-        </aside>
+        <?php } ?>
+        <div>
+            <aside id="side-nav" style="display: <?php echo defined('hideSideMenu') ? 'none' : 'block' ?>">
+                <button id="side-nav-toggle" type="button" data-toggle="collapse" data-target="#side-nav-container"
+                        aria-controls="side-nav-container" aria-expanded="false" aria-label="Toggle navigation">
+                    <span>&nbsp;</span></button>
 
-        <section id="content" class="<?php echo defined('skipInPageNav') ? 'skip-in-page-nav' : '' ?>">
+                <?php if(!defined('hideSideMenu')) { ?>
+                    <div class="search-wrapper">
+                        <input type="text" class="search-input" placeholder="Search Docs"/>
+                    </div>
+                <?php } ?>
+
+                <div id="side-nav-container" class="collapse">
+                    <?php include 'documentation_menu.php'; ?>
+                </div>
+            </aside>
+
+            <section id="content" class="<?php echo defined('skipInPageNav') ? 'skip-in-page-nav' : '' ?>">

@@ -91,25 +91,6 @@ $(function() {
         })();
     }
 
-    $(window).on("scroll", function(e) {
-        if (!breakpoints.length) {
-            return;
-        }
-
-        var scrollTop = $(window).scrollTop();
-        var i = 0;
-
-        while (i < breakpoints.length && breakpoints[i].heading.offset().top < scrollTop) {
-            i++;
-        }
-
-        docNav.find("a").removeClass("current-section");
-
-        if (i == 0) {
-            i = 1;
-        }
-        breakpoints[i - 1].link.find("> a").addClass("current-section");
-    });
     var imgs = document.querySelectorAll("#feature-roadshow img, .lazy-load")
     new lazyload((imgs && imgs.length) ? imgs : [], {});
 });
