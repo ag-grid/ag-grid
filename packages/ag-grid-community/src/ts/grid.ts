@@ -96,8 +96,8 @@ export interface GridParams {
     // this allows the base frameworks (React, NG2, etc) to provide alternative cellRenderers and cellEditors
     frameworkOverrides?: IFrameworkOverrides;
 
-    //bean instances to add to the context
-    seedBeanInstances?: {[key:string]:any};
+    // bean instances to add to the context
+    providedBeanInstances?: {[key:string]:any};
 }
 
 export class Grid {
@@ -125,17 +125,16 @@ export class Grid {
 
         const registeredModules = ModuleRegistry.getRegisteredModules();
 
-        const beans = this.createBeansList(registeredModules);
+        const beanClasses = this.createBeansList(registeredModules);
         const agStackComponents = this.createAgStackComponentsList(registeredModules);
-        const externalBeans = this.createExternalBeans(eGridDiv, params);
+        const providedBeanInstances = this.createProvidedBeans(eGridDiv, params);
 
-        if (!beans) { return; } // happens when no row model found
+        if (!beanClasses) { return; } // happens when no row model found
 
         const contextParams: ContextParams = {
-            externalBeans: externalBeans,
-            beans: beans,
+            providedBeanInstances: providedBeanInstances,
+            beanClasses: beanClasses,
             components: agStackComponents,
-            registeredModules: registeredModules.map(module => module.moduleName),
             debug: debug
         };
 
@@ -166,7 +165,7 @@ export class Grid {
         } );
     }
 
-    private createExternalBeans(eGridDiv: HTMLElement, params: GridParams): any {
+    private createProvidedBeans(eGridDiv: HTMLElement, params: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (_.missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
@@ -181,8 +180,8 @@ export class Grid {
             globalEventListener: params ? params.globalEventListener : null,
             frameworkOverrides: frameworkOverrides
         };
-        if (params && params.seedBeanInstances) {
-            _.assign(seed, params.seedBeanInstances);
+        if (params && params.providedBeanInstances) {
+            _.assign(seed, params.providedBeanInstances);
         }
 
         return seed;

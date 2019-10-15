@@ -13,10 +13,9 @@ import { ModuleNames } from "../modules/moduleNames";
 // each bean is responsible for initialising itself, taking items from the gridOptionsWrapper
 
 export interface ContextParams {
-    externalBeans: any;
-    beans: any[];
+    providedBeanInstances: any;
+    beanClasses: any[];
     components: ComponentMeta[];
-    registeredModules: string[];
     debug: boolean;
 }
 
@@ -42,7 +41,7 @@ export class Context {
     private destroyed = false;
 
     public constructor(params: ContextParams, logger: ILogger) {
-        if (!params || !params.beans) {
+        if (!params || !params.beanClasses) {
             return;
         }
 
@@ -122,7 +121,7 @@ export class Context {
 
     private createBeans(): void {
         // register all normal beans
-        this.contextParams.beans.forEach(this.createBeanWrapper.bind(this));
+        this.contextParams.beanClasses.forEach(this.createBeanWrapper.bind(this));
         // register override beans, these will overwrite beans above of same name
 
         // instantiate all beans - overridden beans will be left out
@@ -244,8 +243,8 @@ export class Context {
     private lookupBeanInstance(wiringBean: string, beanName: string, optional = false): any {
         if (beanName === "context") {
             return this;
-        } else if (this.contextParams.externalBeans && this.contextParams.externalBeans.hasOwnProperty(beanName)) {
-            return this.contextParams.externalBeans[beanName];
+        } else if (this.contextParams.providedBeanInstances && this.contextParams.providedBeanInstances.hasOwnProperty(beanName)) {
+            return this.contextParams.providedBeanInstances[beanName];
         } else {
             const beanEntry = this.beanWrappers[beanName];
             if (beanEntry) {
@@ -282,7 +281,7 @@ export class Context {
         const beanInstances = this.getBeanInstances();
         this.callLifeCycleMethods(beanInstances, 'preDestroyMethods');
 
-        this.contextParams.externalBeans = null;
+        this.contextParams.providedBeanInstances = null;
 
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");

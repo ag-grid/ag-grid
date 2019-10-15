@@ -98,7 +98,7 @@ export class AgGridVue extends Vue {
 
         const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
-            seedBeanInstances: {
+            providedBeanInstances: {
                 frameworkComponentWrapper,
             },
         };

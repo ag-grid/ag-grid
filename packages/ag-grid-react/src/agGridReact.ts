@@ -69,7 +69,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     componentDidMount() {
         const gridParams = {
-            seedBeanInstances: {
+            providedBeanInstances: {
                 agGridReact: this,
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this)
             }

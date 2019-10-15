@@ -79,7 +79,7 @@ export class AgGridAngular implements AfterViewInit {
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
             frameworkOverrides: this.angularFrameworkOverrides,
-            seedBeanInstances: {
+            providedBeanInstances: {
                 frameworkComponentWrapper: this.frameworkComponentWrapper
             }
         };
