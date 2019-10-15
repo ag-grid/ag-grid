@@ -14,6 +14,7 @@ import {
     WrapableInterface,
     Module,
     ModuleNames,
+    ModuleRegistry
 } from "ag-grid-community";
 import {AgGridColumn} from "./agGridColumn";
 import {ReactComponent} from "./reactComponent";
@@ -272,4 +273,4 @@ const reactModule: Module = {
     beans: [ReactFrameworkComponentWrapper]
 };
 
-Grid.addModule([reactModule]);
+ModuleRegistry.register(reactModule);

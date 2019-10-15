@@ -40,15 +40,15 @@
     ],
     "homepage": "http://www.ag-grid.com/",
     "dependencies": {
-        "@ag-enterprise/rich-select": "^21.2.2",
-        "ag-grid-community": "^21.2.2",
-        "gulp-typescript": "^5.0.1"
+        "@ag-enterprise/rich-select": "~21.2.2",
+        "ag-grid-community": "~21.2.2"
     },
     "devDependencies": {
         "@types/jest": "^24.0.18",
         "gulp": "^4.0.2",
         "jest": "^24.9.0",
         "ts-jest": "^24.1.0",
-        "typescript": "^3.6.3"
+        "typescript": "^3.6.3",
+        "gulp-typescript": "^5.0.1"
     }
 }

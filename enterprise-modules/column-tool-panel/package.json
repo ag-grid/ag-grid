@@ -39,13 +39,13 @@
     ],
     "homepage": "http://www.ag-grid.com/",
     "dependencies": {
-        "@ag-enterprise/row-grouping": "^21.2.2",
-        "@ag-enterprise/side-bar": "^21.2.2",
-        "ag-grid-community": "^21.2.2",
-        "gulp-typescript": "^5.0.1"
+        "@ag-enterprise/row-grouping": "~21.2.2",
+        "@ag-enterprise/side-bar": "~21.2.2",
+        "ag-grid-community": "~21.2.2"
     },
     "devDependencies": {
         "gulp": "^4.0.2",
-        "typescript": "^3.6.3"
+        "typescript": "^3.6.3",
+        "gulp-typescript": "^5.0.1"
     }
 }

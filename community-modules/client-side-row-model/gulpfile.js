@@ -16,7 +16,7 @@ const buildEs5 = () => {
     const tsResult = tsProject.src()
         .pipe(tsProject());
 
-    return tsResult.js.pipe(gulp.dest('dist/es5'));
+    return tsResult.js.pipe(gulp.dest('dist/cjs'));
 };
 
 const watch = () => {
