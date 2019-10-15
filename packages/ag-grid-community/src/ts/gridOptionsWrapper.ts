@@ -1029,13 +1029,11 @@ export class GridOptionsWrapper {
     public isTreeData(): boolean {
         const usingTreeData = isTrue(this.gridOptions.treeData);
 
-        _.doOnce(() => {
-            if (usingTreeData && !ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule)) {
-                console.warn('ag-grid: TreeData is an Enterprise feature of ag-Grid.');
-            }
-        }, 'TreeDataEnterpriseCheck');
-
-        return usingTreeData;
+        if (usingTreeData) {
+            return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
+        } else {
+            return false;
+        }
     }
 
     public isValueCache(): boolean {
