@@ -5,8 +5,10 @@ import {
     Column,
     ColumnController,
     Component,
+    Events,
     EventService,
     FilterManager,
+    FilterOpenedEvent,
     GridApi,
     GridOptionsWrapper,
     OriginalColumnGroup,
@@ -117,6 +119,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private addFilterChangedListeners() {
+
         if (this.columnGroup instanceof OriginalColumnGroup) {
             const group = this.columnGroup as OriginalColumnGroup;
             const anyChildFiltersActive = () => group.getLeafColumns().some(col => col.isFilterActive());
@@ -127,10 +130,24 @@ export class ToolPanelFilterGroupComp extends Component {
             });
         } else {
             const column = this.columnGroup as Column;
+
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+
             this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
                 _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', column.isFilterActive());
             });
         }
+    }
+
+    private onFilterOpened(event: FilterOpenedEvent): void {
+        // when a filter is opened elsewhere, i.e. column menu we close the filter comp so we also need to collapse
+        // the column group. This approach means we don't need to try and sync filter models on the same column.
+
+        if (event.source !== 'COLUMN_MENU') { return; }
+        if (event.column !== this.columnGroup) { return; }
+        if (!this.isExpanded()) { return; }
+
+        this.collapse();
     }
 
     public expand() {
