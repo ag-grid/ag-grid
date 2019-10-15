@@ -7,7 +7,7 @@
   "scripts": {
     "build": "gulp",
     "umd": "rollup -c",
-    "test": "jest && npm run cypress",
+    "test": "gulp link-umd-e2e && jest && npm run cypress",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "cypress:open": "cypress open",

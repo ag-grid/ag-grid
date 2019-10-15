@@ -13,6 +13,9 @@ const rollup = require('rollup-stream');
 const source = require('vinyl-source-stream');
 const clean = require('gulp-clean');
 const link = require('lnk').sync;
+const os = require('os');
+
+const WINDOWS = /^win/.test(os.platform());
 
 const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
@@ -74,16 +77,22 @@ const watch = () => {
 };
 
 const linkUmdForE2E = (done) => {
+    let linkType = 'symbolic';
+    if (WINDOWS) {
+        console.log('creating window links...');
+        linkType = 'junction';
+    }
+
     if(!fs.existsSync('./cypress/integration/ag-grid-react.min.js')) {
         link('./umd/ag-grid-react.min.js', './cypress/integration/',{
             force: true,
-            type: 'symbolic'
+            type: linkType
         })
     }
     if(!fs.existsSync('./cypress/integration/ag-grid-community.min.js')) {
         link('../ag-grid-community/dist/ag-grid-community.min.js', './cypress/integration/',{
             force: true,
-            type: 'symbolic'
+            type: linkType
         })
     }
     done();
@@ -95,4 +104,4 @@ gulp.task('link-umd-e2e', linkUmdForE2E);
 gulp.task('clean-lib', cleanLib);
 gulp.task('tsc', tscTask);
 gulp.task('watch', series('tsc', watch));
-gulp.task('default', series('clean-lib', 'tsc', "clean-umd", "umd", "link-umd-e2e"));
+gulp.task('default', series('clean-lib', 'tsc', "clean-umd", "umd"));
