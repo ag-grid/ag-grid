@@ -1236,6 +1236,9 @@ export class CellComp extends Component {
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)
     // to allow the text editor full access to the entire cell
     private setInlineEditingClass(): void {
+        if (!this.isAlive()) {
+            return;
+        }
 
         // ag-cell-inline-editing - appears when user is inline editing
         // ag-cell-not-inline-editing - appears when user is no inline editing
@@ -1606,9 +1609,8 @@ export class CellComp extends Component {
     public destroy(): void {
         super.destroy();
 
-        if (this.cellEditor && this.cellEditor.destroy) {
-            this.cellEditor.destroy();
-            this.cellEditor = null;
+        if (this.editingCell) {
+            this.stopEditing();
         }
 
         if (this.cellRenderer && this.cellRenderer.destroy) {
