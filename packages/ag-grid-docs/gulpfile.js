@@ -15,6 +15,7 @@ const merge = require('merge-stream');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const PurgecssPlugin = require('purgecss-webpack-plugin');
+const getAllModules =require("./utils").getAllModules;
 // const debug = require('gulp-debug'); // don't remove this Gil
 
 const generateExamples = require('./example-generator');
@@ -139,6 +140,9 @@ const replaceAgReferencesWithCdnLinks = () => {
         .pipe(gulp.dest('./dist'));
 };
 
+
+const {communityModules, enterpriseModules} = getAllModules();
+
 gulp.task('generate-examples-release', (done) => {
     generateExamples.bind(
         null,
@@ -147,7 +151,9 @@ gulp.task('generate-examples-release', (done) => {
             done();
         },
         undefined,
-        false
+        false,
+        communityModules,
+        enterpriseModules
     )();
 });
 gulp.task('generate-examples-dev', (done) => {
@@ -158,7 +164,9 @@ gulp.task('generate-examples-dev', (done) => {
             done();
         },
         undefined,
-        true
+        true,
+        communityModules,
+        enterpriseModules
     )();
 });
 gulp.task('build-packaged-examples', (done) => buildPackagedExamples(() => {

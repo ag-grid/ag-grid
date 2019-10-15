@@ -12,6 +12,7 @@ const hotMiddleware = require('webpack-hot-middleware');
 const chokidar = require('chokidar');
 const generateExamples = require('./example-generator');
 const buildPackagedExamples = require('./packaged-example-builder');
+const getAllModules =require("./utils").getAllModules;
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
@@ -285,25 +286,6 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
         }
     });
     fs.writeFileSync(communityFilename, newCommunityLines.concat(communityEntries).join('\n'), 'UTF-8');
-}
-
-function getAllModules() {
-    const agGridCommunityModules = glob.sync("../ag-grid-community/*Module.js")
-        .map(module => module.replace('../ag-grid-community/', ''))
-        .map(module => module.replace('.js', ''));
-
-    const agGridEnterpriseModules = glob.sync("../ag-grid-enterprise/*Module.js")
-        .map(module => module.replace('../ag-grid-enterprise/', ''))
-        .map(module => module.replace('.js', ''));
-
-    const communityModules = glob.sync("../../community-modules/*")
-        .filter(module => module.indexOf('ag-grid') === -1)
-        .map(module => module.replace('../../community-modules/', ''));
-
-    const enterpriseModules = glob.sync("../../enterprise-modules/*")
-        .map(module => module.replace('../../enterprise-modules/', ''));
-
-    return {agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules};
 }
 
 function updateSystemJsMappings(utilFileLines,
