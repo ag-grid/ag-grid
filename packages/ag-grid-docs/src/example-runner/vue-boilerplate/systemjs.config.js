@@ -72,6 +72,10 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
+           '@ag-enterprise/charts': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
            '@ag-enterprise/clipboard': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
@@ -85,6 +89,10 @@
                 defaultExtension: 'js'
             },
            '@ag-enterprise/filter-tool-panel': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-enterprise/grid-charts': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
