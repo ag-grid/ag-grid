@@ -120,9 +120,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         _.set(this.chartOptions, expression, value);
 
         const mappings: any = {
-            "legend.box.strokeWidth": "legend.markerStrokeWidth",
-            "legend.box.size": "legend.markerSize",
-            "legend.box.padding": "legend.markerPadding",
+            "legend.marker.strokeWidth": "legend.markerStrokeWidth",
+            "legend.marker.size": "legend.markerSize",
+            "legend.marker.padding": "legend.markerPadding",
             "legend.item.paddingX": "legend.itemPaddingX",
             "legend.item.paddingY": "legend.itemPaddingY",
         };
@@ -300,7 +300,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                     paddingX: 16,
                     paddingY: 8,
                 },
-                box: {
+                marker: {
                     padding: 4,
                     size: 14,
                     strokeWidth: 1,

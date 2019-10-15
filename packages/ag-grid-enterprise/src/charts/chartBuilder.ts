@@ -482,8 +482,9 @@ export class ChartBuilder {
         ChartBuilder.initLabelOptions(legend, options);
 
         this.setValueIfExists(legend, "enabled", options.enabled);
-        this.setValueIfExists(legend, "markerStrokeWidth", options.box && options.box.strokeWidth);
-        this.setValueIfExists(legend, "markerSize", options.box && options.box.size);
+        this.setValueIfExists(legend, "markerStrokeWidth", options.marker && options.marker.strokeWidth);
+        this.setValueIfExists(legend, "markerSize", options.marker && options.marker.size);
+        this.setValueIfExists(legend, "markerPadding", options.marker && options.marker.padding);
         this.setValueIfExists(legend, "itemPaddingX", options.item && options.item.paddingX);
         this.setValueIfExists(legend, "itemPaddingY", options.item && options.item.paddingY);
     }

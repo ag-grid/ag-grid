@@ -17,7 +17,7 @@ import { ChartProxy } from "../../../chartProxies/chartProxy";
 export class LegendPanel extends Component {
 
     public static TEMPLATE =
-        `<div>  
+        `<div>
             <ag-group-component ref="legendGroup">
                 <ag-select ref="legendPositionSelect"></ag-select>
                 <ag-slider ref="legendPaddingSlider"></ag-slider>
@@ -109,9 +109,9 @@ export class LegendPanel extends Component {
                 .onValueChange(newValue => this.chartProxy.setChartOption(`legend.${expression}`, newValue));
         };
 
-        initSlider("box.size", "markerSize", this.markerSizeSlider, 40);
-        initSlider("box.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
-        initSlider("box.padding", "markerPadding", this.markerPaddingSlider, 200);
+        initSlider("marker.size", "markerSize", this.markerSizeSlider, 40);
+        initSlider("marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
+        initSlider("marker.padding", "markerPadding", this.markerPaddingSlider, 200);
         initSlider("item.paddingX", "itemPaddingX", this.itemPaddingXSlider, 50);
         initSlider("item.paddingY", "itemPaddingY", this.itemPaddingYSlider, 50);
     }

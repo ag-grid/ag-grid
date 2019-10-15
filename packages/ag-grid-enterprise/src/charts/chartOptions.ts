@@ -55,13 +55,13 @@ export interface LegendOptions {
     position?: LegendPosition;
     padding?: number;
     label?: FontOptions;
-    box?: BoxOptions;
+    marker?: LegendMarkerOptions;
     item?: ItemOptions;
 }
 
 export declare type LegendPosition = "top" | "right" | "bottom" | "left";
 
-export interface BoxOptions {
+export interface LegendMarkerOptions {
     size?: number;
     padding?: number;
     strokeWidth?: number;
