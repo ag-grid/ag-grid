@@ -143,7 +143,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         new Grid(this.eDetailGrid, this.detailGridOptions, {
             $scope: params.$scope,
             $compile: params.$compile,
-            seedBeanInstances: {
+            providedBeanInstances: {
                 // a temporary fix for AG-1574
                 // AG-1715 raised to do a wider ranging refactor to improve this
                 agGridReact: params.agGridReact,
