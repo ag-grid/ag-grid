@@ -235,7 +235,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
 }
 
 export interface ScatterMarkerOptions extends MarkerOptions {
-    minRequiredSize?: number;
+    minSize?: number;
 }
 
 export interface ScatterSeriesFieldOptions {
