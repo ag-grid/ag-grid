@@ -1,15 +1,15 @@
 <?php 
-$navKey = "about";
+$navKey = "privacy";
 include_once 'includes/html-helpers.php';
-gtm_data_layer('about');
+gtm_data_layer('privacy');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <?php
-meta_and_links("Privacy Policy", "About ag-Grid", "We take your privacy very seiously at ag-Grid. This page outlines our privacy policy which we have updated in light of GDPR.", true);
+meta_and_links("Privacy Policy", "About ag-Grid", "We take your privacy very seriously at ag-Grid. This page outlines our privacy policy which we have updated in light of GDPR.", true);
 ?>
-<title>Privacy Policy</title>
+<title>ag-Grid: Privacy Policy</title>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
 

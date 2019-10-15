@@ -1,7 +1,7 @@
 <?php 
-$navKey = "about";
+$navKey = "cookies";
 include_once 'includes/html-helpers.php';
-gtm_data_layer('about');
+gtm_data_layer('cookies');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +10,7 @@ gtm_data_layer('about');
 meta_and_links("Cookies Policy", "About ag-Grid", "This page outlines our policy in relation to
   the cookies that we collect on our website.", true);
 ?>
-<title>Cookie Policy</title>
+<title>ag-Grid: Cookie Policy</title>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
 
