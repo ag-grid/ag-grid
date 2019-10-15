@@ -44,26 +44,26 @@ var gridDiv;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
-    {country: "Ireland", continent: "Europe", language: "English"},
-    {country: "Spain", continent: "Europe", language: "Spanish"},
-    {country: "United Kingdom", continent: "Europe", language: "English"},
-    {country: "France", continent: "Europe", language: "French"},
-    {country: "Germany", continent: "Europe", language: "German"},
-    {country: "Luxembourg", continent: "Europe", language: "French"},
-    {country: "Sweden", continent: "Europe", language: "Swedish"},
-    {country: "Norway", continent: "Europe", language: "Norwegian"},
-    {country: "Italy", continent: "Europe", language: "Italian"},
-    {country: "Greece", continent: "Europe", language: "Greek"},
-    {country: "Iceland", continent: "Europe", language: "Icelandic"},
-    {country: "Portugal", continent: "Europe", language: "Portuguese"},
-    {country: "Malta", continent: "Europe", language: "Maltese"},
-    {country: "Brazil", continent: "South America", language: "Portuguese"},
-    {country: "Argentina", continent: "South America", language: "Spanish"},
-    {country: "Colombia", continent: "South America", language: "Spanish"},
-    {country: "Peru", continent: "South America", language: "Spanish"},
-    {country: "Venezuela", continent: "South America", language: "Spanish"},
-    {country: "Uruguay", continent: "South America", language: "Spanish"},
-    {country: "Belgium", continent: "Europe", language: "French"}
+    { country: "Ireland", continent: "Europe", language: "English" },
+    { country: "Spain", continent: "Europe", language: "Spanish" },
+    { country: "United Kingdom", continent: "Europe", language: "English" },
+    { country: "France", continent: "Europe", language: "French" },
+    { country: "Germany", continent: "Europe", language: "German" },
+    { country: "Luxembourg", continent: "Europe", language: "French" },
+    { country: "Sweden", continent: "Europe", language: "Swedish" },
+    { country: "Norway", continent: "Europe", language: "Norwegian" },
+    { country: "Italy", continent: "Europe", language: "Italian" },
+    { country: "Greece", continent: "Europe", language: "Greek" },
+    { country: "Iceland", continent: "Europe", language: "Icelandic" },
+    { country: "Portugal", continent: "Europe", language: "Portuguese" },
+    { country: "Malta", continent: "Europe", language: "Maltese" },
+    { country: "Brazil", continent: "South America", language: "Portuguese" },
+    { country: "Argentina", continent: "South America", language: "Spanish" },
+    { country: "Colombia", continent: "South America", language: "Spanish" },
+    { country: "Peru", continent: "South America", language: "Spanish" },
+    { country: "Venezuela", continent: "South America", language: "Spanish" },
+    { country: "Uruguay", continent: "South America", language: "Spanish" },
+    { country: "Belgium", continent: "Europe", language: "French" }
 ];
 
 var games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
@@ -224,7 +224,7 @@ var gridOptions = {
     enableFillHandle: false,
     suppressClearOnFillReduction: false,
 
-    rowSelection:  'multiple', // one of ['single','multiple'], leave blank for no selection
+    rowSelection: 'multiple', // one of ['single','multiple'], leave blank for no selection
     rowDeselection: true,
     quickFilterText: null,
     groupSelectsChildren: true, // one of [true, false]
@@ -314,9 +314,9 @@ var gridOptions = {
             return 0;
         }
     },
-    processCellFromClipboard: function(params) {
+    processCellFromClipboard: function (params) {
         var colIdUpperCase = params.column.getId().toUpperCase();
-        var monthsUpperCase = months.map( function(month) { return month.toUpperCase(); });
+        var monthsUpperCase = months.map(function (month) { return month.toUpperCase(); });
         var isMonth = monthsUpperCase.indexOf(colIdUpperCase) >= 0;
 
         if (isMonth) {
@@ -402,22 +402,22 @@ var gridOptions = {
     onRangeSelectionChanged: function (event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-    processChartOptions: function(params) {
+    processChartOptions: function (params) {
         var type = params.type;
         var options = params.options;
 
-        if (params.type === 'pie' || params.type === 'doughnut')  {
-            options.seriesDefaults.tooltipRenderer = function (params) {
+        if (params.type === 'pie' || params.type === 'doughnut') {
+            options.seriesDefaults.tooltip.renderer = function (params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return title + '<div class="content">' + '$' + value + '</div>';
             };
         } else {
             var isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
             var isBar = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
 
-            var standardiseNumber = function(value) {
+            var standardiseNumber = function (value) {
                 if (isNaN(value)) { return value; }
                 if (isNormalized) { return value + '%'; }
 
@@ -433,43 +433,45 @@ var gridOptions = {
                 return value < 0 ? '-' + standardised : standardised;
             }
 
-            options[isBar ? "xAxis" : "yAxis"].labelFormatter = function(params) {
+            options[isBar ? "xAxis" : "yAxis"].label.formatter = function (params) {
                 return standardiseNumber(params.value);
             };
 
             if (type === 'scatter' || type === 'bubble') {
-                options.xAxis.labelFormatter = function(params) {
+                options.xAxis.label.formatter = function (params) {
                     return standardiseNumber(params.value);
                 };
 
-                options.seriesDefaults.tooltipRenderer = function (params) {
-                    var formatCurrency = function(value) {
+                options.seriesDefaults.tooltip.renderer = function (params) {
+                    var formatCurrency = function (value) {
                         return '$' + String(value).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                     }
 
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    var label = params.labelField ? params.datum[params.labelField] + '<br>' : '';
-                    var xValueStr = params.xFieldName + ': ' + formatCurrency(params.datum[params.xField]);
-                    var yValueStr = params.yFieldName + ': ' + formatCurrency(params.datum[params.yField]);
-                    var radiusValueStr = '';
-                    if (type === 'bubble' && params.radiusField) {
-                        radiusValueStr = '<br>' + params.radiusFieldName + ': ' + formatCurrency(params.datum[params.radiusField]);
+                    var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
+                    var xValue = params.xName + ': ' + formatCurrency(params.datum[params.xKey]);
+                    var yValue = params.yName + ': ' + formatCurrency(params.datum[params.yKey]);
+                    var size = '';
+                    if (type === 'bubble' && params.sizeKey) {
+                        size = '<br>' + params.sizeName + ': ' + formatCurrency(params.datum[params.sizeKey]);
                     }
-                    return title + '<div class="content">' + label + xValueStr + '<br>' + yValueStr + radiusValueStr + '</div>';
+                    return title + '<div class="content">' + label + xValue + '<br>' + yValue + size + '</div>';
                 };
             } else {
-                options.seriesDefaults.tooltipRenderer = function (params) {
+                options.seriesDefaults.tooltip.renderer = function (params) {
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                     return title + '<div class="content">' + '$' + value + '</div>';
                 };
             }
 
-            options.seriesDefaults.labelFormatter = function (params) {
-                return standardiseNumber(params.value);
-            };
+            if (options.seriesDefaults.label) {
+                options.seriesDefaults.label.formatter = function (params) {
+                    return standardiseNumber(params.value);
+                };
+            }
         }
 
         return options;
@@ -485,7 +487,7 @@ var gridOptions = {
         {
             id: 'alphabet',
             alignment: {
-                vertical:'Center'
+                vertical: 'Center'
             }
         },
         {
@@ -739,7 +741,7 @@ var desktopDefaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 cellClass: 'booleanType',
-                cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                cellRenderer: 'booleanCellRenderer', cellStyle: { "text-align": "center" }, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
@@ -774,7 +776,7 @@ var desktopDefaultCols = [
             {
                 colId: 'extraInfo1',
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false, filter: false,
-                sortable: false, suppressMenu: true, cellStyle: {"text-align": "right"},
+                sortable: false, suppressMenu: true, cellStyle: { "text-align": "right" },
                 cellRenderer: function () {
                     return 'Abra...';
                 }
@@ -782,7 +784,7 @@ var desktopDefaultCols = [
             {
                 colId: 'extraInfo2',
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false, filter: false,
-                sortable: false, suppressMenu: true, cellStyle: {"text-align": "left"},
+                sortable: false, suppressMenu: true, cellStyle: { "text-align": "left" },
                 cellRenderer: function () {
                     return '...cadabra!';
                 }
@@ -797,7 +799,7 @@ var desktopDefaultCols = [
         enablePivot: true,
         enableValue: true,
         chartDataType: 'category',
-        filterParams: {cellRenderer: 'ratingFilterRenderer'}
+        filterParams: { cellRenderer: 'ratingFilterRenderer' }
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
@@ -965,7 +967,7 @@ function createCols() {
 
     for (var col = defaultColCount; col < colCount; col++) {
         var colName = colNames[col % colNames.length];
-        var colDef = {headerName: colName, field: "col" + col, width: 200, editable: true};
+        var colDef = { headerName: colName, field: "col" + col, width: 200, editable: true };
         columns.push(colDef);
     }
 
@@ -1238,7 +1240,7 @@ PersonFloatingFilterComponent.prototype.init = function (params) {
     input.className = 'ag-floating-filter-input';
     eGui.appendChild(input);
     this.changeEventListener = function () {
-        params.parentFilterInstance(function(instance) {
+        params.parentFilterInstance(function (instance) {
             instance.setFromFloatingFilter(input.value);
         });
     };
@@ -1344,7 +1346,7 @@ WinningsFilter.prototype.setModel = function () {
 
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
-        return {"color": "red", "font-weight": "bold"};
+        return { "color": "red", "font-weight": "bold" };
     } else {
         return {};
     }
