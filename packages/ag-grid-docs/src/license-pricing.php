@@ -509,7 +509,7 @@ gtm_data_layer('community-enterprise');
                         &dollar;750
                     </div>
                     <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
+                        <a class="btn" style="color: #009ede;;border-color: #009ede;" href="..">BUY</a>
                     </div>
                 </div>
                 <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center; margin-top: 1rem">
@@ -520,71 +520,23 @@ gtm_data_layer('community-enterprise');
                         &dollar;1,200
                     </div>
                     <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
+                        <a class="btn" style="color: #009d70;border-color: #009d70;" href="..">BUY</a>
                     </div>
                 </div>
-                <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa; margin-top: 1rem">
-                    <a class="btn" style="color: turquoise;border-color: turquoise; width: 100%" href="..">CONTACT US</a>
+                <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center; margin-top: 1rem">
+                    <div style="flex: 1 1 auto; margin: 1rem">
+                        <img src="./images/pricing/Deployment%20Add-on.svg" style="min-width: 55px; max-width: 55px;">
+                    </div>
+                    <div style="flex: 1 1 auto;">
+                        &dollar;750
+                    </div>
+                    <div style="flex: 1 1 auto; margin: 1rem">
+                        <a class="btn" style="color: #fbad18;border-color: #fbad18;" href="..">BUY</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- The Order Form Modal -->
-    <!--<div class="modal fade orderForm-applicationDeveloper" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">-->
-    <!--    <div class="modal-dialog modal-lg" role="document">-->
-    <!--        <div class="modal-content">-->
-    <!--            <div class="modal-header">-->
-    <!--                <h4 class="modal-title">Order Enquiry</h4>-->
-    <!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-    <!--                    <span aria-hidden="true">&times;</span>-->
-    <!--                </button>-->
-    <!--            </div>-->
-    <!--            <div class="modal-body">-->
-    <!--                --><?php
-    //                $formKey = "applicationDeveloper";
-    //                include("includes/orderForm.php"); ?>
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
-    <!--</div>-->
-
-    <!-- The Order Form Modal -->
-    <!--<div class="modal fade orderForm-siteDeveloper" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">-->
-    <!--    <div class="modal-dialog modal-lg" role="document">-->
-    <!--        <div class="modal-content">-->
-    <!--            <div class="modal-header">-->
-    <!--                <h4 class="modal-title">Order Enquiry</h4>-->
-    <!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-    <!--                    <span aria-hidden="true">&times;</span>-->
-    <!--                </button>-->
-    <!--            </div>-->
-    <!--            <div class="modal-body">-->
-    <!--                --><?php
-    //                $formKey = "siteDeveloper";
-    //                include("includes/orderForm.php"); ?>
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
-    <!--</div>-->
-    <!-- The Order Form Modal -->
-    <!--<div class="modal fade orderForm-saasAndOEM" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">-->
-    <!--    <div class="modal-dialog modal-lg" role="document">-->
-    <!--        <div class="modal-content">-->
-    <!--            <div class="modal-header">-->
-    <!--                <h4 class="modal-title">Order Enquiry</h4>-->
-    <!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-    <!--                    <span aria-hidden="true">&times;</span>-->
-    <!--                </button>-->
-    <!--            </div>-->
-    <!--            <div class="modal-body">-->
-    <!--                --><?php
-    //                $formKey = "saasAndOEM";
-    //                include("includes/orderForm.php"); ?>
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
-    <!--</div>-->
     <?php include_once("./includes/footer.php"); ?>
 </div>
 <?php include_once("./includes/analytics.php"); ?>
@@ -614,7 +566,7 @@ gtm_data_layer('community-enterprise');
         return viewport;
     }
 
-    var win = jQuery(window);
+    var win = jQuery('.page-content');
 
     function trackIfInViewPort(element, leeway, callback) {
         function comparePosition() {
@@ -626,7 +578,7 @@ gtm_data_layer('community-enterprise');
         }
 
         comparePosition();
-        window.addEventListener('scroll', comparePosition);
+        win[0].addEventListener('scroll', comparePosition);
     }
 
     function positionAndToggleSideBar(inViewPort) {
