@@ -70,7 +70,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     componentDidMount() {
         const gridParams = {
             seedBeanInstances: {
-                agGridReact: this
+                agGridReact: this,
+                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this)
             }
         };
 
@@ -259,18 +260,16 @@ function addProperties(listOfProps: string[], propType: any) {
     });
 }
 
-@Bean("frameworkComponentWrapper")
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
-    @Autowired("agGridReact") private agGridReact!: AgGridReact;
+
+    private readonly agGridReact!: AgGridReact;
+
+    constructor(agGridReact: AgGridReact) {
+        super();
+        this.agGridReact = agGridReact;
+    }
 
     createWrapper(UserReactComponent: { new(): any }): WrapableInterface {
         return new ReactComponent(UserReactComponent, this.agGridReact);
     }
 }
-
-const reactModule: Module = {
-    moduleName: ModuleNames.ReactSupport,
-    beans: [ReactFrameworkComponentWrapper]
-};
-
-ModuleRegistry.register(reactModule);

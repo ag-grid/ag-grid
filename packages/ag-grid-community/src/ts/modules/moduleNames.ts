@@ -18,8 +18,4 @@ export enum ModuleNames {
     MasterDetailModule = "masterDetailModule",
     RichSelectModule = "richSelectModule",
     EnterpriseCoreModule = "enterpriseCoreModule",
-
-    // we have React module, but not the other frameworks, as React adds the bean ReactFrameworkComponentWrapper,
-    // whereas the other frameworks provide such been as a seed bean
-    ReactSupport = "reactSupport"
 }
