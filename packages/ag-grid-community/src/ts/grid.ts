@@ -82,6 +82,7 @@ import {CellPositionUtils} from "./entities/cellPosition";
 import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
 import {IComponent} from "./interfaces/iComponent";
 import {ModuleRegistry} from "./modules/moduleRegistry";
+import {ModuleNames} from "./modules/moduleNames";
 
 export interface GridParams {
     // used by Web Components
@@ -122,13 +123,11 @@ export class Grid {
 
         this.gridOptions = gridOptions;
 
-        const enterprise = ModuleRegistry.isEnterprise();
-
         const registeredModules = ModuleRegistry.getRegisteredModules();
 
         const beans = this.createBeansList(registeredModules);
         const agStackComponents = this.createAgStackComponentsList(registeredModules);
-        const externalBeans = this.createExternalBeans(enterprise, eGridDiv, params);
+        const externalBeans = this.createExternalBeans(eGridDiv, params);
 
         if (!beans) { return; } // happens when no row model found
 
@@ -151,7 +150,8 @@ export class Grid {
 
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);
-        this.logger.log(`initialised successfully, enterprise = ${enterprise}`);
+        const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
+        this.logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
     }
 
     private registerModuleUserComponents(registeredModules: Module[]): void {
@@ -166,14 +166,13 @@ export class Grid {
         } );
     }
 
-    private createExternalBeans(enterprise: boolean, eGridDiv: HTMLElement, params: GridParams): any {
+    private createExternalBeans(eGridDiv: HTMLElement, params: GridParams): any {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
         if (_.missing(frameworkOverrides)) {
             frameworkOverrides = new VanillaFrameworkOverrides();
         }
 
         const seed = {
-            enterprise: enterprise,
             gridOptions: this.gridOptions,
             eGridDiv: eGridDiv,
             $scope: params ? params.$scope : null,

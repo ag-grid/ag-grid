@@ -95,7 +95,6 @@ export class GridOptionsWrapper {
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('enterprise') private enterprise: boolean;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('environment') private environment: Environment;
@@ -240,10 +239,6 @@ export class GridOptionsWrapper {
             (element as any)[this.domDataKey] = domData;
         }
         domData[key] = value;
-    }
-
-    public isEnterprise() {
-        return this.enterprise;
     }
 
     public isRowSelection() {
@@ -845,7 +840,7 @@ export class GridOptionsWrapper {
     }
 
     public isEnableRangeSelection(): boolean {
-        return this.enterprise && isTrue(this.gridOptions.enableRangeSelection);
+        return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
     }
 
     public isEnableRangeHandle(): boolean {
@@ -889,15 +884,14 @@ export class GridOptionsWrapper {
     }
 
     public isMasterDetail() {
-        const usingMasterDetail = isTrue(this.gridOptions.masterDetail);
 
-        _.doOnce(() => {
-            if (usingMasterDetail && !this.enterprise) {
-                console.warn('ag-grid: Master Detail is an Enterprise feature of ag-Grid.');
-            }
-        }, 'MasterDetailEnterpriseCheck');
+        const masterDetail = isTrue(this.gridOptions.masterDetail);
 
-        return usingMasterDetail && this.enterprise;
+        if (masterDetail) {
+            return ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
+        } else {
+            return false;
+        }
     }
 
     public isKeepDetailRows(): boolean {
@@ -1036,7 +1030,7 @@ export class GridOptionsWrapper {
         const usingTreeData = isTrue(this.gridOptions.treeData);
 
         _.doOnce(() => {
-            if (usingTreeData && !this.enterprise) {
+            if (usingTreeData && !ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule)) {
                 console.warn('ag-grid: TreeData is an Enterprise feature of ag-Grid.');
             }
         }, 'TreeDataEnterpriseCheck');

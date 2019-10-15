@@ -15,16 +15,16 @@ export class ModuleRegistry {
         if (this.isRegistered(moduleName)) {
             return true;
         }
-        console.warn(`ag-Grid: unable to use ${reason} as module ${moduleName} is not present. `
-            + `You need to load the module with: import "${moduleName}"`);
+
+        const warningKey = reason + moduleName;
+        const warningMessage = `ag-Grid: unable to use ${reason} as module ${moduleName} is not present. `
+            + `You need to load the module with: import "${moduleName}"`;
+
+        _.doOnce( () => { console.warn(warningMessage) }, warningKey);
     }
 
     public static isRegistered(moduleName: ModuleNames): boolean {
         return !!this.modulesMap[moduleName];
-    }
-
-    public static isEnterprise(): boolean {
-        return this.isRegistered(ModuleNames.EnterpriseCoreModule);
     }
 
     public static getRegisteredModules(): Module[] {

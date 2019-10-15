@@ -1,46 +1,48 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ColumnController } from "../columnController/columnController";
-import { ColumnApi } from "../columnController/columnApi";
-import { RowRenderer } from "../rendering/rowRenderer";
-import { Autowired, Optional, PostConstruct } from "../context/context";
-import { EventService } from "../eventService";
-import { BodyHeightChangedEvent, BodyScrollEvent, CellKeyDownEvent, CellKeyPressEvent, Events } from "../events";
-import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
-import { IRangeController } from "../interfaces/iRangeController";
-import { Constants } from "../constants";
-import { MouseEventService } from "./mouseEventService";
-import { IClipboardService } from "../interfaces/iClipboardService";
-import { FocusedCellController } from "../focusedCellController";
-import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
-import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleService";
-import { Column } from "../entities/column";
-import { RowContainerComponent } from "../rendering/rowContainerComponent";
-import { RowNode } from "../entities/rowNode";
-import { PaginationProxy } from "../pagination/paginationProxy";
-import { PaginationAutoPageSizeService } from "../pagination/paginationAutoPageSizeService";
-import { PopupEditorWrapper } from "../rendering/cellEditors/popupEditorWrapper";
-import { AlignedGridsService } from "../alignedGridsService";
-import { GridApi } from "../gridApi";
-import { AnimationFrameService } from "../misc/animationFrameService";
-import { RowComp } from "../rendering/rowComp";
-import { NavigationService } from "./navigationService";
-import { CellComp } from "../rendering/cellComp";
-import { ValueService } from "../valueService/valueService";
-import { LongTapEvent, TouchListener } from "../widgets/touchListener";
-import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
-import { RowDragFeature } from "./rowDragFeature";
-import { MaxDivHeightScaler } from "../rendering/maxDivHeightScaler";
-import { OverlayWrapperComponent } from "../rendering/overlays/overlayWrapperComponent";
-import { Component } from "../widgets/component";
-import { AutoHeightCalculator } from "../rendering/autoHeightCalculator";
-import { ColumnAnimationService } from "../rendering/columnAnimationService";
-import { AutoWidthCalculator } from "../rendering/autoWidthCalculator";
-import { Beans } from "../rendering/beans";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { HeaderRootComp } from "../headerRendering/headerRootComp";
-import { ResizeObserverService } from "../misc/resizeObserverService";
-import { _ } from "../utils";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {ColumnController} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
+import {RowRenderer} from "../rendering/rowRenderer";
+import {Autowired, Optional, PostConstruct} from "../context/context";
+import {EventService} from "../eventService";
+import {BodyHeightChangedEvent, BodyScrollEvent, CellKeyDownEvent, CellKeyPressEvent, Events} from "../events";
+import {DragListenerParams, DragService} from "../dragAndDrop/dragService";
+import {IRangeController} from "../interfaces/iRangeController";
+import {Constants} from "../constants";
+import {MouseEventService} from "./mouseEventService";
+import {IClipboardService} from "../interfaces/iClipboardService";
+import {FocusedCellController} from "../focusedCellController";
+import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
+import {ScrollVisibleService, SetScrollsVisibleParams} from "./scrollVisibleService";
+import {Column} from "../entities/column";
+import {RowContainerComponent} from "../rendering/rowContainerComponent";
+import {RowNode} from "../entities/rowNode";
+import {PaginationProxy} from "../pagination/paginationProxy";
+import {PaginationAutoPageSizeService} from "../pagination/paginationAutoPageSizeService";
+import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
+import {AlignedGridsService} from "../alignedGridsService";
+import {GridApi} from "../gridApi";
+import {AnimationFrameService} from "../misc/animationFrameService";
+import {RowComp} from "../rendering/rowComp";
+import {NavigationService} from "./navigationService";
+import {CellComp} from "../rendering/cellComp";
+import {ValueService} from "../valueService/valueService";
+import {LongTapEvent, TouchListener} from "../widgets/touchListener";
+import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
+import {RowDragFeature} from "./rowDragFeature";
+import {MaxDivHeightScaler} from "../rendering/maxDivHeightScaler";
+import {OverlayWrapperComponent} from "../rendering/overlays/overlayWrapperComponent";
+import {Component} from "../widgets/component";
+import {AutoHeightCalculator} from "../rendering/autoHeightCalculator";
+import {ColumnAnimationService} from "../rendering/columnAnimationService";
+import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
+import {Beans} from "../rendering/beans";
+import {RefSelector} from "../widgets/componentAnnotations";
+import {HeaderRootComp} from "../headerRendering/headerRootComp";
+import {ResizeObserverService} from "../misc/resizeObserverService";
+import {_} from "../utils";
 import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
+import {ModuleRegistry} from "../modules/moduleRegistry";
+import {ModuleNames} from "../modules/moduleNames";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -125,7 +127,6 @@ export class GridPanel extends Component {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('maxDivHeightScaler') private heightScaler: MaxDivHeightScaler;
-    @Autowired('enterprise') private enterprise: boolean;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     @Optional('rangeController') private rangeController: IRangeController;
@@ -713,20 +714,16 @@ export class GridPanel extends Component {
     }
 
     private onCtrlAndV(): void {
-
-        if (!this.enterprise || this.gridOptionsWrapper.isSuppressClipboardPaste()) {
-            return;
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
+            this.clipboardService.pasteFromClipboard();
         }
-
-        this.clipboardService.pasteFromClipboard();
     }
 
     private onCtrlAndD(event: KeyboardEvent): void {
-
-        if (!this.enterprise) { return; }
-
-        this.clipboardService.copyRangeDown();
-        event.preventDefault();
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
+            this.clipboardService.copyRangeDown();
+            event.preventDefault();
+        }
     }
 
     // Valid values for position are bottom, middle and top
