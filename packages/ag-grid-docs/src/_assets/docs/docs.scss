@@ -11,6 +11,28 @@
 @import "./legacy.scss";
 @import "./algolia.scss";
 
+html, body {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+body > div {
+    height: calc(100% - 4em);
+    overflow: auto;
+}
+
 #documentation {
     @extend .container-fluid;
 
@@ -231,7 +253,7 @@
         #doc-nav {
             display: none;
             font-size: 90%;
-            height: 100vh;
+            height: calc(100% - 4rem);
             overflow: auto;
             padding-left: 0;
 
@@ -288,7 +310,7 @@
                 max-width: 100% / 12 * 2.5;
                 padding-left: 2rem;
                 position: sticky;
-                top: 4rem;
+                top: 0;
             }
 
             @media (min-width: 1920px) {
@@ -306,17 +328,6 @@
 
                 &:hover {
                     text-decoration: none;
-                }
-
-                &.current-section {
-                    color: $blue-2;
-
-                    &::before {
-                        border-left: 1px solid $blue-2;
-                        content: "\00a0";
-                        left: -1px;
-                        position: absolute;
-                    }
                 }
             }
         }
@@ -399,17 +410,6 @@
 
                 &:hover {
                     text-decoration: none;
-                }
-
-                &.current-section {
-                    color: $blue-2;
-
-                    &::before {
-                        border-left: 1px solid $blue-2;
-                        content: "\00a0";
-                        left: -1px;
-                        position: absolute;
-                    }
                 }
             }
         }
