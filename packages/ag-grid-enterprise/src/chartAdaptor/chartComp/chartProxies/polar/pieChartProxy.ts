@@ -22,23 +22,24 @@ export class PieChartProxy extends PolarChartProxy {
         const chart = this.chart;
         const existingSeries = chart.series[0] as PieSeries;
         const existingSeriesId = existingSeries && existingSeries.angleField;
-        const pieSeriesId = params.fields[0].colId;
+        const pieSeriesField = params.fields[0];
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { seriesDefaults } = this.chartOptions;
 
         let pieSeries = existingSeries;
-        let calloutColors = this.chartOptions.seriesDefaults.callout && this.chartOptions.seriesDefaults.callout.colors;
+        let calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
 
-        if (existingSeriesId !== pieSeriesId) {
+        if (existingSeriesId !== pieSeriesField.colId) {
             chart.removeSeries(existingSeries);
 
             const seriesOptions: PieSeriesInternalOptions = {
-                ...this.chartOptions.seriesDefaults,
+                ...seriesDefaults,
                 type: "pie",
                 field: {
-                    angleKey: pieSeriesId,
+                    angleKey: pieSeriesField.colId,
                 },
                 title: {
-                    ...this.chartOptions.seriesDefaults.title,
+                    ...seriesDefaults.title,
                     text: params.fields[0].displayName,
                 }
             };
@@ -46,7 +47,9 @@ export class PieChartProxy extends PolarChartProxy {
             pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
         }
 
+        pieSeries.angleFieldName = pieSeriesField.displayName;
         pieSeries.labelField = params.category.id;
+        pieSeries.labelFieldName = params.category.name;
         pieSeries.data = params.data;
         pieSeries.fills = fills;
         pieSeries.strokes = strokes;

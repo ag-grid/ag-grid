@@ -15,6 +15,7 @@ import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
 import { Caption } from "../../caption";
 import { Shape } from "../../scene/shape/shape";
+import { PieTooltipRendererParams } from "../../chartOptions";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     index: number;
@@ -36,15 +37,6 @@ enum PieSeriesNodeTag {
     Sector,
     Callout,
     Label
-}
-
-export interface PieTooltipRendererParams {
-    datum: any;
-    angleKey: string;
-    radiusKey?: string;
-    labelKey?: string;
-    title?: string;
-    color?: string;
 }
 
 class PieSeriesLabel extends SeriesLabel {
@@ -276,7 +268,7 @@ export class PieSeries extends Series<PolarChart> {
     }
 
     /**
-     * The name of the numeric field to use to determine the angle (for example,
+     * The key of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
     private _angleField: string = '';
@@ -290,8 +282,19 @@ export class PieSeries extends Series<PolarChart> {
         return this._angleField;
     }
 
+    private _angleFieldName: string = '';
+    set angleFieldName(value: string) {
+        if (this._angleFieldName !== value) {
+            this._angleFieldName = value;
+            this.update();
+        }
+    }
+    get angleFieldName(): string {
+        return this._angleFieldName;
+    }
+
     /**
-     * The name of the numeric field to use to determine the radii of pie slices.
+     * The key of the numeric field to use to determine the radii of pie slices.
      * The largest value will correspond to the full radius and smaller values to
      * proportionally smaller radii. To prevent confusing visuals, this config only works
      * if {@link innerRadiusOffset} is zero.
@@ -307,10 +310,17 @@ export class PieSeries extends Series<PolarChart> {
         return this._radiusField;
     }
 
-    /**
-     * The value of the label field is supposed to be a string.
-     * If it isn't, it will be coerced to a string value.
-     */
+    private _radiusFieldName?: string;
+    set radiusFieldName(value: string | undefined) {
+        if (this._radiusFieldName !== value) {
+            this._radiusFieldName = value;
+            this.update();
+        }
+    }
+    get radiusFieldName(): string | undefined {
+        return this._radiusFieldName;
+    }
+
     private _labelField?: string;
     set labelField(value: string | undefined) {
         if (this._labelField !== value) {
@@ -320,6 +330,17 @@ export class PieSeries extends Series<PolarChart> {
     }
     get labelField(): string | undefined {
         return this._labelField;
+    }
+
+    private _labelFieldName?: string;
+    set labelFieldName(value: string | undefined) {
+        if (this._labelFieldName !== value) {
+            this._labelFieldName = value;
+            this.update();
+        }
+    }
+    get labelFieldName(): string | undefined {
+        return this._labelFieldName;
     }
 
     private _labelEnabled: boolean = true;
@@ -684,35 +705,47 @@ export class PieSeries extends Series<PolarChart> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
-        let html: string = '';
-        const angleField = this.angleField;
+        const { angleField: angleKey } = this;
 
-        if (!angleField) {
-            return html;
+        if (!angleKey) {
+            return "";
         }
 
-        let title = this.title ? this.title.text : undefined;
-        const color = this.fills[nodeDatum.index % this.fills.length];
+        const {
+            title,
+            fills,
+            tooltipRenderer,
+            angleFieldName: angleName,
+            radiusField: radiusKey,
+            radiusFieldName: radiusName,
+            labelField: labelKey,
+            labelFieldName: labelName,
+        } = this;
 
-        if (this.tooltipRenderer) {
-            html = this.tooltipRenderer({
+        const text = title ? title.text : undefined;
+        const color = fills[nodeDatum.index % fills.length];
+
+        if (tooltipRenderer) {
+            return tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
-                angleKey: angleField,
-                radiusKey: this.radiusField,
-                labelKey: this.labelField,
-                title,
-                color
+                angleKey,
+                angleName,
+                radiusKey,
+                radiusName,
+                labelKey,
+                labelName,
+                title: text,
+                color,
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
-            const label = this.labelField ? `${nodeDatum.seriesDatum[this.labelField]}: ` : '';
-            const value = nodeDatum.seriesDatum[angleField];
-            const formattedValue = typeof (value) === 'number' ? toFixed(value) : value.toString();
-            html = `${title}<div class="content">${label}${formattedValue}</div>`;
-        }
+            const titleString = title ? `<div class="title" ${titleStyle}>${text}</div>` : '';
+            const label = labelKey ? `${nodeDatum.seriesDatum[labelKey]}: ` : '';
+            const value = nodeDatum.seriesDatum[angleKey];
+            const formattedValue = typeof value === 'number' ? toFixed(value) : value.toString();
 
-        return html;
+            return `${titleString}<div class="content">${label}${formattedValue}</div>`;
+        }
     }
 
     tooltipRenderer?: (params: PieTooltipRendererParams) => string;

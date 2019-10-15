@@ -173,10 +173,10 @@ export interface TooltipRendererParams {
 
 export interface CartesianTooltipRendererParams extends TooltipRendererParams {
     xKey: string;
-    xName: string;
+    xName?: string;
 
     yKey: string;
-    yName: string;
+    yName?: string;
 }
 
 export interface BarSeriesOptions extends SeriesOptions {
@@ -307,7 +307,6 @@ export interface PieSeriesOptions extends SeriesOptions {
 
 export interface PieSeriesFieldOptions {
     angleKey?: string;
-    radiusKey?: string;
     labelKey?: string;
 }
 
@@ -324,6 +323,8 @@ export interface PieSeriesCalloutOptions {
 
 export interface PieTooltipRendererParams extends TooltipRendererParams {
     angleKey: string;
-    radiusKey?: string;
+    angleName?: string;
+
     labelKey?: string;
+    labelName?: string;
 }

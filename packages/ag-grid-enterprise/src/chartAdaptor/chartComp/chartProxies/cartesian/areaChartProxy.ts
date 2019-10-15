@@ -44,6 +44,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
             areaSeries.data = params.data;
             areaSeries.xField = params.category.id;
+            areaSeries.xFieldName = params.category.name;
             areaSeries.yFields = params.fields.map(f => f.colId);
             areaSeries.yFieldNames = params.fields.map(f => f.displayName);
             areaSeries.fills = fills;
@@ -80,6 +81,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.yFieldNames = [f.displayName];
                 areaSeries.data = params.data;
                 areaSeries.xField = params.category.id;
+                areaSeries.xFieldName = params.category.name;
                 areaSeries.yFields = [f.colId];
                 areaSeries.fills = [fills[index % fills.length]];
                 areaSeries.strokes = [strokes[index % strokes.length]];

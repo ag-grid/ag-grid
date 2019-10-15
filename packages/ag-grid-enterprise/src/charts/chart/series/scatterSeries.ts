@@ -10,6 +10,7 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import linearScale from "../../scale/linearScale";
+import { ScatterTooltipRendererParams } from "../../chartOptions";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -18,20 +19,6 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
     fill?: string;
     stroke?: string;
     strokeWidth: number;
-}
-
-export interface ScatterTooltipRendererParams {
-    datum: any;
-    xKey: string;
-    yKey: string;
-    sizeKey?: string;
-    labelKey?: string;
-    xName: string;
-    yName: string;
-    sizeName?: string;
-    labelName?: string;
-    title?: string;
-    color?: string;
 }
 
 export class ScatterSeries extends Series<CartesianChart> {
@@ -353,37 +340,34 @@ export class ScatterSeries extends Series<CartesianChart> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
-        const {
-            xField,
-            yField,
-            sizeKey,
-            labelField,
-            xFieldName,
-            yFieldName,
-            sizeKeyName,
-            labelFieldName,
-            fill: color
-        } = this;
+        const { xField: xKey, yField: yKey } = this;
 
-        let html: string = '';
-
-        if (!xField || !yField) {
-            return html;
+        if (!xKey || !yKey) {
+            return "";
         }
 
-        const title = this.title;
+        const {
+            title,
+            tooltipRenderer,
+            xFieldName: xName,
+            yFieldName: yName,
+            sizeKey,
+            sizeKeyName: sizeName,
+            labelField: labelKey,
+            labelFieldName: labelName,
+            fill: color } = this;
 
-        if (this.tooltipRenderer && this.xField) {
-            html = this.tooltipRenderer({
+        if (tooltipRenderer) {
+            return tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
-                xKey: xField,
-                yKey: yField,
+                xKey,
+                yKey,
                 sizeKey,
-                labelKey: labelField,
-                xName: xFieldName,
-                yName: yFieldName,
-                sizeName: sizeKeyName,
-                labelName: labelFieldName,
+                labelKey,
+                xName,
+                yName,
+                sizeName,
+                labelName,
                 title,
                 color
             });
@@ -391,22 +375,20 @@ export class ScatterSeries extends Series<CartesianChart> {
             const titleStyle = `style="color: white; background-color: ${color}"`;
             const titleHtml = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
-            const xValue = seriesDatum[xField];
-            const yValue = seriesDatum[yField];
-            let fieldString = `<b>${xFieldName}</b>: ${toFixed(xValue)}<br><b>${yFieldName}</b>: ${toFixed(yValue)}`;
+            const xValue = seriesDatum[xKey];
+            const yValue = seriesDatum[yKey];
+            let fieldString = `<b>${xName}</b>: ${toFixed(xValue)}<br><b>${yName}</b>: ${toFixed(yValue)}`;
 
             if (sizeKey) {
-                fieldString += `<br><b>${sizeKeyName}</b>: ${seriesDatum[sizeKey]}`;
+                fieldString += `<br><b>${sizeName}</b>: ${seriesDatum[sizeKey]}`;
             }
 
-            if (labelField) {
-                fieldString = `<b>${labelFieldName}</b>: ${seriesDatum[labelField]}<br>` + fieldString;
+            if (labelKey) {
+                fieldString = `<b>${labelName}</b>: ${seriesDatum[labelKey]}<br>` + fieldString;
             }
 
-            html = `${titleHtml}<div class="content">${fieldString}</div>`;
+            return `${titleHtml}<div class="content">${fieldString}</div>`;
         }
-
-        return html;
     }
 
     tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;

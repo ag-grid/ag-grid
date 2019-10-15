@@ -12,6 +12,7 @@ import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
+import { LineTooltipRendererParams } from "../../chartOptions";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -20,14 +21,6 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
     stroke?: string;
     strokeWidth: number;
     radius: number;
-}
-
-export interface LineTooltipRendererParams {
-    datum: any;
-    xKey: string;
-    yKey: string;
-    title?: string;
-    color?: string;
 }
 
 export class LineSeries extends Series<CartesianChart> {
@@ -86,6 +79,17 @@ export class LineSeries extends Series<CartesianChart> {
         return this._xField;
     }
 
+    protected _xFieldName: string = '';
+    set xFieldName(value: string) {
+        if (this._xFieldName !== value) {
+            this._xFieldName = value;
+            this.update();
+        }
+    }
+    get xFieldName(): string {
+        return this._xFieldName;
+    }
+
     protected _yField: string = '';
     set yField(value: string) {
         if (this._yField !== value) {
@@ -96,6 +100,17 @@ export class LineSeries extends Series<CartesianChart> {
     }
     get yField(): string {
         return this._yField;
+    }
+
+    protected _yFieldName: string = '';
+    set yFieldName(value: string) {
+        if (this._yFieldName !== value) {
+            this._yFieldName = value;
+            this.update();
+        }
+    }
+    get yFieldName(): string {
+        return this._xFieldName;
     }
 
     private _marker: boolean = false;
@@ -318,36 +333,35 @@ export class LineSeries extends Series<CartesianChart> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
-        const { xField, yField, fill: color } = this;
-        let html: string = '';
+        const { xField: xKey, yField: yKey } = this;
 
-        if (!xField || !yField) {
-            return html;
+        if (!xKey || !yKey) {
+            return "";
         }
 
-        let title = this.title;
+        const { xFieldName: xName, yFieldName: yName, fill: color, title, tooltipRenderer } = this;
 
-        if (this.tooltipRenderer && this.xField) {
-            html = this.tooltipRenderer({
+        if (tooltipRenderer) {
+            return tooltipRenderer({
                 datum: nodeDatum.seriesDatum,
-                xKey: xField,
-                yKey: yField,
+                xKey,
+                xName,
+                yKey,
+                yName,
                 title,
-                color
+                color,
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
+            const titleString = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
-            const xValue = seriesDatum[xField];
-            const yValue = seriesDatum[yField];
-            const xString = typeof (xValue) === 'number' ? toFixed(xValue) : String(xValue);
-            const yString = typeof (yValue) === 'number' ? toFixed(yValue) : String(yValue);
+            const xValue = seriesDatum[xKey];
+            const yValue = seriesDatum[yKey];
+            const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+            const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
 
-            html = `${title}<div class="content">${xString}: ${yString}</div>`;
+            return `${titleString}<div class="content">${xString}: ${yString}</div>`;
         }
-
-        return html;
     }
 
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;

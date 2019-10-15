@@ -40,7 +40,9 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.title = f.displayName;
                 lineSeries.data = params.data;
                 lineSeries.xField = params.category.id;
+                lineSeries.xFieldName = params.category.name;
                 lineSeries.yField = f.colId;
+                lineSeries.yFieldName = f.displayName;
                 lineSeries.fill = fills[index % fills.length];
                 lineSeries.stroke = strokes[index % strokes.length];
 

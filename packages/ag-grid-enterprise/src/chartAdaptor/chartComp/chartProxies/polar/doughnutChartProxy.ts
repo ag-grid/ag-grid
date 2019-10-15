@@ -54,7 +54,9 @@ export class DoughnutChartProxy extends PolarChartProxy {
             const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
             const pieSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as PieSeries;
 
+            pieSeries.angleFieldName = f.displayName;
             pieSeries.labelField = params.category.id;
+            pieSeries.labelFieldName = params.category.name;
             pieSeries.data = params.data;
             pieSeries.fills = fills;
             pieSeries.strokes = strokes;

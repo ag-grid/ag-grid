@@ -14,6 +14,7 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { NumberAxis } from "../axis/numberAxis";
+import { BarTooltipRendererParams } from "../../chartOptions";
 
 interface SelectionDatum extends SeriesNodeDatum {
     yField: string;
@@ -46,14 +47,6 @@ export type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
 enum BarSeriesNodeTag {
     Bar,
     Label
-}
-
-export interface BarTooltipRendererParams {
-    datum: any;
-    xKey: string;
-    yKey: string;
-    title?: string;
-    color?: string;
 }
 
 class BarSeriesLabel extends SeriesLabel {
@@ -170,6 +163,17 @@ export class BarSeries extends Series<CartesianChart> {
         return this._xField;
     }
 
+    protected _xFieldName: string = '';
+    set xFieldName(value: string) {
+        if (this._xFieldName !== value) {
+            this._xFieldName = value;
+            this.update();
+        }
+    }
+    get xFieldName(): string {
+        return this._xFieldName;
+    }
+
     /**
      * With a single value in the `yFields` array we get the regular bar series.
      * With multiple values, we get the stacked bar series.
@@ -189,7 +193,6 @@ export class BarSeries extends Series<CartesianChart> {
         groupScale.domain = values;
         groupScale.padding = 0.1;
         groupScale.round = true;
-
 
         this.scheduleData();
     }
@@ -538,45 +541,45 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     getTooltipHtml(nodeDatum: SelectionDatum): string {
-        let html: string = '';
+        const { xField: xKey } = this;
+        const { yField: yKey } = nodeDatum;
 
-        if (this.tooltipEnabled) {
-            const xField = this.xField;
-            const yField = nodeDatum.yField;
-            const yFields = this.yFields;
-            const yFieldIndex = yFields.indexOf(yField);
-            const datum = nodeDatum.seriesDatum;
-            const color = this.fills[yFieldIndex % this.fills.length];
-
-            let title = this.yFieldNames[yFieldIndex] || undefined;
-            if (this.tooltipRenderer && xField) {
-                html = this.tooltipRenderer({
-                    datum,
-                    xKey: xField,
-                    yKey: yField,
-                    title,
-                    color
-                });
-            } else {
-                const titleStyle = `style="color: white; background-color: ${color}"`;
-                title = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
-                const xValue = datum[xField];
-                const yValue = datum[yField];
-                const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-                const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-
-                html = `${title}<div class="content">${xString}: ${yString}</div>`;
-            }
+        if (!xKey || !yKey) {
+            return "";
         }
 
-        return html;
+        const { xFieldName: xName, yFields, yFieldNames, fills, tooltipRenderer } = this;
+        const { seriesDatum: datum } = nodeDatum;
+        const yFieldIndex = yFields.indexOf(yKey);
+        const yName = yFieldNames[yFieldIndex];
+        const color = fills[yFieldIndex % fills.length];
+        const title = yName;
+
+        if (tooltipRenderer) {
+            return tooltipRenderer({
+                datum,
+                xKey,
+                xName,
+                yKey,
+                yName,
+                title,
+                color,
+            });
+        } else {
+            const titleStyle = `style="color: white; background-color: ${color}"`;
+            const titleString = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
+            const xValue = datum[xKey];
+            const yValue = datum[yKey];
+            const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
+            const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+
+            return `${titleString}<div class="content">${xString}: ${yString}</div>`;
+        }
     }
 
     listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xField && this.yFields.length) {
-            const fills = this.fills;
-            const strokes = this.strokes;
-            const id = this.id;
+            const { fills, strokes, id } = this;
 
             this.yFields.forEach((yField, index) => {
                 data.push({

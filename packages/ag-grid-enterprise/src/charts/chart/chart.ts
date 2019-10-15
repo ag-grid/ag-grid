@@ -292,8 +292,8 @@ export abstract class Chart {
                 series.listSeriesItems(legendData);
             }
         });
-        this.legend.data = legendData;
 
+        this.legend.data = legendData;
         this.layoutPending = true;
     }
 
@@ -451,23 +451,18 @@ export abstract class Chart {
     };
 
     private readonly onMouseMove = (event: MouseEvent) => {
-        const x = event.offsetX;
-        const y = event.offsetY;
-
+        const { offsetX: x, offsetY: y } = event;
         const pick = this.pickSeriesNode(x, y);
+
         if (pick) {
-            const node = pick.node;
+            const { node } = pick;
+
             if (node instanceof Shape) {
-                if (!this.lastPick) { // cursor moved from empty space to a node
+                if (!this.lastPick || // cursor moved from empty space to a node
+                    this.lastPick.node !== node) { // cursor moved from one node to another
                     this.onSeriesNodePick(event, pick.series, node);
-                } else {
-                    if (this.lastPick.node !== node) { // cursor moved from one node to another
-                        this.onSeriesNodePick(event, pick.series, node);
-                    } else { // cursor moved within the same node
-                        if (pick.series.tooltipEnabled) {
-                            this.showTooltip(event);
-                        }
-                    }
+                } else if (pick.series.tooltipEnabled) { // cursor moved within the same node
+                    this.showTooltip(event);
                 }
             }
         } else if (this.lastPick) { // cursor moved from a node to empty space
@@ -482,10 +477,9 @@ export abstract class Chart {
     }
 
     private readonly onClick = (event: MouseEvent) => {
-        const x = event.offsetX;
-        const y = event.offsetY;
-
+        const { offsetX: x, offsetY: y } = event;
         const datum = this.legend.datumForPoint(x, y);
+
         if (datum) {
             const { id, itemId, enabled } = datum;
             const series = find(this.series, series => series.id === id);
@@ -505,6 +499,7 @@ export abstract class Chart {
         series.highlightNode(node);
 
         const html = series.tooltipEnabled && series.getTooltipHtml(node.datum as SeriesNodeDatum);
+
         if (html) {
             this.showTooltip(event, html);
         }

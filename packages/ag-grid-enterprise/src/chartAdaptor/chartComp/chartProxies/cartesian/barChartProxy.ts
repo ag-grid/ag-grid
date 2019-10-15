@@ -4,9 +4,6 @@ import { BarSeries } from "../../../../charts/chart/series/barSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export type BarSeriesProperty = 'strokeWidth' | 'strokeOpacity' | 'fillOpacity' | 'tooltipEnabled';
-export type BarSeriesFontProperty = 'labelEnabled' | 'labelFontFamily' | 'labelFontStyle' | 'labelFontWeight' | 'labelFontSize' | 'labelColor';
-
 export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -36,6 +33,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         barSeries.data = params.data;
         barSeries.xField = params.category.id;
+        barSeries.xFieldName = params.category.name;
         barSeries.yFields = params.fields.map(f => f.colId);
         barSeries.yFieldNames = params.fields.map(f => f.displayName);
         barSeries.fills = fills;

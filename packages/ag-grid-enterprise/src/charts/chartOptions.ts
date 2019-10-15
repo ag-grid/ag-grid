@@ -317,6 +317,11 @@ export interface PieSeriesCalloutOptions {
 
 export interface PieTooltipRendererParams extends TooltipRendererParams {
     angleKey: string;
+    angleName?: string;
+
     radiusKey?: string;
+    radiusName?: string;
+
     labelKey?: string;
+    labelName?: string;
 }
