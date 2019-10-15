@@ -13,7 +13,7 @@ import {
     IChartService,
     IClipboardService,
     MenuItemDef,
-    ModuleNames,
+    ModuleNames, ModuleRegistry,
     Optional
 } from 'ag-grid-community';
 
@@ -88,15 +88,15 @@ export class MenuItemMapper {
                     checked: !(column as Column).isPinned()
                 };
             case 'valueAggSubMenu':
-                if (!this.context.isModuleRegistered(ModuleNames.RowGroupingModule)) {
-                    console.warn('ag-Grid: aggregation module is not found');
+                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Aggregation from Menu')) {
+                    return {
+                        name: localeTextFunc('valueAggregation', 'Value Aggregation'),
+                        icon: _.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
+                        subMenu: this.createAggregationSubMenu((column as Column))
+                    };
+                } else {
                     return null;
                 }
-                return {
-                    name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                    icon: _.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
-                    subMenu: this.createAggregationSubMenu((column as Column))
-                };
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
@@ -135,35 +135,44 @@ export class MenuItemMapper {
                     action: () => this.gridApi.collapseAll()
                 };
             case 'copy':
-                if (!this.context.isModuleRegistered(ModuleNames.ClipboardModule)) { return null; }
-                return {
-                    name: localeTextFunc('copy', 'Copy'),
-                    shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                    icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
-                    action: () => this.clipboardService.copyToClipboard(false)
-                };
+                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Copy from Menu')) {
+                    return {
+                        name: localeTextFunc('copy', 'Copy'),
+                        shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
+                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                        action: () => this.clipboardService.copyToClipboard(false)
+                    };
+                } else {
+                    return null;
+                }
             case 'copyWithHeaders':
-                if (!this.context.isModuleRegistered(ModuleNames.ClipboardModule)) { return null; }
-                return {
-                    name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
-                    // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                    icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
-                    action: () => this.clipboardService.copyToClipboard(true)
-                };
+                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Copy with Headers from Menu')) {
+                    return {
+                        name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
+                        // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
+                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                        action: () => this.clipboardService.copyToClipboard(true)
+                    };
+                } else {
+                    return null;
+                }
             case 'paste':
-                if (!this.context.isModuleRegistered(ModuleNames.ClipboardModule)) { return null; }
-                return {
-                    name: localeTextFunc('paste', 'Paste'),
-                    shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
-                    disabled: true,
-                    icon: _.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
-                    action: () => this.clipboardService.pasteFromClipboard()
-                };
+                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Copy with Headers from Menu')) {
+                    return {
+                        name: localeTextFunc('paste', 'Paste'),
+                        shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
+                        disabled: true,
+                        icon: _.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
+                        action: () => this.clipboardService.pasteFromClipboard()
+                    };
+                } else {
+                    return null;
+                }
             case 'export':
                 const exportSubMenuItems: string[] = [];
 
-                const csvModuleLoaded = this.context.isModuleRegistered(ModuleNames.CsvExportModule);
-                const excelModuleLoaded = this.context.isModuleRegistered(ModuleNames.ExcelExportModule);
+                const csvModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.CsvExportModule);
+                const excelModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule);
 
                 if (!this.gridOptionsWrapper.isSuppressCsvExport() && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');

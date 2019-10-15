@@ -40,6 +40,7 @@ import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
 import {SideBarDef, SideBarDefParser, ToolPanelDef} from "./entities/sideBar";
 import {ModuleNames} from "./modules/moduleNames";
 import {ChartOptions} from "./interfaces/iChartOptions";
+import {ModuleRegistry} from "./modules/moduleRegistry";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -156,8 +157,8 @@ export class GridOptionsWrapper {
             console.warn('ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don\'t ask us how to us these together on our support forum either you will get the same answer!');
         }
 
-        if (this.isEnableRangeSelection() && !this.context.isModuleRegistered(ModuleNames.RangeSelectionModule)) {
-            console.warn('ag-Grid: enableRangeSelection will only work if range module is loaded');
+        if (this.isEnableRangeSelection()) {
+            ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
         }
 
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
@@ -619,13 +620,7 @@ export class GridOptionsWrapper {
 
     public isEnableCharts() {
         if (isTrue((this.gridOptions.enableCharts))) {
-            if (!this.context.isModuleRegistered(ModuleNames.ChartsModule)) {
-                _.doOnce(() => {
-                    console.warn('ag-grid: Charts is enabled but the Charts Module has not been included.');
-                }, 'ChartsModuleCheck');
-                return false;
-            }
-            return true;
+            return ModuleRegistry.assertRegistered(ModuleNames.ChartsModule, 'enableCharts');
         }
         return false;
     }

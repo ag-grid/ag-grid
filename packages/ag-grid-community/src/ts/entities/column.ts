@@ -24,6 +24,7 @@ import {ColumnGroup} from "./columnGroup";
 import {OriginalColumnGroup} from "./originalColumnGroup";
 import {Constants} from "../constants";
 import {ModuleNames} from "../modules/moduleNames";
+import {ModuleRegistry} from "../modules/moduleRegistry";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -216,7 +217,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         const colDefAny = this.colDef as any;
 
-        if (!this.context.isModuleRegistered(ModuleNames.RowGroupingModule)) {
+        if (!ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
             const rowGroupingItems =
                 ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(item => {
@@ -226,7 +227,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             });
         }
 
-        if (!this.context.isModuleRegistered(ModuleNames.RichSelectModule)) {
+        if (!ModuleRegistry.isRegistered(ModuleNames.RichSelectModule)) {
             if (this.colDef.cellEditor==='agRichSelect' || this.colDef.cellEditor==='agRichSelectCellEditor') {
                 console.warn(`ag-Grid: ${this.colDef.cellEditor} can only be used with module ${ModuleNames.RichSelectModule}`);
             }

@@ -11,20 +11,20 @@ export class ModuleRegistry {
         this.modulesMap[module.moduleName] = module;
     }
 
-    public static assertLoaded(moduleName: ModuleNames, reason: string): boolean {
-        if (this.isLoaded(moduleName)) {
+    public static assertRegistered(moduleName: ModuleNames, reason: string): boolean {
+        if (this.isRegistered(moduleName)) {
             return true;
         }
         console.warn(`ag-Grid: unable to use ${reason} as module ${moduleName} is not present. `
             + `You need to load the module with: import "${moduleName}"`);
     }
 
-    public static isLoaded(moduleName: ModuleNames): boolean {
+    public static isRegistered(moduleName: ModuleNames): boolean {
         return !!this.modulesMap[moduleName];
     }
 
     public static isEnterprise(): boolean {
-        return this.isLoaded(ModuleNames.EnterpriseCoreModule);
+        return this.isRegistered(ModuleNames.EnterpriseCoreModule);
     }
 
     public static getRegisteredModules(): Module[] {

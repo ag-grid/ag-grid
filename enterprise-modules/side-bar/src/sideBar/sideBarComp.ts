@@ -8,7 +8,7 @@ import {
     IComponent,
     ISideBar,
     IToolPanel,
-    ModuleNames,
+    ModuleNames, ModuleRegistry,
     PostConstruct,
     RefSelector,
     SideBarDef,
@@ -91,15 +91,16 @@ export class SideBarComp extends Component implements ISideBar {
             }
 
             // helpers, in case user doesn't have the right module loaded
-            const columnToolPanelModuleMissing = !this.getContext().isModuleRegistered(ModuleNames.ColumnToolPanelModule);
-            if (def.toolPanel==='agColumnsToolPanel' && columnToolPanelModuleMissing) {
-                console.warn('ag-Grid: tried to use Column Tool Panel, but column tool panel module is missing.');
-                return;
+            if (def.toolPanel==='agColumnsToolPanel') {
+                const moduleMissing =
+                    !ModuleRegistry.assertRegistered(ModuleNames.ColumnToolPanelModule, 'Column Tool Panel');
+                if (moduleMissing) { return; }
             }
-            const filtersToolPanelModuleMissing = !this.getContext().isModuleRegistered(ModuleNames.FiltersToolPanelModule);
-            if (def.toolPanel==='agFiltersToolPanel' && filtersToolPanelModuleMissing) {
-                console.warn('ag-Grid: tried to use Filters Tool Panel, but filters tool panel module is missing.');
-                return;
+
+            if (def.toolPanel==='agFiltersToolPanel') {
+                const moduleMissing =
+                    !ModuleRegistry.assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel');
+                if (moduleMissing) { return; }
             }
 
             const wrapper = new ToolPanelWrapper();

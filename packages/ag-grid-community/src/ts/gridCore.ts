@@ -22,6 +22,7 @@ import {SideBarDef, SideBarDefParser} from "./entities/sideBar";
 import {_} from "./utils";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {ModuleNames} from "./modules/moduleNames";
+import {ModuleRegistry} from "./modules/moduleRegistry";
 
 export class GridCore extends Component {
 
@@ -71,7 +72,7 @@ export class GridCore extends Component {
             this.popupService
         ].forEach(service => service.registerGridCore(this));
 
-        if (this.getContext().isModuleRegistered(ModuleNames.ClipboardModule)) {
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
             this.clipboardService.registerGridCore(this);
         }
 
@@ -114,10 +115,10 @@ export class GridCore extends Component {
 
     private createTemplate(): string {
 
-        const sideBarModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.SideBarModule);
-        const statusBarModuleLoaded = this.getContext().isModuleRegistered(ModuleNames.StatusBarModule);
-        const rowGroupingLoaded = this.getContext().isModuleRegistered(ModuleNames.RowGroupingModule);
-        const enterpriseCoreLoaded = this.getContext().isModuleRegistered(ModuleNames.EnterpriseCoreModule);
+        const sideBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
+        const statusBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.StatusBarModule);
+        const rowGroupingLoaded = ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule);
+        const enterpriseCoreLoaded = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
 
         const dropZones = rowGroupingLoaded ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
         const sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
