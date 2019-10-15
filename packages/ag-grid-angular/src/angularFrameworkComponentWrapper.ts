@@ -3,7 +3,6 @@ import { BaseComponentWrapper, Bean, FrameworkComponentWrapper, WrapableInterfac
 import { AgFrameworkComponent } from "./interfaces";
 
 @Injectable()
-@Bean("frameworkComponentWrapper")
 export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
     private viewContainerRef: ViewContainerRef;
     private componentFactoryResolver: ComponentFactoryResolver;
