@@ -134,7 +134,6 @@ export class ToolPanelFilterGroupComp extends Component {
             this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
 
             this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
-                this.filterGroupComp.toggleGroupExpand(true);
                 _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', column.isFilterActive());
             });
         }
