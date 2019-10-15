@@ -337,7 +337,7 @@ export class ChartBuilder {
         if (marker) {
             this.setValueIfExists(series, "marker", marker.enabled);
             this.setValueIfExists(series, "markerSize", marker.size);
-            this.setValueIfExists(series, "minMarkerSize", marker.minRequiredSize);
+            this.setValueIfExists(series, "minMarkerSize", marker.minSize);
             this.setValueIfExists(series, "markerStrokeWidth", marker.strokeWidth);
         }
 
