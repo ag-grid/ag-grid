@@ -1,4 +1,4 @@
-#license-pricing {
+.license-pricing {
     @extend %stage, .full-width-row, .justify-content-center;
 
     .card-footer {
@@ -19,14 +19,17 @@
         }
 
         .packages {
-            @extend .row, .px-md-5;
             > div {
-                @extend .card, .col-md, .py-5, .px-3, .mx-md-4, .mb-3, .mb-md-0;
-                &:first-child {
-                    @extend .ml-0;
+                @extend .card, .d-flex, .flex-row, .p-2, .m-5;
+                > div:first-child {
+                    min-width: 10rem;
+                    @extend .d-flex, .justify-content-center, .align-items-start;
+                    img {
+                        min-width: 5rem;
+                    }
                 }
-                &:last-child {
-                    @extend .mr-0;
+                >div:last-child {
+                    @extend .flex-fill;
                 }
                 h2 {
                     @extend .card-title;
@@ -37,6 +40,19 @@
                 ul {
                     @extend .card-text;
                 }
+                span {
+                    font-family: monospace;
+                    @extend .mx-2;
+                }
+                .package-install {
+                    @extend .d-flex;
+                    span:first-child {
+                        @extend .ml-0;
+                    }
+                    span:last-child {
+                        @extend .ml-auto;
+                    }
+                }
             }
         }
     }
@@ -44,7 +60,7 @@
     #licenses {
         @extend .row, .px-md-5;
         .license {
-            @extend .card, .col-md, .text-center, .pt-2, .pt-md-5, .mb-3, .m-md-3;
+            @extend .card, .col-lg, .text-center, .pt-2, .pt-md-5, .mb-3, .m-md-3;
 
             .card-body {
                 @extend .card-body;
