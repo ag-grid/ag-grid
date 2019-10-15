@@ -1,5 +1,5 @@
 import { Shape } from "./shape";
-import { Path2D } from "../path2D";
+import { Path } from "./path";
 import { BBox } from "../bbox";
 import { normalizeAngle360 } from "../../util/angle";
 import { chainObjects } from "../../util/object";
@@ -14,7 +14,7 @@ export enum ArcType {
 /**
  * Elliptical arc node.
  */
-export class Arc extends Shape {
+export class Arc extends Path {
 
     static className = 'Arc';
 
@@ -23,32 +23,9 @@ export class Arc extends Shape {
         fillStyle: null
     });
 
-    // Declare a path to retain for later rendering and hit testing
-    // using custom Path2D class. It's pure TypeScript and works in all browsers.
-    protected path = new Path2D();
-
     constructor() {
         super();
         this.restoreOwnStyles();
-    }
-
-    /**
-     * It's not always that the path has to be updated.
-     * For example, if transform attributes (such as `translationX`)
-     * are changed, we don't have to update the path. The `dirtyFlag`
-     * is how we keep track if the path has to be updated or not.
-     */
-    private _dirtyPath = true;
-    set dirtyPath(value: boolean) {
-        if (this._dirtyPath !== value) {
-            this._dirtyPath = value;
-            if (value) {
-                this.dirty = true;
-            }
-        }
-    }
-    get dirtyPath(): boolean {
-        return this._dirtyPath;
     }
 
     private _centerX: number = 0;
@@ -156,10 +133,6 @@ export class Arc extends Shape {
     }
 
     updatePath(): void {
-        if (!this.dirtyPath) {
-            return;
-        }
-
         const path = this.path;
 
         path.clear(); // No need to recreate the Path, can simply clear the existing one.
@@ -176,8 +149,6 @@ export class Arc extends Shape {
             path.lineTo(this.centerX, this.centerY);
             path.closePath();
         }
-
-        this.dirtyPath = false;
     }
 
     readonly getBBox = (): BBox => {
@@ -197,23 +168,5 @@ export class Arc extends Shape {
         return this.type !== ArcType.Open
             && bbox.containsPoint(point.x, point.y)
             && this.path.isPointInPath(point.x, point.y);
-    }
-
-    isPointInStroke(x: number, y: number): boolean {
-        return false;
-    }
-
-    render(ctx: CanvasRenderingContext2D): void {
-        if (this.dirtyTransform) {
-            this.computeTransformMatrix();
-        }
-        this.matrix.toContext(ctx);
-
-        this.updatePath();
-        this.scene!.appendPath(this.path);
-
-        this.fillStroke(ctx);
-
-        this.dirty = false;
     }
 }
