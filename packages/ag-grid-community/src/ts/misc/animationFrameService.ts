@@ -78,13 +78,15 @@ export class AnimationFrameService {
 
         // create a copy of p1Tasks, so that when a task calls addP1Task
         // the new task is held until next frame so that it can be
-        // sorted and executed in the right order
-        const tasksToExecute = this.p1Tasks;
+        // sorted and executed in the right order. we don't do this for p2
+        // tasks as p2 tasks are not ordered.
+        const p1TasksCopy = this.p1Tasks;
         this.p1Tasks = [];
+
         if (this.scrollGoingDown) {
-            tasksToExecute.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
+            p1TasksCopy.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
         } else {
-            tasksToExecute.sort((a: TaskItem, b: TaskItem) => a.index - b.index);
+            p1TasksCopy.sort((a: TaskItem, b: TaskItem) => a.index - b.index);
         }
 
         const frameStart = new Date().getTime();
@@ -98,8 +100,8 @@ export class AnimationFrameService {
             const gridPanelUpdated = this.gridPanel.executeFrame();
 
             if (!gridPanelUpdated) {
-                if (tasksToExecute.length > 0) {
-                    const taskItem = tasksToExecute.pop();
+                if (p1TasksCopy.length > 0) {
+                    const taskItem = p1TasksCopy.pop();
                     taskItem.task();
                 } else if (this.p2Tasks.length > 0) {
                     const task = this.p2Tasks.pop();
@@ -112,7 +114,7 @@ export class AnimationFrameService {
             duration = (new Date().getTime()) - frameStart;
         }
 
-        this.p1Tasks = tasksToExecute.concat(this.p1Tasks);
+        this.p1Tasks = p1TasksCopy.concat(this.p1Tasks);
 
         if (this.p1Tasks.length > 0 || this.p2Tasks.length > 0) {
             this.requestFrame();
