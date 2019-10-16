@@ -3,6 +3,7 @@ import { Chart } from "../chart";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { FontStyle, FontWeight } from "../../scene/shape/text";
+import { Marker } from "../marker/marker";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -94,6 +95,135 @@ export class SeriesLabel {
     }
 }
 
+class SeriesMarker {
+    onChange?: () => void;
+    onTypeChange?: () => void;
+
+    // Marker constructor. A series will create one marker instance per data point.
+    private _type?: (new () => Marker) = undefined;
+    set type(value: (new () => Marker) | undefined) {
+        if (this._type !== value) {
+            this._type = value;
+            if (this.onTypeChange) {
+                this.onTypeChange();
+            }
+        }
+    }
+    get type(): (new () => Marker) | undefined {
+        return this._type;
+    }
+
+    // In case a series has the `sizeKey` set, the `size` config will be ignored
+    // and the `sizeKey` values along with the `minSize/maxSize` configs will be used
+    // to determine the size of the marker. All values will be mapped to a marker size
+    // within the `[minSize, maxSize]` range, where the largest values will correspond
+    // to the `maxSize` and the lowest to the `minSize`.
+    private _size: number = 8;
+    set size(value: number) {
+        if (this._size !== value) {
+            this._size = value;
+            this.update();
+        }
+    }
+    get size(): number {
+        return this._size;
+    }
+
+    private _minSize: number = 4;
+    set minSize(value: number) {
+        if (this._minSize !== value) {
+            this._minSize = value;
+            this.update();
+        }
+    }
+    get minSize(): number {
+        return this._minSize;
+    }
+
+    private _maxSize: number = 8;
+    set maxSize(value: number) {
+        if (this._maxSize !== value) {
+            this._maxSize = value;
+            this.update();
+        }
+    }
+    get maxSize(): number {
+        return this._maxSize;
+    }
+
+    private _enabled: boolean = true;
+    set enabled(value: boolean) {
+        if (this._enabled !== value) {
+            this._enabled = value;
+            this.update();
+        }
+    }
+    get enabled(): boolean {
+        return this._enabled;
+    }
+
+    private _xOffset: number = 0;
+    set xOffset(value: number) {
+        if (this._xOffset !== value) {
+            this._xOffset = value;
+            this.update();
+        }
+    }
+    get xOffset(): number {
+        return this._xOffset;
+    }
+
+    private _yOffset: number = 0;
+    set yOffset(value: number) {
+        if (this._yOffset !== value) {
+            this._yOffset = value;
+            this.update();
+        }
+    }
+    get yOffset(): number {
+        return this._yOffset;
+    }
+
+    private _fill: string | undefined = undefined;
+    set fill(value: string | undefined) {
+        if (this._fill !== value) {
+            this._fill = value;
+            this.update();
+        }
+    }
+    get fill(): string | undefined {
+        return this._fill;
+    }
+
+    private _stroke: string | undefined = undefined;
+    set stroke(value: string | undefined) {
+        if (this._stroke !== value) {
+            this._stroke = value;
+            this.update();
+        }
+    }
+    get stroke(): string | undefined {
+        return this._stroke;
+    }
+
+    private _strokeWidth: number | undefined = undefined;
+    set strokeWidth(value: number | undefined) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
+            this.update();
+        }
+    }
+    get strokeWidth(): number | undefined {
+        return this._strokeWidth;
+    }
+
+    protected update() {
+        if (this.onChange) {
+            this.onChange();
+        }
+    }
+}
+
 export abstract class Series<C extends Chart> {
 
     readonly id: string = this.createId();
@@ -146,6 +276,8 @@ export abstract class Series<C extends Chart> {
     abstract getTooltipHtml(nodeDatum: SeriesNodeDatum): string;
 
     tooltipEnabled: boolean = false;
+
+    readonly marker2 = new SeriesMarker();
 
     /**
      * @private
