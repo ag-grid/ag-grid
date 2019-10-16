@@ -17,7 +17,8 @@
         section {
             @extend .full-width-row;
             > div {
-                @extend .my-3, .py-2;
+                @extend .my-3, .py-2, .mx-0;
+                width: calc(100% - 2rem);
             }
         }
 
