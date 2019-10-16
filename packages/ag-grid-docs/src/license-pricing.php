@@ -136,7 +136,7 @@ gtm_data_layer('community-enterprise');
                             <p>1 project / 1 developer</p>
                         </h4>
                         <div>
-                            <a class="btn" style="color: #009ede;border-color: #009ede" href="..">BUY</a>
+                            <a class="btn" style="color: #009ede;border-color: #009ede" href="mailto:info@ag-grid.com">CONTACT US</a>
                         </div>
                     </div>
                     <div class="license" style="border-color: #009d70;">
@@ -151,7 +151,7 @@ gtm_data_layer('community-enterprise');
                             <p>unlimited projects / 1 Developer</p>
                         </h4>
                         <div>
-                            <a class="btn" style="color: #009d70;border-color: #009d70" href="..">BUY</a>
+                            <a class="btn" style="color: #009d70;border-color: #009d70" href="mailto:info@ag-grid.com">CONTACT US</a>
                         </div>
                     </div>
                     <div class="license" style="border-color: #fbad18;">
@@ -166,7 +166,7 @@ gtm_data_layer('community-enterprise');
                             <p>1 project / 1 Production Environment</p>
                         </h4>
                         <div>
-                            <a class="btn" style="color: #fbad18;border-color: #fbad18" href="..">BUY</a>
+                            <a class="btn" style="color: #fbad18;border-color: #fbad18" href="mailto:info@ag-grid.com">CONTACT US</a>
                         </div>
                     </div>
                 </div>
@@ -439,7 +439,7 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>1-year Subscription to New Versions (included)</span>
                         <p>When you make a purchase you get a Subscription to license New Versions of ag-Grid Enterprise for 365 days. 
-                            You can see our release list here. After 365 days you will no longer be able to license the latest versions 
+                            You can see our release list <a href="./ag-grid-changelog/">here</a>. After 365 days you will no longer be able to license the latest versions 
                             of ag-Grid Enterprise without renewing your subscription. You can continue to use your licensed versions 
                             in perpetuity.
                         </p>
@@ -511,7 +511,7 @@ gtm_data_layer('community-enterprise');
                         &dollar;750
                     </div>
                     <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: #009ede;;border-color: #009ede;" href="..">BUY</a>
+                        <a class="btn" style="color: #009ede;;border-color: #009ede;" href="mailto:info@ag-grid.com">CONTACT US</a>
                     </div>
                 </div>
                 <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center; margin-top: 1rem">
@@ -522,7 +522,7 @@ gtm_data_layer('community-enterprise');
                         &dollar;1,200
                     </div>
                     <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: #009d70;border-color: #009d70;" href="..">BUY</a>
+                        <a class="btn" style="color: #009d70;border-color: #009d70;" href="mailto:info@ag-grid.com">CONTACT US</a>
                     </div>
                 </div>
                 <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center; margin-top: 1rem">
@@ -533,7 +533,7 @@ gtm_data_layer('community-enterprise');
                         &dollar;750
                     </div>
                     <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: #fbad18;border-color: #fbad18;" href="..">BUY</a>
+                        <a class="btn" style="color: #fbad18;border-color: #fbad18;" href="mailto:info@ag-grid.com">CONTACT US</a>
                     </div>
                 </div>
             </div>
