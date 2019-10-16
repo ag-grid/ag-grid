@@ -99,7 +99,7 @@ export interface GridParams {
     // bean instances to add to the context
     providedBeanInstances?: {[key:string]:any};
 
-    modules?: [];
+    modules?: Module[];
 }
 
 export class Grid {
