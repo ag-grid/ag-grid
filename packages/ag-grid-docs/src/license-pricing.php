@@ -78,61 +78,51 @@ gtm_data_layer('community-enterprise');
 </header>
 
 <div class="page-content">
-    <div id="license-pricing">
+    <div class="license-pricing">
         <div id="content">
-            <section>
-                <div id="thankyou" style="display: none"> Thank you for contacting ag-Grid. We'll be in contact
-                    shortly.
-                </div>
-            </section>
             <section class="page-info">
-                <h1>ag-Grid Pricing</h1>
-                <p>ag-Grid comes in two versions – <strong>ag-Grid Community</strong> and <strong>ag-Grid Enterprise</strong>.
-                    You can <b>evaluate ag-Grid Enterprise without contacting us</b>. A license is only
-                    required when you start developing for production.
-                </p>
+                <h1>ag-Grid Pricing nad Licensing</h1>
             </section>
             <section class="packages">
                 <div>
-                    <h2>
+                    <div>
                         <img src="./images/pricing/Community.svg" style="max-width: 50px;" alt="MIT">
-                        ag-Grid Community
-                    </h2>
-                    <h3>Open Source MIT License (Free for Everyone)</h3>
-                    <ul>
-                        <li>All essential datagrid features</li>
-                        <li>Community support</li>
-                    </ul>
+                    </div>
+                    <div>
+                        <h3>ag-Grid Community</h3>
+                        <p>has the same outstanding performance as ag-Grid Enterprise and contains many essential features.<br>
+                        It's completely free to use under the MIT license. We actively maintain the project but offer no support.
+                        </p>
+                        <div class="package-install">
+                            <span>&gt; npm i ag-grid-community</span>
+                            <span>downloads &gt; 150K/month</span>
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <h2>
-                        <img src="./images/enterprise_50.png" style="width: 50px;" alt="MIT">
-                        ag-Grid Enterprise
-                    </h2>
-                    <h3>Commercial License</h3>
-                    <ul>
-                        <li>All Community features + </li>
-                        <li><strong>A premium set of enterprise oriented features</strong></li>
-                        <li><strong>Dedicated support</strong></li>
-                    </ul>
+                    <div>
+                        <img src="./images/svg/enterprise.svg" style="max-width: 50px;" alt="Enterprise">
+                    </div>
+                    <div>
+                    <h3>ag-Grid Enterprise</h3>
+                    <p>
+                    is a commercial license that unlocks advanced grid functionallity like Row Grouping, Range Selection, 
+                    Master / Detail, Server Side Row Model and <a href="#">more</a>.
+                    </p>
+                    <p>Feel free to download &amp; evaluate<span>&gt; npm i ag-grid-enterprise</span></p>
+                    <p>
+                    You don't need a license key to evaluate the grid, all features are unlocked. If you need to temporarily
+                    hide the watermark and browser console errors, please send us an e-mail <a href="mailto:info@ag-grid.com>">info@ag-grid.com</a> 
+                    to request an evaluation license.
+                    </p>
+                    <p><strong>If you are ready to begin development, please, select the Enterprise product you wish to purchase below:</strong><br>
+                    if you need more information, scroll down for expanded definitions and FAQ responses or e-mail our sales team 
+                    <a href="mailto:sales@ag-grid.com">sales@ag-grid.com</a>.
+                    </p>
                 </div>
             </section>
             <section id="licenses">
-                <div class="license">
-                    <div>
-                        <img src="./images/pricing/Community.svg" alt="MIT">
-                        <h3>ag-Grid Community Developer License</h3>
-                        <h2>&nbsp;</h2>
-                        <h3>&nbsp;</h3>
-                    </div>
-                    <h4>FREE
-                    <p>&nbsp;</p>
-                    </h4>
-                    <div>
-                        <a class="btn" href="../javascript-grid-getting-started/">Get Started</a>
-                    </div>
-                </div>
-                <div class="license">
+                <div class="license" style="border-color: #009ede;">
                     <div>
                         <img src="./images/pricing/SA.svg" alt="Single Application">
                         <h3>ag-Grid Enterprise</h3>
@@ -142,13 +132,13 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <h4>
                         &dollar;750.<span style="font-size: small">00</span>
-                        <p>per app/per Developer</p>
+                        <p>1 project / 1 developer</p>
                     </h4>
                     <div>
-                        <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
+                        <a class="btn" style="color: #009ede;border-color: #009ede" href="..">BUY</a>
                     </div>
                 </div>
-                <div class="license">
+                <div class="license" style="border-color: #009d70;">
                     <div>
                         <img src="./images/pricing/MA.svg" alt="Multiple Applications">
                         <h3>ag-Grid Enterprise</h3>
@@ -157,10 +147,25 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <h4>
                         &dollar;1,200.<span style="font-size: small">00</span>
-                        <p>per Developer</p>
+                        <p>unlimited projects / 1 Developer</p>
                     </h4>
                     <div>
-                        <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
+                        <a class="btn" style="color: #009d70;border-color: #009d70" href="..">BUY</a>
+                    </div>
+                </div>
+                <div class="license" style="border-color: #fbad18;">
+                    <div>
+                        <img src="./images/pricing/Deployment%20Add-on.svg" alt="Deployment License">
+                        <h3>ag-Grid Enterprise</h3>
+                        <h2>Deployment License</h2>
+                        <h3>Add-on</h3>
+                    </div>
+                    <h4>
+                        &dollar;750.<span style="font-size: small">00</span>
+                        <p>1 project / 1 Production Environment</p>
+                    </h4>
+                    <div>
+                        <a class="btn" style="color: #fbad18;border-color: #fbad18" href="..">BUY</a>
                     </div>
                 </div>
             </section>
@@ -178,22 +183,21 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Community License</span>
                         <p>
-                            Licenses use of ag-Grid Community – which contains all of our Core features – without charge 
-                            under the MIT license.
+                            A license grant to use the ag-Grid Community package - it contains all of our essential features - without
+                            charge under the MIT license.
                         </p>
                     </div>
                 </div>
                 <div>
                     <div>
-                        &nbsp;
+                        <img src="./images/svg/enterprise.svg">
                     </div>
                     <div>
                         <span>Enterprise License</span>
                         <p>
-                            Licenses use of ag-Grid Enterprise – which contains all of our Core and Enterprise Features, 
-                            such as; aggregating row/column data, grouping rows/columns, pivot tables, master/detail layout, 
-                            etc – for internal use, as a Perpetual, Concurrent, per Licensed Developer, per Application 
-                            Commercial License with 1-year subscription to New Versions, Support and Maintenance.
+                            A license grant to use the ag-Grid Enteprise package - which contains all of our essential and enterprise features
+                            - for internal use, as a perpetual, concurrent, per developer, per application Commercial License with a 1-year
+                            subscription to new versions, support and maintenance.
                         </p>
                     </div>
                 </div>
@@ -205,9 +209,9 @@ gtm_data_layer('community-enterprise');
                         <span>Single Application Developer License (Enterprise)</span>
                         <p>
                             Allows One Licensed Developer to use ag-Grid Enterprise in One Application, for 
-                            internal use, in perpetuity. Includes a 1-year subscription to New Versions, 
-                            Support and Maintenance. For customer-facing (external) applications see Deployment 
-                            License Add-on.
+                            internal use, in perpetuity. Includes a 1-year subscription to new versions, 
+                            support and maintenance. For customer-facing (external) applications see deployment 
+                            license add-on.
                         </p>
                         <div class="example card">
                             <div class="card-header">Example</div>
@@ -234,9 +238,9 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Multiple Applications Developer License (Enterprise)</span>
                         <p>
-                            Allows One Licensed Developer to use ag-Grid Enterprise in Unlimited Applications, 
-                            for internal use, in perpetuity. Includes a 1-year subscription to New Versions, 
-                            Support and Maintenance. For customer-facing (external) applications see Deployment License.
+                            Allows one licensed developer to use ag-Grid Enterprise in unlimited applications, 
+                            for internal use, in perpetuity. Includes a 1-year subscription to new versions, 
+                            support and maintenance. For customer-facing (external) applications see Deployment License.
                         </p>
                         <div class="example card">
                             <div class="card-header">Example</div>
@@ -257,8 +261,8 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Deployment License Add-on (Enterprise)</span>
                         <p>
-                            Allows Licensed Developers to sub-license ag-Grid for One Application on One Production Environment 
-                            in perpetuity. Includes a 1-year subscription to New Versions, Support and Maintenance. Only available 
+                            Allows Licensed Developers to sub-license ag-Grid for one application on one production environment 
+                            in perpetuity. Includes a 1-year subscription to new versions, support and maintenance. Only available 
                             with a Developer License.
                         </p>
                         <div class="example card">
@@ -363,11 +367,25 @@ gtm_data_layer('community-enterprise');
                 </div>
                 <div>
                     <div>
-                        &nbsp;
+                    <img src="./images/svg/production.svg">
                     </div>
                     <div>
                         <span>Production Environment</span>
-                        <p>To follow</p>
+                        <p>A software project will have an indirect dependency on the ag-Grid Enterprise package event if it's wrapped into
+                        another framework, file, library, etc. Every concurrent, front-end, javascript developer working on a project using
+                        a library that wraps the ag-Grid Enterprise package will need to be licensed.</p>
+                        <div class="example card">
+                            <div class="card-header">Example</div>
+                            <div class="card-body">
+                                <div class="card-text">
+                                    A UI development team at Company 'A' creates it's own UI library for internal development and includes ag-Grid 
+                                    Enterprise as a component. The team working on 'MyApp' uses the new library and so does the team working on 
+                                    'NewApp'. 'MyApp' has 5 front-end javascript developers and 'NewApp' has 3.<br>
+                                    There are 2 front-end javascript developers on the UI development team. Company 'A' purchases 10 licenses for
+                                    ag-Grid Enterprise.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -394,16 +412,18 @@ gtm_data_layer('community-enterprise');
                             performance enhancements and other improvements into new releases – we don’t patch, fix or in any way 
                             alter older versions.
                         </p>
-                        <div class="example">
-                            <span>Example</span>
-                            <p>
-                                Company ‘A’ is developing an application named ‘MyApp’. The app needs to render 10K rows of data 
-                                in a table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise to the 
-                                project to satisfy that requirement. 5 Front-End and 10 Back-End developers are working on ‘MyApp’. 
-                                Only 1 Front-End developer is tasked with configuring and modifying the data grid. The benefit to 
-                                the UI is project wide however and all developers contributing to it need to be licensed. Company 
-                                ‘A’ purchases 5 licenses for ag-Grid Enterprise.
-                            </p>
+                        <div class="example card">
+                            <div class="card-header">Example</div>
+                            <div class="card-body">
+                                <div class="card-text">
+                                    Company ‘A’ is developing an application named ‘MyApp’. The app needs to render 10K rows of data 
+                                    in a table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise to the 
+                                    project to satisfy that requirement. 5 Front-End and 10 Back-End developers are working on ‘MyApp’. 
+                                    Only 1 Front-End developer is tasked with configuring and modifying the data grid. The benefit to 
+                                    the UI is project wide however and all developers contributing to it need to be licensed. Company 
+                                    ‘A’ purchases 5 licenses for ag-Grid Enterprise.
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <img src="./images/pricing/Version%201.svg">
@@ -474,7 +494,6 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <div>
                         <span>Corrective maintenance (only with an active subscription)</span>
-                        <p>To follow</p>
                     </div>
                 </div>
             </section>
@@ -490,7 +509,7 @@ gtm_data_layer('community-enterprise');
                         &dollar;750
                     </div>
                     <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
+                        <a class="btn" style="color: #009ede;;border-color: #009ede;" href="..">BUY</a>
                     </div>
                 </div>
                 <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center; margin-top: 1rem">
@@ -501,71 +520,23 @@ gtm_data_layer('community-enterprise');
                         &dollar;1,200
                     </div>
                     <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: turquoise;border-color: turquoise" href="..">BUY</a>
+                        <a class="btn" style="color: #009d70;border-color: #009d70;" href="..">BUY</a>
                     </div>
                 </div>
-                <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa; margin-top: 1rem">
-                    <a class="btn" style="color: turquoise;border-color: turquoise; width: 100%" href="..">CONTACT US</a>
+                <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center; margin-top: 1rem">
+                    <div style="flex: 1 1 auto; margin: 1rem">
+                        <img src="./images/pricing/Deployment%20Add-on.svg" style="min-width: 55px; max-width: 55px;">
+                    </div>
+                    <div style="flex: 1 1 auto;">
+                        &dollar;750
+                    </div>
+                    <div style="flex: 1 1 auto; margin: 1rem">
+                        <a class="btn" style="color: #fbad18;border-color: #fbad18;" href="..">BUY</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- The Order Form Modal -->
-    <!--<div class="modal fade orderForm-applicationDeveloper" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">-->
-    <!--    <div class="modal-dialog modal-lg" role="document">-->
-    <!--        <div class="modal-content">-->
-    <!--            <div class="modal-header">-->
-    <!--                <h4 class="modal-title">Order Enquiry</h4>-->
-    <!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-    <!--                    <span aria-hidden="true">&times;</span>-->
-    <!--                </button>-->
-    <!--            </div>-->
-    <!--            <div class="modal-body">-->
-    <!--                --><?php
-    //                $formKey = "applicationDeveloper";
-    //                include("includes/orderForm.php"); ?>
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
-    <!--</div>-->
-
-    <!-- The Order Form Modal -->
-    <!--<div class="modal fade orderForm-siteDeveloper" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">-->
-    <!--    <div class="modal-dialog modal-lg" role="document">-->
-    <!--        <div class="modal-content">-->
-    <!--            <div class="modal-header">-->
-    <!--                <h4 class="modal-title">Order Enquiry</h4>-->
-    <!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-    <!--                    <span aria-hidden="true">&times;</span>-->
-    <!--                </button>-->
-    <!--            </div>-->
-    <!--            <div class="modal-body">-->
-    <!--                --><?php
-    //                $formKey = "siteDeveloper";
-    //                include("includes/orderForm.php"); ?>
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
-    <!--</div>-->
-    <!-- The Order Form Modal -->
-    <!--<div class="modal fade orderForm-saasAndOEM" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">-->
-    <!--    <div class="modal-dialog modal-lg" role="document">-->
-    <!--        <div class="modal-content">-->
-    <!--            <div class="modal-header">-->
-    <!--                <h4 class="modal-title">Order Enquiry</h4>-->
-    <!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-    <!--                    <span aria-hidden="true">&times;</span>-->
-    <!--                </button>-->
-    <!--            </div>-->
-    <!--            <div class="modal-body">-->
-    <!--                --><?php
-    //                $formKey = "saasAndOEM";
-    //                include("includes/orderForm.php"); ?>
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
-    <!--</div>-->
     <?php include_once("./includes/footer.php"); ?>
 </div>
 <?php include_once("./includes/analytics.php"); ?>
@@ -595,7 +566,7 @@ gtm_data_layer('community-enterprise');
         return viewport;
     }
 
-    var win = jQuery(window);
+    var win = jQuery('.page-content');
 
     function trackIfInViewPort(element, leeway, callback) {
         function comparePosition() {
@@ -607,7 +578,7 @@ gtm_data_layer('community-enterprise');
         }
 
         comparePosition();
-        window.addEventListener('scroll', comparePosition);
+        win[0].addEventListener('scroll', comparePosition);
     }
 
     function positionAndToggleSideBar(inViewPort) {
