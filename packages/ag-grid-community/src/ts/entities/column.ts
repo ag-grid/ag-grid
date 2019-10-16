@@ -217,19 +217,31 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         const colDefAny = this.colDef as any;
 
+        function warnOnce(msg: string, key: string, obj?: any) {
+            _.doOnce( ()=> {
+                if (obj) {
+                console.warn(msg, obj)
+                } else {
+                    _.doOnce( ()=> console.warn(msg), key);
+                }
+            }, key);
+        }
+
         if (!ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
             const rowGroupingItems =
                 ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(item => {
                 if (_.exists(colDefAny[item])) {
-                    console.warn(`ag-Grid: ${item} is only valid with module Row Grouping, your column definition should not have ${item}`);
+                    warnOnce(`ag-Grid: ${item} is only valid with module Row Grouping, your column definition `
+                        + `should not have ${item}`, 'ColumnRowGroupingMissing'+item);
                 }
             });
         }
 
         if (!ModuleRegistry.isRegistered(ModuleNames.RichSelectModule)) {
             if (this.colDef.cellEditor==='agRichSelect' || this.colDef.cellEditor==='agRichSelectCellEditor') {
-                console.warn(`ag-Grid: ${this.colDef.cellEditor} can only be used with module ${ModuleNames.RichSelectModule}`);
+                warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with `
+                    + `module ${ModuleNames.RichSelectModule}`, 'ColumnRichSelectMissing');
             }
         }
 
@@ -238,83 +250,84 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (_.exists(colDefAny[item])) {
-                    console.warn(`ag-Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`);
+                    warnOnce(`ag-Grid: ${item} is not possible when doing tree data, your `
+                        + `column definition should not have ${item}`, 'TreeDataCannotRowGroup');
                 }
             });
         }
 
         if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
-            console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
+            warnOnce('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
         }
 
         if (_.get(this, 'colDef.cellRendererParams.restrictToOneGroup', null)) {
-            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.restrictToOneGroup is deprecated. You should use showRowGroup');
+            warnOnce('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.restrictToOneGroup is deprecated. You should use showRowGroup', 'ColumnCheck_sksldjf');
         }
 
         if (_.get(this, 'colDef.cellRendererParams.keyMap', null)) {
-            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
+            warnOnce('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator', 'ColumnCheck_ieiruhgdf');
         }
 
         if (_.get(this, 'colDef.cellRendererParams.keyMap', null)) {
-            console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
+            warnOnce('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator', 'ColumnCheck_uitolghj');
         }
 
         if (colDefAny.floatingCellRenderer) {
-            console.warn('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer');
+            warnOnce('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer', 'ColumnCheck_soihwewe');
             this.colDef.pinnedRowCellRenderer = colDefAny.floatingCellRenderer;
         }
         if (colDefAny.floatingRendererFramework) {
-            console.warn('ag-Grid: since v11, floatingRendererFramework is now pinnedRowCellRendererFramework');
+            warnOnce('ag-Grid: since v11, floatingRendererFramework is now pinnedRowCellRendererFramework', 'ColumnCheck_zdkiouhwer');
             this.colDef.pinnedRowCellRendererFramework = colDefAny.floatingRendererFramework;
         }
         if (colDefAny.floatingRendererParams) {
-            console.warn('ag-Grid: since v11, floatingRendererParams is now pinnedRowCellRendererParams');
+            console.warn('ag-Grid: since v11, floatingRendererParams is now pinnedRowCellRendererParams', 'ColumnCheck_retiuhjs');
             this.colDef.pinnedRowCellRendererParams = colDefAny.floatingRendererParams;
         }
         if (colDefAny.floatingValueFormatter) {
-            console.warn('ag-Grid: since v11, floatingValueFormatter is now pinnedRowValueFormatter');
+            warnOnce('ag-Grid: since v11, floatingValueFormatter is now pinnedRowValueFormatter', 'ColumnCheck_qwroeihjdf');
             this.colDef.pinnedRowValueFormatter = colDefAny.floatingValueFormatter;
         }
         if (colDefAny.cellFormatter) {
-            console.warn('ag-Grid: since v12, cellFormatter is now valueFormatter');
+            warnOnce('ag-Grid: since v12, cellFormatter is now valueFormatter', 'ColumnCheck_eoireknml');
             if (_.missing(this.colDef.valueFormatter)) {
                 this.colDef.valueFormatter = colDefAny.cellFormatter;
             }
         }
 
         if (colDefAny.headerCellTemplate) {
-            console.warn('ag-Grid: since v15, headerCellTemplate is gone, use header component instead.');
+            warnOnce('ag-Grid: since v15, headerCellTemplate is gone, use header component instead.', 'ColumnCheck_eroihxcm');
         }
         if (colDefAny.headerCellRenderer) {
-            console.warn('ag-Grid: since v15, headerCellRenderer is gone, use header component instead.');
+            warnOnce('ag-Grid: since v15, headerCellRenderer is gone, use header component instead.', 'ColumnCheck_terteuh');
         }
 
         if (colDefAny.volatile) {
-            console.warn('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.');
+            warnOnce('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.', 'ColumnCheck_weoihjxcv');
         }
 
         if (colDefAny.suppressSorting) {
-            console.warn(`ag-Grid: since v20, colDef.suppressSorting is gone, instead use colDef.sortable=false.`, this.colDef);
+            warnOnce(`ag-Grid: since v20, colDef.suppressSorting is gone, instead use colDef.sortable=false.`, 'ColumnCheck_43ljrer', this.colDef);
             this.colDef.sortable = false;
         }
 
         if (colDefAny.suppressFilter) {
-            console.warn(`ag-Grid: since v20, colDef.suppressFilter is gone, instead use colDef.filter=false.`, this.colDef);
+            warnOnce(`ag-Grid: since v20, colDef.suppressFilter is gone, instead use colDef.filter=false.`, 'ColumnCheck_erlkhfdm', this.colDef);
             this.colDef.filter = false;
         }
 
         if (colDefAny.suppressResize) {
-            console.warn(`ag-Grid: since v20, colDef.suppressResize is gone, instead use colDef.resizable=false.`, this.colDef);
+            warnOnce(`ag-Grid: since v20, colDef.suppressResize is gone, instead use colDef.resizable=false.`, 'ColumnCheck_weoihjxcv', this.colDef);
             this.colDef.resizable = false;
         }
 
         if (colDefAny.tooltip) {
-            console.warn(`ag-Grid: since v20.1, colDef.tooltip is gone, instead use colDef.tooltipValueGetter.`, this.colDef);
+            warnOnce(`ag-Grid: since v20.1, colDef.tooltip is gone, instead use colDef.tooltipValueGetter.`, 'ColumnCheck_adslknjwef', this.colDef);
             this.colDef.tooltipValueGetter = colDefAny.tooltip;
         }
 
         if (colDefAny.suppressToolPanel) {
-            console.warn(`ag-Grid: since v22, colDef.suppressToolPanel is gone, instead use suppressColumnsToolPanel / suppressFiltersToolPanel.`, this.colDef);
+            warnOnce(`ag-Grid: since v22, colDef.suppressToolPanel is gone, instead use suppressColumnsToolPanel / suppressFiltersToolPanel.`, 'ColumnCheck_weihjlsjkdf', this.colDef);
             this.colDef.suppressColumnsToolPanel = true;
         }
     }
