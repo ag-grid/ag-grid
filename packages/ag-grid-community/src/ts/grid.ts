@@ -98,6 +98,8 @@ export interface GridParams {
 
     // bean instances to add to the context
     providedBeanInstances?: {[key:string]:any};
+
+    modules?: [];
 }
 
 export class Grid {
@@ -123,7 +125,7 @@ export class Grid {
 
         this.gridOptions = gridOptions;
 
-        const registeredModules = ModuleRegistry.getRegisteredModules();
+        const registeredModules = this.getRegisteredModules(params);
 
         const beanClasses = this.createBeansList(registeredModules);
         const agStackComponents = this.createAgStackComponentsList(registeredModules);
@@ -151,6 +153,32 @@ export class Grid {
         this.dispatchGridReadyEvent(gridOptions);
         const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
         this.logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
+    }
+
+    private getRegisteredModules(params: GridParams): Module[] {
+        let passedViaConstructor: Module[] = params ? params.modules : null;
+        let registered = ModuleRegistry.getRegisteredModules();
+
+        let allModules: Module[] = [];
+        let mapNames: {[name: string]: boolean} = {};
+
+        // adds to list and removes duplicates
+        function addModule(module: Module) {
+            if (!mapNames[module.moduleName]) {
+                mapNames[module.moduleName] = true;
+                allModules.push(module);
+            }
+        }
+
+        if (passedViaConstructor) {
+            passedViaConstructor.forEach(addModule);
+        }
+
+        if (registered) {
+            registered.forEach(addModule);
+        }
+
+        return allModules;
     }
 
     private registerModuleUserComponents(registeredModules: Module[]): void {
