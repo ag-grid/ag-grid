@@ -24,7 +24,7 @@
 
         .packages {
             > div {
-                @extend .card, .row, .flex-md-row, .flex-nowrap;
+                @extend .card, .row, .flex-md-row, .flex-nowrap, .py-3;
                 > div:first-child {
                     min-width: 10rem;
                     @extend .col-md, .d-flex, .justify-content-center, .mb-4, .mb-md-0, .align-items-start;
