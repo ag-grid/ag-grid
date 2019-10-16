@@ -81,7 +81,7 @@ gtm_data_layer('community-enterprise');
     <div class="license-pricing">
         <div id="content">
             <section class="page-info">
-                <h1>ag-Grid Pricing nad Licensing</h1>
+                <h1>ag-Grid Pricing and Licensing</h1>
             </section>
             <section class="packages">
                 <div>
@@ -117,55 +117,57 @@ gtm_data_layer('community-enterprise');
                     </p>
                     <p><strong>If you are ready to begin development, please, select the Enterprise product you wish to purchase below:</strong><br>
                     if you need more information, scroll down for expanded definitions and FAQ responses or e-mail our sales team 
-                    <a href="mailto:sales@ag-grid.com">sales@ag-grid.com</a>.
+                    <a href="mailto:sales@ag-grid.com">info@ag-grid.com</a>.
                     </p>
                 </div>
             </section>
             <section id="licenses">
-                <div class="license" style="border-color: #009ede;">
-                    <div>
-                        <img src="./images/pricing/SA.svg" alt="Single Application">
-                        <h3>ag-Grid Enterprise</h3>
-                        <h2>Single Application</h2>
-                        <h3>Developer License</h3>
-                        
+                <div class="license-container">
+                    <div class="license" style="border-color: #009ede;">
+                        <div>
+                            <img src="./images/pricing/SA.svg" alt="Single Application">
+                            <h3>ag-Grid Enterprise</h3>
+                            <h2>Single Application</h2>
+                            <h3>Developer License</h3>
+                            
+                        </div>
+                        <h4>
+                            &dollar;750.<span style="font-size: small">00</span>
+                            <p>1 project / 1 developer</p>
+                        </h4>
+                        <div>
+                            <a class="btn" style="color: #009ede;border-color: #009ede" href="..">BUY</a>
+                        </div>
                     </div>
-                    <h4>
-                        &dollar;750.<span style="font-size: small">00</span>
-                        <p>1 project / 1 developer</p>
-                    </h4>
-                    <div>
-                        <a class="btn" style="color: #009ede;border-color: #009ede" href="..">BUY</a>
+                    <div class="license" style="border-color: #009d70;">
+                        <div>
+                            <img src="./images/pricing/MA.svg" alt="Multiple Applications">
+                            <h3>ag-Grid Enterprise</h3>
+                            <h2>Multiple Applications</h2>
+                            <h3>Developer License</h3>
+                        </div>
+                        <h4>
+                            &dollar;1,200.<span style="font-size: small">00</span>
+                            <p>unlimited projects / 1 Developer</p>
+                        </h4>
+                        <div>
+                            <a class="btn" style="color: #009d70;border-color: #009d70" href="..">BUY</a>
+                        </div>
                     </div>
-                </div>
-                <div class="license" style="border-color: #009d70;">
-                    <div>
-                        <img src="./images/pricing/MA.svg" alt="Multiple Applications">
-                        <h3>ag-Grid Enterprise</h3>
-                        <h2>Multiple Applications</h2>
-                        <h3>Developer License</h3>
-                    </div>
-                    <h4>
-                        &dollar;1,200.<span style="font-size: small">00</span>
-                        <p>unlimited projects / 1 Developer</p>
-                    </h4>
-                    <div>
-                        <a class="btn" style="color: #009d70;border-color: #009d70" href="..">BUY</a>
-                    </div>
-                </div>
-                <div class="license" style="border-color: #fbad18;">
-                    <div>
-                        <img src="./images/pricing/Deployment%20Add-on.svg" alt="Deployment License">
-                        <h3>ag-Grid Enterprise</h3>
-                        <h2>Deployment License</h2>
-                        <h3>Add-on</h3>
-                    </div>
-                    <h4>
-                        &dollar;750.<span style="font-size: small">00</span>
-                        <p>1 project / 1 Production Environment</p>
-                    </h4>
-                    <div>
-                        <a class="btn" style="color: #fbad18;border-color: #fbad18" href="..">BUY</a>
+                    <div class="license" style="border-color: #fbad18;">
+                        <div>
+                            <img src="./images/pricing/Deployment%20Add-on.svg" alt="Deployment License">
+                            <h3>ag-Grid Enterprise</h3>
+                            <h2>Deployment License</h2>
+                            <h3>Add-on</h3>
+                        </div>
+                        <h4>
+                            &dollar;750.<span style="font-size: small">00</span>
+                            <p>1 project / 1 Production Environment</p>
+                        </h4>
+                        <div>
+                            <a class="btn" style="color: #fbad18;border-color: #fbad18" href="..">BUY</a>
+                        </div>
                     </div>
                 </div>
             </section>
