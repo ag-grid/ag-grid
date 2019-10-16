@@ -6,7 +6,7 @@ import { SelectionController } from "./selectionController";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { ValueService } from "./valueService/valueService";
-import { EventService } from "./eventService";
+import { EventService, setDefaultEventSourceForClassMethods } from "./eventService";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants";
@@ -171,6 +171,8 @@ export class GridApi {
                 this.serverSideRowModel = this.rowModel as IServerSideRowModel;
                 break;
         }
+
+        setDefaultEventSourceForClassMethods('api', this, GridApi, this.eventService);
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */

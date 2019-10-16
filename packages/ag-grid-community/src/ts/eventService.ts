@@ -18,6 +18,8 @@ export class EventService implements IEventEmitter {
 
     private logger: Logger;
 
+    private defaultEventSource: string;
+
     private asyncFunctionsQueue: Function[] = [];
     private scheduled = false;
 
@@ -95,6 +97,10 @@ export class EventService implements IEventEmitter {
     // why do we pass the type here? the type is in ColumnChangeEvent, so unless the
     // type is not in other types of events???
     public dispatchEvent(event: AgEvent): void {
+        if (this.defaultEventSource && typeof event.source === "undefined") {
+            event.source = this.defaultEventSource;
+        }
+
         // console.log(`dispatching ${eventType}: ${event}`);
         this.dispatchToListeners(event, true);
         this.dispatchToListeners(event, false);
@@ -106,6 +112,14 @@ export class EventService implements IEventEmitter {
         if (!this.firedEvents[event.type]) {
             this.dispatchEvent(event);
         }
+    }
+
+    public setDefaultEventSource(source: string) {
+        this.defaultEventSource = source;
+    }
+
+    public clearDefaultEventSource() {
+        this.defaultEventSource = undefined;
     }
 
     private dispatchToListeners(event: AgEvent, async: boolean) {
@@ -177,4 +191,21 @@ export class EventService implements IEventEmitter {
         // execute the queue
         queueCopy.forEach(func => func());
     }
+}
+
+export function setDefaultEventSourceForClassMethods<T>(source: string, instance: T, cls: {prototype: T}, eventService: EventService): void {
+    Object.getOwnPropertyNames(cls.prototype).forEach(name => {
+        const instanceAny = instance as any;
+        if (typeof instanceAny[name] === "function") {
+            const method = instanceAny[name];
+            instanceAny[name] = (...args: any[]) => {
+                eventService.setDefaultEventSource(source);
+                try {
+                    method.apply(instance, args);
+                } finally {
+                    eventService.clearDefaultEventSource();
+                }
+            };
+        }
+    });
 }
