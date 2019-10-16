@@ -3,7 +3,7 @@ export enum ModuleNames {
     // when using modules, user references this
     CommunityCoreModule = "@ag-community/grid-core", // should this be grid-community-core?
     // when not using modules, user references this
-    CommunityAllModules = "@ag-community/grid-core-all-modules", // should this be grid-community-core-all-modules
+    CommunityAllModules = "@ag-community/grid-all", // should this be grid-community-all
 
     // community modules
     InfiniteRowModelModule = "@ag-community/grid-infinite-row-model",
@@ -14,7 +14,7 @@ export enum ModuleNames {
     // enterprise core - users never import on this, but other enterprise modules do
     EnterpriseCoreModule = "@ag-enterprise/grid-core", // should this be grid-enterprise-core?
     // when not using modules, user references this
-    EnterpriseAllModules = "@ag-enterprise/grid-core-all-modules", // should this be grid-enterprise-core-all-modules
+    EnterpriseAllModules = "@ag-enterprise/grid-all", // should this be grid-enterprise-all
 
     // enterprise modules
     RowGroupingModule = "@ag-enterprise/grid-row-grouping",
