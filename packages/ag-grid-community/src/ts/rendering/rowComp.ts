@@ -279,7 +279,7 @@ export class RowComp extends Component {
             callback(eRow);
 
             if (useAnimationsFrameForCreate) {
-                this.beans.taskQueue.addP1Task(this.lazyCreateCells.bind(this, cols, eRow), this.rowNode.rowIndex);
+                this.beans.taskQueue.addCreateP1Task(this.lazyCreateCells.bind(this, cols, eRow), this.rowNode.rowIndex);
             } else {
                 this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
                 this.rowContainerReadyCount = 3;
@@ -602,7 +602,7 @@ export class RowComp extends Component {
             this.refreshCellsInAnimationFrame();
         } else {
             if (this.columnRefreshPending) { return; }
-            this.beans.taskQueue.addP1Task(this.refreshCellsInAnimationFrame.bind(this), this.rowNode.rowIndex);
+            this.beans.taskQueue.addCreateP1Task(this.refreshCellsInAnimationFrame.bind(this), this.rowNode.rowIndex);
         }
     }
 
@@ -1284,7 +1284,7 @@ export class RowComp extends Component {
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
         if (this.useAnimationFrameForCreate) {
-            this.beans.taskQueue.addP2Task(this.addHoverFunctionality.bind(this, eRow));
+            this.beans.taskQueue.addCreateP2Task(this.addHoverFunctionality.bind(this, eRow), this.rowNode.rowIndex);
         } else {
             this.addHoverFunctionality(eRow);
         }

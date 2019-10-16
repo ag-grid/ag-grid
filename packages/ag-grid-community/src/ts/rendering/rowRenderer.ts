@@ -786,7 +786,7 @@ export class RowRenderer extends BeanStub {
 
         const useAnimationFrame = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame() && !this.printLayout;
         if (useAnimationFrame) {
-            this.beans.taskQueue.addP2Task(this.destroyRowComps.bind(this, rowsToRecycle, animate));
+            this.beans.taskQueue.addDestroyTask(this.destroyRowComps.bind(this, rowsToRecycle, animate));
         } else {
             this.destroyRowComps(rowsToRecycle, animate);
         }

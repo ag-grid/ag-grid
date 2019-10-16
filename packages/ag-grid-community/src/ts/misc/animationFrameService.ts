@@ -17,14 +17,17 @@ export class AnimationFrameService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
 
-    // create tasks are to do with row creation. for them we want to execute according to row order, so we use
+    // p1 and p2 are create tasks are to do with row and cell creation.
+    // for them we want to execute according to row order, so we use
     // TaskItem so we know what index the item is for.
-    private p1Tasks: TaskItem[] = [];
+    private createTasksP1: TaskItem[] = []; // eg drawing back-ground of rows
+    private createTasksP2: TaskItem[] = []; // eg cell renderers, adding hover functionality
 
     // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
     // important.
-    private p2Tasks: (() => void)[] = [];
+    private destroyTasks: (() => void)[] = [];
+
     private ticking = false;
 
     private useAnimationFrame: boolean;
@@ -60,33 +63,49 @@ export class AnimationFrameService {
         }
     }
 
-    public addP1Task(task: () => void, index: number): void {
+    public addCreateP1Task(task: () => void, index: number): void {
         this.verifyAnimationFrameOn('addP1Task');
         const taskItem: TaskItem = {task: task, index: index};
-        this.p1Tasks.push(taskItem);
+        this.createTasksP1.push(taskItem);
         this.schedule();
     }
 
-    public addP2Task(task: () => void): void {
+    public addCreateP2Task(task: () => void, index: number): void {
         this.verifyAnimationFrameOn('addP2Task');
-        this.p2Tasks.push(task);
+        const taskItem: TaskItem = {task: task, index: index};
+        this.createTasksP2.push(taskItem);
+        this.schedule();
+    }
+
+    public addDestroyTask(task: () => void): void {
+        this.verifyAnimationFrameOn('addP3Task');
+        this.destroyTasks.push(task);
         this.schedule();
     }
 
     private executeFrame(millis: number): void {
         this.verifyAnimationFrameOn('executeFrame');
 
-        // create a copy of p1Tasks, so that when a task calls addP1Task
+        // create a copy of p1Tasks, so that when addP1Task is called,
         // the new task is held until next frame so that it can be
         // sorted and executed in the right order. we don't do this for p2
         // tasks as p2 tasks are not ordered.
-        const p1TasksCopy = this.p1Tasks;
-        this.p1Tasks = [];
+        const createP1TasksThisFrame = this.createTasksP1;
+        const createP2TasksThisFrame = this.createTasksP2;
+        const destroyTasksThisFrame = this.destroyTasks;
+
+        this.createTasksP1 = [];
+        this.createTasksP2 = [];
+        this.destroyTasks = [];
 
         if (this.scrollGoingDown) {
-            p1TasksCopy.sort((a: TaskItem, b: TaskItem) => b.index - a.index);
+            const ascSortFunc = (a: TaskItem, b: TaskItem) => b.index - a.index;
+            createP1TasksThisFrame.sort(ascSortFunc);
+            createP2TasksThisFrame.sort(ascSortFunc);
         } else {
-            p1TasksCopy.sort((a: TaskItem, b: TaskItem) => a.index - b.index);
+            const descSortFunc = (a: TaskItem, b: TaskItem) => a.index - b.index;
+            createP1TasksThisFrame.sort(descSortFunc);
+            createP2TasksThisFrame.sort(descSortFunc);
         }
 
         const frameStart = new Date().getTime();
@@ -100,11 +119,14 @@ export class AnimationFrameService {
             const gridPanelUpdated = this.gridPanel.executeFrame();
 
             if (!gridPanelUpdated) {
-                if (p1TasksCopy.length > 0) {
-                    const taskItem = p1TasksCopy.pop();
+                if (createP1TasksThisFrame.length > 0) {
+                    const taskItem = createP1TasksThisFrame.pop();
                     taskItem.task();
-                } else if (this.p2Tasks.length > 0) {
-                    const task = this.p2Tasks.pop();
+                } else if (createP2TasksThisFrame.length > 0) {
+                    const taskItem = createP2TasksThisFrame.pop();
+                    taskItem.task();
+                } else if (destroyTasksThisFrame.length > 0) {
+                    const task = destroyTasksThisFrame.pop();
                     task();
                 } else {
                     break;
@@ -114,9 +136,11 @@ export class AnimationFrameService {
             duration = (new Date().getTime()) - frameStart;
         }
 
-        this.p1Tasks = p1TasksCopy.concat(this.p1Tasks);
+        this.createTasksP1 = createP1TasksThisFrame.concat(this.createTasksP1);
+        this.createTasksP2 = createP2TasksThisFrame.concat(this.createTasksP2);
+        this.destroyTasks = destroyTasksThisFrame.concat(this.destroyTasks);
 
-        if (this.p1Tasks.length > 0 || this.p2Tasks.length > 0) {
+        if (this.createTasksP1.length > 0 || this.createTasksP2.length > 0 || this.destroyTasks.length > 0) {
             this.requestFrame();
         } else {
             this.stopTicking();
