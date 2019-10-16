@@ -14,8 +14,11 @@
             }
         }
 
-        section > div {
-            @extend .my-3, .py-2;
+        section {
+            @extend .full-width-row;
+            > div {
+                @extend .my-3, .py-2;
+            }
         }
 
         .packages {
