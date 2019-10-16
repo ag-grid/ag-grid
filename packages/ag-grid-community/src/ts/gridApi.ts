@@ -55,7 +55,7 @@ import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { IImmutableService } from "./interfaces/iImmutableService";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
-import {ModuleRegistry} from "./modules/moduleRegistry";
+import { ModuleRegistry } from "./modules/moduleRegistry";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -983,13 +983,15 @@ export class GridApi {
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ChartsModule, 'api.createRangeChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createRangeChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart')) {
             return this.chartService.createRangeChart(params);
         }
     }
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ChartsModule, 'api.createPivotChart')) {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createPivotChart') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart')) {
             return this.chartService.createPivotChart(params);
         }
     }

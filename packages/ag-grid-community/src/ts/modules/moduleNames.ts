@@ -27,7 +27,7 @@ export enum ModuleNames {
     RangeSelectionModule = "@ag-enterprise/grid-range-selection",
     MasterDetailModule = "@ag-enterprise/grid-master-detail",
     RichSelectModule = "@ag-enterprise/grid-rich-select",
-    ChartsModule = "@ag-enterprise/grid-charts",
+    GridChartsModule = "@ag-enterprise/grid-charts",
     ViewportRowModelModule = "@ag-enterprise/grid-viewport-row-model",
     ServerSideRowModelModule = "@ag-enterprise/grid-server-side-row-model", // or
     ExcelExportModule = "@ag-enterprise/grid-excel-export",

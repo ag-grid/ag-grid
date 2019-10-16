@@ -1,7 +1,7 @@
-import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
-import {LicenseManager} from "./licenseManager";
-import {MD5} from "./license/md5";
-import {WatermarkComp} from "./license/watermark";
+import { Module, ModuleNames, ModuleRegistry } from "ag-grid-community";
+import { LicenseManager } from "./licenseManager";
+import { MD5 } from "./license/md5";
+import { WatermarkComp } from "./license/watermark";
 
 export { LicenseManager } from "./licenseManager";
 export { MD5 } from "./license/md5";
@@ -11,7 +11,7 @@ export const EnterpriseCoreModule: Module = {
     moduleName: ModuleNames.EnterpriseCoreModule,
     beans: [LicenseManager, MD5],
     agStackComponents: [
-        {componentName: 'AgWatermark', componentClass: WatermarkComp}
+        { componentName: 'AgWatermark', componentClass: WatermarkComp }
     ]
 };
 

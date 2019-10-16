@@ -1,4 +1,4 @@
-import {RowNode} from "./entities/rowNode";
+import { RowNode } from "./entities/rowNode";
 import {
     ChartRef,
     FillOperationParams,
@@ -17,30 +17,30 @@ import {
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
-import {_} from "./utils";
-import {EventService} from "./eventService";
-import {Constants} from "./constants";
-import {ComponentUtil} from "./components/componentUtil";
-import {GridApi} from "./gridApi";
-import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./entities/colDef";
-import {Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier} from "./context/context";
-import {ColumnApi} from "./columnController/columnApi";
-import {ColumnController} from "./columnController/columnController";
-import {IViewportDatasource} from "./interfaces/iViewportDatasource";
-import {IDatasource} from "./interfaces/iDatasource";
-import {CellPosition} from "./entities/cellPosition";
-import {IServerSideDatasource} from "./interfaces/iServerSideDatasource";
-import {BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "./interfaces/exportParams";
-import {AgEvent} from "./events";
-import {Environment, SASS_PROPERTIES} from "./environment";
-import {PropertyKeys} from "./propertyKeys";
-import {ColDefUtil} from "./components/colDefUtil";
-import {Events} from "./eventKeys";
-import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
-import {SideBarDef, SideBarDefParser, ToolPanelDef} from "./entities/sideBar";
-import {ModuleNames} from "./modules/moduleNames";
-import {ChartOptions} from "./interfaces/iChartOptions";
-import {ModuleRegistry} from "./modules/moduleRegistry";
+import { _ } from "./utils";
+import { EventService } from "./eventService";
+import { Constants } from "./constants";
+import { ComponentUtil } from "./components/componentUtil";
+import { GridApi } from "./gridApi";
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./entities/colDef";
+import { Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier } from "./context/context";
+import { ColumnApi } from "./columnController/columnApi";
+import { ColumnController } from "./columnController/columnController";
+import { IViewportDatasource } from "./interfaces/iViewportDatasource";
+import { IDatasource } from "./interfaces/iDatasource";
+import { CellPosition } from "./entities/cellPosition";
+import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
+import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./interfaces/exportParams";
+import { AgEvent } from "./events";
+import { Environment, SASS_PROPERTIES } from "./environment";
+import { PropertyKeys } from "./propertyKeys";
+import { ColDefUtil } from "./components/colDefUtil";
+import { Events } from "./eventKeys";
+import { AutoHeightCalculator } from "./rendering/autoHeightCalculator";
+import { SideBarDef, SideBarDefParser, ToolPanelDef } from "./entities/sideBar";
+import { ModuleNames } from "./modules/moduleNames";
+import { ChartOptions } from "./interfaces/iChartOptions";
+import { ModuleRegistry } from "./modules/moduleRegistry";
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -615,7 +615,7 @@ export class GridOptionsWrapper {
 
     public isEnableCharts() {
         if (isTrue((this.gridOptions.enableCharts))) {
-            return ModuleRegistry.assertRegistered(ModuleNames.ChartsModule, 'enableCharts');
+            return ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'enableCharts');
         }
         return false;
     }
@@ -1550,7 +1550,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.localeTextFunc;
         }
         const that = this;
-        return function (key: any, defaultValue: any) {
+        return function(key: any, defaultValue: any) {
             const localeText = that.gridOptions.localeText;
             if (localeText && localeText[key]) {
                 return localeText[key];

@@ -23,9 +23,9 @@ import {
     Optional,
     IRangeController, ModuleRegistry
 } from "ag-grid-community";
-import {MenuItemComponent} from "./menuItemComponent";
-import {MenuList} from "./menuList";
-import {MenuItemMapper} from "./menuItemMapper";
+import { MenuItemComponent } from "./menuItemComponent";
+import { MenuList } from "./menuList";
+import { MenuItemMapper } from "./menuItemMapper";
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory implements IContextMenuFactory {
@@ -64,14 +64,12 @@ export class ContextMenuFactory implements IContextMenuFactory {
             // nothing to show, perhaps tool panels???
         }
 
-        if (this.gridOptionsWrapper.isEnableCharts() && ModuleRegistry.isRegistered(ModuleNames.ChartsModule)) {
-
+        if (this.gridOptionsWrapper.isEnableCharts() &&
+            ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) &&
+            ModuleRegistry.isRegistered(ModuleNames.GridChartsModule)) {
             if (this.columnController.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
-            // else {
-            //     defaultMenuOptions.push('pivotChartAndPivotMode');
-            // }
 
             if (this.rangeController && !this.rangeController.isEmpty()) {
                 defaultMenuOptions.push('chartRange');

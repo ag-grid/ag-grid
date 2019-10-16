@@ -1,11 +1,11 @@
-import {Module} from "../interfaces/iModule";
-import {ModuleNames} from "./moduleNames";
-import {_} from "../utils";
+import { Module } from "../interfaces/iModule";
+import { ModuleNames } from "./moduleNames";
+import { _ } from "../utils";
 
 export class ModuleRegistry {
 
     // having in a map a) removes duplicates and b) allows fast lookup
-    private static modulesMap: {[name: string]: Module} = {};
+    private static modulesMap: { [name: string]: Module } = {};
 
     public static register(module: Module): void {
         this.modulesMap[module.moduleName] = module;
@@ -20,7 +20,9 @@ export class ModuleRegistry {
         const warningMessage = `ag-Grid: unable to use ${reason} as module ${moduleName} is not present. `
             + `You need to load the module with: import "${moduleName}"`;
 
-        _.doOnce( () => { console.warn(warningMessage) }, warningKey);
+        _.doOnce(() => { console.warn(warningMessage); }, warningKey);
+
+        return false;
     }
 
     public static isRegistered(moduleName: ModuleNames): boolean {
@@ -28,8 +30,6 @@ export class ModuleRegistry {
     }
 
     public static getRegisteredModules(): Module[] {
-        const res: Module[] = [];
-        _.iterateObject(this.modulesMap, (key: string, module: Module) => res.push(module) );
-        return res;
+        return _.values(this.modulesMap);
     }
 }

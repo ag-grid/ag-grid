@@ -2,7 +2,6 @@
 
 // spl modules
 /* MODULES - Don't delete this line */
-import "../../../../ag-grid-enterprise/src/modules/chartsModule.ts";
 import "../../../../../enterprise-modules/charts/src/chartsModule.ts";
 import "../../../../../enterprise-modules/clipboard/src/clipboardModule.ts";
 import "../../../../../enterprise-modules/column-tool-panel/src/columnsToolPanelModule.ts";
