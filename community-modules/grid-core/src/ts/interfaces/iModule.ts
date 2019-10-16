@@ -9,4 +9,5 @@ export interface Module {
     agStackComponents?: ComponentMeta[];
     userComponents?: {componentName: string, componentClass: AgGridRegisteredComponentInput<IComponent<any>>}[];
     rowModels?: {[name: string]: { new(): IRowModel }};
+    dependantModules?: Module[]; // Niall / Sean - my addition
 }

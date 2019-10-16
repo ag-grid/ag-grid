@@ -6,7 +6,7 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     RowNode
-} from "ag-grid-community"
+} from "@ag-community/grid-core"
 
 @Bean("filterService")
 export class FilterService {

@@ -7,7 +7,7 @@ import {
     Component,
     PostConstruct,
     RefSelector
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { ChartTranslator } from "../../../chartTranslator";
 
 export type LabelFont = {

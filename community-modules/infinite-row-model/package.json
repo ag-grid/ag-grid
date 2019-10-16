@@ -38,10 +38,11 @@
         "not blackberry > 0"
     ],
     "homepage": "http://www.ag-grid.com/",
-    "dependencies": {
-        "ag-grid-community": "~21.2.2"
+    "peerDependencies": {
+        "@ag-community/grid-core": "^21.2.0"
     },
     "devDependencies": {
+        "@ag-community/grid-core": "^21.2.0",
         "gulp": "^4.0.2",
         "typescript": "^3.6.3",
         "gulp-typescript": "^5.0.1"

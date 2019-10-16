@@ -38,7 +38,7 @@ const tscSrcTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 
     const tsResult = gulp
-        .src('src/ts/**/*.ts')
+        .src('src/**/*.ts')
         .pipe(tsProject());
 
     return merge([
@@ -55,7 +55,7 @@ const tscMainTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
 
     const tsResult = gulp
-        .src('./src/ts/main.ts')
+        .src('./src/main.ts')
         .pipe(tsProject());
 
     return merge([
@@ -72,33 +72,9 @@ const tscMainTask = () => {
     ]);
 };
 
-const tscModulesTask = () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
-
-    const tsResult = gulp
-        .src(['./src/ts/modules/**/*Module.ts'])
-        .pipe(tsProject());
-
-    return merge([
-        tsResult.dts
-            .pipe(replace("\"./", "\"./dist/lib/"))
-            .pipe(replace("\"../", "\"./dist/lib/"))
-            .pipe(gulp.dest('./')),
-        tsResult.js
-            .pipe(replace("require(\"./", "require(\"./dist/lib/modules/"))
-            .pipe(replace("require(\"../", "require(\"./dist/lib/"))
-            .pipe(gulp.dest('./'))
-    ]);
-};
-
 const cleanMain = () => {
     return gulp
         .src(['./main.d.ts', 'main.js'], {read: false, allowEmpty: true})
-        .pipe(clean());
-};
-const cleanModules = () => {
-    return gulp
-        .src(['./*Module.d.ts', './*Module.js'], {read: false, allowEmpty: true})
         .pipe(clean());
 };
 
@@ -109,14 +85,14 @@ const cleanDist = () => {
 };
 
 const tscWatch = () => {
-    gulp.watch('./src/ts/**/*', series('tsc-no-clean'));
+    gulp.watch('./src/**/*', series('tsc-no-clean'));
 };
 
 const tscSrcEs6Task = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig.es6.json', {typescript: typescript});
 
     const tsResult = gulp
-        .src('src/ts/**/*.ts')
+        .src('src/**/*.ts')
         .pipe(tsProject());
 
     return merge([
@@ -133,7 +109,7 @@ const tscMainEs6Task = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.es6.json', {typescript: typescript});
 
     const tsResult = gulp
-        .src('./src/ts/main.ts')
+        .src('./src/main.ts')
         .pipe(tsProject());
 
     return merge([
@@ -150,97 +126,6 @@ const tscMainEs6Task = () => {
     ]);
 };
 // End of Typescript related tasks
-
-// Start of scss/css related tasks
-const scssTask = () => {
-    var f = filter(["**/*.css", '!*Font*.css'], {restore: true});
-
-    return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
-        .pipe(named())
-        .pipe(webpackStream({
-            mode: 'none',
-            module: {
-                rules: [
-                    {
-                        test: /\.scss$/,
-                        use: [
-                            MiniCssExtractPlugin.loader,
-                            {
-                                loader: "css-loader"
-                            },
-                            "sass-loader",
-                            {
-                                loader: 'postcss-loader',
-                                options: {
-                                    syntax: 'postcss-scss',
-                                    plugins: [autoprefixer({
-                                        overrideBrowserslist: ["last 2 version"],
-                                        flexbox: true
-                                    })]
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        test: /\.(svg)$/,
-                        use: [
-                            'cache-loader',
-                            {
-                                loader: 'url-loader',
-                                options: {
-                                    limit: 8192
-                                }
-                            },
-                            {
-                                loader: 'image-webpack-loader',
-                                options: {
-                                    svgo: {
-                                        cleanupAttrs: true,
-                                        removeDoctype: true,
-                                        removeComments: true,
-                                        removeMetadata: true,
-                                        removeTitle: true,
-                                        removeDesc: true,
-                                        removeEditorsNSData: true,
-                                        removeUselessStrokeAndFill: true,
-                                        cleanupIDs: true,
-                                        collapseGroups: true,
-                                        convertShapeToPath: true
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                ]
-            },
-            plugins: [
-                new MiniCssExtractPlugin('[name].css')
-            ]
-        }))
-        .pipe(f)
-        .pipe(gulp.dest('dist/styles/'))
-        .pipe(f.restore)
-        .pipe(filter('*Font*.css'))
-        .pipe(gulp.dest('dist/styles/webfont/'));
-};
-
-const minifyCss = () => {
-    return gulp.src('./dist/styles/*.css')
-        .pipe(cssnano({
-            preset: ['default', {
-                discardComments: {
-                    removeAll: true,
-                },
-            }]
-        }))
-        .pipe(rename(path => path.basename = `${path.basename}.min`))
-        .pipe(gulp.dest('./dist/styles'));
-};
-
-const scssWatch = () => {
-    gulp.watch('./src/styles/!**/!*', series('scss-no-clean'));
-};
-// End of scss/css related tasks
 
 // Start of webpack related tasks
 const webpackTask = (minify, styles) => {
@@ -314,44 +199,32 @@ const watch = () => {
 // Typescript related tasks
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-main', cleanMain);
-gulp.task('clean-modules', cleanModules);
-gulp.task('clean', parallel('clean-dist', 'clean-main', 'clean-modules'));
+gulp.task('clean', parallel('clean-dist', 'clean-main'));
 gulp.task('tsc-no-clean-src', tscSrcTask);
 gulp.task('tsc-no-clean-main', tscMainTask);
-gulp.task('tsc-no-clean-modules', tscModulesTask);
 gulp.task('tsc-es6-no-clean-src', tscSrcEs6Task);
 gulp.task('tsc-es6-no-clean-main', tscMainEs6Task);
 gulp.task('tsc-es6-no-clean', parallel('tsc-es6-no-clean-src', 'tsc-es6-no-clean-main'));
-gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-no-clean-modules', 'tsc-es6-no-clean'));
+gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-es6-no-clean'));
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 gulp.task('tsc-watch', series('tsc-no-clean', tscWatch));
 
-// scss/css related tasks
-gulp.task('scss-no-clean', scssTask);
-gulp.task('minify-css', minifyCss);
-gulp.task('scss', series('clean', 'scss-no-clean'));
-gulp.task('scss-watch', series('scss-no-clean', scssWatch));
-
-// tsc & scss/css related tasks
-gulp.task('tsc-scss-clean', series('clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css'))));
-gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));
-
 // webpack related tasks
-gulp.task('webpack', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, false, true)));
-gulp.task('webpack-no-clean', series(webpackTask.bind(null, false, true)));
-gulp.task('webpack-minify', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, true, true)));
-gulp.task('webpack-minify-no-clean', series(webpackTask.bind(null, true, true)));
-gulp.task('webpack-noStyle', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, false, false)));
-gulp.task('webpack-noStyle-no-clean', series(webpackTask.bind(null, false, false)));
-gulp.task('webpack-minify-noStyle', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, true, false)));
-gulp.task('webpack-minify-noStyle-no-clean', series(webpackTask.bind(null, true, false)));
+// gulp.task('webpack', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, false, true)));
+// gulp.task('webpack-no-clean', series(webpackTask.bind(null, false, true)));
+// gulp.task('webpack-minify', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, true, true)));
+// gulp.task('webpack-minify-no-clean', series(webpackTask.bind(null, true, true)));
+// gulp.task('webpack-noStyle', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, false, false)));
+// gulp.task('webpack-noStyle-no-clean', series(webpackTask.bind(null, false, false)));
+// gulp.task('webpack-minify-noStyle', series('clean', 'tsc-scss-no-clean', webpackTask.bind(null, true, false)));
+// gulp.task('webpack-minify-noStyle-no-clean', series(webpackTask.bind(null, true, false)));
 
 // for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
-gulp.task('webpack-all-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean'));
-gulp.task('webpack-all', series('clean', 'tsc-scss-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
-gulp.task('watch', series('webpack', watch));
+// gulp.task('webpack-all-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean'));
+// gulp.task('webpack-all', series('clean', 'tsc-scss-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
+// gulp.task('watch', series('webpack', watch));
 
 // default/release task
-gulp.task('default', series('webpack-all'));
+// gulp.task('default', series('webpack-all'));
 
 

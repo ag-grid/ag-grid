@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ReactPortal} from 'react';
 import * as ReactDOM from 'react-dom';
-import {Promise, Utils} from 'ag-grid-community';
+import {Promise, Utils} from '@ag-community/grid-core';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
 import {assignProperties} from "./utils";

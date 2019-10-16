@@ -8,7 +8,7 @@ import {
     GridOptionsWrapper,
     ModuleNames,
     PostConstruct
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import {RowGroupDropZonePanel} from "./rowGroupDropZonePanel";
 import {PivotDropZonePanel} from "./pivotDropZonePanel";
 

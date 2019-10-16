@@ -8,7 +8,7 @@ import {
     PostConstruct,
     RefSelector,
     LegendPosition,
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { ChartController } from "../../../chartController";
 import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
 import { ChartTranslator } from "../../../chartTranslator";

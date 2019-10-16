@@ -1,5 +1,5 @@
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
-import { ColDef } from "ag-grid-community";
+import { ColDef } from "@ag-community/grid-core";
 
 @Component({
     selector: 'ag-grid-column',

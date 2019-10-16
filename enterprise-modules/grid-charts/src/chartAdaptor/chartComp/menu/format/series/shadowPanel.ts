@@ -7,7 +7,7 @@ import {
     PostConstruct,
     RefSelector,
     DropShadowOptions,
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { ChartTranslator } from "../../../chartTranslator";
 import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
 import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";

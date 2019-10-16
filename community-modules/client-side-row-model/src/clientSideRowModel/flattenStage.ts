@@ -10,7 +10,7 @@ import {
     RowNode,
     SelectionController,
     StageExecuteParams
-} from "ag-grid-community"
+} from "@ag-community/grid-core"
 
 @Bean('flattenStage')
 export class FlattenStage implements IRowNodeStage {

@@ -1,4 +1,4 @@
-import { _, ChartType, Component, PostConstruct } from "ag-grid-community";
+import { _, ChartType, Component, PostConstruct } from "@ag-community/grid-core";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
 import { BarSeriesPanel } from "./series/barSeriesPanel";

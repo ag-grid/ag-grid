@@ -14,7 +14,7 @@ import {
     ISelectionHandle,
     RowPositionUtils,
     _
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { RangeController } from "./rangeController";
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {

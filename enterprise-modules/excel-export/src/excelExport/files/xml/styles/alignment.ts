@@ -1,5 +1,5 @@
-import { XmlElement } from 'ag-grid-community';
-import { ExcelStyle, ExcelXMLTemplate } from 'ag-grid-community';
+import { XmlElement } from '@ag-community/grid-core';
+import { ExcelStyle, ExcelXMLTemplate } from '@ag-community/grid-core';
 
 const alignment: ExcelXMLTemplate = {
     getTemplate(styleProperties: ExcelStyle): XmlElement {

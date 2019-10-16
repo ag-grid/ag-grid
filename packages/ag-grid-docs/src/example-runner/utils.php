@@ -32,6 +32,7 @@ if (USE_LOCAL) {
         /* START OF MODULES DEV - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "$prefix/@ag-community/client-side-row-model",
         "@ag-community/csv-export" => "$prefix/@ag-community/csv-export",
+        "@ag-community/grid-core" => "$prefix/@ag-community/grid-core",
         "@ag-community/infinite-row-model" => "$prefix/@ag-community/infinite-row-model",
         "@ag-enterprise/charts" => "$prefix/@ag-enterprise/charts",
         "@ag-enterprise/clipboard" => "$prefix/@ag-enterprise/clipboard",
@@ -39,6 +40,7 @@ if (USE_LOCAL) {
         "@ag-enterprise/excel-export" => "$prefix/@ag-enterprise/excel-export",
         "@ag-enterprise/filter-tool-panel" => "$prefix/@ag-enterprise/filter-tool-panel",
         "@ag-enterprise/grid-charts" => "$prefix/@ag-enterprise/grid-charts",
+        "@ag-enterprise/grid-core" => "$prefix/@ag-enterprise/grid-core",
         "@ag-enterprise/master-detail" => "$prefix/@ag-enterprise/master-detail",
         "@ag-enterprise/menu" => "$prefix/@ag-enterprise/menu",
         "@ag-enterprise/range-selection" => "$prefix/@ag-enterprise/range-selection",
@@ -67,6 +69,7 @@ if (USE_LOCAL) {
         /* START OF MODULES PROD - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "https://unpkg.com/@ag-community/client-side-row-model@" . AG_GRID_VERSION . "/",
         "@ag-community/csv-export" => "https://unpkg.com/@ag-community/csv-export@" . AG_GRID_VERSION . "/",
+        "@ag-community/grid-core" => "https://unpkg.com/@ag-community/grid-core@" . AG_GRID_VERSION . "/",
         "@ag-community/infinite-row-model" => "https://unpkg.com/@ag-community/infinite-row-model@" . AG_GRID_VERSION . "/",
         "@ag-enterprise/charts" => "https://unpkg.com/@ag-enterprise/charts@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/clipboard" => "https://unpkg.com/@ag-enterprise/clipboard@" . AG_GRID_ENTERPRISE_VERSION . "/",
@@ -74,6 +77,7 @@ if (USE_LOCAL) {
         "@ag-enterprise/excel-export" => "https://unpkg.com/@ag-enterprise/excel-export@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/filter-tool-panel" => "https://unpkg.com/@ag-enterprise/filter-tool-panel@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/grid-charts" => "https://unpkg.com/@ag-enterprise/grid-charts@" . AG_GRID_ENTERPRISE_VERSION . "/",
+        "@ag-enterprise/grid-core" => "https://unpkg.com/@ag-enterprise/grid-core@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/master-detail" => "https://unpkg.com/@ag-enterprise/master-detail@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/menu" => "https://unpkg.com/@ag-enterprise/menu@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/range-selection" => "https://unpkg.com/@ag-enterprise/range-selection@" . AG_GRID_ENTERPRISE_VERSION . "/",

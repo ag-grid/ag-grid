@@ -1,5 +1,5 @@
-import { XmlElement,  _ } from 'ag-grid-community';
-import { Bean, Autowired } from 'ag-grid-community';
+import { XmlElement,  _ } from '@ag-community/grid-core';
+import { Bean, Autowired } from '@ag-community/grid-core';
 
 import workbook from './files/xml/workbook';
 import excelWorkbook from './files/xml/excelWorkbook';
@@ -14,7 +14,7 @@ import protection from './files/xml/styles/protection';
 import numberFormat from './files/xml/styles/numberFormat';
 import style from './files/xml/styles/style';
 
-import { ExcelStyle, ExcelWorksheet, ExcelXMLTemplate } from 'ag-grid-community';
+import { ExcelStyle, ExcelWorksheet, ExcelXMLTemplate } from '@ag-community/grid-core';
 import {XmlFactory} from "@ag-community/csv-export";
 
 /**

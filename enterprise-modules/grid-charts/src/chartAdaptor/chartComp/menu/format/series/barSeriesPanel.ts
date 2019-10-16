@@ -7,7 +7,7 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { ChartController } from "../../../chartController";
 import { ShadowPanel } from "./shadowPanel";
 import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";

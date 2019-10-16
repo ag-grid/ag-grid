@@ -10,7 +10,7 @@ import {
     RowNode,
     SortController,
     ValueService
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 
 import {RowNodeMap} from "./clientSideRowModel";
 

@@ -75,6 +75,10 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
+           '@ag-community/grid-core': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
            '@ag-community/infinite-row-model': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
@@ -100,6 +104,10 @@
                 defaultExtension: 'js'
             },
            '@ag-enterprise/grid-charts': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-enterprise/grid-core': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },

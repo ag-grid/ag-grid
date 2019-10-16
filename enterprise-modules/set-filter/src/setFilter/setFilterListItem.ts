@@ -12,7 +12,7 @@ import {
     Promise,
     UserComponentFactory,
     ValueFormatterService
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 
 export interface SelectedEvent extends AgEvent {
 }

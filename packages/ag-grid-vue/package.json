@@ -34,14 +34,14 @@
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
-    "ag-grid-community": "^21.2.0",
+    "@ag-community/grid-core": "^21.2.0",
     "typescript": "^3.6.0",
     "vue-template-compiler": "^2.6.10",
     "gulp-typescript": "^5.0.0",
     "gulp": "^4.0.0"
   },
   "peerDependencies": {
-    "ag-grid-community": "^21.2.0",
+    "@ag-community/grid-all-modules": "^21.2.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0"
   }

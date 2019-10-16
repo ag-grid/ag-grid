@@ -2,7 +2,7 @@ const fs = require('fs');
 const glob = require("glob");
 
 const communityModules = glob.sync("../../community-modules/*")
-    .filter(module => module.indexOf('ag-grid') === -1)
+    .filter(module => module.indexOf('grid-core') === -1)
     .map(module => `require('${module}');`);
 
 const modules = glob.sync("*Module.js")

@@ -17,7 +17,7 @@ import {
     ValueService,
     _,
     RowNodeBlock
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 

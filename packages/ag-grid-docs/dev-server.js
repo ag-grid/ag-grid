@@ -12,7 +12,7 @@ const hotMiddleware = require('webpack-hot-middleware');
 const chokidar = require('chokidar');
 const generateExamples = require('./example-generator');
 const buildPackagedExamples = require('./packaged-example-builder');
-const getAllModules =require("./utils").getAllModules;
+const getAllModules = require("./utils").getAllModules;
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
@@ -261,7 +261,7 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
             newEnterpriseBundleLines.push(line);
         }
     });
-    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseEntries).concat(['import "../../../../ag-grid-enterprise/src/main.ts";']);
+    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseEntries)/*.concat(['import "../../../../ag-grid-enterprise/src/main.ts";'])*/;
     fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.join('\n'), 'UTF-8');
 
     const existingEnterpriseMainLines = fs.readFileSync(enterpriseMainFilename, 'UTF-8').split('\n');
@@ -273,7 +273,7 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
             newEnterpriseMainLines.push(line);
         }
     });
-    const newEnterpriseMainContent = newEnterpriseMainLines.concat(enterpriseEntries).concat(['import "../../../../ag-grid-enterprise/src/main.ts";']);
+    const newEnterpriseMainContent = newEnterpriseMainLines.concat(enterpriseEntries)/*.concat(['import "../../../../ag-grid-enterprise/src/main.ts";'])*/;
     fs.writeFileSync(enterpriseMainFilename, newEnterpriseMainContent.join('\n'), 'UTF-8');
 
     const existingCommunityLines = fs.readFileSync(communityFilename).toString().split('\n');

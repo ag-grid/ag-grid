@@ -12,9 +12,9 @@ import {
     StylingService,
     ValueService,
     _
-} from 'ag-grid-community';
+} from '@ag-community/grid-core';
 
-import { ExcelCell, ExcelStyle } from 'ag-grid-community';
+import { ExcelCell, ExcelStyle } from '@ag-community/grid-core';
 import { ExcelGridSerializingParams, ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXmlFactory } from './excelXmlFactory';

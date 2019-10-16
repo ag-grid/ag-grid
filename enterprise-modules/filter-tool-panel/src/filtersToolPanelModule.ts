@@ -1,7 +1,8 @@
-import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
+import {Module, ModuleNames} from "@ag-community/grid-core";
 import {FiltersToolPanelHeaderPanel} from "./filterToolPanel/filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./filterToolPanel/filtersToolPanelListPanel";
 import {FiltersToolPanel} from "./filterToolPanel/filtersToolPanel";
+import {SideBarModule} from "@ag-enterprise/side-bar";
 
 export const FiltersToolPanelModule: Module = {
     moduleName: ModuleNames.FiltersToolPanelModule,
@@ -12,7 +13,9 @@ export const FiltersToolPanelModule: Module = {
     ],
     userComponents: [
         {componentName: 'agFiltersToolPanel', componentClass: FiltersToolPanel},
+    ],
+    dependantModules: [
+        SideBarModule
     ]
 };
 
-ModuleRegistry.register(FiltersToolPanelModule);

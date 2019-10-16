@@ -2,26 +2,23 @@ import * as React from "react";
 import {Component, ReactPortal} from "react";
 import * as PropTypes from "prop-types";
 import {
-    Autowired,
     BaseComponentWrapper,
-    Bean,
     ColumnApi,
     ComponentUtil,
     FrameworkComponentWrapper,
     Grid,
     GridApi,
     GridOptions,
-    WrapableInterface,
     Module,
-    ModuleNames,
-    ModuleRegistry
-} from "ag-grid-community";
+    WrapableInterface
+} from "@ag-community/grid-core";
 import {AgGridColumn} from "./agGridColumn";
 import {ReactComponent} from "./reactComponent";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
+    modules?: Module[];
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
 }
@@ -68,11 +65,13 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     componentDidMount() {
+        const modules = this.props.modules || [];
         const gridParams = {
             providedBeanInstances: {
                 agGridReact: this,
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this)
-            }
+            },
+            modules
         };
 
         let gridOptions = this.props.gridOptions || {};

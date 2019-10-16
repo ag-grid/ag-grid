@@ -8,7 +8,7 @@ import {
     Component,
     PostConstruct,
     RefSelector,
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";

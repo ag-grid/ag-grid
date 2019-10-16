@@ -9,7 +9,7 @@ import {
     RowPosition,
     ValueService,
     _
-} from 'ag-grid-community';
+} from '@ag-community/grid-core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
 interface FillValues {

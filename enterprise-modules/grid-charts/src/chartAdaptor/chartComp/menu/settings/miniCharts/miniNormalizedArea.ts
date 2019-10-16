@@ -1,4 +1,4 @@
-import {_, ChartType} from "ag-grid-community";
+import {_, ChartType} from "@ag-community/grid-core";
 
 import {MiniStackedArea} from "./miniStackedArea";
 

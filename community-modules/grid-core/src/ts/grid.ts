@@ -97,7 +97,7 @@ export interface GridParams {
     frameworkOverrides?: IFrameworkOverrides;
 
     // bean instances to add to the context
-    providedBeanInstances?: {[key:string]:any};
+    providedBeanInstances?: { [key: string]: any };
 
     modules?: Module[];
 }
@@ -131,7 +131,9 @@ export class Grid {
         const agStackComponents = this.createAgStackComponentsList(registeredModules);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, params);
 
-        if (!beanClasses) { return; } // happens when no row model found
+        if (!beanClasses) {
+            return;
+        } // happens when no row model found
 
         const contextParams: ContextParams = {
             providedBeanInstances: providedBeanInstances,
@@ -160,13 +162,21 @@ export class Grid {
         let registered = ModuleRegistry.getRegisteredModules();
 
         let allModules: Module[] = [];
-        let mapNames: {[name: string]: boolean} = {};
+        let mapNames: { [name: string]: boolean } = {};
 
         // adds to list and removes duplicates
         function addModule(module: Module) {
-            if (!mapNames[module.moduleName]) {
-                mapNames[module.moduleName] = true;
-                allModules.push(module);
+            function addIndividualModule(module: Module) {
+                if (!mapNames[module.moduleName]) {
+                    mapNames[module.moduleName] = true;
+                    allModules.push(module);
+                    ModuleRegistry.register(module); // Niall / Sean - my addition
+                }
+            }
+
+            addIndividualModule(module);
+            if (module.dependantModules) {
+                module.dependantModules.forEach(addIndividualModule); // Niall / Sean - my addition
             }
         }
 
@@ -184,13 +194,13 @@ export class Grid {
     private registerModuleUserComponents(registeredModules: Module[]): void {
         const userComponentRegistry: UserComponentRegistry = this.context.getBean('userComponentRegistry');
 
-        const moduleUserComps: {componentName: string, componentClass: AgGridRegisteredComponentInput<IComponent<any>>}[]
+        const moduleUserComps: { componentName: string, componentClass: AgGridRegisteredComponentInput<IComponent<any>> }[]
             = this.extractModuleEntity(registeredModules,
             (module) => module.userComponents ? module.userComponents : []);
 
-        moduleUserComps.forEach( compMeta => {
+        moduleUserComps.forEach(compMeta => {
             userComponentRegistry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
-        } );
+        });
     }
 
     private createProvidedBeans(eGridDiv: HTMLElement, params: GridParams): any {
@@ -217,24 +227,24 @@ export class Grid {
 
     private createAgStackComponentsList(registeredModules: Module[]): any[] {
         let components: ComponentMeta[] = [
-            { componentName: 'AgCheckbox', componentClass: AgCheckbox },
-            { componentName: 'AgRadioButton', componentClass: AgRadioButton },
-            { componentName: 'AgToggleButton', componentClass: AgToggleButton },
-            { componentName: 'AgInputTextField', componentClass: AgInputTextField},
-            { componentName: 'AgInputTextArea', componentClass: AgInputTextArea},
-            { componentName: 'AgInputNumberField', componentClass: AgInputNumberField},
-            { componentName: 'AgInputRange', componentClass: AgInputRange},
-            { componentName: 'AgSelect', componentClass: AgSelect},
-            { componentName: 'AgSlider', componentClass: AgSlider},
-            { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
-            { componentName: 'AgColorPicker', componentClass: AgColorPicker },
-            { componentName: 'AgGridComp', componentClass: GridPanel },
-            { componentName: 'AgHeaderRoot', componentClass: HeaderRootComp },
-            { componentName: 'AgPagination', componentClass: PaginationComp },
-            { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
-            { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
-            { componentName: 'AgPanel', componentClass: AgPanel },
-            { componentName: 'AgDialog', componentClass: AgDialog }
+            {componentName: 'AgCheckbox', componentClass: AgCheckbox},
+            {componentName: 'AgRadioButton', componentClass: AgRadioButton},
+            {componentName: 'AgToggleButton', componentClass: AgToggleButton},
+            {componentName: 'AgInputTextField', componentClass: AgInputTextField},
+            {componentName: 'AgInputTextArea', componentClass: AgInputTextArea},
+            {componentName: 'AgInputNumberField', componentClass: AgInputNumberField},
+            {componentName: 'AgInputRange', componentClass: AgInputRange},
+            {componentName: 'AgSelect', componentClass: AgSelect},
+            {componentName: 'AgSlider', componentClass: AgSlider},
+            {componentName: 'AgAngleSelect', componentClass: AgAngleSelect},
+            {componentName: 'AgColorPicker', componentClass: AgColorPicker},
+            {componentName: 'AgGridComp', componentClass: GridPanel},
+            {componentName: 'AgHeaderRoot', componentClass: HeaderRootComp},
+            {componentName: 'AgPagination', componentClass: PaginationComp},
+            {componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent},
+            {componentName: 'AgGroupComponent', componentClass: AgGroupComponent},
+            {componentName: 'AgPanel', componentClass: AgPanel},
+            {componentName: 'AgDialog', componentClass: AgDialog}
         ];
 
         const moduleAgStackComps = this.extractModuleEntity(registeredModules,
@@ -248,7 +258,9 @@ export class Grid {
     private createBeansList(registeredModules: Module[]): any[] {
 
         const rowModelClass = this.getRowModelClass(registeredModules);
-        if (!rowModelClass) { return undefined; }
+        if (!rowModelClass) {
+            return undefined;
+        }
 
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
 
@@ -273,8 +285,8 @@ export class Grid {
         // check for duplicates, as different modules could include the same beans that
         // they depend on, eg ClientSideRowModel in enterprise, and ClientSideRowModel in community
         const beansNoDuplicates: any[] = [];
-        beans.forEach( bean => {
-            if (beansNoDuplicates.indexOf(bean) <0 ) {
+        beans.forEach(bean => {
+            if (beansNoDuplicates.indexOf(bean) < 0) {
                 beansNoDuplicates.push(bean);
             }
         });
@@ -314,12 +326,12 @@ export class Grid {
         let rowModelType = this.gridOptions.rowModelType;
 
         //TODO: temporary measure before 'enterprise' is completely removed (similar handling in gridOptionsWrapper is also required)
-        if (rowModelType==='enterprise') {
+        if (rowModelType === 'enterprise') {
             console.warn(`ag-Grid: enterprise rowModel deprecated. Should now be called server side row model instead.`);
             rowModelType = Constants.ROW_MODEL_TYPE_SERVER_SIDE;
         }
 
-        if (rowModelType==='normal') {
+        if (rowModelType === 'normal') {
             console.warn(`ag-Grid: normal rowModel deprecated. Should now be called client side row model instead.`);
             rowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         }
@@ -329,8 +341,8 @@ export class Grid {
             rowModelType = Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         }
 
-        const rowModelClasses: {[name: string]: { new(): IRowModel }} = {};
-        registeredModules.forEach( module => {
+        const rowModelClasses: { [name: string]: { new(): IRowModel } } = {};
+        registeredModules.forEach(module => {
             _.iterateObject(module.rowModels, (key: string, value: { new(): IRowModel }) => {
                 rowModelClasses[key] = value;
             });
@@ -342,14 +354,14 @@ export class Grid {
         } else {
             if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
                 console.error(`ag-Grid: Row Model "Infinite" not found. Please ensure the `
-                    +`InfiniteRowModelModule is loaded using: import 'ag-grid-community/infiniteRowModelModule';`);
+                    + `InfiniteRowModelModule is loaded using: import '@ag-community/infinite-row-model';`);
             }
             console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
             if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
                 console.error(`ag-Grid: Row Model "Viewport" not found. For this row model to work you must ` +
-                                    `a) be using ag-Grid Enterprise and ` +
-                                    `b) ensure ViewportRowModelModule is ` +
-                                    `loaded using: import 'ag-grid-enterprise/viewportRowModelModule';`);
+                    `a) be using ag-Grid Enterprise and ` +
+                    `b) ensure ViewportRowModelModule is ` +
+                    `loaded using: import '@ag-enterprise/viewport-row-model;`);
             }
             if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
                 console.error(`ag-Grid: Row Model "Server Side" not found. For this row model to work you must ` +
@@ -359,7 +371,7 @@ export class Grid {
             }
             if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
                 console.error(`ag-Grid: Row Model "Client Side" not found. Please ensure the `
-                    +`ClientSideRowModelModule is loaded using: import 'ag-grid-community/clientSideRowModelModule';`);
+                    + `ClientSideRowModelModule is loaded using: import '@ag-community/client-side-row-model';`);
             }
             return undefined;
         }

@@ -1,4 +1,4 @@
-import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
+import {Module, ModuleNames} from "@ag-community/grid-core";
 import {RangeController} from "./rangeSelection/rangeController";
 import {FillHandle} from "./rangeSelection/fillHandle";
 import {RangeHandle} from "./rangeSelection/rangeHandle";
@@ -12,4 +12,3 @@ export const RangeSelectionModule: Module = {
     ]
 };
 
-ModuleRegistry.register(RangeSelectionModule);

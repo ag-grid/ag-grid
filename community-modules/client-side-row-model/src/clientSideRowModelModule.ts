@@ -1,4 +1,4 @@
-import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
+import {Module, ModuleNames} from "@ag-community/grid-core";
 import {ClientSideRowModel} from "./clientSideRowModel/clientSideRowModel";
 import {FilterStage} from "./clientSideRowModel/filterStage";
 import {SortStage} from "./clientSideRowModel/sortStage";
@@ -10,7 +10,6 @@ import {ImmutableService} from "./clientSideRowModel/immutableService";
 export const ClientSideRowModelModule: Module = {
     moduleName: ModuleNames.ClientSideRowModelModule,
     beans: [FilterStage, SortStage, FlattenStage, SortService, FilterService, ImmutableService],
-    rowModels: { clientSide: ClientSideRowModel }
+    rowModels: {clientSide: ClientSideRowModel}
 };
 
-ModuleRegistry.register(ClientSideRowModelModule);

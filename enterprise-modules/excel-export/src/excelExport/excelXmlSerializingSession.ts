@@ -10,7 +10,7 @@ import {
     ExcelWorksheet,
     RowNode,
     _
-} from 'ag-grid-community';
+} from '@ag-community/grid-core';
 
 import { ExcelMixedStyle } from './excelCreator';
 import { ExcelXmlFactory } from './excelXmlFactory';

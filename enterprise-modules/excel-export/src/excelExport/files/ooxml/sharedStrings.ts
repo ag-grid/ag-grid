@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, XmlElement, _ } from 'ag-grid-community';
+import { ExcelOOXMLTemplate, XmlElement, _ } from '@ag-community/grid-core';
 
 const buildSharedString = (textNode: string): XmlElement => ({
     name: 'si',

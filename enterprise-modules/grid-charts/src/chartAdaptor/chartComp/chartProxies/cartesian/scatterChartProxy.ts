@@ -1,4 +1,4 @@
-import { ChartType, _, ScatterSeriesOptions, CartesianChartOptions } from "ag-grid-community";
+import { ChartType, _, ScatterSeriesOptions, CartesianChartOptions } from "@ag-community/grid-core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";

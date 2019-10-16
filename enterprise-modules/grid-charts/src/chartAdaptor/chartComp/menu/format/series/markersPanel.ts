@@ -1,4 +1,4 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, ChartType } from "ag-grid-community";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, ChartType } from "@ag-community/grid-core";
 import { ChartTranslator } from "../../../chartTranslator";
 import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
 import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";

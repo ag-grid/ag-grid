@@ -11,7 +11,7 @@ import {
     Optional,
     RowNode,
     ValueService
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import {ChartModel, ColState} from "./chartModel";
 
 export interface ChartDatasourceParams {

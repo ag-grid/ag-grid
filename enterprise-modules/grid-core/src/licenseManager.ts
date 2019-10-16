@@ -1,4 +1,4 @@
-import { _, Autowired, Bean, PreConstruct } from 'ag-grid-community';
+import { _, Autowired, Bean, PreConstruct } from '@ag-community/grid-core';
 import { MD5 } from './license/md5';
 
 @Bean('licenseManager')

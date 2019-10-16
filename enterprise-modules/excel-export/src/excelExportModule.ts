@@ -1,8 +1,9 @@
-import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
+import {Module, ModuleNames} from "@ag-community/grid-core";
 import {ExcelXlsxFactory} from "./excelExport/excelXlsxFactory";
 import {ExcelXmlFactory} from "./excelExport/excelXmlFactory";
 import {ExcelCreator} from "./excelExport/excelCreator";
 import {CsvCreator, Downloader, GridSerializer, XmlFactory, ZipContainer} from "@ag-community/csv-export";
+import {CsvExportModule} from "@ag-community/csv-export";
 
 export const ExcelExportModule: Module = {
     moduleName: ModuleNames.ExcelExportModule,
@@ -11,7 +12,10 @@ export const ExcelExportModule: Module = {
         ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,
 
         // these beans are part of CSV Export module
-        GridSerializer, ZipContainer, XmlFactory, Downloader, CsvCreator]
+        GridSerializer, ZipContainer, XmlFactory, Downloader, CsvCreator
+    ],
+    dependantModules: [
+        CsvExportModule
+    ]
 };
 
-ModuleRegistry.register(ExcelExportModule);

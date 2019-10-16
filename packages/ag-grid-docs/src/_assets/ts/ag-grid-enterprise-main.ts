@@ -8,6 +8,7 @@ import "../../../../../enterprise-modules/column-tool-panel/src/columnsToolPanel
 import "../../../../../enterprise-modules/excel-export/src/excelExportModule.ts";
 import "../../../../../enterprise-modules/filter-tool-panel/src/filtersToolPanelModule.ts";
 import "../../../../../enterprise-modules/grid-charts/src/gridChartsModule.ts";
+import "../../../../../enterprise-modules/grid-core/src/agGridEnterpriseModule.ts";
 import "../../../../../enterprise-modules/master-detail/src/masterDetailModule.ts";
 import "../../../../../enterprise-modules/menu/src/menuModule.ts";
 import "../../../../../enterprise-modules/range-selection/src/rangeSelectionModule.ts";
@@ -18,4 +19,3 @@ import "../../../../../enterprise-modules/set-filter/src/setFilterModule.ts";
 import "../../../../../enterprise-modules/side-bar/src/sideBarModule.ts";
 import "../../../../../enterprise-modules/status-bar/src/statusBarModule.ts";
 import "../../../../../enterprise-modules/viewport-row-model/src/viewportRowModelModule.ts";
-import "../../../../ag-grid-enterprise/src/main.ts";

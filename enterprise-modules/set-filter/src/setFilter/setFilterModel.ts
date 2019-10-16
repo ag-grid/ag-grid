@@ -1,4 +1,4 @@
-import { ProvidedFilterModel } from "ag-grid-community";
+import { ProvidedFilterModel } from "@ag-community/grid-core";
 
 export interface SetFilterModel extends ProvidedFilterModel {
     values: string[];

@@ -16,7 +16,7 @@ import {
     PostConstruct,
     RefSelector,
     TouchListener
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import {BaseColumnItem} from "./primaryColsPanel";
 import {ColumnFilterResults} from "./primaryColsListPanel";
 

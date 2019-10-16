@@ -9,7 +9,7 @@ import {
     PostConstruct,
     RowDataTransaction,
     RowNode
-} from "ag-grid-community"
+} from "@ag-community/grid-core"
 
 import {ClientSideRowModel} from "./clientSideRowModel";
 

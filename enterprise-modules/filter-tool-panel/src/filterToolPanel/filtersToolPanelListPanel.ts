@@ -10,7 +10,7 @@ import {
     GridApi,
     OriginalColumnGroup,
     OriginalColumnGroupChild
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";

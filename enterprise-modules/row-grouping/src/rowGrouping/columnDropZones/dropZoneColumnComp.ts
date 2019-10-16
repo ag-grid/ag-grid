@@ -23,7 +23,7 @@ import {
     Optional,
     IAggFuncService,
     VirtualList
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 
 export interface ColumnRemoveEvent extends AgEvent {}
 

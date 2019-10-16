@@ -1,8 +1,8 @@
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Bean, ComponentUtil, Grid, GridOptions } from 'ag-grid-community';
-import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
-import { getAgGridProperties, Properties } from './Utils';
-import { AgGridColumn } from './AgGridColumn';
+import {Component, Prop, Vue} from 'vue-property-decorator';
+import {Bean, ComponentUtil, Grid, GridOptions, Module} from '@ag-community/grid-core';
+import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
+import {getAgGridProperties, Properties} from './Utils';
+import {AgGridColumn} from './AgGridColumn';
 
 const [props, watch, model] = getAgGridProperties();
 
@@ -25,6 +25,9 @@ export class AgGridVue extends Vue {
 
     @Prop({default: () => []})
     public componentDependencies!: string[];
+
+    @Prop({default: () => []})
+    public modules!: Module[];
 
     private gridCreated = false;
     private isDestroyed = false;
@@ -101,6 +104,7 @@ export class AgGridVue extends Vue {
             providedBeanInstances: {
                 frameworkComponentWrapper,
             },
+            modules: this.modules
         };
 
         new Grid(this.$el as HTMLElement, gridOptions, gridParams);
@@ -184,7 +188,7 @@ export class AgGridVue extends Vue {
     private debounce(func: () => void, delay: number) {
         let timeout: number;
         return () => {
-            const later = function() {
+            const later = function () {
                 func();
             };
             window.clearTimeout(timeout);

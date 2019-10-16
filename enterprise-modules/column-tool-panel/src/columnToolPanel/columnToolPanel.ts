@@ -11,7 +11,7 @@ import {
     IToolPanelParams,
     ModuleNames,
     IColumnToolPanel, ModuleRegistry
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import {PivotModePanel} from "./pivotModePanel";
 import {RowGroupDropZonePanel, ValuesDropZonePanel, PivotDropZonePanel } from "@ag-enterprise/row-grouping"
 import {PrimaryColsPanel} from "./primaryColsPanel";

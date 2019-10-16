@@ -1,4 +1,4 @@
-import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
+import {Module, ModuleNames} from "@ag-community/grid-core";
 import {AggregationStage} from "./rowGrouping/aggregationStage";
 import {GroupStage} from "./rowGrouping/groupStage";
 import {PivotColDefService} from "./rowGrouping/pivotColDefService";
@@ -14,4 +14,3 @@ export const RowGroupingModule: Module = {
     ]
 };
 
-ModuleRegistry.register(RowGroupingModule);

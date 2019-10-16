@@ -1,12 +1,16 @@
-import { Module, ModuleNames, ModuleRegistry } from "ag-grid-community";
-import { ChartService } from "./chartAdaptor/chartService";
-import { ChartTranslator } from "./chartAdaptor/chartComp/chartTranslator";
+import {Module, ModuleNames} from "@ag-community/grid-core";
+import {ChartService} from "./chartAdaptor/chartService";
+import {ChartTranslator} from "./chartAdaptor/chartComp/chartTranslator";
+
+import {RangeSelectionModule} from "@ag-enterprise/range-selection";
 
 export const GridChartsModule: Module = {
     moduleName: ModuleNames.GridChartsModule,
     beans: [
         ChartService, ChartTranslator
+    ],
+    dependantModules: [
+        RangeSelectionModule
     ]
 };
 
-ModuleRegistry.register(GridChartsModule);

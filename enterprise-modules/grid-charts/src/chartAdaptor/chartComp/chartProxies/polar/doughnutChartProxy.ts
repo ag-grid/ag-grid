@@ -1,5 +1,5 @@
 import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { _, PolarChartOptions, PieSeriesOptions } from "ag-grid-community";
+import { _, PolarChartOptions, PieSeriesOptions } from "@ag-community/grid-core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PieSeries } from "../../../../charts/chart/series/pieSeries";
 import { PolarChartProxy } from "./polarChartProxy";

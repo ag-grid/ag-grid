@@ -22,7 +22,7 @@ import {
     RowNode,
     Optional,
     IRangeController, ModuleRegistry
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
