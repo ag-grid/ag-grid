@@ -81,13 +81,15 @@ function renderItems($items, $level) {
 
         echo "$title";
 
+        if ($enterprise) {
+            echo "<span class=\"enterprise-icon\"></span>";
+        }
+
         if ($hasLink) {
             echo "</a>";
         }
 
-        if ($enterprise) {
-            echo "<span class=\"enterprise-icon\"></span>";
-        }
+        
 
         if ($level > 0) {
             echo "<span class=\"item-split\">, &nbsp;</span>";
