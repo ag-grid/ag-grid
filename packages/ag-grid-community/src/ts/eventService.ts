@@ -193,6 +193,9 @@ export class EventService implements IEventEmitter {
     }
 }
 
+// given an instance of a class, wrap every method in a function that calls
+// eventService.setDefaultEventSource(source) before the method is invoked
+// and eventService.clearDefaultEventSource() afterwards.
 export function setDefaultEventSourceForClassMethods<T>(source: string, instance: T, cls: {prototype: T}, eventService: EventService): void {
     Object.getOwnPropertyNames(cls.prototype).forEach(name => {
         const instanceAny = instance as any;
@@ -201,7 +204,7 @@ export function setDefaultEventSourceForClassMethods<T>(source: string, instance
             instanceAny[name] = (...args: any[]) => {
                 eventService.setDefaultEventSource(source);
                 try {
-                    method.apply(instance, args);
+                    return method.apply(instance, args);
                 } finally {
                     eventService.clearDefaultEventSource();
                 }
