@@ -106,8 +106,8 @@ gtm_data_layer('community-enterprise');
                     <div>
                     <h3>ag-Grid Enterprise</h3>
                     <p>
-                    is a commercial license that unlocks advanced grid functionallity like Row Grouping, Range Selection, 
-                    Master / Detail, Server Side Row Model and <a href="#">more</a>.
+                    is a commercial license that unlocks advanced grid functionality like Row Grouping, Range Selection, 
+                    Master / Detail, Server Side Row Model and <a href="./javascript-grid-set-license/">more</a>.
                     </p>
                     <p>Feel free to download &amp; evaluate<span>&gt; npm i ag-grid-enterprise</span></p>
                     <p>
@@ -117,7 +117,7 @@ gtm_data_layer('community-enterprise');
                     </p>
                     <p><strong>If you are ready to begin development, please, select the Enterprise product you wish to purchase below:</strong><br>
                     if you need more information, scroll down for expanded definitions and FAQ responses or e-mail our sales team 
-                    <a href="mailto:sales@ag-grid.com">info@ag-grid.com</a>.
+                    <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
                     </p>
                 </div>
             </section>
