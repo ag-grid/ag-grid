@@ -98,18 +98,6 @@
 	margin-top: 3rem;
 }
 
-@media (max-width: 991px) {	
-	#documentation > div #side-nav {
-		padding-bottom: 1rem;
-	}
-	#documentation > div #side-nav .search-wrapper {
-		margin-bottom: 0;
-	}
-	#documentation .group:first-child {
-		margin-top: 1rem;
-	}
-}
-
 #documentation .group .group-wrapper,
 #documentation .group .group-items {
 	flex-direction: row;
@@ -160,6 +148,18 @@
 	#documentation .docs-homepage-section-preview {
 		width: 100%;
 		height: auto;
+	}
+}
+
+@media (max-width: 991px) {	
+	#documentation > div #side-nav {
+		padding-bottom: 1rem;
+	}
+	#documentation > div #side-nav .search-wrapper {
+		margin-bottom: 0;
+	}
+	#documentation .group:first-child {
+		margin-top: 1rem;
 	}
 }
 

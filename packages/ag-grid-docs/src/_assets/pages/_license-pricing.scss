@@ -118,6 +118,10 @@
     }
 
     #definitions, #deeper-dive, #timeline {
+        img {
+            max-width: 60%;
+            min-width: 20rem;
+        }
         > div {
             @extend .row, .mb-4, .justify-content-end;
             > div {
