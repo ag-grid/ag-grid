@@ -1,13 +1,9 @@
 .license-pricing {
-    @extend %stage, .full-width-row, .justify-content-center;
-
-    .card-footer {
-        background-color: transparent;
-        border-top: 0;
-    }
+    @extend %stage;
 
     #content {
-        @extend .mx-2, .mx-md-5;
+        @extend .pr-3;
+        padding-left: 2rem;
         .page-info {
             h1 {
                 font-weight: 400;
@@ -18,18 +14,26 @@
             }
         }
 
+        section {
+            @extend .full-width-row;
+            > div {
+                @extend .my-3, .py-2, .mx-0;
+                width: calc(100% - 2rem);
+            }
+        }
+
         .packages {
             > div {
-                @extend .card, .d-flex, .flex-row, .p-2, .m-5;
+                @extend .card, .row, .flex-md-row, .flex-nowrap;
                 > div:first-child {
                     min-width: 10rem;
-                    @extend .d-flex, .justify-content-center, .align-items-start;
+                    @extend .col-md, .d-flex, .justify-content-center, .mb-4, .mb-md-0, .align-items-start;
                     img {
                         min-width: 5rem;
                     }
                 }
                 >div:last-child {
-                    @extend .flex-fill;
+                    @extend .col-lg, .flex-fill;
                 }
                 h2 {
                     @extend .card-title;
@@ -58,18 +62,20 @@
     }
     
     #licenses {
-        @extend .row, .px-md-5;
+        .license-container {
+            @extend .row;
+        }
         .license {
-            @extend .card, .col-lg, .text-center, .pt-2, .pt-md-5, .mb-3, .m-md-3;
+            @extend .card, .col-lg, .text-center, .pt-2, .pt-md-5, .mb-3, .mx-lg-3, .px-0;
 
             .card-body {
                 @extend .card-body;
             }
             &:first-child {
-                @extend .ml-md-0;
+                @extend .ml-lg-0;
             }
             &:last-child {
-                @extend .mr-md-0;
+                @extend .mr-lg-0;
             }
 
             > div:last-of-type {

@@ -1609,9 +1609,7 @@ export class CellComp extends Component {
     public destroy(): void {
         super.destroy();
 
-        if (this.editingCell) {
-            this.stopEditing();
-        }
+        this.stopEditing();
 
         if (this.cellRenderer && this.cellRenderer.destroy) {
             this.cellRenderer.destroy();

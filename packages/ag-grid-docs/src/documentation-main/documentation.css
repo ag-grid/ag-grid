@@ -55,8 +55,8 @@
 	position: relative;
 	padding: 0;
 	border: none;
-	width: 22%;
-	min-width: 270px;
+	width: 20%;
+	min-width: 250px;
 	flex: none;
 	margin-bottom: 25px;
 	margin-right: 25px;
@@ -93,6 +93,21 @@
 
 #documentation .group {
 	flex-direction: column;
+}
+#documentation .group:first-child {
+	margin-top: 3rem;
+}
+
+@media (max-width: 991px) {	
+	#documentation > div #side-nav {
+		padding-bottom: 1rem;
+	}
+	#documentation > div #side-nav .search-wrapper {
+		margin-bottom: 0;
+	}
+	#documentation .group:first-child {
+		margin-top: 1rem;
+	}
 }
 
 #documentation .group .group-wrapper,
