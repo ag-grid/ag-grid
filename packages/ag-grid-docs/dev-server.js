@@ -93,18 +93,19 @@ function serveAndWatchModules(app, communityModules, enterpriseModules) {
 
     const watchModule = (type, module) => {
         console.log(`watching module ${module}`);
+        console.log(module);
 
-        const moduleDirName = `../../${type}-modules/${module}`;
-        const moduleWatch = cp.spawn(gulpPath, ['watch'], {
-            stdio: 'inherit',
-            cwd: `${moduleDirName}`
-        });
+        // const moduleDirName = `../../${type}-modules/${module}`;
+        // const moduleWatch = cp.spawn(gulpPath, ['watch'], {
+        //     stdio: 'inherit',
+        //     cwd: `${moduleDirName}`
+        // });
 
-        app.use(`/dev/@ag-${type}/${module}`, express.static(`${moduleDirName}`));
+        // app.use(`/dev/@ag-${type}/${module}`, express.static(`${moduleDirName}`));
 
-        process.on('exit', () => {
-            moduleWatch.kill();
-        });
+        // process.on('exit', () => {
+        //     moduleWatch.kill();
+        // });
     };
 
     communityModules.forEach(module => {
@@ -122,8 +123,9 @@ function launchTSCCheck(communityModules, enterpriseModules) {
         rimraf.sync("_dev");
     }
 
-    mkdirp('_dev/ag-grid-community/dist');
+    mkdirp('_dev/');
     mkdirp('_dev/@ag-community/');
+    mkdirp('_dev/@ag-enterprise/');
 
     let linkType = 'symbolic';
     if (WINDOWS) {
@@ -131,17 +133,6 @@ function launchTSCCheck(communityModules, enterpriseModules) {
         linkType = 'junction';
     }
 
-    lnk('../ag-grid-community/src/main.ts', '_dev/ag-grid-community/', {
-        force: true,
-        type: linkType,
-        rename: 'main.ts'
-    });
-    lnk('../ag-grid-community/src/ts', '_dev/ag-grid-community/dist', {
-        force: true,
-        type: linkType,
-        rename: 'lib'
-    });
-    lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
     lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
     lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
         force: true,
@@ -152,21 +143,25 @@ function launchTSCCheck(communityModules, enterpriseModules) {
     lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
 
     // spl modules
-    // lnk('../../community-modules/ag-grid', '_dev/@ag-community', {force: true, type: linkType, rename: 'ag-grid'});
-    communityModules.forEach(module => {
-        lnk(`../../community-modules/${module}`, '_dev/@ag-community', {
-            force: true,
-            type: linkType,
-            rename: module
+    communityModules
+        .concat({ fullPath: '../../community-modules/grid-core', moduleDirName: 'grid-core'})
+        .forEach(module => {
+            lnk(module.fullPath, '_dev/@ag-community', {
+                force: true,
+                type: linkType,
+                rename: module.moduleDirName
+            });
         });
-    });
-    enterpriseModules.forEach(module => {
-        lnk(`../../enterprise-modules/${module}`, '_dev/@ag-enterprise', {
-            force: true,
-            type: linkType,
-            rename: module
+
+    enterpriseModules
+        .concat({ fullPath: '../../community-modules/grid-core', moduleDirName: 'grid-core'})
+        .forEach(module => {
+            lnk(module.fullPath, '_dev/@ag-enterprise', {
+                force: true,
+                type: linkType,
+                rename: module.moduleDirName
+            });
         });
-    });
 
     const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
 
@@ -213,20 +208,20 @@ function updateWebpackConfigWithBundles(communityModules, enterpriseModules) {
 
     // spl modules
     const communityModulesEntries = communityModules
-        .map(module => `import "${module.fullPath}";
-import {${module.moduleName}} from "${module.fullPath.replace('.ts', '')}"; 
+        .map(module => `import "../../../${module.fullPath}";
+import {${module.moduleName}} from "../../../${module.fullPath.replace('.ts', '')}"; 
         `);
 
     const communityRegisterModuleLines = communityModules
-        .map(module => `ModuleRegistry.register(${module.moduleName});`);
+        .map(module => `ModuleRegistry.register(${module.moduleName} as any);`);
 
     const enterpriseModulesEntries = enterpriseModules
-        .map(module => `import "${module.fullPath}";
-import {${module.moduleName}} from "${module.fullPath.replace('.ts', '')}"; 
+        .map(module => `import "../../../${module.fullPath}";
+import {${module.moduleName}} from "../../../${module.fullPath.replace('.ts', '')}"; 
         `);
 
     const enterpriseRegisterModuleLines = enterpriseModules
-        .map(module => `ModuleRegistry.register(${module.moduleName});`);
+        .map(module => `ModuleRegistry.register(${module.moduleName} as any);`);
 
 
     const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd.ts';
@@ -371,23 +366,22 @@ module.exports = () => {
     });
 
     const {communityModules, enterpriseModules} = getAllModules();
-
     updateWebpackConfigWithBundles(communityModules, enterpriseModules);
 
     // serve community, enterprise and react
 
     // for js examples that just require community functionality (landing pages, vanilla community examples etc)
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-community/grid-all-modules/dist/ag-grid-community.js
-    addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-community/grid-all-modules/dist');
+    // addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-community/grid-all-modules/dist');
 
     // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-enterprise/grid-all-modules/dist/ag-grid-enterprise.js
-    addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-enterprise/grid-all-modules/dist');
+    // addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-enterprise/grid-all-modules/dist');
 
     // addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
 
     // for the actual site - php, css etc
-    addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
+    // addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
 
     // addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
 
@@ -395,10 +389,10 @@ module.exports = () => {
     // add community & enterprise modules to express (for importing in the fw examples)
     // updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
     // updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
-    // serveAndWatchModules(app, communityModules, enterpriseModules);
+    serveAndWatchModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
-    serveAndWatchAngular(app);
+    // serveAndWatchAngular(app);
     // serveAndWatchVue(app);
 
     // build "packaged" landing page examples (for performance reasons)
@@ -407,13 +401,13 @@ module.exports = () => {
     // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
 
     // regenerate examples
-    watchAndGenerateExamples(communityModules, enterpriseModules);
+    // watchAndGenerateExamples(communityModules, enterpriseModules);
 
     // PHP
-    launchPhpCP(app);
+    // launchPhpCP(app);
 
     // Watch TS for errors. No actual transpiling happens here, just errors
-    launchTSCCheck(communityModules, enterpriseModules);
+    // launchTSCCheck(communityModules, enterpriseModules);
 
     app.listen(EXPRESS_PORT, function () {
         console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);

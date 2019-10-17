@@ -7,12 +7,18 @@ const getAllModules = () => {
         .map(module => glob.sync(`${module}/src/*Module.ts`)[0])
         .map(module => {
             // this relies on the module name within the module class to be the same as the filename
-            const fullPath = `../../../${module}`;
+            const fullPath = `${module}`;
             const filename = module.substr(module.lastIndexOf('/') + 1);
             const moduleName = filename.charAt(0).toUpperCase() + filename.slice(1).replace('.ts', '');
+
+            let moduleDirName = fullPath.replace(`../../${moduleRoot}/`, '');
+            moduleDirName = moduleDirName.substr(0, moduleDirName.lastIndexOf("/src"));
+
             return {
                 fullPath,
-                moduleName
+                filename,
+                moduleName,
+                moduleDirName
             }
         });
 

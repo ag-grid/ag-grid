@@ -24,6 +24,6 @@ import {CsvExportModule} from "../../../../../community-modules/csv-export/src/c
 import "../../../../../community-modules/infinite-row-model/src/infiniteRowModelModule.ts";
 import {InfiniteRowModelModule} from "../../../../../community-modules/infinite-row-model/src/infiniteRowModelModule"; 
         
-ModuleRegistry.register(ClientSideRowModelModule);
-ModuleRegistry.register(CsvExportModule);
-ModuleRegistry.register(InfiniteRowModelModule);
+ModuleRegistry.register(ClientSideRowModelModule as any);
+ModuleRegistry.register(CsvExportModule as any);
+ModuleRegistry.register(InfiniteRowModelModule as any);
