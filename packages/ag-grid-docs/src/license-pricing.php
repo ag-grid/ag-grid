@@ -384,7 +384,7 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Production Environment</span>
                         <p>A software project will have an indirect dependency on the ag-Grid Enterprise package event if it's wrapped into
-                        another framework, file, library, etc. Every concurrent Front-End, JavScript developer working on a project using
+                        another framework, file, library, etc. Every concurrent Front-End, JavaScript developer working on a project using
                         a library that wraps the ag-Grid Enterprise package will need to be licensed.</p>
                         <div class="example card">
                             <div class="card-header">Example</div>
