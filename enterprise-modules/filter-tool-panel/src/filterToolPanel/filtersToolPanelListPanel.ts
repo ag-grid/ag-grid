@@ -57,6 +57,14 @@ export class FiltersToolPanelListPanel extends Component {
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
 
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, (event) => {
+            // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
+            // filters have been changed elsewhere, i.e. via an api call.
+            if (event.source === 'filters') {
+                this.refreshFilters();
+            }
+        });
+
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
@@ -316,6 +324,10 @@ export class FiltersToolPanelListPanel extends Component {
         };
 
         this.filterGroupComps.forEach(filterGroup => recursivelySearch(filterGroup, false));
+    }
+
+    private refreshFilters() {
+        this.filterGroupComps.forEach(filterGroupComp => filterGroupComp.refreshFilters());
     }
 
     private destroyFilters() {
