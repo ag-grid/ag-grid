@@ -67,11 +67,12 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
     // spl modules
     if (bindings.gridSettings.enterprise) {
         imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
-        imports.push('console.log("XXXXXX", AllModules);');
     } else {
         imports.push('import {AllModules} from "@ag-community/grid-all-modules";');
-        imports.push('console.log("XXXXXX", AllModules);');
     }
+
+    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
+    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";');
 
     if (componentFileNames) {
         let titleCase = (s) => {
@@ -85,7 +86,7 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
         });
     }
 
-    const propertyAttributes = [];
+    const propertyAttributes = ['[modules]="modules"'];
     const propertyVars = [];
     const propertyAssignments = [];
 
@@ -163,6 +164,7 @@ ${imports.join('\n')}
 export class AppComponent {
     private gridApi;
     private gridColumnApi;
+    public modules: Module[] = AllModules;
 
     ${propertyVars.join('\n')}
 

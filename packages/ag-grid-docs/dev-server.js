@@ -98,7 +98,6 @@ function serveAndWatchModules(app, communityModules, enterpriseModules) {
         //     cwd: `${module.rootDir}`
         // });
 
-        console.log(`/dev/${module.publishedName} - ./_dev/${module.publishedName}`);
         app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
 
         // process.on('exit', () => {
@@ -161,22 +160,21 @@ function symlinkModules(communityModules, enterpriseModules) {
     communityModules
         .forEach(module => {
             console.log(module.moduleDirName);
-            lnk(module.fullPath, '_dev/', {
+            lnk(module.rootDir, '_dev/@ag-community', {
                 force: true,
                 type: linkType,
-                rename: module.publishedName
+                rename: module.moduleDirName
             });
         });
 
     enterpriseModules
         .forEach(module => {
-            lnk(module.fullPath, '_dev/', {
+            lnk(module.rootDir, '_dev/@ag-enterprise', {
                 force: true,
                 type: linkType,
-                rename: module.publishedName
+                rename: module.moduleDirName
             });
         });
-    process.exit()
 }
 
 const exampleDirMatch = new RegExp('src/([-\\w]+)/');
@@ -406,7 +404,7 @@ module.exports = () => {
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples
     // commented out by default - add if you want to test as part of the dev build (or run separately - see at the end of the file)
-    // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
+    buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
 
     // regenerate examples
     watchAndGenerateExamples(communityModules, enterpriseModules);
