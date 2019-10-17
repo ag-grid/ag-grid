@@ -8,7 +8,6 @@ const express = require('express');
 const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
-const hotMiddleware = require('webpack-hot-middleware');
 const chokidar = require('chokidar');
 const generateExamples = require('./example-generator');
 const buildPackagedExamples = require('./packaged-example-builder');
@@ -31,6 +30,7 @@ function addWebpackMiddleware(app, configFile, prefix) {
         prefix,
         webpackMiddleware(compiler, {
             noInfo: true,
+            logLevel: 'trace',
             publicPath: '/'
         })
     );
@@ -207,32 +207,28 @@ function watchAndGenerateExamples(communityModules, enterpriseModules) {
     chokidar.watch('./src/*/*/*.{html,css,js}').on('change', callback);
 }
 
-function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules) {
+function updateWebpackConfigWithBundles(communityModules, enterpriseModules) {
     console.log("updating webpack config with modules...");
 
     // spl modules
-    const agGridCommunityModulesEntries = agGridCommunityModules
-        .map(module => `../../../../ag-grid-community/src/ts/modules/${module}.ts`)
-        .map(module => `import "${module}";`);
-
-    const agGridEnterpriseModulesEntries = agGridEnterpriseModules
-        .map(module => `../../../../ag-grid-enterprise/src/modules/${module}.ts`)
-        .map(module => `import "${module}";`);
-
     const communityModulesEntries = communityModules
-        .map(module => glob.sync(`../../community-modules/${module}/src/*Module.ts`))
-        .map(module => `import "../../../${module}";`);
+        .map(module => `import "${module.fullPath}";
+import {${module.moduleName}} from "${module.fullPath.replace('.ts', '')}"; 
+        `);
+
+    const communityRegisterModuleLines = communityModules
+        .map(module => `ModuleRegistry.register(${module.moduleName});`);
 
     const enterpriseModulesEntries = enterpriseModules
         .map(module => glob.sync(`../../enterprise-modules/${module}/src/*Module.ts`))
-        .map(module => `import "../../../${module}";`);
-
-    const communityEntries = agGridCommunityModulesEntries.concat(communityModulesEntries);
-    const enterpriseEntries = agGridEnterpriseModulesEntries.concat(enterpriseModulesEntries);
+        .map(module => `
+            import "../../../${module}";
+            import ${module.moduleName} from "../../../${module}"; 
+        `);
 
     const enterpriseBundleFilename = './src/_assets/ts/ag-grid-enterprise-bundle.ts';
     const enterpriseMainFilename = './src/_assets/ts/ag-grid-enterprise-main.ts';
-    const communityFilename = 'src/_assets/ts/ag-grid-community.ts';
+    const communityFilename = 'src/_assets/ts/community-grid-all-modules.ts';
 
     const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split('\n');
     let modulesLineFound = false;
@@ -243,7 +239,7 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
             newEnterpriseBundleLines.push(line);
         }
     });
-    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseEntries)/*.concat(['import "../../../../ag-grid-enterprise/src/main.ts";'])*/;
+    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries);
     fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.join('\n'), 'UTF-8');
 
     const existingEnterpriseMainLines = fs.readFileSync(enterpriseMainFilename, 'UTF-8').split('\n');
@@ -255,7 +251,7 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
             newEnterpriseMainLines.push(line);
         }
     });
-    const newEnterpriseMainContent = newEnterpriseMainLines.concat(enterpriseEntries)/*.concat(['import "../../../../ag-grid-enterprise/src/main.ts";'])*/;
+    const newEnterpriseMainContent = newEnterpriseMainLines.concat(enterpriseModulesEntries);
     fs.writeFileSync(enterpriseMainFilename, newEnterpriseMainContent.join('\n'), 'UTF-8');
 
     const existingCommunityLines = fs.readFileSync(communityFilename).toString().split('\n');
@@ -263,11 +259,11 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
     const newCommunityLines = [];
     existingCommunityLines.forEach(line => {
         if (!modulesLineFound) {
-            modulesLineFound = line === "/* MODULES - Don't delete this line */";
+            modulesLineFound = line.indexOf("/* MODULES - Don't delete this line */") !== -1;
             newCommunityLines.push(line);
         }
     });
-    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityEntries).join('\n'), 'UTF-8');
+    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
 }
 
 function updateSystemJsMappings(utilFileLines,
@@ -366,32 +362,37 @@ module.exports = () => {
     const app = express();
 
     // necessary for plunkers
-
     app.use(function (req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         return next();
     });
 
-    const {agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules} = getAllModules();
+    const {communityModules, enterpriseModules} = getAllModules();
 
-    updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules);
+    updateWebpackConfigWithBundles(communityModules, enterpriseModules);
 
-    // serve ag-grid, enterprise and react
-    addWebpackMiddleware(app, 'webpack.community.config.js', '/dev/ag-grid-community');
-    // addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
+    // serve community, enterprise and react
+
+    // for js examples that just require community functionality
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-community/grid-all-modules/dist/ag-grid-community.js
+    addWebpackMiddleware(app, 'webpack.community-grid-all.config.js', '/dev/@ag-community/grid-all-modules/dist');
+
+    // for the actual site - php, css etc
+    addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
+
     // addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
     // addWebpackMiddleware(app, 'webpack.enterprise-bundle.config.js', '/dev/ag-grid-enterprise-bundle'); // mostly used by landing pages
     // addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
 
     // spl modules
     // add community & enterprise modules to express (for importing in the fw examples)
-    updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
-    updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
+    // updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
+    // updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
     // serveAndWatchModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
-    serveAndWatchAngular(app);
-    serveAndWatchVue(app);
+    // serveAndWatchAngular(app);
+    // serveAndWatchVue(app);
 
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples
@@ -405,7 +406,7 @@ module.exports = () => {
     launchPhpCP(app);
 
     // Watch TS for errors. No actual transpiling happens here, just errors
-    launchTSCCheck(communityModules, enterpriseModules);
+    // launchTSCCheck(communityModules, enterpriseModules);
 
     app.listen(EXPRESS_PORT, function () {
         console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);

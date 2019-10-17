@@ -22,8 +22,8 @@ if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
 }
 
 if (USE_LOCAL) {
-
-    define('AG_GRID_SCRIPT_PATH', "$prefix/ag-grid-community/dist/ag-grid-community.js");
+    // plain js examples that require old skool umd bundles
+    define('AG_GRID_SCRIPT_PATH', "$prefix/@ag-community/grid-all-modules/dist/ag-grid-community.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/ag-grid-enterprise-bundle/ag-grid-enterprise.js");
 
     $systemJsMap = array(
