@@ -627,6 +627,7 @@ export class RowComp extends Component {
         this.insertCellsIntoContainer(this.eBodyRow, centerCols);
         this.insertCellsIntoContainer(this.ePinnedLeftRow, leftCols);
         this.insertCellsIntoContainer(this.ePinnedRightRow, rightCols);
+        this.elementOrderChanged = false;
 
         const colIdsToRemove = Object.keys(this.cellComps);
         centerCols.forEach(col => _.removeFromArray(colIdsToRemove, col.getId()));
@@ -639,25 +640,6 @@ export class RowComp extends Component {
 
         // remove old cells from gui, but we don't destroy them, we might use them again
         this.removeRenderedCells(eligibleToBeRemoved);
-
-        if (this.elementOrderChanged) {
-            this.elementOrderChanged = false;
-            if (this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
-                this.sortCells(this.ePinnedLeftRow, leftCols);
-                this.sortCells(this.eBodyRow, centerCols);
-                this.sortCells(this.ePinnedRightRow, rightCols);
-            }
-        }
-    }
-
-    private sortCells(eRow: HTMLElement, sortedCols: Column[]) {
-        for (let i = 0; i < sortedCols.length; i++) {
-            const correctCellAtIndex = this.getCellForCol(sortedCols[i]);
-            const actualCellAtIndex = eRow.children[i];
-            if (actualCellAtIndex !== correctCellAtIndex) {
-                eRow.insertBefore(correctCellAtIndex, actualCellAtIndex);
-            }
-        }
     }
 
     private onColumnMoved() {
@@ -758,6 +740,11 @@ export class RowComp extends Component {
         if (cellTemplates.length > 0) {
             _.appendHtml(eRow, cellTemplates.join(''));
             this.callAfterRowAttachedOnCells(newCellComps, eRow);
+        }
+
+        if (this.elementOrderChanged && this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
+            const correctChildOrder = cols.map(col => this.getCellForCol(col));
+            _.setDomChildOrder(eRow, correctChildOrder);
         }
     }
 

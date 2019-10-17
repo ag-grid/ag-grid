@@ -1165,22 +1165,12 @@ export class Utils {
         }
     }
 
-    static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
-        if (eChildBefore) {
-            if (eChildBefore.nextSibling) {
-                // insert between the eRowBefore and the row after it
-                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
-            } else {
-                // if nextSibling is missing, means other row is at end, so just append new row at the end
-                eContainer.appendChild(eChild);
-            }
-        } else {
-            if (eContainer.firstChild) {
-                // insert it at the first location
-                eContainer.insertBefore(eChild, eContainer.firstChild);
-            } else {
-                // otherwise eContainer is empty, so just append it
-                eContainer.appendChild(eChild);
+    static setDomChildOrder(eContainer: HTMLElement, orderedChildren: HTMLElement[]): void {
+        for (let i = 0; i < orderedChildren.length; i++) {
+            const correctCellAtIndex = orderedChildren[i];
+            const actualCellAtIndex = eContainer.children[i];
+            if (actualCellAtIndex !== correctCellAtIndex) {
+                eContainer.insertBefore(correctCellAtIndex, actualCellAtIndex);
             }
         }
     }
