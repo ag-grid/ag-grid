@@ -479,14 +479,27 @@ export class ChartBuilder {
     }
 
     static initLegend(legend: Legend, options: LegendOptions) {
-        ChartBuilder.initLabelOptions(legend, options);
-
         this.setValueIfExists(legend, "enabled", options.enabled);
-        this.setValueIfExists(legend, "markerStrokeWidth", options.marker && options.marker.strokeWidth);
-        this.setValueIfExists(legend, "markerSize", options.marker && options.marker.size);
-        this.setValueIfExists(legend, "markerPadding", options.marker && options.marker.padding);
-        this.setValueIfExists(legend, "itemPaddingX", options.item && options.item.paddingX);
-        this.setValueIfExists(legend, "itemPaddingY", options.item && options.item.paddingY);
+        this.setValueIfExists(legend, "position", options.position);
+
+        if (options.label) {
+            this.setValueIfExists(legend, "labelFontFamily", options.label.fontFamily);
+            this.setValueIfExists(legend, "labelFontSize", options.label.fontSize);
+            this.setValueIfExists(legend, "labelFontStyle", options.label.fontStyle);
+            this.setValueIfExists(legend, "labelFontWeight", options.label.fontWeight);
+            this.setValueIfExists(legend, "labelColor", options.label.color);
+        }
+
+        if (options.marker) {
+            this.setValueIfExists(legend, "markerStrokeWidth", options.marker.strokeWidth);
+            this.setValueIfExists(legend, "markerSize", options.marker.size);
+            this.setValueIfExists(legend, "markerPadding", options.marker.padding);
+        }
+
+        if (options.item) {
+            this.setValueIfExists(legend, "itemPaddingX", options.item.paddingX);
+            this.setValueIfExists(legend, "itemPaddingY", options.item.paddingY);
+        }
     }
 
     static setDefaultFontOptions(options: CaptionOptions, fontSize = 16, fontWeight: FontWeight = "bold", fontFamily = "Verdana, sans-serif") {

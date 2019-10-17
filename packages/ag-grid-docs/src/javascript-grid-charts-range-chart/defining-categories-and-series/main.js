@@ -1,16 +1,16 @@
 var columnDefs = [
     // different ways to define 'categories'
-    {field: "athlete", width: 150, chartDataType: 'category'},
-    {field: "age", chartDataType: 'category', sort: 'asc'},
-    {field: "sport"}, // inferred as category by grid
+    { field: "athlete", width: 150, chartDataType: 'category' },
+    { field: "age", chartDataType: 'category', sort: 'asc' },
+    { field: "sport" }, // inferred as category by grid
 
     // excludes year from charts
-    {field: "year", chartDataType: 'excluded'},
+    { field: "year", chartDataType: 'excluded' },
 
     // different ways to define 'series'
-    {field: "gold", chartDataType: 'series'},
-    {field: "silver", chartDataType: 'series'},
-    {field: "bronze"} // inferred as series by grid
+    { field: "gold", chartDataType: 'series' },
+    { field: "silver", chartDataType: 'series' },
+    { field: "bronze" } // inferred as series by grid
 ];
 
 var gridOptions = {
@@ -25,18 +25,18 @@ var gridOptions = {
     processChartOptions: function(params) {
         var opts = params.options;
 
-        opts.title = {text: "Medals by Age"};
-        opts.legendPosition = 'bottom';
+        opts.title = { text: "Medals by Age" };
+        opts.legend.position = 'bottom';
 
-        opts.seriesDefaults.tooltipRenderer = function (params) {
+        opts.seriesDefaults.tooltip.renderer = function(params) {
             var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
             var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-            var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
             return title + '<div class="content" style="text-align: center">' + value + '</div>';
         };
 
         if (opts.xAxis) {
-            opts.xAxis.labelRotation = 0;
+            opts.xAxis.label.rotation = 0;
         }
 
         return opts;
@@ -60,7 +60,7 @@ function onFirstDataRendered(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/wideSpreadOfSports.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function () {
+    httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);

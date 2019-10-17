@@ -1,25 +1,25 @@
 var columnDefs = [
-    {field: "country", width: 150, chartDataType: 'category'},
-    {field: "gold", chartDataType: 'series'},
-    {field: "silver", chartDataType: 'series'},
-    {field: "bronze", chartDataType: 'series'},
-    {headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'}
+    { field: "country", width: 150, chartDataType: 'category' },
+    { field: "gold", chartDataType: 'series' },
+    { field: "silver", chartDataType: 'series' },
+    { field: "bronze", chartDataType: 'series' },
+    { headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' }
 ];
 
 function createRowData() {
     var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
-    
+
     return countries.map(function(country, index) {
         return {
             country: country,
-            gold: Math.floor(((index+1 / 7) * 333)%100),
-            silver: Math.floor(((index+1 / 3) * 555)%100),
-            bronze: Math.floor(((index+1 / 7.3) * 777)%100),
+            gold: Math.floor(((index + 1 / 7) * 333) % 100),
+            silver: Math.floor(((index + 1 / 3) * 555) % 100),
+            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
         };
     });
 }
@@ -39,6 +39,7 @@ var gridOptions = {
 
 function processChartOptions(params) {
     var options = params.options;
+    var legendPosition = 'right';
 
     switch (params.type) {
         case 'groupedBar':
@@ -47,22 +48,23 @@ function processChartOptions(params) {
         case 'area':
         case 'stackedArea':
         case 'normalizedArea':
-            options.legendPosition = 'bottom';
+            legendPosition = 'bottom';
             break;
         case 'groupedColumn':
         case 'stackedColumn':
         case 'normalizedColumn':
         case 'doughnut':
-            options.legendPosition = 'right';
+            legendPosition = 'right';
             break;
         case 'pie':
-            options.legendPosition = 'top';
+            legendPosition = 'top';
             break;
         case 'line':
-            options.legendPosition = 'left';
+            legendPosition = 'left';
             break;
     }
 
+    options.legend.position = legendPosition;
     options.width = 600;
     options.height = 300;
 

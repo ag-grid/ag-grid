@@ -7,7 +7,7 @@ gtm_data_layer('community-enterprise');
 <html lang="en">
 <head>
     <?php
-    meta_and_links("ag-Grid: License and Pricing", "ag-Grid Javascript Grid License and Pricing", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows adescribes the License and Pricing details for ag-Grid Enterprise.", true);
+    meta_and_links("ag-Grid: License and Pricing", "ag-Grid Javascript Grid License and Pricing", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page describes the License and Pricing details for ag-Grid Enterprise.", true);
     ?>
 
     <!-- Facebook Pixel Code -->
@@ -106,17 +106,18 @@ gtm_data_layer('community-enterprise');
                     <div>
                     <h3>ag-Grid Enterprise</h3>
                     <p>
-                    is a commercial license that unlocks advanced grid functionality like Row Grouping, Range Selection, 
-                    Master / Detail, Server Side Row Model and <a href="./javascript-grid-set-license/">more</a>.
+                    is a commercial license that unlocks advanced grid functionality like Row Grouping, Range Selection,
+                    Master / Detail, Server Side Row Model and <a href="./javascript-grid-set-license/">more</a>. You are free to
+                    download ag-Grid Enterprise to evaluate.
                     </p>
-                    <p>Feel free to download &amp; evaluate<span>&gt; npm i ag-grid-enterprise</span></p>
+                    <p><span>&gt; npm i ag-grid-enterprise</span></p>
                     <p>
-                    You don't need a license key to evaluate the grid, all features are unlocked. If you need to temporarily
-                    hide the watermark and browser console errors, please send us an e-mail <a href="mailto:info@ag-grid.com>">info@ag-grid.com</a> 
+                    You don't need a license key to evaluate the grid as all features are unlocked. If you need to temporarily
+                    hide the watermark and browser console errors while evaluating, please send an e-mail to <a href="mailto:info@ag-grid.com>">info@ag-grid.com</a>
                     to request an evaluation license.
                     </p>
-                    <p><strong>If you are ready to begin development, please, select the Enterprise product you wish to purchase below:</strong><br>
-                    if you need more information, scroll down for expanded definitions and FAQ responses or e-mail our sales team 
+                    <p><strong>If you are ready to begin development, please select the Enterprise product you wish to purchase from the options below.</strong></p>
+                    <p>If you need more information, please scroll down for expanded definitions and FAQ responses, or e-mail our sales team at
                     <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
                     </p>
                 </div>
@@ -129,7 +130,7 @@ gtm_data_layer('community-enterprise');
                             <h3>ag-Grid Enterprise</h3>
                             <h2>Single Application</h2>
                             <h3>Developer License</h3>
-                            
+
                         </div>
                         <h4>
                             &dollar;750.<span style="font-size: small">00</span>
@@ -148,7 +149,7 @@ gtm_data_layer('community-enterprise');
                         </div>
                         <h4>
                             &dollar;1,200.<span style="font-size: small">00</span>
-                            <p>unlimited projects / 1 Developer</p>
+                            <p>unlimited projects / 1 developer</p>
                         </h4>
                         <div>
                             <a class="btn" style="color: #009d70;border-color: #009d70" href="mailto:info@ag-grid.com">CONTACT US</a>
@@ -163,7 +164,7 @@ gtm_data_layer('community-enterprise');
                         </div>
                         <h4>
                             &dollar;750.<span style="font-size: small">00</span>
-                            <p>1 project / 1 Production Environment</p>
+                            <p>1 project / 1 production environment</p>
                         </h4>
                         <div>
                             <a class="btn" style="color: #fbad18;border-color: #fbad18" href="mailto:info@ag-grid.com">CONTACT US</a>
@@ -185,7 +186,7 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Community License</span>
                         <p>
-                            A license grant to use the ag-Grid Community package - it contains all of our essential features - without
+                            A license grant to use the ag-Grid Community package, which contains all of our essential features, without
                             charge under the MIT license.
                         </p>
                     </div>
@@ -197,8 +198,8 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Enterprise License</span>
                         <p>
-                            A license grant to use the ag-Grid Enteprise package - which contains all of our essential and enterprise features
-                            - for internal use, as a perpetual, concurrent, per developer, per application Commercial License with a 1-year
+                            A license grant to use the ag-Grid Enterprise package, which contains all of the features of ag-Grid Community
+                            and additional enterprise features, for internal use, as a perpetual, concurrent, per developer, per application Commercial License with a 1-year
                             subscription to new versions, support and maintenance.
                         </p>
                     </div>
@@ -210,24 +211,23 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Single Application Developer License (Enterprise)</span>
                         <p>
-                            Allows One Licensed Developer to use ag-Grid Enterprise in One Application, for 
-                            internal use, in perpetuity. Includes a 1-year subscription to new versions, 
-                            support and maintenance. For customer-facing (external) applications see deployment 
-                            license add-on.
+                            Allows one licensed Developer to use ag-Grid Enterprise in one application, for
+                            internal use, in perpetuity. Includes a 1-year subscription to new versions,
+                            support and maintenance. For customer-facing (external) applications, please see the Deployment
+                            License Add-on.
                         </p>
                         <div class="example card">
                             <div class="card-header">Example</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    A development team in company ‘A’ working on an application named ‘MyApp’ decides 
-                                    to use ag-Grid Multiple Applications Developer License. They need to purchase the 
-                                    number of developer license ‘seats’ that equals the count of concurrent, Front-End, 
-                                    JavaScript developers working on ‘MyApp’, say 5. If company ‘A’ starts working on a 
-                                    new application named ‘NewApp’ they can freely move developers between the two projects, 
-                                    assuming the concurrent count of ‘seats’ is not exceeded. That means that company ‘A’ 
-                                    owns 5 ag-Grid Multiple Application Developer Licenses available to use with ‘MyApp’, 
-                                    ‘NewApp’ and any other project so long as the concurrent licensed developer count 
-                                    is not exceeded.
+                                    A development team in company &lsquo;A&rsquo; working on an application named &lsquo;MyApp&rsquo; decides to use
+                                    ag-Grid Single Application Developer License. They need to purchase the number of developer license
+                                    &lsquo;seats&rsquo; that equals the count of concurrent Front-End JavaScript developers working on &lsquo;MyApp&rsquo;,
+                                    say 5. These 5 &lsquo;seats&rsquo; will only be available for &lsquo;MyApp&rsquo;. If company &lsquo;A&rsquo; starts
+                                    working on a new application named &lsquo;NewApp&rsquo; they need to purchase a number of developer license
+                                    &lsquo;seats&rsquo; that equals the count of concurrent Front-End JavaScript developers working on &lsquo;NewApp&rsquo;,
+                                    say 3. That means that company &lsquo;A&rsquo; now owns 8 ag-Grid Single Application Developer Licenses: 5 for use with
+                                    &lsquo;MyApp&rsquo; only and 3 for use with &lsquo;NewApp&rsquo; only.
                                 </div>
                             </div>
                         </div>
@@ -240,17 +240,25 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Multiple Applications Developer License (Enterprise)</span>
                         <p>
-                            Allows one licensed developer to use ag-Grid Enterprise in unlimited applications, 
-                            for internal use, in perpetuity. Includes a 1-year subscription to new versions, 
-                            support and maintenance. For customer-facing (external) applications see Deployment License.
+                            Allows one licensed developer to use ag-Grid Enterprise in an unlimited number of applications,
+                            for internal use, in perpetuity. Includes a 1-year subscription to new versions,
+                            support and maintenance. For customer-facing (external) applications, please see the Deployment
+                            License Add-on.
                         </p>
                         <div class="example card">
                             <div class="card-header">Example</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    A development team in company ‘A’ working on an application named ‘MyApp’ decides to use
-                                    ag-Grid Single Application Developer License. They need to purchase the number of developer license ‘seats’ that equals the count of concurent, Front-End, JavaScript developers working on ‘MyApp’, say 5. These 5 ‘seats’ will only be available with ‘MyApp’. If company ‘A’ starts working on a new application named ‘NewApp’ they need to purchase a number of developer license ‘seats’ that equals the count of concurrent, Front-End, JavaScript developers working on ‘NewApp’, say 3. That means that company ‘A’ now owns 8
-                                    ag-Grid Single Application Developer Licenses – 5 for use with ‘MyApp’ only and 3 for use with ‘NewApp’ only.
+                                    A development team in company &lsquo;A&rsquo; working on an application named
+                                    &lsquo;MyApp&rsquo; decides to use ag-Grid Multiple Applications Developer License. They
+                                    need to purchase the number of developer license &lsquo;seats&rsquo; that equals the count
+                                    of concurrent Front-End JavaScript developers working on &lsquo;MyApp&rsquo;, say 5. If
+                                    company &lsquo;A&rsquo; starts working on a new application named &lsquo;NewApp&rsquo; they
+                                    can freely move developers between the two projects, assuming the total concurrent count of
+                                    &lsquo;seats&rsquo; is not exceeded. That means that company &lsquo;A&rsquo; owns 5 ag-Grid
+                                    Multiple Application Developer Licenses available to use with &lsquo;MyApp&rsquo;,
+                                    &lsquo;NewApp&rsquo; and any other project so long as the concurrent licensed developer count
+                                    is not exceeded.
                                 </div>
                             </div>
                         </div>
@@ -263,19 +271,19 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Deployment License Add-on (Enterprise)</span>
                         <p>
-                            Allows Licensed Developers to sub-license ag-Grid for one application on one production environment 
-                            in perpetuity. Includes a 1-year subscription to new versions, support and maintenance. Only available 
+                            Allows licensed developers to sub-license ag-Grid for one application on one production environment
+                            in perpetuity. Includes a 1-year subscription to new versions, support and maintenance. Only available
                             with a Developer License.
                         </p>
                         <div class="example card">
                             <div class="card-header">Example 1</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    Company ‘A’ deploys ‘MyApp’ as a SaaS offering on a multi-tenant cloud instance. It’s replicated 
-                                    or performance across 5 Availability Zones and accessed by hundreds of thousands of customers. 
-                                    Company ‘A’ needs a single Deployment License Add-on to cover a single Production Environment, 
-                                    irrespective of the quantity of resources available to the app. Development, Testing, Build, 
-                                    Integration, Staging, etc. environments are not counted.
+                                    Company &lsquo;A&rsquo; deploys &lsquo;MyApp&rsquo; as a SaaS offering on a multi-tenant cloud
+                                    instance. It's replicated for performance across 5 Availability Zones and accessed by hundreds
+                                    of thousands of customers. Company &lsquo;A&rsquo; needs a single Deployment License Add-on to
+                                    cover the single production environment, irrespective of the quantity of resources available to
+                                    the app. Development, Testing, Build, Integration, Staging, etc. environments are not counted.
                                 </div>
                             </div>
                         </div>
@@ -283,11 +291,12 @@ gtm_data_layer('community-enterprise');
                             <div class="card-header">Example 2</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    A customer of company ‘A’, company ‘B’, requests a version of ‘MyApp’ to run on their private 
-                                    infrastructure. Company ‘A’ deploys ‘MyApp’ to a datacenter controlled by Company ‘B’. Company ‘A’ 
-                                    needs One Deployment License Add-on to cover its SaaS offering (Example 1) and One Deployment License 
-                                    Add-on to cover the ‘on-premise’ deployment to Company ‘B’, irrespective of the quantity of resources 
-                                    available to the app. Development, Testing, Build, Integration, Staging, etc. environments are not counted.
+                                    A customer of company &lsquo;A&rsquo;, company &lsquo;B&rsquo;, requests a version of &lsquo;MyApp&rsquo;
+                                    to run on their private infrastructure. Company &lsquo;A&rsquo; deploys &lsquo;MyApp&rsquo; to a datacentre
+                                    controlled by Company &lsquo;B&rsquo;. Company &lsquo;A&rsquo; needs one Deployment License Add-on to cover
+                                    its SaaS offering (Example 1) and one Deployment License Add-on to cover the &lsquo;on-premise&rsquo;
+                                    deployment to Company &lsquo;B&rsquo;, irrespective of the quantity of resources available to the app.
+                                    Development, Testing, Build, Integration, Staging, etc. environments are not counted.
                                 </div>
                             </div>
                         </div>
@@ -295,12 +304,13 @@ gtm_data_layer('community-enterprise');
                             <div class="card-header">Example 3</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    Company ‘C’ approaches company ‘A’ with a request to deploy ‘MyApp’ across 50 locations, 
-                                    each with their own infrastructure. Company ‘A’ would need One Deployment License Add-on to cover 
-                                    its SaaS offering (Example 1), One Deployment License Add-on to cover the ‘on-premise’ deployment to 
-                                    Company ‘B’ (Example 2) and Fifty Deployment License Add-ons to cover the ‘on-premise’ deployment to 
-                                    Company ‘C’, irrespective of the quantity of resources available to the app in a location. Development, 
-                                    Testing, Build, Integration, Staging, etc. environments are not counted.                            
+                                    Company &lsquo;C&rsquo; approaches company &lsquo;A&rsquo; with a request to deploy &lsquo;MyApp&rsquo;
+                                    across 50 locations, each with their own infrastructure. Company &lsquo;A&rsquo; would need one Deployment
+                                    License Add-on to cover its SaaS offering (Example 1), one Deployment License Add-on to cover the
+                                    &lsquo;on-premise&rsquo; deployment to Company &lsquo;B&rsquo; (Example 2) and fifty Deployment License Add-ons
+                                    to cover the &lsquo;on-premise&rsquo; deployment to Company &lsquo;C&rsquo;, irrespective of the quantity of
+                                    resources available to the app in a location. Development, Testing, Build, Integration, Staging, etc. environments
+                                    are not counted.
                                 </div>
                             </div>
                         </div>
@@ -320,20 +330,20 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <div>
                         <span>Project Dependency</span>
-                        <p>A software project will have a dependency on ag-Grid Enterprise if it requires our software to 
-                            perform some of its functions. Every Front-End JavaScript developer working on the project will need 
+                        <p>A software project will have a dependency on ag-Grid Enterprise if it requires our software to
+                            perform some of its functions. Every Front-End JavaScript developer working on the project will need
                             to be licensed.
                         </p>
                         <div class="example card">
                             <div class="card-header">Example</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    Company ‘A’ is developing an application named ‘MyApp’. The app needs to render 10K rows of data in a 
-                                    table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise to the project to 
-                                    satisfy that requirement. 5 Front-End and 10 Back-End developers are working on ‘MyApp’. Only 1 Front-End 
-                                    developer is tasked with configuring and modifying the data grid. The benefit to the UI is project wide 
-                                    however and all developers contributing to it need to be licensed. Company ‘A’ purchases 5 licenses for 
-                                    ag-Grid Enterprise.
+                                    Company &lsquo;A&rsquo; is developing an application named &lsquo;MyApp&rsquo;. The app needs to render
+                                    10K rows of data in a table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise
+                                    to the project to satisfy that requirement. 5 Front-End and 10 Back-End developers are working on
+                                    &lsquo;MyApp&rsquo;. Only 1 Front-End developer is tasked with configuring and modifying the data grid.
+                                    The benefit to the UI is project-wide however and all developers contributing to it need to be licensed.
+                                    Company &lsquo;A&rsquo; purchases 5 licenses for ag-Grid Enterprise.
                                 </div>
                             </div>
                         </div>
@@ -346,22 +356,22 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Indirect Project Dependency</span>
                         <p>
-                            A software project will have an indirect dependency on ag-Grid Enterprise even if it’s wrapped into 
-                            another framework, file, library, etc. Every Front-End JavaScript developer working on a project using 
+                            A software project will have an indirect dependency on ag-Grid Enterprise even if it's wrapped into
+                            another framework, file, library, etc. Every Front-End JavaScript developer working on a project using
                             a library that wraps ag-Grid Enterprise will need to be licensed.
                         </p>
-                        <p>Please note: You are not allowed to wrap ag-Grid Enterprise in a framework, library, component, etc. and 
+                        <p>Please note: You are not allowed to wrap ag-Grid Enterprise in a framework, library, component, etc. and
                             make it available as a development tool outside of your organisation.
                         </p>
                         <div class="example card">
                             <div class="card-header">Example</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    A UI development team at Company ‘A’ creates its own UI library for internal development and includes 
-                                    ag-Grid Enterprise as a component. The team working on ‘MyApp’ uses the new library and so does the 
-                                    team working on ‘NewApp’. ‘MyApp’ has 5 Front-End JavaScript developers and ‘NewApp’ has 3. There 
-                                    are 2 Front-End JavaScript developers on the UI development team. Comnpany ‘A’ purchases 10 licenses 
-                                    for ag-Grid Enterprise.
+                                    A UI development team at Company &lsquo;A&rsquo; creates its own UI library for internal development
+                                    and includes ag-Grid Enterprise as a component. The team working on &lsquo;MyApp&rsquo; uses the new
+                                    library and so does the team working on &lsquo;NewApp&rsquo;. &lsquo;MyApp&rsquo; has 5 Front-End
+                                    JavaScript developers and &lsquo;NewApp&rsquo; has 3. There are 2 Front-End JavaScript developers on
+                                    the UI development team. Company &lsquo;A&rsquo; purchases 10 licenses for ag-Grid Enterprise.
                                 </div>
                             </div>
                         </div>
@@ -374,16 +384,16 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Production Environment</span>
                         <p>A software project will have an indirect dependency on the ag-Grid Enterprise package event if it's wrapped into
-                        another framework, file, library, etc. Every concurrent, front-end, javascript developer working on a project using
+                        another framework, file, library, etc. Every concurrent Front-End, JavaScript developer working on a project using
                         a library that wraps the ag-Grid Enterprise package will need to be licensed.</p>
                         <div class="example card">
                             <div class="card-header">Example</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    A UI development team at Company 'A' creates it's own UI library for internal development and includes ag-Grid 
-                                    Enterprise as a component. The team working on 'MyApp' uses the new library and so does the team working on 
-                                    'NewApp'. 'MyApp' has 5 front-end javascript developers and 'NewApp' has 3.<br>
-                                    There are 2 front-end javascript developers on the UI development team. Company 'A' purchases 10 licenses for
+                                    A UI development team at Company &lsquo;A&rsquo; creates its own UI library for internal development and includes ag-Grid
+                                    Enterprise as a component. The team working on &lsquo;MyApp&rsquo; uses the new library and so does the team working on
+                                    &lsquo;NewApp&rsquo;. &lsquo;MyApp&rsquo; has 5 Front-End JavaScript developers and &lsquo;NewApp&rsquo; has 3.
+                                    There are 2 Front-End JavaScript developers on the UI development team. Company &lsquo;A&rsquo; purchases 10 licenses for
                                     ag-Grid Enterprise.
                                 </div>
                             </div>
@@ -405,25 +415,25 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Perpetual License</span>
                         <p>
-                            When you purchase ag-Grid Enterprise you are granted a license to use a version of the product in 
-                            perpetuity. There are no further charges until you choose to extend your license to cover newer 
+                            When you purchase ag-Grid Enterprise you are granted a license to use a version of the product in
+                            perpetuity. There are no further charges until you choose to extend your license to cover newer
                             versions (see next point).
                         </p>
-                        <p>Please note that while use of the software is perpetual Support and Corrective Maintenance are not. We 
-                            do not provide issue resolution to versions of ag-Grid Enterprise older than 12m. We roll bug fixes, 
-                            performance enhancements and other improvements into new releases – we don’t patch, fix or in any way 
+                        <p>Please note that while use of the software is perpetual, Support and Corrective Maintenance are not. We
+                            do not provide issue resolution to versions of ag-Grid Enterprise older than 12 months. We roll bug fixes,
+                            performance enhancements and other improvements into new releases; we don't patch, fix or in any way
                             alter older versions.
                         </p>
                         <div class="example card">
                             <div class="card-header">Example</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    Company ‘A’ is developing an application named ‘MyApp’. The app needs to render 10K rows of data 
-                                    in a table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise to the 
-                                    project to satisfy that requirement. 5 Front-End and 10 Back-End developers are working on ‘MyApp’. 
-                                    Only 1 Front-End developer is tasked with configuring and modifying the data grid. The benefit to 
-                                    the UI is project wide however and all developers contributing to it need to be licensed. Company 
-                                    ‘A’ purchases 5 licenses for ag-Grid Enterprise.
+                                    Company &lsquo;A&rsquo; is developing an application named &lsquo;MyApp&rsquo;. The app needs to render 10K rows of data
+                                    in a table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise to the project to satisfy that
+                                    requirement. 5 Front-End and 10 Back-End developers are working on &lsquo;MyApp&rsquo;.
+                                    Only 1 Front-End developer is tasked with configuring and modifying the data grid. The benefit to
+                                    the UI is project wide however and all developers contributing to it need to be licensed. Company
+                                    &lsquo;A&rsquo; purchases 5 licenses for ag-Grid Enterprise.
                                 </div>
                             </div>
                         </div>
@@ -438,15 +448,15 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <div>
                         <span>1-year Subscription to New Versions (included)</span>
-                        <p>When you make a purchase you get a Subscription to license New Versions of ag-Grid Enterprise for 365 days. 
-                            You can see our release list <a href="./ag-grid-changelog/">here</a>. After 365 days you will no longer be able to license the latest versions 
-                            of ag-Grid Enterprise without renewing your subscription. You can continue to use your licensed versions 
+                        <p>When you make a purchase you get a Subscription to license new versions of ag-Grid Enterprise for 365 days.
+                            You can see our release list <a href="./ag-grid-changelog/">here</a>. After 365 days you will no longer be able to license the latest versions
+                            of ag-Grid Enterprise without renewing your subscription. You can continue to use your licensed versions
                             in perpetuity.
                         </p>
                         <p>
-                            Please note that while use of the software is perpetual Support and Corrective Maintenance are not. We 
-                            do not provide issue resolution to versions of ag-Grid Enterprise older than 12m. We roll bug fixes, 
-                            performance enhancements and other improvements into new releases – we don’t patch, fix or in any way 
+                            Please note that while use of the software is perpetual, Support and Corrective Maintenance are not. We
+                            do not provide issue resolution to versions of ag-Grid Enterprise older than 12 months. We roll bug fixes,
+                            performance enhancements and other improvements into new releases; we don't patch, fix or in any way
                             alter older versions.
                         </p>
                         <div>
@@ -461,15 +471,15 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Subscription Renewal (optional)</span>
                         <p>
-                            You can choose to renew your Subscription to license New Versions of ag-Grid Enterprise at a 
-                            discounted rate. This could range from 365 days up to a 5-year term. At the end of your subscription 
-                            period you will no longer be able to license the latest versions of ag-Grid Enterprise without renewing. 
+                            You can choose to renew your subscription to license new versions of ag-Grid Enterprise at a
+                            discounted rate. This could range from 365 days up to a 5-year term. At the end of your subscription
+                            period you will no longer be able to license the latest versions of ag-Grid Enterprise without renewing.
                             You can continue to use your licensed versions in perpetuity.
                         </p>
                         <p>
-                            Please note that while use of the software is perpetual Support and Corrective Maintenance are not. We 
-                            do not provide issue resolution to versions of ag-Grid Enterprise older than 12m. We roll bug fixes, 
-                            performance enhancements and other improvements into new releases – we don’t patch, fix or in any way 
+                            Please note that while use of the software is perpetual Support, and Corrective Maintenance are not. We
+                            do not provide issue resolution to versions of ag-Grid Enterprise older than 12 months. We roll bug fixes,
+                            performance enhancements and other improvements into new releases; we don't patch, fix or in any way
                             alter older versions.
                         </p>
                         <div>
@@ -484,8 +494,8 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Support (only with an active subscription)</span>
                         <p>
-                            We offer a log-in protected support portal that has a vast knowledge base library and access to 
-                            our ticketing system. We aim to respond to support requests within 24h. We operate on Business Days 
+                            We offer a log-in protected support portal that has a vast knowledge base and access to
+                            our ticketing system. We aim to respond to support requests within 24 hours. We operate on business days
                             only, between 9am and 5pm GMT.
                         </p>
                     </div>

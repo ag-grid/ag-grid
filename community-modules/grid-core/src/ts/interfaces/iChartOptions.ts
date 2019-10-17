@@ -65,7 +65,7 @@ export interface LegendOptions {
     enabled?: boolean;
     position?: LegendPosition;
     padding?: number;
-    font?: FontOptions;
+    label?: FontOptions;
     marker?: LegendMarkerOptions;
     item?: ItemOptions;
 }

@@ -125,6 +125,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             "legend.marker.padding": "legend.markerPadding",
             "legend.item.paddingX": "legend.itemPaddingX",
             "legend.item.paddingY": "legend.itemPaddingY",
+            "legend.label.fontFamily": "legend.labelFontFamily",
+            "legend.label.fontWeight": "legend.labelFontWeight",
+            "legend.label.fontSize": "legend.labelFontSize",
+            "legend.label.color": "legend.labelColor",
         };
 
         _.set(this.chart, mappings[expression] || expression, value);
@@ -293,7 +297,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 enabled: true,
                 padding: 20,
                 position: "right",
-                font: {
+                label: {
                     ...this.getDefaultFontOptions(),
                 },
                 item: {

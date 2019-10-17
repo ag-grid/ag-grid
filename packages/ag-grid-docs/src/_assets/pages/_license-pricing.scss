@@ -8,6 +8,9 @@
             h1 {
                 font-weight: 400;
                 font-size: 2.5rem;
+                @include media-breakpoint-down(sm) {
+                    font-size: 1.4rem;
+                }
             }
             p {
                 @extend .lead, .mx-4;
@@ -18,7 +21,9 @@
             @extend .full-width-row;
             > div {
                 @extend .my-3, .py-2, .mx-0;
-                width: calc(100% - 2rem);
+                @include media-breakpoint-up(sm) {
+                    width: calc(100% - 2rem);
+                }
             }
         }
 
@@ -55,6 +60,9 @@
                     }
                     span:last-child {
                         @extend .ml-auto;
+                        @include media-breakpoint-down(sm) {
+                            display: none;
+                        }
                     }
                 }
             }

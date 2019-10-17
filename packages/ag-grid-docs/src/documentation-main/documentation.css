@@ -147,6 +147,9 @@
 		display: block !important;
 		transform: translateX(10px);
 	}
+	#documentation .docs-homepage-section-preview .card > h2 .uiIcon {
+		display: none;
+	}
 }
 @media (max-width: 715px) {
 	#documentation .group .group-items {

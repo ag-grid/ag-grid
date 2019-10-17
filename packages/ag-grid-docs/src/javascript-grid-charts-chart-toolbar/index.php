@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Chart Toolbar</h1>
 
     <p class="lead">
-        The chart toolbar appears when the mouse hovers over the top right area of the chart, and provides access to 
+        The chart toolbar appears when the mouse hovers over the top right area of the chart, and provides access to
         additional functionality and the chart configuration sidebar.
     </p>
 
@@ -99,8 +99,8 @@ include '../documentation-main/documentation_header.php';
     <h2>Unlinking Charts</h2>
 
     <p>
-        Charts are linked to the data in the grid by default, so that if the data changes, the chart will also update. 
-        However, it is sometimes desirable to unlink a chart from the grid data. For instance, users may want to prevent 
+        Charts are linked to the data in the grid by default, so that if the data changes, the chart will also update.
+        However, it is sometimes desirable to unlink a chart from the grid data. For instance, users may want to prevent
         a chart from being updated when subsequent sorts and filters are applied in the grid.
     </p>
 
@@ -138,10 +138,12 @@ interface GridOptions {
 }
 
 interface GetChartToolbarItemsParams {
-    defaultItems: string[];
+    defaultItems: ChartMenuOptions[];
     api: GridApi;
     columnApi: ColumnApi;
 }
+
+type ChartMenuOptions = "chartSettings" | "chartData" | "chartFormat" | "chartUnlink" | "chartDownload";
 </snippet>
 
 <p>

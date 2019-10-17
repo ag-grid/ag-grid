@@ -153,7 +153,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex: 1 1 auto;
 }
 
-@media only print {
+@media print {
+  .ag-layout-normal {
+    // hide grid if trying to print in non-print mode
+    display: none;
+  }
   .ag-root-wrapper,
   .ag-root-wrapper-body,
   .ag-root,

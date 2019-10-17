@@ -42,7 +42,8 @@ body {
 
 body > div.page-content {
     height: calc(100% - 4em);
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .stretch-contents {
@@ -254,10 +255,10 @@ body > div.page-content {
     .get-started-btn {
         @extend .btn, .btn-lg, .py-3, .px-4;
         &:first-child {
-            @extend .btn-darkblue, .mr-3;
+            @extend .btn-darkblue, .mr-1, .mr-sm-2;
         }
         &:last-child {
-            @extend .btn-outline-darkblue, .ml-3;
+            @extend .btn-outline-darkblue, .ml-2, .ml-sm-3;
         }
     }
 }
@@ -301,7 +302,7 @@ body > div.page-content {
             font-size: 2.5rem;
         }
         @include media-breakpoint-down(sm) {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
         }
         span {
             @extend .display-5, .text-center, .d-block;

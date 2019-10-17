@@ -45,8 +45,8 @@ meta_and_links($title, $keywords, $description, false);
                     <h3>Feature Packed</h3>
                     <p>
                         The performance, feature set and quality of ag-Grid has not been seen before in a
-                        JavaScript datagrid. Many features in ag-Grid are unique to ag-Grid and simply put
-                        ag-Grid into a class of it’s own without compromising on quality or performance.
+                        JavaScript datagrid. Many features in ag-Grid are unique to ag-Grid, and simply put
+                        ag-Grid into a class of its own, without compromising on quality or performance.
                     </p>
                 </div>
                 <div>
@@ -60,9 +60,9 @@ meta_and_links($title, $keywords, $description, false);
                 <div>
                     <h3>Community & Enterprise</h3>
                     <p>
-                        ag-Grid Community is free and open-sourced under MIT license. ag-Grid Enterprise comes with
+                        ag-Grid Community is free and open-sourced under the MIT license. ag-Grid Enterprise comes with
                         dedicated support and more enterprise style features. ag-Grid gives for free what other grids
-                        charge for, then provides in ag-Grid Enterprise where it goes above and beyond the competition.
+                        charge for, then provides ag-Grid Enterprise where it goes above and beyond the competition.
                     </p>
                 </div>
             </section>

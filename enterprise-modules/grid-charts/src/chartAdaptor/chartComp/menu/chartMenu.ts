@@ -11,9 +11,9 @@ import {
     PostConstruct,
     Promise
 } from "@ag-community/grid-core";
-import {TabbedChartMenu} from "./tabbedChartMenu";
-import {ChartController} from "../chartController";
-import {GridChartComp} from "../gridChartComp";
+import { TabbedChartMenu } from "./tabbedChartMenu";
+import { ChartController } from "../chartController";
+import { GridChartComp } from "../gridChartComp";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
@@ -27,7 +27,7 @@ export class ChartMenu extends Component {
 
     private buttons: ChartToolbarButtons = {
         chartSettings: ['menu', () => this.showMenu('chartSettings')],
-        chartData: ['menu' , () => this.showMenu('chartData')],
+        chartData: ['menu', () => this.showMenu('chartData')],
         chartFormat: ['menu', () => this.showMenu('chartFormat')],
         chartUnlink: ['linked', (e) => this.toggleDetached(e)],
         chartDownload: ['save', () => this.saveChart()]
@@ -63,7 +63,7 @@ export class ChartMenu extends Component {
                 defaultItems: tabOptions
             };
 
-            tabOptions = (toolbarItemsFunc(params) as ChartMenuOptions[]).filter(option => {
+            tabOptions = toolbarItemsFunc(params).filter(option => {
                 if (!this.buttons[option]) {
                     console.warn(`ag-Grid: '${option} is not a valid Chart Toolbar Option`);
                     return false;
@@ -97,7 +97,7 @@ export class ChartMenu extends Component {
 
         chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
-            const [ iconName, callback ] = buttonConfig;
+            const [iconName, callback] = buttonConfig;
             const buttonEl = _.createIconNoSpan(iconName, this.gridOptionsWrapper, undefined, true);
             this.addDestroyableEventListener(buttonEl, 'click', callback);
             this.getGui().appendChild(buttonEl);
@@ -166,9 +166,9 @@ export class ChartMenu extends Component {
 
         if (!this.menuPanel) {
             this.createMenu(tab)
-            .then(() => {
-                this.slideDockedContainer();
-            });
+                .then(() => {
+                    this.slideDockedContainer();
+                });
         } else {
             this.slideDockedContainer();
         }
