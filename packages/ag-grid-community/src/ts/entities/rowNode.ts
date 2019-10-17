@@ -823,7 +823,7 @@ export class RowNode implements IEventEmitter {
         return foundFirstChildPath ? nodeToSwapIn : null;
     }
 
-    public isFullWidthCell() {
+    public isFullWidthCell(): boolean {
         const isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
     }
