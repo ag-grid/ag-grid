@@ -64,7 +64,7 @@ function enterprise_feature($name)
         }
 
         function toggleOpen(e, container, state) {
-            if (e.target.tagName === 'A') {
+            if (e.target.tagName === 'A' || document.body.clientWidth > 715) {
                 return;
             }
 
