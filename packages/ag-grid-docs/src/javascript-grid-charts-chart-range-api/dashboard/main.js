@@ -1,13 +1,13 @@
 var columnDefs = [
-    {field: "country", width: 150, chartDataType: 'category'},
-    {field: "group", chartDataType: 'category'},
-    {field: "gold", chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: "silver", chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: "bronze", chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'a', chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'b', chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'c', chartDataType: 'series', editable: true, valueParser: numberValueParser},
-    {field: 'd', chartDataType: 'series', editable: true, valueParser: numberValueParser}
+    { field: "country", width: 150, chartDataType: 'category' },
+    { field: "group", chartDataType: 'category' },
+    { field: "gold", chartDataType: 'series', editable: true, valueParser: numberValueParser },
+    { field: "silver", chartDataType: 'series', editable: true, valueParser: numberValueParser },
+    { field: "bronze", chartDataType: 'series', editable: true, valueParser: numberValueParser },
+    { field: 'a', chartDataType: 'series', editable: true, valueParser: numberValueParser },
+    { field: 'b', chartDataType: 'series', editable: true, valueParser: numberValueParser },
+    { field: 'c', chartDataType: 'series', editable: true, valueParser: numberValueParser },
+    { field: 'd', chartDataType: 'series', editable: true, valueParser: numberValueParser }
 ];
 
 function createRowData() {
@@ -17,17 +17,17 @@ function createRowData() {
 
     return countries.map(function(country, index) {
         var group = index % 2 == 0 ? 'Group A' : 'Group B';
-        
+
         return {
             country: country,
             group: group,
-            gold: Math.floor(((index+1 / 7) * 333)%100),
-            silver: Math.floor(((index+1 / 3) * 555)%100),
-            bronze: Math.floor(((index+1 / 7.3) * 777)%100),
-            a: Math.floor(Math.random()*1000),
-            b: Math.floor(Math.random()*1000),
-            c: Math.floor(Math.random()*1000),
-            d: Math.floor(Math.random()*1000)
+            gold: Math.floor(((index + 1 / 7) * 333) % 100),
+            silver: Math.floor(((index + 1 / 3) * 555) % 100),
+            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
+            a: Math.floor(Math.random() * 1000),
+            b: Math.floor(Math.random() * 1000),
+            c: Math.floor(Math.random() * 1000),
+            d: Math.floor(Math.random() * 1000)
         };
     });
 }
@@ -52,7 +52,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
-    // needed for the menu's in the carts, otherwise popups appear over grid
+    // needed for the menus in the carts, otherwise popups appear over grid
     popupParent: document.body,
     onFirstDataRendered: onFirstDataRendered,
     getChartToolbarItems: getChartToolbarItems
@@ -68,15 +68,15 @@ function onFirstDataRendered(event) {
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
-            columns: ['country','gold','silver']
+            columns: ['country', 'gold', 'silver']
         },
         chartType: 'groupedBar',
         chartContainer: eContainer1,
         processChartOptions: function(params) {
-            params.options.seriesDefaults.tooltipRenderer = function (params) {
+            params.options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 
@@ -89,19 +89,19 @@ function onFirstDataRendered(event) {
     var eContainer2 = document.querySelector('#chart2');
     var params2 = {
         cellRange: {
-            columns: ['group','gold']
+            columns: ['group', 'gold']
         },
         chartType: 'pie',
         chartContainer: eContainer2,
         aggFunc: 'sum',
         processChartOptions: function(params) {
-            params.options.legendPosition = 'bottom';
+            params.options.legend.position = 'bottom';
             params.options.padding = { top: 20, left: 10, bottom: 30, right: 10 };
 
-            params.options.seriesDefaults.tooltipRenderer = function (params) {
+            params.options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 
@@ -114,19 +114,19 @@ function onFirstDataRendered(event) {
     var eContainer3 = document.querySelector('#chart3');
     var params3 = {
         cellRange: {
-            columns: ['group','silver']
+            columns: ['group', 'silver']
         },
         chartType: 'pie',
         chartContainer: eContainer3,
         aggFunc: 'sum',
         processChartOptions: function(params) {
-            params.options.legendPosition = 'bottom';
+            params.options.legend.position = 'bottom';
             params.options.padding = { top: 20, left: 10, bottom: 30, right: 10 };
 
-            params.options.seriesDefaults.tooltipRenderer = function (params) {
+            params.options.seriesDefaults.tooltipRenderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = params.datum[params.angleField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 

@@ -1,22 +1,22 @@
 "use strict";
 var columnDefs = [
-    {headerName: 'Product', field: 'product', chartDataType: 'category'},
-    {headerName: 'Book', field: 'book', chartDataType: 'category'},
+    { headerName: 'Product', field: 'product', chartDataType: 'category' },
+    { headerName: 'Book', field: 'book', chartDataType: 'category' },
 
-    {headerName: 'Current', field: 'current', type: 'measure'},
-    {headerName: 'Previous', field: 'previous', type: 'measure'},
-    {headerName: 'PL 1', field: 'pl1', type: 'measure'},
-    {headerName: 'PL 2', field: 'pl2', type: 'measure'},
-    {headerName: 'Gain-DX', field: 'gainDx', type: 'measure'},
-    {headerName: 'SX / PX', field: 'sxPx', type: 'measure'},
+    { headerName: 'Current', field: 'current', type: 'measure' },
+    { headerName: 'Previous', field: 'previous', type: 'measure' },
+    { headerName: 'PL 1', field: 'pl1', type: 'measure' },
+    { headerName: 'PL 2', field: 'pl2', type: 'measure' },
+    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure' },
+    { headerName: 'SX / PX', field: 'sxPx', type: 'measure' },
 
-    {headerName: 'Trade', field: 'trade', type: 'measure'},
-    {headerName: 'Submitter ID', field: 'submitterID', type: 'measure'},
-    {headerName: 'Submitted Deal ID', field: 'submitterDealID', type: 'measure', width: 150},
+    { headerName: 'Trade', field: 'trade', type: 'measure' },
+    { headerName: 'Submitter ID', field: 'submitterID', type: 'measure' },
+    { headerName: 'Submitted Deal ID', field: 'submitterDealID', type: 'measure', width: 150 },
 
-    {headerName: 'Portfolio', field: 'portfolio'},
-    {headerName: 'Deal Type', field: 'dealType'},
-    {headerName: 'Bid', field: 'bidFlag'}
+    { headerName: 'Portfolio', field: 'portfolio' },
+    { headerName: 'Deal Type', field: 'dealType' },
+    { headerName: 'Bid', field: 'bidFlag' }
 ];
 
 var chartRef;
@@ -33,7 +33,7 @@ var gridOptions = {
             chartDataType: 'series',
             cellClass: 'number',
             valueFormatter: numberCellFormatter,
-            cellRenderer:'agAnimateShowChangeCellRenderer'
+            cellRenderer: 'agAnimateShowChangeCellRenderer'
         }
     },
     animateRows: true,
@@ -43,7 +43,7 @@ var gridOptions = {
     onFirstDataRendered: function(params) {
         var createRangeChartParams = {
             cellRange: {
-                columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
+                columns: [ 'product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx' ]
             },
             chartType: 'groupedColumn',
             chartContainer: document.querySelector('#myChart'),
@@ -56,14 +56,14 @@ var gridOptions = {
     processChartOptions: function(params) {
         var opts = params.options;
 
-        opts.legendPosition = 'bottom';
-        opts.yAxis.labelFormatter = yAxisLabelFormatter;
-        opts.seriesDefaults.tooltipEnabled = true;
-        opts.seriesDefaults.fills =['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
-        opts.seriesDefaults.strokes =['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
+        opts.legend.position = 'bottom';
+        opts.yAxis.label.formatter = yAxisLabelFormatter;
+        opts.seriesDefaults.tooltip.enabled = true;
+        opts.seriesDefaults.fills = [ '#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1' ];
+        opts.seriesDefaults.strokes = [ '#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692' ];
 
-        opts.seriesDefaults.tooltipRenderer = function(params) {
-            var value = '$' + params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+        opts.seriesDefaults.tooltip.renderer = function(params) {
+            var value = '$' + params.datum[ params.yKey ].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
             return '<div style="padding: 5px"><b>' + params.title + '</b>: ' + value + '</div>';
         };
 
@@ -83,7 +83,7 @@ function createChart(type) {
 
     var params = {
         cellRange: {
-            columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
+            columns: [ 'product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx' ]
         },
         chartContainer: document.querySelector('#myChart'),
         chartType: type,
@@ -121,7 +121,7 @@ var worker;
             gridOptions.api.setRowData(e.data.records);
         }
         if (e.data.type === 'updateData') {
-            gridOptions.api.batchUpdateRowData({update: e.data.records});
+            gridOptions.api.batchUpdateRowData({ update: e.data.records });
         }
     };
 

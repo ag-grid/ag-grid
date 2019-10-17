@@ -12,6 +12,7 @@ import { PaddingPanel } from "./paddingPanel";
 import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartProxy } from "../../../chartProxies/chartProxy";
+import { CaptionOptions } from "../../../../../charts/chartOptions";
 
 export class ChartPanel extends Component {
 
@@ -54,7 +55,7 @@ export class ChartPanel extends Component {
     }
 
     private initTitles(): void {
-        const { title } = this.chartProxy.getChartOption("title");
+        const title = this.chartProxy.getChartOption<CaptionOptions>("title");
         const text = title ? title.text : "";
 
         // note we don't set the font style via chart title panel

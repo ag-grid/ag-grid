@@ -411,7 +411,6 @@ export class Legend {
             markerLabel.markerStroke = marker.stroke;
             markerLabel.markerStrokeWidth = this.markerStrokeWidth;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
-
             markerLabel.labelColor = this.labelColor;
         });
     }
