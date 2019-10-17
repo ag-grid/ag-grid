@@ -220,15 +220,17 @@ import {${module.moduleName}} from "${module.fullPath.replace('.ts', '')}";
         .map(module => `ModuleRegistry.register(${module.moduleName});`);
 
     const enterpriseModulesEntries = enterpriseModules
-        .map(module => glob.sync(`../../enterprise-modules/${module}/src/*Module.ts`))
-        .map(module => `
-            import "../../../${module}";
-            import ${module.moduleName} from "../../../${module}"; 
+        .map(module => `import "${module.fullPath}";
+import {${module.moduleName}} from "${module.fullPath.replace('.ts', '')}"; 
         `);
 
-    const enterpriseBundleFilename = './src/_assets/ts/ag-grid-enterprise-bundle.ts';
+    const enterpriseRegisterModuleLines = enterpriseModules
+        .map(module => `ModuleRegistry.register(${module.moduleName});`);
+
+
+    const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd.ts';
     const enterpriseMainFilename = './src/_assets/ts/ag-grid-enterprise-main.ts';
-    const communityFilename = 'src/_assets/ts/community-grid-all-modules.ts';
+    const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd.ts';
 
     const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split('\n');
     let modulesLineFound = false;
@@ -239,8 +241,8 @@ import {${module.moduleName}} from "${module.fullPath.replace('.ts', '')}";
             newEnterpriseBundleLines.push(line);
         }
     });
-    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries);
-    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.join('\n'), 'UTF-8');
+    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
 
     const existingEnterpriseMainLines = fs.readFileSync(enterpriseMainFilename, 'UTF-8').split('\n');
     modulesLineFound = false;
@@ -373,15 +375,19 @@ module.exports = () => {
 
     // serve community, enterprise and react
 
-    // for js examples that just require community functionality
+    // for js examples that just require community functionality (landing pages, vanilla community examples etc)
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-community/grid-all-modules/dist/ag-grid-community.js
-    addWebpackMiddleware(app, 'webpack.community-grid-all.config.js', '/dev/@ag-community/grid-all-modules/dist');
+    addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-community/grid-all-modules/dist');
+
+    // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-enterprise/grid-all-modules/dist/ag-grid-enterprise.js
+    addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-enterprise/grid-all-modules/dist');
+
+    // addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
 
     // for the actual site - php, css etc
     addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
 
-    // addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
-    // addWebpackMiddleware(app, 'webpack.enterprise-bundle.config.js', '/dev/ag-grid-enterprise-bundle'); // mostly used by landing pages
     // addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
 
     // spl modules

@@ -1,4 +1,18 @@
-/* used by fw examples */
+// for js examples that just require enterprise functionality (landing pages, vanilla community examples etc)
+
+import "../../../../../community-modules/grid-core/src/styles/ag-grid.scss";
+
+import "../../../../../community-modules/grid-core/src/styles/ag-theme-material/sass/ag-theme-material.scss";
+import "../../../../../community-modules/grid-core/src/styles/ag-theme-fresh/sass/ag-theme-fresh.scss";
+import "../../../../../community-modules/grid-core/src/styles/ag-theme-dark/sass/ag-theme-dark.scss";
+import "../../../../../community-modules/grid-core/src/styles/ag-theme-blue/sass/ag-theme-blue.scss";
+import "../../../../../community-modules/grid-core/src/styles/ag-theme-bootstrap/sass/ag-theme-bootstrap.scss";
+import "../../../../../community-modules/grid-core/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+import "../../../../../community-modules/grid-core/src/styles/ag-theme-balham-dark/sass/ag-theme-balham-dark.scss";
+
+
+import { ModuleRegistry } from "../../../../../community-modules/grid-core/src/ts/main";
+export * from "../../../../../community-modules/grid-core/src/ts/main";
 
 // spl modules
 /* MODULES - Don't delete this line */
@@ -50,3 +64,31 @@ import {StatusBarModule} from "../../../../../enterprise-modules/status-bar/src/
 import "../../../../../enterprise-modules/viewport-row-model/src/viewportRowModelModule.ts";
 import {ViewportRowModelModule} from "../../../../../enterprise-modules/viewport-row-model/src/viewportRowModelModule"; 
         
+import "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule.ts";
+import {ClientSideRowModelModule} from "../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule"; 
+        
+import "../../../../../community-modules/csv-export/src/csvExportModule.ts";
+import {CsvExportModule} from "../../../../../community-modules/csv-export/src/csvExportModule"; 
+        
+import "../../../../../community-modules/infinite-row-model/src/infiniteRowModelModule.ts";
+import {InfiniteRowModelModule} from "../../../../../community-modules/infinite-row-model/src/infiniteRowModelModule"; 
+        
+ModuleRegistry.register(ChartsModule);
+ModuleRegistry.register(ClipboardModule);
+ModuleRegistry.register(ColumnsToolPanelModule);
+ModuleRegistry.register(ExcelExportModule);
+ModuleRegistry.register(FiltersToolPanelModule);
+ModuleRegistry.register(GridChartsModule);
+ModuleRegistry.register(MasterDetailModule);
+ModuleRegistry.register(MenuModule);
+ModuleRegistry.register(RangeSelectionModule);
+ModuleRegistry.register(RichSelectModule);
+ModuleRegistry.register(RowGroupingModule);
+ModuleRegistry.register(ServerSideRowModelModule);
+ModuleRegistry.register(SetFilterModule);
+ModuleRegistry.register(SideBarModule);
+ModuleRegistry.register(StatusBarModule);
+ModuleRegistry.register(ViewportRowModelModule);
+ModuleRegistry.register(ClientSideRowModelModule);
+ModuleRegistry.register(CsvExportModule);
+ModuleRegistry.register(InfiniteRowModelModule);

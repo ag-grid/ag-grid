@@ -1,3 +1,5 @@
+// for js examples that just require community functionality (landing pages, vanilla community examples etc)
+
 import "../../../../../community-modules/grid-core/src/styles/ag-grid.scss";
 
 import "../../../../../community-modules/grid-core/src/styles/ag-theme-material/sass/ag-theme-material.scss";
