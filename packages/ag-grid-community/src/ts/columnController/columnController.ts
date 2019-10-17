@@ -1071,7 +1071,7 @@ export class ColumnController {
             columns.forEach(col => {
                 const newWidth = newWidths[col.getId()];
                 if (col.getActualWidth() !== newWidth) {
-                    col.setActualWidth(newWidth);
+                    col.setActualWidth(newWidth, source);
                     changedCols.push(col);
                 }
             });
