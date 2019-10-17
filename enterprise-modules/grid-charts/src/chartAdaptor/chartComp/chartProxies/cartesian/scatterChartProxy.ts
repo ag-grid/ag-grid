@@ -111,7 +111,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             },
             marker: {
                 enabled: true,
-                size: isBubble ? 30 : 6,
+                size: isBubble ? 15 : 3,
                 minSize: isBubble ? 3 : undefined,
                 strokeWidth: 1,
             },

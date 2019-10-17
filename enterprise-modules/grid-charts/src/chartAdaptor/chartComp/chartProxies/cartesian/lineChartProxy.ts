@@ -71,7 +71,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             },
             marker: {
                 enabled: true,
-                size: 6,
+                size: 3,
                 strokeWidth: 1,
             },
             tooltip: {
