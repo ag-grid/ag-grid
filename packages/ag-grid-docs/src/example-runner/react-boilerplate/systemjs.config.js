@@ -62,8 +62,9 @@
                 main: './main.js',
                 defaultExtension: 'js'
             },
-            'ag-grid-enterprise': {
-                main: './main.js',
+            // utils is a little different in that it's a directory...
+            '@ag-community/grid-core/dist/cjs/utils': {
+                main: './index.js',
                 defaultExtension: 'js'
             },
             /* START OF MODULES - DO NOT DELETE */

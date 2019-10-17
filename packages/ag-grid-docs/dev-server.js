@@ -92,16 +92,14 @@ function serveAndWatchModules(app, communityModules, enterpriseModules) {
     const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
 
     const watchModule = (type, module) => {
-        console.log(`watching module ${module}`);
-        console.log(module);
+        console.log(`watching module ${module.moduleDirName}`);
 
-        // const moduleDirName = `../../${type}-modules/${module}`;
         // const moduleWatch = cp.spawn(gulpPath, ['watch'], {
         //     stdio: 'inherit',
-        //     cwd: `${moduleDirName}`
+        //     cwd: `${module.rootDir}`
         // });
 
-        // app.use(`/dev/@ag-${type}/${module}`, express.static(`${moduleDirName}`));
+        app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
 
         // process.on('exit', () => {
         //     moduleWatch.kill();
@@ -144,7 +142,6 @@ function launchTSCCheck(communityModules, enterpriseModules) {
 
     // spl modules
     communityModules
-        .concat({ fullPath: '../../community-modules/grid-core', moduleDirName: 'grid-core'})
         .forEach(module => {
             lnk(module.fullPath, '_dev/@ag-community', {
                 force: true,
@@ -154,7 +151,6 @@ function launchTSCCheck(communityModules, enterpriseModules) {
         });
 
     enterpriseModules
-        .concat({ fullPath: '../../community-modules/grid-core', moduleDirName: 'grid-core'})
         .forEach(module => {
             lnk(module.fullPath, '_dev/@ag-enterprise', {
                 force: true,
@@ -206,23 +202,31 @@ function watchAndGenerateExamples(communityModules, enterpriseModules) {
 function updateWebpackConfigWithBundles(communityModules, enterpriseModules) {
     console.log("updating webpack config with modules...");
 
+    console.log(communityModules);
     // spl modules
     const communityModulesEntries = communityModules
+        .filter(module => module.moduleDirName !== 'grid-core')
+        .filter(module => module.moduleDirName !== 'grid-all-modules')
         .map(module => `import "../../../${module.fullPath}";
 import {${module.moduleName}} from "../../../${module.fullPath.replace('.ts', '')}"; 
         `);
 
     const communityRegisterModuleLines = communityModules
+        .filter(module => module.moduleDirName !== 'grid-core')
+        .filter(module => module.moduleDirName !== 'grid-all-modules')
         .map(module => `ModuleRegistry.register(${module.moduleName} as any);`);
 
     const enterpriseModulesEntries = enterpriseModules
+        .filter(module => module.moduleDirName !== 'grid-core')
+        .filter(module => module.moduleDirName !== 'grid-all-modules')
         .map(module => `import "../../../${module.fullPath}";
 import {${module.moduleName}} from "../../../${module.fullPath.replace('.ts', '')}"; 
         `);
 
     const enterpriseRegisterModuleLines = enterpriseModules
+        .filter(module => module.moduleDirName !== 'grid-core')
+        .filter(module => module.moduleDirName !== 'grid-all-modules')
         .map(module => `ModuleRegistry.register(${module.moduleName} as any);`);
-
 
     const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd.ts';
     const enterpriseMainFilename = './src/_assets/ts/ag-grid-enterprise-main.ts';
@@ -311,8 +315,8 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         '/* END OF MODULES DEV - DO NOT DELETE */',
         communityModules,
         enterpriseModules,
-        module => `        "@ag-community/${module}" => "$prefix/@ag-community/${module}",`,
-        module => `        "@ag-enterprise/${module}" => "$prefix/@ag-enterprise/${module}",`);
+        module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`,
+        module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`);
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
         '/* START OF MODULES PROD - DO NOT DELETE */',
@@ -320,8 +324,8 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         communityModules,
         enterpriseModules,
         // spl module - to test prior to release!!!
-        module => `        "@ag-community/${module}" => "https://unpkg.com/@ag-community/${module}@" . AG_GRID_VERSION . "/",`,
-        module => `        "@ag-enterprise/${module}" => "https://unpkg.com/@ag-enterprise/${module}@" . AG_GRID_ENTERPRISE_VERSION . "/",`);
+        module => `        "${module.publishedName}" => "https://unpkg.com/${module.publishedName}@" . AG_GRID_VERSION . "/",`,
+        module => `        "${module.publishedName}" => "https://unpkg.com/${module.publishedName}@" . AG_GRID_ENTERPRISE_VERSION . "/",`);
 
     fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
 }
@@ -343,11 +347,11 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
             '/* END OF MODULES - DO NOT DELETE */',
             communityModules,
             enterpriseModules,
-            module => `           '@ag-community/${module}': { 
+            module => `           '${module.publishedName}': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },`,
-            module => `           '@ag-enterprise/${module}': { 
+            module => `           '${module.publishedName}': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },`);
@@ -387,12 +391,12 @@ module.exports = () => {
 
     // spl modules
     // add community & enterprise modules to express (for importing in the fw examples)
-    // updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
-    // updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
+    updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
+    updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
     serveAndWatchModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
-    // serveAndWatchAngular(app);
+    serveAndWatchAngular(app);
     // serveAndWatchVue(app);
 
     // build "packaged" landing page examples (for performance reasons)
@@ -401,10 +405,10 @@ module.exports = () => {
     // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
 
     // regenerate examples
-    // watchAndGenerateExamples(communityModules, enterpriseModules);
+    watchAndGenerateExamples(communityModules, enterpriseModules);
 
     // PHP
-    // launchPhpCP(app);
+    launchPhpCP(app);
 
     // Watch TS for errors. No actual transpiling happens here, just errors
     // launchTSCCheck(communityModules, enterpriseModules);

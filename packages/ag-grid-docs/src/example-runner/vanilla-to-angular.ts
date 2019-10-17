@@ -67,8 +67,10 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
     // spl modules
     if (bindings.gridSettings.enterprise) {
         imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
+        imports.push('console.log("XXXXXX", AllModules);');
     } else {
         imports.push('import {AllModules} from "@ag-community/grid-all-modules";');
+        imports.push('console.log("XXXXXX", AllModules);');
     }
 
     if (componentFileNames) {
