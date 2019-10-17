@@ -28,7 +28,8 @@ if (USE_LOCAL) {
 
     $systemJsMap = array(
         // spl modules
-        // "ag-community/ag-grid" => "$prefix/@ag-community/ag-grid",
+        "@ag-community/grid-all-modules" => "$prefix/@ag-community/grid-all-modules",
+        "@ag-enterprise/grid-all-modules" => "$prefix/@ag-enterprise/grid-all-modules",
         /* START OF MODULES DEV - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "$prefix/@ag-community/client-side-row-model",
         "@ag-community/csv-export" => "$prefix/@ag-community/csv-export",
@@ -52,9 +53,6 @@ if (USE_LOCAL) {
         "@ag-enterprise/status-bar" => "$prefix/@ag-enterprise/status-bar",
         "@ag-enterprise/viewport-row-model" => "$prefix/@ag-enterprise/viewport-row-model",
         /* END OF MODULES DEV - DO NOT DELETE */
-        "ag-grid-community" => "$prefix/ag-grid-community/dist/ag-grid-community.js",
-        "ag-grid-community/main" => "$prefix/ag-grid-community/dist/ag-grid-community.js",
-        "ag-grid-enterprise" => "$prefix/ag-grid-enterprise",
         "ag-grid-react" => "$prefix/ag-grid-react",
         "ag-grid-angular" => "$prefix/ag-grid-angular",
         "ag-grid-vue" => "$prefix/ag-grid-vue"
@@ -66,6 +64,8 @@ if (USE_LOCAL) {
 
     $systemJsMap = array(
         // spl modules test prior to release!
+        "@ag-community/grid-all-modules" => "https://unpkg.com/@ag-community/grid-all-modules@" . AG_GRID_VERSION . "/",
+        "@ag-enterprise/grid-all-modules" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/",
         /* START OF MODULES PROD - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "https://unpkg.com/@ag-community/client-side-row-model@" . AG_GRID_VERSION . "/",
         "@ag-community/csv-export" => "https://unpkg.com/@ag-community/csv-export@" . AG_GRID_VERSION . "/",
@@ -89,9 +89,6 @@ if (USE_LOCAL) {
         "@ag-enterprise/status-bar" => "https://unpkg.com/@ag-enterprise/status-bar@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/viewport-row-model" => "https://unpkg.com/@ag-enterprise/viewport-row-model@" . AG_GRID_ENTERPRISE_VERSION . "/",
         /* END OF MODULES PROD - DO NOT DELETE */
-        "ag-grid-community" => "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/dist/ag-grid-community.js",
-        "ag-grid-community/main" => "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/dist/ag-grid-community.js",
-        "ag-grid-enterprise" => "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "ag-grid-react" => "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
         "ag-grid-angular" => "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/",
         "ag-grid-vue" => "npm:ag-grid-vue@" . AG_GRID_VUE_VERSION . "/"

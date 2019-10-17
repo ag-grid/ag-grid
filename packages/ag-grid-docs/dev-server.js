@@ -198,7 +198,8 @@ function watchAndGenerateExamples(communityModules, enterpriseModules) {
             }
         }
         console.log('regenerating examples...');
-        generateExamples(() => console.log('generation done.'), dir, true, communityModules, enterpriseModules);
+        generateExamples(() => console.log('generation done.'), 'javascript-grid-column-header', true, communityModules, enterpriseModules);
+        // generateExamples(() => console.log('generation done.'), dir, true, communityModules, enterpriseModules);
     };
 
     callback();
@@ -397,7 +398,7 @@ module.exports = () => {
     // serveAndWatchModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
-    // serveAndWatchAngular(app);
+    serveAndWatchAngular(app);
     // serveAndWatchVue(app);
 
     // build "packaged" landing page examples (for performance reasons)
@@ -406,13 +407,13 @@ module.exports = () => {
     // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
 
     // regenerate examples
-    // watchAndGenerateExamples(communityModules, enterpriseModules);
+    watchAndGenerateExamples(communityModules, enterpriseModules);
 
     // PHP
     launchPhpCP(app);
 
     // Watch TS for errors. No actual transpiling happens here, just errors
-    // launchTSCCheck(communityModules, enterpriseModules);
+    launchTSCCheck(communityModules, enterpriseModules);
 
     app.listen(EXPRESS_PORT, function () {
         console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
