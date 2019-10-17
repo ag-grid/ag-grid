@@ -27,7 +27,6 @@ import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { Palette, palettes } from "../../charts/chart/palettes";
 import { ChartTranslator } from "./chartTranslator";
-import { SeriesOptions } from "../../charts/chartOptions";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -36,7 +35,7 @@ export interface GridChartParams {
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
 export class GridChartComp extends Component {

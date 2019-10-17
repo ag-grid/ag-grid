@@ -15,13 +15,13 @@ function createRowData() {
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"
     ];
-    
+
     return countries.map(function(country, index) {
         return {
             country: country,
-            gold: Math.floor(((index+1 / 7) * 333)%100),
-            silver: Math.floor(((index+1 / 3) * 555)%100),
-            bronze: Math.floor(((index+1 / 7.3) * 777)%100),
+            gold: Math.floor(((index + 1 / 7) * 333) % 100),
+            silver: Math.floor(((index + 1 / 3) * 555) % 100),
+            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
         };
     });
 }
@@ -47,11 +47,11 @@ function processChartOptions(params) {
 
     options.width = 700;
     options.height = 400;
-    
+
     options.padding = {
-        top: 20, 
-        right: 10, 
-        bottom: 10, 
+        top: 20,
+        right: 30,
+        bottom: 10,
         left: 20
     };
 
@@ -62,37 +62,34 @@ function processChartOptions(params) {
     options.title = {
         text: 'Precious Metals Production',
         fontStyle: 'italic',
-        fontWeight: 'bold',
+        fontWeight: '600',
         fontSize: 18,
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: 'Impact, sans-serif',
         color: '#414182'
     };
 
     options.subtitle = {
         text: 'by country',
-        fontStyle: 'oblique',
-        fontWeight: 600,
         fontSize: 14,
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: 'Monaco, monospace',
         color: 'rgb(100, 100, 100)'
     };
 
     var legend = options.legend;
 
     legend.enabled = true;
-    legend.markerStrokeWidth = 2;
-    legend.markerSize = 25;
-    legend.markerPadding = 10;
-    legend.itemPaddingX = 120;
-    legend.itemPaddingY = 20;
-    legend.labelFontStyle = 'italic';
-    legend.labelFontWeight = 'bold';
-    legend.labelFontSize = 18;
-    legend.labelFontFamily = 'Arial, sans-serif';
-    legend.labelColor = '#555';
-
-    options.legendPosition = 'bottom';
-    options.legendPadding = 20;
+    legend.marker.strokeWidth = 2;
+    legend.marker.size = 25;
+    legend.marker.padding = 10;
+    legend.item.paddingX = 120;
+    legend.item.paddingY = 20;
+    legend.label.fontStyle = 'italic';
+    legend.label.fontWeight = 'bold';
+    legend.label.fontSize = 18;
+    legend.label.fontFamily = 'Palatino, serif';
+    legend.label.color = '#555';
+    legend.position = 'bottom';
+    legend.padding = 20;
 
     options.tooltipClass = 'my-tooltip-class';
 

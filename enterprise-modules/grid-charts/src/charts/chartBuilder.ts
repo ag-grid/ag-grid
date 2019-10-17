@@ -371,18 +371,27 @@ export class ChartBuilder {
     static initBarSeries(series: BarSeries, options: BarSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        this.setValueIfExists(series, "xField", options.field && options.field.xKey);
-        this.setValueIfExists(series, "yFields", options.field && options.field.yKeys);
-        this.setValueIfExists(series, "yFieldNames", options.field && options.field.yNames);
         this.setValueIfExists(series, "grouped", options.grouped);
         this.setValueIfExists(series, "normalizedTo", options.normalizedTo);
-        this.setValueIfExists(series, "fills", options.fill && options.fill.colors);
-        this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
-        this.setValueIfExists(series, "strokes", options.stroke && options.stroke.colors);
-        this.setValueIfExists(series, "strokeOpacity", options.stroke && options.stroke.opacity);
-        this.setValueIfExists(series, "strokeWidth", options.stroke && options.stroke.width);
 
-        const { highlightStyle, label, tooltip } = options;
+        const { field, fill, stroke, highlightStyle, label, tooltip } = options;
+
+        if (field) {
+            this.setValueIfExists(series, "xField", field.xKey);
+            this.setValueIfExists(series, "yFields", field.yKeys);
+            this.setValueIfExists(series, "yFieldNames", field.yNames);
+        }
+
+        if (fill) {
+            this.setValueIfExists(series, "fills", fill.colors);
+            this.setValueIfExists(series, "fillOpacity", fill.opacity);
+        }
+
+        if (stroke) {
+            this.setValueIfExists(series, "strokes", stroke.colors);
+            this.setValueIfExists(series, "strokeOpacity", stroke.opacity);
+            this.setValueIfExists(series, "strokeWidth", stroke.width);
+        }
 
         if (highlightStyle) {
             this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
@@ -606,7 +615,7 @@ export class ChartBuilder {
         if (tick) {
             this.setValueIfExists(axis.tick, "width", tick.width);
             this.setValueIfExists(axis.tick, "size", tick.size);
-            this.setValueIfExists(axis.line, "color", tick.color);
+            this.setValueIfExists(axis.tick, "color", tick.color);
         }
 
         if (label) {

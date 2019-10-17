@@ -45,7 +45,6 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     private isColumnChart = () => _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
 
     protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
-        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const chartType = this.chartType;
         const isColumnChart = this.isColumnChart();
         const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
@@ -57,13 +56,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         options.yAxis.label.rotation = isColumnChart ? 0 : 335;
 
         options.seriesDefaults = {
-            fill: {
-                colors: fills,
-            },
-            stroke: {
-                colors: strokes,
-                width: 1,
-            },
+            ...options.seriesDefaults,
             grouped: isGrouped,
             normalizedTo: isNormalized ? 100 : undefined,
             tooltip: {

@@ -96,17 +96,17 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts
 
     protected getDefaultOptions(): CartesianChartOptions<ScatterSeriesOptions> {
-        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const isBubble = this.chartType === ChartType.Bubble;
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<ScatterSeriesOptions>;
 
         options.seriesDefaults = {
+            ...options.seriesDefaults,
             fill: {
-                colors: fills,
+                ...options.seriesDefaults.fill,
                 opacity: isBubble ? 0.7 : 1,
             },
             stroke: {
-                colors: strokes,
+                ...options.seriesDefaults.stroke,
                 width: 3,
             },
             marker: {

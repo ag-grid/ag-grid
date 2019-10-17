@@ -7,10 +7,7 @@ import {
     EventService,
     ProcessChartOptionsParams,
     SeriesOptions,
-    IPadding,
-    BarSeriesOptions,
-    AreaSeriesOptions,
-    PieSeriesOptions,
+    Padding,
     DropShadowOptions,
     FontOptions,
     CaptionOptions,
@@ -21,7 +18,7 @@ import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
-import { Padding } from "../../../charts/util/padding";
+import { Padding as InternalPadding } from "../../../charts/util/padding";
 import { Caption } from "../../../charts/caption";
 
 export interface ChartProxyParams {
@@ -52,7 +49,7 @@ export interface UpdateChartParams {
     fields: FieldDefinition[];
 }
 
-export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<SeriesOptions>> {
+export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
     protected chart: TChart;
     protected chartProxyParams: ChartProxyParams;
     protected overriddenPalette: Palette;
@@ -95,12 +92,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
     }
 
-    private overridePalette(chartOptions: any): void {
+    private overridePalette(chartOptions: TOptions): void {
         const palette = this.chartProxyParams.getSelectedPalette();
         const defaultFills = palette.fills;
         const defaultStrokes = palette.strokes;
         const { seriesDefaults } = chartOptions;
-        const { fills, strokes } = seriesDefaults;
+        const { fill: { colors: fills }, stroke: { colors: strokes } } = seriesDefaults;
         const fillsOverridden = fills !== defaultFills;
         const strokesOverridden = strokes !== defaultStrokes;
 
@@ -170,7 +167,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             this.chart.title = {} as Caption;
         }
 
-        (this.chart.title[property] as any) = value;
+        (this.chart.title as any)[property] = value;
 
         if (property === "text") {
             this.setTitleOption("enabled", _.exists(value));
@@ -179,14 +176,14 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getChartPaddingOption = (property: keyof IPadding): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : "";
+    public getChartPaddingOption = (property: keyof Padding): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : "";
 
-    public setChartPaddingOption(property: keyof IPadding, value: number): void {
+    public setChartPaddingOption(property: keyof Padding, value: number): void {
         let { padding } = this.chartOptions;
 
         if (!padding) {
             padding = this.chartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
-            this.chart.padding = new Padding(0);
+            this.chart.padding = new InternalPadding(0);
         }
 
         padding[property] = value;
@@ -199,24 +196,26 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public getShadowEnabled = (): boolean => !!this.getShadowProperty("enabled");
 
-    private getChartOptionsWithShadow() {
-        return this.chartOptions as ChartOptions<BarSeriesOptions | AreaSeriesOptions | PieSeriesOptions>;
-    }
-
     public getShadowProperty(property: keyof DropShadowOptions): any {
-        const { seriesDefaults } = this.getChartOptionsWithShadow();
+        const { seriesDefaults } = this.chartOptions;
 
         return seriesDefaults.shadow ? seriesDefaults.shadow[property] : "";
     }
 
     public setShadowProperty(property: keyof DropShadowOptions, value: any): void {
-        const { seriesDefaults } = this.getChartOptionsWithShadow();
+        const { seriesDefaults } = this.chartOptions;
 
         if (!seriesDefaults.shadow) {
-            seriesDefaults.shadow = {};
+            seriesDefaults.shadow = {
+                enabled: false,
+                blur: 0,
+                xOffset: 0,
+                yOffset: 0,
+                color: "rgba(0,0,0,0.5)"
+            };
         }
 
-        (seriesDefaults.shadow as any)[property] = value; // TODO: why is this cast to any needed?
+        seriesDefaults.shadow[property] = value;
 
         const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
 
@@ -249,7 +248,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected getDefaultFontOptions(): FontOptions {
         return {
-            fontWeight: "normal",
             fontSize: 12,
             fontFamily: "Verdana, sans-serif",
             color: this.getLabelColor()
@@ -267,9 +265,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
+        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
+
         return {
             background: {
                 fill: this.getBackgroundColor(),
+                visible: true,
             },
             width: 800,
             height: 400,
@@ -310,7 +311,17 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                     strokeWidth: 1,
                 },
             },
-            seriesDefaults: {}
+            seriesDefaults: {
+                fill: {
+                    colors: fills,
+                    opacity: 1,
+                },
+                stroke: {
+                    colors: strokes,
+                    opacity: 1,
+                    width: 1,
+                },
+            }
         };
     }
 

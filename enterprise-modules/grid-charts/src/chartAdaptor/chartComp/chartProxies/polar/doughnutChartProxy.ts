@@ -100,17 +100,11 @@ export class DoughnutChartProxy extends PolarChartProxy {
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
-        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
+        const { strokes } = this.chartProxyParams.getSelectedPalette();
         const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
 
         options.seriesDefaults = {
-            fill: {
-                colors: fills,
-            },
-            stroke: {
-                colors: strokes,
-                width: 1,
-            },
+            ...options.seriesDefaults,
             callout: {
                 colors: strokes,
                 length: 10,

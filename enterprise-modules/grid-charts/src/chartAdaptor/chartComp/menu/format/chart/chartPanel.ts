@@ -56,7 +56,7 @@ export class ChartPanel extends Component {
 
     private initTitles(): void {
         const title = this.chartProxy.getChartOption<CaptionOptions>("title");
-        const text = title ? title.text : "";
+        const text = title && title.text ? title.text : "";
 
         // note we don't set the font style via chart title panel
         const setFont = (font: LabelFont) => {
@@ -69,7 +69,7 @@ export class ChartPanel extends Component {
         const initialFont = {
             family: title ? this.chartProxy.getChartOption("title.fontFamily") : "Verdana, sans-serif",
             style: title ? this.chartProxy.getChartOption("title.fontStyle") : "",
-            weight: title ? this.chartProxy.getChartOption("title.fontWeight") : "Normal",
+            weight: title ? this.chartProxy.getChartOption("title.fontWeight") : "normal",
             size: title ? this.chartProxy.getChartOption<number>("title.fontSize") : 22,
             color: title ? this.chartProxy.getChartOption("title.color") : "black"
         };

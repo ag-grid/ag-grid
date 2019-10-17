@@ -16,69 +16,82 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 interface ChartOptions {
-    width?: number,
-    height?: number;
+    width: number, // default: 800
+    height: number; // default: 400
+    padding: Padding;
+    background: BackgroundOptions;
 
-    padding?: {
-        top: number;
-        right: number;
-        bottom: number;
-        left: number;
-    };
+    // If the title is disabled, the subtitle won't be visible either
+    title: CaptionOptions;
+    subtitle: CaptionOptions;
 
-    background?: BackgroundOptions;
-
-    // If the title is not specified or is disabled, the subtitle won't be visible either
-    title?: CaptionOptions;
-    subtitle?: CaptionOptions;
-
-    legend?: {
-        enabled?: boolean; // defaults to `true`
-        markerStrokeWidth?: number; // defaults to `1`
-        markerSize?: number; // defaults to `14`
-        markerPadding?: number; // defaults to `4`
-        // The amount of horizontal padding between legend items
-        itemPaddingX?: number; // defaults to `16`
-        // The amount of vertical padding between legend items
-        itemPaddingY?: number; // defaults to `8`
-        labelFontStyle?: FontStyle; // defaults to undefined
-        labelFontWeight?: FontWeight; // defaults to undefined
-        labelFontSize?: number; // defaults to `12`
-        labelFontFamily?: string; // defaults to `Verdana, sans-serif`
-        labelColor?: string; // default depends on ag-Grid theme
-    };
-
-    legendPosition?: 'top' | 'right' | 'bottom' | 'left';
-    legendPadding?: number;
+    legend: LegendOptions;
 
     // Additional CSS class to be added to the tooltip element
     tooltipClass?: string;
 }
 
+interface Padding {
+    top: number; // default: 20
+    right: number; // default: 20
+    bottom: number; // default: 20
+    left: number; // default: 20
+}
+
 interface BackgroundOptions {
-    fill?: string;
-    visible?: boolean;
+    fill: string; // default: dependent on light/dark mode
+    visible: boolean; // default: true
 }
 
 interface CaptionOptions {
+    enabled: boolean;
     text?: string;
     fontStyle?: FontStyle;
-    fontWeight?: FontWeight; // defaults to `bold` for the title, and `undefined` for the subtitle
-    fontSize?: number; // defaults to `16` for the title and `12` for the subtitle
-    fontFamily?: string; // defaults to `Verdana, sans-serif`
-    color?: string; // defaults to `black`
-    enabled?: boolean; // defaults to `true`
+    fontWeight?: FontWeight; // default: "bold" for title, `undefined` for subtitle
+    fontSize?: number; // default: 16 (for title), 12 (for subtitle)
+    fontFamily?: string; // default: "Verdana, sans-serif"
+    color?: string; // default: "black"
 }
 
-export type FontStyle = 'normal' | 'italic' | 'oblique';
+type FontStyle = "normal" | "italic" | "oblique";
 
-export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | number;
+type FontWeight = "normal" | "bold" | "bolder" | "lighter" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
+
+interface LegendOptions {
+    enabled: boolean; // default: true
+    position: LegendPosition; // default: "right"
+    padding: number; // default: 20
+    label: LegendLabelOptions;
+    marker: LegendMarkerOptions;
+    item: ItemOptions;
+}
+
+type LegendPosition = "top" | "right" | "bottom" | "left";
+
+interface LegendLabelOptions {
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    fontSize?: number; // default: 12
+    fontFamily?: string; // default: "Verdana, sans-serif"
+    color?: string; // default: dependent on light/dark mode
+}
+
+interface LegendMarkerOptions {
+    size: number; // default: 14
+    padding: number; // default: 4
+    strokeWidth: number; // default: 1
+}
+
+interface ItemOptions {
+    paddingX: number; // default: 16
+    paddingY: number; // default: 8
+}
 </snippet>
 
 <h3>Example: General Chart Customisations</h3>
 
 <p>
-    The example below changes all available styling options shown above. The styling options are exaggerated to 
+    The example below changes all available styling options shown above. The styling options are exaggerated to
     demonstrate each option rather than to produce a chart that looks nice!
 </p>
 

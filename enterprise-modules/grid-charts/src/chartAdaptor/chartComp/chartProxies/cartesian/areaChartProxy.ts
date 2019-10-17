@@ -94,18 +94,18 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     }
 
     protected getDefaultOptions(): CartesianChartOptions<AreaSeriesOptions> {
-        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<AreaSeriesOptions>;
 
         options.xAxis.label.rotation = 335;
 
         options.seriesDefaults = {
+            ...options.seriesDefaults,
             fill: {
-                colors: fills,
+                ...options.seriesDefaults.fill,
                 opacity: this.chartType === ChartType.Area ? 0.7 : 1,
             },
             stroke: {
-                colors: strokes,
+                ...options.seriesDefaults.stroke,
                 width: 3,
             },
             normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,

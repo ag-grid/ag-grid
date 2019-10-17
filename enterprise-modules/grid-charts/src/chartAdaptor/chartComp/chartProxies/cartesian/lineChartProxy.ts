@@ -56,17 +56,14 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     protected getDefaultOptions(): CartesianChartOptions<LineSeriesOptions> {
-        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<LineSeriesOptions>;
 
         options.xAxis.label.rotation = 335;
 
         options.seriesDefaults = {
-            fill: {
-                colors: fills,
-            },
+            ...options.seriesDefaults,
             stroke: {
-                colors: strokes,
+                ...options.seriesDefaults.stroke,
                 width: 3,
             },
             marker: {
