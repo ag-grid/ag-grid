@@ -80,10 +80,11 @@ $(() => {
     });
     var imgs = document.querySelectorAll("#stage-feature-highlights img"); 
     new lazyload((imgs && imgs.length) ? imgs : [], {});
+    var scroller = $('.page-content');
 
     if (breakpoints.length) {
-        window.addEventListener("scroll", function(e) {
-            var scrollBottom = $(window).scrollTop();
+        scroller[0].addEventListener("scroll", function(e) {
+            var scrollBottom = scroller.scrollTop();
             var i = 0;
 
             while (i < breakpoints.length - 1 && breakpoints[i].heading.offset().top < scrollBottom) {
