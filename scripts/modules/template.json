@@ -39,11 +39,11 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "ag-grid-community": "",
-    "gulp-typescript": "^5.0.1"
+    "ag-grid-community": ""
   },
   "devDependencies": {
     "gulp": "^4.0.2",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.3",
+    "gulp-typescript": "^5.0.1"
   }
 }

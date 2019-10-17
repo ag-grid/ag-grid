@@ -7,12 +7,13 @@ const webpack = require('webpack');
 module.exports = merge(common, {
     mode: 'development',
     entry: {
-        'dist/ag-grid-community': ['./src/_assets/ts/ag-grid-community.ts']
+        // 'dist/ag-grid-community': ['./src/_assets/ts/ag-grid-community.ts'] ???
     },
 
     resolve: {
         alias: {
-            'ag-grid-community': path.resolve('./src/_assets/ts/ag-grid-community.ts'),
+            '@ag-community/grid-all-modules': path.resolve('./src/_assets/ts/community-grid-all-modules.ts')
+            // '@ag-community/grid-core': path.resolve('./src/_assets/ts/ag-grid-community.ts')
         },
         extensions: ['.ts', '.js']
     },
@@ -21,13 +22,10 @@ module.exports = merge(common, {
         filename: '[name].js',
         library: ['agGrid'],
         libraryTarget: 'umd',
-        publicPath: '/',
-        hotUpdateChunkFilename: 'dev/ag-grid-community/[hash].hot-update.js',
-        hotUpdateMainFilename: 'dev/ag-grid-community/[hash].hot-update.json'
+        publicPath: '/'
     },
 
     plugins: [
-        new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.NamedModulesPlugin()
     ]
 });

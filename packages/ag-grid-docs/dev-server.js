@@ -22,24 +22,10 @@ const PHP_PORT = 8888;
 const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
-const rewrite = require('express-urlrewrite');
-
-var argv = require('minimist')(process.argv.slice(2));
-const useHmr = argv.hmr;
-
 function addWebpackMiddleware(app, configFile, prefix) {
     const webpackConfig = require(path.resolve(`./webpack-config/${configFile}`));
 
-    webpackConfig.plugins.push(new realWebpack.DefinePlugin({HMR: useHmr}));
-
-    // remove the HMR plugins - very "hardcoded" approach. 
-    if (!useHmr) {
-        webpackConfig.plugins.splice(0, 2);
-    }
-
     const compiler = realWebpack(webpackConfig);
-
-    app.use(rewrite(new RegExp(`^${prefix}/(.+).hot-update.(json|js)`), `${prefix}${prefix}/$1.hot-update.$2`));
 
     app.use(
         prefix,
@@ -48,10 +34,6 @@ function addWebpackMiddleware(app, configFile, prefix) {
             publicPath: '/'
         })
     );
-
-    if (useHmr) {
-        app.use(prefix, hotMiddleware(compiler));
-    }
 }
 
 function launchPhpCP(app) {
@@ -396,16 +378,16 @@ module.exports = () => {
 
     // serve ag-grid, enterprise and react
     addWebpackMiddleware(app, 'webpack.community.config.js', '/dev/ag-grid-community');
-    addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
-    addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
-    addWebpackMiddleware(app, 'webpack.enterprise-bundle.config.js', '/dev/ag-grid-enterprise-bundle'); // mostly used by landing pages
-    addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
+    // addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
+    // addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
+    // addWebpackMiddleware(app, 'webpack.enterprise-bundle.config.js', '/dev/ag-grid-enterprise-bundle'); // mostly used by landing pages
+    // addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
 
     // spl modules
     // add community & enterprise modules to express (for importing in the fw examples)
     updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
     updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
-    serveAndWatchModules(app, communityModules, enterpriseModules);
+    // serveAndWatchModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
     serveAndWatchAngular(app);
@@ -417,7 +399,7 @@ module.exports = () => {
     // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
 
     // regenerate examples
-    watchAndGenerateExamples(communityModules, enterpriseModules);
+    // watchAndGenerateExamples(communityModules, enterpriseModules);
 
     // PHP
     launchPhpCP(app);

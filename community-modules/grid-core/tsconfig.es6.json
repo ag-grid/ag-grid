@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "es6",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": false,
     "declaration": true,
     "target": "es5",
     "noImplicitAny": true,
