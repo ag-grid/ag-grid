@@ -887,7 +887,7 @@ export class RowComp extends Component {
                 const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
                 if (!res) {
                     const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
-                    if (cellRendererName==='agDetailCellRenderer' && !masterDetailModuleLoaded) {
+                    if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
                         console.warn(`ag-Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
                     } else {
                         console.error(`ag-Grid: fullWidthCellRenderer ${cellRendererName} not found`);

@@ -495,7 +495,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function (key: string, value: any) {
+                this.iterateObject(source, function(key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -1603,7 +1603,7 @@ export class Utils {
             const anyWindow = window as any;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function (p) {
+                || (function(p) {
                     return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                     (!anyWindow.safari || anyWindow.safari.pushNotification);
@@ -2057,7 +2057,7 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function (...args: any[]) {
+        return function(...args: any[]) {
             // reference the context and args for the setTimeout function
             const context = this;
 
@@ -2072,7 +2072,7 @@ export class Utils {
             window.clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = window.setTimeout(function () {
+            timeout = window.setTimeout(function() {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode
