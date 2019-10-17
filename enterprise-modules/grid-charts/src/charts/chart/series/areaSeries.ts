@@ -50,6 +50,19 @@ export class AreaSeries extends Series<CartesianChart> {
      */
     private readonly yFieldEnabled = new Map<string, boolean>();
 
+    constructor() {
+        super();
+
+        this.marker.onChange = this.update.bind(this);
+        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+    }
+
+    onMarkerTypeChange() {
+        this.markerSelection = this.markerSelection.setData([]);
+        this.markerSelection.exit.remove();
+        this.update();
+    }
+
     private _fills: string[] = palette.fills;
     set fills(values: string[]) {
         this._fills = values;
@@ -354,8 +367,8 @@ export class AreaSeries extends Series<CartesianChart> {
                         yField,
                         x,
                         y,
-                        fill: fills[j % fills.length],
-                        stroke: strokes[j % strokes.length],
+                        fill: marker.fill || fills[j % fills.length],
+                        stroke: marker.stroke || strokes[j % strokes.length],
                         size: markerSize,
                         text: this.yFieldNames[j]
                     });
