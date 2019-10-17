@@ -80,6 +80,16 @@ export class ToolPanelFilterGroupComp extends Component {
         this.addFilterChangedListeners();
     }
 
+    public refreshFilters() {
+        this.childFilterComps.forEach((filterComp: ToolPanelFilterComp | ToolPanelFilterGroupComp) => {
+            if (filterComp instanceof ToolPanelFilterGroupComp) {
+               filterComp.refreshFilters();
+            } else {
+               filterComp.refreshFilter();
+            }
+        });
+    }
+
     public isColumnGroup(): boolean {
         return this.columnGroup instanceof OriginalColumnGroup;
     }
