@@ -118,19 +118,19 @@ export class LegendPanel extends Component {
 
     private initLabelPanel() {
         const initialFont = {
-            family: this.chartProxy.getChartOption("label.fontFamily"),
-            style: this.chartProxy.getChartOption("label.fontStyle"),
-            weight: this.chartProxy.getChartOption("label.fontWeight"),
-            size: this.chartProxy.getChartOption<number>("label.fontSize"),
-            color: this.chartProxy.getChartOption("label.color")
+            family: this.chartProxy.getChartOption("legend.label.fontFamily"),
+            style: this.chartProxy.getChartOption("legend.label.fontStyle"),
+            weight: this.chartProxy.getChartOption("legend.label.fontWeight"),
+            size: this.chartProxy.getChartOption<number>("legend.label.fontSize"),
+            color: this.chartProxy.getChartOption("legend.label.color")
         };
 
         // note we don't set the font style via legend panel
         const setFont = (font: LabelFont) => {
-            if (font.family) { this.chartProxy.setChartOption("label.fontFamily", font.family); }
-            if (font.weight) { this.chartProxy.setChartOption("label.fontWeight", font.weight); }
-            if (font.size) { this.chartProxy.setChartOption("label.fontSize", font.size); }
-            if (font.color) { this.chartProxy.setChartOption("label.color", font.color); }
+            if (font.family) { this.chartProxy.setChartOption("legend.label.fontFamily", font.family); }
+            if (font.weight) { this.chartProxy.setChartOption("legend.label.fontWeight", font.weight); }
+            if (font.size) { this.chartProxy.setChartOption("legend.label.fontSize", font.size); }
+            if (font.color) { this.chartProxy.setChartOption("legend.label.color", font.color); }
         };
 
         const params: LabelPanelParams = {

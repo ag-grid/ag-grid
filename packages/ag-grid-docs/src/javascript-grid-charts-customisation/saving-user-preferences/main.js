@@ -1,8 +1,8 @@
 var columnDefs = [
-    {field: "country", chartDataType: 'category'},
-    {field: "sugar", chartDataType: 'series'},
-    {field: "fat", chartDataType: 'series'},
-    {field: "weight", chartDataType: 'series'},
+    { field: "country", chartDataType: 'category' },
+    { field: "sugar", chartDataType: 'series' },
+    { field: "fat", chartDataType: 'series' },
+    { field: "weight", chartDataType: 'series' },
 ];
 
 var gridOptions = {
@@ -32,11 +32,7 @@ function onChartOptionsChanged(event) {
 
     // changes made by users via the format panel are being saved locally here,
     // however applications can choose to persist them across user sessions.
-    savedLegendUserPreference = {
-        legend: chartOptions.legend,
-        legendPosition: chartOptions.legendPosition,
-        legendPadding: chartOptions.legendPadding
-    };
+    savedLegendUserPreference = chartOptions.legend;
 
     savedUserPreferenceByChartType[event.chartType] = chartOptions;
 }
@@ -51,9 +47,7 @@ function processChartOptions(params) {
 
     // used shared legend user preference for all chart types
     if (savedLegendUserPreference) {
-        overriddenChartOptions.legend = savedLegendUserPreference.legend;
-        overriddenChartOptions.legendPosition = savedLegendUserPreference.legendPosition;
-        overriddenChartOptions.legendPadding = savedLegendUserPreference.legendPadding;
+        overriddenChartOptions.legend = savedLegendUserPreference;
     }
 
     // here we fix the chart and axis titles when a bubble chart is selected.
@@ -101,7 +95,7 @@ function createChartContainer(chartRef) {
 function onFirstDataRendered(params) {
     var createRangeChartParams = {
         cellRange: {
-            columns: ['sugar', 'fat', 'weight']
+            columns: ['country', 'sugar', 'fat', 'weight']
         },
         chartContainer: document.querySelector('#myChart'),
         chartType: 'bubble',
@@ -119,9 +113,9 @@ function createRowData() {
     return countries.map(function(country) {
         return {
             country: country,
-            sugar: Math.floor(Math.floor(Math.random()*50)),
-            fat: Math.floor(Math.floor(Math.random()*100)),
-            weight: Math.floor(Math.floor(Math.random()*200))
+            sugar: Math.floor(Math.floor(Math.random() * 50)),
+            fat: Math.floor(Math.floor(Math.random() * 100)),
+            weight: Math.floor(Math.floor(Math.random() * 200))
         };
     });
 }

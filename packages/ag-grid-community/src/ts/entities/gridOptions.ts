@@ -82,7 +82,7 @@ import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayCompone
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
-import { ChartOptions, ChartType } from "../interfaces/iChartOptions";
+import { ChartOptions, ChartType, ChartMenuOptions } from "../interfaces/iChartOptions";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -633,13 +633,13 @@ export interface GetContextMenuItems {
 }
 
 export interface GetChartToolbarItemsParams {
-    defaultItems: string[] | undefined;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    defaultItems?: ChartMenuOptions[];
+    api?: GridApi | null;
+    columnApi?: ColumnApi | null;
 }
 
 export interface GetChartToolbarItems {
-    (params: GetChartToolbarItemsParams): string[];
+    (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
 
 export interface MenuItemDef {

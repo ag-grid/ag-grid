@@ -23,8 +23,8 @@ function onFirstDataRendered(event) {
         chartType: 'groupedColumn',
         chartContainer: chartContainer,
         processChartOptions: function(params) {
-            params.options.legendPosition = "bottom";
-            
+            params.options.legend.position = "bottom";
+
             return params.options;
         }
     };
