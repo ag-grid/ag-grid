@@ -167,29 +167,6 @@ export class ScatterSeries extends Series<CartesianChart> {
         return domain;
     }
 
-    private _fill: string = palette.fills[0];
-    set fill(value: string) {
-        if (this._fill !== value) {
-            this._fill = value;
-            this.stroke = Color.fromString(value).darker().toHexString();
-            this.scheduleData();
-        }
-    }
-    get fill(): string {
-        return this._fill;
-    }
-
-    private _stroke: string = palette.strokes[0];
-    set stroke(value: string) {
-        if (this._stroke !== value) {
-            this._stroke = value;
-            this.scheduleData();
-        }
-    }
-    get stroke(): string {
-        return this._stroke;
-    }
-
     highlightStyle: {
         fill?: string,
         stroke?: string
@@ -233,26 +210,22 @@ export class ScatterSeries extends Series<CartesianChart> {
             yData,
             sizeData,
             sizeScale,
-            fill,
-            stroke,
             marker,
             highlightedNode
         } = this;
 
         const Marker = marker.type;
-        const markerSize = marker.size;
-        const markerStrokeWidth = marker.strokeWidth;
 
-        this.sizeScale.range = [marker.minSize / 2, marker.size / 2];
+        this.sizeScale.range = [marker.minSize, marker.size];
 
         const groupSelectionData: GroupSelectionDatum[] = xData.map((xDatum, i) => ({
             seriesDatum: data[i],
             x: xScale.convert(xDatum) + xOffset,
             y: yScale.convert(yData[i]) + yOffset,
-            fill,
-            stroke,
-            strokeWidth: markerStrokeWidth,
-            size: sizeData.length ? sizeScale.convert(sizeData[i]) : markerSize / 2,
+            fill: marker.fill,
+            stroke: marker.stroke,
+            strokeWidth: marker.strokeWidth,
+            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
         }));
 
         const updateGroups = this.groupSelection.setData(groupSelectionData);
@@ -269,8 +242,8 @@ export class ScatterSeries extends Series<CartesianChart> {
                 node.translationX = datum.x;
                 node.translationY = datum.y;
                 node.size = datum.size;
-                node.fill = node === highlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
-                node.stroke = node === highlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+                node.fill = node === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
+                node.stroke = node === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
                 node.fillOpacity = marker.fillOpacity;
                 node.strokeOpacity = marker.strokeOpacity;
                 node.strokeWidth = datum.strokeWidth;
@@ -303,8 +276,10 @@ export class ScatterSeries extends Series<CartesianChart> {
             sizeKey,
             sizeKeyName: sizeName,
             labelField: labelKey,
-            labelFieldName: labelName,
-            fill: color } = this;
+            labelFieldName: labelName
+        } = this;
+
+        const color = this.marker.fill || 'gray';
 
         if (tooltipRenderer) {
             return tooltipRenderer({
@@ -352,8 +327,8 @@ export class ScatterSeries extends Series<CartesianChart> {
                     text: this.title || this.yField
                 },
                 marker: {
-                    fill: this.fill,
-                    stroke: this.stroke
+                    fill: this.marker.fill || 'gray',
+                    stroke: this.marker.stroke || 'black'
                 }
             });
         }

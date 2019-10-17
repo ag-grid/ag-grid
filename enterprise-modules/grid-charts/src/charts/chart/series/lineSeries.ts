@@ -3,7 +3,6 @@ import { Path } from "../../scene/shape/path";
 import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
-import { Arc, ArcType } from "../../scene/shape/arc";
 import palette from "../palettes";
 import { Series, SeriesNodeDatum } from "./series";
 import { numericExtent } from "../../util/array";
@@ -13,6 +12,7 @@ import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { LineTooltipRendererParams } from "../../chartOptions";
+import { Marker } from "../marker/marker";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -20,7 +20,7 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
     fill?: string;
     stroke?: string;
     strokeWidth: number;
-    radius: number;
+    size: number;
 }
 
 export class LineSeries extends Series<CartesianChart> {
@@ -44,6 +44,15 @@ export class LineSeries extends Series<CartesianChart> {
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
+
+        this.marker.onChange = this.update.bind(this);
+        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+    }
+
+    onMarkerTypeChange() {
+        this.groupSelection = this.groupSelection.setData([]);
+        this.groupSelection.exit.remove();
+        this.update();
     }
 
     set chart(chart: CartesianChart | undefined) {
@@ -111,39 +120,6 @@ export class LineSeries extends Series<CartesianChart> {
     }
     get yFieldName(): string {
         return this._xFieldName;
-    }
-
-    private _marker: boolean = false;
-    set marker(value: boolean) {
-        if (this._marker !== value) {
-            this._marker = value;
-            this.update();
-        }
-    }
-    get marker(): boolean {
-        return this._marker;
-    }
-
-    private _markerSize: number = 8;
-    set markerSize(value: number) {
-        if (this._markerSize !== value) {
-            this._markerSize = Math.abs(value);
-            this.update();
-        }
-    }
-    get markerSize(): number {
-        return this._markerSize;
-    }
-
-    private _markerStrokeWidth: number = 2;
-    set markerStrokeWidth(value: number) {
-        if (this._markerStrokeWidth !== value) {
-            this._markerStrokeWidth = value;
-            this.update();
-        }
-    }
-    get markerStrokeWidth(): number {
-        return this._markerStrokeWidth;
     }
 
     processData(): boolean {
@@ -227,10 +203,10 @@ export class LineSeries extends Series<CartesianChart> {
             fill: 'yellow'
         };
 
-    private highlightedNode?: Arc;
+    private highlightedNode?: Marker;
 
     highlightNode(node: Shape) {
-        if (!(node instanceof Arc)) {
+        if (!(node instanceof Marker)) {
             return;
         }
 
@@ -262,12 +238,13 @@ export class LineSeries extends Series<CartesianChart> {
             fill,
             stroke,
             marker,
-            markerSize,
-            markerStrokeWidth,
             lineNode
         } = this;
 
         const linePath = lineNode.path;
+        const Marker = marker.type;
+        const markerSize = marker.size;
+        const markerStrokeWidth = marker.strokeWidth;
 
         linePath.clear();
 
@@ -292,7 +269,7 @@ export class LineSeries extends Series<CartesianChart> {
                     fill,
                     stroke,
                     strokeWidth: markerStrokeWidth,
-                    radius: markerSize / 2
+                    size: markerSize / 2
                 });
             }
         });
@@ -304,21 +281,23 @@ export class LineSeries extends Series<CartesianChart> {
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Arc).each(arc => arc.type = ArcType.Chord);
+        enterGroups.append(Marker);
 
         const highlightedNode = this.highlightedNode;
         const groupSelection = updateGroups.merge(enterGroups);
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
 
-        groupSelection.selectByClass(Arc)
-            .each((arc, datum) => {
-                arc.centerX = datum.x;
-                arc.centerY = datum.y;
-                arc.radiusX = arc.radiusY = datum.radius;
-                arc.fill = arc === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-                arc.stroke = arc === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
-                arc.strokeWidth = datum.strokeWidth;
-                arc.visible = datum.radius > 0;
+        groupSelection.selectByClass(Marker)
+            .each((node, datum) => {
+                node.translationX = datum.x;
+                node.translationY = datum.y;
+                node.size = datum.size;
+                node.fill = node === highlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
+                node.stroke = node === highlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+                node.fillOpacity = marker.fillOpacity;
+                node.strokeOpacity = marker.strokeOpacity;
+                node.strokeWidth = datum.strokeWidth;
+                node.visible = marker.enabled && datum.size > 0;
             });
 
         this.groupSelection = groupSelection;

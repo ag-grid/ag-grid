@@ -34,6 +34,7 @@ import { GroupedCategoryAxis } from "./chart/axis/groupedCategoryAxis";
 import { GroupedCategoryChart, GroupedCategoryChartAxis } from "./chart/groupedCategoryChart";
 import { Axis } from "./axis";
 import Scale from "./scale/scale";
+import { Circle } from "./chart/marker/circle";
 
 export class ChartBuilder {
     private static createCartesianChart(
@@ -297,9 +298,16 @@ export class ChartBuilder {
         }
 
         if (marker) {
-            this.setValueIfExists(series, "marker", marker.enabled);
-            this.setValueIfExists(series, "markerSize", marker.size);
-            this.setValueIfExists(series, "markerStrokeWidth", marker.strokeWidth);
+            const seriesMarker = series.marker;
+            seriesMarker.type = Circle;
+            this.setValueIfExists(seriesMarker, "enabled", marker.enabled);
+            this.setValueIfExists(seriesMarker, "size", marker.size);
+            this.setValueIfExists(seriesMarker, "minSize", marker.minSize);
+            this.setValueIfExists(seriesMarker, "fill", marker.fill);
+            this.setValueIfExists(seriesMarker, "stroke", marker.stroke);
+            this.setValueIfExists(seriesMarker, "strokeWidth", marker.strokeWidth);
+            this.setValueIfExists(seriesMarker, "fillOpacity", marker.fillOpacity);
+            this.setValueIfExists(seriesMarker, "strokeOpacity", marker.strokeOpacity);
         }
 
         if (tooltip) {
@@ -322,10 +330,6 @@ export class ChartBuilder {
         this.setValueIfExists(series, "sizeKeyName", options.field && options.field.sizeName);
         this.setValueIfExists(series, "labelField", options.field && options.field.labelKey);
         this.setValueIfExists(series, "labelFieldName", options.field && options.field.labelName);
-        this.setValueIfExists(series, "fill", options.fill && options.fill.color);
-        this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
-        this.setValueIfExists(series, "stroke", options.stroke && options.stroke.color);
-        this.setValueIfExists(series, "strokeOpacity", options.stroke && options.stroke.opacity);
 
         const { highlightStyle, marker, tooltip } = options;
 
@@ -335,10 +339,16 @@ export class ChartBuilder {
         }
 
         if (marker) {
-            this.setValueIfExists(series, "marker", marker.enabled);
-            this.setValueIfExists(series, "markerSize", marker.size);
-            this.setValueIfExists(series, "minMarkerSize", marker.minSize);
-            this.setValueIfExists(series, "markerStrokeWidth", marker.strokeWidth);
+            const seriesMarker = series.marker;
+            seriesMarker.type = Circle;
+            this.setValueIfExists(seriesMarker, "enabled", marker.enabled);
+            this.setValueIfExists(seriesMarker, "size", marker.size);
+            this.setValueIfExists(seriesMarker, "minSize", marker.minSize);
+            this.setValueIfExists(seriesMarker, "fill", marker.fill);
+            this.setValueIfExists(seriesMarker, "stroke", marker.stroke);
+            this.setValueIfExists(seriesMarker, "strokeWidth", marker.strokeWidth);
+            this.setValueIfExists(seriesMarker, "fillOpacity", marker.fillOpacity);
+            this.setValueIfExists(seriesMarker, "strokeOpacity", marker.strokeOpacity);
         }
 
         if (tooltip) {
@@ -417,9 +427,16 @@ export class ChartBuilder {
         }
 
         if (marker) {
-            this.setValueIfExists(series, "marker", marker.enabled);
-            this.setValueIfExists(series, "markerSize", marker.size);
-            this.setValueIfExists(series, "markerStrokeWidth", marker.strokeWidth);
+            const seriesMarker = series.marker;
+            seriesMarker.type = Circle;
+            this.setValueIfExists(seriesMarker, "enabled", marker.enabled);
+            this.setValueIfExists(seriesMarker, "size", marker.size);
+            this.setValueIfExists(seriesMarker, "minSize", marker.minSize);
+            this.setValueIfExists(seriesMarker, "fill", marker.fill);
+            this.setValueIfExists(seriesMarker, "stroke", marker.stroke);
+            this.setValueIfExists(seriesMarker, "strokeWidth", marker.strokeWidth);
+            this.setValueIfExists(seriesMarker, "fillOpacity", marker.fillOpacity);
+            this.setValueIfExists(seriesMarker, "strokeOpacity", marker.strokeOpacity);
         }
 
         if (tooltip) {

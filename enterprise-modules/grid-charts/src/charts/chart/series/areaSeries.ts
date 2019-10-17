@@ -10,10 +10,10 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Path } from "../../scene/shape/path";
-import { Arc, ArcType } from "../../scene/shape/arc";
 import palette from "../palettes";
 import { numericExtent } from "../../util/array";
 import { AreaTooltipRendererParams } from "../../chartOptions";
+import { Marker } from "../marker/marker";
 
 interface AreaSelectionDatum {
     yField: string;
@@ -25,7 +25,7 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
     yValue: number;
     x: number;
     y: number;
-    radius: number;
+    size: number;
     fill?: string;
     stroke?: string;
     text?: string;
@@ -42,7 +42,7 @@ export class AreaSeries extends Series<CartesianChart> {
 
     private areaSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
     private strokeSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.strokeGroup).selectAll<Path>();
-    private markerSelection: Selection<Arc, Group, any, any> = Selection.select(this.markerGroup).selectAll<Arc>();
+    private markerSelection: Selection<Marker, Group, any, any> = Selection.select(this.markerGroup).selectAll<Marker>();
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -173,39 +173,6 @@ export class AreaSeries extends Series<CartesianChart> {
         return this._strokeWidth;
     }
 
-    private _marker: boolean = false;
-    set marker(value: boolean) {
-        if (this._marker !== value) {
-            this._marker = value;
-            this.update();
-        }
-    }
-    get marker(): boolean {
-        return this._marker;
-    }
-
-    private _markerSize: number = 8;
-    set markerSize(value: number) {
-        if (this._markerSize !== value) {
-            this._markerSize = Math.abs(value);
-            this.update();
-        }
-    }
-    get markerSize(): number {
-        return this._markerSize;
-    }
-
-    private _markerStrokeWidth: number = 2;
-    set markerStrokeWidth(value: number) {
-        if (this._markerStrokeWidth !== value) {
-            this._markerStrokeWidth = value;
-            this.update();
-        }
-    }
-    get markerStrokeWidth(): number {
-        return this._markerStrokeWidth;
-    }
-
     private _shadow?: DropShadow;
     set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
@@ -224,10 +191,10 @@ export class AreaSeries extends Series<CartesianChart> {
             fill: 'yellow'
         };
 
-    private highlightedNode?: Arc;
+    private highlightedNode?: Marker;
 
     highlightNode(node: Shape) {
-        if (!(node instanceof Arc)) {
+        if (!(node instanceof Marker)) {
             return;
         }
 
@@ -357,7 +324,6 @@ export class AreaSeries extends Series<CartesianChart> {
             xData,
             yData,
             marker,
-            markerSize,
             chart,
         } = this;
 
@@ -367,6 +333,7 @@ export class AreaSeries extends Series<CartesianChart> {
         const areaSelectionData: AreaSelectionDatum[] = [];
         const markerSelectionData: MarkerSelectionDatum[] = [];
         const last = xData.length * 2 - 1;
+        const markerSize = this.marker.size;
 
         xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
@@ -389,7 +356,7 @@ export class AreaSeries extends Series<CartesianChart> {
                         y,
                         fill: fills[j % fills.length],
                         stroke: strokes[j % strokes.length],
-                        radius: markerSize / 2,
+                        size: markerSize,
                         text: this.yFieldNames[j]
                     });
                 }
@@ -491,22 +458,25 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     private updateMarkerSelection(markerSelectionData: MarkerSelectionDatum[]): void {
-        const { markerStrokeWidth, yFieldEnabled, highlightedNode, highlightStyle: { fill, stroke } } = this;
+        const { marker, yFieldEnabled, highlightedNode, highlightStyle: { fill, stroke } } = this;
         const updateMarkers = this.markerSelection.setData(markerSelectionData);
+        const Marker = marker.type;
 
         updateMarkers.exit.remove();
 
-        const enterMarkers = updateMarkers.enter.append(Arc).each(arc => arc.type = ArcType.Chord);
+        const enterMarkers = updateMarkers.enter.append(Marker);
         const markerSelection = updateMarkers.merge(enterMarkers);
 
-        markerSelection.each((arc, datum) => {
-            arc.centerX = datum.x;
-            arc.centerY = datum.y;
-            arc.radiusX = arc.radiusY = datum.radius;
-            arc.fill = arc === highlightedNode && fill !== undefined ? fill : datum.fill;
-            arc.stroke = arc === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
-            arc.strokeWidth = markerStrokeWidth;
-            arc.visible = datum.radius > 0 && !!yFieldEnabled.get(datum.yField);
+        markerSelection.each((node, datum) => {
+            node.translationX = datum.x;
+            node.translationY = datum.y;
+            node.size = datum.size;
+            node.fill = node === highlightedNode && fill !== undefined ? fill : marker.fill || datum.fill;
+            node.stroke = node === highlightedNode && stroke !== undefined ? stroke : marker.stroke || datum.stroke;
+            node.fillOpacity = marker.fillOpacity;
+            node.strokeOpacity = marker.strokeOpacity;
+            node.strokeWidth = marker.strokeWidth;
+            node.visible = marker.enabled && datum.size > 0 && !!yFieldEnabled.get(datum.yField);
         });
 
         this.markerSelection = markerSelection;
@@ -517,7 +487,7 @@ export class AreaSeries extends Series<CartesianChart> {
         const { yField: yKey } = nodeDatum;
 
         if (!xKey || !yKey) {
-            return "";
+            return '';
         }
 
         const { xFieldName: xName, yFields, yFieldNames, fills, tooltipRenderer } = this;

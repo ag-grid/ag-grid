@@ -55,8 +55,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             series.yField = yFieldDefinition.colId;
             series.yFieldName = yFieldDefinition.displayName;
             series.data = params.data;
-            series.fill = fills[index % fills.length];
-            series.stroke = strokes[index % strokes.length];
+            series.marker.fill = fills[index % fills.length];
+            series.marker.stroke = strokes[index % strokes.length];
 
             if (isBubbleChart) {
                 const radiusFieldDefinition = params.fields[index * 2 + 2];

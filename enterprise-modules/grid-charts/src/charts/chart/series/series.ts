@@ -4,6 +4,8 @@ import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { FontStyle, FontWeight } from "../../scene/shape/text";
 import { Marker } from "../marker/marker";
+import { Color } from "../../util/color";
+import palette from "../palettes";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -176,10 +178,11 @@ class SeriesMarker {
     //     return this._yOffset;
     // }
 
-    private _fill: string | undefined = undefined;
+    private _fill: string | undefined = palette.fills[0];
     set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
+            this.stroke = Color.fromString(value).darker().toHexString();
             this.update();
         }
     }
@@ -187,7 +190,7 @@ class SeriesMarker {
         return this._fill;
     }
 
-    private _stroke: string | undefined = undefined;
+    private _stroke: string | undefined = palette.strokes[0];
     set stroke(value: string | undefined) {
         if (this._stroke !== value) {
             this._stroke = value;
