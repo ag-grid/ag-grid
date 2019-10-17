@@ -28,11 +28,11 @@ if (USE_LOCAL) {
 
     $systemJsMap = array(
         // spl modules
-        "@ag-community/grid-all-modules" => "$prefix/@ag-community/grid-all-modules",
         "@ag-enterprise/grid-all-modules" => "$prefix/@ag-enterprise/grid-all-modules",
         /* START OF MODULES DEV - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "$prefix/@ag-community/client-side-row-model",
         "@ag-community/csv-export" => "$prefix/@ag-community/csv-export",
+        "@ag-community/grid-all-modules" => "$prefix/@ag-community/grid-all-modules",
         "@ag-community/grid-core" => "$prefix/@ag-community/grid-core",
         "@ag-community/infinite-row-model" => "$prefix/@ag-community/infinite-row-model",
         "@ag-enterprise/charts" => "$prefix/@ag-enterprise/charts",
@@ -40,6 +40,7 @@ if (USE_LOCAL) {
         "@ag-enterprise/column-tool-panel" => "$prefix/@ag-enterprise/column-tool-panel",
         "@ag-enterprise/excel-export" => "$prefix/@ag-enterprise/excel-export",
         "@ag-enterprise/filter-tool-panel" => "$prefix/@ag-enterprise/filter-tool-panel",
+        "@ag-enterprise/grid-all-modules" => "$prefix/@ag-enterprise/grid-all-modules",
         "@ag-enterprise/grid-charts" => "$prefix/@ag-enterprise/grid-charts",
         "@ag-enterprise/grid-core" => "$prefix/@ag-enterprise/grid-core",
         "@ag-enterprise/master-detail" => "$prefix/@ag-enterprise/master-detail",
@@ -64,11 +65,11 @@ if (USE_LOCAL) {
 
     $systemJsMap = array(
         // spl modules test prior to release!
-        "@ag-community/grid-all-modules" => "https://unpkg.com/@ag-community/grid-all-modules@" . AG_GRID_VERSION . "/",
         "@ag-enterprise/grid-all-modules" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/",
         /* START OF MODULES PROD - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "https://unpkg.com/@ag-community/client-side-row-model@" . AG_GRID_VERSION . "/",
         "@ag-community/csv-export" => "https://unpkg.com/@ag-community/csv-export@" . AG_GRID_VERSION . "/",
+        "@ag-community/grid-all-modules" => "https://unpkg.com/@ag-community/grid-all-modules@" . AG_GRID_VERSION . "/",
         "@ag-community/grid-core" => "https://unpkg.com/@ag-community/grid-core@" . AG_GRID_VERSION . "/",
         "@ag-community/infinite-row-model" => "https://unpkg.com/@ag-community/infinite-row-model@" . AG_GRID_VERSION . "/",
         "@ag-enterprise/charts" => "https://unpkg.com/@ag-enterprise/charts@" . AG_GRID_ENTERPRISE_VERSION . "/",
@@ -76,6 +77,7 @@ if (USE_LOCAL) {
         "@ag-enterprise/column-tool-panel" => "https://unpkg.com/@ag-enterprise/column-tool-panel@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/excel-export" => "https://unpkg.com/@ag-enterprise/excel-export@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/filter-tool-panel" => "https://unpkg.com/@ag-enterprise/filter-tool-panel@" . AG_GRID_ENTERPRISE_VERSION . "/",
+        "@ag-enterprise/grid-all-modules" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/grid-charts" => "https://unpkg.com/@ag-enterprise/grid-charts@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/grid-core" => "https://unpkg.com/@ag-enterprise/grid-core@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/master-detail" => "https://unpkg.com/@ag-enterprise/master-detail@" . AG_GRID_ENTERPRISE_VERSION . "/",

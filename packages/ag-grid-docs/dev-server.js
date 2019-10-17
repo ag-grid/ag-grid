@@ -3,7 +3,6 @@ const fs = require('fs');
 const cp = require('child_process');
 const path = require('path');
 const rimraf = require('rimraf');
-const glob = require('glob');
 const express = require('express');
 const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
@@ -99,6 +98,7 @@ function serveAndWatchModules(app, communityModules, enterpriseModules) {
         //     cwd: `${module.rootDir}`
         // });
 
+        console.log(`/dev/${module.publishedName} - ./_dev/${module.publishedName}`);
         app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
 
         // process.on('exit', () => {
@@ -114,7 +114,24 @@ function serveAndWatchModules(app, communityModules, enterpriseModules) {
     });
 }
 
-function launchTSCCheck(communityModules, enterpriseModules) {
+function launchTSCCheck() {
+    const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
+
+    const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
+
+    tsChecker.stdout.on('data', data => {
+        data
+            .toString()
+            .trim()
+            .split('\n')
+            .filter(line => line.indexOf('Watching for') === -1 && line.indexOf('File change') === -1)
+            .filter(line => line.indexOf('__tests__') === -1 && line.indexOf('.test.') === -1 && line.indexOf('setupTests.ts') === -1)
+            .filter(line => line.indexOf('Experimental') === -1)
+            .forEach(line => console.log(line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/')));
+    });
+}
+
+function symlinkModules(communityModules, enterpriseModules) {
     // we delete the _dev folder each time we run now as we're constantly adding new modules etc
     // this saves us having to manually delete _dev each time
     if (fs.existsSync('_dev')) {
@@ -143,36 +160,23 @@ function launchTSCCheck(communityModules, enterpriseModules) {
     // spl modules
     communityModules
         .forEach(module => {
-            lnk(module.fullPath, '_dev/@ag-community', {
+            console.log(module.moduleDirName);
+            lnk(module.fullPath, '_dev/', {
                 force: true,
                 type: linkType,
-                rename: module.moduleDirName
+                rename: module.publishedName
             });
         });
 
     enterpriseModules
         .forEach(module => {
-            lnk(module.fullPath, '_dev/@ag-enterprise', {
+            lnk(module.fullPath, '_dev/', {
                 force: true,
                 type: linkType,
-                rename: module.moduleDirName
+                rename: module.publishedName
             });
         });
-
-    const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
-
-    const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
-
-    tsChecker.stdout.on('data', data => {
-        data
-            .toString()
-            .trim()
-            .split('\n')
-            .filter(line => line.indexOf('Watching for') === -1 && line.indexOf('File change') === -1)
-            .filter(line => line.indexOf('__tests__') === -1 && line.indexOf('.test.') === -1 && line.indexOf('setupTests.ts') === -1)
-            .filter(line => line.indexOf('Experimental') === -1)
-            .forEach(line => console.log(line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/')));
-    });
+    process.exit()
 }
 
 const exampleDirMatch = new RegExp('src/([-\\w]+)/');
@@ -202,7 +206,6 @@ function watchAndGenerateExamples(communityModules, enterpriseModules) {
 function updateWebpackConfigWithBundles(communityModules, enterpriseModules) {
     console.log("updating webpack config with modules...");
 
-    console.log(communityModules);
     // spl modules
     const communityModulesEntries = communityModules
         .filter(module => module.moduleDirName !== 'grid-core')
@@ -391,6 +394,7 @@ module.exports = () => {
 
     // spl modules
     // add community & enterprise modules to express (for importing in the fw examples)
+    symlinkModules(communityModules, enterpriseModules);
     updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
     updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
     serveAndWatchModules(app, communityModules, enterpriseModules);

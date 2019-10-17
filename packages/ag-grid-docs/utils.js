@@ -3,6 +3,7 @@ const glob = require('glob');
 const getAllModules = () => {
     const mapModules = moduleRoot => glob.sync(`../../${moduleRoot}/*`)
         .map(module => glob.sync(`${module}/src/*Module.ts`)[0])
+        .filter(module => module)
         .map(module => {
             // this relies on the module name within the module class to be the same as the filename
             const fullPath = `${module}`;
@@ -28,7 +29,6 @@ const getAllModules = () => {
                 moduleDirName
             }
         });
-
 
     const communityModules = mapModules('community-modules');
     const enterpriseModules = mapModules('enterprise-modules');

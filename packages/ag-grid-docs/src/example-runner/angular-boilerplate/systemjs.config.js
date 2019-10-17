@@ -135,6 +135,10 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
+           '@ag-community/grid-all-modules': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
            '@ag-community/grid-core': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
@@ -160,6 +164,10 @@
                 defaultExtension: 'js'
             },
            '@ag-enterprise/filter-tool-panel': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-enterprise/grid-all-modules': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
