@@ -22,7 +22,8 @@ import {
     PostConstruct,
     Promise,
     TabbedItem,
-    TabbedLayout
+    TabbedLayout,
+    Events
 } from "ag-grid-community";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
@@ -38,10 +39,18 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
 
     private lastSelectedTab: string;
 
     private activeMenu: EnterpriseMenu | null;
+
+    private updateMenuPosition: (() => void) | null;
+
+    @PostConstruct
+    public init() {
+        this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this))
+    }
 
     public hideActiveMenu(): void {
         if (this.activeMenu) {
@@ -76,6 +85,12 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         }
 
         this.showMenu(column, (menu: EnterpriseMenu) => {
+            // if the body is scrolled off the grid, column virtualisation will remove the header cell
+            // leading to incorrect positioning, so close the menu instead.
+            if (!document.body.contains(eventSource)) {
+                this.hideActiveMenu();
+                return;
+            }
             const minDims = menu.getMinDimensions();
             this.popupService.positionPopupUnderComponent({
                 column: column,
@@ -110,6 +125,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             () => { // menu closed callback
                 menu.destroy();
                 column.setMenuVisible(false, "contextMenu");
+                this.updateMenuPosition = null;
             }
         );
 
@@ -117,7 +133,8 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             hidePopup: hidePopup
         });
 
-        positionCallback(menu);
+        this.updateMenuPosition = () => positionCallback(menu);
+        this.updateMenuPosition();
 
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
@@ -139,6 +156,12 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public isMenuEnabled(column: Column): boolean {
         return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
+    }
+
+    private onBodyScroll() {
+        if (this.updateMenuPosition) {
+            this.updateMenuPosition();
+        }
     }
 }
 
