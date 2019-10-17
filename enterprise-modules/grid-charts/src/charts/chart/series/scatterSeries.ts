@@ -11,11 +11,12 @@ import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import linearScale from "../../scale/linearScale";
 import { ScatterTooltipRendererParams } from "../../chartOptions";
+import { Marker } from "../marker/marker";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
     y: number;
-    radius: number;
+    size: number;
     fill?: string;
     stroke?: string;
     strokeWidth: number;
@@ -33,6 +34,19 @@ export class ScatterSeries extends Series<CartesianChart> {
     private sizeScale = linearScale();
 
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
+
+    constructor() {
+        super();
+
+        this.marker.onChange = this.update.bind(this);
+        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+    }
+
+    onMarkerTypeChange() {
+        this.groupSelection = this.groupSelection.setData([]);
+        this.groupSelection.exit.remove();
+        this.update();
+    }
 
     set chart(chart: CartesianChart | undefined) {
         if (this._chart !== chart) {
@@ -107,58 +121,13 @@ export class ScatterSeries extends Series<CartesianChart> {
     sizeKeyName?: string = 'Size';
     labelFieldName?: string = 'Label';
 
-    private _marker: boolean = false;
-    set marker(value: boolean) {
-        if (this._marker !== value) {
-            this._marker = value;
-            this.update();
-        }
-    }
-    get marker(): boolean {
-        return this._marker;
-    }
-
-    private _markerSize: number = 8;
-    set markerSize(value: number) {
-        if (this._markerSize !== value) {
-            this._markerSize = Math.abs(value);
-            this.update();
-        }
-    }
-    get markerSize(): number {
-        return this._markerSize;
-    }
-
-    private _minMarkerSize: number = 4;
-    set minMarkerSize(value: number) {
-        if (this._minMarkerSize !== value) {
-            this._minMarkerSize = value;
-            this.update();
-        }
-    }
-    get minMarkerSize(): number {
-        return this._minMarkerSize;
-    }
-
-    private _markerStrokeWidth: number = 2;
-    set markerStrokeWidth(value: number) {
-        if (this._markerStrokeWidth !== value) {
-            this._markerStrokeWidth = value;
-            this.update();
-        }
-    }
-    get markerStrokeWidth(): number {
-        return this._markerStrokeWidth;
-    }
-
     processData(): boolean {
         const {
             chart,
             xField,
             yField,
             sizeKey,
-            markerSize,
-            minMarkerSize,
+            marker
         } = this;
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
@@ -180,7 +149,6 @@ export class ScatterSeries extends Series<CartesianChart> {
         }
 
         this.sizeScale.domain = numericExtent(this.sizeData) || [1, 1];
-        this.sizeScale.range = [minMarkerSize / 2, markerSize / 2];
         this.domainX = this.calculateDomain(this.xData);
         this.domainY = this.calculateDomain(this.yData);
 
@@ -222,28 +190,6 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._stroke;
     }
 
-    private _fillOpacity: number = 1;
-    set fillOpacity(value: number) {
-        if (this._fillOpacity !== value) {
-            this._fillOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get fillOpacity(): number {
-        return this._fillOpacity;
-    }
-
-    private _strokeOpacity: number = 1;
-    set strokeOpacity(value: number) {
-        if (this._strokeOpacity !== value) {
-            this._strokeOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get strokeOpacity(): number {
-        return this._strokeOpacity;
-    }
-
     highlightStyle: {
         fill?: string,
         stroke?: string
@@ -251,10 +197,10 @@ export class ScatterSeries extends Series<CartesianChart> {
             fill: 'yellow'
         };
 
-    private highlightedNode?: Arc;
+    private highlightedNode?: Marker;
 
     highlightNode(node: Shape) {
-        if (!(node instanceof Arc)) {
+        if (!(node instanceof Marker)) {
             return;
         }
 
@@ -289,12 +235,15 @@ export class ScatterSeries extends Series<CartesianChart> {
             sizeScale,
             fill,
             stroke,
-            fillOpacity,
-            strokeOpacity,
-            markerStrokeWidth,
-            markerSize,
+            marker,
             highlightedNode
         } = this;
+
+        const Marker = marker.type;
+        const markerSize = marker.size;
+        const markerStrokeWidth = marker.strokeWidth;
+
+        this.sizeScale.range = [marker.minSize / 2, marker.size / 2];
 
         const groupSelectionData: GroupSelectionDatum[] = xData.map((xDatum, i) => ({
             seriesDatum: data[i],
@@ -303,29 +252,29 @@ export class ScatterSeries extends Series<CartesianChart> {
             fill,
             stroke,
             strokeWidth: markerStrokeWidth,
-            radius: sizeData.length ? sizeScale.convert(sizeData[i]) : markerSize / 2,
+            size: sizeData.length ? sizeScale.convert(sizeData[i]) : markerSize / 2,
         }));
 
         const updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Arc).each(arc => arc.type = ArcType.Chord);
+        enterGroups.append(Marker);
 
         const groupSelection = updateGroups.merge(enterGroups);
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
 
-        groupSelection.selectByClass(Arc)
-            .each((arc, datum) => {
-                arc.centerX = datum.x;
-                arc.centerY = datum.y;
-                arc.radiusX = arc.radiusY = datum.radius;
-                arc.fill = arc === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-                arc.stroke = arc === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
-                arc.fillOpacity = fillOpacity;
-                arc.strokeOpacity = strokeOpacity;
-                arc.strokeWidth = datum.strokeWidth;
-                arc.visible = datum.radius > 0;
+        groupSelection.selectByClass(Marker)
+            .each((node, datum) => {
+                node.translationX = datum.x;
+                node.translationY = datum.y;
+                node.size = datum.size;
+                node.fill = node === highlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
+                node.stroke = node === highlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+                node.fillOpacity = marker.fillOpacity;
+                node.strokeOpacity = marker.strokeOpacity;
+                node.strokeWidth = datum.strokeWidth;
+                node.visible = marker.enabled && datum.size > 0;
             });
 
         this.groupSelection = groupSelection;
@@ -343,7 +292,7 @@ export class ScatterSeries extends Series<CartesianChart> {
         const { xField: xKey, yField: yKey } = this;
 
         if (!xKey || !yKey) {
-            return "";
+            return '';
         }
 
         const {
