@@ -21,7 +21,7 @@ export class PieChartProxy extends PolarChartProxy {
 
         const chart = this.chart;
         const existingSeries = chart.series[0] as PieSeries;
-        const existingSeriesId = existingSeries && existingSeries.angleField;
+        const existingSeriesId = existingSeries && existingSeries.angleKey;
         const pieSeriesField = params.fields[0];
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
         const { seriesDefaults } = this.chartOptions;
@@ -47,9 +47,9 @@ export class PieChartProxy extends PolarChartProxy {
             pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
         }
 
-        pieSeries.angleFieldName = pieSeriesField.displayName;
-        pieSeries.labelField = params.category.id;
-        pieSeries.labelFieldName = params.category.name;
+        pieSeries.angleName = pieSeriesField.displayName;
+        pieSeries.labelKey = params.category.id;
+        pieSeries.labelName = params.category.name;
         pieSeries.data = params.data;
         pieSeries.fills = fills;
         pieSeries.strokes = strokes;

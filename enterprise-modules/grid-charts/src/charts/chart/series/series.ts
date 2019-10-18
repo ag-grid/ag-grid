@@ -123,7 +123,7 @@ class SeriesMarker {
      * within the `[minSize, size]` range, where the largest values will correspond to the `size`
      * and the lowest to the `minSize`.
      */
-    private _size: number = 8;
+    private _size: number = 6;
     set size(value: number) {
         if (this._size !== value) {
             this._size = value;
@@ -134,7 +134,7 @@ class SeriesMarker {
         return this._size;
     }
 
-    private _minSize: number = 4;
+    private _minSize: number = 6;
     set minSize(value: number) {
         if (this._minSize !== value) {
             this._minSize = value;

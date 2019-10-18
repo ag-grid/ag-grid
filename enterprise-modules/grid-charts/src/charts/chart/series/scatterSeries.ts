@@ -69,28 +69,28 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._title;
     }
 
-    protected _xField: string = '';
-    set xField(value: string) {
-        if (this._xField !== value) {
-            this._xField = value;
+    protected _xKey: string = '';
+    set xKey(value: string) {
+        if (this._xKey !== value) {
+            this._xKey = value;
             this.xData = [];
             this.scheduleData();
         }
     }
-    get xField(): string {
-        return this._xField;
+    get xKey(): string {
+        return this._xKey;
     }
 
-    protected _yField: string = '';
-    set yField(value: string) {
-        if (this._yField !== value) {
-            this._yField = value;
+    protected _yKey: string = '';
+    set yKey(value: string) {
+        if (this._yKey !== value) {
+            this._yKey = value;
             this.yData = [];
             this.scheduleData();
         }
     }
-    get yField(): string {
-        return this._yField;
+    get yKey(): string {
+        return this._yKey;
     }
 
     private _sizeKey?: string;
@@ -105,41 +105,40 @@ export class ScatterSeries extends Series<CartesianChart> {
         return this._sizeKey;
     }
 
-    private _labelField?: string;
-    set labelField(value: string | undefined) {
-        if (this._labelField !== value) {
-            this._labelField = value;
+    private _labelKey?: string;
+    set labelKey(value: string | undefined) {
+        if (this._labelKey !== value) {
+            this._labelKey = value;
             this.scheduleData();
         }
     }
-    get labelField(): string | undefined {
-        return this._labelField;
+    get labelKey(): string | undefined {
+        return this._labelKey;
     }
 
-    xFieldName: string = 'X';
-    yFieldName: string = 'Y';
-    sizeKeyName?: string = 'Size';
-    labelFieldName?: string = 'Label';
+    xName: string = 'X';
+    yName: string = 'Y';
+    sizeName?: string = 'Size';
+    labelName?: string = 'Label';
 
     processData(): boolean {
         const {
             chart,
-            xField,
-            yField,
-            sizeKey,
-            marker
+            xKey,
+            yKey,
+            sizeKey
         } = this;
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
         }
 
-        if (!(xField && yField)) {
+        if (!(xKey && yKey)) {
             this._data = [];
         }
 
-        this.xData = this.data.map(d => d[xField]);
-        this.yData = this.data.map(d => d[yField]);
+        this.xData = this.data.map(d => d[xKey]);
+        this.yData = this.data.map(d => d[yKey]);
 
         if (sizeKey) {
             this.sizeData = this.data.map(d => d[sizeKey]);
@@ -262,7 +261,7 @@ export class ScatterSeries extends Series<CartesianChart> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
-        const { xField: xKey, yField: yKey } = this;
+        const { xKey, yKey } = this;
 
         if (!xKey || !yKey) {
             return '';
@@ -271,12 +270,12 @@ export class ScatterSeries extends Series<CartesianChart> {
         const {
             title,
             tooltipRenderer,
-            xFieldName: xName,
-            yFieldName: yName,
+            xName,
+            yName,
             sizeKey,
-            sizeKeyName: sizeName,
-            labelField: labelKey,
-            labelFieldName: labelName
+            sizeName,
+            labelKey,
+            labelName
         } = this;
 
         const color = this.marker.fill || 'gray';
@@ -301,30 +300,30 @@ export class ScatterSeries extends Series<CartesianChart> {
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xKey];
             const yValue = seriesDatum[yKey];
-            let fieldString = `<b>${xName}</b>: ${toFixed(xValue)}<br><b>${yName}</b>: ${toFixed(yValue)}`;
+            let contentHtml = `<b>${xName}</b>: ${toFixed(xValue)}<br><b>${yName}</b>: ${toFixed(yValue)}`;
 
             if (sizeKey) {
-                fieldString += `<br><b>${sizeName}</b>: ${seriesDatum[sizeKey]}`;
+                contentHtml += `<br><b>${sizeName}</b>: ${seriesDatum[sizeKey]}`;
             }
 
             if (labelKey) {
-                fieldString = `<b>${labelName}</b>: ${seriesDatum[labelKey]}<br>` + fieldString;
+                contentHtml = `<b>${labelName}</b>: ${seriesDatum[labelKey]}<br>` + contentHtml;
             }
 
-            return `${titleHtml}<div class="content">${fieldString}</div>`;
+            return `${titleHtml}<div class="content">${contentHtml}</div>`;
         }
     }
 
     tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.xField && this.yField) {
+        if (this.data.length && this.xKey && this.yKey) {
             data.push({
                 id: this.id,
                 itemId: undefined,
                 enabled: this.visible,
                 label: {
-                    text: this.title || this.yField
+                    text: this.title || this.yKey
                 },
                 marker: {
                     fill: this.marker.fill || 'gray',

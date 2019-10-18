@@ -32,9 +32,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         (chart.series as ScatterSeries[])
             .forEach(scatterSeries => {
-                const yField = scatterSeries.yField;
+                const yField = scatterSeries.yKey;
 
-                if (scatterSeries.xField === xFieldDefinition.colId && _.includes(fieldIds, yField)) {
+                if (scatterSeries.xKey === xFieldDefinition.colId && _.includes(fieldIds, yField)) {
                     existingSeriesMap[yField] = scatterSeries;
                 } else {
                     chart.removeSeries(scatterSeries);
@@ -50,10 +50,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             if (!series) { return; }
 
             series.title = `${xFieldDefinition.displayName} vs ${yFieldDefinition.displayName}`;
-            series.xField = xFieldDefinition.colId;
-            series.xFieldName = xFieldDefinition.displayName;
-            series.yField = yFieldDefinition.colId;
-            series.yFieldName = yFieldDefinition.displayName;
+            series.xKey = xFieldDefinition.colId;
+            series.xName = xFieldDefinition.displayName;
+            series.yKey = yFieldDefinition.colId;
+            series.yName = yFieldDefinition.displayName;
             series.data = params.data;
             series.marker.fill = fills[index % fills.length];
             series.marker.stroke = strokes[index % strokes.length];
@@ -63,7 +63,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
                 if (radiusFieldDefinition) {
                     series.sizeKey = radiusFieldDefinition.colId;
-                    series.sizeKeyName = radiusFieldDefinition.displayName;
+                    series.sizeName = radiusFieldDefinition.displayName;
                 } else {
                     // not enough information to render this series, so ensure it is removed
                     if (existingSeries) {
@@ -73,14 +73,14 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                     return;
                 }
             } else {
-                series.sizeKey = series.sizeKeyName = undefined;
+                series.sizeKey = series.sizeName = undefined;
             }
 
             if (labelFieldDefinition) {
-                series.labelField = labelFieldDefinition.id;
-                series.labelFieldName = labelFieldDefinition.name;
+                series.labelKey = labelFieldDefinition.id;
+                series.labelName = labelFieldDefinition.name;
             } else {
-                series.labelField = series.labelFieldName = undefined;
+                series.labelKey = series.labelName = undefined;
             }
 
             if (!existingSeries) {

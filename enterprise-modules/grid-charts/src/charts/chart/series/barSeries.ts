@@ -17,7 +17,7 @@ import { NumberAxis } from "../axis/numberAxis";
 import { BarTooltipRendererParams } from "../../chartOptions";
 
 interface SelectionDatum extends SeriesNodeDatum {
-    yField: string;
+    yKey: string;
     yValue: number;
     x: number;
     y: number;
@@ -87,9 +87,9 @@ export class BarSeries extends Series<CartesianChart> {
 
     /**
      * The assumption is that the values will be reset (to `true`)
-     * in the {@link yFields} setter.
+     * in the {@link yKeys} setter.
      */
-    private readonly yFieldEnabled = new Map<string, boolean>();
+    private readonly yKeyEnabled = new Map<string, boolean>();
 
     private _fills: string[] = palette.fills;
     set fills(values: string[]) {
@@ -151,43 +151,43 @@ export class BarSeries extends Series<CartesianChart> {
         return this._chart;
     }
 
-    protected _xField: string = '';
-    set xField(value: string) {
-        if (this._xField !== value) {
-            this._xField = value;
+    protected _xKey: string = '';
+    set xKey(value: string) {
+        if (this._xKey !== value) {
+            this._xKey = value;
             this.xData = [];
             this.scheduleData();
         }
     }
-    get xField(): string {
-        return this._xField;
+    get xKey(): string {
+        return this._xKey;
     }
 
-    protected _xFieldName: string = '';
-    set xFieldName(value: string) {
-        if (this._xFieldName !== value) {
-            this._xFieldName = value;
+    protected _xName: string = '';
+    set xName(value: string) {
+        if (this._xName !== value) {
+            this._xName = value;
             this.update();
         }
     }
-    get xFieldName(): string {
-        return this._xFieldName;
+    get xName(): string {
+        return this._xName;
     }
 
     /**
-     * With a single value in the `yFields` array we get the regular bar series.
+     * With a single value in the `yKeys` array we get the regular bar series.
      * With multiple values, we get the stacked bar series.
      * If the {@link grouped} set to `true`, we get the grouped bar series.
      * @param values
      */
-    protected _yFields: string[] = [];
-    set yFields(values: string[]) {
-        this._yFields = values;
+    protected _yKeys: string[] = [];
+    set yKeys(values: string[]) {
+        this._yKeys = values;
         this.yData = [];
 
-        const { yFieldEnabled } = this;
-        yFieldEnabled.clear();
-        values.forEach(field => yFieldEnabled.set(field, true));
+        const { yKeyEnabled } = this;
+        yKeyEnabled.clear();
+        values.forEach(key => yKeyEnabled.set(key, true));
 
         const groupScale = this.groupScale;
         groupScale.domain = values;
@@ -196,17 +196,17 @@ export class BarSeries extends Series<CartesianChart> {
 
         this.scheduleData();
     }
-    get yFields(): string[] {
-        return this._yFields;
+    get yKeys(): string[] {
+        return this._yKeys;
     }
 
-    protected _yFieldNames: string[] = [];
-    set yFieldNames(values: string[]) {
-        this._yFieldNames = values;
+    protected _yNames: string[] = [];
+    set yNames(values: string[]) {
+        this._yNames = values;
         this.update();
     }
-    get yFieldNames(): string[] {
-        return this._yFieldNames;
+    get yNames(): string[] {
+        return this._yNames;
     }
 
     private _grouped: boolean = false;
@@ -281,35 +281,35 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     processData(): boolean {
-        const { xField, yFields } = this;
+        const { xKey, yKeys } = this;
 
-        if (!(xField && yFields.length)) {
+        if (!(xKey && yKeys.length)) {
             this._data = [];
         }
 
         // If the data is an array of rows like so:
         //
         // [{
-        //   xField: 'Jan',
-        //   yField1: 5,
-        //   yField2: 7,
-        //   yField3: -9,
+        //   xKey: 'Jan',
+        //   yKey1: 5,
+        //   yKey2: 7,
+        //   yKey3: -9,
         // }, {
-        //   xField: 'Feb',
-        //   yField1: 10,
-        //   yField2: -15,
-        //   yField3: 20
+        //   xKey: 'Feb',
+        //   yKey1: 10,
+        //   yKey2: -15,
+        //   yKey3: 20
         // }]
         //
 
-        const { yFieldEnabled, data } = this;
+        const { yKeyEnabled, data } = this;
 
-        this.xData = data.map(datum => datum[xField]);
+        this.xData = data.map(datum => datum[xKey]);
 
-        this.yData = data.map(datum => yFields.map(field => {
-            const value = datum[field];
+        this.yData = data.map(datum => yKeys.map(key => {
+            const value = datum[key];
 
-            return isFinite(value) && yFieldEnabled.get(field) ? value : 0;
+            return isFinite(value) && yKeyEnabled.get(key) ? value : 0;
         }));
 
         // xData: ['Jan', 'Feb']
@@ -393,12 +393,12 @@ export class BarSeries extends Series<CartesianChart> {
 
         const {
             groupScale,
-            yFields,
+            yKeys,
             fills,
             strokes,
             grouped,
             strokeWidth,
-            yFieldEnabled,
+            yKeyEnabled,
             data,
             xData,
             yData,
@@ -425,11 +425,11 @@ export class BarSeries extends Series<CartesianChart> {
             let prev = 0;
 
             values.forEach((curr, j) => {
-                const yField = yFields[j];
-                const barX = grouped ? x + groupScale.convert(yField) : x;
+                const yKey = yKeys[j];
+                const barX = grouped ? x + groupScale.convert(yKey) : x;
                 const y = yScale.convert(grouped ? curr : prev + curr);
                 const bottomY = yScale.convert(grouped ? 0 : prev);
-                const yValue = seriesDatum[yField]; // unprocessed y-value
+                const yValue = seriesDatum[yKey]; // unprocessed y-value
                 const yValueIsNumber = typeof yValue === 'number';
 
                 let labelText: string;
@@ -443,7 +443,7 @@ export class BarSeries extends Series<CartesianChart> {
                 selectionData.push({
                     seriesDatum,
                     yValue,
-                    yField,
+                    yKey,
                     x: flipXY ? Math.min(y, bottomY) : barX,
                     y: flipXY ? barX : Math.min(y, bottomY),
                     width: flipXY ? Math.abs(bottomY - y) : barWidth,
@@ -451,7 +451,7 @@ export class BarSeries extends Series<CartesianChart> {
                     fill: fills[j % fills.length],
                     stroke: strokes[j % strokes.length],
                     strokeWidth,
-                    label: yFieldEnabled.get(yField) && labelText ? {
+                    label: yKeyEnabled.get(yKey) && labelText ? {
                         text: labelText,
                         fontStyle: labelFontStyle,
                         fontWeight: labelFontWeight,
@@ -541,18 +541,18 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     getTooltipHtml(nodeDatum: SelectionDatum): string {
-        const { xField: xKey } = this;
-        const { yField: yKey } = nodeDatum;
+        const { xKey } = this;
+        const { yKey } = nodeDatum;
 
         if (!xKey || !yKey) {
             return "";
         }
 
-        const { xFieldName: xName, yFields, yFieldNames, fills, tooltipRenderer } = this;
+        const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
         const { seriesDatum: datum } = nodeDatum;
-        const yFieldIndex = yFields.indexOf(yKey);
-        const yName = yFieldNames[yFieldIndex];
-        const color = fills[yFieldIndex % fills.length];
+        const yKeyIndex = yKeys.indexOf(yKey);
+        const yName = yNames[yKeyIndex];
+        const color = fills[yKeyIndex % fills.length];
         const title = yName;
 
         if (tooltipRenderer) {
@@ -578,16 +578,16 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.xField && this.yFields.length) {
+        if (this.data.length && this.xKey && this.yKeys.length) {
             const { fills, strokes, id } = this;
 
-            this.yFields.forEach((yField, index) => {
+            this.yKeys.forEach((yKey, index) => {
                 data.push({
                     id,
-                    itemId: yField,
-                    enabled: this.yFieldEnabled.get(yField) || false,
+                    itemId: yKey,
+                    enabled: this.yKeyEnabled.get(yKey) || false,
                     label: {
-                        text: this.yFieldNames[index] || this.yFields[index]
+                        text: this.yNames[index] || this.yKeys[index]
                     },
                     marker: {
                         fill: fills[index % fills.length],
@@ -599,14 +599,14 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
-        this.yFieldEnabled.set(itemId, enabled);
-        const enabledYFields: string[] = [];
-        this.yFieldEnabled.forEach((enabled, yField) => {
+        this.yKeyEnabled.set(itemId, enabled);
+        const enabledYKeys: string[] = [];
+        this.yKeyEnabled.forEach((enabled, yKey) => {
             if (enabled) {
-                enabledYFields.push(yField);
+                enabledYKeys.push(yKey);
             }
         });
-        this.groupScale.domain = enabledYFields;
+        this.groupScale.domain = enabledYKeys;
         this.scheduleData();
     }
 }

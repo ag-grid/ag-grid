@@ -284,8 +284,8 @@ export class ChartBuilder {
         ChartBuilder.initSeries(series, options);
 
         this.setValueIfExists(series, "title", options.title);
-        this.setValueIfExists(series, "xField", options.field && options.field.xKey);
-        this.setValueIfExists(series, "yField", options.field && options.field.yKey);
+        this.setValueIfExists(series, "xKey", options.field && options.field.xKey);
+        this.setValueIfExists(series, "yKey", options.field && options.field.yKey);
         this.setValueIfExists(series, "fill", options.fill && options.fill.color);
         this.setValueIfExists(series, "stroke", options.stroke && options.stroke.color);
         this.setValueIfExists(series, "strokeWidth", options.stroke && options.stroke.width);
@@ -322,14 +322,14 @@ export class ChartBuilder {
         ChartBuilder.initSeries(series, options);
 
         this.setValueIfExists(series, "title", options.title);
-        this.setValueIfExists(series, "xField", options.field && options.field.xKey);
-        this.setValueIfExists(series, "xFieldName", options.field && options.field.xName);
-        this.setValueIfExists(series, "yField", options.field && options.field.yKey);
-        this.setValueIfExists(series, "yFieldName", options.field && options.field.yName);
+        this.setValueIfExists(series, "xKey", options.field && options.field.xKey);
+        this.setValueIfExists(series, "xName", options.field && options.field.xName);
+        this.setValueIfExists(series, "yKey", options.field && options.field.yKey);
+        this.setValueIfExists(series, "yName", options.field && options.field.yName);
         this.setValueIfExists(series, "sizeKey", options.field && options.field.sizeKey);
-        this.setValueIfExists(series, "sizeKeyName", options.field && options.field.sizeName);
-        this.setValueIfExists(series, "labelField", options.field && options.field.labelKey);
-        this.setValueIfExists(series, "labelFieldName", options.field && options.field.labelName);
+        this.setValueIfExists(series, "sizeName", options.field && options.field.sizeName);
+        this.setValueIfExists(series, "labelKey", options.field && options.field.labelKey);
+        this.setValueIfExists(series, "labelName", options.field && options.field.labelName);
 
         const { highlightStyle, marker, tooltip } = options;
 
@@ -377,9 +377,9 @@ export class ChartBuilder {
         const { field, fill, stroke, highlightStyle, label, tooltip } = options;
 
         if (field) {
-            this.setValueIfExists(series, "xField", field.xKey);
-            this.setValueIfExists(series, "yFields", field.yKeys);
-            this.setValueIfExists(series, "yFieldNames", field.yNames);
+            this.setValueIfExists(series, "xKey", field.xKey);
+            this.setValueIfExists(series, "yKeys", field.yKeys);
+            this.setValueIfExists(series, "yNames", field.yNames);
         }
 
         if (fill) {
@@ -418,9 +418,9 @@ export class ChartBuilder {
     static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        this.setValueIfExists(series, "xField", options.field && options.field.xKey);
-        this.setValueIfExists(series, "yFields", options.field && options.field.yKeys);
-        this.setValueIfExists(series, "yFieldNames", options.field && options.field.yNames);
+        this.setValueIfExists(series, "xKey", options.field && options.field.xKey);
+        this.setValueIfExists(series, "yKeys", options.field && options.field.yKeys);
+        this.setValueIfExists(series, "yNames", options.field && options.field.yNames);
         this.setValueIfExists(series, "normalizedTo", options.normalizedTo);
         this.setValueIfExists(series, "fills", options.fill && options.fill.colors);
         this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
@@ -462,9 +462,9 @@ export class ChartBuilder {
         ChartBuilder.initSeries(series, options);
 
         this.setTransformedValueIfExists(series, "title", t => ChartBuilder.createPieTitle(t), options.title);
-        this.setValueIfExists(series, "angleField", options.field && options.field.angleKey);
-        this.setValueIfExists(series, "radiusField", options.field && options.field.radiusKey);
-        this.setValueIfExists(series, "labelField", options.field && options.field.labelKey);
+        this.setValueIfExists(series, "angleKey", options.field && options.field.angleKey);
+        this.setValueIfExists(series, "radiusKey", options.field && options.field.radiusKey);
+        this.setValueIfExists(series, "labelKey", options.field && options.field.labelKey);
         this.setValueIfExists(series, "fills", options.fill && options.fill.colors);
         this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
         this.setValueIfExists(series, "strokes", options.stroke && options.stroke.colors);
@@ -490,8 +490,8 @@ export class ChartBuilder {
         if (label) {
             ChartBuilder.initLabelOptions(series.label, label);
 
-            this.setValueIfExists(series, "labelEnabled", label.enabled);
-            this.setValueIfExists(series, "labelMinAngle", label.minRequiredAngle);
+            this.setValueIfExists(series.label, "enabled", label.enabled);
+            this.setValueIfExists(series.label, "minAngle", label.minRequiredAngle);
         }
 
         if (tooltip) {
