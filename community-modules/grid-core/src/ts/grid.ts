@@ -112,7 +112,6 @@ export class Grid {
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
 
-        console.log("Grid Constructor Called!!!");
         if (!eGridDiv) {
             console.error('ag-Grid: no div element provided to the grid');
             return;
