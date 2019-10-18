@@ -11,7 +11,8 @@ module.exports = {
     },
     resolve: {
         alias: {
-            './dist/es6': './src'
+            // './dist/es6': './src'
+            "@ag-community/grid-core": path.resolve(__dirname, "../../../community-modules/grid-core/src/ts/main.ts")
         },
         extensions: ['.ts', '.js']
     },

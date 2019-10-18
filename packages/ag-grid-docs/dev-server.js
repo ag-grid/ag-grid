@@ -71,30 +71,12 @@ function serveAndWatchFramework(app, framework) {
     });
 }
 
-function serveAndWatchModules(app, communityModules, enterpriseModules) {
+function serveModules(app, communityModules, enterpriseModules) {
     // spl modules
-    const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
-
-    const watchModule = (type, module) => {
-        console.log(`watching module ${module.moduleDirName}`);
-
-        // const moduleWatch = cp.spawn(gulpPath, ['watch'], {
-        //     stdio: 'inherit',
-        //     cwd: `${module.rootDir}`
-        // });
-
+    console.log("serving modules");
+    communityModules.concat(enterpriseModules).forEach(module => {
+        console.log(`serving modules ${module.publishedName} from ./_dev/${module.publishedName} - available at /dev/${module.publishedName}`);
         app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
-
-        // process.on('exit', () => {
-        //     moduleWatch.kill();
-        // });
-    };
-
-    communityModules.forEach(module => {
-        watchModule('community', module);
-    });
-    enterpriseModules.forEach(module => {
-        watchModule('enterprise', module);
     });
 }
 
@@ -376,7 +358,7 @@ module.exports = () => {
     symlinkModules(communityModules, enterpriseModules);
     updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
     updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
-    serveAndWatchModules(app, communityModules, enterpriseModules);
+    serveModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
     serveAndWatchFramework(app, 'ag-grid-angular');
