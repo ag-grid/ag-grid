@@ -11,7 +11,7 @@
         "watchWebpack": "webpack --watch",
         "webpack-updater": "node webpackUpdater.js",
         "rollup": "node rollup/build.js",
-        "package": "npm run webpack-updater && npx gulp webpack-all-no-clean && npm run rollup",
+        "package": "gulp copy-grid-core-styles && npm run webpack-updater && npx gulp webpack-all-no-clean && npm run rollup",
         "test:e2e": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
         "e2e": "protractor protractor.conf.js",
         "update-webdriver": "webdriver-manager update --gecko false",

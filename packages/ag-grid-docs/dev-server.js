@@ -176,8 +176,8 @@ function watchAndGenerateExamples(communityModules, enterpriseModules) {
             }
         }
         console.log('regenerating examples...');
-        generateExamples(() => console.log('generation done.'), 'javascript-grid-column-header', true, communityModules, enterpriseModules);
-        // generateExamples(() => console.log('generation done.'), dir, true, communityModules, enterpriseModules);
+        // generateExamples(() => console.log('generation done.'), 'javascript-grid-column-header', true, communityModules, enterpriseModules);
+        generateExamples(() => console.log('generation done.'), dir, true, communityModules, enterpriseModules);
     };
 
     callback();
@@ -362,13 +362,11 @@ module.exports = () => {
 
     // for js examples that just require community functionality (landing pages, vanilla community examples etc)
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-community/grid-all-modules/dist/ag-grid-community.js
-    // addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-community/grid-all-modules/dist');
+    addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-community/grid-all-modules/dist');
 
     // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-enterprise/grid-all-modules/dist/ag-grid-enterprise.js
-    // addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-enterprise/grid-all-modules/dist');
-
-    // addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
+    addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-enterprise/grid-all-modules/dist');
 
     // for the actual site - php, css etc
     addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
@@ -388,7 +386,7 @@ module.exports = () => {
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples
     // commented out by default - add if you want to test as part of the dev build (or run separately - see at the end of the file)
-    buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
+    // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
 
     // regenerate examples
     watchAndGenerateExamples(communityModules, enterpriseModules);
@@ -396,8 +394,8 @@ module.exports = () => {
     // PHP
     launchPhpCP(app);
 
-    // Watch TS for errors. No actual transpiling happens here, just errors
-    // launchTSCCheck(communityModules, enterpriseModules);
+    // Watch TS for errors. No actual transpiling happens here, just error reporting
+    launchTSCCheck(communityModules, enterpriseModules);
 
     app.listen(EXPRESS_PORT, function () {
         console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);

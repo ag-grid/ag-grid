@@ -77,7 +77,7 @@ const tscSrcEs6Task = () => {
 
 // Start of scss/css related tasks
 const scssTask = () => {
-    var f = filter(["**/*.css", '!*Font*.css'], {restore: true});
+    var f = filter(["**/*.css", '*Font*.css'], {restore: true});
 
     return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
         .pipe(named())
@@ -149,7 +149,7 @@ const scssTask = () => {
 };
 
 const minifyCss = () => {
-    return gulp.src('./dist/styles/*.css')
+    return gulp.src(['./dist/styles/*.css', '!./dist/styles/*.min.css'])
         .pipe(cssnano({
             preset: ['default', {
                 discardComments: {
@@ -162,7 +162,7 @@ const minifyCss = () => {
 };
 
 const scssWatch = () => {
-    gulp.watch('./src/styles/!**/!*', series('scss-no-clean'));
+    gulp.watch('./src/styles/**/*', series('scss-no-clean'));
 };
 // End of scss/css related tasks
 

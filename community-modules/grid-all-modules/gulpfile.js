@@ -56,18 +56,18 @@ const webpackTask = (minify, styles) => {
     return gulp.src(mainFile)
         .pipe(webpackStream({
             mode: minify ? 'production' : 'none',
-            // optimization: {
-            //     minimizer: !!minify ? [
-            //         new TerserPlugin({
-            //             terserOptions: {
-            //                 output: {
-            //                     comments: false
-            //                 }
-            //             },
-            //             extractComments: false
-            //         })
-            //     ] : [],
-            // },
+            optimization: {
+                minimizer: !!minify ? [
+                    new TerserPlugin({
+                        terserOptions: {
+                            output: {
+                                comments: false
+                            }
+                        },
+                        extractComments: false
+                    })
+                ] : [],
+            },
             output: {
                 path: path.join(__dirname, "dist"),
                 filename: fileName,
@@ -109,7 +109,7 @@ const webpackTask = (minify, styles) => {
 };
 
 const watch = () => {
-    gulp.watch('./src/**/*', series('webpack'));
+    gulp.watch('./src/**/*', series('build'));
 };
 // End of webpack related tasks
 
@@ -118,7 +118,7 @@ const copyGridCoreStyles = (done) => {
         done("node_modules/@ag-community/grid-core/dist/styles doesn't exist - exiting")
     }
 
-    return gulp.src('./node_modules/@ag-community/grid-core/dist/styles').pipe(gulp.dest('./dist'));
+    return gulp.src('./node_modules/@ag-community/grid-core/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
 };
 
 gulp.task('clean', cleanDist);
@@ -142,7 +142,7 @@ gulp.task('webpack-minify-noStyle-no-clean', series(webpackTask.bind(null, true,
 // for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
 gulp.task('webpack-all-no-clean', series('copy-grid-core-styles', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
 gulp.task('webpack-all', series('clean', 'build', 'copy-grid-core-styles', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
-gulp.task('watch', series('webpack', watch));
+gulp.task('watch', series('build', 'copy-grid-core-styles', watch));
 
 // default/release task
 gulp.task('default', series('webpack-all'));
