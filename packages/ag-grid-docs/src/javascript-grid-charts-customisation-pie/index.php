@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Pie/Doughnut Chart Customisation</h1>
 
 <p class="lead">
-    In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a>, you can also 
+    In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a>, you can also
     use these customisations for pie/doughnut charts.
 </p>
 
@@ -17,71 +17,74 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 interface PieChartOptions {
-    seriesDefaults?: {
+    seriesDefaults: {
         title?: CaptionOptions;
 
-        fills?: string[];
-        fillOpacity?: number; // valid range from `0` to `1`, defaults to `1` (opaque)
-        strokes?: string[]; // defaults to darker versions of fill colours
-        strokeOpacity?: number; // valid range from `0` to `1`, defaults to `1` (opaque)
-        strokeWidth?: number; // defaults to `1`
-        // The style to apply to a chart when it is hovered or tapped
+        // The style to apply to a slice when it is hovered over or tapped
         highlightStyle?: HighlightStyle;
 
-        shadow?: {
-            color?: string;
-            offset?: [ number, number ];
-            blur?: number;
-        };
-
-        // Whether to show slice labels or not
-        labelEnabled?: boolean; // defaults to `false`
-        // If the slice angle is smaller than this value (in degrees),
-        // the label won't be shown
-        labelMinAngle?: number; // defaults to `0`
-        labelFontStyle?: FontStyle;
-        labelFontWeight?: FontWeight;
-        labelFontSize?: number; // defaults to `12`
-        labelFontFamily?: string; // defaults to `Verdana, sans-serif`
-        labelColor?: string; // default varies based on light or dark mode
-
-        calloutStrokeWidth?: number; // defaults to `2`
-        calloutLength?: number; // defaults to `10`
-        calloutColors?: string[]; 
-
-        // Whether to show the tooltip for slices when they are hovered/tapped
-        tooltipEnabled?: boolean; // defaults to `true`
-        // A custom tooltip render function. Should return a valid HTML string.
-        tooltipRenderer?: (params: PieTooltipRendererParams) => string;
+        shadow: DropShadowOptions;
+        label: PieSeriesLabelOptions;
+        callout: PieSeriesCalloutOptions;
+        tooltip: TooltipOptions;
     };
 }
 
 interface CaptionOptions {
-    enabled?: boolean; // defaults to `true`
+    enabled?: boolean;
     text?: string;
     fontStyle?: FontStyle;
-    fontWeight?: FontWeight; // defaults to `bold`
-    fontSize?: number; // defaults to `16`
-    fontFamily?: string; // defaults to `Verdana, sans-serif`
-    color?: string; // defaults to `black`
+    fontWeight?: FontWeight;
+    fontSize?: number;
+    fontFamily?: string;
+    color?: string;
 }
+
+type FontStyle = 'normal' | 'italic' | 'oblique';
+
+type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
 interface HighlightStyle {
     fill?: string;
     stroke?: string;
 }
 
-export type FontStyle = 'normal' | 'italic' | 'oblique';
+interface DropShadowOptions {
+    enabled: boolean; // default: false
+    color: string; // default: 'rgba(0, 0, 0, 0.5)'
+    xOffset: number; // default: 3
+    yOffset: number; // default: 3
+    blur: number; // default: 5
+}
 
-export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | number;
+interface PieSeriesLabelOptions {
+    enabled: boolean; // default: false
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    fontSize?: number; // default: 12
+    fontFamily?: string; // default: 'Verdana, sans-serif'
+    color?: string; // default: dependent on light/dark mode
+    minRequiredAngle: number; // default: 0
+    offset: number; // default: 3
+}
+
+interface PieSeriesCalloutOptions {
+    length: number; // default: 10
+    strokeWidth: number; // default: 2
+    colors: string[]; // default: from selected palette
+}
 
 interface PieTooltipRendererParams {
-    // The datum object the tooltip is being rendered for
+    // The datum object for the highlighted slice that the tooltip is being rendered for
     datum: any;
-    // The field of the datum object that contains the value of the highlighted slice
-    angleField: string;
-    // The field of the datum object that contains the label text of the highlighted slice
-    labelField?: string;
+    // The key of the datum object that contains the angle value
+    angleKey: string;
+    // The name of the column that the angle value is from
+    angleName: string;
+    // The key of the datum object that contains the label text
+    labelKey?: string;
+    // The name of the column that the label text is from
+    labelName: string;
 }
 </snippet>
 
@@ -91,7 +94,7 @@ interface PieTooltipRendererParams {
     The example below changes all available styling options. The styling options are exaggerated
     to demonstrate each option rather than to produce a chart that looks nice!
 </p>
-    
+
 <?= example('Pie/Doughnut Chart Customisations', 'custom-pie-chart', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
