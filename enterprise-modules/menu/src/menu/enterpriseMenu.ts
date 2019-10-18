@@ -8,6 +8,7 @@ import {
     ColumnController,
     Constants,
     Context,
+    Events,
     EventService,
     FilterManager,
     FilterWrapper,

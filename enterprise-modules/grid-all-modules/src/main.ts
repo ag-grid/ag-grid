@@ -1,6 +1,6 @@
 import {AllModules as CommunityModules} from "@ag-community/grid-all-modules";
 import {ClipboardModule} from "@ag-enterprise/clipboard";
-import {ColumnToolPanelModule} from "@ag-enterprise/column-tool-panel";
+import {ColumnsToolPanelModule} from "@ag-enterprise/column-tool-panel";
 import {ExcelExportModule} from "@ag-enterprise/excel-export";
 import {FiltersToolPanelModule} from "@ag-enterprise/filter-tool-panel";
 import {GridChartsModule} from "@ag-enterprise/grid-charts";
@@ -35,7 +35,7 @@ export * from "@ag-enterprise/viewport-row-model";
 
 export const AllModules = CommunityModules.concat([
     ClipboardModule,
-    ColumnToolPanelModule,
+    ColumnsToolPanelModule,
     ExcelExportModule,
     FiltersToolPanelModule,
     GridChartsModule,
