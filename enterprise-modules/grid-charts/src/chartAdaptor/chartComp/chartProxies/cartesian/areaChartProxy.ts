@@ -111,7 +111,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
             marker: {
                 enabled: true,
-                size: 6,
+                size: 3,
                 strokeWidth: 1,
             },
             tooltip: {

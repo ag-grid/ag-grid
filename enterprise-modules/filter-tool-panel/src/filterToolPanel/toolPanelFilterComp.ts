@@ -42,6 +42,7 @@ export class ToolPanelFilterComp extends Component {
     private hideHeader: boolean;
     private column: Column;
     private expanded: boolean = false;
+    private underlyingFilter: IFilterComp;
 
     constructor(hideHeader = false) {
         super(ToolPanelFilterComp.TEMPLATE);
@@ -111,6 +112,7 @@ export class ToolPanelFilterComp extends Component {
         const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
         if (filterPromise) {
             filterPromise.then((filter: IFilterComp): void => {
+                this.underlyingFilter = filter;
                 container.appendChild(filter.getGui());
                 this.agFilterToolPanelBody.appendChild(container);
                 if (filter.afterGuiAttached) {
@@ -131,6 +133,19 @@ export class ToolPanelFilterComp extends Component {
 
         _.setDisplayed(this.eExpandChecked, false);
         _.setDisplayed(this.eExpandUnchecked, true);
+    }
+
+    public refreshFilter(): void {
+        const filter = this.underlyingFilter as any;
+        if (!filter) return;
+
+        // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
+        // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
+        // scroll position in the filter list panel
+        const isSetFilter = typeof filter.refreshVirtualList === "function";
+        if (isSetFilter) {
+            filter.refreshVirtualList();
+        }
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {

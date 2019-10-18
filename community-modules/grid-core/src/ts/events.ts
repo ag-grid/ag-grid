@@ -26,7 +26,6 @@ export interface ModelUpdatedEvent extends AgGridEvent {
 
 export interface AgEvent {
     type: string;
-    source?: string;
 }
 
 export interface AgGridEvent extends AgEvent {

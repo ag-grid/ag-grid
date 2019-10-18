@@ -4,6 +4,8 @@ import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { FontStyle, FontWeight } from "../../scene/shape/text";
 import { Marker } from "../marker/marker";
+import { Color } from "../../util/color";
+import palette from "../palettes";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -99,7 +101,9 @@ class SeriesMarker {
     onChange?: () => void;
     onTypeChange?: () => void;
 
-    // Marker constructor. A series will create one marker instance per data point.
+    /**
+     * Marker constructor function. A series will create one marker instance per data point.
+     */
     private _type?: (new () => Marker) = undefined;
     set type(value: (new () => Marker) | undefined) {
         if (this._type !== value) {
@@ -113,11 +117,12 @@ class SeriesMarker {
         return this._type;
     }
 
-    // In case a series has the `sizeKey` set, the `size` config will be ignored
-    // and the `sizeKey` values along with the `minSize/maxSize` configs will be used
-    // to determine the size of the marker. All values will be mapped to a marker size
-    // within the `[minSize, maxSize]` range, where the largest values will correspond
-    // to the `maxSize` and the lowest to the `minSize`.
+    /**
+     * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
+     * will be used to determine the size of the marker. All values will be mapped to a marker size
+     * within the `[minSize, size]` range, where the largest values will correspond to the `size`
+     * and the lowest to the `minSize`.
+     */
     private _size: number = 8;
     set size(value: number) {
         if (this._size !== value) {
@@ -140,17 +145,6 @@ class SeriesMarker {
         return this._minSize;
     }
 
-    private _maxSize: number = 8;
-    set maxSize(value: number) {
-        if (this._maxSize !== value) {
-            this._maxSize = value;
-            this.update();
-        }
-    }
-    get maxSize(): number {
-        return this._maxSize;
-    }
-
     private _enabled: boolean = true;
     set enabled(value: boolean) {
         if (this._enabled !== value) {
@@ -162,32 +156,33 @@ class SeriesMarker {
         return this._enabled;
     }
 
-    private _xOffset: number = 0;
-    set xOffset(value: number) {
-        if (this._xOffset !== value) {
-            this._xOffset = value;
-            this.update();
-        }
-    }
-    get xOffset(): number {
-        return this._xOffset;
-    }
+    // private _xOffset: number = 0;
+    // set xOffset(value: number) {
+    //     if (this._xOffset !== value) {
+    //         this._xOffset = value;
+    //         this.update();
+    //     }
+    // }
+    // get xOffset(): number {
+    //     return this._xOffset;
+    // }
 
-    private _yOffset: number = 0;
-    set yOffset(value: number) {
-        if (this._yOffset !== value) {
-            this._yOffset = value;
-            this.update();
-        }
-    }
-    get yOffset(): number {
-        return this._yOffset;
-    }
+    // private _yOffset: number = 0;
+    // set yOffset(value: number) {
+    //     if (this._yOffset !== value) {
+    //         this._yOffset = value;
+    //         this.update();
+    //     }
+    // }
+    // get yOffset(): number {
+    //     return this._yOffset;
+    // }
 
-    private _fill: string | undefined = undefined;
+    private _fill: string | undefined = palette.fills[0];
     set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
+            this.stroke = Color.fromString(value).darker().toHexString();
             this.update();
         }
     }
@@ -195,7 +190,7 @@ class SeriesMarker {
         return this._fill;
     }
 
-    private _stroke: string | undefined = undefined;
+    private _stroke: string | undefined = palette.strokes[0];
     set stroke(value: string | undefined) {
         if (this._stroke !== value) {
             this._stroke = value;
@@ -215,6 +210,28 @@ class SeriesMarker {
     }
     get strokeWidth(): number | undefined {
         return this._strokeWidth;
+    }
+
+    private _fillOpacity: number = 1;
+    set fillOpacity(value: number) {
+        if (this._fillOpacity !== value) {
+            this._fillOpacity = value;
+            this.update();
+        }
+    }
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    private _strokeOpacity: number = 1;
+    set strokeOpacity(value: number) {
+        if (this._strokeOpacity !== value) {
+            this._strokeOpacity = value;
+            this.update();
+        }
+    }
+    get strokeOpacity(): number {
+        return this._strokeOpacity;
     }
 
     protected update() {
@@ -277,7 +294,7 @@ export abstract class Series<C extends Chart> {
 
     tooltipEnabled: boolean = false;
 
-    readonly marker2 = new SeriesMarker();
+    readonly marker = new SeriesMarker();
 
     /**
      * @private

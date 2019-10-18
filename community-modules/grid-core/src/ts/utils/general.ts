@@ -495,7 +495,7 @@ export class Utils {
     static assign(object: any, ...sources: any[]): any {
         sources.forEach(source => {
             if (this.exists(source)) {
-                this.iterateObject(source, function (key: string, value: any) {
+                this.iterateObject(source, function(key: string, value: any) {
                     object[key] = value;
                 });
             }
@@ -1165,22 +1165,12 @@ export class Utils {
         }
     }
 
-    static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void {
-        if (eChildBefore) {
-            if (eChildBefore.nextSibling) {
-                // insert between the eRowBefore and the row after it
-                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
-            } else {
-                // if nextSibling is missing, means other row is at end, so just append new row at the end
-                eContainer.appendChild(eChild);
-            }
-        } else {
-            if (eContainer.firstChild) {
-                // insert it at the first location
-                eContainer.insertBefore(eChild, eContainer.firstChild);
-            } else {
-                // otherwise eContainer is empty, so just append it
-                eContainer.appendChild(eChild);
+    static setDomChildOrder(eContainer: HTMLElement, orderedChildren: HTMLElement[]): void {
+        for (let i = 0; i < orderedChildren.length; i++) {
+            const correctCellAtIndex = orderedChildren[i];
+            const actualCellAtIndex = eContainer.children[i];
+            if (actualCellAtIndex !== correctCellAtIndex) {
+                eContainer.insertBefore(correctCellAtIndex, actualCellAtIndex);
             }
         }
     }
@@ -1613,7 +1603,7 @@ export class Utils {
             const anyWindow = window as any;
             // taken from https://github.com/ag-grid/ag-grid/issues/550
             this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function (p) {
+                || (function(p) {
                     return p ? p.toString() === "[object SafariRemoteNotification]" : false;
                 })
                     (!anyWindow.safari || anyWindow.safari.pushNotification);
@@ -2067,7 +2057,7 @@ export class Utils {
         let timeout: any;
 
         // Calling debounce returns a new anonymous function
-        return function (...args: any[]) {
+        return function(...args: any[]) {
             // reference the context and args for the setTimeout function
             const context = this;
 
@@ -2082,7 +2072,7 @@ export class Utils {
             window.clearTimeout(timeout);
 
             // Set the new timeout
-            timeout = window.setTimeout(function () {
+            timeout = window.setTimeout(function() {
 
                 // Inside the timeout function, clear the timeout variable
                 // which will let the next execution run when in 'immediate' mode

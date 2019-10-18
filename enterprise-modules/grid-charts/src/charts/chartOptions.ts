@@ -210,7 +210,12 @@ export interface LineSeriesOptions extends SeriesOptions {
 export interface MarkerOptions {
     enabled?: boolean;
     size?: number;
+    minSize?: number;
+    fill?: string;
+    stroke?: string;
     strokeWidth?: number;
+    fillOpacity?: number;
+    strokeOpacity?: number;
 }
 
 export interface LineSeriesFieldOptions {

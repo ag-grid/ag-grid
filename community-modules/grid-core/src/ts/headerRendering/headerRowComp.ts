@@ -162,7 +162,7 @@ export class HeaderRowComp extends Component {
         this.setWidth();
     }
 
-    private getItemsAtDept(): ColumnGroupChild[] {
+    private getItemsAtDepth(): ColumnGroupChild[] {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         if (printLayout) {
@@ -197,10 +197,8 @@ export class HeaderRowComp extends Component {
     private onVirtualColumnsChanged(): void {
 
         const currentChildIds = Object.keys(this.headerComps);
-
-        const itemsAtDepth = this.getItemsAtDept();
-        const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
-        let eBefore: HTMLElement;
+        const correctChildIds: string[] = [];
+        const itemsAtDepth = this.getItemsAtDepth();
 
         itemsAtDepth.forEach((child: ColumnGroupChild) => {
             // skip groups that have no displayed children. this can happen when the group is broken,
@@ -220,27 +218,24 @@ export class HeaderRowComp extends Component {
             let eHeaderCompGui: HTMLElement;
             if (colAlreadyInDom) {
                 _.removeFromArray(currentChildIds, idOfChild);
-                headerComp = this.headerComps[idOfChild];
-                eHeaderCompGui = headerComp.getGui();
-                if (ensureDomOrder) {
-                    _.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
-                }
-                eBefore = eHeaderCompGui;
             } else {
                 headerComp = this.createHeaderComp(child);
                 this.headerComps[idOfChild] = headerComp;
                 eHeaderCompGui = headerComp.getGui();
-                if (ensureDomOrder) {
-                    _.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
-                } else {
-                    eParentContainer.appendChild(eHeaderCompGui);
-                }
-                eBefore = eHeaderCompGui;
+                eParentContainer.appendChild(eHeaderCompGui);
             }
+
+            correctChildIds.push(idOfChild);
         });
 
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
         this.removeAndDestroyChildComponents(currentChildIds);
+
+        const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
+        if (ensureDomOrder) {
+            const correctChildOrder = correctChildIds.map(id => this.headerComps[id].getGui());
+            _.setDomChildOrder(this.getGui(), correctChildOrder);
+        }
     }
 
     private createHeaderComp(columnGroupChild: ColumnGroupChild): IComponent<any> {

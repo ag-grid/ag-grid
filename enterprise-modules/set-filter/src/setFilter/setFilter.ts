@@ -263,6 +263,10 @@ export class SetFilter extends ProvidedFilter {
         this.eMiniFilter.focus();
     }
 
+    public refreshVirtualList(): void {
+        this.virtualList.refresh();
+    }
+
     public applyModel(): boolean {
         const res = super.applyModel();
 

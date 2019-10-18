@@ -309,12 +309,11 @@ export abstract class Chart {
         let paddingTop = 0;
 
         if (title && title.enabled) {
-            paddingTop += 10;
-            const bbox = title.node.getBBox();
             title.node.x = this.width / 2;
-            title.node.y = paddingTop;
+            title.node.y = 10;
             titleVisible = true;
-            paddingTop += bbox ? bbox.height : 0;
+            const bbox = title.node.getBBox();
+            paddingTop += bbox ? bbox.y + bbox.height * 1.5 : 0;
 
             if (subtitle && subtitle.enabled) {
                 const bbox = subtitle.node.getBBox();

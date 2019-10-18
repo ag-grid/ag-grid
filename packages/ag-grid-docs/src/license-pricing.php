@@ -578,7 +578,8 @@ gtm_data_layer('community-enterprise');
         return viewport;
     }
 
-    var win = jQuery('.page-content');
+    var win = jQuery(window);
+    var scroller = jQuery('.page-content')[0];
 
     function trackIfInViewPort(element, leeway, callback) {
         function comparePosition() {
@@ -590,7 +591,7 @@ gtm_data_layer('community-enterprise');
         }
 
         comparePosition();
-        win[0].addEventListener('scroll', comparePosition);
+        scroller.addEventListener('scroll', comparePosition);
     }
 
     function positionAndToggleSideBar(inViewPort) {

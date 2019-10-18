@@ -4,19 +4,12 @@ import { ColumnController, ColumnState } from "./columnController";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
-import { Autowired, Bean, PostConstruct } from "../context/context";
-import { EventService, setDefaultEventSourceForClassMethods } from "../eventService";
+import { Autowired, Bean } from "../context/context";
 
 @Bean('columnApi')
 export class ColumnApi {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
-
-    @PostConstruct
-    private init(): void {
-        setDefaultEventSourceForClassMethods('api', this, ColumnApi, this.eventService);
-    }
 
     public sizeColumnsToFit(gridWidth: any): void { this.columnController.sizeColumnsToFit(gridWidth, 'api'); }
     public setColumnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void { this.columnController.setColumnGroupOpened(group, newValue, 'api'); }
