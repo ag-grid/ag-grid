@@ -4,7 +4,6 @@ const path = require('path');
 module.exports = {
     mode: 'development',
     devtool: 'inline-source-map',
-    entry: ['webpack-hot-middleware/client'],
     externals: {
         angular: 'angular',
         react: 'react',
@@ -12,8 +11,8 @@ module.exports = {
     },
     resolve: {
         alias: {
-            './dist/lib/main': './src/main.ts',
-            './dist/lib': './src/ts'
+            // './dist/es6': './src'
+            "@ag-community/grid-core": path.resolve(__dirname, "../../../community-modules/grid-core/src/ts/main.ts")
         },
         extensions: ['.ts', '.js']
     },

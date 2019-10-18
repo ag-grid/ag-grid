@@ -1,22 +1,39 @@
 const glob = require('glob');
 
 const getAllModules = () => {
-    const agGridCommunityModules = glob.sync("../ag-grid-community/*Module.js")
-        .map(module => module.replace('../ag-grid-community/', ''))
-        .map(module => module.replace('.js', ''));
+    const mapModules = moduleRoot => glob.sync(`../../${moduleRoot}/*`)
+        .map(module => glob.sync(`${module}/src/*Module.ts`)[0])
+        .filter(module => module)
+        .map(module => {
+            // this relies on the module name within the module class to be the same as the filename
+            const fullPath = `${module}`;
+            const filename = module.substr(module.lastIndexOf('/') + 1);
+            const moduleName = filename.charAt(0).toUpperCase() + filename.slice(1).replace('.ts', '');
 
-    const agGridEnterpriseModules = glob.sync("../ag-grid-enterprise/*Module.js")
-        .map(module => module.replace('../ag-grid-enterprise/', ''))
-        .map(module => module.replace('.js', ''));
+            let moduleDirName = fullPath.replace(`../../${moduleRoot}/`, '');
+            moduleDirName = moduleDirName.substr(0, moduleDirName.lastIndexOf("/src"));
 
-    const communityModules = glob.sync("../../community-modules/*")
-        .filter(module => module.indexOf('ag-grid') === -1)
-        .map(module => module.replace('../../community-modules/', ''));
+            const sourceDir = fullPath.substr(0, fullPath.lastIndexOf("/"));
+            const rootDir = sourceDir.substr(0, sourceDir.lastIndexOf("/"));
 
-    const enterpriseModules = glob.sync("../../enterprise-modules/*")
-        .map(module => module.replace('../../enterprise-modules/', ''));
+            const barrelNamePrefix = moduleRoot === 'community-modules' ? '@ag-community' : '@ag-enterprise';
+            const publishedName = `${barrelNamePrefix}/${moduleDirName}`;
 
-    return {agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules};
+            return {
+                publishedName,
+                fullPath,
+                filename,
+                moduleName,
+                sourceDir,
+                rootDir,
+                moduleDirName
+            }
+        });
+
+    const communityModules = mapModules('community-modules');
+    const enterpriseModules = mapModules('enterprise-modules');
+
+    return {communityModules, enterpriseModules};
 };
 
 exports.getAllModules = getAllModules;

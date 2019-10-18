@@ -13,7 +13,7 @@ import {
     TextFormatter,
     ValueFormatterService,
     _
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for

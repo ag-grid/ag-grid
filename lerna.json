@@ -3,7 +3,8 @@
   "packages": [
     "packages/*",
     "community-modules/*",
-    "enterprise-modules/*"
+    "enterprise-modules/*",
+    "fw-examples/*"
   ],
   "command": {
     "bootstrap": {

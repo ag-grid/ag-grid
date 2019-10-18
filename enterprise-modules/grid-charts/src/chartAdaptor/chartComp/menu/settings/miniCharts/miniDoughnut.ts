@@ -1,4 +1,4 @@
-import {_, ChartType} from "ag-grid-community";
+import {_, ChartType} from "@ag-community/grid-core";
 
 import {MiniChart} from "./miniChart";
 import {Sector} from "../../../../../charts/scene/shape/sector";

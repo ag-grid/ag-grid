@@ -1,10 +1,13 @@
-import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
+import {Module, ModuleNames} from "@ag-community/grid-core";
 import {PrimaryColsHeaderPanel} from "./columnToolPanel/primaryColsHeaderPanel";
 import {PrimaryColsListPanel} from "./columnToolPanel/primaryColsListPanel";
 import {ColumnToolPanel} from "./columnToolPanel/columnToolPanel";
 import {PrimaryColsPanel} from "./columnToolPanel/primaryColsPanel";
 
-export const ColumnToolPanelModule: Module = {
+import {RowGroupingModule} from "@ag-enterprise/row-grouping";
+import {SideBarModule} from "@ag-enterprise/side-bar";
+
+export const ColumnsToolPanelModule: Module = {
     moduleName: ModuleNames.ColumnToolPanelModule,
     beans: [],
     agStackComponents: [
@@ -14,7 +17,10 @@ export const ColumnToolPanelModule: Module = {
     ],
     userComponents: [
         {componentName: 'agColumnsToolPanel', componentClass: ColumnToolPanel},
+    ],
+    dependantModules: [
+        RowGroupingModule,
+        SideBarModule
     ]
 };
 
-ModuleRegistry.register(ColumnToolPanelModule);

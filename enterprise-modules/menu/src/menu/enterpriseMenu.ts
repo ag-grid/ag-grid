@@ -8,6 +8,7 @@ import {
     ColumnController,
     Constants,
     Context,
+    Events,
     EventService,
     FilterManager,
     FilterWrapper,
@@ -22,9 +23,8 @@ import {
     PostConstruct,
     Promise,
     TabbedItem,
-    TabbedLayout,
-    Events
-} from "ag-grid-community";
+    TabbedLayout
+} from "@ag-community/grid-core";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";

@@ -29,7 +29,7 @@ import {
     ValueCache,
     ValueService,
     IClientSideRowModel
-} from "ag-grid-community"
+} from "@ag-community/grid-core"
 import {ClientSideNodeManager} from "./clientSideNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}

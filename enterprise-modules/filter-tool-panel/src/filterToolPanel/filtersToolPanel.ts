@@ -10,7 +10,7 @@ import {
     IToolPanelParams,
     RefSelector,
     IFiltersToolPanel
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import {FiltersToolPanelHeaderPanel} from "./filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./filtersToolPanelListPanel";
 

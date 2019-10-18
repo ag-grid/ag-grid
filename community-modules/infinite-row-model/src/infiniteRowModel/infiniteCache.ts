@@ -12,7 +12,7 @@ import {
     RowNode,
     RowNodeCache,
     RowNodeCacheParams,
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import {InfiniteBlock} from "./infiniteBlock";
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {

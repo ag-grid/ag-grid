@@ -5,7 +5,7 @@ import {
     IRowNodeStage,
     SelectableService,
     StageExecuteParams
-} from "ag-grid-community"
+} from "@ag-community/grid-core"
 
 import {FilterService} from "./filterService";
 

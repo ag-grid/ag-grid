@@ -1,6 +1,5 @@
 import * as jQuery from 'jquery';
 
-
 const win = jQuery(window);
 const scroller = jQuery('.page-content')[0];
 
@@ -29,7 +28,6 @@ export function whenInViewPort(element, callback) {
     function comparePosition() {
         const viewPort = getCurrentViewPort();
         const box = getRect(element);
-        console.log(viewPort.bottom, box.top);
         if (viewPort.bottom >= box.top) {
             scroller.removeEventListener('scroll', comparePosition);
             callback();

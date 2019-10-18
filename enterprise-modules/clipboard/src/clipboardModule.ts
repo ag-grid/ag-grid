@@ -1,4 +1,4 @@
-import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
+import {Module, ModuleNames} from "@ag-community/grid-core";
 import {ClipboardService} from "./clipboard/clipboardService";
 
 export const ClipboardModule: Module = {
@@ -6,4 +6,3 @@ export const ClipboardModule: Module = {
     beans: [ClipboardService]
 };
 
-ModuleRegistry.register(ClipboardModule);

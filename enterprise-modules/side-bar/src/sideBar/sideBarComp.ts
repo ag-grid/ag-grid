@@ -14,7 +14,7 @@ import {
     SideBarDef,
     ToolPanelDef,
     ToolPanelVisibleChangedEvent
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import {SideBarButtonClickedEvent, SideBarButtonsComp} from "./sideBarButtonsComp";
 import {ToolPanelWrapper} from "./toolPanelWrapper";
 

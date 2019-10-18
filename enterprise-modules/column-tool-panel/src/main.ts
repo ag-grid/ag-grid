@@ -1,1 +1,1 @@
-export {ColumnToolPanelModule} from "./columnsToolPanelModule"
+export {ColumnsToolPanelModule} from "./columnsToolPanelModule"

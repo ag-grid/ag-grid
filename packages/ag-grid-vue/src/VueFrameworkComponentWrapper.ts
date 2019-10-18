@@ -1,4 +1,4 @@
-import { BaseComponentWrapper, Bean, WrapableInterface } from 'ag-grid-community';
+import { BaseComponentWrapper, Bean, WrapableInterface } from '@ag-community/grid-core';
 import { AgGridVue} from './AgGridVue';
 import { VueComponentFactory } from './VueComponentFactory';
 

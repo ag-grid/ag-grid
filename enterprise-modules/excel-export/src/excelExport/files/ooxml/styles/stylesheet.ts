@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders, ExcelFont, _ } from 'ag-grid-community';
+import { ExcelOOXMLTemplate, ExcelStyle, ExcelInterior, ExcelBorders, ExcelFont, _ } from '@ag-community/grid-core';
 import numberFormatsFactory from './numberFormats';
 import fontsFactory from './fonts';
 import fillsFactory from './fills';

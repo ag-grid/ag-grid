@@ -18,7 +18,7 @@ import {
     StageExecuteParams,
     ValueService,
     _
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'

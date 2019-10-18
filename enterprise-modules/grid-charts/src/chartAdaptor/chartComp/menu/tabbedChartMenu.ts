@@ -8,7 +8,7 @@ import {
     Promise,
     TabbedItem,
     TabbedLayout
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { ChartController } from "../chartController";
 import { ChartDataPanel } from "./data/chartDataPanel";
 import { ChartFormattingPanel } from "./format/chartFormattingPanel";

@@ -1,4 +1,4 @@
-import {IComponent, WrapableInterface} from 'ag-grid-community';
+import {IComponent, WrapableInterface} from '@ag-community/grid-core';
 
 export abstract class BaseReactComponent implements IComponent<any>, WrapableInterface {
     hasMethod(name: string): boolean {

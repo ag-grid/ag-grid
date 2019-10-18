@@ -1,4 +1,4 @@
-import { Bean, IStatusPanelComp, IStatusBarService } from 'ag-grid-community';
+import { Bean, IStatusPanelComp, IStatusBarService } from '@ag-community/grid-core';
 
 @Bean('statusBarService')
 export class StatusBarService implements IStatusBarService {

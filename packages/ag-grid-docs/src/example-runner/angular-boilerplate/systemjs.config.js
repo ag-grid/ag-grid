@@ -4,7 +4,7 @@
  * System configuration for Angular samples
  * Adjust as necessary for your application needs.
  */
-(function(global) {
+(function (global) {
     var ANGULAR_VERSION = "5.1.3";
     var ANGULAR_CDK_VERSION = "5.2.5";
     var ANGULAR_MATERIAL_VERSION = "5.2.5";
@@ -27,7 +27,8 @@
         meta: {
             typescript: {
                 exports: "ts"
-            }
+            },
+            '*.css': {loader: 'css'}
         },
         paths: {
             // paths serve as alias
@@ -52,6 +53,9 @@
         // map tells the System loader where to look for things
         map: Object.assign(
             {
+                // css plugin
+                'css': 'npm:systemjs-plugin-css/css.js',
+
                 // angular bundles
                 "@angular/animations": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations.umd.js",
                 "@angular/animations/browser": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations-browser.umd.js",
@@ -121,9 +125,14 @@
                 main: "./main.js",
                 defaultExtension: "js"
             },
-            "ag-grid-enterprise": {
-                main: "./main.js",
-                defaultExtension: "js"
+            // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
+            '@ag-community/grid-core/dist/cjs/utils': {
+                main: './index.js',
+                defaultExtension: 'js'
+            },
+            '@ag-enterprise/grid-charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
+                main: './index.js',
+                defaultExtension: 'js'
             },
             /* START OF MODULES - DO NOT DELETE */
            '@ag-community/client-side-row-model': { 
@@ -131,6 +140,14 @@
                 defaultExtension: 'js'
             },
            '@ag-community/csv-export': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-community/grid-all-modules': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-community/grid-core': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
@@ -158,7 +175,15 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
+           '@ag-enterprise/grid-all-modules': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
            '@ag-enterprise/grid-charts': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-enterprise/grid-core': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },

@@ -21,7 +21,7 @@ const buildEs5 = () => {
 
 const watch = () => {
     gulp.watch([
-            './node_modules/ag-grid-community/dist/**/*.js',
+            './node_modules/@ag-community/ag-grid/dist/**/*.js',
             './node_modules/ag-grid-enterprise/dist/**/*.js',
             './src/**/*.ts'
         ],

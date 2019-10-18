@@ -1,4 +1,4 @@
-import { Bean, _ } from 'ag-grid-community';
+import { Bean, _ } from "@ag-community/grid-core";
 
 export interface ZipFolder {
     path: string;

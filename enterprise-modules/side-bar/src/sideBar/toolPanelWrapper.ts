@@ -7,7 +7,7 @@ import {
     ToolPanelDef,
     PostConstruct,
     GridOptionsWrapper
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { HorizontalResizeComp } from "./horizontalResizeComp";
 
 export class ToolPanelWrapper extends Component {

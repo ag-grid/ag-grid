@@ -13,7 +13,7 @@ import {
     RowBounds,
     RowNode,
     RowNodeCacheParams, RowNodeCache
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 
 import {ServerSideBlock} from "./serverSideBlock";
 

@@ -19,6 +19,9 @@
         },
         map: assign(
             {
+                // css plugin
+                'css': 'npm:systemjs-plugin-css/css.js',
+
                 // babel transpiler
                 'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
                 'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
@@ -62,8 +65,13 @@
                 main: './main.js',
                 defaultExtension: 'js'
             },
-            'ag-grid-enterprise': {
-                main: './main.js',
+            // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
+            '@ag-community/grid-core/dist/cjs/utils': {
+                main: './index.js',
+                defaultExtension: 'js'
+            },
+            '@ag-enterprise/grid-charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
+                main: './index.js',
                 defaultExtension: 'js'
             },
             /* START OF MODULES - DO NOT DELETE */
@@ -72,6 +80,14 @@
                 defaultExtension: 'js'
             },
            '@ag-community/csv-export': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-community/grid-all-modules': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-community/grid-core': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
@@ -99,7 +115,15 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
+           '@ag-enterprise/grid-all-modules': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
            '@ag-enterprise/grid-charts': { 
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
+           '@ag-enterprise/grid-core': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
@@ -150,7 +174,8 @@
                 babelOptions: {
                     react: true
                 }
-            }
+            },
+            '*.css': {loader: 'css'}
         }
     });
 })(this);

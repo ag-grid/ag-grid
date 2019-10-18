@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate } from 'ag-grid-community';
+import { ExcelOOXMLTemplate } from '@ag-community/grid-core';
 import colorScheme from './colorScheme';
 import fontScheme from './fontScheme';
 import formatScheme from './formatScheme';

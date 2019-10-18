@@ -13,7 +13,7 @@ import {
     RowNode,
     RowRenderer,
     IRangeController
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
 import { Palette } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";

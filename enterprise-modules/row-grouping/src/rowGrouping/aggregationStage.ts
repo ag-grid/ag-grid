@@ -11,7 +11,7 @@ import {
     IAggFunc,
     ChangedPath,
     _
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import { PivotStage } from "./pivotStage";
 import { AggFuncService } from "./aggFuncService";
 

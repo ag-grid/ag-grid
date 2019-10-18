@@ -19,7 +19,7 @@ import {
     IToolPanelParams,
     IAfterGuiAttachedParams,
     IStatusPanelParams
-} from 'ag-grid-community';
+} from '@ag-community/grid-core';
 
 export interface AgReactFrameworkComponent<T> {
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;

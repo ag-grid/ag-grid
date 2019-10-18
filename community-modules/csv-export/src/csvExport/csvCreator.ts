@@ -13,7 +13,7 @@ import {
     PostConstruct,
     RowNode,
     ValueService
-} from "ag-grid-community"
+} from "@ag-community/grid-core"
 
 import {
     BaseGridSerializingSession,

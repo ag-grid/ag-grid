@@ -65,23 +65,14 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
     }
 
     // spl modules
-    // imports.push('import "@ag-community/ag-grid";');
-    communityModules.forEach(module => {
-        imports.push(`import "@ag-community/${module}";`);
-    });
-
     if (bindings.gridSettings.enterprise) {
-        enterpriseModules.forEach(module => {
-            imports.push(`import "@ag-enterprise/${module}";`);
-        });
-
-        imports.push('import "ag-grid-enterprise";');
+        imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
+    } else {
+        imports.push('import {AllModules} from "@ag-community/grid-all-modules";');
     }
 
-    const chartsEnabled = bindings.properties.filter(property => property.name === 'enableCharts' && property.value === 'true').length >= 1;
-    if(chartsEnabled && !isDev) {
-        imports.push('import "ag-grid-enterprise/chartsModule";');
-    }
+    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
+    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";');
 
     if (componentFileNames) {
         let titleCase = (s) => {
@@ -95,7 +86,7 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
         });
     }
 
-    const propertyAttributes = [];
+    const propertyAttributes = ['[modules]="modules"'];
     const propertyVars = [];
     const propertyAssignments = [];
 
@@ -173,6 +164,7 @@ ${imports.join('\n')}
 export class AppComponent {
     private gridApi;
     private gridColumnApi;
+    public modules: Module[] = AllModules;
 
     ${propertyVars.join('\n')}
 

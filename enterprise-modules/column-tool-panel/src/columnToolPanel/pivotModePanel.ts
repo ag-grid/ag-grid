@@ -8,7 +8,7 @@ import {
     GridOptionsWrapper,
     PreConstruct,
     RefSelector
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 
 export class PivotModePanel extends Component {
 

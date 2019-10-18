@@ -3,16 +3,14 @@ const fs = require('fs');
 const cp = require('child_process');
 const path = require('path');
 const rimraf = require('rimraf');
-const glob = require('glob');
 const express = require('express');
 const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
-const hotMiddleware = require('webpack-hot-middleware');
 const chokidar = require('chokidar');
 const generateExamples = require('./example-generator');
 const buildPackagedExamples = require('./packaged-example-builder');
-const getAllModules =require("./utils").getAllModules;
+const getAllModules = require("./utils").getAllModules;
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
@@ -22,36 +20,19 @@ const PHP_PORT = 8888;
 const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
-const rewrite = require('express-urlrewrite');
-
-var argv = require('minimist')(process.argv.slice(2));
-const useHmr = argv.hmr;
-
 function addWebpackMiddleware(app, configFile, prefix) {
     const webpackConfig = require(path.resolve(`./webpack-config/${configFile}`));
 
-    webpackConfig.plugins.push(new realWebpack.DefinePlugin({HMR: useHmr}));
-
-    // remove the HMR plugins - very "hardcoded" approach. 
-    if (!useHmr) {
-        webpackConfig.plugins.splice(0, 2);
-    }
-
     const compiler = realWebpack(webpackConfig);
-
-    app.use(rewrite(new RegExp(`^${prefix}/(.+).hot-update.(json|js)`), `${prefix}${prefix}/$1.hot-update.$2`));
 
     app.use(
         prefix,
         webpackMiddleware(compiler, {
             noInfo: true,
+            logLevel: 'trace',
             publicPath: '/'
         })
     );
-
-    if (useHmr) {
-        app.use(prefix, hotMiddleware(compiler));
-    }
 }
 
 function launchPhpCP(app) {
@@ -75,117 +56,31 @@ function launchPhpCP(app) {
     });
 }
 
-function serveAndWatchAngular(app) {
+function serveAndWatchFramework(app, framework) {
     const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
 
-    const angularWatch = cp.spawn(gulpPath, ['watch'], {
+    const frameworkWatch = cp.spawn(gulpPath, ['watch'], {
         stdio: 'inherit',
-        cwd: '../ag-grid-angular'
+        cwd: `../${framework}`
     });
 
-    app.use('/dev/ag-grid-angular', express.static('../ag-grid-angular'));
+    app.use(`/dev/${framework}`, express.static(`../${framework}`));
 
     process.on('exit', () => {
-        angularWatch.kill();
+        frameworkWatch.kill();
     });
 }
 
-function serveAndWatchVue(app) {
-    const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
-
-    const vueWatch = cp.spawn(gulpPath, ['watch'], {
-        stdio: 'inherit',
-        cwd: '../ag-grid-vue'
-    });
-
-    app.use('/dev/ag-grid-vue', express.static('../ag-grid-vue'));
-
-    process.on('exit', () => {
-        vueWatch.kill();
-    });
-}
-
-function serveAndWatchModules(app, communityModules, enterpriseModules) {
+function serveModules(app, communityModules, enterpriseModules) {
     // spl modules
-    const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
-
-    const watchModule = (type, module) => {
-        console.log(`watching module ${module}`);
-
-        const moduleDirName = `../../${type}-modules/${module}`;
-        const moduleWatch = cp.spawn(gulpPath, ['watch'], {
-            stdio: 'inherit',
-            cwd: `${moduleDirName}`
-        });
-
-        app.use(`/dev/@ag-${type}/${module}`, express.static(`${moduleDirName}`));
-
-        process.on('exit', () => {
-            moduleWatch.kill();
-        });
-    };
-
-    communityModules.forEach(module => {
-        watchModule('community', module);
-    });
-    enterpriseModules.forEach(module => {
-        watchModule('enterprise', module);
+    console.log("serving modules");
+    communityModules.concat(enterpriseModules).forEach(module => {
+        console.log(`serving modules ${module.publishedName} from ./_dev/${module.publishedName} - available at /dev/${module.publishedName}`);
+        app.use(`/dev/${module.publishedName}`, express.static(`./_dev/${module.publishedName}`));
     });
 }
 
-function launchTSCCheck(communityModules, enterpriseModules) {
-    // we delete the _dev folder each time we run now as we're constantly adding new modules etc
-    // this saves us having to manually delete _dev each time
-    if (fs.existsSync('_dev')) {
-        rimraf.sync("_dev");
-    }
-
-    mkdirp('_dev/ag-grid-community/dist');
-    mkdirp('_dev/@ag-community/');
-
-    let linkType = 'symbolic';
-    if (WINDOWS) {
-        console.log('creating window links...');
-        linkType = 'junction';
-    }
-
-    lnk('../ag-grid-community/src/main.ts', '_dev/ag-grid-community/', {
-        force: true,
-        type: linkType,
-        rename: 'main.ts'
-    });
-    lnk('../ag-grid-community/src/ts', '_dev/ag-grid-community/dist', {
-        force: true,
-        type: linkType,
-        rename: 'lib'
-    });
-    lnk('../ag-grid-enterprise/', '_dev', {force: true, type: linkType});
-    lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
-    lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
-        force: true,
-        type: linkType,
-        rename: 'main.ts'
-    });
-    lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
-    lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
-
-    // spl modules
-    // lnk('../../community-modules/ag-grid', '_dev/@ag-community', {force: true, type: linkType, rename: 'ag-grid'});
-    communityModules.forEach(module => {
-        lnk(`../../community-modules/${module}`, '_dev/@ag-community', {
-            force: true,
-            type: linkType,
-            rename: module
-        });
-    });
-    enterpriseModules.forEach(module => {
-        lnk(`../../enterprise-modules/${module}`, '_dev/@ag-enterprise', {
-            force: true,
-            type: linkType,
-            rename: module
-        });
-    });
-
+function launchTSCCheck() {
     const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
 
     const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
@@ -202,6 +97,53 @@ function launchTSCCheck(communityModules, enterpriseModules) {
     });
 }
 
+function symlinkModules(communityModules, enterpriseModules) {
+    // we delete the _dev folder each time we run now as we're constantly adding new modules etc
+    // this saves us having to manually delete _dev each time
+    if (fs.existsSync('_dev')) {
+        rimraf.sync("_dev");
+    }
+
+    mkdirp('_dev/');
+    mkdirp('_dev/@ag-community/');
+    mkdirp('_dev/@ag-enterprise/');
+
+    let linkType = 'symbolic';
+    if (WINDOWS) {
+        console.log('creating window links...');
+        linkType = 'junction';
+    }
+
+    lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
+    lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
+        force: true,
+        type: linkType,
+        rename: 'main.ts'
+    });
+    lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
+    lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
+
+    // spl modules
+    communityModules
+        .forEach(module => {
+            console.log(module.moduleDirName);
+            lnk(module.rootDir, '_dev/@ag-community', {
+                force: true,
+                type: linkType,
+                rename: module.moduleDirName
+            });
+        });
+
+    enterpriseModules
+        .forEach(module => {
+            lnk(module.rootDir, '_dev/@ag-enterprise', {
+                force: true,
+                type: linkType,
+                rename: module.moduleDirName
+            });
+        });
+}
+
 const exampleDirMatch = new RegExp('src/([-\\w]+)/');
 
 function watchAndGenerateExamples(communityModules, enterpriseModules) {
@@ -216,6 +158,7 @@ function watchAndGenerateExamples(communityModules, enterpriseModules) {
             }
         }
         console.log('regenerating examples...');
+        // generateExamples(() => console.log('generation done.'), 'javascript-grid-column-header', true, communityModules, enterpriseModules);
         generateExamples(() => console.log('generation done.'), dir, true, communityModules, enterpriseModules);
     };
 
@@ -225,32 +168,37 @@ function watchAndGenerateExamples(communityModules, enterpriseModules) {
     chokidar.watch('./src/*/*/*.{html,css,js}').on('change', callback);
 }
 
-function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules) {
+function updateWebpackConfigWithBundles(communityModules, enterpriseModules) {
     console.log("updating webpack config with modules...");
 
     // spl modules
-    const agGridCommunityModulesEntries = agGridCommunityModules
-        .map(module => `../../../../ag-grid-community/src/ts/modules/${module}.ts`)
-        .map(module => `import "${module}";`);
-
-    const agGridEnterpriseModulesEntries = agGridEnterpriseModules
-        .map(module => `../../../../ag-grid-enterprise/src/modules/${module}.ts`)
-        .map(module => `import "${module}";`);
-
     const communityModulesEntries = communityModules
-        .map(module => glob.sync(`../../community-modules/${module}/src/*Module.ts`))
-        .map(module => `import "../../../${module}";`);
+        .filter(module => module.moduleDirName !== 'grid-core')
+        .filter(module => module.moduleDirName !== 'grid-all-modules')
+        .map(module => `import "../../../${module.fullPath}";
+import {${module.moduleName}} from "../../../${module.fullPath.replace('.ts', '')}"; 
+        `);
+
+    const communityRegisterModuleLines = communityModules
+        .filter(module => module.moduleDirName !== 'grid-core')
+        .filter(module => module.moduleDirName !== 'grid-all-modules')
+        .map(module => `ModuleRegistry.register(${module.moduleName} as any);`);
 
     const enterpriseModulesEntries = enterpriseModules
-        .map(module => glob.sync(`../../enterprise-modules/${module}/src/*Module.ts`))
-        .map(module => `import "../../../${module}";`);
+        .filter(module => module.moduleDirName !== 'grid-core')
+        .filter(module => module.moduleDirName !== 'grid-all-modules')
+        .map(module => `import "../../../${module.fullPath}";
+import {${module.moduleName}} from "../../../${module.fullPath.replace('.ts', '')}"; 
+        `);
 
-    const communityEntries = agGridCommunityModulesEntries.concat(communityModulesEntries);
-    const enterpriseEntries = agGridEnterpriseModulesEntries.concat(enterpriseModulesEntries);
+    const enterpriseRegisterModuleLines = enterpriseModules
+        .filter(module => module.moduleDirName !== 'grid-core')
+        .filter(module => module.moduleDirName !== 'grid-all-modules')
+        .map(module => `ModuleRegistry.register(${module.moduleName} as any);`);
 
-    const enterpriseBundleFilename = './src/_assets/ts/ag-grid-enterprise-bundle.ts';
+    const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd.ts';
     const enterpriseMainFilename = './src/_assets/ts/ag-grid-enterprise-main.ts';
-    const communityFilename = 'src/_assets/ts/ag-grid-community.ts';
+    const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd.ts';
 
     const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split('\n');
     let modulesLineFound = false;
@@ -261,8 +209,8 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
             newEnterpriseBundleLines.push(line);
         }
     });
-    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseEntries).concat(['import "../../../../ag-grid-enterprise/src/main.ts";']);
-    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.join('\n'), 'UTF-8');
+    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
 
     const existingEnterpriseMainLines = fs.readFileSync(enterpriseMainFilename, 'UTF-8').split('\n');
     modulesLineFound = false;
@@ -273,7 +221,7 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
             newEnterpriseMainLines.push(line);
         }
     });
-    const newEnterpriseMainContent = newEnterpriseMainLines.concat(enterpriseEntries).concat(['import "../../../../ag-grid-enterprise/src/main.ts";']);
+    const newEnterpriseMainContent = newEnterpriseMainLines.concat(enterpriseModulesEntries);
     fs.writeFileSync(enterpriseMainFilename, newEnterpriseMainContent.join('\n'), 'UTF-8');
 
     const existingCommunityLines = fs.readFileSync(communityFilename).toString().split('\n');
@@ -281,11 +229,11 @@ function updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterprise
     const newCommunityLines = [];
     existingCommunityLines.forEach(line => {
         if (!modulesLineFound) {
-            modulesLineFound = line === "/* MODULES - Don't delete this line */";
+            modulesLineFound = line.indexOf("/* MODULES - Don't delete this line */") !== -1;
             newCommunityLines.push(line);
         }
     });
-    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityEntries).join('\n'), 'UTF-8');
+    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
 }
 
 function updateSystemJsMappings(utilFileLines,
@@ -335,8 +283,8 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         '/* END OF MODULES DEV - DO NOT DELETE */',
         communityModules,
         enterpriseModules,
-        module => `        "@ag-community/${module}" => "$prefix/@ag-community/${module}",`,
-        module => `        "@ag-enterprise/${module}" => "$prefix/@ag-enterprise/${module}",`);
+        module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`,
+        module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`);
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
         '/* START OF MODULES PROD - DO NOT DELETE */',
@@ -344,8 +292,8 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         communityModules,
         enterpriseModules,
         // spl module - to test prior to release!!!
-        module => `        "@ag-community/${module}" => "https://unpkg.com/@ag-community/${module}@" . AG_GRID_VERSION . "/",`,
-        module => `        "@ag-enterprise/${module}" => "https://unpkg.com/@ag-enterprise/${module}@" . AG_GRID_ENTERPRISE_VERSION . "/",`);
+        module => `        "${module.publishedName}" => "https://unpkg.com/${module.publishedName}@" . AG_GRID_VERSION . "/",`,
+        module => `        "${module.publishedName}" => "https://unpkg.com/${module.publishedName}@" . AG_GRID_ENTERPRISE_VERSION . "/",`);
 
     fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
 }
@@ -367,11 +315,11 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
             '/* END OF MODULES - DO NOT DELETE */',
             communityModules,
             enterpriseModules,
-            module => `           '@ag-community/${module}': { 
+            module => `           '${module.publishedName}': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },`,
-            module => `           '@ag-enterprise/${module}': { 
+            module => `           '${module.publishedName}': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },`);
@@ -384,32 +332,38 @@ module.exports = () => {
     const app = express();
 
     // necessary for plunkers
-
     app.use(function (req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         return next();
     });
 
-    const {agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules} = getAllModules();
+    const {communityModules, enterpriseModules} = getAllModules();
+    updateWebpackConfigWithBundles(communityModules, enterpriseModules);
 
-    updateWebpackConfigWithBundles(agGridCommunityModules, agGridEnterpriseModules, communityModules, enterpriseModules);
+    // serve community, enterprise and react
 
-    // serve ag-grid, enterprise and react
-    addWebpackMiddleware(app, 'webpack.community.config.js', '/dev/ag-grid-community');
+    // for js examples that just require community functionality (landing pages, vanilla community examples etc)
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-community/grid-all-modules/dist/ag-grid-community.js
+    addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-community/grid-all-modules/dist');
+
+    // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-enterprise/grid-all-modules/dist/ag-grid-enterprise.js
+    addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-enterprise/grid-all-modules/dist');
+
+    // for the actual site - php, css etc
     addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
-    addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
-    addWebpackMiddleware(app, 'webpack.enterprise-bundle.config.js', '/dev/ag-grid-enterprise-bundle'); // mostly used by landing pages
-    addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
 
     // spl modules
     // add community & enterprise modules to express (for importing in the fw examples)
+    symlinkModules(communityModules, enterpriseModules);
     updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
     updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
-    serveAndWatchModules(app, communityModules, enterpriseModules);
+    serveModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
-    serveAndWatchAngular(app);
-    serveAndWatchVue(app);
+    serveAndWatchFramework(app, 'ag-grid-angular');
+    serveAndWatchFramework(app, 'ag-grid-vue');
+    serveAndWatchFramework(app, 'ag-grid-react');
 
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples
@@ -422,7 +376,7 @@ module.exports = () => {
     // PHP
     launchPhpCP(app);
 
-    // Watch TS for errors. No actual transpiling happens here, just errors
+    // Watch TS for errors. No actual transpiling happens here, just error reporting
     launchTSCCheck(communityModules, enterpriseModules);
 
     app.listen(EXPRESS_PORT, function () {

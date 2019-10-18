@@ -52,7 +52,7 @@
   "homepage": "http://www.ag-grid.com/",
   "devDependencies": {
     "@types/jest": "^24.0.0",
-    "ag-grid-community": "^21.2.0",
+    "@ag-enterprise/grid-all-modules": "^21.2.0",
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.0",
     "eslint": "^6.3.0",

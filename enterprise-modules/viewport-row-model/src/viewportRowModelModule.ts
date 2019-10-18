@@ -1,4 +1,4 @@
-import {Module, ModuleNames, ModuleRegistry} from "ag-grid-community";
+import {Module, ModuleNames} from "@ag-community/grid-core";
 import {ViewportRowModel} from "./viewportRowModel/viewportRowModel";
 
 export const ViewportRowModelModule: Module = {
@@ -6,4 +6,3 @@ export const ViewportRowModelModule: Module = {
     rowModels: {'viewport': ViewportRowModel}
 };
 
-ModuleRegistry.register(ViewportRowModelModule);

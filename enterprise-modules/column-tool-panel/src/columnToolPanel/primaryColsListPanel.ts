@@ -13,7 +13,7 @@ import {
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     ToolPanelColumnCompParams
-} from "ag-grid-community";
+} from "@ag-community/grid-core";
 import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./primaryColsPanel";

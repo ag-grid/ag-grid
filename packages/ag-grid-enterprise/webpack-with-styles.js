@@ -1,5 +1,6 @@
 require('../../community-modules/client-side-row-model');
 require('../../community-modules/csv-export');
+require('../../community-modules/grid-all-modules');
 require('../../community-modules/infinite-row-model');
 
 require('../../enterprise-modules/charts');
@@ -7,7 +8,9 @@ require('../../enterprise-modules/clipboard');
 require('../../enterprise-modules/column-tool-panel');
 require('../../enterprise-modules/excel-export');
 require('../../enterprise-modules/filter-tool-panel');
+require('../../enterprise-modules/grid-all-modules');
 require('../../enterprise-modules/grid-charts');
+require('../../enterprise-modules/grid-core');
 require('../../enterprise-modules/master-detail');
 require('../../enterprise-modules/menu');
 require('../../enterprise-modules/range-selection');
@@ -31,11 +34,3 @@ var agGrid = require('ag-grid-community');
 Object.keys(agGrid).forEach(function(key) {
     exports[key] = agGrid[key];
 });
-require('ag-grid-community/dist/styles/ag-grid.css');
-require('ag-grid-community/dist/styles/ag-theme-balham-dark.css');
-require('ag-grid-community/dist/styles/ag-theme-balham.css');
-require('ag-grid-community/dist/styles/ag-theme-blue.css');
-require('ag-grid-community/dist/styles/ag-theme-bootstrap.css');
-require('ag-grid-community/dist/styles/ag-theme-dark.css');
-require('ag-grid-community/dist/styles/ag-theme-fresh.css');
-require('ag-grid-community/dist/styles/ag-theme-material.css');

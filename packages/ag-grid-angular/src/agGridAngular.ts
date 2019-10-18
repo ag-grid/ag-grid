@@ -22,8 +22,9 @@ import {
     GridOptionsWrapper,
     GridParams,
     Promise,
-    Utils as _
-} from "ag-grid-community";
+    Utils as _,
+    Module
+} from "@ag-community/grid-core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AgGridColumn } from "./agGridColumn";
@@ -81,7 +82,8 @@ export class AgGridAngular implements AfterViewInit {
             frameworkOverrides: this.angularFrameworkOverrides,
             providedBeanInstances: {
                 frameworkComponentWrapper: this.frameworkComponentWrapper
-            }
+            },
+            modules: (this.modules || []) as any
         };
 
         if (this.columns && this.columns.length > 0) {
@@ -159,6 +161,7 @@ export class AgGridAngular implements AfterViewInit {
     }
 
     @Input() public gridOptions: GridOptions;
+    @Input() public modules: Module[];
 
     // @START@
     @Input() public slaveGrids : any = undefined;
