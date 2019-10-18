@@ -31,7 +31,7 @@ export * from "@ag-enterprise/set-filter";
 export * from "@ag-enterprise/side-bar";
 export * from "@ag-enterprise/status-bar";
 export * from "@ag-enterprise/viewport-row-model";
-
+export * from "@ag-enterprise/grid-core";
 
 export const AllModules = CommunityModules.concat([
     ClipboardModule,

@@ -40,6 +40,7 @@
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
     "@ag-community/grid-all-modules": "~21.2.0",
+    "@ag-enterprise/grid-core": "~21.2.0",
     "@ag-enterprise/charts": "~21.2.0",
     "@ag-enterprise/clipboard": "~21.2.0",
     "@ag-enterprise/column-tool-panel": "~21.2.0",
