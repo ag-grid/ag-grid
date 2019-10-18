@@ -15,7 +15,7 @@ function createRowData() {
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"
     ];
-    
+
     return countries.map(function(country, index) {
         return {
             country: country,
@@ -47,33 +47,42 @@ function processChartOptions(params) {
     // we are only interested in processing pie type.
     // so if user changes the type using the chart control,
     // we ignore it.
-    if ([ 'pie', 'doughnut' ].indexOf(params.type) < 0) {
+    if (['pie', 'doughnut'].indexOf(params.type) < 0) {
         console.log('chart type is ' + params.type + ', making no changes.');
         return params.options;
     }
 
     var seriesDefaults = options.seriesDefaults;
-    seriesDefaults.fills = ['#5e64b2', '#b594dc', '#fec444', '#f07372', '#35c2bd'];
-    seriesDefaults.strokes = ['#42467d', '#7f689a', '#b28930', '#a85150', '#258884'];
-    seriesDefaults.fillOpacity = 0.8;
-    seriesDefaults.strokeOpacity = 0.8;
-    seriesDefaults.strokeWidth = 2;
+    seriesDefaults.fill.colors = ['#5e64b2', '#b594dc', '#fec444', '#f07372', '#35c2bd'];
+    seriesDefaults.fill.opacity = 0.8;
+    seriesDefaults.stroke.colors = ['#42467d', '#7f689a', '#b28930', '#a85150', '#258884'];
+    seriesDefaults.stroke.opacity = 0.8;
+    seriesDefaults.stroke.width = 2;
     seriesDefaults.highlightStyle = {
         fill: 'red',
         stroke: 'yellow'
     };
 
-    seriesDefaults.labelEnabled = true;
-    seriesDefaults.labelMinAngle = 30;
-    seriesDefaults.labelFontStyle = 'italic';
-    seriesDefaults.labelFontWeight = 'bold';
-    seriesDefaults.labelFontSize = 14;
-    seriesDefaults.labelFontFamily = 'Arial, sans-serif';
-    seriesDefaults.labelColor = '#2222aa';
+    seriesDefaults.title = {
+        enabled: true,
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 12,
+        fontFamily: 'Arial, sans-serif',
+        color: 'maroon'
+    }
 
-    seriesDefaults.calloutStrokeWidth = 3;
-    seriesDefaults.calloutColors = [ 'black', '#00ff00' ];
-    seriesDefaults.calloutLength = 15;
+    seriesDefaults.label.enabled = true;
+    seriesDefaults.label.minRequiredAngle = 30;
+    seriesDefaults.label.fontStyle = 'italic';
+    seriesDefaults.label.fontWeight = 'bold';
+    seriesDefaults.label.fontSize = 14;
+    seriesDefaults.label.fontFamily = 'Arial, sans-serif';
+    seriesDefaults.label.color = '#2222aa';
+
+    seriesDefaults.callout.strokeWidth = 3;
+    seriesDefaults.callout.colors = ['black', '#00ff00'];
+    seriesDefaults.callout.length = 15;
 
     seriesDefaults.shadow = {
         color: 'rgba(96, 96, 175, 0.5)',
@@ -81,12 +90,10 @@ function processChartOptions(params) {
         blur: 10
     };
 
-    seriesDefaults.tooltipRenderer = function(params) {
-        var angleField = params.angleField;
-        var labelField = params.labelField;
-        var value = params.datum[angleField];
-        var label = params.datum[labelField];
-        return '<b>' + angleField.toUpperCase() + ':</b> ' + value + '<br><b>' + labelField.toUpperCase() + ':</b> ' + label;
+    seriesDefaults.tooltip.renderer = function(params) {
+        var value = params.datum[params.angleKey];
+        var label = params.datum[params.labelKey];
+        return '<b>' + params.angleName.toUpperCase() + ':</b> ' + value + '<br><b>' + params.labelName.toUpperCase() + ':</b> ' + label;
     };
 
     return options;
@@ -108,7 +115,7 @@ function onFirstDataRendered(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
