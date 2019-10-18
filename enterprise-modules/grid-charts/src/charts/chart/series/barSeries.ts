@@ -6,7 +6,8 @@ import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
 import palette from "../palettes";
-import { HighlightStyle, Series, SeriesLabel, SeriesNodeDatum } from "./series";
+import { HighlightStyle, Series, SeriesNodeDatum } from "./series";
+import { Label } from "../label";
 import { PointerEvents } from "../../scene/node";
 import { sumPositiveValues } from "../../util/array";
 import { Color } from "../../util/color";
@@ -49,7 +50,7 @@ enum BarSeriesNodeTag {
     Label
 }
 
-class BarSeriesLabel extends SeriesLabel {
+class BarSeriesLabel extends Label {
     private _formatter?: BarLabelFormatter;
     set formatter(value: BarLabelFormatter | undefined) {
         if (this._formatter !== value) {

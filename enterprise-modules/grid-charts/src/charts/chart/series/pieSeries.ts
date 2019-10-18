@@ -6,7 +6,8 @@ import { DropShadow } from "../../scene/dropShadow";
 import { LinearScale } from "../../scale/linearScale";
 import palette from "../palettes";
 import { Sector } from "../../scene/shape/sector";
-import { Series, SeriesLabel, SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum } from "./series";
+import { Label } from "../label";
 import { PointerEvents } from "../../scene/node";
 import { normalizeAngle180, toRadians } from "../../util/angle";
 import { Color } from "../../util/color";
@@ -39,7 +40,7 @@ enum PieSeriesNodeTag {
     Label
 }
 
-class PieSeriesLabel extends SeriesLabel {
+class PieSeriesLabel extends Label {
     onDataChange?: () => void;
 
     set enabled(value: boolean) {

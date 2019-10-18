@@ -1,11 +1,8 @@
 import { CartesianChart } from "../cartesianChart";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
-import { Arc, ArcType } from "../../scene/shape/arc";
-import palette from "../palettes";
 import { Series, SeriesNodeDatum } from "./series";
 import { numericExtent } from "../../util/array";
-import { Color } from "../../util/color";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
