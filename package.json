@@ -33,6 +33,7 @@
     "buildCommunityModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildCommunityModules()'",
     "buildEnterpriseModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildEnterpriseModules()'",
     "buildModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildModules()'",
+    "buildFrameworkExamples": "npx lerna run build --scope ag-grid-angular-cli-example --scope ag-grid-react-example --scope ag-grid-vue-example",
     "cleanLegacy": "npx lerna clean --scope ag-grid-community --scope ag-grid-enterprise",
     "bootstrapLegacy": "npx lerna bootstarp --scope ag-grid-community --scope ag-grid-enterprise",
     "buildLegacy": "npx lerna run build --scope ag-grid-community --scope ag-grid-enterprise",

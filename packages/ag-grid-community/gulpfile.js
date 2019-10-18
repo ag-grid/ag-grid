@@ -196,6 +196,17 @@ const watch = () => {
 };
 // End of webpack related tasks
 
+const copyGridCoreStyles = (done) => {
+    if(!fs.existsSync('./node_modules/@ag-community/grid-core/dist/styles')) {
+        done("node_modules/@ag-community/grid-core/dist/styles doesn't exist - exiting")
+    }
+
+    return gulp.src('./node_modules/@ag-community/grid-core/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
+};
+
+// copy from grid-core tasks
+gulp.task('copy-grid-core-styles', copyGridCoreStyles);
+
 // Typescript related tasks
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-main', cleanMain);
