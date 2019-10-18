@@ -308,8 +308,13 @@ export interface PieSeriesOptions extends SeriesOptions {
 
 export interface PieSeriesFieldOptions {
     angleKey: string;
+    angleName?: string;
+
     radiusKey?: string;
+    radiusName?: string;
+
     labelKey?: string;
+    labelName?: string;
 }
 
 export interface PieSeriesLabelOptions extends SeriesLabelOptions {

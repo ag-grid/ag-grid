@@ -491,8 +491,11 @@ export class ChartBuilder {
 
         if (field) {
             this.setValueIfExists(series, "angleKey", field.angleKey);
+            this.setValueIfExists(series, "angleName", field.angleName);
             this.setValueIfExists(series, "radiusKey", field.radiusKey);
+            this.setValueIfExists(series, "radiusName", field.radiusName);
             this.setValueIfExists(series, "labelKey", field.labelKey);
+            this.setValueIfExists(series, "labelName", field.labelName);
         }
 
         if (fill) {
@@ -522,6 +525,7 @@ export class ChartBuilder {
 
             this.setValueIfExists(series.label, "enabled", label.enabled);
             this.setValueIfExists(series.label, "minAngle", label.minRequiredAngle);
+            this.setValueIfExists(series.label, "offset", label.offset);
         }
 
         if (tooltip) {

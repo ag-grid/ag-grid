@@ -72,7 +72,7 @@ export class PieChartProxy extends PolarChartProxy {
             callout: {
                 colors: strokes,
                 length: 10,
-                strokeWidth: 1,
+                strokeWidth: 2,
             },
             label: {
                 ...this.getDefaultFontOptions(),
