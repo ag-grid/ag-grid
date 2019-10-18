@@ -65,8 +65,12 @@
                 main: './main.js',
                 defaultExtension: 'js'
             },
-            // utils is a little different in that it's a directory...
+            // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
             '@ag-community/grid-core/dist/cjs/utils': {
+                main: './index.js',
+                defaultExtension: 'js'
+            },
+            '@ag-enterprise/grid-charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
                 main: './index.js',
                 defaultExtension: 'js'
             },
