@@ -119,7 +119,7 @@ export class LineSeries extends Series<CartesianChart> {
         }
     }
     get yName(): string {
-        return this._xName;
+        return this._yName;
     }
 
     processData(): boolean {

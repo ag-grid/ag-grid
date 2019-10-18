@@ -21,8 +21,8 @@ interface BarChartOptions {
     yAxis: AxisOptions;
 
     seriesDefaults: {
-        fill: MultiFillOptions;
-        stroke: MultiStrokeOptions;
+        fill: FillOptions;
+        stroke: StrokeOptions;
 
         // The shadow type to use for bars. Defaults to no shadow.
         // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
@@ -60,28 +60,28 @@ interface CaptionOptions {
     color?: string;
 }
 
-type FontStyle = "normal" | "italic" | "oblique";
+type FontStyle = 'normal' | 'italic' | 'oblique';
 
-type FontWeight = "normal" | "bold" | "bolder" | "lighter" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
+type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
 interface LineOptions {
-    width: number; // default: `1`
-    color: string; // default: grey
+    width: number; // default: 1
+    color: string; // default: 'rgba(195, 195, 195, 1)'
 }
 
 interface TickOptions {
-    width: number; // default: `1`
-    size: number; // default: `6`
-    color: string; // default: grey
+    width: number; // default: 1
+    size: number; // default: 6
+    color: string; // default: 'rgba(195, 195, 195, 1)'
 }
 
 interface AxisLabelOptions {
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
-    fontSize?: number; // default: `12`
-    fontFamily?: string; // default: `Verdana, sans-serif`
-    color?: string; // default: `black`
-    padding: number; // default: `5`
+    fontSize?: number; // default: 12
+    fontFamily?: string; // default: 'Verdana, sans-serif'
+    color?: string; // default: 'black'
+    padding: number; // default: 5
     rotation?: number; // default: dependent on chart type. Overridden for default category
 
     // A custom formatter function for the axis labels.
@@ -95,35 +95,36 @@ interface GridStyle {
 
     // The line dash array. Every number in the array specifies the length of alternating
     // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
-    lineDash: number[]; // default: `[4, 2]`
+    // If undefined, a solid line will be used.
+    lineDash?: number[]; // default: [4, 2]
 }
 
-interface MultiFillOptions {
+interface FillOptions {
     colors: string[]; // default: dependent on selected palette
-    opacity: number; // valid range from `0` to `1`. Default: `1` (opaque)
+    opacity: number; // valid range from 0 to 1. Default: 1 (opaque)
 }
 
-interface MultiStrokeOptions {
+interface StrokeOptions {
     colors: string[]; // default: dependent on selected palette
-    opacity: number; // valid range from `0` to `1`. Default: `1` (opaque)
-    width: number; // default: `1`
+    opacity: number; // valid range from 0 to 1. Default: 1 (opaque)
+    width: number; // default: 1
 }
 
-export interface DropShadowOptions {
-    enabled: boolean; // default: `false`
-    color: string; // default: `rgba(0, 0, 0, 0.5)`
-    xOffset: number; // default: `3`
-    yOffset: number; // default: `3`
-    blur: number; // default: `5`
+interface DropShadowOptions {
+    enabled: boolean; // default: false
+    color: string; // default: 'rgba(0, 0, 0, 0.5)'
+    xOffset: number; // default: 3
+    yOffset: number; // default: 3
+    blur: number; // default: 5
 }
 
-export interface BarSeriesLabelOptions {
-    enabled: boolean; // default: `false`
+interface BarSeriesLabelOptions {
+    enabled: boolean; // default: false
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
-    fontSize?: number; // default: `12`
-    fontFamily?: string; // default: `Verdana, sans-serif`
-    color?: string; // default: `black`
+    fontSize?: number; // default: 12
+    fontFamily?: string; // default: 'Verdana, sans-serif'
+    color?: string; // default: 'black'
     formatter?: (params: { value: number }) => string;
 }
 
@@ -133,7 +134,7 @@ interface HighlightStyle {
 }
 
 interface TooltipOptions {
-    enabled: boolean; // default: `true`
+    enabled: boolean; // default: true
     renderer?: (params: BarTooltipRendererParams) => string; // should return a valid HTML string
 }
 

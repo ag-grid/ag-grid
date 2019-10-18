@@ -47,32 +47,32 @@ interface CaptionOptions {
     enabled: boolean;
     text?: string;
     fontStyle?: FontStyle;
-    fontWeight?: FontWeight; // default: "bold" for title, `undefined` for subtitle
+    fontWeight?: FontWeight; // default: 'bold' for title, `undefined` for subtitle
     fontSize?: number; // default: 16 (for title), 12 (for subtitle)
-    fontFamily?: string; // default: "Verdana, sans-serif"
-    color?: string; // default: "black"
+    fontFamily?: string; // default: 'Verdana, sans-serif'
+    color?: string; // default: 'black'
 }
 
-type FontStyle = "normal" | "italic" | "oblique";
+type FontStyle = 'normal' | 'italic' | 'oblique';
 
-type FontWeight = "normal" | "bold" | "bolder" | "lighter" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
+type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
 interface LegendOptions {
     enabled: boolean; // default: true
-    position: LegendPosition; // default: "right"
+    position: LegendPosition; // default: 'right'
     padding: number; // default: 20
     label: LegendLabelOptions;
     marker: LegendMarkerOptions;
     item: ItemOptions;
 }
 
-type LegendPosition = "top" | "right" | "bottom" | "left";
+type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 interface LegendLabelOptions {
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
     fontSize?: number; // default: 12
-    fontFamily?: string; // default: "Verdana, sans-serif"
+    fontFamily?: string; // default: 'Verdana, sans-serif'
     color?: string; // default: dependent on light/dark mode
 }
 

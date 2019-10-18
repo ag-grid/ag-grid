@@ -284,13 +284,22 @@ export class ChartBuilder {
         ChartBuilder.initSeries(series, options);
 
         this.setValueIfExists(series, "title", options.title);
-        this.setValueIfExists(series, "xKey", options.field && options.field.xKey);
-        this.setValueIfExists(series, "yKey", options.field && options.field.yKey);
-        this.setValueIfExists(series, "fill", options.fill && options.fill.color);
-        this.setValueIfExists(series, "stroke", options.stroke && options.stroke.color);
-        this.setValueIfExists(series, "strokeWidth", options.stroke && options.stroke.width);
 
-        const { highlightStyle, marker, tooltip } = options;
+        const { field, fill, stroke, highlightStyle, marker, tooltip } = options;
+
+        if (field) {
+            this.setValueIfExists(series, "xKey", field.xKey);
+            this.setValueIfExists(series, "yKey", field.yKey);
+        }
+
+        if (fill) {
+            this.setValueIfExists(series, "fill", fill.color);
+        }
+
+        if (stroke) {
+            this.setValueIfExists(series, "stroke", stroke.color);
+            this.setValueIfExists(series, "strokeWidth", stroke.width);
+        }
 
         if (highlightStyle) {
             this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
@@ -322,16 +331,19 @@ export class ChartBuilder {
         ChartBuilder.initSeries(series, options);
 
         this.setValueIfExists(series, "title", options.title);
-        this.setValueIfExists(series, "xKey", options.field && options.field.xKey);
-        this.setValueIfExists(series, "xName", options.field && options.field.xName);
-        this.setValueIfExists(series, "yKey", options.field && options.field.yKey);
-        this.setValueIfExists(series, "yName", options.field && options.field.yName);
-        this.setValueIfExists(series, "sizeKey", options.field && options.field.sizeKey);
-        this.setValueIfExists(series, "sizeName", options.field && options.field.sizeName);
-        this.setValueIfExists(series, "labelKey", options.field && options.field.labelKey);
-        this.setValueIfExists(series, "labelName", options.field && options.field.labelName);
 
-        const { highlightStyle, marker, tooltip } = options;
+        const { field, highlightStyle, marker, tooltip } = options;
+
+        if (field) {
+            this.setValueIfExists(series, "xKey", field.xKey);
+            this.setValueIfExists(series, "xName", field.xName);
+            this.setValueIfExists(series, "yKey", field.yKey);
+            this.setValueIfExists(series, "yName", field.yName);
+            this.setValueIfExists(series, "sizeKey", field.sizeKey);
+            this.setValueIfExists(series, "sizeName", field.sizeName);
+            this.setValueIfExists(series, "labelKey", field.labelKey);
+            this.setValueIfExists(series, "labelName", field.labelName);
+        }
 
         if (highlightStyle) {
             this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
@@ -418,17 +430,26 @@ export class ChartBuilder {
     static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions) {
         ChartBuilder.initSeries(series, options);
 
-        this.setValueIfExists(series, "xKey", options.field && options.field.xKey);
-        this.setValueIfExists(series, "yKeys", options.field && options.field.yKeys);
-        this.setValueIfExists(series, "yNames", options.field && options.field.yNames);
         this.setValueIfExists(series, "normalizedTo", options.normalizedTo);
-        this.setValueIfExists(series, "fills", options.fill && options.fill.colors);
-        this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
-        this.setValueIfExists(series, "strokes", options.stroke && options.stroke.colors);
-        this.setValueIfExists(series, "strokeOpacity", options.stroke && options.stroke.opacity);
-        this.setValueIfExists(series, "strokeWidth", options.stroke && options.stroke.width);
 
-        const { highlightStyle, marker, tooltip } = options;
+        const { field, fill, stroke, highlightStyle, marker, tooltip } = options;
+
+        if (field) {
+            this.setValueIfExists(series, "xKey", field.xKey);
+            this.setValueIfExists(series, "yKeys", field.yKeys);
+            this.setValueIfExists(series, "yNames", field.yNames);
+        }
+
+        if (fill) {
+            this.setValueIfExists(series, "fills", fill.colors);
+            this.setValueIfExists(series, "fillOpacity", fill.opacity);
+        }
+
+        if (stroke) {
+            this.setValueIfExists(series, "strokes", stroke.colors);
+            this.setValueIfExists(series, "strokeOpacity", stroke.opacity);
+            this.setValueIfExists(series, "strokeWidth", stroke.width);
+        }
 
         if (highlightStyle) {
             this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
@@ -462,19 +483,28 @@ export class ChartBuilder {
         ChartBuilder.initSeries(series, options);
 
         this.setTransformedValueIfExists(series, "title", t => ChartBuilder.createPieTitle(t), options.title);
-        this.setValueIfExists(series, "angleKey", options.field && options.field.angleKey);
-        this.setValueIfExists(series, "radiusKey", options.field && options.field.radiusKey);
-        this.setValueIfExists(series, "labelKey", options.field && options.field.labelKey);
-        this.setValueIfExists(series, "fills", options.fill && options.fill.colors);
-        this.setValueIfExists(series, "fillOpacity", options.fill && options.fill.opacity);
-        this.setValueIfExists(series, "strokes", options.stroke && options.stroke.colors);
-        this.setValueIfExists(series, "strokeOpacity", options.stroke && options.stroke.opacity);
-        this.setValueIfExists(series, "strokeWidth", options.stroke && options.stroke.width);
         this.setValueIfExists(series, "rotation", options.rotation);
         this.setValueIfExists(series, "outerRadiusOffset", options.outerRadiusOffset);
         this.setValueIfExists(series, "innerRadiusOffset", options.innerRadiusOffset);
 
-        const { highlightStyle, callout, label, tooltip } = options;
+        const { field, fill, stroke, highlightStyle, callout, label, tooltip } = options;
+
+        if (field) {
+            this.setValueIfExists(series, "angleKey", field.angleKey);
+            this.setValueIfExists(series, "radiusKey", field.radiusKey);
+            this.setValueIfExists(series, "labelKey", field.labelKey);
+        }
+
+        if (fill) {
+            this.setValueIfExists(series, "fills", fill.colors);
+            this.setValueIfExists(series, "fillOpacity", fill.opacity);
+        }
+
+        if (stroke) {
+            this.setValueIfExists(series, "strokes", stroke.colors);
+            this.setValueIfExists(series, "strokeOpacity", stroke.opacity);
+            this.setValueIfExists(series, "strokeWidth", stroke.width);
+        }
 
         if (highlightStyle) {
             this.setValueIfExists(series.highlightStyle, "fill", highlightStyle.fill && highlightStyle.fill.color);
@@ -482,9 +512,9 @@ export class ChartBuilder {
         }
 
         if (callout) {
-            this.setValueIfExists(series, "calloutColors", options.callout && options.callout.colors);
-            this.setValueIfExists(series, "calloutStrokeWidth", options.callout && options.callout.strokeWidth);
-            this.setValueIfExists(series, "calloutLength", options.callout && options.callout.length);
+            this.setValueIfExists(series, "calloutColors", callout.colors);
+            this.setValueIfExists(series, "calloutStrokeWidth", callout.strokeWidth);
+            this.setValueIfExists(series, "calloutLength", callout.length);
         }
 
         if (label) {
@@ -508,23 +538,25 @@ export class ChartBuilder {
         this.setValueIfExists(legend, "enabled", options.enabled);
         this.setValueIfExists(legend, "position", options.position);
 
-        if (options.label) {
-            this.setValueIfExists(legend, "labelFontFamily", options.label.fontFamily);
-            this.setValueIfExists(legend, "labelFontSize", options.label.fontSize);
-            this.setValueIfExists(legend, "labelFontStyle", options.label.fontStyle);
-            this.setValueIfExists(legend, "labelFontWeight", options.label.fontWeight);
-            this.setValueIfExists(legend, "labelColor", options.label.color);
+        const { label, marker, item } = options;
+
+        if (label) {
+            this.setValueIfExists(legend, "labelFontFamily", label.fontFamily);
+            this.setValueIfExists(legend, "labelFontSize", label.fontSize);
+            this.setValueIfExists(legend, "labelFontStyle", label.fontStyle);
+            this.setValueIfExists(legend, "labelFontWeight", label.fontWeight);
+            this.setValueIfExists(legend, "labelColor", label.color);
         }
 
-        if (options.marker) {
-            this.setValueIfExists(legend, "markerStrokeWidth", options.marker.strokeWidth);
-            this.setValueIfExists(legend, "markerSize", options.marker.size);
-            this.setValueIfExists(legend, "markerPadding", options.marker.padding);
+        if (marker) {
+            this.setValueIfExists(legend, "markerStrokeWidth", marker.strokeWidth);
+            this.setValueIfExists(legend, "markerSize", marker.size);
+            this.setValueIfExists(legend, "markerPadding", marker.padding);
         }
 
-        if (options.item) {
-            this.setValueIfExists(legend, "itemPaddingX", options.item.paddingX);
-            this.setValueIfExists(legend, "itemPaddingY", options.item.paddingY);
+        if (item) {
+            this.setValueIfExists(legend, "itemPaddingX", item.paddingX);
+            this.setValueIfExists(legend, "itemPaddingY", item.paddingY);
         }
     }
 

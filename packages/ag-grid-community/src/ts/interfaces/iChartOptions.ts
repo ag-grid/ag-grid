@@ -123,7 +123,7 @@ export interface AxisLabelOptions extends FontOptions {
 
 export interface GridStyle {
     stroke: string;
-    lineDash: number[];
+    lineDash?: number[];
 }
 
 export interface HighlightStyle {
