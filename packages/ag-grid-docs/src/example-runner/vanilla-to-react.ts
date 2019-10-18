@@ -13,8 +13,8 @@ function isInstanceMethod(instance: any, property: any) {
 
 function indexTemplate(bindings, componentFilenames, isDev, communityModules, enterpriseModules) {
     const imports = [];
-    const propertyAssignments = [];
-    const componentAttributes = [];
+    const propertyAssignments = ["modules: AllModules"];
+    const componentAttributes = ["modules={this.state.modules}"];
 
     const instanceBindings = [];
     bindings.properties.filter(property => property.name != 'onGridReady').forEach(property => {
@@ -45,23 +45,14 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
     // spl modules
-    // imports.push('import "@ag-community/ag-grid";');
-    communityModules.forEach(module => {
-        imports.push(`import "@ag-community/${module}";`);
-    });
-
     if (bindings.gridSettings.enterprise) {
-        enterpriseModules.forEach(module => {
-            imports.push(`import "@ag-enterprise/${module}";`);
-        });
-
-        imports.push('import "ag-grid-enterprise";');
+        imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
+    } else {
+        imports.push('import {AllModules} from "@ag-community/grid-all-modules";');
     }
 
-    const chartsEnabled = bindings.properties.filter(property => property.name === 'enableCharts' && property.value === 'true').length >= 1;
-    if (chartsEnabled && !isDev) {
-        imports.push('import "ag-grid-enterprise/chartsModule";');
-    }
+    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
+    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";');
 
     if (componentFilenames) {
         let titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);

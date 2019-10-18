@@ -19,6 +19,9 @@
         },
         map: assign(
             {
+                // css plugin
+                'css': 'npm:systemjs-plugin-css/css.js',
+
                 // babel transpiler
                 'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
                 'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
@@ -167,7 +170,8 @@
                 babelOptions: {
                     react: true
                 }
-            }
+            },
+            '*.css': {loader: 'css'}
         }
     });
 })(this);

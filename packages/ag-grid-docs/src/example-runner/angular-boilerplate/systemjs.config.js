@@ -53,7 +53,9 @@
         // map tells the System loader where to look for things
         map: Object.assign(
             {
-                "css": 'https://unpkg.com/systemjs-plugin-css@0.1.37/css.js',
+                // css plugin
+                'css': 'npm:systemjs-plugin-css/css.js',
+
                 // angular bundles
                 "@angular/animations": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations.umd.js",
                 "@angular/animations/browser": "npm:@angular/animations@" + ANGULAR_VERSION + "/bundles/animations-browser.umd.js",

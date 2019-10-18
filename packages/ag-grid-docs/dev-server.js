@@ -56,33 +56,18 @@ function launchPhpCP(app) {
     });
 }
 
-function serveAndWatchAngular(app) {
+function serveAndWatchFramework(app, framework) {
     const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
 
-    const angularWatch = cp.spawn(gulpPath, ['watch'], {
+    const frameworkWatch = cp.spawn(gulpPath, ['watch'], {
         stdio: 'inherit',
-        cwd: '../ag-grid-angular'
+        cwd: `../${framework}`
     });
 
-    app.use('/dev/ag-grid-angular', express.static('../ag-grid-angular'));
+    app.use(`/dev/${framework}`, express.static(`../${framework}`));
 
     process.on('exit', () => {
-        angularWatch.kill();
-    });
-}
-
-function serveAndWatchVue(app) {
-    const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
-
-    const vueWatch = cp.spawn(gulpPath, ['watch'], {
-        stdio: 'inherit',
-        cwd: '../ag-grid-vue'
-    });
-
-    app.use('/dev/ag-grid-vue', express.static('../ag-grid-vue'));
-
-    process.on('exit', () => {
-        vueWatch.kill();
+        frameworkWatch.kill();
     });
 }
 
@@ -386,9 +371,7 @@ module.exports = () => {
     // addWebpackMiddleware(app, 'webpack.enterprise.config.js', '/dev/ag-grid-enterprise');
 
     // for the actual site - php, css etc
-    // addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
-
-    // addWebpackMiddleware(app, 'webpack.react.config.js', '/dev/ag-grid-react');
+    addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
 
     // spl modules
     // add community & enterprise modules to express (for importing in the fw examples)
@@ -398,8 +381,9 @@ module.exports = () => {
     serveAndWatchModules(app, communityModules, enterpriseModules);
 
     // angular & vue are separate processes
-    serveAndWatchAngular(app);
-    // serveAndWatchVue(app);
+    serveAndWatchFramework(app, 'ag-grid-angular');
+    serveAndWatchFramework(app, 'ag-grid-vue');
+    serveAndWatchFramework(app, 'ag-grid-react');
 
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples

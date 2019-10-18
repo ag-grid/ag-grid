@@ -28,7 +28,6 @@ if (USE_LOCAL) {
 
     $systemJsMap = array(
         // spl modules
-        "@ag-enterprise/grid-all-modules" => "$prefix/@ag-enterprise/grid-all-modules",
         /* START OF MODULES DEV - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "$prefix/@ag-community/client-side-row-model",
         "@ag-community/csv-export" => "$prefix/@ag-community/csv-export",
@@ -65,7 +64,6 @@ if (USE_LOCAL) {
 
     $systemJsMap = array(
         // spl modules test prior to release!
-        "@ag-enterprise/grid-all-modules" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/",
         /* START OF MODULES PROD - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "https://unpkg.com/@ag-community/client-side-row-model@" . AG_GRID_VERSION . "/",
         "@ag-community/csv-export" => "https://unpkg.com/@ag-community/csv-export@" . AG_GRID_VERSION . "/",
