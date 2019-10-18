@@ -46,3 +46,7 @@ module.exports.bootstrapModules = () => executeLernaCommand(['bootstrap', getMod
 module.exports.buildCommunityModules = () => executeLernaCommand(['run', 'build', getCommunityScopes]);
 module.exports.buildEnterpriseModules = () => executeLernaCommand(['run', 'build', getEnterpriseScopes]);
 module.exports.buildModules = () => executeLernaCommand(['run', 'build', getModuleScopes]);
+
+module.exports.testCommunityModules = () => executeLernaCommand(['run', 'test', getCommunityScopes]);
+module.exports.testEnterpriseModules = () => executeLernaCommand(['run', 'test', getEnterpriseScopes]);
+module.exports.testModules = () => executeLernaCommand(['run', 'test', getModuleScopes]);

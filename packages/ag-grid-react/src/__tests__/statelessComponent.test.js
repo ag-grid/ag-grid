@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {AgGridReact} from '../agGridReact';
-import '@ag-community/client-side-row-model';
+import {ClientSideRowModelModule} from "@ag-community/client-side-row-model";
 import {ensureGridApiHasBeenSet} from "./utils"
 
 import {mount} from 'enzyme';
@@ -60,7 +60,7 @@ class GridWithStatelessFunction extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
-                />
+                    modules={[ClientSideRowModelModule]} />
             </div>
         );
     }

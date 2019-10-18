@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {AgGridReact} from '../agGridReact';
-import '@ag-community/client-side-row-model';
+import {ClientSideRowModelModule} from "@ag-community/client-side-row-model";
 
 import {ensureGridApiHasBeenSet} from "./utils"
 
@@ -97,6 +97,7 @@ class App extends Component {
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         rowData={this.state.rowData}
+                        modules={[ClientSideRowModelModule]}
                         onGridReady={this.onGridReady}>
                     </AgGridReact>
                 </div>

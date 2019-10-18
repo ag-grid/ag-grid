@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {AgGridReact} from '../agGridReact';
-import '@ag-community/client-side-row-model';
+import {ClientSideRowModelModule} from "@ag-community/client-side-row-model";
 
 import {ensureGridApiHasBeenSet} from "./utils"
 
@@ -71,7 +71,8 @@ class DeclarativeColumnsGrid extends Component {
                 className="ag-theme-balham">
                 <AgGridReact
                     onGridReady={this.onGridReady.bind(this)}
-                    rowData={this.state.rowData}>
+                    rowData={this.state.rowData}
+                    modules={[ClientSideRowModelModule]}>
                     <AgGridColumn field="name" width={150} pinned={this.state.pinName} editable/>
                     <AgGridColumn field="country" width={150} hide={this.state.hideCountry}/>
                 </AgGridReact>

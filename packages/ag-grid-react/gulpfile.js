@@ -58,7 +58,7 @@ const umd = () => {
                 react: 'React',
                 'react-dom': 'ReactDOM',
                 'prop-types': 'PropTypes',
-                'ag-grid-community': 'agGrid'
+                '@ag-community/grid-core': 'agGrid'
             },
         },
         plugins: [typescript(), commonjs(),
@@ -90,7 +90,7 @@ const linkUmdForE2E = (done) => {
         })
     }
     if(!fs.existsSync('./cypress/integration/ag-grid-community.min.js')) {
-        link('../ag-grid-community/dist/ag-grid-community.min.js', './cypress/integration/',{
+        link('../../community-modules/grid-all-modules/dist/ag-grid-community.min.js', './cypress/integration/',{
             force: true,
             type: linkType
         })

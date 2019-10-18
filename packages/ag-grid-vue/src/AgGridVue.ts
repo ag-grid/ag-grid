@@ -104,7 +104,7 @@ export class AgGridVue extends Vue {
             providedBeanInstances: {
                 frameworkComponentWrapper,
             },
-            modules: this.modules
+            modules: this.modules,
         };
 
         new Grid(this.$el as HTMLElement, gridOptions, gridParams);
@@ -188,7 +188,7 @@ export class AgGridVue extends Vue {
     private debounce(func: () => void, delay: number) {
         let timeout: number;
         return () => {
-            const later = function () {
+            const later = function() {
                 func();
             };
             window.clearTimeout(timeout);
