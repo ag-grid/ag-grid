@@ -76,65 +76,65 @@ export class LineSeries extends Series<CartesianChart> {
         return this._title;
     }
 
-    protected _xField: string = '';
-    set xField(value: string) {
-        if (this._xField !== value) {
-            this._xField = value;
+    protected _xKey: string = '';
+    set xKey(value: string) {
+        if (this._xKey !== value) {
+            this._xKey = value;
             this.xData = [];
             this.scheduleData();
         }
     }
-    get xField(): string {
-        return this._xField;
+    get xKey(): string {
+        return this._xKey;
     }
 
-    protected _xFieldName: string = '';
-    set xFieldName(value: string) {
-        if (this._xFieldName !== value) {
-            this._xFieldName = value;
+    protected _xName: string = '';
+    set xName(value: string) {
+        if (this._xName !== value) {
+            this._xName = value;
             this.update();
         }
     }
-    get xFieldName(): string {
-        return this._xFieldName;
+    get xName(): string {
+        return this._xName;
     }
 
-    protected _yField: string = '';
-    set yField(value: string) {
-        if (this._yField !== value) {
-            this._yField = value;
+    protected _yKey: string = '';
+    set yKey(value: string) {
+        if (this._yKey !== value) {
+            this._yKey = value;
             this.yData = [];
             this.scheduleData();
         }
     }
-    get yField(): string {
-        return this._yField;
+    get yKey(): string {
+        return this._yKey;
     }
 
-    protected _yFieldName: string = '';
-    set yFieldName(value: string) {
-        if (this._yFieldName !== value) {
-            this._yFieldName = value;
+    protected _yName: string = '';
+    set yName(value: string) {
+        if (this._yName !== value) {
+            this._yName = value;
             this.update();
         }
     }
-    get yFieldName(): string {
-        return this._xFieldName;
+    get yName(): string {
+        return this._yName;
     }
 
     processData(): boolean {
-        const { chart, xField, yField } = this;
+        const { chart, xKey, yKey } = this;
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
         }
 
-        if (!(xField && yField)) {
+        if (!(xKey && yKey)) {
             this._data = [];
         }
 
-        this.xData = this.data.map(datum => datum[xField]);
-        this.yData = this.data.map(datum => datum[yField]);
+        this.xData = this.data.map(datum => datum[xKey]);
+        this.yData = this.data.map(datum => datum[yKey]);
 
         const isContinuousX = chart.xAxis.scale instanceof ContinuousScale;
         const domainX = isContinuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
@@ -313,13 +313,13 @@ export class LineSeries extends Series<CartesianChart> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
-        const { xField: xKey, yField: yKey } = this;
+        const { xKey, yKey } = this;
 
         if (!xKey || !yKey) {
-            return "";
+            return '';
         }
 
-        const { xFieldName: xName, yFieldName: yName, fill: color, title, tooltipRenderer } = this;
+        const { xName, yName, fill: color, title, tooltipRenderer } = this;
 
         if (tooltipRenderer) {
             return tooltipRenderer({
@@ -347,13 +347,13 @@ export class LineSeries extends Series<CartesianChart> {
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.xField && this.yField) {
+        if (this.data.length && this.xKey && this.yKey) {
             data.push({
                 id: this.id,
                 itemId: undefined,
                 enabled: this.visible,
                 label: {
-                    text: this.title || this.yField
+                    text: this.title || this.yKey
                 },
                 marker: {
                     fill: this.fill,

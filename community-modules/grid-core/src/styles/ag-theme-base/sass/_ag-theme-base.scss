@@ -705,6 +705,8 @@
                 &.ag-filter-header {
                     min-height: $header-height;
                     height: $header-height;
+                    border-bottom: 1px solid $border-color;
+                    box-sizing: content-box;
                 }
 
                 > div {
@@ -726,6 +728,14 @@
                 flex: 1 1 auto;
                 overflow: auto;
                 > div {
+                    &:first-of-type {
+                        > .ag-group-component {
+                            .ag-group-component-title-bar {
+                                border-top: none;
+                                min-height: calc(#{$header-height} - 1px);
+                            }
+                        }
+                    }
                     &:last-of-type {
                         .ag-group-component.ag-collapsed {
                             border-bottom: 1px solid $border-color;

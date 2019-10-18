@@ -1,4 +1,4 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, IPadding } from "@ag-community/grid-core";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, Padding } from "@ag-community/grid-core";
 import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartProxy } from "../../../chartProxies/chartProxy";
@@ -46,7 +46,7 @@ export class PaddingPanel extends Component {
     }
 
     private initChartPaddingItems(): void {
-        const initInput = (property: keyof IPadding, input: AgSlider, labelKey: string) => {
+        const initInput = (property: keyof Padding, input: AgSlider, labelKey: string) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
                 .setValue(this.chartProxy.getChartPaddingOption(property))
                 .setMaxValue(200)

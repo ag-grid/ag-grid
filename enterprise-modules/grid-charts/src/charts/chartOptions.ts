@@ -54,12 +54,15 @@ export interface LegendOptions {
     enabled?: boolean;
     position?: LegendPosition;
     padding?: number;
-    label?: FontOptions;
+    label?: LegendLabelOptions;
     marker?: LegendMarkerOptions;
     item?: ItemOptions;
 }
 
 export declare type LegendPosition = "top" | "right" | "bottom" | "left";
+
+export interface LegendLabelOptions extends FontOptions {
+}
 
 export interface LegendMarkerOptions {
     size?: number;

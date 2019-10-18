@@ -207,9 +207,6 @@ export class SetFilter extends ProvidedFilter {
         if (eSetFilterList) {
             eSetFilterList.appendChild(this.virtualList.getGui());
         }
-        if (_.exists(this.setFilterParams.cellHeight)) {
-            this.virtualList.setRowHeight(this.setFilterParams.cellHeight);
-        }
 
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
 

@@ -27,7 +27,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         (lineChart.series as LineSeries[])
             .forEach(lineSeries => {
-                const id = lineSeries.yField;
+                const id = lineSeries.yKey;
 
                 _.includes(fieldIds, id) ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
             });
@@ -39,10 +39,10 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             if (lineSeries) {
                 lineSeries.title = f.displayName;
                 lineSeries.data = params.data;
-                lineSeries.xField = params.category.id;
-                lineSeries.xFieldName = params.category.name;
-                lineSeries.yField = f.colId;
-                lineSeries.yFieldName = f.displayName;
+                lineSeries.xKey = params.category.id;
+                lineSeries.xName = params.category.name;
+                lineSeries.yKey = f.colId;
+                lineSeries.yName = f.displayName;
                 lineSeries.fill = fills[index % fills.length];
                 lineSeries.stroke = strokes[index % strokes.length];
 
@@ -56,17 +56,14 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     protected getDefaultOptions(): CartesianChartOptions<LineSeriesOptions> {
-        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<LineSeriesOptions>;
 
         options.xAxis.label.rotation = 335;
 
         options.seriesDefaults = {
-            fill: {
-                colors: fills,
-            },
+            ...options.seriesDefaults,
             stroke: {
-                colors: strokes,
+                ...options.seriesDefaults.stroke,
                 width: 3,
             },
             marker: {

@@ -39,18 +39,10 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
 
     private lastSelectedTab: string;
 
     private activeMenu: EnterpriseMenu | null;
-
-    private updateMenuPosition: (() => void) | null;
-
-    @PostConstruct
-    public init() {
-        this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this))
-    }
 
     public hideActiveMenu(): void {
         if (this.activeMenu) {
@@ -85,12 +77,6 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         }
 
         this.showMenu(column, (menu: EnterpriseMenu) => {
-            // if the body is scrolled off the grid, column virtualisation will remove the header cell
-            // leading to incorrect positioning, so close the menu instead.
-            if (!document.body.contains(eventSource)) {
-                this.hideActiveMenu();
-                return;
-            }
             const minDims = menu.getMinDimensions();
             this.popupService.positionPopupUnderComponent({
                 column: column,
@@ -125,7 +111,6 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             () => { // menu closed callback
                 menu.destroy();
                 column.setMenuVisible(false, "contextMenu");
-                this.updateMenuPosition = null;
             }
         );
 
@@ -133,8 +118,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             hidePopup: hidePopup
         });
 
-        this.updateMenuPosition = () => positionCallback(menu);
-        this.updateMenuPosition();
+        positionCallback(menu);
 
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
@@ -156,12 +140,6 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public isMenuEnabled(column: Column): boolean {
         return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
-    }
-
-    private onBodyScroll() {
-        if (this.updateMenuPosition) {
-            this.updateMenuPosition();
-        }
     }
 }
 
@@ -201,6 +179,8 @@ export class EnterpriseMenu extends BeanStub {
     private includeChecks:{[p:string]:() => boolean} = {};
     private restrictTo ?: string[];
 
+    private timeOfLastColumnChange = Date.now();
+
     constructor(column: Column, initialSelection: string, restrictTo ?: string[]) {
         super();
         this.column = column;
@@ -230,6 +210,8 @@ export class EnterpriseMenu extends BeanStub {
             onActiveItemClicked: this.onHidePopup.bind(this),
             onItemClicked: this.onTabItemClicked.bind(this)
         });
+
+        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
 
     private getTabsToCreate() {
@@ -502,14 +484,37 @@ export class EnterpriseMenu extends BeanStub {
     public afterGuiAttached(params: any): void {
         this.tabbedLayout.setAfterAttachedParams({hidePopup: params.hidePopup});
         this.hidePopupFunc = params.hidePopup;
+        const initialScroll = this.gridApi.getHorizontalPixelRange().left;
+        // if the user scrolls the grid horizontally, we want to hide the menu, as the menu will not appear in the right location anymore
+        const onBodyScroll = (event: any) => {
+            // If the user hides columns using the columns tab in this menu, it will change the size of the
+            // grid content and lead to a bodyScroll event. But we don't want to hide the menu for that kind
+            // of indirect scrolling. Assume that any bodyScroll that happens right after a column change is
+            // caused by that change, and ignore it.
+            const msSinceLastColumnChange = Date.now() - this.timeOfLastColumnChange;
+            if (msSinceLastColumnChange < 500) {
+                return;
+            }
+            // if h scroll, popup is no longer over the column
+            if (event.direction === 'horizontal') {
+                const newScroll = this.gridApi.getHorizontalPixelRange().left;
+
+                if (Math.abs(newScroll - initialScroll) > this.gridOptionsWrapper.getScrollbarWidth()) {
+                    params.hidePopup();
+                }
+            }
+        };
+
         this.addDestroyFunc(params.hidePopup);
 
-        // NOTE: at this point we used to set a bodyScroll listener to close the popup when the body
-        // scrolls, but it was removed for AG-3334 because it caused issues when hiding columns from
-        // the floating column menu
+        this.addDestroyableEventListener(this.eventService, 'bodyScroll', onBodyScroll);
     }
 
     public getGui(): HTMLElement {
         return this.tabbedLayout.getGui();
+    }
+
+    private onDisplayedColumnsChanged() {
+        this.timeOfLastColumnChange = Date.now();
     }
 }

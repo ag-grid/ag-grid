@@ -43,10 +43,10 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
 
             areaSeries.data = params.data;
-            areaSeries.xField = params.category.id;
-            areaSeries.xFieldName = params.category.name;
-            areaSeries.yFields = params.fields.map(f => f.colId);
-            areaSeries.yFieldNames = params.fields.map(f => f.displayName);
+            areaSeries.xKey = params.category.id;
+            areaSeries.xName = params.category.name;
+            areaSeries.yKeys = params.fields.map(f => f.colId);
+            areaSeries.yNames = params.fields.map(f => f.displayName);
             areaSeries.fills = fills;
             areaSeries.strokes = strokes;
         }
@@ -68,7 +68,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         (chart.series as AreaSeries[])
             .forEach(areaSeries => {
-                const id = areaSeries.yFields[0];
+                const id = areaSeries.yKeys[0];
 
                 _.includes(fieldIds, id) ? existingSeriesMap[id] = areaSeries : chart.removeSeries(areaSeries);
             });
@@ -78,11 +78,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             const areaSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as AreaSeries;
 
             if (areaSeries) {
-                areaSeries.yFieldNames = [f.displayName];
+                areaSeries.yNames = [f.displayName];
                 areaSeries.data = params.data;
-                areaSeries.xField = params.category.id;
-                areaSeries.xFieldName = params.category.name;
-                areaSeries.yFields = [f.colId];
+                areaSeries.xKey = params.category.id;
+                areaSeries.xName = params.category.name;
+                areaSeries.yKeys = [f.colId];
                 areaSeries.fills = [fills[index % fills.length]];
                 areaSeries.strokes = [strokes[index % strokes.length]];
 
@@ -94,18 +94,18 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     }
 
     protected getDefaultOptions(): CartesianChartOptions<AreaSeriesOptions> {
-        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<AreaSeriesOptions>;
 
         options.xAxis.label.rotation = 335;
 
         options.seriesDefaults = {
+            ...options.seriesDefaults,
             fill: {
-                colors: fills,
+                ...options.seriesDefaults.fill,
                 opacity: this.chartType === ChartType.Area ? 0.7 : 1,
             },
             stroke: {
-                colors: strokes,
+                ...options.seriesDefaults.stroke,
                 width: 3,
             },
             normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,

@@ -6,7 +6,8 @@ import { DropShadow } from "../../scene/dropShadow";
 import { LinearScale } from "../../scale/linearScale";
 import palette from "../palettes";
 import { Sector } from "../../scene/shape/sector";
-import { Series, SeriesLabel, SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum } from "./series";
+import { Label } from "../label";
 import { PointerEvents } from "../../scene/node";
 import { normalizeAngle180, toRadians } from "../../util/angle";
 import { Color } from "../../util/color";
@@ -39,7 +40,7 @@ enum PieSeriesNodeTag {
     Label
 }
 
-class PieSeriesLabel extends SeriesLabel {
+class PieSeriesLabel extends Label {
     onDataChange?: () => void;
 
     set enabled(value: boolean) {
@@ -246,17 +247,6 @@ export class PieSeries extends Series<PolarChart> {
         return this._labelColor;
     }
 
-    private _labelMinAngle: number = 20; // in degrees
-    set labelMinAngle(value: number) {
-        if (this._labelMinAngle !== value) {
-            this._labelMinAngle = value;
-            this.scheduleData();
-        }
-    }
-    get labelMinAngle(): number {
-        return this._labelMinAngle;
-    }
-
     set chart(chart: PolarChart | undefined) {
         if (this._chart !== chart) {
             this._chart = chart;
@@ -271,26 +261,26 @@ export class PieSeries extends Series<PolarChart> {
      * The key of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    private _angleField: string = '';
-    set angleField(value: string) {
-        if (this._angleField !== value) {
-            this._angleField = value;
+    private _angleKey: string = '';
+    set angleKey(value: string) {
+        if (this._angleKey !== value) {
+            this._angleKey = value;
             this.scheduleData();
         }
     }
-    get angleField(): string {
-        return this._angleField;
+    get angleKey(): string {
+        return this._angleKey;
     }
 
-    private _angleFieldName: string = '';
-    set angleFieldName(value: string) {
-        if (this._angleFieldName !== value) {
-            this._angleFieldName = value;
+    private _angleName: string = '';
+    set angleName(value: string) {
+        if (this._angleName !== value) {
+            this._angleName = value;
             this.update();
         }
     }
-    get angleFieldName(): string {
-        return this._angleFieldName;
+    get angleName(): string {
+        return this._angleName;
     }
 
     /**
@@ -299,59 +289,48 @@ export class PieSeries extends Series<PolarChart> {
      * proportionally smaller radii. To prevent confusing visuals, this config only works
      * if {@link innerRadiusOffset} is zero.
      */
-    private _radiusField?: string;
-    set radiusField(value: string | undefined) {
-        if (this._radiusField !== value) {
-            this._radiusField = value;
+    private _radiusKey?: string;
+    set radiusKey(value: string | undefined) {
+        if (this._radiusKey !== value) {
+            this._radiusKey = value;
             this.scheduleData();
         }
     }
-    get radiusField(): string | undefined {
-        return this._radiusField;
+    get radiusKey(): string | undefined {
+        return this._radiusKey;
     }
 
-    private _radiusFieldName?: string;
-    set radiusFieldName(value: string | undefined) {
-        if (this._radiusFieldName !== value) {
-            this._radiusFieldName = value;
+    private _radiusName?: string;
+    set radiusName(value: string | undefined) {
+        if (this._radiusName !== value) {
+            this._radiusName = value;
             this.update();
         }
     }
-    get radiusFieldName(): string | undefined {
-        return this._radiusFieldName;
+    get radiusName(): string | undefined {
+        return this._radiusName;
     }
 
-    private _labelField?: string;
-    set labelField(value: string | undefined) {
-        if (this._labelField !== value) {
-            this._labelField = value;
+    private _labelKey?: string;
+    set labelKey(value: string | undefined) {
+        if (this._labelKey !== value) {
+            this._labelKey = value;
             this.scheduleData();
         }
     }
-    get labelField(): string | undefined {
-        return this._labelField;
+    get labelKey(): string | undefined {
+        return this._labelKey;
     }
 
-    private _labelFieldName?: string;
-    set labelFieldName(value: string | undefined) {
-        if (this._labelFieldName !== value) {
-            this._labelFieldName = value;
+    private _labelName?: string;
+    set labelName(value: string | undefined) {
+        if (this._labelName !== value) {
+            this._labelName = value;
             this.update();
         }
     }
-    get labelFieldName(): string | undefined {
-        return this._labelFieldName;
-    }
-
-    private _labelEnabled: boolean = true;
-    set labelEnabled(value: boolean) {
-        if (this._labelEnabled !== value) {
-            this._labelEnabled = value;
-            this.scheduleData();
-        }
-    }
-    get labelEnabled(): boolean {
-        return this._labelEnabled;
+    get labelName(): string | undefined {
+        return this._labelName;
     }
 
     private _fills: string[] = palette.fills;
@@ -489,7 +468,7 @@ export class PieSeries extends Series<PolarChart> {
     processData(): boolean {
         const { data, dataEnabled } = this;
 
-        const angleData: number[] = data.map((datum, index) => dataEnabled[index] && +datum[this.angleField] || 0);
+        const angleData: number[] = data.map((datum, index) => dataEnabled[index] && +datum[this.angleKey] || 0);
         const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
 
         // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie slice.
@@ -499,14 +478,14 @@ export class PieSeries extends Series<PolarChart> {
             return angleData.map(datum => sum += datum / angleDataTotal);
         })();
 
-        const labelField = this.label.enabled && this.labelField;
-        const labelData = labelField ? data.map(datum => String(datum[labelField])) : [];
-        const radiusField = this.radiusField;
-        const useRadiusField = !!radiusField && !this.innerRadiusOffset;
+        const labelKey = this.label.enabled && this.labelKey;
+        const labelData = labelKey ? data.map(datum => String(datum[labelKey])) : [];
+        const radiusKey = this.radiusKey;
+        const useRadiusKey = !!radiusKey && !this.innerRadiusOffset;
         let radiusData: number[] = [];
 
-        if (useRadiusField) {
-            const radii = data.map(datum => Math.abs(datum[radiusField!]));
+        if (useRadiusKey) {
+            const radii = data.map(datum => Math.abs(datum[radiusKey!]));
             const maxDatum = Math.max(...radii);
 
             radiusData = radii.map(value => value / maxDatum);
@@ -523,7 +502,7 @@ export class PieSeries extends Series<PolarChart> {
 
         // Simply use reduce here to pair up adjacent ratios.
         angleDataRatios.reduce((start, end) => {
-            const radius = useRadiusField ? radiusData[datumIndex] : 1;
+            const radius = useRadiusKey ? radiusData[datumIndex] : 1;
             const startAngle = angleScale.convert(start) + rotation;
             const endAngle = angleScale.convert(end) + rotation;
 
@@ -533,7 +512,7 @@ export class PieSeries extends Series<PolarChart> {
             const midSin = Math.sin(midAngle);
 
             const labelMinAngle = toRadians(this.label.minAngle);
-            const labelVisible = labelField && span > labelMinAngle;
+            const labelVisible = labelKey && span > labelMinAngle;
             const midAngle180 = normalizeAngle180(midAngle);
 
             // Split the circle into quadrants like so: ⊗
@@ -705,21 +684,21 @@ export class PieSeries extends Series<PolarChart> {
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
-        const { angleField: angleKey } = this;
+        const { angleKey } = this;
 
         if (!angleKey) {
-            return "";
+            return '';
         }
 
         const {
             title,
             fills,
             tooltipRenderer,
-            angleFieldName: angleName,
-            radiusField: radiusKey,
-            radiusFieldName: radiusName,
-            labelField: labelKey,
-            labelFieldName: labelName,
+            angleName,
+            radiusKey,
+            radiusName,
+            labelKey,
+            labelName,
         } = this;
 
         const text = title ? title.text : undefined;
@@ -751,9 +730,9 @@ export class PieSeries extends Series<PolarChart> {
     tooltipRenderer?: (params: PieTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
-        const { labelField } = this;
+        const { labelKey } = this;
 
-        if (this.data.length && labelField) {
+        if (this.data.length && labelKey) {
             const { fills, strokes, id } = this;
 
             this.data.forEach((datum, index) => {
@@ -762,7 +741,7 @@ export class PieSeries extends Series<PolarChart> {
                     itemId: index,
                     enabled: this.dataEnabled[index],
                     label: {
-                        text: String(datum[labelField])
+                        text: String(datum[labelKey])
                     },
                     marker: {
                         fill: fills[index % fills.length],

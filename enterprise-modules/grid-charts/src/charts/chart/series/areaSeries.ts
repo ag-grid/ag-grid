@@ -16,12 +16,12 @@ import { AreaTooltipRendererParams } from "../../chartOptions";
 import { Marker } from "../marker/marker";
 
 interface AreaSelectionDatum {
-    yField: string;
+    yKey: string;
     points: { x: number, y: number }[];
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
-    yField: string;
+    yKey: string;
     yValue: number;
     x: number;
     y: number;
@@ -46,9 +46,9 @@ export class AreaSeries extends Series<CartesianChart> {
 
     /**
      * The assumption is that the values will be reset (to `true`)
-     * in the {@link yFields} setter.
+     * in the {@link yKeys} setter.
      */
-    private readonly yFieldEnabled = new Map<string, boolean>();
+    private readonly yKeyEnabled = new Map<string, boolean>();
 
     constructor() {
         super();
@@ -117,49 +117,49 @@ export class AreaSeries extends Series<CartesianChart> {
         return this._chart;
     }
 
-    protected _xField: string = '';
-    set xField(value: string) {
-        if (this._xField !== value) {
-            this._xField = value;
+    protected _xKey: string = '';
+    set xKey(value: string) {
+        if (this._xKey !== value) {
+            this._xKey = value;
             this.xData = [];
             this.scheduleData();
         }
     }
-    get xField(): string {
-        return this._xField;
+    get xKey(): string {
+        return this._xKey;
     }
 
-    protected _xFieldName: string = '';
-    set xFieldName(value: string) {
-        this._xFieldName = value;
+    protected _xName: string = '';
+    set xName(value: string) {
+        this._xName = value;
         this.update();
     }
-    get xFieldName(): string {
-        return this._xFieldName;
+    get xName(): string {
+        return this._xName;
     }
 
-    protected _yFields: string[] = [];
-    set yFields(values: string[]) {
-        this._yFields = values;
+    protected _yKeys: string[] = [];
+    set yKeys(values: string[]) {
+        this._yKeys = values;
         this.yData = [];
 
-        const { yFieldEnabled } = this;
-        yFieldEnabled.clear();
-        values.forEach(field => yFieldEnabled.set(field, true));
+        const { yKeyEnabled } = this;
+        yKeyEnabled.clear();
+        values.forEach(key => yKeyEnabled.set(key, true));
 
         this.scheduleData();
     }
-    get yFields(): string[] {
-        return this._yFields;
+    get yKeys(): string[] {
+        return this._yKeys;
     }
 
-    protected _yFieldNames: string[] = [];
-    set yFieldNames(values: string[]) {
-        this._yFieldNames = values;
+    protected _yNames: string[] = [];
+    set yNames(values: string[]) {
+        this._yNames = values;
         this.update();
     }
-    get yFieldNames(): string[] {
-        return this._yFieldNames;
+    get yNames(): string[] {
+        return this._yNames;
     }
 
     private _normalizedTo?: number;
@@ -221,38 +221,38 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     processData(): boolean {
-        const { chart, xField, yFields } = this;
+        const { chart, xKey, yKeys } = this;
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
         }
 
-        if (!(xField && yFields.length)) {
+        if (!(xKey && yKeys.length)) {
             this._data = [];
         }
 
         // If the data is an array of rows like so:
         //
         // [{
-        //   xField: 'Jan',
-        //   yField1: 5,
-        //   yField2: 7,
-        //   yField3: -9,
+        //   xKy: 'Jan',
+        //   yKey1: 5,
+        //   yKey2: 7,
+        //   yKey3: -9,
         // }, {
-        //   xField: 'Feb',
-        //   yField1: 10,
-        //   yField2: -15,
-        //   yField3: 20
+        //   xKey: 'Feb',
+        //   yKey1: 10,
+        //   yKey2: -15,
+        //   yKey3: 20
         // }]
         //
-        const { yFieldEnabled, data } = this;
+        const { yKeyEnabled, data } = this;
 
-        this.xData = data.map(datum => datum[xField]);
+        this.xData = data.map(datum => datum[xKey]);
 
-        this.yData = data.map(datum => yFields.map(yField => {
-            const value = datum[yField];
+        this.yData = data.map(datum => yKeys.map(yKey => {
+            const value = datum[yKey];
 
-            return isFinite(value) && yFieldEnabled.get(yField) ? Math.abs(value) : 0;
+            return isFinite(value) && yKeyEnabled.get(yKey) ? Math.abs(value) : 0;
         }));
 
         // xData: ['Jan', 'Feb']
@@ -330,7 +330,7 @@ export class AreaSeries extends Series<CartesianChart> {
 
     private generateSelectionData(): { areaSelectionData: AreaSelectionDatum[], markerSelectionData: MarkerSelectionDatum[] } {
         const {
-            yFields,
+            yKeys,
             fills,
             strokes,
             data,
@@ -357,24 +357,24 @@ export class AreaSeries extends Series<CartesianChart> {
 
             yDatum.forEach((curr, j) => {
                 const y = yScale.convert(prev + curr) + yOffset;
-                const yField = yFields[j];
-                const yValue = seriesDatum[yField];
+                const yKey = yKeys[j];
+                const yValue = seriesDatum[yKey];
 
                 if (marker) {
                     markerSelectionData.push({
                         seriesDatum,
                         yValue,
-                        yField,
+                        yKey,
                         x,
                         y,
                         fill: marker.fill || fills[j % fills.length],
                         stroke: marker.stroke || strokes[j % strokes.length],
                         size: markerSize,
-                        text: this.yFieldNames[j]
+                        text: this.yNames[j]
                     });
                 }
 
-                const areaDatum = areaSelectionData[j] || (areaSelectionData[j] = { yField, points: [] });
+                const areaDatum = areaSelectionData[j] || (areaSelectionData[j] = { yKey, points: [] });
                 const areaPoints = areaDatum.points;
 
                 areaPoints[i] = { x, y };
@@ -388,7 +388,7 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     private updateAreaSelection(areaSelectionData: AreaSelectionDatum[]): void {
-        const { fills, fillOpacity, yFieldEnabled, shadow } = this;
+        const { fills, fillOpacity, yKeyEnabled, shadow } = this;
         const updateAreas = this.areaSelection.setData(areaSelectionData);
 
         updateAreas.exit.remove();
@@ -407,7 +407,7 @@ export class AreaSeries extends Series<CartesianChart> {
             shape.fill = fills[index % fills.length];
             shape.fillOpacity = fillOpacity;
             shape.fillShadow = shadow;
-            shape.visible = !!yFieldEnabled.get(datum.yField);
+            shape.visible = !!yKeyEnabled.get(datum.yKey);
 
             path.clear();
 
@@ -428,7 +428,7 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     private updateStrokeSelection(areaSelectionData: AreaSelectionDatum[]): void {
-        const { strokes, strokeWidth, strokeOpacity, data, yFieldEnabled } = this;
+        const { strokes, strokeWidth, strokeOpacity, data, yKeyEnabled } = this;
         const updateStrokes = this.strokeSelection.setData(areaSelectionData);
 
         updateStrokes.exit.remove();
@@ -447,7 +447,7 @@ export class AreaSeries extends Series<CartesianChart> {
 
             shape.stroke = strokes[index % strokes.length];
             shape.strokeWidth = strokeWidth;
-            shape.visible = !!yFieldEnabled.get(datum.yField);
+            shape.visible = !!yKeyEnabled.get(datum.yKey);
             shape.strokeOpacity = strokeOpacity;
 
             path.clear();
@@ -471,7 +471,7 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     private updateMarkerSelection(markerSelectionData: MarkerSelectionDatum[]): void {
-        const { marker, yFieldEnabled, highlightedNode, highlightStyle: { fill, stroke } } = this;
+        const { marker, yKeyEnabled, highlightedNode, highlightStyle: { fill, stroke } } = this;
         const updateMarkers = this.markerSelection.setData(markerSelectionData);
         const Marker = marker.type;
 
@@ -489,25 +489,25 @@ export class AreaSeries extends Series<CartesianChart> {
             node.fillOpacity = marker.fillOpacity;
             node.strokeOpacity = marker.strokeOpacity;
             node.strokeWidth = marker.strokeWidth;
-            node.visible = marker.enabled && datum.size > 0 && !!yFieldEnabled.get(datum.yField);
+            node.visible = marker.enabled && datum.size > 0 && !!yKeyEnabled.get(datum.yKey);
         });
 
         this.markerSelection = markerSelection;
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
-        const { xField: xKey } = this;
-        const { yField: yKey } = nodeDatum;
+        const { xKey } = this;
+        const { yKey } = nodeDatum;
 
         if (!xKey || !yKey) {
             return '';
         }
 
-        const { xFieldName: xName, yFields, yFieldNames, fills, tooltipRenderer } = this;
+        const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
         const { text } = nodeDatum;
-        const yFieldIndex = yFields.indexOf(yKey);
-        const yName = yFieldNames[yFieldIndex];
-        const color = fills[yFieldIndex % fills.length];
+        const yKeyIndex = yKeys.indexOf(yKey);
+        const yName = yNames[yKeyIndex];
+        const color = fills[yKeyIndex % fills.length];
 
         if (tooltipRenderer) {
             return tooltipRenderer({
@@ -533,16 +533,16 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.xField && this.yFields.length) {
+        if (this.data.length && this.xKey && this.yKeys.length) {
             const { fills, strokes, id } = this;
 
-            this.yFields.forEach((yField, index) => {
+            this.yKeys.forEach((yKey, index) => {
                 data.push({
                     id,
-                    itemId: yField,
-                    enabled: this.yFieldEnabled.get(yField) || false,
+                    itemId: yKey,
+                    enabled: this.yKeyEnabled.get(yKey) || false,
                     label: {
-                        text: this.yFieldNames[index] || this.yFields[index]
+                        text: this.yNames[index] || this.yKeys[index]
                     },
                     marker: {
                         fill: fills[index % fills.length],
@@ -554,7 +554,7 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
-        this.yFieldEnabled.set(itemId, enabled);
+        this.yKeyEnabled.set(itemId, enabled);
         this.scheduleData();
     }
 }

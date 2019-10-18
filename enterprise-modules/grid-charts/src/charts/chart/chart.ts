@@ -5,7 +5,7 @@ import { Padding } from "../util/padding";
 import { Shape } from "../scene/shape/shape";
 import { Node } from "../scene/node";
 import { Rect } from "../scene/shape/rect";
-import { Legend, LegendDatum, Orientation } from "./legend";
+import { Legend, LegendDatum } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { Caption } from "../caption";
