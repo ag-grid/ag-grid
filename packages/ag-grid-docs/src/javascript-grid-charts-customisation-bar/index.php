@@ -101,12 +101,17 @@ interface GridStyle {
 
 interface FillOptions {
     colors: string[]; // default: dependent on selected palette
-    opacity: number; // valid range from 0 to 1. Default: 1 (opaque)
+
+    // Valid range from 0 (transparent) to 1 (opaque)
+    opacity: number; // default: 1
 }
 
 interface StrokeOptions {
     colors: string[]; // default: dependent on selected palette
-    opacity: number; // valid range from 0 to 1. Default: 1 (opaque)
+
+    // Valid range from 0 (transparent) to 1 (opaque)
+    opacity: number; // default: 1
+
     width: number; // default: 1
 }
 
@@ -139,15 +144,15 @@ interface TooltipOptions {
 }
 
 interface BarTooltipRendererParams {
-    // The datum object the tooltip is being rendered for
+    // The datum object for the highlighted bar that the tooltip is being rendered for
     datum: any;
-    // The key of the datum object that contains the category name of the highlighted bar
+    // The key of the datum object that contains the X value
     xKey: string;
-    // The column name of the category
+    // The name of the column that the X value is from
     xName: string;
-    // The key of the datum object that contains the series value of the highlighted bar
+    // The key of the datum object that contains the Y value
     yKey: string;
-    // The column name of the series
+    // The name of the column that the Y value is from
     yName: string;
     // The title of the series the datum is in
     title?: string;
