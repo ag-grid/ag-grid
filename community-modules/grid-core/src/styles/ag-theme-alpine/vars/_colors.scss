@@ -1,0 +1,30 @@
+@import './svg-encode';
+
+$alpine-blue: #2196f3;
+$alpine-orange: #ff9800;
+$alpine-purple: #e040fb; // good candidate for secondary color
+$alpine-green: #76ff03;
+
+$alpine-black: #181d1f;
+$alpine-white: #fff;
+
+$alpine-gray-1: #222628;
+$alpine-gray-2: #585652;
+$alpine-gray-3: #68686e;
+$alpine-gray-4: #babfc7;
+$alpine-gray-5: #fcfdfe;
+
+$alpine-light-pink: #fce4ec;
+$alpine-dim-green: #43a047;
+$alpine-dim-red: #e53935;
+$alpine-deep-teal: #16a085;
+
+// Add your SVG code here:
+@function dropdown-arrow($fill-color) {
+    @return '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g fill="' + $fill-color +
+        '" fill-rule="nonzero"><path d="M24.708 12.355l-8.708 8.706-8.708-8.706 1.416-1.416 7.292 7.294 7.292-7.294c0.472 0.472 0.944 0.944 1.416 1.416z"></path></g></svg>';
+}
+
+$white-dropdown-arrow: svg-encode(dropdown-arrow($alpine-white));
+$blue-dropdown-arrow: svg-encode(dropdown-arrow($alpine-blue));
+$black-dropdown-arrow: svg-encode(dropdown-arrow($alpine-gray-3));

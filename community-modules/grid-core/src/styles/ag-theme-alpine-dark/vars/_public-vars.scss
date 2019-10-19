@@ -1,0 +1,31 @@
+@import '../../ag-theme-alpine/vars/colors';
+$color-background: $alpine-black !default;
+$color-foreground: $alpine-white !default;
+$color-background-alt: $alpine-gray-1 !default;
+$color-primary: $alpine-blue !default;
+$color-secondary: $alpine-orange !default;
+
+// selection
+$color-selected: darken($color-secondary, 25) !default;
+$color-background-range-selection: darken($color-secondary, 34) !default;
+$color-background-range-selected-1: lighten($color-background-range-selection, 10) !default;
+$color-background-range-selected-2: lighten($color-background-range-selection, 20) !default;
+$color-background-range-selected-3: lighten($color-background-range-selection, 30) !default;
+$color-background-range-selected-4: lighten($color-background-range-selection, 40) !default;
+
+$color-border-primary: $alpine-gray-3 !default;
+$color-border-secondary: transparentize($alpine-gray-2, 0.5) !default;
+$color-icon: $alpine-gray-3 !default;
+
+$color-row-hover: transparentize($color-primary, 0.8) !default;
+
+// dropdown arrow
+$url-data-image-dropdown-arrow: url($white-dropdown-arrow) !default;
+$url-hover-data-image-dropdown-arrow: url($blue-dropdown-arrow) !default;
+$url-pressed-data-image-dropdown-arrow: url($black-dropdown-arrow) !default;
+
+// switch needs to be a bit darker
+$color-background-toggle-button: $alpine-gray-3 !default;
+
+// shadow should be darker (instead of inverted) for a natural look
+$color-chrome-shadow: $alpine-black !default;

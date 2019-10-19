@@ -32,7 +32,9 @@ body:not(.dark) .bad-score {
     filter: invert(100%);
 }
 
-body .ag-theme-material, body .ag-theme-balham {
+body .ag-theme-material, 
+body .ag-theme-balham,
+body .ag-theme-alpine {
     .good-score {
         background-color: rgba(185, 246, 202, 0.4);
     }

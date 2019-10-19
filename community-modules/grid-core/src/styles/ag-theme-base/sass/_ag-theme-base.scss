@@ -1,7 +1,8 @@
-@import "../../mixins/ag-theme-mixins";
+@import '../../mixins/ag-theme-mixins';
 
-@if $icon-font-family == 'agGridBalham' or
-    $icon-font-family == 'agGridMaterial' or
+@if $icon-font-family == 'agGridBalham' or 
+    $icon-font-family == 'agGridMaterial' or 
+    $icon-font-family == 'agGridAlpine' or  
     $icon-font-family == 'agGridClassic' {
     @font-face {
         font-family: '#{$icon-font-family}';
@@ -12,104 +13,104 @@
 }
 
 @mixin ag-grid-theme($params) {
-    $grid-size: map-get($params, "grid-size");
-    $icon-size: map-get($params, "icon-size");
-    $icon-color: map-get($params, "icon-color");
-    $alt-icon-color: map-get($params, "alt-icon-color");
-    $header-icon-size: map-get($params, "header-icon-size");
-    $row-height: map-get($params, "row-height");
-    $header-height: map-get($params, "header-height");
-    $virtual-item-height: map-get($params, "virtual-item-height");
-    $cell-horizontal-padding: map-get($params, "cell-horizontal-padding");
+    $grid-size: map-get($params, 'grid-size');
+    $icon-size: map-get($params, 'icon-size');
+    $icon-color: map-get($params, 'icon-color');
+    $alt-icon-color: map-get($params, 'alt-icon-color');
+    $header-icon-size: map-get($params, 'header-icon-size');
+    $row-height: map-get($params, 'row-height');
+    $header-height: map-get($params, 'header-height');
+    $virtual-item-height: map-get($params, 'virtual-item-height');
+    $cell-horizontal-padding: map-get($params, 'cell-horizontal-padding');
 
-    $font-family: map-get($params, "font-family");
-    $font-size: map-get($params, "font-size");
-    $font-weight: map-get($params, "font-weight");
+    $font-family: map-get($params, 'font-family');
+    $font-size: map-get($params, 'font-size');
+    $font-weight: map-get($params, 'font-weight');
 
-    $secondary-font-family: map-get($params, "secondary-font-family");
-    $secondary-font-size: map-get($params, "secondary-font-size");
-    $secondary-font-weight: map-get($params, "secondary-font-weight");
+    $secondary-font-family: map-get($params, 'secondary-font-family');
+    $secondary-font-size: map-get($params, 'secondary-font-size');
+    $secondary-font-weight: map-get($params, 'secondary-font-weight');
 
-    $foreground-color: map-get($params, "foreground-color");
-    $foreground-opacity: map-get($params, "foreground-opacity");
+    $foreground-color: map-get($params, 'foreground-color');
+    $foreground-opacity: map-get($params, 'foreground-opacity');
 
-    $secondary-foreground-color-opacity: map-get($params, "secondary-foreground-color-opacity");
-    $secondary-foreground-color: map-get($params, "secondary-foreground-color");
+    $secondary-foreground-color-opacity: map-get($params, 'secondary-foreground-color-opacity');
+    $secondary-foreground-color: map-get($params, 'secondary-foreground-color');
 
-    $disabled-foreground-color-opacity: map-get($params, "disabled-foreground-color-opacity");
-    $disabled-foreground-color: map-get($params, "disabled-foreground-color");
-    $input-disabled-background-color: map-get($params, "input-disabled-background-color");
+    $disabled-foreground-color-opacity: map-get($params, 'disabled-foreground-color-opacity');
+    $disabled-foreground-color: map-get($params, 'disabled-foreground-color');
+    $input-disabled-background-color: map-get($params, 'input-disabled-background-color');
 
-    $background-color: map-get($params, "background-color");
-    $border-color: map-get($params, "border-color");
-    $row-border-width: map-get($params, "row-border-width");
-    $scroll-spacer-border: map-get($params, "scroll-spacer-border");
+    $background-color: map-get($params, 'background-color');
+    $border-color: map-get($params, 'border-color');
+    $row-border-width: map-get($params, 'row-border-width');
+    $scroll-spacer-border: map-get($params, 'scroll-spacer-border');
 
-    $button-background-color: map-get($params, "button-background-color");
+    $button-background-color: map-get($params, 'button-background-color');
 
-    $cell-data-changed-color: map-get($params, "cell-data-changed-color");
+    $cell-data-changed-color: map-get($params, 'cell-data-changed-color');
 
-    $chip-background-color: map-get($params, "chip-background-color");
+    $chip-background-color: map-get($params, 'chip-background-color');
 
-    $editor-background-color-color: map-get($params, "editor-background-color-color");
+    $editor-background-color-color: map-get($params, 'editor-background-color-color');
 
-    $range-selection-background-color: map-get($params, "range-selection-background-color");
-    $range-selection-chart-background-color: map-get($params, "range-selection-chart-background-color");
-    $range-selection-chart-category-background-color: map-get($params, "range-selection-chart-category-background-color");
-    $range-selection-highlight-color: map-get($params, "range-selection-highlight-color");
-    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
-    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
-    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
-    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
+    $range-selection-background-color: map-get($params, 'range-selection-background-color');
+    $range-selection-chart-background-color: map-get($params, 'range-selection-chart-background-color');
+    $range-selection-chart-category-background-color: map-get($params, 'range-selection-chart-category-background-color');
+    $range-selection-highlight-color: map-get($params, 'range-selection-highlight-color');
+    $ag-range-selected-color-1: map-get($params, 'ag-range-selected-color-1');
+    $ag-range-selected-color-2: map-get($params, 'ag-range-selected-color-2');
+    $ag-range-selected-color-3: map-get($params, 'ag-range-selected-color-3');
+    $ag-range-selected-color-4: map-get($params, 'ag-range-selected-color-4');
 
-    $header-background-color: map-get($params, "header-background-color");
-    $header-background-image: map-get($params, "header-background-image");
-    $header-cell-hover-background-color: map-get($params, "header-cell-hover-background-color");
-    $header-cell-moving-background-color: map-get($params, "header-cell-moving-background-color");
-    $header-foreground-color: map-get($params, "header-foreground-color");
-    $panel-background-color: map-get($params, "panel-background-color");
-    $tool-panel-background-color: map-get($params, "tool-panel-background-color");
-    $row-stub-background-color: map-get($params, "row-stub-background-color");
+    $header-background-color: map-get($params, 'header-background-color');
+    $header-background-image: map-get($params, 'header-background-image');
+    $header-cell-hover-background-color: map-get($params, 'header-cell-hover-background-color');
+    $header-cell-moving-background-color: map-get($params, 'header-cell-moving-background-color');
+    $header-foreground-color: map-get($params, 'header-foreground-color');
+    $panel-background-color: map-get($params, 'panel-background-color');
+    $tool-panel-background-color: map-get($params, 'tool-panel-background-color');
+    $row-stub-background-color: map-get($params, 'row-stub-background-color');
 
-    $accent-color: map-get($params, "accent-color");
-    $primary-color: map-get($params, "primary-color");
-    $hover-color: map-get($params, "hover-color");
-    $selected-color: map-get($params, "selected-color");
+    $accent-color: map-get($params, 'accent-color');
+    $primary-color: map-get($params, 'primary-color');
+    $hover-color: map-get($params, 'hover-color');
+    $selected-color: map-get($params, 'selected-color');
 
-    $icon-opacity: map-get($params, "icon-opacity");
-    $button-text-transform: map-get($params, "button-text-transform");
-    $card-radius: map-get($params, "card-radius");
-    $card-shadow: map-get($params, "card-shadow");
-    $focused-textbox-border: map-get($params, "focused-textbox-border");
+    $icon-opacity: map-get($params, 'icon-opacity');
+    $button-text-transform: map-get($params, 'button-text-transform');
+    $card-radius: map-get($params, 'card-radius');
+    $card-shadow: map-get($params, 'card-shadow');
+    $focused-textbox-border: map-get($params, 'focused-textbox-border');
 
-    $tooltip-background-color: map-get($params, "tooltip-background-color");
-    $tooltip-foreground-color: map-get($params, "tooltip-foreground-color");
-    $tooltip-border-radius: map-get($params, "tooltip-border-radius");
-    $tooltip-padding: map-get($params, "tooltip-padding");
-    $tooltip-border-width: map-get($params, "tooltip-border-width");
-    $tooltip-border-style: map-get($params, "tooltip-border-style");
-    $tooltip-border-color: map-get($params, "tooltip-border-color");
+    $tooltip-background-color: map-get($params, 'tooltip-background-color');
+    $tooltip-foreground-color: map-get($params, 'tooltip-foreground-color');
+    $tooltip-border-radius: map-get($params, 'tooltip-border-radius');
+    $tooltip-padding: map-get($params, 'tooltip-padding');
+    $tooltip-border-width: map-get($params, 'tooltip-border-width');
+    $tooltip-border-style: map-get($params, 'tooltip-border-style');
+    $tooltip-border-color: map-get($params, 'tooltip-border-color');
 
-    $value-change-delta-up-color: map-get($params, "value-change-delta-up-color");
-    $value-change-delta-down-color: map-get($params, "value-change-delta-down-color");
-    $value-change-value-highlight-background-color: map-get($params, "value-change-value-highlight-background-color");
-    $toolpanel-indent-size: map-get($params, "toolpanel-indent-size");
-    $row-group-indent-size: map-get($params, "row-group-indent-size");
-    $row-floating-background-color: map-get($params, "row-floating-background-color");
+    $value-change-delta-up-color: map-get($params, 'value-change-delta-up-color');
+    $value-change-delta-down-color: map-get($params, 'value-change-delta-down-color');
+    $value-change-value-highlight-background-color: map-get($params, 'value-change-value-highlight-background-color');
+    $toolpanel-indent-size: map-get($params, 'toolpanel-indent-size');
+    $row-group-indent-size: map-get($params, 'row-group-indent-size');
+    $row-floating-background-color: map-get($params, 'row-floating-background-color');
 
-    $dialog-background-color: map-get($params, "dialog-background-color");
-    $dialog-border-size: map-get($params, "dialog-border-size");
-    $dialog-border-style: map-get($params, "dialog-border-style");
-    $dialog-border-color: map-get($params, "dialog-border-color");
+    $dialog-background-color: map-get($params, 'dialog-background-color');
+    $dialog-border-size: map-get($params, 'dialog-border-size');
+    $dialog-border-style: map-get($params, 'dialog-border-style');
+    $dialog-border-color: map-get($params, 'dialog-border-color');
 
-    $dialog-title-background-color: map-get($params, "dialog-title-background-color");
-    $dialog-title-foreground-color: map-get($params, "dialog-title-foreground-color");
-    $dialog-title-height: map-get($params, "dialog-title-height");
-    $dialog-title-font-family: map-get($params, "dialog-title-font-family");
-    $dialog-title-font-size: map-get($params, "dialog-title-font-size");
-    $dialog-title-font-weight: map-get($params, "dialog-title-font-weight");
-    $dialog-title-padding: map-get($params, "dialog-title-padding");
-    $dialog-title-icon-size: map-get($params, "dialog-title-icon-size");
+    $dialog-title-background-color: map-get($params, 'dialog-title-background-color');
+    $dialog-title-foreground-color: map-get($params, 'dialog-title-foreground-color');
+    $dialog-title-height: map-get($params, 'dialog-title-height');
+    $dialog-title-font-family: map-get($params, 'dialog-title-font-family');
+    $dialog-title-font-size: map-get($params, 'dialog-title-font-size');
+    $dialog-title-font-weight: map-get($params, 'dialog-title-font-weight');
+    $dialog-title-padding: map-get($params, 'dialog-title-padding');
+    $dialog-title-icon-size: map-get($params, 'dialog-title-icon-size');
 
     ////////////////////////////////////////
     // Chinese wall of inline vars over
@@ -129,7 +130,9 @@
 
     * {
         box-sizing: border-box;
-        &:focus, *:before, *:after {
+        &:focus,
+        *:before,
+        *:after {
             outline: none;
             box-sizing: border-box;
         }
@@ -163,7 +166,9 @@
         vertical-align: middle;
     }
 
-    .ag-checkbox, .ag-radio-button, .ag-toggle-button {
+    .ag-checkbox,
+    .ag-radio-button,
+    .ag-toggle-button {
         display: flex;
         align-items: center;
         cursor: default;
@@ -186,7 +191,7 @@
     // do not remove .ag-ltr from here
     .ag-ltr {
         .ag-row-group-leaf-indent {
-            margin-left: $icon-size + $grid-size * 3;
+            margin-left: $row-group-indent-size;
         }
         .ag-cell {
             border-right: $cell-horizontal-border;
@@ -235,18 +240,18 @@
     ////////////////////////////////////////
     .ag-input-wrapper {
         input:not([type]),
-        input[type="text"],
-        input[type="number"],
-        input[type="tel"],
-        input[type="date"],
-        input[type="datetime-local"] {
+        input[type='text'],
+        input[type='number'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'] {
             @include textbox($params);
         }
 
-        input[type="date"] {
+        input[type='date'] {
             flex: 1 1 auto;
         }
-        input[type="range"] {
+        input[type='range'] {
             padding: 0;
         }
 
@@ -295,13 +300,13 @@
         }
     }
 
-    @if map-get($params, "odd-row-background-color") {
+    @if map-get($params, 'odd-row-background-color') {
         .ag-row-odd {
-            background-color: map-get($params, "odd-row-background-color");
+            background-color: map-get($params, 'odd-row-background-color');
         }
 
         .ag-row-even {
-            background-color: map-get($params, "background-color");
+            background-color: map-get($params, 'background-color');
         }
     }
 
@@ -311,7 +316,7 @@
             border-right: none;
         }
     }
-    .ag-horizontal-right-spacer  {
+    .ag-horizontal-right-spacer {
         border-left: $scroll-spacer-border;
         &.ag-scroller-corner {
             border-left: none;
@@ -349,7 +354,8 @@
     }
 
     .ag-header-row:first-child {
-        .ag-header-cell, .ag-header-group-cell {
+        .ag-header-cell,
+        .ag-header-group-cell {
             border-top-width: 0;
         }
     }
@@ -359,7 +365,8 @@
     .ag-header-group-cell:first-of-type,
     .ag-header-cell:first-of-type {
         @if ($header-background-color != $header-cell-hover-background-color) {
-            &:hover, &.ag-column-resizing {
+            &:hover,
+            &.ag-column-resizing {
                 background-color: $header-cell-hover-background-color;
             }
         }
@@ -389,7 +396,8 @@
         min-width: $icon-size + $grid-size * 3;
     }
 
-    .ag-row-dragging, .ag-row-dragging .ag-row-drag {
+    .ag-row-dragging,
+    .ag-row-dragging .ag-row-drag {
         cursor: move;
     }
 
@@ -407,7 +415,8 @@
     // Navigation
     ////////////////////////////////////////
 
-    .ag-ltr, .ag-rtl {
+    .ag-ltr,
+    .ag-rtl {
         .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
         .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
         .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
@@ -504,7 +513,7 @@
         }
     }
 
-    $full-width-tabs: map-get($params, "full-width-tabs");
+    $full-width-tabs: map-get($params, 'full-width-tabs');
 
     ////////////////////////////////////////
     // Column Filter
@@ -560,7 +569,8 @@
     // Value Set Filter
     ////////////////////////////////////////
     .ag-filter {
-        .ag-filter-select, .ag-filter-body {
+        .ag-filter-select,
+        .ag-filter-body {
             margin-bottom: $grid-size;
         }
 
@@ -578,15 +588,15 @@
             margin: $grid-size;
         }
 
-        input[type="radio"] {
+        input[type='radio'] {
             margin: 0 3px 0 6px;
             width: 12px;
             height: 17px;
             vertical-align: top;
         }
 
-        input[type="text"],
-        input[type="date"] {
+        input[type='text'],
+        input[type='date'] {
             padding-left: $grid-size;
         }
 
@@ -597,7 +607,8 @@
         .ag-set-filter-item {
             height: $virtual-item-height;
             > {
-                div, span {
+                div,
+                span {
                     margin-left: 5px;
                 }
             }
@@ -615,7 +626,7 @@
             padding-top: $grid-size * 2;
             button {
                 line-height: 1.5;
-                @if map-get($params, "customize-buttons") {
+                @if map-get($params, 'customize-buttons') {
                     @include regular-button($primary-color, $button-background-color, $button-text-transform);
                 }
             }
@@ -650,7 +661,7 @@
         }
 
         .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
-            margin-left: $icon-size + $grid-size * 2;
+            margin-left: $toolpanel-indent-size + $grid-size;
         }
     }
 
@@ -913,7 +924,8 @@
         background-color: $selected-color;
     }
 
-    .ag-ltr, .ag-rtl {
+    .ag-ltr,
+    .ag-rtl {
         .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
             border: 1px solid transparent;
             &.ag-cell-range-top {
@@ -959,7 +971,8 @@
         background-color: $ag-range-selected-color-4;
     }
 
-    .ag-ltr, .ag-rtl {
+    .ag-ltr,
+    .ag-rtl {
         .ag-selection-fill-top {
             border-top: 1px dashed $primary-color;
             &.ag-cell.ag-cell-range-selected {
@@ -1101,7 +1114,8 @@
     .ag-group-expanded:not(.ag-hidden),
     .ag-group-contracted:not(.ag-hidden),
     .ag-group-checkbox:not(.ag-invisible) {
-        ~ .ag-cell-value, + .ag-group-value {
+        ~ .ag-cell-value,
+        + .ag-group-value {
             &:not(:empty) {
                 margin-left: $cell-horizontal-padding;
             }
@@ -1189,7 +1203,7 @@
         }
 
         .ag-virtual-list-item:hover {
-            background-color: map-get($params, "menu-option-active-color");
+            background-color: map-get($params, 'menu-option-active-color');
         }
     }
 
@@ -1228,8 +1242,12 @@
         }
 
         @keyframes spin {
-            from { transform:rotate(0deg); }
-            to { transform:rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .ag-loading-text {
@@ -1245,7 +1263,8 @@
         border-top: 1px solid $border-color;
     }
 
-    .ag-floating-top, .ag-floating-bottom {
+    .ag-floating-top,
+    .ag-floating-bottom {
         background-color: $row-floating-background-color;
 
         .ag-row {
@@ -1286,7 +1305,7 @@
     }
 
     .ag-overlay-loading-wrapper {
-        background-color: rgba(255, 255, 255, 0.5);
+        background-color: transparentize($background-color, 0.5);
     }
 
     .ag-overlay-loading-center {
@@ -1346,15 +1365,14 @@
                     background-position-y: center;
                     background-position-x: center;
                     background-repeat: no-repeat;
-
                 }
             }
 
             .ag-selected {
-              button {
-                background-color: $tool-panel-background-color;
-                border-color: $border-color;
-              }
+                button {
+                    background-color: $tool-panel-background-color;
+                    border-color: $border-color;
+                }
             }
         }
 
@@ -1386,7 +1404,6 @@
         margin-right: $grid-size;
     }
 
-
     ////
     /// Widgets
     ///
@@ -1396,7 +1413,8 @@
         border: 0 solid $group-component-border-color;
         border-top-width: 1px;
         &.ag-disabled > {
-            .ag-group-component-label .ag-group-component-title, .ag-group-component-container {
+            .ag-group-component-label .ag-group-component-title,
+            .ag-group-component-container {
                 opacity: 0.5;
             }
         }
@@ -1451,7 +1469,8 @@
         }
     }
 
-    .ag-slider, .ag-angle-select {
+    .ag-slider,
+    .ag-angle-select {
         > .ag-wrapper {
             > div:not(:first-of-type) {
                 margin-left: $grid-size * 2;
@@ -1610,13 +1629,15 @@
     &.ag-popup > div:not(.ag-tooltip-custom) {
         box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
     }
+
     ////////////////////////////////////////
     // Dialog
     ////////////////////////////////////////
     .ag-panel {
         background-color: $dialog-background-color;
         border: $dialog-border-size $dialog-border-style $dialog-border-color;
-        .ag-dragging-range-handle &.ag-dialog, .ag-dragging-fill-handle &.ag-dialog {
+        .ag-dragging-range-handle &.ag-dialog,
+        .ag-dragging-fill-handle &.ag-dialog {
             opacity: 0.7;
             pointer-events: none;
         }
@@ -1629,8 +1650,8 @@
             font-size: $dialog-title-font-size;
             font-weight: $dialog-title-font-weight;
             font-family: $dialog-title-font-family;
-            padding-left: $cell-horizontal-padding;
             padding: $dialog-title-padding;
+            padding-left: $cell-horizontal-padding;
 
             .ag-title-bar-buttons {
                 .ag-button {
@@ -1641,7 +1662,8 @@
                         font-size: $dialog-title-icon-size;
                     }
                     border-radius: 5px;
-                    &:hover, &.ag-has-popup {
+                    &:hover,
+                    &.ag-has-popup {
                         background-color: darken($dialog-title-background-color, 10%);
                     }
                     &:not(:last-child) {
@@ -1756,7 +1778,9 @@
             text-align: left;
         }
 
-        .ag-checkbox, .ag-radio-button, .ag-toggle-button {
+        .ag-checkbox,
+        .ag-radio-button,
+        .ag-toggle-button {
             &:not(.ag-label-align-left) {
                 label {
                     margin-right: $grid-size;
@@ -1797,7 +1821,7 @@
 
             .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
                 margin-left: 0;
-                margin-right: $icon-size + $grid-size * 2;
+                margin-right: $toolpanel-indent-size + $grid-size;
             }
         }
 
@@ -1842,7 +1866,8 @@
 
         .ag-set-filter-item {
             > {
-                div, span {
+                div,
+                span {
                     margin-left: 0;
                     margin-right: 5px;
                 }
@@ -1914,7 +1939,7 @@
     }
 
     .sass-variables::after {
-        content: "{ #{$json-list} }";
+        content: '{ #{$json-list} }';
         display: none;
     }
 }

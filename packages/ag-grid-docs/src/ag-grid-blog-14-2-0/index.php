@@ -48,15 +48,15 @@ if (!d.getElementById(id)) {
             <p><img src="themes.jpg" alt="themes" width='80%'/></p>
 
             <ul class="content">
-            <li>Fresh (<code>ag-theme-fresh</code>)</li>
+                <li>Fresh (<code>ag-theme-fresh</code>)</li>
 
-            <li>Dark (<code>ag-theme-dark</code>)</li>
+                <li>Dark (<code>ag-theme-dark</code>)</li>
 
-            <li>Blue (<code>ag-theme-blue</code>)</li>
+                <li>Blue (<code>ag-theme-blue</code>)</li>
 
-            <li>Material (<code>ag-theme-material</code>)</li>
+                <li>Material (<code>ag-theme-material</code>)</li>
 
-            <li>Bootstrap (<code>ag-theme-bootstrap</code>)</li>
+                <li>Bootstrap (<code>ag-theme-bootstrap</code>)</li>
             </ul>
 
             <p>The new themes use a different architecture which provides means for easier customization. The improved implementation also introduces customization with <strong>Sass variables</strong>. 

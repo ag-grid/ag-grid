@@ -11,6 +11,7 @@ import {
     PostConstruct,
     Promise
 } from "@ag-community/grid-core";
+
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { GridChartComp } from "../gridChartComp";
@@ -20,23 +21,21 @@ type ChartToolbarButtons = {
 };
 
 export class ChartMenu extends Component {
+    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
-    public static EVENT_DOWNLOAD_CHART = 'downloadChart';
+    public static EVENT_DOWNLOAD_CHART = "downloadChart";
 
     private buttons: ChartToolbarButtons = {
-        chartSettings: ['menu', () => this.showMenu('chartSettings')],
-        chartData: ['menu', () => this.showMenu('chartData')],
-        chartFormat: ['menu', () => this.showMenu('chartFormat')],
-        chartUnlink: ['linked', (e) => this.toggleDetached(e)],
+        chartSettings: ['menu', () => this.showMenu("chartSettings")],
+        chartData: ['menu', () => this.showMenu("chartData")],
+        chartFormat: ['menu', () => this.showMenu("chartFormat")],
+        chartUnlink: ['linked', e => this.toggleDetached(e)],
         chartDownload: ['save', () => this.saveChart()]
     };
 
     private tabs: ChartMenuOptions[] = [];
 
-    private static TEMPLATE =
-        `<div class="ag-chart-menu"></div>`;
+    private static TEMPLATE = `<div class="ag-chart-menu"></div>`;
 
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
@@ -53,7 +52,13 @@ export class ChartMenu extends Component {
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
-        let tabOptions: ChartMenuOptions[] = ['chartSettings', 'chartData', 'chartFormat', 'chartUnlink', 'chartDownload'];
+        let tabOptions: ChartMenuOptions[] = [
+            'chartSettings',
+            'chartData',
+            'chartFormat',
+            'chartUnlink',
+            'chartDownload'
+        ];
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
 
         if (toolbarItemsFunc) {
@@ -80,12 +85,16 @@ export class ChartMenu extends Component {
         const ignoreOptions: ChartMenuOptions[] = ['chartUnlink', 'chartDownload'];
         this.tabs = tabOptions.filter(option => ignoreOptions.indexOf(option) === -1);
 
-        return tabOptions.filter(value => ignoreOptions.indexOf(value) !== -1 || (this.tabs.length && value === this.tabs[0]));
+        return tabOptions.filter(value =>
+            ignoreOptions.indexOf(value) !== -1 ||
+            (this.tabs.length && value === this.tabs[0])
+        );
     }
 
     private toggleDetached(e: MouseEvent): void {
         const target = e.target as HTMLElement;
         const active = _.containsClass(target, 'ag-icon-linked');
+
         _.addOrRemoveCssClass(target, 'ag-icon-linked', !active);
         _.addOrRemoveCssClass(target, 'ag-icon-unlinked', active);
 
@@ -98,16 +107,20 @@ export class ChartMenu extends Component {
         chartToolbarOptions.forEach(button => {
             const buttonConfig = this.buttons[button];
             const [iconName, callback] = buttonConfig;
-            const buttonEl = _.createIconNoSpan(iconName, this.gridOptionsWrapper, undefined, true);
+            const buttonEl = _.createIconNoSpan(
+                iconName,
+                this.gridOptionsWrapper,
+                undefined,
+                true
+            );
+
             this.addDestroyableEventListener(buttonEl, 'click', callback);
             this.getGui().appendChild(buttonEl);
         });
     }
 
     private saveChart() {
-        const event: AgEvent = {
-            type: ChartMenu.EVENT_DOWNLOAD_CHART
-        };
+        const event: AgEvent = { type: ChartMenu.EVENT_DOWNLOAD_CHART };
         this.dispatchEvent(event);
     }
 
@@ -117,14 +130,14 @@ export class ChartMenu extends Component {
         const context = this.getContext();
 
         const menuPanel = this.menuPanel = new AgPanel({
-            minWidth: 220,
-            width: 220,
+            minWidth: this.gridOptionsWrapper.chartMenuPanelWidth(),
+            width: this.gridOptionsWrapper.chartMenuPanelWidth(),
             height: '100%',
             closable: true,
             hideTitleBar: true
         });
-        context.wireBean(this.menuPanel);
 
+        context.wireBean(this.menuPanel);
         menuPanel.setParentComponent(this);
         dockedContainer.appendChild(menuPanel.getGui());
 
@@ -133,21 +146,27 @@ export class ChartMenu extends Component {
             type: chartComp.getCurrentChartType(),
             panels: this.tabs
         });
+
         context.wireBean(this.tabbedMenu);
+        this.addDestroyableEventListener(
+            this.menuPanel,
+            Component.EVENT_DESTROYED,
+            () => this.tabbedMenu.destroy()
+        );
 
-        this.addDestroyableEventListener(this.menuPanel, Component.EVENT_DESTROYED, () => {
-            this.tabbedMenu.destroy();
-        });
-
-        return new Promise((res) => {
+        return new Promise((res: (arg0: any) => void) => {
             window.setTimeout(() => {
                 menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(defaultTab);
-                this.addDestroyableEventListener(chartComp.getChartComponentsWrapper(), 'click', () => {
-                    if (_.containsClass(chartComp.getGui(), 'ag-has-menu')) {
-                        this.hideMenu();
+                this.addDestroyableEventListener(
+                    chartComp.getChartComponentsWrapper(),
+                    'click',
+                    () => {
+                        if (_.containsClass(chartComp.getGui(), 'ag-has-menu')) {
+                            this.hideMenu();
+                        }
                     }
-                });
+                );
                 res(menuPanel);
             }, 100);
         });
@@ -155,6 +174,7 @@ export class ChartMenu extends Component {
 
     private slideDockedContainer() {
         const chartComp = this.getParentComponent() as GridChartComp;
+
         chartComp.slideDockedOut((this.menuPanel as AgPanel).getWidth());
         window.setTimeout(() => {
             _.addCssClass(this.getParentComponent()!.getGui(), 'ag-has-menu');
@@ -165,10 +185,9 @@ export class ChartMenu extends Component {
         const tab = this.tabs.indexOf(tabName);
 
         if (!this.menuPanel) {
-            this.createMenu(tab)
-                .then(() => {
-                    this.slideDockedContainer();
-                });
+            this.createMenu(tab).then(() => {
+                this.slideDockedContainer();
+            });
         } else {
             this.slideDockedContainer();
         }
@@ -176,12 +195,14 @@ export class ChartMenu extends Component {
 
     private hideMenu(): void {
         const chartComp = this.getParentComponent() as GridChartComp;
+
         chartComp.slideDockedIn();
         _.removeCssClass(this.getParentComponent()!.getGui(), 'ag-has-menu');
     }
 
     public destroy() {
         super.destroy();
+
         if (this.menuPanel && this.menuPanel.isAlive()) {
             this.menuPanel.destroy();
         }
