@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test:e2e": "run-script-os",
+    "test:e2ex:win32": "",
+    "test:e2ex:darwin:linux": "npm run test:e2e:modules && npm run test:e2e:bundle-size",
     "test:e2e:win32": "",
-    "test:e2e:darwin:linux": "npm run test:e2e:modules && npm run test:e2e:bundle-size",
+    "test:e2e:darwin:linux": "npm run test:e2e:bundle-size",
     "test:e2e:modules": "cd tests && sh ./runTests.sh",
     "test:e2e:bundle-size": "cd bundle-size-tests && sh ./compareBundleSizes.sh",
     "build:e2e": "run-script-os",
