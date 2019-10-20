@@ -79,7 +79,7 @@ const tscSrcEs6Task = () => {
 const scssTask = () => {
     var f = filter(["**/*.css", '*Font*.css'], {restore: true});
 
-    return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
+    return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss', '!**/node_modules/**'])
         .pipe(named())
         .pipe(webpackStream({
             mode: 'none',

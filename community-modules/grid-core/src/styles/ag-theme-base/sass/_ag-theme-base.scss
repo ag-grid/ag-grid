@@ -5,7 +5,7 @@
     $icon-font-family == 'agGridClassic' {
     @font-face {
         font-family: '#{$icon-font-family}';
-        src: url("data:application/x-font-ttf;charset=utf-8;base64,#{$icons-data}") format('truetype');
+        src: $icons-data;
         font-weight: normal;
         font-style: normal;
     }
