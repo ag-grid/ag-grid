@@ -56,19 +56,9 @@ function launchPhpCP(app) {
     });
 }
 
-function serveAndWatchFramework(app, framework) {
-    const gulpPath = WINDOWS ? 'node_modules\\.bin\\gulp.cmd' : 'node_modules/.bin/gulp';
-
-    const frameworkWatch = cp.spawn(gulpPath, ['watch'], {
-        stdio: 'inherit',
-        cwd: `../${framework}`
-    });
-
+function serveFramework(app, framework) {
+    console.log(`serving ${framework}`);
     app.use(`/dev/${framework}`, express.static(`../${framework}`));
-
-    process.on('exit', () => {
-        frameworkWatch.kill();
-    });
 }
 
 function serveModules(app, communityModules, enterpriseModules) {
@@ -360,10 +350,9 @@ module.exports = () => {
     updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
     serveModules(app, communityModules, enterpriseModules);
 
-    // angular & vue are separate processes
-    serveAndWatchFramework(app, 'ag-grid-angular');
-    serveAndWatchFramework(app, 'ag-grid-vue');
-    serveAndWatchFramework(app, 'ag-grid-react');
+    serveFramework(app, 'ag-grid-angular');
+    serveFramework(app, 'ag-grid-vue');
+    serveFramework(app, 'ag-grid-react');
 
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples
