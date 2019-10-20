@@ -18,7 +18,7 @@
     "initFullBuild": "npm run initLatest && npm run updateAndRebuild",
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna clean --yes",
-    "bootstrap": "npx lerna bootstrap",
+    "bootstrap": "npx lerna bootstrap --no-ci",
     "build": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
     "test": "npx lerna run test",
     "cleanCoreDependencies": "npx lerna clean --yes --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-docs",
