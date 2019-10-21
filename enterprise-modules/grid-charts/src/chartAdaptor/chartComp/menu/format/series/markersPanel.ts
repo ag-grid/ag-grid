@@ -10,6 +10,7 @@ export class MarkersPanel extends Component {
     public static TEMPLATE =
         `<div>
             <ag-group-component ref="seriesMarkersGroup">
+                <ag-slider ref="seriesMarkerMinSizeSlider"></ag-slider>
                 <ag-slider ref="seriesMarkerSizeSlider"></ag-slider>
                 <ag-slider ref="seriesMarkerStrokeWidthSlider"></ag-slider>
             </ag-group-component>
@@ -17,6 +18,7 @@ export class MarkersPanel extends Component {
 
     @RefSelector('seriesMarkersGroup') private seriesMarkersGroup: AgGroupComponent;
     @RefSelector('seriesMarkerSizeSlider') private seriesMarkerSizeSlider: AgSlider;
+    @RefSelector('seriesMarkerMinSizeSlider') private seriesMarkerMinSizeSlider: AgSlider;
     @RefSelector('seriesMarkerStrokeWidthSlider') private seriesMarkerStrokeWidthSlider: AgSlider;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
@@ -55,10 +57,12 @@ export class MarkersPanel extends Component {
                 .onValueChange(newValue => this.chartProxy.setSeriesOption(expression, newValue));
         };
 
-        if (this.chartController.getChartType() !== ChartType.Bubble) {
-            initInput("marker.size", this.seriesMarkerSizeSlider, "size", 30);
+        if (this.chartController.getChartType() === ChartType.Bubble) {
+            initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 30);
+            initInput("marker.size", this.seriesMarkerSizeSlider, "maxSize", 30);
         } else {
-            this.seriesMarkerSizeSlider.setDisplayed(false);
+            this.seriesMarkerMinSizeSlider.setDisplayed(false);
+            initInput("marker.size", this.seriesMarkerSizeSlider, "size", 30);
         }
 
         initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
