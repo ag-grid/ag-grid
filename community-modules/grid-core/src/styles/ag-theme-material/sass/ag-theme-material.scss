@@ -40,9 +40,8 @@
     }
 
     .ag-side-bar {
-        border-bottom: 0;
-        border-right: 0;
-        border-top: 0;
+        border-bottom: none;
+        border-top: none;
 
         .ag-side-buttons button {
             border: 0;
@@ -59,14 +58,39 @@
         }
 
         .ag-side-buttons .ag-selected button {
-          border-left: 2px solid $primary-color;
           background-color: $tool-panel-background-color;
-          margin-left: -2px;
-          padding-left: 1px;
+          
         }
 
         .ag-filter-toolpanel-body {
             background-color: $background-color;
+        }
+
+        &.ag-side-bar-right {
+            border-right: none;
+            .ag-side-buttons .ag-side-button {
+                button {
+                    border-left: 2px solid transparent;
+                }
+                &.ag-selected {
+                    button {
+                        border-left-color: $primary-color;
+                    }
+                }
+            }
+        }
+        &.ag-side-bar-left {
+            border-left: none;
+            .ag-side-buttons .ag-side-button {
+                button {
+                    border-right: 2px solid transparent;
+                }
+                &.ag-selected {
+                    button {
+                        border-right-color: $primary-color;
+                    }
+                }
+            }
         }
     }
 

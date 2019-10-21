@@ -15,6 +15,7 @@ export interface SideBarDef {
     toolPanels?: (ToolPanelDef | string) [];
     defaultToolPanel?: string;
     hiddenByDefault?: boolean;
+    position?: 'left' | 'right';
 }
 
 export class SideBarDefParser {
@@ -78,7 +79,8 @@ export class SideBarDefParser {
         const result: SideBarDef = {
             toolPanels: SideBarDefParser.parseComponents(toParse.toolPanels),
             defaultToolPanel: toParse.defaultToolPanel,
-            hiddenByDefault: toParse.hiddenByDefault
+            hiddenByDefault: toParse.hiddenByDefault,
+            position: toParse.position
         };
 
         return result;

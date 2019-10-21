@@ -133,8 +133,6 @@
 
     // tool panel
     .ag-tool-panel-wrapper {
-        border-right: 1px solid $border-color;
-
         .ag-column-select-panel {
             .ag-column-tool-panel-column-group,
             .ag-column-tool-panel-column {
@@ -146,12 +144,6 @@
             padding-bottom: $grid-size * 2;
             padding-top: $grid-size * 2;
         }
-    }
-
-    .ag-rtl .ag-side-bar,
-    .ag-rtl .ag-tool-panel-wrapper {
-        border-left: 1px solid $border-color;
-        border-right: 0;
     }
 
     .ag-rtl {

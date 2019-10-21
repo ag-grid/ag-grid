@@ -1328,6 +1328,32 @@
         border-left-width: 0;
         position: relative;
 
+        &.ag-side-bar-left {
+            border-left: 1px solid $border-color;
+            border-right: none;
+            .ag-side-button.ag-selected button {
+                margin-left: 1px;
+                padding-right: 1px;
+            }
+            .ag-tool-panel-wrapper {
+                border-left: 1px solid $border-color;
+                border-right: none;
+            }
+        }
+    
+        &.ag-side-bar-right {
+            border-right: 1px solid $border-color;
+            border-left: none;
+            .ag-side-button.ag-selected button {
+                margin-left: -1px;
+                padding-left: 1px;
+            }
+            .ag-tool-panel-wrapper {
+                border-right: 1px solid $border-color;
+                border-left: none;
+            }
+        }
+
         .ag-side-buttons {
             padding-top: $grid-size * 4;
             background: $background-color;
@@ -1356,12 +1382,9 @@
             .ag-selected {
               button {
                 background-color: $tool-panel-background-color;
-                margin-left: -1px;
-                padding-left: 1px;
                 border-color: $border-color;
               }
             }
-
         }
 
         .ag-panel-container {

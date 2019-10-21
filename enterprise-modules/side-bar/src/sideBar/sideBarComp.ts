@@ -69,8 +69,10 @@ export class SideBarComp extends Component implements ISideBar {
 
         const sideBar: SideBarDef = this.gridOptionsWrapper.getSideBar();
         const sideBarExists = !!sideBar && !!sideBar.toolPanels;
+
         if (sideBarExists) {
             const shouldDisplaySideBar = sideBarExists && !sideBar.hiddenByDefault;
+            this.setSideBarPosition(sideBar.position);
             this.setDisplayed(shouldDisplaySideBar);
 
             const toolPanelDefs = sideBar.toolPanels as ToolPanelDef[];
@@ -81,6 +83,16 @@ export class SideBarComp extends Component implements ISideBar {
                 this.openToolPanel(sideBar.defaultToolPanel);
             }
         }
+    }
+
+    public setSideBarPosition(side?: 'left' | 'right'): this {
+        if (!side) { side = 'right'; }
+        const eGui = this.getGui();
+
+        _.addOrRemoveCssClass(eGui, 'ag-side-bar-left', side === 'left');
+        _.addOrRemoveCssClass(eGui, 'ag-side-bar-right', side === 'right');
+
+        return this;
     }
 
     private setupToolPanels(defs: ToolPanelDef[]): void {
