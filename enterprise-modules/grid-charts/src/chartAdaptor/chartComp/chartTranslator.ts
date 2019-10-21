@@ -65,7 +65,7 @@ export class ChartTranslator {
         pieTooltip: 'Pie',
         doughnutTooltip: 'Doughnut',
         lineTooltip: 'Line',
-        groupedAreaTooltip: 'Grouped',
+        groupedAreaTooltip: 'Area',
         stackedAreaTooltip: 'Stacked',
         normalizedAreaTooltip: '100% Stacked',
         scatterTooltip: 'Scatter',
