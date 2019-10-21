@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
 interface ChartOptions {
     width: number, // default: 800
     height: number; // default: 400
-    padding: Padding;
+    padding: PaddingOptions;
     background: BackgroundOptions;
 
     // If the title is disabled, the subtitle won't be visible either
@@ -31,7 +31,7 @@ interface ChartOptions {
     tooltipClass?: string;
 }
 
-interface Padding {
+interface PaddingOptions {
     top: number; // default: 20
     right: number; // default: 20
     bottom: number; // default: 20
@@ -61,12 +61,12 @@ interface LegendOptions {
     enabled: boolean; // default: true
     position: LegendPosition; // default: 'right'
     padding: number; // default: 20
-    item: ItemOptions;
+    item: LegendItemOptions;
 }
 
 type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-interface ItemOptions {
+interface LegendItemOptions {
     label: LegendLabelOptions;
     marker: LegendMarkerOptions;
     paddingX: number; // default: 16

@@ -7,7 +7,7 @@ import {
     EventService,
     ProcessChartOptionsParams,
     SeriesOptions,
-    Padding,
+    PaddingOptions,
     DropShadowOptions,
     FontOptions,
     CaptionOptions,
@@ -18,7 +18,7 @@ import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
 import { PieSeries } from "../../../charts/chart/series/pieSeries";
-import { Padding as InternalPadding } from "../../../charts/util/padding";
+import { Padding } from "../../../charts/util/padding";
 import { Caption } from "../../../charts/caption";
 
 export interface ChartProxyParams {
@@ -176,14 +176,14 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getChartPaddingOption = (property: keyof Padding): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : '';
+    public getChartPaddingOption = (property: keyof PaddingOptions): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : '';
 
-    public setChartPaddingOption(property: keyof Padding, value: number): void {
+    public setChartPaddingOption(property: keyof PaddingOptions, value: number): void {
         let { padding } = this.chartOptions;
 
         if (!padding) {
             padding = this.chartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
-            this.chart.padding = new InternalPadding(0);
+            this.chart.padding = new Padding(0);
         }
 
         padding[property] = value;

@@ -28,7 +28,7 @@ interface AreaChartOptions {
         shadow: DropShadowOptions;
 
         // The style to apply to a marker when it is hovered over or tapped
-        highlightStyle?: HighlightStyle;
+        highlightStyle?: HighlightOptions;
 
         // Configuration for area series markers at each data point.
         // Note: tooltips won't show without markers.
@@ -40,8 +40,8 @@ interface AreaChartOptions {
 }
 interface AxisOptions {
     title?: CaptionOptions;
-    line: LineOptions;
-    tick: TickOptions;
+    line: AxisLineOptions;
+    tick: AxisTickOptions;
     label: AxisLabelOptions;
 
     // The styles of the grid lines. These are repeated. If only a single style is provided,
@@ -64,12 +64,12 @@ type FontStyle = 'normal' | 'italic' | 'oblique';
 
 type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
-interface LineOptions {
+interface AxisLineOptions {
     width: number; // default: 1
     color: string; // default: 'rgba(195, 195, 195, 1)'
 }
 
-interface TickOptions {
+interface AxisTickOptions {
     width: number; // default: 1
     size: number; // default: 6
     color: string; // default: 'rgba(195, 195, 195, 1)'
@@ -123,7 +123,7 @@ interface DropShadowOptions {
     blur: number; // default: 5
 }
 
-interface HighlightStyle {
+interface HighlightOptions {
     fill?: string;
     stroke?: string;
 }
