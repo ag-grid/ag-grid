@@ -78,16 +78,16 @@ function processChartOptions(params) {
     var legend = options.legend;
 
     legend.enabled = true;
-    legend.marker.strokeWidth = 2;
-    legend.marker.size = 25;
-    legend.marker.padding = 10;
+    legend.item.marker.strokeWidth = 2;
+    legend.item.marker.size = 25;
+    legend.item.marker.padding = 10;
     legend.item.paddingX = 120;
     legend.item.paddingY = 20;
-    legend.label.fontStyle = 'italic';
-    legend.label.fontWeight = 'bold';
-    legend.label.fontSize = 18;
-    legend.label.fontFamily = 'Palatino, serif';
-    legend.label.color = '#555';
+    legend.item.label.fontStyle = 'italic';
+    legend.item.label.fontWeight = 'bold';
+    legend.item.label.fontSize = 18;
+    legend.item.label.fontFamily = 'Palatino, serif';
+    legend.item.label.color = '#555';
     legend.position = 'bottom';
     legend.padding = 20;
 

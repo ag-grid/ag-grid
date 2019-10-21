@@ -109,28 +109,28 @@ export class LegendPanel extends Component {
                 .onValueChange(newValue => this.chartProxy.setChartOption(`legend.${expression}`, newValue));
         };
 
-        initSlider("marker.size", "markerSize", this.markerSizeSlider, 40);
-        initSlider("marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
-        initSlider("marker.padding", "markerPadding", this.markerPaddingSlider, 200);
+        initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
+        initSlider("item.marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
+        initSlider("item.marker.padding", "markerPadding", this.markerPaddingSlider, 200);
         initSlider("item.paddingX", "itemPaddingX", this.itemPaddingXSlider, 50);
         initSlider("item.paddingY", "itemPaddingY", this.itemPaddingYSlider, 50);
     }
 
     private initLabelPanel() {
         const initialFont = {
-            family: this.chartProxy.getChartOption("legend.label.fontFamily"),
-            style: this.chartProxy.getChartOption("legend.label.fontStyle"),
-            weight: this.chartProxy.getChartOption("legend.label.fontWeight"),
-            size: this.chartProxy.getChartOption<number>("legend.label.fontSize"),
-            color: this.chartProxy.getChartOption("legend.label.color")
+            family: this.chartProxy.getChartOption("legend.item.label.fontFamily"),
+            style: this.chartProxy.getChartOption("legend.item.label.fontStyle"),
+            weight: this.chartProxy.getChartOption("legend.item.label.fontWeight"),
+            size: this.chartProxy.getChartOption<number>("legend.item.label.fontSize"),
+            color: this.chartProxy.getChartOption("legend.item.label.color")
         };
 
         // note we don't set the font style via legend panel
         const setFont = (font: LabelFont) => {
-            if (font.family) { this.chartProxy.setChartOption("legend.label.fontFamily", font.family); }
-            if (font.weight) { this.chartProxy.setChartOption("legend.label.fontWeight", font.weight); }
-            if (font.size) { this.chartProxy.setChartOption("legend.label.fontSize", font.size); }
-            if (font.color) { this.chartProxy.setChartOption("legend.label.color", font.color); }
+            if (font.family) { this.chartProxy.setChartOption("legend.item.label.fontFamily", font.family); }
+            if (font.weight) { this.chartProxy.setChartOption("legend.item.label.fontWeight", font.weight); }
+            if (font.size) { this.chartProxy.setChartOption("legend.item.label.fontSize", font.size); }
+            if (font.color) { this.chartProxy.setChartOption("legend.item.label.color", font.color); }
         };
 
         const params: LabelPanelParams = {

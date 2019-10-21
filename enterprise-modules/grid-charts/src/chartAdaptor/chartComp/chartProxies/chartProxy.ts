@@ -66,9 +66,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public getChart = (): TChart => this.chart;
 
     private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
-    protected getLabelColor = (): string => this.isDarkTheme() ? "rgb(221, 221, 221)" : "rgb(87, 87, 87)";
-    protected getAxisGridColor = (): string => this.isDarkTheme() ? "rgb(100, 100, 100)" : "rgb(219, 219, 219)";
-    protected getBackgroundColor = (): string => this.isDarkTheme() ? "#2d3436" : "white";
+    protected getLabelColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
+    protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
+    protected getBackgroundColor = (): string => this.isDarkTheme() ? '#2d3436' : 'white';
 
     protected abstract getDefaultOptions(): TOptions;
 
@@ -117,15 +117,15 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         _.set(this.chartOptions, expression, value);
 
         const mappings: any = {
-            "legend.marker.strokeWidth": "legend.markerStrokeWidth",
-            "legend.marker.size": "legend.markerSize",
-            "legend.marker.padding": "legend.markerPadding",
-            "legend.item.paddingX": "legend.itemPaddingX",
-            "legend.item.paddingY": "legend.itemPaddingY",
-            "legend.label.fontFamily": "legend.labelFontFamily",
-            "legend.label.fontWeight": "legend.labelFontWeight",
-            "legend.label.fontSize": "legend.labelFontSize",
-            "legend.label.color": "legend.labelColor",
+            'legend.item.marker.strokeWidth': 'legend.markerStrokeWidth',
+            'legend.item.marker.size': 'legend.markerSize',
+            'legend.item.marker.padding': 'legend.markerPadding',
+            'legend.item.label.fontFamily': 'legend.labelFontFamily',
+            'legend.item.label.fontWeight': 'legend.labelFontWeight',
+            'legend.item.label.fontSize': 'legend.labelFontSize',
+            'legend.item.label.color': 'legend.labelColor',
+            'legend.item.paddingX': 'legend.itemPaddingX',
+            'legend.item.paddingY': 'legend.itemPaddingY',
         };
 
         _.set(this.chart, mappings[expression] || expression, value);
@@ -141,17 +141,17 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         _.set(this.chartOptions.seriesDefaults, expression, value);
 
         const mappings: { [key: string]: string } = {
-            "stroke.width": "strokeWidth",
-            "stroke.opacity": "strokeOpacity",
-            "fill.opacity": "fillOpacity",
-            "marker.enabled": "marker.enabled",
-            "marker.size": "marker.size",
-            "marker.minSize": "marker.minSize",
-            "marker.strokeWidth": "marker.strokeWidth",
-            "tooltip.enabled": "tooltipEnabled",
-            "callout.colors": "calloutColors",
-            "callout.strokeWidth": "calloutStrokeWidth",
-            "callout.length": "calloutLength",
+            'stroke.width': 'strokeWidth',
+            'stroke.opacity': 'strokeOpacity',
+            'fill.opacity': 'fillOpacity',
+            'marker.enabled': 'marker.enabled',
+            'marker.size': 'marker.size',
+            'marker.minSize': 'marker.minSize',
+            'marker.strokeWidth': 'marker.strokeWidth',
+            'tooltip.enabled': 'tooltipEnabled',
+            'callout.colors': 'calloutColors',
+            'callout.strokeWidth': 'calloutStrokeWidth',
+            'callout.length': 'calloutLength',
         };
 
         const series = this.chart.series;
@@ -169,14 +169,14 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         (this.chart.title as any)[property] = value;
 
-        if (property === "text") {
-            this.setTitleOption("enabled", _.exists(value));
+        if (property === 'text') {
+            this.setTitleOption('enabled', _.exists(value));
         }
 
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getChartPaddingOption = (property: keyof Padding): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : "";
+    public getChartPaddingOption = (property: keyof Padding): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : '';
 
     public setChartPaddingOption(property: keyof Padding, value: number): void {
         let { padding } = this.chartOptions;
@@ -194,12 +194,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getShadowEnabled = (): boolean => !!this.getShadowProperty("enabled");
+    public getShadowEnabled = (): boolean => !!this.getShadowProperty('enabled');
 
     public getShadowProperty(property: keyof DropShadowOptions): any {
         const { seriesDefaults } = this.chartOptions;
 
-        return seriesDefaults.shadow ? seriesDefaults.shadow[property] : "";
+        return seriesDefaults.shadow ? seriesDefaults.shadow[property] : '';
     }
 
     public setShadowProperty(property: keyof DropShadowOptions, value: any): void {
@@ -211,7 +211,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 blur: 0,
                 xOffset: 0,
                 yOffset: 0,
-                color: "rgba(0,0,0,0.5)"
+                color: 'rgba(0,0,0,0.5)'
             };
         }
 
@@ -249,7 +249,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected getDefaultFontOptions(): FontOptions {
         return {
             fontSize: 12,
-            fontFamily: "Verdana, sans-serif",
+            fontFamily: 'Verdana, sans-serif',
             color: this.getLabelColor()
         };
     }
@@ -260,7 +260,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             blur: 5,
             xOffset: 3,
             yOffset: 3,
-            color: "rgba(0, 0, 0, 0.5)",
+            color: 'rgba(0, 0, 0, 0.5)',
         };
     }
 
@@ -282,33 +282,33 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             },
             title: {
                 enabled: false,
-                fontFamily: "Verdana, sans-serif",
-                fontWeight: "bold",
+                fontFamily: 'Verdana, sans-serif',
+                fontWeight: 'bold',
                 fontSize: 16,
-                color: "black",
+                color: 'black',
             },
             subtitle: {
                 enabled: false,
-                fontFamily: "Verdana, sans-serif",
-                fontWeight: "bold",
+                fontFamily: 'Verdana, sans-serif',
+                fontWeight: 'bold',
                 fontSize: 12,
-                color: "black",
+                color: 'black',
             },
             legend: {
                 enabled: true,
                 padding: 20,
-                position: "right",
-                label: {
-                    ...this.getDefaultFontOptions(),
-                },
+                position: 'right',
                 item: {
+                    label: {
+                        ...this.getDefaultFontOptions(),
+                    },
+                    marker: {
+                        padding: 4,
+                        size: 14,
+                        strokeWidth: 1,
+                    },
                     paddingX: 16,
                     paddingY: 8,
-                },
-                marker: {
-                    padding: 4,
-                    size: 14,
-                    strokeWidth: 1,
                 },
             },
             seriesDefaults: {

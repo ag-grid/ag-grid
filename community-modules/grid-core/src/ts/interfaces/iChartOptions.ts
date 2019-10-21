@@ -67,8 +67,6 @@ export interface LegendOptions {
     enabled: boolean;
     position: LegendPosition;
     padding: number;
-    label: LegendLabelOptions;
-    marker: LegendMarkerOptions;
     item: ItemOptions;
 }
 
@@ -84,6 +82,8 @@ export interface LegendMarkerOptions {
 }
 
 export interface ItemOptions {
+    label: LegendLabelOptions;
+    marker: LegendMarkerOptions;
     paddingX: number;
     paddingY: number;
 }

@@ -61,12 +61,17 @@ interface LegendOptions {
     enabled: boolean; // default: true
     position: LegendPosition; // default: 'right'
     padding: number; // default: 20
-    label: LegendLabelOptions;
-    marker: LegendMarkerOptions;
     item: ItemOptions;
 }
 
 type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
+
+interface ItemOptions {
+    label: LegendLabelOptions;
+    marker: LegendMarkerOptions;
+    paddingX: number; // default: 16
+    paddingY: number; // default: 8
+}
 
 interface LegendLabelOptions {
     fontStyle?: FontStyle;
@@ -80,11 +85,6 @@ interface LegendMarkerOptions {
     size: number; // default: 14
     padding: number; // default: 4
     strokeWidth: number; // default: 1
-}
-
-interface ItemOptions {
-    paddingX: number; // default: 16
-    paddingY: number; // default: 8
 }
 </snippet>
 

@@ -538,23 +538,25 @@ export class ChartBuilder {
         this.setValueIfExists(legend, 'enabled', options.enabled);
         this.setValueIfExists(legend, 'position', options.position);
 
-        const { label, marker, item } = options;
-
-        if (label) {
-            this.setValueIfExists(legend, 'labelFontFamily', label.fontFamily);
-            this.setValueIfExists(legend, 'labelFontSize', label.fontSize);
-            this.setValueIfExists(legend, 'labelFontStyle', label.fontStyle);
-            this.setValueIfExists(legend, 'labelFontWeight', label.fontWeight);
-            this.setValueIfExists(legend, 'labelColor', label.color);
-        }
-
-        if (marker) {
-            this.setValueIfExists(legend, 'markerStrokeWidth', marker.strokeWidth);
-            this.setValueIfExists(legend, 'markerSize', marker.size);
-            this.setValueIfExists(legend, 'markerPadding', marker.padding);
-        }
+        const { item } = options;
 
         if (item) {
+            const { label, marker } = item;
+
+            if (label) {
+                this.setValueIfExists(legend, 'labelFontFamily', label.fontFamily);
+                this.setValueIfExists(legend, 'labelFontSize', label.fontSize);
+                this.setValueIfExists(legend, 'labelFontStyle', label.fontStyle);
+                this.setValueIfExists(legend, 'labelFontWeight', label.fontWeight);
+                this.setValueIfExists(legend, 'labelColor', label.color);
+            }
+
+            if (marker) {
+                this.setValueIfExists(legend, 'markerStrokeWidth', marker.strokeWidth);
+                this.setValueIfExists(legend, 'markerSize', marker.size);
+                this.setValueIfExists(legend, 'markerPadding', marker.padding);
+            }
+
             this.setValueIfExists(legend, 'itemPaddingX', item.paddingX);
             this.setValueIfExists(legend, 'itemPaddingY', item.paddingY);
         }
