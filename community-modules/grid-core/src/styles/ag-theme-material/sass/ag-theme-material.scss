@@ -65,7 +65,7 @@
         .ag-filter-toolpanel-body {
             background-color: $background-color;
         }
-
+        
         &.ag-side-bar-right {
             border-right: none;
             .ag-side-buttons .ag-side-button {
@@ -79,6 +79,7 @@
                 }
             }
         }
+
         &.ag-side-bar-left {
             border-left: none;
             .ag-side-buttons .ag-side-button {

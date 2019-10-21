@@ -1322,6 +1322,30 @@
         @include card($params);
     }
 
+    %side-bar-left {
+        border-left: 1px solid $border-color;
+        border-right: none;
+        .ag-side-button.ag-selected button {
+            margin-left: 1px;
+            padding-right: 1px;
+        }
+        .ag-tool-panel-wrapper {
+            border-left: 1px solid $border-color;
+            border-right: none;
+        }
+    }
+    %side-bar-right {
+        border-right: 1px solid $border-color;
+        border-left: none;
+        .ag-side-button.ag-selected button {
+            margin-left: -1px;
+            padding-left: 1px;
+        }
+        .ag-tool-panel-wrapper {
+            border-right: 1px solid $border-color;
+            border-left: none;
+        }
+    }
     .ag-side-bar {
         background-color: $tool-panel-background-color;
         border: 1px solid $border-color;
@@ -1329,29 +1353,11 @@
         position: relative;
 
         &.ag-side-bar-left {
-            border-left: 1px solid $border-color;
-            border-right: none;
-            .ag-side-button.ag-selected button {
-                margin-left: 1px;
-                padding-right: 1px;
-            }
-            .ag-tool-panel-wrapper {
-                border-left: 1px solid $border-color;
-                border-right: none;
-            }
+            @extend %side-bar-left;
         }
     
         &.ag-side-bar-right {
-            border-right: 1px solid $border-color;
-            border-left: none;
-            .ag-side-button.ag-selected button {
-                margin-left: -1px;
-                padding-left: 1px;
-            }
-            .ag-tool-panel-wrapper {
-                border-right: 1px solid $border-color;
-                border-left: none;
-            }
+            @extend %side-bar-right;
         }
 
         .ag-side-buttons {
@@ -1870,6 +1876,14 @@
         }
 
         .ag-side-bar {
+            &.ag-side-bar-left {
+                @extend %side-bar-right;
+            }
+        
+            &.ag-side-bar-right {
+                @extend %side-bar-left;
+            }
+
             .ag-panel-container {
                 border-left: 1px solid $border-color;
                 border-right: 0;
