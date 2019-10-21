@@ -35,5 +35,4 @@ export interface IPrimaryColsPanel {
     collapseGroups(groupIds?: string[]): void;
     setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void;
     syncLayoutWithGrid(): void;
-    notifyListeners(): void;
 }

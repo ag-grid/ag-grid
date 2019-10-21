@@ -95,11 +95,6 @@ export class PrimaryColsListPanel extends Component {
         }
     }
 
-    public notifyListeners(): void {
-        this.fireGroupExpandedEvent();
-        this.fireSelectionChangedEvent();
-    }
-
     public syncColumnLayout(): void {
         this.colDefService.syncLayoutWithGrid(this.setColumnLayout.bind(this));
     }
@@ -438,6 +433,11 @@ export class PrimaryColsListPanel extends Component {
         } else {
             return columnGroupChild.getId();
         }
+    }
+
+    private notifyListeners(): void {
+        this.fireGroupExpandedEvent();
+        this.fireSelectionChangedEvent();
     }
 
     private fireGroupExpandedEvent(): void {

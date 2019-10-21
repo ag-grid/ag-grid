@@ -18,7 +18,8 @@ import {
     IPrimaryColsPanel,
     IRowModel,
     MenuItemDef,
-    ModuleNames, ModuleRegistry,
+    ModuleNames,
+    ModuleRegistry,
     PopupService,
     PostConstruct,
     Promise,
@@ -466,9 +467,6 @@ export class EnterpriseMenu extends BeanStub {
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi
         });
-
-        // notify header comp with initial expand / selection state
-        this.columnSelectPanel.notifyListeners();
 
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 

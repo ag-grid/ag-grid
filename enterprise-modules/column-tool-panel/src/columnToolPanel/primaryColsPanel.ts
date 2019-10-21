@@ -45,25 +45,26 @@ export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
         this.allowDragging = allowDragging;
         this.params = params;
 
+
         this.primaryColsHeaderPanel.init(this.params);
-        this.primaryColsListPanel.init(this.params, this.allowDragging);
 
         const hideFilter = this.params.suppressColumnFilter;
         const hideSelect = this.params.suppressColumnSelectAll;
         const hideExpand = this.params.suppressColumnExpandAll;
-
         if (hideExpand && hideFilter && hideSelect) {
             this.primaryColsHeaderPanel.setDisplayed(false);
         }
+
+        this.addDestroyableEventListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
+        this.addDestroyableEventListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
+
+        this.primaryColsListPanel.init(this.params, this.allowDragging);
 
         this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
         this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
         this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
         this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
         this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
-
-        this.addDestroyableEventListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
-        this.addDestroyableEventListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
     }
 
     public onExpandAll(): void {
@@ -92,10 +93,6 @@ export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
 
     public syncLayoutWithGrid(): void {
         this.primaryColsListPanel.syncColumnLayout();
-    }
-
-    public notifyListeners(): void {
-        this.primaryColsListPanel.notifyListeners();
     }
 
     private onSelectAll(): void {
