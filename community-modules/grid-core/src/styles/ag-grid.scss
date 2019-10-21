@@ -1270,12 +1270,42 @@ $handleSize: 5px;
     z-index: 1;
 }
 
-.ag-rtl .ag-tool-panel-horizontal-resize {
+%ag-tool-panel-horizontal-resizer-left {
     transform: translateX(3px);
+    right: 0;
 }
 
-.ag-ltr .ag-tool-panel-horizontal-resize {
+%ag-tool-panel-horizontal-resizer-right {
     transform: translateX(-3px);
+    left: 0;
+}
+
+.ag-ltr {
+    .ag-side-bar-left {
+        .ag-tool-panel-horizontal-resize {
+            @extend %ag-tool-panel-horizontal-resizer-left;
+        }
+    }
+    
+    .ag-side-bar-right {
+        .ag-tool-panel-horizontal-resize {
+            @extend %ag-tool-panel-horizontal-resizer-right;
+        }
+    }
+}
+
+.ag-rtl {
+    .ag-side-bar-left {
+        .ag-tool-panel-horizontal-resize {
+            @extend %ag-tool-panel-horizontal-resizer-right;
+        }
+    }
+    
+    .ag-side-bar-right {
+        .ag-tool-panel-horizontal-resize {
+            @extend %ag-tool-panel-horizontal-resizer-left;
+        }
+    }
 }
 
 .loading-filter {

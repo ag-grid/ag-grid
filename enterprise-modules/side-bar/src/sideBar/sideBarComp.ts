@@ -72,12 +72,12 @@ export class SideBarComp extends Component implements ISideBar {
 
         if (sideBarExists) {
             const shouldDisplaySideBar = sideBarExists && !sideBar.hiddenByDefault;
-            this.setSideBarPosition(sideBar.position);
             this.setDisplayed(shouldDisplaySideBar);
 
             const toolPanelDefs = sideBar.toolPanels as ToolPanelDef[];
             this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
             this.setupToolPanels(toolPanelDefs);
+            this.setSideBarPosition(sideBar.position);
 
             if (!sideBar.hiddenByDefault) {
                 this.openToolPanel(sideBar.defaultToolPanel);
@@ -87,10 +87,18 @@ export class SideBarComp extends Component implements ISideBar {
 
     public setSideBarPosition(side?: 'left' | 'right'): this {
         if (!side) { side = 'right'; }
+
+        const isLeft =  side === 'left';
+        const resizerSide = isLeft ? 'right' : 'left';
+
         const eGui = this.getGui();
 
-        _.addOrRemoveCssClass(eGui, 'ag-side-bar-left', side === 'left');
-        _.addOrRemoveCssClass(eGui, 'ag-side-bar-right', side === 'right');
+        _.addOrRemoveCssClass(eGui, 'ag-side-bar-left', isLeft);
+        _.addOrRemoveCssClass(eGui, 'ag-side-bar-right', !isLeft);
+
+        this.toolPanelWrappers.forEach(wrapper => {
+            wrapper.setResizerSizerSide(resizerSide);
+        });
 
         return this;
     }

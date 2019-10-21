@@ -19,8 +19,8 @@ export class ToolPanelWrapper extends Component {
         `<div class="ag-tool-panel-wrapper"/>`;
 
     private toolPanelCompInstance: IToolPanelComp;
-
     private toolPanelId: string;
+    private resizeBar: HorizontalResizeComp;
 
     constructor() {
         super(ToolPanelWrapper.TEMPLATE);
@@ -49,7 +49,7 @@ export class ToolPanelWrapper extends Component {
 
     @PostConstruct
     private setupResize(): void {
-        const resizeBar = new HorizontalResizeComp();
+        const resizeBar = this.resizeBar = new HorizontalResizeComp();
         this.getContext().wireBean(resizeBar);
         resizeBar.setElementToResize(this.getGui());
         this.appendChild(resizeBar);
@@ -62,6 +62,14 @@ export class ToolPanelWrapper extends Component {
 
     public getToolPanelInstance(): IToolPanelComp {
         return this.toolPanelCompInstance;
+    }
+
+    public setResizerSizerSide(side: 'right' | 'left') {
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        const isLeft = side === 'left';
+        const inverted = isRtl ? isLeft : !isLeft;
+
+        this.resizeBar.setInverted(inverted);
     }
 
     public refresh(): void {

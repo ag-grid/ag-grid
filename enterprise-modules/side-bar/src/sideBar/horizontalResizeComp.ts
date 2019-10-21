@@ -14,8 +14,8 @@ export class HorizontalResizeComp extends Component {
     @Autowired('eventService') private eventService: EventService;
 
     private startingWidth: number;
-
     private elementToResize: HTMLElement;
+    private inverted: boolean;
 
     constructor() {
         super(`<div class="ag-tool-panel-horizontal-resize"></div>`);
@@ -36,6 +36,7 @@ export class HorizontalResizeComp extends Component {
         });
 
         this.addDestroyFunc(finishedWithResizeFunc);
+        this.setInverted(this.gridOptionsWrapper.isEnableRtl());
     }
 
     private onResizeStart(): void {
@@ -43,8 +44,12 @@ export class HorizontalResizeComp extends Component {
     }
 
     private onResizing(delta: number): void {
-        const direction = this.gridOptionsWrapper.isEnableRtl() ? -1 : 1;
+        const direction = this.inverted ? -1 : 1;
         const newWidth = Math.max(100, Math.floor(this.startingWidth - (delta * direction)));
         this.elementToResize.style.width = `${newWidth}px`;
+    }
+
+    public setInverted(inverted: boolean) {
+        this.inverted = inverted;
     }
 }
