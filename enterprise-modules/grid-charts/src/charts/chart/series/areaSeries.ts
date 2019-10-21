@@ -367,8 +367,8 @@ export class AreaSeries extends Series<CartesianChart> {
                         yKey,
                         x,
                         y,
-                        fill: marker.fill || fills[j % fills.length],
-                        stroke: marker.stroke || strokes[j % strokes.length],
+                        fill: fills[j % fills.length],
+                        stroke: strokes[j % strokes.length],
                         size: markerSize,
                         text: this.yNames[j]
                     });
@@ -484,8 +484,8 @@ export class AreaSeries extends Series<CartesianChart> {
             node.translationX = datum.x;
             node.translationY = datum.y;
             node.size = datum.size;
-            node.fill = node === highlightedNode && fill !== undefined ? fill : marker.fill || datum.fill;
-            node.stroke = node === highlightedNode && stroke !== undefined ? stroke : marker.stroke || datum.stroke;
+            node.fill = node === highlightedNode && fill !== undefined ? fill : datum.fill;
+            node.stroke = node === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
             node.fillOpacity = marker.fillOpacity;
             node.strokeOpacity = marker.strokeOpacity;
             node.strokeWidth = marker.strokeWidth;

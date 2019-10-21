@@ -243,8 +243,8 @@ export class LineSeries extends Series<CartesianChart> {
         const linePath = lineNode.path;
         const Marker = marker.type;
         const markerSize = marker.size;
-        const markerFill = marker.fill || this.fill;
-        const markerStroke = marker.stroke || this.stroke;
+        const markerFill = this.fill;
+        const markerStroke = this.stroke;
         const markerStrokeWidth = marker.strokeWidth;
 
         linePath.clear();
@@ -293,8 +293,8 @@ export class LineSeries extends Series<CartesianChart> {
                 node.translationX = datum.x;
                 node.translationY = datum.y;
                 node.size = datum.size;
-                node.fill = node === highlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
-                node.stroke = node === highlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+                node.fill = node === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
+                node.stroke = node === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
                 node.fillOpacity = marker.fillOpacity;
                 node.strokeOpacity = marker.strokeOpacity;
                 node.strokeWidth = datum.strokeWidth;
