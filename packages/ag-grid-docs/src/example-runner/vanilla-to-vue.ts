@@ -84,7 +84,6 @@ const toAssignment = (property) => {
 function createComponentImports(bindings, componentFileNames: any, isDev, communityModules, enterpriseModules) {
     const imports = [];
 
-    // spl modules
     if (bindings.gridSettings.enterprise) {
         imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
     } else {

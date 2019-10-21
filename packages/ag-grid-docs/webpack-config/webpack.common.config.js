@@ -10,33 +10,36 @@ module.exports = {
         'react-dom': 'react-dom'
     },
     resolve: {
+        // we prioritise main (cjs) vs module (es6) as when doing dev we only rebuild cjs for performance reasons
+        mainFields: ["main", "module"],
         alias: {
-            // './dist/es6': './src'
-            "@ag-community/grid-core": path.resolve(__dirname, "../../../community-modules/grid-core/src/ts/main.ts")
+            // "@ag-community/grid-core": path.resolve(__dirname, "../../../community-modules/grid-core/src/ts/main.ts")
+            "@ag-community/grid-core": path.resolve(__dirname, "../_dev/@ag-community/grid-core")
         },
-        extensions: ['.ts', '.js']
+        extensions: ['.js']
+        // extensions: ['.ts', '.js']
     },
     module: {
         rules: [
-            {
-                test: /\.ts$/,
-                use: [
-                    {loader: 'cache-loader'},
-                    {
-                        loader: 'thread-loader',
-                        options: {
-                            workers: require('os').cpus().length - 1
-                        }
-                    },
-                    {
-                        loader: 'ts-loader',
-                        options: {
-                            happyPackMode: true,
-                            configFile: path.resolve('./tsconfig.json')
-                        }
-                    }
-                ]
-            },
+            // {
+            //     test: /\.ts$/,
+            //     use: [
+            //         {loader: 'cache-loader'},
+            //         {
+            //             loader: 'thread-loader',
+            //             options: {
+            //                 workers: require('os').cpus().length - 1
+            //             }
+            //         },
+            //         {
+            //             loader: 'ts-loader',
+            //             options: {
+            //                 happyPackMode: true,
+            //                 configFile: path.resolve('./tsconfig.json')
+            //             }
+            //         }
+            //     ]
+            // },
             {
                 test: /\.scss$/,
                 use: [

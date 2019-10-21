@@ -14,7 +14,6 @@ import "../../../../../community-modules/grid-core/src/styles/ag-theme-balham-da
 import { ModuleRegistry } from "../../../../../community-modules/grid-core/src/ts/main";
 export * from "../../../../../community-modules/grid-core/src/ts/main";
 
-// spl modules
 /* MODULES - Don't delete this line */
 import "../../../../../enterprise-modules/charts/src/chartsModule.ts";
 import {ChartsModule} from "../../../../../enterprise-modules/charts/src/chartsModule"; 

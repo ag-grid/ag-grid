@@ -27,7 +27,6 @@ if (USE_LOCAL) {
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/@ag-enterprise/grid-all-modules/dist/ag-grid-enterprise.js");
 
     $systemJsMap = array(
-        // spl modules
         /* START OF MODULES DEV - DO NOT DELETE */
         "@ag-community/client-side-row-model" => "$prefix/@ag-community/client-side-row-model",
         "@ag-community/csv-export" => "$prefix/@ag-community/csv-export",

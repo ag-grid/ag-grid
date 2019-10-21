@@ -11,7 +11,13 @@
     "lib": [
       "es2015",
       "dom"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@ag-*": [
+        "node_modules/@ag-*/dist/es6/main"
+      ]
+    }
   },
   "include": [
     "src/**/*"

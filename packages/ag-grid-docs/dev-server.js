@@ -62,7 +62,6 @@ function serveFramework(app, framework) {
 }
 
 function serveModules(app, communityModules, enterpriseModules) {
-    // spl modules
     console.log("serving modules");
     communityModules.concat(enterpriseModules).forEach(module => {
         console.log(`serving modules ${module.publishedName} from ./_dev/${module.publishedName} - available at /dev/${module.publishedName}`);
@@ -113,7 +112,6 @@ function symlinkModules(communityModules, enterpriseModules) {
     lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
     lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
 
-    // spl modules
     communityModules
         .forEach(module => {
             console.log(module.moduleDirName);
@@ -161,34 +159,32 @@ function watchAndGenerateExamples(communityModules, enterpriseModules) {
 function updateWebpackConfigWithBundles(communityModules, enterpriseModules) {
     console.log("updating webpack config with modules...");
 
-    // spl modules
     const communityModulesEntries = communityModules
         .filter(module => module.moduleDirName !== 'grid-core')
         .filter(module => module.moduleDirName !== 'grid-all-modules')
-        .map(module => `import "../../../${module.fullPath}";
-import {${module.moduleName}} from "../../../${module.fullPath.replace('.ts', '')}"; 
+        .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
+const {${module.moduleName}} = require("../../../${module.fullJsPath.replace('.ts', '')}"); 
         `);
 
     const communityRegisterModuleLines = communityModules
         .filter(module => module.moduleDirName !== 'grid-core')
         .filter(module => module.moduleDirName !== 'grid-all-modules')
-        .map(module => `ModuleRegistry.register(${module.moduleName} as any);`);
+        .map(module => `ModuleRegistry.ModuleRegistry.register(${module.moduleName});`);
 
     const enterpriseModulesEntries = enterpriseModules
         .filter(module => module.moduleDirName !== 'grid-core')
         .filter(module => module.moduleDirName !== 'grid-all-modules')
-        .map(module => `import "../../../${module.fullPath}";
-import {${module.moduleName}} from "../../../${module.fullPath.replace('.ts', '')}"; 
+        .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
+const {${module.moduleName}} = require("../../../${module.fullJsPath.replace('.ts', '')}"); 
         `);
 
     const enterpriseRegisterModuleLines = enterpriseModules
         .filter(module => module.moduleDirName !== 'grid-core')
         .filter(module => module.moduleDirName !== 'grid-all-modules')
-        .map(module => `ModuleRegistry.register(${module.moduleName} as any);`);
+        .map(module => `ModuleRegistry.ModuleRegistry.register(${module.moduleName});`);
 
-    const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd.ts';
-    const enterpriseMainFilename = './src/_assets/ts/ag-grid-enterprise-main.ts';
-    const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd.ts';
+    const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd.js';
+    const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd.js';
 
     const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split('\n');
     let modulesLineFound = false;
@@ -201,18 +197,6 @@ import {${module.moduleName}} from "../../../${module.fullPath.replace('.ts', ''
     });
     const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
     fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
-
-    const existingEnterpriseMainLines = fs.readFileSync(enterpriseMainFilename, 'UTF-8').split('\n');
-    modulesLineFound = false;
-    const newEnterpriseMainLines = [];
-    existingEnterpriseMainLines.forEach(line => {
-        if (!modulesLineFound) {
-            modulesLineFound = line.indexOf("/* MODULES - Don't delete this line */") !== -1;
-            newEnterpriseMainLines.push(line);
-        }
-    });
-    const newEnterpriseMainContent = newEnterpriseMainLines.concat(enterpriseModulesEntries);
-    fs.writeFileSync(enterpriseMainFilename, newEnterpriseMainContent.join('\n'), 'UTF-8');
 
     const existingCommunityLines = fs.readFileSync(communityFilename).toString().split('\n');
     modulesLineFound = false;
@@ -288,6 +272,24 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
     fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
 }
 
+function watchModules() {
+    const node = 'node';
+    const lernaWatch = cp.spawn(node, ['./scripts/modules/lernaWatch.js', '-w'], {
+        stdio: 'inherit',
+        cwd: '../../'
+    });
+
+    process.on('exit', () => {
+        lernaWatch.kill();
+    });
+}
+function buildModules() {
+    console.log("Building all modules...");
+    require('child_process').execSync(`node ../../scripts/modules/lernaWatch.js -b`, {
+        stdio: 'inherit'
+    });
+}
+
 function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules) {
     console.log("updating fw systemjs boilerplate config with modules...");
 
@@ -343,7 +345,6 @@ module.exports = () => {
     // for the actual site - php, css etc
     addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
 
-    // spl modules
     // add community & enterprise modules to express (for importing in the fw examples)
     symlinkModules(communityModules, enterpriseModules);
     updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
@@ -361,6 +362,9 @@ module.exports = () => {
 
     // regenerate examples
     watchAndGenerateExamples(communityModules, enterpriseModules);
+
+    buildModules();
+    watchModules();
 
     // PHP
     launchPhpCP(app);

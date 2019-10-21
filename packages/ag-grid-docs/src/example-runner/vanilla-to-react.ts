@@ -44,7 +44,6 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
     componentAttributes.push('onGridReady={this.onGridReady}');
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
-    // spl modules
     if (bindings.gridSettings.enterprise) {
         imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
     } else {

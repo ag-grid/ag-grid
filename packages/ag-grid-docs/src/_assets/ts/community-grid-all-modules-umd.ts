@@ -10,7 +10,6 @@ import "../../../../../community-modules/grid-core/src/styles/ag-theme-bootstrap
 import "../../../../../community-modules/grid-core/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 import "../../../../../community-modules/grid-core/src/styles/ag-theme-balham-dark/sass/ag-theme-balham-dark.scss";
 
-// spl modules
 import { ModuleRegistry } from "../../../../../community-modules/grid-core/src/ts/main";
 export * from "../../../../../community-modules/grid-core/src/ts/main";
 

@@ -7,7 +7,9 @@ const chokidar = require("chokidar");
 commandLineOptions
     .option(
         "-w, --watch",
-        "Watcher dependents of the current working directory."
+    )
+    .option(
+        "-b, --build"
     )
     .option(
         "-t, --test"
@@ -20,6 +22,16 @@ const manifest = (dir = undefined) =>
             encoding: "utf8"
         })
     );
+
+const buildDependencies = async dependencies => {
+    console.log("------------------------------------------------------------------------------------------");
+    console.log(`Building ${dependencies.map(dependency => `--scope ${dependency}`).join(' ')}`);
+    console.log("------------------------------------------------------------------------------------------");
+
+    const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
+    const lernaArgs = `run build-cjs ${scopedDependencies}`.split(" ");
+    await execa("lerna", lernaArgs, { stdio: "inherit" });
+};
 
 const findParentPackageManifest = changedFile => {
     const startingPath = path.dirname(changedFile);
@@ -39,55 +51,19 @@ const findParentPackageManifest = changedFile => {
     return up(startingPath);
 };
 
-const prunePackageTree = tree => tree.slice(1, tree.length); // removes the the tree root
-
-const findChildPackages = async name => {
-    const lernaArgs = `ls --all --toposort --json --scope ${name} --include-filtered-dependents`.split(
-        " "
-    );
-    const {stdout} = await execa("lerna", lernaArgs);
-    return JSON.parse(stdout).filter(dependency => exclude.indexOf(dependency.name) === -1 && dependency.name.indexOf('-example') === -1);
-};
-
-const buildDependency = async name => {
-    console.log(`Building ${name}`);
-    // const lernaArgs = `run build --scope ${name}`.split(" ");
-    // await execa("lerna", lernaArgs);
-    // await execa("lerna", lernaArgs, { stdio: "inherit" });
-};
-
-const findIndexAfterPackage = (packageName, buildChain) => {
-    let packageIndex = null;
-
-    const indices = Object.keys(buildChain);
-    indices.forEach(index => {
-        if (!packageIndex && buildChain[index].includes(packageName)) {
-            packageIndex = index;
-        }
-    });
-    return String(parseInt(packageIndex) + 1);
-};
-
-const buildDependencyChain = async (path, buildChains) => {
-    const packageName = manifest(path).name;
+const buildDependencyChain = async (changeFile, buildChains) => {
+    const packageName = manifest(findParentPackageManifest(changeFile)).name;
 
     const buildChain = buildChains[packageName];
 
-    const startingIndex = findIndexAfterPackage(packageName, buildChain);
     const maxIndex = Object.keys(buildChain).length;
 
-    console.log([packageName]);
-    for (let i = startingIndex; i < maxIndex; i++) {
-        console.log(buildChain[i]);
+    for (let i = 0; i < maxIndex; i++) {
+        await buildDependencies(buildChain[i]);
     }
-
-    // const buildOperations = buildEligibleChildren.map(dependency =>
-    //     buildDependency(dependency.name)
-    // );
-    // await Promise.all(buildOperations);
 };
 
-const spawnWatcher = async (paths, buildChains) => {
+const spawnWatcher = async ({paths, buildChains}) => {
     await console.log(`Watching the following paths: ${paths.join('\n')}`);
     const log = console.log.bind(console);
 
@@ -129,14 +105,12 @@ const filterAgGridOnly = dependencyTree => {
     return prunedDependencyTree;
 };
 
-const buildBuildTree = (dependencyTree, dependenciesOrdered) => {
-    const rootPackage = dependenciesOrdered[0];
-
+const buildBuildTree = (startingPackage, dependencyTree, dependenciesOrdered) => {
     let index = 0;
     let buildChain = {
-        [index++]: [rootPackage]
+        [index++]: [startingPackage]
     };
-    delete dependencyTree[rootPackage];
+    delete dependencyTree[startingPackage];
 
     dependenciesOrdered.forEach(dependency => {
         buildChain[index] = [];
@@ -207,28 +181,85 @@ const generateBuildChain = async (packageName, allPackagesOrdered) => {
     dependencyTree = filterAgGridOnly(dependencyTree);
     dependencyTree = filterExcludedRoots(dependencyTree);
 
-    return buildBuildTree(dependencyTree, allPackagesOrdered);
+    return buildBuildTree(packageName, dependencyTree, allPackagesOrdered);
 };
 
 const test = async () => {
-    let buildChains = {};
+    let buildChainInfo = {};
 
-    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache');
+    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
         const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-community/grid-core");
 
+        const buildChains = {};
         for (let packageName of orderedPackageNames) {
             buildChains[packageName] = await generateBuildChain(packageName, orderedPackageNames);
         }
-        fs.writeFileSync(cacheFilePath, JSON.stringify(buildChains), 'UTF-8');
+
+        buildChainInfo = {
+            paths,
+            buildChains
+        };
+
+        fs.writeFileSync(cacheFilePath, JSON.stringify(buildChainInfo), 'UTF-8');
     } else {
-        buildChains = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
+        buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
     }
 
-    // buildDependencyChain('/Users/seanlandsman/IdeaProjects/ag/ag-grid/ag-grid/community-modules/csv-export', buildChains)
-    // spawnWatcher(paths, buildChains);
+    await buildDependencyChain('/Users/seanlandsman/IdeaProjects/ag/ag-grid/ag-grid/enterprise-modules/side-bar/src/sideBar/toolPanelWrapper.ts', buildChainInfo.buildChains)
+};
+
+const watch = async () => {
+    let buildChainInfo = {};
+
+    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
+    if(!fs.existsSync(cacheFilePath)) {
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-community/grid-core");
+
+        const buildChains = {};
+        for (let packageName of orderedPackageNames) {
+            buildChains[packageName] = await generateBuildChain(packageName, orderedPackageNames);
+        }
+
+        buildChainInfo = {
+            paths,
+            buildChains
+        };
+
+        fs.writeFileSync(cacheFilePath, JSON.stringify(buildChainInfo), 'UTF-8');
+    } else {
+        buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
+    }
+
+    spawnWatcher(buildChainInfo);
+};
+
+const build = async () => {
+    let buildChainInfo = {};
+
+    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
+    if(!fs.existsSync(cacheFilePath)) {
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-community/grid-core");
+
+        const buildChains = {};
+        for (let packageName of orderedPackageNames) {
+            buildChains[packageName] = await generateBuildChain(packageName, orderedPackageNames);
+        }
+
+        buildChainInfo = {
+            paths,
+            buildChains
+        };
+
+        fs.writeFileSync(cacheFilePath, JSON.stringify(buildChainInfo), 'UTF-8');
+    } else {
+        buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
+    }
+
+    await buildDependencyChain(path.resolve(__dirname, '../../community-modules/grid-core/src/gridCoreModule.ts'), buildChainInfo.buildChains)
 };
 
 if (commandLineOptions.watch) watch();
+if (commandLineOptions.build) build();
 if (commandLineOptions.test) test();
 

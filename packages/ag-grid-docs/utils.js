@@ -7,6 +7,7 @@ const getAllModules = () => {
         .map(module => {
             // this relies on the module name within the module class to be the same as the filename
             const fullPath = `${module}`;
+            const fullJsPath = fullPath.replace("/ts/", "").replace("/src/", "/dist/cjs/");
             const filename = module.substr(module.lastIndexOf('/') + 1);
             const moduleName = filename.charAt(0).toUpperCase() + filename.slice(1).replace('.ts', '');
 
@@ -22,6 +23,7 @@ const getAllModules = () => {
             return {
                 publishedName,
                 fullPath,
+                fullJsPath,
                 filename,
                 moduleName,
                 sourceDir,

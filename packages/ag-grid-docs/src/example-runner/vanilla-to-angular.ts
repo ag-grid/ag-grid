@@ -64,7 +64,6 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
         diParams.push('private http: HttpClient');
     }
 
-    // spl modules
     if (bindings.gridSettings.enterprise) {
         imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
     } else {

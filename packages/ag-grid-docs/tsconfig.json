@@ -7,17 +7,11 @@
         "sourceMap": true,
         "target": "es5",
         "lib": [ "es5", "es6", "dom" ],
-        "noImplicitAny": false,
-        "baseUrl": ".",
-        "paths": {
-            "ag-grid": ["./_dev/ag-grid/main.ts"],
-            "ag-grid/main": ["./_dev/ag-grid/main.ts"]
-        }
+        "noImplicitAny": false
     },
-
     "include": [ 
-        "./src/_assets/**/*.ts", 
-        "./_dev/ag-grid/dist/lib/**/*.ts",
+        "./_dev/@ag-community/src/**/*.ts",
+        "./_dev/@ag-enterprise/src/**/*.ts",
         "./_dev/ag-grid-enterprise/src/**/*.ts",
         "./_dev/ag-grid-angular/src/**/*.ts",
         "./_dev/ag-grid-react/src/**/*.ts"
