@@ -360,9 +360,8 @@ export class CellComp extends Component {
         if (this.usingCellRenderer) {
             if (typeof this.cellRendererGui === 'string') {
                 return this.cellRendererGui as string;
-            } else {
-                return '';
             }
+            return '';
         }
 
         const colDef = this.getComponentHolder();
@@ -370,19 +369,18 @@ export class CellComp extends Component {
             // template is really only used for angular 1 - as people using ng1 are used to providing templates with
             // bindings in it. in ng2, people will hopefully want to provide components, not templates.
             return colDef.template;
-        } else if (colDef.templateUrl) {
+        }
+
+        if (colDef.templateUrl) {
             // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
             // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
             // not do these, but would follow a pattern that was friendly towards components, not templates.
             const template = this.beans.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
-            if (template) {
-                return template;
-            } else {
-                return '';
-            }
-        } else {
-            return this.getValueToUse();
+
+            return template ||  '';
         }
+
+        return this.getValueToUse();
     }
 
     public getRenderedRow(): RowComp {
@@ -1070,14 +1068,10 @@ export class CellComp extends Component {
     public startEditingIfEnabled(keyPress: number | null = null, charPress: string | null = null, cellStartedEdit = false): void {
 
         // don't do it if not editable
-        if (!this.isCellEditable()) {
-            return;
-        }
+        if (!this.isCellEditable()) { return; }
 
         // don't do it if already editing
-        if (this.editingCell) {
-            return;
-        }
+        if (this.editingCell) { return; }
 
         this.editingCell = true;
 
@@ -1105,9 +1099,7 @@ export class CellComp extends Component {
 
             const isPopup = cellEditor.isPopup && cellEditor.isPopup();
 
-            if (!isPopup) {
-                return cellEditor;
-            }
+            if (!isPopup) { return cellEditor; }
 
             if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
                 console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
@@ -1236,9 +1228,7 @@ export class CellComp extends Component {
     // if we are editing inline, then we don't have the padding in the cell (set in the themes)
     // to allow the text editor full access to the entire cell
     private setInlineEditingClass(): void {
-        if (!this.isAlive()) {
-            return;
-        }
+        if (!this.isAlive()) { return; }
 
         // ag-cell-inline-editing - appears when user is inline editing
         // ag-cell-not-inline-editing - appears when user is no inline editing
@@ -1250,6 +1240,7 @@ export class CellComp extends Component {
 
         const editingInline = this.editingCell && !this.cellEditorInPopup;
         const popupEditorShowing = this.editingCell && this.cellEditorInPopup;
+
         _.addOrRemoveCssClass(this.getGui(), "ag-cell-inline-editing", editingInline);
         _.addOrRemoveCssClass(this.getGui(), "ag-cell-not-inline-editing", !editingInline);
         _.addOrRemoveCssClass(this.getGui(), "ag-cell-popup-editing", popupEditorShowing);
@@ -1287,6 +1278,7 @@ export class CellComp extends Component {
     private stopEditingAndFocus(suppressNavigateAfterEdit = false): void {
         this.stopRowOrCellEdit();
         this.focusCell(true);
+
         if (!suppressNavigateAfterEdit) {
             this.navigateAfterEdit();
         }
@@ -1312,6 +1304,7 @@ export class CellComp extends Component {
 
     public focusCell(forceBrowserFocus = false): void {
         this.beans.focusedCellController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
+        this.refreshHandle();
     }
 
     public setFocusInOnEditor(): void {
@@ -1413,9 +1406,7 @@ export class CellComp extends Component {
 
     private navigateAfterEdit(): void {
         const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
-        if (fullRowEdit) {
-            return;
-        }
+        if (fullRowEdit) { return; }
 
         const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
@@ -1442,9 +1433,8 @@ export class CellComp extends Component {
         // in which cse we should not be listening for these key pressed
         const eventTarget = _.getTarget(event);
         const eventOnChildComponent = eventTarget !== this.getGui();
-        if (eventOnChildComponent || this.editingCell) {
-            return;
-        }
+
+        if (eventOnChildComponent || this.editingCell) { return; }
 
         const pressedChar = String.fromCharCode(event.charCode);
         if (pressedChar === ' ') {
@@ -1486,9 +1476,7 @@ export class CellComp extends Component {
         if (rangeController) {
             const cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
 
-            if (cellInRange && button === 2) {
-                return;
-            }
+            if (cellInRange && button === 2) { return; }
         }
 
         if (_.isBrowserIE()) {
@@ -1530,9 +1518,7 @@ export class CellComp extends Component {
 
     // returns true if on iPad and this is second 'click' event in 200ms
     private isDoubleClickOnIPad(): boolean {
-        if (!_.isUserAgentIPad()) {
-            return false;
-        }
+        if (!_.isUserAgentIPad()) { return false; }
 
         const nowMillis = new Date().getTime();
         const res = nowMillis - this.lastIPadMouseClickEvent < 200;
@@ -1627,13 +1613,9 @@ export class CellComp extends Component {
     }
 
     private modifyLeftForPrintLayout(leftPosition: number): number {
-        if (!this.printLayout) {
-            return leftPosition;
-        }
+        if (!this.printLayout) { return leftPosition; }
 
-        if (this.column.getPinned() === Constants.PINNED_LEFT) {
-            return leftPosition;
-        }
+        if (this.column.getPinned() === Constants.PINNED_LEFT) { return leftPosition; }
 
         if (this.column.getPinned() === Constants.PINNED_RIGHT) {
             const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
@@ -1767,9 +1749,7 @@ export class CellComp extends Component {
     }
 
     public onRangeSelectionChanged(): void {
-        if (!this.beans.rangeController) {
-            return;
-        }
+        if (!this.beans.rangeController) { return; }
 
         const { beans, cellPosition, rangeCount } = this;
         const { rangeController } = beans;
@@ -1818,7 +1798,8 @@ export class CellComp extends Component {
             gridOptionsWrapper.isEnableFillHandle() ||
             gridOptionsWrapper.isEnableRangeHandle() ||
             this.hasChartRange && !isFirstRangeCategory
-            ) && rangesLen === 1;
+            ) && rangesLen === 1 &&
+            !this.editingCell;
 
         if (!handlesAllowed && this.hasChartRange) {
             const cellPosition = this.getCellPosition();
@@ -2045,9 +2026,7 @@ export class CellComp extends Component {
     }
 
     public stopEditing(cancel = false): void {
-        if (!this.editingCell) {
-            return;
-        }
+        if (!this.editingCell) { return; }
 
         // if no cell editor, this means due to async, that the cell editor never got initialised,
         // so we just carry on regardless as if the editing was never started.

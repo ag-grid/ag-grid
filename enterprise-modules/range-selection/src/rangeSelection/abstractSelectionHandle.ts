@@ -167,7 +167,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             }
         }
 
-        if (oldCellComp !== cellComp) {
+        if (oldCellComp !== cellComp || !_.isVisible(eGui)) {
             this.setCellComp(cellComp);
             window.setTimeout(() => {
                 if (this.isAlive()) {

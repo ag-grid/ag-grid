@@ -3,7 +3,6 @@ var columnDefs = [
     {field: "age", width: 90},
     {field: "country", width: 120},
     {field: "year", width: 90},
-    {field: "date", width: 110},
     {field: "sport", width: 110},
     {field: "gold", width: 100},
     {field: "silver", width: 100},
