@@ -143,7 +143,7 @@ interface GetChartToolbarItemsParams {
     columnApi: ColumnApi;
 }
 
-type ChartMenuOptions = "chartSettings" | "chartData" | "chartFormat" | "chartUnlink" | "chartDownload";
+type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUnlink' | 'chartDownload';
 </snippet>
 
 <p>

@@ -3,7 +3,7 @@ import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { LineSeries } from "../../../../charts/chart/series/lineSeries";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { SeriesOptions } from "../../../../charts/chartOptions";
+import { LineSeriesOptions as InternalLineSeriesOptions } from "../../../../charts/chartOptions";
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     public constructor(params: ChartProxyParams) {
@@ -23,7 +23,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         const fieldIds = params.fields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: LineSeries } = {};
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
-        const seriesOptions: SeriesOptions = { type: "line", ...this.chartOptions.seriesDefaults };
 
         (lineChart.series as LineSeries[])
             .forEach(lineSeries => {
@@ -33,23 +32,49 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             });
 
         params.fields.forEach((f, index) => {
-            const existingSeries = existingSeriesMap[f.colId];
-            const lineSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as LineSeries;
+            let lineSeries = existingSeriesMap[f.colId];
 
             if (lineSeries) {
+                const fill = fills[index % fills.length];
+                const stroke = strokes[index % strokes.length];
+
                 lineSeries.title = f.displayName;
                 lineSeries.data = params.data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
                 lineSeries.yKey = f.colId;
                 lineSeries.yName = f.displayName;
-                lineSeries.fill = fills[index % fills.length];
-                lineSeries.stroke = strokes[index % strokes.length];
+                lineSeries.fill = fill;
+                lineSeries.marker.fill = fill;
+                lineSeries.stroke = stroke;
+                lineSeries.marker.stroke = stroke;
+            } else {
+                const { seriesDefaults } = this.chartOptions;
+                const options: InternalLineSeriesOptions = {
+                    ...seriesDefaults,
+                    type: 'line',
+                    title: f.displayName,
+                    data: params.data,
+                    field: {
+                        xKey: params.category.id,
+                        xName: params.category.name,
+                        yKey: f.colId,
+                        yName: f.displayName,
+                    },
+                    fill: {
+                        ...seriesDefaults.fill,
+                        color: fills[index % fills.length],
+                    },
+                    stroke: {
+                        ...seriesDefaults.stroke,
+                        color: strokes[index % strokes.length],
+                    },
+                };
 
-                if (!existingSeries) {
-                    lineChart.addSeries(lineSeries);
-                }
+                lineSeries = ChartBuilder.createSeries(options) as LineSeries;
             }
+
+            lineChart.addSeries(lineSeries);
         });
 
         this.updateLabelRotation(params.category.id);

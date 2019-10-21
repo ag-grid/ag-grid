@@ -12,14 +12,14 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         let builderFunction: keyof typeof ChartBuilder;
         if (this.isColumnChart()) {
-            builderFunction = params.grouping ? "createGroupedColumnChart" : "createColumnChart";
+            builderFunction = params.grouping ? 'createGroupedColumnChart' : 'createColumnChart';
         } else {
-            builderFunction = params.grouping ? "createGroupedBarChart" : "createBarChart";
+            builderFunction = params.grouping ? 'createGroupedBarChart' : 'createBarChart';
         }
 
         this.chart = ChartBuilder[builderFunction](params.parentElement, this.chartOptions);
 
-        const barSeries = ChartBuilder.createSeries({ type: "bar", ...this.chartOptions.seriesDefaults });
+        const barSeries = ChartBuilder.createSeries({ type: 'bar', ...this.chartOptions.seriesDefaults });
 
         if (barSeries) {
             this.chart.addSeries(barSeries);

@@ -6,7 +6,7 @@ import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
-import { SeriesOptions } from "../../../../charts/chartOptions";
+import { AreaSeriesOptions as InternalAreaSeriesOptions } from "../../../../charts/chartOptions";
 
 export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     public constructor(params: ChartProxyParams) {
@@ -17,7 +17,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         this.setAxisPadding(this.chart);
 
-        const areaSeries = ChartBuilder.createSeries({ type: "area", ...this.chartOptions.seriesDefaults });
+        const areaSeries = ChartBuilder.createSeries({ type: 'area', ...this.chartOptions.seriesDefaults });
 
         if (areaSeries) {
             this.chart.addSeries(areaSeries);
@@ -64,7 +64,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         const fieldIds = params.fields.map(f => f.colId);
         const existingSeriesMap: { [id: string]: AreaSeries } = {};
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
-        const seriesOptions: SeriesOptions = { type: "area", ...this.chartOptions.seriesDefaults };
 
         (chart.series as AreaSeries[])
             .forEach(areaSeries => {
@@ -74,22 +73,47 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             });
 
         params.fields.forEach((f, index) => {
-            const existingSeries = existingSeriesMap[f.colId];
-            const areaSeries = existingSeries || ChartBuilder.createSeries(seriesOptions) as AreaSeries;
+            let areaSeries = existingSeriesMap[f.colId];
 
             if (areaSeries) {
+                const fill = fills[index % fills.length];
+                const stroke = strokes[index % strokes.length];
+
                 areaSeries.yNames = [f.displayName];
                 areaSeries.data = params.data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
                 areaSeries.yKeys = [f.colId];
-                areaSeries.fills = [fills[index % fills.length]];
-                areaSeries.strokes = [strokes[index % strokes.length]];
+                areaSeries.fills = [fill];
+                areaSeries.marker.fill = fill;
+                areaSeries.strokes = [stroke];
+                areaSeries.marker.stroke = stroke;
+            } else {
+                const { seriesDefaults } = this.chartOptions;
+                const options: InternalAreaSeriesOptions = {
+                    ...seriesDefaults,
+                    type: 'area',
+                    data: params.data,
+                    field: {
+                        xKey: params.category.id,
+                        xName: params.category.name,
+                        yKeys: [f.colId],
+                        yNames: [f.displayName],
+                    },
+                    fill: {
+                        ...seriesDefaults.fill,
+                        colors: [fills[index % fills.length]],
+                    },
+                    stroke: {
+                        ...seriesDefaults.stroke,
+                        colors: [strokes[index % strokes.length]],
+                    }
+                };
 
-                if (!existingSeries) {
-                    chart.addSeries(areaSeries);
-                }
+                areaSeries = ChartBuilder.createSeries(options) as AreaSeries;
             }
+
+            chart.addSeries(areaSeries);
         });
     }
 

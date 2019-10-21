@@ -20,7 +20,7 @@ export interface HighlightStyle {
     stroke?: string;
 }
 
-class SeriesMarker {
+export class SeriesMarker {
     onChange?: () => void;
     onTypeChange?: () => void;
 

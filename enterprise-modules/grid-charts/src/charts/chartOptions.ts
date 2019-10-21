@@ -236,7 +236,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
     title?: string;
     field?: ScatterSeriesFieldOptions;
     fill?: FillOptions;
-    stroke?: StrokeOptions; // is this used...?
+    stroke?: StrokeOptions;
     highlightStyle?: HighlightStyle;
     marker?: ScatterMarkerOptions;
     tooltip?: TooltipOptions<ScatterTooltipRendererParams>;
