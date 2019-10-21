@@ -65,7 +65,6 @@ export class ChartSettingsPanel extends Component {
     private addCardLink(idx: number): void {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-nav-card-item');
-        link.innerHTML = '\u25CF';
         this.addDestroyableEventListener(link, 'click', () => {
             if (idx === this.activePalette || this.isAnimating) { return; }
             this.setActivePalette(idx, idx < this.activePalette ? 1 : 2);

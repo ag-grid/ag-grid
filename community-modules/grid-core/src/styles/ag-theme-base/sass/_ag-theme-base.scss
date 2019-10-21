@@ -192,7 +192,7 @@
             border-right: $cell-horizontal-border;
         }
 
-        .ag-cell:not(.ag-cell-focus), 
+        .ag-cell:not(.ag-cell-focus),
         .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
         .ag-root:not(.ag-has-focus) .ag-cell {
             &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
@@ -212,7 +212,7 @@
             border-left: $cell-horizontal-border;
         }
 
-        .ag-cell:not(.ag-cell-focus), 
+        .ag-cell:not(.ag-cell-focus),
         .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
         .ag-root:not(.ag-has-focus) .ag-cell {
             &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
@@ -752,7 +752,7 @@
                     .ag-group-component-title {
                         white-space: nowrap;
                     }
-    
+
                     .ag-column-group-icons {
                         margin: 0 $grid-size;
                     }
@@ -804,7 +804,7 @@
                         }
                     }
                 }
-                
+
                 .ag-group-item:not(.ag-filter-toolpanel-instance),
                 .ag-group-item > .ag-group-component {
                     border-top: none;
@@ -1717,10 +1717,12 @@
             .ag-chart-settings-nav-bar {
                 .ag-nav-card-selector {
                     .ag-nav-card-item {
-                        color: $foreground-color;
-                        font-size: $font-size - 2;
+                        background: $foreground-color;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 4px;
                         &.ag-selected {
-                            color: $primary-color;
+                            background: $primary-color;
                         }
                     }
                 }
