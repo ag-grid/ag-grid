@@ -101,8 +101,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const columnGroup = this.params.columnGroup;
         if (columnGroup.isExpandable()) {
             const expanded = this.params.columnGroup.isExpanded();
-            _.setDisplayed(this.eOpenIcon, !expanded);
-            _.setDisplayed(this.eCloseIcon, expanded);
+            _.setDisplayed(this.eOpenIcon, expanded);
+            _.setDisplayed(this.eCloseIcon, !expanded);
         } else {
             _.setDisplayed(this.eOpenIcon, false);
             _.setDisplayed(this.eCloseIcon, false);

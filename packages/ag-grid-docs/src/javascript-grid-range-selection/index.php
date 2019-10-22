@@ -112,8 +112,8 @@ interface CellRange {
 }
 
 interface RowPosition {
-    rowIndex: number,
-    floating: string
+    rowIndex: number;
+    rowPinned: string | undefined;
 }
 </snippet>
 
