@@ -56,8 +56,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-        import 'ag-grid-enterprise';
-        import 'ag-grid-enterprise/chartsModule';
+        import '@ag-enterprise/grid-range-selection';
+        import '@ag-enterprise/grid-charts';
     </snippet>
 
     <p>

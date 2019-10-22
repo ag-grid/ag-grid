@@ -8,10 +8,12 @@ import {
     Component,
     PostConstruct,
     RefSelector,
+    FontStyle,
+    FontWeight,
 } from "@ag-community/grid-core";
 import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
-import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 
@@ -80,37 +82,37 @@ export class AxisPanel extends Component {
     private initAxisLabels() {
         const initialFont = {
             family: this.chartProxy.getAxisProperty("label.fontFamily"),
-            style: this.chartProxy.getAxisProperty("label.fontStyle"),
-            weight: this.chartProxy.getAxisProperty("label.fontWeight"),
+            style: this.chartProxy.getAxisProperty<FontStyle>("label.fontStyle"),
+            weight: this.chartProxy.getAxisProperty<FontWeight>("label.fontWeight"),
             size: this.chartProxy.getAxisProperty<number>("label.fontSize"),
             color: this.chartProxy.getAxisProperty("label.color")
         };
 
-        // note we don't set the font style via legend panel
-        const setFont = (font: LabelFont) => {
+        const setFont = (font: Font) => {
             if (font.family) { this.chartProxy.setAxisProperty("label.fontFamily", font.family); }
             if (font.weight) { this.chartProxy.setAxisProperty("label.fontWeight", font.weight); }
+            if (font.style) { this.chartProxy.setAxisProperty("label.fontStyle", font.style); }
             if (font.size) { this.chartProxy.setAxisProperty("label.fontSize", font.size); }
             if (font.color) { this.chartProxy.setAxisProperty("label.color", font.color); }
 
             this.chartProxy.getChart().performLayout();
         };
 
-        const params: LabelPanelParams = {
+        const params: FontPanelParams = {
             enabled: true,
             suppressEnabledCheckbox: true,
             initialFont,
             setFont
         };
 
-        const labelPanelComp = this.wireBean(new LabelPanel(params));
+        const labelPanelComp = this.wireBean(new FontPanel(params));
         this.axisGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
         this.addAdditionalLabelComps(labelPanelComp);
     }
 
-    private addAdditionalLabelComps(labelPanelComp: LabelPanel) {
+    private addAdditionalLabelComps(labelPanelComp: FontPanel) {
         const createAngleComp = (label: string, initialValue: number, updateFunc: (value: number) => void) => {
             const rotationInput = this.wireBean(new AgAngleSelect()
                 .setLabel(label)

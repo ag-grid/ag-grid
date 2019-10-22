@@ -7,10 +7,12 @@ import {
     Component,
     PostConstruct,
     RefSelector,
+    FontStyle,
+    FontWeight,
 } from "@ag-community/grid-core";
 import { ChartController } from "../../../chartController";
 import { ShadowPanel } from "./shadowPanel";
-import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
 
@@ -100,21 +102,21 @@ export class BarSeriesPanel extends Component {
     private initLabelPanel() {
         const initialFont = {
             family: this.chartProxy.getSeriesOption("label.fontFamily"),
-            style: this.chartProxy.getSeriesOption("label.fontStyle"),
-            weight: this.chartProxy.getSeriesOption("label.fontWeight"),
+            style: this.chartProxy.getSeriesOption<FontStyle>("label.fontStyle"),
+            weight: this.chartProxy.getSeriesOption<FontWeight>("label.fontWeight"),
             size: this.chartProxy.getSeriesOption<number>("label.fontSize"),
             color: this.chartProxy.getSeriesOption("label.color")
         };
 
-        // note we don't set the font style via series panel
-        const setFont = (font: LabelFont) => {
+        const setFont = (font: Font) => {
             if (font.family) { this.chartProxy.setSeriesOption("label.fontFamily", font.family); }
             if (font.weight) { this.chartProxy.setSeriesOption("label.fontWeight", font.weight); }
+            if (font.style) { this.chartProxy.setSeriesOption("label.fontStyle", font.style); }
             if (font.size) { this.chartProxy.setSeriesOption("label.fontSize", font.size); }
             if (font.color) { this.chartProxy.setSeriesOption("label.color", font.color); }
         };
 
-        const params: LabelPanelParams = {
+        const params: FontPanelParams = {
             enabled: this.chartProxy.getSeriesOption("label.enabled") || false,
             setEnabled: (enabled: boolean) => this.chartProxy.setSeriesOption("label.enabled", enabled),
             suppressEnabledCheckbox: false,
@@ -122,7 +124,7 @@ export class BarSeriesPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = this.wireBean(new LabelPanel(params));
+        const labelPanelComp = this.wireBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
 
         this.seriesGroup.addItem(labelPanelComp);

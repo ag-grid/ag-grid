@@ -8,9 +8,11 @@ import {
     PostConstruct,
     RefSelector,
     LegendPosition,
+    FontStyle,
+    FontWeight,
 } from "@ag-community/grid-core";
 import { ChartController } from "../../../chartController";
-import { LabelFont, LabelPanel, LabelPanelParams } from "../label/labelPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartProxy } from "../../../chartProxies/chartProxy";
 
@@ -119,30 +121,30 @@ export class LegendPanel extends Component {
     private initLabelPanel() {
         const initialFont = {
             family: this.chartProxy.getChartOption("legend.item.label.fontFamily"),
-            style: this.chartProxy.getChartOption("legend.item.label.fontStyle"),
-            weight: this.chartProxy.getChartOption("legend.item.label.fontWeight"),
+            style: this.chartProxy.getChartOption<FontStyle>("legend.item.label.fontStyle"),
+            weight: this.chartProxy.getChartOption<FontWeight>("legend.item.label.fontWeight"),
             size: this.chartProxy.getChartOption<number>("legend.item.label.fontSize"),
             color: this.chartProxy.getChartOption("legend.item.label.color")
         };
 
-        // note we don't set the font style via legend panel
-        const setFont = (font: LabelFont) => {
+        const setFont = (font: Font) => {
             if (font.family) { this.chartProxy.setChartOption("legend.item.label.fontFamily", font.family); }
             if (font.weight) { this.chartProxy.setChartOption("legend.item.label.fontWeight", font.weight); }
+            if (font.style) { this.chartProxy.setChartOption("legend.item.label.fontStyle", font.style); }
             if (font.size) { this.chartProxy.setChartOption("legend.item.label.fontSize", font.size); }
             if (font.color) { this.chartProxy.setChartOption("legend.item.label.color", font.color); }
         };
 
-        const params: LabelPanelParams = {
+        const params: FontPanelParams = {
             enabled: true,
             suppressEnabledCheckbox: true,
             initialFont: initialFont,
             setFont: setFont
         };
 
-        const labelPanelComp = this.wireBean(new LabelPanel(params));
-        this.legendGroup.addItem(labelPanelComp);
-        this.activePanels.push(labelPanelComp);
+        const fontPanelComp = this.wireBean(new FontPanel(params));
+        this.legendGroup.addItem(fontPanelComp);
+        this.activePanels.push(fontPanelComp);
     }
 
     private destroyActivePanels(): void {
