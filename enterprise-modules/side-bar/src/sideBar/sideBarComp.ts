@@ -85,10 +85,10 @@ export class SideBarComp extends Component implements ISideBar {
         }
     }
 
-    public setSideBarPosition(side?: 'left' | 'right'): this {
-        if (!side) { side = 'right'; }
+    public setSideBarPosition(position?: 'left' | 'right'): this {
+        if (!position) { position = 'right'; }
 
-        const isLeft =  side === 'left';
+        const isLeft =  position === 'left';
         const resizerSide = isLeft ? 'right' : 'left';
 
         const eGui = this.getGui();

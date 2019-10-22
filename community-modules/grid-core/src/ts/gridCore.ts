@@ -179,6 +179,14 @@ export class GridCore extends Component {
         this.sideBarComp.setDisplayed(show);
     }
 
+    public setSideBarPosition(position: 'left' | 'right') {
+        if (!this.sideBarComp) {
+            console.warn('ag-Grid: sideBar is not loaded');
+            return;
+        }
+        this.sideBarComp.setSideBarPosition(position);
+    }
+
     public closeToolPanel() {
         if (!this.sideBarComp) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
@@ -210,7 +218,7 @@ export class GridCore extends Component {
         if (!this.sideBarComp) { return; }
         this.eRootWrapperBody.removeChild(this.sideBarComp.getGui());
         this.gridOptions.sideBar = SideBarDefParser.parse(def);
-        this.sideBarComp.reset ();
+        this.sideBarComp.reset();
         this.eRootWrapperBody.appendChild(this.sideBarComp.getGui());
     }
 
