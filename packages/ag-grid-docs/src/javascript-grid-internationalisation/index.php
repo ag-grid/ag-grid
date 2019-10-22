@@ -40,7 +40,7 @@ localeText = {
         filterOoo: 'daFilter...',
         applyFilter: 'daApplyFilter...',
         equals: 'daEquals',
-        notEquals: 'daNotEqual',
+        notEqual: 'daNotEqual',
 
         // for number filter
         lessThan: 'daLessThan',
