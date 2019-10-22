@@ -231,7 +231,7 @@
     }
 
     .ag-group-expanded {
-        .ag-icon-contracted:empty:before {
+        .ag-icon-expanded:empty:before {
             content: map-get($icons-font-codes, tree-open);
         }
     }
