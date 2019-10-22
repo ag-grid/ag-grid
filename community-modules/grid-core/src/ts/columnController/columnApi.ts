@@ -11,7 +11,14 @@ export class ColumnApi {
 
     @Autowired('columnController') private columnController: ColumnController;
 
-    public sizeColumnsToFit(gridWidth: any): void { this.columnController.sizeColumnsToFit(gridWidth, 'api'); }
+    public sizeColumnsToFit(gridWidth: any): void {
+        // AG-3403 validate that gridWidth is provided because this method has the same name as
+        // a method on the grid API that takes no arguments, and it's easy to confuse the two
+        if (typeof gridWidth === "undefined") {
+            throw new Error('missing gridWidth parameter');
+        }
+        this.columnController.sizeColumnsToFit(gridWidth, 'api');
+    }
     public setColumnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void { this.columnController.setColumnGroupOpened(group, newValue, 'api'); }
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this.columnController.getColumnGroup(name, instanceId); }
     public getOriginalColumnGroup(name: string): OriginalColumnGroup { return this.columnController.getOriginalColumnGroup(name); }
