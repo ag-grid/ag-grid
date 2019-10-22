@@ -5,6 +5,8 @@ import { Series } from "./series/series";
 import { numericExtent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
+import { CategoryAxis } from "./axis/categoryAxis";
+import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 
 /** Defines the orientation used when rendering data series */
 export enum CartesianChartLayout {
@@ -110,7 +112,11 @@ export class CartesianChart<TX extends ILinearAxis = Axis<Scale<any, number>>, T
         xAxis.label.parallel = true;
         xAxis.gridLength = shrinkRect.height;
 
-        yAxis.scale.range = [shrinkRect.height, 0];
+        if (yAxis instanceof CategoryAxis || yAxis instanceof GroupedCategoryAxis) {
+            yAxis.scale.range = [0, shrinkRect.height];
+        } else {
+            yAxis.scale.range = [shrinkRect.height, 0];
+        }
         (yAxis as any).translation.x = Math.floor(shrinkRect.x); // TODO: remove the CartesianChart generic (possibly get rid of xAxis, yAxis too)
         (yAxis as any).translation.y = Math.floor(shrinkRect.y);
         yAxis.gridLength = shrinkRect.width;
