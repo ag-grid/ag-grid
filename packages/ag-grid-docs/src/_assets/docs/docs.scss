@@ -189,13 +189,12 @@ body > div {
                 font-size: 80%;
                 line-height: 1.8rem;
                 margin-right: 1rem;
-                transform: rotate(90deg);
                 transition: transform 0.3s ease-out;
             }
 
             > li.expanded > a::after,
             > li.expanded > span::after {
-                transform: rotate(-90deg);
+                transform: rotate(90deg);
             }
         }
 
