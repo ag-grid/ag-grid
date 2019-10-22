@@ -9,6 +9,9 @@ commandLineOptions
         "-w, --watch",
     )
     .option(
+        "-s, --single",
+    )
+    .option(
         "-b, --build"
     )
     .option(
@@ -51,19 +54,22 @@ const findParentPackageManifest = changedFile => {
     return up(startingPath);
 };
 
-const buildDependencyChain = async (changeFile, buildChains) => {
+const buildDependencyChain = async (changeFile, buildChains, singleModule) => {
     const packageName = manifest(findParentPackageManifest(changeFile)).name;
 
     const buildChain = buildChains[packageName];
 
-    const maxIndex = Object.keys(buildChain).length;
-
-    for (let i = 0; i < maxIndex; i++) {
-        await buildDependencies(buildChain[i]);
+    if(singleModule) {
+        await buildDependencies(buildChain["0"]);
+    } else {
+        const maxIndex = Object.keys(buildChain).length;
+        for (let i = 0; i < maxIndex; i++) {
+            await buildDependencies(buildChain[i]);
+        }
     }
 };
 
-const spawnWatcher = async ({paths, buildChains}) => {
+const spawnWatcher = async ({paths, buildChains}, singleModule) => {
     await console.log(`Watching the following paths: ${paths.join('\n')}`);
     const log = console.log.bind(console);
 
@@ -84,15 +90,15 @@ const spawnWatcher = async ({paths, buildChains}) => {
     return watcher
         .on("add", path => {
             log(`File ${path} has been added`);
-            buildDependencyChain(path, buildChains);
+            buildDependencyChain(path, buildChains, singleModule);
         })
         .on("change", path => {
             log(`File ${path} has been changed`);
-            buildDependencyChain(path, buildChains);
+            buildDependencyChain(path, buildChains, singleModule);
         })
         .on("unlink", path => {
             log(`File ${path} has been removed`);
-            buildDependencyChain(path, buildChains);
+            buildDependencyChain(path, buildChains, singleModule);
         });
 };
 
@@ -209,7 +215,11 @@ const test = async () => {
     await buildDependencyChain('/Users/seanlandsman/IdeaProjects/ag/ag-grid/ag-grid/enterprise-modules/side-bar/src/sideBar/toolPanelWrapper.ts', buildChainInfo.buildChains)
 };
 
-const watch = async () => {
+const watch = async (singleModule) => {
+    singleModule = singleModule || false;
+
+    console.log("singleModule", singleModule);
+
     let buildChainInfo = {};
 
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
@@ -231,7 +241,7 @@ const watch = async () => {
         buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
     }
 
-    spawnWatcher(buildChainInfo);
+    spawnWatcher(buildChainInfo, singleModule);
 };
 
 const build = async () => {
@@ -259,7 +269,8 @@ const build = async () => {
     await buildDependencyChain(path.resolve(__dirname, '../../community-modules/grid-core/src/gridCoreModule.ts'), buildChainInfo.buildChains)
 };
 
-if (commandLineOptions.watch) watch();
+if (commandLineOptions.watch) watch(false);
+if (commandLineOptions.single) watch(true);
 if (commandLineOptions.build) build();
 if (commandLineOptions.test) test();
 

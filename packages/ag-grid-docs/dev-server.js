@@ -272,9 +272,10 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
     fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
 }
 
-function watchModules() {
+function watchModules(buildSourceModuleOnly) {
     const node = 'node';
-    const lernaWatch = cp.spawn(node, ['./scripts/modules/lernaWatch.js', '-w'], {
+    const watchMode = buildSourceModuleOnly ? '-s' : '-w';
+    const lernaWatch = cp.spawn(node, ['./scripts/modules/lernaWatch.js', watchMode], {
         stdio: 'inherit',
         cwd: '../../'
     });
@@ -320,7 +321,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
     })
 }
 
-module.exports = () => {
+module.exports = (buildSourceModuleOnly = false, done) => {
     const app = express();
 
     // necessary for plunkers
@@ -364,7 +365,7 @@ module.exports = () => {
     watchAndGenerateExamples(communityModules, enterpriseModules);
 
     buildModules();
-    watchModules();
+    watchModules(buildSourceModuleOnly);
 
     // PHP
     launchPhpCP(app);
