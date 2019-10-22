@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var select = document.getElementById('data-size');
 
     if (select) {
@@ -294,18 +294,18 @@ var gridOptions = {
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
     aggFuncs: {
-        'zero': function () {
+        'zero': function() {
             return 0;
         }
     },
-    getBusinessKeyForNode: function (node) {
+    getBusinessKeyForNode: function(node) {
         if (node.data) {
             return node.data.name;
         } else {
             return '';
         }
     },
-    defaultGroupSortComparator: function (nodeA, nodeB) {
+    defaultGroupSortComparator: function(nodeA, nodeB) {
         if (nodeA.key < nodeB.key) {
             return -1;
         } else if (nodeA.key > nodeB.key) {
@@ -314,9 +314,9 @@ var gridOptions = {
             return 0;
         }
     },
-    processCellFromClipboard: function (params) {
+    processCellFromClipboard: function(params) {
         var colIdUpperCase = params.column.getId().toUpperCase();
-        var monthsUpperCase = months.map(function (month) { return month.toUpperCase(); });
+        var monthsUpperCase = months.map(function(month) { return month.toUpperCase(); });
         var isMonth = monthsUpperCase.indexOf(colIdUpperCase) >= 0;
 
         if (isMonth) {
@@ -342,72 +342,72 @@ var gridOptions = {
     // callback when row clicked
     // stopEditingWhenGridLosesFocus: true,
     // allowShowChangeAfterFilter: true,
-    onRowClicked: function (params) {
+    onRowClicked: function(params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
     },
     // onSortChanged: function (params) {
     //     console.log("Callback onSortChanged");
     // },
-    onRowDoubleClicked: function (params) {
+    onRowDoubleClicked: function(params) {
         // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
     },
-    onGridSizeChanged: function (params) {
+    onGridSizeChanged: function(params) {
         console.log("Callback onGridSizeChanged: ", params);
     },
     // callback when cell clicked
-    onCellClicked: function (params) {
+    onCellClicked: function(params) {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
-    onColumnVisible: function (event) {
+    onColumnVisible: function(event) {
         console.log("Callback onColumnVisible:", event);
     },
-    onColumnResized: function (event) {
+    onColumnResized: function(event) {
         console.log("Callback onColumnResized:", event);
     },
-    onCellValueChanged: function (params) {
+    onCellValueChanged: function(params) {
         // taking this out, as clipboard paste operation can result in this getting called
         // lots and lots of times (especially if user does ctrl+a to copy everything, then paste)
         // console.log("Callback onCellValueChanged:", params);
     },
-    onRowDataChanged: function (params) {
+    onRowDataChanged: function(params) {
         console.log('Callback onRowDataChanged: ');
     },
     // callback when cell double clicked
-    onCellDoubleClicked: function (params) {
+    onCellDoubleClicked: function(params) {
         // console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     // callback when cell right clicked
-    onCellContextMenu: function (params) {
+    onCellContextMenu: function(params) {
         console.log("Callback onCellContextMenu: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
-    onCellFocused: function (params) {
+    onCellFocused: function(params) {
         // console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
     },
-    onPasteStart: function (params) {
+    onPasteStart: function(params) {
         console.log('Callback onPasteStart:', params);
     },
-    onPasteEnd: function (params) {
+    onPasteEnd: function(params) {
         console.log('Callback onPasteEnd:', params);
     },
-    onGridReady: function (event) {
+    onGridReady: function(event) {
         console.log('Callback onGridReady: api = ' + event.api);
 
         if (docEl.clientWidth <= 1024) {
             event.api.closeToolPanel();
         }
     },
-    onRowGroupOpened: function (event) {
+    onRowGroupOpened: function(event) {
         console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
     },
-    onRangeSelectionChanged: function (event) {
+    onRangeSelectionChanged: function(event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
-    processChartOptions: function (params) {
+    processChartOptions: function(params) {
         var type = params.type;
         var options = params.options;
 
         if (params.type === 'pie' || params.type === 'doughnut') {
-            options.seriesDefaults.tooltip.renderer = function (params) {
+            options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
@@ -417,7 +417,7 @@ var gridOptions = {
             var isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
             var isBar = type === 'groupedBar' || type === 'stackedBar' || type === 'normalizedBar';
 
-            var standardiseNumber = function (value) {
+            var standardiseNumber = function(value) {
                 if (isNaN(value)) { return value; }
                 if (isNormalized) { return value + '%'; }
 
@@ -433,17 +433,17 @@ var gridOptions = {
                 return value < 0 ? '-' + standardised : standardised;
             }
 
-            options[isBar ? "xAxis" : "yAxis"].label.formatter = function (params) {
+            options[isBar ? 'xAxis' : 'yAxis'].label.formatter = function(params) {
                 return standardiseNumber(params.value);
             };
 
             if (type === 'scatter' || type === 'bubble') {
-                options.xAxis.label.formatter = function (params) {
+                options.xAxis.label.formatter = function(params) {
                     return standardiseNumber(params.value);
                 };
 
-                options.seriesDefaults.tooltip.renderer = function (params) {
-                    var formatCurrency = function (value) {
+                options.seriesDefaults.tooltip.renderer = function(params) {
+                    var formatCurrency = function(value) {
                         return '$' + String(value).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
                     }
 
@@ -459,7 +459,7 @@ var gridOptions = {
                     return title + '<div class="content">' + label + xValue + '<br>' + yValue + size + '</div>';
                 };
             } else {
-                options.seriesDefaults.tooltip.renderer = function (params) {
+                options.seriesDefaults.tooltip.renderer = function(params) {
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                     var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
@@ -468,7 +468,7 @@ var gridOptions = {
             }
 
             if (options.seriesDefaults.label) {
-                options.seriesDefaults.label.formatter = function (params) {
+                options.seriesDefaults.label.formatter = function(params) {
                     return standardiseNumber(params.value);
                 };
             }
@@ -580,7 +580,7 @@ function getContextMenuItems(params) {
             name: 'Custom Menu Item',
             icon: '<img src="images/lab.svg" style="width: 14px; height: 14px;"/>',
             //shortcut: 'Alt + M',
-            action: function () {
+            action: function() {
                 var value = params.value ? params.value : '<empty>';
                 window.alert('You clicked a custom menu item on cell ' + value);
             }
@@ -622,11 +622,11 @@ var desktopDefaultCols = [
                 filter: 'personFilter',
                 cellClass: 'vAlign',
                 floatingFilterComponent: 'personFloatingFilterComponent',
-                checkboxSelection: function (params) {
+                checkboxSelection: function(params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
                 },
-                headerCheckboxSelection: function (params) {
+                headerCheckboxSelection: function(params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
                 },
@@ -717,7 +717,7 @@ var desktopDefaultCols = [
             {
                 headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
                 tooltipField: 'game.name',
-                cellClass: function () {
+                cellClass: function() {
                     return 'alphabet';
                 },
                 filterParams: {
@@ -777,7 +777,7 @@ var desktopDefaultCols = [
                 colId: 'extraInfo1',
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false, filter: false,
                 sortable: false, suppressMenu: true, cellStyle: { "text-align": "right" },
-                cellRenderer: function () {
+                cellRenderer: function() {
                     return 'Abra...';
                 }
             },
@@ -785,7 +785,7 @@ var desktopDefaultCols = [
                 colId: 'extraInfo2',
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false, filter: false,
                 sortable: false, suppressMenu: true, cellStyle: { "text-align": "left" },
-                cellRenderer: function () {
+                cellRenderer: function() {
                     return '...cadabra!';
                 }
             }
@@ -826,11 +826,11 @@ var mobileDefaultCols = [
         width: 200,
         editable: true,
         cellClass: 'vAlign',
-        checkboxSelection: function (params) {
+        checkboxSelection: function(params) {
             // we put checkbox on the name if we are not doing grouping
             return params.columnApi.getRowGroupColumns().length === 0;
         },
-        headerCheckboxSelection: function (params) {
+        headerCheckboxSelection: function(params) {
             // we put checkbox on the name if we are not doing grouping
             return params.columnApi.getRowGroupColumns().length === 0;
         },
@@ -864,7 +864,7 @@ var mobileDefaultCols = [
     },
     {
         headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
-        cellClass: function () {
+        cellClass: function() {
             return 'alphabet';
         }
     },
@@ -899,7 +899,7 @@ var monthGroup = {
     children: []
 };
 
-months.forEach(function (month) {
+months.forEach(function(month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
         width: 110, filter: 'agNumberColumnFilter', editable: true, type: 'numericColumn',
@@ -935,7 +935,7 @@ var dataSize = '.1x' + defaultColCount;
 
 
 function filterDoubleClicked(event) {
-    setInterval(function () {
+    setInterval(function() {
         gridOptions.api.ensureIndexVisible(Math.floor(Math.random() * 100000));
     }, 4000);
 }
@@ -994,7 +994,7 @@ function createData() {
 
     eMessage.style.display = 'inline';
 
-    var intervalId = setInterval(function () {
+    var intervalId = setInterval(function() {
         if (loadInstanceCopy != loadInstance) {
             clearInterval(intervalId);
             return;
@@ -1012,7 +1012,7 @@ function createData() {
 
         if (row >= rowCount) {
             clearInterval(intervalId);
-            window.setTimeout(function () {
+            window.setTimeout(function() {
                 gridOptions.api.setColumnDefs(colDefs);
                 gridOptions.api.setRowData(data);
                 eMessage.style.display = 'none';
@@ -1046,7 +1046,7 @@ function createRowItem(row, colCount) {
     rowItem.rating = (Math.round(pseudoRandom() * 5));
 
     var totalWinnings = 0;
-    months.forEach(function (month) {
+    months.forEach(function(month) {
         var value = (Math.round(pseudoRandom() * 100000)) - 20;
         rowItem[month.toLocaleLowerCase()] = value;
         totalWinnings += value;
@@ -1106,7 +1106,7 @@ var filterCount = 0;
 function onFilterChanged(newFilter) {
     filterCount++;
     var filterCountCopy = filterCount;
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         if (filterCount === filterCountCopy) {
             gridOptions.api.setQuickFilter(newFilter);
         }
@@ -1151,7 +1151,7 @@ function sharedNumberParser(value) {
 function PersonFilter() {
 }
 
-PersonFilter.prototype.init = function (params) {
+PersonFilter.prototype.init = function(params) {
     this.valueGetter = params.valueGetter;
     this.filterText = null;
     this.params = params;
@@ -1159,7 +1159,7 @@ PersonFilter.prototype.init = function (params) {
 };
 
 // not called by ag-Grid, just for us to help setup
-PersonFilter.prototype.setupGui = function () {
+PersonFilter.prototype.setupGui = function() {
     this.gui = document.createElement('div');
     this.gui.innerHTML =
         '<div style="padding: 4px;">' +
@@ -1174,29 +1174,29 @@ PersonFilter.prototype.setupGui = function () {
     this.eFilterText.addEventListener("input", this.onFilterChanged.bind(this));
 };
 
-PersonFilter.prototype.setFromFloatingFilter = function (filter) {
+PersonFilter.prototype.setFromFloatingFilter = function(filter) {
     this.eFilterText.value = filter;
     this.onFilterChanged();
 };
 
-PersonFilter.prototype.onFilterChanged = function () {
+PersonFilter.prototype.onFilterChanged = function() {
     this.extractFilterText();
     this.params.filterChangedCallback();
 };
 
-PersonFilter.prototype.extractFilterText = function () {
+PersonFilter.prototype.extractFilterText = function() {
     this.filterText = this.eFilterText.value;
 };
 
-PersonFilter.prototype.getGui = function () {
+PersonFilter.prototype.getGui = function() {
     return this.gui;
 };
 
-PersonFilter.prototype.doesFilterPass = function (params) {
+PersonFilter.prototype.doesFilterPass = function(params) {
     // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
     var valueGetter = this.valueGetter;
-    this.filterText.toLowerCase().split(" ").forEach(function (filterWord) {
+    this.filterText.toLowerCase().split(" ").forEach(function(filterWord) {
         var value = valueGetter(params);
         if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
             passed = false;
@@ -1206,64 +1206,64 @@ PersonFilter.prototype.doesFilterPass = function (params) {
     return passed;
 };
 
-PersonFilter.prototype.isFilterActive = function () {
+PersonFilter.prototype.isFilterActive = function() {
     var isActive = this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
     return isActive;
 };
 
-PersonFilter.prototype.getModelAsString = function (model) {
+PersonFilter.prototype.getModelAsString = function(model) {
     return model ? model : '';
 };
 
-PersonFilter.prototype.getModel = function () {
+PersonFilter.prototype.getModel = function() {
     return this.eFilterText.value;
 };
 
 // lazy, the example doesn't use setModel()
-PersonFilter.prototype.setModel = function (model) {
+PersonFilter.prototype.setModel = function(model) {
     this.eFilterText.value = model;
     this.extractFilterText();
 };
 
-PersonFilter.prototype.destroy = function () {
+PersonFilter.prototype.destroy = function() {
     this.eFilterText.removeEventListener("input", this.onFilterChanged);
 };
 
 function PersonFloatingFilterComponent() {
 }
 
-PersonFloatingFilterComponent.prototype.init = function (params) {
+PersonFloatingFilterComponent.prototype.init = function(params) {
     this.params = params;
     var eGui = this.eGui = document.createElement('div');
     eGui.className = 'ag-input-wrapper';
     var input = this.input = document.createElement('input');
     input.className = 'ag-floating-filter-input';
     eGui.appendChild(input);
-    this.changeEventListener = function () {
-        params.parentFilterInstance(function (instance) {
+    this.changeEventListener = function() {
+        params.parentFilterInstance(function(instance) {
             instance.setFromFloatingFilter(input.value);
         });
     };
     input.addEventListener('input', this.changeEventListener);
 };
 
-PersonFloatingFilterComponent.prototype.getGui = function () {
+PersonFloatingFilterComponent.prototype.getGui = function() {
     return this.eGui;
 };
 
-PersonFloatingFilterComponent.prototype.onParentModelChanged = function (model) {
+PersonFloatingFilterComponent.prototype.onParentModelChanged = function(model) {
     // add in child, one for each flat
     this.input.value = model != null ? model : '';
 };
 
-PersonFloatingFilterComponent.prototype.destroy = function () {
+PersonFloatingFilterComponent.prototype.destroy = function() {
     this.input.removeEventListener('input', this.changeEventListener);
 };
 
 function WinningsFilter() {
 }
 
-WinningsFilter.prototype.init = function (params) {
+WinningsFilter.prototype.init = function(params) {
     var uniqueId = Math.random();
     this.filterChangedCallback = params.filterChangedCallback;
     this.eGui = document.createElement("div");
@@ -1290,13 +1290,13 @@ WinningsFilter.prototype.init = function (params) {
     this.valueGetter = params.valueGetter;
 };
 
-WinningsFilter.prototype.getGui = function () {
+WinningsFilter.prototype.getGui = function() {
     var isDark = document.body.classList.contains('dark');
     this.eGui.querySelectorAll('div')[1].style.backgroundColor = isDark ? '#2d3436' : 'white';
     return this.eGui;
 };
 
-WinningsFilter.prototype.doesFilterPass = function (node) {
+WinningsFilter.prototype.doesFilterPass = function(node) {
 
     var value = this.valueGetter(node);
     if (this.cbNoFilter.checked) {
@@ -1314,15 +1314,15 @@ WinningsFilter.prototype.doesFilterPass = function (node) {
     }
 };
 
-WinningsFilter.prototype.isFilterActive = function () {
+WinningsFilter.prototype.isFilterActive = function() {
     return !this.cbNoFilter.checked;
 };
 
-WinningsFilter.prototype.getModelAsString = function (model) {
+WinningsFilter.prototype.getModelAsString = function(model) {
     return model ? model : '';
 };
 
-WinningsFilter.prototype.getModel = function () {
+WinningsFilter.prototype.getModel = function() {
     if (this.cbNoFilter.checked) {
         return '';
     }
@@ -1341,7 +1341,7 @@ WinningsFilter.prototype.getModel = function () {
     console.error('invalid checkbox selection');
 };
 // lazy, the example doesn't use setModel()
-WinningsFilter.prototype.setModel = function () {
+WinningsFilter.prototype.setModel = function() {
 };
 
 function currencyCssFunc(params) {
@@ -1456,17 +1456,17 @@ function booleanCleaner(value) {
 function CountryFloatingFilterComponent() {
 }
 
-CountryFloatingFilterComponent.prototype.init = function (params) {
+CountryFloatingFilterComponent.prototype.init = function(params) {
     this.params = params;
     this.eGui = document.createElement('div');
     // this.eGui.style.borderBottom = '1px solid lightgrey';
 };
 
-CountryFloatingFilterComponent.prototype.getGui = function () {
+CountryFloatingFilterComponent.prototype.getGui = function() {
     return this.eGui;
 };
 
-CountryFloatingFilterComponent.prototype.onParentModelChanged = function (dataModel) {
+CountryFloatingFilterComponent.prototype.onParentModelChanged = function(dataModel) {
     // add in child, one for each flat
     if (dataModel) {
 
@@ -1480,7 +1480,7 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function (dataMo
         } else {
             var toPrint = model;
         }
-        toPrint.forEach(function (country) {
+        toPrint.forEach(function(country) {
             flagsHtml.push('<img class="flag" style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
                 'src="https://flags.fmcdn.net/data/flags/mini/'
                 + COUNTRY_CODES[country] + '.png">');

@@ -101,7 +101,7 @@ export class ChartModel extends BeanStub {
 
         const params: ChartDatasourceParams = {
             aggFunc: this.aggFunc,
-            dimensionCols: [ selectedDimension ],
+            dimensionCols: [selectedDimension],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             multiCategories: this.isMultiCategoryChart(),
@@ -152,6 +152,7 @@ export class ChartModel extends BeanStub {
             displayName: '(None)',
             selected: dimensionsInCellRange.length === 0
         };
+
         this.dimensionColState.unshift(defaultCategory);
     }
 
@@ -171,7 +172,7 @@ export class ChartModel extends BeanStub {
     }
 
     public updateCellRanges(updatedCol?: ColState) {
-        const {dimensionCols, valueCols} = this.getAllChartColumns();
+        const { dimensionCols, valueCols } = this.getAllChartColumns();
         const lastRange = _.last(this.cellRanges) as CellRange;
         if (lastRange) {
             // update the reference range
@@ -210,10 +211,11 @@ export class ChartModel extends BeanStub {
             }
         }
 
-        let valueColsInRange = valueCols.filter(col => allColsFromRanges.indexOf(col) > -1);
-        if (updatedCol && valueCols.indexOf(updatedCol.column as Column) > -1) {
+        let valueColsInRange = valueCols.filter(col => _.includes(allColsFromRanges, col));
+
+        if (updatedCol && _.includes(valueCols, updatedCol.column!)) {
             if (updatedCol.selected) {
-                valueColsInRange.push(updatedCol.column as Column);
+                valueColsInRange.push(updatedCol.column);
                 valueColsInRange = this.getColumnInDisplayOrder(valueCols, valueColsInRange);
             } else {
                 valueColsInRange = valueColsInRange.filter(col => col.getColId() !== updatedCol.colId);
@@ -237,7 +239,7 @@ export class ChartModel extends BeanStub {
         return this.chartData.map((d: any, index: number) => {
             const value = d[colId];
             const valueString = value && value.toString ? value.toString() : '';
-            
+
             d[colId] = { id: index, value: d[colId], toString: () => valueString };
 
             return d;
@@ -308,13 +310,15 @@ export class ChartModel extends BeanStub {
         this.detached = !this.detached;
     }
 
-    public getSelectedValueColState = (): {colId: string, displayName: string}[] => this.getValueColState().filter(cs => cs.selected);
+    public getSelectedValueColState = (): { colId: string, displayName: string }[] => this.getValueColState().filter(cs => cs.selected);
 
     public getSelectedValueCols = (): Column[] => this.valueColState.filter(cs => cs.selected).map(cs => cs.column!);
 
     public getSelectedDimension = (): ColState => this.dimensionColState.filter(cs => cs.selected)[0];
 
-    private getColumnInDisplayOrder = (allDisplayedColumns: Column[], listToSort: Column[]) => allDisplayedColumns.filter(col => _.includes(listToSort, col));
+    private getColumnInDisplayOrder(allDisplayedColumns: Column[], listToSort: Column[]): Column[] {
+        return allDisplayedColumns.filter(col => _.includes(listToSort, col));
+    }
 
     private addRange(cellRangeType: CellRangeType, columns: Column[]) {
         const newRange = {
@@ -439,7 +443,7 @@ export class ChartModel extends BeanStub {
         return col;
     }
 
-    private isMultiCategoryChart = (): boolean => !_.includes([ ChartType.Pie, ChartType.Doughnut, ChartType.Scatter, ChartType.Bubble ], this.chartType);
+    private isMultiCategoryChart = (): boolean => !_.includes([ChartType.Pie, ChartType.Doughnut, ChartType.Scatter, ChartType.Bubble], this.chartType);
 
     private generateId = (): string => 'id-' + Math.random().toString(36).substr(2, 16);
 

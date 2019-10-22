@@ -1,15 +1,15 @@
-import {Column} from "../entities/column";
-import {RowNode} from "../entities/rowNode";
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ChangedPath} from "../utils/changedPath";
-import {IRowModel} from "../interfaces/iRowModel";
-import {RowRenderer} from "../rendering/rowRenderer";
-import {EventService} from "../eventService";
-import {Constants} from "../constants";
-import {BeanStub} from "../context/beanStub";
-import {CellValueChangedEvent, Events} from "../events";
-import {IClientSideRowModel} from "../interfaces/iClientSideRowModel";
+import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ChangedPath } from "../utils/changedPath";
+import { IRowModel } from "../interfaces/iRowModel";
+import { RowRenderer } from "../rendering/rowRenderer";
+import { EventService } from "../eventService";
+import { Constants } from "../constants";
+import { BeanStub } from "../context/beanStub";
+import { CellValueChangedEvent, Events } from "../events";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 
 @Bean('changeDetectionService')
 export class ChangeDetectionService extends BeanStub {
@@ -32,13 +32,13 @@ export class ChangeDetectionService extends BeanStub {
 
     private onCellValueChanged(event: CellValueChangedEvent): void {
 
-        // clipboard service manages it's own change detection, so no need to do it here.
-        // the clipboard manages it own, as otherwise this would happen once for every cell
-        // that got updated as part of a paste operation. so eg if 100 cells in a paste operation,
+        // Clipboard service manages its own change detection, so no need to do it here.
+        // The clipboard manages its own as otherwise this would happen once for every cell
+        // that got updated as part of a paste operation, so e.g. if 100 cells in a paste operation,
         // this doChangeDetection would get called 100 times (once for each cell), instead clipboard
         // service executes the logic we have here once (in essence batching up all cell changes
         // into one change detection).
-        if (event.source===Constants.SOURCE_PASTE) { return; }
+        if (event.source === Constants.SOURCE_PASTE) { return; }
 
         this.doChangeDetection(event.node, event.column);
     }
@@ -57,5 +57,4 @@ export class ChangeDetectionService extends BeanStub {
         // step 2 of change detection is to refresh the cells
         this.rowRenderer.refreshCells();
     }
-
 }

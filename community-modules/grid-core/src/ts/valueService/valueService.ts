@@ -30,11 +30,9 @@ export class ValueService {
     }
 
     public getValue(column: Column,
-                    rowNode?: RowNode | null,
-                    forFilter = false,
-                    ignoreAggData = false): any {
-
-        // console.log(`turnActive = ${this.turnActive}`);
+        rowNode?: RowNode | null,
+        forFilter = false,
+        ignoreAggData = false): any {
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -57,6 +55,7 @@ export class ValueService {
         // if there is a value getter, this gets precedence over a field
         const groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
+
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
         } else if (this.gridOptionsWrapper.isTreeData() && aggDataExists) {
@@ -84,7 +83,7 @@ export class ValueService {
         return result;
     }
 
-    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, eventSource: string = undefined): void {
+    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, eventSource?: string): void {
         const column = this.columnController.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
@@ -98,7 +97,7 @@ export class ValueService {
         }
 
         // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
-        const {field, newValueHandler, valueSetter} = column.getColDef();
+        const { field, newValueHandler, valueSetter } = column.getColDef();
 
         // need either a field or a newValueHandler for this to work
         if (_.missing(field) && _.missing(newValueHandler) && _.missing(valueSetter)) {
@@ -122,6 +121,7 @@ export class ValueService {
         params.newValue = newValue;
 
         let valueWasDifferent: boolean;
+
         if (newValueHandler && _.exists(newValueHandler)) {
             valueWasDifferent = newValueHandler(params);
         } else if (_.exists(valueSetter)) {
@@ -263,7 +263,7 @@ export class ValueService {
         const value = this.getValue(col, rowNode);
         const keyCreator = col.getColDef().keyCreator;
 
-        let result = keyCreator ? keyCreator({value: value}) : value;
+        let result = keyCreator ? keyCreator({ value: value }) : value;
 
         // if already a string, or missing, just return it
         if (typeof result === 'string' || result == null) {
@@ -280,5 +280,4 @@ export class ValueService {
 
         return result;
     }
-
 }

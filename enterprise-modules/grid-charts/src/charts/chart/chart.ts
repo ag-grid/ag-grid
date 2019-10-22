@@ -490,6 +490,10 @@ export abstract class Chart {
     }
 
     private onSeriesNodePick(event: MouseEvent, series: Series<Chart>, node: Shape) {
+        if (this.lastPick) {
+            this.lastPick.series.dehighlightNode();
+        }
+
         this.lastPick = {
             series,
             node

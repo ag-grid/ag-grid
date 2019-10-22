@@ -33,19 +33,16 @@ export class ValueCache {
                 rowNode.__cacheVersion = this.cacheVersion;
                 rowNode.__cacheData = {};
             }
+
             rowNode.__cacheData[colId] = value;
         }
     }
 
     public getValue(rowNode: RowNode, colId: string): any {
-        const valueInCache = this.active
-            && rowNode.__cacheVersion === this.cacheVersion
-            && rowNode.__cacheData[colId] !== undefined;
-        if (valueInCache) {
-            return rowNode.__cacheData[colId];
-        } else {
+        if (!this.active || rowNode.__cacheVersion !== this.cacheVersion) {
             return undefined;
         }
-    }
 
+        return rowNode.__cacheData[colId];
+    }
 }
