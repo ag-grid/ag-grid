@@ -56,6 +56,7 @@ export class ChartTranslator {
         bold: 'Bold',
         italic: 'Italic',
         boldItalic: 'Bold Italic',
+        predefined: 'Predefined',
         fillOpacity: 'Fill Opacity',
         strokeOpacity: 'Line Opacity',
         groupedColumnTooltip: 'Grouped',
