@@ -15,7 +15,7 @@ export class ColumnApi {
         // AG-3403 validate that gridWidth is provided because this method has the same name as
         // a method on the grid API that takes no arguments, and it's easy to confuse the two
         if (typeof gridWidth === "undefined") {
-            throw new Error('missing gridWidth parameter');
+            console.error('ag-Grid: missing parameter to columnApi.sizeColumnsToFit(gridWidth)');
         }
         this.columnController.sizeColumnsToFit(gridWidth, 'api');
     }
