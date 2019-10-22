@@ -2,6 +2,11 @@ interface Tick {
     labels: string[];
 }
 
+/**
+ * The tree layout is calculated in abstract x/y coordinates, where the root is at (0, 0)
+ * and the tree grows downward from the root.
+ */
+
 class TreeNode {
     label: string;
     x: number = 0;
@@ -53,6 +58,11 @@ class TreeNode {
     }
 }
 
+/**
+ * Converts an array of ticks, where each tick has an array of labels, to a label tree.
+ * If `pad` is `true`, will ensure that every branch matches the depth of the tree by
+ * creating empty labels.
+ */
 export function ticksToTree(ticks: Tick[], pad = true): TreeNode {
     const root: any = new TreeNode();
     let depth = 0;
@@ -289,7 +299,7 @@ export class TreeLayout {
         this.nodes.push(node);
     }
 
-    resize(width: number, height: number, shiftX = 0, shiftY = 0) {
+    resize(width: number, height: number, shiftX = 0, shiftY = 0, flipX: boolean = false) {
         const xSteps = this.leafCount - 1;
         const ySteps = this.depth;
         const dimensions = this.dimensions;
@@ -300,6 +310,9 @@ export class TreeLayout {
             const existingSpacingX = (dimensions.right - dimensions.left) / xSteps;
             const desiredSpacingX = width / xSteps;
             scalingX = desiredSpacingX / existingSpacingX;
+            if (flipX) {
+                scalingX = -scalingX;
+            }
         }
         if (height > 0 && ySteps) {
             const existingSpacingY = (dimensions.bottom - dimensions.top) / ySteps;

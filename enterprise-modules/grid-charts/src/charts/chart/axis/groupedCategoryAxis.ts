@@ -107,7 +107,8 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
                 Math.abs(range[1] - range[0]),
                 layout.depth * lineHeight,
                 (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2,
-                -layout.depth * lineHeight
+                -layout.depth * lineHeight,
+                (range[1] - range[0]) < 0
             );
         }
     }
@@ -212,7 +213,10 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
      */
     update() {
         const { group, scale, label, tickScale } = this;
-        const bandwidth = Math.abs(scale.range[1] - scale.range[0]) / scale.domain.length || 0;
+        const rangeStart = scale.range[0];
+        const rangeEnd = scale.range[1];
+        const rangeLength = Math.abs(rangeEnd - rangeStart);
+        const bandwidth = (rangeLength / scale.domain.length) || 0;
         const parallelLabels = label.parallel;
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
@@ -324,12 +328,12 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
             // Calculate positions of label separators for all nodes except the root.
             // Each separator is placed to the top of the current label.
             if (datum.parent && isLabelTree) {
-                const y = !datum.children.length
+                let y = !datum.children.length
                     ? datum.screenX - bandwidth / 2
                     : datum.screenX - datum.leafCount * bandwidth / 2;
 
                 if (!datum.children.length) {
-                    if (!datum.number || labelGrid) {
+                    if ((datum.number !== datum.children.length - 1) || labelGrid) {
                         separatorData.push({
                             y,
                             x1: 0,
@@ -352,7 +356,7 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
         let minX = 0;
         separatorData.forEach(d => minX = Math.min(minX, d.x2));
         separatorData.push({
-            y: Math.max(scale.range[0], scale.range[1]),
+            y: Math.max(rangeStart, rangeEnd),
             x1: 0,
             x2: minX,
             toString: () => String(separatorData.length)
@@ -394,8 +398,8 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
             const x = index > 0 ? -maxLeafLabelWidth - this.label.padding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;
             line.x2 = x;
-            line.y1 = scale.range[0];
-            line.y2 = scale.range[1];
+            line.y1 = rangeStart;
+            line.y2 = rangeEnd;
             line.strokeWidth = this.line.width;
             line.stroke = this.line.color;
             line.visible = labels.length > 0 && (index === 0 || (labelGrid && isLabelTree));
@@ -412,7 +416,7 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
                     line.x2 = -sideFlag * this.gridLength;
                     line.y1 = y;
                     line.y2 = y;
-                    line.visible = Math.abs(line.parent!.translationY - scale.range[0]) > 1;
+                    line.visible = Math.abs(line.parent!.translationY - rangeStart) > 1;
 
                     const style = styles[index % styleCount];
                     line.stroke = style.stroke;
