@@ -69,15 +69,16 @@ export class ShadowPanel extends Component {
             .setValue("rgba(0,0,0,0.5)")
             .onValueChange(newValue => this.chartProxy.setShadowProperty("color", newValue));
 
-        const initInput = (input: AgSlider, property: keyof DropShadowOptions, maxValue: number) => {
+        const initInput = (input: AgSlider, property: keyof DropShadowOptions, minValue: number, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(property))
                 .setValue(this.chartProxy.getShadowProperty(property))
+                .setMinValue(minValue)
                 .setMaxValue(maxValue)
                 .onValueChange(newValue => this.chartProxy.setShadowProperty(property, newValue));
         };
 
-        initInput(this.shadowBlurSlider, "blur", 20);
-        initInput(this.shadowXOffsetSlider, "xOffset", 20);
-        initInput(this.shadowYOffsetSlider, "yOffset", 20);
+        initInput(this.shadowBlurSlider, "blur", 0, 20);
+        initInput(this.shadowXOffsetSlider, "xOffset", -10, 10);
+        initInput(this.shadowYOffsetSlider, "yOffset", -10, 10);
     }
 }
