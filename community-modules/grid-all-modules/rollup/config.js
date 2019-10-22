@@ -13,28 +13,28 @@ const banner = ['/**',
 const builds = {
     'community-es-dev': {
         entry: path.resolve(__dirname, '../dist/es6/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid.esm.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-community.esm.js'),
         format: 'es',
         env: 'development',
         banner
     },
     'community-es-prod': {
         entry: path.resolve(__dirname, '../dist/es6/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid.esm.min.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-community.esm.min.js'),
         format: 'es',
         env: 'production',
         banner
     },
     'community-cjs-dev': {
         entry: path.resolve(__dirname, '../dist/es6/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid.cjs.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-community.cjs.js'),
         format: 'cjs',
         env: 'development',
         banner
     },
     'community-cjs-prod': {
         entry: path.resolve(__dirname, '../dist/es6/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid.cjs.min.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-community.cjs.min.js'),
         format: 'cjs',
         env: 'production',
         banner
@@ -42,7 +42,7 @@ const builds = {
 /*
     'community-umd-noStyle-dev': {
         entry: path.resolve(__dirname, '../dist/es6/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid.noStyle.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-community.noStyle.js'),
         format: 'umd',
         env: 'development',
         moduleName: 'agGrid',
@@ -50,7 +50,7 @@ const builds = {
     },
     'community-umd-noStyle-prod': {
         entry: path.resolve(__dirname, '../dist/es6/main.js'),
-        dest: path.resolve(__dirname, '../dist/ag-grid.min.noStyle.js'),
+        dest: path.resolve(__dirname, '../dist/ag-grid-community.min.noStyle.js'),
         format: 'umd',
         env: 'production',
         moduleName: 'agGrid',

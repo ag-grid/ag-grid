@@ -6,8 +6,9 @@
     "module": "./dist/es6/main.js",
     "scripts": {
         "test": "jest",
-        "build-cjs": "tsc -p tsconfig.json",
+        "build-cjs": "tsc -p tsconfig.es5.json",
         "build-es6": "tsc -p tsconfig.es6.json",
+        "build-docs": "tsc -p tsconfig.docs.json",
         "build": "npm run build-cjs && npm run build-es6"
     },
     "repository": {
@@ -40,15 +41,13 @@
     ],
     "homepage": "http://www.ag-grid.com/",
     "dependencies": {
-        "@ag-community/grid-core": "^21.2.2",
-        "@ag-enterprise/range-selection": "^21.2.2"
+        "@ag-community/grid-core": "~21.2.0",
+        "@ag-enterprise/range-selection": "~21.2.0"
     },
     "devDependencies": {
         "@types/jest": "^24.0.18",
         "jest": "^24.9.0",
         "ts-jest": "^24.1.0",
-        "gulp-typescript": "^5.0.1",
-        "gulp": "^4.0.2",
         "typescript": "^3.6.3"
     }
 }

@@ -32,7 +32,7 @@ const buildDependencies = async dependencies => {
     console.log("------------------------------------------------------------------------------------------");
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
-    const lernaArgs = `run build-cjs ${scopedDependencies}`.split(" ");
+    const lernaArgs = `run build-docs ${scopedDependencies}`.split(" ");
     await execa("lerna", lernaArgs, { stdio: "inherit" });
 };
 
@@ -150,13 +150,6 @@ const excludePackage = packageName => !exclude.includes(packageName) && !package
 // && !packageName.includes("-enterprise") && !packageName.includes("-angular") && !packageName.includes("-vue") && !packageName.includes("-react");
 
 const filterExcludedRoots = dependencyTree => {
-    const exclude = [
-        'ag-grid-dev',
-        'ag-grid-docs',
-        'ag-grid-community',
-        'ag-grid-enterprise'
-    ];
-
     const prunedDependencyTree = {};
     const agRoots = Object.keys(dependencyTree).filter(excludePackage);
     agRoots.forEach(root => {
@@ -217,8 +210,6 @@ const test = async () => {
 
 const watch = async (singleModule) => {
     singleModule = singleModule || false;
-
-    console.log("singleModule", singleModule);
 
     let buildChainInfo = {};
 

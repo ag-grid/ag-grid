@@ -11,7 +11,8 @@ const pkg = require('./package.json');
 const ts = require('gulp-typescript');
 
 const tsEs6Project = ts.createProject('tsconfig.es6.json');
-const tsProject = ts.createProject('tsconfig.json');
+const tsEs5Project = ts.createProject('tsconfig.es5.json');
+const tsDocsProject = ts.createProject('tsconfig.docs.json');
 
 const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
@@ -38,10 +39,17 @@ const buildEs6 = () => {
 };
 
 const buildEs5 = () => {
-    const tsResult = tsProject.src()
-        .pipe(tsProject());
+    const tsResult = tsEs5Project.src()
+        .pipe(tsEs5Project());
 
     return tsResult.js.pipe(gulp.dest('dist/es5'));
+};
+
+const buildDocs = () => {
+    const tsResult = tsEs5Project.src()
+        .pipe(tsDocsProject());
+
+    return tsResult.js.pipe(gulp.dest('dist/cjs'));
 };
 
 // Start of webpack related tasks
@@ -107,10 +115,6 @@ const webpackTask = (minify, styles) => {
         .pipe(header(headerTemplate, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
 };
-
-const watch = () => {
-    gulp.watch('./src/**/*', series('build'));
-};
 // End of webpack related tasks
 
 const copyGridCoreStyles = (done) => {
@@ -124,6 +128,7 @@ const copyGridCoreStyles = (done) => {
 gulp.task('clean', cleanDist);
 gulp.task('buildEs5', buildEs5);
 gulp.task('buildEs6', buildEs6);
+gulp.task('buildDocs', buildDocs);
 gulp.task('build', parallel('buildEs5', 'buildEs6'));
 
 // copy from grid-core tasks
@@ -142,7 +147,6 @@ gulp.task('webpack-minify-noStyle-no-clean', series(webpackTask.bind(null, true,
 // for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
 gulp.task('webpack-all-no-clean', series('copy-grid-core-styles', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
 gulp.task('webpack-all', series('clean', 'build', 'copy-grid-core-styles', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
-gulp.task('watch', series('build', 'copy-grid-core-styles', watch));
 
 // default/release task
 gulp.task('default', series('webpack-all'));

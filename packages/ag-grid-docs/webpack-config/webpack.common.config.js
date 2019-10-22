@@ -13,7 +13,6 @@ module.exports = {
         // we prioritise main (cjs) vs module (es6) as when doing dev we only rebuild cjs for performance reasons
         mainFields: ["main", "module"],
         alias: {
-            // "@ag-community/grid-core": path.resolve(__dirname, "../../../community-modules/grid-core/src/ts/main.ts")
             "@ag-community/grid-core": path.resolve(__dirname, "../_dev/@ag-community/grid-core")
         },
         extensions: ['.js']
@@ -21,25 +20,11 @@ module.exports = {
     },
     module: {
         rules: [
-            // {
-            //     test: /\.ts$/,
-            //     use: [
-            //         {loader: 'cache-loader'},
-            //         {
-            //             loader: 'thread-loader',
-            //             options: {
-            //                 workers: require('os').cpus().length - 1
-            //             }
-            //         },
-            //         {
-            //             loader: 'ts-loader',
-            //             options: {
-            //                 happyPackMode: true,
-            //                 configFile: path.resolve('./tsconfig.json')
-            //             }
-            //         }
-            //     ]
-            // },
+            {
+                test: /\.js$/,
+                use: ["source-map-loader"],
+                enforce: "pre"
+            },
             {
                 test: /\.scss$/,
                 use: [

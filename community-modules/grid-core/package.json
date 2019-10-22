@@ -5,14 +5,15 @@
     "main": "./dist/cjs/main.js",
     "module": "./dist/es6/main.js",
     "scripts": {
-        "lint": "tslint -p tsconfig.json src/ts/**/*.ts",
-        "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
+        "lint": "tslint -p tsconfig.es5.json src/ts/**/*.ts",
+        "lint-fix": "tslint -p tsconfig.es5.json -c tslint-fix.json --fix src/ts/**/*.ts",
         "precheck": "tsc -p tsconfig-precheck.json",
         "build": "npm run precheck && npx gulp tsc-scss-clean",
         "test": "npm run validate-es5",
         "validate-es5": "eslint dist/cjs",
         "build-es6": "npx gulp tsc-no-clean-es6",
-        "build-cjs": "npx gulp tsc-no-clean-es5"
+        "build-cjs": "npx gulp tsc-no-clean-es5",
+        "build-docs": "tsc -p tsconfig.docs.json"
     },
     "repository": {
         "type": "git",

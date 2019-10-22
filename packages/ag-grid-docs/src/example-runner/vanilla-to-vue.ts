@@ -9,7 +9,8 @@ function getFunctionName(code) {
     return matches && matches.length === 2 ? matches[1] : null;
 }
 
-function onGridReadyTemplate(readyCode: string,
+function onGridReadyTemplate(gridSettings: any,
+                             readyCode: string,
                              resizeToFit: boolean,
                              propertyAttributes: string[],
                              propertyVars: string[],
@@ -25,7 +26,7 @@ function onGridReadyTemplate(readyCode: string,
     }
 
     propertyAttributes.push(':modules="modules"');
-    propertyVars.push('modules: AllModules');
+    propertyVars.push(`modules: ${gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`);
 
     if (data) {
         let setRowDataBlock = data.callback;
@@ -87,7 +88,7 @@ function createComponentImports(bindings, componentFileNames: any, isDev, commun
     if (bindings.gridSettings.enterprise) {
         imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
     } else {
-        imports.push('import {AllModules} from "@ag-community/grid-all-modules";');
+        imports.push('import {AllCommunityModules} from "@ag-community/grid-all-modules";');
     }
 
     imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
@@ -178,7 +179,7 @@ function parseAllMethods(bindings) {
 function componentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules) {
     const imports = createComponentImports(bindings, componentFileNames, isDev, communityModules, enterpriseModules);
     const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
-    const gridReadyTemplate = onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data);
+    const gridReadyTemplate = onGridReadyTemplate(bindings.gridSettings, bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceFunctions, utilFunctions] = parseAllMethods(bindings);
 

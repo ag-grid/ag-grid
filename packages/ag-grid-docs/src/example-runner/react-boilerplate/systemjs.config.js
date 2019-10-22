@@ -95,10 +95,6 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/charts': { 
-                main: './dist/cjs/main.js',
-                defaultExtension: 'js'
-            },
            '@ag-enterprise/clipboard': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'

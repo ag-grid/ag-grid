@@ -176,7 +176,7 @@ export class Grid {
 
             addIndividualModule(module);
             if (module.dependantModules) {
-                module.dependantModules.forEach(addIndividualModule); // Niall / Sean - my addition
+                module.dependantModules.forEach(addModule); // Niall / Sean - my addition
             }
         }
 

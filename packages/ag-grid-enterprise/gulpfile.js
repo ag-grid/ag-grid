@@ -1,40 +1,30 @@
-const gulpTypescript = require('gulp-typescript');
 const gulp = require('gulp');
 const {series, parallel} = gulp;
+
+const fs = require('fs');
+const clean = require('gulp-clean');
+const rename = require("gulp-rename");
+const gulpTypescript = require('gulp-typescript');
 const typescript = require('typescript');
 const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
-const clean = require('gulp-clean');
-const TerserPlugin = require('terser-webpack-plugin');
-const webpackStream = require('webpack-stream');
-const path = require('path');
-const rename = require("gulp-rename");
 const replace = require('gulp-replace');
-const tslint = require("gulp-tslint");
 
-const headerTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
-const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
+const headerTemplate = ['/**',
+    ' * <%= pkg.name %> - <%= pkg.description %>',
+    ' * @version v<%= pkg.version %>',
+    ' * @link <%= pkg.homepage %>',
+    ' * @license <%= pkg.license %>',
+    ' */',
+    ''].join('\n');
 
-// Start of typescript related tasks
-const cleanDist = () => {
-    return gulp
-        .src('dist', {read: false, allowEmpty: true})
-        .pipe(clean());
-};
+const dtsHeaderTemplate =
+    '// Type definitions for <%= pkg.name %> v<%= pkg.version %>\n' +
+    '// Project: <%= pkg.homepage %>\n' +
+    '// Definitions by: Niall Crosby <https://github.com/ag-grid/>\n';
 
-const cleanMain = () => {
-    return gulp
-        .src(['./main.d.ts', 'main.js'], {read: false, allowEmpty: true})
-        .pipe(clean());
-};
-
-const cleanModules = () => {
-    return gulp
-        .src(['./*Module.d.ts', './*Module.js'], {read: false, allowEmpty: true})
-        .pipe(clean());
-};
-
+// Start of Typescript related tasks
 const tscSrcTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
 
@@ -44,7 +34,7 @@ const tscSrcTask = () => {
 
     return merge([
         tsResult.dts
-            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib')),
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
@@ -62,7 +52,7 @@ const tscMainTask = () => {
     return merge([
         tsResult.dts
             .pipe(replace("\"./", "\"./dist/lib/"))
-            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(rename("main.d.ts"))
             .pipe(gulp.dest('./')),
         tsResult.js
@@ -73,31 +63,20 @@ const tscMainTask = () => {
     ]);
 };
 
-const tscModulesTask = () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
+const cleanMain = () => {
+    return gulp
+        .src(['./main.d.ts', 'main.js'], {read: false, allowEmpty: true})
+        .pipe(clean());
+};
 
-    const tsResult = gulp
-        .src('./src/modules/**/*Module.ts')
-        .pipe(tsProject());
-
-    return merge([
-        tsResult.dts
-            .pipe(replace("\"./", "\"./dist/lib/"))
-            .pipe(replace("\"../", "\"./dist/lib/"))
-            .pipe(gulp.dest('./')),
-        tsResult.js
-            .pipe(replace("require(\"./", "require(\"./dist/lib/modules/"))
-            .pipe(replace("require(\"../", "require(\"./dist/lib/"))
-            .pipe(gulp.dest('./'))
-    ]);
+const cleanDist = () => {
+    return gulp
+        .src('dist', {read: false, allowEmpty: true})
+        .pipe(clean());
 };
 
 const tscWatch = () => {
-    gulp.watch([
-            './node_modules/ag-grid-community/dist/lib/**/*',
-            './src/**/*'
-        ],
-        series('tsc'));
+    gulp.watch('./src/**/*', series('tsc-no-clean'));
 };
 
 const tscSrcEs6Task = () => {
@@ -109,10 +88,9 @@ const tscSrcEs6Task = () => {
 
     return merge([
         tsResult.dts
-            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/es6')),
         tsResult.js
-            .pipe(replace("ag-grid-community/dist/lib", "ag-grid-community/dist/es6"))
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/es6'))
     ]);
@@ -128,7 +106,7 @@ const tscMainEs6Task = () => {
     return merge([
         tsResult.dts
             .pipe(replace("\"./", "\"./dist/es6/"))
-            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(rename("main.d.ts"))
             .pipe(gulp.dest('./dist/es6/')),
         tsResult.js
@@ -138,130 +116,43 @@ const tscMainEs6Task = () => {
             .pipe(gulp.dest('./dist/es6/'))
     ]);
 };
-// End of typescript related tasks
+// End of Typescript related tasks
 
-// Start of webpack related tasks
-const webpackWatch = () => {
-    gulp.watch([
-            './node_modules/ag-grid-community/dist/lib/**/*',
-            './src/**/*'
-        ],
-        series('webpack-noStyle'));
+const copyGridCoreStyles = (done) => {
+    if(!fs.existsSync('./node_modules/@ag-community/grid-core/dist/styles')) {
+        done("node_modules/@ag-community/grid-core/dist/styles doesn't exist - exiting")
+    }
+
+    return gulp.src('./node_modules/@ag-community/grid-core/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
 };
 
-const webpackTask = (minify, styles) => {
-    const mainFile = styles ? './webpack-with-styles.js' : './webpack-no-styles.js';
+const copyGridAllUmdFiles = (done) => {
+    if(!fs.existsSync('./node_modules/@ag-enterprise/grid-all-modules/dist')) {
+        done("./node_modules/@ag-enterprise/grid-all-modules/dist doesn't exist - exiting")
+    }
 
-    let fileName = 'ag-grid-enterprise';
-    fileName += minify ? '.min' : '';
-    fileName += styles ? '' : '.noStyle';
-    fileName += '.js';
-
-    return gulp.src(mainFile)
-        .pipe(webpackStream({
-            mode: minify ? 'production' : 'none',
-            optimization: {
-                minimizer: !!minify ? [
-                    new TerserPlugin({
-                        terserOptions: {
-                            output: {
-                                comments: false
-                            }
-                        },
-                        extractComments: false
-                    })
-                ] : [],
-            },
-            output: {
-                path: path.join(__dirname, "dist"),
-                filename: fileName,
-                library: ["agGrid"],
-                libraryTarget: "umd"
-            },
-            // resolve: {
-            //     alias: {
-            //         // primarily for including community bundles into enterprise
-            //         // if we don't do this then the grid import will result in a huge increase (and duplicated code
-            //         // which webpack can't seem to detect)
-            //         // spl todo - make this more generic and flexibe
-            //         // how to do this resolution of ./dist/lib -> ./node_modules/ag-grid-community for community only?
-            //         './dist/lib/grid': path.resolve(__dirname, './node_modules/ag-grid-community'),
-            //         './dist/lib/rowModels/clientSide/clientSideRowModel': path.resolve(__dirname, './node_modules/ag-grid-community'),
-            //         './dist/lib/rowModels/infinite/infiniteRowModel': path.resolve(__dirname, './node_modules/ag-grid-community'),
-            //     }
-            // },
-            module: {
-                rules: [
-                    {
-                        test: /\.css$/,
-                        use: [
-                            'style-loader',
-                            'css-loader'
-                        ].concat(
-                            !!minify ?
-                                {
-                                    loader: 'postcss-loader',
-                                    options: {
-                                        ident: 'postcss',
-                                        plugins: () => [
-                                            require('cssnano')({
-                                                preset: ['default', {
-                                                    discardComments: {
-                                                        removeAll: true,
-                                                    },
-                                                }]
-                                            })
-                                        ]
-                                    }
-                                } : []
-                        )
-                    }
-                ]
-            }
-        }))
-        .pipe(header(bundleTemplate, {pkg: pkg}))
-        .pipe(gulp.dest('./dist/'));
+    return gulp.src('./node_modules/@ag-enterprise/grid-all-modules/dist/ag-grid-enterprise*.js').pipe(gulp.dest('./dist/'));
 };
-// End of webpack related tasks
+
+// copy from grid-core tasks
+gulp.task('copy-grid-core-styles', copyGridCoreStyles);
+gulp.task('copy-umd-files', copyGridAllUmdFiles);
 
 // Typescript related tasks
-gulp.task('clean-dist', series(cleanDist));
+gulp.task('clean-dist', cleanDist);
 gulp.task('clean-main', cleanMain);
-gulp.task('clean-modules', cleanModules);
-gulp.task('clean', parallel('clean-dist', 'clean-main', 'clean-modules'));
+gulp.task('clean', parallel('clean-dist', 'clean-main'));
 gulp.task('tsc-no-clean-src', tscSrcTask);
 gulp.task('tsc-no-clean-main', tscMainTask);
-gulp.task('tsc-no-clean-modules', tscModulesTask);
 gulp.task('tsc-es6-no-clean-src', tscSrcEs6Task);
 gulp.task('tsc-es6-no-clean-main', tscMainEs6Task);
 gulp.task('tsc-es6-no-clean', parallel('tsc-es6-no-clean-src', 'tsc-es6-no-clean-main'));
-gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-no-clean-modules', 'tsc-es6-no-clean'));
+gulp.task('tsc-no-clean', parallel('tsc-no-clean-src', 'tsc-no-clean-main', 'tsc-es6-no-clean'));
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
-gulp.task('tsc-watch', series('tsc', tscWatch));
 
 // webpack related tasks
-gulp.task('webpack', series('clean', 'tsc-no-clean', webpackTask.bind(null, false, true)));
-gulp.task('webpack-no-clean', webpackTask.bind(null, false, true));
-gulp.task('webpack-minify', series('clean', 'tsc-no-clean', webpackTask.bind(null, true, true)));
-gulp.task('webpack-minify-no-clean', webpackTask.bind(null, true, true));
-gulp.task('webpack-noStyle', series('clean', 'tsc-no-clean', webpackTask.bind(null, false, false)));
-gulp.task('webpack-noStyle-no-clean', webpackTask.bind(null, false, false));
-gulp.task('webpack-minify-noStyle', series('clean', 'tsc-no-clean', webpackTask.bind(null, true, false)));
-gulp.task('webpack-minify-noStyle-no-clean', webpackTask.bind(null, true, false));
-// for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
-gulp.task('webpack-all-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean'));
-gulp.task('webpack-all', series('clean', 'tsc-no-clean', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean')));
-gulp.task('webpack-watch', series('webpack-noStyle', webpackWatch));
+gulp.task('package', series('tsc', 'copy-grid-core-styles', 'copy-umd-files'));
 
 // default/release task
-gulp.task('default', series('webpack-all'));
-
-// lint tasks
-gulp.task("tslint", () =>
-    gulp.src("src/**/*.ts")
-        .pipe(tslint({
-            formatter: "verbose"
-        }))
-        .pipe(tslint.report())
-);
+gulp.task('default', series('package'));
 

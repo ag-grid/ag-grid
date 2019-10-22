@@ -13,7 +13,7 @@ function isInstanceMethod(instance: any, property: any) {
 
 function indexTemplate(bindings, componentFilenames, isDev, communityModules, enterpriseModules) {
     const imports = [];
-    const propertyAssignments = ["modules: AllModules"];
+    const propertyAssignments = [`modules: ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`];
     const componentAttributes = ["modules={this.state.modules}"];
 
     const instanceBindings = [];
@@ -47,7 +47,7 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
     if (bindings.gridSettings.enterprise) {
         imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
     } else {
-        imports.push('import {AllModules} from "@ag-community/grid-all-modules";');
+        imports.push('import {AllCommunityModules} from "@ag-community/grid-all-modules";');
     }
 
     imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');

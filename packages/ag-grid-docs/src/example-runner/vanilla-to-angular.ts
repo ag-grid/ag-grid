@@ -67,7 +67,7 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
     if (bindings.gridSettings.enterprise) {
         imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
     } else {
-        imports.push('import {AllModules} from "@ag-community/grid-all-modules";');
+        imports.push('import {AllCommunityModules} from "@ag-community/grid-all-modules";');
     }
 
     imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
@@ -163,7 +163,7 @@ ${imports.join('\n')}
 export class AppComponent {
     private gridApi;
     private gridColumnApi;
-    public modules: Module[] = AllModules;
+    public modules: Module[] = ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'};
 
     ${propertyVars.join('\n')}
 

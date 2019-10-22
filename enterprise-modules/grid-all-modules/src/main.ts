@@ -1,4 +1,4 @@
-import {AllModules as CommunityModules, Module} from "@ag-community/grid-all-modules";
+import {AllCommunityModules, Module} from "@ag-community/grid-all-modules";
 import {ClipboardModule} from "@ag-enterprise/clipboard";
 import {ColumnsToolPanelModule} from "@ag-enterprise/column-tool-panel";
 import {ExcelExportModule} from "@ag-enterprise/excel-export";
@@ -33,7 +33,7 @@ export * from "@ag-enterprise/status-bar";
 export * from "@ag-enterprise/viewport-row-model";
 export * from "@ag-enterprise/grid-core";
 
-export const AllModules: Module[] = CommunityModules.concat([
+export const AllEnterpriseModules: Module[] = [
     ClipboardModule,
     ColumnsToolPanelModule,
     ExcelExportModule,
@@ -49,4 +49,6 @@ export const AllModules: Module[] = CommunityModules.concat([
     SideBarModule,
     StatusBarModule,
     ViewportRowModelModule
-]);
+];
+
+export const AllModules: Module[] = AllCommunityModules.concat(AllEnterpriseModules);
