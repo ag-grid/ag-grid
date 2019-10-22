@@ -1857,6 +1857,7 @@ export class CellComp extends Component {
     }
 
     private refreshHandle(): void {
+        if (!this.beans.rangeController) { return; }
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
 
         if (this.selectionHandle && !shouldHaveSelectionHandle) {
