@@ -40,6 +40,10 @@ function getSideBar() {
     console.log(sideBar);
 }
 
+function setSideBarPosition(position) {
+    gridOptions.api.setSideBarPosition(position);
+}
+
 function getOpenedToolPanelItem() {
     alert(gridOptions.api.getOpenedToolPanelItem());
 }

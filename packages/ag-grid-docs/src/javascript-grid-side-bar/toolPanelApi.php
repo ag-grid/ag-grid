@@ -21,6 +21,10 @@ $toolPanelApi = [
     ],
     ['getSideBar',
         'Returns the current side bar configuration. If a short cut was used, returns the detailed long form.'
+    ],
+    ['setSideBarPosition',
+        "Sets the side bar position relative to the grid. Possible values are: <code>'left'</code> | <code>'right'</code>,
+         where <code>'right'</code> is the default option."
     ]
 ];
 ?>

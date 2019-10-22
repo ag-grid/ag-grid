@@ -267,6 +267,7 @@ var gridOptions = {
                 }
             }
         ],
+        position: 'left',
         defaultToolPanel: 'columns',
         hiddenByDefault: isSmall
     },

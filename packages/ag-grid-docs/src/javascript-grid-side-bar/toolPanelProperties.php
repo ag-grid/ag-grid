@@ -9,6 +9,10 @@ $toolPanelProperties = [
     ],
     ['hiddenByDefault',
         'To hide the side bar by default enable hiddenByDefault, if left blank the side bar will be shown.'
+    ],
+    ['position',
+        "Sets the side bar position relative to the grid. Possible values are: <code>'left'</code> | <code>'right'</code>,
+         where <code>'right'</code> is the default option."
     ]
 ];
 

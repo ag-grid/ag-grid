@@ -132,6 +132,7 @@ sideBar = {
             toolPanel: 'agFiltersToolPanel',
         }
     ],
+    position: 'left',
     defaultToolPanel: 'filters'
 }
 </snippet>
@@ -305,8 +306,11 @@ sideBar = {
     </li>
     <li><b>Open / Close Buttons:</b> These open and close different tool panel items.</li>
     <li>
-        <b>Reset:</b> These reset the tool panel to a new configuration. Notice that <a href="#shortcuts">shortcuts</a>
+        <b>Reset Buttons:</b> These reset the tool panel to a new configuration. Notice that <a href="#shortcuts">shortcuts</a>
         are provided as configuration however <code>getToolPanel()</code> returns back the long form.
+    </li>
+    <li>
+        <b>Position Buttons:</b> These change the position of the side bar relative to the grid.
     </li>
 </ul>
 
