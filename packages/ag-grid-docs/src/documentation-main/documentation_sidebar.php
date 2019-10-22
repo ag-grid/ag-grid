@@ -1,5 +1,21 @@
 <div id="side-bar-announcements">
 </div>
+
+<div class="card card-highlight mb-4">
+    <div class="card-body">
+        <h5 class="card-title"><a href="https://youtu.be/HG_D1_N-RwQ">Angular Connect</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Oct 01</h6>
+        <p class="card-text">
+            <iframe width="180" height="100" src="https://www.youtube.com/embed/HG_D1_N-RwQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </p>
+        <p class="card-text">
+            Niall Crosby presents ag-Grid at Angular Connect 2019
+        </p>
+        <p class="text-right">
+            <a class="learn-more" href="https://youtu.be/HG_D1_N-RwQ">Open on YouTube</a>
+        </p>
+    </div>
+</div>
 <div class="card card-highlight mb-4">
     <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.2.2">Version 21.2.2</a></h5>
@@ -38,7 +54,6 @@
         </p>
     </div>
 </div>
-
 <div class="card card-highlight mb-4">
     <div class="card-body">
         <h5 class="card-title">Community or Enterprise?</h5>
@@ -46,6 +61,10 @@
         <p class="font-weight-normal">Everyone can use ag-Grid Community for free.
             It's MIT licensed and Open Source. No restrictions. No strings attached.
         </p>
+        <!--
+                <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/SA.svg"/>
+                <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/MA.svg"/>
+        -->
         <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/enterprise.svg"/>
         <p class="font-weight-normal">Do you want more features? Then
             <a class="learn-more" href="../javascript-grid-set-license/">get started with ag-Grid Enterprise</a>.
