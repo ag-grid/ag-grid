@@ -25,11 +25,6 @@ export class AgSlider extends AgAbstractLabel {
         super(AgSlider.TEMPLATE);
     }
 
-    protected postConstruct() {
-        super.postConstruct();
-        this.setMinValue(0);
-    }
-
     public onValueChange(callbackFn: (newValue: number) => void) {
         const eventChanged = AgAbstractField.EVENT_CHANGED;
         this.addDestroyableEventListener(this.eText, eventChanged, () => {
