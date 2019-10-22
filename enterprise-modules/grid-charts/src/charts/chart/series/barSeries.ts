@@ -546,7 +546,7 @@ export class BarSeries extends Series<CartesianChart> {
         const { yKey } = nodeDatum;
 
         if (!xKey || !yKey) {
-            return "";
+            return '';
         }
 
         const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
