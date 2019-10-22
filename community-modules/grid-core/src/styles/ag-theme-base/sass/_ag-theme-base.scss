@@ -1078,7 +1078,8 @@
         background-color: $editor-background-color-color;
 
         .ag-rich-select-list {
-            width: 200px;
+            width: 100%;
+            min-width: 200px;
             height: $row-height * 6.5; // intentional
         }
 

@@ -1183,6 +1183,7 @@ $handleSize: 5px;
         }
     }
     .ag-rich-select-list {
+        position: relative;
         .ag-virtual-list-item {
             display: flex;
             .ag-rich-select-row {
