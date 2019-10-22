@@ -275,9 +275,9 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
 function watchModules(buildSourceModuleOnly) {
     const node = 'node';
     const watchMode = buildSourceModuleOnly ? '-s' : '-w';
-    const lernaWatch = cp.spawn(node, ['./scripts/modules/lernaWatch.js', watchMode], {
+    const lernaWatch = cp.spawn(node, ['.\\scripts\\modules\\lernaWatch.js', watchMode], {
         stdio: 'inherit',
-        cwd: '../../'
+        cwd: '..\\..\\'
     });
 
     process.on('exit', () => {
@@ -286,7 +286,7 @@ function watchModules(buildSourceModuleOnly) {
 }
 function buildModules() {
     console.log("Building all modules...");
-    require('child_process').execSync(`node ../../scripts/modules/lernaWatch.js -b`, {
+    require('child_process').execSync(`node ..\\..\\scripts\\modules\\lernaWatch.js -b`, {
         stdio: 'inherit'
     });
 }
