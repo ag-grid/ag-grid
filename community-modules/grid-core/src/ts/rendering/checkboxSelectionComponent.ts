@@ -26,7 +26,7 @@ export class CheckboxSelectionComponent extends Component {
     private isRowSelectableFunc: IsRowSelectable;
 
     constructor() {
-        super(`<span class="ag-selection-checkbox" unselectable="on"/>`);
+        super(`<span class="ag-selection-checkbox"/>`);
     }
 
     private createAndAddIcons(): void {
