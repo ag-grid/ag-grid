@@ -163,7 +163,7 @@ function updateWebpackConfigWithBundles(communityModules, enterpriseModules) {
         .filter(module => module.moduleDirName !== 'grid-core')
         .filter(module => module.moduleDirName !== 'grid-all-modules')
         .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
-const {${module.moduleName}} = require("../../../${module.fullJsPath.replace('.ts', '')}"); 
+const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName}; 
         `);
 
     const communityRegisterModuleLines = communityModules
@@ -175,7 +175,7 @@ const {${module.moduleName}} = require("../../../${module.fullJsPath.replace('.t
         .filter(module => module.moduleDirName !== 'grid-core')
         .filter(module => module.moduleDirName !== 'grid-all-modules')
         .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
-const {${module.moduleName}} = require("../../../${module.fullJsPath.replace('.ts', '')}"); 
+const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName}; 
         `);
 
     const enterpriseRegisterModuleLines = enterpriseModules
