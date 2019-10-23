@@ -40,7 +40,7 @@ echo "################# Installing Package Dependencies ########################
 
 echo "########################################################################"
 echo "###################### Installing Packages #############################"
-./node_modules/.bin/lerna run build
+./node_modules/.bin/lerna run build --ignore ag-grid-charts-example
 
 echo "########################################################################"
 echo "##################### Updating .gitignore #############################"

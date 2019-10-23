@@ -1,6 +1,6 @@
 const fs=require('fs')
 
-const LICENSE_MANAGER_FILE='packages/ag-grid-enterprise/src/licenseManager.ts';
+const LICENSE_MANAGER_FILE='enterprise-modules/grid-core/src/licenseManager.ts';
 
 if (process.argv.length !== 3) {
     console.log("Usage: node scripts/updateLicenseManager.js NEW_LICENSE");
