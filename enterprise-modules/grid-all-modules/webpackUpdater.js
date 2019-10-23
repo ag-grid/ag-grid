@@ -1,8 +1,17 @@
 const fs = require('fs');
 const glob = require("glob");
 
+const frameworkModules = [
+    'grid-react',
+    'grid-angular',
+    'grid-vue',
+    'grid-polymer'
+];
+
 const modules = glob.sync("../../community-modules/*")
     .concat(glob.sync("../../enterprise-modules/*"))
+    .filter(module => !frameworkModules.includes(module.replace(`../../community-modules/`, '')))
+    .filter(module => !frameworkModules.includes(module.replace(`../../enterprise-modules/`, '')))
     .filter(module => module.indexOf('grid-all-modules') === -1)
     .map(module => glob.sync(`${module}/src/*Module.ts`)[0])
     .map(module => module.replace('.ts', ''))

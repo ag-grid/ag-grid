@@ -47,15 +47,18 @@ const main = async () => {
     templatePackageJson.name = moduleName;
     templatePackageJson.version = packageVersionNumber;
     templatePackageJson.license = answers.enterprise ? 'Commercial' : 'MIT';
-    templatePackageJson.dependencies['ag-grid-community'] = `~${packageVersionNumber}`;
+    templatePackageJson.dependencies['@ag-community/grid-core'] = `~${packageVersionNumber}`;
+    if(answers.enterprise) {
+        templatePackageJson.dependencies['@ag-enterprise/grid-core'] = `~${packageVersionNumber}`;
+    }
 
     fs.mkdirSync(`./${moduleDirName}`);
     fs.mkdirSync(`./${moduleDirName}/src`);
 
     fsExtra.copySync(path.resolve(__dirname, './.gitignore'), `./${moduleDirName}/.gitignore`);
-    fsExtra.copySync(path.resolve(__dirname, './gulpfile.js'), `./${moduleDirName}/gulpfile.js`);
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.es6.json'), `./${moduleDirName}/tsconfig.es6.json`);
-    fsExtra.copySync(path.resolve(__dirname, './tsconfig.json'), `./${moduleDirName}/tsconfig.json`);
+    fsExtra.copySync(path.resolve(__dirname, './tsconfig.es5.json'), `./${moduleDirName}/tsconfig.es5.json`);
+    fsExtra.copySync(path.resolve(__dirname, './tsconfig.docs.json'), `./${moduleDirName}/tsconfig.docs.json`);
     fsExtra.copySync(path.resolve(__dirname, './main.ts'), `./${moduleDirName}/src/main.ts`);
 
     fs.writeFileSync(`./${moduleDirName}/package.json`, JSON.stringify(templatePackageJson, null, 4), 'UTF-8');

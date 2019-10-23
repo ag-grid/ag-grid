@@ -121,7 +121,7 @@
                     }
                 }
             },
-            "ag-grid-angular": {
+            "@ag-community/grid-angular": {
                 main: "./main.js",
                 defaultExtension: "js"
             },

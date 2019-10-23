@@ -1,5 +1,5 @@
 import { Component, QueryList, ViewChildren, ViewContainerRef } from "@angular/core";
-import { ICellEditorAngularComp } from "ag-grid-angular";
+import { ICellEditorAngularComp } from "@ag-community/grid-angular";
 
 @Component({
     selector: "input-cell",

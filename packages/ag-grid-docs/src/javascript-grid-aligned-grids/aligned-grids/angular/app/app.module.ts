@@ -4,7 +4,7 @@ import { FormsModule }   from '@angular/forms'; // <-- NgModel lives here
 import {HttpClientModule} from '@angular/common/http';
 
 // ag-grid
-import { AgGridModule }  from "ag-grid-angular";
+import { AgGridModule }  from "@ag-community/grid-angular";
 
 import { AppComponent }  from './app.component';
 

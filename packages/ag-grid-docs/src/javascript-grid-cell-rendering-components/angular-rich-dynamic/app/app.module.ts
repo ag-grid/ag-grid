@@ -4,7 +4,7 @@ import {FormsModule} from "@angular/forms";
 import {HttpModule} from '@angular/http';
 
 // ag-grid
-import {AgGridModule} from "ag-grid-angular";
+import {AgGridModule} from "@ag-community/grid-angular";
 
 // from rich component
 import {RichComponent} from "./rich.component";

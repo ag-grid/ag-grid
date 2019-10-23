@@ -52,7 +52,7 @@ if (USE_LOCAL) {
         "@ag-enterprise/grid-viewport-row-model" => "$prefix/@ag-enterprise/grid-viewport-row-model",
         /* END OF MODULES DEV - DO NOT DELETE */
         "ag-grid-react" => "$prefix/ag-grid-react",
-        "ag-grid-angular" => "$prefix/ag-grid-angular",
+        "@ag-community/grid-angular" => "$prefix/@ag-community/grid-angular",
         "ag-grid-vue" => "$prefix/ag-grid-vue"
     );
 // production mode, return from unpkg
@@ -87,7 +87,7 @@ if (USE_LOCAL) {
         "@ag-enterprise/grid-viewport-row-model" => "https://unpkg.com/@ag-enterprise/grid-viewport-row-model@" . AG_GRID_ENTERPRISE_VERSION . "/",
         /* END OF MODULES PROD - DO NOT DELETE */
         "ag-grid-react" => "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
-        "ag-grid-angular" => "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/",
+        "@ag-community/grid-angular" => "npm:@ag-community/grid-angular@" . AG_GRID_ANGULAR_VERSION . "/",
         "ag-grid-vue" => "npm:ag-grid-vue@" . AG_GRID_VUE_VERSION . "/"
     );
 }

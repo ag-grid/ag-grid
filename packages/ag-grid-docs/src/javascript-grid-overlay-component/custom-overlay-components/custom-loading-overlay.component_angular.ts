@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ILoadingOverlayAngularComp } from "ag-grid-angular";
+import { ILoadingOverlayAngularComp } from "@ag-community/grid-angular";
 
 @Component({
     selector: 'app-loading-overlay',

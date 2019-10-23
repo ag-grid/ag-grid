@@ -71,7 +71,7 @@
     "@babel/preset-env": "7.3.1",
     "@babel/preset-react": "7.0.0",
     "@fortawesome/fontawesome-free": "5.6.3",
-    "ag-grid-angular": "^21.2.0",
+    "@ag-community/grid-angular": "^21.2.0",
     "ag-grid-community": "^21.2.0",
     "ag-grid-react": "^21.2.0",
     "ag-grid-testing": "0.0.2",

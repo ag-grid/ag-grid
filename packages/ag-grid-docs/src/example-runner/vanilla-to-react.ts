@@ -51,7 +51,10 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
     }
 
     imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
-    imports.push(`import "@ag-community/grid-all-modules/dist/styles/${bindings.gridSettings.theme}.css";`);
+
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = bindings.gridSettings.theme.indexOf(" ") !== -1 ? 'ag-theme-balham' : bindings.gridSettings.theme;
+    imports.push(`import "@ag-community/grid-all-modules/dist/styles/${theme}.css";`);
 
     if (componentFilenames) {
         let titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);
