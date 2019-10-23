@@ -51,22 +51,6 @@ export class Utils {
     private static doOnceFlags: { [key: string]: boolean } = {};
 
     /**
-     * When in IE or Edge, when you are editing a cell, then click on another cell,
-     * the other cell doesn't keep focus, so navigation keys, type to start edit etc
-     * don't work. appears that when you update the dom in IE it looses focus
-     * https://ag-grid.com/forum/showthread.php?tid=4362
-     * @param {HTMLElement} el
-     */
-    static doIeFocusHack(el: HTMLElement): void {
-        if (_.isBrowserIE() || _.isBrowserEdge()) {
-            if (_.missing(document.activeElement) || document.activeElement === document.body) {
-                // console.log('missing focus');
-                el.focus();
-            }
-        }
-    }
-
-    /**
      * If the key was passed before, then doesn't execute the func
      * @param {Function} func
      * @param {string} key

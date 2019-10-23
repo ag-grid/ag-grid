@@ -1552,8 +1552,6 @@ export class CellComp extends Component {
         if (editOnSingleClick) {
             this.startRowOrCellEdit();
         }
-
-        _.doIeFocusHack(this.getGui());
     }
 
     private createGridCellVo(): void {
@@ -2004,10 +2002,18 @@ export class CellComp extends Component {
 
         // if this cell was just focused, see if we need to force browser focus, his can
         // happen if focus is programmatically set.
-        if (cellFocused && event && event.forceBrowserFocus) {
+        if (cellFocused) {
             const eGui = this.getGui();
-            eGui.focus();
-            _.doIeFocusHack(eGui);
+            if (event && event.forceBrowserFocus) {
+                eGui.focus();
+            } else if (_.isBrowserIE() || _.isBrowserEdge()) {
+                /**
+                 * IE or Edge have issues with focus. When the DOM is modified, focus is lost. Also,
+                 * clicking on an unselectable="on" element within a cell fails to focus the cell. So
+                 * always focus, just to be sure.
+                 */
+                eGui.focus();
+            }
         }
 
         // if another cell was focused, and we are editing, then stop editing
