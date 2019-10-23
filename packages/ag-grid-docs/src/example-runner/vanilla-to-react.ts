@@ -53,7 +53,7 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
     imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
 
     // to account for the (rare) example that has more than one class...just default to balham if it does
-    const theme = bindings.gridSettings.theme.indexOf(" ") !== -1 ? 'ag-theme-balham' : bindings.gridSettings.theme;
+    const theme = bindings.gridSettings.theme || 'ag-theme-balham';
     imports.push(`import "@ag-community/grid-all-modules/dist/styles/${theme}.css";`);
 
     if (componentFilenames) {
@@ -155,7 +155,7 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
 
 import React, {Component} from "react"
 import {render} from "react-dom"
-import {AgGridReact} from 'ag-grid-react';
+import {AgGridReact} from '@ag-community/grid-react'
 ${imports.join('\n')}
 
 class GridExample extends Component {

@@ -185,8 +185,6 @@ export interface CartesianTooltipRendererParams extends TooltipRendererParams {
 }
 
 export interface BarSeriesOptions extends SeriesOptions {
-    grouped: boolean;
-    normalizedTo: number;
     highlightStyle?: HighlightOptions;
     shadow: DropShadowOptions;
     label: BarSeriesLabelOptions;
@@ -234,8 +232,6 @@ export interface ScatterTooltipRendererParams extends CartesianTooltipRendererPa
 }
 
 export interface AreaSeriesOptions extends SeriesOptions {
-    grouped: boolean;
-    normalizedTo: number;
     highlightStyle?: HighlightOptions;
     marker: MarkerOptions;
     shadow: DropShadowOptions;

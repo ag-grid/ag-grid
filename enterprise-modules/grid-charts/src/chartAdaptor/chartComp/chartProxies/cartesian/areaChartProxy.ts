@@ -13,11 +13,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         super(params);
 
         this.initChartOptions();
+
         this.chart = ChartBuilder[params.grouping ? "createGroupedAreaChart" : "createAreaChart"](params.parentElement, this.chartOptions);
 
         this.setAxisPadding(this.chart);
 
-        const areaSeries = ChartBuilder.createSeries({ type: 'area', ...this.chartOptions.seriesDefaults });
+        const areaSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
 
         if (areaSeries) {
             this.chart.addSeries(areaSeries);
@@ -95,10 +96,9 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.strokes = [stroke];
                 areaSeries.marker.stroke = stroke;
             } else {
-                const { seriesDefaults } = this.chartOptions;
+                const seriesDefaults = this.getSeriesDefaults();
                 const options: InternalAreaSeriesOptions = {
                     ...seriesDefaults,
-                    type: 'area',
                     data: params.data,
                     field: {
                         xKey: params.category.id,
@@ -140,7 +140,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 ...options.seriesDefaults.stroke,
                 width: 3,
             },
-            normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
             marker: {
                 enabled: true,
                 size: 3,
@@ -153,5 +152,13 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         };
 
         return options;
+    }
+
+    private getSeriesDefaults(): InternalAreaSeriesOptions {
+        return {
+            ...this.chartOptions.seriesDefaults,
+            type: 'area',
+            normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
+        };
     }
 }

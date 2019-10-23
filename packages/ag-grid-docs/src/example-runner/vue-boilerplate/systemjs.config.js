@@ -51,7 +51,7 @@
             app: {
                 defaultExtension: 'js'
             },
-            'ag-grid-vue': {
+            '@ag-community/grid-vue': {
                 main: './main.js',
                 defaultExtension: 'js'
             },

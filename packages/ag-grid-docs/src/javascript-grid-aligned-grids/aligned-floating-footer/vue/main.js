@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { AgGridVue } from "ag-grid-vue";
+import { AgGridVue } from "@ag-community/grid-vue";
 
 const VueExample = {
   template: `

@@ -94,7 +94,7 @@ function createComponentImports(bindings, componentFileNames: any, isDev, commun
     imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
 
     // to account for the (rare) example that has more than one class...just default to balham if it does
-    const theme = bindings.gridSettings.theme.indexOf(" ") !== -1 ? 'ag-theme-balham' : bindings.gridSettings.theme;
+    const theme = bindings.gridSettings.theme || 'ag-theme-balham';
     imports.push(`import "@ag-community/grid-all-modules/dist/styles/${theme}.css";`);
 
     if (componentFileNames) {
@@ -197,7 +197,7 @@ function componentTemplate(bindings, componentFileNames, isDev, communityModules
     const template = bindings.template ? parseTemplateFromBinding(bindings, agGridTag) : agGridTag;
     return `
 import Vue from "vue";
-import {AgGridVue} from "ag-grid-vue";
+import {AgGridVue} from "@ag-community/grid-vue";
 
 ${imports.join('\n')}
 

@@ -13,8 +13,8 @@
         "./_dev/@ag-community/src/**/*.ts",
         "./_dev/@ag-enterprise/src/**/*.ts",
         "./_dev/ag-grid-enterprise/src/**/*.ts",
-        "./_dev/ag-grid-angular/src/**/*.ts",
-        "./_dev/ag-grid-react/src/**/*.ts"
+        "./_dev/@ag-community/grid-angular/src/**/*.ts",
+        "./_dev/@ag-community/grid-react/src/**/*.ts"
     ],
 
     "exclude": [ "node_modules" ]

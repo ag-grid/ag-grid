@@ -342,7 +342,8 @@ export default function parser(js, html, exampleSettings) {
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
     if (inlineClass) {
-        exampleSettings.theme = inlineClass;
+        const theme = inlineClass.split(' ').filter(clazz => clazz.indexOf('ag-theme') !== -1);
+        exampleSettings.theme = (theme && theme.length > 0) ? theme[0] : 'ag-theme-balham';
     }
 
     if (parseInt(inlineHeight)) {

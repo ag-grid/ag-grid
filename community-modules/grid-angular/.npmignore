@@ -4,5 +4,4 @@ main.ts
 !aot/
 !dist/
 
-src/*.module.ngfactory.ts
-src/*.module.ngsummary.json
+src
