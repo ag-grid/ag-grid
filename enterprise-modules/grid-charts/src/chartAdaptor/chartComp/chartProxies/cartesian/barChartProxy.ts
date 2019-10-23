@@ -3,6 +3,7 @@ import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { BarSeries } from "../../../../charts/chart/series/barSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
+import { BarSeriesOptions as InternalBarSeriesOptions } from "../../../../charts/chartOptions";
 
 export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     public constructor(params: ChartProxyParams) {
@@ -19,7 +20,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         this.chart = ChartBuilder[builderFunction](params.parentElement, this.chartOptions);
 
-        const barSeries = ChartBuilder.createSeries({ type: 'bar', ...this.chartOptions.seriesDefaults });
+        const barSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
 
         if (barSeries) {
             this.chart.addSeries(barSeries);
@@ -42,13 +43,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     }
 
-    private isColumnChart = () => _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
-
     protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
-        const chartType = this.chartType;
         const isColumnChart = this.isColumnChart();
-        const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
-        const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
         const fontOptions = this.getDefaultFontOptions();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<BarSeriesOptions>;
 
@@ -57,8 +53,6 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         options.seriesDefaults = {
             ...options.seriesDefaults,
-            grouped: isGrouped,
-            normalizedTo: isNormalized ? 100 : undefined,
             tooltip: {
                 enabled: true,
             },
@@ -70,5 +64,22 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         };
 
         return options;
+    }
+
+    private isColumnChart(): boolean {
+        return _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
+    }
+
+    private getSeriesDefaults(): InternalBarSeriesOptions {
+        const { chartType } = this;
+        const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
+        const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
+
+        return {
+            ...this.chartOptions.seriesDefaults,
+            type: 'bar',
+            grouped: isGrouped,
+            normalizedTo: isNormalized ? 100 : undefined,
+        };
     }
 }
