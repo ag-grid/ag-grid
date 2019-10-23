@@ -77,6 +77,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             return map;
         }, new Map<string, AreaSeries>());
 
+        let previousSeries: AreaSeries = undefined;
+
         params.fields.forEach((f, index) => {
             let areaSeries = existingSeriesById.get(f.colId);
             const fill = fills[index % fills.length];
@@ -114,8 +116,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     }
                 };
 
-                chart.addSeries(ChartBuilder.createSeries(options));
+                areaSeries = ChartBuilder.createSeries(options) as AreaSeries;
+
+                chart.addSeriesAfter(areaSeries, previousSeries);
             }
+
+            previousSeries = areaSeries;
         });
     }
 
