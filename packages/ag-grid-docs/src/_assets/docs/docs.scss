@@ -95,7 +95,7 @@ body > div {
                 cursor: pointer;
             }
 
-            // a tad more convulted way to set whitespace, due to menu collapse / expand animation
+            // a tad more convoluted way to set whitespace, due to menu collapse / expand animation
             a + ul,
             span + ul {
                 & > li:first-child {

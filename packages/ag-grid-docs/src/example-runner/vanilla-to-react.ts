@@ -51,7 +51,7 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
     }
 
     imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
-    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";');
+    imports.push(`import "@ag-community/grid-all-modules/dist/styles/${bindings.gridSettings.theme}.css";`);
 
     if (componentFilenames) {
         let titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);

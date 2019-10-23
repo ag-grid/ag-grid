@@ -7,11 +7,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 let homepage = './src/_assets/homepage/homepage.ts';
 let docs = './src/_assets/docs/docs.ts';
 
-if (require('minimist')(process.argv.slice(2)).hmr) {
-    homepage = ['./src/_assets/homepage/homepage.ts', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'];
-    docs = ['./src/_assets/docs/docs.ts', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'];
-}
-
 module.exports = {
     mode: 'development',
     devtool: 'inline-source-map',
@@ -22,9 +17,7 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        publicPath: '/',
-        hotUpdateChunkFilename: 'dist/[hash].hot-update.js',
-        hotUpdateMainFilename: 'dist/[hash].hot-update.json'
+        publicPath: '/'
     },
 
     resolve: {
@@ -100,7 +93,6 @@ module.exports = {
 
     plugins: [
         new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin(),
         new MiniCssExtractPlugin({filename: '[name].css'}),
         new webpack.ProvidePlugin({
             $: 'jquery',

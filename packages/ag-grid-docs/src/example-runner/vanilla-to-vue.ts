@@ -92,7 +92,7 @@ function createComponentImports(bindings, componentFileNames: any, isDev, commun
     }
 
     imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
-    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";');
+    imports.push(`import "@ag-community/grid-all-modules/dist/styles/${bindings.gridSettings.theme}.css";`);
 
     if (componentFileNames) {
         let titleCase = (s) => {

@@ -5,7 +5,10 @@ import {bindActionCreators} from 'redux';
 import {AgGridReact} from "ag-grid-react";
 import {actions} from './actions/fileActions.jsx'
 
-import "ag-grid-enterprise";
+import {AllModules} from "@ag-enterprise/grid-all-modules";
+
+import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";
+import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";
 
 import FileCellRenderer from './FileCellRenderer.jsx';
 
@@ -24,6 +27,8 @@ class FileBrowser extends Component {
     }
   };
 
+  modules = AllModules;
+
   frameworkComponents = {
     fileCellRenderer: FileCellRenderer
   };
@@ -41,6 +46,7 @@ class FileBrowser extends Component {
           onGridReady={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}
           deltaRowDataMode={true}
+          modules={this.modules}
           getRowNodeId={data => data.id}
           onRowDragEnd={this.onRowDragEnd}
           frameworkComponents={this.frameworkComponents}
