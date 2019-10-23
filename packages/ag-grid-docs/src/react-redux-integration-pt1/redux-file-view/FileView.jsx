@@ -4,7 +4,10 @@ import {bindActionCreators} from 'redux';
 import {AgGridReact} from "ag-grid-react";
 import {actions} from './actions/fileActions.jsx'
 
-import "ag-grid-enterprise";
+import {AllModules} from "@ag-enterprise/grid-all-modules";
+
+import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";
+import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";
 
 class FileView extends Component {
   colDefs = [
@@ -22,6 +25,8 @@ class FileView extends Component {
     }
   };
 
+  modules = AllModules;
+
   render() {
     return (
       <div id='myGrid' style={{height: 450}} className="ag-theme-balham">
@@ -31,6 +36,7 @@ class FileView extends Component {
           deltaRowDataMode={true}
           getRowNodeId={data => data.id}
           autoGroupColumnDef={this.autoGroupColumnDef}
+          modules={this.modules}
           groupDefaultExpanded={-1}
           onFirstDataRendered={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}>

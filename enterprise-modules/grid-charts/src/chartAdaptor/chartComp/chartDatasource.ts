@@ -175,7 +175,7 @@ export class ChartDatasource extends BeanStub {
                         currentMap[key] = groupItem;
                         dataAggregated.push(groupItem);
                     }
-                    
+
                     groupItem.__children.push(data);
                 } else {
                     // map of maps
@@ -208,7 +208,7 @@ export class ChartDatasource extends BeanStub {
             rowNode = rowNode.parent!;
             labels.push(rowNode.key);
         }
-        
+
         return labels;
     }
 }

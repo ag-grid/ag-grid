@@ -471,9 +471,15 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     private updateMarkerSelection(markerSelectionData: MarkerSelectionDatum[]): void {
-        const { marker, yKeyEnabled, highlightedNode, highlightStyle: { fill, stroke } } = this;
-        const updateMarkers = this.markerSelection.setData(markerSelectionData);
+        const { marker } = this;
         const Marker = marker.type;
+
+        if (!Marker) {
+            return;
+        }
+
+        const { yKeyEnabled, highlightedNode, highlightStyle: { fill, stroke } } = this;
+        const updateMarkers = this.markerSelection.setData(markerSelectionData);
 
         updateMarkers.exit.remove();
 
@@ -488,7 +494,7 @@ export class AreaSeries extends Series<CartesianChart> {
             node.stroke = node === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
             node.fillOpacity = marker.fillOpacity;
             node.strokeOpacity = marker.strokeOpacity;
-            node.strokeWidth = marker.strokeWidth;
+            node.strokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
             node.visible = marker.enabled && datum.size > 0 && !!yKeyEnabled.get(datum.yKey);
         });
 

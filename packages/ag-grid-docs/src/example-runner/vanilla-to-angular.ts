@@ -71,7 +71,7 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
     }
 
     imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
-    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";');
+    imports.push(`import "@ag-community/grid-all-modules/dist/styles/${bindings.gridSettings.theme}.css";`);
 
     if (componentFileNames) {
         let titleCase = (s) => {

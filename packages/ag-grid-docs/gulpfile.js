@@ -15,26 +15,32 @@ const merge = require('merge-stream');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const PurgecssPlugin = require('purgecss-webpack-plugin');
-const getAllModules =require("./utils").getAllModules;
+const getAllModules = require("./utils").getAllModules;
 // const debug = require('gulp-debug'); // don't remove this Gil
 
 const generateExamples = require('./example-generator');
 const buildPackagedExamples = require('./packaged-example-builder');
 
-
 const SKIP_INLINE = true;
 const DEV_DIR = "dev";
 
+const {communityModules, enterpriseModules} = getAllModules();
+
 // copy core project libs (community, enterprise, angular etc) to dist/dev folder
 const populateDevFolder = () => {
-    const standard = gulp.src('../ag-grid-community/**/*.*', {base: '../ag-grid-community/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-community`));
-    const enterprise = gulp.src('../ag-grid-enterprise/**/*.*', {base: '../ag-grid-enterprise/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-enterprise`));
-    const enterpriseBundle = gulp.src('../ag-grid-enterprise/dist/ag-grid-enterprise.js').pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-enterprise-bundle/`));
-    const react = gulp.src('../ag-grid-react/**/*.*', {base: '../ag-grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-react`));
-    const angular = gulp.src('../ag-grid-angular/**/*.*', {base: '../ag-grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-angular`));
-    const vue = gulp.src('../ag-grid-vue/**/*.*', {base: '../ag-grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-vue`));
+    console.log("Polulating dev folder with modules...");
+    const copyTasks = [];
+    communityModules.concat(enterpriseModules).forEach(module => {
+        copyTasks.push(
+            gulp.src([`${module.rootDir}/**/*.*`, '!node_modules/**/*', '!src/**/*'], {cwd: `${module.rootDir}/`})
+                .pipe(gulp.dest(`dist/${DEV_DIR}/${module.publishedName}`)));
+    });
 
-    return merge(standard, enterprise, enterpriseBundle, react, angular, vue);
+    const react = gulp.src(['../ag-grid-react/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../ag-grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-react`));
+    const angular = gulp.src(['../ag-grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../ag-grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-angular`));
+    const vue = gulp.src(['../ag-grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../ag-grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-vue`));
+
+    return merge(...copyTasks, react, angular, vue);
 };
 
 const processSource = () => {
@@ -53,7 +59,12 @@ const processSource = () => {
 
     return (
         gulp
-            .src(['./src/**/*', '!./src/dist/ag-grid-community/', '!./src/dist/ag-grid-enterprise/', `!${DEV_DIR}`])
+            .src(['./src/**/*',
+                '!./src/dist/ag-grid-community/',
+                '!./src/dist/ag-grid-enterprise/',
+                '!./src/dist/@ag-community/',
+                '!./src/dist/@ag-enterprise/',
+                `!${DEV_DIR}`])
             // inline the PHP part
             .pipe(phpFilter)
             // .pipe(debug())
@@ -83,7 +94,7 @@ const bundleSite = (production) => {
     };
     const cssWhitelistPatterns = () => {
         // ie: [/^whitelisted-/]
-        return [/runner-item.*/];
+        return [/runner-item.*/, /level-*/];
     };
     webpackConfig.plugins.push(
         new PurgecssPlugin({
@@ -111,10 +122,10 @@ const bundleSite = (production) => {
 
 const copyFromDistFolder = () => {
     return merge(
-        gulp.src(['../ag-grid-community/dist/ag-grid-community.js']).pipe(gulp.dest('./dist/dist/ag-grid-community/')),
+        gulp.src(['../../community-modules/grid-all-modules/dist/ag-grid-community.js']).pipe(gulp.dest('./dist/@ag-community/grid-all-modules/dist/')),
         gulp
-            .src(['../ag-grid-enterprise/dist/ag-grid-enterprise.js', '../ag-grid-enterprise/dist/ag-grid-enterprise.min.js'])
-            .pipe(gulp.dest('./dist/dist/ag-grid-enterprise'))
+            .src(['../../enterprise-modules/grid-all-modules/dist/ag-grid-enterprise.js', '../../enterprise-modules/grid-all-modules/dist/ag-grid-enterprise.min.js'])
+            .pipe(gulp.dest('./dist/@ag-enterprise/grid-all-modules/dist/'))
     );
 };
 
@@ -139,9 +150,6 @@ const replaceAgReferencesWithCdnLinks = () => {
         .pipe(replace('$$LOCAL$$', version))
         .pipe(gulp.dest('./dist'));
 };
-
-
-const {communityModules, enterpriseModules} = getAllModules();
 
 gulp.task('generate-examples-release', (done) => {
     generateExamples.bind(

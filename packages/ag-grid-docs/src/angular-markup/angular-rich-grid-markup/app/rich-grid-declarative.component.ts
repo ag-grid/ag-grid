@@ -1,8 +1,10 @@
 import {Component, ViewEncapsulation} from "@angular/core";
 
-import {GridOptions} from "ag-grid-community";
-// only import this if you are using the ag-Grid-Enterprise
-import "ag-grid-enterprise";
+import {GridOptions, Module, AllModules} from "@ag-enterprise/grid-all-modules";
+
+import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";
+import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";
+
 
 import ProficiencyFilter from "./filters/proficiencyFilter";
 import SkillFilter from "./filters/skillFilter";
@@ -24,6 +26,8 @@ export class RichGridDeclarativeComponent {
     private rowData: any[];
     public rowCount: string;
     public showToolPanel: true;
+    public modules: Module[] = AllModules;
+
     public components = {
         headerGroupComponent: HeaderGroupComponent
     };

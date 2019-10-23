@@ -116,6 +116,13 @@ export class Color {
         throw new Error('The given array should contain 3 or 4 color components (numbers).');
     }
 
+    /**
+     * Creates an instance of the Color class from the given HSB(A) components.
+     * @param h Hue in the [0, 360) range.
+     * @param s Saturation in the [0, 1] range.
+     * @param b Brightness in the [0, 1] range.
+     * @param alpha Opacity in the [0, 1] range. Defaults to 1 (completely opaque).
+     */
     static fromHSB(h: number, s: number, b: number, alpha = 1): Color {
         const rgb = Color.HSBtoRGB(h, s, b);
         return new Color(rgb[0], rgb[1], rgb[2], alpha);

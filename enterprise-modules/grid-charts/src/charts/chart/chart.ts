@@ -136,21 +136,44 @@ export abstract class Chart {
     }
 
     addSeries(series: Series<Chart>, before?: Series<Chart>): boolean {
-        const canAdd = this.series.indexOf(series) < 0;
+        const { series: allSeries, seriesRoot } = this;
+        const canAdd = allSeries.indexOf(series) < 0;
 
         if (canAdd) {
-            const beforeIndex = before ? this.series.indexOf(before) : -1;
+            const beforeIndex = before ? allSeries.indexOf(before) : -1;
 
             if (beforeIndex >= 0) {
-                this.series.splice(beforeIndex, 0, series);
-                this.seriesRoot.insertBefore(series.group, before!.group);
+                allSeries.splice(beforeIndex, 0, series);
+                seriesRoot.insertBefore(series.group, before!.group);
             } else {
-                this.series.push(series);
-                this.seriesRoot.append(series.group);
+                allSeries.push(series);
+                seriesRoot.append(series.group);
             }
             series.chart = this;
             this.dataPending = true;
+
             return true;
+        }
+
+        return false;
+    }
+
+    addSeriesAfter(series: Series<Chart>, after?: Series<Chart>): boolean {
+        const { series: allSeries, seriesRoot } = this;
+        const canAdd = allSeries.indexOf(series) < 0;
+
+        if (canAdd) {
+            const afterIndex = after ? this.series.indexOf(after) : -1;
+
+            if (afterIndex >= 0 && afterIndex + 1 < allSeries.length) {
+                allSeries.splice(afterIndex + 1, 0, series);
+                seriesRoot.insertBefore(series.group, allSeries[afterIndex + 1].group);
+            } else {
+                allSeries.push(series);
+                seriesRoot.append(series.group);
+            }
+            series.chart = this;
+            this.dataPending = true;
         }
 
         return false;

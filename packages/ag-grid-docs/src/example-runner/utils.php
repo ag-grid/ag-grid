@@ -251,7 +251,7 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     }
 
     $gridSettings = array(
-        'theme' => 'ag-theme-balham',
+        'theme' => $options['theme'],
         'noStyle' => $options['noStyle'] ? $options['noStyle'] : 0,
         'height' => '100%',
         'width' => '100%',
@@ -353,7 +353,7 @@ function packagedExample($title, $dir, $type = 'vanilla', $options = array())
     }
 
     $gridSettings = array(
-        'theme' => 'ag-theme-balham',
+        'theme' => $options['theme'],
         'noStyle' => $options['noStyle'] ? $options['noStyle'] : 0,
         'height' => '100%',
         'width' => '100%',
