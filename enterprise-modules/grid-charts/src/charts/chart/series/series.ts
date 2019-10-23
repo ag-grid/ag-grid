@@ -105,7 +105,9 @@ export class SeriesMarker {
     set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
-            this.stroke = Color.fromString(value).darker().toHexString();
+            if (value) {
+                this.stroke = Color.fromString(value).darker().toHexString();
+            }
             this.update();
         }
     }
