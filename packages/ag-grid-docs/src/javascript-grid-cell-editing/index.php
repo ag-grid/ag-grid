@@ -300,7 +300,7 @@ cellDefs.forEach( function(cellDef) {
 
     <p>
         It is also possible to use different editors for different rows in the same column.
-        Typically an application might check the rows contents and choose and editor accordingly.
+        Typically an application might check the rows contents and choose an editor accordingly.
         To configure this set <code>colDef.cellEditorSelector</code>
         to a function that returns the name of the component to be used as an editor
         and optionally the custom params to be passed into it

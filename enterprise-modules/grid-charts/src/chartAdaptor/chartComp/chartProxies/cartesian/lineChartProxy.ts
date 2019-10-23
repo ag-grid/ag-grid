@@ -36,6 +36,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             return map;
         }, new Map<string, LineSeries>());
 
+        let previousSeries: LineSeries = undefined;
+
         params.fields.forEach((f, index) => {
             let lineSeries = existingSeriesById.get(f.colId);
             const fill = fills[index % fills.length];
@@ -75,8 +77,12 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     },
                 };
 
-                chart.addSeries(ChartBuilder.createSeries(options));
+                lineSeries = ChartBuilder.createSeries(options) as LineSeries;
+
+                chart.addSeriesAfter(lineSeries, previousSeries);
             }
+
+            previousSeries = lineSeries;
         });
 
         this.updateLabelRotation(params.category.id);

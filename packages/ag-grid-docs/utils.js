@@ -1,7 +1,15 @@
 const glob = require('glob');
 
+const frameworkModules = [
+    'grid-react',
+    'grid-angular',
+    'grid-vue',
+    'grid-polymer'
+];
+
 const getAllModules = () => {
     const mapModules = moduleRoot => glob.sync(`../../${moduleRoot}/*`)
+        .filter(module => !frameworkModules.includes(module.replace(`../../${moduleRoot}/`, '')))
         .map(module => glob.sync(`${module}/src/*Module.ts`)[0])
         .filter(module => module)
         .map(module => {

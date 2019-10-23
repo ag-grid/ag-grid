@@ -105,6 +105,13 @@ var Color = /** @class */ (function () {
         }
         throw new Error('The given array should contain 3 or 4 color components (numbers).');
     };
+    /**
+     * Creates an instance of the Color class from the given HSB(A) components.
+     * @param h Hue in the [0, 360) range.
+     * @param s Saturation in the [0, 1] range.
+     * @param b Brightness in the [0, 1] range.
+     * @param alpha Opacity in the [0, 1] range. Defaults to 1 (completely opaque).
+     */
     Color.fromHSB = function (h, s, b, alpha) {
         if (alpha === void 0) { alpha = 1; }
         var rgb = Color.HSBtoRGB(h, s, b);
@@ -18092,9 +18099,12 @@ var CellComp = /** @class */ (function (_super) {
                 /**
                  * IE or Edge have issues with focus. When the DOM is modified, focus is lost. Also,
                  * clicking on an unselectable="on" element within a cell fails to focus the cell. So
-                 * always focus, just to be sure.
+                 * always focus, unless we're editing the cell in which case focussing will steal focus
+                 * from the editor.
                  */
-                eGui.focus();
+                if (!this.editingCell) {
+                    eGui.focus();
+                }
             }
         }
         // if another cell was focused, and we are editing, then stop editing
@@ -25427,8 +25437,10 @@ var GridPanel = /** @class */ (function (_super) {
         // reset back to the left, however no scroll event is fired. so we need to get header to also scroll
         // back to the left to be kept in sync.
         // adding and removing the grid from the DOM both resets the scroll position and
-        // triggers a resize event, so notify listeners that the scroll position might have changed
-        this.onBodyHorizontalScroll(this.eCenterViewport);
+        // triggers a resize event, so notify listeners if the scroll position has changed
+        if (this.scrollLeft !== this.getCenterViewportScrollLeft()) {
+            this.onBodyHorizontalScroll(this.eCenterViewport);
+        }
     };
     GridPanel.prototype.updateScrollVisibleService = function () {
         // because of column animation (which takes 200ms), we have to do this twice.
@@ -54745,20 +54757,49 @@ var Chart = /** @class */ (function () {
         configurable: true
     });
     Chart.prototype.addSeries = function (series, before) {
-        var canAdd = this.series.indexOf(series) < 0;
+        var _a = this, allSeries = _a.series, seriesRoot = _a.seriesRoot;
+        var canAdd = allSeries.indexOf(series) < 0;
         if (canAdd) {
-            var beforeIndex = before ? this.series.indexOf(before) : -1;
+            var beforeIndex = before ? allSeries.indexOf(before) : -1;
             if (beforeIndex >= 0) {
-                this.series.splice(beforeIndex, 0, series);
-                this.seriesRoot.insertBefore(series.group, before.group);
+                allSeries.splice(beforeIndex, 0, series);
+                seriesRoot.insertBefore(series.group, before.group);
             }
             else {
-                this.series.push(series);
-                this.seriesRoot.append(series.group);
+                allSeries.push(series);
+                seriesRoot.append(series.group);
             }
             series.chart = this;
             this.dataPending = true;
             return true;
+        }
+        return false;
+    };
+    Chart.prototype.addSeriesAfter = function (series, after) {
+        var _a = this, allSeries = _a.series, seriesRoot = _a.seriesRoot;
+        var canAdd = allSeries.indexOf(series) < 0;
+        if (canAdd) {
+            var afterIndex = after ? this.series.indexOf(after) : -1;
+            if (afterIndex >= 0) {
+                if (afterIndex + 1 < allSeries.length) {
+                    seriesRoot.insertBefore(series.group, allSeries[afterIndex + 1].group);
+                }
+                else {
+                    seriesRoot.append(series.group);
+                }
+                allSeries.splice(afterIndex + 1, 0, series);
+            }
+            else {
+                if (allSeries.length > 0) {
+                    seriesRoot.insertBefore(series.group, allSeries[0].group);
+                }
+                else {
+                    seriesRoot.append(series.group);
+                }
+                allSeries.unshift(series);
+            }
+            series.chart = this;
+            this.dataPending = true;
         }
         return false;
     };
@@ -58169,7 +58210,9 @@ var SeriesMarker = /** @class */ (function () {
         set: function (value) {
             if (this._fill !== value) {
                 this._fill = value;
-                this.stroke = Color$1.fromString(value).darker().toHexString();
+                if (value) {
+                    this.stroke = Color$1.fromString(value).darker().toHexString();
+                }
                 this.update();
             }
         },
@@ -60158,9 +60201,14 @@ var AreaSeries = /** @class */ (function (_super) {
         this.strokeSelection = strokeSelection;
     };
     AreaSeries.prototype.updateMarkerSelection = function (markerSelectionData) {
-        var _a = this, marker = _a.marker, yKeyEnabled = _a.yKeyEnabled, highlightedNode = _a.highlightedNode, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
-        var updateMarkers = this.markerSelection.setData(markerSelectionData);
+        var _this = this;
+        var marker = this.marker;
         var Marker = marker.type;
+        if (!Marker) {
+            return;
+        }
+        var _a = this, yKeyEnabled = _a.yKeyEnabled, highlightedNode = _a.highlightedNode, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
+        var updateMarkers = this.markerSelection.setData(markerSelectionData);
         updateMarkers.exit.remove();
         var enterMarkers = updateMarkers.enter.append(Marker);
         var markerSelection = updateMarkers.merge(enterMarkers);
@@ -60172,7 +60220,7 @@ var AreaSeries = /** @class */ (function (_super) {
             node.stroke = node === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
             node.fillOpacity = marker.fillOpacity;
             node.strokeOpacity = marker.strokeOpacity;
-            node.strokeWidth = marker.strokeWidth;
+            node.strokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : _this.strokeWidth;
             node.visible = marker.enabled && datum.size > 0 && !!yKeyEnabled.get(datum.yKey);
         });
         this.markerSelection = markerSelection;
@@ -64986,6 +65034,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
             }
             return map;
         }, new Map());
+        var previousSeries = undefined;
         params.fields.forEach(function (f, index) {
             var areaSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
@@ -65009,8 +65058,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
                         yKeys: [f.colId],
                         yNames: [f.displayName],
                     }, fill: __assign$6(__assign$6({}, seriesDefaults.fill), { colors: [fill] }), stroke: __assign$6(__assign$6({}, seriesDefaults.stroke), { colors: [stroke] }) });
-                chart.addSeries(ChartBuilder.createSeries(options));
+                areaSeries = ChartBuilder.createSeries(options);
+                chart.addSeriesAfter(areaSeries, previousSeries);
             }
+            previousSeries = areaSeries;
         });
     };
     AreaChartProxy.prototype.getDefaultOptions = function () {
@@ -65079,6 +65130,7 @@ var LineChartProxy = /** @class */ (function (_super) {
             }
             return map;
         }, new Map());
+        var previousSeries = undefined;
         params.fields.forEach(function (f, index) {
             var lineSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
@@ -65103,8 +65155,10 @@ var LineChartProxy = /** @class */ (function (_super) {
                         yKey: f.colId,
                         yName: f.displayName,
                     }, fill: __assign$7(__assign$7({}, seriesDefaults.fill), { color: fill }), stroke: __assign$7(__assign$7({}, seriesDefaults.stroke), { color: stroke }) });
-                chart.addSeries(ChartBuilder.createSeries(options));
+                lineSeries = ChartBuilder.createSeries(options);
+                chart.addSeriesAfter(lineSeries, previousSeries);
             }
+            previousSeries = lineSeries;
         });
         this.updateLabelRotation(params.category.id);
     };

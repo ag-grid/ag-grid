@@ -25,7 +25,7 @@ export function appModuleAngular(componentFileNames) {
         import {HttpClientModule} from '@angular/common/http';
         
         // ag-grid
-        import { AgGridModule }  from "ag-grid-angular";
+        import { AgGridModule }  from "@ag-community/grid-angular";
         import { AppComponent }  from './app.component';
         
         ${imports.join('\n')}

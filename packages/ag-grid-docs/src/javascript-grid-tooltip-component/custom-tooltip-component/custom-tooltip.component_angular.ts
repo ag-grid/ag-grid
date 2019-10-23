@@ -1,5 +1,5 @@
 import {Component, ViewEncapsulation} from '@angular/core';
-import {ITooltipAngularComp} from "ag-grid-angular";
+import {ITooltipAngularComp} from "@ag-community/grid-angular";
 
 @Component({
     selector: 'tooltip-component',

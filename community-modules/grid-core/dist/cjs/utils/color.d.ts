@@ -36,6 +36,13 @@ export declare class Color {
     private static rgbaRe;
     static fromRgbaString(str: string): Color;
     static fromArray(arr: [number, number, number] | [number, number, number, number]): Color;
+    /**
+     * Creates an instance of the Color class from the given HSB(A) components.
+     * @param h Hue in the [0, 360) range.
+     * @param s Saturation in the [0, 1] range.
+     * @param b Brightness in the [0, 1] range.
+     * @param alpha Opacity in the [0, 1] range. Defaults to 1 (completely opaque).
+     */
     static fromHSB(h: number, s: number, b: number, alpha?: number): Color;
     private static padHex;
     toHexString(): string;

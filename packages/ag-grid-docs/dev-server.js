@@ -58,7 +58,7 @@ function launchPhpCP(app) {
 
 function serveFramework(app, framework) {
     console.log(`serving ${framework}`);
-    app.use(`/dev/${framework}`, express.static(`../${framework}`));
+    app.use(`/dev/${framework}`, express.static(`./_dev/${framework}`));
 }
 
 function serveModules(app, communityModules, enterpriseModules) {
@@ -104,12 +104,12 @@ function symlinkModules(communityModules, enterpriseModules) {
     }
 
     lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
-    lnk('../ag-grid-angular/exports.ts', '_dev/ag-grid-angular/', {
+    lnk('../../community-modules/grid-angular/', '_dev/@ag-community', {force: true, type: linkType});
+    lnk('../../community-modules/grid-angular/exports.ts', '_dev/@ag-community/grid-angular/', {
         force: true,
         type: linkType,
         rename: 'main.ts'
     });
-    lnk('../ag-grid-angular/', '_dev', {force: true, type: linkType});
     lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
 
     communityModules
@@ -348,13 +348,14 @@ module.exports = (buildSourceModuleOnly = false, done) => {
     // for the actual site - php, css etc
     addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
 
+
     // add community & enterprise modules to express (for importing in the fw examples)
     symlinkModules(communityModules, enterpriseModules);
     updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
     updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
     serveModules(app, communityModules, enterpriseModules);
 
-    serveFramework(app, 'ag-grid-angular');
+    serveFramework(app, '@ag-community/grid-angular');
     serveFramework(app, 'ag-grid-vue');
     serveFramework(app, 'ag-grid-react');
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { INoRowsOverlayAngularComp } from "ag-grid-angular";
+import { INoRowsOverlayAngularComp } from "@ag-community/grid-angular";
 
 @Component({
     selector: 'app-gender-renderer',

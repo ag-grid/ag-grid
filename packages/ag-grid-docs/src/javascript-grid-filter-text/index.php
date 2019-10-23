@@ -86,7 +86,7 @@ function myComparator (filter, value, filterText) {
 <h2>Text Formatter</h2>
 <p>
     The grid compares the text filter with the values in a case insensite way, thus 'o' will match 'Olivia' and 'Salmon',
-    however it will not match against 'Bj&oslash;rk'. If you want to match in any other way (eg you want to makes against
+    however it will not match against 'Bj&ouml;rk'. If you want to match in any other way (eg you want to makes against
     accents), or you want to have case sensitive matches, then you should provide your own textFormatter.
 </p>
 <p>

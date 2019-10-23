@@ -105,6 +105,13 @@ var Color = /** @class */ (function () {
         }
         throw new Error('The given array should contain 3 or 4 color components (numbers).');
     };
+    /**
+     * Creates an instance of the Color class from the given HSB(A) components.
+     * @param h Hue in the [0, 360) range.
+     * @param s Saturation in the [0, 1] range.
+     * @param b Brightness in the [0, 1] range.
+     * @param alpha Opacity in the [0, 1] range. Defaults to 1 (completely opaque).
+     */
     Color.fromHSB = function (h, s, b, alpha) {
         if (alpha === void 0) { alpha = 1; }
         var rgb = Color.HSBtoRGB(h, s, b);
@@ -18092,9 +18099,12 @@ var CellComp = /** @class */ (function (_super) {
                 /**
                  * IE or Edge have issues with focus. When the DOM is modified, focus is lost. Also,
                  * clicking on an unselectable="on" element within a cell fails to focus the cell. So
-                 * always focus, just to be sure.
+                 * always focus, unless we're editing the cell in which case focussing will steal focus
+                 * from the editor.
                  */
-                eGui.focus();
+                if (!this.editingCell) {
+                    eGui.focus();
+                }
             }
         }
         // if another cell was focused, and we are editing, then stop editing
@@ -25427,8 +25437,10 @@ var GridPanel = /** @class */ (function (_super) {
         // reset back to the left, however no scroll event is fired. so we need to get header to also scroll
         // back to the left to be kept in sync.
         // adding and removing the grid from the DOM both resets the scroll position and
-        // triggers a resize event, so notify listeners that the scroll position might have changed
-        this.onBodyHorizontalScroll(this.eCenterViewport);
+        // triggers a resize event, so notify listeners if the scroll position has changed
+        if (this.scrollLeft !== this.getCenterViewportScrollLeft()) {
+            this.onBodyHorizontalScroll(this.eCenterViewport);
+        }
     };
     GridPanel.prototype.updateScrollVisibleService = function () {
         // because of column animation (which takes 200ms), we have to do this twice.

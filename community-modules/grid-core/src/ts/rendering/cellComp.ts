@@ -2010,9 +2010,12 @@ export class CellComp extends Component {
                 /**
                  * IE or Edge have issues with focus. When the DOM is modified, focus is lost. Also,
                  * clicking on an unselectable="on" element within a cell fails to focus the cell. So
-                 * always focus, just to be sure.
+                 * always focus, unless we're editing the cell in which case focussing will steal focus
+                 * from the editor.
                  */
-                eGui.focus();
+                if (!this.editingCell) {
+                    eGui.focus();
+                }
             }
         }
 

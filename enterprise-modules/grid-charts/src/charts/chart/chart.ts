@@ -165,13 +165,24 @@ export abstract class Chart {
         if (canAdd) {
             const afterIndex = after ? this.series.indexOf(after) : -1;
 
-            if (afterIndex >= 0 && afterIndex + 1 < allSeries.length) {
+            if (afterIndex >= 0) {
+                if (afterIndex + 1 < allSeries.length) {
+                    seriesRoot.insertBefore(series.group, allSeries[afterIndex + 1].group);
+                } else {
+                    seriesRoot.append(series.group);
+                }
+
                 allSeries.splice(afterIndex + 1, 0, series);
-                seriesRoot.insertBefore(series.group, allSeries[afterIndex + 1].group);
             } else {
-                allSeries.push(series);
-                seriesRoot.append(series.group);
+                if (allSeries.length > 0) {
+                    seriesRoot.insertBefore(series.group, allSeries[0].group);
+                } else {
+                    seriesRoot.append(series.group);
+                }
+
+                allSeries.unshift(series);
             }
+
             series.chart = this;
             this.dataPending = true;
         }

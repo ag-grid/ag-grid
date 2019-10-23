@@ -611,8 +611,10 @@ var GridPanel = /** @class */ (function (_super) {
         // reset back to the left, however no scroll event is fired. so we need to get header to also scroll
         // back to the left to be kept in sync.
         // adding and removing the grid from the DOM both resets the scroll position and
-        // triggers a resize event, so notify listeners that the scroll position might have changed
-        this.onBodyHorizontalScroll(this.eCenterViewport);
+        // triggers a resize event, so notify listeners if the scroll position has changed
+        if (this.scrollLeft !== this.getCenterViewportScrollLeft()) {
+            this.onBodyHorizontalScroll(this.eCenterViewport);
+        }
     };
     GridPanel.prototype.updateScrollVisibleService = function () {
         // because of column animation (which takes 200ms), we have to do this twice.
