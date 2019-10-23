@@ -14,12 +14,13 @@ export class PieChartProxy extends PolarChartProxy {
     }
 
     public update(params: UpdateChartParams): void {
+        const { chart } = this;
+
         if (params.fields.length === 0) {
-            this.chart.removeAllSeries();
+            chart.removeAllSeries();
             return;
         }
 
-        const chart = this.chart;
         const existingSeries = chart.series[0] as PieSeries;
         const existingSeriesId = existingSeries && existingSeries.angleKey;
         const pieSeriesField = params.fields[0];

@@ -1,0 +1,12 @@
+// Type definitions for @ag-community/grid-core v21.2.2
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { Module } from "../interfaces/iModule";
+import { ModuleNames } from "./moduleNames";
+export declare class ModuleRegistry {
+    private static modulesMap;
+    static register(module: Module): void;
+    static assertRegistered(moduleName: ModuleNames, reason: string): boolean;
+    static isRegistered(moduleName: ModuleNames): boolean;
+    static getRegisteredModules(): Module[];
+}

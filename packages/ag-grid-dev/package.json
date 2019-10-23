@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-dev",
-  "version": "21.2.1",
+  "version": "22.0.0",
   "description": "ag-Grid Modularisation Tests",
   "main": "index.js",
   "scripts": {
@@ -51,8 +51,8 @@
     "@ag-enterprise/grid-range-selection": "^21.2.0",
     "@ag-enterprise/grid-status-bar": "^21.2.0",
     "@types/node": "^11.12.2",
-    "ag-grid-community": "^21.2.0",
-    "ag-grid-enterprise": "^21.2.0",
+    "ag-grid-community": "~22.0.0",
+    "ag-grid-enterprise": "~22.0.0",
     "autoprefixer": "^9.6.0",
     "awesome-typescript-loader": "5.2.1",
     "css-loader": "1.0.0",

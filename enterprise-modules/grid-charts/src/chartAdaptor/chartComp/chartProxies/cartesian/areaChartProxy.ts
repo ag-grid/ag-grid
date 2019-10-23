@@ -55,35 +55,39 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     }
 
     private updateAreaChart(params: UpdateChartParams) {
+        const { chart } = this;
+
         if (params.fields.length === 0) {
-            this.chart.removeAllSeries();
+            chart.removeAllSeries();
             return;
         }
 
-        const chart = this.chart;
         const fieldIds = params.fields.map(f => f.colId);
-        const existingSeriesMap: { [id: string]: AreaSeries } = {};
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
 
-        (chart.series as AreaSeries[])
-            .forEach(areaSeries => {
-                const id = areaSeries.yKeys[0];
+        const existingSeriesById = (chart.series as AreaSeries[]).reduceRight((map, series) => {
+            const id = series.yKeys[0];
 
-                _.includes(fieldIds, id) ? existingSeriesMap[id] = areaSeries : chart.removeSeries(areaSeries);
-            });
+            if (_.includes(fieldIds, id)) {
+                map.set(id, series);
+            } else {
+                chart.removeSeries(series);
+            }
+
+            return map;
+        }, new Map<string, AreaSeries>());
 
         params.fields.forEach((f, index) => {
-            let areaSeries = existingSeriesMap[f.colId];
+            let areaSeries = existingSeriesById.get(f.colId);
+            const fill = fills[index % fills.length];
+            const stroke = strokes[index % strokes.length];
 
             if (areaSeries) {
-                const fill = fills[index % fills.length];
-                const stroke = strokes[index % strokes.length];
-
-                areaSeries.yNames = [f.displayName];
                 areaSeries.data = params.data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
                 areaSeries.yKeys = [f.colId];
+                areaSeries.yNames = [f.displayName];
                 areaSeries.fills = [fill];
                 areaSeries.marker.fill = fill;
                 areaSeries.strokes = [stroke];
@@ -102,18 +106,16 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     },
                     fill: {
                         ...seriesDefaults.fill,
-                        colors: [fills[index % fills.length]],
+                        colors: [fill],
                     },
                     stroke: {
                         ...seriesDefaults.stroke,
-                        colors: [strokes[index % strokes.length]],
+                        colors: [stroke],
                     }
                 };
 
-                areaSeries = ChartBuilder.createSeries(options) as AreaSeries;
+                chart.addSeries(ChartBuilder.createSeries(options));
             }
-
-            chart.addSeries(areaSeries);
         });
     }
 

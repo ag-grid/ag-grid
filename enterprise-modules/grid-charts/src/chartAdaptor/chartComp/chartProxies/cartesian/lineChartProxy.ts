@@ -14,30 +14,34 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     public update(params: UpdateChartParams): void {
+        const { chart } = this;
+
         if (params.fields.length === 0) {
-            this.chart.removeAllSeries();
+            chart.removeAllSeries();
             return;
         }
 
-        const lineChart = this.chart;
         const fieldIds = params.fields.map(f => f.colId);
-        const existingSeriesMap: { [id: string]: LineSeries } = {};
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
 
-        (lineChart.series as LineSeries[])
-            .forEach(lineSeries => {
-                const id = lineSeries.yKey;
+        const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series) => {
+            const id = series.yKey;
 
-                _.includes(fieldIds, id) ? existingSeriesMap[id] = lineSeries : lineChart.removeSeries(lineSeries);
-            });
+            if (_.includes(fieldIds, id)) {
+                map.set(id, series);
+            } else {
+                chart.removeSeries(series);
+            }
+
+            return map;
+        }, new Map<string, LineSeries>());
 
         params.fields.forEach((f, index) => {
-            let lineSeries = existingSeriesMap[f.colId];
+            let lineSeries = existingSeriesById.get(f.colId);
+            const fill = fills[index % fills.length];
+            const stroke = strokes[index % strokes.length];
 
             if (lineSeries) {
-                const fill = fills[index % fills.length];
-                const stroke = strokes[index % strokes.length];
-
                 lineSeries.title = f.displayName;
                 lineSeries.data = params.data;
                 lineSeries.xKey = params.category.id;
@@ -63,18 +67,16 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     },
                     fill: {
                         ...seriesDefaults.fill,
-                        color: fills[index % fills.length],
+                        color: fill,
                     },
                     stroke: {
                         ...seriesDefaults.stroke,
-                        color: strokes[index % strokes.length],
+                        color: stroke,
                     },
                 };
 
-                lineSeries = ChartBuilder.createSeries(options) as LineSeries;
+                chart.addSeries(ChartBuilder.createSeries(options));
             }
-
-            lineChart.addSeries(lineSeries);
         });
 
         this.updateLabelRotation(params.category.id);
