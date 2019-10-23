@@ -1,11 +1,10 @@
 {
-    "name": "@ag-enterprise/grid-charts",
+    "name": "@ag-enterprise/grid-server-side-row-model",
     "version": "21.2.2",
     "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
     "main": "./dist/cjs/main.js",
     "module": "./dist/es6/main.js",
     "scripts": {
-        "test": "jest",
         "build-cjs": "tsc -p tsconfig.es5.json",
         "build-es6": "tsc -p tsconfig.es6.json",
         "build-docs": "tsc -p tsconfig.docs.json",
@@ -42,13 +41,9 @@
     "homepage": "http://www.ag-grid.com/",
     "dependencies": {
         "@ag-community/grid-core": "~21.2.0",
-        "@ag-enterprise/grid-core": "~21.2.0",
-        "@ag-enterprise/grid-range-selection": "~21.2.0"
+        "@ag-enterprise/grid-core": "~21.2.0"
     },
     "devDependencies": {
-        "@types/jest": "^24.0.18",
-        "jest": "^24.9.0",
-        "ts-jest": "^24.1.0",
         "typescript": "^3.6.3"
     }
 }

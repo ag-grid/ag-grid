@@ -8,8 +8,8 @@ export enum ModuleNames {
     // community modules
     InfiniteRowModelModule = "@ag-community/grid-infinite-row-model",
     ClientSideRowModelModule = "@ag-community/grid-client-side-row-model",
-    CsvExportModule = "@ag-community/csv-export",
-    RowNodeCache = "@ag-community/row-node-cache",
+    CsvExportModule = "@ag-community/grid-csv-export",
+    RowNodeCache = "@ag-community/grid-row-node-cache",
 
     // enterprise core - users never import on this, but other enterprise modules do
     EnterpriseCoreModule = "@ag-enterprise/grid-core", // should this be grid-enterprise-core?

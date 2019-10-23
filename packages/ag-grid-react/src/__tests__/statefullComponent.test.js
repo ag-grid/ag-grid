@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {AgGridReact} from '../agGridReact';
-import {ClientSideRowModelModule} from "@ag-community/client-side-row-model";
+import {ClientSideRowModelModule} from "@ag-community/grid-client-side-row-model";
 
 import {ensureGridApiHasBeenSet, waitForAsyncCondition} from "./utils"
 

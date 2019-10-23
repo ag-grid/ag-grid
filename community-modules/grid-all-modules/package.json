@@ -54,9 +54,9 @@
     "dependencies": {
         "gulp-typescript": "^5.0.1",
         "@ag-community/grid-core": "~21.2.0",
-        "@ag-community/client-side-row-model": "~21.2.0",
-        "@ag-community/infinite-row-model": "~21.2.0",
-        "@ag-community/csv-export": "~21.2.0"
+        "@ag-community/grid-client-side-row-model": "~21.2.0",
+        "@ag-community/grid-infinite-row-model": "~21.2.0",
+        "@ag-community/grid-csv-export": "~21.2.0"
     },
     "devDependencies": {
         "gulp": "^4.0.2",

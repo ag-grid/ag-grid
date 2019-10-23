@@ -1,7 +1,7 @@
-var ClientSideRowModelModule = require('../../community-modules/client-side-row-model');
-var CsvExportModule = require('../../community-modules/csv-export');
+var ClientSideRowModelModule = require('../../community-modules/grid-client-side-row-model');
 var GridCoreModule = require('../../community-modules/grid-core');
-var InfiniteRowModelModule = require('../../community-modules/infinite-row-model');
+var CsvExportModule = require('../../community-modules/grid-csv-export');
+var InfiniteRowModelModule = require('../../community-modules/grid-infinite-row-model');
 var agGrid = require('./dist/es6/main');
 Object.keys(agGrid).forEach(function(key) {
     exports[key] = agGrid[key];

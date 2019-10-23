@@ -3,7 +3,7 @@ import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
 import {ChartService} from "./chartAdaptor/chartService";
 import {ChartTranslator} from "./chartAdaptor/chartComp/chartTranslator";
 
-import {RangeSelectionModule} from "@ag-enterprise/range-selection";
+import {RangeSelectionModule} from "@ag-enterprise/grid-range-selection";
 
 export const GridChartsModule: Module = {
     moduleName: ModuleNames.GridChartsModule,
