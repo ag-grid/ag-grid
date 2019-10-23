@@ -94,7 +94,12 @@ const bundleSite = (production) => {
     };
     const cssWhitelistPatterns = () => {
         // ie: [/^whitelisted-/]
-        return [/runner-item.*/, /level-*/];
+        return [
+            /runner-item.*/,
+            /level-*/,
+            /algolia.*/,
+            /aa-.*/
+        ];
     };
     webpackConfig.plugins.push(
         new PurgecssPlugin({
