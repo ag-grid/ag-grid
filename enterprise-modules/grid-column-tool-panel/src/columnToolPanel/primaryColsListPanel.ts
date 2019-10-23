@@ -52,7 +52,7 @@ export class PrimaryColsListPanel extends Component {
         this.allowDragging = allowDragging;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.syncColumnLayout.bind(this));
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
         }
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
@@ -79,20 +79,9 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public onColumnsChanged(): void {
-        if (!this.params.suppressSyncLayoutWithGrid) {
-            this.syncColumnLayout();
-        } else {
-            this.destroyColumnComps();
-
-            // add column / group comps to tool panel
-            this.columnTree = this.columnController.getPrimaryColumnTree();
-            const groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
-            this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-            this.recursivelySetVisibility(this.columnTree, true);
-
-            // notify header
-            this.notifyListeners();
-        }
+        const pivotModeActive = this.columnController.isPivotMode();
+        const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
+        shouldSyncColumnLayoutWithGrid ? this.syncColumnLayout() : this.buildTreeFromProvidedColumnDefs();
     }
 
     public syncColumnLayout(): void {
@@ -110,6 +99,19 @@ export class PrimaryColsListPanel extends Component {
             return colDef && typeof (colDef as ColGroupDef).children !== 'undefined';
         });
 
+        this.recursivelyAddComps(this.columnTree, 0, groupsExist);
+        this.recursivelySetVisibility(this.columnTree, true);
+
+        // notify header
+        this.notifyListeners();
+    }
+
+    private buildTreeFromProvidedColumnDefs(): void {
+        this.destroyColumnComps();
+
+        // add column / group comps to tool panel
+        this.columnTree = this.columnController.getPrimaryColumnTree();
+        const groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
         this.recursivelyAddComps(this.columnTree, 0, groupsExist);
         this.recursivelySetVisibility(this.columnTree, true);
 

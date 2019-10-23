@@ -52,7 +52,7 @@ export class FiltersToolPanelListPanel extends Component {
         this.params = defaultParams;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.syncFilterLayout());
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
         }
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
@@ -71,6 +71,16 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     public onColumnsChanged(): void {
+        const pivotModeActive = this.columnController.isPivotMode();
+        const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
+        shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();
+    }
+
+    public syncFilterLayout(): void {
+        this.toolPanelColDefService.syncLayoutWithGrid(this.setFiltersLayout.bind(this));
+    }
+
+    private buildTreeFromProvidedColumnDefs(): void {
         this.destroyFilters();
         const columnTree: OriginalColumnGroupChild[] = this.columnController.getPrimaryColumnTree();
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
@@ -83,10 +93,6 @@ export class FiltersToolPanelListPanel extends Component {
 
         // notify header of expand
         this.fireExpandedEvent();
-    }
-
-    public syncFilterLayout(): void {
-        this.toolPanelColDefService.syncLayoutWithGrid(this.setFiltersLayout.bind(this));
     }
 
     public setFiltersLayout(colDefs: AbstractColDef[]): void {
