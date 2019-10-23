@@ -1,4 +1,5 @@
 import {Module, ModuleNames} from "@ag-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
 import {StatusBarService} from "./statusBar/statusBarService";
 import {StatusBar} from "./statusBar/statusBar";
 import {NameValueComp} from "./statusBar/providedPanels/nameValueComp";
@@ -21,6 +22,9 @@ export const StatusBarModule: Module = {
         {componentName: 'agTotalRowCountComponent', componentClass: TotalRowsComp},
         {componentName: 'agFilteredRowCountComponent', componentClass: FilteredRowsComp},
         {componentName: 'agTotalAndFilteredRowCountComponent', componentClass: TotalAndFilteredRowsComp}
+    ],
+    dependantModules: [
+        EnterpriseCoreModule
     ]
 };
 

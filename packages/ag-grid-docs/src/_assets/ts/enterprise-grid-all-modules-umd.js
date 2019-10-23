@@ -12,6 +12,7 @@ require("../../../../../community-modules/grid-core/src/styles/ag-theme-balham-d
 
 const  ModuleRegistry = require("../../../../../community-modules/grid-core/dist/cjs/main");
 export * from "../../../../../community-modules/grid-core/dist/cjs/main";
+export * from "../../../../../enterprise-modules/grid-core/dist/cjs/main";
 
 /* MODULES - Don't delete this line */
 require("../../../../../enterprise-modules/clipboard/dist/cjs/clipboardModule");

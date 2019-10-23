@@ -1,4 +1,5 @@
 import {Module, ModuleNames} from "@ag-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
 import {AggregationStage} from "./rowGrouping/aggregationStage";
 import {GroupStage} from "./rowGrouping/groupStage";
 import {PivotColDefService} from "./rowGrouping/pivotColDefService";
@@ -11,6 +12,9 @@ export const RowGroupingModule: Module = {
     beans: [AggregationStage, GroupStage, PivotColDefService, PivotStage, AggFuncService],
     agStackComponents: [
         {componentName: 'AgGridHeaderDropZones', componentClass: GridHeaderDropZones}
+    ],
+    dependantModules: [
+        EnterpriseCoreModule
     ]
 };
 

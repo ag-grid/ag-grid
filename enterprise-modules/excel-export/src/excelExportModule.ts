@@ -1,4 +1,5 @@
 import {Module, ModuleNames} from "@ag-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
 import {ExcelXlsxFactory} from "./excelExport/excelXlsxFactory";
 import {ExcelXmlFactory} from "./excelExport/excelXmlFactory";
 import {ExcelCreator} from "./excelExport/excelCreator";
@@ -15,7 +16,8 @@ export const ExcelExportModule: Module = {
         GridSerializer, ZipContainer, XmlFactory, Downloader, CsvCreator
     ],
     dependantModules: [
-        CsvExportModule
+        CsvExportModule,
+        EnterpriseCoreModule
     ]
 };
 

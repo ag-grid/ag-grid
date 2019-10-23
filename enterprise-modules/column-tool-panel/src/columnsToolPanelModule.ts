@@ -1,4 +1,5 @@
 import {Module, ModuleNames} from "@ag-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
 import {PrimaryColsHeaderPanel} from "./columnToolPanel/primaryColsHeaderPanel";
 import {PrimaryColsListPanel} from "./columnToolPanel/primaryColsListPanel";
 import {ColumnToolPanel} from "./columnToolPanel/columnToolPanel";
@@ -19,6 +20,7 @@ export const ColumnsToolPanelModule: Module = {
         {componentName: 'agColumnsToolPanel', componentClass: ColumnToolPanel},
     ],
     dependantModules: [
+        EnterpriseCoreModule,
         RowGroupingModule,
         SideBarModule
     ]

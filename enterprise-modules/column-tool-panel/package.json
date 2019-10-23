@@ -42,6 +42,7 @@
     "dependencies": {
         "@ag-enterprise/row-grouping": "~21.2.0",
         "@ag-enterprise/side-bar": "~21.2.0",
+        "@ag-enterprise/grid-core": "~21.2.0",
         "@ag-community/grid-core": "~21.2.0"
     },
     "devDependencies": {

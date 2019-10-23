@@ -16,7 +16,6 @@ module.exports = {
             "@ag-community/grid-core": path.resolve(__dirname, "../_dev/@ag-community/grid-core")
         },
         extensions: ['.js']
-        // extensions: ['.ts', '.js']
     },
     module: {
         rules: [

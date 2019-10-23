@@ -1,4 +1,5 @@
 import {Module, ModuleNames} from "@ag-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
 import {FiltersToolPanelHeaderPanel} from "./filterToolPanel/filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./filterToolPanel/filtersToolPanelListPanel";
 import {FiltersToolPanel} from "./filterToolPanel/filtersToolPanel";
@@ -15,7 +16,8 @@ export const FiltersToolPanelModule: Module = {
         {componentName: 'agFiltersToolPanel', componentClass: FiltersToolPanel},
     ],
     dependantModules: [
-        SideBarModule
+        SideBarModule,
+        EnterpriseCoreModule
     ]
 };
 

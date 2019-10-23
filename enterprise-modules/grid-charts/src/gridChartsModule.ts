@@ -1,4 +1,5 @@
 import {Module, ModuleNames} from "@ag-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
 import {ChartService} from "./chartAdaptor/chartService";
 import {ChartTranslator} from "./chartAdaptor/chartComp/chartTranslator";
 
@@ -10,7 +11,8 @@ export const GridChartsModule: Module = {
         ChartService, ChartTranslator
     ],
     dependantModules: [
-        RangeSelectionModule
+        RangeSelectionModule,
+        EnterpriseCoreModule
     ]
 };
 
