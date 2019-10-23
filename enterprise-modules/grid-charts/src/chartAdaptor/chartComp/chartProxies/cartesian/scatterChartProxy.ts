@@ -15,36 +15,36 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     public update(params: UpdateChartParams): void {
+        const { chart } = this;
+
         if (params.fields.length < 2) {
-            this.chart.removeAllSeries();
+            chart.removeAllSeries();
             return;
         }
 
-        const chart = this.chart;
         const isBubbleChart = this.chartType === ChartType.Bubble;
         const yFields = params.fields.slice(1, params.fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
         const fieldIds = yFields.map(f => f.colId);
-        const existingSeriesMap: { [id: string]: ScatterSeries } = {};
         const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
         const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
         const seriesOptions: SeriesOptions = { type: "scatter", ...this.chartOptions.seriesDefaults };
         const xFieldDefinition = params.fields[0];
-
-        (chart.series as ScatterSeries[])
-            .forEach(scatterSeries => {
-                const yField = scatterSeries.yKey;
-
-                if (scatterSeries.xKey === xFieldDefinition.colId && _.includes(fieldIds, yField)) {
-                    existingSeriesMap[yField] = scatterSeries;
-                } else {
-                    chart.removeSeries(scatterSeries);
-                }
-            });
-
         const labelFieldDefinition = defaultCategorySelected ? undefined : params.category;
 
+        const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series) => {
+            const id = series.yKey;
+
+            if (series.xKey === xFieldDefinition.colId && _.includes(fieldIds, id)) {
+                map.set(id, series);
+            } else {
+                chart.removeSeries(series);
+            }
+
+            return map;
+        }, new Map<string, ScatterSeries>());
+
         yFields.forEach((yFieldDefinition, index) => {
-            const existingSeries = existingSeriesMap[yFieldDefinition.colId];
+            const existingSeries = existingSeriesById.get(yFieldDefinition.colId);
             const series = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
 
             if (!series) { return; }
