@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import * as PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {bindActionCreators} from 'redux';
-import {AgGridReact} from "ag-grid-react";
+import {AgGridReact} from "@ag-community/grid-react";
 import {actions} from './actions/fileActions.jsx'
 
 import {AllModules} from "@ag-enterprise/grid-all-modules";

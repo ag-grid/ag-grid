@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {AgGridReact} from 'ag-grid-react';
+import {AgGridReact} from '@ag-community/grid-react';
 
 import {AllCommunityModules} from "@ag-community/grid-all-modules";
 

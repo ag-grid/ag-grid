@@ -51,9 +51,9 @@ if (USE_LOCAL) {
         "@ag-enterprise/grid-status-bar" => "$prefix/@ag-enterprise/grid-status-bar",
         "@ag-enterprise/grid-viewport-row-model" => "$prefix/@ag-enterprise/grid-viewport-row-model",
         /* END OF MODULES DEV - DO NOT DELETE */
-        "ag-grid-react" => "$prefix/ag-grid-react",
+        "@ag-community/grid-react" => "$prefix/@ag-community/grid-react",
         "@ag-community/grid-angular" => "$prefix/@ag-community/grid-angular",
-        "ag-grid-vue" => "$prefix/ag-grid-vue"
+        "@ag-community/grid-vue" => "$prefix/@ag-community/grid-vue"
     );
 // production mode, return from unpkg
 } else {
@@ -86,9 +86,9 @@ if (USE_LOCAL) {
         "@ag-enterprise/grid-status-bar" => "https://unpkg.com/@ag-enterprise/grid-status-bar@" . AG_GRID_ENTERPRISE_VERSION . "/",
         "@ag-enterprise/grid-viewport-row-model" => "https://unpkg.com/@ag-enterprise/grid-viewport-row-model@" . AG_GRID_ENTERPRISE_VERSION . "/",
         /* END OF MODULES PROD - DO NOT DELETE */
-        "ag-grid-react" => "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
+        "@ag-community/grid-react" => "npm:@ag-community/grid-react@" . AG_GRID_REACT_VERSION . "/",
         "@ag-community/grid-angular" => "npm:@ag-community/grid-angular@" . AG_GRID_ANGULAR_VERSION . "/",
-        "ag-grid-vue" => "npm:ag-grid-vue@" . AG_GRID_VUE_VERSION . "/"
+        "@ag-community/grid-vue" => "npm:@ag-community/grid-vue@" . AG_GRID_VUE_VERSION . "/"
     );
 }
 
@@ -251,7 +251,6 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     }
 
     $gridSettings = array(
-        'theme' => $options['theme'],
         'noStyle' => $options['noStyle'] ? $options['noStyle'] : 0,
         'height' => '100%',
         'width' => '100%',
@@ -353,7 +352,6 @@ function packagedExample($title, $dir, $type = 'vanilla', $options = array())
     }
 
     $gridSettings = array(
-        'theme' => $options['theme'],
         'noStyle' => $options['noStyle'] ? $options['noStyle'] : 0,
         'height' => '100%',
         'width' => '100%',

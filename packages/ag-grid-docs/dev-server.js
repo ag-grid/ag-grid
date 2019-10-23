@@ -103,14 +103,14 @@ function symlinkModules(communityModules, enterpriseModules) {
         linkType = 'junction';
     }
 
-    lnk('../ag-grid-react/', '_dev', {force: true, type: linkType});
+    lnk('../../community-modules/grid-vue/', '_dev/@ag-community', {force: true, type: linkType});
     lnk('../../community-modules/grid-angular/', '_dev/@ag-community', {force: true, type: linkType});
     lnk('../../community-modules/grid-angular/exports.ts', '_dev/@ag-community/grid-angular/', {
         force: true,
         type: linkType,
         rename: 'main.ts'
     });
-    lnk('../ag-grid-vue/', '_dev', {force: true, type: linkType});
+    lnk('../../community-modules/grid-react/', '_dev/@ag-community', {force: true, type: linkType});
 
     communityModules
         .forEach(module => {
@@ -356,8 +356,8 @@ module.exports = (buildSourceModuleOnly = false, done) => {
     serveModules(app, communityModules, enterpriseModules);
 
     serveFramework(app, '@ag-community/grid-angular');
-    serveFramework(app, 'ag-grid-vue');
-    serveFramework(app, 'ag-grid-react');
+    serveFramework(app, '@ag-community/grid-vue');
+    serveFramework(app, '@ag-community/grid-react');
 
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples

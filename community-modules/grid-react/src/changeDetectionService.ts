@@ -73,6 +73,13 @@ class DeepValueStrategy implements ChangeDetectionStrategy {
         }, {});
     }
 
+    static isNaN(value: any) {
+        if(Number && Number.isNaN) {
+            return Number.isNaN(value);
+        }
+        // for ie11...
+        return typeof(value) === 'number' && isNaN(value);
+    }
     /*
      * slightly modified, but taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
      *
@@ -86,7 +93,7 @@ class DeepValueStrategy implements ChangeDetectionStrategy {
         b = DeepValueStrategy.unwrapStringOrNumber(b);
         if (a === b) return true; //e.g. a and b both null
         if (a === null || b === null || typeof a !== typeof b) return false;
-        if(Number.isNaN(a) && Number.isNaN(b)) {
+        if(isNaN(a) && isNaN(b)) {
             return true;
         }
         if (a instanceof Date) {

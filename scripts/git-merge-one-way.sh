@@ -16,3 +16,6 @@ git pull
 git checkout $current_branch
 git merge $1 --no-commit --no-ff --strategy-option theirs
 git stash apply
+
+
+git merge latest --no-commit --no-ff --strategy-option theirs
