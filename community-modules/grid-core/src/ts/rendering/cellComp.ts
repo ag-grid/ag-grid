@@ -2026,20 +2026,21 @@ export class CellComp extends Component {
         }
 
         // if the cell already has browser focus, we're all OK
-        const cellHasBrowserFocus = document.activeElement === this.getGui();
+        const { activeElement } = document;
+        const cellHasBrowserFocus = activeElement === this.getGui();
         if (cellHasBrowserFocus) {
             return false;
         }
 
         // if the element with browser focus is a cell, then it's the wrong cell, and it's OK to steal focus
-        const otherCellHasBrowserFocus = document.activeElement && document.activeElement.classList.contains('ag-cell');
+        const otherCellHasBrowserFocus = activeElement && activeElement.classList.contains('ag-cell');
         if (otherCellHasBrowserFocus) {
             return true;
         }
 
         // If another element in the grid is focussed (and by this point we know it's not another cell)
         // don't steal focus from it as the user might be interacting with it
-        const gridHasBrowserFocus = this.beans.gridPanel.getGui().contains(document.activeElement);
+        const gridHasBrowserFocus = this.beans.gridPanel.getGui().contains(activeElement);
         if (gridHasBrowserFocus) {
             return false;
         }
