@@ -74,7 +74,7 @@ class DeepValueStrategy implements ChangeDetectionStrategy {
     }
 
     static isNaN(value: any) {
-        if(Number && Number.isNaN) {
+        if(Number.isNaN) {
             return Number.isNaN(value);
         }
         // for ie11...

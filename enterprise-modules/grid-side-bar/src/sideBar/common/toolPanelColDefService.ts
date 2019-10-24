@@ -119,8 +119,7 @@ export class ToolPanelColDefService {
         // only primary columns and non row group columns should appear in the tool panel
         const allPrimaryGridColumns = allGridColumns.filter(column => {
             const colDef = column.getColDef();
-            const rowGroupColumn = colDef.rowGroup || colDef.rowGroupIndex || colDef.showRowGroup;
-            return column.isPrimary() && !rowGroupColumn;
+            return column.isPrimary() && !colDef.showRowGroup;
         });
 
         // construct a leaf path tree for each column

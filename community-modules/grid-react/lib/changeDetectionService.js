@@ -69,7 +69,7 @@ var DeepValueStrategy = /** @class */ (function () {
         }, {});
     };
     DeepValueStrategy.isNaN = function (value) {
-        if (Number && Number.isNaN) {
+        if (Number.isNaN) {
             return Number.isNaN(value);
         }
         // for ie11...
@@ -90,7 +90,7 @@ var DeepValueStrategy = /** @class */ (function () {
             return true; //e.g. a and b both null
         if (a === null || b === null || typeof a !== typeof b)
             return false;
-        if (isNaN(a) && isNaN(b)) {
+        if (DeepValueStrategy.isNaN(a) && DeepValueStrategy.isNaN(b)) {
             return true;
         }
         if (a instanceof Date) {
