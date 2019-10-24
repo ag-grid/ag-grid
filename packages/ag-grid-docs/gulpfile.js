@@ -44,7 +44,7 @@ const populateDevFolder = () => {
     return merge(...copyTasks, react, angular, vue);
 };
 
-updateSystemJsBoilerplateMappingsForFrameworks = () => {
+updateSystemJsBoilerplateMappingsForFrameworks = (done) => {
     console.log("updating fw systemjs boilerplate config with modules...");
 
     const systemJsFiles = [
@@ -79,7 +79,9 @@ updateSystemJsBoilerplateMappingsForFrameworks = () => {
             },`);
 
         fs.writeFileSync(systemJsFile, updateFileLines.join('\n'), 'UTF-8');
-    })
+    });
+
+    done();
 };
 
 const processSource = () => {
