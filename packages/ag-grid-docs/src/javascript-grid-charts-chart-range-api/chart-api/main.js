@@ -47,7 +47,10 @@ function onChart1() {
             var opts = params.options;
 
             opts.title = { text: "Top 5 Medal Winners" };
-            opts.xAxis.label.rotation = 30;
+
+            if (opts.xAxis) {
+                opts.xAxis.label.rotation = 30;
+            }
 
             opts.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
