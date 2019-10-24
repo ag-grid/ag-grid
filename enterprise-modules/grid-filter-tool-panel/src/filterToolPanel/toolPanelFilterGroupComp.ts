@@ -121,8 +121,12 @@ export class ToolPanelFilterGroupComp extends Component {
     private addTopLevelColumnGroupExpandListener() {
         this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
             this.childFilterComps.forEach(filterComp => {
+                // also need to refresh the virtual list on set filters as the filter may have been updated elsewhere
                 if (filterComp instanceof ToolPanelFilterComp) {
                    filterComp.expand();
+                   filterComp.refreshFilter();
+                } else {
+                    filterComp.refreshFilters();
                 }
             });
         });
