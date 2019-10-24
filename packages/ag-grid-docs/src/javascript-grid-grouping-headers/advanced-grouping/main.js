@@ -78,8 +78,8 @@ var gridOptions = {
         filter: true
     },
     icons: {
-        columnGroupOpened: '<i class="far fa-plus-square"/>',
-        columnGroupClosed: '<i class="far fa-minus-square"/>'
+        columnGroupOpened: '<i class="far fa-minus-square"/>',
+        columnGroupClosed: '<i class="far fa-plus-square"/>'
     }
 };
 
