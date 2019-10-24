@@ -797,18 +797,6 @@
                         height: unset;
                         margin: $grid-size 0;
                     }
-                    @for $i from 1 through 5 {
-                        &.ag-level-#{$i} {
-                            @if $i > 1 {
-                                .ag-group-component-title-bar {
-                                    padding-left: 1rem * ($i - 1);
-                                }
-                            }
-                            .ag-filter-toolpanel-header {
-                                padding-left: 1rem * $i;
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -863,6 +851,8 @@
             }
         }
     }
+
+    @include padding-filters(false);
 
     ////////////////////////////////////////
     // Sorting
@@ -1901,6 +1891,8 @@
             }
         }
     }
+
+    @include padding-filters(true);
 
     $exported: (
         autoSizePadding: $grid-size * 3,
