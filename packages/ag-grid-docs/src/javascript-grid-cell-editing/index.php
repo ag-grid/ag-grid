@@ -378,7 +378,7 @@ cellEditorParams: function(params) {
                 If the selection doesn't match the city, the city cell is cleared.</li>
             <li>Column <b>City</b> uses dynamic parameters to display values for the selected country, and uses <code>formatValue</code>
                 to add the selected city's country as a suffix.</li>
-            <li>Column <b>Address</b> uses the rich text area editor.</li>
+            <li>Column <b>Address</b> uses the large text area editor.</li>
         </ul>
     </p>
 
