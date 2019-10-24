@@ -1,4 +1,4 @@
-// Type definitions for @ag-community/grid-core v21.2.2
+// Type definitions for @ag-community/grid-core v22.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare enum ChartType {
@@ -156,8 +156,6 @@ export interface CartesianTooltipRendererParams extends TooltipRendererParams {
     yName: string;
 }
 export interface BarSeriesOptions extends SeriesOptions {
-    grouped: boolean;
-    normalizedTo: number;
     highlightStyle?: HighlightOptions;
     shadow: DropShadowOptions;
     label: BarSeriesLabelOptions;
@@ -197,8 +195,6 @@ export interface ScatterTooltipRendererParams extends CartesianTooltipRendererPa
     labelName?: string;
 }
 export interface AreaSeriesOptions extends SeriesOptions {
-    grouped: boolean;
-    normalizedTo: number;
     highlightStyle?: HighlightOptions;
     marker: MarkerOptions;
     shadow: DropShadowOptions;

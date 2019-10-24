@@ -1,5 +1,5 @@
 /**
- * @ag-enterprise/grid-all-modules - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components * @version v21.2.2
+ * @ag-enterprise/grid-all-modules - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components * @version v22.0.0
  * @link http://www.ag-grid.com/
 ' * @license Commercial
  */
@@ -10,7 +10,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -425,7 +425,7 @@ var Color = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -489,7 +489,7 @@ var Constants = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2642,7 +2642,7 @@ var _ = Utils;
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2734,7 +2734,7 @@ var Promise = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2780,7 +2780,7 @@ var ColumnKeyCreator = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3103,7 +3103,7 @@ function getOrCreateProps(target) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3283,7 +3283,7 @@ var EventService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3330,7 +3330,7 @@ var EventService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3363,7 +3363,7 @@ var ModuleRegistry = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3970,7 +3970,7 @@ var Column = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4252,7 +4252,7 @@ var ColumnGroup = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4413,7 +4413,7 @@ var OriginalColumnGroup = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4426,7 +4426,7 @@ var DefaultColumnTypes = {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4741,7 +4741,7 @@ var ColumnFactory = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4872,7 +4872,7 @@ var Events = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4909,7 +4909,7 @@ var GroupInstanceIdCreator = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7496,7 +7496,7 @@ var ColumnController = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7637,7 +7637,7 @@ var ColumnUtils = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7829,7 +7829,7 @@ var DisplayedGroupCreator = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7930,7 +7930,7 @@ var PropertyKeys = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8087,7 +8087,7 @@ var ColDefUtil = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8178,7 +8178,7 @@ var SideBarDefParser = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9496,7 +9496,7 @@ var GridOptionsWrapper = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9672,7 +9672,7 @@ function checkForDeprecated(changes) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9807,7 +9807,7 @@ var BeanStub = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10107,7 +10107,7 @@ var Component = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10149,7 +10149,7 @@ var PopupComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10258,7 +10258,7 @@ var TextCellEditor = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10316,7 +10316,7 @@ function getOrCreateProps$1(target, instanceName) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10371,7 +10371,7 @@ var DateCompWrapper = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10443,7 +10443,7 @@ var OptionsFactory = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10643,7 +10643,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10931,7 +10931,7 @@ var SimpleFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11066,7 +11066,7 @@ var ScalerFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11258,7 +11258,7 @@ var DateFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11388,7 +11388,7 @@ var TouchListener = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11657,7 +11657,7 @@ var HeaderComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11778,7 +11778,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12387,7 +12387,7 @@ var RowNode = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12511,7 +12511,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12903,7 +12903,7 @@ var UserComponentFactory = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13398,7 +13398,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13514,7 +13514,7 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13617,7 +13617,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13669,7 +13669,7 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13757,7 +13757,7 @@ var SelectCellEditor = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13787,7 +13787,7 @@ var PopupTextCellEditor = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13817,7 +13817,7 @@ var PopupSelectCellEditor = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13880,7 +13880,7 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14067,7 +14067,7 @@ var NumberFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14111,7 +14111,7 @@ var LoadingOverlayComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14155,7 +14155,7 @@ var NoRowsOverlayComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14187,7 +14187,7 @@ var TooltipComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14233,7 +14233,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14342,7 +14342,7 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14460,7 +14460,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14649,7 +14649,7 @@ var TextFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14738,7 +14738,7 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14783,7 +14783,7 @@ var NumberFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14823,7 +14823,7 @@ var TextFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15032,7 +15032,7 @@ var UserComponentRegistry = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15195,7 +15195,7 @@ var ChangedPath = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15529,7 +15529,7 @@ var SelectionController = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15691,7 +15691,7 @@ var ColumnApi = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15702,7 +15702,7 @@ var ColumnApi = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16072,7 +16072,7 @@ var DragAndDropService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16267,7 +16267,7 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16364,7 +16364,7 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16449,7 +16449,7 @@ var DndSourceComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18209,7 +18209,7 @@ var CellComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19519,7 +19519,7 @@ var RowComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20790,7 +20790,7 @@ var RowRenderer = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20845,7 +20845,7 @@ var CssClassApplier = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20955,7 +20955,7 @@ var SetLeftFeature = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21047,7 +21047,7 @@ var AgAbstractLabel = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21102,7 +21102,7 @@ var AgAbstractField = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21183,7 +21183,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21319,7 +21319,7 @@ var AgCheckbox = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21517,7 +21517,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21572,7 +21572,7 @@ var HoverFeature = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21873,7 +21873,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22235,7 +22235,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22293,7 +22293,7 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22540,7 +22540,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22790,7 +22790,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23175,7 +23175,7 @@ var MoveColumnController = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23265,7 +23265,7 @@ var BodyDropPivotTarget = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23378,7 +23378,7 @@ var BodyDropTarget = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23531,7 +23531,7 @@ var HeaderContainer = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23683,7 +23683,7 @@ var HeaderRootComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24256,7 +24256,7 @@ var FilterManager = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24516,7 +24516,7 @@ var ValueService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24649,7 +24649,7 @@ var RowContainerComponent = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24842,7 +24842,7 @@ var RowDragFeature = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26135,7 +26135,7 @@ var GridPanel = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27253,7 +27253,7 @@ var GridApi = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27341,7 +27341,7 @@ var ExpressionService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27419,7 +27419,7 @@ var TemplateService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27868,7 +27868,7 @@ var PopupService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27920,7 +27920,7 @@ var Logger = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28027,7 +28027,7 @@ var AutoWidthCalculator = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28103,7 +28103,7 @@ var HorizontalResizeService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28374,7 +28374,7 @@ var GridCore = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28471,7 +28471,7 @@ var StandardMenuFactory = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28729,7 +28729,7 @@ var DragService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28911,7 +28911,7 @@ var SortController = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29044,7 +29044,7 @@ var FocusedCellController = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29110,7 +29110,7 @@ var MouseEventService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29385,7 +29385,7 @@ var CellNavigationService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29447,7 +29447,7 @@ var CellRendererFactory = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29513,7 +29513,7 @@ var ValueFormatterService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29556,7 +29556,7 @@ var AgRadioButton = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29577,7 +29577,7 @@ var VanillaFrameworkOverrides = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29635,7 +29635,7 @@ var ScrollVisibleService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29706,7 +29706,7 @@ var StylingService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29772,7 +29772,7 @@ var ColumnHoverService = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29870,7 +29870,7 @@ var ColumnAnimationService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29995,7 +29995,7 @@ var AutoGroupColService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30293,7 +30293,7 @@ var PaginationProxy = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30364,7 +30364,7 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30420,7 +30420,7 @@ var ValueCache = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30503,7 +30503,7 @@ var ChangeDetectionService = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30714,7 +30714,7 @@ var AlignedGridsService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30788,7 +30788,7 @@ var AgComponentUtils = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30912,7 +30912,7 @@ var ComponentMetadataProvider = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31043,7 +31043,7 @@ var Beans = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31161,7 +31161,7 @@ var Environment = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31339,7 +31339,7 @@ var AnimationFrameService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31556,7 +31556,7 @@ var NavigationService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31687,7 +31687,7 @@ var MaxDivHeightScaler = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31752,7 +31752,7 @@ var SelectableService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31830,7 +31830,7 @@ var AutoHeightCalculator = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32039,7 +32039,7 @@ var PaginationComp = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32110,7 +32110,7 @@ var ResizeObserverService = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32323,7 +32323,7 @@ var TooltipManager = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32424,7 +32424,7 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32627,7 +32627,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32987,7 +32987,7 @@ var AgPanel = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33314,7 +33314,7 @@ var AgDialog = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33356,7 +33356,7 @@ var AgInputTextField = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33396,7 +33396,7 @@ var AgInputTextArea = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33491,7 +33491,7 @@ var AgSlider = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33743,7 +33743,7 @@ var AgColorPanel = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33809,7 +33809,7 @@ var AgPickerField = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33912,7 +33912,7 @@ var AgColorPicker = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34026,7 +34026,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34107,7 +34107,7 @@ var AgInputRange = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34156,7 +34156,7 @@ var AgSelect = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34368,7 +34368,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34411,7 +34411,7 @@ var AgToggleButton = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34560,7 +34560,7 @@ var DetailRowCompCache = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34633,7 +34633,7 @@ var RowPositionUtils = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34667,7 +34667,7 @@ var CellPositionUtils = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34816,7 +34816,7 @@ var PinnedRowModel = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35046,7 +35046,7 @@ var Grid = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35085,7 +35085,7 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35197,7 +35197,7 @@ function toCamelCase(myString) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35309,7 +35309,7 @@ var TabbedLayout = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35329,7 +35329,7 @@ function simpleHttpRequest(params) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35535,7 +35535,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35642,7 +35642,7 @@ var RowNodeBlockLoader = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35908,7 +35908,7 @@ var RowNodeCache = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35978,7 +35978,7 @@ var MessageBody = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36143,7 +36143,7 @@ var VirtualList = /** @class */ (function (_super) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36170,7 +36170,7 @@ function defaultGroupComparator(valueA, valueB, nodeA, nodeB, accentedCompare) {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36208,7 +36208,7 @@ var BaseComponentWrapper = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36231,7 +36231,7 @@ var BaseComponentWrapper = /** @class */ (function () {
 
 /**
  * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v21.2.2
+ * @version v22.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64906,7 +64906,6 @@ var BarChartProxy = /** @class */ (function (_super) {
     __extends$2J(BarChartProxy, _super);
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
-        _this.isColumnChart = function () { return _.includes([exports.ChartType.GroupedColumn, exports.ChartType.StackedColumn, exports.ChartType.NormalizedColumn], _this.chartType); };
         _this.initChartOptions();
         var builderFunction;
         if (_this.isColumnChart()) {
@@ -64916,7 +64915,7 @@ var BarChartProxy = /** @class */ (function (_super) {
             builderFunction = params.grouping ? 'createGroupedBarChart' : 'createBarChart';
         }
         _this.chart = ChartBuilder[builderFunction](params.parentElement, _this.chartOptions);
-        var barSeries = ChartBuilder.createSeries(__assign$5({ type: 'bar' }, _this.chartOptions.seriesDefaults));
+        var barSeries = ChartBuilder.createSeries(_this.getSeriesDefaults());
         if (barSeries) {
             _this.chart.addSeries(barSeries);
         }
@@ -64936,18 +64935,24 @@ var BarChartProxy = /** @class */ (function (_super) {
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     };
     BarChartProxy.prototype.getDefaultOptions = function () {
-        var chartType = this.chartType;
         var isColumnChart = this.isColumnChart();
-        var isGrouped = chartType === exports.ChartType.GroupedColumn || chartType === exports.ChartType.GroupedBar;
-        var isNormalized = chartType === exports.ChartType.NormalizedColumn || chartType === exports.ChartType.NormalizedBar;
         var fontOptions = this.getDefaultFontOptions();
         var options = this.getDefaultCartesianChartOptions();
         options.xAxis.label.rotation = isColumnChart ? 335 : 0;
         options.yAxis.label.rotation = isColumnChart ? 0 : 335;
-        options.seriesDefaults = __assign$5(__assign$5({}, options.seriesDefaults), { grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined, tooltip: {
+        options.seriesDefaults = __assign$5(__assign$5({}, options.seriesDefaults), { tooltip: {
                 enabled: true,
             }, label: __assign$5(__assign$5({}, fontOptions), { enabled: false }), shadow: this.getDefaultDropShadowOptions() });
         return options;
+    };
+    BarChartProxy.prototype.isColumnChart = function () {
+        return _.includes([exports.ChartType.GroupedColumn, exports.ChartType.StackedColumn, exports.ChartType.NormalizedColumn], this.chartType);
+    };
+    BarChartProxy.prototype.getSeriesDefaults = function () {
+        var chartType = this.chartType;
+        var isGrouped = chartType === exports.ChartType.GroupedColumn || chartType === exports.ChartType.GroupedBar;
+        var isNormalized = chartType === exports.ChartType.NormalizedColumn || chartType === exports.ChartType.NormalizedBar;
+        return __assign$5(__assign$5({}, this.chartOptions.seriesDefaults), { type: 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;
 }(CartesianChartProxy));
@@ -64983,7 +64988,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
         _this.initChartOptions();
         _this.chart = ChartBuilder[params.grouping ? "createGroupedAreaChart" : "createAreaChart"](params.parentElement, _this.chartOptions);
         _this.setAxisPadding(_this.chart);
-        var areaSeries = ChartBuilder.createSeries(__assign$6({ type: 'area' }, _this.chartOptions.seriesDefaults));
+        var areaSeries = ChartBuilder.createSeries(_this.getSeriesDefaults());
         if (areaSeries) {
             _this.chart.addSeries(areaSeries);
         }
@@ -65051,8 +65056,8 @@ var AreaChartProxy = /** @class */ (function (_super) {
                 areaSeries.marker.stroke = stroke;
             }
             else {
-                var seriesDefaults = _this.chartOptions.seriesDefaults;
-                var options = __assign$6(__assign$6({}, seriesDefaults), { type: 'area', data: params.data, field: {
+                var seriesDefaults = _this.getSeriesDefaults();
+                var options = __assign$6(__assign$6({}, seriesDefaults), { data: params.data, field: {
                         xKey: params.category.id,
                         xName: params.category.name,
                         yKeys: [f.colId],
@@ -65067,7 +65072,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
     AreaChartProxy.prototype.getDefaultOptions = function () {
         var options = this.getDefaultCartesianChartOptions();
         options.xAxis.label.rotation = 335;
-        options.seriesDefaults = __assign$6(__assign$6({}, options.seriesDefaults), { fill: __assign$6(__assign$6({}, options.seriesDefaults.fill), { opacity: this.chartType === exports.ChartType.Area ? 0.7 : 1 }), stroke: __assign$6(__assign$6({}, options.seriesDefaults.stroke), { width: 3 }), normalizedTo: this.chartType === exports.ChartType.NormalizedArea ? 100 : undefined, marker: {
+        options.seriesDefaults = __assign$6(__assign$6({}, options.seriesDefaults), { fill: __assign$6(__assign$6({}, options.seriesDefaults.fill), { opacity: this.chartType === exports.ChartType.Area ? 0.7 : 1 }), stroke: __assign$6(__assign$6({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
                 enabled: true,
                 size: 3,
                 strokeWidth: 1,
@@ -65075,6 +65080,9 @@ var AreaChartProxy = /** @class */ (function (_super) {
                 enabled: true,
             }, shadow: this.getDefaultDropShadowOptions() });
         return options;
+    };
+    AreaChartProxy.prototype.getSeriesDefaults = function () {
+        return __assign$6(__assign$6({}, this.chartOptions.seriesDefaults), { type: 'area', normalizedTo: this.chartType === exports.ChartType.NormalizedArea ? 100 : undefined });
     };
     return AreaChartProxy;
 }(CartesianChartProxy));

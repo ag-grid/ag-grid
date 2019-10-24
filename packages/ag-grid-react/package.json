@@ -25,13 +25,13 @@
   },
   "homepage": "https://www.ag-grid.com/react-grid/",
   "dependencies": {
-    "@ag-community/grid-react": "~21.2.0"
+    "@ag-community/grid-react": "~22.0.0"
   },
   "devDependencies": {
     "typescript": "3.6.3"
   },
   "peerDependencies": {
-    "@ag-community/grid-core": "^21.2.0",
+    "@ag-community/grid-core": "~22.0.0",
     "react": "^16.3.0",
     "react-dom": "^16.3.0"
   }

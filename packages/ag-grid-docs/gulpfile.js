@@ -36,9 +36,9 @@ const populateDevFolder = () => {
                 .pipe(gulp.dest(`dist/${DEV_DIR}/${module.publishedName}`)));
     });
 
-    const react = gulp.src(['../../community-modules/grid-react/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-react`));
+    const react = gulp.src(['../../community-modules/grid-react/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-community/grid-react`));
     const angular = gulp.src(['../../community-modules/grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-community/grid-angular`));
-    const vue = gulp.src(['../../community-modules/grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-vue`));
+    const vue = gulp.src(['../../community-modules/grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-community/grid-vue`));
 
     return merge(...copyTasks, react, angular, vue);
 };
