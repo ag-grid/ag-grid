@@ -182,7 +182,10 @@ function endingStan() {
 
 function setCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
-    var model = ['Algeria', 'Argentina'];
+    var model = {
+        type: 'set',
+        values: ['Algeria', 'Argentina']
+    };
     countryFilterComponent.setModel(model);
     gridOptions.api.onFilterChanged();
 }
