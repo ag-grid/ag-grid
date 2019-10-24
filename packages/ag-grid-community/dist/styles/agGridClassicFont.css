@@ -8,6 +8,7 @@
 .ag-icon {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: "agGridClassic";
+  display: block;
   speak: none;
   font-size: 12px;
   color: lightgray;

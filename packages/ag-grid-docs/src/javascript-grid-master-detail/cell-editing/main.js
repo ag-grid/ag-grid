@@ -1,9 +1,9 @@
 var columnDefs = [
     // group cell renderer needed for expand / collapse icons
-    {field: 'name', cellRenderer:'agGroupCellRenderer'},
-    {field: 'account'},
-    {field: 'calls'},
-    {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}
+    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+    { field: 'account' },
+    { field: 'calls' },
+    { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
 ];
 
 var gridOptions = {
@@ -12,11 +12,11 @@ var gridOptions = {
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
-                {field: 'callId'},
-                {field: 'direction'},
-                {field: 'number'},
-                {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-                {field: 'switchCode'}
+                { field: 'callId' },
+                { field: 'direction' },
+                { field: 'number' },
+                { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+                { field: 'switchCode' }
             ],
             defaultColDef: {
                 editable: true,
@@ -35,13 +35,15 @@ var gridOptions = {
         editable: true,
         resizable: true
     },
-    onFirstDataRendered: function(params) {
-        params.api.sizeColumnsToFit();
-
-        // arbitrarily expand a row for presentational purposes
-        setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);
-    }
+    onFirstDataRendered: onFirstDataRendered
 };
+
+function onFirstDataRendered(params) {
+    params.api.sizeColumnsToFit();
+
+    // arbitrarily expand a row for presentational purposes
+    setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);
+}
 
 function startEditingInMasterRow() {
     // stop editing in detail grid
@@ -50,7 +52,7 @@ function startEditingInMasterRow() {
     });
 
     // start editing in master grid
-    gridOptions.api.startEditingCell({rowIndex: 0, colKey: 'calls'});
+    gridOptions.api.startEditingCell({ rowIndex: 0, colKey: 'calls' });
 }
 
 function stopEditingInMasterRows() {
@@ -63,7 +65,7 @@ function startEditingInDetailRow() {
 
     // start editing in detail grid
     var detailGrid = gridOptions.api.getDetailGridInfo("detail_1");
-    detailGrid.api.startEditingCell({rowIndex: 0, colKey: 'number'});
+    detailGrid.api.startEditingCell({ rowIndex: 0, colKey: 'number' });
 }
 
 function stopEditingInDetailRows() {
@@ -77,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/cell-editing/data/data.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/cell-editing/data/data.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

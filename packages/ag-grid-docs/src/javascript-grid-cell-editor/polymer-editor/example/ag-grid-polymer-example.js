@@ -1,5 +1,5 @@
 import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
-import "../node_modules/ag-grid-polymer/index.js";
+import "../node_modules/@ag-community/grid-polymer/index.js";
 
 import MoodRenderer from "./mood-renderer.js";
 import MoodEditor from "./mood-editor.js";
@@ -8,8 +8,8 @@ import NumericEditor from "./numeric-editor.js";
 class AgGridPolymerExample extends PolymerElement {
     static get template() {
         return html`
-            <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css">
-            <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-community/grid-core/dist/styles/ag-grid.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-community/grid-core/dist/styles/ag-theme-balham.css">
           
             <ag-grid-polymer style="width: 100%; height: 420px; "
                              class="ag-theme-balham"

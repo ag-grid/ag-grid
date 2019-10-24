@@ -41337,7 +41337,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.params = params;
         this.allowDragging = allowDragging;
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.syncColumnLayout.bind(this));
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
         }
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
         var eventsImpactingCheckedState = [
@@ -41359,19 +41359,9 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         }
     };
     PrimaryColsListPanel.prototype.onColumnsChanged = function () {
-        if (!this.params.suppressSyncLayoutWithGrid) {
-            this.syncColumnLayout();
-        }
-        else {
-            this.destroyColumnComps();
-            // add column / group comps to tool panel
-            this.columnTree = this.columnController.getPrimaryColumnTree();
-            var groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
-            this.recursivelyAddComps(this.columnTree, 0, groupsExist);
-            this.recursivelySetVisibility(this.columnTree, true);
-            // notify header
-            this.notifyListeners();
-        }
+        var pivotModeActive = this.columnController.isPivotMode();
+        var shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
+        shouldSyncColumnLayoutWithGrid ? this.syncColumnLayout() : this.buildTreeFromProvidedColumnDefs();
     };
     PrimaryColsListPanel.prototype.syncColumnLayout = function () {
         this.colDefService.syncLayoutWithGrid(this.setColumnLayout.bind(this));
@@ -41384,6 +41374,16 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         var groupsExist = colDefs.some(function (colDef) {
             return colDef && typeof colDef.children !== 'undefined';
         });
+        this.recursivelyAddComps(this.columnTree, 0, groupsExist);
+        this.recursivelySetVisibility(this.columnTree, true);
+        // notify header
+        this.notifyListeners();
+    };
+    PrimaryColsListPanel.prototype.buildTreeFromProvidedColumnDefs = function () {
+        this.destroyColumnComps();
+        // add column / group comps to tool panel
+        this.columnTree = this.columnController.getPrimaryColumnTree();
+        var groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
         this.recursivelyAddComps(this.columnTree, 0, groupsExist);
         this.recursivelySetVisibility(this.columnTree, true);
         // notify header
@@ -44919,8 +44919,7 @@ var ToolPanelColDefService = /** @class */ (function () {
         // only primary columns and non row group columns should appear in the tool panel
         var allPrimaryGridColumns = allGridColumns.filter(function (column) {
             var colDef = column.getColDef();
-            var rowGroupColumn = colDef.rowGroup || colDef.rowGroupIndex || colDef.showRowGroup;
-            return column.isPrimary() && !rowGroupColumn;
+            return column.isPrimary() && !colDef.showRowGroup;
         });
         // construct a leaf path tree for each column
         return allPrimaryGridColumns.map(function (col) { return getLeafPathTree(col, col.getColDef()); });
@@ -48110,7 +48109,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, function () { return _this.syncFilterLayout(); });
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, function () { return _this.onColumnsChanged(); });
         }
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onColumnsChanged(); });
         this.addDestroyableEventListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, function (event) {
@@ -48125,6 +48124,14 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         }
     };
     FiltersToolPanelListPanel.prototype.onColumnsChanged = function () {
+        var pivotModeActive = this.columnController.isPivotMode();
+        var shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
+        shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();
+    };
+    FiltersToolPanelListPanel.prototype.syncFilterLayout = function () {
+        this.toolPanelColDefService.syncLayoutWithGrid(this.setFiltersLayout.bind(this));
+    };
+    FiltersToolPanelListPanel.prototype.buildTreeFromProvidedColumnDefs = function () {
         var _this = this;
         this.destroyFilters();
         var columnTree = this.columnController.getPrimaryColumnTree();
@@ -48136,9 +48143,6 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         }
         // notify header of expand
         this.fireExpandedEvent();
-    };
-    FiltersToolPanelListPanel.prototype.syncFilterLayout = function () {
-        this.toolPanelColDefService.syncLayoutWithGrid(this.setFiltersLayout.bind(this));
     };
     FiltersToolPanelListPanel.prototype.setFiltersLayout = function (colDefs) {
         var _this = this;

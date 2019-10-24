@@ -6,7 +6,8 @@ CustomStatsToolPanel.prototype.init = function (params) {
     this.eGui.style.textAlign = "center";
 
     // calculate stats when new rows loaded, i.e. onModelUpdated
-    var renderStats = function() { this.eGui.innerHTML = calculateStats(params); };
+    var _this = this;
+    var renderStats = function() { _this.eGui.innerHTML = calculateStats(params); };
     params.api.addEventListener('modelUpdated', renderStats);
 };
 

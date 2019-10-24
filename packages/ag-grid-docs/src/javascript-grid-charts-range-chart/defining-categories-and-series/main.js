@@ -39,6 +39,10 @@ var gridOptions = {
             opts.xAxis.label.rotation = 0;
         }
 
+        if (opts.yAxis) {
+            opts.yAxis.label.rotation = 0;
+        }
+
         return opts;
     },
     onFirstDataRendered: onFirstDataRendered,

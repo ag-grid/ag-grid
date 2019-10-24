@@ -10,7 +10,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const generateExamples = require('./example-generator');
 const buildPackagedExamples = require('./packaged-example-builder');
-const getAllModules = require("./utils").getAllModules;
+const {updateSystemJsMappings, getAllModules} = require("./utils");
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
@@ -208,41 +208,6 @@ const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts'
         }
     });
     fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
-}
-
-function updateSystemJsMappings(utilFileLines,
-                                startString,
-                                endString,
-                                communityModules,
-                                enterpriseModules,
-                                communityMappingFunc,
-                                enterpriseMappingFunc) {
-    let foundStart = false;
-    let foundEnd = false;
-
-    const newUtilFileTop = [];
-    const newUtilFileBottom = [];
-    utilFileLines.forEach(line => {
-        if (!foundStart) {
-            newUtilFileTop.push(line);
-
-            if (line.indexOf(startString) !== -1) {
-                foundStart = true;
-            }
-        } else if (foundEnd) {
-            newUtilFileBottom.push(line);
-        } else if (foundStart && !foundEnd) {
-            if (line.indexOf(endString) !== -1) {
-                foundEnd = true;
-                newUtilFileBottom.push(line);
-            }
-        }
-    });
-
-    const communityModuleEntries = communityModules.map(communityMappingFunc);
-    const enterpriseModuleEntries = enterpriseModules.map(enterpriseMappingFunc);
-
-    return newUtilFileTop.concat(communityModuleEntries).concat(enterpriseModuleEntries).concat(newUtilFileBottom);
 }
 
 function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules) {

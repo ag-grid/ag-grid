@@ -8,6 +8,7 @@
 .ag-icon {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: "agGridBalham";
+  display: block;
   speak: none;
   font-size: 16px;
   color: #7F8C8D;

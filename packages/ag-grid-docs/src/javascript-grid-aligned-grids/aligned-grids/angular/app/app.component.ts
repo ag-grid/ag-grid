@@ -1,5 +1,9 @@
 import {Component, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {AllCommunityModules} from '@ag-community/grid-all-modules';
+
+import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";
+import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";
 
 @Component({
     selector: 'my-app',
@@ -17,6 +21,7 @@ import {HttpClient} from '@angular/common/http';
                 class="ag-theme-balham"
                 [rowData]="rowData"
                 [gridOptions]="topOptions"
+                [modules]="modules"
                 [columnDefs]="columnDefs"
                 (firstDataRendered)="onFirstDataRendered($event)">
         </ag-grid-angular>
@@ -27,6 +32,7 @@ import {HttpClient} from '@angular/common/http';
                 class="ag-theme-balham"
                 [rowData]="rowData"
                 [gridOptions]="bottomOptions"
+                [modules]="modules"
                 [columnDefs]="columnDefs"
                 (firstDataRendered)="onFirstDataRendered($event)">
         </ag-grid-angular>
@@ -37,6 +43,7 @@ export class AppComponent {
     rowData;
     topOptions = {alignedGrids: []};
     bottomOptions = {alignedGrids: []};
+    modules=AllCommunityModules;
 
     @ViewChild('topGrid') topGrid;
     @ViewChild('bottomGrid') bottomGrid;

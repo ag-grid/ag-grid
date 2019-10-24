@@ -9,6 +9,7 @@
         "build-cjs": "tsc -p tsconfig.es5.json",
         "build-es6": "tsc -p tsconfig.es6.json",
         "build-docs": "tsc -p tsconfig.docs.json",
+        "package": "node ../../common-build/rollup/build.js",
         "build": "npm run build-cjs && npm run build-es6"
     },
     "repository": {
@@ -50,5 +51,8 @@
         "jest": "^24.9.0",
         "ts-jest": "^24.1.0",
         "typescript": "^3.6.3"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

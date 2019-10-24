@@ -46,4 +46,40 @@ const getAllModules = () => {
     return {communityModules, enterpriseModules};
 };
 
+function updateSystemJsMappings(utilFileLines,
+                                startString,
+                                endString,
+                                communityModules,
+                                enterpriseModules,
+                                communityMappingFunc,
+                                enterpriseMappingFunc) {
+    let foundStart = false;
+    let foundEnd = false;
+
+    const newUtilFileTop = [];
+    const newUtilFileBottom = [];
+    utilFileLines.forEach(line => {
+        if (!foundStart) {
+            newUtilFileTop.push(line);
+
+            if (line.indexOf(startString) !== -1) {
+                foundStart = true;
+            }
+        } else if (foundEnd) {
+            newUtilFileBottom.push(line);
+        } else if (foundStart && !foundEnd) {
+            if (line.indexOf(endString) !== -1) {
+                foundEnd = true;
+                newUtilFileBottom.push(line);
+            }
+        }
+    });
+
+    const communityModuleEntries = communityModules.map(communityMappingFunc);
+    const enterpriseModuleEntries = enterpriseModules.map(enterpriseMappingFunc);
+
+    return newUtilFileTop.concat(communityModuleEntries).concat(enterpriseModuleEntries).concat(newUtilFileBottom);
+}
+
 exports.getAllModules = getAllModules;
+exports.updateSystemJsMappings = updateSystemJsMappings;

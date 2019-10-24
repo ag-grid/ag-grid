@@ -1502,6 +1502,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       display: flex;
       -ms-flex-item-align: stretch;
       align-self: stretch; }
+  .ag-group-component .ag-column-group-icons > span {
+    display: block; }
   .ag-group-component .ag-group-item {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -2302,6 +2304,21 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     left: -4px; }
   .ag-rtl .ag-pinned-left-header .ag-header-cell-resize {
     right: -4px; }
+  .ag-rtl .ag-group-component .ag-column-group-icons .ag-column-group-closed-icon {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg); }
+  .ag-rtl .ag-filter-toolpanel-instance .ag-filter-toolpanel-header .ag-icon-tree-closed {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg); }
+  .ag-rtl .ag-primary-cols-header-panel .ag-icon-tree-closed,
+  .ag-rtl .ag-filter-toolpanel-header.ag-filter-header .ag-icon-tree-closed {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg); }
+  .ag-rtl .ag-header-group-cell .ag-header-icon.ag-header-expand-icon-expanded,
+  .ag-rtl .ag-header-group-cell .ag-header-icon.ag-header-expand-icon-collapsed,
+  .ag-rtl .ag-cell-wrapper .ag-group-contracted {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg); }
 
 @media print {
   .ag-body-viewport {

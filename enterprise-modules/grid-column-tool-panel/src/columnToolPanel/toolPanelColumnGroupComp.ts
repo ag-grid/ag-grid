@@ -25,8 +25,8 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     private static TEMPLATE =
         `<div class="ag-column-tool-panel-column-group">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
-                <span class="ag-column-group-closed-icon" ref="eGroupOpenedIcon"></span>
-                <span class="ag-column-group-opened-icon" ref="eGroupClosedIcon"></span>
+                <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
+                <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
             </span>
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
