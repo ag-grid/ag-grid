@@ -104,7 +104,12 @@ function getActions() {
         },
         function (api) {
             api.setSortModel([]);
-            api.setFilterModel({country: ["Ireland"]});
+            api.setFilterModel({
+                country: {
+                    type: 'set',
+                    values: ["Ireland"]
+                }
+            });
             setTitleFormatted("api", "setFilter", "Ireland");
         },
         function (api) {

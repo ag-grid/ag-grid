@@ -38,11 +38,16 @@ var gridOptions = {
 };
 
 function filterBy2004() {
-  gridOptions.api.setFilterModel({year: ['2008','2012']});
+    gridOptions.api.setFilterModel({
+        year: {
+            type: 'set',
+            values: ['2008','2012']
+        }
+    });
 }
 
 function clearFilter() {
-  gridOptions.api.setFilterModel(null);
+    gridOptions.api.setFilterModel(null);
 }
 
 // setup the grid after the page has finished loading

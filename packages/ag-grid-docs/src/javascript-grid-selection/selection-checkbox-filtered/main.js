@@ -30,12 +30,22 @@ var gridOptions = {
 };
 
 function filterSwimming() {
-   gridOptions.api.setFilterModel({sport: ['Swimming']});
+    gridOptions.api.setFilterModel({
+        sport: {
+            type: 'set',
+            values: ['Swimming']
+        }
+    });
 }
 
 
 function ages16And20() {
-   gridOptions.api.setFilterModel({age: ['16','20']});
+    gridOptions.api.setFilterModel({
+        age: {
+            type: 'set',
+            values: ['16','20']
+        }
+    });
 }
 
 function clearFilter() {
