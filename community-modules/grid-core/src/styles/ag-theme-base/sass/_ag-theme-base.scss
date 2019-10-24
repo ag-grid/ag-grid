@@ -846,8 +846,8 @@
                 margin-right: $grid-size;
             }
 
-            &:last-child {
-                border-bottom: 0;
+            &.ag-last-column-drop {
+                border-bottom-width: 0;
             }
         }
     }
