@@ -3,6 +3,7 @@
   "version": "21.2.1",
   "description": "ag-Grid Modularisation Tests",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test:e2e": "run-script-os",
     "test:e2ex:win32": "",

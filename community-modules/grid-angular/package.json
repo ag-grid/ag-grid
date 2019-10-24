@@ -53,5 +53,8 @@
     "@angular/compiler": ">=2.1.x",
     "@angular/core": ">=2.1.x",
     "@ag-community/grid-core": "^21.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
