@@ -224,7 +224,7 @@ ClickableStatusBarComponent.prototype.init = function (params) {
 <h2>Status Bar Height</h2>
 
 <p>
-    The status bar sizes it's height to fit content. That means when not components are visible, the
+    The status bar sizes its height to fit content. That means when no components are visible, the
     status bar will have zero height - it will not be shown.
 </p>
 
