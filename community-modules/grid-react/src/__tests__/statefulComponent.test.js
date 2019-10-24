@@ -1,16 +1,16 @@
-import React, {Component} from 'react';
-import {AgGridReact} from '../agGridReact';
-import {ClientSideRowModelModule} from "@ag-community/grid-client-side-row-model";
+import React, { Component } from 'react';
+import { AgGridReact } from '../agGridReact';
+import { ClientSideRowModelModule } from "@ag-community/grid-client-side-row-model";
 
-import {ensureGridApiHasBeenSet, waitForAsyncCondition} from "./utils"
+import { ensureGridApiHasBeenSet, waitForAsyncCondition } from "./utils"
 
-import {mount} from 'enzyme';
+import { mount } from 'enzyme';
 
 let component = null;
 let agGridReact = null;
 
 beforeEach((done) => {
-    component = mount((<GridWithStatefullComponent/>));
+    component = mount((<GridWithStatefulComponent />));
     agGridReact = component.find(AgGridReact).instance();
     // don't start our tests until the grid is ready
     ensureGridApiHasBeenSet(component).then(() => setTimeout(() => done(), 20), () => fail("Grid API not set within expected time limits"));
@@ -27,7 +27,7 @@ it('stateful component renders as expected', () => {
 });
 
 it('stateful component returns a valid component instance', () => {
-    const instances = agGridReact.api.getCellRendererInstances({columns: ['age']});
+    const instances = agGridReact.api.getCellRendererInstances({ columns: ['age'] });
     expect(instances).toBeTruthy();
     expect(instances.length).toEqual(1);
 
@@ -36,7 +36,7 @@ it('stateful component returns a valid component instance', () => {
     expect(frameworkInstance.getValue()).toEqual("Test Value");
 });
 
-it('cell should be editable and editor component usable', async() => {
+it('cell should be editable and editor component usable', async () => {
     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><div>Age: 24</div></div>`);
 
     // we use the API to start and stop editing - in a real e2e test we could actually double click on the cell etc
@@ -66,7 +66,7 @@ it('cell should be editable and editor component usable', async() => {
 
 class CellRenderer extends Component {
     render() {
-        return(
+        return (
             <div>Age: {this.props.value}</div>
         )
     }
@@ -87,12 +87,12 @@ class EditorComponent extends Component {
 
     render() {
         return (
-            <input type="text" value={this.state.value} onChange={this.handleChange} style={{width: "100%"}} />
+            <input type="text" value={this.state.value} onChange={this.handleChange} style={{ width: "100%" }} />
         )
     }
 
     handleChange = (event) => {
-        this.setState({value: event.target.value});
+        this.setState({ value: event.target.value });
     }
 
     getValue() {
@@ -115,7 +115,7 @@ class EditorComponent extends Component {
     };
 }
 
-class GridWithStatefullComponent extends Component {
+class GridWithStatefulComponent extends Component {
     constructor(props) {
         super(props);
 
@@ -126,7 +126,7 @@ class GridWithStatefullComponent extends Component {
                 cellRendererFramework: CellRenderer,
                 cellEditorFramework: EditorComponent
             }],
-            rowData: [{age: 24}]
+            rowData: [{ age: 24 }]
         };
     }
 
