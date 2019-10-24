@@ -1,14 +1,18 @@
-import parser, {recognizedDomEvents} from './vanilla-src-parser';
+import parser, { recognizedDomEvents } from './vanilla-src-parser';
 import styleConvertor from './lib/convert-style-to-react';
 
 function getFunctionName(code) {
     let matches = /function ([^\(]*)/.exec(code);
-    return matches && matches.length === 2 ? matches[1] : null;
+    return matches && matches.length === 2 ? matches[1].trim() : null;
 }
 
 function isInstanceMethod(instance: any, property: any) {
     const instanceMethods = instance.map(getFunctionName);
     return instanceMethods.filter(methodName => methodName === property.name).length > 0;
+}
+
+function convertFunctionToProperty(definition: string) {
+    return definition.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) => ');
 }
 
 function indexTemplate(bindings, componentFilenames, isDev, communityModules, enterpriseModules) {
@@ -83,7 +87,7 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
         additionalInReady.push(`
             const httpRequest = new XMLHttpRequest();
             const updateData = (data) => ${setRowDataBlock};
-    
+
             httpRequest.open('GET', ${bindings.data.url});
             httpRequest.send();
             httpRequest.onreadystatechange = () => {
@@ -91,7 +95,6 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
                     updateData(JSON.parse(httpRequest.responseText));
                 }
             };`);
-
     }
 
     if (bindings.onGridReady) {
@@ -103,11 +106,11 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
         additionalInReady.push('params.api.sizeColumnsToFit();');
     }
 
-    const agGridTag = `<div 
+    const agGridTag = `<div
                 id="myGrid"
                 style={{
-                    height: '${bindings.gridSettings.height}', 
-                    width: '${bindings.gridSettings.width}'}} 
+                    height: '${bindings.gridSettings.height}',
+                    width: '${bindings.gridSettings.width}'}}
                     className="${bindings.gridSettings.theme}">
             <AgGridReact
                 ${componentAttributes.join('\n')}
@@ -128,8 +131,8 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
         // react events are case sensitive - could do something tricky here, but as there are only 2 events effected so far
         // I'll keep it simple
         const domEventsCaseSensitive = [
-            {name: 'ondragover',  replacement: 'onDragOver'},
-            {name: 'ondragstart', replacement: 'onDragStart'}
+            { name: 'ondragover', replacement: 'onDragOver' },
+            { name: 'ondragstart', replacement: 'onDragStart' }
         ];
 
         domEventsCaseSensitive.forEach(event => {
@@ -144,18 +147,18 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
 
     template = styleConvertor(template);
 
-    const eventHandlers = bindings.eventHandlers.map(event => event.handler.replace(/^function /, ''));
-    const externalEventHandlers = bindings.externalEventHandlers.map(handler => handler.body.replace(/^function /, ''));
-    const instance = bindings.instance.map(body => body.replace(/^function /, ''));
+    const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
+    const instance = bindings.instance.map(body => convertFunctionToProperty(body));
 
     const style = bindings.gridSettings.noStyle ? '' : `style={{width: '100%', height: '100%' }}`;
 
     return `
 'use strict'
 
-import React, {Component} from "react"
-import {render} from "react-dom"
-import {AgGridReact} from '@ag-community/grid-react'
+import React, { Component } from "react";
+import { render } from "react-dom";
+import { AgGridReact } from "@ag-community/grid-react";
 ${imports.join('\n')}
 
 class GridExample extends Component {
@@ -165,17 +168,18 @@ class GridExample extends Component {
         this.state = {
             ${propertyAssignments.join(',\n    ')}
         };
-        
+
         ${instanceBindings.join(';\n    ')}
     }
 
-    onGridReady = (params) => {
+    onGridReady = params => {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
         ${additionalInReady.join('\n')}
     }
 
-${[].concat(eventHandlers, externalEventHandlers).join('\n    ')}
+${[].concat(eventHandlers, externalEventHandlers, instance).join('\n\n   ')}
+
     render() {
         return (
             <div ${style}>
@@ -183,8 +187,6 @@ ${[].concat(eventHandlers, externalEventHandlers).join('\n    ')}
             </div>
         );
     }
-    
-    ${instance.join('\n')}
 }
 
 ${bindings.utils.join('\n')}
