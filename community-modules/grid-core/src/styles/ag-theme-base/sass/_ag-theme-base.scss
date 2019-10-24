@@ -730,14 +730,14 @@
                 > div {
                     &:first-of-type {
                         > .ag-group-component {
-                            .ag-group-component-title-bar {
+                            > .ag-group-component-title-bar {
                                 border-top: none;
                                 min-height: calc(#{$header-height} - 1px);
                             }
                         }
                     }
                     &:last-of-type {
-                        .ag-group-component.ag-collapsed {
+                        > .ag-group-component.ag-collapsed {
                             border-bottom: 1px solid $border-color;
                         }
                     }
@@ -784,6 +784,9 @@
                 padding: 0;
                 .ag-group-item {
                     margin: $grid-size $grid-size / 2;
+                    &:not(.ag-filter-toolpanel-instance) {
+                        margin-top: 0;
+                    }
                     .ag-group-component-title-bar {
                         background-color: $group-component-background-color;
                     }
@@ -808,7 +811,6 @@
                 .ag-group-item:not(.ag-filter-toolpanel-instance),
                 .ag-group-item > .ag-group-component {
                     border-top: none;
-                    margin-top: 0;
                     margin-bottom: 0;
                     .ag-group-component-title-bar {
                         min-height: unset;

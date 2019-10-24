@@ -74,8 +74,13 @@ var customToolPanelColumnDefs = [
         children: [
             { field: "total" },
             { field: "bronze" },
-            { field: "silver" },
-            { field: "gold" }
+            { 
+                headerName: 'Dummy Group 3',
+                children: [
+                    { field: "silver" },
+                    { field: "gold" }
+                ]
+            }
         ]
     }
 ];
