@@ -113,6 +113,7 @@
     .ag-icon {
         /* use !important to prevent issues with browser extensions that change fonts */
         font-family: '#{$icon-font-family}';
+        display: block;
         speak: none;
         font-size: $icon-size;
         color: $icon-color;

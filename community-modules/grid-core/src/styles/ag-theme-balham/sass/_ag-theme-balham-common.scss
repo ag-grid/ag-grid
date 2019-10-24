@@ -146,13 +146,6 @@
         }
     }
 
-    .ag-rtl {
-        .ag-icon-expanded,
-        .ag-icon-contracted {
-            transform: rotate(180deg);
-        }
-    }
-
     // context menu spacing
     .ag-menu-option {
         height: $grid-size * 7;

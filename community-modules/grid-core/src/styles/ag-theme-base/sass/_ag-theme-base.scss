@@ -183,33 +183,13 @@
     .ag-cell {
         -webkit-font-smoothing: subpixel-antialiased;
     }
-    // we use rtl and ltr below, even though it's the same style, so it propertly
+    // do not remove .ag-ltr from here
     .ag-ltr {
         .ag-row-group-leaf-indent {
             margin-left: $icon-size + $grid-size * 3;
         }
         .ag-cell {
             border-right: $cell-horizontal-border;
-        }
-
-        .ag-cell:not(.ag-cell-focus),
-        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
-        .ag-root:not(.ag-has-focus) .ag-cell {
-            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
-                border-left: 1px solid $border-color;
-            }
-            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
-                border-right: 1px solid $border-color;
-            }
-        }
-    }
-
-    .ag-rtl {
-        .ag-row-group-leaf-indent {
-            margin-right: $icon-size + $grid-size * 3;
-        }
-        .ag-cell {
-            border-left: $cell-horizontal-border;
         }
 
         .ag-cell:not(.ag-cell-focus),
@@ -1820,6 +1800,11 @@
                 }
             }
 
+            .ag-column-group-closed-icon {
+                display: block;
+                transform: rotate(180deg);
+            }
+
             .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
                 margin-left: 0;
                 margin-right: $icon-size + $grid-size * 2;
@@ -1835,7 +1820,6 @@
         .ag-group-checkbox,
         .ag-group-expanded,
         .ag-group-contracted {
-            display: inline-flex;
             + .ag-cell-value, + .ag-group-value {
                 &:not(:empty) {
                     margin-right: $cell-horizontal-padding;
@@ -1878,6 +1862,24 @@
         .ag-header .ag-header-cell-resize::after {
             border-left: 1px solid $border-color;
             border-right: 0;
+        }
+
+        .ag-row-group-leaf-indent {
+            margin-right: $icon-size + $grid-size * 3;
+        }
+        .ag-cell {
+            border-left: $cell-horizontal-border;
+        }
+
+        .ag-cell:not(.ag-cell-focus),
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+        .ag-root:not(.ag-has-focus) .ag-cell {
+            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
+                border-left: 1px solid $border-color;
+            }
+            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
+                border-right: 1px solid $border-color;
+            }
         }
 
         .ag-side-bar {
