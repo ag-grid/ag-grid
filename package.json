@@ -56,7 +56,11 @@
     "inquirer": "^7.0.0",
     "lerna": "^3.18.1",
     "lighthouse": "^5.4.0",
-    "walk": "^2.3.14"
+    "walk": "^2.3.14",
+    "rollup": "^1.21.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "terser-webpack-plugin": "^2.0.1"
   },
   "dependencies": {
     "fs-extra": "^8.1.0"
