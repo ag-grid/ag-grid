@@ -1,6 +1,7 @@
 const os = require('os');
 const fs = require('fs');
 const cp = require('child_process');
+const glob = require('glob');
 const path = require('path');
 const rimraf = require('rimraf');
 const express = require('express');
@@ -105,11 +106,11 @@ function symlinkModules(communityModules, enterpriseModules) {
 
     lnk('../../community-modules/grid-vue/', '_dev/@ag-community', {force: true, type: linkType});
     lnk('../../community-modules/grid-angular/', '_dev/@ag-community', {force: true, type: linkType});
-    lnk('../../community-modules/grid-angular/exports.ts', '_dev/@ag-community/grid-angular/', {
-        force: true,
-        type: linkType,
-        rename: 'main.ts'
-    });
+    // lnk('../../community-modules/grid-angular/exports.ts', '_dev/@ag-community/grid-angular/', {
+    //     force: true,
+    //     type: linkType,
+    //     rename: 'main.ts'
+    // });
     lnk('../../community-modules/grid-react/', '_dev/@ag-community', {force: true, type: linkType});
 
     communityModules
@@ -213,9 +214,13 @@ const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts'
 function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules) {
     console.log("updating util.php -> systemjs mapping with modules...");
 
-    // spl module
     const utilityFilename = 'src/example-runner/utils.php';
     const utilFileLines = fs.readFileSync(utilityFilename, 'UTF-8').split('\n');
+
+    const cssFiles = glob.sync(`../../community-modules/grid-all-modules/dist/styles/*.css`)
+        .filter(css => !css.includes(".min."))
+        .filter(css => !css.includes("Font"))
+        .map(css => css.replace('../../community-modules/grid-all-modules/dist/styles/', ''));
 
     let updatedUtilFileLines = updateSystemJsMappings(utilFileLines,
         '/* START OF MODULES DEV - DO NOT DELETE */',
@@ -226,13 +231,60 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`);
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+        '/* START OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
+        '/* END OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
+        communityModules,
+        [],
+        module => `        "${module.publishedName}" => "$prefix/@ag-community/grid-all-modules/dist/ag-grid-community.cjs.js",`,
+        () => {});
+
+    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+        '/* START OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
+        '/* END OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
+        communityModules,
+        enterpriseModules,
+        module => `        "${module.publishedName}" => "$prefix/@ag-enterprise/grid-all-modules/dist/ag-grid-enterprise.cjs.js",`,
+        module => `        "${module.publishedName}" => "$prefix/@ag-enterprise/grid-all-modules/dist/ag-grid-enterprise.cjs.js",`);
+
+    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+        '/* START OF CSS DEV - DO NOT DELETE */',
+        '/* END OF CSS DEV - DO NOT DELETE */',
+        cssFiles,
+        [],
+        cssFile => `        "@ag-community/grid-all-modules/dist/styles/${cssFile}" => "$prefix/@ag-community/grid-all-modules/dist/styles/${cssFile}",`,
+        () => {});
+
+    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
         '/* START OF MODULES PROD - DO NOT DELETE */',
         '/* END OF MODULES PROD - DO NOT DELETE */',
         communityModules,
         enterpriseModules,
-        // spl module - to test prior to release!!!
         module => `        "${module.publishedName}" => "https://unpkg.com/${module.publishedName}@" . AG_GRID_VERSION . "/",`,
         module => `        "${module.publishedName}" => "https://unpkg.com/${module.publishedName}@" . AG_GRID_ENTERPRISE_VERSION . "/",`);
+
+    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+        '/* START OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
+        '/* END OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
+        communityModules,
+        [],
+        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-community/grid-all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",`,
+        () => {});
+
+    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+        '/* START OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
+        '/* END OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
+        communityModules,
+        enterpriseModules,
+        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.cjs.js",`,
+        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.cjs.js",`);
+
+    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+        '/* START OF CSS PROD - DO NOT DELETE */',
+        '/* END OF CSS PROD - DO NOT DELETE */',
+        cssFiles,
+        [],
+        cssFile => `        "@ag-community/grid-all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
+        () => {});
 
     fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
 }
@@ -289,6 +341,8 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
 }
 
 module.exports = (buildSourceModuleOnly = false, done) => {
+    const {communityModules, enterpriseModules} = getAllModules();
+
     const app = express();
 
     // necessary for plunkers
@@ -297,7 +351,6 @@ module.exports = (buildSourceModuleOnly = false, done) => {
         return next();
     });
 
-    const {communityModules, enterpriseModules} = getAllModules();
     updateWebpackConfigWithBundles(communityModules, enterpriseModules);
 
     // serve community, enterprise and react
@@ -316,6 +369,7 @@ module.exports = (buildSourceModuleOnly = false, done) => {
 
     // add community & enterprise modules to express (for importing in the fw examples)
     symlinkModules(communityModules, enterpriseModules);
+
     updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
     updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
     serveModules(app, communityModules, enterpriseModules);

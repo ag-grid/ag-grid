@@ -45,8 +45,21 @@ $generated = isset($_GET['generated']);
         var appLocation = '<?= $example["appLocation"] ?>';
         var boilerplatePath = '<?= $example["boilerplatePath"] ?>';
         var systemJsMap = <?= json_encode($systemJsMap) ?>;
+<?php
+    // only used in archives/production
+    if ($example['gridSettings']['enterprise']) {
+?>
+        var systemJsPaths = <?= json_encode($systemJsEnterprisePaths) ?>;
+<?php
+} else {
+?>
+        var systemJsPaths = <?= json_encode($systemJsCommunityPaths) ?>;
+<?php
+}
+?>
     </script>
 
+    <!-- leave the next line as is - is replaced when deploying to archives or production -->
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>
 
     <script>

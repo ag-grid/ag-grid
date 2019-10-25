@@ -44,42 +44,38 @@ const populateDevFolder = () => {
     return merge(...copyTasks, react, angular, vue);
 };
 
-updateSystemJsBoilerplateMappingsForFrameworks = (done) => {
-    console.log("updating fw systemjs boilerplate config with modules...");
+updateFrameworkBoilerplateSystemJsEntry = (done) => {
+    console.log("updating fw systemjs boilerplate config...");
 
-    const systemJsFiles = [
-        './dist/example-runner/angular-boilerplate/systemjs.config.js',
-        './dist/example-runner/react-boilerplate/systemjs.config.js',
-        './dist/example-runner/vue-boilerplate/systemjs.config.js'];
+    const boilerPlateLocation = [
+        './dist/example-runner/angular-boilerplate/',
+        './dist/example-runner/vue-boilerplate/',
+        './dist/example-runner/react-boilerplate/',
+    ];
 
-    const bundleNameForModule = module => {
-        // the grid all modules follow a slightly different naming convention to assist migration from
-        // the old legacy projects
-        if (module.publishedName === '@ag-community/grid-all-modules') {
-            return 'ag-grid-community'
-        } else if (module.publishedName === '@ag-enterprise/grid-all-modules') {
-            return 'ag-grid-enterprise'
-        }
-        return module.moduleDirName;
-    };
-
-    systemJsFiles.forEach(systemJsFile => {
-        const fileLines = fs.readFileSync(systemJsFile, 'UTF-8').split('\n');
-
-        let updateFileLines = updateSystemJsMappings(fileLines,
-            '/* START OF MODULES - DO NOT DELETE */',
-            '/* END OF MODULES - DO NOT DELETE */',
-            communityModules,
-            enterpriseModules,
-            module => `           '${module.publishedName}': { 
-                main: './dist/${bundleNameForModule(module)}.cjs.js'
-            },`,
-            module => `           '${module.publishedName}': { 
-                main: './dist/${bundleNameForModule(module)}.cjs.js'
-            },`);
-
-        fs.writeFileSync(systemJsFile, updateFileLines.join('\n'), 'UTF-8');
+    boilerPlateLocation.forEach(boilerPlateLocation => {
+        fs.renameSync(`${boilerPlateLocation}/systemjs.prod.config.js`, `${boilerPlateLocation}/systemjs.config.js`)
     });
+
+
+    const utilityFilename = './dist/example-runner/utils.php';
+    const utilFileLines = fs.readFileSync(utilityFilename, 'UTF-8').split('\n');
+    let updatedUtilFileLines = updateSystemJsMappings(utilFileLines,
+        '/* START OF MODULES DEV - DO NOT DELETE */',
+        '/* END OF MODULES DEV - DO NOT DELETE */',
+        [],
+        [],
+        () => {},
+        () => {});
+    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+        '/* START OF MODULES PROD - DO NOT DELETE */',
+        '/* END OF MODULES PROD - DO NOT DELETE */',
+        [],
+        [],
+        () => {},
+        () => {});
+
+    fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
 
     done();
 };
@@ -228,17 +224,17 @@ gulp.task('build-packaged-examples', (done) => buildPackagedExamples(() => {
     done();
 }));
 gulp.task('populate-dev-folder', populateDevFolder);
-gulp.task('update-dist-systemjs-files', updateSystemJsBoilerplateMappingsForFrameworks);
+gulp.task('update-dist-systemjs-files', updateFrameworkBoilerplateSystemJsEntry);
 gulp.task('process-src', processSource);
 gulp.task('bundle-site-archive', bundleSite.bind(null, false));
 gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
-gulp.task('release-archive', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder'));
-// gulp.task('release-archive', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
+gulp.task('release-archive', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
 gulp.task('release', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-release', 'copy-from-dist', 'update-dist-systemjs-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 gulp.task('generate-examples', series('generate-examples-dev'));
 gulp.task('serve', require('./dev-server').bind(null, false));
 gulp.task('serve-source-mod-only', require('./dev-server').bind(null, true));
+
