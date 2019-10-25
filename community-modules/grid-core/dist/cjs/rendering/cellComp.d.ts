@@ -172,6 +172,7 @@ export declare class CellComp extends Component {
     private addSelectionCheckbox;
     private addDomData;
     onCellFocused(event?: any): void;
+    private shouldForceBrowserFocus;
     stopRowOrCellEdit(cancel?: boolean): void;
     stopEditing(cancel?: boolean): void;
 }

@@ -1406,7 +1406,21 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     -ms-flex-direction: row;
     flex-direction: row; }
   .ag-side-bar .ag-side-buttons div button {
-    display: block;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
     white-space: nowrap;
     outline: none;
     cursor: pointer; }
@@ -1417,6 +1431,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
       -webkit-writing-mode: vertical-lr;
       -ms-writing-mode: tb-lr;
       writing-mode: vertical-lr; }
+    .ag-side-bar .ag-side-buttons div button .ag-icon {
+      display: inline; }
   .ag-side-bar .panel-container {
     width: 180px; }
   .ag-side-bar.full-width .panel-container {
