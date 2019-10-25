@@ -13,7 +13,7 @@ import {
     PostConstruct,
     ProcessChartOptionsParams,
     RefSelector,
-    ResizeObserverService
+    ResizeObserverService,
 } from "@ag-community/grid-core";
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
@@ -118,6 +118,7 @@ export class GridChartComp extends Component {
             // preserve existing width/height
             width = chart.width;
             height = chart.height;
+
             this.chartProxy.destroy();
 
             const canvas = this.eChart.querySelector('canvas');
@@ -146,7 +147,7 @@ export class GridChartComp extends Component {
             document: this.gridOptionsWrapper.getDocument()
         };
 
-        // local state used to detect when chart type changes
+        // set local state used to detect when chart type changes
         this.currentChartType = this.model.getChartType();
         this.currentChartGroupingActive = this.model.isGrouping();
         this.currentPalette = this.model.getActivePalette();

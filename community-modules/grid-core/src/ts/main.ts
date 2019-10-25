@@ -116,8 +116,8 @@ export { MoveColumnController } from "./headerRendering/moveColumnController";
 export { StandardMenuFactory } from "./headerRendering/standardMenu";
 
 // layout
-export {TabbedLayout} from "./layout/tabbedLayout";
-export {TabbedItem} from "./layout/tabbedLayout";
+export { TabbedLayout } from "./layout/tabbedLayout";
+export { TabbedItem } from "./layout/tabbedLayout";
 
 // misc
 export { simpleHttpRequest } from "./misc/simpleHttpRequest";
@@ -144,9 +144,9 @@ export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams } fr
 export { IStatusBarService } from "./interfaces/iStatusBarService";
 
 // tool panel components
-export {IToolPanel, IToolPanelComp, IToolPanelParams, IPrimaryColsPanel, ToolPanelColumnCompParams} from "./interfaces/iToolPanel";
-export {IColumnToolPanel} from "./interfaces/iColumToolPanel";
-export {IFiltersToolPanel} from "./interfaces/iFiltersToolPanel";
+export { IToolPanel, IToolPanelComp, IToolPanelParams, IPrimaryColsPanel, ToolPanelColumnCompParams } from "./interfaces/iToolPanel";
+export { IColumnToolPanel } from "./interfaces/iColumToolPanel";
+export { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
 
 // overlays
 export { ILoadingOverlayComp, ILoadingOverlayParams } from "./rendering/overlays/loadingOverlayComponent";
@@ -167,16 +167,16 @@ export { TextFormatter } from "./filter/provided/text/textFilter";
 export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 
 // row models
-export {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
-export {RowNodeTransaction} from "./interfaces/rowNodeTransaction";
-export {RowDataTransaction} from "./interfaces/rowDataTransaction";
-export {ChangedPath} from "./utils/changedPath";
-export {RowNodeBlock} from "./modules/rowNodeCache/rowNodeBlock";
-export {RowNodeBlockLoader} from "./modules/rowNodeCache/rowNodeBlockLoader";
-export {PaginationProxy} from "./pagination/paginationProxy";
-export {RefreshModelParams} from "./interfaces/refreshModelParams";
-export {IClientSideRowModel} from "./interfaces/iClientSideRowModel";
-export {IInfiniteRowModel} from "./interfaces/iInfiniteRowModel";
+export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
+export { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
+export { RowDataTransaction } from "./interfaces/rowDataTransaction";
+export { ChangedPath } from "./utils/changedPath";
+export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
+export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
+export { PaginationProxy } from "./pagination/paginationProxy";
+export { RefreshModelParams } from "./interfaces/refreshModelParams";
+export { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
+export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 
 export { ColumnVO } from "./interfaces/iColumnVO";
 
@@ -195,27 +195,27 @@ export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 export { StylingService } from "./styling/stylingService";
 
 // widgets
-export {AgAbstractField} from "./widgets/agAbstractField";
-export {AgCheckbox} from "./widgets/agCheckbox";
-export {AgRadioButton} from "./widgets/agRadioButton";
-export {AgToggleButton} from "./widgets/agToggleButton";
-export {AgInputTextField} from "./widgets/agInputTextField";
-export {AgInputTextArea} from "./widgets/agInputTextArea";
-export {AgInputNumberField} from "./widgets/agInputNumberField";
-export {AgInputRange} from "./widgets/agInputRange";
-export {AgSelect} from "./widgets/agSelect";
-export {AgSlider} from "./widgets/agSlider";
-export {AgAngleSelect} from "./widgets/agAngleSelect";
-export {AgColorPicker} from "./widgets/agColorPicker";
-export {AgGroupComponent} from "./widgets/agGroupComponent";
-export {AgDialog} from "./widgets/agDialog";
-export {AgPanel} from "./widgets/agPanel";
-export {MessageBox} from "./widgets/messageBox";
-export {Component, VisibleChangedEvent} from "./widgets/component";
-export {PopupComponent} from "./widgets/popupComponent";
-export {PopupService} from "./widgets/popupService";
-export {TouchListener, TapEvent, LongTapEvent} from "./widgets/touchListener";
-export {VirtualList, VirtualListModel} from "./widgets/virtualList";
+export { AgAbstractField } from "./widgets/agAbstractField";
+export { AgCheckbox } from "./widgets/agCheckbox";
+export { AgRadioButton } from "./widgets/agRadioButton";
+export { AgToggleButton } from "./widgets/agToggleButton";
+export { AgInputTextField } from "./widgets/agInputTextField";
+export { AgInputTextArea } from "./widgets/agInputTextArea";
+export { AgInputNumberField } from "./widgets/agInputNumberField";
+export { AgInputRange } from "./widgets/agInputRange";
+export { AgSelect } from "./widgets/agSelect";
+export { AgSlider } from "./widgets/agSlider";
+export { AgAngleSelect } from "./widgets/agAngleSelect";
+export { AgColorPicker } from "./widgets/agColorPicker";
+export { AgGroupComponent } from "./widgets/agGroupComponent";
+export { AgDialog } from "./widgets/agDialog";
+export { AgPanel } from "./widgets/agPanel";
+export { MessageBox } from "./widgets/messageBox";
+export { Component, VisibleChangedEvent } from "./widgets/component";
+export { PopupComponent } from "./widgets/popupComponent";
+export { PopupService } from "./widgets/popupService";
+export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
+export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
 // range
 export {
@@ -228,9 +228,9 @@ export { IChartService } from "./interfaces/IChartService";
 export {
     CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams,
     ProcessGroupHeaderForExportParams, ShouldRowBeSkippedParams, BaseExportParams
-}from "./interfaces/exportParams";
-export {HeaderElement, PrefixedXmlAttributes, XmlElement} from "./interfaces/iXmlFactory"
-export {ICsvCreator} from "./interfaces/iCsvCreator";
+} from "./interfaces/exportParams";
+export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "./interfaces/iXmlFactory"
+export { ICsvCreator } from "./interfaces/iCsvCreator";
 
 // root
 export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
@@ -333,88 +333,9 @@ export { IAggregationStage } from "./interfaces/iAggregationStage";
 export * from "./interfaces/iChartOptions";
 
 // modules
-export {Module} from "./interfaces/iModule";
-export {ModuleNames} from "./modules/moduleNames";
-export {ModuleRegistry} from "./modules/moduleRegistry";
+export { Module } from "./interfaces/iModule";
+export { ModuleNames } from "./modules/moduleNames";
+export { ModuleRegistry } from "./modules/moduleRegistry";
 
 //  events
-export {
-    AgEvent,
-    AgGridEvent,
-    ModelUpdatedEvent,
-    ColumnPivotModeChangedEvent,
-    VirtualColumnsChangedEvent,
-    ColumnEverythingChangedEvent,
-    NewColumnsLoadedEvent,
-    GridColumnsChangedEvent,
-    DisplayedColumnsChangedEvent,
-    RowDataChangedEvent,
-    RowDataUpdatedEvent,
-    PinnedRowDataChangedEvent,
-    SelectionChangedEvent,
-    FilterChangedEvent,
-    FilterModifiedEvent,
-    FilterOpenedEvent,
-    SortChangedEvent,
-    GridReadyEvent,
-    DragStartedEvent,
-    DragStoppedEvent,
-    DisplayedColumnsWidthChangedEvent,
-    ColumnHoverChangedEvent,
-    BodyHeightChangedEvent,
-    ComponentStateChangedEvent,
-    ViewportChangedEvent,
-    RangeSelectionChangedEvent,
-    ColumnGroupOpenedEvent,
-    ItemsAddedEvent,
-    BodyScrollEvent,
-    FlashCellsEvent,
-    PaginationChangedEvent,
-    CellFocusedEvent,
-    ColumnEvent,
-    ColumnResizedEvent,
-    ColumnPivotChangedEvent,
-    ColumnRowGroupChangedEvent,
-    ColumnValueChangedEvent,
-    ColumnMovedEvent,
-    ColumnVisibleEvent,
-    ColumnPinnedEvent,
-    RowEvent,
-    RowGroupOpenedEvent,
-    RowValueChangedEvent,
-    RowSelectedEvent,
-    VirtualRowRemovedEvent,
-    RowClickedEvent,
-    RowDoubleClickedEvent,
-    RowEditingStartedEvent,
-    RowEditingStoppedEvent,
-    CellEvent,
-    CellClickedEvent,
-    CellMouseDownEvent,
-    CellDoubleClickedEvent,
-    CellMouseOverEvent,
-    CellMouseOutEvent,
-    CellContextMenuEvent,
-    CellEditingStartedEvent,
-    CellEditingStoppedEvent,
-    CellValueChangedEvent,
-    ColumnRequestEvent,
-    ColumnRowGroupChangeRequestEvent,
-    ColumnPivotChangeRequestEvent,
-    ColumnValueChangeRequestEvent,
-    ColumnAggFuncChangeRequestEvent,
-    ScrollVisibilityChangedEvent,
-    RowDragEvent,
-    RowDragLeaveEvent,
-    RowDragEnterEvent,
-    RowDragEndEvent,
-    RowDragMoveEvent,
-    ToolPanelVisibleChangedEvent,
-    PasteEndEvent,
-    PasteStartEvent,
-    GridSizeChangedEvent,
-    ChartRangeSelectionChanged,
-    ChartOptionsChanged,
-    ExpandCollapseAllEvent
-}
-    from "./events";
+export * from "./events";

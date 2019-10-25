@@ -90,6 +90,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         // so this allows the chart defaults to be overridden
         this.chartOptions.width = this.chartProxyParams.width || this.chartOptions.width;
         this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     private overridePalette(chartOptions: TOptions): void {
@@ -237,11 +239,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected raiseChartOptionsChangedEvent(): void {
-        const event: ChartOptionsChanged = {
+        const event: ChartOptionsChanged = Object.freeze({
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartType: this.chartType,
-            chartOptions: this.chartOptions
-        };
+            chartOptions: this.chartOptions,
+        });
 
         this.chartProxyParams.eventService.dispatchEvent(event);
     }
