@@ -1890,9 +1890,8 @@
                 border-left: 0;
             }
         }
+        @include padding-filters(true);
     }
-
-    @include padding-filters(true);
 
     $exported: (
         autoSizePadding: $grid-size * 3,
