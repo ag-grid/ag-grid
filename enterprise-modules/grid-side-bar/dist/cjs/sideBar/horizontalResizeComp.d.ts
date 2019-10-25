@@ -1,0 +1,15 @@
+import { Component } from "@ag-community/grid-core";
+export declare class HorizontalResizeComp extends Component {
+    private horizontalResizeService;
+    private gridOptionsWrapper;
+    private eventService;
+    private startingWidth;
+    private elementToResize;
+    private inverted;
+    constructor();
+    setElementToResize(elementToResize: HTMLElement): void;
+    private postConstruct;
+    private onResizeStart;
+    private onResizing;
+    setInverted(inverted: boolean): void;
+}

@@ -1,0 +1,18 @@
+import { Component } from "@ag-community/grid-core";
+import { ChartController } from "../../../chartController";
+export declare class ChartPanel extends Component {
+    static TEMPLATE: string;
+    private chartGroup;
+    private titleInput;
+    private chartTranslator;
+    private chartProxy;
+    private activePanels;
+    private readonly chartController;
+    constructor(chartController: ChartController);
+    private init;
+    private initGroup;
+    private initTitles;
+    private initPaddingPanel;
+    private destroyActivePanels;
+    destroy(): void;
+}

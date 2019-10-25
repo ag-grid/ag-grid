@@ -14,3 +14,39 @@ node_modules
 
 package-lock.json
 
+# latest only
+dist
+
+packages/ag-grid-angular/aot/**
+packages/ag-grid-angular/dist/**
+packages/ag-grid-angular/main.js.map
+packages/ag-grid-angular/main.js
+packages/ag-grid-angular/main.d.ts
+packages/ag-grid-angular/main.metadata.json
+community-modules/grid-angular/aot/**
+community-modules/grid-angular/dist/**
+community-modules/grid-angular/main.js.map
+community-modules/grid-angular/main.js
+community-modules/grid-angular/main.d.ts
+community-modules/grid-angular/main.metadata.json
+
+packages/ag-grid-react/lib/**
+packages/ag-grid-react/umd/ag-grid-react.min.js
+community-modules/grid-react/lib/**
+community-modules/grid-react/umd/ag-grid-react.min.js
+
+packages/ag-grid-community/main.d.ts
+packages/ag-grid-community/main.js
+packages/ag-grid-enterprise/main.d.ts
+packages/ag-grid-enterprise/main.js
+
+packages/ag-grid-vue/lib/**
+packages/ag-grid-vue/main.js
+community-modules/grid-vue/lib/**
+community-modules/grid-vue/main.js
+
+packages/ag-grid-angular/exports.d.ts
+packages/ag-grid-angular/exports.js
+packages/ag-grid-angular/exports.js.map
+packages/ag-grid-angular/exports.metadata.json
+

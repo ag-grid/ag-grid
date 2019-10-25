@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var grid_core_1 = require("@ag-community/grid-core");
+var csvCreator_1 = require("./csvExport/csvCreator");
+var downloader_1 = require("./csvExport/downloader");
+var xmlFactory_1 = require("./csvExport/xmlFactory");
+var gridSerializer_1 = require("./csvExport/gridSerializer");
+var zipContainer_1 = require("./csvExport/zipContainer");
+exports.CsvExportModule = {
+    moduleName: grid_core_1.ModuleNames.CsvExportModule,
+    beans: [csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory, gridSerializer_1.GridSerializer, zipContainer_1.ZipContainer]
+};
