@@ -35,6 +35,11 @@ packages/ag-grid-react/umd/ag-grid-react.min.js
 community-modules/grid-react/lib/**
 community-modules/grid-react/umd/ag-grid-react.min.js
 
+packages/ag-grid-community/main.d.ts
+packages/ag-grid-community/main.js
+packages/ag-grid-enterprise/main.d.ts
+packages/ag-grid-enterprise/main.js
+
 packages/ag-grid-vue/lib/**
 packages/ag-grid-vue/main.js
 community-modules/grid-vue/lib/**
