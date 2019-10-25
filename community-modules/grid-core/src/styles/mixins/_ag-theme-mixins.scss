@@ -126,10 +126,16 @@
         .ag-group-component-container {
             .ag-group-item {
                 @if ($rtl) {
-                    margin: $grid-size 0 $grid-size $grid-size / 2;
+                    margin-top: $grid-size;
+                    margin-bottom: $grid-size;
+                    margin-right: 0;
+                    margin-left: $grid-size / 2;
                 }
                 @else {
-                    margin: $grid-size $grid-size / 2 $grid-size 0;
+                    margin-top: $grid-size;
+                    margin-right: $grid-size / 2; 
+                    margin-bottom: $grid-size;
+                    margin-left: 0;
                 }
                 
             }
