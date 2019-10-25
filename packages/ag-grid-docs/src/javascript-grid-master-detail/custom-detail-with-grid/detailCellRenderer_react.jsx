@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { AgGridReact } from "@ag-community/grid-react";
-import "ag-grid-enterprise";
+
+import {AllModules} from "@ag-enterprise/grid-all-modules";
 
 export default class DetailCellRenderer extends Component {
   constructor(props) {
@@ -34,6 +35,7 @@ export default class DetailCellRenderer extends Component {
           id="detailGrid"
           columnDefs={this.state.colDefs}
           rowData={this.state.rowData}
+          modules={AllModules}
           debug={true}
           onGridReady={this.onGridReady}
         />

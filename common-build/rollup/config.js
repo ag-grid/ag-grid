@@ -9,12 +9,13 @@ const builds = {
     },
     'prod': {
         format: 'es',
-        env: 'production'
+        env: 'production',
+        extension: '.esm.min.js'
     },
     'cjs-dev': {
         format: 'cjs',
         env: 'development',
-        extension: '.cjs.js'
+        extension: '.cjs.js',
     },
     'cjs-prod': {
         format: 'cjs',
