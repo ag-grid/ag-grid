@@ -41,7 +41,7 @@ export class Utils {
     private static isChrome: boolean;
     private static isFirefox: boolean;
 
-    private static isIPad: boolean;
+    private static isIOS: boolean;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
 
@@ -1612,12 +1612,14 @@ export class Utils {
         return this.isFirefox;
     }
 
-    static isUserAgentIPad(): boolean {
-        if (this.isIPad === undefined) {
+    static isIOSUserAgent(): boolean {
+        if (this.isIOS === undefined) {
             // taken from https://davidwalsh.name/detect-ipad
-            this.isIPad = navigator.userAgent.match(/iPad|iPhone/i) != null;
+            this.isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+                         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+                         !window.MSStream;
         }
-        return this.isIPad;
+        return this.isIOS;
     }
 
     /**

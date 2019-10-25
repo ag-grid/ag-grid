@@ -1518,7 +1518,7 @@ export class CellComp extends Component {
 
     // returns true if on iPad and this is second 'click' event in 200ms
     private isDoubleClickOnIPad(): boolean {
-        if (!_.isUserAgentIPad()) { return false; }
+        if (!_.isIOSUserAgent()) { return false; }
 
         const nowMillis = new Date().getTime();
         const res = nowMillis - this.lastIPadMouseClickEvent < 200;
