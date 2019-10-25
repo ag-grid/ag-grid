@@ -43,23 +43,22 @@
         border-bottom: none;
         border-top: none;
 
-        .ag-side-buttons button {
-            border: 0;
-            color: $secondary-foreground-color;
-            font-family: $secondary-font-family;
-            font-size: $secondary-font-size;
-            font-weight: $secondary-font-weight;
-            background: transparent;
-        }
 
-        .ag-side-buttons .ag-side-button button {
-          background-color: transparent;
-          border-width: 0;
-        }
-
-        .ag-side-buttons .ag-selected button {
-          background-color: $tool-panel-background-color;
-          
+        .ag-side-buttons {
+            .ag-side-button {
+                button {
+                    color: $secondary-foreground-color;
+                    font-family: $secondary-font-family;
+                    font-size: $secondary-font-size;
+                    font-weight: $secondary-font-weight;
+                    background-color: transparent;
+                    border-width: 0;
+                    width: calc(100% + 2px);
+                }
+                &.ag-selected {
+                    background-color: $tool-panel-background-color;
+                }
+            } 
         }
 
         .ag-filter-toolpanel-body {

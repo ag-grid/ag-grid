@@ -846,8 +846,8 @@
                 margin-right: $grid-size;
             }
 
-            &:last-child {
-                border-bottom: 0;
+            &.ag-last-column-drop {
+                border-bottom-width: 0;
             }
         }
     }
@@ -1347,7 +1347,7 @@
                     border: 0;
                     color: $foreground-color;
                     padding: $grid-size * 2 0 $grid-size * 2 0;
-                    width: 100%;
+                    width: calc(100% + 1px);
                     margin: 0;
                     min-height: $grid-size * 18;
                     border-width: 1px 0 1px 0;

@@ -43,7 +43,8 @@ However,  for the purposes of this setup, we are going to stick to tried-and-tru
 </snippet>
 
 <div class="note">
-You can either use your favorite programming text editor, or you can execute the steps in the tutorial using <a href="http://plnkr.co/edit/ZicWEPr1TP04bttMLkCr">this Plunker as a starting point</a>.
+You can either use your favorite programming text editor, or you can execute the steps in the tutorial using
+    <a href="http://plnkr.co/edit/TOcEXbiVu9GrkjLDWpuk">this Plunker as a starting point</a>.
 </div>
 
 <h2>Add ag-Grid to Your Project</h2>

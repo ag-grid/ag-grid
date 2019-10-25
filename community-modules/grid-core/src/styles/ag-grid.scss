@@ -1365,7 +1365,11 @@ $handleSize: 5px;
     .ag-side-buttons {
         div {
             button {
-                display: block;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                flex-wrap: nowrap;
                 white-space: nowrap;
                 outline: none;
                 cursor: pointer;
@@ -1373,6 +1377,9 @@ $handleSize: 5px;
                 span:not(.ag-icon) {
                   writing-mode: tb;
                   writing-mode: vertical-lr;
+                }
+                .ag-icon {
+                    display: inline;
                 }
             }
         }
