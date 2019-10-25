@@ -1048,7 +1048,7 @@ var Utils = /** @class */ (function () {
                 return rendererResult;
             }
             else {
-                throw new Error('iconRenderer should return back a string or a dom object');
+                console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
             }
         }
         else {
@@ -1056,7 +1056,8 @@ var Utils = /** @class */ (function () {
             var cssClass = this.iconNameClassMap[iconName];
             if (!cssClass) {
                 if (!forceCreate) {
-                    throw new Error(iconName + " did not find class");
+                    console.warn("ag-Grid: Did not find icon " + iconName);
+                    cssClass = '';
                 }
                 else {
                     cssClass = iconName;
@@ -1239,12 +1240,15 @@ var Utils = /** @class */ (function () {
         }
         return this.isFirefox;
     };
-    Utils.isUserAgentIPad = function () {
-        if (this.isIPad === undefined) {
-            // taken from https://davidwalsh.name/detect-ipad
-            this.isIPad = navigator.userAgent.match(/iPad|iPhone/i) != null;
+    Utils.isIOSUserAgent = function () {
+        if (this.isIOS === undefined) {
+            // taken from https://stackoverflow.com/a/58064481/1388233
+            this.isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+                // eslint-disable-next-line
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+                !window.MSStream;
         }
-        return this.isIPad;
+        return this.isIOS;
     };
     /**
      * srcElement is only available in IE. In all other browsers it is target

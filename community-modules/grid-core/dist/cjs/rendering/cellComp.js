@@ -1232,8 +1232,8 @@ var CellComp = /** @class */ (function (_super) {
                 return;
             }
         }
-        if (utils_1._.isBrowserIE()) {
-            if (target.classList.contains('ag-cell')) {
+        if (utils_1._.isBrowserIE() || utils_1._.isBrowserEdge()) {
+            if (this.getGui().contains(target)) {
                 forceBrowserFocus = true;
             }
         }
@@ -1268,7 +1268,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {
-        if (!utils_1._.isUserAgentIPad()) {
+        if (!utils_1._.isIOSUserAgent()) {
             return false;
         }
         var nowMillis = new Date().getTime();
@@ -1651,7 +1651,7 @@ var CellComp = /** @class */ (function (_super) {
             this.cellFocused = cellFocused;
         }
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && this.shouldForceBrowserFocus(event)) {
+        if (cellFocused && event && event.forceBrowserFocus) {
             this.getGui().focus();
         }
         // if another cell was focused, and we are editing, then stop editing
@@ -1659,41 +1659,6 @@ var CellComp = /** @class */ (function (_super) {
         if (!cellFocused && !fullRowEdit && this.editingCell) {
             this.stopRowOrCellEdit();
         }
-    };
-    CellComp.prototype.shouldForceBrowserFocus = function (event) {
-        if (event && event.forceBrowserFocus) {
-            return true;
-        }
-        // IE and Edge have issues with focus. When the DOM is modified, focus is lost. Also,
-        // clicking on an unselectable="on" element within a cell fails to focus the cell. So
-        // if this cell is not focussed but is supposed to be, focus it.
-        var browserHasFocusIssues = utils_1._.isBrowserIE() || utils_1._.isBrowserEdge();
-        if (!browserHasFocusIssues) {
-            return false;
-        }
-        // if the cell already has browser focus, we're all OK
-        var activeElement = document.activeElement;
-        var cellHasBrowserFocus = activeElement === this.getGui();
-        if (cellHasBrowserFocus) {
-            return false;
-        }
-        // if the element with browser focus is a cell, then it's the wrong cell, and it's OK to steal focus
-        var otherCellHasBrowserFocus = activeElement && activeElement.classList.contains('ag-cell');
-        if (otherCellHasBrowserFocus) {
-            return true;
-        }
-        // If another element in the grid is focussed (and by this point we know it's not another cell)
-        // don't steal focus from it as the user might be interacting with it
-        var gridHasBrowserFocus = this.beans.gridPanel.getGui().contains(activeElement);
-        if (gridHasBrowserFocus) {
-            return false;
-        }
-        // if we're editing, focus might be in a popup editor outside the grid, so don't steal focus from it
-        if (this.editingCell) {
-            return false;
-        }
-        // safe to force browser focus back to this cell
-        return true;
     };
     // pass in 'true' to cancel the editing.
     CellComp.prototype.stopRowOrCellEdit = function (cancel) {

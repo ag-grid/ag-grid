@@ -10,6 +10,7 @@ gtm_data_layer('privacy');
 meta_and_links("Privacy Policy", "About ag-Grid", "We take your privacy very seriously at ag-Grid. This page outlines our privacy policy which we have updated in light of GDPR.", true);
 ?>
 <title>ag-Grid: Privacy Policy</title>
+<script src="dist/homepage.js"></script>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
 

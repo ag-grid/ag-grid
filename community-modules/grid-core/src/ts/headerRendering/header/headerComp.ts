@@ -158,7 +158,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
-        const hideShowMenu = !this.params.enableMenu || (_.isUserAgentIPad() && !suppressMenuHide);
+        const hideShowMenu = !this.params.enableMenu || (_.isIOSUserAgent() && !suppressMenuHide);
 
         if (hideShowMenu) {
             _.removeFromParent(this.eMenu);

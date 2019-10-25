@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Events, PostConstruct } from '@ag-community/grid-core';
+import { Autowired, Events, PostConstruct, _ } from '@ag-community/grid-core';
 import { NameValueComp } from "./nameValueComp";
 var SelectedRowsComp = /** @class */ (function (_super) {
     __extends(SelectedRowsComp, _super);
@@ -33,7 +33,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-selected-row-count');
         var selectedRowCount = this.gridApi.getSelectedRows().length;
-        this.setValue(selectedRowCount);
+        this.setValue(_.formatNumberCommas(selectedRowCount));
         this.setDisplayed(selectedRowCount > 0);
         var eventListener = this.onRowSelectionChanged.bind(this);
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, eventListener);
@@ -46,7 +46,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     };
     SelectedRowsComp.prototype.onRowSelectionChanged = function () {
         var selectedRowCount = this.gridApi.getSelectedRows().length;
-        this.setValue(selectedRowCount);
+        this.setValue(_.formatNumberCommas(selectedRowCount));
         this.setDisplayed(selectedRowCount > 0);
     };
     SelectedRowsComp.prototype.init = function () {

@@ -57,8 +57,8 @@ export class BodyDropTarget implements DropTarget {
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
-        // not interested in row drags
-        return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
+        // not interested in row or toolpanel column drags
+        return type === DragSourceType.HeaderCell;
     }
 
     public getSecondaryContainers(): HTMLElement[] {

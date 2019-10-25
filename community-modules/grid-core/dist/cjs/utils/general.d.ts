@@ -21,7 +21,7 @@ export declare class Utils {
     private static isEdge;
     private static isChrome;
     private static isFirefox;
-    private static isIPad;
+    private static isIOS;
     private static PRINTABLE_CHARACTERS;
     private static NUMPAD_DEL_NUMLOCK_ON_KEY;
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
@@ -260,7 +260,7 @@ export declare class Utils {
     static isBrowserSafari(): boolean;
     static isBrowserChrome(): boolean;
     static isBrowserFirefox(): boolean;
-    static isUserAgentIPad(): boolean;
+    static isIOSUserAgent(): boolean;
     /**
      * srcElement is only available in IE. In all other browsers it is target
      * http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean

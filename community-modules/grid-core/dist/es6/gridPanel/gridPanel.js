@@ -399,7 +399,7 @@ var GridPanel = /** @class */ (function (_super) {
     GridPanel.prototype.mockContextMenuForIPad = function () {
         var _this = this;
         // we do NOT want this when not in iPad, otherwise we will be doing
-        if (!_.isUserAgentIPad()) {
+        if (!_.isIOSUserAgent()) {
             return;
         }
         this.eAllCellContainers.forEach(function (container) {

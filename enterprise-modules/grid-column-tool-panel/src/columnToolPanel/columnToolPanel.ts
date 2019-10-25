@@ -169,7 +169,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const eGui = this.getGui();
 
         const columnDrops: HTMLElement[] = Array.prototype.slice.call(eGui.querySelectorAll('.ag-column-drop'));
- 
+
         columnDrops.forEach(columnDrop => _.removeCssClass(columnDrop, 'ag-last-column-drop'));
 
         const lastVisible = _.last(eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)') as any) as HTMLElement;

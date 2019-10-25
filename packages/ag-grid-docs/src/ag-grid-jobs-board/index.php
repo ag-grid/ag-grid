@@ -12,6 +12,7 @@ $socialImage = "https://www.ag-grid.com/ag-grid-jobs-board/images/jobs_board.png
 
 meta_and_links("Current Opportunities at ag-Grid", "ag-Grid jobs", "We are looking for the best and the brightest to join us on our mission to create the best datagrid in the world. This page lists our current opportunities. We are always looking for JavaScript Developers.", false);
 ?>
+<script src="../dist/homepage.js"></script>
 <link rel="stylesheet" href="../dist/homepage.css">
 </head>
 <body>

@@ -42,7 +42,7 @@ var FilteredRowsComp = /** @class */ (function (_super) {
     FilteredRowsComp.prototype.onDataChanged = function () {
         var totalRowCountValue = this.getTotalRowCountValue();
         var filteredRowCountValue = this.getFilteredRowCountValue();
-        this.setValue(filteredRowCountValue);
+        this.setValue(grid_core_1._.formatNumberCommas(filteredRowCountValue));
         this.setDisplayed(totalRowCountValue !== filteredRowCountValue);
     };
     FilteredRowsComp.prototype.getTotalRowCountValue = function () {

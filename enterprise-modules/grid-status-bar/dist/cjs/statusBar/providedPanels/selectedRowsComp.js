@@ -35,7 +35,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-selected-row-count');
         var selectedRowCount = this.gridApi.getSelectedRows().length;
-        this.setValue(selectedRowCount);
+        this.setValue(grid_core_1._.formatNumberCommas(selectedRowCount));
         this.setDisplayed(selectedRowCount > 0);
         var eventListener = this.onRowSelectionChanged.bind(this);
         this.eventService.addEventListener(grid_core_1.Events.EVENT_MODEL_UPDATED, eventListener);
@@ -48,7 +48,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     };
     SelectedRowsComp.prototype.onRowSelectionChanged = function () {
         var selectedRowCount = this.gridApi.getSelectedRows().length;
-        this.setValue(selectedRowCount);
+        this.setValue(grid_core_1._.formatNumberCommas(selectedRowCount));
         this.setDisplayed(selectedRowCount > 0);
     };
     SelectedRowsComp.prototype.init = function () {

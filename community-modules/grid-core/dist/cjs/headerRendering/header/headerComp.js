@@ -118,7 +118,7 @@ var HeaderComp = /** @class */ (function (_super) {
         // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         var suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
-        var hideShowMenu = !this.params.enableMenu || (utils_1._.isUserAgentIPad() && !suppressMenuHide);
+        var hideShowMenu = !this.params.enableMenu || (utils_1._.isIOSUserAgent() && !suppressMenuHide);
         if (hideShowMenu) {
             utils_1._.removeFromParent(this.eMenu);
             return;

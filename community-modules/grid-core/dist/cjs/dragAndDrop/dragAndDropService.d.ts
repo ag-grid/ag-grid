@@ -109,7 +109,6 @@ export declare class DragAndDropService {
     private eDropNotAllowedIcon;
     private init;
     private setBeans;
-    private getStringType;
     addDragSource(dragSource: DragSource, allowTouch?: boolean): void;
     removeDragSource(dragSource: DragSource): void;
     private destroy;

@@ -54,16 +54,6 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     };
-    DragAndDropService.prototype.getStringType = function (type) {
-        switch (type) {
-            case DragSourceType.RowDrag: return 'row';
-            case DragSourceType.HeaderCell: return 'headerCell';
-            case DragSourceType.ToolPanel: return 'toolPanel';
-            default:
-                console.warn("ag-Grid: bug - unknown drag type " + type);
-                return null;
-        }
-    };
     DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
         if (allowTouch === void 0) { allowTouch = false; }
         var params = {

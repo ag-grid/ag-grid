@@ -41,7 +41,7 @@ export class Utils {
     private static isChrome: boolean;
     private static isFirefox: boolean;
 
-    private static isIPad: boolean;
+    private static isIOS: boolean;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
 
@@ -1391,14 +1391,15 @@ export class Utils {
             } else if (this.isNodeOrElement(rendererResult)) {
                 return rendererResult;
             } else {
-                throw new Error('iconRenderer should return back a string or a dom object');
+                console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
             }
         } else {
             const span = document.createElement('span');
             let cssClass = this.iconNameClassMap[iconName];
             if (!cssClass) {
                 if (!forceCreate) {
-                    throw new Error(`${iconName} did not find class`);
+                    console.warn(`ag-Grid: Did not find icon ${iconName}`);
+                    cssClass = '';
                 } else {
                     cssClass = iconName;
                 }
@@ -1612,12 +1613,15 @@ export class Utils {
         return this.isFirefox;
     }
 
-    static isUserAgentIPad(): boolean {
-        if (this.isIPad === undefined) {
-            // taken from https://davidwalsh.name/detect-ipad
-            this.isIPad = navigator.userAgent.match(/iPad|iPhone/i) != null;
+    static isIOSUserAgent(): boolean {
+        if (this.isIOS === undefined) {
+            // taken from https://stackoverflow.com/a/58064481/1388233
+            this.isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+                        // eslint-disable-next-line
+                         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+                         !window.MSStream;
         }
-        return this.isIPad;
+        return this.isIOS;
     }
 
     /**

@@ -42,8 +42,8 @@ var BodyDropTarget = /** @class */ (function () {
         }
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
-        // not interested in row drags
-        return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
+        // not interested in row or toolpanel column drags
+        return type === DragSourceType.HeaderCell;
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;

@@ -14,7 +14,7 @@ export function isEqual(a, b, epsilon) {
 export function toFixed(value, fractionOrSignificantDigits) {
     if (fractionOrSignificantDigits === void 0) { fractionOrSignificantDigits = 2; }
     var power = Math.floor(Math.log(Math.abs(value)) / Math.LN10);
-    if (power >= 0) {
+    if (power >= 0 || !isFinite(power)) {
         return value.toFixed(fractionOrSignificantDigits); // fraction digits
     }
     return value.toFixed(Math.abs(power) - 1 + fractionOrSignificantDigits); // significant digits

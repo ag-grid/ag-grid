@@ -40,12 +40,12 @@ var TotalRowsComp = /** @class */ (function (_super) {
         this.eventService.addEventListener(grid_core_1.Events.EVENT_MODEL_UPDATED, listener);
     };
     TotalRowsComp.prototype.onDataChanged = function () {
-        this.setValue(this.getRowCountValue());
+        this.setValue(grid_core_1._.formatNumberCommas(this.getRowCountValue()));
     };
     TotalRowsComp.prototype.getRowCountValue = function () {
         var totalRowCount = 0;
         this.gridApi.forEachLeafNode(function (node) { return totalRowCount += 1; });
-        return "" + totalRowCount;
+        return totalRowCount;
     };
     TotalRowsComp.prototype.init = function () {
     };

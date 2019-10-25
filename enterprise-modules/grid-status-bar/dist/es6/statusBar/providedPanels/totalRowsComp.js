@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Events, PostConstruct } from '@ag-community/grid-core';
+import { Autowired, Events, PostConstruct, _ } from '@ag-community/grid-core';
 import { NameValueComp } from "./nameValueComp";
 var TotalRowsComp = /** @class */ (function (_super) {
     __extends(TotalRowsComp, _super);
@@ -38,12 +38,12 @@ var TotalRowsComp = /** @class */ (function (_super) {
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener);
     };
     TotalRowsComp.prototype.onDataChanged = function () {
-        this.setValue(this.getRowCountValue());
+        this.setValue(_.formatNumberCommas(this.getRowCountValue()));
     };
     TotalRowsComp.prototype.getRowCountValue = function () {
         var totalRowCount = 0;
         this.gridApi.forEachLeafNode(function (node) { return totalRowCount += 1; });
-        return "" + totalRowCount;
+        return totalRowCount;
     };
     TotalRowsComp.prototype.init = function () {
     };

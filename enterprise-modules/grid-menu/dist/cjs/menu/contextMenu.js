@@ -61,7 +61,7 @@ var ContextMenuFactory = /** @class */ (function () {
             var excelModuleMissing = !grid_core_1.ModuleRegistry.isRegistered(grid_core_1.ModuleNames.ExcelExportModule);
             var suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport() || excelModuleMissing;
             var suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport() || csvModuleMissing;
-            var onIPad = grid_core_1._.isUserAgentIPad();
+            var onIPad = grid_core_1._.isIOSUserAgent();
             var anyExport = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');

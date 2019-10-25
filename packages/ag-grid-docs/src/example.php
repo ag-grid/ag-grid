@@ -72,6 +72,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 
 <?= globalAgGridScript(true) ?>
 
+<script src="dist/homepage.js"></script>
 <script src="example.js"></script>
 
 </body>

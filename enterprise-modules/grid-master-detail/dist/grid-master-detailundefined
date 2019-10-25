@@ -1530,7 +1530,7 @@ var Utils = /** @class */ (function () {
                 return rendererResult;
             }
             else {
-                throw new Error('iconRenderer should return back a string or a dom object');
+                console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
             }
         }
         else {
@@ -1538,7 +1538,8 @@ var Utils = /** @class */ (function () {
             var cssClass = this.iconNameClassMap[iconName];
             if (!cssClass) {
                 if (!forceCreate) {
-                    throw new Error(iconName + " did not find class");
+                    console.warn("ag-Grid: Did not find icon " + iconName);
+                    cssClass = '';
                 }
                 else {
                     cssClass = iconName;
@@ -1721,12 +1722,15 @@ var Utils = /** @class */ (function () {
         }
         return this.isFirefox;
     };
-    Utils.isUserAgentIPad = function () {
-        if (this.isIPad === undefined) {
-            // taken from https://davidwalsh.name/detect-ipad
-            this.isIPad = navigator.userAgent.match(/iPad|iPhone/i) != null;
+    Utils.isIOSUserAgent = function () {
+        if (this.isIOS === undefined) {
+            // taken from https://stackoverflow.com/a/58064481/1388233
+            this.isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+                // eslint-disable-next-line
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+                !window.MSStream;
         }
-        return this.isIPad;
+        return this.isIOS;
     };
     /**
      * srcElement is only available in IE. In all other browsers it is target
@@ -11477,7 +11481,7 @@ var HeaderComp = /** @class */ (function (_super) {
         // Note: If suppressMenuHide is set to true the menu will be displayed, and if suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
         var suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
-        var hideShowMenu = !this.params.enableMenu || (_.isUserAgentIPad() && !suppressMenuHide);
+        var hideShowMenu = !this.params.enableMenu || (_.isIOSUserAgent() && !suppressMenuHide);
         if (hideShowMenu) {
             _.removeFromParent(this.eMenu);
             return;
@@ -15733,16 +15737,6 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     };
-    DragAndDropService.prototype.getStringType = function (type) {
-        switch (type) {
-            case DragSourceType.RowDrag: return 'row';
-            case DragSourceType.HeaderCell: return 'headerCell';
-            case DragSourceType.ToolPanel: return 'toolPanel';
-            default:
-                console.warn("ag-Grid: bug - unknown drag type " + type);
-                return null;
-        }
-    };
     DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
         if (allowTouch === void 0) { allowTouch = false; }
         var params = {
@@ -17654,8 +17648,8 @@ var CellComp = /** @class */ (function (_super) {
                 return;
             }
         }
-        if (_.isBrowserIE()) {
-            if (target.classList.contains('ag-cell')) {
+        if (_.isBrowserIE() || _.isBrowserEdge()) {
+            if (this.getGui().contains(target)) {
                 forceBrowserFocus = true;
             }
         }
@@ -17690,7 +17684,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {
-        if (!_.isUserAgentIPad()) {
+        if (!_.isIOSUserAgent()) {
             return false;
         }
         var nowMillis = new Date().getTime();
@@ -18073,7 +18067,7 @@ var CellComp = /** @class */ (function (_super) {
             this.cellFocused = cellFocused;
         }
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && this.shouldForceBrowserFocus(event)) {
+        if (cellFocused && event && event.forceBrowserFocus) {
             this.getGui().focus();
         }
         // if another cell was focused, and we are editing, then stop editing
@@ -18081,41 +18075,6 @@ var CellComp = /** @class */ (function (_super) {
         if (!cellFocused && !fullRowEdit && this.editingCell) {
             this.stopRowOrCellEdit();
         }
-    };
-    CellComp.prototype.shouldForceBrowserFocus = function (event) {
-        if (event && event.forceBrowserFocus) {
-            return true;
-        }
-        // IE and Edge have issues with focus. When the DOM is modified, focus is lost. Also,
-        // clicking on an unselectable="on" element within a cell fails to focus the cell. So
-        // if this cell is not focussed but is supposed to be, focus it.
-        var browserHasFocusIssues = _.isBrowserIE() || _.isBrowserEdge();
-        if (!browserHasFocusIssues) {
-            return false;
-        }
-        // if the cell already has browser focus, we're all OK
-        var activeElement = document.activeElement;
-        var cellHasBrowserFocus = activeElement === this.getGui();
-        if (cellHasBrowserFocus) {
-            return false;
-        }
-        // if the element with browser focus is a cell, then it's the wrong cell, and it's OK to steal focus
-        var otherCellHasBrowserFocus = activeElement && activeElement.classList.contains('ag-cell');
-        if (otherCellHasBrowserFocus) {
-            return true;
-        }
-        // If another element in the grid is focussed (and by this point we know it's not another cell)
-        // don't steal focus from it as the user might be interacting with it
-        var gridHasBrowserFocus = this.beans.gridPanel.getGui().contains(activeElement);
-        if (gridHasBrowserFocus) {
-            return false;
-        }
-        // if we're editing, focus might be in a popup editor outside the grid, so don't steal focus from it
-        if (this.editingCell) {
-            return false;
-        }
-        // safe to force browser focus back to this cell
-        return true;
     };
     // pass in 'true' to cancel the editing.
     CellComp.prototype.stopRowOrCellEdit = function (cancel) {
@@ -23306,8 +23265,8 @@ var BodyDropTarget = /** @class */ (function () {
         }
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
-        // not interested in row drags
-        return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
+        // not interested in row or toolpanel column drags
+        return type === DragSourceType.HeaderCell;
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;
@@ -25231,7 +25190,7 @@ var GridPanel = /** @class */ (function (_super) {
     GridPanel.prototype.mockContextMenuForIPad = function () {
         var _this = this;
         // we do NOT want this when not in iPad, otherwise we will be doing
-        if (!_.isUserAgentIPad()) {
+        if (!_.isIOSUserAgent()) {
             return;
         }
         this.eAllCellContainers.forEach(function (container) {
