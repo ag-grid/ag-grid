@@ -309,6 +309,8 @@ export class FiltersToolPanelListPanel extends Component {
             return !_.exists(searchFilter) || groupName.toLowerCase().includes(searchFilter as string);
         };
 
+        let isFirstVisibleGroup = true;
+
         const recursivelySearch = (filterItem: ToolPanelFilterItem, parentPasses: boolean): boolean => {
             if (filterItem instanceof ToolPanelFilterGroupComp) {
                 const children = filterItem.getChildren();
@@ -320,6 +322,11 @@ export class FiltersToolPanelListPanel extends Component {
                 if (alreadyPassed) {
                     // ensure group visible
                     filterItem.hideGroup(false);
+
+                    filterItem.setFirstVisibleGroup(isFirstVisibleGroup);
+                    if (isFirstVisibleGroup) {
+                        isFirstVisibleGroup = false;
+                    }
 
                     // ensure all children are visible
                     for (let i = 0; i < children.length; i++) {
@@ -339,6 +346,11 @@ export class FiltersToolPanelListPanel extends Component {
 
                 // hide group if no children pass
                 filterItem.hideGroup(!anyChildPasses);
+
+                filterItem.setFirstVisibleGroup(anyChildPasses && isFirstVisibleGroup);
+                if (anyChildPasses && isFirstVisibleGroup) {
+                    isFirstVisibleGroup = false;
+                }
 
                 return anyChildPasses;
             } else {

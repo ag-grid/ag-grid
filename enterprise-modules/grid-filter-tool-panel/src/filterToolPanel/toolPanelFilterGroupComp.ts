@@ -118,6 +118,10 @@ export class ToolPanelFilterGroupComp extends Component {
         _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-hidden', hide);
     }
 
+    public setFirstVisibleGroup(visible: boolean) {
+        _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-first-visible-group', visible);
+    }
+
     private addTopLevelColumnGroupExpandListener() {
         this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
             this.childFilterComps.forEach(filterComp => {
