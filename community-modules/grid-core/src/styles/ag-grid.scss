@@ -1418,6 +1418,11 @@ $handleSize: 5px;
     .ag-status-panel {
         display: inline-flex;
     }
+
+    .ag-name-value {
+        white-space: nowrap;
+    }
+
 }
 
 .ag-status-bar-left {
