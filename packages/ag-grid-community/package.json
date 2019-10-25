@@ -41,8 +41,8 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "@ag-community/grid-all-modules": "~22.0.0",
-    "@ag-community/grid-core": "~22.0.0"
+    "@ag-community/grid-all-modules": "^22.0.0",
+    "@ag-community/grid-core": "^22.0.0"
   },
   "devDependencies": {
     "gulp": "^4.0.0",

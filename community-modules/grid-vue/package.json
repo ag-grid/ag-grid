@@ -28,17 +28,17 @@
     "lint": "vue-cli-service lint"
   },
   "devDependencies": {
-    "vue": "2.6.10",
-    "vue-class-component": "^7.0.0",
-    "vue-property-decorator": "^8.2.0",
+    "@ag-community/grid-core": "^22.0.0",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
-    "@ag-community/grid-core": "~22.0.0",
-    "typescript": "^3.6.0",
-    "vue-template-compiler": "^2.6.10",
+    "gulp": "^4.0.0",
     "gulp-typescript": "^5.0.0",
-    "gulp": "^4.0.0"
+    "typescript": "^3.6.0",
+    "vue": "2.6.10",
+    "vue-class-component": "^7.0.0",
+    "vue-property-decorator": "^8.2.0",
+    "vue-template-compiler": "^2.6.10"
   },
   "peerDependencies": {
     "@ag-community/grid-all-modules": "~22.0.0",

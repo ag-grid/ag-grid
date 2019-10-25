@@ -1,8 +1,8 @@
 {
   "packages": [
-    "packages/*",
     "community-modules/*",
-    "enterprise-modules/*"
+    "enterprise-modules/*",
+    "packages/*"
   ],
   "command": {
     "bootstrap": {

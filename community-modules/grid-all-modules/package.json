@@ -52,29 +52,29 @@
     ],
     "homepage": "http://www.ag-grid.com/",
     "dependencies": {
-        "gulp-typescript": "^5.0.1",
-        "@ag-community/grid-core": "~22.0.0",
-        "@ag-community/grid-client-side-row-model": "~22.0.0",
-        "@ag-community/grid-infinite-row-model": "~22.0.0",
-        "@ag-community/grid-csv-export": "~22.0.0"
+        "@ag-community/grid-client-side-row-model": "^22.0.0",
+        "@ag-community/grid-core": "^22.0.0",
+        "@ag-community/grid-csv-export": "^22.0.0",
+        "@ag-community/grid-infinite-row-model": "^22.0.0",
+        "gulp-typescript": "^5.0.1"
     },
     "devDependencies": {
+        "css-loader": "^3.2.0",
+        "cssnano": "^4.1.0",
         "gulp": "^4.0.2",
         "gulp-clean": "^0.4.0",
-        "typescript": "^3.6.3",
-        "webpack": "^4.39.0",
-        "webpack-stream": "5.0.0",
-        "terser-webpack-plugin": "^2.0.1",
-        "style-loader": "^1.0.0",
-        "css-loader": "^3.2.0",
         "gulp-header": "^2.0.0",
         "postcss-loader": "^3.0.0",
-        "cssnano": "^4.1.0",
         "protractor": "^5.4.0",
-        "start-server-and-test": "^1.10.0",
         "rollup": "^1.21.2",
         "rollup-plugin-node-resolve": "^5.2.0",
-        "rollup-plugin-replace": "^2.2.0"
+        "rollup-plugin-replace": "^2.2.0",
+        "start-server-and-test": "^1.10.0",
+        "style-loader": "^1.0.0",
+        "terser-webpack-plugin": "^2.0.1",
+        "typescript": "^3.6.3",
+        "webpack": "^4.39.0",
+        "webpack-stream": "5.0.0"
     },
     "publishConfig": {
         "access": "public"

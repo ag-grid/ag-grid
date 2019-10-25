@@ -41,8 +41,8 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "@ag-community/grid-core": "~22.0.0",
-    "@ag-enterprise/grid-core": "~22.0.0"
+    "@ag-community/grid-core": "^22.0.0",
+    "@ag-enterprise/grid-core": "^22.0.0"
   },
   "devDependencies": {
     "typescript": "^3.6.3"
