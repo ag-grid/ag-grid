@@ -691,7 +691,6 @@
 
                 > div {
                     &:not(.ag-input-wrapper) {
-                        padding-left: $grid-size / 2;
                         margin: 0 $grid-size / 2;
                     }
                     &.ag-input-wrapper {
@@ -763,7 +762,6 @@
                 margin-left: 0;
                 padding: 0;
                 .ag-group-item {
-                    margin: $grid-size $grid-size / 2;
                     &:not(.ag-filter-toolpanel-instance) {
                         margin-top: 0;
                     }
