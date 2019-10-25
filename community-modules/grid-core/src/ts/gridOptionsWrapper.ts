@@ -335,8 +335,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressSetColumnStateEvents);
     }
 
-    public isAllowDragColumnsFromToolPanel() {
-        return isTrue(this.gridOptions.allowDragColumnsFromToolPanel);
+    public isAllowDragFromColumnsToolPanel() {
+        return isTrue(this.gridOptions.allowDragFromColumnsToolPanel);
     }
 
     public useAsyncEvents() {

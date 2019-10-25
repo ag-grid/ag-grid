@@ -60,7 +60,7 @@ export class BodyDropTarget implements DropTarget {
 
     public isInterestedIn(type: DragSourceType): boolean {
         return type === DragSourceType.HeaderCell
-            || (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragColumnsFromToolPanel());
+            || (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
     }
 
     public getSecondaryContainers(): HTMLElement[] {

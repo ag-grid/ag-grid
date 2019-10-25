@@ -96,7 +96,7 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>allowDragColumnsFromToolPanel</th>
+            <th>allowDragFromColumnsToolPanel</th>
             <td>
                 Allow reordering and pinning columns by dragging columns from the columns tool panel to the grid.
             </td>
