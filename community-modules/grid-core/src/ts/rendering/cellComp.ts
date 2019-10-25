@@ -1479,8 +1479,8 @@ export class CellComp extends Component {
             if (cellInRange && button === 2) { return; }
         }
 
-        if (_.isBrowserIE()) {
-            if ((target as HTMLElement).classList.contains('ag-cell')) {
+        if (_.isBrowserIE() || _.isBrowserEdge()) {
+            if (this.getGui().contains(target as HTMLElement)) {
                 forceBrowserFocus = true;
             }
         }
@@ -2001,7 +2001,7 @@ export class CellComp extends Component {
         }
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && this.shouldForceBrowserFocus(event)) {
+        if (cellFocused && event && event.forceBrowserFocus) {
             this.getGui().focus();
         }
 
@@ -2010,48 +2010,6 @@ export class CellComp extends Component {
         if (!cellFocused && !fullRowEdit && this.editingCell) {
             this.stopRowOrCellEdit();
         }
-    }
-
-    private shouldForceBrowserFocus(event?: any): boolean {
-        if (event && event.forceBrowserFocus) {
-            return true;
-        }
-
-        // IE and Edge have issues with focus. When the DOM is modified, focus is lost. Also,
-        // clicking on an unselectable="on" element within a cell fails to focus the cell. So
-        // if this cell is not focussed but is supposed to be, focus it.
-        const browserHasFocusIssues = _.isBrowserIE() || _.isBrowserEdge();
-        if (!browserHasFocusIssues) {
-            return false;
-        }
-
-        // if the cell already has browser focus, we're all OK
-        const { activeElement } = document;
-        const cellHasBrowserFocus = activeElement === this.getGui();
-        if (cellHasBrowserFocus) {
-            return false;
-        }
-
-        // if the element with browser focus is a cell, then it's the wrong cell, and it's OK to steal focus
-        const otherCellHasBrowserFocus = activeElement && activeElement.classList.contains('ag-cell');
-        if (otherCellHasBrowserFocus) {
-            return true;
-        }
-
-        // If another element in the grid is focussed (and by this point we know it's not another cell)
-        // don't steal focus from it as the user might be interacting with it
-        const gridHasBrowserFocus = this.beans.gridPanel.getGui().contains(activeElement);
-        if (gridHasBrowserFocus) {
-            return false;
-        }
-
-        // if we're editing, focus might be in a popup editor outside the grid, so don't steal focus from it
-        if (this.editingCell) {
-            return false;
-        }
-
-        // safe to force browser focus back to this cell
-        return true;
     }
 
     // pass in 'true' to cancel the editing.
