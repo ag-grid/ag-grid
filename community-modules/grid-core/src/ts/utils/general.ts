@@ -1615,8 +1615,9 @@ export class Utils {
 
     static isIOSUserAgent(): boolean {
         if (this.isIOS === undefined) {
-            // taken from https://davidwalsh.name/detect-ipad
+            // taken from https://stackoverflow.com/a/58064481/1388233
             this.isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+                        // eslint-disable-next-line
                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
                          !window.MSStream;
         }
