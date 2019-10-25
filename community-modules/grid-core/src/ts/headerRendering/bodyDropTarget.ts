@@ -6,6 +6,7 @@ import { GridPanel } from "../gridPanel/gridPanel";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
 import {Constants} from "../constants";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 
 export interface DropListener {
     getIconName(): string;
@@ -22,6 +23,7 @@ export class BodyDropTarget implements DropTarget {
     @Autowired('context') private context: Context;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;
 
@@ -57,8 +59,8 @@ export class BodyDropTarget implements DropTarget {
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
-        // not interested in row or toolpanel column drags
-        return type === DragSourceType.HeaderCell;
+        return type === DragSourceType.HeaderCell
+            || (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragColumnsFromToolPanel());
     }
 
     public getSecondaryContainers(): HTMLElement[] {

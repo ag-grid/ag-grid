@@ -153,6 +153,8 @@ include '../documentation-main/documentation_header.php';
         <li><code>suppressColumnFilter</code>: to suppress Column Filter section.</li>
         <li><code>suppressColumnSelectAll</code>: to suppress Select / Un-select all widget.</li>
         <li><code>suppressColumnExpandAll</code>: to suppress Expand / Collapse all widget.</li>
+        <li><code>contractColumnSelection</code>: by default, column groups start expanded. Pass true to default to contracted groups.</li>
+        <li><code>suppressSyncLayoutWithGrid</code>: to suppress updating the layout of columns in this panel as they are rearranged in the grid.</li>
     </ul>
 
     <p>
