@@ -36155,7 +36155,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
         }
         return this;
     };
-    AgGroupComponent.TEMPLATE = "<div class=\"ag-group-component\">\n            <div class=\"ag-group-component-title-bar\" ref=\"groupTitle\">\n                 <span class=\"ag-column-group-icons\">\n                    <span class=\"ag-column-group-closed-icon\" ref=\"eGroupOpenedIcon\"></span>\n                    <span class=\"ag-column-group-opened-icon\" ref=\"eGroupClosedIcon\"></span>\n                </span>\n                <span ref=\"lbGroupTitle\" class=\"ag-group-component-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-component-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-component-container\"></div>\n        </div>";
+    AgGroupComponent.TEMPLATE = "<div class=\"ag-group-component\">\n            <div class=\"ag-group-component-title-bar\" ref=\"groupTitle\">\n                 <span class=\"ag-column-group-icons\">\n                    <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n                    <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                </span>\n                <span ref=\"lbGroupTitle\" class=\"ag-group-component-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-component-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-component-container\"></div>\n        </div>";
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_2__["Autowired"])('gridOptionsWrapper')
     ], AgGroupComponent.prototype, "gridOptionsWrapper", void 0);
@@ -66280,7 +66280,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.setSelected = function (selected) {
         this.cbSelect.setValue(selected, true);
     };
-    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupClosedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
+    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
         Object(_ag_community_grid_core__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('eventService')
     ], ToolPanelColumnGroupComp.prototype, "eventService", void 0);
@@ -74233,8 +74233,13 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         var _this = this;
         this.addDestroyableEventListener(this.filterGroupComp, 'expanded', function () {
             _this.childFilterComps.forEach(function (filterComp) {
+                // also need to refresh the virtual list on set filters as the filter may have been updated elsewhere
                 if (filterComp instanceof _toolPanelFilterComp__WEBPACK_IMPORTED_MODULE_1__["ToolPanelFilterComp"]) {
                     filterComp.expand();
+                    filterComp.refreshFilter();
+                }
+                else {
+                    filterComp.refreshFilters();
                 }
             });
         });

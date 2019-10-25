@@ -116,9 +116,9 @@ export class FiltersToolPanelListPanel extends Component {
                 return _.flatten(this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, depth));
             } else {
                 const column = child as Column;
-                if (column.getColDef() && column.getColDef().suppressFiltersToolPanel) {
-                    return [];
-                }
+
+                const suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
+                if (suppressFiltersToolPanel || !column.isFilterAllowed()) return [];
 
                 const hideFilterCompHeader = depth === 0;
                 const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
