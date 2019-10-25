@@ -707,7 +707,7 @@
                 flex: 1 1 auto;
                 overflow: auto;
                 > div {
-                    &:first-of-type {
+                    &.ag-first-group-visible {
                         > .ag-group-component {
                             > .ag-group-component-title-bar {
                                 border-top: none;
@@ -715,7 +715,7 @@
                             }
                         }
                     }
-                    &:last-of-type {
+                    &.ag-last-group-visible {
                         > .ag-group-component.ag-collapsed {
                             border-bottom: 1px solid $border-color;
                         }

@@ -84,7 +84,12 @@ export class FiltersToolPanelListPanel extends Component {
         this.destroyFilters();
         const columnTree: OriginalColumnGroupChild[] = this.columnController.getPrimaryColumnTree();
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
-        this.filterGroupComps.forEach(comp => this.appendChild(comp));
+        const len = this.filterGroupComps.length;
+
+        if (len) {
+            this.filterGroupComps.forEach(comp => this.appendChild(comp));
+            this.setFirstAndLastVisible(0, len -1);
+        }
 
         // perform search if searchFilterText exists
         if (_.exists(this.searchFilterText)) {
@@ -99,7 +104,13 @@ export class FiltersToolPanelListPanel extends Component {
         this.destroyFilters();
         const columnTree: OriginalColumnGroupChild[] = this.toolPanelColDefService.createColumnTree(colDefs);
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
-        this.filterGroupComps.forEach(comp => this.appendChild(comp));
+
+        const len = this.filterGroupComps.length;
+
+        if (len) {
+            this.filterGroupComps.forEach(comp => this.appendChild(comp));
+            this.setFirstAndLastVisible(0, len -1);
+        }
 
         // perform search if searchFilterText exists
         if (_.exists(this.searchFilterText)) {
@@ -114,32 +125,29 @@ export class FiltersToolPanelListPanel extends Component {
         return _.flatten(tree.map(child => {
             if (child instanceof OriginalColumnGroup) {
                 return _.flatten(this.recursivelyAddFilterGroupComps(child as OriginalColumnGroup, depth));
-            } else {
-                const column = child as Column;
-
-                if (!this.shouldDisplayFilter(column)) return [];
-
-                const hideFilterCompHeader = depth === 0;
-                const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
-                this.getContext().wireBean(filterComp);
-                filterComp.setColumn(column);
-
-                if (depth > 0) {
-                    return filterComp;
-                } else {
-                    const filterGroupComp =
-                        new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth);
-
-                    this.getContext().wireBean(filterGroupComp);
-                    filterGroupComp.collapse();
-                    return filterGroupComp;
-                }
             }
+
+            const column = child as Column;
+
+            if (!this.shouldDisplayFilter(column)) { return [] };
+
+            const hideFilterCompHeader = depth === 0;
+            const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
+            this.getContext().wireBean(filterComp);
+            filterComp.setColumn(column);
+
+            if (depth > 0) { return filterComp; }
+
+            const filterGroupComp =
+                new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth);
+
+            this.getContext().wireBean(filterGroupComp);
+            filterGroupComp.collapse();
+            return filterGroupComp;
         }));
     }
 
     private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, depth: number): ToolPanelFilterGroupComp[] {
-
         if (!this.filtersExistInChildren(columnGroup.getChildren())) return;
 
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressFiltersToolPanel) {
@@ -163,9 +171,9 @@ export class FiltersToolPanelListPanel extends Component {
         return tree.some(child => {
             if (child instanceof OriginalColumnGroup) {
                 return this.filtersExistInChildren(child.getChildren());
-            } else {
-                return this.shouldDisplayFilter(child as Column);
             }
+
+            return this.shouldDisplayFilter(child as Column);
         });
     }
 
@@ -241,15 +249,17 @@ export class FiltersToolPanelListPanel extends Component {
                     }
                 });
                 return anyChildrenChanged;
-            } else {
-                const colId = filterComp.getColumn().getColId();
-                const updateFilterExpandState = !colIds || _.includes(colIds, colId);
-                if (updateFilterExpandState) {
-                    expand ? filterComp.expand() : filterComp.collapse();
-                    updatedColIds.push(colId);
-                }
-                return updateFilterExpandState;
             }
+
+            const colId = filterComp.getColumn().getColId();
+            const updateFilterExpandState = !colIds || _.includes(colIds, colId);
+
+            if (updateFilterExpandState) {
+                expand ? filterComp.expand() : filterComp.collapse();
+                updatedColIds.push(colId);
+            }
+
+            return updateFilterExpandState;
         };
 
         this.filterGroupComps.forEach(updateGroupExpandState);
@@ -310,43 +320,70 @@ export class FiltersToolPanelListPanel extends Component {
         };
 
         const recursivelySearch = (filterItem: ToolPanelFilterItem, parentPasses: boolean): boolean => {
-            if (filterItem instanceof ToolPanelFilterGroupComp) {
-                const children = filterItem.getChildren();
-
-                const groupNamePasses = passesFilter(filterItem.getFilterGroupName());
-
-                // if group or parent already passed - ensure this group and all children are visible
-                const alreadyPassed = parentPasses || groupNamePasses;
-                if (alreadyPassed) {
-                    // ensure group visible
-                    filterItem.hideGroup(false);
-
-                    // ensure all children are visible
-                    for (let i = 0; i < children.length; i++) {
-                        recursivelySearch(children[i], alreadyPassed);
-                        filterItem.hideGroupItem(false, i);
-                    }
-                    return true;
-                }
-
-                // hide group item filters
-                let anyChildPasses = false;
-                children.forEach((child: ToolPanelFilterItem, index: number) => {
-                    const childPasses = recursivelySearch(child, parentPasses);
-                    filterItem.hideGroupItem(!childPasses, index);
-                    if (childPasses) anyChildPasses = true;
-                });
-
-                // hide group if no children pass
-                filterItem.hideGroup(!anyChildPasses);
-
-                return anyChildPasses;
-            } else {
+            if (!(filterItem instanceof ToolPanelFilterGroupComp)) {
                 return passesFilter(filterItem.getColumnFilterName());
             }
+
+            const children = filterItem.getChildren();
+
+            const groupNamePasses = passesFilter(filterItem.getFilterGroupName());
+
+            // if group or parent already passed - ensure this group and all children are visible
+            const alreadyPassed = parentPasses || groupNamePasses;
+            if (alreadyPassed) {
+                // ensure group visible
+                filterItem.hideGroup(false);
+
+                // ensure all children are visible
+                for (let i = 0; i < children.length; i++) {
+                    recursivelySearch(children[i], alreadyPassed);
+                    filterItem.hideGroupItem(false, i);
+                }
+                return true;
+            }
+
+            // hide group item filters
+            let anyChildPasses = false;
+            children.forEach((child: ToolPanelFilterItem, index: number) => {
+                const childPasses = recursivelySearch(child, parentPasses);
+                filterItem.hideGroupItem(!childPasses, index);
+                if (childPasses) anyChildPasses = true;
+            });
+
+            // hide group if no children pass
+            filterItem.hideGroup(!anyChildPasses);
+
+            return anyChildPasses;
         };
 
-        this.filterGroupComps.forEach(filterGroup => recursivelySearch(filterGroup, false));
+        let firstVisible: number;
+        let lastVisible: number;
+        this.filterGroupComps.forEach((filterGroup, idx) => {
+            recursivelySearch(filterGroup, false);
+            if (firstVisible === undefined) {
+                if (!_.containsClass(filterGroup.getGui(), 'ag-hidden')) {
+                    firstVisible = idx;
+                    lastVisible = idx;
+                }
+            } else if (!_.containsClass(filterGroup.getGui(), 'ag-hidden') && lastVisible !== idx) {
+                lastVisible = idx;
+            }
+        });
+
+        this.setFirstAndLastVisible(firstVisible, lastVisible);
+    }
+
+    private setFirstAndLastVisible(firstIdx: number, lastIdx: number) {
+        this.filterGroupComps.forEach((filterGroup, idx) => {
+            _.removeCssClass(filterGroup.getGui(), 'ag-first-group-visible');
+            _.removeCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+            if (idx === firstIdx) {
+                _.addCssClass(filterGroup.getGui(), 'ag-first-group-visible');
+            }
+            if (idx === lastIdx) {
+                _.addCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+            }
+        });
     }
 
     private refreshFilters() {

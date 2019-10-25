@@ -115,7 +115,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public hideGroup(hide: boolean) {
-        _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-hidden', hide);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
     }
 
     private addTopLevelColumnGroupExpandListener() {
