@@ -1299,7 +1299,7 @@
         border-left: 1px solid $border-color;
         border-right: none;
         .ag-side-button.ag-selected button {
-            margin-left: 1px;
+            margin-right: -1px;
             padding-right: 1px;
         }
         .ag-tool-panel-wrapper {
@@ -1326,14 +1326,6 @@
         border: 1px solid $border-color;
         border-left-width: 0;
         position: relative;
-
-        &.ag-side-bar-left {
-            @extend %side-bar-left;
-        }
-    
-        &.ag-side-bar-right {
-            @extend %side-bar-right;
-        }
 
         .ag-side-buttons {
             padding-top: $grid-size * 4;
@@ -1378,6 +1370,16 @@
 
         .ag-column-drop {
             min-height: 50px;
+        }
+    }
+
+    .ag-ltr .ag-side-bar {
+        &.ag-side-bar-left {
+            @extend %side-bar-left;
+        }
+    
+        &.ag-side-bar-right {
+            @extend %side-bar-right;
         }
     }
 
