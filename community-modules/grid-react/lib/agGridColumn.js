@@ -1,4 +1,4 @@
-// @ag-community/grid-react v22.0.0
+// @ag-community/grid-react v22.0.0-beta.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {

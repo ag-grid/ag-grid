@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-docs",
-  "version": "22.0.0",
+  "version": "22.0.0-beta.0",
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
@@ -61,9 +61,9 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
-    "@ag-community/grid-angular": "^22.0.0",
-    "@ag-community/grid-react": "^22.0.0",
-    "@ag-community/grid-vue": "^22.0.0",
+    "@ag-community/grid-angular": "^22.0.0-beta.0",
+    "@ag-community/grid-react": "^22.0.0-beta.0",
+    "@ag-community/grid-vue": "^22.0.0-beta.0",
     "@angular/common": "7.2.3",
     "@angular/compiler": "7.2.3",
     "@angular/core": "7.2.3",
@@ -74,7 +74,7 @@
     "@babel/preset-env": "7.3.1",
     "@babel/preset-react": "7.0.0",
     "@fortawesome/fontawesome-free": "5.6.3",
-    "ag-grid-community": "^22.0.0",
+    "ag-grid-community": "^22.0.0-beta.0",
     "ag-grid-testing": "0.0.2",
     "anchor-js": "4.1.0",
     "autocomplete.js": "0.33.0",

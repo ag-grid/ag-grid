@@ -1,4 +1,4 @@
-// @ag-community/grid-react v22.0.0
+// @ag-community/grid-react v22.0.0-beta.0
 import { Component } from "react";
 import * as AgGrid from "@ag-community/grid-core";
 import { ColDef, ColGroupDef } from "@ag-community/grid-core";

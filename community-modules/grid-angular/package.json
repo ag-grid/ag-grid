@@ -1,6 +1,6 @@
 {
   "name": "@ag-community/grid-angular",
-  "version": "22.0.0",
+  "version": "22.0.0-beta.0",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
@@ -33,7 +33,7 @@
   },
   "homepage": "https://angular-grid.ag-grid.com",
   "devDependencies": {
-    "@ag-community/grid-core": "^22.0.0",
+    "@ag-community/grid-core": "^22.0.0-beta.0",
     "@angular/compiler": "^4.0.0",
     "@angular/compiler-cli": "^4.0.0",
     "@angular/core": "^4.0.0",

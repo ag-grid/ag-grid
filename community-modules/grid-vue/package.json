@@ -1,7 +1,7 @@
 {
   "name": "@ag-community/grid-vue",
   "description": "ag-Grid Vue Component",
-  "version": "22.0.0",
+  "version": "22.0.0-beta.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -28,7 +28,7 @@
     "lint": "vue-cli-service lint"
   },
   "devDependencies": {
-    "@ag-community/grid-core": "^22.0.0",
+    "@ag-community/grid-core": "^22.0.0-beta.0",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
