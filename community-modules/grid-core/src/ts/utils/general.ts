@@ -1391,14 +1391,15 @@ export class Utils {
             } else if (this.isNodeOrElement(rendererResult)) {
                 return rendererResult;
             } else {
-                throw new Error('iconRenderer should return back a string or a dom object');
+                console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
             }
         } else {
             const span = document.createElement('span');
             let cssClass = this.iconNameClassMap[iconName];
             if (!cssClass) {
                 if (!forceCreate) {
-                    throw new Error(`${iconName} did not find class`);
+                    console.warn(`ag-Grid: Did not find icon ${iconName}`);
+                    cssClass = '';
                 } else {
                     cssClass = iconName;
                 }
