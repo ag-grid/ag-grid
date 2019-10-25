@@ -73754,8 +73754,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             }
             else {
                 var column = child;
-                var suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
-                if (suppressFiltersToolPanel || !column.isFilterAllowed())
+                if (!_this.shouldDisplayFilter(column))
                     return [];
                 var hideFilterCompHeader = depth === 0;
                 var filterComp = new _toolPanelFilterComp__WEBPACK_IMPORTED_MODULE_1__["ToolPanelFilterComp"](hideFilterCompHeader);
@@ -73774,6 +73773,8 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         }));
     };
     FiltersToolPanelListPanel.prototype.recursivelyAddFilterGroupComps = function (columnGroup, depth) {
+        if (!this.filtersExistInChildren(columnGroup.getChildren()))
+            return;
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressFiltersToolPanel) {
             return [];
         }
@@ -73784,6 +73785,21 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         var filterGroupComp = new _toolPanelFilterGroupComp__WEBPACK_IMPORTED_MODULE_2__["ToolPanelFilterGroupComp"](columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
         this.getContext().wireBean(filterGroupComp);
         return [filterGroupComp];
+    };
+    FiltersToolPanelListPanel.prototype.filtersExistInChildren = function (tree) {
+        var _this = this;
+        return tree.some(function (child) {
+            if (child instanceof _ag_community_grid_core__WEBPACK_IMPORTED_MODULE_0__["OriginalColumnGroup"]) {
+                return _this.filtersExistInChildren(child.getChildren());
+            }
+            else {
+                return _this.shouldDisplayFilter(child);
+            }
+        });
+    };
+    FiltersToolPanelListPanel.prototype.shouldDisplayFilter = function (column) {
+        var suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
+        return column.isFilterAllowed() && !suppressFiltersToolPanel;
     };
     // we don't support refreshing, but must implement because it's on the tool panel interface
     FiltersToolPanelListPanel.prototype.refresh = function () { };

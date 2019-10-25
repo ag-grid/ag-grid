@@ -1148,22 +1148,22 @@
     border-radius: 2px;
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     padding: 8px; }
-  .ag-theme-material .ag-side-bar.ag-side-bar-left, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-right {
+  .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-left, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-right {
     border-left: 1px solid #e2e2e2;
     border-right: none; }
-    .ag-theme-material .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button {
-      margin-left: 1px;
+    .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button {
+      margin-right: -1px;
       padding-right: 1px; }
-    .ag-theme-material .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper {
+    .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper {
       border-left: 1px solid #e2e2e2;
       border-right: none; }
-  .ag-theme-material .ag-side-bar.ag-side-bar-right, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-left {
+  .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-right, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-left {
     border-right: 1px solid #e2e2e2;
     border-left: none; }
-    .ag-theme-material .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button {
+    .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button {
       margin-left: -1px;
       padding-left: 1px; }
-    .ag-theme-material .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper {
+    .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper, .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper {
       border-right: 1px solid #e2e2e2;
       border-left: none; }
   .ag-theme-material .ag-side-bar {
@@ -1687,39 +1687,46 @@
   .ag-theme-material .ag-side-bar {
     border-bottom: none;
     border-top: none; }
-    .ag-theme-material .ag-side-bar .ag-side-buttons .ag-side-button button {
-      color: rgba(0, 0, 0, 0.54);
-      font-family: "Roboto", sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      background-color: transparent;
-      border-width: 0;
-      width: calc(100% + 2px); }
-    .ag-theme-material .ag-side-bar .ag-side-buttons .ag-side-button.ag-selected {
-      background-color: #fafafa; }
+    .ag-theme-material .ag-side-bar .ag-side-buttons {
+      z-index: 1; }
+      .ag-theme-material .ag-side-bar .ag-side-buttons .ag-side-button button {
+        color: rgba(0, 0, 0, 0.54);
+        font-family: "Roboto", sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        background-color: transparent;
+        border-width: 0;
+        width: calc(100% + 2px); }
+      .ag-theme-material .ag-side-bar .ag-side-buttons .ag-side-button.ag-selected {
+        background-color: #fafafa; }
     .ag-theme-material .ag-side-bar .ag-filter-toolpanel-body {
       background-color: #fff; }
-    .ag-theme-material .ag-side-bar.ag-side-bar-right {
-      border-right: none; }
-      .ag-theme-material .ag-side-bar.ag-side-bar-right .ag-side-buttons .ag-side-button button {
-        border-left: 2px solid transparent; }
-      .ag-theme-material .ag-side-bar.ag-side-bar-right .ag-side-buttons .ag-side-button.ag-selected button {
-        border-left-color: #3f51b5; }
-    .ag-theme-material .ag-side-bar.ag-side-bar-left {
-      border-left: none; }
-      .ag-theme-material .ag-side-bar.ag-side-bar-left .ag-side-buttons .ag-side-button button {
-        border-right: 2px solid transparent; }
-      .ag-theme-material .ag-side-bar.ag-side-bar-left .ag-side-buttons .ag-side-button.ag-selected button {
-        border-right-color: #3f51b5; }
   .ag-theme-material .ag-status-bar {
     border-top-width: 1px; }
-  .ag-theme-material .ag-rtl .ag-side-bar .ag-side-buttons .ag-selected button {
-    border-left: 0;
-    margin-left: 0;
-    padding-left: 0;
-    border-right: 2px solid #3f51b5;
-    margin-right: -2px;
-    padding-right: 1px; }
+  .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-right {
+    border-right: none; }
+    .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-right .ag-side-buttons .ag-side-button button {
+      border-left: 2px solid transparent; }
+    .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-right .ag-side-buttons .ag-side-button.ag-selected button {
+      border-left-color: #3f51b5; }
+  .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-left {
+    border-left: none; }
+    .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-left .ag-side-buttons .ag-side-button button {
+      border-right: 2px solid transparent; }
+    .ag-theme-material .ag-ltr .ag-side-bar.ag-side-bar-left .ag-side-buttons .ag-side-button.ag-selected button {
+      border-right-color: #3f51b5; }
+  .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-right {
+    border-right: none; }
+    .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-right .ag-side-buttons .ag-side-button button {
+      border-right: 2px solid transparent; }
+    .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-right .ag-side-buttons .ag-side-button.ag-selected button {
+      border-right-color: #3f51b5; }
+  .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-left {
+    border-left: none; }
+    .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-left .ag-side-buttons .ag-side-button button {
+      border-left: 2px solid transparent; }
+    .ag-theme-material .ag-rtl .ag-side-bar.ag-side-bar-left .ag-side-buttons .ag-side-button.ag-selected button {
+      border-left-color: #3f51b5; }
   .ag-theme-material .ag-group-expanded .ag-icon-expanded:empty:before {
     content: ""; }
 

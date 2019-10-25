@@ -117,8 +117,7 @@ export class FiltersToolPanelListPanel extends Component {
             } else {
                 const column = child as Column;
 
-                const suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
-                if (suppressFiltersToolPanel || !column.isFilterAllowed()) return [];
+                if (!this.shouldDisplayFilter(column)) return [];
 
                 const hideFilterCompHeader = depth === 0;
                 const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
@@ -140,6 +139,9 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, depth: number): ToolPanelFilterGroupComp[] {
+
+        if (!this.filtersExistInChildren(columnGroup.getChildren())) return;
+
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressFiltersToolPanel) {
             return [];
         }
@@ -155,6 +157,21 @@ export class FiltersToolPanelListPanel extends Component {
         this.getContext().wireBean(filterGroupComp);
 
         return [filterGroupComp];
+    }
+
+    private filtersExistInChildren(tree: OriginalColumnGroupChild[]): boolean {
+        return tree.some(child => {
+            if (child instanceof OriginalColumnGroup) {
+                return this.filtersExistInChildren(child.getChildren());
+            } else {
+                return this.shouldDisplayFilter(child as Column);
+            }
+        });
+    }
+
+    private shouldDisplayFilter(column: Column) {
+        const suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
+        return column.isFilterAllowed() && !suppressFiltersToolPanel;
     }
 
     // we don't support refreshing, but must implement because it's on the tool panel interface

@@ -18,6 +18,8 @@ export declare class FiltersToolPanelListPanel extends Component {
     setFiltersLayout(colDefs: AbstractColDef[]): void;
     private recursivelyAddComps;
     private recursivelyAddFilterGroupComps;
+    private filtersExistInChildren;
+    private shouldDisplayFilter;
     refresh(): void;
     setVisible(visible: boolean): void;
     expandFilterGroups(expand: boolean, groupIds?: string[]): void;

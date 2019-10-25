@@ -1117,22 +1117,22 @@
     border-radius: 0;
     box-shadow: none;
     padding: 4px; }
-  .ag-theme-bootstrap .ag-side-bar.ag-side-bar-left, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-right {
+  .ag-theme-bootstrap .ag-ltr .ag-side-bar.ag-side-bar-left, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-right {
     border-left: 1px solid transparent;
     border-right: none; }
-    .ag-theme-bootstrap .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button {
-      margin-left: 1px;
+    .ag-theme-bootstrap .ag-ltr .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button {
+      margin-right: -1px;
       padding-right: 1px; }
-    .ag-theme-bootstrap .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper {
+    .ag-theme-bootstrap .ag-ltr .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper {
       border-left: 1px solid transparent;
       border-right: none; }
-  .ag-theme-bootstrap .ag-side-bar.ag-side-bar-right, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-left {
+  .ag-theme-bootstrap .ag-ltr .ag-side-bar.ag-side-bar-right, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-left {
     border-right: 1px solid transparent;
     border-left: none; }
-    .ag-theme-bootstrap .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button {
+    .ag-theme-bootstrap .ag-ltr .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button {
       margin-left: -1px;
       padding-left: 1px; }
-    .ag-theme-bootstrap .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper {
+    .ag-theme-bootstrap .ag-ltr .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper, .ag-theme-bootstrap .ag-rtl .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper {
       border-right: 1px solid transparent;
       border-left: none; }
   .ag-theme-bootstrap .ag-side-bar {

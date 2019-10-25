@@ -43,8 +43,8 @@
         border-bottom: none;
         border-top: none;
 
-
         .ag-side-buttons {
+            z-index: 1;
             .ag-side-button {
                 button {
                     color: $secondary-foreground-color;
@@ -64,7 +64,13 @@
         .ag-filter-toolpanel-body {
             background-color: $background-color;
         }
-        
+    }
+
+    .ag-status-bar {
+      border-top-width: 1px;
+    }
+
+    .ag-ltr .ag-side-bar {
         &.ag-side-bar-right {
             border-right: none;
             .ag-side-buttons .ag-side-button {
@@ -94,19 +100,33 @@
         }
     }
 
-    .ag-status-bar {
-      border-top-width: 1px;
-    }
-
     .ag-rtl .ag-side-bar {
-        .ag-side-buttons .ag-selected button {
-          border-left: 0;
-          margin-left: 0;
-          padding-left:0;
+        &.ag-side-bar-right {
+            border-right: none;
+            .ag-side-buttons .ag-side-button {
+                button {
+                    border-right: 2px solid transparent;
+                }
+                &.ag-selected {
+                    button {
+                        border-right-color: $primary-color;
+                    }
+                }
+            }
+        }
 
-          border-right: 2px solid $primary-color;
-          margin-right: -2px;
-          padding-right: 1px;
+        &.ag-side-bar-left {
+            border-left: none;
+            .ag-side-buttons .ag-side-button {
+                button {
+                    border-left: 2px solid transparent;
+                }
+                &.ag-selected {
+                    button {
+                        border-left-color: $primary-color;
+                    }
+                }
+            }
         }
     }
 

@@ -30,6 +30,7 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
+        filter: true,
         sortable: true,
         enablePivot: true
     },

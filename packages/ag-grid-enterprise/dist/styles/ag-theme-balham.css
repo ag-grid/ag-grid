@@ -1116,22 +1116,22 @@
     border-radius: 2px;
     box-shadow: none;
     padding: 4px; }
-  .ag-theme-balham .ag-side-bar.ag-side-bar-left, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-right {
+  .ag-theme-balham .ag-ltr .ag-side-bar.ag-side-bar-left, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-right {
     border-left: 1px solid #BDC3C7;
     border-right: none; }
-    .ag-theme-balham .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button {
-      margin-left: 1px;
+    .ag-theme-balham .ag-ltr .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button {
+      margin-right: -1px;
       padding-right: 1px; }
-    .ag-theme-balham .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper {
+    .ag-theme-balham .ag-ltr .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper {
       border-left: 1px solid #BDC3C7;
       border-right: none; }
-  .ag-theme-balham .ag-side-bar.ag-side-bar-right, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-left {
+  .ag-theme-balham .ag-ltr .ag-side-bar.ag-side-bar-right, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-left {
     border-right: 1px solid #BDC3C7;
     border-left: none; }
-    .ag-theme-balham .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button {
+    .ag-theme-balham .ag-ltr .ag-side-bar.ag-side-bar-right .ag-side-button.ag-selected button, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-left .ag-side-button.ag-selected button {
       margin-left: -1px;
       padding-left: 1px; }
-    .ag-theme-balham .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper {
+    .ag-theme-balham .ag-ltr .ag-side-bar.ag-side-bar-right .ag-tool-panel-wrapper, .ag-theme-balham .ag-rtl .ag-side-bar.ag-side-bar-left .ag-tool-panel-wrapper {
       border-right: 1px solid #BDC3C7;
       border-left: none; }
   .ag-theme-balham .ag-side-bar {
