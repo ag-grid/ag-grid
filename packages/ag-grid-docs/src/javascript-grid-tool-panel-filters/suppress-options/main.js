@@ -10,7 +10,7 @@ var columnDefs = [
                 headerName: 'Competition',
                 children: [
                     { field: "year", width: 90 },
-                    { field: "date", width: 110 },
+                    { field: "date", width: 110, suppressFiltersToolPanel: true },
                 ]
             },
             { field: "country", width: 120}
