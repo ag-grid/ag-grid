@@ -29,7 +29,7 @@ import { OriginalColumnGroup } from "./originalColumnGroup";
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg OriginalColumnGroup
 // can only appear in OriginalColumn tree).
-export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
+export class Column<T> implements ColumnGroupChild<T>, OriginalColumnGroupChild, IEventEmitter {
 
     // + renderedHeaderCell - for making header cell transparent when moving
     public static EVENT_MOVING_CHANGED = 'movingChanged';
@@ -70,13 +70,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     @Autowired('gridApi') private gridApi: GridApi;
 
     private readonly colId: any;
-    private colDef: ColDef;
+    private colDef: ColDef<T>;
 
     // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
     // when the user provides an updated list of columns - so we can check if we have a column already
     // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
     // This is used in ColumnFactory
-    private userProvidedColDef: ColDef;
+    private userProvidedColDef: ColDef<T>;
 
     private actualWidth: any;
 
@@ -109,10 +109,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private readonly primary: boolean;
 
-    private parent: ColumnGroup;
+    private parent: ColumnGroup<T>;
     private originalParent: OriginalColumnGroup;
 
-    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: String, primary: boolean) {
+    constructor(colDef: ColDef<T>, userProvidedColDef: ColDef<T> | null, colId: String, primary: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.visible = !colDef.hide;
@@ -123,20 +123,20 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     // gets called when user provides an alternative colDef, eg
-    public setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void {
+    public setColDef(colDef: ColDef<T>, userProvidedColDef: ColDef<T> | null): void {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
     }
 
-    public getUserProvidedColDef(): ColDef {
+    public getUserProvidedColDef(): ColDef<T> {
         return this.userProvidedColDef;
     }
 
-    public setParent(parent: ColumnGroup): void {
+    public setParent(parent: ColumnGroup<T>): void {
         this.parent = parent;
     }
 
-    public getParent(): ColumnGroup {
+    public getParent(): ColumnGroup<T> {
         return this.parent;
     }
 
@@ -319,7 +319,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.eventService.removeEventListener(eventType, listener);
     }
 
-    private createIsColumnFuncParams(rowNode: RowNode): IsColumnFuncParams {
+    private createIsColumnFuncParams(rowNode: RowNode<T>): IsColumnFuncParams<T> {
         return {
             node: rowNode,
             data: rowNode.data,
@@ -331,7 +331,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         };
     }
 
-    public isSuppressNavigable(rowNode: RowNode): boolean {
+    public isSuppressNavigable(rowNode: RowNode<T>): boolean {
         // if boolean set, then just use it
         if (typeof this.colDef.suppressNavigable === 'boolean') {
             return this.colDef.suppressNavigable as boolean;
@@ -340,14 +340,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
             const params = this.createIsColumnFuncParams(rowNode);
-            const userFunc = this.colDef.suppressNavigable as IsColumnFunc;
+            const userFunc = this.colDef.suppressNavigable as IsColumnFunc<T>;
             return userFunc(params);
         }
 
         return false;
     }
 
-    public isCellEditable(rowNode: RowNode): boolean {
+    public isCellEditable(rowNode: RowNode<T>): boolean {
 
         // only allow editing of groups if the user has this option enabled
         if (rowNode.group && !this.gridOptionsWrapper.isEnableGroupEdit()) {
@@ -357,19 +357,19 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.isColumnFunc(rowNode, this.colDef.editable);
     }
 
-    public isRowDrag(rowNode: RowNode): boolean {
+    public isRowDrag(rowNode: RowNode<T>): boolean {
         return this.isColumnFunc(rowNode, this.colDef.rowDrag);
     }
 
-    public isDndSource(rowNode: RowNode): boolean {
+    public isDndSource(rowNode: RowNode<T>): boolean {
         return this.isColumnFunc(rowNode, this.colDef.dndSource);
     }
 
-    public isCellCheckboxSelection(rowNode: RowNode): boolean {
+    public isCellCheckboxSelection(rowNode: RowNode<T>): boolean {
         return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
     }
 
-    public isSuppressPaste(rowNode: RowNode): boolean {
+    public isSuppressPaste(rowNode: RowNode<T>): boolean {
         return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
     }
 
@@ -377,7 +377,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.colDef.resizable === true;
     }
 
-    private isColumnFunc(rowNode: RowNode, value: boolean | IsColumnFunc): boolean {
+    private isColumnFunc(rowNode: RowNode<T>, value: boolean | IsColumnFunc<T>): boolean {
         // if boolean set, then just use it
         if (typeof value === 'boolean') {
             return value as boolean;
@@ -386,7 +386,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         // if function, then call the function to find out
         if (typeof value === 'function') {
             const params = this.createIsColumnFuncParams(rowNode);
-            const editableFunc = value as IsColumnFunc;
+            const editableFunc = value as IsColumnFunc<T>;
             return editableFunc(params);
         }
 
@@ -564,7 +564,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.visible;
     }
 
-    public getColDef(): ColDef {
+    public getColDef(): ColDef<T> {
         return this.colDef;
     }
 
@@ -588,8 +588,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.actualWidth;
     }
 
-    private createBaseColDefParams(rowNode: RowNode): BaseColDefParams {
-        const params: BaseColDefParams = {
+    private createBaseColDefParams(rowNode: RowNode<T>): BaseColDefParams<T> {
+        const params: BaseColDefParams<T> = {
             node: rowNode,
             data: rowNode.data,
             colDef: this.colDef,
@@ -601,18 +601,18 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return params;
     }
 
-    public getColSpan(rowNode: RowNode): number {
+    public getColSpan(rowNode: RowNode<T>): number {
         if (_.missing(this.colDef.colSpan)) { return 1; }
-        const params: ColSpanParams = this.createBaseColDefParams(rowNode);
+        const params: ColSpanParams<T> = this.createBaseColDefParams(rowNode);
         const colSpan = this.colDef.colSpan(params);
         // colSpan must be number equal to or greater than 1
 
         return Math.max(colSpan, 1);
     }
 
-    public getRowSpan(rowNode: RowNode): number {
+    public getRowSpan(rowNode: RowNode<T>): number {
         if (_.missing(this.colDef.rowSpan)) { return 1; }
-        const params: RowSpanParams = this.createBaseColDefParams(rowNode);
+        const params: RowSpanParams<T> = this.createBaseColDefParams(rowNode);
         const rowSpan = this.colDef.rowSpan(params);
         // rowSpan must be number equal to or greater than 1
 

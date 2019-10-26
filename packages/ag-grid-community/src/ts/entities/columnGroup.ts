@@ -9,7 +9,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { _ } from "../utils";
 
-export class ColumnGroup implements ColumnGroupChild {
+export class ColumnGroup<T> implements ColumnGroupChild<T> {
 
     public static HEADER_GROUP_SHOW_OPEN = 'open';
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';
@@ -26,9 +26,9 @@ export class ColumnGroup implements ColumnGroupChild {
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     // all the children of this group, regardless of whether they are opened or closed
-    private children: ColumnGroupChild[];
+    private children: ColumnGroupChild<T>[];
     // depends on the open/closed state of the group, only displaying columns are stored here
-    private displayedChildren: ColumnGroupChild[] = [];
+    private displayedChildren: ColumnGroupChild<T>[] = [];
 
     private readonly groupId: string;
     private readonly instanceId: number;
@@ -40,7 +40,7 @@ export class ColumnGroup implements ColumnGroupChild {
     private oldLeft: number;
     private localEventService: EventService = new EventService();
 
-    private parent: ColumnGroup;
+    private parent: ColumnGroup<T>;
 
     constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: string) {
         this.groupId = groupId;
@@ -57,11 +57,11 @@ export class ColumnGroup implements ColumnGroupChild {
         this.displayedChildren = null;
     }
 
-    public getParent(): ColumnGroup {
+    public getParent(): ColumnGroup<T> {
         return this.parent;
     }
 
-    public setParent(parent: ColumnGroup): void {
+    public setParent(parent: ColumnGroup<T>): void {
         this.parent = parent;
     }
 
@@ -88,9 +88,9 @@ export class ColumnGroup implements ColumnGroupChild {
 
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
-        this.displayedChildren.forEach((child: ColumnGroupChild) => {
+        this.displayedChildren.forEach((child: ColumnGroupChild<T>) => {
             if (child instanceof ColumnGroup) {
-                (child as ColumnGroup).checkLeft();
+                (child as ColumnGroup<T>).checkLeft();
             }
         });
 
@@ -153,15 +153,15 @@ export class ColumnGroup implements ColumnGroupChild {
         return this.instanceId;
     }
 
-    public isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean {
+    public isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild<T>): boolean {
         let result = false;
 
-        this.children.forEach((foundChild: ColumnGroupChild) => {
+        this.children.forEach((foundChild: ColumnGroupChild<T>) => {
             if (wantedChild === foundChild) {
                 result = true;
             }
             if (foundChild instanceof ColumnGroup) {
-                if ((foundChild as ColumnGroup).isChildInThisGroupDeepSearch(wantedChild)) {
+                if ((foundChild as ColumnGroup<T>).isChildInThisGroupDeepSearch(wantedChild)) {
                     result = true;
                 }
             }
@@ -173,7 +173,7 @@ export class ColumnGroup implements ColumnGroupChild {
     public getActualWidth(): number {
         let groupActualWidth = 0;
         if (this.displayedChildren) {
-            this.displayedChildren.forEach((child: ColumnGroupChild) => {
+            this.displayedChildren.forEach((child: ColumnGroupChild<T>) => {
                 groupActualWidth += child.getActualWidth();
             });
         }
@@ -185,7 +185,7 @@ export class ColumnGroup implements ColumnGroupChild {
 
         // if at least one child is resizable, then the group is resizable
         let result = false;
-        this.displayedChildren.forEach((child: ColumnGroupChild) => {
+        this.displayedChildren.forEach((child: ColumnGroupChild<T>) => {
             if (child.isResizable()) {
                 result = true;
             }
@@ -196,31 +196,31 @@ export class ColumnGroup implements ColumnGroupChild {
 
     public getMinWidth(): number {
         let result = 0;
-        this.displayedChildren.forEach((groupChild: ColumnGroupChild) => {
+        this.displayedChildren.forEach((groupChild: ColumnGroupChild<T>) => {
             result += groupChild.getMinWidth();
         });
         return result;
     }
 
-    public addChild(child: ColumnGroupChild): void {
+    public addChild(child: ColumnGroupChild<T>): void {
         if (!this.children) {
             this.children = [];
         }
         this.children.push(child);
     }
 
-    public getDisplayedChildren(): ColumnGroupChild[] {
+    public getDisplayedChildren(): ColumnGroupChild<T>[] {
         return this.displayedChildren;
     }
 
-    public getLeafColumns(): Column[] {
-        const result: Column[] = [];
+    public getLeafColumns(): Column<T>[] {
+        const result: Column<T>[] = [];
         this.addLeafColumns(result);
         return result;
     }
 
-    public getDisplayedLeafColumns(): Column[] {
-        const result: Column[] = [];
+    public getDisplayedLeafColumns(): Column<T>[] {
+        const result: Column<T>[] = [];
         this.addDisplayedLeafColumns(result);
         return result;
     }
@@ -230,7 +230,7 @@ export class ColumnGroup implements ColumnGroupChild {
         return this.originalColumnGroup.getColGroupDef();
     }
 
-    public getColGroupDef(): ColGroupDef {
+    public getColGroupDef(): ColGroupDef<T> {
         return this.originalColumnGroup.getColGroupDef();
     }
 
@@ -250,27 +250,27 @@ export class ColumnGroup implements ColumnGroupChild {
         this.originalColumnGroup.setExpanded(expanded);
     }
 
-    private addDisplayedLeafColumns(leafColumns: Column[]): void {
-        this.displayedChildren.forEach((child: ColumnGroupChild) => {
+    private addDisplayedLeafColumns(leafColumns: Column<T>[]): void {
+        this.displayedChildren.forEach((child: ColumnGroupChild<T>) => {
             if (child instanceof Column) {
-                leafColumns.push(child as Column);
+                leafColumns.push(child as Column<T>);
             } else if (child instanceof ColumnGroup) {
-                (child as ColumnGroup).addDisplayedLeafColumns(leafColumns);
+                (child as ColumnGroup<T>).addDisplayedLeafColumns(leafColumns);
             }
         });
     }
 
-    private addLeafColumns(leafColumns: Column[]): void {
-        this.children.forEach((child: ColumnGroupChild) => {
+    private addLeafColumns(leafColumns: Column<T>[]): void {
+        this.children.forEach((child: ColumnGroupChild<T>) => {
             if (child instanceof Column) {
-                leafColumns.push(child as Column);
+                leafColumns.push(child as Column<T>);
             } else if (child instanceof ColumnGroup) {
-                (child as ColumnGroup).addLeafColumns(leafColumns);
+                (child as ColumnGroup<T>).addLeafColumns(leafColumns);
             }
         });
     }
 
-    public getChildren(): ColumnGroupChild[] {
+    public getChildren(): ColumnGroupChild<T>[] {
         return this.children;
     }
 
@@ -285,7 +285,7 @@ export class ColumnGroup implements ColumnGroupChild {
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];
-        let topLevelGroup: ColumnGroup = this;
+        let topLevelGroup: ColumnGroup<T> = this;
 
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.

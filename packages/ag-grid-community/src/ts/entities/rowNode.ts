@@ -29,22 +29,22 @@ export interface SetSelectedParams {
     groupSelectsFiltered?: boolean;
 }
 
-export interface RowNodeEvent extends AgEvent {
-    node: RowNode;
+export interface RowNodeEvent<T> extends AgEvent {
+    node: RowNode<T>;
 }
 
-export interface DataChangedEvent extends RowNodeEvent {
-    oldData: any;
-    newData: any;
+export interface DataChangedEvent<T> extends RowNodeEvent<T> {
+    oldData: T;
+    newData: T;
     update: boolean;
 }
 
-export interface CellChangedEvent extends RowNodeEvent {
+export interface CellChangedEvent<T> extends RowNodeEvent<T> {
     column: Column;
     newValue: any;
 }
 
-export class RowNode implements IEventEmitter {
+export class RowNode<T> implements IEventEmitter {
 
     private static OBJECT_ID_SEQUENCE = 0;
 
@@ -84,9 +84,9 @@ export class RowNode implements IEventEmitter {
     /** The aggregated data */
     public aggData: any;
     /** The user provided data */
-    public data: any;
+    public data: T;
     /** The parent node to this node, or empty if top level */
-    public parent: RowNode | null;
+    public parent: RowNode<T> | null;
     /** How many levels this node is from the top */
     public level: number;
     /** How many levels this node is from the top in the UI (different to the level when removing parents)*/
@@ -104,7 +104,7 @@ export class RowNode implements IEventEmitter {
     /** True if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
     public detail: boolean;
     /** If this row is a master row that was expanded, this points to the associated detail row. */
-    public detailNode: RowNode;
+    public detailNode: RowNode<T>;
     /** If master detail, this contains details about the detail grid */
     public detailGridInfo: DetailGridInfo | null;
 
@@ -113,7 +113,7 @@ export class RowNode implements IEventEmitter {
     /** Same as detail, kept for legacy reasons */
     public flower: boolean;
     /** Same as detailNode, kept for legacy reasons */
-    public childFlower: RowNode;
+    public childFlower: RowNode<T>;
 
     /** True if this node is a group and the group is the bottom level in the tree */
     public leafGroup: boolean;
@@ -141,14 +141,14 @@ export class RowNode implements IEventEmitter {
     public stub: boolean;
 
     /** All user provided nodes */
-    public allLeafChildren: RowNode[];
+    public allLeafChildren: RowNode<T>[];
 
     /** Groups only - Children of this group */
-    public childrenAfterGroup: RowNode[];
+    public childrenAfterGroup: RowNode<T>[];
     /** Groups only - Filtered children of this group */
-    public childrenAfterFilter: RowNode[];
+    public childrenAfterFilter: RowNode<T>[];
     /** Groups only - Sorted children of this group */
-    public childrenAfterSort: RowNode[];
+    public childrenAfterSort: RowNode<T>[];
     /** Groups only - Number of children and grand children */
     public allChildrenCount: number | null;
 
@@ -161,7 +161,7 @@ export class RowNode implements IEventEmitter {
     /** Groups only - True if group is expanded, otherwise false */
     public expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
-    public sibling: RowNode;
+    public sibling: RowNode<T>;
 
     /** The height, in pixels, of this row */
     public rowHeight: number;
@@ -181,7 +181,7 @@ export class RowNode implements IEventEmitter {
      * a copy where daemon=true. */
     public daemon: boolean;
 
-    /** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
+    /** True by default - can be overridden via gridOptions.isRowSelectable(RowNode<T>) */
     public selectable = true;
 
     /** Used by the value service, stores values for a particular change detection turn. */
@@ -198,7 +198,7 @@ export class RowNode implements IEventEmitter {
     private selected = false;
     private eventService: EventService;
 
-    public setData(data: any): void {
+    public setData(data: T): void {
         const oldData = this.data;
         this.data = data;
 
@@ -208,12 +208,12 @@ export class RowNode implements IEventEmitter {
 
         this.checkRowSelectable();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
+        const event: DataChangedEvent<T> = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
-    // so if we show / hide the detail, the same detail rowNode is used. so we need to keep the data
+    // so if we show / hide the detail, the same detail RowNode<T> is used. so we need to keep the data
     // in sync, otherwise expand/collapse of the detail would still show the old values.
     private updateDataOnDetailNode(): void {
         if (this.detailNode) {
@@ -221,7 +221,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    private createDataChangedEvent(newData: any, oldData: any, update: boolean): DataChangedEvent {
+    private createDataChangedEvent(newData: any, oldData: any, update: boolean): DataChangedEvent<T> {
         return {
             type: RowNode.EVENT_DATA_CHANGED,
             node: this,
@@ -231,7 +231,7 @@ export class RowNode implements IEventEmitter {
         };
     }
 
-    private createLocalRowEvent(type: string): RowNodeEvent {
+    private createLocalRowEvent(type: string): RowNodeEvent<T> {
         return {
             type: type,
             node: this
@@ -253,7 +253,7 @@ export class RowNode implements IEventEmitter {
 
         this.updateDataOnDetailNode();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
+        const event: DataChangedEvent<T> = this.createDataChangedEvent(data, oldData, true);
         this.dispatchLocalEvent(event);
     }
 
@@ -267,8 +267,8 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    private createDaemonNode(): RowNode {
-        const oldNode = new RowNode();
+    private createDaemonNode(): RowNode<T> {
+        const oldNode = new RowNode<T>();
         this.context.wireBean(oldNode);
         // just copy the id and data, this is enough for the node to be used
         // in the selection controller (the selection controller is the only
@@ -294,7 +294,7 @@ export class RowNode implements IEventEmitter {
 
         this.checkRowSelectable();
 
-        const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
+        const event: DataChangedEvent<T> = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
     }
 
@@ -322,7 +322,7 @@ export class RowNode implements IEventEmitter {
             if (this.data) {
                 this.id = getRowNodeId(this.data);
             } else {
-                // this can happen if user has set blank into the rowNode after the row previously
+                // this can happen if user has set blank into the RowNode<T> after the row previously
                 // having data. this happens in virtual page row model, when data is delete and
                 // the page is refreshed.
                 this.id = undefined;
@@ -441,7 +441,7 @@ export class RowNode implements IEventEmitter {
         this.mainEventService.dispatchEvent(event);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.gridApi.redrawRows({rowNodes: [this]});
+            this.gridApi.redrawRows({ rowNodes: [this] });
         }
     }
 
@@ -517,7 +517,7 @@ export class RowNode implements IEventEmitter {
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: any): void {
-        const cellChangedEvent: CellChangedEvent = {
+        const cellChangedEvent: CellChangedEvent<T> = {
             type: RowNode.EVENT_CELL_CHANGED,
             node: this,
             column: column,
@@ -543,7 +543,7 @@ export class RowNode implements IEventEmitter {
         return this.selected;
     }
 
-    public depthFirstSearch(callback: (rowNode: RowNode) => void): void {
+    public depthFirstSearch(callback: (rowNode: RowNode<T>) => void): void {
         if (this.childrenAfterGroup) {
             this.childrenAfterGroup.forEach(child => child.depthFirstSearch(callback));
         }
@@ -730,7 +730,7 @@ export class RowNode implements IEventEmitter {
         return updatedCount;
     }
 
-    public isParentOfNode(potentialParent: RowNode): boolean {
+    public isParentOfNode(potentialParent: RowNode<T>): boolean {
         let parentNode = this.parent;
         while (parentNode) {
             if (parentNode === potentialParent) {
@@ -793,15 +793,15 @@ export class RowNode implements IEventEmitter {
         this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_LEAVE));
     }
 
-    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode {
-        let currentRowNode: RowNode = this;
+    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode<T> {
+        let currentRowNode: RowNode<T> = this;
 
         // if we are hiding groups, then if we are the first child, of the first child,
         // all the way up to the column we are interested in, then we show the group cell.
 
         let isCandidate = true;
         let foundFirstChildPath = false;
-        let nodeToSwapIn: RowNode;
+        let nodeToSwapIn: RowNode<T>;
 
         while (isCandidate && !foundFirstChildPath) {
 

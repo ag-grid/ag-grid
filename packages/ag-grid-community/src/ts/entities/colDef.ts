@@ -39,9 +39,9 @@ export interface AbstractColDef {
     tooltipComponentParams?: any;
 }
 
-export interface ColGroupDef extends AbstractColDef {
+export interface ColGroupDef<T> extends AbstractColDef {
     /** Columns in this group */
-    children: (ColDef | ColGroupDef)[];
+    children: (ColDef<T> | ColGroupDef<T>)[];
     /** Group ID */
     groupId?: string;
     /** Open by Default */
@@ -63,7 +63,7 @@ export interface IAggFunc {
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. PLEASE!*
  ****************************************************************/
-export interface ColDef extends AbstractColDef {
+export interface ColDef<T> extends AbstractColDef {
 
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
@@ -105,13 +105,13 @@ export interface ColDef extends AbstractColDef {
     tooltipValueGetter?: (params: ITooltipParams) => string;
 
     /** Expression or function to get the cells value. */
-    valueGetter?: ((params: ValueGetterParams) => any) | string;
+    valueGetter?: ((params: ValueGetterParams<T>) => any) | string;
 
     /** Expression or function to get the cells value for filtering. */
-    filterValueGetter?: ((params: ValueGetterParams) => any) | string;
+    filterValueGetter?: ((params: ValueGetterParams<T>) => any) | string;
 
     /** If not using a field, then this puts the value into the cell */
-    valueSetter?: ((params: ValueSetterParams) => boolean) | string;
+    valueSetter?: ((params: ValueSetterParams<T>) => boolean) | string;
 
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
@@ -130,7 +130,7 @@ export interface ColDef extends AbstractColDef {
     autoHeight?: boolean;
 
     /** Class to use for the cell. Can be string, array of strings, or function. */
-    cellClass?: string | string[] | ((cellClassParams: CellClassParams) => string | string[]);
+    cellClass?: string | string[] | ((cellClassParams: CellClassParams<T>) => string | string[]);
 
     /** An object of css values. Or a function returning an object of css values. */
     cellStyle?: {} | ((params: any) => {});
@@ -153,12 +153,12 @@ export interface ColDef extends AbstractColDef {
     pinnedRowCellRendererParams?: any;
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    valueFormatter?: (params: ValueFormatterParams) => string | string;
+    valueFormatter?: (params: ValueFormatterParams<T>) => string | string;
     /** A function to format a pinned row value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    pinnedRowValueFormatter?: (params: ValueFormatterParams) => string | string;
+    pinnedRowValueFormatter?: (params: ValueFormatterParams<T>) => string | string;
 
     /** Gets called after editing, converts the value in the cell. */
-    valueParser?: (params: ValueParserParams) => any | string;
+    valueParser?: (params: ValueParserParams<T>) => any | string;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
@@ -179,7 +179,7 @@ export interface ColDef extends AbstractColDef {
     pivot?: boolean;
 
     /** Comparator function for custom sorting. */
-    comparator?: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number;
+    comparator?: (valueA: any, valueB: any, nodeA: RowNode<T>, nodeB: RowNode<T>, isInverted: boolean) => number;
 
     /** Comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed. */
     equals?: (valueA: any, valueB: any) => boolean;
@@ -203,7 +203,7 @@ export interface ColDef extends AbstractColDef {
     dndSource?: boolean | ((params: any) => boolean);
 
     /** For native drag and drop, set to true to allow custom onRowDrag processing */
-    dndSourceOnRowDrag?: ((params: {rowNode: RowNode, dragEvent: DragEvent}) => void);
+    dndSourceOnRowDrag?: ((params: {rowNode: RowNode<unknown>, dragEvent: DragEvent}) => void);
 
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
@@ -252,7 +252,7 @@ export interface ColDef extends AbstractColDef {
     suppressAutoSize?: boolean;
 
     /** Allows user to suppress certain keyboard events */
-    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams<T>) => boolean;
 
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;
@@ -264,20 +264,20 @@ export interface ColDef extends AbstractColDef {
     enableValue?: boolean;
 
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
-    editable?: boolean | IsColumnFunc;
+    editable?: boolean | IsColumnFunc<T>;
 
-    colSpan?: (params: ColSpanParams) => number;
+    colSpan?: (params: ColSpanParams<T>) => number;
 
-    rowSpan?: (params: RowSpanParams) => number;
+    rowSpan?: (params: RowSpanParams<T>) => number;
 
     /** Set to true if this col should not be allowed take new values from teh clipboard . */
-    suppressPaste?: boolean | IsColumnFunc;
+    suppressPaste?: boolean | IsColumnFunc<T>;
 
     /** Set to tru if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
-    suppressNavigable?: boolean | IsColumnFunc;
+    suppressNavigable?: boolean | IsColumnFunc<T>;
 
     /** To create the quick filter text for this column, if toString is not good enough on the value. */
-    getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
+    getQuickFilterText?: (params: GetQuickFilterTextParams<T>) => string;
 
     /** Callbacks for editing. See editing section for further details.
      * Return true if the update was successful, or false if not.
@@ -324,7 +324,7 @@ export interface ColDef extends AbstractColDef {
     enableCellChangeFlash?: boolean;
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
-    pivotValueColumn?: Column | null;
+    pivotValueColumn?: Column<T> | null;
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
@@ -349,79 +349,79 @@ export interface ColDef extends AbstractColDef {
     fillOperation?: string;
 }
 
-export interface IsColumnFunc {
-    (params: IsColumnFuncParams): boolean;
+export interface IsColumnFunc<T> {
+    (params: IsColumnFuncParams<T>): boolean;
 }
 
-export interface IsColumnFuncParams {
-    node: RowNode;
+export interface IsColumnFuncParams<T> {
+    node: RowNode<T>;
     data: any;
-    column: Column;
-    colDef: ColDef;
+    column: Column<T>;
+    colDef: ColDef<T>;
     context: any;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
 }
 
-export interface GetQuickFilterTextParams {
+export interface GetQuickFilterTextParams<T> {
     value: any;
-    node: RowNode;
+    node: RowNode<T>;
     data: any;
-    column: Column;
-    colDef: ColDef;
+    column: Column<T>;
+    colDef: ColDef<T>;
     context: any;
 }
 
-export interface BaseColDefParams {
-    node: RowNode;
+export interface BaseColDefParams<T> {
+    node: RowNode<T>;
     data: any;
-    colDef: ColDef;
-    column: Column;
+    colDef: ColDef<T>;
+    column: Column<T>;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
     context: any;
 }
 
-export interface BaseWithValueColDefParams extends BaseColDefParams {
+export interface BaseWithValueColDefParams<T> extends BaseColDefParams<T> {
     value: any;
 }
 
-export interface ValueGetterParams extends BaseColDefParams {
+export interface ValueGetterParams<T> extends BaseColDefParams<T> {
     getValue: (field: string) => any;
 }
 
-export interface NewValueParams extends BaseColDefParams {
+export interface NewValueParams<T> extends BaseColDefParams<T> {
     oldValue: any;
     newValue: any;
 }
 
-export interface ValueSetterParams extends NewValueParams {
+export interface ValueSetterParams<T> extends NewValueParams<T> {
 }
 
-export interface ValueParserParams extends NewValueParams {
+export interface ValueParserParams<T> extends NewValueParams<T> {
 }
 
-export interface ValueFormatterParams extends BaseWithValueColDefParams {
+export interface ValueFormatterParams<T> extends BaseWithValueColDefParams<T> {
 }
 
-export interface ColSpanParams extends BaseColDefParams {
+export interface ColSpanParams<T> extends BaseColDefParams<T> {
 }
 
-export interface RowSpanParams extends BaseColDefParams {
+export interface RowSpanParams<T> extends BaseColDefParams<T> {
 }
 
-export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
+export interface SuppressKeyboardEventParams<T> extends IsColumnFuncParams<T> {
     // the keyboard event the grid received
     event: KeyboardEvent;
     // whether the cell is editing or not
     editing: boolean;
 }
 
-export interface CellClassParams {
+export interface CellClassParams<T> {
     value: any;
     data: any;
-    node: RowNode;
-    colDef: ColDef;
+    node: RowNode<T>;
+    colDef: ColDef<T>;
     rowIndex: number;
     $scope: any;
     api: GridApi;

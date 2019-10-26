@@ -83,7 +83,7 @@ import { ChartOptions, ChartType } from "../interfaces/iChartOptions";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
-export interface GridOptions {
+export interface GridOptions<T> {
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. PLEASE!*
@@ -156,7 +156,7 @@ export interface GridOptions {
     suppressClickEdit?: boolean;
 
     /** Allows user to suppress certain keyboard events */
-    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams<T>) => boolean;
 
     stopEditingWhenGridLosesFocus?: boolean;
     debug?: boolean;
@@ -277,8 +277,8 @@ export interface GridOptions {
     // cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};
     /* a map of strings (cellEditor keys) to cellEditors */
     // cellEditors?: {[key: string]: {new(): ICellEditor}};
-    defaultColGroupDef?: ColGroupDef;
-    defaultColDef?: ColDef;
+    defaultColGroupDef?: ColGroupDef<T>;
+    defaultColDef?: ColDef<T>;
     defaultExportParams?: CsvExportParams;
 
     /****************************************************************
@@ -298,8 +298,8 @@ export interface GridOptions {
     groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
     /** @deprecated in v11.0 substituted by autoGroupColumnDef */
-    groupColumnDef?: ColDef;
-    autoGroupColumnDef?: ColDef;
+    groupColumnDef?: ColDef<T>;
+    autoGroupColumnDef?: ColDef<T>;
     forPrint?: boolean;
     enableOldSetFilterModel?: boolean;
     enableCharts?: boolean;
@@ -314,8 +314,8 @@ export interface GridOptions {
     rowClass?: string | string[];
     groupDefaultExpanded?: number;
     /** @deprecated slaveGrids, replace with alignedGrids */
-    slaveGrids?: GridOptions[];
-    alignedGrids?: GridOptions[];
+    slaveGrids?: GridOptions<T>[];
+    alignedGrids?: GridOptions<T>[];
     rowSelection?: string;
     rowDeselection?: boolean;
     rowMultiSelectWithClick?: boolean;
@@ -345,8 +345,8 @@ export interface GridOptions {
     /** @deprecated */
     showToolPanel?: boolean;
     sideBar?: SideBarDef | string | boolean;
-    columnDefs?: (ColDef | ColGroupDef)[];
-    columnTypes?: { [key: string]: ColDef };
+    columnDefs?: (ColDef<T> | ColGroupDef<T>)[];
+    columnTypes?: { [key: string]: ColDef<T> };
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;
     serverSideDatasource?: IServerSideDatasource;
@@ -379,7 +379,7 @@ export interface GridOptions {
 
     isExternalFilterPresent?(): boolean;
 
-    doesExternalFilterPass?(node: RowNode): boolean;
+    doesExternalFilterPass?(node: RowNode<T>): boolean;
 
     getRowStyle?: Function;
     getRowClass?: (params: any) => (string | string[]);
@@ -387,10 +387,10 @@ export interface GridOptions {
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
-    navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
-    tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
+    navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition<T>;
+    tabToNextCell?: (params: TabToNextCellParams) => CellPosition<T>;
     getDocument?: () => Document;
-    defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
+    defaultGroupSortComparator?: (nodeA: RowNode<T>, nodeB: RowNode<T>) => number;
 
     loadingCellRenderer?: { new(): ICellRenderer } | string;
     loadingCellRendererFramework?: any;
@@ -406,11 +406,11 @@ export interface GridOptions {
     fullWidthCellRendererFramework?: any;
     fullWidthCellRendererParams?: any;
 
-    isFullWidthCell?(rowNode: RowNode): boolean;
+    isFullWidthCell?(rowNode: RowNode<T>): boolean;
 
-    groupRowAggNodes?(nodes: RowNode[]): any;
+    groupRowAggNodes?(nodes: RowNode<T>[]): any;
 
-    getBusinessKeyForNode?(node: RowNode): string;
+    getBusinessKeyForNode?(node: RowNode<T>): string;
 
     /** @deprecated */
     getNodeChildDetails?: GetNodeChildDetails;
@@ -436,11 +436,11 @@ export interface GridOptions {
 
     processCellFromClipboard?(params: ProcessCellForExportParams): any;
 
-    processSecondaryColDef?(colDef: ColDef): void;
+    processSecondaryColDef?(colDef: ColDef<T>): void;
 
-    processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
+    processSecondaryColGroupDef?(colGroupDef: ColGroupDef<T>): void;
 
-    postSort?(nodes: RowNode[]): void;
+    postSort?(nodes: RowNode<T>[]): void;
 
     processChartOptions?(params: ProcessChartOptionsParams): ChartOptions;
 
@@ -598,8 +598,8 @@ export interface FillOperationParams {
     columnApi: ColumnApi;
     context: any;
     direction: string; // up, down, left or right
-    column?: Column; // only present if up / down
-    rowNode?: RowNode; // only present if left / right
+    column?: Column<T>; // only present if up / down
+    rowNode?: RowNode<T>; // only present if left / right
 }
 
 export interface GetDataPath {
