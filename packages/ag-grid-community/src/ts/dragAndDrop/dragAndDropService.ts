@@ -10,27 +10,28 @@ import { _ } from "../utils";
 
 export enum DragSourceType { ToolPanel, HeaderCell, RowDrag }
 
-export interface DragItem {
+// TODO: split into two types, what would be the tag?
+export interface DragItem<T> {
     // if moving a row, the, this contains the row node
-    rowNode?: RowNode;
+    rowNode?: RowNode<T>;
     // if moving columns, this contains the columns and the visible state
-    columns?: Column[];
+    columns?: Column<T>[];
     visibleState?: {[key: string]: boolean};
 }
 
-export interface DragSource {
+export interface DragSource<T> {
     /** So the drop target knows what type of event it is, useful for columns,
      * we we re-ordering or moving dropping from toolPanel */
     type: DragSourceType;
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    dragItemCallback: () => DragItem;
+    dragItemCallback: () => DragItem<T>;
     /** This name appears in the ghost icon when dragging */
     dragItemName: string | null;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
-    dragSourceDropTarget?: DropTarget;
+    dragSourceDropTarget?: DropTarget<T>;
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number;
     /** Callback for drag started */
@@ -39,7 +40,7 @@ export interface DragSource {
     dragStopped?: () => void;
 }
 
-export interface DropTarget {
+export interface DropTarget<T> {
     /** The main container that will get the drop. */
     getContainer(): HTMLElement;
     /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
@@ -51,37 +52,37 @@ export interface DropTarget {
     isInterestedIn(type: DragSourceType): boolean;
 
     /** Callback for when drag enters */
-    onDragEnter?(params: DraggingEvent): void;
+    onDragEnter?(params: DraggingEvent<T>): void;
     /** Callback for when drag leaves */
-    onDragLeave?(params: DraggingEvent): void;
+    onDragLeave?(params: DraggingEvent<T>): void;
     /** Callback for when dragging */
-    onDragging?(params: DraggingEvent): void;
+    onDragging?(params: DraggingEvent<T>): void;
     /** Callback for when drag stops */
-    onDragStop?(params: DraggingEvent): void;
+    onDragStop?(params: DraggingEvent<T>): void;
 }
 
 export enum VDirection {Up, Down}
 
 export enum HDirection {Left, Right}
 
-export interface DraggingEvent {
+export interface DraggingEvent<T> {
     event: MouseEvent;
     x: number;
     y: number;
     vDirection: VDirection;
     hDirection: HDirection;
-    dragSource: DragSource;
-    dragItem: DragItem;
+    dragSource: DragSource<T>;
+    dragItem: DragItem<T>;
     fromNudge: boolean;
 }
 
 @Bean('dragAndDropService')
-export class DragAndDropService {
+export class DragAndDropService<T> {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('environment') private environment: Environment;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnController') private columnController: ColumnController<T>;
 
     public static ICON_PINNED = 'pinned';
     public static ICON_ADD = 'add';
@@ -102,19 +103,19 @@ export class DragAndDropService {
 
     private logger: Logger;
 
-    private dragSourceAndParamsList: {params: DragListenerParams, dragSource: DragSource}[] = [];
+    private dragSourceAndParamsList: {params: DragListenerParams, dragSource: DragSource<T>}[] = [];
 
-    private dragItem: DragItem;
+    private dragItem: DragItem<T>;
     private eventLastTime: MouseEvent;
-    private dragSource: DragSource;
+    private dragSource: DragSource<T>;
     private dragging: boolean;
 
     private eGhost: HTMLElement;
     private eGhostParent: HTMLElement;
     private eGhostIcon: HTMLElement;
 
-    private dropTargets: DropTarget[] = [];
-    private lastDropTarget: DropTarget;
+    private dropTargets: DropTarget<T>[] = [];
+    private lastDropTarget: DropTarget<T>;
 
     private ePinnedIcon: HTMLElement;
     private ePlusIcon: HTMLElement;
@@ -156,7 +157,7 @@ export class DragAndDropService {
         }
     }
 
-    public addDragSource(dragSource: DragSource, allowTouch = false): void {
+    public addDragSource(dragSource: DragSource<T>, allowTouch = false): void {
         const params: DragListenerParams = {
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
@@ -170,7 +171,7 @@ export class DragAndDropService {
         this.dragService.addDragSource(params, allowTouch);
     }
 
-    public removeDragSource(dragSource: DragSource): void {
+    public removeDragSource(dragSource: DragSource<T>): void {
         const sourceAndParams = _.find(this.dragSourceAndParamsList, item => item.dragSource === dragSource);
         if (sourceAndParams) {
             this.dragService.removeDragSource(sourceAndParams.params);
@@ -192,7 +193,7 @@ export class DragAndDropService {
         }
     }
 
-    private onDragStart(dragSource: DragSource, mouseEvent: MouseEvent): void {
+    private onDragStart(dragSource: DragSource<T>, mouseEvent: MouseEvent): void {
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
@@ -244,7 +245,7 @@ export class DragAndDropService {
         }
     }
 
-    private enterDragTargetIfExists(dropTarget: DropTarget, mouseEvent: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): void {
+    private enterDragTargetIfExists(dropTarget: DropTarget<T>, mouseEvent: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): void {
         if (!dropTarget) { return; }
 
         const dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
@@ -260,7 +261,7 @@ export class DragAndDropService {
         this.setGhostIcon(null);
     }
 
-    private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[] {
+    private getAllContainersFromDropTarget(dropTarget: DropTarget<T>): HTMLElement[] {
         let containers = [dropTarget.getContainer()];
         const secondaryContainers = dropTarget.getSecondaryContainers ? dropTarget.getSecondaryContainers() : null;
         if (secondaryContainers) {
@@ -270,7 +271,7 @@ export class DragAndDropService {
     }
 
     // checks if the mouse is on the drop target. it checks eContainer and eSecondaryContainers
-    private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget): boolean {
+    private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget<T>): boolean {
         const allContainers = this.getAllContainersFromDropTarget(dropTarget);
 
         let mouseOverTarget: boolean = false;
@@ -300,7 +301,7 @@ export class DragAndDropService {
         }
     }
 
-    public addDropTarget(dropTarget: DropTarget) {
+    public addDropTarget(dropTarget: DropTarget<T>) {
         this.dropTargets.push(dropTarget);
     }
 
@@ -324,14 +325,14 @@ export class DragAndDropService {
         }
     }
 
-    public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): DraggingEvent {
+    public createDropTargetEvent(dropTarget: DropTarget<T>, event: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): DraggingEvent<T> {
 
         // localise x and y to the target component
         const rect = dropTarget.getContainer().getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        const dropTargetEvent: DraggingEvent = {
+        const dropTargetEvent: DraggingEvent<T> = {
             event: event,
             x: x,
             y: y,

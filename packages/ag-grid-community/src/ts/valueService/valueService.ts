@@ -11,11 +11,11 @@ import { ValueCache } from "./valueCache";
 import { _ } from "../utils";
 
 @Bean('valueService')
-export class ValueService {
+export class ValueService<T> {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnController') private columnController: ColumnController<T>;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('valueCache') private valueCache: ValueCache;
 
@@ -29,8 +29,8 @@ export class ValueService {
         this.initialised = true;
     }
 
-    public getValue(column: Column,
-                    rowNode?: RowNode | null,
+    public getValue<T>(column: Column<T>,
+                    rowNode?: RowNode<T> | null,
                     forFilter = false,
                     ignoreAggData = false): any {
 
@@ -84,7 +84,8 @@ export class ValueService {
         return result;
     }
 
-    public setValue(rowNode: RowNode, colKey: string | Column, newValue: any): void {
+    // TODO: is the newValue T or any/unknown?
+    public setValue(rowNode: RowNode<T>, colKey: string | Column<T>, newValue: T): void {
         const column = this.columnController.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
@@ -94,7 +95,7 @@ export class ValueService {
         // the user should not be trying to paste into group rows
         const data = rowNode.data;
         if (_.missing(data)) {
-            rowNode.data = {};
+            rowNode.data = {} as T;
         }
 
         // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
@@ -107,7 +108,7 @@ export class ValueService {
             return;
         }
 
-        const params: NewValueParams = {
+        const params: NewValueParams<T> = {
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
@@ -157,7 +158,7 @@ export class ValueService {
             setTimeout(() => onCellValueChanged(params), 0);
         }
 
-        const event: CellValueChangedEvent = {
+        const event: CellValueChangedEvent<T> = {
             type: Events.EVENT_CELL_VALUE_CHANGED,
             event: null,
             rowIndex: rowNode.rowIndex,
@@ -202,8 +203,8 @@ export class ValueService {
         return !valuesAreSame;
     }
 
-    private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
-        const params: ValueGetterParams = {
+    private executeFilterValueGetter<T>(valueGetter: string | Function, data: any, column: Column<T>, rowNode: RowNode<T>): any {
+        const params: ValueGetterParams<T> = {
             data: data,
             node: rowNode,
             column: column,
@@ -217,7 +218,7 @@ export class ValueService {
         return this.expressionService.evaluate(valueGetter, params);
     }
 
-    private executeValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: RowNode): any {
+    private executeValueGetter<T>(valueGetter: string | Function, data: any, column: Column<T>, rowNode: RowNode<T>): any {
 
         const colId = column.getId();
 
@@ -228,7 +229,7 @@ export class ValueService {
             return valueFromCache;
         }
 
-        const params: ValueGetterParams = {
+        const params: ValueGetterParams<T> = {
             data: data,
             node: rowNode,
             column: column,
@@ -247,7 +248,7 @@ export class ValueService {
         return result;
     }
 
-    private getValueCallback(node: RowNode, field: string | Column): any {
+    private getValueCallback(node: RowNode<T>, field: string | Column<T>): any {
         const otherColumn = this.columnController.getPrimaryColumn(field);
 
         if (otherColumn) {
@@ -258,7 +259,7 @@ export class ValueService {
     }
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
-    public getKeyForNode(col: Column, rowNode: RowNode): any {
+    public getKeyForNode<T>(col: Column<T>, rowNode: RowNode<T>): any {
         const value = this.getValue(col, rowNode);
         const keyCreator = col.getColDef().keyCreator;
 

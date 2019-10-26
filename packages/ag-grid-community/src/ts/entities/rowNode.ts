@@ -40,7 +40,7 @@ export interface DataChangedEvent<T> extends RowNodeEvent<T> {
 }
 
 export interface CellChangedEvent<T> extends RowNodeEvent<T> {
-    column: Column;
+    column: Column<T>;
     newValue: any;
 }
 
@@ -68,9 +68,10 @@ export class RowNode<T> implements IEventEmitter {
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('rowModel') private rowModel: IRowModel;
+    // TODO: Should column type parameter be different than RowNode?
+    @Autowired('columnController') private columnController: ColumnController<T>;
+    @Autowired('valueService') private valueService: ValueService<T>;
+    @Autowired('rowModel') private rowModel: IRowModel<T>;
     @Autowired('context') private context: Context;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -134,7 +135,7 @@ export class RowNode<T> implements IEventEmitter {
     /** Groups only - The field we are grouping on eg Country*/
     public field: string | null;
     /** Groups only - the row group column for this group */
-    public rowGroupColumn: Column | null;
+    public rowGroupColumn: Column<T> | null;
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: any;
     /** Used by server side row model, true if this row node is a stub */
@@ -437,7 +438,7 @@ export class RowNode<T> implements IEventEmitter {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
-        const event: RowGroupOpenedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED);
+        const event: RowGroupOpenedEvent<T> = this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED);
         this.mainEventService.dispatchEvent(event);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
@@ -445,8 +446,8 @@ export class RowNode<T> implements IEventEmitter {
         }
     }
 
-    private createGlobalRowEvent(type: string): RowEvent {
-        const event: RowGroupOpenedEvent = {
+    private createGlobalRowEvent(type: string): RowEvent<T> {
+        const event: RowGroupOpenedEvent<T> = {
             type: type,
             node: this,
             data: this.data,
@@ -470,13 +471,13 @@ export class RowNode<T> implements IEventEmitter {
     // the cell knows about the change given it's in charge of the editing.
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
-    public setDataValue(colKey: string | Column, newValue: any): void {
+    public setDataValue(colKey: string | Column<T>, newValue: T): void {
         const column = this.columnController.getPrimaryColumn(colKey);
         this.valueService.setValue(this, column, newValue);
         this.dispatchCellChangedEvent(column, newValue);
     }
 
-    public setGroupValue(colKey: string | Column, newValue: any): void {
+    public setGroupValue(colKey: string | Column<T>, newValue: any): void {
         const column = this.columnController.getGridColumn(colKey);
 
         if (_.missing(this.groupData)) {
@@ -516,7 +517,7 @@ export class RowNode<T> implements IEventEmitter {
         return this.group && _.missingOrEmpty(this.childrenAfterGroup);
     }
 
-    private dispatchCellChangedEvent(column: Column, newValue: any): void {
+    private dispatchCellChangedEvent(column: Column<T>, newValue: any): void {
         const cellChangedEvent: CellChangedEvent<T> = {
             type: RowNode.EVENT_CELL_CHANGED,
             node: this,
@@ -750,7 +751,7 @@ export class RowNode<T> implements IEventEmitter {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
         }
 
-        const event: RowSelectedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED);
+        const event: RowSelectedEvent<T> = this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED);
         this.mainEventService.dispatchEvent(event);
 
         return true;
@@ -793,7 +794,7 @@ export class RowNode<T> implements IEventEmitter {
         this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_MOUSE_LEAVE));
     }
 
-    public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode<T> {
+    public getFirstChildOfFirstChild(rowGroupColumn: Column<T> | null): RowNode<T> {
         let currentRowNode: RowNode<T> = this;
 
         // if we are hiding groups, then if we are the first child, of the first child,

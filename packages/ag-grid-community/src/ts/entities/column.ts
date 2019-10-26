@@ -398,7 +398,7 @@ export class Column<T> implements ColumnGroupChild<T>, OriginalColumnGroupChild,
         this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED, source));
     }
 
-    private createColumnEvent(type: string, source: ColumnEventType): ColumnEvent {
+    private createColumnEvent(type: string, source: ColumnEventType): ColumnEvent<T> {
         return {
             api: this.gridApi,
             columnApi: this.columnApi,

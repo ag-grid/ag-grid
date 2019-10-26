@@ -6,13 +6,13 @@ export interface RowBounds {
     rowIndex?: number;
 }
 
-export interface IRowModel {
+export interface IRowModel<T> {
 
     /** Returns the rowNode at the given index. */
-    getRow(index: number): RowNode | null;
+    getRow(index: number): RowNode<T> | null;
 
     /** Returns the rowNode for given id. */
-    getRowNode(id: string): RowNode | null;
+    getRowNode(id: string): RowNode<T> | null;
 
     /** This is legacy, not used by ag-Grid, but keeping for backward compatibility */
     getRowCount(): number;
@@ -25,7 +25,7 @@ export interface IRowModel {
     /** Returns total height of all the rows - used to size the height of the grid div that contains the rows */
     getCurrentPageHeight(): number;
     /** Returns true if the provided rowNode is in the list of rows to render */
-    isRowPresent(rowNode: RowNode): boolean;
+    isRowPresent(rowNode: RowNode<T>): boolean;
     /** Returns row top and bottom for a given row */
     getRowBounds(index: number): RowBounds;
 
@@ -39,11 +39,11 @@ export interface IRowModel {
 
     /** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then
      *  then no rows should be returned  */
-    getNodesInRangeForSelection(first: RowNode, last: RowNode): RowNode[];
+    getNodesInRangeForSelection(first: RowNode<T>, last: RowNode<T>): RowNode<T>[];
 
     /** Iterate through each node. What this does depends on the model type. For clientSide, goes through
      * all nodes. For pagination, goes through current page. For virtualPage, goes through what's loaded in memory. */
-    forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
+    forEachNode(callback: (rowNode: RowNode<T>, index: number) => void): void;
 
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
      * their own implementation of the models in the future. */

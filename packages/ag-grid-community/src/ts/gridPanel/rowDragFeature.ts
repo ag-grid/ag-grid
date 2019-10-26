@@ -14,11 +14,11 @@ import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants";
 
-export class RowDragFeature implements DropTarget {
+export class RowDragFeature<T> implements DropTarget<T> {
 
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService<T>;
     // this feature is only created when row model is ClientSide, so we can type it as ClientSide
-    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowModel') private rowModel: IRowModel<T>;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Optional('rangeController') private rangeController: IRangeController;
@@ -36,7 +36,7 @@ export class RowDragFeature implements DropTarget {
     private movingIntervalId: number;
     private intervalCount: number;
 
-    private lastDraggingEvent: DraggingEvent;
+    private lastDraggingEvent: DraggingEvent<T>;
 
     constructor(eContainer: HTMLElement, gridPanel: GridPanel) {
         this.eContainer = eContainer;
@@ -62,7 +62,7 @@ export class RowDragFeature implements DropTarget {
         return DragAndDropService.ICON_MOVE;
     }
 
-    public onDragEnter(draggingEvent: DraggingEvent): void {
+    public onDragEnter(draggingEvent: DraggingEvent<T>): void {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
@@ -71,11 +71,11 @@ export class RowDragFeature implements DropTarget {
         this.onEnterOrDragging(draggingEvent);
     }
 
-    public onDragging(draggingEvent: DraggingEvent): void {
+    public onDragging(draggingEvent: DraggingEvent<T>): void {
         this.onEnterOrDragging(draggingEvent);
     }
 
-    private onEnterOrDragging(draggingEvent: DraggingEvent): void {
+    private onEnterOrDragging(draggingEvent: DraggingEvent<T>): void {
         // this event is fired for enter and move
         this.dispatchEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
 
@@ -90,7 +90,7 @@ export class RowDragFeature implements DropTarget {
         this.checkCenterForScrolling(pixel);
     }
 
-    private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
+    private doManagedDrag(draggingEvent: DraggingEvent<T>, pixel: number): void {
         const rowNode = draggingEvent.dragItem.rowNode;
         const rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
 
@@ -171,7 +171,7 @@ export class RowDragFeature implements DropTarget {
     // i tried using generics here with this:
     //     public createEvent<T extends RowDragEvent>(type: string, clazz: {new(): T; }, draggingEvent: DraggingEvent) {
     // but it didn't work - i think it's because it only works with classes, and not interfaces, (the events are interfaces)
-    public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
+    public dispatchEvent(type: string, draggingEvent: DraggingEvent<T>): void {
 
         const yNormalised = this.normaliseForScroll(draggingEvent.y);
 
@@ -197,7 +197,7 @@ export class RowDragFeature implements DropTarget {
                 break;
         }
 
-        const event: RowDragEvent = {
+        const event: RowDragEvent<T> = {
             type: type,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
@@ -212,17 +212,17 @@ export class RowDragFeature implements DropTarget {
         this.eventService.dispatchEvent(event);
     }
 
-    public onDragLeave(draggingEvent: DraggingEvent): void {
+    public onDragLeave(draggingEvent: DraggingEvent<T>): void {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
     }
 
-    public onDragStop(draggingEvent: DraggingEvent): void {
+    public onDragStop(draggingEvent: DraggingEvent<T>): void {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
     }
 
-    private stopDragging(draggingEvent: DraggingEvent): void {
+    private stopDragging(draggingEvent: DraggingEvent<T>): void {
         this.ensureIntervalCleared();
         draggingEvent.dragItem.rowNode.setDragging(false);
     }
