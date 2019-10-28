@@ -2003,6 +2003,11 @@ export class CellComp extends Component {
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
             this.getGui().focus();
+            // Fix for AG-3465 "IE11 - After editing cell's content, selection doesn't go one cell below on enter"
+            // IE can fail to focus the cell after the first call to focus(), and needs a second call
+            if (!document.activeElement || document.activeElement === document.body) {
+                this.getGui().focus();
+            }
         }
 
         // if another cell was focused, and we are editing, then stop editing
