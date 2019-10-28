@@ -157,7 +157,7 @@ export class Rect extends Path {
         }
     }
 
-    readonly getBBox = () => {
+    getBBox(): BBox {
         return new BBox(
             this.x,
             this.y,

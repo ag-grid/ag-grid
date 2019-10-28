@@ -111,7 +111,7 @@ export class Sector extends Shape {
         return this._angleOffset;
     }
 
-    readonly getBBox = (): BBox => {
+    getBBox(): BBox {
         const radius = this.outerRadius;
         return new BBox(
             this.centerX - radius,

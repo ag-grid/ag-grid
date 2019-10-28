@@ -13,7 +13,7 @@ export class Group extends Node {
         return true;
     }
 
-    readonly getBBox = (): BBox => {
+    getBBox(): BBox {
         let left = Infinity;
         let right = -Infinity;
         let top = Infinity;

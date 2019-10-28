@@ -151,7 +151,7 @@ export class Arc extends Path {
         }
     }
 
-    readonly getBBox = (): BBox => {
+    getBBox(): BBox {
         // Only works with full arcs (circles) and untransformed ellipses.
         return new BBox(
             this.centerX - this.radiusX,
