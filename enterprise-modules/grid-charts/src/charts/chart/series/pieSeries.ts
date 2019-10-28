@@ -6,7 +6,7 @@ import { DropShadow } from "../../scene/dropShadow";
 import { LinearScale } from "../../scale/linearScale";
 import palette from "../palettes";
 import { Sector } from "../../scene/shape/sector";
-import { Series, SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, PolarTooltipRendererParams } from "./series";
 import { Label } from "../label";
 import { PointerEvents } from "../../scene/node";
 import { normalizeAngle180, toRadians } from "../../util/angle";
@@ -16,7 +16,6 @@ import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
 import { Caption } from "../../caption";
 import { Shape } from "../../scene/shape/shape";
-import { PieTooltipRendererParams } from "../../chartOptions";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     index: number;
@@ -32,6 +31,11 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
         textAlign: CanvasTextAlign,
         textBaseline: CanvasTextBaseline
     };
+}
+
+export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
+    labelKey?: string;
+    labelName?: string;
 }
 
 enum PieSeriesNodeTag {

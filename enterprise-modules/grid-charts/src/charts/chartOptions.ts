@@ -1,3 +1,17 @@
+import { BarTooltipRendererParams } from "./chart/series/barSeries";
+import { LineTooltipRendererParams } from "./chart/series/lineSeries";
+import { AreaTooltipRendererParams } from "./chart/series/areaSeries";
+import { ScatterTooltipRendererParams } from "./chart/series/scatterSeries";
+import { PieTooltipRendererParams } from "./chart/series/pieSeries";
+
+export {
+    BarTooltipRendererParams,
+    LineTooltipRendererParams,
+    AreaTooltipRendererParams,
+    ScatterTooltipRendererParams,
+    PieTooltipRendererParams
+};
+
 export type CartesianSeriesType = "line" | "scatter" | "bar" | "area";
 export type PolarSeriesType = "pie";
 export type SeriesType = CartesianSeriesType | PolarSeriesType;
@@ -165,14 +179,6 @@ export interface TooltipRendererParams {
     color?: string;
 }
 
-export interface CartesianTooltipRendererParams extends TooltipRendererParams {
-    xKey: string;
-    xName?: string;
-
-    yKey: string;
-    yName?: string;
-}
-
 export interface BarSeriesOptions extends SeriesOptions {
     field?: BarSeriesFieldOptions;
     grouped?: boolean;
@@ -195,9 +201,6 @@ export interface BarSeriesFieldOptions {
 
 export interface BarSeriesLabelOptions extends SeriesLabelOptions {
     formatter?: (params: { value: number }) => string;
-}
-
-export interface BarTooltipRendererParams extends CartesianTooltipRendererParams {
 }
 
 export interface LineSeriesOptions extends SeriesOptions {
@@ -229,9 +232,6 @@ export interface LineSeriesFieldOptions {
     yName?: string;
 }
 
-export interface LineTooltipRendererParams extends CartesianTooltipRendererParams {
-}
-
 export interface ScatterSeriesOptions extends SeriesOptions {
     title?: string;
     field?: ScatterSeriesFieldOptions;
@@ -260,14 +260,6 @@ export interface ScatterSeriesFieldOptions {
     labelName?: string;
 }
 
-export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
-    sizeKey?: string;
-    sizeName?: string;
-
-    labelKey?: string;
-    labelName?: string;
-}
-
 export interface AreaSeriesOptions extends SeriesOptions {
     field?: AreaSeriesFieldOptions;
     grouped?: boolean;
@@ -286,9 +278,6 @@ export interface AreaSeriesFieldOptions {
 
     yKeys: string[];
     yNames?: string[];
-}
-
-export interface AreaTooltipRendererParams extends CartesianTooltipRendererParams {
 }
 
 export interface PieSeriesOptions extends SeriesOptions {
@@ -326,15 +315,4 @@ export interface PieSeriesCalloutOptions {
     length?: number;
     strokeWidth?: number;
     colors?: string[];
-}
-
-export interface PieTooltipRendererParams extends TooltipRendererParams {
-    angleKey: string;
-    angleName?: string;
-
-    radiusKey?: string;
-    radiusName?: string;
-
-    labelKey?: string;
-    labelName?: string;
 }

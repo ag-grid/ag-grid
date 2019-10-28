@@ -4,14 +4,13 @@ import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import palette from "../palettes";
-import { Series, SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams } from "./series";
 import { numericExtent } from "../../util/array";
 import { Color } from "../../util/color";
 import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
-import { LineTooltipRendererParams } from "../../chartOptions";
 import { Marker } from "../marker/marker";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
@@ -22,6 +21,8 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
     strokeWidth: number;
     size: number;
 }
+
+export { LineTooltipRendererParams };
 
 export class LineSeries extends Series<CartesianChart> {
 

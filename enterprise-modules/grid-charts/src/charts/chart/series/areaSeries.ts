@@ -2,7 +2,7 @@ import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
 import { DropShadow } from "../../scene/dropShadow";
-import { Series, SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams } from "./series";
 import ContinuousScale from "../../scale/continuousScale";
 import { PointerEvents } from "../../scene/node";
 import { sumPositiveValues } from "../../util/array";
@@ -12,7 +12,6 @@ import { Shape } from "../../scene/shape/shape";
 import { Path } from "../../scene/shape/path";
 import palette from "../palettes";
 import { numericExtent } from "../../util/array";
-import { AreaTooltipRendererParams } from "../../chartOptions";
 import { Marker } from "../marker/marker";
 
 interface AreaSelectionDatum {
@@ -30,6 +29,8 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
     stroke?: string;
     text?: string;
 }
+
+export { AreaTooltipRendererParams };
 
 export class AreaSeries extends Series<CartesianChart> {
     static className = 'AreaSeries';

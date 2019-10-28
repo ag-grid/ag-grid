@@ -1,13 +1,12 @@
 import { CartesianChart } from "../cartesianChart";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
-import { Series, SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, CartesianTooltipRendererParams } from "./series";
 import { numericExtent } from "../../util/array";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import linearScale from "../../scale/linearScale";
-import { ScatterTooltipRendererParams } from "../../chartOptions";
 import { Marker } from "../marker/marker";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
@@ -17,6 +16,14 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
     fill?: string;
     stroke?: string;
     strokeWidth: number;
+}
+
+export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
+    sizeKey?: string;
+    sizeName?: string;
+
+    labelKey?: string;
+    labelName?: string;
 }
 
 export class ScatterSeries extends Series<CartesianChart> {

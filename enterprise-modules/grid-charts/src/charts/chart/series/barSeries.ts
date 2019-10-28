@@ -6,7 +6,7 @@ import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
 import { BandScale } from "../../scale/bandScale";
 import { DropShadow } from "../../scene/dropShadow";
 import palette from "../palettes";
-import { HighlightStyle, Series, SeriesNodeDatum } from "./series";
+import { HighlightStyle, Series, SeriesNodeDatum, CartesianTooltipRendererParams as BarTooltipRendererParams } from "./series";
 import { Label } from "../label";
 import { PointerEvents } from "../../scene/node";
 import { sumPositiveValues } from "../../util/array";
@@ -15,7 +15,6 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { NumberAxis } from "../axis/numberAxis";
-import { BarTooltipRendererParams } from "../../chartOptions";
 
 interface SelectionDatum extends SeriesNodeDatum {
     yKey: string;
@@ -38,6 +37,8 @@ interface SelectionDatum extends SeriesNodeDatum {
         y: number
     };
 }
+
+export { BarTooltipRendererParams };
 
 export interface BarLabelFormatterParams {
     value: number;

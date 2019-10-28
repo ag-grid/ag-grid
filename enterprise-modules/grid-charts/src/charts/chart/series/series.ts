@@ -15,6 +15,28 @@ export interface SeriesNodeDatum {
     seriesDatum: any;
 }
 
+export interface TooltipRendererParams {
+    datum: any;
+    title?: string;
+    color?: string;
+}
+
+export interface CartesianTooltipRendererParams extends TooltipRendererParams {
+    xKey: string;
+    xName?: string;
+
+    yKey: string;
+    yName?: string;
+}
+
+export interface PolarTooltipRendererParams extends TooltipRendererParams {
+    angleKey: string;
+    angleName?: string;
+
+    radiusKey?: string;
+    radiusName?: string;
+}
+
 export interface HighlightStyle {
     fill?: string;
     stroke?: string;
@@ -185,6 +207,9 @@ export abstract class Series<C extends Chart> {
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     }
 
+    onDataChange?: () => {};
+    onLayoutChange?: () => {};
+
     protected _data: any[] = [];
     set data(data: any[]) {
         this._data = data;
@@ -250,12 +275,18 @@ export abstract class Series<C extends Chart> {
     abstract dehighlightNode(): void;
 
     scheduleLayout() {
+        if (this.onLayoutChange) {
+            this.onLayoutChange();
+        }
         if (this.chart) {
             this.chart.layoutPending = true;
         }
     }
 
     scheduleData() {
+        if (this.onDataChange) {
+            this.onDataChange();
+        }
         if (this.chart) {
             this.chart.dataPending = true;
         }
