@@ -339,22 +339,22 @@ export abstract class Chart {
         let titleVisible = false;
         let subtitleVisible = false;
 
-        const spacing = 5;
-        let paddingTop = 0;
+        const spacing = 10;
+        let paddingTop = spacing;
 
         if (title && title.enabled) {
             title.node.x = this.width / 2;
-            title.node.y = 10;
+            title.node.y = paddingTop;
             titleVisible = true;
-            const bbox = title.node.getBBox();
-            paddingTop += bbox ? bbox.y + bbox.height * 1.5 : 0;
+            const titleBBox = title.node.getBBox(); // make sure to set node's x/y, then getBBox
+            paddingTop = titleBBox.y + titleBBox.height;
 
             if (subtitle && subtitle.enabled) {
-                const bbox = subtitle.node.getBBox();
                 subtitle.node.x = this.width / 2;
-                subtitle.node.y = paddingTop;
+                subtitle.node.y = paddingTop + spacing;
                 subtitleVisible = true;
-                paddingTop += spacing + (bbox ? bbox.height : 0);
+                const subtitleBBox = subtitle.node.getBBox();
+                paddingTop = subtitleBBox.y + subtitleBBox.height;
             }
         }
 
