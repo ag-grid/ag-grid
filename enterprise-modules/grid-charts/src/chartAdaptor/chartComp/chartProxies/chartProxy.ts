@@ -13,7 +13,7 @@ import {
     CaptionOptions,
 } from "@ag-community/grid-core";
 import { Chart } from "../../../charts/chart/chart";
-import { Palette } from "../../../charts/chart/palettes";
+import { Palette, palettes, DefaultPalette } from "../../../charts/chart/palettes";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
@@ -96,8 +96,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     private overridePalette(chartOptions: TOptions): void {
         const palette = this.chartProxyParams.getSelectedPalette();
-        const defaultFills = palette.fills;
-        const defaultStrokes = palette.strokes;
+        const { fills: defaultFills, strokes: defaultStrokes } = palette;
         const { seriesDefaults } = chartOptions;
         const { fill: { colors: fills }, stroke: { colors: strokes } } = seriesDefaults;
         const fillsOverridden = fills !== defaultFills;

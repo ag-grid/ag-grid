@@ -15,7 +15,7 @@ import {
     IRangeController
 } from "@ag-community/grid-core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { Palette } from "../../charts/chart/palettes";
+import { Palette, DefaultPalette } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ColState {
@@ -30,8 +30,8 @@ export interface ChartModelParams {
     chartType: ChartType;
     aggFunc?: string | IAggFunc;
     cellRanges: CellRange[];
-    palettes: Palette[];
-    activePalette: number;
+    palettes: Map<DefaultPalette, Palette>;
+    activePalette: DefaultPalette;
     suppressChartRanges: boolean;
 }
 
@@ -53,8 +53,8 @@ export class ChartModel extends BeanStub {
 
     private readonly pivotChart: boolean;
     private chartType: ChartType;
-    private activePalette: number;
-    private readonly palettes: Palette[];
+    private activePalette: DefaultPalette;
+    private readonly palettes: Map<DefaultPalette, Palette>;
     private readonly suppressChartRanges: boolean;
 
     private readonly aggFunc?: string | IAggFunc;
@@ -294,13 +294,13 @@ export class ChartModel extends BeanStub {
 
     public getChartType = (): ChartType => this.chartType;
 
-    public setActivePalette(palette: number) {
+    public setActivePalette(palette: DefaultPalette) {
         this.activePalette = palette;
     }
 
-    public getActivePalette = (): number => this.activePalette;
+    public getActivePalette = (): DefaultPalette => this.activePalette;
 
-    public getPalettes = (): Palette[] => this.palettes;
+    public getPalettes = (): Map<DefaultPalette, Palette> => this.palettes;
 
     public isSuppressChartRanges = (): boolean => this.suppressChartRanges;
 

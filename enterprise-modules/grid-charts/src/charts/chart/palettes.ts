@@ -132,10 +132,17 @@ export const flat: Palette = {
 
 export default borneo;
 
-export const palettes: Palette[] = [
-    borneo,
-    material,
-    pastel,
-    bright,
-    flat
-];
+export type DefaultPalette = 'borneo' | 'material' | 'pastel' | 'bright' | 'flat';
+
+export const palettes = (function() {
+    const map = new Map<DefaultPalette, Palette>();
+
+    map.set('borneo', borneo);
+    map.set('material', material);
+    map.set('pastel', pastel);
+    map.set('bright', bright);
+    map.set('flat', flat);
+
+    return map;
+})();
+

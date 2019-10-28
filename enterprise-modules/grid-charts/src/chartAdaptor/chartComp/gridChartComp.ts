@@ -25,7 +25,7 @@ import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { Palette, palettes } from "../../charts/chart/palettes";
+import { Palette, palettes, DefaultPalette } from "../../charts/chart/palettes";
 import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
@@ -68,7 +68,7 @@ export class GridChartComp extends Component {
 
     private currentChartType: ChartType;
     private currentChartGroupingActive: boolean;
-    private currentPalette: number;
+    private currentPalette: DefaultPalette;
     private chartProxy: ChartProxy<any, any>;
 
     private readonly params: GridChartParams;
@@ -87,7 +87,7 @@ export class GridChartComp extends Component {
             cellRanges: [this.params.cellRange],
             suppressChartRanges: this.params.suppressChartRanges,
             palettes: palettes,
-            activePalette: 0
+            activePalette: 'borneo'
         };
 
         this.model = this.wireBean(new ChartModel(modelParams));
@@ -157,7 +157,7 @@ export class GridChartComp extends Component {
         this.model.setChartProxy(this.chartProxy);
     }
 
-    private getSelectedPalette = (): Palette => this.model.getPalettes()[this.model.getActivePalette()];
+    private getSelectedPalette = (): Palette => this.model.getPalettes().get(this.model.getActivePalette());
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {

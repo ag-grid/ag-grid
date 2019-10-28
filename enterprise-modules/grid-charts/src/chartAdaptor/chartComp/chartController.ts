@@ -1,6 +1,6 @@
 import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct, _, IRangeController } from "@ag-community/grid-core";
 import { ChartModel, ColState } from "./chartModel";
-import { Palette } from "../../charts/chart/palettes";
+import { Palette, DefaultPalette } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
@@ -67,15 +67,15 @@ export class ChartController extends BeanStub {
 
     public getChartType = (): ChartType => this.model.getChartType();
     public isPivotChart = () => this.model.isPivotChart();
-    public getActivePalette = (): number => this.model.getActivePalette();
-    public getPalettes = (): Palette[] => this.model.getPalettes();
+    public getActivePalette = (): DefaultPalette => this.model.getActivePalette();
+    public getPalettes = (): Map<DefaultPalette, Palette> => this.model.getPalettes();
 
     public setChartType(chartType: ChartType): void {
         this.model.setChartType(chartType);
         this.raiseChartUpdatedEvent();
     }
 
-    public setChartWithPalette(chartType: ChartType, palette: number): void {
+    public setChartWithPalette(chartType: ChartType, palette: DefaultPalette): void {
         this.model.setChartType(chartType);
         this.model.setActivePalette(palette);
         this.raiseChartUpdatedEvent();
