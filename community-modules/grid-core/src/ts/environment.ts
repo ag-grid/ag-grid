@@ -1,39 +1,49 @@
 import { Bean, Autowired } from './context/context';
-import { _ } from "./utils";
+import { _ } from './utils';
 
 const MAT_GRID_SIZE = 8;
 
-export type SASS_PROPERTIES = 'headerHeight' | 'virtualItemHeight' | 'rowHeight';
+export type SASS_PROPERTIES = 'headerHeight' | 'virtualItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 interface HardCodedSize {
     [key: string]: {
-        [key in SASS_PROPERTIES]?: number
+        [key in SASS_PROPERTIES]?: number;
     };
 }
 const FRESH_GRID_SIZE = 4;
 const BALHAM_GRID_SIZE = 4;
+const ALPINE_GRID_SIZE = 6;
 
 const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-material': {
         headerHeight: MAT_GRID_SIZE * 7,
         virtualItemHeight: MAT_GRID_SIZE * 5,
-        rowHeight: MAT_GRID_SIZE * 6
+        rowHeight: MAT_GRID_SIZE * 6,
+        chartMenuPanelWidth: 220
     },
     'ag-theme-classic': {
         headerHeight: 25,
         virtualItemHeight: FRESH_GRID_SIZE * 5,
-        rowHeight: 25
+        rowHeight: 25,
+        chartMenuPanelWidth: 220
     },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,
         virtualItemHeight: BALHAM_GRID_SIZE * 7,
-        rowHeight: BALHAM_GRID_SIZE * 7
-   }
+        rowHeight: BALHAM_GRID_SIZE * 7,
+        chartMenuPanelWidth: 220
+    },
+    'ag-theme-alpine': {
+        headerHeight: ALPINE_GRID_SIZE * 8,
+        virtualItemHeight: ALPINE_GRID_SIZE * 5,
+        rowHeight: ALPINE_GRID_SIZE * 7,
+        chartMenuPanelWidth: 240
+    }
 };
 
 /**
  * this object contains a list of Sass variables and an array
  * of CSS styles required to get the correct value.
- * eg. $virtual-item-height requires a structure, so we can get it's height.
+ * eg. $virtual-item-height requires a structure, so we can get its height.
  * <div class="ag-theme-balham">
  *     <div class="ag-virtual-list-container">
  *         <div class="ag-virtual-list-item"></div>
@@ -42,18 +52,18 @@ const HARD_CODED_SIZES: HardCodedSize = {
 const SASS_PROPERTY_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
     headerHeight: ['ag-header-row'],
     virtualItemHeight: ['ag-virtual-list-container', 'ag-virtual-list-item'],
-    rowHeight: ['ag-row']
+    rowHeight: ['ag-row'],
+    chartMenuPanelWidth: ['ag-chart-docked-container']
 };
 
 const CALCULATED_SIZES: HardCodedSize = {};
 
 @Bean('environment')
 export class Environment {
-
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     public getSassVariable(theme: string, key: SASS_PROPERTIES): number {
-        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : (theme.match('balham') ? 'balham' : 'classic'));
+        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'classic');
         const defaultValue = HARD_CODED_SIZES[useTheme][key];
         let calculatedValue = 0;
 
@@ -97,7 +107,16 @@ export class Environment {
         return !!theme && theme.indexOf('dark') >= 0;
     }
 
-    public getTheme(): { theme?: string, el?: HTMLElement } {
+    public useNativeCheckboxes() {
+        const { theme } = this.getTheme();
+        return !!theme && theme.indexOf('alpine') >= 0;
+    }
+
+    public chartMenuPanelWidth() {
+        return HARD_CODED_SIZES[this.getTheme().themeFamily].chartMenuPanelWidth;
+    }
+
+    public getTheme(): { theme?: string, el?: HTMLElement, themeFamily?: string } {
         const reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
         let el: HTMLElement = this.eGridDiv;
         let themeMatch: RegExpMatchArray;
@@ -117,10 +136,10 @@ export class Environment {
         const usingOldTheme = themeMatch[2] === undefined;
 
         if (usingOldTheme) {
-            const newTheme =  theme.replace('ag-', 'ag-theme-');
+            const newTheme = theme.replace('ag-', 'ag-theme-');
             _.doOnce(() => console.warn(`ag-Grid: As of v19 old theme are no longer provided. Please replace ${theme} with ${newTheme}.`), 'using-old-theme');
         }
 
-        return { theme, el };
+        return { theme, el, themeFamily: theme.replace(/-dark$/, '') };
     }
 }

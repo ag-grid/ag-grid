@@ -41,6 +41,19 @@ include '../documentation-main/documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
+            <td class="theme-name-cell"><code>ag-theme-alpine<br/>ag-theme-alpine-dark</code></td>
+            <td>
+                <p>
+                    <strong>New</strong> modern looking themes using styled components and two accent colors. <code>ag-theme-alpine-dark</code> is a dark
+                    version of <code>ag-theme-alpine</code>.
+                </p>
+                <p>
+                    <span class="reccommendation">Recommendation:</span>
+                    This is the most recent and polished theme set, upgrading the Balham theme.  
+                </p>
+            </td>
+        </tr>
+        <tr>
             <td class="theme-name-cell"><code>ag-theme-balham<br/>ag-theme-balham-dark</code></td>
             <td>
                 <p>
@@ -118,6 +131,139 @@ include '../documentation-main/documentation_header.php';
         &lt;div id="myGrid" class="ag-theme-balham-dark"&gt;&lt;/div&gt;
     </snippet>
 
+  <h1>Alpine Themes</h1>
+    <p>
+        The Alpine theme comes in two versions: 1) light and 2) dark. Below shows examples of each type.
+    </p>
+
+    <p>Example Alpine Light (ag-theme-alpine)</p>
+
+    <?= example('Alpine Theme', 'theme-alpine', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+
+    <p>Example Alpine Dark (ag-theme-alpine-dark)</p>
+
+    <?= example('Alpine Theme (dark)', 'theme-alpine-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+
+    <h3>Customizing the Alpine Theme</h3>
+
+    <p>In addition to the basic set of Sass variables, the Alpine theme exposes the following Sass variables which you can override to change the theme look:
+
+<snippet>
+$alpine-blue: #2196f3;
+$alpine-orange: #ff9800;
+$alpine-purple: #e040fb; 
+$alpine-green: #76ff03;
+
+$alpine-black: #181d1f;
+$alpine-white: #fff;
+
+$alpine-gray-1: #222628;
+$alpine-gray-2: #585652;
+$alpine-gray-3: #68686e;
+$alpine-gray-4: #babfc7;
+$alpine-gray-5: #fcfdfe;
+
+$alpine-light-pink: #fce4ec;
+$alpine-dim-green: #43a047;
+$alpine-dim-red: #e53935;
+$alpine-deep-teal: #16a085;
+
+////////////////////////////////////////
+// Colors
+////////////////////////////////////////
+
+// Used as an active state across the grid - focus forms, caret, etc.
+$color-primary: $alpine-blue !default;
+// color used for the grid selection and selection checkboxes.
+$color-secondary: $alpine-orange !default;
+// background
+$color-background: $alpine-white !default;
+
+// text
+$color-foreground: $alpine-black !default;
+
+// used for panels and popups
+$color-background-alt: $alpine-gray-5 !default;
+
+// borders between the grid elements (body, panel, header, etc.)
+$color-border-primary: $alpine-gray-4 !default;
+
+// borders between body cells
+$color-border-secondary: transparentize($alpine-gray-4, 0.5) !default;
+
+$color-icon: $alpine-gray-3 !default;
+
+// range selection
+$color-selected: lighten($color-secondary, 40) !default;
+$color-background-range-selection: lighten($color-secondary, 44) !default;
+$color-background-range-selected-1: darken($color-background-range-selection, 10) !default;
+$color-background-range-selected-2: darken($color-background-range-selection, 20) !default;
+$color-background-range-selected-3: darken($color-background-range-selection, 30) !default;
+$color-background-range-selected-4: darken($color-background-range-selection, 40) !default;
+
+$color-row-hover: transparentize($color-primary, 0.9) !default;
+
+// shadows of popups, menus, etc
+$color-chrome-shadow: $alpine-gray-4 !default;
+
+// dropdown arrow
+$url-data-image-dropdown-arrow: url($black-dropdown-arrow) !default;
+$url-hover-data-image-dropdown-arrow: url($blue-dropdown-arrow) !default;
+$url-pressed-data-image-dropdown-arrow: url($white-dropdown-arrow) !default;
+
+// color for the reset / cancel buttons
+$color-form-element-secondary: $alpine-gray-3;
+$color-border-form-element: $alpine-gray-4 !default;
+$color-background-form-element-disabled: transparentize($alpine-gray-4, 0.8) !default;
+
+// inactive color for the switch
+$color-background-toggle-button: $alpine-gray-4 !default;
+
+// chart selections
+$color-background-chart-range-selection-category: $alpine-green !default;
+$color-background-chart-range-selection: $alpine-blue !default;
+
+// chips in grouping and aggregation
+$color-background-chip: transparentize($alpine-gray-4, 0.8) !default;
+
+// delta changes
+$color-cell-data-changed: $alpine-light-pink !default;
+$color-value-change-delta-up: $alpine-dim-green !default;
+$color-value-change-delta-down: $alpine-dim-red !default;
+$color-value-change-value-highlight-background: transparentize($alpine-deep-teal, 0.5) !default;
+
+////////////////////////////////////////
+//Fonts
+////////////////////////////////////////
+
+// Primary
+$font-family-default: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
+$size-font-default: 14px !default;
+$weight-font-default: 400 !default;
+$font-default: $weight-font-default $size-font-default $font-family-default;
+
+// Secondary (used mostly in headers)
+$font-family-secondary: $font-family-default !default;
+$size-font-secondary: 13px !default;
+$weight-font-secondary: 700 !default;
+$font-secondary: $weight-font-secondary $size-font-secondary $font-family-secondary;
+
+// Form elements
+$font-family-form-element: $font-family-default !default;
+$size-font-form-element: 13px !default;
+$weight-font-form-element: 400 !default;
+$font-form-element: $weight-font-form-element $size-font-form-element $font-family-form-element;
+
+// Chrome UI (menu, tool panel, etc)
+$font-family-chrome: $font-family-default !default;
+$size-font-chrome: 13px !default;
+$weight-font-chrome: 400 !default;
+$font-chrome: $weight-font-chrome $size-font-chrome $font-family-chrome;
+
+// tooltip and status bar are chrome but smaller
+$size-font-tooltip: $size-font-chrome - 1 !default;
+$size-font-status-bar: $size-font-chrome - 1 !default;
+</snippet>
 
     <h1>Balham Themes</h1>
 

@@ -7,6 +7,8 @@ require("../../../../../community-modules/grid-core/src/styles/ag-theme-fresh/sa
 require("../../../../../community-modules/grid-core/src/styles/ag-theme-dark/sass/ag-theme-dark.scss");
 require("../../../../../community-modules/grid-core/src/styles/ag-theme-blue/sass/ag-theme-blue.scss");
 require("../../../../../community-modules/grid-core/src/styles/ag-theme-bootstrap/sass/ag-theme-bootstrap.scss");
+require("../../../../../community-modules/grid-core/src/styles/ag-theme-alpine/sass/ag-theme-alpine.scss");
+require("../../../../../community-modules/grid-core/src/styles/ag-theme-alpine-dark/sass/ag-theme-alpine-dark.scss");
 require("../../../../../community-modules/grid-core/src/styles/ag-theme-balham/sass/ag-theme-balham.scss");
 require("../../../../../community-modules/grid-core/src/styles/ag-theme-balham-dark/sass/ag-theme-balham-dark.scss");
 

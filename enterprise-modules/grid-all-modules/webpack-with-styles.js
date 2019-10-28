@@ -50,6 +50,8 @@ agGrid.ModuleRegistry.register(SideBarModule.SideBarModule);
 agGrid.ModuleRegistry.register(StatusBarModule.StatusBarModule);
 agGrid.ModuleRegistry.register(ViewportRowModelModule.ViewportRowModelModule);
 require('./dist/styles/ag-grid.css');
+require('./dist/styles/ag-theme-alpine-dark.css');
+require('./dist/styles/ag-theme-alpine.css');
 require('./dist/styles/ag-theme-balham-dark.css');
 require('./dist/styles/ag-theme-balham.css');
 require('./dist/styles/ag-theme-blue.css');

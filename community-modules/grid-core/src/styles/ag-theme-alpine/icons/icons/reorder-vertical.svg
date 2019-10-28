@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>reorder-vertical</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="reorder-vertical" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M17,25 L15,25 L15,7 L17,7 L17,25 Z M23,23 L21,25 L21,7 L23,9 L23,23 Z M11,25 L9,23 L9,9 L11,7 L11,25 Z" id="Shape" fill="#000000" fill-rule="nonzero" transform="translate(16.000000, 16.000000) rotate(90.000000) translate(-16.000000, -16.000000) "></path>
+    </g>
+</svg>

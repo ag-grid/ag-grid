@@ -1,0 +1,7 @@
+@import '../vars/public-vars';
+@import '../../ag-theme-alpine/vars/ag-theme-alpine-vars';
+@import '../../ag-theme-alpine/sass/ag-theme-alpine-common';
+
+.ag-theme-alpine-dark {
+    @include ag-theme-alpine($params);
+}

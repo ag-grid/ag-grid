@@ -23,6 +23,7 @@ enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
 export class SetFilter extends ProvidedFilter {
 
     private valueModel: SetValueModel;
+    private eSelectAllCheckbox: HTMLInputElement;
 
     @RefSelector('eSelectAll') private eSelectAll: HTMLInputElement;
     @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
@@ -122,6 +123,14 @@ export class SetFilter extends ProvidedFilter {
         this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.setFilterParams.column);
         this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.setFilterParams.column);
 
+
+        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
+            this.eSelectAllCheckbox = document.createElement("input");
+            this.eSelectAllCheckbox.type = "checkbox";
+            this.eSelectAllCheckbox.className = "ag-native-checkbox";
+            this.eSelectAll.appendChild(this.eSelectAllCheckbox);
+        }
+
         this.initialiseFilterBodyUi();
 
         const syncValuesAfterDataChange = !params.suppressSyncValuesAfterDataChange
@@ -175,25 +184,30 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private updateCheckboxIcon() {
-        _.clearElement(this.eSelectAll);
+        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
+            this.eSelectAllCheckbox.checked = this.selectAllState === CheckboxState.CHECKED;
+            this.eSelectAllCheckbox.indeterminate = this.selectAllState === CheckboxState.INTERMEDIATE;
+        } else {
+            _.clearElement(this.eSelectAll);
 
-        let icon: HTMLElement;
-        switch (this.selectAllState) {
-            case CheckboxState.INTERMEDIATE:
-                icon = this.eIndeterminateCheckedIcon;
-                break;
-            case CheckboxState.CHECKED:
-                icon = this.eCheckedIcon;
-                break;
-            case CheckboxState.UNCHECKED:
-                icon = this.eUncheckedIcon;
-                break;
-            default: // default happens when initialising for first time
-                icon = this.eCheckedIcon;
-                break;
+            let icon: HTMLElement;
+            switch (this.selectAllState) {
+                case CheckboxState.INTERMEDIATE:
+                    icon = this.eIndeterminateCheckedIcon;
+                    break;
+                case CheckboxState.CHECKED:
+                    icon = this.eCheckedIcon;
+                    break;
+                case CheckboxState.UNCHECKED:
+                    icon = this.eUncheckedIcon;
+                    break;
+                default: // default happens when initialising for first time
+                    icon = this.eCheckedIcon;
+                    break;
+            }
+
+            this.eSelectAll.appendChild(icon);
         }
-
-        this.eSelectAll.appendChild(icon);
     }
 
     public setLoading(loading: boolean): void {
@@ -204,6 +218,7 @@ export class SetFilter extends ProvidedFilter {
         this.virtualList = new VirtualList();
         this.getContext().wireBean(this.virtualList);
         const eSetFilterList = this.getRefElement('eSetFilterList');
+
         if (eSetFilterList) {
             eSetFilterList.appendChild(this.virtualList.getGui());
         }
@@ -221,6 +236,7 @@ export class SetFilter extends ProvidedFilter {
             this.valueFormatterService,
             this.setFilterParams.column
         );
+
         this.virtualList.setModel(new ModelWrapper(this.valueModel));
         _.setDisplayed(this.getGui().querySelector('#ag-mini-filter') as HTMLElement, !this.setFilterParams.suppressMiniFilter);
 
@@ -241,8 +257,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private createSetListItem(value: any): Component {
-
         const listItem = new SetFilterListItem(value, this.setFilterParams.column);
+
         this.getContext().wireBean(listItem);
         listItem.setSelected(this.valueModel.isValueSelected(value));
 
@@ -285,6 +301,7 @@ export class SetFilter extends ProvidedFilter {
         if (!this.appliedModelValuesMapped) { return true; }
 
         let value = this.setFilterParams.valueGetter(params.node);
+
         if (this.setFilterParams.colDef.keyCreator) {
             value = this.setFilterParams.colDef.keyCreator({value: value});
         }
@@ -299,14 +316,12 @@ export class SetFilter extends ProvidedFilter {
                 }
             }
             return false;
-        } else {
-            const valueExistsInMap = !!this.appliedModelValuesMapped![value];
-            return valueExistsInMap;
         }
+
+        return !!this.appliedModelValuesMapped![value];
     }
 
     public onNewRowsLoaded(): void {
-
         const valuesType = this.valueModel.getValuesType();
         const valuesTypeProvided =
             valuesType === SetFilterModelValuesType.PROVIDED_CB
@@ -315,9 +330,8 @@ export class SetFilter extends ProvidedFilter {
         // if the user is providing values, and we are keeping the previous selection, then
         // loading new rows into the grid should have no impact.
         const newRowsActionKeep = this.isNewRowsActionKeep();
-        if (newRowsActionKeep && valuesTypeProvided) {
-            return;
-        }
+
+        if (newRowsActionKeep && valuesTypeProvided) { return; }
 
         const everythingSelected = !this.getModel();
 

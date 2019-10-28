@@ -81,6 +81,7 @@ $range-selection-chart-category-background-color: adjust-hue($range-selection-ba
 // Icons
 @import "./font-vars";
 
+
 $icons_font_codes: (
     aggregation: $ag-icon-aggregation,
     arrows: $ag-icon-arrows,
@@ -123,8 +124,8 @@ $icons_font_codes: (
     pivot: $ag-icon-pivot,
     plus: $ag-icon-plus,
     previous: $ag-icon-previous,
-    radio-button-off:$ag-icon-radio-button-off,
-    radio-button-on:$ag-icon-radio-button-on,
+    radio-button-off: $ag-icon-radio-button-off,
+    radio-button-on: $ag-icon-radio-button-on,
     right: $ag-icon-right,
     save: $ag-icon-save,
     small-down: $ag-icon-small-down,
@@ -135,5 +136,5 @@ $icons_font_codes: (
     tree-closed: $ag-icon-tree-closed,
     tree-indeterminate: $ag-icon-tree-indeterminate,
     tree-open: $ag-icon-tree-open,
-    unlinked: $ag-icon-unlinked,
+    unlinked: $ag-icon-unlinked
 );
