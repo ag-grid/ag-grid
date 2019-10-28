@@ -218,11 +218,11 @@
             }
         }
     }
-}
 
-.ag-chart-docked-container {
-    min-width: 220px;
-    width: 220px;
+    .ag-chart-docked-container {
+        min-width: 0;
+        width: 0;
+    }
 }
 
 .ag-chart-tabbed-menu {

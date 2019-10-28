@@ -176,7 +176,13 @@ export class GridOptionsWrapper {
             const userProperties: string[] = Object.getOwnPropertyNames(colDef);
             const validProperties: string[] = [...ColDefUtil.ALL_PROPERTIES, ...ColDefUtil.FRAMEWORK_PROPERTIES];
 
-            this.checkProperties(userProperties, validProperties, validProperties, 'colDef', 'https://www.ag-grid.com/javascript-grid-column-properties/');
+            this.checkProperties(
+                userProperties,
+                validProperties,
+                validProperties,
+                'colDef',
+                'https://www.ag-grid.com/javascript-grid-column-properties/'
+            );
         });
     }
 
@@ -190,14 +196,30 @@ export class GridOptionsWrapper {
 
         const validPropertiesAndExceptions: string[] = [...validProperties, 'api', 'columnApi'];
 
-        this.checkProperties(userProperties, validPropertiesAndExceptions, validProperties, 'gridOptions', 'https://www.ag-grid.com/javascript-grid-properties/');
+        this.checkProperties(
+            userProperties,
+            validPropertiesAndExceptions,
+            validProperties,
+            'gridOptions',
+            'https://www.ag-grid.com/javascript-grid-properties/'
+        );
     }
 
-    private checkProperties(userProperties: string[], validPropertiesAndExceptions: string[], validProperties: string[], containerName: string, docsUrl: string) {
-        const invalidProperties: { [p: string]: string[] } = _.fuzzyCheckStrings(userProperties, validPropertiesAndExceptions, validProperties);
+    private checkProperties(
+        userProperties: string[],
+        validPropertiesAndExceptions: string[],
+        validProperties: string[],
+        containerName: string,
+        docsUrl: string
+    ) {
+        const invalidProperties: { [p: string]: string[] } = _.fuzzyCheckStrings(
+            userProperties,
+            validPropertiesAndExceptions,
+            validProperties
+        );
 
         _.iterateObject<any>(invalidProperties, (key, value) => {
-            console.warn(`ag-grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}`);
+            console.warn(`ag-grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
         });
 
         if (Object.keys(invalidProperties).length > 0) {

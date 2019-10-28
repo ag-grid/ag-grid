@@ -13,7 +13,7 @@ $row-height: $grid-size * 7 !default;
 // theme shortcuts
 $default-background: white !default;
 $chrome-background: lighten($flat-gray-1, 3) !default;
-$active: #0091ea !default;
+$active: #0091EA !default;
 $foreground-color: #000 !default;
 $border-color: $flat-silver !default;
 $icon-color: $flat-gray-4 !default;
@@ -60,7 +60,7 @@ $row-floating-background-color: inherit !default;
 $cell-data-changed-color: #fce4ec !default;
 $value-change-delta-up-color: #43a047 !default;
 $value-change-delta-down-color: #e53935 !default;
-$value-change-value-highlight-background-color: transparentize(#16a085, 0.5) !default;
+$value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
 
 $header-height: $grid-size * 8 !default;
 $virtual-item-height: $grid-size * 7 !default;
