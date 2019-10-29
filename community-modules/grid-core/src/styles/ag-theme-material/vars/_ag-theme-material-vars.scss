@@ -1,17 +1,17 @@
-@import "./material-legacy-var-names";
+@import "./ag-theme-material-import-legacy-vars";
 
 // Taken from the palette of angular material: https://github.com/angular/material2/blob/master/src/lib/core/theming/_palette.scss
-$mat-grey-0: #fff;
-$mat-grey-50: #fafafa;
-$mat-grey-100: #f5f5f5;
-$mat-grey-200: #eee;
-$mat-grey-300: #e2e2e2;
+$ag-mat-grey-0: #fff;
+$ag-mat-grey-50: #fafafa;
+$ag-mat-grey-100: #f5f5f5;
+$ag-mat-grey-200: #eee;
+$ag-mat-grey-300: #e2e2e2;
 
 // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
-$mat-indigo-500: #3f51b5;
-$mat-pink-A200: #ff4081;
-$mat-pink-50: #fce4ec;
-$mat-indigo-50: #e8eaf6;
+$ag-mat-indigo-500: #3f51b5;
+$ag-mat-pink-A200: #ff4081;
+$ag-mat-pink-50: #fce4ec;
+$ag-mat-indigo-50: #e8eaf6;
 
 // opacity values used for black values, taken from material spec
 $ag-foreground-opacity: 0.87 !default;
@@ -48,50 +48,50 @@ $ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.
 $ag-card-radius: 2px;
 
 // Colors
-$ag-background-color: $mat-grey-0 !default;
+$ag-background-color: $ag-mat-grey-0 !default;
 $ag-foreground-color: rgba(#000, $ag-foreground-opacity) !default; // foreground
-$secondary-foreground-color: rgba(#000, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
-$disabled-foreground-color: rgba(#000, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
+$ag-secondary-foreground-color: rgba(#000, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
+$ag-disabled-foreground-color: rgba(#000, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
 $ag-header-background-color: $ag-background-color !default;
-$header-cell-hover-background-color: darken($ag-header-background-color, 5%) !default;
-$ag-header-cell-moving-background-color: $header-cell-hover-background-color !default;
-$ag-header-foreground-color: $secondary-foreground-color !default;
+$ag-header-cell-hover-background-color: darken($ag-header-background-color, 5%) !default;
+$ag-header-cell-moving-background-color: $ag-header-cell-hover-background-color !default;
+$ag-header-foreground-color: $ag-secondary-foreground-color !default;
 
-$ag-border-color: $mat-grey-300 !default;
-$primary-color: $mat-indigo-500 !default;
-$ag-accent-color: $mat-pink-A200 !default;
+$ag-border-color: $ag-mat-grey-300 !default;
+$ag-primary-color: $ag-mat-indigo-500 !default;
+$ag-accent-color: $ag-mat-pink-A200 !default;
 $ag-icon-color: #333 !default;
 $ag-alt-icon-color: transparent !default;
 
-$editor-background-color: $mat-grey-50 !default;
-$panel-background-color: $mat-grey-200 !default;
-$ag-tool-panel-background-color: $mat-grey-50 !default;
-$chip-background-color: $mat-grey-300 !default;
+$ag-editor-background-color: $ag-mat-grey-50 !default;
+$ag-panel-background-color: $ag-mat-grey-200 !default;
+$ag-tool-panel-background-color: $ag-mat-grey-50 !default;
+$ag-chip-background-color: $ag-mat-grey-300 !default;
 
-$ag-range-selection-background-color: transparentize(darken($mat-indigo-50, 30%), 0.9) !default;
+$ag-range-selection-background-color: transparentize(darken($ag-mat-indigo-50, 30%), 0.9) !default;
 $ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
 $ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
-$range-selection-highlight-color: $mat-pink-50 !default;
+$ag-range-selection-highlight-color: $ag-mat-pink-50 !default;
 $ag-range-selected-color-1: opacify($ag-range-selection-background-color, 0.1) !default;
 $ag-range-selected-color-2: opacify($ag-range-selection-background-color, 0.2) !default;
 $ag-range-selected-color-3: opacify($ag-range-selection-background-color, 0.3) !default;
 $ag-range-selected-color-4: opacify($ag-range-selection-background-color, 0.4) !default;
 
-$hover-color: $mat-grey-50 !default;
-$selected-color: $mat-grey-200 !default;
-$cell-data-changed-color: $mat-pink-50 !default;
+$ag-hover-color: $ag-mat-grey-50 !default;
+$ag-selected-color: $ag-mat-grey-200 !default;
+$ag-cell-data-changed-color: $ag-mat-pink-50 !default;
 
 // delta changes
-$value-change-delta-up-color: #43a047 !default;
-$value-change-delta-down-color: #e53935 !default;
-$value-change-value-highlight-background-color: #00acc1 !default;
+$ag-value-change-delta-up-color: #43a047 !default;
+$ag-value-change-delta-down-color: #e53935 !default;
+$ag-value-change-value-highlight-background-color: #00acc1 !default;
 
 // Icons
 @import "./font-vars";
 
 @import "../../ag-theme-base/vars/ag-theme-base-vars";
 
-$params: (
+$ag-params: (
     font-family: $ag-font-family,
     font-size: $ag-font-size,
     font-weight: $ag-font-weight,
@@ -100,47 +100,47 @@ $params: (
     secondary-font-weight: $ag-secondary-font-weight,
 
     accent-color: $ag-accent-color,
-    primary-color: $primary-color,
-    hover-color: $hover-color,
-    selected-color: $selected-color,
+    primary-color: $ag-primary-color,
+    hover-color: $ag-hover-color,
+    selected-color: $ag-selected-color,
 
     background-color: $ag-background-color,
 
     foreground-color: $ag-foreground-color,
     foreground-opacity: $ag-foreground-opacity,
     secondary-foreground-color-opacity: $ag-secondary-foreground-color-opacity,
-    secondary-foreground-color: $secondary-foreground-color,
+    secondary-foreground-color: $ag-secondary-foreground-color,
     disabled-foreground-color-opacity: $ag-disabled-foreground-color-opacity,
-    disabled-foreground-color: $disabled-foreground-color,
+    disabled-foreground-color: $ag-disabled-foreground-color,
 
     border-color: $ag-border-color,
     scroll-spacer-border: $ag-scroll-spacer-border,
 
-    panel-background-color: $panel-background-color,
+    panel-background-color: $ag-panel-background-color,
     tool-panel-background-color: $ag-tool-panel-background-color,
     header-background-color: $ag-header-background-color,
-    header-cell-hover-background-color: $header-cell-hover-background-color,
+    header-cell-hover-background-color: $ag-header-cell-hover-background-color,
     header-cell-moving-background-color: $ag-header-cell-moving-background-color,
     header-foreground-color: $ag-header-foreground-color,
 
-    focused-textbox-border: 2px solid $primary-color,
+    focused-textbox-border: 2px solid $ag-primary-color,
     input-bottom-border: 2px solid $ag-border-color,
     input-bottom-border-disabled: 1px solid $ag-border-color,
-    value-change-delta-up-color: $value-change-delta-up-color,
-    value-change-delta-down-color: $value-change-delta-down-color,
-    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
+    value-change-delta-up-color: $ag-value-change-delta-up-color,
+    value-change-delta-down-color: $ag-value-change-delta-down-color,
+    value-change-value-highlight-background-color: $ag-value-change-value-highlight-background-color,
 
     button-background-color: transparent,
     icon-color: $ag-icon-color,
-    cell-data-changed-color: $cell-data-changed-color,
-    chip-background-color: $chip-background-color,
+    cell-data-changed-color: $ag-cell-data-changed-color,
+    chip-background-color: $ag-chip-background-color,
     card-background-color: $ag-background-color,
-    editor-background-color-color: $editor-background-color,
+    editor-background-color-color: $ag-editor-background-color,
     
     range-selection-background-color: $ag-range-selection-background-color,
     range-selection-chart-background-color: $ag-range-selection-chart-background-color,
     range-selection-chart-category-background-color: $ag-range-selection-chart-category-background-color,
-    range-selection-highlight-color: $range-selection-highlight-color,
+    range-selection-highlight-color: $ag-range-selection-highlight-color,
     ag-range-selected-color-1: $ag-range-selected-color-1,
     ag-range-selected-color-2: $ag-range-selected-color-2,
     ag-range-selected-color-3: $ag-range-selected-color-3,
