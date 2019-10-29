@@ -91,7 +91,7 @@ type ChartType =
 <snippet>
 interface ChartOptionsChanged extends AgEvent {
     chartType: ChartType;
-    palette: ChartPalette;
+    chartPalette: ChartPalette;
     chartOptions: ChartOptions;
 }
 
@@ -110,12 +110,6 @@ type ChartType =
     'area' |
     'stackedArea' |
     'normalizedArea';
-
-interface ChartPalette {
-    name: string;
-    fills: string[];
-    strokes: string[];
-}
 </snippet>
 
     <h3>Example: Saving User Preferences</h3>

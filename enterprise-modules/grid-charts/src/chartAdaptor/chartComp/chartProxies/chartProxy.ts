@@ -13,7 +13,7 @@ import {
     CaptionOptions,
 } from "@ag-community/grid-core";
 import { Chart } from "../../../charts/chart/chart";
-import { Palette, DefaultPalette, palettes } from "../../../charts/chart/palettes";
+import { ChartPalette, ChartPaletteName, palettes } from "../../../charts/chart/palettes";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
@@ -31,7 +31,7 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    getSelectedPalette: () => DefaultPalette;
+    getChartPaletteName: () => ChartPaletteName;
     isDarkTheme: () => boolean;
 }
 
@@ -52,7 +52,7 @@ export interface UpdateChartParams {
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
     protected chart: TChart;
     protected chartProxyParams: ChartProxyParams;
-    protected overriddenPalette: Palette;
+    protected overriddenPalette: ChartPalette;
     protected chartType: ChartType;
     protected chartOptions: TOptions;
 
@@ -242,7 +242,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const event: ChartOptionsChanged = Object.freeze({
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartType: this.chartType,
-            palette: this.chartProxyParams.getSelectedPalette(),
+            chartPalette: this.chartProxyParams.getChartPaletteName(),
             chartOptions: this.chartOptions,
         });
 
@@ -267,11 +267,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         };
     }
 
-    protected getDefaultPalette(): Palette {
-        return palettes.get(this.chartProxyParams.getSelectedPalette());
+    protected getDefaultPalette(): ChartPalette {
+        return palettes.get(this.chartProxyParams.getChartPaletteName());
     }
 
-    protected getPalette(): Palette {
+    protected getPalette(): ChartPalette {
         return this.overriddenPalette || this.getDefaultPalette();
     }
 

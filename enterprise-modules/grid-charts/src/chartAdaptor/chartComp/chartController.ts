@@ -11,7 +11,7 @@ import {
     IRangeController
 } from "@ag-community/grid-core";
 import { ChartModel, ColState } from "./chartModel";
-import { Palette, palettes, DefaultPalette } from "../../charts/chart/palettes";
+import { ChartPalette, palettes, ChartPaletteName } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
@@ -24,12 +24,12 @@ export class ChartController extends BeanStub {
     @Autowired('rangeController') rangeController: IRangeController;
 
     private chartProxy: ChartProxy<any, any>;
-    private defaultPalette: DefaultPalette;
+    private chartPaletteName: ChartPaletteName;
 
-    public constructor(private readonly model: ChartModel, palette: DefaultPalette) {
+    public constructor(private readonly model: ChartModel, paletteName: ChartPaletteName) {
         super();
 
-        this.defaultPalette = palette;
+        this.chartPaletteName = paletteName;
     }
 
     @PostConstruct
@@ -72,8 +72,8 @@ export class ChartController extends BeanStub {
 
     public getChartType = (): ChartType => this.model.getChartType();
     public isPivotChart = () => this.model.isPivotChart();
-    public getActivePalette = (): DefaultPalette => this.defaultPalette;
-    public getPalettes = (): Map<DefaultPalette, Palette> => palettes;
+    public getPaletteName = (): ChartPaletteName => this.chartPaletteName;
+    public getPalettes = (): Map<ChartPaletteName, ChartPalette> => palettes;
 
     public setChartType(chartType: ChartType): void {
         this.model.setChartType(chartType);
@@ -81,8 +81,8 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setPalette(palette: DefaultPalette): void {
-        this.defaultPalette = palette;
+    public setChartPaletteName(palette: ChartPaletteName): void {
+        this.chartPaletteName = palette;
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     }
@@ -142,13 +142,12 @@ export class ChartController extends BeanStub {
         const event: ChartOptionsChanged = Object.freeze({
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartType: this.getChartType(),
-            palette: this.defaultPalette,
+            chartPalette: this.chartPaletteName,
             chartOptions: this.getChartProxy().getChartOptions(),
         });
 
         this.eventService.dispatchEvent(event);
     }
-
 
     public destroy() {
         super.destroy();

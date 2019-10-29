@@ -43,7 +43,7 @@ function onChart1() {
             columns: ['country', 'gold', 'silver']
         },
         chartType: 'groupedColumn',
-        palette: 'bright',
+        chartPalette: 'bright',
         processChartOptions: function(params) {
             var opts = params.options;
 
@@ -73,7 +73,7 @@ function onChart2() {
             columns: ['country', 'bronze']
         },
         chartType: 'groupedBar',
-        palette: 'pastel',
+        chartPalette: 'pastel',
         processChartOptions: function(params) {
             var opts = params.options;
             opts.seriesDefaults.showInLegend = false;

@@ -26,7 +26,7 @@ interface CreateRangeChartParams {
 {
     cellRange: CellRangeParams;
     chartType: ChartType;
-    palette: string;
+    chartPalette: string;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
@@ -93,7 +93,7 @@ interface ProcessChartOptionsParams {
             <code>'groupedColumn', 'stackedColumn', 'normalizedColumn', 'groupedBar', 'stackedBar', 'normalizedBar', 'line', 'scatter', 'bubble', 'pie', 'doughnut', 'area', 'stackedArea', 'normalizedArea'</code>
         </li>
         <li>
-            <code>palette</code>: The default palette to use for charts. The options are
+            <code>chartPalette</code>: The default palette to use for charts. The options are
             <code>'borneo', 'material', 'pastel', 'bright', 'flat'</code>
         </li>
         <li>

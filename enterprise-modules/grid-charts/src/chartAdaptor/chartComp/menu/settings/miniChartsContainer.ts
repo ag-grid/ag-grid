@@ -18,7 +18,7 @@ import {
     MiniStackedArea,
     MiniNormalizedArea,
 } from "./miniCharts";
-import { DefaultPalette } from "../../../../charts/chart/palettes";
+import { ChartPaletteName } from "../../../../charts/chart/palettes";
 
 type ChartGroupsType = 'barGroup' | 'columnGroup' | 'pieGroup' | 'lineGroup' | 'scatterGroup' | 'areaGroup';
 
@@ -36,10 +36,10 @@ export class MiniChartsContainer extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    constructor(activePalette: DefaultPalette, chartController: ChartController) {
+    constructor(chartPaletteName: ChartPaletteName, chartController: ChartController) {
         super(MiniChartsContainer.TEMPLATE);
 
-        const { fills, strokes } = chartController.getPalettes().get(activePalette);
+        const { fills, strokes } = chartController.getPalettes().get(chartPaletteName);
         this.fills = fills;
         this.strokes = strokes;
         this.chartController = chartController;

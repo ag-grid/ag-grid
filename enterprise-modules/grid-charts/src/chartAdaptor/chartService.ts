@@ -21,7 +21,7 @@ import {
     IRangeController,
 } from "@ag-community/grid-core";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
-import { DefaultPalette } from "../charts/chart/palettes";
+import { ChartPaletteName } from "../charts/chart/palettes";
 
 @Bean('chartService')
 export class ChartService implements IChartService {
@@ -54,7 +54,7 @@ export class ChartService implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
-            params.palette as DefaultPalette,
+            params.chartPalette as ChartPaletteName,
             false,
             params.suppressChartRanges,
             params.chartContainer,
@@ -85,7 +85,7 @@ export class ChartService implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
-            params.palette as DefaultPalette,
+            params.chartPalette as ChartPaletteName,
             true,
             true,
             params.chartContainer,
@@ -95,7 +95,7 @@ export class ChartService implements IChartService {
 
     private createChart(cellRange: CellRange,
         chartType: ChartType,
-        palette: DefaultPalette = 'borneo',
+        palette: ChartPaletteName = 'borneo',
         pivotChart = false,
         suppressChartRanges = false,
         container?: HTMLElement,
@@ -108,7 +108,7 @@ export class ChartService implements IChartService {
             pivotChart,
             cellRange,
             chartType,
-            palette,
+            chartPaletteName: palette,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
             aggFunc,

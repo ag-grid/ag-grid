@@ -1,7 +1,7 @@
 import { _, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector } from "@ag-community/grid-core";
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { ChartController } from "../../chartController";
-import { DefaultPalette } from "../../../../charts/chart/palettes";
+import { ChartPaletteName } from "../../../../charts/chart/palettes";
 
 export class ChartSettingsPanel extends Component {
 
@@ -31,15 +31,15 @@ export class ChartSettingsPanel extends Component {
 
     private readonly chartController: ChartController;
 
-    private activePalette: DefaultPalette;
-    private paletteNames: DefaultPalette[] = [];
+    private activePalette: ChartPaletteName;
+    private paletteNames: ChartPaletteName[] = [];
 
     private isAnimating: boolean;
 
     constructor(chartController: ChartController) {
         super(ChartSettingsPanel.TEMPLATE);
         this.chartController = chartController;
-        this.activePalette = this.chartController.getActivePalette();
+        this.activePalette = this.chartController.getPaletteName();
         this.chartController.getPalettes().forEach((_, key) => this.paletteNames.push(key));
     }
 
@@ -62,7 +62,7 @@ export class ChartSettingsPanel extends Component {
         this.setActivePalette(this.activePalette, 0);
     }
 
-    private addCardLink(name: DefaultPalette): void {
+    private addCardLink(name: ChartPaletteName): void {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-nav-card-item');
 
@@ -116,7 +116,7 @@ export class ChartSettingsPanel extends Component {
         this.setActivePalette(this.paletteNames[this.getNext()], 2);
     }
 
-    private setActivePalette(palette: DefaultPalette, animate?: number) {
+    private setActivePalette(palette: ChartPaletteName, animate?: number) {
         const paletteIndex = this.paletteNames.indexOf(palette);
 
         _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected');
@@ -145,7 +145,7 @@ export class ChartSettingsPanel extends Component {
             _.addCssClass(futureGui, 'ag-animating');
 
             this.activePalette = palette;
-            this.chartController.setPalette(this.activePalette);
+            this.chartController.setChartPaletteName(this.activePalette);
 
             this.isAnimating = true;
 

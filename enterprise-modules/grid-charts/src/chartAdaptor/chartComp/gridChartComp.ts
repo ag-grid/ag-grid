@@ -25,14 +25,14 @@ import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { DefaultPalette } from "../../charts/chart/palettes";
+import { ChartPaletteName } from "../../charts/chart/palettes";
 import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;
     chartType: ChartType;
-    palette: DefaultPalette;
+    chartPaletteName: ChartPaletteName;
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
@@ -89,7 +89,7 @@ export class GridChartComp extends Component {
         };
 
         this.model = this.wireBean(new ChartModel(modelParams));
-        this.chartController = this.wireBean(new ChartController(this.model, this.params.palette));
+        this.chartController = this.wireBean(new ChartController(this.model, this.params.chartPaletteName));
 
         this.createChart();
 
@@ -136,7 +136,7 @@ export class GridChartComp extends Component {
         const chartProxyParams: ChartProxyParams = {
             chartType,
             processChartOptions: processChartOptionsFunc,
-            getSelectedPalette: this.getSelectedPalette.bind(this),
+            getChartPaletteName: this.getSelectedPalette.bind(this),
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width,
@@ -155,7 +155,7 @@ export class GridChartComp extends Component {
         this.chartController.setChartProxy(this.chartProxy);
     }
 
-    private getSelectedPalette = (): DefaultPalette => this.chartController.getActivePalette();
+    private getSelectedPalette = (): ChartPaletteName => this.chartController.getPaletteName();
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {
