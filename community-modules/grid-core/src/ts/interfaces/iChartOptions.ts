@@ -15,6 +15,12 @@ export enum ChartType {
     NormalizedArea = "normalizedArea"
 }
 
+export interface ChartPalette {
+    name: string;
+    fills: string[];
+    strokes: string[];
+}
+
 export type ChartMenuOptions = "chartSettings" | "chartData" | "chartFormat" | "chartUnlink" | "chartDownload";
 
 export interface SeriesOptions {

@@ -26,6 +26,7 @@ interface CreateRangeChartParams {
 {
     cellRange: CellRangeParams;
     chartType: ChartType;
+    palette: string;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
@@ -92,7 +93,11 @@ interface ProcessChartOptionsParams {
             <code>'groupedColumn', 'stackedColumn', 'normalizedColumn', 'groupedBar', 'stackedBar', 'normalizedBar', 'line', 'scatter', 'bubble', 'pie', 'doughnut', 'area', 'stackedArea', 'normalizedArea'</code>
         </li>
         <li>
-            <code>chartContainer</code>: If the chart is to be displayed outside of the grid then a chart container 
+            <code>palette</code>: The default palette to use for charts. The options are
+            <code>'borneo', 'material', 'pastel', 'bright', 'flat'</code>
+        </li>
+        <li>
+            <code>chartContainer</code>: If the chart is to be displayed outside of the grid then a chart container
             should be provided. If the chart is to be displayed using the grid's popup window mechanism then leave as <code>undefined</code>.
         </li>
         <li>
@@ -163,9 +168,9 @@ interface ProcessChartOptionsParams {
     <?= example('Charts in Dashboard', 'dashboard', 'generated', array("enterprise" => true, "exampleHeight" => 700)) ?>
 
     <h2>Pivot Charts</h2>
-    
+
     <p>
-        You can also use the API to create a pivot chart. There are fewer parameters available as the pivot chart is always 
+        You can also use the API to create a pivot chart. There are fewer parameters available as the pivot chart is always
         generated from all data in the grid:
     </p>
 

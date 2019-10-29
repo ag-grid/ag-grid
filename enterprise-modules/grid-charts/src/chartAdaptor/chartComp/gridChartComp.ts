@@ -32,6 +32,7 @@ export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;
     chartType: ChartType;
+    palette: DefaultPalette;
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
@@ -87,7 +88,7 @@ export class GridChartComp extends Component {
             cellRanges: [this.params.cellRange],
             suppressChartRanges: this.params.suppressChartRanges,
             palettes: palettes,
-            activePalette: 'borneo'
+            activePalette: this.params.palette
         };
 
         this.model = this.wireBean(new ChartModel(modelParams));
