@@ -1,9 +1,9 @@
-export interface Palette {
+export interface ChartPalette {
     fills: string[];
     strokes: string[];
 }
 
-export const borneo: Palette = {
+export const borneo: ChartPalette = {
     fills: [
         '#f3622d',
         '#fba71b',
@@ -26,7 +26,7 @@ export const borneo: Palette = {
     ]
 };
 
-export const material: Palette = {
+export const material: ChartPalette = {
     fills: [
         '#f44336',
         '#e91e63',
@@ -65,7 +65,7 @@ export const material: Palette = {
     ]
 };
 
-export const pastel: Palette = {
+export const pastel: ChartPalette = {
     fills: [
         '#c16068',
         '#a2bf8a',
@@ -84,7 +84,7 @@ export const pastel: Palette = {
     ]
 };
 
-export const bright: Palette = {
+export const bright: ChartPalette = {
     fills: [
         '#5BC0EB',
         '#FDE74C',
@@ -103,7 +103,7 @@ export const bright: Palette = {
     ]
 };
 
-export const flat: Palette = {
+export const flat: ChartPalette = {
     fills: [
         '#febe76',
         '#ff7979',
@@ -132,10 +132,16 @@ export const flat: Palette = {
 
 export default borneo;
 
-export const palettes: Palette[] = [
-    borneo,
-    material,
-    pastel,
-    bright,
-    flat
-];
+export type ChartPaletteName = 'borneo' | 'material' | 'pastel' | 'bright' | 'flat';
+
+export const palettes = (function() {
+    const map = new Map<ChartPaletteName, ChartPalette>();
+
+    map.set('borneo', borneo);
+    map.set('material', material);
+    map.set('pastel', pastel);
+    map.set('bright', bright);
+    map.set('flat', flat);
+
+    return map;
+})();

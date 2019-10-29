@@ -1,7 +1,7 @@
 import { _, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector } from "@ag-community/grid-core";
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { ChartController } from "../../chartController";
-import { Palette } from "../../../../charts/chart/palettes";
+import { ChartPaletteName } from "../../../../charts/chart/palettes";
 
 export class ChartSettingsPanel extends Component {
 
@@ -31,26 +31,26 @@ export class ChartSettingsPanel extends Component {
 
     private readonly chartController: ChartController;
 
-    private activePalette: number;
-    private palettes: Palette[];
+    private activePalette: ChartPaletteName;
+    private paletteNames: ChartPaletteName[] = [];
 
     private isAnimating: boolean;
 
     constructor(chartController: ChartController) {
         super(ChartSettingsPanel.TEMPLATE);
         this.chartController = chartController;
-        this.activePalette = this.chartController.getActivePalette();
-        this.palettes = this.chartController.getPalettes();
+        this.activePalette = this.chartController.getPaletteName();
+        this.chartController.getPalettes().forEach((_, key) => this.paletteNames.push(key));
     }
 
     @PostConstruct
     private postConstruct() {
-        this.palettes.forEach((palette, idx) => {
-            const miniChartsContainer = this.wireBean(new MiniChartsContainer(idx, this.chartController));
+        this.paletteNames.forEach(n => {
+            const miniChartsContainer = this.wireBean(new MiniChartsContainer(n, this.chartController));
 
             this.miniCharts.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
-            this.addCardLink(idx);
+            this.addCardLink(n);
         });
 
         this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
@@ -62,61 +62,76 @@ export class ChartSettingsPanel extends Component {
         this.setActivePalette(this.activePalette, 0);
     }
 
-    private addCardLink(idx: number): void {
+    private addCardLink(paletteName: ChartPaletteName): void {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-nav-card-item');
+
         this.addDestroyableEventListener(link, 'click', () => {
-            if (idx === this.activePalette || this.isAnimating) { return; }
-            this.setActivePalette(idx, idx < this.activePalette ? 1 : 2);
+            const { activePalette, isAnimating, paletteNames } = this;
+
+            if (paletteName === activePalette || isAnimating) {
+                return;
+            }
+
+            this.setActivePalette(paletteName, paletteNames.indexOf(paletteName) < paletteNames.indexOf(activePalette) ? 1 : 2);
         });
+
         this.eCardSelector.appendChild(link);
         this.cardItems.push(link);
     }
 
     private getPrev(): number {
-        let prev = this.activePalette - 1;
+        let prev = this.paletteNames.indexOf(this.activePalette) - 1;
 
         if (prev < 0) {
-            prev = this.palettes.length - 1;
+            prev = this.paletteNames.length - 1;
         }
 
         return prev;
     }
 
     private prev() {
-        if (this.isAnimating) { return; }
-        const prev = this.getPrev();
-        this.setActivePalette(prev, 1);
+        if (this.isAnimating) {
+            return;
+        }
+
+        this.setActivePalette(this.paletteNames[this.getPrev()], 1);
     }
 
     private getNext(): number {
-        let next = this.activePalette + 1;
+        let next = this.paletteNames.indexOf(this.activePalette) + 1;
 
-        if (next === this.palettes.length) {
+        if (next >= this.paletteNames.length) {
             next = 0;
         }
+
         return next;
     }
 
     private next() {
-        if (this.isAnimating) { return; }
-        const next = this.getNext();
-        this.setActivePalette(next, 2);
+        if (this.isAnimating) {
+            return;
+        }
+
+        this.setActivePalette(this.paletteNames[this.getNext()], 2);
     }
 
-    private setActivePalette(palette: number, animate?: number) {
-        _.radioCssClass(this.cardItems[palette], 'ag-selected');
+    private setActivePalette(paletteName: ChartPaletteName, animate?: number) {
+        const paletteIndex = this.paletteNames.indexOf(paletteName);
+
+        _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected');
 
         if (!animate) {
             this.miniCharts.forEach((miniChart, idx) => {
-                _.addOrRemoveCssClass(miniChart.getGui(), 'ag-hidden', idx !== palette);
+                _.addOrRemoveCssClass(miniChart.getGui(), 'ag-hidden', idx !== paletteIndex);
             });
-            this.miniCharts[this.activePalette].refreshSelected();
-            this.activePalette = palette;
+
+            this.miniCharts[paletteIndex].refreshSelected();
+            this.activePalette = paletteName;
         } else {
-            const currentPalette = this.miniCharts[this.activePalette];
+            const currentPalette = this.miniCharts[this.paletteNames.indexOf(this.activePalette)];
             const currentGui = currentPalette.getGui();
-            const futurePalette = this.miniCharts[palette];
+            const futurePalette = this.miniCharts[paletteIndex];
             const futureGui = futurePalette.getGui();
 
             currentPalette.refreshSelected();
@@ -129,11 +144,8 @@ export class ChartSettingsPanel extends Component {
             _.addCssClass(currentGui, 'ag-animating');
             _.addCssClass(futureGui, 'ag-animating');
 
-            this.activePalette = palette;
-            this.chartController.setChartWithPalette(
-                this.chartController.getChartType(),
-                this.activePalette
-            );
+            this.activePalette = paletteName;
+            this.chartController.setChartPaletteName(this.activePalette);
 
             this.isAnimating = true;
 

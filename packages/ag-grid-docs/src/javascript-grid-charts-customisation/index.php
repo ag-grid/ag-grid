@@ -91,6 +91,7 @@ type ChartType =
 <snippet>
 interface ChartOptionsChanged extends AgEvent {
     chartType: ChartType;
+    chartPalette: ChartPalette;
     chartOptions: ChartOptions;
 }
 
@@ -112,7 +113,7 @@ type ChartType =
 </snippet>
 
     <h3>Example: Saving User Preferences</h3>
-    
+
     <p>
         The example below demonstrates how the <code>ChartOptionsChanged</code> event can be used to save and restore
         user chart formatting preferences. Notice the following:

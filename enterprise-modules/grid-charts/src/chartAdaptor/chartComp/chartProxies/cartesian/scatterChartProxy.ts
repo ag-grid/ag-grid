@@ -26,7 +26,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const yFields = params.fields.slice(1, params.fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
         const fieldIds = yFields.map(f => f.colId);
         const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
         const seriesOptions: SeriesOptions = { type: "scatter", ...this.chartOptions.seriesDefaults };
         const xFieldDefinition = params.fields[0];
         const labelFieldDefinition = defaultCategorySelected ? undefined : params.category;

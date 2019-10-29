@@ -21,6 +21,7 @@ import {
     IRangeController,
 } from "@ag-community/grid-core";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
+import { ChartPaletteName } from "../charts/chart/palettes";
 
 @Bean('chartService')
 export class ChartService implements IChartService {
@@ -53,6 +54,7 @@ export class ChartService implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
+            params.chartPalette as ChartPaletteName,
             false,
             params.suppressChartRanges,
             params.chartContainer,
@@ -81,11 +83,19 @@ export class ChartService implements IChartService {
         }
 
         return this.createChart(
-            cellRange, params.chartType, true, true, params.chartContainer, undefined, params.processChartOptions);
+            cellRange,
+            params.chartType,
+            params.chartPalette as ChartPaletteName,
+            true,
+            true,
+            params.chartContainer,
+            undefined,
+            params.processChartOptions);
     }
 
     private createChart(cellRange: CellRange,
         chartType: ChartType,
+        chartPaletteName: ChartPaletteName = 'borneo',
         pivotChart = false,
         suppressChartRanges = false,
         container?: HTMLElement,
@@ -98,6 +108,7 @@ export class ChartService implements IChartService {
             pivotChart,
             cellRange,
             chartType,
+            chartPaletteName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
             aggFunc,
@@ -117,6 +128,7 @@ export class ChartService implements IChartService {
             // has the grid's theme, we manually add the current theme to
             // make sure all styles for the chartMenu are rendered correctly
             const theme = this.environment.getTheme();
+
             if (theme.el && !theme.el.contains(container)) {
                 _.addCssClass(container, theme.theme!);
             }
@@ -126,9 +138,8 @@ export class ChartService implements IChartService {
             createChartContainerFunc(chartRef);
         } else {
             // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
-            chartComp.addEventListener(GridChartComp.EVENT_DESTROYED, () => {
-                _.removeFromArray(this.activeCharts, chartRef);
-            });
+            chartComp.addEventListener(
+                GridChartComp.EVENT_DESTROYED, () => _.removeFromArray(this.activeCharts, chartRef));
         }
 
         return chartRef;
@@ -146,6 +157,7 @@ export class ChartService implements IChartService {
         };
 
         this.activeCharts.push(chartRef);
+
         return chartRef;
     }
 
