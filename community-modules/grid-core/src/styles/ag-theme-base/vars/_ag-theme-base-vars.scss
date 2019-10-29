@@ -1,88 +1,90 @@
-$foreground-opacity: 1 !default;
-$secondary-foreground-color-opacity: 1 !default;
-$disabled-foreground-color-opacity: 0.5 !default;
+@import "./ag-theme-base-import-legacy-vars";
+
+$ag-foreground-opacity: 1 !default;
+$ag-secondary-foreground-color-opacity: 1 !default;
+$ag-disabled-foreground-color-opacity: 0.5 !default;
 
 // Colors
-$border-color: transparent !default;
-$background-color: #fff !default;
-$foreground-color: #000 !default;
-$header-background-color: $background-color !default;
-$header-foreground-color: $foreground-color !default;
-$icon-color: lightgray !default;
-$alt-icon-color: $background-color !default;
-$accent-color: transparent !default;
-$range-selection-background-color: $icon-color !default;
+$ag-border-color: transparent !default;
+$ag-background-color: #fff !default;
+$ag-foreground-color: #000 !default;
+$ag-header-background-color: $ag-background-color !default;
+$ag-header-foreground-color: $ag-foreground-color !default;
+$ag-icon-color: lightgray !default;
+$ag-alt-icon-color: $ag-background-color !default;
+$ag-accent-color: transparent !default;
+$ag-range-selection-background-color: $ag-icon-color !default;
 
 // Sizing
-$grid-size: 4px !default;
-$icon-size: 12px !default;
-$header-height: $grid-size * 6 + 1 !default;
-$row-height: ($grid-size * 6 + 1) !default;
-$rich-select-item-height: $row-height !default;
-$cell-horizontal-padding: $grid-size * 3 !default;
-$virtual-item-height: $grid-size * 5 !default;
-$header-icon-size: 14px !default;
+$ag-grid-size: 4px !default;
+$ag-icon-size: 12px !default;
+$ag-header-height: $ag-grid-size * 6 + 1 !default;
+$ag-row-height: ($ag-grid-size * 6 + 1) !default;
+$ag-rich-select-item-height: $ag-row-height !default;
+$ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
+$ag-virtual-item-height: $ag-grid-size * 5 !default;
+$ag-header-icon-size: 14px !default;
 
 // Fonts
-$font-family: 'Helvetica Neue', sans-serif !default;
-$font-size: 14px !default;
-$font-weight: 400 !default;
+$ag-font-family: 'Helvetica Neue', sans-serif !default;
+$ag-font-size: 14px !default;
+$ag-font-weight: 400 !default;
 
-$secondary-font-family: $font-family !default;
-$secondary-font-size: 14px !default;
-$secondary-font-weight: 400 !default;
+$ag-secondary-font-family: $ag-font-family !default;
+$ag-secondary-font-size: 14px !default;
+$ag-secondary-font-weight: 400 !default;
 
 // Tooltip
-$tooltip-background-color: $background-color !default;
-$tooltip-foreground-color: $foreground-color !default;
-$tooltip-border-radius: 2px !default;
-$tooltip-padding: 5px !default;
-$tooltip-border-width: 1px !default;
-$tooltip-border-style: solid !default;
-$tooltip-border-color: #ebebeb !default;
+$ag-tooltip-background-color: $ag-background-color !default;
+$ag-tooltip-foreground-color: $ag-foreground-color !default;
+$ag-tooltip-border-radius: 2px !default;
+$ag-tooltip-padding: 5px !default;
+$ag-tooltip-border-width: 1px !default;
+$ag-tooltip-border-style: solid !default;
+$ag-tooltip-border-color: #ebebeb !default;
 
 // Misc
-$card-shadow: none !default;
-$card-radius: 0 !default;
-$row-border-width: 0 !default;
-$transition-speed: 120ms !default;
-$cell-horizontal-border: 1px solid transparent !default;
+$ag-card-shadow: none !default;
+$ag-card-radius: 0 !default;
+$ag-row-border-width: 0 !default;
+$ag-transition-speed: 120ms !default;
+$ag-cell-horizontal-border: 1px solid transparent !default;
 
-$toolpanel-indent-size: $grid-size + $icon-size !default;
-$row-group-indent-size: $grid-size * 3 + $icon-size !default;
+$ag-toolpanel-indent-size: $ag-grid-size + $ag-icon-size !default;
+$ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 
-$header-cell-moving-background-color: rgb(190, 190, 190) !default;
-$input-disabled-background-color: #ebebeb !default;
-$input-border-color: #000000 !default;
-$scroll-spacer-border: 1px solid if($border-color, $border-color, lightgrey) !default;
+$ag-header-cell-moving-background-color: rgb(190, 190, 190) !default;
+$ag-input-disabled-background-color: #ebebeb !default;
+$ag-input-border-color: #000000 !default;
+$ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
 
-$dialog-background-color: $background-color !default;
-$dialog-border-size: 1px !default;
-$dialog-border-style: solid !default;
-$dialog-border-color: $border-color !default;
+$ag-dialog-background-color: $ag-background-color !default;
+$ag-dialog-border-size: 1px !default;
+$ag-dialog-border-style: solid !default;
+$ag-dialog-border-color: $ag-border-color !default;
 
-$dialog-title-background-color: $header-background-color !default;
-$dialog-title-foreground-color: $header-foreground-color !default;
-$dialog-title-height: $header-height !default;
-$dialog-title-font-family: $secondary-font-family !default;
-$dialog-title-font-size: $secondary-font-size !default;
-$dialog-title-font-weight: $secondary-font-weight !default;
-$dialog-title-padding: 5px 10px !default;
-$dialog-title-icon-size: max(20px, $icon-size) !default;
+$ag-dialog-title-background-color: $ag-header-background-color !default;
+$ag-dialog-title-foreground-color: $ag-header-foreground-color !default;
+$ag-dialog-title-height: $ag-header-height !default;
+$ag-dialog-title-font-family: $ag-secondary-font-family !default;
+$ag-dialog-title-font-size: $ag-secondary-font-size !default;
+$ag-dialog-title-font-weight: $ag-secondary-font-weight !default;
+$ag-dialog-title-padding: 5px 10px !default;
+$ag-dialog-title-icon-size: max(20px, $ag-icon-size) !default;
 
-$tool-panel-background-color: $background-color !default;
-$group-component-background-color: lighten($tool-panel-background-color, 1%) !default;
-$group-component-border-color: lighten($border-color, 5%) !default;
-$group-component-title-background-color: darken($group-component-background-color, 5%) !default;
+$ag-tool-panel-background-color: $ag-background-color !default;
+$ag-group-component-background-color: lighten($ag-tool-panel-background-color, 1%) !default;
+$ag-group-component-border-color: lighten($ag-border-color, 5%) !default;
+$ag-group-component-title-background-color: darken($ag-group-component-background-color, 5%) !default;
 
-$range-selection-chart-background-color: adjust-hue($range-selection-background-color, 25%) !default;
-$range-selection-chart-category-background-color: adjust-hue($range-selection-background-color, -80%) !default;
+$ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25%) !default;
+$ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80%) !default;
 
 // Icons
 @import "./font-vars";
 
 
-$icons_font_codes: (
+$icons-font-codes: (
     aggregation: $ag-icon-aggregation,
     arrows: $ag-icon-arrows,
     asc: $ag-icon-asc,

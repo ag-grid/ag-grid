@@ -1,50 +1,50 @@
 @import './public-vars';
 
-$foreground-opacity: 1 !default;
-$secondary-foreground-color-opacity: 1 !default;
-$disabled-foreground-color-opacity: 1 !default;
+$ag-foreground-opacity: 1 !default;
+$ag-secondary-foreground-color-opacity: 1 !default;
+$ag-disabled-foreground-color-opacity: 1 !default;
 
 // Sizing
-$grid-size: 6px !default;
-$icon-size: 16px !default;
+$ag-grid-size: 6px !default;
+$ag-icon-size: 16px !default;
 
 // these three should be changed in environment.ts, too
-$row-height: $grid-size * 7 !default;
+$ag-row-height: $ag-grid-size * 7 !default;
 
 $default-background: $color-background !default;
 $chrome-background: $color-background !default;
-$background-color: $default-background !default;
+$ag-background-color: $default-background !default;
 
-$border-color: $color-border-secondary !default;
+$ag-border-color: $color-border-secondary !default;
 
-$icon-color: $color-icon !default;
-$alt-icon-color: $default-background !default;
-$header-cell-moving-background-color: $default-background !default;
+$ag-icon-color: $color-icon !default;
+$ag-alt-icon-color: $default-background !default;
+$ag-header-cell-moving-background-color: $default-background !default;
 
 // Derived from above
-$secondary-foreground-color: rgba($color-foreground, $secondary-foreground-color-opacity) !default; // foreground-secondary
-$disabled-foreground-color: rgba($color-foreground, $disabled-foreground-color-opacity) !default; // foreground-disabled
-$input-border-color: $color-border-form-element !default;
-$input-disabled-background-color: $color-background-form-element-disabled !default;
+$secondary-foreground-color: rgba($color-foreground, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
+$disabled-foreground-color: rgba($color-foreground, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
+$ag-input-border-color: $color-border-form-element !default;
+$ag-input-disabled-background-color: $color-background-form-element-disabled !default;
 
 $range-selection-highlight-color: $color-secondary !default;
 
 $selected-color: $color-selected !default;
-$range-selection-background-color: $color-background-range-selection !default;
+$ag-range-selection-background-color: $color-background-range-selection !default;
 $ag-range-selected-color-1: $color-background-range-selected-1 !default;
 $ag-range-selected-color-2: $color-background-range-selected-2 !default;
 $ag-range-selected-color-3: $color-background-range-selected-3 !default;
 $ag-range-selected-color-4: $color-background-range-selected-4 !default;
 
-$range-selection-chart-category-background-color: transparentize($color-background-chart-range-selection-category, 0.9) !default;
-$range-selection-chart-background-color: transparentize($color-background-chart-range-selection, 0.9) !default;
+$ag-range-selection-chart-category-background-color: transparentize($color-background-chart-range-selection-category, 0.9) !default;
+$ag-range-selection-chart-background-color: transparentize($color-background-chart-range-selection, 0.9) !default;
 
 $editor-background-color: $chrome-background !default;
 $panel-background-color: $chrome-background !default;
-$tool-panel-background-color: $chrome-background !default;
-$header-background-color: $chrome-background !default;
-$header-cell-hover-background-color: $header-background-color !default;
-$header-foreground-color: $secondary-foreground-color !default;
+$ag-tool-panel-background-color: $chrome-background !default;
+$ag-header-background-color: $chrome-background !default;
+$header-cell-hover-background-color: $ag-header-background-color !default;
+$ag-header-foreground-color: $secondary-foreground-color !default;
 
 $hover-color: $color-row-hover !default;
 $chip-background-color: $color-background-chip !default;
@@ -52,24 +52,24 @@ $chip-background-color: $color-background-chip !default;
 $row-stub-background-color: inherit !default;
 $row-floating-background-color: inherit !default;
 
-$header-height: $grid-size * 8 !default;
-$virtual-item-height: $grid-size * 5 !default;
-$row-border-width: 1px !default;
+$ag-header-height: $ag-grid-size * 8 !default;
+$ag-virtual-item-height: $ag-grid-size * 5 !default;
+$ag-row-border-width: 1px !default;
 
-$toolpanel-indent-size: $icon-size !default;
-$row-group-indent-size: $grid-size + $icon-size !default;
-$cell-horizontal-padding: $grid-size * 3 !default;
+$ag-toolpanel-indent-size: $ag-icon-size !default;
+$ag-row-group-indent-size: $ag-grid-size + $ag-icon-size !default;
+$ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 
-$header-icon-size: 14px !default;
+$ag-header-icon-size: 14px !default;
 $border-radius: 3px !default;
 
-$card-radius: 2px !default;
-$card-shadow: none !default;
+$ag-card-radius: 2px !default;
+$ag-card-shadow: none !default;
 
-$tooltip-background-color: $color-background-alt !default;
-$tooltip-foreground-color: $color-foreground !default;
-$tooltip-border-radius: $border-radius !default;
-$tooltip-border-color: $color-background-alt !default;
+$ag-tooltip-background-color: $color-background-alt !default;
+$ag-tooltip-foreground-color: $color-foreground !default;
+$ag-tooltip-border-radius: $border-radius !default;
+$ag-tooltip-border-color: $color-background-alt !default;
 $tooltip-font-size: $size-font-tooltip !default;
 
 // Icons
@@ -89,77 +89,77 @@ $params: (
     hover-color: $hover-color,
     selected-color: $selected-color,
     default-background: $default-background,
-    background-color: $background-color,
+    background-color: $ag-background-color,
     foreground-color: $color-foreground,
-    foreground-opacity: $foreground-opacity,
-    secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
+    foreground-opacity: $ag-foreground-opacity,
+    secondary-foreground-color-opacity: $ag-secondary-foreground-color-opacity,
     secondary-foreground-color: $secondary-foreground-color,
-    disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
+    disabled-foreground-color-opacity: $ag-disabled-foreground-color-opacity,
     disabled-foreground-color: $disabled-foreground-color,
-    border-color: $border-color,
-    scroll-spacer-border: $scroll-spacer-border,
+    border-color: $ag-border-color,
+    scroll-spacer-border: $ag-scroll-spacer-border,
     panel-background-color: $panel-background-color,
-    tool-panel-background-color: $tool-panel-background-color,
-    header-foreground-color: $header-foreground-color,
-    header-background-color: $header-background-color,
+    tool-panel-background-color: $ag-tool-panel-background-color,
+    header-foreground-color: $ag-header-foreground-color,
+    header-background-color: $ag-header-background-color,
     header-cell-hover-background-color: $header-cell-hover-background-color,
-    header-cell-moving-background-color: $header-cell-moving-background-color,
+    header-cell-moving-background-color: $ag-header-cell-moving-background-color,
     odd-row-background-color: $color-background-alt,
     row-stub-background-color: $row-stub-background-color,
     row-floating-background-color: $row-floating-background-color,
     chip-background-color: $chip-background-color,
-    card-background-color: $background-color,
+    card-background-color: $ag-background-color,
     cell-data-changed-color: $color-cell-data-changed,
     value-change-delta-up-color: $color-value-change-delta-up,
     value-change-delta-down-color: $color-value-change-delta-down,
     value-change-value-highlight-background-color: $color-value-change-value-highlight-background,
     editor-background-color-color: $editor-background-color,
-    input-border-color: $input-border-color,
-    input-disabled-background-color: $input-disabled-background-color,
+    input-border-color: $ag-input-border-color,
+    input-disabled-background-color: $ag-input-disabled-background-color,
     icon-color: $color-icon,
-    alt-icon-color: $alt-icon-color,
-    icon-opacity: $foreground-opacity,
-    range-selection-background-color: $range-selection-background-color,
-    range-selection-chart-background-color: $range-selection-chart-background-color,
-    range-selection-chart-category-background-color: $range-selection-chart-category-background-color,
+    alt-icon-color: $ag-alt-icon-color,
+    icon-opacity: $ag-foreground-opacity,
+    range-selection-background-color: $ag-range-selection-background-color,
+    range-selection-chart-background-color: $ag-range-selection-chart-background-color,
+    range-selection-chart-category-background-color: $ag-range-selection-chart-category-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
     ag-range-selected-color-1: $ag-range-selected-color-1,
     ag-range-selected-color-2: $ag-range-selected-color-2,
     ag-range-selected-color-3: $ag-range-selected-color-3,
     ag-range-selected-color-4: $ag-range-selected-color-4,
-    grid-size: $grid-size,
-    input-height: $grid-size * 4,
-    icon-size: $icon-size,
-    header-icon-size: $header-icon-size,
-    header-height: $header-height,
-    row-height: $row-height,
-    row-border-width: $row-border-width,
-    virtual-item-height: $virtual-item-height,
-    cell-horizontal-padding: $cell-horizontal-padding,
-    cell-horizontal-border: $cell-horizontal-border,
-    toolpanel-indent-size: $toolpanel-indent-size,
-    row-group-indent-size: $row-group-indent-size,
+    grid-size: $ag-grid-size,
+    input-height: $ag-grid-size * 4,
+    icon-size: $ag-icon-size,
+    header-icon-size: $ag-header-icon-size,
+    header-height: $ag-header-height,
+    row-height: $ag-row-height,
+    row-border-width: $ag-row-border-width,
+    virtual-item-height: $ag-virtual-item-height,
+    cell-horizontal-padding: $ag-cell-horizontal-padding,
+    cell-horizontal-border: $ag-cell-horizontal-border,
+    toolpanel-indent-size: $ag-toolpanel-indent-size,
+    row-group-indent-size: $ag-row-group-indent-size,
     button-text-transform: uppercase,
-    card-radius: $card-radius,
-    card-shadow: $card-shadow,
+    card-radius: $ag-card-radius,
+    card-shadow: $ag-card-shadow,
     use-icons-for-pager-buttons: true,
-    tooltip-background-color: $tooltip-background-color,
-    tooltip-foreground-color: $tooltip-foreground-color,
-    tooltip-padding: $tooltip-padding,
-    tooltip-border-radius: $tooltip-border-radius,
-    tooltip-border-color: $tooltip-border-color,
-    tooltip-border-width: $tooltip-border-width,
-    tooltip-border-style: $tooltip-border-style,
-    dialog-background-color: $dialog-background-color,
-    dialog-border-size: $dialog-border-size,
-    dialog-border-style: $dialog-border-style,
-    dialog-border-color: $dialog-border-color,
-    dialog-title-background-color: $dialog-title-background-color,
-    dialog-title-foreground-color: $dialog-title-foreground-color,
-    dialog-title-height: $dialog-title-height,
-    dialog-title-font-family: $dialog-title-font-family,
-    dialog-title-font-size: $dialog-title-font-size,
-    dialog-title-font-weight: $dialog-title-font-weight,
-    dialog-title-padding: $dialog-title-padding,
-    dialog-title-icon-size: $dialog-title-icon-size
+    tooltip-background-color: $ag-tooltip-background-color,
+    tooltip-foreground-color: $ag-tooltip-foreground-color,
+    tooltip-padding: $ag-tooltip-padding,
+    tooltip-border-radius: $ag-tooltip-border-radius,
+    tooltip-border-color: $ag-tooltip-border-color,
+    tooltip-border-width: $ag-tooltip-border-width,
+    tooltip-border-style: $ag-tooltip-border-style,
+    dialog-background-color: $ag-dialog-background-color,
+    dialog-border-size: $ag-dialog-border-size,
+    dialog-border-style: $ag-dialog-border-style,
+    dialog-border-color: $ag-dialog-border-color,
+    dialog-title-background-color: $ag-dialog-title-background-color,
+    dialog-title-foreground-color: $ag-dialog-title-foreground-color,
+    dialog-title-height: $ag-dialog-title-height,
+    dialog-title-font-family: $ag-dialog-title-font-family,
+    dialog-title-font-size: $ag-dialog-title-font-size,
+    dialog-title-font-weight: $ag-dialog-title-font-weight,
+    dialog-title-padding: $ag-dialog-title-padding,
+    dialog-title-icon-size: $ag-dialog-title-icon-size
 );

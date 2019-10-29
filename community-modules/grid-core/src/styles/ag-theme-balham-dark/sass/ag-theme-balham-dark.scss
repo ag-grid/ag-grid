@@ -7,11 +7,11 @@
     input,
     select {
         background-color: $odd-row-background-color;
-        color: $foreground-color;
+        color: $ag-foreground-color;
     }
 
     .ag-filter-toolpanel-body {
-        background-color: $background-color;
+        background-color: $ag-background-color;
     }
 
     .ag-angle-select {

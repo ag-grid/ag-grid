@@ -136,7 +136,7 @@ $checkbox-border-radius: $border-radius;
     appearance: none;
     -webkit-appearance: none;
     border-radius: $border-radius;
-    padding: $grid-size;
+    padding: $ag-grid-size;
     border: 1px solid $color-border-form-element;
     background: $color-background;
     color: $color-foreground;
@@ -154,9 +154,9 @@ $checkbox-border-radius: $border-radius;
 @mixin with-dropdown-arrow() {
     background-image: $url-data-image-dropdown-arrow !important;
     background-repeat: no-repeat;
-    background-position: right $grid-size top $grid-size;
-    background-size: $grid-size * 3;
-    padding-right: $grid-size * 4;
+    background-position: right $ag-grid-size top $ag-grid-size;
+    background-size: $ag-grid-size * 3;
+    padding-right: $ag-grid-size * 4;
 
     &:hover {
         background-image: $url-hover-data-image-dropdown-arrow !important;
@@ -167,9 +167,9 @@ $checkbox-border-radius: $border-radius;
     }
 
     .ag-rtl & {
-        background-position: left $grid-size top $grid-size;
-        padding-right: $grid-size;
-        padding-left: $grid-size * 4;
+        background-position: left $ag-grid-size top $ag-grid-size;
+        padding-right: $ag-grid-size;
+        padding-left: $ag-grid-size * 4;
     }
 }
 
@@ -228,7 +228,7 @@ $checkbox-border-radius: $border-radius;
     color: $color-primary;
     background: $color-background;
     font-weight: 600;
-    padding: $grid-size $grid-size * 2;
+    padding: $ag-grid-size $ag-grid-size * 2;
     // transition: all 0.1s;
 
     &:hover {

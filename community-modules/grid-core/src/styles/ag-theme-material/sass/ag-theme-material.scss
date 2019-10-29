@@ -16,14 +16,14 @@
     .ag-icon-checkbox-indeterminate-readonly,
     .ag-icon-radio-button-on,
     .ag-icon-radio-button-off {
-        height: $icon-size + 6;
-        width: $icon-size + 6;
-        font-size: $icon-size + 6;
-        line-height: $icon-size + 6;
+        height: $ag-icon-size + 6;
+        width: $ag-icon-size + 6;
+        font-size: $ag-icon-size + 6;
+        line-height: $ag-icon-size + 6;
     }
 
     .ag-header-cell, .ag-header-group-cell {
-        background-color: $background-color;
+        background-color: $ag-background-color;
         transition: background-color 0.5s;
     }
 
@@ -36,7 +36,7 @@
     }
 
     .ag-menu-option {
-        height: $grid-size * 5 - 2;
+        height: $ag-grid-size * 5 - 2;
     }
 
     .ag-side-bar {
@@ -48,21 +48,21 @@
             .ag-side-button {
                 button {
                     color: $secondary-foreground-color;
-                    font-family: $secondary-font-family;
-                    font-size: $secondary-font-size;
-                    font-weight: $secondary-font-weight;
+                    font-family: $ag-secondary-font-family;
+                    font-size: $ag-secondary-font-size;
+                    font-weight: $ag-secondary-font-weight;
                     background-color: transparent;
                     border-width: 0;
                     width: calc(100% + 2px);
                 }
                 &.ag-selected {
-                    background-color: $tool-panel-background-color;
+                    background-color: $ag-tool-panel-background-color;
                 }
             } 
         }
 
         .ag-filter-toolpanel-body {
-            background-color: $background-color;
+            background-color: $ag-background-color;
         }
     }
 

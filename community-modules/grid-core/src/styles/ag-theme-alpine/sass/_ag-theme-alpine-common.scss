@@ -50,7 +50,7 @@
     ////////////////////////////////////////
     .ag-filter {
         .ag-filter-body-wrapper {
-            padding: $grid-size * 2;
+            padding: $ag-grid-size * 2;
             .ag-filter-select,
             .ag-filter-body,
             .ag-filter-filter {
@@ -61,7 +61,7 @@
             .ag-filter-body,
             .ag-filter-condition {
                 &:not(:last-child) {
-                    margin-bottom: $grid-size * 2;
+                    margin-bottom: $ag-grid-size * 2;
                 }
             }
 
@@ -80,10 +80,10 @@
 
         .ag-filter-apply-panel {
             padding: 0;
-            padding-top: $grid-size * 3;
-            margin: $grid-size * 2;
+            padding-top: $ag-grid-size * 3;
+            margin: $ag-grid-size * 2;
             margin-top: 0;
-            border-top: 1px solid $border-color;
+            border-top: 1px solid $ag-border-color;
 
             button {
                 @extend %button;
@@ -102,7 +102,7 @@
             @extend %label;
             display: inline-block;
             margin: 0;
-            margin-left: $grid-size * 1;
+            margin-left: $ag-grid-size * 1;
         }
 
         .ag-native-checkbox {
@@ -111,10 +111,10 @@
     }
 
     .ag-filter-header-container {
-        margin-bottom: $grid-size;
+        margin-bottom: $ag-grid-size;
         .ag-set-filter-item {
-            margin-top: $grid-size;
-            margin-bottom: $grid-size;
+            margin-top: $ag-grid-size;
+            margin-bottom: $ag-grid-size;
         }
     }
     ////////////////////////////////////////
@@ -130,12 +130,12 @@
 
     .ag-menu-list {
         font: $font-chrome;
-        padding: $grid-size * 2;
+        padding: $ag-grid-size * 2;
         margin: 0;
 
         .ag-menu-option > span {
-            padding-top: $grid-size;
-            padding-bottom: $grid-size;
+            padding-top: $ag-grid-size;
+            padding-bottom: $ag-grid-size;
         }
 
         .ag-menu-option-shortcut {
@@ -152,8 +152,8 @@
         justify-content: center;
 
         .ag-tab {
-            padding: $grid-size $grid-size * 4;
-            padding-bottom: $grid-size - 2;
+            padding: $ag-grid-size $ag-grid-size * 4;
+            padding-bottom: $ag-grid-size - 2;
 
             .ag-icon {
                 display: block;
@@ -174,15 +174,15 @@
 
     // resets from the main theme
     .ag-tab-body {
-        border-top: 1px solid $border-color;
+        border-top: 1px solid $ag-border-color;
         padding: 0;
 
         .ag-menu-list {
             & > div:first-child > span {
-                padding-top: $grid-size;
+                padding-top: $ag-grid-size;
             }
             & > div:last-child > span {
-                padding-bottom: $grid-size;
+                padding-bottom: $ag-grid-size;
             }
         }
     }
@@ -227,7 +227,7 @@
     ////////////////////////////////////////
     &.ag-popup .ag-tooltip {
         font-size: $tooltip-font-size;
-        padding: $grid-size / 2 $grid-size;
+        padding: $ag-grid-size / 2 $ag-grid-size;
     }
 
     ////////////////////////////////////////
@@ -238,17 +238,17 @@
     .ag-header-cell-resize {
         box-sizing: border-box;
         right: -2px;
-        width: $grid-size;
+        width: $ag-grid-size;
 
         &::before {
             content: ' ';
             background: $resize-handle-color;
             width: 2px;
             border-radius: 1px;
-            height: $header-height / 4;
-            margin-top: $header-height * 3 / 2 / 4;
+            height: $ag-header-height / 4;
+            margin-top: $ag-header-height * 3 / 2 / 4;
             display: block;
-            transform: translateX($grid-size / 2 - 2);
+            transform: translateX($ag-grid-size / 2 - 2);
         }
 
         &:hover::before {
@@ -291,15 +291,15 @@
         }
     }
     .ag-ltr .ag-floating-filter-button {
-        margin-left: $grid-size / 2;
+        margin-left: $ag-grid-size / 2;
     }
     .ag-floating-filter-button {
         button {
             @extend %button;
-            background-position: right $grid-size / 2 top $grid-size / 2;
-            padding: $grid-size - 1;
-            height: $icon-size + $grid-size * 2 - 2;
-            width: $grid-size * 5;
+            background-position: right $ag-grid-size / 2 top $ag-grid-size / 2;
+            padding: $ag-grid-size - 1;
+            height: $ag-icon-size + $ag-grid-size * 2 - 2;
+            width: $ag-grid-size * 5;
             border-radius: $border-radius;
             border: 1px solid $color-border-form-element;
             text-align: left;
@@ -342,8 +342,8 @@
             @extend %input-text;
             border: 0;
             border-radius: 0;
-            padding-left: $grid-size * 3 - 1;
-            padding-right: $grid-size * 3 - 1;
+            padding-left: $ag-grid-size * 3 - 1;
+            padding-right: $ag-grid-size * 3 - 1;
             font: $font-default;
         }
 
@@ -352,9 +352,9 @@
             @extend %select;
             border: 0;
             border-radius: 0;
-            padding-left: $grid-size * 3 - 1;
-            padding-right: $grid-size * 3 - 1;
-            background-position: right $grid-size top $row-height / 2 - 9;
+            padding-left: $ag-grid-size * 3 - 1;
+            padding-right: $ag-grid-size * 3 - 1;
+            background-position: right $ag-grid-size top $ag-row-height / 2 - 9;
             font: $font-default;
         }
     }
@@ -364,7 +364,7 @@
     ////////////////////////////////////////
     .ag-popup > div.ag-popup-editor {
         @include primary-box-shadow();
-        min-height: $row-height;
+        min-height: $ag-row-height;
         border-color: $color-primary;
         border-radius: 0;
         padding: 0;
@@ -376,10 +376,10 @@
         .ag-cell-edit-input select {
             border: 0;
             border-radius: 0;
-            padding-left: $grid-size * 3 - 1;
-            padding-right: $grid-size * 6 - 1;
+            padding-left: $ag-grid-size * 3 - 1;
+            padding-right: $ag-grid-size * 6 - 1;
             font: $font-default;
-            line-height: $row-height - $grid-size * 2 - 2;
+            line-height: $ag-row-height - $ag-grid-size * 2 - 2;
         }
 
         .ag-input-wrapper .ag-cell-edit-input {
@@ -389,7 +389,7 @@
         // select editor
         .ag-cell-edit-input select {
             @extend %select;
-            background-position: right $grid-size top $row-height / 2 - 9;
+            background-position: right $ag-grid-size top $ag-row-height / 2 - 9;
         }
 
         textarea {
@@ -398,7 +398,7 @@
             color: $color-foreground;
             background: $color-background;
             font: $font-default;
-            padding: $grid-size * 2 $grid-size * 3;
+            padding: $ag-grid-size * 2 $ag-grid-size * 3;
         }
     }
 
@@ -408,12 +408,12 @@
     .ag-rich-select {
         .ag-rich-select-value {
             @include with-dropdown-arrow();
-            background-position: right $grid-size top $row-height / 2 - $icon-size / 2;
+            background-position: right $ag-grid-size top $ag-row-height / 2 - $ag-icon-size / 2;
             border-bottom: 1px solid $color-border-secondary;
         }
 
         .ag-virtual-list-item {
-            height: $grid-size * 5;
+            height: $ag-grid-size * 5;
         }
 
         .ag-rich-select-row-selected {
@@ -427,17 +427,17 @@
     .ag-column-select-panel {
         .ag-primary-cols-header-panel {
             border-top: 0;
-            padding-left: $grid-size * 1;
-            padding-top: $grid-size * 2;
-            padding-bottom: $grid-size * 2;
+            padding-left: $ag-grid-size * 1;
+            padding-top: $ag-grid-size * 2;
+            padding-bottom: $ag-grid-size * 2;
             height: auto;
 
             & > [ref='eExpand'] {
-                margin-left: $grid-size;
+                margin-left: $ag-grid-size;
             }
 
             & > [ref='eExpand'].ag-hidden + div {
-                margin-left: $grid-size * 2;
+                margin-left: $ag-grid-size * 2;
             }
 
             .ag-checkbox {
@@ -445,13 +445,13 @@
             }
 
             .ag-input-wrapper {
-                margin-right: $grid-size * 2;
+                margin-right: $ag-grid-size * 2;
             }
         }
 
         .ag-primary-cols-list-panel {
-            margin-left: $grid-size * 2;
-            margin-right: $grid-size * 2;
+            margin-left: $ag-grid-size * 2;
+            margin-right: $ag-grid-size * 2;
             padding-left: 0;
         }
 
@@ -464,7 +464,7 @@
         }
 
         .ag-primary-cols-list-panel > div {
-            height: $grid-size * 5;
+            height: $ag-grid-size * 5;
         }
 
         .ag-primary-cols-filter-wrapper.ag-input-wrapper {
@@ -482,7 +482,7 @@
     .ag-overlay-loading-center {
         @include chrome-box-shadow();
         border: 1px solid $color-border-primary;
-        padding: $grid-size * 2 $grid-size * 3;
+        padding: $ag-grid-size * 2 $ag-grid-size * 3;
         font: $font-default;
     }
 
@@ -509,16 +509,16 @@
         ~ .ag-cell-value,
         + .ag-group-value {
             &:not(:empty) {
-                margin-left: $grid-size;
+                margin-left: $ag-grid-size;
             }
         }
         ~ .ag-group-checkbox {
-            margin-left: $grid-size;
+            margin-left: $ag-grid-size;
         }
     }
 
     .ag-header-select-all {
-        margin-right: $grid-size;
+        margin-right: $ag-grid-size;
     }
 
     ////////////////////////////////////////
@@ -529,7 +529,7 @@
         // Align the first pill to the header
         font: $font-chrome;
         .ag-icon-group {
-            margin-right: $grid-size * 2;
+            margin-right: $ag-grid-size * 2;
         }
     }
 
@@ -537,7 +537,7 @@
         padding: 0;
 
         .ag-column-drag {
-            margin-left: $grid-size;
+            margin-left: $ag-grid-size;
             transform: translateY(1px);
         }
 
@@ -583,8 +583,8 @@
         border-top: 1px solid $color-border-primary;
         font: $font-chrome;
         font-size: $size-font-status-bar;
-        padding-left: $cell-horizontal-padding;
-        padding-right: $cell-horizontal-padding;
+        padding-left: $ag-cell-horizontal-padding;
+        padding-right: $ag-cell-horizontal-padding;
 
         div.ag-name-value:first-child {
             margin-left: 0;
@@ -608,11 +608,11 @@
 
         .ag-tool-panel-wrapper {
             border-left: 1px solid $color-border-primary;
-            // border-right: 1px solid $border-color;
+            // border-right: 1px solid $ag-border-color;
             background-color: $color-background-alt;
 
             .ag-pivot-mode-select {
-                margin-left: $grid-size * 2;
+                margin-left: $ag-grid-size * 2;
                 input {
                     @include toggle-button;
                 }
@@ -624,8 +624,8 @@
 
             & > div:first-child {
                 background-color: $color-background;
-                padding: $grid-size * 2 $grid-size * 2;
-                border-bottom: 1px solid $border-color;
+                padding: $ag-grid-size * 2 $ag-grid-size * 2;
+                border-bottom: 1px solid $ag-border-color;
                 & > span:first-child {
                     margin-left: 0px;
                     // display: none;
@@ -633,33 +633,33 @@
             }
 
             .ag-column-drop-list {
-                padding: $grid-size;
+                padding: $ag-grid-size;
             }
 
             .ag-column-drop-empty-message {
                 font-weight: inherit;
                 opacity: 0.5;
-                border: 1px dashed $border-color;
-                margin: $grid-size * 2;
-                padding: $grid-size * 2;
+                border: 1px dashed $ag-border-color;
+                margin: $ag-grid-size * 2;
+                padding: $ag-grid-size * 2;
             }
         }
 
         // filter panel
         .ag-filter-panel {
             .ag-filter-body-wrapper {
-                padding: $grid-size * 2;
-                padding-top: $grid-size;
+                padding: $ag-grid-size * 2;
+                padding-top: $ag-grid-size;
             }
 
             .ag-filter-apply-panel {
                 margin: 0;
-                margin-bottom: $grid-size;
-                padding-top: $grid-size * 2;
+                margin-bottom: $ag-grid-size;
+                padding-top: $ag-grid-size * 2;
                 justify-content: space-evenly;
                 button {
                     font-size: 0.8em;
-                    padding: $grid-size / 2 $grid-size;
+                    padding: $ag-grid-size / 2 $ag-grid-size;
                 }
             }
 
@@ -667,12 +667,12 @@
                 font-weight: $weight-font-chrome;
 
                 .ag-filter-toolpanel-header {
-                    padding: $grid-size $grid-size * 2;
+                    padding: $ag-grid-size $ag-grid-size * 2;
                     background-color: $color-background;
-                    border-bottom: 1px solid $border-color;
+                    border-bottom: 1px solid $ag-border-color;
 
                     [ref='eExpand'] {
-                        margin-right: $grid-size;
+                        margin-right: $ag-grid-size;
                     }
                 }
 
@@ -685,10 +685,10 @@
         // side buttons
         .ag-side-buttons {
             border-left: 1px solid $color-border-primary;
-            width: $grid-size * 5;
+            width: $ag-grid-size * 5;
 
             .ag-side-button {
-                margin-bottom: $grid-size;
+                margin-bottom: $ag-grid-size;
                 display: flex;
                 align-items: center;
                 transition: border-color 0.3s linear;
@@ -701,11 +701,11 @@
                     appearance: none;
                     padding: 0;
                     & > div {
-                        margin-left: $grid-size;
-                        margin-bottom: $grid-size;
+                        margin-left: $ag-grid-size;
+                        margin-bottom: $ag-grid-size;
                     }
                     & > span {
-                        margin-left: $grid-size * 1.5;
+                        margin-left: $ag-grid-size * 1.5;
                     }
                 }
 
@@ -733,22 +733,22 @@
     ////////////////////////////////////////
     .ag-panel {
         .ag-title-bar {
-            background-color: $dialog-title-background-color;
+            background-color: $ag-dialog-title-background-color;
             border-bottom: 1px solid $color-border-primary;
-            color: $dialog-title-foreground-color;
-            height: $dialog-title-height;
-            font-size: $dialog-title-font-size;
-            font-weight: $dialog-title-font-weight;
-            font-family: $dialog-title-font-family;
-            padding: $grid-size $cell-horizontal-padding;
+            color: $ag-dialog-title-foreground-color;
+            height: $ag-dialog-title-height;
+            font-size: $ag-dialog-title-font-size;
+            font-weight: $ag-dialog-title-font-weight;
+            font-family: $ag-dialog-title-font-family;
+            padding: $ag-grid-size $ag-cell-horizontal-padding;
 
             .ag-title-bar-buttons {
                 .ag-button {
-                    height: $dialog-title-icon-size;
-                    width: $dialog-title-icon-size;
+                    height: $ag-dialog-title-icon-size;
+                    width: $ag-dialog-title-icon-size;
                     .ag-icon {
-                        line-height: $dialog-title-icon-size;
-                        font-size: $dialog-title-icon-size;
+                        line-height: $ag-dialog-title-icon-size;
+                        font-size: $ag-dialog-title-icon-size;
                     }
                     border-radius: $border-radius;
 
@@ -761,7 +761,7 @@
                     }
 
                     &:not(:last-child) {
-                        margin-right: $grid-size;
+                        margin-right: $ag-grid-size;
                     }
                 }
             }
@@ -770,10 +770,10 @@
         .ag-message-box {
             .ag-message-box-button-bar {
                 height: 30px;
-                background-color: $header-background-color;
+                background-color: $ag-header-background-color;
                 padding: 2px;
                 button {
-                    border-radius: $card-radius;
+                    border-radius: $ag-card-radius;
                 }
             }
         }
@@ -781,8 +781,8 @@
 
     .ag-chart {
         .ag-chart-menu {
-            top: $grid-size * 2;
-            right: $grid-size * 3;
+            top: $ag-grid-size * 2;
+            right: $ag-grid-size * 3;
             & > .ag-icon {
                 opacity: 1;
                 &:hover {
@@ -816,7 +816,7 @@
         .ag-chart-data {
             .ag-radio-button {
                 margin: 0;
-                padding: $grid-size 0;
+                padding: $ag-grid-size 0;
 
                 input[type='radio'] {
                     @extend %radio-button;
@@ -826,7 +826,7 @@
             }
 
             .ag-checkbox {
-                padding: $grid-size 0;
+                padding: $ag-grid-size 0;
             }
         }
 
@@ -846,7 +846,7 @@
                 @extend %custom-selection;
                 border: 1px solid $color-primary;
                 border-radius: $border-radius;
-                padding: $grid-size;
+                padding: $ag-grid-size;
                 color: $color-foreground;
                 background: $color-background;
             }
@@ -881,24 +881,24 @@
         .ag-group-component-title-bar {
             font: $font-chrome;
             background: $color-background;
-            border-bottom: 1px solid $border-color;
-            padding: $grid-size $grid-size * 2 !important;
+            border-bottom: 1px solid $ag-border-color;
+            padding: $ag-grid-size $ag-grid-size * 2 !important;
             // hacky way to adjust the height of the header to match the one in the filter panel
-            line-height: $icon-size + $grid-size - 2;
+            line-height: $ag-icon-size + $ag-grid-size - 2;
             height: auto;
 
             .ag-column-group-icons {
                 margin-left: -2px;
-                margin-right: $grid-size;
+                margin-right: $ag-grid-size;
                 transform: translateY(1px);
             }
         }
 
         .ag-group-component-container {
-            border-bottom: 1px solid $border-color;
+            border-bottom: 1px solid $ag-border-color;
             margin-left: 0;
             justify-content: flex-start;
-            padding: $grid-size $grid-size * 2;
+            padding: $ag-grid-size $ag-grid-size * 2;
 
             .ag-group-item {
                 margin: 0;
@@ -909,17 +909,17 @@
         // second level nesting
         .ag-group-component {
             .ag-group-component-container {
-                padding: $grid-size * 2 0;
+                padding: $ag-grid-size * 2 0;
             }
             .ag-group-component-title-bar {
                 background-color: unset;
-                padding: $grid-size 0 !important;
+                padding: $ag-grid-size 0 !important;
                 height: auto;
             }
         }
 
         .ag-group-component-toolbar {
-            padding: $grid-size $grid-size * 2;
+            padding: $ag-grid-size $ag-grid-size * 2;
             height: auto;
             background: $color-background;
             input.ag-native-checkbox {
@@ -939,7 +939,7 @@
         border-color: $color-border-primary;
 
         & > div {
-            height: $grid-size * 4;
+            height: $ag-grid-size * 4;
         }
     }
 
@@ -980,7 +980,7 @@
     // hover effect on menu icons
     [ref='eMenu'].ag-header-icon {
         // @extend %button;
-        // padding: $grid-size / 2;
+        // padding: $ag-grid-size / 2;
 
         .ag-icon {
             color: $color-primary;
@@ -995,7 +995,7 @@
     .ag-rtl {
         .ag-filter .ag-filter-apply-panel button + button {
             margin-left: 0;
-            margin-right: $grid-size * 2;
+            margin-right: $ag-grid-size * 2;
         }
 
         // arrows should point in the other direction
@@ -1014,15 +1014,15 @@
         }
 
         .ag-floating-filter-button {
-            margin-right: $grid-size / 2;
+            margin-right: $ag-grid-size / 2;
             button {
-                background-position: left $grid-size / 2 top $grid-size / 2;
-                padding-left: $grid-size * 4;
+                background-position: left $ag-grid-size / 2 top $ag-grid-size / 2;
+                padding-left: $ag-grid-size * 4;
             }
         }
 
         .ag-cell.ag-cell-inline-editing .ag-cell-edit-input select {
-            background-position: left $grid-size top $row-height / 2 - 9;
+            background-position: left $ag-grid-size top $ag-row-height / 2 - 9;
         }
 
         ////////////////////////////////////////
@@ -1031,13 +1031,13 @@
         .ag-popup > div.ag-popup-editor {
             .ag-input-wrapper .ag-cell-edit-input,
             .ag-cell-edit-input select {
-                padding-right: $grid-size * 3 - 1;
-                padding-left: $grid-size * 6 - 1;
+                padding-right: $ag-grid-size * 3 - 1;
+                padding-left: $ag-grid-size * 6 - 1;
             }
 
             // select editor
             .ag-cell-edit-input select {
-                background-position: left $grid-size top $row-height / 2 - 9;
+                background-position: left $ag-grid-size top $ag-row-height / 2 - 9;
             }
         }
 
@@ -1045,7 +1045,7 @@
             .ag-menu-option-shortcut {
                 text-align: left !important;
                 padding-left: 0 !important;
-                padding-right: $grid-size * 2 !important;
+                padding-right: $ag-grid-size * 2 !important;
             }
         }
 
@@ -1054,15 +1054,15 @@
         ////////////////////////////////////////
         .ag-column-select-panel {
             .ag-primary-cols-header-panel {
-                padding-right: $grid-size * 1;
+                padding-right: $ag-grid-size * 1;
 
                 & > [ref='eExpand'] {
-                    margin-right: $grid-size;
+                    margin-right: $ag-grid-size;
                     margin-left: 0;
                 }
 
                 & > [ref='eExpand'].ag-hidden + div {
-                    margin-right: $grid-size * 2;
+                    margin-right: $ag-grid-size * 2;
                     margin-left: 0;
                 }
             }
@@ -1070,21 +1070,21 @@
 
         .ag-column-drop-cell .ag-column-drag {
             margin-left: 0;
-            margin-right: $grid-size;
+            margin-right: $ag-grid-size;
         }
 
         .ag-group-checkbox {
             display: block;
             // this should not be necessary, but I am negating some weird inline flex idea
-            margin-top: $grid-size / 2;
+            margin-top: $ag-grid-size / 2;
         }
         .ag-rich-select {
             .ag-rich-select-value {
-                background-position: left $grid-size top $row-height / 2 - $icon-size / 2;
-                padding-right: $cell-horizontal-padding;
+                background-position: left $ag-grid-size top $ag-row-height / 2 - $ag-icon-size / 2;
+                padding-right: $ag-cell-horizontal-padding;
             }
             .ag-rich-select-row {
-                padding-right: $cell-horizontal-padding;
+                padding-right: $ag-cell-horizontal-padding;
             }
         }
 
@@ -1106,12 +1106,12 @@
                 button {
                     & > div {
                         margin-left: 0;
-                        margin-right: $grid-size;
+                        margin-right: $ag-grid-size;
                     }
 
                     & > span {
                         margin-left: 0;
-                        margin-right: $grid-size * 1;
+                        margin-right: $ag-grid-size * 1;
                         writing-mode: vertical-rl;
                     }
                 }
@@ -1119,8 +1119,8 @@
         }
 
         .ag-column-select-panel .ag-primary-cols-header-panel .ag-input-wrapper {
-            margin-left: $grid-size;
-            margin-right: $grid-size;
+            margin-left: $ag-grid-size;
+            margin-right: $ag-grid-size;
         }
 
         .ag-column-select-panel .ag-column-tool-panel-column-group .ag-column-group-icons {
@@ -1129,16 +1129,16 @@
 
         .ag-column-select-panel .ag-column-tool-panel-column .ag-column-select-checkbox {
             margin: 0;
-            margin-left: $grid-size;
+            margin-left: $ag-grid-size;
         }
 
         .ag-tool-panel-wrapper .ag-column-drop > div:first-child > span:first-child {
-            margin-left: $grid-size;
+            margin-left: $ag-grid-size;
             margin-right: 0;
         }
 
         .ag-tool-panel-wrapper .ag-pivot-mode-panel .ag-pivot-mode-select {
-            margin-right: $grid-size * 2;
+            margin-right: $ag-grid-size * 2;
         }
 
         .ag-chart-settings-next-btn,
@@ -1152,7 +1152,7 @@
         }
 
         .ag-group-component .ag-group-component-title-bar .ag-column-group-icons {
-            margin-left: $grid-size;
+            margin-left: $ag-grid-size;
             margin-right: 0;
             transform: scaleX(-1);
         }
@@ -1160,19 +1160,19 @@
         .ag-slider > .ag-wrapper > div:not(:first-of-type),
         .ag-angle-select > .ag-wrapper > div:not(:first-of-type) {
             margin-left: 0;
-            margin-right: $grid-size * 2;
+            margin-right: $ag-grid-size * 2;
         }
 
         .ag-chart .ag-chart-format input[type='number'] {
             @extend %input-text;
             font-size: 0.9em;
-            padding-right: $grid-size;
+            padding-right: $ag-grid-size;
             padding-left: 0;
         }
 
         .ag-labeled label {
             margin-right: 0;
-            margin-left: $grid-size;
+            margin-left: $ag-grid-size;
         }
     }
 
@@ -1188,10 +1188,10 @@
     }
 
     .ag-panel .ag-title-bar .ag-title-bar-buttons .ag-button .ag-icon {
-        font-size: $icon-size;
+        font-size: $ag-icon-size;
     }
 
     .ag-header-expand-icon {
-        transform: translateY($grid-size / 2);
+        transform: translateY($ag-grid-size / 2);
     }
 }

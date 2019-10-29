@@ -2,8 +2,8 @@
 @import '../mixins/ag-theme-mixins';
 
 @font-face {
-    font-family: '#{$icon-font-family}';
-    src: url("data:application/x-font-ttf;charset=utf-8;base64,#{$icons-data}") format('truetype');
+    font-family: '#{$ag-icon-font-family}';
+    src: url("data:application/x-font-ttf;charset=utf-8;base64,#{$ag-icons-data}") format('truetype');
     font-weight: normal;
     font-style: normal;
 }
