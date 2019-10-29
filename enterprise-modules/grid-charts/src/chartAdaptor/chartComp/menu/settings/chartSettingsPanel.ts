@@ -62,18 +62,18 @@ export class ChartSettingsPanel extends Component {
         this.setActivePalette(this.activePalette, 0);
     }
 
-    private addCardLink(name: ChartPaletteName): void {
+    private addCardLink(paletteName: ChartPaletteName): void {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-nav-card-item');
 
         this.addDestroyableEventListener(link, 'click', () => {
             const { activePalette, isAnimating, paletteNames } = this;
 
-            if (name === activePalette || isAnimating) {
+            if (paletteName === activePalette || isAnimating) {
                 return;
             }
 
-            this.setActivePalette(name, paletteNames.indexOf(name) < paletteNames.indexOf(activePalette) ? 1 : 2);
+            this.setActivePalette(paletteName, paletteNames.indexOf(paletteName) < paletteNames.indexOf(activePalette) ? 1 : 2);
         });
 
         this.eCardSelector.appendChild(link);
@@ -116,8 +116,8 @@ export class ChartSettingsPanel extends Component {
         this.setActivePalette(this.paletteNames[this.getNext()], 2);
     }
 
-    private setActivePalette(palette: ChartPaletteName, animate?: number) {
-        const paletteIndex = this.paletteNames.indexOf(palette);
+    private setActivePalette(paletteName: ChartPaletteName, animate?: number) {
+        const paletteIndex = this.paletteNames.indexOf(paletteName);
 
         _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected');
 
@@ -127,7 +127,7 @@ export class ChartSettingsPanel extends Component {
             });
 
             this.miniCharts[paletteIndex].refreshSelected();
-            this.activePalette = palette;
+            this.activePalette = paletteName;
         } else {
             const currentPalette = this.miniCharts[this.paletteNames.indexOf(this.activePalette)];
             const currentGui = currentPalette.getGui();
@@ -144,7 +144,7 @@ export class ChartSettingsPanel extends Component {
             _.addCssClass(currentGui, 'ag-animating');
             _.addCssClass(futureGui, 'ag-animating');
 
-            this.activePalette = palette;
+            this.activePalette = paletteName;
             this.chartController.setChartPaletteName(this.activePalette);
 
             this.isAnimating = true;

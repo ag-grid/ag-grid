@@ -26,7 +26,7 @@ interface CreateRangeChartParams {
 {
     cellRange: CellRangeParams;
     chartType: ChartType;
-    chartPalette: string;
+    chartPalette?: string;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
@@ -179,6 +179,7 @@ function createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
 
 interface CreatePivotChartParams {
     chartType: ChartType;
+    chartPalette?: string;
     chartContainer?: HTMLElement;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }</snippet>

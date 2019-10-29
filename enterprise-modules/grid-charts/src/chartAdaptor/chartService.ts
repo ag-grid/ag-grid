@@ -95,7 +95,7 @@ export class ChartService implements IChartService {
 
     private createChart(cellRange: CellRange,
         chartType: ChartType,
-        palette: ChartPaletteName = 'borneo',
+        chartPaletteName: ChartPaletteName = 'borneo',
         pivotChart = false,
         suppressChartRanges = false,
         container?: HTMLElement,
@@ -108,7 +108,7 @@ export class ChartService implements IChartService {
             pivotChart,
             cellRange,
             chartType,
-            chartPaletteName: palette,
+            chartPaletteName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
             aggFunc,

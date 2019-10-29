@@ -136,7 +136,7 @@ export class GridChartComp extends Component {
         const chartProxyParams: ChartProxyParams = {
             chartType,
             processChartOptions: processChartOptionsFunc,
-            getChartPaletteName: this.getSelectedPalette.bind(this),
+            getChartPaletteName: this.getChartPaletteName.bind(this),
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width,
@@ -155,7 +155,7 @@ export class GridChartComp extends Component {
         this.chartController.setChartProxy(this.chartProxy);
     }
 
-    private getSelectedPalette = (): ChartPaletteName => this.chartController.getPaletteName();
+    private getChartPaletteName = (): ChartPaletteName => this.chartController.getPaletteName();
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {
