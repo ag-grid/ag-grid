@@ -1,20 +1,20 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 
-@mixin ag-theme-balham($params) {
-    $ag-border-color: map-get($params, "border-color");
-    $default-background: map-get($params, "default-background");
-    $ag-foreground-color: map-get($params, "foreground-color");
-    $ag-grid-size: map-get($params, "grid-size");
-    $ag-header-background-color: map-get($params, "header-background-color");
-    $ag-header-foreground-color: map-get($params, "header-foreground-color");
-    $ag-header-height: map-get($params, "header-height");
-    $ag-icon-size: map-get($params, "icon-size");
-    $panel-background-color: map-get($params, "panel-background-color");
-    $primary-color: map-get($params, "primary-color");
-    $range-selection-highlight-color: map-get($params, "range-selection-highlight-color");
-    $ag-row-height: map-get($params, "row-height");
-    $ag-row-border-width: map-get($params, "row-border-width");
-    $selected-color: map-get($params, "selected-color");
+@mixin ag-theme-balham($ag-params) {
+    $ag-border-color: map-get($ag-params, "border-color");
+    $ag-default-background: map-get($ag-params, "default-background");
+    $ag-foreground-color: map-get($ag-params, "foreground-color");
+    $ag-grid-size: map-get($ag-params, "grid-size");
+    $ag-header-background-color: map-get($ag-params, "header-background-color");
+    $ag-header-foreground-color: map-get($ag-params, "header-foreground-color");
+    $ag-header-height: map-get($ag-params, "header-height");
+    $ag-icon-size: map-get($ag-params, "icon-size");
+    $ag-panel-background-color: map-get($ag-params, "panel-background-color");
+    $ag-primary-color: map-get($ag-params, "primary-color");
+    $ag-range-selection-highlight-color: map-get($ag-params, "range-selection-highlight-color");
+    $ag-row-height: map-get($ag-params, "row-height");
+    $ag-row-border-width: map-get($ag-params, "row-border-width");
+    $ag-selected-color: map-get($ag-params, "selected-color");
 
     %card {
         border: 1px solid $ag-border-color;
@@ -29,16 +29,16 @@
     }
 
     %selected-tab {
-        background-color: $default-background;
-        border-bottom: 2px solid $primary-color;
-        border-bottom: 2px solid $default-background;
+        background-color: $ag-default-background;
+        border-bottom: 2px solid $ag-primary-color;
+        border-bottom: 2px solid $ag-default-background;
         border-color: $ag-border-color;
     }
 
-    @include ag-grid-theme($params);
+    @include ag-grid-theme($ag-params);
 
     .ag-cell-highlight {
-        background-color: $range-selection-highlight-color !important;
+        background-color: $ag-range-selection-highlight-color !important;
     }
 
     .ag-header-cell-resize::after {
@@ -93,7 +93,7 @@
     }
 
     .ag-row-selected {
-        border-color: $selected-color;
+        border-color: $ag-selected-color;
     }
 
     .ag-column-drop-cell {
@@ -119,7 +119,7 @@
     }
 
     .ag-column-drop-horizontal {
-        background-color: $panel-background-color;
+        background-color: $ag-panel-background-color;
         height: $ag-header-height;
 
         .ag-column-drop-cell-text {
@@ -166,7 +166,7 @@
         }
 
         .ag-tab.ag-tab-selected {
-            background-color: $default-background;
+            background-color: $ag-default-background;
             border-bottom-color: transparent;
         }
     }
@@ -174,7 +174,7 @@
     .ag-tab-body,
     .ag-popup-editor,
     .ag-menu {
-        background-color: $default-background;
+        background-color: $ag-default-background;
         color: $ag-foreground-color;
     }
 
@@ -184,7 +184,7 @@
     }
 
     .ag-details-row {
-        background-color: $default-background;
+        background-color: $ag-default-background;
     }
 
     .ag-overlay-loading-wrapper {
@@ -192,7 +192,7 @@
     }
 
     .ag-overlay-loading-center {
-        background-color: $default-background;
+        background-color: $ag-default-background;
         border: 1px solid $ag-border-color;
         color: $ag-foreground-color;
         padding: $ag-grid-size * 4;

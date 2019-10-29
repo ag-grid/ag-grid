@@ -2,7 +2,7 @@
 @import "./ag-theme-balham-common";
 
 .ag-theme-balham {
-    @include ag-theme-balham($params);
+    @include ag-theme-balham($ag-params);
 
     .ag-filter-toolpanel-body{
         background-color: $ag-background-color;

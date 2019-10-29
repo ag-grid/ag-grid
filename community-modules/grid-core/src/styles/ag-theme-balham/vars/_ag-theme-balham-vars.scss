@@ -1,3 +1,4 @@
+@import './ag-theme-balham-import-legacy-vars';
 @import '../../ag-theme-base/vars/flat-colors';
 
 $ag-foreground-opacity: 0.87 !default;
@@ -11,56 +12,56 @@ $ag-icon-size: 16px !default;
 // these three should be changed in environment.ts, too
 $ag-row-height: $ag-grid-size * 7 !default;
 // theme shortcuts
-$default-background: white !default;
-$chrome-background: lighten($flat-gray-1, 3) !default;
-$active: #0091EA !default;
+$ag-default-background: white !default;
+$ag-chrome-background: lighten($flat-gray-1, 3) !default;
+$ag-active: #0091EA !default;
 $ag-foreground-color: #000 !default;
 $ag-border-color: $flat-silver !default;
 $ag-icon-color: $flat-gray-4 !default;
-$ag-alt-icon-color: $default-background !default;
-$alt-background: $flat-gray-1 !default;
-$odd-row-background-color: rgb(252, 253, 254) !default;
-$ag-header-cell-moving-background-color: $default-background !default;
+$ag-alt-icon-color: $ag-default-background !default;
+$ag-alt-background: $flat-gray-1 !default;
+$ag-odd-row-background-color: rgb(252, 253, 254) !default;
+$ag-header-cell-moving-background-color: $ag-default-background !default;
 
 // Derived from above
 $ag-foreground-color: rgba($ag-foreground-color, $ag-foreground-opacity) !default; // foreground
-$secondary-foreground-color: rgba($ag-foreground-color, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
-$disabled-foreground-color: rgba($ag-foreground-color, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
+$ag-secondary-foreground-color: rgba($ag-foreground-color, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
+$ag-disabled-foreground-color: rgba($ag-foreground-color, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
 $ag-input-border-color: $flat-gray-3 !default;
 $ag-input-disabled-background-color: #ebebeb !default;
 
-$primary-color: $active !default;
-$ag-accent-color: $active !default;
-$ag-range-selection-background-color: transparentize($active, 0.8) !default;
+$ag-primary-color: $ag-active !default;
+$ag-accent-color: $ag-active !default;
+$ag-range-selection-background-color: transparentize($ag-active, 0.8) !default;
 $ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
 $ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
 $ag-range-selected-color-1: opacify($ag-range-selection-background-color, 0.1) !default;
 $ag-range-selected-color-2: opacify($ag-range-selection-background-color, 0.2) !default;
 $ag-range-selected-color-3: opacify($ag-range-selection-background-color, 0.3) !default;
 $ag-range-selected-color-4: opacify($ag-range-selection-background-color, 0.4) !default;
-$range-selection-highlight-color: $active !default;
-$selected-color: lighten($active, 40) !default;
+$ag-range-selection-highlight-color: $ag-active !default;
+$ag-selected-color: lighten($ag-active, 40) !default;
 
-$ag-background-color: $default-background !default;
+$ag-background-color: $ag-default-background !default;
 
-$editor-background-color: $chrome-background !default;
-$panel-background-color: $chrome-background !default;
-$ag-tool-panel-background-color: $chrome-background !default;
-$ag-header-background-color: $chrome-background !default;
-$header-cell-hover-background-color: $ag-header-background-color !default;
-$ag-header-foreground-color: $secondary-foreground-color !default;
+$ag-editor-background-color: $ag-chrome-background !default;
+$ag-panel-background-color: $ag-chrome-background !default;
+$ag-tool-panel-background-color: $ag-chrome-background !default;
+$ag-header-background-color: $ag-chrome-background !default;
+$ag-header-cell-hover-background-color: $ag-header-background-color !default;
+$ag-header-foreground-color: $ag-secondary-foreground-color !default;
 
-$hover-color: $alt-background !default;
-$chip-background-color: darken($alt-background, 5) !default;
+$ag-hover-color: $ag-alt-background !default;
+$ag-chip-background-color: darken($ag-alt-background, 5) !default;
 
-$row-stub-background-color: inherit !default;
-$row-floating-background-color: inherit !default;
+$ag-row-stub-background-color: inherit !default;
+$ag-row-floating-background-color: inherit !default;
 
 // delta changes
-$cell-data-changed-color: #fce4ec !default;
-$value-change-delta-up-color: #43a047 !default;
-$value-change-delta-down-color: #e53935 !default;
-$value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
+$ag-cell-data-changed-color: #fce4ec !default;
+$ag-value-change-delta-up-color: #43a047 !default;
+$ag-value-change-delta-down-color: #e53935 !default;
+$ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
 
 $ag-header-height: $ag-grid-size * 8 !default;
 $ag-virtual-item-height: $ag-grid-size * 7 !default;
@@ -71,7 +72,7 @@ $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 
 $ag-header-icon-size: 14px !default;
-$border-radius: 2px !default;
+$ag-border-radius: 2px !default;
 
 // Fonts
 $ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
@@ -87,7 +88,7 @@ $ag-card-shadow: none !default;
 
 $ag-tooltip-background-color: lighten($flat-gray-2, 5%) !default;
 $ag-tooltip-foreground-color: $ag-foreground-color !default;
-$ag-tooltip-border-radius: $border-radius !default;
+$ag-tooltip-border-radius: $ag-border-radius !default;
 $ag-tooltip-border-color: $ag-tooltip-background-color !default;
 
 // Icons
@@ -95,7 +96,7 @@ $ag-tooltip-border-color: $ag-tooltip-background-color !default;
 
 @import '../../ag-theme-base/vars/ag-theme-base-vars';
 
-$params: (
+$ag-params: (
     font-family: $ag-font-family,
     font-size: $ag-font-size,
     font-weight: $ag-font-weight,
@@ -103,35 +104,35 @@ $params: (
     secondary-font-size: $ag-secondary-font-size,
     secondary-font-weight: $ag-secondary-font-weight,
     accent-color: $ag-accent-color,
-    primary-color: $primary-color,
-    hover-color: $hover-color,
-    selected-color: $selected-color,
-    default-background: $default-background,
+    primary-color: $ag-primary-color,
+    hover-color: $ag-hover-color,
+    selected-color: $ag-selected-color,
+    default-background: $ag-default-background,
     background-color: $ag-background-color,
     foreground-color: $ag-foreground-color,
     foreground-opacity: $ag-foreground-opacity,
     secondary-foreground-color-opacity: $ag-secondary-foreground-color-opacity,
-    secondary-foreground-color: $secondary-foreground-color,
+    secondary-foreground-color: $ag-secondary-foreground-color,
     disabled-foreground-color-opacity: $ag-disabled-foreground-color-opacity,
-    disabled-foreground-color: $disabled-foreground-color,
+    disabled-foreground-color: $ag-disabled-foreground-color,
     border-color: $ag-border-color,
     scroll-spacer-border: $ag-scroll-spacer-border,
-    panel-background-color: $panel-background-color,
+    panel-background-color: $ag-panel-background-color,
     tool-panel-background-color: $ag-tool-panel-background-color,
     header-foreground-color: $ag-header-foreground-color,
     header-background-color: $ag-header-background-color,
-    header-cell-hover-background-color: $header-cell-hover-background-color,
+    header-cell-hover-background-color: $ag-header-cell-hover-background-color,
     header-cell-moving-background-color: $ag-header-cell-moving-background-color,
-    odd-row-background-color: $odd-row-background-color,
-    row-stub-background-color: $row-stub-background-color,
-    row-floating-background-color: $row-floating-background-color,
-    cell-data-changed-color: $cell-data-changed-color,
-    chip-background-color: $chip-background-color,
+    odd-row-background-color: $ag-odd-row-background-color,
+    row-stub-background-color: $ag-row-stub-background-color,
+    row-floating-background-color: $ag-row-floating-background-color,
+    cell-data-changed-color: $ag-cell-data-changed-color,
+    chip-background-color: $ag-chip-background-color,
     card-background-color: $ag-background-color,
-    value-change-delta-up-color: $value-change-delta-up-color,
-    value-change-delta-down-color: $value-change-delta-down-color,
-    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
-    editor-background-color-color: $editor-background-color,
+    value-change-delta-up-color: $ag-value-change-delta-up-color,
+    value-change-delta-down-color: $ag-value-change-delta-down-color,
+    value-change-value-highlight-background-color: $ag-value-change-value-highlight-background-color,
+    editor-background-color-color: $ag-editor-background-color,
     input-border-color: $ag-input-border-color,
     input-disabled-background-color: $ag-input-disabled-background-color,
     icon-color: $ag-icon-color,
@@ -140,7 +141,7 @@ $params: (
     range-selection-background-color: $ag-range-selection-background-color,
     range-selection-chart-background-color: $ag-range-selection-chart-background-color,
     range-selection-chart-category-background-color: $ag-range-selection-chart-category-background-color,
-    range-selection-highlight-color: $range-selection-highlight-color,
+    range-selection-highlight-color: $ag-range-selection-highlight-color,
     ag-range-selected-color-1: $ag-range-selected-color-1,
     ag-range-selected-color-2: $ag-range-selected-color-2,
     ag-range-selected-color-3: $ag-range-selected-color-3,

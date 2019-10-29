@@ -2,11 +2,11 @@
 @import "../../ag-theme-balham/sass/ag-theme-balham-common";
 
 .ag-theme-balham-dark {
-    @include ag-theme-balham($params);
+    @include ag-theme-balham($ag-params);
 
     input,
     select {
-        background-color: $odd-row-background-color;
+        background-color: $ag-odd-row-background-color;
         color: $ag-foreground-color;
     }
 
