@@ -225,7 +225,7 @@
 
     .ag-group-expanded {
         .ag-icon-expanded:empty:before {
-            content: map-get($icons-font-codes, tree-open);
+            content: map-get($ag-icons-font-codes, tree-open);
         }
     }
 }

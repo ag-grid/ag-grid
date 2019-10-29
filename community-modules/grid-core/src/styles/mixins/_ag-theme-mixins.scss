@@ -186,7 +186,7 @@
       -moz-osx-font-smoothing: grayscale;
   }
 
-  @each $icon, $code in $icons-font-codes {
+  @each $icon, $code in $ag-icons-font-codes {
       .ag-icon-#{$icon} {
           &:before {
               content: $code;
@@ -208,22 +208,22 @@
   .ag-icon-checkbox-checked {
       color: $ag-accent-color;
       &-readonly:before {
-          content: map-get($icons-font-codes, checkbox-checked);
+          content: map-get($ag-icons-font-codes, checkbox-checked);
       }
   }
   .ag-icon-checkbox-indeterminate-readonly:before {
-      content: map-get($icons-font-codes, checkbox-indeterminate);
+      content: map-get($ag-icons-font-codes, checkbox-indeterminate);
   }
   .ag-icon-checkbox-unchecked-readonly:before  {
-      content: map-get($icons-font-codes, checkbox-unchecked); 
+      content: map-get($ag-icons-font-codes, checkbox-unchecked); 
   }
 
   .ag-icon-row-drag:before {
-      content: map-get($icons-font-codes, grip);
+      content: map-get($ag-icons-font-codes, grip);
   }
 
   .ag-right-arrow:before {
-      content: map-get($icons-font-codes, left);
+      content: map-get($ag-icons-font-codes, left);
   }
 
   .ag-icon-radio-button-on {
@@ -231,6 +231,6 @@
   }
 
   .ag-right-arrow:before {
-      content: map-get($icons-font-codes, right);
+      content: map-get($ag-icons-font-codes, right);
   }
 }

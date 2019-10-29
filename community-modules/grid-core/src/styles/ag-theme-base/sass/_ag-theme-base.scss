@@ -35,10 +35,10 @@
     $ag-foreground-opacity: map-get($params, 'foreground-opacity');
 
     $ag-secondary-foreground-color-opacity: map-get($params, 'secondary-foreground-color-opacity');
-    $secondary-foreground-color: map-get($params, 'secondary-foreground-color');
+    $ag-secondary-foreground-color: map-get($params, 'secondary-foreground-color');
 
     $ag-disabled-foreground-color-opacity: map-get($params, 'disabled-foreground-color-opacity');
-    $disabled-foreground-color: map-get($params, 'disabled-foreground-color');
+    $ag-disabled-foreground-color: map-get($params, 'disabled-foreground-color');
     $ag-input-disabled-background-color: map-get($params, 'input-disabled-background-color');
 
     $ag-background-color: map-get($params, 'background-color');
@@ -46,42 +46,40 @@
     $ag-row-border-width: map-get($params, 'row-border-width');
     $ag-scroll-spacer-border: map-get($params, 'scroll-spacer-border');
 
-    $button-background-color: map-get($params, 'button-background-color');
+    $ag-button-background-color: map-get($params, 'button-background-color');
 
-    $cell-data-changed-color: map-get($params, 'cell-data-changed-color');
+    $ag-cell-data-changed-color: map-get($params, 'cell-data-changed-color');
 
-    $chip-background-color: map-get($params, 'chip-background-color');
+    $ag-chip-background-color: map-get($params, 'chip-background-color');
 
-    $editor-background-color-color: map-get($params, 'editor-background-color-color');
+    $ag-editor-background-color: map-get($params, 'editor-background-color');
 
     $ag-range-selection-background-color: map-get($params, 'range-selection-background-color');
     $ag-range-selection-chart-background-color: map-get($params, 'range-selection-chart-background-color');
     $ag-range-selection-chart-category-background-color: map-get($params, 'range-selection-chart-category-background-color');
-    $range-selection-highlight-color: map-get($params, 'range-selection-highlight-color');
+    $ag-range-selection-highlight-color: map-get($params, 'range-selection-highlight-color');
     $ag-range-selected-color-1: map-get($params, 'ag-range-selected-color-1');
     $ag-range-selected-color-2: map-get($params, 'ag-range-selected-color-2');
     $ag-range-selected-color-3: map-get($params, 'ag-range-selected-color-3');
     $ag-range-selected-color-4: map-get($params, 'ag-range-selected-color-4');
 
     $ag-header-background-color: map-get($params, 'header-background-color');
-    $header-background-image: map-get($params, 'header-background-image');
-    $header-cell-hover-background-color: map-get($params, 'header-cell-hover-background-color');
+    $ag-header-background-image: map-get($params, 'header-background-image');
+    $ag-header-cell-hover-background-color: map-get($params, 'header-cell-hover-background-color');
     $ag-header-cell-moving-background-color: map-get($params, 'header-cell-moving-background-color');
     $ag-header-foreground-color: map-get($params, 'header-foreground-color');
-    $panel-background-color: map-get($params, 'panel-background-color');
+    $ag-panel-background-color: map-get($params, 'panel-background-color');
     $ag-tool-panel-background-color: map-get($params, 'tool-panel-background-color');
-    $row-stub-background-color: map-get($params, 'row-stub-background-color');
+    $ag-row-stub-background-color: map-get($params, 'row-stub-background-color');
 
     $ag-accent-color: map-get($params, 'accent-color');
-    $primary-color: map-get($params, 'primary-color');
-    $hover-color: map-get($params, 'hover-color');
-    $selected-color: map-get($params, 'selected-color');
+    $ag-primary-color: map-get($params, 'primary-color');
+    $ag-hover-color: map-get($params, 'hover-color');
+    $ag-selected-color: map-get($params, 'selected-color');
 
-    $icon-opacity: map-get($params, 'icon-opacity');
-    $button-text-transform: map-get($params, 'button-text-transform');
+    $ag-button-text-transform: map-get($params, 'button-text-transform');
     $ag-card-radius: map-get($params, 'card-radius');
     $ag-card-shadow: map-get($params, 'card-shadow');
-    $focused-textbox-border: map-get($params, 'focused-textbox-border');
 
     $ag-tooltip-background-color: map-get($params, 'tooltip-background-color');
     $ag-tooltip-foreground-color: map-get($params, 'tooltip-foreground-color');
@@ -91,12 +89,12 @@
     $ag-tooltip-border-style: map-get($params, 'tooltip-border-style');
     $ag-tooltip-border-color: map-get($params, 'tooltip-border-color');
 
-    $value-change-delta-up-color: map-get($params, 'value-change-delta-up-color');
-    $value-change-delta-down-color: map-get($params, 'value-change-delta-down-color');
-    $value-change-value-highlight-background-color: map-get($params, 'value-change-value-highlight-background-color');
+    $ag-value-change-delta-up-color: map-get($params, 'value-change-delta-up-color');
+    $ag-value-change-delta-down-color: map-get($params, 'value-change-delta-down-color');
+    $ag-value-change-value-highlight-background-color: map-get($params, 'value-change-value-highlight-background-color');
     $ag-toolpanel-indent-size: map-get($params, 'toolpanel-indent-size');
     $ag-row-group-indent-size: map-get($params, 'row-group-indent-size');
-    $row-floating-background-color: map-get($params, 'row-floating-background-color');
+    $ag-row-floating-background-color: map-get($params, 'row-floating-background-color');
 
     $ag-dialog-background-color: map-get($params, 'dialog-background-color');
     $ag-dialog-border-size: map-get($params, 'dialog-border-size');
@@ -215,11 +213,11 @@
     }
 
     .ag-value-change-delta-up {
-        color: $value-change-delta-up-color;
+        color: $ag-value-change-delta-up-color;
     }
 
     .ag-value-change-delta-down {
-        color: $value-change-delta-down-color;
+        color: $ag-value-change-delta-down-color;
     }
 
     .ag-value-change-value {
@@ -231,7 +229,7 @@
     }
 
     .ag-value-change-value-highlight {
-        background-color: $value-change-value-highlight-background-color;
+        background-color: $ag-value-change-value-highlight-background-color;
         transition: background-color 0.1s;
     }
 
@@ -264,8 +262,8 @@
         @if $ag-header-background-color {
             background-color: $ag-header-background-color;
         }
-        @if $header-background-image {
-            background-image: $header-background-image;
+        @if $ag-header-background-image {
+            background-image: $ag-header-background-image;
         }
 
         color: $ag-header-foreground-color;
@@ -324,7 +322,7 @@
     }
 
     .ag-row-hover {
-        background-color: $hover-color;
+        background-color: $ag-hover-color;
     }
 
     .ag-numeric-cell {
@@ -364,10 +362,10 @@
     .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
     .ag-header-group-cell:first-of-type,
     .ag-header-cell:first-of-type {
-        @if ($ag-header-background-color != $header-cell-hover-background-color) {
+        @if ($ag-header-background-color != $ag-header-cell-hover-background-color) {
             &:hover,
             &.ag-column-resizing {
-                background-color: $header-cell-hover-background-color;
+                background-color: $ag-header-cell-hover-background-color;
             }
         }
     }
@@ -420,7 +418,7 @@
         .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
         .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
         .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
-            border: 1px solid $primary-color;
+            border: 1px solid $ag-primary-color;
             outline: initial;
         }
     }
@@ -446,9 +444,9 @@
             width: 100%;
         }
 
-        @if $hover-color {
+        @if $ag-hover-color {
             .ag-menu-option-active {
-                background-color: $hover-color;
+                background-color: $ag-hover-color;
             }
         }
 
@@ -490,7 +488,7 @@
         @include card($params);
 
         border: 1px solid $ag-border-color;
-        color: $secondary-foreground-color;
+        color: $ag-secondary-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;
         font-family: $ag-secondary-font-family;
@@ -519,7 +517,7 @@
     // Column Filter
     ////////////////////////////////////////
     .ag-tab-header {
-        background: $panel-background-color;
+        background: $ag-panel-background-color;
         min-width: 220px;
         width: 100%;
         display: flex;
@@ -627,7 +625,7 @@
             button {
                 line-height: 1.5;
                 @if map-get($params, 'customize-buttons') {
-                    @include regular-button($primary-color, $button-background-color, $button-text-transform);
+                    @include regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
                 }
             }
 
@@ -836,7 +834,7 @@
             padding-bottom: $ag-grid-size * 2;
 
             .ag-column-drop-empty-message {
-                color: $disabled-foreground-color;
+                color: $ag-disabled-foreground-color;
                 font-weight: $ag-secondary-font-weight;
                 font-size: $ag-secondary-font-size;
                 font-family: $ag-secondary-font-family;
@@ -877,7 +875,7 @@
     ////////////////////////////////////////
     .ag-paging-panel {
         border-top: 1px solid $ag-border-color;
-        color: $secondary-foreground-color;
+        color: $ag-secondary-foreground-color;
         height: $ag-header-height;
         padding: 0 $ag-cell-horizontal-padding;
 
@@ -903,7 +901,7 @@
             }
             &.ag-disabled {
                 .ag-icon {
-                    color: $disabled-foreground-color;
+                    color: $ag-disabled-foreground-color;
                     opacity: $ag-disabled-foreground-color-opacity;
                 }
                 button {
@@ -921,7 +919,7 @@
     // Selection
     ////////////////////////////////////////
     .ag-row-selected {
-        background-color: $selected-color;
+        background-color: $ag-selected-color;
     }
 
     .ag-ltr,
@@ -929,16 +927,16 @@
         .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
             border: 1px solid transparent;
             &.ag-cell-range-top {
-                border-top-color: $primary-color;
+                border-top-color: $ag-primary-color;
             }
             &.ag-cell-range-right {
-                border-right-color: $primary-color;
+                border-right-color: $ag-primary-color;
             }
             &.ag-cell-range-bottom {
-                border-bottom-color: $primary-color;
+                border-bottom-color: $ag-primary-color;
             }
             &.ag-cell-range-left {
-                border-left-color: $primary-color;
+                border-left-color: $ag-primary-color;
             }
         }
     }
@@ -974,28 +972,28 @@
     .ag-ltr,
     .ag-rtl {
         .ag-selection-fill-top {
-            border-top: 1px dashed $primary-color;
+            border-top: 1px dashed $ag-primary-color;
             &.ag-cell.ag-cell-range-selected {
                 border-top: 1px dashed darken($ag-border-color, 20%);
             }
         }
 
         .ag-selection-fill-right {
-            border-right: 1px dashed $primary-color;
+            border-right: 1px dashed $ag-primary-color;
             &.ag-cell.ag-cell-range-selected {
                 border-right: 1px dashed darken($ag-border-color, 20%);
             }
         }
 
         .ag-selection-fill-bottom {
-            border-bottom: 1px dashed $primary-color;
+            border-bottom: 1px dashed $ag-primary-color;
             &.ag-cell.ag-cell-range-selected {
                 border-bottom: 1px dashed darken($ag-border-color, 20%);
             }
         }
 
         .ag-selection-fill-left {
-            border-left: 1px dashed $primary-color;
+            border-left: 1px dashed $ag-primary-color;
             &.ag-cell.ag-cell-range-selected {
                 border-left: 1px dashed darken($ag-border-color, 20%);
             }
@@ -1008,7 +1006,7 @@
         height: 6px;
         bottom: -1px;
         right: -1px;
-        background-color: $primary-color;
+        background-color: $ag-primary-color;
     }
 
     .ag-fill-handle {
@@ -1032,13 +1030,13 @@
         &.ag-cell-inline-editing {
             @include card($params);
 
-            background-color: $editor-background-color-color;
+            background-color: $ag-editor-background-color;
         }
     }
 
     .ag-popup-editor {
         @include card($params);
-        background-color: $editor-background-color-color;
+        background-color: $ag-editor-background-color;
         padding: 0;
         .ag-large-textarea textarea {
             height: auto;
@@ -1058,7 +1056,7 @@
     // Rich Select
     ////////////////////////////////////////
     .ag-rich-select {
-        background-color: $editor-background-color-color;
+        background-color: $ag-editor-background-color;
 
         .ag-rich-select-list {
             width: 100%;
@@ -1076,7 +1074,7 @@
             height: $ag-rich-select-item-height;
 
             &:hover {
-                background-color: $hover-color;
+                background-color: $ag-hover-color;
             }
         }
 
@@ -1085,7 +1083,7 @@
         }
 
         .ag-rich-select-row-selected {
-            background-color: $selected-color;
+            background-color: $ag-selected-color;
         }
     }
 
@@ -1137,7 +1135,7 @@
     // Column drop
     ////////////////////////////////////////
     .ag-column-drop-horizontal {
-        background-color: $panel-background-color;
+        background-color: $ag-panel-background-color;
         height: $ag-row-height;
         padding-left: $ag-cell-horizontal-padding;
 
@@ -1158,7 +1156,7 @@
     }
 
     .ag-column-drop-cell {
-        background: $chip-background-color;
+        background: $ag-chip-background-color;
         border-radius: $ag-grid-size * 4;
         min-height: $ag-grid-size * 4;
         padding: 0 $ag-grid-size / 2;
@@ -1219,7 +1217,7 @@
 
     // cell data changed
     .ag-cell-data-changed {
-        background-color: $value-change-value-highlight-background-color !important;
+        background-color: $ag-value-change-value-highlight-background-color !important;
     }
 
     .ag-cell-data-changed-animation {
@@ -1228,7 +1226,7 @@
     }
 
     .ag-row-stub {
-        background-color: $row-stub-background-color;
+        background-color: $ag-row-stub-background-color;
     }
 
     .ag-stub-cell {
@@ -1265,10 +1263,10 @@
 
     .ag-floating-top,
     .ag-floating-bottom {
-        background-color: $row-floating-background-color;
+        background-color: $ag-row-floating-background-color;
 
         .ag-row {
-            background-color: $row-floating-background-color;
+            background-color: $ag-row-floating-background-color;
         }
     }
 
@@ -1276,7 +1274,7 @@
         background: $ag-background-color;
         border: 1px solid $ag-border-color;
         border-top-width: 0;
-        color: $disabled-foreground-color;
+        color: $ag-disabled-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;
         font-family: $ag-secondary-font-family;
@@ -1538,7 +1536,7 @@
                 background-color: $ag-background-color;
             }
             button:hover {
-                background-color: $hover-color;
+                background-color: $ag-hover-color;
             }
         }
     }
@@ -1735,7 +1733,7 @@
                         margin-right: 2px;
                     }
                     &.ag-selected {
-                        border-color: $primary-color;
+                        border-color: $ag-primary-color;
                     }
                 }
             }
@@ -1748,7 +1746,7 @@
                         height: 8px;
                         border-radius: 4px;
                         &.ag-selected {
-                            background: $primary-color;
+                            background: $ag-primary-color;
                         }
                     }
                 }
