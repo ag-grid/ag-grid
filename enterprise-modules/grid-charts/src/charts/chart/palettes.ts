@@ -1,11 +1,9 @@
 export interface Palette {
-    name: string;
     fills: string[];
     strokes: string[];
 }
 
 export const borneo: Palette = {
-    name: 'borneo',
     fills: [
         '#f3622d',
         '#fba71b',
@@ -29,7 +27,6 @@ export const borneo: Palette = {
 };
 
 export const material: Palette = {
-    name: 'material',
     fills: [
         '#f44336',
         '#e91e63',
@@ -69,7 +66,6 @@ export const material: Palette = {
 };
 
 export const pastel: Palette = {
-    name: 'pastel',
     fills: [
         '#c16068',
         '#a2bf8a',
@@ -89,7 +85,6 @@ export const pastel: Palette = {
 };
 
 export const bright: Palette = {
-    name: 'bright',
     fills: [
         '#5BC0EB',
         '#FDE74C',
@@ -109,7 +104,6 @@ export const bright: Palette = {
 };
 
 export const flat: Palette = {
-    name: 'flat',
     fills: [
         '#febe76',
         '#ff7979',

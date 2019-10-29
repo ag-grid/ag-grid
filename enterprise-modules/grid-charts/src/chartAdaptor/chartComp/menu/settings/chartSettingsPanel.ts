@@ -145,10 +145,7 @@ export class ChartSettingsPanel extends Component {
             _.addCssClass(futureGui, 'ag-animating');
 
             this.activePalette = palette;
-            this.chartController.setChartWithPalette(
-                this.chartController.getChartType(),
-                this.activePalette
-            );
+            this.chartController.setPalette(this.activePalette);
 
             this.isAnimating = true;
 

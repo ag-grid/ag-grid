@@ -15,8 +15,6 @@ import {
     IRangeController
 } from "@ag-community/grid-core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { Palette, DefaultPalette } from "../../charts/chart/palettes";
-import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ColState {
     column?: Column;
@@ -30,8 +28,6 @@ export interface ChartModelParams {
     chartType: ChartType;
     aggFunc?: string | IAggFunc;
     cellRanges: CellRange[];
-    palettes: Map<DefaultPalette, Palette>;
-    activePalette: DefaultPalette;
     suppressChartRanges: boolean;
 }
 
@@ -53,8 +49,6 @@ export class ChartModel extends BeanStub {
 
     private readonly pivotChart: boolean;
     private chartType: ChartType;
-    private activePalette: DefaultPalette;
-    private readonly palettes: Map<DefaultPalette, Palette>;
     private readonly suppressChartRanges: boolean;
 
     private readonly aggFunc?: string | IAggFunc;
@@ -64,7 +58,6 @@ export class ChartModel extends BeanStub {
     private datasource: ChartDatasource;
 
     private readonly chartId: string;
-    private chartProxy: ChartProxy<any, any>;
     private detached: boolean = false;
     private grouping: boolean;
     private columnNames: { [p: string]: string[] } = {};
@@ -76,8 +69,6 @@ export class ChartModel extends BeanStub {
         this.chartType = params.chartType;
         this.aggFunc = params.aggFunc;
         this.cellRanges = params.cellRanges;
-        this.palettes = params.palettes;
-        this.activePalette = params.activePalette;
         this.suppressChartRanges = params.suppressChartRanges;
 
         // this is used to associate chart ranges with charts
@@ -278,12 +269,6 @@ export class ChartModel extends BeanStub {
 
     public isPivotChart = (): boolean => this.pivotChart;
 
-    public setChartProxy(chartProxy: ChartProxy<any, any>): void {
-        this.chartProxy = chartProxy;
-    }
-
-    public getChartProxy = (): ChartProxy<any, any> => this.chartProxy;
-
     public getChartId = (): string => this.chartId;
 
     public getValueColState = (): ColState[] => this.valueColState.map(this.displayNameMapper.bind(this));
@@ -293,14 +278,6 @@ export class ChartModel extends BeanStub {
     public getCellRanges = (): CellRange[] => this.cellRanges;
 
     public getChartType = (): ChartType => this.chartType;
-
-    public setActivePalette(palette: DefaultPalette) {
-        this.activePalette = palette;
-    }
-
-    public getActivePalette = (): DefaultPalette => this.activePalette;
-
-    public getPalettes = (): Map<DefaultPalette, Palette> => this.palettes;
 
     public isSuppressChartRanges = (): boolean => this.suppressChartRanges;
 

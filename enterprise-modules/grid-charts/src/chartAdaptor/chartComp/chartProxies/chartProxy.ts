@@ -13,7 +13,7 @@ import {
     CaptionOptions,
 } from "@ag-community/grid-core";
 import { Chart } from "../../../charts/chart/chart";
-import { Palette } from "../../../charts/chart/palettes";
+import { Palette, DefaultPalette, palettes } from "../../../charts/chart/palettes";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
@@ -31,7 +31,7 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    getSelectedPalette: () => Palette;
+    getSelectedPalette: () => DefaultPalette;
     isDarkTheme: () => boolean;
 }
 
@@ -90,13 +90,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         // so this allows the chart defaults to be overridden
         this.chartOptions.width = this.chartProxyParams.width || this.chartOptions.width;
         this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
-
-        this.raiseChartOptionsChangedEvent();
     }
 
     private overridePalette(chartOptions: TOptions): void {
-        const palette = this.chartProxyParams.getSelectedPalette();
-        const { fills: defaultFills, strokes: defaultStrokes } = palette;
+        const { fills: defaultFills, strokes: defaultStrokes } = this.getDefaultPalette();
         const { seriesDefaults } = chartOptions;
         const { fill: { colors: fills }, stroke: { colors: strokes } } = seriesDefaults;
         const fillsOverridden = fills !== defaultFills;
@@ -104,11 +101,14 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         if (fillsOverridden || strokesOverridden) {
             this.overriddenPalette = {
-                name: 'custom',
                 fills: fillsOverridden && fills ? fills : defaultFills,
                 strokes: strokesOverridden && strokes ? strokes : defaultStrokes
             };
         }
+    }
+
+    public getChartOptions(): TOptions {
+        return this.chartOptions;
     }
 
     public getChartOption<T = string>(expression: string): T {
@@ -267,8 +267,16 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         };
     }
 
+    protected getDefaultPalette(): Palette {
+        return palettes.get(this.chartProxyParams.getSelectedPalette());
+    }
+
+    protected getPalette(): Palette {
+        return this.overriddenPalette || this.getDefaultPalette();
+    }
+
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
-        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getDefaultPalette();
 
         return {
             background: {

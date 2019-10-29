@@ -30,7 +30,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     public update(params: UpdateChartParams): void {
         const chart = this.chart;
         const barSeries = chart.series[0] as BarSeries;
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
 
         barSeries.data = params.data;
         barSeries.xKey = params.category.id;

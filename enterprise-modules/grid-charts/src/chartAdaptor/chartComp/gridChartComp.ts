@@ -25,7 +25,7 @@ import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { Palette, palettes, DefaultPalette } from "../../charts/chart/palettes";
+import { DefaultPalette } from "../../charts/chart/palettes";
 import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
@@ -67,10 +67,9 @@ export class GridChartComp extends Component {
     private model: ChartModel;
     private chartController: ChartController;
 
-    private currentChartType: ChartType;
-    private currentChartGroupingActive: boolean;
-    private currentPalette: DefaultPalette;
     private chartProxy: ChartProxy<any, any>;
+    private chartType: ChartType;
+    private chartGroupingActive: boolean;
 
     private readonly params: GridChartParams;
 
@@ -87,12 +86,10 @@ export class GridChartComp extends Component {
             aggFunc: this.params.aggFunc,
             cellRanges: [this.params.cellRange],
             suppressChartRanges: this.params.suppressChartRanges,
-            palettes: palettes,
-            activePalette: this.params.palette
         };
 
         this.model = this.wireBean(new ChartModel(modelParams));
-        this.chartController = this.wireBean(new ChartController(this.model));
+        this.chartController = this.wireBean(new ChartController(this.model, this.params.palette));
 
         this.createChart();
 
@@ -133,9 +130,11 @@ export class GridChartComp extends Component {
             this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
 
         const categorySelected = this.model.getSelectedDimension().colId !== ChartModel.DEFAULT_CATEGORY;
+        const chartType = this.model.getChartType();
+        const isGrouping = this.model.isGrouping();
 
         const chartProxyParams: ChartProxyParams = {
-            chartType: this.model.getChartType(),
+            chartType,
             processChartOptions: processChartOptionsFunc,
             getSelectedPalette: this.getSelectedPalette.bind(this),
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
@@ -144,21 +143,19 @@ export class GridChartComp extends Component {
             height,
             eventService: this.eventService,
             categorySelected,
-            grouping: this.model.isGrouping(),
+            grouping: isGrouping,
             document: this.gridOptionsWrapper.getDocument()
         };
 
         // set local state used to detect when chart type changes
-        this.currentChartType = this.model.getChartType();
-        this.currentChartGroupingActive = this.model.isGrouping();
-        this.currentPalette = this.model.getActivePalette();
+        this.chartType = chartType;
+        this.chartGroupingActive = isGrouping;
         this.chartProxy = this.createChartProxy(chartProxyParams);
 
-        // update chart proxy ref (used by format panel)
-        this.model.setChartProxy(this.chartProxy);
+        this.chartController.setChartProxy(this.chartProxy);
     }
 
-    private getSelectedPalette = (): Palette => this.model.getPalettes().get(this.model.getActivePalette());
+    private getSelectedPalette = (): DefaultPalette => this.chartController.getActivePalette();
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {
@@ -220,11 +217,10 @@ export class GridChartComp extends Component {
     }
 
     private shouldRecreateChart(): boolean {
-        const chartTypeChanged = this.currentChartType !== this.model.getChartType();
-        const groupingChanged = this.currentChartGroupingActive !== this.model.isGrouping();
-        const paletteChanged = this.currentPalette !== this.model.getActivePalette();
+        const chartTypeChanged = this.chartType !== this.model.getChartType();
+        const groupingChanged = this.chartGroupingActive !== this.model.isGrouping();
 
-        return chartTypeChanged || groupingChanged || paletteChanged;
+        return chartTypeChanged || groupingChanged;
     }
 
     public getChartComponentsWrapper = (): HTMLElement => this.eChartComponentsWrapper;
@@ -239,7 +235,7 @@ export class GridChartComp extends Component {
         this.eDockedContainer.style.minWidth = '0';
     }
 
-    public getCurrentChartType = (): ChartType => this.currentChartType;
+    public getCurrentChartType = (): ChartType => this.chartType;
 
     public updateChart() {
         const { model, chartProxy } = this;

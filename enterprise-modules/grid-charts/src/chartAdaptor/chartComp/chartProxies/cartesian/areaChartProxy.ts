@@ -41,7 +41,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         } else {
             // stacked and normalized has a single series
             const areaSeries = this.chart.series[0] as AreaSeries;
-            const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+            const { fills, strokes } = this.getPalette();
 
             areaSeries.data = params.data;
             areaSeries.xKey = params.category.id;
@@ -64,7 +64,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         }
 
         const fieldIds = params.fields.map(f => f.colId);
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
 
         const existingSeriesById = (chart.series as AreaSeries[]).reduceRight((map, series) => {
             const id = series.yKeys[0];

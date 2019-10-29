@@ -24,7 +24,7 @@ export class PieChartProxy extends PolarChartProxy {
         const existingSeries = chart.series[0] as PieSeries;
         const existingSeriesId = existingSeries && existingSeries.angleKey;
         const pieSeriesField = params.fields[0];
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
         const { seriesDefaults } = this.chartOptions;
 
         let pieSeries = existingSeries;
@@ -63,7 +63,7 @@ export class PieChartProxy extends PolarChartProxy {
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
-        const { strokes } = this.chartProxyParams.getSelectedPalette();
+        const { strokes } = this.getDefaultPalette();
         const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
 
         options.seriesDefaults = {

@@ -32,7 +32,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         });
 
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
         let offset = 0;
 
         params.fields.forEach((f, index) => {
@@ -100,7 +100,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
-        const { strokes } = this.chartProxyParams.getSelectedPalette();
+        const { strokes } = this.getDefaultPalette();
         const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
 
         options.seriesDefaults = {

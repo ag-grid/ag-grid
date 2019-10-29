@@ -22,7 +22,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         }
 
         const fieldIds = params.fields.map(f => f.colId);
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
 
         const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series) => {
             const id = series.yKey;
