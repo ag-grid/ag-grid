@@ -1,13 +1,13 @@
 @import '../../ag-theme-base/sass/ag-theme-base';
 @import './ag-theme-alpine-mixins';
 
-@mixin ag-theme-alpine($params) {
-    @include ag-grid-theme($params);
+@mixin ag-theme-alpine($ag-params) {
+    @include ag-grid-theme($ag-params);
 
-    color: $color-foreground;
+    color: $ag-color-foreground;
 
     &.ag-popup {
-        color: $color-foreground;
+        color: $ag-color-foreground;
     }
 
     .ag-cell,
@@ -17,31 +17,31 @@
     }
 
     .ag-root-wrapper {
-        border: 1px solid $color-border-primary;
-        border-radius: $border-radius;
+        border: 1px solid $ag-color-border-primary;
+        border-radius: $ag-border-radius;
     }
 
     .ag-column-drop {
-        border-bottom: 1px solid $color-border-primary;
+        border-bottom: 1px solid $ag-color-border-primary;
     }
 
     .ag-header {
-        border-bottom: 1px solid $color-border-primary;
+        border-bottom: 1px solid $ag-color-border-primary;
     }
 
     .ag-header-cell {
-        border-color: $color-border-primary;
+        border-color: $ag-color-border-primary;
     }
 
     .ag-row:not(.ag-row-selected) .ag-cell.ag-column-hover:not(.ag-cell-range-selected) {
-        background-color: transparentize($color-primary, 0.97);
+        background-color: transparentize($ag-color-primary, 0.97);
     }
 
     .ag-row:not(.ag-row-first) {
         border-top-width: 0;
 
         .ag-cell {
-            border-top: 1px solid $color-border-secondary;
+            border-top: 1px solid $ag-color-border-secondary;
         }
     }
 
@@ -106,7 +106,7 @@
         }
 
         .ag-native-checkbox {
-            @include checkbox($color-primary);
+            @include checkbox($ag-color-primary);
         }
     }
 
@@ -121,7 +121,7 @@
     // context menu and enterprise column menu
     ////////////////////////////////////////
     .ag-menu {
-        background: $color-background-alt;
+        background: $ag-color-background-alt;
 
         .ag-menu-list {
             margin: 0;
@@ -129,7 +129,7 @@
     }
 
     .ag-menu-list {
-        font: $font-chrome;
+        font: $ag-font-chrome;
         padding: $ag-grid-size * 2;
         margin: 0;
 
@@ -148,7 +148,7 @@
 
     .ag-tab-header {
         min-width: 15rem;
-        border-bottom: 1px solid $color-border-primary;
+        border-bottom: 1px solid $ag-color-border-primary;
         justify-content: center;
 
         .ag-tab {
@@ -165,10 +165,10 @@
 
         .ag-tab-selected {
             .ag-icon {
-                color: $color-primary;
+                color: $ag-color-primary;
             }
 
-            border-bottom-color: $color-primary;
+            border-bottom-color: $ag-color-primary;
         }
     }
 
@@ -192,14 +192,14 @@
     ////////////////////////////////////////
     &.ag-popup > div:not(.ag-tooltip-custom) {
         @include chrome-box-shadow();
-        border: 1px solid $color-border-primary;
-        border-radius: $border-radius;
+        border: 1px solid $ag-color-border-primary;
+        border-radius: $ag-border-radius;
         @include chrome-box-shadow();
     }
 
     &.ag-dnd-ghost {
         @include chrome-box-shadow();
-        border-radius: $border-radius;
+        border-radius: $ag-border-radius;
     }
 
     ////////////////////////////////////////
@@ -226,14 +226,14 @@
     // Header Checkbox
     ////////////////////////////////////////
     &.ag-popup .ag-tooltip {
-        font-size: $tooltip-font-size;
+        font-size: $ag-tooltip-font-size;
         padding: $ag-grid-size / 2 $ag-grid-size;
     }
 
     ////////////////////////////////////////
     // Column Resize Handle
     ////////////////////////////////////////
-    $resize-handle-color: transparentize($color-border-primary, 0.6);
+    $resize-handle-color: transparentize($ag-color-border-primary, 0.6);
 
     .ag-header-cell-resize {
         box-sizing: border-box;
@@ -252,7 +252,7 @@
         }
 
         &:hover::before {
-            background: $color-primary;
+            background: $ag-color-primary;
         }
     }
 
@@ -261,11 +261,11 @@
     ////////////////////////////////////////
     .ag-pinned-left-header,
     .ag-root:not(.ag-has-focus) .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
-        border-right: 1px solid $color-border-primary !important;
+        border-right: 1px solid $ag-color-border-primary !important;
     }
 
     .ag-pinned-right-header {
-        border-left-color: $color-border-primary;
+        border-left-color: $ag-color-border-primary;
     }
 
     .ag-ltr .ag-pinned-right-header .ag-header-cell-resize {
@@ -273,7 +273,7 @@
     }
 
     .ag-ltr .ag-root:not(.ag-has-focus) .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
-        border-left-color: $color-border-primary;
+        border-left-color: $ag-color-border-primary;
     }
 
     ////////////////////////////////////////
@@ -281,7 +281,7 @@
     ////////////////////////////////////////
     .ag-input-wrapper input:not([type]) {
         @extend %input-text;
-        border-color: $color-border-form-element;
+        border-color: $ag-color-border-form-element;
         font-size: smaller;
     }
 
@@ -300,20 +300,20 @@
             padding: $ag-grid-size - 1;
             height: $ag-icon-size + $ag-grid-size * 2 - 2;
             width: $ag-grid-size * 5;
-            border-radius: $border-radius;
-            border: 1px solid $color-border-form-element;
+            border-radius: $ag-border-radius;
+            border: 1px solid $ag-color-border-form-element;
             text-align: left;
 
             .ag-icon {
-                color: $color-border-form-element;
+                color: $ag-color-border-form-element;
             }
 
             &:hover .ag-icon {
-                color: $color-primary;
+                color: $ag-color-primary;
             }
 
             &:active .ag-icon {
-                color: $color-background;
+                color: $ag-color-background;
             }
         }
     }
@@ -326,7 +326,7 @@
         .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
         .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
         .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
-            border: 1px solid $color-primary;
+            border: 1px solid $ag-color-primary;
         }
     }
 
@@ -344,7 +344,7 @@
             border-radius: 0;
             padding-left: $ag-grid-size * 3 - 1;
             padding-right: $ag-grid-size * 3 - 1;
-            font: $font-default;
+            font: $ag-font-default;
         }
 
         // select editor
@@ -355,7 +355,7 @@
             padding-left: $ag-grid-size * 3 - 1;
             padding-right: $ag-grid-size * 3 - 1;
             background-position: right $ag-grid-size top $ag-row-height / 2 - 9;
-            font: $font-default;
+            font: $ag-font-default;
         }
     }
 
@@ -365,7 +365,7 @@
     .ag-popup > div.ag-popup-editor {
         @include primary-box-shadow();
         min-height: $ag-row-height;
-        border-color: $color-primary;
+        border-color: $ag-color-primary;
         border-radius: 0;
         padding: 0;
         overflow: visible;
@@ -378,7 +378,7 @@
             border-radius: 0;
             padding-left: $ag-grid-size * 3 - 1;
             padding-right: $ag-grid-size * 6 - 1;
-            font: $font-default;
+            font: $ag-font-default;
             line-height: $ag-row-height - $ag-grid-size * 2 - 2;
         }
 
@@ -395,9 +395,9 @@
         textarea {
             @extend %custom-selection;
             border: 0;
-            color: $color-foreground;
-            background: $color-background;
-            font: $font-default;
+            color: $ag-color-foreground;
+            background: $ag-color-background;
+            font: $ag-font-default;
             padding: $ag-grid-size * 2 $ag-grid-size * 3;
         }
     }
@@ -407,9 +407,7 @@
     ////////////////////////////////////////
     .ag-rich-select {
         .ag-rich-select-value {
-            @include with-dropdown-arrow();
-            background-position: right $ag-grid-size top $ag-row-height / 2 - $ag-icon-size / 2;
-            border-bottom: 1px solid $color-border-secondary;
+            border-bottom: 1px solid $ag-color-border-secondary;
         }
 
         .ag-virtual-list-item {
@@ -441,7 +439,7 @@
             }
 
             .ag-checkbox {
-                @include checkbox($color-primary);
+                @include checkbox($ag-color-primary);
             }
 
             .ag-input-wrapper {
@@ -456,7 +454,7 @@
         }
 
         .ag-primary-cols-list-panel .ag-checkbox input {
-            @include checkbox($color-primary);
+            @include checkbox($ag-color-primary);
         }
 
         .ag-primary-cols-list-panel .ag-column-group-icons {
@@ -481,13 +479,13 @@
     ////////////////////////////////////////
     .ag-overlay-loading-center {
         @include chrome-box-shadow();
-        border: 1px solid $color-border-primary;
+        border: 1px solid $ag-color-border-primary;
         padding: $ag-grid-size * 2 $ag-grid-size * 3;
-        font: $font-default;
+        font: $ag-font-default;
     }
 
     .ag-overlay-loading-wrapper {
-        background-color: transparentize($color-background, 0.25);
+        background-color: transparentize($ag-color-background, 0.25);
     }
 
     ////////////////////////////////////////
@@ -527,7 +525,7 @@
 
     .ag-column-drop-horizontal {
         // Align the first pill to the header
-        font: $font-chrome;
+        font: $ag-font-chrome;
         .ag-icon-group {
             margin-right: $ag-grid-size * 2;
         }
@@ -559,16 +557,16 @@
         .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
             border: 1px solid transparent;
             &.ag-cell-range-top {
-                border-top-color: $color-secondary;
+                border-top-color: $ag-color-secondary;
             }
             &.ag-cell-range-right {
-                border-right-color: $color-secondary;
+                border-right-color: $ag-color-secondary;
             }
             &.ag-cell-range-bottom {
-                border-bottom-color: $color-secondary;
+                border-bottom-color: $ag-color-secondary;
             }
             &.ag-cell-range-left {
-                border-left-color: $color-secondary;
+                border-left-color: $ag-color-secondary;
             }
 
             border-top-color: transparent;
@@ -580,9 +578,9 @@
     ////////////////////////////////////////
     .ag-status-bar {
         border: 0;
-        border-top: 1px solid $color-border-primary;
-        font: $font-chrome;
-        font-size: $size-font-status-bar;
+        border-top: 1px solid $ag-color-border-primary;
+        font: $ag-font-chrome;
+        font-size: $ag-size-font-status-bar;
         padding-left: $ag-cell-horizontal-padding;
         padding-right: $ag-cell-horizontal-padding;
 
@@ -603,13 +601,13 @@
     // Side Bar
     ////////////////////////////////////////
     .ag-side-bar {
-        font: $font-chrome;
+        font: $ag-font-chrome;
         border: 0;
 
         .ag-tool-panel-wrapper {
-            border-left: 1px solid $color-border-primary;
+            border-left: 1px solid $ag-color-border-primary;
             // border-right: 1px solid $ag-border-color;
-            background-color: $color-background-alt;
+            background-color: $ag-color-background-alt;
 
             .ag-pivot-mode-select {
                 margin-left: $ag-grid-size * 2;
@@ -623,7 +621,7 @@
             padding-top: 0;
 
             & > div:first-child {
-                background-color: $color-background;
+                background-color: $ag-color-background;
                 padding: $ag-grid-size * 2 $ag-grid-size * 2;
                 border-bottom: 1px solid $ag-border-color;
                 & > span:first-child {
@@ -664,11 +662,11 @@
             }
 
             .ag-filter-toolpanel-instance {
-                font-weight: $weight-font-chrome;
+                font-weight: $ag-weight-font-chrome;
 
                 .ag-filter-toolpanel-header {
                     padding: $ag-grid-size $ag-grid-size * 2;
-                    background-color: $color-background;
+                    background-color: $ag-color-background;
                     border-bottom: 1px solid $ag-border-color;
 
                     [ref='eExpand'] {
@@ -684,7 +682,7 @@
 
         // side buttons
         .ag-side-buttons {
-            border-left: 1px solid $color-border-primary;
+            border-left: 1px solid $ag-color-border-primary;
             width: $ag-grid-size * 5;
 
             .ag-side-button {
@@ -712,15 +710,15 @@
                 border-left: 2px solid transparent;
 
                 &.ag-selected {
-                    border-color: $color-primary;
+                    border-color: $ag-color-primary;
 
                     button {
                         border: 0;
                         margin-left: 0;
-                        color: $color-primary;
+                        color: $ag-color-primary;
 
                         & > div .ag-icon {
-                            color: $color-primary;
+                            color: $ag-color-primary;
                         }
                     }
                 }
@@ -734,7 +732,7 @@
     .ag-panel {
         .ag-title-bar {
             background-color: $ag-dialog-title-background-color;
-            border-bottom: 1px solid $color-border-primary;
+            border-bottom: 1px solid $ag-color-border-primary;
             color: $ag-dialog-title-foreground-color;
             height: $ag-dialog-title-height;
             font-size: $ag-dialog-title-font-size;
@@ -750,13 +748,13 @@
                         line-height: $ag-dialog-title-icon-size;
                         font-size: $ag-dialog-title-icon-size;
                     }
-                    border-radius: $border-radius;
+                    border-radius: $ag-border-radius;
 
                     &:hover,
                     &.ag-has-popup {
                         background-color: inherit;
                         .ag-icon {
-                            color: $color-primary;
+                            color: $ag-color-primary;
                         }
                     }
 
@@ -787,29 +785,29 @@
                 opacity: 1;
                 &:hover {
                     background: inherit;
-                    color: $color-primary;
+                    color: $ag-color-primary;
                 }
             }
         }
 
         .ag-chart-tabbed-menu {
-            font: $font-chrome;
+            font: $ag-font-chrome;
 
             .ag-tab-selected {
-                color: $color-primary;
+                color: $ag-color-primary;
             }
         }
 
         .ag-tab-body {
-            background-color: $color-background-alt;
+            background-color: $ag-color-background-alt;
         }
 
         .ag-chart-docked-container .ag-panel {
-            border-left: 1px solid $color-border-primary;
+            border-left: 1px solid $ag-color-border-primary;
         }
 
         .ag-chart-settings-nav-bar {
-            border-top: 1px solid $color-border-primary;
+            border-top: 1px solid $ag-color-border-primary;
         }
 
         // Data Tab
@@ -831,7 +829,7 @@
         }
 
         .ag-native-checkbox {
-            @include checkbox($color-primary);
+            @include checkbox($ag-color-primary);
             margin-right: 2px;
         }
 
@@ -844,11 +842,11 @@
 
             textarea {
                 @extend %custom-selection;
-                border: 1px solid $color-primary;
-                border-radius: $border-radius;
+                border: 1px solid $ag-color-primary;
+                border-radius: $ag-border-radius;
                 padding: $ag-grid-size;
-                color: $color-foreground;
-                background: $color-background;
+                color: $ag-color-foreground;
+                background: $ag-color-background;
             }
 
             select {
@@ -875,12 +873,12 @@
     }
 
     .ag-group-component {
-        background: $color-background-alt;
+        background: $ag-color-background-alt;
         border-top: 0;
 
         .ag-group-component-title-bar {
-            font: $font-chrome;
-            background: $color-background;
+            font: $ag-font-chrome;
+            background: $ag-color-background;
             border-bottom: 1px solid $ag-border-color;
             padding: $ag-grid-size $ag-grid-size * 2 !important;
             // hacky way to adjust the height of the header to match the one in the filter panel
@@ -921,7 +919,7 @@
         .ag-group-component-toolbar {
             padding: $ag-grid-size $ag-grid-size * 2;
             height: auto;
-            background: $color-background;
+            background: $ag-color-background;
             input.ag-native-checkbox {
                 @include toggle-button;
             }
@@ -930,13 +928,13 @@
 
     // override to make the border radius work :(
     .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-mini-wrapper .ag-chart-mini-thumbnail {
-        border-radius: $border-radius;
+        border-radius: $ag-border-radius;
     }
 
     // Color Picker
     .ag-color-picker > .ag-wrapper {
-        border-radius: $border-radius;
-        border-color: $color-border-primary;
+        border-radius: $ag-border-radius;
+        border-color: $ag-color-border-primary;
 
         & > div {
             height: $ag-grid-size * 4;
@@ -944,13 +942,13 @@
     }
 
     .ag-picker-button:hover .ag-icon {
-        color: $color-primary;
+        color: $ag-color-primary;
     }
 
     .ag-color-panel {
         .ag-spectrum-slider {
-            border: 1px solid $color-border-primary;
-            box-shadow: 0 0px 1px 1px $color-background;
+            border: 1px solid $ag-color-border-primary;
+            box-shadow: 0 0px 1px 1px $ag-color-background;
         }
     }
 
@@ -969,10 +967,10 @@
     .ag-angle-select {
         .ag-angle-select-field {
             .ag-parent-circle {
-                background-color: $color-border-form-element;
+                background-color: $ag-color-border-form-element;
             }
             .ag-child-circle {
-                background-color: $color-background;
+                background-color: $ag-color-background;
             }
         }
     }
@@ -983,11 +981,11 @@
         // padding: $ag-grid-size / 2;
 
         .ag-icon {
-            color: $color-primary;
+            color: $ag-color-primary;
         }
 
         &:active .ag-icon {
-            // color: $color-background;
+            // color: $ag-color-background;
         }
     }
 
@@ -1090,12 +1088,12 @@
 
         .ag-side-bar .ag-tool-panel-wrapper {
             border-left: 0;
-            border-right: 1px solid $color-border-primary;
+            border-right: 1px solid $ag-color-border-primary;
         }
 
         .ag-side-buttons {
             border-left: 0;
-            border-right: 1px solid $color-border-primary;
+            border-right: 1px solid $ag-color-border-primary;
         }
 
         .ag-side-bar {
@@ -1148,7 +1146,7 @@
 
         .ag-chart-docked-container .ag-panel {
             border-left: none;
-            border-right: 1px solid $color-border-primary;
+            border-right: 1px solid $ag-color-border-primary;
         }
 
         .ag-group-component .ag-group-component-title-bar .ag-column-group-icons {

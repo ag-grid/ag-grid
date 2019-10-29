@@ -8,7 +8,7 @@
   @return $string;
 }
 
-$encoding-reference: (
+$ag-encoding-reference: (
   //('%','%25'),  // Encode "%" first, otherwise the "%" from encoded code would be encoded again (which would be bad)
   ('<','%3C'),
   ('>','%3E'),
@@ -19,7 +19,7 @@ $encoding-reference: (
 );
 
 @function svg-encode($svg) {
-  @each $char, $encoded in $encoding-reference {
+  @each $char, $encoded in $ag-encoding-reference {
     $svg: str-replace($svg, $char, $encoded);
   }
   @return 'data:image/svg+xml,' + $svg;

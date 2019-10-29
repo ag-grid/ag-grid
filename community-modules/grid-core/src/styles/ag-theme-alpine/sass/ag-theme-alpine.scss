@@ -2,5 +2,5 @@
 @import './ag-theme-alpine-common';
 
 .ag-theme-alpine {
-    @include ag-theme-alpine($params);
+    @include ag-theme-alpine($ag-params);
 }
