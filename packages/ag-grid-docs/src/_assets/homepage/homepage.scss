@@ -371,6 +371,14 @@ body > div.page-content {
             width: 100%;
             height: 515px;
         }
+
+        #bestHtml5Grid.small {
+            height: 460px;
+        }
+
+        #bestHtml5Grid.small:not(.tall) {
+            height: 320px;
+        }
     }
 }
 
