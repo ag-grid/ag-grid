@@ -24,6 +24,7 @@ import {
     ShouldRowBeSkippedParams,
     ValueService
 } from "@ag-community/grid-core";
+import { ProcessRowGroupForExportParams } from "@ag-community/grid-core/dist/cjs/interfaces/exportParams";
 
 /**
  * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface
@@ -90,7 +91,7 @@ export interface GridSerializingParams {
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
-    cellAndHeaderEscaper?: (rawValue: string) => string;
+    processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
 }
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
@@ -100,12 +101,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
-    public cellAndHeaderEscaper?: (rawValue: string) => string;
+    public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
 
     constructor(config: GridSerializingParams) {
         const {
             columnController, valueService, gridOptionsWrapper, processCellCallback,
-            processHeaderCallback, processGroupHeaderCallback, cellAndHeaderEscaper
+            processHeaderCallback, processGroupHeaderCallback,
+            processRowGroupCallback
         } = config;
 
         this.columnController = columnController;
@@ -114,7 +116,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
         this.processGroupHeaderCallback = processGroupHeaderCallback;
-        this.cellAndHeaderEscaper = cellAndHeaderEscaper;
+        this.processRowGroupCallback = processRowGroupCallback;
     }
 
     abstract prepare(columnsToExport: Column[]): void;
@@ -132,11 +134,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract parse(): string;
 
     public extractHeaderValue(column: Column): string {
-        let nameForCol = this.getHeaderName(this.processHeaderCallback, column);
-        if (nameForCol === null || nameForCol === undefined) {
-            nameForCol = '';
-        }
-        return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(nameForCol) : nameForCol;
+        return this.getHeaderName(this.processHeaderCallback, column) || '';
     }
 
     public extractRowCellValue(column: Column, index: number, type: string, node: RowNode) {
@@ -148,12 +146,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } else {
             valueForCell = this.valueService.getValue(column, node);
         }
-        valueForCell = this.processCell(node, column, valueForCell, this.processCellCallback, type);
-        if (valueForCell === null || valueForCell === undefined) {
-            valueForCell = '';
-        }
-
-        return this.cellAndHeaderEscaper ? this.cellAndHeaderEscaper(valueForCell) : valueForCell;
+        return this.processCell(node, column, valueForCell, this.processCellCallback, type) || '';
     }
 
     private getHeaderName(callback: ((params: ProcessHeaderForExportParams) => string) | undefined, column: Column): string | null {
@@ -170,6 +163,14 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     private createValueForGroupNode(node: RowNode): string {
+        if (this.processRowGroupCallback) {
+            return this.processRowGroupCallback({
+                rowNode: node,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                context: this.gridOptionsWrapper.getContext(),
+            });
+        }
         const keys = [node.key];
         while (node.parent) {
             node = node.parent;

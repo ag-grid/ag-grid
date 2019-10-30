@@ -6,9 +6,9 @@ var columnDefs = [{
             greenBackground: function(params) { return params.value < 23; },
             blueBackground: function(params) { return params.value < 20; }
         }},
-        {headerName: "Country", field: "country", width: 120},
+        {headerName: "Country", field: "country", width: 120, rowGroup: true},
         {headerName: "Group", valueGetter: "data.country.charAt(0)", width: 75},
-        {headerName: "Year", field: "year", width: 75}
+        {headerName: "Year", field: "year", width: 75, rowGroup: true}
     ]
 }, {
     headerName: 'Group2',
@@ -90,6 +90,20 @@ function onBtExport() {
         };
     }
 
+    if (getBooleanValue('#customiseRowGroups')) {
+        params.processRowGroupCallback = function(params) {
+            var indent = '::';
+            var node = params.rowNode;
+            var label = ' ' + node.key;
+            // indent once per level in the row group hierarchy
+            while (node.parent) {
+                label = indent + label;
+                node = node.parent;
+            }
+            return label;
+        };
+    }
+
     if (getBooleanValue('#appendHeader')) {
         params.customHeader  = [
             [],
@@ -131,6 +145,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
+            gridOptions.api.forEachNode(function(node) {
+                node.expanded = true;
+            });
+            gridOptions.api.onGroupExpandedOrCollapsed();
         }
     };
 });

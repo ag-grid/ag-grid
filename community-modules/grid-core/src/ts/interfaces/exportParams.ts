@@ -25,6 +25,8 @@ export interface BaseExportParams {
     processHeaderCallback?(params: ProcessHeaderForExportParams): string;
 
     processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams): string;
+
+    processRowGroupCallback?(params: ProcessRowGroupForExportParams): string;
 }
 
 export interface ExportParams<T> extends BaseExportParams {
@@ -61,6 +63,13 @@ export interface ProcessHeaderForExportParams {
 
 export interface ProcessGroupHeaderForExportParams {
     columnGroup: ColumnGroup;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
+    context: any;
+}
+
+export interface ProcessRowGroupForExportParams {
+    rowNode: RowNode;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
     context: any;

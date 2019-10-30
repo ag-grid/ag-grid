@@ -22,7 +22,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     excelFactory: ExcelXmlFactory | ExcelXlsxFactory;
     baseExcelStyles: ExcelStyle[];
     styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column?: Column, node?: RowNode) => string[];
-    suppressTextAsCDATA: boolean;
+    suppressTextAsCDATA?: boolean;
     rowHeight?: number;
     headerRowHeight?: number;
 }
@@ -47,14 +47,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     protected styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column?: Column, node?: RowNode) => string[];
 
     constructor(config: ExcelGridSerializingParams) {
-        super({
-            columnController: config.columnController,
-            valueService: config.valueService,
-            gridOptionsWrapper: config.gridOptionsWrapper,
-            processCellCallback: config.processCellCallback,
-            processHeaderCallback: config.processHeaderCallback,
-            cellAndHeaderEscaper: (raw: string) => raw
-        });
+        super(config);
 
         const {sheetName, excelFactory, baseExcelStyles, styleLinker, suppressTextAsCDATA, rowHeight, headerRowHeight} = config;
 

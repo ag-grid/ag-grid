@@ -39,13 +39,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     private columnSeparator: string;
 
     constructor(config: CsvSerializingParams) {
-        super({
-            columnController: config.columnController,
-            valueService: config.valueService,
-            gridOptionsWrapper: config.gridOptionsWrapper,
-            processCellCallback: config.processCellCallback,
-            processHeaderCallback: config.processHeaderCallback
-        });
+        super(config);
 
         const {suppressQuotes, columnSeparator} = config;
 
@@ -270,7 +264,7 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
         const {columnController, valueService, gridOptionsWrapper} = this;
-        const {processCellCallback, processHeaderCallback, processGroupHeaderCallback, suppressQuotes, columnSeparator} = params;
+        const {processCellCallback, processHeaderCallback, processGroupHeaderCallback, processRowGroupCallback, suppressQuotes, columnSeparator} = params;
 
         return new CsvSerializingSession({
             columnController,
@@ -279,6 +273,7 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
             processCellCallback: processCellCallback || undefined,
             processHeaderCallback: processHeaderCallback || undefined,
             processGroupHeaderCallback: processGroupHeaderCallback || undefined,
+            processRowGroupCallback: processRowGroupCallback || undefined,
             suppressQuotes: suppressQuotes || false,
             columnSeparator: columnSeparator || ','
         });

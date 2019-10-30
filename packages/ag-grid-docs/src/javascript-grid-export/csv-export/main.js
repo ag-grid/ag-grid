@@ -4,7 +4,10 @@ var columnDefs = [
         children: [
             {
                 headerName: 'Group1',
-                children: [{headerName: 'Group', valueGetter: 'data.country.charAt(0)', width: 75}, {headerName: 'Year', field: 'year', width: 75}]
+                children: [
+                    {headerName: 'First letter', valueGetter: 'data.country.charAt(0)', width: 75, rowGroup: true},
+                    {headerName: 'Year', field: 'year', width: 75, rowGroup: true}
+                ]
             },
             {
                 headerName: 'Group2',
@@ -140,6 +143,19 @@ function onBtExport() {
         };
     }
 
+    if (getBooleanValue('#customiseRowGroups')) {
+        params.processRowGroupCallback = function(params) {
+            var indent = '::';
+            var node = params.rowNode;
+            // indent once per level in the row group hierarchy
+            while (node.parent) {
+                label = indent + label;
+                node = node.parent;
+            }
+            return label;
+        };
+    }
+
     if (getBooleanValue('#customHeader')) {
         params.customHeader = '[[[ This ia s sample custom header - so meta data maybe?? ]]]\n';
     }
@@ -164,6 +180,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
+            gridOptions.api.forEachNode(function(node) {
+                node.expanded = true;
+            });
+            gridOptions.api.onGroupExpandedOrCollapsed();
         }
     };
 });
