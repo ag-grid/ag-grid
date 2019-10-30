@@ -8158,6 +8158,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressSetColumnStateEvents = function () {
         return isTrue(this.gridOptions.suppressSetColumnStateEvents);
     };
+    GridOptionsWrapper.prototype.isAllowDragFromColumnsToolPanel = function () {
+        return isTrue(this.gridOptions.allowDragFromColumnsToolPanel);
+    };
     GridOptionsWrapper.prototype.useAsyncEvents = function () {
         return !isTrue(this.gridOptions.suppressAsyncEvents);
     };
@@ -23041,8 +23044,8 @@ var BodyDropTarget = /** @class */ (function () {
         }
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
-        // not interested in row or toolpanel column drags
-        return type === DragSourceType.HeaderCell;
+        return type === DragSourceType.HeaderCell
+            || (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;
@@ -23109,6 +23112,9 @@ var BodyDropTarget = /** @class */ (function () {
     __decorate$N([
         Autowired('columnController')
     ], BodyDropTarget.prototype, "columnController", void 0);
+    __decorate$N([
+        Autowired('gridOptionsWrapper')
+    ], BodyDropTarget.prototype, "gridOptionsWrapper", void 0);
     __decorate$N([
         PostConstruct
     ], BodyDropTarget.prototype, "init", null);
@@ -35980,6 +35986,64 @@ var EnterpriseCoreModule = {
     ]
 };
 
+/**
+ * Returns the minimum and maximum value in the given iterable using natural order.
+ * If the iterable contains no comparable values, returns `undefined`.
+ * @param values
+ */
+function extent(values) {
+    var n = values.length;
+    var i = -1;
+    var value;
+    var min;
+    var max;
+    while (++i < n) { // Find the first comparable value.
+        if ((value = values[i]) != null && value >= value) {
+            min = max = value;
+            while (++i < n) { // Compare the remaining values.
+                if ((value = values[i]) != null) {
+                    if (min > value) {
+                        min = value;
+                    }
+                    if (max < value) {
+                        max = value;
+                    }
+                }
+            }
+        }
+    }
+    return typeof min === "undefined" || typeof max === "undefined" ? undefined : [min, max];
+}
+// Custom `Array.find` implementation for legacy browsers.
+function find(arr, predicate) {
+    for (var i = 0, ln = arr.length; i < ln; i++) {
+        var value = arr[i];
+        if (predicate(value, i, arr)) {
+            return value;
+        }
+    }
+}
+/**
+ * This method will only return `undefined` if there's not a single valid finite number present
+ * in the given array of values. Date values will be converted to timestamps.
+ * @param values
+ */
+function numericExtent(values) {
+    var calculatedExtent = extent(values);
+    if (typeof calculatedExtent === "undefined") {
+        return undefined;
+    }
+    var a = calculatedExtent[0], b = calculatedExtent[1];
+    var min = a instanceof Date ? a.getTime() : a;
+    var max = b instanceof Date ? b.getTime() : b;
+    if (typeof min === "number" && isFinite(min) && typeof max === "number" && isFinite(max)) {
+        return [min, max];
+    }
+}
+function sumPositiveValues(array) {
+    return array.reduce(function (total, value) { return value > 0 ? total + value : total; }, 0);
+}
+
 var __extends$1d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -36034,21 +36098,21 @@ var ChartDatasource = /** @class */ (function (_super) {
                     if (params.grouping) {
                         var valueString = valueObject && valueObject.toString ? String(valueObject.toString()) : '';
                         // traverse parents to extract group label path
-                        var labels_1 = _this.getGroupLabels(rowNode, valueString);
+                        var labels = _this.getGroupLabels(rowNode, valueString);
                         if (params.multiCategories) {
                             // add group labels to group column for multi category charts
-                            data[colId] = { labels: labels_1, toString: function () { return labels_1[0]; } };
+                            data[colId] = { labels: labels, toString: function () { return find(this.labels, function (v) { return !!v; }) || ''; } };
                         }
                         else {
                             // concat group keys from the top group key down (used when grouping Pie charts)
-                            data[colId] = labels_1.slice().reverse().join(' - ');
+                            data[colId] = labels.slice().reverse().join(' - ');
                         }
                         // keep track of group node indexes so they can be padded when other groups are expanded
                         if (rowNode.group) {
-                            groupNodeIndexes[labels_1.toString()] = i;
+                            groupNodeIndexes[labels.toString()] = i;
                         }
                         // if node (group or leaf) has parents then it is expanded and should be removed
-                        var groupKey = labels_1.slice(1, labels_1.length).toString();
+                        var groupKey = labels.slice(1, labels.length).toString();
                         if (groupKey) {
                             groupsToRemove[groupKey] = groupNodeIndexes[groupKey];
                         }
@@ -42014,64 +42078,6 @@ var Legend = /** @class */ (function () {
     return Legend;
 }());
 
-/**
- * Returns the minimum and maximum value in the given iterable using natural order.
- * If the iterable contains no comparable values, returns `undefined`.
- * @param values
- */
-function extent(values) {
-    var n = values.length;
-    var i = -1;
-    var value;
-    var min;
-    var max;
-    while (++i < n) { // Find the first comparable value.
-        if ((value = values[i]) != null && value >= value) {
-            min = max = value;
-            while (++i < n) { // Compare the remaining values.
-                if ((value = values[i]) != null) {
-                    if (min > value) {
-                        min = value;
-                    }
-                    if (max < value) {
-                        max = value;
-                    }
-                }
-            }
-        }
-    }
-    return typeof min === "undefined" || typeof max === "undefined" ? undefined : [min, max];
-}
-// Custom `Array.find` implementation for legacy browsers.
-function find(arr, predicate) {
-    for (var i = 0, ln = arr.length; i < ln; i++) {
-        var value = arr[i];
-        if (predicate(value, i, arr)) {
-            return value;
-        }
-    }
-}
-/**
- * This method will only return `undefined` if there's not a single valid finite number present
- * in the given array of values. Date values will be converted to timestamps.
- * @param values
- */
-function numericExtent(values) {
-    var calculatedExtent = extent(values);
-    if (typeof calculatedExtent === "undefined") {
-        return undefined;
-    }
-    var a = calculatedExtent[0], b = calculatedExtent[1];
-    var min = a instanceof Date ? a.getTime() : a;
-    var max = b instanceof Date ? b.getTime() : b;
-    if (typeof min === "number" && isFinite(min) && typeof max === "number" && isFinite(max)) {
-        return [min, max];
-    }
-}
-function sumPositiveValues(array) {
-    return array.reduce(function (total, value) { return value > 0 ? total + value : total; }, 0);
-}
-
 var Chart = /** @class */ (function () {
     function Chart(options) {
         var _this = this;
@@ -43380,29 +43386,18 @@ var AxisLabel = /** @class */ (function () {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var Axis = /** @class */ (function () {
-    // onLayoutChange?: () => void;
     function Axis(scale) {
-        var _this = this;
         this.group = new Group();
         this.lineNode = new Line();
-        this.translation = {
-            x: 0,
-            y: 0
-        };
-        /**
-         * Axis rotation angle in degrees.
-         */
-        this.rotation = 0;
+        // onLayoutChange?: () => void;
         this.line = {
             width: 1,
             color: 'rgba(195, 195, 195, 1)'
         };
-        this.tick = (function () {
-            var tick = new FormattableAxisTick();
-            tick.onFormatChange = _this.onTickFormatChange;
-            return tick;
-        })();
+        this.tick = new FormattableAxisTick();
         this.label = new AxisLabel();
+        this.translation = { x: 0, y: 0 };
+        this.rotation = 0; // axis rotation angle in degrees
         this._title = undefined;
         /**
          * The length of the grid. The grid is only visible in case of a non-zero value.
@@ -43428,6 +43423,7 @@ var Axis = /** @class */ (function () {
         this._radialGrid = false;
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll();
+        this.tick.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
@@ -43852,7 +43848,7 @@ function insertTick(root, tick) {
     var lastPartIndex = pathParts.length - 1;
     pathParts.forEach(function (pathPart, partIndex) {
         var children = root.children;
-        var existingNode = children.find(function (child) { return child.label === pathPart; });
+        var existingNode = find(children, function (child) { return child.label === pathPart; });
         var isNotLeaf = partIndex !== lastPartIndex;
         if (existingNode && isNotLeaf) { // the isNotLeaf check is to allow duplicate leafs
             root = existingNode;

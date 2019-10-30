@@ -134,29 +134,18 @@ export { AxisLabel };
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var Axis = /** @class */ (function () {
-    // onLayoutChange?: () => void;
     function Axis(scale) {
-        var _this = this;
         this.group = new Group();
         this.lineNode = new Line();
-        this.translation = {
-            x: 0,
-            y: 0
-        };
-        /**
-         * Axis rotation angle in degrees.
-         */
-        this.rotation = 0;
+        // onLayoutChange?: () => void;
         this.line = {
             width: 1,
             color: 'rgba(195, 195, 195, 1)'
         };
-        this.tick = (function () {
-            var tick = new FormattableAxisTick();
-            tick.onFormatChange = _this.onTickFormatChange;
-            return tick;
-        })();
+        this.tick = new FormattableAxisTick();
         this.label = new AxisLabel();
+        this.translation = { x: 0, y: 0 };
+        this.rotation = 0; // axis rotation angle in degrees
         this._title = undefined;
         /**
          * The length of the grid. The grid is only visible in case of a non-zero value.
@@ -182,6 +171,7 @@ var Axis = /** @class */ (function () {
         this._radialGrid = false;
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll();
+        this.tick.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
         // this.group.append(this.bboxRect); // debug (bbox)
     }

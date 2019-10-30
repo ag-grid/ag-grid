@@ -739,7 +739,6 @@
         border-bottom: 1px solid #424242;
         box-sizing: content-box; }
       .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
-        padding-left: 2px;
         margin: 0 2px; }
       .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div.ag-input-wrapper {
         padding-left: 4px;
@@ -749,10 +748,10 @@
       .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel {
         flex: 1 1 auto;
         overflow: auto; }
-        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel > div:first-of-type > .ag-group-component > .ag-group-component-title-bar {
+        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel > div.ag-first-group-visible > .ag-group-component > .ag-group-component-title-bar {
           border-top: none;
           min-height: calc(32px - 1px); }
-        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel > div:last-of-type > .ag-group-component.ag-collapsed {
+        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel > div.ag-last-group-visible > .ag-group-component.ag-collapsed {
           border-bottom: 1px solid #424242; }
       .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component {
         border: none;
@@ -776,23 +775,21 @@
       .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container {
         margin-left: 0;
         padding: 0; }
-        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {
-          margin: 4px 2px; }
-          .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance) {
-            margin-top: 0; }
-          .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-group-component-title-bar {
-            background-color: #2d3436; }
-          .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-header {
-            padding: 2px 0; }
-          .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-body:not(:empty) {
-            margin: 4px 0; }
-          .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-body .ag-filter-air {
-            border: 1px solid #424242;
-            padding-top: 4px;
-            color: #F5F5F5;
-            font-weight: 400;
-            font-size: 12px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; }
+        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance) {
+          margin-top: 0; }
+        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-group-component-title-bar {
+          background-color: #2d3436; }
+        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-header {
+          padding: 2px 0; }
+        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-body:not(:empty) {
+          margin: 4px 0; }
+        .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-body .ag-filter-air {
+          border: 1px solid #424242;
+          padding-top: 4px;
+          color: #F5F5F5;
+          font-weight: 400;
+          font-size: 12px;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; }
         .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance),
         .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component {
           border-top: none;
@@ -834,6 +831,10 @@
         margin-right: 4px; }
       .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-column-drop.ag-last-column-drop {
         border-bottom-width: 0; }
+  .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
+    padding-left: 2px; }
+  .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {
+    margin: 4px 2px 4px 0; }
   .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-1 .ag-filter-toolpanel-header,
   .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-1 .ag-filter-toolpanel-header {
     padding-left: 1rem; }
@@ -1598,6 +1599,10 @@
       border-right: 0; }
     .ag-theme-balham-dark .ag-rtl .ag-side-bar.full-width .ag-panel-container {
       border-left: 0; }
+  .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
+    padding-right: 2px; }
+  .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {
+    margin: 4px 0 4px 2px; }
   .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-1 .ag-filter-toolpanel-header,
   .ag-theme-balham-dark .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-1 .ag-filter-toolpanel-header {
     padding-right: 1rem; }

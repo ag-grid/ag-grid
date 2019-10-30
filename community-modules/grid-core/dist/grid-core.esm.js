@@ -8382,6 +8382,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressSetColumnStateEvents = function () {
         return isTrue(this.gridOptions.suppressSetColumnStateEvents);
     };
+    GridOptionsWrapper.prototype.isAllowDragFromColumnsToolPanel = function () {
+        return isTrue(this.gridOptions.allowDragFromColumnsToolPanel);
+    };
     GridOptionsWrapper.prototype.useAsyncEvents = function () {
         return !isTrue(this.gridOptions.suppressAsyncEvents);
     };
@@ -23282,8 +23285,8 @@ var BodyDropTarget = /** @class */ (function () {
         }
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
-        // not interested in row or toolpanel column drags
-        return type === DragSourceType.HeaderCell;
+        return type === DragSourceType.HeaderCell
+            || (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;
@@ -23350,6 +23353,9 @@ var BodyDropTarget = /** @class */ (function () {
     __decorate$N([
         Autowired('columnController')
     ], BodyDropTarget.prototype, "columnController", void 0);
+    __decorate$N([
+        Autowired('gridOptionsWrapper')
+    ], BodyDropTarget.prototype, "gridOptionsWrapper", void 0);
     __decorate$N([
         PostConstruct
     ], BodyDropTarget.prototype, "init", null);

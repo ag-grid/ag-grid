@@ -13,6 +13,7 @@ import {
     ValueService
 } from "@ag-community/grid-core";
 import {ChartModel, ColState} from "./chartModel";
+import { find } from "../../charts/util/array";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -79,7 +80,7 @@ export class ChartDatasource extends BeanStub {
 
                         if (params.multiCategories) {
                             // add group labels to group column for multi category charts
-                            data[colId] = { labels, toString: () => labels[0] };
+                            data[colId] = { labels, toString: function () { return find(this.labels as string[], v => !!v) || ''; } };
                         } else {
                             // concat group keys from the top group key down (used when grouping Pie charts)
                             data[colId] = labels.slice().reverse().join(' - ');

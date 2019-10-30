@@ -222,6 +222,7 @@ export interface GridOptions {
     batchUpdateWaitMillis?: number;
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
+    allowDragFromColumnsToolPanel?: boolean;
     suppressMaxRenderedRowRestriction?: boolean;
     excludeChildrenWhenTreeDataFiltering?: boolean;
 

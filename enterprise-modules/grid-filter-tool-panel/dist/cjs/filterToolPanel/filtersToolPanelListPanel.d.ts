@@ -28,6 +28,7 @@ export declare class FiltersToolPanelListPanel extends Component {
     private fireExpandedEvent;
     performFilterSearch(searchText: string): void;
     private searchFilters;
+    private setFirstAndLastVisible;
     private refreshFilters;
     private destroyFilters;
     destroy(): void;

@@ -57,7 +57,6 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
             return;
         }
         var eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
-        eIcon.innerHTML = '&nbsp';
         eParent.appendChild(eIcon);
     };
     ToolPanelFilterComp.prototype.isFilterActive = function () {

@@ -42,8 +42,8 @@ var BodyDropTarget = /** @class */ (function () {
         }
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
-        // not interested in row or toolpanel column drags
-        return type === DragSourceType.HeaderCell;
+        return type === DragSourceType.HeaderCell
+            || (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;
@@ -110,6 +110,9 @@ var BodyDropTarget = /** @class */ (function () {
     __decorate([
         Autowired('columnController')
     ], BodyDropTarget.prototype, "columnController", void 0);
+    __decorate([
+        Autowired('gridOptionsWrapper')
+    ], BodyDropTarget.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         PostConstruct
     ], BodyDropTarget.prototype, "init", null);

@@ -216,6 +216,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressSetColumnStateEvents = function () {
         return isTrue(this.gridOptions.suppressSetColumnStateEvents);
     };
+    GridOptionsWrapper.prototype.isAllowDragFromColumnsToolPanel = function () {
+        return isTrue(this.gridOptions.allowDragFromColumnsToolPanel);
+    };
     GridOptionsWrapper.prototype.useAsyncEvents = function () {
         return !isTrue(this.gridOptions.suppressAsyncEvents);
     };

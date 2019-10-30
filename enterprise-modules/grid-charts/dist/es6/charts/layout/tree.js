@@ -1,3 +1,4 @@
+import { find } from "../util/array";
 /**
  * The tree layout is calculated in abstract x/y coordinates, where the root is at (0, 0)
  * and the tree grows downward from the root.
@@ -73,7 +74,7 @@ function insertTick(root, tick) {
     var lastPartIndex = pathParts.length - 1;
     pathParts.forEach(function (pathPart, partIndex) {
         var children = root.children;
-        var existingNode = children.find(function (child) { return child.label === pathPart; });
+        var existingNode = find(children, function (child) { return child.label === pathPart; });
         var isNotLeaf = partIndex !== lastPartIndex;
         if (existingNode && isNotLeaf) { // the isNotLeaf check is to allow duplicate leafs
             root = existingNode;

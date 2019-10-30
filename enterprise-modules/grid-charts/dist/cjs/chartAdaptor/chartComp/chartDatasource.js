@@ -21,6 +21,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var grid_core_1 = require("@ag-community/grid-core");
 var chartModel_1 = require("./chartModel");
+var array_1 = require("../../charts/util/array");
 var ChartDatasource = /** @class */ (function (_super) {
     __extends(ChartDatasource, _super);
     function ChartDatasource() {
@@ -56,21 +57,21 @@ var ChartDatasource = /** @class */ (function (_super) {
                     if (params.grouping) {
                         var valueString = valueObject && valueObject.toString ? String(valueObject.toString()) : '';
                         // traverse parents to extract group label path
-                        var labels_1 = _this.getGroupLabels(rowNode, valueString);
+                        var labels = _this.getGroupLabels(rowNode, valueString);
                         if (params.multiCategories) {
                             // add group labels to group column for multi category charts
-                            data[colId] = { labels: labels_1, toString: function () { return labels_1[0]; } };
+                            data[colId] = { labels: labels, toString: function () { return array_1.find(this.labels, function (v) { return !!v; }) || ''; } };
                         }
                         else {
                             // concat group keys from the top group key down (used when grouping Pie charts)
-                            data[colId] = labels_1.slice().reverse().join(' - ');
+                            data[colId] = labels.slice().reverse().join(' - ');
                         }
                         // keep track of group node indexes so they can be padded when other groups are expanded
                         if (rowNode.group) {
-                            groupNodeIndexes[labels_1.toString()] = i;
+                            groupNodeIndexes[labels.toString()] = i;
                         }
                         // if node (group or leaf) has parents then it is expanded and should be removed
-                        var groupKey = labels_1.slice(1, labels_1.length).toString();
+                        var groupKey = labels.slice(1, labels.length).toString();
                         if (groupKey) {
                             groupsToRemove[groupKey] = groupNodeIndexes[groupKey];
                         }

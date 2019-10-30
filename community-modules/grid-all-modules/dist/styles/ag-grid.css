@@ -1463,6 +1463,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;
     display: inline-flex; }
+  .ag-status-bar .ag-name-value {
+    white-space: nowrap; }
 
 .ag-status-bar-left {
   display: -webkit-inline-box;

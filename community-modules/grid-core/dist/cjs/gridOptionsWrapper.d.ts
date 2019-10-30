@@ -74,6 +74,7 @@ export declare class GridOptionsWrapper {
     isSuppressTouch(): boolean;
     isSuppressRowTransform(): boolean;
     isSuppressSetColumnStateEvents(): boolean;
+    isAllowDragFromColumnsToolPanel(): boolean;
     useAsyncEvents(): boolean;
     isEnableCellChangeFlash(): boolean;
     isGroupSelectsChildren(): boolean;

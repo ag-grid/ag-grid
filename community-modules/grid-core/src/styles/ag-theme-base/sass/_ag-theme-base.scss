@@ -691,7 +691,6 @@
 
                 > div {
                     &:not(.ag-input-wrapper) {
-                        padding-left: $grid-size / 2;
                         margin: 0 $grid-size / 2;
                     }
                     &.ag-input-wrapper {
@@ -708,7 +707,7 @@
                 flex: 1 1 auto;
                 overflow: auto;
                 > div {
-                    &:first-of-type {
+                    &.ag-first-group-visible {
                         > .ag-group-component {
                             > .ag-group-component-title-bar {
                                 border-top: none;
@@ -716,7 +715,7 @@
                             }
                         }
                     }
-                    &:last-of-type {
+                    &.ag-last-group-visible {
                         > .ag-group-component.ag-collapsed {
                             border-bottom: 1px solid $border-color;
                         }
@@ -763,7 +762,6 @@
                 margin-left: 0;
                 padding: 0;
                 .ag-group-item {
-                    margin: $grid-size $grid-size / 2;
                     &:not(.ag-filter-toolpanel-instance) {
                         margin-top: 0;
                     }

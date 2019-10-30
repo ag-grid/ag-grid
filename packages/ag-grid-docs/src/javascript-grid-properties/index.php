@@ -95,6 +95,12 @@ include '../documentation-main/documentation_header.php';
                 <code>columnApi.resetColumnState()</code> are invoked.
             </td>
         </tr>
+        <tr>
+            <th>allowDragFromColumnsToolPanel</th>
+            <td>
+                Allow reordering and pinning columns by dragging columns from the columns tool panel to the grid.
+            </td>
+        </tr>
     </table>
     <h2>Sort & Filter</h2>
     <table class="table content reference">

@@ -9451,6 +9451,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressSetColumnStateEvents = function () {
         return isTrue(this.gridOptions.suppressSetColumnStateEvents);
     };
+    GridOptionsWrapper.prototype.isAllowDragFromColumnsToolPanel = function () {
+        return isTrue(this.gridOptions.allowDragFromColumnsToolPanel);
+    };
     GridOptionsWrapper.prototype.useAsyncEvents = function () {
         return !isTrue(this.gridOptions.suppressAsyncEvents);
     };
@@ -25882,8 +25885,8 @@ var BodyDropTarget = /** @class */ (function () {
         }
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
-        // not interested in row or toolpanel column drags
-        return type === _dragAndDrop_dragAndDropService__WEBPACK_IMPORTED_MODULE_0__["DragSourceType"].HeaderCell;
+        return type === _dragAndDrop_dragAndDropService__WEBPACK_IMPORTED_MODULE_0__["DragSourceType"].HeaderCell
+            || (type === _dragAndDrop_dragAndDropService__WEBPACK_IMPORTED_MODULE_0__["DragSourceType"].ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;
@@ -25950,6 +25953,9 @@ var BodyDropTarget = /** @class */ (function () {
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('columnController')
     ], BodyDropTarget.prototype, "columnController", void 0);
+    __decorate([
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('gridOptionsWrapper')
+    ], BodyDropTarget.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         _context_context__WEBPACK_IMPORTED_MODULE_1__["PostConstruct"]
     ], BodyDropTarget.prototype, "init", null);

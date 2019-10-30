@@ -117,23 +117,6 @@ export declare class Axis<S extends Scale<D, number>, D = any> implements ILinea
     readonly group: Group;
     private groupSelection;
     private lineNode;
-    constructor(scale: S);
-    range: number[];
-    domain: D[];
-    readonly translation: {
-        /**
-         * The horizontal translation of the axis group.
-         */
-        x: number;
-        /**
-         * The vertical translation of the axis group.
-         */
-        y: number;
-    };
-    /**
-     * Axis rotation angle in degrees.
-     */
-    rotation: number;
     readonly line: {
         /**
          * The line width to be used by the axis line.
@@ -146,9 +129,17 @@ export declare class Axis<S extends Scale<D, number>, D = any> implements ILinea
         color?: string;
     };
     readonly tick: FormattableAxisTick;
+    readonly label: AxisLabel;
+    readonly translation: {
+        x: number;
+        y: number;
+    };
+    rotation: number;
+    constructor(scale: S);
+    range: number[];
+    domain: D[];
     private tickFormatter?;
     private onTickFormatChange;
-    readonly label: AxisLabel;
     private _title;
     title: Caption | undefined;
     /**

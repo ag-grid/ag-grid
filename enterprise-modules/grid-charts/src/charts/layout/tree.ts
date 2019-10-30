@@ -1,3 +1,5 @@
+import { find } from "../util/array";
+
 interface Tick {
     labels: string[];
 }
@@ -88,7 +90,7 @@ function insertTick(root: TreeNode, tick: Tick) {
 
     pathParts.forEach((pathPart, partIndex) => {
         const children = root.children;
-        const existingNode = children.find(child => child.label === pathPart);
+        const existingNode = find(children, child => child.label === pathPart);
         const isNotLeaf = partIndex !== lastPartIndex;
         if (existingNode && isNotLeaf) { // the isNotLeaf check is to allow duplicate leafs
             root = existingNode;

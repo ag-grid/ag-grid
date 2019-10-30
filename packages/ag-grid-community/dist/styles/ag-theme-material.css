@@ -777,7 +777,6 @@
         border-bottom: 1px solid #e2e2e2;
         box-sizing: content-box; }
       .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
-        padding-left: 4px;
         margin: 0 4px; }
       .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div.ag-input-wrapper {
         padding-left: 8px;
@@ -787,10 +786,10 @@
       .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel {
         flex: 1 1 auto;
         overflow: auto; }
-        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel > div:first-of-type > .ag-group-component > .ag-group-component-title-bar {
+        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel > div.ag-first-group-visible > .ag-group-component > .ag-group-component-title-bar {
           border-top: none;
           min-height: calc(56px - 1px); }
-        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel > div:last-of-type > .ag-group-component.ag-collapsed {
+        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-list-panel > div.ag-last-group-visible > .ag-group-component.ag-collapsed {
           border-bottom: 1px solid #e2e2e2; }
       .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component {
         border: none;
@@ -814,23 +813,21 @@
       .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container {
         margin-left: 0;
         padding: 0; }
-        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {
-          margin: 8px 4px; }
-          .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance) {
-            margin-top: 0; }
-          .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-group-component-title-bar {
-            background-color: #fdfdfd; }
-          .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-header {
-            padding: 4px 0; }
-          .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-body:not(:empty) {
-            margin: 8px 0; }
-          .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-body .ag-filter-air {
-            border: 1px solid #e2e2e2;
-            padding-top: 8px;
-            color: rgba(0, 0, 0, 0.87);
-            font-weight: 400;
-            font-size: 13px;
-            font-family: "Roboto", sans-serif; }
+        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance) {
+          margin-top: 0; }
+        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-group-component-title-bar {
+          background-color: #fdfdfd; }
+        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-header {
+          padding: 4px 0; }
+        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-body:not(:empty) {
+          margin: 8px 0; }
+        .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item .ag-filter-toolpanel-body .ag-filter-air {
+          border: 1px solid #e2e2e2;
+          padding-top: 8px;
+          color: rgba(0, 0, 0, 0.87);
+          font-weight: 400;
+          font-size: 13px;
+          font-family: "Roboto", sans-serif; }
         .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance),
         .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component {
           border-top: none;
@@ -872,6 +869,10 @@
         margin-right: 8px; }
       .ag-theme-material .ag-tool-panel-wrapper .ag-column-drop.ag-last-column-drop {
         border-bottom-width: 0; }
+  .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
+    padding-left: 4px; }
+  .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {
+    margin: 8px 4px 8px 0; }
   .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-1 .ag-filter-toolpanel-header,
   .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-1 .ag-filter-toolpanel-header {
     padding-left: 1rem; }
@@ -1630,6 +1631,10 @@
       border-right: 0; }
     .ag-theme-material .ag-rtl .ag-side-bar.full-width .ag-panel-container {
       border-left: 0; }
+  .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
+    padding-right: 4px; }
+  .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {
+    margin: 8px 0 8px 4px; }
   .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-1 .ag-filter-toolpanel-header,
   .ag-theme-material .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-1 .ag-filter-toolpanel-header {
     padding-right: 1rem; }

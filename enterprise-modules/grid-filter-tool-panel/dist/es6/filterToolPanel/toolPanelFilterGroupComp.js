@@ -80,7 +80,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         this.filterGroupComp.hideItem(hide, index);
     };
     ToolPanelFilterGroupComp.prototype.hideGroup = function (hide) {
-        _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-hidden', hide);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
     };
     ToolPanelFilterGroupComp.prototype.addTopLevelColumnGroupExpandListener = function () {
         var _this = this;

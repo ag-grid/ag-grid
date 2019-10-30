@@ -8385,6 +8385,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressSetColumnStateEvents = function () {
         return isTrue(this.gridOptions.suppressSetColumnStateEvents);
     };
+    GridOptionsWrapper.prototype.isAllowDragFromColumnsToolPanel = function () {
+        return isTrue(this.gridOptions.allowDragFromColumnsToolPanel);
+    };
     GridOptionsWrapper.prototype.useAsyncEvents = function () {
         return !isTrue(this.gridOptions.suppressAsyncEvents);
     };
@@ -23281,8 +23284,8 @@ var BodyDropTarget = /** @class */ (function () {
         }
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
-        // not interested in row or toolpanel column drags
-        return type === exports.DragSourceType.HeaderCell;
+        return type === exports.DragSourceType.HeaderCell
+            || (type === exports.DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;
@@ -23349,6 +23352,9 @@ var BodyDropTarget = /** @class */ (function () {
     __decorate$N([
         Autowired('columnController')
     ], BodyDropTarget.prototype, "columnController", void 0);
+    __decorate$N([
+        Autowired('gridOptionsWrapper')
+    ], BodyDropTarget.prototype, "gridOptionsWrapper", void 0);
     __decorate$N([
         PostConstruct
     ], BodyDropTarget.prototype, "init", null);
@@ -47784,7 +47790,6 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
             return;
         }
         var eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
-        eIcon.innerHTML = '&nbsp';
         eParent.appendChild(eIcon);
     };
     ToolPanelFilterComp.prototype.isFilterActive = function () {
@@ -47966,7 +47971,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         this.filterGroupComp.hideItem(hide, index);
     };
     ToolPanelFilterGroupComp.prototype.hideGroup = function (hide) {
-        _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-hidden', hide);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
     };
     ToolPanelFilterGroupComp.prototype.addTopLevelColumnGroupExpandListener = function () {
         var _this = this;
@@ -48136,7 +48141,11 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         this.destroyFilters();
         var columnTree = this.columnController.getPrimaryColumnTree();
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
-        this.filterGroupComps.forEach(function (comp) { return _this.appendChild(comp); });
+        var len = this.filterGroupComps.length;
+        if (len) {
+            this.filterGroupComps.forEach(function (comp) { return _this.appendChild(comp); });
+            this.setFirstAndLastVisible(0, len - 1);
+        }
         // perform search if searchFilterText exists
         if (_.exists(this.searchFilterText)) {
             this.searchFilters(this.searchFilterText);
@@ -48149,7 +48158,11 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         this.destroyFilters();
         var columnTree = this.toolPanelColDefService.createColumnTree(colDefs);
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
-        this.filterGroupComps.forEach(function (comp) { return _this.appendChild(comp); });
+        var len = this.filterGroupComps.length;
+        if (len) {
+            this.filterGroupComps.forEach(function (comp) { return _this.appendChild(comp); });
+            this.setFirstAndLastVisible(0, len - 1);
+        }
         // perform search if searchFilterText exists
         if (_.exists(this.searchFilterText)) {
             this.searchFilters(this.searchFilterText);
@@ -48163,24 +48176,21 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             if (child instanceof OriginalColumnGroup) {
                 return _.flatten(_this.recursivelyAddFilterGroupComps(child, depth));
             }
-            else {
-                var column = child;
-                if (!_this.shouldDisplayFilter(column))
-                    return [];
-                var hideFilterCompHeader = depth === 0;
-                var filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
-                _this.getContext().wireBean(filterComp);
-                filterComp.setColumn(column);
-                if (depth > 0) {
-                    return filterComp;
-                }
-                else {
-                    var filterGroupComp = new ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth);
-                    _this.getContext().wireBean(filterGroupComp);
-                    filterGroupComp.collapse();
-                    return filterGroupComp;
-                }
+            var column = child;
+            if (!_this.shouldDisplayFilter(column)) {
+                return [];
             }
+            var hideFilterCompHeader = depth === 0;
+            var filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
+            _this.getContext().wireBean(filterComp);
+            filterComp.setColumn(column);
+            if (depth > 0) {
+                return filterComp;
+            }
+            var filterGroupComp = new ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth);
+            _this.getContext().wireBean(filterGroupComp);
+            filterGroupComp.collapse();
+            return filterGroupComp;
         }));
     };
     FiltersToolPanelListPanel.prototype.recursivelyAddFilterGroupComps = function (columnGroup, depth) {
@@ -48203,9 +48213,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             if (child instanceof OriginalColumnGroup) {
                 return _this.filtersExistInChildren(child.getChildren());
             }
-            else {
-                return _this.shouldDisplayFilter(child);
-            }
+            return _this.shouldDisplayFilter(child);
         });
     };
     FiltersToolPanelListPanel.prototype.shouldDisplayFilter = function (column) {
@@ -48273,15 +48281,13 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
                 });
                 return anyChildrenChanged_1;
             }
-            else {
-                var colId = filterComp.getColumn().getColId();
-                var updateFilterExpandState = !colIds || _.includes(colIds, colId);
-                if (updateFilterExpandState) {
-                    expand ? filterComp.expand() : filterComp.collapse();
-                    updatedColIds.push(colId);
-                }
-                return updateFilterExpandState;
+            var colId = filterComp.getColumn().getColId();
+            var updateFilterExpandState = !colIds || _.includes(colIds, colId);
+            if (updateFilterExpandState) {
+                expand ? filterComp.expand() : filterComp.collapse();
+                updatedColIds.push(colId);
             }
+            return updateFilterExpandState;
         };
         this.filterGroupComps.forEach(updateGroupExpandState);
         // update header expand / collapse icon
@@ -48331,38 +48337,62 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             return !_.exists(searchFilter) || groupName.toLowerCase().includes(searchFilter);
         };
         var recursivelySearch = function (filterItem, parentPasses) {
-            if (filterItem instanceof ToolPanelFilterGroupComp) {
-                var children = filterItem.getChildren();
-                var groupNamePasses = passesFilter(filterItem.getFilterGroupName());
-                // if group or parent already passed - ensure this group and all children are visible
-                var alreadyPassed = parentPasses || groupNamePasses;
-                if (alreadyPassed) {
-                    // ensure group visible
-                    filterItem.hideGroup(false);
-                    // ensure all children are visible
-                    for (var i = 0; i < children.length; i++) {
-                        recursivelySearch(children[i], alreadyPassed);
-                        filterItem.hideGroupItem(false, i);
-                    }
-                    return true;
-                }
-                // hide group item filters
-                var anyChildPasses_1 = false;
-                children.forEach(function (child, index) {
-                    var childPasses = recursivelySearch(child, parentPasses);
-                    filterItem.hideGroupItem(!childPasses, index);
-                    if (childPasses)
-                        anyChildPasses_1 = true;
-                });
-                // hide group if no children pass
-                filterItem.hideGroup(!anyChildPasses_1);
-                return anyChildPasses_1;
-            }
-            else {
+            if (!(filterItem instanceof ToolPanelFilterGroupComp)) {
                 return passesFilter(filterItem.getColumnFilterName());
             }
+            var children = filterItem.getChildren();
+            var groupNamePasses = passesFilter(filterItem.getFilterGroupName());
+            // if group or parent already passed - ensure this group and all children are visible
+            var alreadyPassed = parentPasses || groupNamePasses;
+            if (alreadyPassed) {
+                // ensure group visible
+                filterItem.hideGroup(false);
+                // ensure all children are visible
+                for (var i = 0; i < children.length; i++) {
+                    recursivelySearch(children[i], alreadyPassed);
+                    filterItem.hideGroupItem(false, i);
+                }
+                return true;
+            }
+            // hide group item filters
+            var anyChildPasses = false;
+            children.forEach(function (child, index) {
+                var childPasses = recursivelySearch(child, parentPasses);
+                filterItem.hideGroupItem(!childPasses, index);
+                if (childPasses)
+                    anyChildPasses = true;
+            });
+            // hide group if no children pass
+            filterItem.hideGroup(!anyChildPasses);
+            return anyChildPasses;
         };
-        this.filterGroupComps.forEach(function (filterGroup) { return recursivelySearch(filterGroup, false); });
+        var firstVisible;
+        var lastVisible;
+        this.filterGroupComps.forEach(function (filterGroup, idx) {
+            recursivelySearch(filterGroup, false);
+            if (firstVisible === undefined) {
+                if (!_.containsClass(filterGroup.getGui(), 'ag-hidden')) {
+                    firstVisible = idx;
+                    lastVisible = idx;
+                }
+            }
+            else if (!_.containsClass(filterGroup.getGui(), 'ag-hidden') && lastVisible !== idx) {
+                lastVisible = idx;
+            }
+        });
+        this.setFirstAndLastVisible(firstVisible, lastVisible);
+    };
+    FiltersToolPanelListPanel.prototype.setFirstAndLastVisible = function (firstIdx, lastIdx) {
+        this.filterGroupComps.forEach(function (filterGroup, idx) {
+            _.removeCssClass(filterGroup.getGui(), 'ag-first-group-visible');
+            _.removeCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+            if (idx === firstIdx) {
+                _.addCssClass(filterGroup.getGui(), 'ag-first-group-visible');
+            }
+            if (idx === lastIdx) {
+                _.addCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+            }
+        });
     };
     FiltersToolPanelListPanel.prototype.refreshFilters = function () {
         this.filterGroupComps.forEach(function (filterGroupComp) { return filterGroupComp.refreshFilters(); });
@@ -48518,6 +48548,64 @@ var FiltersToolPanelModule = {
     ]
 };
 
+/**
+ * Returns the minimum and maximum value in the given iterable using natural order.
+ * If the iterable contains no comparable values, returns `undefined`.
+ * @param values
+ */
+function extent(values) {
+    var n = values.length;
+    var i = -1;
+    var value;
+    var min;
+    var max;
+    while (++i < n) { // Find the first comparable value.
+        if ((value = values[i]) != null && value >= value) {
+            min = max = value;
+            while (++i < n) { // Compare the remaining values.
+                if ((value = values[i]) != null) {
+                    if (min > value) {
+                        min = value;
+                    }
+                    if (max < value) {
+                        max = value;
+                    }
+                }
+            }
+        }
+    }
+    return typeof min === "undefined" || typeof max === "undefined" ? undefined : [min, max];
+}
+// Custom `Array.find` implementation for legacy browsers.
+function find(arr, predicate) {
+    for (var i = 0, ln = arr.length; i < ln; i++) {
+        var value = arr[i];
+        if (predicate(value, i, arr)) {
+            return value;
+        }
+    }
+}
+/**
+ * This method will only return `undefined` if there's not a single valid finite number present
+ * in the given array of values. Date values will be converted to timestamps.
+ * @param values
+ */
+function numericExtent(values) {
+    var calculatedExtent = extent(values);
+    if (typeof calculatedExtent === "undefined") {
+        return undefined;
+    }
+    var a = calculatedExtent[0], b = calculatedExtent[1];
+    var min = a instanceof Date ? a.getTime() : a;
+    var max = b instanceof Date ? b.getTime() : b;
+    if (typeof min === "number" && isFinite(min) && typeof max === "number" && isFinite(max)) {
+        return [min, max];
+    }
+}
+function sumPositiveValues(array) {
+    return array.reduce(function (total, value) { return value > 0 ? total + value : total; }, 0);
+}
+
 var __extends$1G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -48572,21 +48660,21 @@ var ChartDatasource = /** @class */ (function (_super) {
                     if (params.grouping) {
                         var valueString = valueObject && valueObject.toString ? String(valueObject.toString()) : '';
                         // traverse parents to extract group label path
-                        var labels_1 = _this.getGroupLabels(rowNode, valueString);
+                        var labels = _this.getGroupLabels(rowNode, valueString);
                         if (params.multiCategories) {
                             // add group labels to group column for multi category charts
-                            data[colId] = { labels: labels_1, toString: function () { return labels_1[0]; } };
+                            data[colId] = { labels: labels, toString: function () { return find(this.labels, function (v) { return !!v; }) || ''; } };
                         }
                         else {
                             // concat group keys from the top group key down (used when grouping Pie charts)
-                            data[colId] = labels_1.slice().reverse().join(' - ');
+                            data[colId] = labels.slice().reverse().join(' - ');
                         }
                         // keep track of group node indexes so they can be padded when other groups are expanded
                         if (rowNode.group) {
-                            groupNodeIndexes[labels_1.toString()] = i;
+                            groupNodeIndexes[labels.toString()] = i;
                         }
                         // if node (group or leaf) has parents then it is expanded and should be removed
-                        var groupKey = labels_1.slice(1, labels_1.length).toString();
+                        var groupKey = labels.slice(1, labels.length).toString();
                         if (groupKey) {
                             groupsToRemove[groupKey] = groupNodeIndexes[groupKey];
                         }
@@ -54552,64 +54640,6 @@ var Legend = /** @class */ (function () {
     return Legend;
 }());
 
-/**
- * Returns the minimum and maximum value in the given iterable using natural order.
- * If the iterable contains no comparable values, returns `undefined`.
- * @param values
- */
-function extent(values) {
-    var n = values.length;
-    var i = -1;
-    var value;
-    var min;
-    var max;
-    while (++i < n) { // Find the first comparable value.
-        if ((value = values[i]) != null && value >= value) {
-            min = max = value;
-            while (++i < n) { // Compare the remaining values.
-                if ((value = values[i]) != null) {
-                    if (min > value) {
-                        min = value;
-                    }
-                    if (max < value) {
-                        max = value;
-                    }
-                }
-            }
-        }
-    }
-    return typeof min === "undefined" || typeof max === "undefined" ? undefined : [min, max];
-}
-// Custom `Array.find` implementation for legacy browsers.
-function find(arr, predicate) {
-    for (var i = 0, ln = arr.length; i < ln; i++) {
-        var value = arr[i];
-        if (predicate(value, i, arr)) {
-            return value;
-        }
-    }
-}
-/**
- * This method will only return `undefined` if there's not a single valid finite number present
- * in the given array of values. Date values will be converted to timestamps.
- * @param values
- */
-function numericExtent(values) {
-    var calculatedExtent = extent(values);
-    if (typeof calculatedExtent === "undefined") {
-        return undefined;
-    }
-    var a = calculatedExtent[0], b = calculatedExtent[1];
-    var min = a instanceof Date ? a.getTime() : a;
-    var max = b instanceof Date ? b.getTime() : b;
-    if (typeof min === "number" && isFinite(min) && typeof max === "number" && isFinite(max)) {
-        return [min, max];
-    }
-}
-function sumPositiveValues(array) {
-    return array.reduce(function (total, value) { return value > 0 ? total + value : total; }, 0);
-}
-
 var Chart = /** @class */ (function () {
     function Chart(options) {
         var _this = this;
@@ -55918,29 +55948,18 @@ var AxisLabel = /** @class */ (function () {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var Axis = /** @class */ (function () {
-    // onLayoutChange?: () => void;
     function Axis(scale) {
-        var _this = this;
         this.group = new Group();
         this.lineNode = new Line();
-        this.translation = {
-            x: 0,
-            y: 0
-        };
-        /**
-         * Axis rotation angle in degrees.
-         */
-        this.rotation = 0;
+        // onLayoutChange?: () => void;
         this.line = {
             width: 1,
             color: 'rgba(195, 195, 195, 1)'
         };
-        this.tick = (function () {
-            var tick = new FormattableAxisTick();
-            tick.onFormatChange = _this.onTickFormatChange;
-            return tick;
-        })();
+        this.tick = new FormattableAxisTick();
         this.label = new AxisLabel();
+        this.translation = { x: 0, y: 0 };
+        this.rotation = 0; // axis rotation angle in degrees
         this._title = undefined;
         /**
          * The length of the grid. The grid is only visible in case of a non-zero value.
@@ -55966,6 +55985,7 @@ var Axis = /** @class */ (function () {
         this._radialGrid = false;
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll();
+        this.tick.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
@@ -56390,7 +56410,7 @@ function insertTick(root, tick) {
     var lastPartIndex = pathParts.length - 1;
     pathParts.forEach(function (pathPart, partIndex) {
         var children = root.children;
-        var existingNode = children.find(function (child) { return child.label === pathPart; });
+        var existingNode = find(children, function (child) { return child.label === pathPart; });
         var isNotLeaf = partIndex !== lastPartIndex;
         if (existingNode && isNotLeaf) { // the isNotLeaf check is to allow duplicate leafs
             root = existingNode;

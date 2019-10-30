@@ -168,9 +168,31 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
     private lineNode = new Line();
     // onLayoutChange?: () => void;
 
+    readonly line: {
+        /**
+         * The line width to be used by the axis line.
+         */
+        width: number,
+        /**
+         * The color of the axis line.
+         * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
+         */
+        color?: string
+    } = {
+            width: 1,
+            color: 'rgba(195, 195, 195, 1)'
+        };
+
+    readonly tick = new FormattableAxisTick();
+    readonly label = new AxisLabel();
+
+    readonly translation = { x: 0, y: 0 };
+    rotation: number = 0; // axis rotation angle in degrees
+
     constructor(scale: S) {
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
+        this.tick.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
@@ -189,46 +211,6 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         return this.scale.domain;
     }
 
-    readonly translation: {
-        /**
-         * The horizontal translation of the axis group.
-         */
-        x: number,
-        /**
-         * The vertical translation of the axis group.
-         */
-        y: number
-    } = {
-            x: 0,
-            y: 0
-        };
-
-    /**
-     * Axis rotation angle in degrees.
-     */
-    rotation: number = 0;
-
-    readonly line: {
-        /**
-         * The line width to be used by the axis line.
-         */
-        width: number,
-        /**
-         * The color of the axis line.
-         * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
-         */
-        color?: string
-    } = {
-            width: 1,
-            color: 'rgba(195, 195, 195, 1)'
-        };
-
-    readonly tick: FormattableAxisTick = (() => {
-        const tick = new FormattableAxisTick();
-        tick.onFormatChange = this.onTickFormatChange;
-        return tick;
-    })();
-
     private tickFormatter?: (datum: any) => string;
     private onTickFormatChange(format?: string) {
         if (format) {
@@ -239,8 +221,6 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
             this.tickFormatter = undefined;
         }
     }
-
-    readonly label = new AxisLabel();
 
     private _title: Caption | undefined = undefined;
     set title(value: Caption | undefined) {

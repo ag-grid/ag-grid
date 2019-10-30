@@ -68,7 +68,11 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         this.destroyFilters();
         var columnTree = this.columnController.getPrimaryColumnTree();
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
-        this.filterGroupComps.forEach(function (comp) { return _this.appendChild(comp); });
+        var len = this.filterGroupComps.length;
+        if (len) {
+            this.filterGroupComps.forEach(function (comp) { return _this.appendChild(comp); });
+            this.setFirstAndLastVisible(0, len - 1);
+        }
         // perform search if searchFilterText exists
         if (_.exists(this.searchFilterText)) {
             this.searchFilters(this.searchFilterText);
@@ -81,7 +85,11 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         this.destroyFilters();
         var columnTree = this.toolPanelColDefService.createColumnTree(colDefs);
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
-        this.filterGroupComps.forEach(function (comp) { return _this.appendChild(comp); });
+        var len = this.filterGroupComps.length;
+        if (len) {
+            this.filterGroupComps.forEach(function (comp) { return _this.appendChild(comp); });
+            this.setFirstAndLastVisible(0, len - 1);
+        }
         // perform search if searchFilterText exists
         if (_.exists(this.searchFilterText)) {
             this.searchFilters(this.searchFilterText);
@@ -95,24 +103,22 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             if (child instanceof OriginalColumnGroup) {
                 return _.flatten(_this.recursivelyAddFilterGroupComps(child, depth));
             }
-            else {
-                var column = child;
-                if (!_this.shouldDisplayFilter(column))
-                    return [];
-                var hideFilterCompHeader = depth === 0;
-                var filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
-                _this.getContext().wireBean(filterComp);
-                filterComp.setColumn(column);
-                if (depth > 0) {
-                    return filterComp;
-                }
-                else {
-                    var filterGroupComp = new ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth);
-                    _this.getContext().wireBean(filterGroupComp);
-                    filterGroupComp.collapse();
-                    return filterGroupComp;
-                }
+            var column = child;
+            if (!_this.shouldDisplayFilter(column)) {
+                return [];
             }
+            ;
+            var hideFilterCompHeader = depth === 0;
+            var filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
+            _this.getContext().wireBean(filterComp);
+            filterComp.setColumn(column);
+            if (depth > 0) {
+                return filterComp;
+            }
+            var filterGroupComp = new ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth);
+            _this.getContext().wireBean(filterGroupComp);
+            filterGroupComp.collapse();
+            return filterGroupComp;
         }));
     };
     FiltersToolPanelListPanel.prototype.recursivelyAddFilterGroupComps = function (columnGroup, depth) {
@@ -135,9 +141,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             if (child instanceof OriginalColumnGroup) {
                 return _this.filtersExistInChildren(child.getChildren());
             }
-            else {
-                return _this.shouldDisplayFilter(child);
-            }
+            return _this.shouldDisplayFilter(child);
         });
     };
     FiltersToolPanelListPanel.prototype.shouldDisplayFilter = function (column) {
@@ -205,15 +209,13 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
                 });
                 return anyChildrenChanged_1;
             }
-            else {
-                var colId = filterComp.getColumn().getColId();
-                var updateFilterExpandState = !colIds || _.includes(colIds, colId);
-                if (updateFilterExpandState) {
-                    expand ? filterComp.expand() : filterComp.collapse();
-                    updatedColIds.push(colId);
-                }
-                return updateFilterExpandState;
+            var colId = filterComp.getColumn().getColId();
+            var updateFilterExpandState = !colIds || _.includes(colIds, colId);
+            if (updateFilterExpandState) {
+                expand ? filterComp.expand() : filterComp.collapse();
+                updatedColIds.push(colId);
             }
+            return updateFilterExpandState;
         };
         this.filterGroupComps.forEach(updateGroupExpandState);
         // update header expand / collapse icon
@@ -263,38 +265,62 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             return !_.exists(searchFilter) || groupName.toLowerCase().includes(searchFilter);
         };
         var recursivelySearch = function (filterItem, parentPasses) {
-            if (filterItem instanceof ToolPanelFilterGroupComp) {
-                var children = filterItem.getChildren();
-                var groupNamePasses = passesFilter(filterItem.getFilterGroupName());
-                // if group or parent already passed - ensure this group and all children are visible
-                var alreadyPassed = parentPasses || groupNamePasses;
-                if (alreadyPassed) {
-                    // ensure group visible
-                    filterItem.hideGroup(false);
-                    // ensure all children are visible
-                    for (var i = 0; i < children.length; i++) {
-                        recursivelySearch(children[i], alreadyPassed);
-                        filterItem.hideGroupItem(false, i);
-                    }
-                    return true;
-                }
-                // hide group item filters
-                var anyChildPasses_1 = false;
-                children.forEach(function (child, index) {
-                    var childPasses = recursivelySearch(child, parentPasses);
-                    filterItem.hideGroupItem(!childPasses, index);
-                    if (childPasses)
-                        anyChildPasses_1 = true;
-                });
-                // hide group if no children pass
-                filterItem.hideGroup(!anyChildPasses_1);
-                return anyChildPasses_1;
-            }
-            else {
+            if (!(filterItem instanceof ToolPanelFilterGroupComp)) {
                 return passesFilter(filterItem.getColumnFilterName());
             }
+            var children = filterItem.getChildren();
+            var groupNamePasses = passesFilter(filterItem.getFilterGroupName());
+            // if group or parent already passed - ensure this group and all children are visible
+            var alreadyPassed = parentPasses || groupNamePasses;
+            if (alreadyPassed) {
+                // ensure group visible
+                filterItem.hideGroup(false);
+                // ensure all children are visible
+                for (var i = 0; i < children.length; i++) {
+                    recursivelySearch(children[i], alreadyPassed);
+                    filterItem.hideGroupItem(false, i);
+                }
+                return true;
+            }
+            // hide group item filters
+            var anyChildPasses = false;
+            children.forEach(function (child, index) {
+                var childPasses = recursivelySearch(child, parentPasses);
+                filterItem.hideGroupItem(!childPasses, index);
+                if (childPasses)
+                    anyChildPasses = true;
+            });
+            // hide group if no children pass
+            filterItem.hideGroup(!anyChildPasses);
+            return anyChildPasses;
         };
-        this.filterGroupComps.forEach(function (filterGroup) { return recursivelySearch(filterGroup, false); });
+        var firstVisible;
+        var lastVisible;
+        this.filterGroupComps.forEach(function (filterGroup, idx) {
+            recursivelySearch(filterGroup, false);
+            if (firstVisible === undefined) {
+                if (!_.containsClass(filterGroup.getGui(), 'ag-hidden')) {
+                    firstVisible = idx;
+                    lastVisible = idx;
+                }
+            }
+            else if (!_.containsClass(filterGroup.getGui(), 'ag-hidden') && lastVisible !== idx) {
+                lastVisible = idx;
+            }
+        });
+        this.setFirstAndLastVisible(firstVisible, lastVisible);
+    };
+    FiltersToolPanelListPanel.prototype.setFirstAndLastVisible = function (firstIdx, lastIdx) {
+        this.filterGroupComps.forEach(function (filterGroup, idx) {
+            _.removeCssClass(filterGroup.getGui(), 'ag-first-group-visible');
+            _.removeCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+            if (idx === firstIdx) {
+                _.addCssClass(filterGroup.getGui(), 'ag-first-group-visible');
+            }
+            if (idx === lastIdx) {
+                _.addCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+            }
+        });
     };
     FiltersToolPanelListPanel.prototype.refreshFilters = function () {
         this.filterGroupComps.forEach(function (filterGroupComp) { return filterGroupComp.refreshFilters(); });

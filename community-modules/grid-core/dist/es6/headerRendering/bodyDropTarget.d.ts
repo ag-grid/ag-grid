@@ -14,6 +14,7 @@ export declare class BodyDropTarget implements DropTarget {
     private context;
     private dragAndDropService;
     private columnController;
+    private gridOptionsWrapper;
     private gridPanel;
     private pinned;
     private eContainer;
