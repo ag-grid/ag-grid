@@ -86,47 +86,37 @@ export class AnimationFrameService {
     private executeFrame(millis: number): void {
         this.verifyAnimationFrameOn('executeFrame');
 
-        // create a copy of p1Tasks, so that when addP1Task is called,
-        // the new task is held until next frame so that it can be
-        // sorted and executed in the right order. we don't do this for p2
-        // tasks as p2 tasks are not ordered.
-        const createP1TasksThisFrame = this.createTasksP1;
-        const createP2TasksThisFrame = this.createTasksP2;
-        const destroyTasksThisFrame = this.destroyTasks;
-
-        this.createTasksP1 = [];
-        this.createTasksP2 = [];
-        this.destroyTasks = [];
+        const p1Tasks = this.createTasksP1;
+        const p2Tasks = this.createTasksP2;
+        const destroyTasks = this.destroyTasks;
 
         if (this.scrollGoingDown) {
             const ascSortFunc = (a: TaskItem, b: TaskItem) => b.index - a.index;
-            createP1TasksThisFrame.sort(ascSortFunc);
-            createP2TasksThisFrame.sort(ascSortFunc);
+            p1Tasks.sort(ascSortFunc);
+            p2Tasks.sort(ascSortFunc);
         } else {
             const descSortFunc = (a: TaskItem, b: TaskItem) => a.index - b.index;
-            createP1TasksThisFrame.sort(descSortFunc);
-            createP2TasksThisFrame.sort(descSortFunc);
+            p1Tasks.sort(descSortFunc);
+            p2Tasks.sort(descSortFunc);
         }
 
         const frameStart = new Date().getTime();
-
         let duration = (new Date().getTime()) - frameStart;
 
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-
             const gridPanelUpdated = this.gridPanel.executeFrame();
 
             if (!gridPanelUpdated) {
-                if (createP1TasksThisFrame.length > 0) {
-                    const taskItem = createP1TasksThisFrame.pop();
+                if (p1Tasks.length) {
+                    const taskItem = p1Tasks.pop();
                     taskItem.task();
-                } else if (createP2TasksThisFrame.length > 0) {
-                    const taskItem = createP2TasksThisFrame.pop();
+                } else if (p2Tasks.length) {
+                    const taskItem = p2Tasks.pop();
                     taskItem.task();
-                } else if (destroyTasksThisFrame.length > 0) {
-                    const task = destroyTasksThisFrame.pop();
+                } else if (destroyTasks.length) {
+                    const task = destroyTasks.pop();
                     task();
                 } else {
                     break;
@@ -136,11 +126,7 @@ export class AnimationFrameService {
             duration = (new Date().getTime()) - frameStart;
         }
 
-        this.createTasksP1 = createP1TasksThisFrame.concat(this.createTasksP1);
-        this.createTasksP2 = createP2TasksThisFrame.concat(this.createTasksP2);
-        this.destroyTasks = destroyTasksThisFrame.concat(this.destroyTasks);
-
-        if (this.createTasksP1.length > 0 || this.createTasksP2.length > 0 || this.destroyTasks.length > 0) {
+        if (p1Tasks.length || p2Tasks.length || destroyTasks.length) {
             this.requestFrame();
         } else {
             this.stopTicking();
