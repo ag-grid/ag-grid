@@ -9,6 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/community-modules/csv-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-all-modules/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-core/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-csv-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/charts" />

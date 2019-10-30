@@ -18,13 +18,13 @@ import {
     PinnedRowModel,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
+    ProcessRowGroupForExportParams,
     ProcessHeaderForExportParams,
     RowNode,
     SelectionController,
     ShouldRowBeSkippedParams,
     ValueService
 } from "@ag-community/grid-core";
-import { ProcessRowGroupForExportParams } from "@ag-community/grid-core/dist/cjs/interfaces/exportParams";
 
 /**
  * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface
