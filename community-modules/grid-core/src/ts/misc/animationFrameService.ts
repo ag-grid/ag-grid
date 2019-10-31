@@ -73,20 +73,18 @@ export class AnimationFrameService {
     }
 
     public addTaskToList(taskList: TaskList, task: TaskItem): void {
+        taskList.list.push(task);
+        taskList.sorted = false;
+    }
+
+    private sortTaskList(taskList: TaskList) {
+        if (taskList.sorted) { return; }
+
         const ascSortFunc = (a: TaskItem, b: TaskItem) => b.index - a.index;
         const descSortFunc = (a: TaskItem, b: TaskItem) => a.index - b.index;
 
-        if (!taskList.sorted) {
-            taskList.list.push(task);
-            taskList.list.sort(this.scrollGoingDown ? ascSortFunc : descSortFunc);
-            taskList.sorted = true;
-        } else {
-            if (this.scrollGoingDown) {
-                taskList.list.unshift(task);
-            } else {
-                taskList.list.push(task);
-            }
-        }
+        taskList.list.sort(this.scrollGoingDown ? ascSortFunc : descSortFunc);
+        taskList.sorted = true;
     }
 
     public addDestroyTask(task: () => void): void {
@@ -98,11 +96,11 @@ export class AnimationFrameService {
     private executeFrame(millis: number): void {
         this.verifyAnimationFrameOn('executeFrame');
 
-        const p1Tasks = this.createTasksP1;
-        const p1TaskList = p1Tasks.list;
+        const p1TaskList = this.createTasksP1;
+        const p1Tasks = p1TaskList.list;
 
-        const p2Tasks = this.createTasksP2;
-        const p2TaskList = p2Tasks.list;
+        const p2TaskList = this.createTasksP2;
+        const p2Tasks = p2TaskList.list;
 
         const destroyTasks = this.destroyTasks;
 
@@ -112,14 +110,14 @@ export class AnimationFrameService {
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            if (p1TaskList.length) {
-                const taskItem = p1TaskList.pop();
+            if (p1Tasks.length) {
+                this.sortTaskList(p1TaskList);
+                const taskItem = p1Tasks.pop();
                 taskItem.task();
-                p1Tasks.sorted = false;
-            } else if (p2TaskList.length) {
-                const taskItem = p2TaskList.pop();
+            } else if (p2Tasks.length) {
+                this.sortTaskList(p2TaskList);
+                const taskItem = p2Tasks.pop();
                 taskItem.task();
-                p2Tasks.sorted = false;
             } else if (destroyTasks.length) {
                 const task = destroyTasks.pop();
                 task();
@@ -130,10 +128,7 @@ export class AnimationFrameService {
             duration = (new Date().getTime()) - frameStart;
         }
 
-        p1Tasks.sorted = false;
-        p2Tasks.sorted = false;
-
-        if (p1TaskList.length || p2TaskList.length || destroyTasks.length) {
+        if (p1Tasks.length || p2Tasks.length || destroyTasks.length) {
             this.requestFrame();
         } else {
             this.stopTicking();
