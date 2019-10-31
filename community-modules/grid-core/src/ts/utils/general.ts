@@ -49,6 +49,7 @@ export class Utils {
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
 
     private static doOnceFlags: { [key: string]: boolean } = {};
+    private static supports: { [key: string]: boolean } = {};
 
     /**
      * If the key was passed before, then doesn't execute the func
@@ -62,6 +63,38 @@ export class Utils {
         func();
         this.doOnceFlags[key] = true;
     }
+
+    static isEventSupported = (() => {
+        const tags = {
+            select: 'input',
+            change: 'input',
+            submit: 'form',
+            reset: 'form',
+            error: 'img',
+            load: 'img',
+            abort: 'img'
+        } as any;
+
+        const isEventSupported = (eventName: any) => {
+            if (typeof Utils.supports[eventName] === 'boolean') {
+                return Utils.supports[eventName];
+            }
+          let el = document.createElement(tags[eventName] || 'div');
+          eventName = 'on' + eventName;
+
+          let isSupported = (eventName in el);
+
+          if (!isSupported) {
+            el.setAttribute(eventName, 'return;');
+            isSupported = typeof el[eventName] == 'function';
+          }
+          el = null;
+
+          return Utils.supports[eventName] = isSupported;
+        };
+
+        return isEventSupported;
+      })();
 
     /**
      * Checks if event was issued by a left click
