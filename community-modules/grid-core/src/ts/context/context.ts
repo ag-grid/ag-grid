@@ -1,7 +1,6 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
-import { ModuleNames } from "../modules/moduleNames";
 
 // steps in booting up:
 // 1. create all beans
@@ -159,14 +158,6 @@ export class Context {
             beanInstance: null as any,
             beanName: metaData.beanName
         };
-
-/*
-        if (this.beanWrappers[metaData.beanName]) {
-            this.logger.log(`overriding bean ${metaData.beanName}`);
-            console.log('old', this.beanWrappers[metaData.beanName]);
-            console.log('new', beanEntry);
-        }
-*/
 
         this.beanWrappers[metaData.beanName] = beanEntry;
     }

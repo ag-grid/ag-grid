@@ -10,11 +10,11 @@ import { _ } from './utils';
 @Bean('eventService')
 export class EventService implements IEventEmitter {
 
-    private allSyncListeners: {[key: string]: Function[]} = {};
-    private allAsyncListeners: {[key: string]: Function[]} = {};
+    private allSyncListeners = new Map<string, Set<Function>>();
+    private allAsyncListeners = new Map<string, Set<Function>>();
 
-    private globalSyncListeners: Function[] = [];
-    private globalAsyncListeners: Function[] = [];
+    private globalSyncListeners = new Set<Function>();
+    private globalAsyncListeners = new Set<Function>();
 
     private logger: Logger;
 
@@ -25,7 +25,8 @@ export class EventService implements IEventEmitter {
     // events first, to give model and service objects preference over the view
     private static PRIORITY = '-P1';
 
-    private firedEvents: { [key: string]: boolean; } = {};
+    // using an object performs better than a Set for the number of different events we have
+    private firedEvents: { [key: string]: boolean } = {};
 
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes
@@ -36,9 +37,10 @@ export class EventService implements IEventEmitter {
     //
     // the times when this class is used outside of the context (eg RowNode has an instance of this
     // class) then it is not a bean, and this setBeans method is not called.
-    public setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory,
-                    @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
-                   @Qualifier('globalEventListener') globalEventListener: Function = null) {
+    public setBeans(
+        @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
+        @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
+        @Qualifier('globalEventListener') globalEventListener: Function = null) {
         this.logger = loggerFactory.create('EventService');
 
         if (globalEventListener) {
@@ -47,21 +49,24 @@ export class EventService implements IEventEmitter {
         }
     }
 
-    private getListenerList(eventType: string, async: boolean): Function[] {
+    private getListeners(eventType: string, async: boolean): Set<Function> {
         const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
-        let listenerList = listenerMap[eventType];
-        if (!listenerList) {
-            listenerList = [];
-            listenerMap[eventType] = listenerList;
+        let listeners = listenerMap.get(eventType);
+
+        if (!listeners) {
+            listeners = new Set<Function>();
+            listenerMap.set(eventType, listeners);
         }
-        return listenerList;
+
+        return listeners;
     }
 
     public addEventListener(eventType: string, listener: Function, async = false): void {
-        const listenerList = this.getListenerList(eventType, async);
-        if (listenerList.indexOf(listener) < 0) {
-            listenerList.push(listener);
-        }
+        this.getListeners(eventType, async).add(listener);
+    }
+
+    public removeEventListener(eventType: string, listener: Function, async = false): void {
+        this.getListeners(eventType, async).delete(listener);
     }
 
     // for some events, it's important that the model gets to hear about them before the view,
@@ -72,30 +77,14 @@ export class EventService implements IEventEmitter {
     }
 
     public addGlobalListener(listener: Function, async = false): void {
-        if (async) {
-            this.globalAsyncListeners.push(listener);
-        } else {
-            this.globalSyncListeners.push(listener);
-        }
-    }
-
-    public removeEventListener(eventType: string, listener: Function, async = false): void {
-        const listenerList = this.getListenerList(eventType, async);
-        _.removeFromArray(listenerList, listener);
+        (async ? this.globalAsyncListeners : this.globalSyncListeners).add(listener);
     }
 
     public removeGlobalListener(listener: Function, async = false): void {
-        if (async) {
-            _.removeFromArray(this.globalAsyncListeners, listener);
-        } else {
-            _.removeFromArray(this.globalSyncListeners, listener);
-        }
+        (async ? this.globalAsyncListeners : this.globalSyncListeners).delete(listener);
     }
 
-    // why do we pass the type here? the type is in ColumnChangeEvent, so unless the
-    // type is not in other types of events???
     public dispatchEvent(event: AgEvent): void {
-        // console.log(`dispatching ${eventType}: ${event}`);
         this.dispatchToListeners(event, true);
         this.dispatchToListeners(event, false);
 
@@ -109,30 +98,22 @@ export class EventService implements IEventEmitter {
     }
 
     private dispatchToListeners(event: AgEvent, async: boolean) {
+        const eventType = event.type;
+        const processEventListeners = (listeners: Set<Function>) => listeners.forEach(listener => {
+            if (async) {
+                this.dispatchAsync(() => listener(event));
+            } else {
+                listener(event);
+            }
+        });
+
+        // PRIORITY events should be processed first
+        processEventListeners(this.getListeners(eventType + EventService.PRIORITY, async));
+        processEventListeners(this.getListeners(eventType, async));
 
         const globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
-        const eventType = event.type;
 
-        // this allows the columnController to get events before anyone else
-        const p1ListenerList = this.getListenerList(eventType + EventService.PRIORITY, async);
-        _.forEachSnapshotFirst(p1ListenerList, listener => {
-            if (async) {
-                this.dispatchAsync(() => listener(event));
-            } else {
-                listener(event);
-            }
-        });
-
-        const listenerList = this.getListenerList(eventType, async);
-        _.forEachSnapshotFirst(listenerList, listener => {
-            if (async) {
-                this.dispatchAsync(() => listener(event));
-            } else {
-                listener(event);
-            }
-        });
-
-        _.forEachSnapshotFirst(globalListeners, listener => {
+        globalListeners.forEach(listener => {
             if (async) {
                 this.dispatchAsync(() => listener(eventType, event));
             } else {
@@ -146,7 +127,6 @@ export class EventService implements IEventEmitter {
     // because setTimeout() is an expensive operation. ideally we would have
     // each event in it's own setTimeout(), but we batch for performance.
     private dispatchAsync(func: Function): void {
-
         // add to the queue for executing later in the next VM turn
         this.asyncFunctionsQueue.push(func);
 

@@ -1012,12 +1012,7 @@ export class Utils {
     }
 
     static removeAllFromArray<T>(array: T[], toRemove: T[]) {
-        toRemove.forEach(item => {
-            const index = array.indexOf(item);
-            if (index >= 0) {
-                array.splice(index, 1);
-            }
-        });
+        toRemove.forEach(item => this.removeFromArray(array, item));
     }
 
     static insertIntoArray<T>(array: T[], object: T, toIndex: number) {
@@ -1617,9 +1612,9 @@ export class Utils {
         if (this.isIOS === undefined) {
             // taken from https://stackoverflow.com/a/58064481/1388233
             this.isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
-                        // eslint-disable-next-line
-                         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
-                         !window.MSStream;
+                // eslint-disable-next-line
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+                !window.MSStream;
         }
         return this.isIOS;
     }
@@ -2173,9 +2168,8 @@ export class Utils {
         eElement: HTMLElement,
         event: string, listener: (event?: any) => void
     ) {
-        const isPassive = Utils.PASSIVE_EVENTS.indexOf(event) >= 0;
-        const isOutsideAngular = Utils.OUTSIDE_ANGULAR_EVENTS.indexOf(event) >= 0;
-
+        const isPassive = this.includes(Utils.PASSIVE_EVENTS, event);
+        const isOutsideAngular = this.includes(Utils.OUTSIDE_ANGULAR_EVENTS, event);
         const options = isPassive ? { passive: true } : undefined;
 
         if (isOutsideAngular) {

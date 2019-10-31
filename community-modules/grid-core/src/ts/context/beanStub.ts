@@ -52,7 +52,7 @@ export class BeanStub implements IEventEmitter {
         this.destroyFunctions.length = 0;
         this.destroyed = true;
 
-        this.dispatchEvent({type: BeanStub.EVENT_DESTROYED});
+        this.dispatchEvent({ type: BeanStub.EVENT_DESTROYED });
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -80,33 +80,24 @@ export class BeanStub implements IEventEmitter {
     }
 
     public addDestroyableEventListener(
-        eElement: Window | HTMLElement | IEventEmitter | GridOptionsWrapper,
-        event: string, listener: (event?: any) => void
+        object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper,
+        event: string,
+        listener: (event?: any) => void
     ): (() => void) | undefined {
-        if (this.destroyed) { return; }
+        if (this.destroyed) {
+            return;
+        }
 
-        if (eElement instanceof HTMLElement) {
-            _.addSafePassiveEventListener(this.getFrameworkOverrides(), (eElement as HTMLElement), event, listener);
-        } else if (eElement instanceof Window) {
-            (eElement as Window).addEventListener(event, listener);
-        } else if (eElement instanceof GridOptionsWrapper) {
-            (eElement as GridOptionsWrapper).addEventListener(event, listener);
+        if (object instanceof HTMLElement) {
+            _.addSafePassiveEventListener(this.getFrameworkOverrides(), object as HTMLElement, event, listener);
         } else {
-            (eElement as IEventEmitter).addEventListener(event, listener);
+            (object as any).addEventListener(event, listener);
         }
 
         const destroyFunc = () => {
-            if (eElement instanceof HTMLElement) {
-                (eElement as HTMLElement).removeEventListener(event, listener);
-            } else if (eElement instanceof Window) {
-                (eElement as Window).removeEventListener(event, listener);
-            } else if (eElement instanceof GridOptionsWrapper) {
-                (eElement as GridOptionsWrapper).removeEventListener(event, listener);
-            } else {
-                (eElement as IEventEmitter).removeEventListener(event, listener);
-            }
+            (object as any).removeEventListener(event, listener);
 
-            this.destroyFunctions = this.destroyFunctions.filter((fn: Function) => fn !== destroyFunc);
+            this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
         };
 
         this.destroyFunctions.push(destroyFunc);
