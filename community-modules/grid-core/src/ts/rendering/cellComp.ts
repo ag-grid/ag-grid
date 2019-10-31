@@ -854,7 +854,7 @@ export class CellComp extends Component {
         };
 
         if (useTaskService) {
-            this.beans.taskQueue.addCreateP2Task(task, this.rowNode.rowIndex);
+            this.beans.taskQueue.createTask(task, this.rowNode.rowIndex, 'createTasksP2');
         } else {
             task();
         }

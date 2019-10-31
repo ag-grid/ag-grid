@@ -58,21 +58,14 @@ export class AnimationFrameService {
         }
     }
 
-    public addCreateP1Task(task: () => void, index: number): void {
-        this.verifyAnimationFrameOn('addP1Task');
-        const taskItem: TaskItem = {task: task, index: index};
-        this.addTaskToList(this.createTasksP1, taskItem);
+    public createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2') {
+        this.verifyAnimationFrameOn(list);
+        const taskItem: TaskItem = { task, index };
+        this.addTaskToList(this[list], taskItem);
         this.schedule();
     }
 
-    public addCreateP2Task(task: () => void, index: number): void {
-        this.verifyAnimationFrameOn('addP2Task');
-        const taskItem: TaskItem = {task: task, index: index};
-        this.addTaskToList(this.createTasksP2, taskItem);
-        this.schedule();
-    }
-
-    public addTaskToList(taskList: TaskList, task: TaskItem): void {
+    private addTaskToList(taskList: TaskList, task: TaskItem): void {
         taskList.list.push(task);
         taskList.sorted = false;
     }
@@ -88,7 +81,7 @@ export class AnimationFrameService {
     }
 
     public addDestroyTask(task: () => void): void {
-        this.verifyAnimationFrameOn('addP3Task');
+        this.verifyAnimationFrameOn('createTasksP3');
         this.destroyTasks.push(task);
         this.schedule();
     }
