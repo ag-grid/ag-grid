@@ -171,7 +171,6 @@ export class GridPanel extends Component {
 
     private scrollLeft = -1;
     private scrollTop = -1;
-    private nextScrollTop = -1;
 
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
     private readonly resetLastHorizontalScrollElementDebounce: () => void;
@@ -282,7 +281,6 @@ export class GridPanel extends Component {
         this.paginationAutoPageSizeService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
-        this.animationFrameService.registerGridComp(this);
 
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
@@ -1333,22 +1331,8 @@ export class GridPanel extends Component {
         const scrollTop: number = this.eBodyViewport.scrollTop;
         this.animationFrameService.setScrollTop(scrollTop);
 
-        this.nextScrollTop = scrollTop;
-
-        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
-            this.redrawRowsAfterScroll();
-        } else {
-            this.animationFrameService.schedule();
-        }
-    }
-
-    public executeFrame(): boolean {
-        const frameNeeded = this.scrollTop !== this.nextScrollTop;
-        if (frameNeeded) {
-            this.scrollTop = this.nextScrollTop;
-            this.redrawRowsAfterScroll();
-        }
-        return frameNeeded;
+        this.scrollTop = scrollTop;
+        this.redrawRowsAfterScroll();
     }
 
     private isControllingScroll(eDiv: HTMLElement): boolean {
