@@ -113,6 +113,7 @@ export declare class Events {
     static EVENT_ROW_DRAG_MOVE: string;
     static EVENT_ROW_DRAG_LEAVE: string;
     static EVENT_ROW_DRAG_END: string;
+    static EVENT_POPUP_TO_FRONT: string;
     static EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST: string;
     static EVENT_COLUMN_PIVOT_CHANGE_REQUEST: string;
     static EVENT_COLUMN_VALUE_CHANGE_REQUEST: string;

@@ -363,6 +363,7 @@ export declare class AgGridAngular implements AfterViewInit {
     rowDragMove: EventEmitter<any>;
     rowDragLeave: EventEmitter<any>;
     rowDragEnd: EventEmitter<any>;
+    popupToFront: EventEmitter<any>;
     columnRowGroupChangeRequest: EventEmitter<any>;
     columnPivotChangeRequest: EventEmitter<any>;
     columnValueChangeRequest: EventEmitter<any>;

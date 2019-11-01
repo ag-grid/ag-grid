@@ -4664,6 +4664,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_ROW_DRAG_MOVE = 'rowDragMove';
     Events.EVENT_ROW_DRAG_LEAVE = 'rowDragLeave';
     Events.EVENT_ROW_DRAG_END = 'rowDragEnd';
+    // primarily for charts
+    Events.EVENT_POPUP_TO_FRONT = 'popupToFront';
     // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
     // to design these better around server side functions and then release to general public when fully working with
     // all the row models.
@@ -35407,7 +35409,7 @@ var LicenseManager = /** @class */ (function () {
         if (_.missingOrEmpty(LicenseManager_1.licenseKey)) {
             this.outputMissingLicenseKey();
         }
-        else if (!_.missingOrEmpty(LicenseManager_1.licenseKey) && LicenseManager_1.licenseKey.length > 32) {
+        else if (LicenseManager_1.licenseKey.length > 32) {
             var _a = LicenseManager_1.extractLicenseComponents(LicenseManager_1.licenseKey), md5 = _a.md5, license = _a.license, version = _a.version, isTrial = _a.isTrial;
             if (md5 === this.md5.md5(license)) {
                 if (_.exists(version) && version) {
@@ -35420,6 +35422,9 @@ var LicenseManager = /** @class */ (function () {
             else {
                 this.outputInvalidLicenseKey();
             }
+        }
+        else {
+            this.outputInvalidLicenseKey();
         }
     };
     LicenseManager.extractExpiry = function (license) {

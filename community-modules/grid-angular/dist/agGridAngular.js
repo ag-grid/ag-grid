@@ -357,6 +357,7 @@ var AgGridAngular = /** @class */ (function () {
         this.rowDragMove = new core_1.EventEmitter();
         this.rowDragLeave = new core_1.EventEmitter();
         this.rowDragEnd = new core_1.EventEmitter();
+        this.popupToFront = new core_1.EventEmitter();
         this.columnRowGroupChangeRequest = new core_1.EventEmitter();
         this.columnPivotChangeRequest = new core_1.EventEmitter();
         this.columnValueChangeRequest = new core_1.EventEmitter();
@@ -806,6 +807,7 @@ var AgGridAngular = /** @class */ (function () {
         'rowDragMove': [{ type: core_1.Output },],
         'rowDragLeave': [{ type: core_1.Output },],
         'rowDragEnd': [{ type: core_1.Output },],
+        'popupToFront': [{ type: core_1.Output },],
         'columnRowGroupChangeRequest': [{ type: core_1.Output },],
         'columnPivotChangeRequest': [{ type: core_1.Output },],
         'columnValueChangeRequest': [{ type: core_1.Output },],

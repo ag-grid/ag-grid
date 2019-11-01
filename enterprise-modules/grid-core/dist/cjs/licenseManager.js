@@ -16,7 +16,7 @@ var LicenseManager = /** @class */ (function () {
         if (grid_core_1._.missingOrEmpty(LicenseManager_1.licenseKey)) {
             this.outputMissingLicenseKey();
         }
-        else if (!grid_core_1._.missingOrEmpty(LicenseManager_1.licenseKey) && LicenseManager_1.licenseKey.length > 32) {
+        else if (LicenseManager_1.licenseKey.length > 32) {
             var _a = LicenseManager_1.extractLicenseComponents(LicenseManager_1.licenseKey), md5 = _a.md5, license = _a.license, version = _a.version, isTrial = _a.isTrial;
             if (md5 === this.md5.md5(license)) {
                 if (grid_core_1._.exists(version) && version) {
@@ -29,6 +29,9 @@ var LicenseManager = /** @class */ (function () {
             else {
                 this.outputInvalidLicenseKey();
             }
+        }
+        else {
+            this.outputInvalidLicenseKey();
         }
     };
     LicenseManager.extractExpiry = function (license) {
