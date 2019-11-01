@@ -121,6 +121,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             },
         };
 
+        options.legend.item.marker.type = 'square';
+
         return options;
     }
 }

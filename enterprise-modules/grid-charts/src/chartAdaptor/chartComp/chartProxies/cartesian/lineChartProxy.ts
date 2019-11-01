@@ -107,8 +107,10 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             },
             tooltip: {
                 enabled: true,
-            },
+            }
         };
+
+        options.legend.item.marker.type = 'square';
 
         return options;
     }

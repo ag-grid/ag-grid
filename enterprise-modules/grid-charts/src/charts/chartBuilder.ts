@@ -15,6 +15,7 @@ import {
     AxisOptions,
     SeriesLabelOptions,
     MarkerOptions,
+    MarkerType,
 } from "./chartOptions";
 import { CartesianChart, CartesianChartLayout } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
@@ -42,6 +43,7 @@ import { Diamond } from "./chart/marker/diamond";
 import { Plus } from "./chart/marker/plus";
 import { Square } from "./chart/marker/square";
 import { Triangle } from "./chart/marker/triangle";
+import { Marker } from "./chart/marker/marker";
 
 export class ChartBuilder {
     private static createCartesianChart(
@@ -540,6 +542,17 @@ export class ChartBuilder {
         return series;
     }
 
+    private static getMarkerFromType(type: MarkerType): new () => Marker {
+        const markerType = (type === 'circle' && Circle)
+            || (type === 'cross' && Cross)
+            || (type === 'diamond' && Diamond)
+            || (type === 'plus' && Plus)
+            || (type === 'square' && Square)
+            || (type === 'triangle' && Triangle)
+            || Circle;
+        return markerType;
+    }
+
     static initLegend(legend: Legend, options: LegendOptions) {
         this.setValueIfExists(legend, 'enabled', options.enabled);
         this.setValueIfExists(legend, 'position', options.position);
@@ -558,6 +571,7 @@ export class ChartBuilder {
             }
 
             if (marker) {
+                this.setValueIfExists(legend, 'markerType', ChartBuilder.getMarkerFromType(marker.type));
                 this.setValueIfExists(legend, 'markerStrokeWidth', marker.strokeWidth);
                 this.setValueIfExists(legend, 'markerSize', marker.size);
                 this.setValueIfExists(legend, 'markerPadding', marker.padding);
@@ -569,15 +583,7 @@ export class ChartBuilder {
     }
 
     static initMarker(marker: SeriesMarker, options: MarkerOptions) {
-        const { type } = options;
-        const markerType = (type === 'circle' && Circle)
-            || (type === 'cross' && Cross)
-            || (type === 'diamond' && Diamond)
-            || (type === 'plus' && Plus)
-            || (type === 'square' && Square)
-            || (type === 'triangle' && Triangle)
-            || Circle;
-        marker.type = markerType;
+        marker.type = ChartBuilder.getMarkerFromType(options.type);
         this.setValueIfExists(marker, 'enabled', options.enabled);
         this.setValueIfExists(marker, 'size', options.size);
         this.setValueIfExists(marker, 'minSize', options.minSize);

@@ -12,6 +12,7 @@ export {
     PieTooltipRendererParams
 };
 
+export type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 export type CartesianSeriesType = "line" | "scatter" | "bar" | "area";
 export type PolarSeriesType = "pie";
 export type SeriesType = CartesianSeriesType | PolarSeriesType;
@@ -84,6 +85,7 @@ export interface LegendLabelOptions extends FontOptions {
 }
 
 export interface LegendMarkerOptions {
+    type?: MarkerType;
     size?: number;
     padding?: number;
     strokeWidth?: number;
@@ -214,7 +216,7 @@ export interface LineSeriesOptions extends SeriesOptions {
 }
 
 export interface MarkerOptions {
-    type?: 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
+    type?: MarkerType;
     enabled?: boolean;
     size?: number;
     minSize?: number;

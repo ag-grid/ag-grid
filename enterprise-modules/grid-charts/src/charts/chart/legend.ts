@@ -6,7 +6,7 @@ import { FontStyle, FontWeight } from "../scene/shape/text";
 import { LegendPosition } from "./chart";
 import { Marker } from "./marker/marker";
 import { Square } from "./marker/square";
-import { reactive } from "../util/observable";
+import { reactive, Observable } from "../util/observable";
 
 export interface LegendDatum {
     id: string;       // component ID
@@ -29,7 +29,7 @@ export enum Orientation {
     Horizontal
 }
 
-export class Legend {
+export class Legend extends Observable {
 
     onLayoutChange?: () => void;
     onPositionChange?: () => void; // The legend's parent component may want to do some special handling
@@ -40,6 +40,13 @@ export class Legend {
     private itemSelection: Selection<MarkerLabel, Group, any, any> = Selection.select(this.group).selectAll<MarkerLabel>();
 
     private oldSize: [number, number] = [0, 0];
+
+    constructor() {
+        super();
+
+        this.addCategoryListener('layout', this.requestLayout.bind(this));
+        this.addCategoryListener('style', this.update.bind(this));
+    }
 
     private _size: [number, number] = [0, 0];
     get size(): Readonly<[number, number]> {
@@ -68,16 +75,7 @@ export class Legend {
         return this._enabled;
     }
 
-    private _orientation: Orientation = Orientation.Vertical;
-    set orientation(value: Orientation) {
-        if (this._orientation !== value) {
-            this._orientation = value;
-            this.requestLayout();
-        }
-    }
-    get orientation(): Orientation {
-        return this._orientation;
-    }
+    @reactive(['layout']) orientation: Orientation = Orientation.Vertical;
 
     private _position: LegendPosition = 'right';
     set position(value: LegendPosition) {
@@ -102,132 +100,22 @@ export class Legend {
         return this._position;
     }
 
-    private _padding: number = 20;
-    set padding(value: number) {
-        value = isFinite(value) ? value : 20;
-        if (this._padding !== value) {
-            this._padding = value;
-            this.requestLayout();
-        }
-    }
-    get padding(): number {
-        return this._padding;
-    }
+    @reactive(['layout']) padding = 20;
+    @reactive(['layout']) itemPaddingX = 16;
+    @reactive(['layout']) itemPaddingY = 8;
 
-    private _itemPaddingX: number = 16;
-    set itemPaddingX(value: number) {
-        value = isFinite(value) ? value : 16;
-        if (this._itemPaddingX !== value) {
-            this._itemPaddingX = value;
-            this.requestLayout();
-        }
-    }
-    get itemPaddingX(): number {
-        return this._itemPaddingX;
-    }
+    // If the marker type is set, the legend will always use that marker type for all its items,
+    // regardless of the type that comes from the `data`.
+    @reactive(['layout']) markerType?: new () => Marker;
+    @reactive(['layout']) markerPadding = MarkerLabel.defaults.padding;
+    @reactive(['layout']) markerSize = MarkerLabel.defaults.markerSize;
+    @reactive(['style']) markerStrokeWidth = 1;
 
-    private _itemPaddingY: number = 8;
-    set itemPaddingY(value: number) {
-        value = isFinite(value) ? value : 8;
-        if (this._itemPaddingY !== value) {
-            this._itemPaddingY = value;
-            this.requestLayout();
-        }
-    }
-    get itemPaddingY(): number {
-        return this._itemPaddingY;
-    }
-
-    private _markerPadding: number = MarkerLabel.defaults.padding;
-    set markerPadding(value: number) {
-        value = isFinite(value) ? value : MarkerLabel.defaults.padding;
-        if (this._markerPadding !== value) {
-            this._markerPadding = value;
-            this.requestLayout();
-        }
-    }
-    get markerPadding(): number {
-        return this._markerPadding;
-    }
-
-    private _labelColor: string = MarkerLabel.defaults.labelColor;
-    set labelColor(value: string) {
-        if (this._labelColor !== value) {
-            this._labelColor = value;
-            this.update();
-        }
-    }
-    get labelColor(): string {
-        return this._labelColor;
-    }
-
-    private _labelFontStyle: FontStyle | undefined = MarkerLabel.defaults.labelFontStyle;
-    set labelFontStyle(value: FontStyle | undefined) {
-        if (this._labelFontStyle !== value) {
-            this._labelFontStyle = value;
-            this.requestLayout();
-        }
-    }
-    get labelFontStyle(): FontStyle | undefined {
-        return this._labelFontStyle;
-    }
-
-    private _labelFontWeight: FontWeight | undefined = MarkerLabel.defaults.labelFontWeight;
-    set labelFontWeight(value: FontWeight | undefined) {
-        if (this._labelFontWeight !== value) {
-            this._labelFontWeight = value;
-            this.requestLayout();
-        }
-    }
-    get labelFontWeight(): FontWeight | undefined {
-        return this._labelFontWeight;
-    }
-
-    private _labelFontSize: number = MarkerLabel.defaults.labelFontSize;
-    set labelFontSize(value: number) {
-        if (this._labelFontSize !== value) {
-            this._labelFontSize = value;
-            this.requestLayout();
-        }
-    }
-    get labelFontSize(): number {
-        return this._labelFontSize;
-    }
-
-    private _labelFontFamily: string = MarkerLabel.defaults.labelFontFamily;
-    set labelFontFamily(value: string) {
-        if (this._labelFontFamily !== value) {
-            this._labelFontFamily = value;
-            this.requestLayout();
-        }
-    }
-    get labelFontFamily(): string {
-        return this._labelFontFamily;
-    }
-
-    private _markerSize: number = MarkerLabel.defaults.markerSize;
-    set markerSize(value: number) {
-        value = isFinite(value) ? value : MarkerLabel.defaults.markerSize;
-        if (this._markerSize !== value) {
-            this._markerSize = value;
-            this.requestLayout();
-        }
-    }
-    get markerSize(): number {
-        return this._markerSize;
-    }
-
-    private _markerStrokeWidth: number = 1;
-    set markerStrokeWidth(value: number) {
-        value = isFinite(value) ? value : 1;
-        if (this._markerStrokeWidth !== value) {
-            this._markerStrokeWidth = value;
-            this.update();
-        }
-    }
-    get markerStrokeWidth(): number {
-        return this._markerStrokeWidth;
-    }
+    @reactive(['style']) labelColor = MarkerLabel.defaults.labelColor;
+    @reactive(['layout']) labelFontStyle?: FontStyle = MarkerLabel.defaults.labelFontStyle;
+    @reactive(['layout']) labelFontWeight?: FontWeight = MarkerLabel.defaults.labelFontWeight;
+    @reactive(['layout']) labelFontSize = MarkerLabel.defaults.labelFontSize;
+    @reactive(['layout']) labelFontFamily = MarkerLabel.defaults.labelFontFamily;
 
     private requestLayout() {
         if (this.onLayoutChange) {
@@ -248,15 +136,16 @@ export class Legend {
      * @param height
      */
     performLayout(width: number, height: number) {
+        const { markerType } = this;
         const updateSelection = this.itemSelection.setData(this.data, (node, datum) => {
-            const markerType = datum.marker.type;
-            const markerName = markerType ? markerType.name : 'Square';
-            return datum.id + '-' + datum.itemId + '-' + markerName;
+            const itemMarkerType = markerType || datum.marker.type;
+            const itemMarkerName = itemMarkerType ? itemMarkerType.name : 'Square';
+            return datum.id + '-' + datum.itemId + '-' + itemMarkerName;
         });
         updateSelection.exit.remove();
 
         const enterSelection = updateSelection.enter.append(MarkerLabel).each((node, datum) => {
-            const Marker = datum.marker.type || Square;
+            const Marker = markerType || datum.marker.type || Square;
             node.marker = new Marker();
         });
         const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
