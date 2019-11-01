@@ -100,6 +100,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 width: 3,
             },
             marker: {
+                type: 'circle',
                 enabled: true,
                 size: 3,
                 strokeWidth: 1,

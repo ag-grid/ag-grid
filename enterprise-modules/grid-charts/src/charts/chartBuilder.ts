@@ -37,6 +37,11 @@ import { GroupedCategoryChart, GroupedCategoryChartAxis } from "./chart/groupedC
 import { Axis } from "./axis";
 import Scale from "./scale/scale";
 import { Circle } from "./chart/marker/circle";
+import { Cross } from "./chart/marker/cross";
+import { Diamond } from "./chart/marker/diamond";
+import { Plus } from "./chart/marker/plus";
+import { Square } from "./chart/marker/square";
+import { Triangle } from "./chart/marker/triangle";
 
 export class ChartBuilder {
     private static createCartesianChart(
@@ -564,7 +569,15 @@ export class ChartBuilder {
     }
 
     static initMarker(marker: SeriesMarker, options: MarkerOptions) {
-        marker.type = Circle;
+        const { type } = options;
+        const markerType = (type === 'circle' && Circle)
+            || (type === 'cross' && Cross)
+            || (type === 'diamond' && Diamond)
+            || (type === 'plus' && Plus)
+            || (type === 'square' && Square)
+            || (type === 'triangle' && Triangle)
+            || Circle;
+        marker.type = markerType;
         this.setValueIfExists(marker, 'enabled', options.enabled);
         this.setValueIfExists(marker, 'size', options.size);
         this.setValueIfExists(marker, 'minSize', options.minSize);

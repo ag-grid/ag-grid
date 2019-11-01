@@ -214,6 +214,7 @@ export interface LineSeriesOptions extends SeriesOptions {
 }
 
 export interface MarkerOptions {
+    type?: 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
     enabled?: boolean;
     size?: number;
     minSize?: number;
