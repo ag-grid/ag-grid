@@ -13,7 +13,7 @@ export class LicenseManager {
     public validateLicense(): void {
         if (_.missingOrEmpty(LicenseManager.licenseKey)) {
             this.outputMissingLicenseKey();
-        } else if (!_.missingOrEmpty(LicenseManager.licenseKey) && LicenseManager.licenseKey.length > 32) {
+        } else if (LicenseManager.licenseKey.length > 32) {
             const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
 
             if (md5 === this.md5.md5(license)) {
@@ -25,6 +25,8 @@ export class LicenseManager {
             } else {
                 this.outputInvalidLicenseKey();
             }
+        } else {
+            this.outputInvalidLicenseKey();
         }
     }
 
